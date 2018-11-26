@@ -1,107 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45294 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeK2AE6 (ORCPT
+        with ESMTP id S1726886AbeKZXt4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:04:58 -0500
+        Mon, 26 Nov 2018 18:49:56 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL v2] Renesas ARM Based SoC DT Updates for v4.21
-Date: Wed, 28 Nov 2018 14:02:12 +0100
-Message-Id: <cover.1543409901.git.horms+renesas@verge.net.au>
+Subject: [PATCH 35/40] arm64: dts: renesas: r8a77990: Add I2C-DVFS device node
+Date: Mon, 26 Nov 2018 13:55:01 +0100
+Message-Id: <44ea652a92d209045da9183981b55fd0c2c01971.1543229516.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Please consider these Renesas ARM based SoC DT updates for v4.21.
+This patch adds I2C-DVFS device node for the R8A77990 SoC.
 
-I am sending out this pull-request at this time as there are a number
-of patches queued up in my arm (32) DT branch and I hope that this
-will ease the burden later on in the development cycle. I expect to
-send a follow-up pull-request for this branch at the usual pre-rc6 timing.
+v2
+* Drop aliases update as in upstream it is not required to configure the
+  BD9571 PMIC for DDR backup, nor is the use of i2c are aliases desired.
+* Do not describe the device as compatible with "renesas,rcar-gen3-iic" or
+  "renesas,rmobile-iic" fallback compat strings. The absence of automatic
+  transmission registers leads us to declare the r8a77990 IIC controller as
+  incompatible.
 
-Changes since v1:
-* Correct garbled Reviewed-by tag in
-  "[PATCH 01/16] ARM: dts: r9a06g032: Add pinctrl node"
+v2.1
+* Reduced register range to reflect documentation
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt-for-v4.21
-
-for you to fetch changes up to 673df60a880f060e3e94920c7b5f7a9ed8aa65f2:
-
-  ARM: dts: r9a06g032: Correct the GIC DT node name (2018-11-28 13:55:30 +0100)
-
-----------------------------------------------------------------
-Renesas ARM Based SoC DT Updates for v4.21
-
-* RZ/N1D (r9a06g032) SoC:
-  - Correct GIC DT node name
-  - Enable pin controller
-
-* RZ/G1C (r8a77470) iWave g23S single board computer
-  - Add QSPI flash support
-  - Add pinctl support for EtherAVB
-  - Enable CMT0 (Renesas R-Car Compare Match Timer)
-  - Enable RWDT (Renesas Watchdog Timer)
-  - Enable uSD and eMMC support
-
-* RZ/G1C (r8a77470) SoC:
-  - Describe USB-DMAC and I2C devices in DT
-
-* R-Mobile A1 (r8a7740), Emma Mobile EV2 (emev2) and
-  SH-Mobile AG5 (sh72a0) SoCs:
-  - Include SoC name in DTSI
-
-* R-Car H2 (r8a7790) based lager, and
-  R-Car M2-W (r8a7791) based koelsch and porter boards:
-  - Disable unconnected LVDS encoders
-
-----------------------------------------------------------------
-Biju Das (6):
-      ARM: dts: r8a77470: Add watchdog support to SoC dtsi
-      ARM: dts: iwg23s-sbc: Enable watchdog support
-      ARM: dts: r8a77470: Add USB-DMAC device nodes
-      ARM: dts: r8a77470: Add CMT SoC specific support
-      ARM: dts: iwg23s-sbc: Enable cmt0
-      ARM: dts: iwg23s-sbc: Add pinctl support for EtherAVB
-
-Fabrizio Castro (6):
-      ARM: dts: r8a77470: Add I2C[0123] support
-      ARM: dts: r8a77470: Add SDHI0 support
-      ARM: dts: r8a77470: Add SDHI1 support
-      ARM: dts: iwg23s-sbc: Add uSD and eMMC support
-      ARM: dts: r8a77470: Add QSPI support
-      ARM: dts: iwg23s-sbc: Add QSPI flash support
-
-Laurent Pinchart (1):
-      ARM: dts: r8a779[01]: Disable unconnected LVDS encoders
-
-Magnus Damm (1):
-      ARM: dts: r8a7740, emev2, sh73a0: Include SoC name in DTSI
-
-Phil Edworthy (2):
-      ARM: dts: r9a06g032: Add pinctrl node
-      ARM: dts: r9a06g032: Correct the GIC DT node name
-
- arch/arm/boot/dts/emev2.dtsi              |   2 +-
- arch/arm/boot/dts/r8a7740.dtsi            |   2 +-
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 119 ++++++++++++++++
- arch/arm/boot/dts/r8a77470.dtsi           | 222 +++++++++++++++++++++++++++++-
- arch/arm/boot/dts/r8a7790-lager.dts       |   2 -
- arch/arm/boot/dts/r8a7791-koelsch.dts     |   2 -
- arch/arm/boot/dts/r8a7791-porter.dts      |   2 -
- arch/arm/boot/dts/r9a06g032.dtsi          |  10 +-
- arch/arm/boot/dts/sh73a0.dtsi             |   2 +-
- 9 files changed, 352 insertions(+), 11 deletions(-)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index b0398e05e8ed..3b334be843f4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -357,6 +357,20 @@
+ 			reg = <0 0xe6060000 0 0x508>;
+ 		};
+ 
++		i2c_dvfs: i2c@e60b0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a77990";
++			reg = <0 0xe60b0000 0 0x15>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
++			dma-names = "tx", "rx";
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a77990-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-- 
+2.11.0
