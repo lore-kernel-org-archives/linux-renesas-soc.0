@@ -1,56 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:57504 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeKMQma (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbeKZXtn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Nov 2018 11:42:30 -0500
-From: Nguyen An Hoan <na-hoan@jinso.co.jp>
-To: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
-Cc: wsa@sang-engineering.com, rui.zhang@intel.com,
-        niklas.soderlund@ragnatech.se, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: [PATCH] thermal: rcar_gen3_thermal: Add supports the hwmon thermal sysfs
-Date: Tue, 13 Nov 2018 15:45:43 +0900
-Message-Id: <1542091543-31597-1-git-send-email-na-hoan@jinso.co.jp>
+        Mon, 26 Nov 2018 18:49:43 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/40] arm64: dts: renesas: r8a77980: Connect R-Car V3H AVB to IPMMU
+Date: Mon, 26 Nov 2018 13:54:41 +0100
+Message-Id: <7ffbcb232c7b8f90dbb40338ce084b65c65fb9fc.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+From: Magnus Damm <damm@opensource.se>
 
-Gen3 thermal registered by devm_thermal_zone_of_sensor_register()
-and this function does not enable hwmon sysfs extensions.
-This patch enables it to keep compatibility to common systems
+Hook up the R-Car V3H AVB device to IPMMU-DS1 33 as described in
+the data sheet.
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Signed-off-by: Magnus Damm <damm@opensource.se>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 75786cc..ae172db 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -19,6 +19,7 @@
- #include <linux/thermal.h>
- 
- #include "thermal_core.h"
-+#include "thermal_hwmon.h"
- 
- /* Register offsets */
- #define REG_GEN3_IRQSTR		0x04
-@@ -429,6 +430,12 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		if (ret < 0)
- 			goto error_unregister;
- 
-+		/* Enable hwmon thermal sysfs */
-+		tsc->zone->tzp->no_hwmon = false;
-+		ret = thermal_add_hwmon_sysfs(tsc->zone);
-+		if (ret)
-+			dev_err(dev, "Can't register hwmon sysfs\n");
-+
- 		dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
- 	}
- 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+index 54acc494a43f..ce2c9955df75 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -602,6 +602,7 @@
+ 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 812>;
+ 			phy-mode = "rgmii";
++			iommus = <&ipmmu_ds1 33>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			status = "disabled";
 -- 
-2.7.4
+2.11.0
