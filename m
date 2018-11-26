@@ -1,146 +1,201 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46111 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387700AbeKGEsv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbeKZXtw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 23:48:51 -0500
-Received: by mail-lf1-f66.google.com with SMTP id f23so5168732lfc.13
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Nov 2018 11:22:06 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a77970: add QSPI pins, groups, and
- functions
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <21306a59-8f20-ad08-fdc1-bcc6333c01d4@cogentembedded.com>
-Message-ID: <38b17a18-59d6-3fbf-8413-915005b274f6@cogentembedded.com>
-Date: Tue, 6 Nov 2018 21:52:55 +0300
-MIME-Version: 1.0
-In-Reply-To: <21306a59-8f20-ad08-fdc1-bcc6333c01d4@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Mon, 26 Nov 2018 18:49:52 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Gaku Inami <gaku.inami.xh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 31/40] arm64: dts: renesas: Add CPU capacity-dmips-mhz
+Date: Mon, 26 Nov 2018 13:54:57 +0100
+Message-Id: <2250d856b279d992c392170860a78c2482b1859c.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Dmitry Shifrin <dmitry.shifrin@cogentembedded.com>
+From: Gaku Inami <gaku.inami.xh@renesas.com>
 
-Add the QSPI{0|1} pins/groups/functions to the R8A77970 PFC driver.
+Set the capacity-dmips-mhz for R-Car Gen3 SoCs, that is based on
+dhrystone. The average in 10 times of dhrystone result as follows:
 
-[Sergei: ported to the upstream driver, fixed up the swapped QSPI0 SPCLK/
-SSL pins, fixed up the comments, moved the QSPI pins/groups/functions to
-be in the alphanumeric order, removed unneeded empty lines, renamed the
-patch.]
+r8a7795 SoC (A57x4 + A53x4)
+  CPU   max-freq   dhrystone
+  ---------------------------------
+  A57   1500 MHz  11470943 lps/s
+  A53   1200 MHz   4798583 lps/s
 
-Signed-off-by: Dmitry Shifrin <dmitry.shifrin@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+r8a7796 SoC (A57x2 + A53x4)
+  CPU   max-freq   dhrystone
+  ---------------------------------
+  A57   1500 MHz  11463526 lps/s
+  A53   1200 MHz   4793276 lps/s
 
+Based on above, capacity-dmips-mhz values are calculated as follows:
+
+r8a7795 SoC
+  A57 : 1024 / (11470943 / 1500) * (11470943 / 1500) = 1024
+  A53 : 1024 / (11470943 / 1500) * ( 4798583 / 1200) =  535
+
+r8a7796 SoC
+  A57 : 1024 / (11463526 / 1500) * (11463526 / 1500) = 1024
+  A53 : 1024 / (11463526 / 1500) * ( 4793276 / 1200) =  535
+
+However, since each CPUs have different max frequencies, the final
+CPU capacities of A53 are scaled by this difference, the values are
+as follows.
+
+[r8a7795 SoC]
+  $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
+  1024	<---- CPU capacity of A57
+  1024
+  1024
+  1024
+  428	<---- CPU capacity of A53
+  428
+  428
+  428
+
+[r8a7796 SoC]
+  $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
+  1024	<---- CPU capacity of A57
+  1024
+  428	<---- CPU capacity of A53
+  428
+  428
+  428
+
+Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-The patch is against the 'sh-pfc' branch of Geert's 'renesas-drivers.git' repo.
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 ++++++
+ 2 files changed, 14 insertions(+)
 
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c |   70 ++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
-
-Index: renesas-drivers/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-===================================================================
---- renesas-drivers.orig/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-+++ renesas-drivers/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-@@ -1382,6 +1382,56 @@ static const unsigned int pwm4_b_mux[] =
- 	PWM4_B_MARK,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 408ff4e8170a..e94a5f2dbd08 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -157,6 +157,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
+ 		};
  
-+/* - QSPI0 ------------------------------------------------------------------ */
-+static const unsigned int qspi0_ctrl_pins[] = {
-+	/* SPCLK, SSL */
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 5),
-+};
-+static const unsigned int qspi0_ctrl_mux[] = {
-+	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
-+};
-+static const unsigned int qspi0_data2_pins[] = {
-+	/* MOSI_IO0, MISO_IO1 */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+};
-+static const unsigned int qspi0_data2_mux[] = {
-+	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
-+};
-+static const unsigned int qspi0_data4_pins[] = {
-+	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
-+	RCAR_GP_PIN(5, 1), RCAR_GP_PIN(5, 2),
-+	RCAR_GP_PIN(5, 3), RCAR_GP_PIN(5, 4),
-+};
-+static const unsigned int qspi0_data4_mux[] = {
-+	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
-+	QSPI0_IO2_MARK, QSPI0_IO3_MARK
-+};
-+
-+/* - QSPI1 ------------------------------------------------------------------ */
-+static const unsigned int qspi1_ctrl_pins[] = {
-+	/* SPCLK, SSL */
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 11),
-+};
-+static const unsigned int qspi1_ctrl_mux[] = {
-+	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
-+};
-+static const unsigned int qspi1_data2_pins[] = {
-+	/* MOSI_IO0, MISO_IO1 */
-+	RCAR_GP_PIN(5, 7), RCAR_GP_PIN(5, 8),
-+};
-+static const unsigned int qspi1_data2_mux[] = {
-+	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
-+};
-+static const unsigned int qspi1_data4_pins[] = {
-+	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
-+	RCAR_GP_PIN(5, 7), RCAR_GP_PIN(5, 8),
-+	RCAR_GP_PIN(5, 9), RCAR_GP_PIN(5, 10),
-+};
-+static const unsigned int qspi1_data4_mux[] = {
-+	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
-+	QSPI1_IO2_MARK, QSPI1_IO3_MARK
-+};
-+
- /* - SCIF Clock ------------------------------------------------------------- */
- static const unsigned int scif_clk_a_pins[] = {
- 	/* SCIF_CLK */
-@@ -1756,6 +1806,12 @@ static const struct sh_pfc_pin_group pin
- 	SH_PFC_PIN_GROUP(pwm3_b),
- 	SH_PFC_PIN_GROUP(pwm4_a),
- 	SH_PFC_PIN_GROUP(pwm4_b),
-+	SH_PFC_PIN_GROUP(qspi0_ctrl),
-+	SH_PFC_PIN_GROUP(qspi0_data2),
-+	SH_PFC_PIN_GROUP(qspi0_data4),
-+	SH_PFC_PIN_GROUP(qspi1_ctrl),
-+	SH_PFC_PIN_GROUP(qspi1_data2),
-+	SH_PFC_PIN_GROUP(qspi1_data4),
- 	SH_PFC_PIN_GROUP(scif_clk_a),
- 	SH_PFC_PIN_GROUP(scif_clk_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
-@@ -1950,6 +2006,18 @@ static const char * const pwm4_groups[]
- 	"pwm4_b",
- };
+@@ -169,6 +170,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
+ 		};
  
-+static const char * const qspi0_groups[] = {
-+	"qspi0_ctrl",
-+	"qspi0_data2",
-+	"qspi0_data4",
-+};
-+
-+static const char * const qspi1_groups[] = {
-+	"qspi1_ctrl",
-+	"qspi1_data2",
-+	"qspi1_data4",
-+};
-+
- static const char * const scif_clk_groups[] = {
- 	"scif_clk_a",
- 	"scif_clk_b",
-@@ -2033,6 +2101,8 @@ static const struct sh_pfc_function pinm
- 	SH_PFC_FUNCTION(pwm2),
- 	SH_PFC_FUNCTION(pwm3),
- 	SH_PFC_FUNCTION(pwm4),
-+	SH_PFC_FUNCTION(qspi0),
-+	SH_PFC_FUNCTION(qspi1),
- 	SH_PFC_FUNCTION(scif_clk),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
+@@ -181,6 +183,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
+ 		};
+ 
+@@ -193,6 +196,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
+ 		};
+ 
+@@ -205,6 +209,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		a53_1: cpu@101 {
+@@ -216,6 +221,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		a53_2: cpu@102 {
+@@ -227,6 +233,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		a53_3: cpu@103 {
+@@ -238,6 +245,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index b12bf73bb03b..369d0bccc651 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -162,6 +162,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
+ 		};
+ 
+@@ -174,6 +175,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			capacity-dmips-mhz = <1024>;
+ 			#cooling-cells = <2>;
+ 		};
+ 
+@@ -186,6 +188,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		a53_1: cpu@101 {
+@@ -197,6 +200,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		a53_2: cpu@102 {
+@@ -208,6 +212,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		a53_3: cpu@103 {
+@@ -219,6 +224,7 @@
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			capacity-dmips-mhz = <535>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
+-- 
+2.11.0
