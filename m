@@ -1,65 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43227 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbeKUWhI (ORCPT
+        with ESMTP id S1726210AbeKZXs3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:37:08 -0500
-Date: Wed, 21 Nov 2018 13:02:57 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mon, 26 Nov 2018 18:48:29 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Enable I2C DMA
-Message-ID: <20181121120252.l433sboqukjpk2ij@verge.net.au>
-References: <1540071326-27428-1-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540071326-27428-1-git-send-email-ykaneko0929@gmail.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 03/16] ARM: dts: r8a77470: Add SDHI0 support
+Date: Mon, 26 Nov 2018 13:54:05 +0100
+Message-Id: <62e0db655706518abea80b21c551d58661e145bd.1543236456.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
+References: <cover.1543236456.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Oct 21, 2018 at 06:35:26AM +0900, Yoshihiro Kaneko wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch enables I2C DMA.
-> 
-> NOTE: I2C7 DMA is not supported by R-Car Gen3 Hardware User's Manual
-> Rev.0.80E.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Base patch stack:
-* renesas-devel-20181121-v4.20-rc3
-+ "iommu/ipmmu-vmsa: Hook up r8a77990 DT matching code"
-+ "pinctrl: sh-pfc: r8a77990: Add Audio SSI pins, groups and functions"
-+ "pinctrl: sh-pfc: r8a77990: Add Audio clock pins, groups and functions"
+RZ/G1C comes with two different types of IP for the SDHI
+interfaces, SDHI0 and SDHI2 share the same IP type, and
+such an IP is also compatible with the one found in R-Car
+Gen2. SDHI1 IP on the other hand is compatible with R-Car
+Gen3 with internal DMA.
+This patch completes the SDHI support of the R-Car Gen2
+compatible IPs, including fixing the max-frequency
+definition of SDHI2, as it turns out there is a bug in
+Section 1.3.9 of the RZ/G1C Hardware User's Manual (Rev.
+1.00 Oct. 2017).
 
-Config: renesas_defconfig + IPMMU_VMSA
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-Should we enable IPMMU_VMSA in arm64 defconfig and renesas_defconfig?
-
-Test with base patch stack:
-# grep dma /proc/interrupts  | grep -v "0          0"
-(no output)
-# amixer set "DVC Out" 2%
-# play xyz.wav
-# grep dma /proc/interrupts  | grep -v "0          0"
-(no output)
-
-Test with base patch stack + this patch applied:
-# grep dma /proc/interrupts  | grep -v "0          0"
-(no output)
-# amixer set "DVC Out" 2%
-# play xyz.wav
-# grep dma /proc/interrupts  | grep -v "0          0"
-109:        512          0     GIC-0 352 Level     ec700000.dma-controller:0
-
-
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-I plan to apply this patch for v4.21.
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 9611a936e1b8..ab2e0223f8a1 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -490,6 +490,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a77470",
++				     "renesas,rcar-gen2-sdhi";
++			reg = <0 0xee100000 0 0x328>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++			       <&dmac1 0xcd>, <&dmac1 0xce>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <156000000>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
++			status = "disabled";
++		};
++
+ 		sdhi2: sd@ee160000 {
+ 			compatible = "renesas,sdhi-r8a77470",
+ 				     "renesas,rcar-gen2-sdhi";
+@@ -499,7 +514,7 @@
+ 			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
+ 			       <&dmac1 0xd3>, <&dmac1 0xd4>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			max-frequency = <97500000>;
++			max-frequency = <78000000>;
+ 			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 312>;
+ 			status = "disabled";
+-- 
+2.11.0
