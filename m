@@ -1,201 +1,418 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeKZXtw (ORCPT
+        with ESMTP id S1726872AbeKZXth (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:49:52 -0500
+        Mon, 26 Nov 2018 18:49:37 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Gaku Inami <gaku.inami.xh@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 31/40] arm64: dts: renesas: Add CPU capacity-dmips-mhz
-Date: Mon, 26 Nov 2018 13:54:57 +0100
-Message-Id: <2250d856b279d992c392170860a78c2482b1859c.1543229515.git.horms+renesas@verge.net.au>
+Subject: [PATCH 10/40] arm64: dts: renesas: r8a774a1: Add VIN and CSI-2 nodes
+Date: Mon, 26 Nov 2018 13:54:36 +0100
+Message-Id: <0c85e78fb1d3742c36ff085999624cc912128776.1543229515.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
 References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Gaku Inami <gaku.inami.xh@renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Set the capacity-dmips-mhz for R-Car Gen3 SoCs, that is based on
-dhrystone. The average in 10 times of dhrystone result as follows:
+Add VIN and CSI-2 nodes to RZ/G2M SoC dtsi.
 
-r8a7795 SoC (A57x4 + A53x4)
-  CPU   max-freq   dhrystone
-  ---------------------------------
-  A57   1500 MHz  11470943 lps/s
-  A53   1200 MHz   4798583 lps/s
-
-r8a7796 SoC (A57x2 + A53x4)
-  CPU   max-freq   dhrystone
-  ---------------------------------
-  A57   1500 MHz  11463526 lps/s
-  A53   1200 MHz   4793276 lps/s
-
-Based on above, capacity-dmips-mhz values are calculated as follows:
-
-r8a7795 SoC
-  A57 : 1024 / (11470943 / 1500) * (11470943 / 1500) = 1024
-  A53 : 1024 / (11470943 / 1500) * ( 4798583 / 1200) =  535
-
-r8a7796 SoC
-  A57 : 1024 / (11463526 / 1500) * (11463526 / 1500) = 1024
-  A53 : 1024 / (11463526 / 1500) * ( 4793276 / 1200) =  535
-
-However, since each CPUs have different max frequencies, the final
-CPU capacities of A53 are scaled by this difference, the values are
-as follows.
-
-[r8a7795 SoC]
-  $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
-  1024	<---- CPU capacity of A57
-  1024
-  1024
-  1024
-  428	<---- CPU capacity of A53
-  428
-  428
-  428
-
-[r8a7796 SoC]
-  $ cat /sys/devices/system/cpu/cpu*/cpu_capacity
-  1024	<---- CPU capacity of A57
-  1024
-  428	<---- CPU capacity of A53
-  428
-  428
-  428
-
-Signed-off-by: Gaku Inami <gaku.inami.xh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 8 ++++++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 6 ++++++
- 2 files changed, 14 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 367 ++++++++++++++++++++++++++++++
+ 1 file changed, 367 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 408ff4e8170a..e94a5f2dbd08 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -157,6 +157,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index a4817a012e11..78ac8e3cda6e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -1126,6 +1126,262 @@
+ 			status = "disabled";
  		};
  
-@@ -169,6 +170,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 811>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 811>;
++			renesas,id = <0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin0csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin0>;
++					};
++					vin0csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin0>;
++					};
++				};
++			};
++		};
++
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 810>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 810>;
++			renesas,id = <1>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin1csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin1>;
++					};
++					vin1csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin1>;
++					};
++				};
++			};
++		};
++
++		vin2: video@e6ef2000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 809>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 809>;
++			renesas,id = <2>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin2csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin2>;
++					};
++					vin2csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin2>;
++					};
++				};
++			};
++		};
++
++		vin3: video@e6ef3000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef3000 0 0x1000>;
++			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 808>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 808>;
++			renesas,id = <3>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin3csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin3>;
++					};
++					vin3csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin3>;
++					};
++				};
++			};
++		};
++
++		vin4: video@e6ef4000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef4000 0 0x1000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 807>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 807>;
++			renesas,id = <4>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin4csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin4>;
++					};
++					vin4csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin4>;
++					};
++				};
++			};
++		};
++
++		vin5: video@e6ef5000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef5000 0 0x1000>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 806>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 806>;
++			renesas,id = <5>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin5csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin5>;
++					};
++					vin5csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin5>;
++					};
++				};
++			};
++		};
++
++		vin6: video@e6ef6000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef6000 0 0x1000>;
++			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 805>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 805>;
++			renesas,id = <6>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin6csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin6>;
++					};
++					vin6csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin6>;
++					};
++				};
++			};
++		};
++
++		vin7: video@e6ef7000 {
++			compatible = "renesas,vin-r8a774a1";
++			reg = <0 0xe6ef7000 0 0x1000>;
++			interrupts = <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 804>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 804>;
++			renesas,id = <7>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin7csi20: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&csi20vin7>;
++					};
++					vin7csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&csi40vin7>;
++					};
++				};
++			};
++		};
++
+ 		rcar_sound: sound@ec500000 {
+ 			/*
+ 			 * #sound-dai-cells is required
+@@ -1613,6 +1869,117 @@
+ 			iommus = <&ipmmu_vc0 19>;
  		};
  
-@@ -181,6 +183,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -193,6 +196,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -205,6 +209,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		a53_1: cpu@101 {
-@@ -216,6 +221,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		a53_2: cpu@102 {
-@@ -227,6 +233,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		a53_3: cpu@103 {
-@@ -238,6 +245,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		L2_CA57: cache-controller-0 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index b12bf73bb03b..369d0bccc651 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -162,6 +162,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -174,6 +175,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-+			capacity-dmips-mhz = <1024>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -186,6 +188,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		a53_1: cpu@101 {
-@@ -197,6 +200,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		a53_2: cpu@102 {
-@@ -208,6 +212,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		a53_3: cpu@103 {
-@@ -219,6 +224,7 @@
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
-+			capacity-dmips-mhz = <535>;
- 		};
- 
- 		L2_CA57: cache-controller-0 {
++		csi20: csi2@fea80000 {
++			compatible = "renesas,r8a774a1-csi2";
++			reg = <0 0xfea80000 0 0x10000>;
++			interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 714>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 714>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					csi20vin0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&vin0csi20>;
++					};
++					csi20vin1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vin1csi20>;
++					};
++					csi20vin2: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&vin2csi20>;
++					};
++					csi20vin3: endpoint@3 {
++						reg = <3>;
++						remote-endpoint = <&vin3csi20>;
++					};
++					csi20vin4: endpoint@4 {
++						reg = <4>;
++						remote-endpoint = <&vin4csi20>;
++					};
++					csi20vin5: endpoint@5 {
++						reg = <5>;
++						remote-endpoint = <&vin5csi20>;
++					};
++					csi20vin6: endpoint@6 {
++						reg = <6>;
++						remote-endpoint = <&vin6csi20>;
++					};
++					csi20vin7: endpoint@7 {
++						reg = <7>;
++						remote-endpoint = <&vin7csi20>;
++					};
++				};
++			};
++		};
++
++		csi40: csi2@feaa0000 {
++			compatible = "renesas,r8a774a1-csi2";
++			reg = <0 0xfeaa0000 0 0x10000>;
++			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 716>;
++			power-domains = <&sysc 32>;
++			resets = <&cpg 716>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					csi40vin0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&vin0csi40>;
++					};
++					csi40vin1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vin1csi40>;
++					};
++					csi40vin2: endpoint@2 {
++						reg = <2>;
++						remote-endpoint = <&vin2csi40>;
++					};
++					csi40vin3: endpoint@3 {
++						reg = <3>;
++						remote-endpoint = <&vin3csi40>;
++					};
++					csi40vin4: endpoint@4 {
++						reg = <4>;
++						remote-endpoint = <&vin4csi40>;
++					};
++					csi40vin5: endpoint@5 {
++						reg = <5>;
++						remote-endpoint = <&vin5csi40>;
++					};
++					csi40vin6: endpoint@6 {
++						reg = <6>;
++						remote-endpoint = <&vin6csi40>;
++					};
++					csi40vin7: endpoint@7 {
++						reg = <7>;
++						remote-endpoint = <&vin7csi40>;
++					};
++				};
++
++			};
++		};
++
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
 -- 
 2.11.0
