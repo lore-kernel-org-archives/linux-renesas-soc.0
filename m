@@ -1,58 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47694 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732565AbeKMWL0 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:58950 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbeKZTKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Nov 2018 17:11:26 -0500
-Date: Tue, 13 Nov 2018 13:13:32 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFT 1/2] dt-bindings: thermal: rcar-thermal: add R8A77990
- support
-Message-ID: <20181113121331.krvvn6txtgfkyhh6@ninjato>
-References: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
- <1539612719-9650-2-git-send-email-ykaneko0929@gmail.com>
+        Mon, 26 Nov 2018 14:10:31 -0500
+Date: Mon, 26 Nov 2018 09:17:07 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: [PATCH] mmc: tmio: introduce mask for 'always 1' bits
+Message-ID: <20181126081706.bv5st4hrfly2bdfm@verge.net.au>
+References: <20181119131357.28648-1-wsa+renesas@sang-engineering.com>
+ <20181122140255.32z7xi5o5aba6u5n@verge.net.au>
+ <20181122140659.GB1070@kunai>
+ <20181123125731.ysjtgl65uunelpul@verge.net.au>
+ <20181123131538.GA1018@kunai>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tzgsyurnlb27erju"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539612719-9650-2-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <20181123131538.GA1018@kunai>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Fri, Nov 23, 2018 at 02:15:38PM +0100, Wolfram Sang wrote:
+> 
+> > > > > +#define TMIO_STAT_ALWAYS_SET_27	BIT(27) /* only known on R-Car 2+ so far */
+> > > > 
+> > > > The _27 seems to be odd to include in the name, but I assume it
+> > > > was the least bad option you could come up with.
+> > > 
+> > > Yes :) I am open for better suggestions.
+> > 
+> > Simply dropping '_27' would be an improvement in my opinion.
+> 
+> And if we get a second one later? Or make it a mask then?
 
---tzgsyurnlb27erju
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---tzgsyurnlb27erju
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvqv+YACgkQFA3kzBSg
-KbaI/A//Rk8Ta+zUAwxTzQFXtx0dN4vMdiY1EQT+TaC3n3OoI6ld7Cj72ZVDsiDF
-UYfsOlU3FKPjNOaXNGM+zO+DOwNvvnJpugtLDkuCy2GawRIClKXG8FYawPO7w8Xf
-MvmN98pNBwVJa9luXl6PJTCK/QGOOSmYlIMr56PmDdM8HkuiLbe/CZOVoSoLWIuU
-EvgqSbeWuECvvD3xYkwNPSUxbfeSrC/mTx84SBYPhEo0MCzdIyG9USglEP9TBTbp
-yeaow7UZt65Q+cH18BCsnE9wIjViGm/Cj3CNGl6wit1qDm+BadOMO4GJ+OZpcdzI
-e+SqmabPG2MOkab7M9v/xIJmUK0I1bKJH7KLgznvuAsOPGZrxiIeKdu3Bhui/gS0
-Rr8erjONpK4a2f3ZpUkVWr31s8QANmPWUhG7b0EmeCOGgp/oXysU9331FOV5JVFN
-q4Ket/iWTyApHiA+Z/e+AWXDW4BgbAeGTzmo4/vvVCW35vJBL+wVduTrtiGlm4Ux
-aEAHlF+YA6oKi0MXyCFePUIiRo54+GFtbH2oTGS8F/tJAZifN2FKg32mjpwpYowT
-fnvD5k19L2IUWCphzDwc4zpQZ9kEpyMZWxA4po7/+rfXavq1bvX/9HK9JbIYh7ol
-2yiZros/liEwOtzqZscv3/JVeTC4oW440qe/WpiHIntcJinn5Oc=
-=9p4x
------END PGP SIGNATURE-----
-
---tzgsyurnlb27erju--
+Lets not spend too much time debating a better macro name.
+But in my opinion we can cross the second bit bridge if
+and when we reach it.
