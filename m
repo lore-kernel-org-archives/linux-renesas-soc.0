@@ -1,96 +1,136 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1310111.outbound.protection.outlook.com ([40.107.131.111]:25803
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726972AbeK1RLI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbeKZXtl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 12:11:08 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "joro@8bytes.org" <joro@8bytes.org>
-CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] iommu/ipmmu-vmsa: Modify ipmmu_slave_whitelist() to check
- SoC revisions
-Date: Wed, 28 Nov 2018 06:10:30 +0000
-Message-ID: <1543385279-1584-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1543385279-1584-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1543385279-1584-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Mon, 26 Nov 2018 18:49:41 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 12/40] arm64: dts: renesas: r8a77990: Add SCIF-{0,1,3,4,5} device nodes
+Date: Mon, 26 Nov 2018 13:54:38 +0100
+Message-Id: <a5ebe5e49a862e21c620656d2dc244a0d92833d9.1543229515.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
+References: <cover.1543229515.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some R-Car Gen3 SoCs has hardware restrictions on the IPMMU. So,
-to check whether this R-Car Gen3 SoC can use the IPMMU correctly,
-this patch modifies the ipmmu_slave_whitelist().
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This patch adds the device nodes for SCIF-{0,1,3,4,5} serial ports to
+the R8A77990 SoC.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/iommu/ipmmu-vmsa.c | 34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 83 +++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 9e2655f..1c38538 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -754,12 +754,6 @@ static int ipmmu_init_platform_device(struct device *d=
-ev,
- 	return 0;
- }
-=20
--static bool ipmmu_slave_whitelist(struct device *dev)
--{
--	/* By default, do not allow use of IPMMU */
--	return false;
--}
--
- static const struct soc_device_attribute soc_rcar_gen3[] =3D {
- 	{ .soc_id =3D "r8a774a1", },
- 	{ .soc_id =3D "r8a7795", },
-@@ -771,11 +765,35 @@ static bool ipmmu_slave_whitelist(struct device *dev)
- 	{ /* sentinel */ }
- };
-=20
-+static const struct soc_device_attribute soc_rcar_gen3_whitelist[] =3D {
-+	{ .soc_id =3D "r8a7795", .revision =3D "ES3.0" },
-+	{ .soc_id =3D "r8a77965", },
-+	{ .soc_id =3D "r8a77990", },
-+	{ .soc_id =3D "r8a77995", },
-+	{ /* sentinel */ }
-+};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 6d5efeb9f363..f969e680b9ba 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -679,6 +679,40 @@
+ 			status = "disabled";
+ 		};
+ 
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a77990",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 64>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 207>,
++				 <&cpg CPG_CORE R8A77990_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x51>, <&dmac1 0x50>,
++			       <&dmac2 0x51>, <&dmac2 0x50>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 207>;
++			status = "disabled";
++		};
 +
-+static bool ipmmu_slave_whitelist(struct device *dev)
-+{
-+	/*
-+	 * For R-Car Gen3 use a white list to opt-in slave devices.
-+	 * For Other SoCs, this returns true anyway.
-+	 */
-+	if (!soc_device_match(soc_rcar_gen3))
-+		return true;
++		scif1: serial@e6e68000 {
++			compatible = "renesas,scif-r8a77990",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6e68000 0 64>;
++			interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 206>,
++				 <&cpg CPG_CORE R8A77990_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x53>, <&dmac1 0x52>,
++			       <&dmac2 0x53>, <&dmac2 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 206>;
++			status = "disabled";
++		};
 +
-+	/* Check whether this R-Car Gen3 can use the IPMMU correctly or not */
-+	if (!soc_device_match(soc_rcar_gen3_whitelist))
-+		return false;
+ 		scif2: serial@e6e88000 {
+ 			compatible = "renesas,scif-r8a77990",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
+@@ -694,6 +728,55 @@
+ 			status = "disabled";
+ 		};
+ 
++		scif3: serial@e6c50000 {
++			compatible = "renesas,scif-r8a77990",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c50000 0 64>;
++			interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 204>,
++				 <&cpg CPG_CORE R8A77990_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x57>, <&dmac0 0x56>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 204>;
++			status = "disabled";
++		};
 +
-+	/* By default, do not allow use of IPMMU */
-+	return false;
-+}
++		scif4: serial@e6c40000 {
++			compatible = "renesas,scif-r8a77990",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6c40000 0 64>;
++			interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 203>,
++				 <&cpg CPG_CORE R8A77990_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac0 0x59>, <&dmac0 0x58>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 203>;
++			status = "disabled";
++		};
 +
- static int ipmmu_of_xlate(struct device *dev,
- 			  struct of_phandle_args *spec)
- {
--	/* For R-Car Gen3 use a white list to opt-in slave devices */
--	if (soc_device_match(soc_rcar_gen3) && !ipmmu_slave_whitelist(dev))
-+	if (!ipmmu_slave_whitelist(dev))
- 		return -ENODEV;
-=20
- 	iommu_fwspec_add_ids(dev, spec->args, 1);
---=20
-1.9.1
++		scif5: serial@e6f30000 {
++			compatible = "renesas,scif-r8a77990",
++				     "renesas,rcar-gen3-scif", "renesas,scif";
++			reg = <0 0xe6f30000 0 64>;
++			interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 202>,
++				 <&cpg CPG_CORE R8A77990_CLK_S3D1C>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x5b>, <&dmac1 0x5a>,
++			       <&dmac2 0x5b>, <&dmac2 0x5a>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
++			resets = <&cpg 202>;
++			status = "disabled";
++		};
++
+ 		msiof0: spi@e6e90000 {
+ 			compatible = "renesas,msiof-r8a77990",
+ 				     "renesas,rcar-gen3-msiof";
+-- 
+2.11.0
