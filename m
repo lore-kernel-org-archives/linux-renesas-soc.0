@@ -1,114 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbeKZXt6 (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:12779 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728998AbeK0XCo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:49:58 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Tue, 27 Nov 2018 18:02:44 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 37/40] arm64: dts: renesas: r8a7796: Add CMT device nodes
-Date: Mon, 26 Nov 2018 13:55:03 +0100
-Message-Id: <8942ce2bfaa162f8d915b50778724be0c5c2662b.1543229516.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 00/22] Add more support to RZ/G1N
+Date: Tue, 27 Nov 2018 11:56:13 +0000
+Message-Id: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+This patch series aims to add support for some more interfaces to
+RZ/G1N SoC (SCIF/HSCIF, I2C, IIC, SDHI, MMC, USBHost, USB Function,
+ rwdt, Audio, Display, CAN and CMT ....).
 
-This patch adds CMT{0|1|2|3} device nodes for r8a7796 SoC.
+This patch series tested against renesas-dev.
+it depends on the the below patch series.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 70 ++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=46273
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index e62c1702ab72..e7614b781308 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -433,6 +433,76 @@
- 			reg = <0 0xe6060000 0 0x50c>;
- 		};
- 
-+		cmt0: timer@e60f0000 {
-+			compatible = "renesas,r8a7796-cmt0",
-+				     "renesas,rcar-gen3-cmt0";
-+			reg = <0 0xe60f0000 0 0x1004>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 303>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 303>;
-+			status = "disabled";
-+		};
-+
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,r8a7796-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 302>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 302>;
-+			status = "disabled";
-+		};
-+
-+		cmt2: timer@e6140000 {
-+			compatible = "renesas,r8a7796-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6140000 0 0x1004>;
-+			interrupts = <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 301>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 301>;
-+			status = "disabled";
-+		};
-+
-+		cmt3: timer@e6148000 {
-+			compatible = "renesas,r8a7796-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6148000 0 0x1004>;
-+			interrupts = <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 300>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 300>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a7796-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
+Biju Das (22):
+  ARM: dts: r8a7744: Add [H]SCIF{A|B} support
+  ARM: dts: r8a7744: Add I2C and IIC support
+  ARM: dts: r8a7744: Add SDHI nodes
+  ARM: dts: r8a7744: Add MMC node
+  ARM: dts: r8a7744-iwg20m: Add eMMC support
+  ARM: dts: r8a7744-iwg20m: Enable SDHI10 controller
+  ARM: dts: r8a7744: USB 2.0 host support
+  ARM: dts: r8a7744: Add USB-DMAC and HSUSB device nodes
+  ARM: dts: r8a7744: Add RWDT node
+  ARM: dts: r8a7744: Add audio support
+  ARM: dts: r8a7744: Add DU support
+  ARM: dts: r8a7744-iwg20d-q7-dbcm-ca: Add device tree for camera DB
+  ARM: dts: r8a7744: Add CAN support
+  ARM: dts: r8a7744: Add IRQC support
+  ARM: dts: r8a7744: Add thermal device to DT
+  ARM: dts: r8a7744: Add CMT SoC specific support
+  ARM: dts: iwg20d-q7-common: Move cmt/rwdt node out of RZ/G1M SOM
+  ARM: dts: r8a7744: Add QSPI support
+  ARM: dts: r8a7744-iwg20m: Add SPI NOR support
+  ARM: dts: r8a7744: Add MSIOF[012] support
+  ARM: dts: r8a7744: Add xhci support
+  ARM: dts: r8a7744: Add PCIe Controller device node
+
+ arch/arm/boot/dts/Makefile                      |    1 +
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi         |    9 +
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi           |    9 -
+ arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts |   17 +
+ arch/arm/boot/dts/r8a7744-iwg20m.dtsi           |   59 ++
+ arch/arm/boot/dts/r8a7744.dtsi                  | 1052 ++++++++++++++++++++++-
+ 6 files changed, 1114 insertions(+), 33 deletions(-)
+ create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
+
 -- 
-2.11.0
+2.7.4
