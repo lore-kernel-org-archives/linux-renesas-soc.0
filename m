@@ -1,87 +1,68 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 15/30] media: entity: Look for indirect routes
-Date: Fri,  2 Nov 2018 00:31:29 +0100
-Message-Id: <20181101233144.31507-16-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:58160 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726512AbeK0WwG (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 27 Nov 2018 17:52:06 -0500
+Date: Tue, 27 Nov 2018 12:54:25 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH] i2c: rcar: check bus state before reinitializing
+Message-ID: <20181127115425.GF1107@kunai>
+References: <20181113111542.5224-1-wsa@the-dreams.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="QXO0/MSS4VvK6f+D"
+Content-Disposition: inline
+In-Reply-To: <20181113111542.5224-1-wsa@the-dreams.de>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Two pads are considered having an active route for the purpose of
-has_route() if an indirect active route can be found between the two pads.
-An simple example of this is that a source pad has an active route to
-another source pad if both of the pads have an active route to the same
-sink pad.
+--QXO0/MSS4VvK6f+D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Make media_entity_has_route() return true in that case, and do not rely on
-drivers performing this by themselves.
+On Tue, Nov 13, 2018 at 12:15:42PM +0100, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> We should check the bus state before reinitializing the IP core.
+> Otherwise, the internal bus busy state which also tracks multi-master
+> activity is lost.
+>=20
+> Credits go to the Renesas BSP team for suggesting this change.
+>=20
+> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Fixes: ae481cc13965 ("i2c: rcar: fix resume by always initializing regist=
+ers before transfer")
+>=20
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/media-entity.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+Applied to for-current, thanks!
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 42977634d7102852..e45fc2549017615a 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -240,6 +240,9 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
- bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- 			    unsigned int pad1)
- {
-+	unsigned int i;
-+	bool has_route;
-+
- 	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
- 		return false;
- 
-@@ -253,7 +256,34 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- 	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
- 		swap(pad0, pad1);
- 
--	return entity->ops->has_route(entity, pad0, pad1);
-+	has_route = entity->ops->has_route(entity, pad0, pad1);
-+	/* A direct route is returned immediately */
-+	if (has_route ||
-+	    (entity->pads[pad0].flags & MEDIA_PAD_FL_SINK &&
-+	     entity->pads[pad1].flags & MEDIA_PAD_FL_SOURCE))
-+		return true;
-+
-+	/* Look for indirect routes */
-+	for (i = 0; i < entity->num_pads; i++) {
-+		if (i == pad0 || i == pad1)
-+			continue;
-+
-+		/*
-+		 * There are no direct routes between same types of
-+		 * pads, so skip checking this route
-+		 */
-+		if (!((entity->pads[pad0].flags ^ entity->pads[i].flags) &
-+		      (MEDIA_PAD_FL_SOURCE | MEDIA_PAD_FL_SINK)))
-+			continue;
-+
-+		/* Is there an indirect route? */
-+		if (entity->ops->has_route(entity, i, pad0) &&
-+		    entity->ops->has_route(entity, i, pad1))
-+			return true;
-+	}
-+
-+	return false;
-+
- }
- EXPORT_SYMBOL_GPL(media_entity_has_route);
- 
--- 
-2.19.1
+
+--QXO0/MSS4VvK6f+D
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlv9MHAACgkQFA3kzBSg
+KbYnFg/9EgnH91Qj4v7zfIYKNQS12xjI+N1+Tj1XvCSpdt3lTaeQm2VNKLiqy1hu
+kqJxfZ8L7tA59yi/bxJGvSo8DpMs36XKdpsXktuTXhJV9IUQbgWPpUWzkWSF2oab
+1WkIORYD5ECuCSjB3VsmmVm0DHMlTLGQnPkR06lPgRKpRS6k0N0PwUO0U83RTpk8
+zSuq2f5W2Uftx4F8PH2+5P8fpDbQE30uWNoHIbn+fJZMa2jTrHdVXuBjZazFcaNu
+off0mZpbO5J9gH9yQugE11DQGmzFdJ36ZpoqArbkAmyO4cg21EQRY7XZNcCjchds
+WIF/xT+tr1CJybMG4Wy9RKunPNcWtr5YgVKqF3SuxsVAPB7+d5dD31Immu3/slyZ
+0Y5utEvUQJpuj4efD1oKNhjAqFR4qQ0Q1Qjcl3enxcT4IeWYWLmGjy4Dxc34drkh
+BAKwgw4ZxzVdunxoed7WvkeSu1Y6VkFOoCTZ4ywKh+MMo2dLyrbuwrIovTAVFiki
+1cVoGDabwVALY6L34s4ajGlIgjWRMZouOzWJHQPJx3UAWbpP4GV/o+mo8gJn8Uv6
+HpXK7PycbQemzKlBPcTzhh8lq89aISqxLQIwfyph9lv7Ky+zCfnPN5VxK/581aLE
+/3y+Aumt3ko14b56/oZg2Ccvy6+HG1zWb/dEe0wGQiZVTRRu7W0=
+=bVmA
+-----END PGP SIGNATURE-----
+
+--QXO0/MSS4VvK6f+D--
