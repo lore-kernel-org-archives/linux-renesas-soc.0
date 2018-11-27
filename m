@@ -1,75 +1,68 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 21/21] ARM: dts: r8a7744: Add CMT SoC specific support
-Date: Fri, 30 Nov 2018 15:26:35 +0000
-Message-Id: <1543591595-37861-22-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:58490 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726287AbeK0X2j (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:28:39 -0500
+Date: Tue, 27 Nov 2018 13:30:51 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: sh_mobile: add support for r8a77990 (R-Car E3)
+Message-ID: <20181127123051.GN1107@kunai>
+References: <20181121120928.25179-1-horms+renesas@verge.net.au>
+ <20181121120928.25179-3-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6yHiY5vv/BiPjcMt"
+Content-Disposition: inline
+In-Reply-To: <20181121120928.25179-3-horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add CMT[01] support to SoC DT.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-   * No Change
----
- arch/arm/boot/dts/r8a7744.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+--6yHiY5vv/BiPjcMt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 937c800..8f43fb4 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1360,6 +1360,38 @@
- 			compatible = "renesas,prr";
- 			reg = <0 0xff000044 0 4>;
- 		};
-+
-+		cmt0: timer@ffca0000 {
-+			compatible = "renesas,r8a7744-cmt0",
-+				     "renesas,rcar-gen2-cmt0";
-+			reg = <0 0xffca0000 0 0x1004>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
-+			status = "disabled";
-+		};
-+
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,r8a7744-cmt1",
-+				     "renesas,rcar-gen2-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 329>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 329>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	thermal-zones {
--- 
-2.7.4
+On Wed, Nov 21, 2018 at 01:09:28PM +0100, Simon Horman wrote:
+> Add support for the IIC code for the r8a77990 (R-Car E3).
+>=20
+> It is not considered compatible with existing fallback bindings
+> due to the documented absence of automatic transmission registers.
+>=20
+> These registers are currently not used by the driver and
+> thus the provides the same behaviour for "renesas,iic-r8a77990" and
+> "renesas,rcar-gen3-iic". The point of declaring incompatibility is
+> to allow for automatic transmission register support to be added to
+> "renesas,iic-r8a77990" and "renesas,rcar-gen3-iic" in future.
+>=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+
+Applied to for-next, thanks!
+
+
+--6yHiY5vv/BiPjcMt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlv9OPoACgkQFA3kzBSg
+KbY/7xAAjI8EvFDaLVB88GNo9jssh0/SiW40Q6U2OC32xEQqXoGhETXWqntjLPFZ
+ZW84C7AAg5MjAs/1u2sd2NeHI5Y9GaSqEoLtUQyACxGCfdqkv9v6gg8zcEXq1gFN
+6zkYkccWAgBwzTGVXII/gDW0RAEbmtK+sMvkZSrJ5U6N0adhZQTaIQubTXJOWmlP
+DWYZQW08pidezwlFxLISwW8lO9FTfDtRDEb9kfuQaZiFjdqzsEGeYOlBIzSIydOI
+p35GJ0W0Ki51Tif8CoyLrvMqc36NZVi/jnFXLASHRxVFg+tLYip8CEWORbMFcva1
+8S5rBKZreGSAqTRg2/plX7mnbKGfyjHxm6nw9BNJ6+V8xowJIly7Nb8WgETBKMsH
+XceSSB58aOqIXJb78PEfTx8IsVsjWlOsBNc1FZCCckKqbA/Dm/mBBkn08LduoHjh
+/5syVWp7PagxiBQPhpYBIOjXEXb8srRFTnpIVU0usdHO4Z8HadAAVztl+U1zgUSG
+3Xi8NiERpyTNe//FmGBPOS8vUh3j+UFXE0CtZgsroHPOE6tVaRcMpoRBR3UTkMsj
+RdcaHx18k+mmHXEQiDQcqvuJxx0a40zdYRryUmpQHhnWozTHmJiNHWQRfDegiFaF
+Q431DxN/DDsPWF4JY5O8RJqwyyZ2J/UziE4lxx50O61WYFSkyJs=
+=oBU2
+-----END PGP SIGNATURE-----
+
+--6yHiY5vv/BiPjcMt--
