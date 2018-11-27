@@ -1,93 +1,91 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:62157 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728624AbeK2DVv (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:58678 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726442AbeK0XD3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:21:51 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 3/3] mmc: renesas_sdhi: disable HS400 on H3 ES1.x and M3-W ES1.[012]
-Date: Wed, 28 Nov 2018 17:18:29 +0100
-Message-Id: <20181128161829.27266-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 27 Nov 2018 18:03:29 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 17/22] ARM: dts: iwg20d-q7-common: Move cmt/rwdt node out of RZ/G1M SOM
+Date: Tue, 27 Nov 2018 11:56:30 +0000
+Message-Id: <1543319795-48325-18-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The Renesas BSP confirms that H3 ES1.x and M3-W ES1.[012] do not
-properly support HS400. Add a quirk to indicate this and disable HS400
-in the MMC capabilities if the quirk is set.
+The iWave RZ/G1N board is almost identical to RZ/G1M. cmt and rwdt modules
+are SoC specific and should be part of board dts rather than SoM dtsi. By
+moving these nodes to the common dtsi it allows cmt and rwdt to be enabled
+on both of these boards with less lines of code.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
-* Changes since v2
-- s/M3-W ES1.x/M3-W ES1.[012]/ in commit message and topic as HS400 is
-  not disabled for M3-W ES1.3. Thanks Geert for pointing this out.
----
- drivers/mmc/host/renesas_sdhi_core.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 9 +++++++++
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi   | 9 ---------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index f20df18f49e0d7c5..d4df4e59d9f2a8ad 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -47,6 +47,7 @@
- #define SDHI_VER_GEN3_SDMMC	0xcd10
- 
- struct renesas_sdhi_quirks {
-+	bool hs400_disabled;
- 	bool hs400_4taps;
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index ca9154dd..e2b1ab9 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -116,6 +116,10 @@
+ 	status = "okay";
  };
  
-@@ -598,15 +599,21 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
- 	renesas_sdhi_sdbuf_width(host, enable ? width : 16);
- }
- 
--static const struct renesas_sdhi_quirks sdhi_quirks_4tap = {
-+static const struct renesas_sdhi_quirks sdhi_quirks_h3_m3w_es1 = {
-+	.hs400_disabled = true,
-+	.hs400_4taps = true,
++&cmt0 {
++	status = "okay";
 +};
 +
-+static const struct renesas_sdhi_quirks sdhi_quirks_h3_es2 = {
-+	.hs400_disabled = false,
- 	.hs400_4taps = true,
+ &hsusb {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb0_pins>;
+@@ -230,6 +234,11 @@
+ 	};
  };
  
- static const struct soc_device_attribute sdhi_quirks_match[]  = {
--	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_4tap },
--	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_4tap },
--	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_4tap },
--	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_4tap },
-+	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_h3_m3w_es1 },
-+	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_h3_es2 },
-+	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_h3_m3w_es1 },
-+	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_h3_m3w_es1 },
- 	{ /* Sentinel. */ },
- };
- 
-@@ -695,6 +702,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
- 	host->dma_ops		= dma_ops;
- 
-+	if (quirks && quirks->hs400_disabled)
-+		host->mmc->caps2 &= ~(MMC_CAP2_HS400 | MMC_CAP2_HS400_ES);
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
++};
 +
- 	if (quirks && quirks->hs400_4taps)
- 		mmc_data->flags |= TMIO_MMC_HAVE_4TAP_HS400;
+ &scif0 {
+ 	pinctrl-0 = <&scif0_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+index 0e2e033..b3fee1d 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+@@ -31,10 +31,6 @@
+ 	};
+ };
  
+-&cmt0 {
+-	status = "okay";
+-};
+-
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
+@@ -88,11 +84,6 @@
+ 	};
+ };
+ 
+-&rwdt {
+-	timeout-sec = <60>;
+-	status = "okay";
+-};
+-
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
 -- 
-2.19.1
+2.7.4
