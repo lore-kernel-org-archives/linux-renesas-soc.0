@@ -1,78 +1,110 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:21395 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726328AbeK2LTc (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:43594 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbeK0Mh6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:19:32 -0500
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] clk: renesas: rcar-gen3: set state when registering SD clocks
-Date: Thu, 29 Nov 2018 01:15:38 +0100
-Message-Id: <20181129001538.17974-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 27 Nov 2018 07:37:58 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hoan <na-hoan@jinso.co.jp>
+Cc: Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH] drm: rcar-du: Fix DU3 start/stop on M3-N
+Date: Tue, 27 Nov 2018 03:42:11 +0200
+Message-ID: <2419901.SZS8ZpWnG2@avalon>
+In-Reply-To: <9b997c47-2538-4777-0d2b-09f2db0e82a4@jinso.co.jp>
+References: <20181123114809.19693-1-laurent.pinchart+renesas@ideasonboard.com> <20181126082125.5k4f2qyx2wczgddq@verge.net.au> <9b997c47-2538-4777-0d2b-09f2db0e82a4@jinso.co.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The driver tries to figure out which state a SD clock is in when the
-clock is register instead of setting a known state. This can be
-problematic for two reasons.
+Hello Hoan-san,
 
-1. If the clock driver can't figure out the state of the clock
-   registration of the clock fails and setting of a known state by a
-   clock user is not possible.
+On Monday, 26 November 2018 11:46:56 EET Hoan wrote:
+> Dear Laurent-san
+> 
+> Thank you for your comments on my patches! I understand.
+> 
+> With this patch,  the problem has been improved.
+> 
+> CC Simon-san
+> 
+> If you wait a little longer, the error log will look like this:
 
-2. The state of the clock depends on if and how the bootloader
-   configured it. The driver only checks that the rate is known not if
-   the clock is stopped or not for example.
+There is another display-related regression in v4.20, for which I have posted 
+https://patchwork.linuxtv.org/patch/53083/. I believe it should fix the issue 
+you're experienced.
 
-Fix this by setting a known state and make sure the clock is stopped.
+> [    2.825800] [drm] No driver support for vblank timestamp query.
+> [   13.027591] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR*
+> [CRTC:55:crtc-2] flip_done timed out
+> [   23.267575] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
+> [CRTC:55:crtc-2] flip_done timed out
+> [   33.507572] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
+> [CONNECTOR:57:VGA-1] flip_done timed out
+> [   43.747572] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
+> [PLANE:30:plane-1] flip_done timed out
+> [   53.987572] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR*
+> [CRTC:55:crtc-2] flip_done timed out
+> [   53.990386] Console: switching to colour frame buffer device 128x48
+> [   64.227573] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
+> [CRTC:55:crtc-2] flip_done timed out
+> [   74.467571] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
+> [CONNECTOR:57:VGA-1] flip_done timed out
+> [   84.707570] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR*
+> [PLANE:30:plane-1] flip_done timed out
+> [   94.947573] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR*
+> [CRTC:55:crtc-2] flip_done timed out
+> [   95.040503] rcar-du feb00000.display: fb0: DRM emulated frame buffer
+> device
+> [   95.048144] [drm] Initialized rcar-du 1.0.0 20130110 for
+> feb00000.display on minor 0
+> [   95.055907] [drm] Device feb00000.display probed
+> ...
+> 
+> On 2018/11/26 17:21, Simon Horman wrote:
+> > On Fri, Nov 23, 2018 at 01:48:08PM +0200, Laurent Pinchart wrote:
+> >> Group start/stop is controlled by the DRES and DEN bits of DSYSR0 for
+> >> the first group and DSYSR2 for the second group. On most DU instances,
+> >> this maps to the first CRTC of the group. On M3-N, however, DU2 doesn't
+> >> exist, but DSYSR2 does. There is no CRTC object there that maps to the
+> >> correct DSYSR register.
+> >> 
+> >> Commit 9144adc5e5a9 ("drm: rcar-du: Cache DSYSR value to ensure known
+> >> initial value") switched group start/stop from using group read/write
+> >> access to DSYSR to a CRTC-based API to cache the DSYSR value. While
+> >> doing so, it introduced a regression on M3-N by accessing DSYSR3 instead
+> >> of DSYSR2 to start/stop the second group.
+> >> 
+> >> To fix this, access the DSYSR register directly through group read/write
+> >> if the SoC is missing the first DU channel of the group. Keep using the
+> >> rcar_du_crtc_dsysr_clr_set() function otherwise, to retain the DSYSR
+> >> caching feature.
+> >> 
+> >> Fixes: 9144adc5e5a9 ("drm: rcar-du: Cache DSYSR value to ensure known
+> >> initial value") Reported-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> >> Signed-off-by: Laurent Pinchart
+> >> <laurent.pinchart+renesas@ideasonboard.com>
+> > 
+> > Thanks Laurent,
+> > 
+> > I have confirmed that with this patch applied on top of
+> > renesas-devel-20181123-v4.20-rc3 Salvator-XS / M3-N ES1.0
+> > boots to user-space when the kernel is compiled using renesas_defconfig.
+> > 
+> > Tested-by: Simon Horman <horms+renesas@verge.net.au>
+> > 
+> > 
+> > Without this patch applied the boot log looks this:
+> > 
+> > Starting kernel ...
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+[snip]
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 4ba38f98cc7bab82..f6335357c85505df 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -360,7 +360,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	struct sd_clock *clock;
- 	struct clk *clk;
- 	unsigned int i;
--	u32 sd_fc;
-+	u32 val;
- 
- 	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
- 	if (!clock)
-@@ -377,17 +377,11 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
- 	clock->div_table = cpg_sd_div_table;
- 	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
- 
--	sd_fc = readl(clock->csn.reg) & CPG_SD_FC_MASK;
--	for (i = 0; i < clock->div_num; i++)
--		if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
--			break;
--
--	if (WARN_ON(i >= clock->div_num)) {
--		kfree(clock);
--		return ERR_PTR(-EINVAL);
--	}
-+	val = readl(clock->csn.reg) & ~CPG_SD_FC_MASK;
-+	val |= CPG_SD_STP_MASK | (clock->div_table[0].val & CPG_SD_FC_MASK);
-+	writel(val, clock->csn.reg);
- 
--	clock->cur_div_idx = i;
-+	clock->cur_div_idx = 0;
- 
- 	clock->div_max = clock->div_table[0].div;
- 	clock->div_min = clock->div_max;
 -- 
-2.19.1
+Regards,
+
+Laurent Pinchart
