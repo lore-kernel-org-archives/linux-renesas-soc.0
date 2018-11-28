@@ -1,62 +1,52 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:41754 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbeK2I70 (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:51549 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728413AbeK2DVO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:59:26 -0500
-Date: Wed, 28 Nov 2018 22:56:20 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        Wed, 28 Nov 2018 22:21:14 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         <niklas.soderlund+renesas@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] mmc: renesas_sdhi: extend quirk selection to
- handle ES revisions
-Message-ID: <20181128215617.GA1707@kunai>
-References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 0/3] mmc: renesas_sdhi: extend quirk selection to handle ES revisions
+Date: Wed, 28 Nov 2018 17:18:26 +0100
+Message-Id: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
-Content-Disposition: inline
-In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi,
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Recent datasheet updates have made it clear that some quirks are not SoC
+specific but SoC + ES version specific. Currently the quirks are
+selected using compatibility values but whit this new information that
+is not enough.
 
-Hi Niklas,
+Patch 1/3 adds support to select quirks based on SoC + ES revision using
+soc_device_match() and converts the only existing quirk. Patch 2/3
+Removes the old method to select quirk based on compatibility string.
+While Patch 3/3 adds a new quirk from the BSP which blacklists some
+known problematic ES versions for HS400. HS400 is not yet enabled
+upstream so blacklisting these ES versions is not a regression of
+functionality.
 
-thanks for the updates! Do you happen to have a branch ready for
-testing?
+Based on mmc/next and tested on H3 and M3-N.
 
-Thanks,
+Niklas Söderlund (3):
+  mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
+  mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
+  mmc: renesas_sdhi: disable HS400 on H3 ES1.x and M3-W ES1.[012]
 
-   Wolfram
+ drivers/mmc/host/renesas_sdhi_core.c          | 36 +++++++++++++++++++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 20 ++---------
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 20 ++---------
+ 3 files changed, 41 insertions(+), 35 deletions(-)
 
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlv/Dv0ACgkQFA3kzBSg
-KbZmQw//cC2aErJlQXzE+Y+Zuqida+1eQTIX+6NwggrUK7bvdXTkm4FEW6XWIxTW
-WU7DyDc/+VBCq3DPQ3HEVGCQGJ4ppGY9Ceul6zqPB2oHMsE844Q0Hvl74dDxcQzP
-Y8iKPLV1Y17ySIIqTkD8vIhC8bBs+QBD6Q3xSwk/0kQ0Isciq4EnIf1iqEzTqG2z
-bLb7aJ07G5Qjpi13Rb91PnrqVUASmvldWJQOiHhwoTZD1gp6c0D7KburM+eByX7E
-QOgtGRjdZoqEOs3ol7wECQ+O5xxKMqOplxyRXzJuqhZJUjDHbNSYUtS4xFRjtV1G
-D5frQRxObjokE0GXnpUl3lulRG6ZHwiyQtG9s7i4A9L6UxsKsPBjurxTMTgmRLxA
-o6+6x3RO5UaE+WCAiwRlpclckFuqMVw5z5kLg9j/nwX7/4NfLd+bUzF3n+SwWjCm
-7wI8A4NPo/ufJTBRvPnk3kkGo3rA3d0i1RSYaHE6m190QtUmy5Chm19g75D/Co7D
-v9vqqIN0z1rpglQlivhw11AOE18UcN6Ed+VT3QRrlitb/WHTl5LaZgxcWAAa2SY3
-2HrVc2VHWuMZvA9F4f/PT38zOrM4dB92nc9KvtuKwcpOUPlj3fJ55ZEcrQSMw0/x
-YSnu/+yV3n5JDSqmVbSveCqNw5DhhZV3KQNL9QRxn6QyKkaOme4=
-=CrDt
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
+-- 
+2.19.1
