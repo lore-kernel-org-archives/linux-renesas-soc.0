@@ -1,84 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44812 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeKEVVI (ORCPT
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:5210 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728413AbeK2DV0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:21:08 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-rspi: simplify getting .driver_data" to the spi tree
-In-Reply-To: <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
-Message-Id: <20181105120141.553C41124D98@debutante.sirena.org.uk>
-Date: Mon,  5 Nov 2018 12:01:41 +0000 (GMT)
+        Wed, 28 Nov 2018 22:21:26 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 1/3] mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
+Date: Wed, 28 Nov 2018 17:18:27 +0100
+Message-Id: <20181128161829.27266-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+Latest datasheet makes it clear that not all ES revisions of the H3 and
+M3-W have the 4-tap HS400 mode quirk, currently the quirk is set
+unconditionally for these two SoCs. Prepare to handle the quirk based on
+SoC revision instead of compatibility value by using soc_device_match()
+and set the TMIO_MMC_HAVE_4TAP_HS400 flag explicitly.
 
-   spi: spi-rspi: simplify getting .driver_data
+The reason for adding a new quirks struct instead of just a flag is that
+looking ahead it seems more quirks needs to be handled in a SoC revision
+basis.
 
-has been applied to the spi tree at
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From be0bf62e3df9afcb3f7a72de347770568dd60af6 Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Sun, 21 Oct 2018 22:00:45 +0200
-Subject: [PATCH] spi: spi-rspi: simplify getting .driver_data
-
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rspi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+* Changes since v2
+- Renamed sdhi_quirks_h3_m3w to sdhi_quirks_4tap. This have little
+  effect as the last patch in this series renames the variable once more
+  once more quirks are added which are more SoC specific. Suggested by
+  Geert, thanks.
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 55f8e55327b3..a4ef641b5227 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -1347,16 +1347,14 @@ MODULE_DEVICE_TABLE(platform, spi_driver_ids);
- #ifdef CONFIG_PM_SLEEP
- static int rspi_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+	struct rspi_data *rspi = dev_get_drvdata(dev);
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 78bd117bbe65de46..f20df18f49e0d7c5 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -32,6 +32,7 @@
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pinctrl/pinctrl-state.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/sys_soc.h>
  
- 	return spi_master_suspend(rspi->master);
+ #include "renesas_sdhi.h"
+ #include "tmio_mmc.h"
+@@ -45,6 +46,10 @@
+ #define SDHI_VER_GEN3_SD	0xcc10
+ #define SDHI_VER_GEN3_SDMMC	0xcd10
+ 
++struct renesas_sdhi_quirks {
++	bool hs400_4taps;
++};
++
+ static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
+ {
+ 	u32 val;
+@@ -593,11 +598,25 @@ static void renesas_sdhi_enable_dma(struct tmio_mmc_host *host, bool enable)
+ 	renesas_sdhi_sdbuf_width(host, enable ? width : 16);
  }
  
- static int rspi_resume(struct device *dev)
++static const struct renesas_sdhi_quirks sdhi_quirks_4tap = {
++	.hs400_4taps = true,
++};
++
++static const struct soc_device_attribute sdhi_quirks_match[]  = {
++	{ .soc_id = "r8a7795", .revision = "ES1.*", .data = &sdhi_quirks_4tap },
++	{ .soc_id = "r8a7795", .revision = "ES2.0", .data = &sdhi_quirks_4tap },
++	{ .soc_id = "r8a7796", .revision = "ES1.0", .data = &sdhi_quirks_4tap },
++	{ .soc_id = "r8a7796", .revision = "ES1.1", .data = &sdhi_quirks_4tap },
++	{ /* Sentinel. */ },
++};
++
+ int renesas_sdhi_probe(struct platform_device *pdev,
+ 		       const struct tmio_mmc_dma_ops *dma_ops)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct rspi_data *rspi = platform_get_drvdata(pdev);
-+	struct rspi_data *rspi = dev_get_drvdata(dev);
+ 	struct tmio_mmc_data *mmd = pdev->dev.platform_data;
++	const struct renesas_sdhi_quirks *quirks = NULL;
+ 	const struct renesas_sdhi_of_data *of_data;
++	const struct soc_device_attribute *attr;
+ 	struct tmio_mmc_data *mmc_data;
+ 	struct tmio_mmc_dma *dma_priv;
+ 	struct tmio_mmc_host *host;
+@@ -607,6 +626,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
  
- 	return spi_master_resume(rspi->master);
- }
+ 	of_data = of_device_get_match_data(&pdev->dev);
+ 
++	attr = soc_device_match(sdhi_quirks_match);
++	if (attr)
++		quirks = attr->data;
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+ 		return -EINVAL;
+@@ -672,6 +695,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	host->multi_io_quirk	= renesas_sdhi_multi_io_quirk;
+ 	host->dma_ops		= dma_ops;
+ 
++	if (quirks && quirks->hs400_4taps)
++		mmc_data->flags |= TMIO_MMC_HAVE_4TAP_HS400;
++
+ 	/* For some SoC, we disable internal WP. GPIO may override this */
+ 	if (mmc_can_gpio_ro(host->mmc))
+ 		mmc_data->capabilities2 &= ~MMC_CAP2_NO_WRITE_PROTECT;
 -- 
-2.19.0.rc2
+2.19.1
