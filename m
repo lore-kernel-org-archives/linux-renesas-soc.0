@@ -1,89 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor3.renesas.com ([210.160.252.173]:16735 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726914AbeKICle (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbeK2AFO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:41:34 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>
-Cc: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Richard Weinberger <richard@nod.at>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH v2 3/3] ARM: dts: iwg23s-sbc: Add QSPI flash support
-Date: Thu,  8 Nov 2018 17:04:43 +0000
-Message-Id: <1541696684-21235-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1541696684-21235-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 28 Nov 2018 19:05:14 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Magnus Damm <damm@opensource.se>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 07/16] ARM: dts: r8a7740, emev2, sh73a0: Include SoC name in DTSI
+Date: Wed, 28 Nov 2018 14:03:09 +0100
+Message-Id: <fb09bf59f081940a5bc5109aed184e63b2abdd67.1543409901.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
+References: <cover.1543409901.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This commit adds QSPI flash support to the iwg23s board specific
-device tree.
+From: Magnus Damm <damm@opensource.se>
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Update the R-Mobile A1 (r8a7740), Emma Mobile EV2 (emev2) and
+SH-Mobile AG5 (sh72a0) DTSI to include product name.
 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+[simon: squashed similar patches]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v1->v2:
-* No Change
+ arch/arm/boot/dts/emev2.dtsi   | 2 +-
+ arch/arm/boot/dts/r8a7740.dtsi | 2 +-
+ arch/arm/boot/dts/sh73a0.dtsi  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 52f23b8..40b7f98 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -96,6 +96,11 @@
- 		power-source = <1800>;
- 	};
- 
-+	qspi0_pins: qspi0 {
-+		groups = "qspi0_ctrl", "qspi0_data2";
-+		function = "qspi0";
-+	};
-+
- 	scif1_pins: scif1 {
- 		groups = "scif1_data_b";
- 		function = "scif1";
-@@ -114,6 +119,27 @@
- 	};
- };
- 
-+&qspi0 {
-+	pinctrl-0 = <&qspi0_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+
-+	/* WARNING - This device contains the bootloader. Handle with care. */
-+	flash: flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "issi,is25lp016d", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <133000000>;
-+		spi-tx-bus-width = <1>;
-+		spi-rx-bus-width = <1>;
-+		m25p,fast-read;
-+		spi-cpol;
-+		spi-cpha;
-+	};
-+};
-+
- &rwdt {
- 	timeout-sec = <60>;
- 	status = "okay";
+diff --git a/arch/arm/boot/dts/emev2.dtsi b/arch/arm/boot/dts/emev2.dtsi
+index 373ea8720769..67d86012a85c 100644
+--- a/arch/arm/boot/dts/emev2.dtsi
++++ b/arch/arm/boot/dts/emev2.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the EMEV2 SoC
++ * Device Tree Source for the Emma Mobile EV2 SoC
+  *
+  * Copyright (C) 2012 Renesas Solutions Corp.
+  */
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index 383cba68dbba..12ffe73bf2bc 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the r8a7740 SoC
++ * Device Tree Source for the R-Mobile A1 (R8A77400) SoC
+  *
+  * Copyright (C) 2012 Renesas Solutions Corp.
+  */
+diff --git a/arch/arm/boot/dts/sh73a0.dtsi b/arch/arm/boot/dts/sh73a0.dtsi
+index e8f0a07c4564..33836990b102 100644
+--- a/arch/arm/boot/dts/sh73a0.dtsi
++++ b/arch/arm/boot/dts/sh73a0.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Device Tree Source for the SH73A0 SoC
++ * Device Tree Source for the SH-Mobile AG5 (R8A73A00/SH73A0) SoC
+  *
+  * Copyright (C) 2012 Renesas Solutions Corp.
+  */
 -- 
-2.7.4
+2.11.0
