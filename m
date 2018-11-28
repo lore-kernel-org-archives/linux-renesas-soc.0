@@ -1,99 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:10914 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726585AbeLACp0 (ORCPT
+Received: from mail-eopbgr1300130.outbound.protection.outlook.com ([40.107.130.130]:31218
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726539AbeK1MRl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:45:26 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 15/21] ARM: dts: r8a7744: Add USB-DMAC and HSUSB device nodes
-Date: Fri, 30 Nov 2018 15:26:29 +0000
-Message-Id: <1543591595-37861-16-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 28 Nov 2018 07:17:41 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>
+CC: "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH/RFC] net: phy: device: Don't deassert the reset when
+ register and probe
+Date: Wed, 28 Nov 2018 01:17:10 +0000
+Message-ID: <TY2PR01MB22971DD32317631C7E3C4ABDD8D10@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+References: <1543320947-32763-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20181127164411.GB19601@lunn.ch>
+ <4aa356d3-7c99-a9d6-0e6c-d46be7e44948@gmail.com>
+In-Reply-To: <4aa356d3-7c99-a9d6-0e6c-d46be7e44948@gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add usb dmac and hsusb device nodes on RZ/G1N SoC dtsi.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-   * No Change
----
- arch/arm/boot/dts/r8a7744.dtsi | 42 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 1d4cb5e..cf05ce0 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -449,8 +449,20 @@
- 		};
- 
- 		hsusb: usb@e6590000 {
-+			compatible = "renesas,usbhs-r8a7744",
-+				     "renesas,rcar-gen2-usbhs";
- 			reg = <0 0xe6590000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
-+			       <&usb_dmac1 0>, <&usb_dmac1 1>;
-+			dma-names = "ch0", "ch1", "ch2", "ch3";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>;
-+			renesas,buswait = <4>;
-+			phys = <&usb0 1>;
-+			phy-names = "usb";
-+			status = "disabled";
- 		};
- 
- 		usbphy: usb-phy@e6590100 {
-@@ -475,6 +487,34 @@
- 			};
- 		};
- 
-+		usb_dmac0: dma-controller@e65a0000 {
-+			compatible = "renesas,r8a7744-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65a0000 0 0x100>;
-+			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 330>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 330>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
-+		usb_dmac1: dma-controller@e65b0000 {
-+			compatible = "renesas,r8a7744-usb-dmac",
-+				     "renesas,usb-dmac";
-+			reg = <0 0xe65b0000 0 0x100>;
-+			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
-+				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "ch0", "ch1";
-+			clocks = <&cpg CPG_MOD 331>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 331>;
-+			#dma-cells = <1>;
-+			dma-channels = <2>;
-+		};
-+
- 		dmac0: dma-controller@e6700000 {
- 			compatible = "renesas,dmac-r8a7744",
- 				     "renesas,rcar-dmac";
--- 
-2.7.4
+SGkgSGVpbmVyLA0KDQo+IEZyb206IEhlaW5lciBLYWxsd2VpLCBTZW50OiBXZWRuZXNkYXksIE5v
+dmVtYmVyIDI4LCAyMDE4IDQ6NDYgQU0NCj4gDQo+IE9uIDI3LjExLjIwMTggMTc6NDQsIEFuZHJl
+dyBMdW5uIHdyb3RlOg0KPiA+IE9uIFR1ZSwgTm92IDI3LCAyMDE4IGF0IDEyOjE4OjIwUE0gKzAw
+MDAsIFlvc2hpaGlybyBTaGltb2RhIHdyb3RlOg0KPiA+PiBTb21lIFBIWSBkZXZpY2UgbmVlZHMg
+ZWRnZSBzaWduYWwgb2YgdGhlIHJlc2V0LCBidXQgdGhlIHByZXZpb3VzIGNvZGUNCj4gPj4gaXMg
+aW1wb3NzaWJsZSB0byBhY2hpZXZlIGl0IGxpa2UgZm9sbG93aW5nOg0KPiA+Pg0KPiA+PiAgMSkg
+S2VybmVsIGJvb3RzIGJ5IHVzaW5nIGluaXRyYW1mcy4NCj4gPj4gIC0tPiBObyBvcGVuIHRoZSBu
+aWMsIHNvIHRoZSBwcm92aW91cyBjb2RlIGRlYXNzZXJ0cyB0aGUgcmVzZXQgYnkNCj4gPj4gICAg
+ICBwaHlfZGV2aWNlX3JlZ2lzdGVyKCkgYW5kIHBoeV9wcm9iZSgpLg0KPiA+PiAgMikgS2VybmVs
+IGVudGVycyB0aGUgc3VzcGVuZC4NCj4gPj4gIC0tPiBTbywga2VlcCB0aGUgcmVzZXQgc2lnbmFs
+IGFzIGRlYXNzZXJ0Lg0KPiA+PiAgLS0+IE9uIFItQ2FyIFNhbHZhdG9yLVhTIGJvYXJkLCB1bmZv
+cnR1bmF0ZWx5LCB0aGUgYm9hcmQgcG93ZXIgaXMNCj4gPj4gICAgICB0dXJuZWQgb2ZmLg0KPiA+
+PiAgMykgS2VybmVsIHJldHVybnMgZnJvbSBzdXNwZW5kLg0KPiA+PiAgNCkgaWZjb25maWcgZXRo
+MCB1cA0KPiA+PiAgLS0+IFRoZW4sIHNpbmNlIGVkZ2Ugc2lnbmFsIG9mIHRoZSByZXNldCBkb2Vz
+bid0IGhhcHBlbiwNCj4gPj4gICAgICBpdCBjYW5ub3QgbGluayB1cC4NCj4gPg0KPiA+IEhpIFlv
+c2hpaGlybw0KPiA+DQo+ID4gSXQgc291bmRzIGxpa2UgeW91IHNob3VsZCBiZSBhZGRpbmcgY29k
+ZSB0byB0aGUgc3VzcGVuZC9yZXN1bWUNCj4gPiBoYW5kbGluZyBvZiBwaHlsaWIsIHNvIHRoYXQg
+aXQgdG9nZ2xlIHRoZSByZXNldCBvbiByZXN1bWUuIFlvdSBjYW5ub3QNCj4gPiBqdXN0IGRlbGV0
+ZSBjb2RlIGxpa2UgeW91IHByb3Bvc2VkLCBpdCBpcyBnb2luZyB0byBicmVhayBkZXZpY2VzLiBC
+dXQNCj4gPiBhZGRpbmcgY29kZSBzaG91bGQgYmUgTy5LLg0KPiA+DQo+IFRoZSBjb21taXQgbWVz
+c2FnZSBtZW50aW9ucyB0aGF0IHRoZSBwYXRjaCBpcyBzdXBwb3NlZCB0byBmaXggc29tZQ0KPiBp
+c3N1ZSBvbiB0aGUgU2FsdmF0b3ItWFMgYm9hcmQuIEkgZm91bmQgdGhlIGZvbGxvd2luZyBmcm9t
+IGEgeWVhciBhZ28NCj4gaHR0cHM6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbmV0ZGV2L21zZzQ1
+NzMwOC5odG1sDQo+IHdoaWNoIGlzIGFsc28gYWJvdXQgUEhZIHJlc2V0IGFuZCB0aGlzIGJvYXJk
+LiBJcyB0aGVyZSBzdGlsbCBzb21ldGhpbmcNCj4gb3Blbj8NCg0KVGhhbmsgeW91IGZvciB5b3Vy
+IGNvbW1lbnQhDQpBcyBHZWVydCBtZW50aW9uZWQgb24gdGhpcyBlbWFpbCB0aHJlYWQsIHRoYXQg
+cGF0Y2ggY2FuIGhhbmRsZSBpZiB1c2VyIG9wZW5lZA0KdGhlIE5JQyBhbmQgdGhlbiB0aGUgUEhZ
+IHdhcyBhY3RpdmUuDQoNCj4gIEJ1dCBhcyBBbmRyZXcgbWVudGlvbmVkIGFscmVhZHk6IEp1c3Qg
+ZGVsZXRpbmcgY29kZSB3L28NCj4gY2hlY2tpbmcgd2hhdCBpdCdzIGdvb2QgZm9yIGFuZCB3aGV0
+aGVyIHRoaXMgY291bGQgaGF2ZSBzaWRlIGVmZmVjdHMsDQo+IGlzbid0IGEgc29sdXRpb24uIEVz
+cGVjaWFsbHkgYmVjYXVzZSB0aGUgcGF0Y2ggd291bGQgc2lsZW50bHkgcmVtb3ZlDQo+IHRoZSBj
+YWxsIHRvIHBoeV9zY2FuX2ZpeHVwcygpLg0KDQpJIHNob3VsZCBoYXZlIG1lbnRpb25lZCBvbiB0
+aGUgY29tbWl0IGxvZywgYnV0IHBoeV9zY2FuX2ZpeHVwcygpIGlzIGNhbGxlZA0KYnkgcGh5X2lu
+aXRfaHcoKSBhbmQgcGh5X2luaXRfaHcoKSBpcyBjYWxsZWQgcGh5X2F0dGFjaF9kaXJlY3QoKS4g
+U28sDQpJIHRoaW5rIHdlIGNhbiByZW1vdmUgcGh5X3NjYW5fZml4dXBzKCkuIEhvd2V2ZXIsIGFz
+IHlvdSBtZW50aW9uZWQsDQp0aGlzIHBhdGNoIGNvdWxkIGhhdmUgc2lkZSBlZmZlY3RzLi4uDQoN
+ClNvLCBJJ2xsIG1ha2Ugc3VjaCBhIHN1c3BlbmQvcmVzdW1lIHBhdGNoIHRoYXQgQW5kcmV3IG1l
+bnRpb25lZCBsYXRlci4NCg0KQmVzdCByZWdhcmRzLA0KWW9zaGloaXJvIFNoaW1vZGENCg0K
