@@ -1,76 +1,57 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:57606 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726512AbeK3WqP (ORCPT
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40957 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbeK2KlU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:46:15 -0500
-Date: Fri, 30 Nov 2018 12:37:14 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
+        Thu, 29 Nov 2018 05:41:20 -0500
+Received: by mail-lf1-f66.google.com with SMTP id v5so33537lfe.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Nov 2018 15:38:00 -0800 (PST)
+From: "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+Date: Thu, 29 Nov 2018 00:37:58 +0100
+To: Wolfram Sang <wsa@the-dreams.de>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH v3 0/3] mmc: renesas_sdhi: extend quirk selection to
  handle ES revisions
-Message-ID: <20181130113714.57t6fuxya6wuz5oh@ninjato>
+Message-ID: <20181128233758.GB2162@bigcity.dyn.berto.se>
 References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181128215617.GA1707@kunai>
+ <20181128220637.GA2162@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k3etslkga2x7e5jo"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181128220637.GA2162@bigcity.dyn.berto.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+Hi Wolfram,
 
---k3etslkga2x7e5jo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018-11-28 23:06:37 +0100, Niklas S�derlund wrote:
+> Hi Wolfram,
+> 
+> On 2018-11-28 22:56:20 +0100, Wolfram Sang wrote:
+> > Hi Niklas,
+> > 
+> > thanks for the updates! Do you happen to have a branch ready for
+> > testing?
+> 
+> I will push a new branch once I'm done updating the clock patch so all 
+> changes can be tested in one go. Will let you know once that is 
+> available. Hopefully later tonight.
 
-On Wed, Nov 28, 2018 at 05:18:26PM +0100, Niklas S=C3=B6derlund wrote:
-> Hi,
->=20
-> Recent datasheet updates have made it clear that some quirks are not SoC
-> specific but SoC + ES version specific. Currently the quirks are
-> selected using compatibility values but whit this new information that
-> is not enough.
->=20
-> Patch 1/3 adds support to select quirks based on SoC + ES revision using
-> soc_device_match() and converts the only existing quirk. Patch 2/3
-> Removes the old method to select quirk based on compatibility string.
-> While Patch 3/3 adds a new quirk from the BSP which blacklists some
-> known problematic ES versions for HS400. HS400 is not yet enabled
-> upstream so blacklisting these ES versions is not a regression of
-> functionality.
->=20
-> Based on mmc/next and tested on H3 and M3-N.
+I have pushed the latest and greatest to [1]. I tested this on H3 ES1, 
+H3 ES2.0 and M3-N and it looks good. Speeds for both MMC and SD cards 
+match what we saw in Edinburgh.
 
-For the record: Tested with H3 ES2.0 and M3N where HS400 was sucesfully
-detected. Tested with H3 ES1.0 and M3-W ES1.0 where HS400 was rightfully
-discarded and HS200 was used.
+I still have to post the clock patches to the mailing list but in case 
+you wish to test right away I thought I send this mail out before I do 
+that :-)
 
+1. git://git.ragnatech.se/linux mmc/hackfest
 
---k3etslkga2x7e5jo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwBIOYACgkQFA3kzBSg
-KbbSDRAAnGeSUAbbfvpMLR0ytii6ZwfeEskuCgBoua55L9fapAPJIbLWSwlHhyKX
-IKeB3bZPYsvHliF75RCUOmR/WLk3dCk9SNmbUf2hMTZfu7fHOCHEbkwedVN10Rs1
-JEXXuu2ONIuanH8NRN2sEOi57D4xGzjXiq2lc6LXY8kzof7HQpCt6JGw79tc7kjl
-mXnpj3uOjVLD+yPaoAyIxoiSkhAQENede6pMlfmuDoqmaVrsDs/3OlfU4TBDg3VA
-HBYZsZ+otCSnYiO7DH8Y8hN2shafOEmYgU6NJQ2jbRPWJWJQ8JRBCCsp79hG9aW8
-I16oeTRVpsd34n8C9VpkGrbXOYh/GTY5wrFqs42bDcTz97SR2loDfpSQ7YaDPnDN
-ZiBamGcrBE4VEbcP6Kk1Pti4v5dgAoPhZbJerGWH8vlaEpl63PNw6DOW4QNMLSq0
-FuexAfnqkqHUlzUbaEOuKzixMtkOCZv5BHBAxkfQlXKjH5C73Zbj4jp8ip9ThYa6
-LSRGiqv60ihGe5L9bZ/it8xLBRhP4Aae6ysMOc1Ne9BIhs1ITxgcYeu5iZVTF88L
-yxst4zDs0zVbM0m72Fawjz90dWOcav+/EglI00f9vDEiHTAP512w1xHl2menlOyp
-t0RXAVq5cTU7yN8+JlfT6Kriclbh3/gYZq1deZmH07PYhBUzyd0=
-=a+zT
------END PGP SIGNATURE-----
-
---k3etslkga2x7e5jo--
+-- 
+Regards,
+Niklas S�derlund
