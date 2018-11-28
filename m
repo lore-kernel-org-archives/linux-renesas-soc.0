@@ -1,55 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeK2AFM (ORCPT
+        with ESMTP id S1728044AbeK2AFF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:05:12 -0500
+        Wed, 28 Nov 2018 19:05:05 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/16] ARM: dts: r8a77470: Add watchdog support to SoC dtsi
-Date: Wed, 28 Nov 2018 14:03:10 +0100
-Message-Id: <dc7bf8795d848890641387d98c5e1324d397e9c8.1543409901.git.horms+renesas@verge.net.au>
+Subject: [PATCH 04/16] ARM: dts: r8a77470: Add SDHI1 support
+Date: Wed, 28 Nov 2018 14:03:06 +0100
+Message-Id: <0485da788028ecd525291974c8efe2d072607476.1543409901.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
 References: <cover.1543409901.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch adds watchdog support to the r8a77470 SoC dtsi.
+Althought interface SDHI1 found on the RZ/G1C SoC (a.k.a.
+r8a77470) is compatible with the R-Car Gen3 ones, its OF
+compatibility is restricted to the SoC specific compatible
+string to avoid confusion, as from a more generic perspective
+the RZ/G1C is sharing the most similarities with the R-Car
+Gen2 family of SoCs, and there is a combination of R-Car
+Gen2 compatible SDHI IPs and R-Car Gen3 compatible SDHI IP
+on this specific chip.
+This patch adds the SoC specific part of SDHI1 support, and
+since SDHI1 comes with internal DMA, its DT node looks fairly
+different from SDHI0 and SDHI2.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-[simon: moved node to preserve sort order]
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 6ac7f467065e..a703b74cc1f9 100644
+index ab2e0223f8a1..6ac7f467065e 100644
 --- a/arch/arm/boot/dts/r8a77470.dtsi
 +++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -79,6 +79,16 @@
- 		#size-cells = <2>;
- 		ranges;
+@@ -505,6 +505,17 @@
+ 			status = "disabled";
+ 		};
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a77470-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
++		sdhi1: sd@ee300000 {
++			compatible = "renesas,sdhi-mmc-r8a77470";
++			reg = <0 0xee300000 0 0x2000>;
++			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 313>;
++			max-frequency = <156000000>;
 +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
++			resets = <&cpg 313>;
 +			status = "disabled";
 +		};
 +
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77470",
- 				     "renesas,rcar-gen2-gpio";
+ 		sdhi2: sd@ee160000 {
+ 			compatible = "renesas,sdhi-r8a77470",
+ 				     "renesas,rcar-gen2-sdhi";
 -- 
 2.11.0
