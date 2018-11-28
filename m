@@ -1,114 +1,82 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v2 10/30] media: entity: Use routing information during graph traversal
-Date: Fri,  2 Nov 2018 00:31:24 +0100
-Message-Id: <20181101233144.31507-11-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-eopbgr1400107.outbound.protection.outlook.com ([40.107.140.107]:25053
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727341AbeK1UDm (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 28 Nov 2018 15:03:42 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "andrew@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/2] net: phy: micrel: add toggling phy reset if PHY is not
+ attached
+Date: Wed, 28 Nov 2018 09:02:42 +0000
+Message-ID: <1543395612-5430-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+This patch adds toggling phy reset if PHY is not attached. Otherwise,
+some boards (e.g. R-Car H3 Salvator-XS) cannot link up correctly if
+we do the following method:
 
-Take internal routing information as reported by the entity has_route
-operation into account during graph traversal to avoid following
-unrelated links.
+ 1) Kernel boots by using initramfs.
+ --> No open the nic, so phy_device_register() and phy_probe()
+     deasserts the reset.
+ 2) Kernel enters the suspend.
+ --> So, keep the reset signal as deassert.
+ --> On R-Car Salvator-XS board, unfortunately, the board power is
+     turned off.
+ 3) Kernel returns from suspend.
+ 4) ifconfig eth0 up
+ --> Then, since edge signal of the reset doesn't happen,
+     it cannot link up.
+ 5) ifconfig eth0 down
+ 6) ifconfig eth0 up
+ --> In this case, it can link up.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reported-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/media/media-entity.c | 44 ++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 17 deletions(-)
+ drivers/net/phy/micrel.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index 33f00e35ccd92c6f..4d10bc186e1e7a10 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -257,15 +257,6 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
- }
- EXPORT_SYMBOL_GPL(media_entity_has_route);
- 
--static struct media_pad *
--media_entity_other(struct media_pad *pad, struct media_link *link)
--{
--	if (link->source == pad)
--		return link->sink;
--	else
--		return link->source;
--}
--
- /* push an entity to traversal stack */
- static void stack_push(struct media_graph *graph, struct media_pad *pad)
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index c333847..fcb561b 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -23,6 +23,7 @@
+  *			 ksz9477
+  */
+=20
++#include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/phy.h>
+@@ -840,6 +841,13 @@ static int kszphy_resume(struct phy_device *phydev)
  {
-@@ -336,7 +327,8 @@ static void media_graph_walk_iter(struct media_graph *graph)
- {
- 	struct media_pad *pad = stack_top(graph);
- 	struct media_link *link;
--	struct media_pad *next;
-+	struct media_pad *remote;
-+	struct media_pad *local;
- 
- 	link = list_entry(link_top(graph), typeof(*link), list);
- 
-@@ -350,23 +342,41 @@ static void media_graph_walk_iter(struct media_graph *graph)
- 		return;
- 	}
- 
--	/* Get the entity in the other end of the link . */
--	next = media_entity_other(pad, link);
-+	/*
-+	 * Get the local pad, the remote pad and the entity at the other
-+	 * end of the link.
-+	 */
-+	if (link->source->entity == pad->entity) {
-+		remote = link->sink;
-+		local = link->source;
-+	} else {
-+		remote = link->source;
-+		local = link->sink;
+ 	int ret;
+=20
++	if (!phydev->attached_dev) {
++		/* If the PHY is not attached, toggle the reset */
++		phy_device_reset(phydev, 1);
++		udelay(1);
++		phy_device_reset(phydev, 0);
 +	}
 +
-+	/*
-+	 * Are the local pad and the pad we came from connected
-+	 * internally in the entity ?
-+	 */
-+	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
-+		link_top(graph) = link_top(graph)->next;
-+		return;
-+	}
- 
- 	/* Has the entity already been visited? */
--	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
-+	if (media_entity_enum_test_and_set(&graph->ent_enum, remote->entity)) {
- 		link_top(graph) = link_top(graph)->next;
- 		dev_dbg(pad->graph_obj.mdev->dev,
- 			"walk: skipping entity '%s' (already seen)\n",
--			next->entity->name);
-+			remote->entity->name);
- 		return;
- 	}
- 
- 	/* Push the new entity to stack and start over. */
- 	link_top(graph) = link_top(graph)->next;
--	stack_push(graph, next);
--	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
--		next->entity->name, next->index);
-+	stack_push(graph, remote);
-+	dev_dbg(remote->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
-+		remote->entity->name, remote->index);
- }
- 
- struct media_pad *media_graph_walk_next(struct media_graph *graph)
--- 
-2.19.1
+ 	genphy_resume(phydev);
+=20
+ 	ret =3D kszphy_config_reset(phydev);
+--=20
+1.9.1
