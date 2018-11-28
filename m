@@ -1,35 +1,82 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46635 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729340AbeKWFSM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbeK2AFH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 00:18:12 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v15-v6so8693508ljh.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 22 Nov 2018 10:37:36 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH 0/4] Renesas R8A77980 CPG/MSSR RPC clock support
-To: linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-Message-ID: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
-Date: Thu, 22 Nov 2018 21:37:33 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Nov 2018 19:05:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/16] ARM: dts: r8a779[01]: Disable unconnected LVDS encoders
+Date: Wed, 28 Nov 2018 14:03:08 +0100
+Message-Id: <89862542fab10fed8a3c2f9c167622ef4287351d.1543409901.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
+References: <cover.1543409901.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Here's the set of 4 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo. We're adding support for the RPC clocks...
+The LVDS0 encoder on Koelsh and Porter, and the LVDS1 encoder on Lager,
+are enabled in DT but have no device connected to their output. This
+result in spurious messages being printed to the kernel log such as
 
-[1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
-[2/4] clk: renesas: rcar-gen3-cpg: add RPC clock
-[3/4] clk: renesas: rcar-gen3-cpg: add RPCD2 clock
-[4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
+rcar-du feb00000.display: no connector for encoder /soc/lvds@feb90000, skipping
 
-MBR, Sergei
+Fix it by disabling the encoders.
+
+Fixes: 15a1ff30d8f9 ("ARM: dts: r8a7790: Convert to new LVDS DT bindings")
+Fixes: e5c3f4707f39 ("ARM: dts: r8a7791: Convert to new LVDS DT bindings")
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7790-lager.dts   | 2 --
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 2 --
+ arch/arm/boot/dts/r8a7791-porter.dts  | 2 --
+ 3 files changed, 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
+index 50312e752e2f..7b9508e83d46 100644
+--- a/arch/arm/boot/dts/r8a7790-lager.dts
++++ b/arch/arm/boot/dts/r8a7790-lager.dts
+@@ -489,8 +489,6 @@
+ };
+ 
+ &lvds1 {
+-	status = "okay";
+-
+ 	ports {
+ 		port@1 {
+ 			lvds_connector: endpoint {
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index ce22db01fbba..e6580aa0cea3 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -479,8 +479,6 @@
+ };
+ 
+ &lvds0 {
+-	status = "okay";
+-
+ 	ports {
+ 		port@1 {
+ 			lvds_connector: endpoint {
+diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
+index f02036e5de01..fefdf8238bbe 100644
+--- a/arch/arm/boot/dts/r8a7791-porter.dts
++++ b/arch/arm/boot/dts/r8a7791-porter.dts
+@@ -482,8 +482,6 @@
+ };
+ 
+ &lvds0 {
+-	status = "okay";
+-
+ 	ports {
+ 		port@1 {
+ 			lvds_connector: endpoint {
+-- 
+2.11.0
