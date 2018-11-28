@@ -1,87 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44960 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeKEVVO (ORCPT
+Received: from mail-eopbgr1400107.outbound.protection.outlook.com ([40.107.140.107]:25053
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727736AbeK1UDj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:21:14 -0500
-From: Mark Brown <broonie@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-zynqmp-gqspi: simplify getting .driver_data" to the spi tree
-In-Reply-To: <20181021200048.2114-4-wsa+renesas@sang-engineering.com>
-Message-Id: <20181105120145.0D9251124D98@debutante.sirena.org.uk>
-Date: Mon,  5 Nov 2018 12:01:45 +0000 (GMT)
+        Wed, 28 Nov 2018 15:03:39 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: "andrew@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/2] net: phy: Fix not to call phy_resume() if PHY is not
+ attached
+Date: Wed, 28 Nov 2018 09:02:41 +0000
+Message-ID: <1543395612-5430-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The patch
+This patch fixes an issue that mdio_bus_phy_resume() doesn't call
+phy_resume() if the PHY is not attached.
 
-   spi: spi-zynqmp-gqspi: simplify getting .driver_data
-
-has been applied to the spi tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 6eee6d317aa2511ea86c4f8f28d79bfd3d621826 Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Sun, 21 Oct 2018 22:00:47 +0200
-Subject: [PATCH] spi: spi-zynqmp-gqspi: simplify getting .driver_data
-
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 803dd9c77ac3 ("net: phy: avoid suspending twice a PHY")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/spi/spi-zynqmp-gqspi.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/phy/phy_device.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index cc4d31033494..9f83e1b17aa1 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -960,8 +960,7 @@ static int __maybe_unused zynqmp_qspi_resume(struct device *dev)
-  */
- static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index e06613f..ecf5e3a9 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -227,7 +227,7 @@ static void phy_mdio_device_remove(struct mdio_device *=
+mdiodev)
+ static DEFINE_MUTEX(phy_fixup_lock);
+=20
+ #ifdef CONFIG_PM
+-static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
++static bool mdio_bus_phy_may_suspend(struct phy_device *phydev, bool suspe=
+nd)
  {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
- 
- 	clk_disable(xqspi->refclk);
-@@ -980,8 +979,7 @@ static int __maybe_unused zynqmp_runtime_suspend(struct device *dev)
-  */
- static int __maybe_unused zynqmp_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct zynqmp_qspi *xqspi = spi_master_get_devdata(master);
+ 	struct device_driver *drv =3D phydev->mdio.dev.driver;
+ 	struct phy_driver *phydrv =3D to_phy_driver(drv);
+@@ -239,10 +239,11 @@ static bool mdio_bus_phy_may_suspend(struct phy_devic=
+e *phydev)
+ 	/* PHY not attached? May suspend if the PHY has not already been
+ 	 * suspended as part of a prior call to phy_disconnect() ->
+ 	 * phy_detach() -> phy_suspend() because the parent netdev might be the
+-	 * MDIO bus driver and clock gated at this point.
++	 * MDIO bus driver and clock gated at this point. Also may resume if
++	 * PHY is not attached.
+ 	 */
+ 	if (!netdev)
+-		return !phydev->suspended;
++		return suspend ? !phydev->suspended : phydev->suspended;
+=20
+ 	if (netdev->wol_enabled)
+ 		return false;
+@@ -277,7 +278,7 @@ static int mdio_bus_phy_suspend(struct device *dev)
+ 	if (phydev->attached_dev && phydev->adjust_link)
+ 		phy_stop_machine(phydev);
+=20
+-	if (!mdio_bus_phy_may_suspend(phydev))
++	if (!mdio_bus_phy_may_suspend(phydev, true))
+ 		return 0;
+=20
+ 	return phy_suspend(phydev);
+@@ -288,7 +289,7 @@ static int mdio_bus_phy_resume(struct device *dev)
+ 	struct phy_device *phydev =3D to_phy_device(dev);
  	int ret;
- 
--- 
-2.19.0.rc2
+=20
+-	if (!mdio_bus_phy_may_suspend(phydev))
++	if (!mdio_bus_phy_may_suspend(phydev, false))
+ 		goto no_resume;
+=20
+ 	ret =3D phy_resume(phydev);
+--=20
+1.9.1
