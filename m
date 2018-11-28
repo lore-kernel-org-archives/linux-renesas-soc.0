@@ -1,74 +1,42 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41304 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeKBVeQ (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:54984 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728798AbeK2DtO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 17:34:16 -0400
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 21/30] v4l: Add bus type to frame descriptors
-To: =?UTF-8?Q?Niklas_S=c3=b6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-References: <20180823132544.521-1-niklas.soderlund+renesas@ragnatech.se>
- <20180823132544.521-22-niklas.soderlund+renesas@ragnatech.se>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <3c1ee187-cb95-efed-7c7e-4efda28209c3@ideasonboard.com>
-Date: Fri, 2 Nov 2018 12:27:11 +0000
-MIME-Version: 1.0
-In-Reply-To: <20180823132544.521-22-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Wed, 28 Nov 2018 22:49:14 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/5] Add more support to RZ/G1N
+Date: Wed, 28 Nov 2018 16:38:26 +0000
+Message-Id: <1543423111-19745-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas, Sakari
+This patch series aims to add support for some more interfaces
+to RZ/G1N SoC (IPMMU, VSP, VIN, PWM and TPU).
 
-On 23/08/2018 14:25, Niklas Söderlund wrote:
-> From: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  include/media/v4l2-subdev.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-> index 5acaeeb9b3cacefa..ac1f7ee4cdb978ad 100644
-> --- a/include/media/v4l2-subdev.h
-> +++ b/include/media/v4l2-subdev.h
-> @@ -349,12 +349,21 @@ struct v4l2_mbus_frame_desc_entry {
->  
->  #define V4L2_FRAME_DESC_ENTRY_MAX	4
->  
-> +enum {
-> +	V4L2_MBUS_FRAME_DESC_TYPE_PLATFORM,
-> +	V4L2_MBUS_FRAME_DESC_TYPE_PARALLEL,
-> +	V4L2_MBUS_FRAME_DESC_TYPE_CCP2,
-> +	V4L2_MBUS_FRAME_DESC_TYPE_CSI2,
+This patch series tested against renesas-dev.
+it depends on the the below patch series.
 
-Does this need to be extended to differentiate CSI2 DPHY/CPHY as has
-been done in the v4l2_mbus_config structures?
+https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=48065
 
+Biju Das (5):
+  ARM: dts: r8a7744: add VIN dt support
+  ARM: dts: r8a7744: Add VSP support
+  ARM: dts: r8a7744: Add IPMMU DT nodes
+  ARM: dts: r8a7744: Add PWM SoC support
+  ARM: dts: r8a7744: Add TPU support
 
-> +};
-> +
->  /**
->   * struct v4l2_mbus_frame_desc - media bus data frame description
-> + * @type: type of the bus (V4L2_MBUS_FRAME_DESC_TYPE_*)
->   * @entry: frame descriptors array
->   * @num_entries: number of entries in @entry array
->   */
->  struct v4l2_mbus_frame_desc {
-> +	u32 type;
->  	struct v4l2_mbus_frame_desc_entry entry[V4L2_FRAME_DESC_ENTRY_MAX];
->  	unsigned short num_entries;
->  };
-> 
+ arch/arm/boot/dts/r8a7744.dtsi | 198 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 198 insertions(+)
 
 -- 
-Regards
---
-Kieran
+2.7.4
