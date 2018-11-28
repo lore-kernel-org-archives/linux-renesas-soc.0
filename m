@@ -1,47 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:33062 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728315AbeKBIiI (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbeK2Fg2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 04:38:08 -0400
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 14/30] media: entity: Add debug information in graph walk route check
-Date: Fri,  2 Nov 2018 00:31:28 +0100
-Message-Id: <20181101233144.31507-15-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+        Thu, 29 Nov 2018 00:36:28 -0500
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181123085635.31067-1-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20181123085635.31067-1-geert+renesas@glider.be>
+Message-ID: <154343003340.88331.9888843680619389201@swboyd.mtv.corp.google.com>
+Subject: Re: [git pull] clk: renesas: Updates for v4.21
+Date: Wed, 28 Nov 2018 10:33:53 -0800
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Quoting Geert Uytterhoeven (2018-11-23 00:56:35)
+>         Hi Mike, Stephen,
+> =
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/media-entity.c | 3 +++
- 1 file changed, 3 insertions(+)
+> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d=
+2a:
+> =
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index a5bb257d5a68f755..42977634d7102852 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -360,6 +360,9 @@ static void media_graph_walk_iter(struct media_graph *graph)
- 	 */
- 	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
- 		link_top(graph) = link_top(graph)->next;
-+		dev_dbg(pad->graph_obj.mdev->dev,
-+			"walk: skipping \"%s\":%u -> %u (no route)\n",
-+			pad->entity->name, pad->index, local->index);
- 		return;
- 	}
- 
--- 
-2.19.1
+>   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> =
+
+> are available in the Git repository at:
+> =
+
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v4.21-tag1
+> =
+
+> for you to fetch changes up to eb38c119dd91c61de26f67050671a84064554f7d:
+> =
+
+>   clk: renesas: r7s9210: Add USB clocks (2018-11-13 09:58:51 +0100)
+> =
+
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v4.21
+> =
+
+>   - Add support for SDHI and USB clocks on RZ/A2,
+>   - Add support for RPC (SPI Multi I/O Bus Controller) clocks on R-Car
+>     V3M.
+> =
+
+> Thanks for pulling!
+> =
+
+
+Thanks. Pulled into clk-next. Plus I threw a sparse warning fix into the
+pile.
