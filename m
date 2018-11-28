@@ -1,60 +1,128 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.218]:34207 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727567AbeKPRcc (ORCPT
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:4432 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728624AbeK2DVq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:32:32 -0500
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        wsa@the-dreams.de
-Cc: Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v2 1/4] pinctrl: sh-pfc: Add physical pin multiplexing helper macros
-Date: Fri, 16 Nov 2018 15:20:48 +0800
-Message-Id: <1542352851-25393-2-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1542352851-25393-1-git-send-email-uli+renesas@fpond.eu>
-References: <1542352851-25393-1-git-send-email-uli+renesas@fpond.eu>
+        Wed, 28 Nov 2018 22:21:46 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 2/3] mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
+Date: Wed, 28 Nov 2018 17:18:28 +0100
+Message-Id: <20181128161829.27266-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Used by I2C controllers 0, 3 and 5 in R8A7795 and R8A7796 SoCs.
+It was though all ES revisions of H3 and M3-W SoCs required the
+TMIO_MMC_HAVE_4TAP_HS400 flag. Recent datasheet updates tells us this is
+not true, only early ES revisions of the SoC do.
 
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Since quirk matching based on ES revisions is now used to handle the
+flag it's possible to align all Gen3 compatibility properties. This will
+allow later ES revisions of H3 and M3-W to use the correct 8-tap HS400
+mode.
+
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 20 ++-----------------
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 20 +++----------------
+ 2 files changed, 5 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 1fc1336..6bb9c6b 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -386,6 +386,28 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 	PINMUX_DATA(fn##_MARK, FN_##msel, FN_##fn, FN_##ipsr)
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 57e829223c40e0ee..332c5c60edb3d9c4 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -99,22 +99,6 @@ static const struct renesas_sdhi_of_data of_rza2_compatible = {
+ 	.max_segs	= 1,
+ };
  
- /*
-+ * Describe a pinmux configuration similar to PINMUX_IPSR_MSEL, but with
-+ * an additional select register that controls physical multiplexing
-+ * with another pin.
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name, also referring to the IPSR field
-+ *   - msel1: Physical multiplexing selector
-+ *   - msel2: Module selector
-+ */
-+#define PINMUX_IPSR_MSEL2(ipsr, fn, msel1, msel2) \
-+	PINMUX_DATA(fn##_MARK, FN_##msel1, FN_##msel2, FN_##fn, FN_##ipsr)
-+
-+/*
-+ * Describe a pinmux configuration in which a pin is physically multiplexed
-+ * with other pins.
-+ *   - ipsr: IPSR field
-+ *   - fn: Function name, also referring to the IPSR field
-+ *   - msel: Phyiscal multiplexing selector
-+ */
-+#define PINMUX_IPSR_PHYS(ipsr, fn, msel) \
-+	PINMUX_DATA(fn##_MARK, FN_##msel)
-+
-+/*
-  * Describe a pinmux configuration for a single-function pin with GPIO
-  * capability.
-  *   - fn: Function name
+-static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+-			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
+-			  TMIO_MMC_HAVE_4TAP_HS400,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+-			  MMC_CAP_CMD23,
+-	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+-	.bus_shift	= 2,
+-	.scc_offset	= 0x1000,
+-	.taps		= rcar_gen3_scc_taps,
+-	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-	/* DMAC can handle 0xffffffff blk count but only 1 segment */
+-	.max_blk_count	= 0xffffffff,
+-	.max_segs	= 1,
+-};
+-
+ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+ 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
+@@ -133,8 +117,8 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r7s9210", .data = &of_rza2_compatible, },
+ 	{ .compatible = "renesas,sdhi-mmc-r8a77470", .data = &of_rcar_gen3_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+ 	{},
+ };
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 1a4016f635d398c2..8471160316e073c5 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -75,19 +75,6 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+ 	},
+ };
+ 
+-static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+-			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
+-			  TMIO_MMC_HAVE_4TAP_HS400,
+-	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+-			  MMC_CAP_CMD23,
+-	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+-	.bus_shift	= 2,
+-	.scc_offset	= 0x1000,
+-	.taps		= rcar_gen3_scc_taps,
+-	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
+-};
+-
+ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+ 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
+@@ -114,8 +101,8 @@ static const struct of_device_id renesas_sdhi_sys_dmac_of_match[] = {
+ 	{ .compatible = "renesas,sdhi-r8a7792", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7793", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,sdhi-r8a7794", .data = &of_rcar_gen2_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
+-	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_gen3_compatible, },
++	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_gen3_compatible, },
+ 	{ .compatible = "renesas,rcar-gen1-sdhi", .data = &of_rcar_gen1_compatible, },
+ 	{ .compatible = "renesas,rcar-gen2-sdhi", .data = &of_rcar_gen2_compatible, },
+ 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
+@@ -493,8 +480,7 @@ static const struct soc_device_attribute gen3_soc_whitelist[] = {
+ 
+ static int renesas_sdhi_sys_dmac_probe(struct platform_device *pdev)
+ {
+-	if ((of_device_get_match_data(&pdev->dev) == &of_rcar_gen3_compatible ||
+-	    of_device_get_match_data(&pdev->dev) == &of_rcar_r8a7795_compatible) &&
++	if (of_device_get_match_data(&pdev->dev) == &of_rcar_gen3_compatible &&
+ 	    !soc_device_match(gen3_soc_whitelist))
+ 		return -ENODEV;
+ 
 -- 
-2.7.4
+2.19.1
