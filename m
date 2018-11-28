@@ -1,72 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34275 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeKSDxE (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbeK2AFK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Nov 2018 22:53:04 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: can: rcar_canfd: document r8a77990 support
-Date: Sun, 18 Nov 2018 18:32:01 +0100
-Message-Id: <20181118173201.4645-2-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181118173201.4645-1-marek.vasut+renesas@gmail.com>
-References: <20181118173201.4645-1-marek.vasut+renesas@gmail.com>
+        Wed, 28 Nov 2018 19:05:10 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 15/16] ARM: dts: iwg23s-sbc: Add QSPI flash support
+Date: Wed, 28 Nov 2018 14:03:17 +0100
+Message-Id: <91f5c32dd0c8fc662694de4d8c5eeb61e4b4210b.1543409901.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
+References: <cover.1543409901.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the support for rcar_canfd on R8A77990 SoC devices.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
+This commit adds QSPI flash support to the iwg23s board specific
+device tree.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- .../devicetree/bindings/net/can/rcar_canfd.txt      | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-index 4720e916fbdd..41049fed5872 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-@@ -9,6 +9,7 @@ Required properties:
-   - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
-   - "renesas,r8a77970-canfd" for R8A77970 (R-Car V3M) compatible controller.
-   - "renesas,r8a77980-canfd" for R8A77980 (R-Car V3H) compatible controller.
-+  - "renesas,r8a77990-canfd" for R8A77990 (R-Car E3) compatible controller.
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 52f23b858885..40b7f98d6013 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -96,6 +96,11 @@
+ 		power-source = <1800>;
+ 	};
  
-   When compatible with the generic version, nodes must list the
-   SoC-specific version corresponding to the platform first, followed by the
-@@ -27,12 +28,12 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
- child node supports the "status" property only, which is used to
- enable/disable the respective channel.
++	qspi0_pins: qspi0 {
++		groups = "qspi0_ctrl", "qspi0_data2";
++		function = "qspi0";
++	};
++
+ 	scif1_pins: scif1 {
+ 		groups = "scif1_data_b";
+ 		function = "scif1";
+@@ -114,6 +119,27 @@
+ 	};
+ };
  
--Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd" and
--"renesas,r8a77965-canfd" compatible:
--In R8A7795, R8A7796 and R8A77965 SoCs, canfd clock is a div6 clock and can
--be used by both CAN and CAN FD controller at the same time. It needs to be
--scaled to maximum frequency if any of these controllers use it. This is done
--using the below properties:
-+Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd",
-+"renesas,r8a77965-canfd" and "renesas,r8a77990-canfd" compatible:
-+In R8A7795, R8A7796, R8A77965 and R8A77990 SoCs, canfd clock is a div6 clock
-+and can be used by both CAN and CAN FD controller at the same time. It needs
-+to be scaled to maximum frequency if any of these controllers use it. This is
-+done using the below properties:
- 
- - assigned-clocks: phandle of canfd clock.
- - assigned-clock-rates: maximum frequency of this clock.
++&qspi0 {
++	pinctrl-0 = <&qspi0_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	/* WARNING - This device contains the bootloader. Handle with care. */
++	flash: flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "issi,is25lp016d", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <133000000>;
++		spi-tx-bus-width = <1>;
++		spi-rx-bus-width = <1>;
++		m25p,fast-read;
++		spi-cpol;
++		spi-cpha;
++	};
++};
++
+ &rwdt {
+ 	timeout-sec = <60>;
+ 	status = "okay";
 -- 
-2.18.0
+2.11.0
