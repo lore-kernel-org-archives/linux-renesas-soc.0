@@ -1,63 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:44568 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbeKIUvR (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45140 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbeK1Xwe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:51:17 -0500
-Date: Fri, 9 Nov 2018 12:11:07 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Ulrich Hecht <uli+renesas@fpond.eu>
-Cc: linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH] serial: sh-sci: do not warn if DMA transfers are not
- supported
-Message-ID: <20181109111107.GD1031@kunai>
-References: <1539352069-1028-1-git-send-email-uli+renesas@fpond.eu>
+        Wed, 28 Nov 2018 18:52:34 -0500
+Date: Wed, 28 Nov 2018 13:50:57 +0100
+From: Simon Horman <horms@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: Re: [PATCH 01/16] ARM: dts: r9a06g032: Add pinctrl node
+Message-ID: <20181128125057.dwf7qae323yv64ma@verge.net.au>
+References: <cover.1543236456.git.horms+renesas@verge.net.au>
+ <2b421730228e2ac6e49c3202e4f7ef79a65da71c.1543236456.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZJcv+A0YCCLh2VIg"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539352069-1028-1-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <2b421730228e2ac6e49c3202e4f7ef79a65da71c.1543236456.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Mon, Nov 26, 2018 at 01:54:03PM +0100, Simon Horman wrote:
+> From: Phil Edworthy <phil.edworthy@renesas.com>
+> 
+> This provides a pinctrl driver for the Renesas R9A06G032 SoC
+> 
+> Based on a patch originally written by Michel Pollet at Renesas.
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Geert Uytterhoeven <geert+renesas@glider.be>
 
---ZJcv+A0YCCLh2VIg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The tag above is garbled. I will fix this and repost this pull-request.
 
-On Fri, Oct 12, 2018 at 03:47:49PM +0200, Ulrich Hecht wrote:
-> Not all (H)SCIF devices support DMA, and failure to set it up is not
-> normally a cause for concern. This patch demotes the associated warning to
-> debug output.
->=20
-> Inspired by BSP patch "sci: sh-sci: Fix transfer sequence of unsupport DMA
-> transfer" (6beb1f98d3bd30) by Hiromitsu Yamasaki.
->=20
-> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---ZJcv+A0YCCLh2VIg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvla0oACgkQFA3kzBSg
-KbYbxRAAjZ3oCPK1lAAx4SEhQhbeRwn295NZS34epVq6nrRDpbFxvQzhG+Rev1Py
-LQ3DANc5yLm7YGzXT8yqAP6Zl6gsDwcQTPmI533JYjDY9JjuLX8Sdy7aA16sTHUB
-tkTQo8McYbr9MUOdkdUO0bzkso3mf8dpHcjW2ceI0mKNUrrprcPL5DAzKcpqnCZO
-CjeFkWS7X5/NjrHK3zh+yX2ILBb8bmL2YFSKuUCIIrSU7VMQU5o8gscWs/VB9NNS
-zFB8luy0GM2kxM9PEiuwwcjh05iQB85qV1gSTVmlGiunGgFcFDURdeRTVXwi19mu
-HRJTPVrguh/whgfFnlcTpOLoSY3V6PC9IpBwi0IPBdlKlOJ8wHP1slkIFZ6kWNiY
-mIA+ntdOQNpklB32YBztOMnQFhgH0QWzpRKGCgzsSAWs9JMSpVUInrsIEJR9w9pn
-R6t/9NxYhn1YMtkHBXXUQ9t7oMB6wameStsd1BZqoCSIE3Fz4csr/8OIS3Xqaf7l
-SBqSJs88jmJO8zgJTIYfFI/I8IiER42M3/er1YBPo0DKSClj1Pag+exm8quJYA0G
-dzJycpiTDnKdxHE3lMDYZUQRWjGSW5tT8Y1ki+pE0h9Wh45M9xsKQ6izpsRjLOWb
-WXvR7GdKE1IIiuSqegh5FM0pvnHcRHUxKEbvGc0uhUOFXC2fsC0=
-=bQ2X
------END PGP SIGNATURE-----
-
---ZJcv+A0YCCLh2VIg--
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index eaf94976ed6d..2322268bc862 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -165,6 +165,14 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		pinctrl: pin-controller@40067000 {
+> +			compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
+> +			reg = <0x40067000 0x1000>, <0x51000000 0x480>;
+> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
+> +			clock-names = "bus";
+> +			status = "okay";
+> +		};
+> +
+>  		gic: gic@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+> -- 
+> 2.11.0
+> 
