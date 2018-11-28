@@ -1,80 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ty1jpn01on0132.outbound.protection.outlook.com ([104.47.93.132]:34066
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726541AbeKHWYM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbeK2AFP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:24:12 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC: Biju Das <biju.das@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for
- r8a774a1
-Date: Thu, 8 Nov 2018 12:48:46 +0000
-Message-ID: <TY1PR01MB1770EDC8696798A93FB7E3D2C0C50@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1535097375-5561-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1535097375-5561-5-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Wed, 28 Nov 2018 19:05:15 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/16] ARM: dts: r8a77470: Add USB-DMAC device nodes
+Date: Wed, 28 Nov 2018 14:03:12 +0100
+Message-Id: <92c3ccd9b847a6cf130e10aa305e9e349626e4f0.1543409901.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
+References: <cover.1543409901.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Dear All,
+From: Biju Das <biju.das@bp.renesas.com>
 
-Who is the best person to take this patch?
+This patch adds USB DMAC nodes.
 
-Thanks,
-Fab
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 56 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Sent: 24 August 2018 08:56
-> Subject: [PATCH 4/6] dt-bindings: dmaengine: usb-dmac: Add binding for r8=
-a774a1
->
-> From: Biju Das <biju.das@bp.renesas.com>
->
-> This patch adds binding for r8a774a1 (RZ/G2M).
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-> b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-> index 482e543..417ca90 100644
-> --- a/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-> +++ b/Documentation/devicetree/bindings/dma/renesas,usb-dmac.txt
-> @@ -5,6 +5,7 @@ Required Properties:
->  Examples with soctypes are:
->    - "renesas,r8a7743-usb-dmac" (RZ/G1M)
->    - "renesas,r8a7745-usb-dmac" (RZ/G1E)
-> +  - "renesas,r8a774a1-usb-dmac" (RZ/G2M)
->    - "renesas,r8a7790-usb-dmac" (R-Car H2)
->    - "renesas,r8a7791-usb-dmac" (R-Car M2-W)
->    - "renesas,r8a7793-usb-dmac" (R-Car M2-N)
-> --
-> 2.7.4
-
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index a703b74cc1f9..0a7ca2ff4dc4 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -325,6 +325,62 @@
+ 			status = "disabled";
+ 		};
+ 
++		usb_dmac00: dma-controller@e65a0000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac10: dma-controller@e65b0000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac01: dma-controller@e65a8000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a8000 0 0x100>;
++			interrupts = <GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 293 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 326>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 326>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac11: dma-controller@e65b8000 {
++			compatible = "renesas,r8a77470-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b8000 0 0x100>;
++			interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 327>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 327>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a77470",
+ 				     "renesas,rcar-dmac";
+-- 
+2.11.0
