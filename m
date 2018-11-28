@@ -1,75 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1410128.outbound.protection.outlook.com ([40.107.141.128]:47712
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr1400093.outbound.protection.outlook.com ([40.107.140.93]:3528
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727382AbeK1UYk (ORCPT
+        id S1727541AbeK1UJ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 15:24:40 -0500
+        Wed, 28 Nov 2018 15:09:58 -0500
 From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "joro@8bytes.org" <joro@8bytes.org>
-CC: "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/2] iommu/ipmmu-vmsa: add an array of slave devices
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 2/2] iommu/ipmmu-vmsa: add an array of slave devices
  whitelist
-Date: Wed, 28 Nov 2018 09:23:36 +0000
-Message-ID: <1543396868-14723-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1543396868-14723-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1543396868-14723-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Date: Wed, 28 Nov 2018 09:08:58 +0000
+Message-ID: <OSBPR01MB2293D96DA44EE3D38648CEDAD8D10@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1543385279-1584-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1543385279-1584-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUmrJXtXegxzVoy9ELsXuigux705BGakkzUhTxrdszAkQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdUmrJXtXegxzVoy9ELsXuigux705BGakkzUhTxrdszAkQ@mail.gmail.com>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To avoid adding copy and pasted strcmp codes in the future,
-this patch adds an array "rcar_gen3_slave_whitelist" to check
-whether the device can work with the IPMMU or not.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/iommu/ipmmu-vmsa.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 5f88031..60e3314 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -773,8 +773,13 @@ static int ipmmu_init_platform_device(struct device *d=
-ev,
- 	{ /* sentinel */ }
- };
-=20
-+static const char * const rcar_gen3_slave_whitelist[] =3D {
-+};
-+
- static bool ipmmu_slave_whitelist(struct device *dev)
- {
-+	unsigned int i;
-+
- 	/*
- 	 * For R-Car Gen3 use a white list to opt-in slave devices.
- 	 * For Other SoCs, this returns true anyway.
-@@ -786,7 +791,13 @@ static bool ipmmu_slave_whitelist(struct device *dev)
- 	if (!soc_device_match(soc_rcar_gen3_whitelist))
- 		return false;
-=20
--	/* By default, do not allow use of IPMMU */
-+	/* Check whether this slave device can work with the IPMMU */
-+	for (i =3D 0; i < ARRAY_SIZE(rcar_gen3_slave_whitelist); i++) {
-+		if (!strcmp(dev_name(dev), rcar_gen3_slave_whitelist[i]))
-+			return true;
-+	}
-+
-+	/* Otherwise, do not allow use of IPMMU */
- 	return false;
- }
-=20
---=20
-1.9.1
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
+ZGF5LCBOb3ZlbWJlciAyOCwgMjAxOCA1OjQ4IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4g
+DQo+IE9uIFdlZCwgTm92IDI4LCAyMDE4IGF0IDc6MTAgQU0gWW9zaGloaXJvIFNoaW1vZGENCj4g
+PHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiBUbyBhdm9pZCBh
+ZGRpbmcgY29weSBhbmQgcGFzdGVkIHN0cmNtcCBjb2RlcyBpbiB0aGUgZnV0dXJlLA0KPiA+IHRo
+aXMgcGF0Y2ggYWRkcyBhbiBhcnJheSAicmNhcl9nZW4zX3NsYXZlX3doaXRlbGlzdCIgdG8gY2hl
+Y2sNCj4gPiB3aGV0aGVyIHRoZSBkZXZpY2UgY2FuIHdvcmsgd2l0aCB0aGUgSVBNTVUgb3Igbm90
+Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5z
+aGltb2RhLnVoQHJlbmVzYXMuY29tPg0KPiANCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhv
+ZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXZp
+ZXchDQoNCj4gT25lIHNtYWxsIGNvbW1lbnQgYmVsb3cuDQo+IA0KPiA+IC0tLSBhL2RyaXZlcnMv
+aW9tbXUvaXBtbXUtdm1zYS5jDQo+ID4gKysrIGIvZHJpdmVycy9pb21tdS9pcG1tdS12bXNhLmMN
+Cj4gPiBAQCAtNzczLDggKzc3MywxMyBAQCBzdGF0aWMgaW50IGlwbW11X2luaXRfcGxhdGZvcm1f
+ZGV2aWNlKHN0cnVjdCBkZXZpY2UgKmRldiwNCj4gPiAgICAgICAgIHsgLyogc2VudGluZWwgKi8g
+fQ0KPiA+ICB9Ow0KPiA+DQo+ID4gK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3QgcmNhcl9nZW4z
+X3NsYXZlX3doaXRlbGlzdFtdID0gew0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgc3RhdGljIGJvb2wg
+aXBtbXVfc2xhdmVfd2hpdGVsaXN0KHN0cnVjdCBkZXZpY2UgKmRldikNCj4gPiAgew0KPiA+ICsg
+ICAgICAgaW50IGk7DQo+IA0KPiB1bnNpZ25lZCBpbnQNCg0KSSBnb3QgaXQuIEknbGwgc3VibWl0
+IHYyIHBhdGNoLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo+ID4gKw0K
+PiA+ICAgICAgICAgLyoNCj4gPiAgICAgICAgICAqIEZvciBSLUNhciBHZW4zIHVzZSBhIHdoaXRl
+IGxpc3QgdG8gb3B0LWluIHNsYXZlIGRldmljZXMuDQo+ID4gICAgICAgICAgKiBGb3IgT3RoZXIg
+U29DcywgdGhpcyByZXR1cm5zIHRydWUgYW55d2F5Lg0KPiA+IEBAIC03ODYsNyArNzkxLDEzIEBA
+IHN0YXRpYyBib29sIGlwbW11X3NsYXZlX3doaXRlbGlzdChzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+
+ID4gICAgICAgICBpZiAoIXNvY19kZXZpY2VfbWF0Y2goc29jX3JjYXJfZ2VuM193aGl0ZWxpc3Qp
+KQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZmFsc2U7DQo+ID4NCj4gPiAtICAgICAgIC8q
+IEJ5IGRlZmF1bHQsIGRvIG5vdCBhbGxvdyB1c2Ugb2YgSVBNTVUgKi8NCj4gPiArICAgICAgIC8q
+IENoZWNrIHdoZXRoZXIgdGhpcyBzbGF2ZSBkZXZpY2UgY2FuIHdvcmsgd2l0aCB0aGUgSVBNTVUg
+Ki8NCj4gPiArICAgICAgIGZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHJjYXJfZ2VuM19zbGF2
+ZV93aGl0ZWxpc3QpOyBpKyspIHsNCj4gPiArICAgICAgICAgICAgICAgaWYgKCFzdHJjbXAoZGV2
+X25hbWUoZGV2KSwgcmNhcl9nZW4zX3NsYXZlX3doaXRlbGlzdFtpXSkpDQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgcmV0dXJuIHRydWU7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsg
+ICAgICAgLyogT3RoZXJ3aXNlLCBkbyBub3QgYWxsb3cgdXNlIG9mIElQTU1VICovDQo+ID4gICAg
+ICAgICByZXR1cm4gZmFsc2U7DQo+ID4gIH0NCj4gDQo+IEdye29ldGplLGVldGluZ31zLA0KPiAN
+Cj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0IFV5dHRl
+cmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGlu
+dXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmlj
+YWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2lu
+ZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlr
+ZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZh
+bGRzDQo=
