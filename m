@@ -1,37 +1,77 @@
-Return-Path: <linux-i2c-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbeK2AFD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 28 Nov 2018 19:05:03 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 0/2] i2c: sh_mobile: add support for r8a77990 (R-Car E3)
-Date: Wed, 21 Nov 2018 13:09:26 +0100
-Message-Id: <20181121120928.25179-1-horms+renesas@verge.net.au>
-Sender: linux-i2c-owner@vger.kernel.org
+Subject: [PATCH 03/16] ARM: dts: r8a77470: Add SDHI0 support
+Date: Wed, 28 Nov 2018 14:03:05 +0100
+Message-Id: <15aa5a95e820e8183aa34535131e7c97789b8504.1543409901.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
+References: <cover.1543409901.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for the IIC code for the r8a77990 (R-Car E3).
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-It is not considered compatible with existing fallback bindings
-due to the documented absence of automatic transmission registers.
+RZ/G1C comes with two different types of IP for the SDHI
+interfaces, SDHI0 and SDHI2 share the same IP type, and
+such an IP is also compatible with the one found in R-Car
+Gen2. SDHI1 IP on the other hand is compatible with R-Car
+Gen3 with internal DMA.
+This patch completes the SDHI support of the R-Car Gen2
+compatible IPs, including fixing the max-frequency
+definition of SDHI2, as it turns out there is a bug in
+Section 1.3.9 of the RZ/G1C Hardware User's Manual (Rev.
+1.00 Oct. 2017).
 
-These registers are currently not used by the driver and
-thus the provides the same behaviour for "renesas,iic-r8a77990" and
-"renesas,rcar-gen3-iic". The point of declaring incompatibility is
-to allow for automatic transmission register support to be added to
-"renesas,iic-r8a77990" and "renesas,rcar-gen3-iic" in future.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a77470.dtsi | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-This series is split into two patches, one to update documentation and
-another to update the driver. I have no objections to it being squashed
-into a single patch if that is the maintainer's wish.
-
-Simon Horman (2):
-  i2c: sh_mobile: document support for r8a77990 (R-Car E3)
-  i2c: sh_mobile: add support for r8a77990 (R-Car E3)
-
- Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 9 ++++++++-
- drivers/i2c/busses/i2c-sh_mobile.c                      | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+index 9611a936e1b8..ab2e0223f8a1 100644
+--- a/arch/arm/boot/dts/r8a77470.dtsi
++++ b/arch/arm/boot/dts/r8a77470.dtsi
+@@ -490,6 +490,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a77470",
++				     "renesas,rcar-gen2-sdhi";
++			reg = <0 0xee100000 0 0x328>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++			       <&dmac1 0xcd>, <&dmac1 0xce>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <156000000>;
++			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
++			status = "disabled";
++		};
++
+ 		sdhi2: sd@ee160000 {
+ 			compatible = "renesas,sdhi-r8a77470",
+ 				     "renesas,rcar-gen2-sdhi";
+@@ -499,7 +514,7 @@
+ 			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
+ 			       <&dmac1 0xd3>, <&dmac1 0xd4>;
+ 			dma-names = "tx", "rx", "tx", "rx";
+-			max-frequency = <97500000>;
++			max-frequency = <78000000>;
+ 			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+ 			resets = <&cpg 312>;
+ 			status = "disabled";
 -- 
 2.11.0
