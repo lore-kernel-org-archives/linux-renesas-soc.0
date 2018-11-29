@@ -1,66 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:47240 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbeKMVNd (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:44084 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727260AbeK2VzX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:13:33 -0500
-From: Wolfram Sang <wsa@the-dreams.de>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: rcar: check bus state before reinitializing
-Date: Tue, 13 Nov 2018 12:15:42 +0100
-Message-Id: <20181113111542.5224-1-wsa@the-dreams.de>
+        Thu, 29 Nov 2018 16:55:23 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 07/13] clk: renesas: r8a77970: Add CPEX clock
+Date: Thu, 29 Nov 2018 11:50:02 +0100
+Message-Id: <20181129105008.10239-8-geert+renesas@glider.be>
+In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
+References: <20181129105008.10239-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Implement support for the CPEX clock on R-Car V3M.  This clock can be
+selected as a clock source for CMT1 (Compare Match Timer Type 1).
 
-We should check the bus state before reinitializing the IP core.
-Otherwise, the internal bus busy state which also tracks multi-master
-activity is lost.
-
-Credits go to the Renesas BSP team for suggesting this change.
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Fixes: ae481cc13965 ("i2c: rcar: fix resume by always initializing registers before transfer")
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ drivers/clk/renesas/r8a77970-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tested with a Lager board (R-Car H2) and used the GPIO fault injector to ensure
-the bus recovery mechanism still works as expected.
-
- drivers/i2c/busses/i2c-rcar.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 4aa7dde876f3..254e6219e538 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -779,6 +779,11 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
+diff --git a/drivers/clk/renesas/r8a77970-cpg-mssr.c b/drivers/clk/renesas/r8a77970-cpg-mssr.c
+index 9d845ebd7355add2..cbed3769a100738d 100644
+--- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
+@@ -96,6 +96,7 @@ static const struct cpg_core_clk r8a77970_core_clks[] __initconst = {
  
- 	pm_runtime_get_sync(dev);
+ 	DEF_FIXED("cl",		R8A77970_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",		R8A77970_CLK_CP,    CLK_EXTAL,	    2, 1),
++	DEF_FIXED("cpex",	R8A77970_CLK_CPEX,  CLK_EXTAL,	    2, 1),
  
-+	/* Check bus state before init otherwise bus busy info will be lost */
-+	ret = rcar_i2c_bus_barrier(priv);
-+	if (ret < 0)
-+		goto out;
-+
- 	/* Gen3 needs a reset before allowing RXDMA once */
- 	if (priv->devtype == I2C_RCAR_GEN3) {
- 		priv->flags |= ID_P_NO_RXDMA;
-@@ -791,10 +796,6 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 
- 	rcar_i2c_init(priv);
- 
--	ret = rcar_i2c_bus_barrier(priv);
--	if (ret < 0)
--		goto out;
--
- 	for (i = 0; i < num; i++)
- 		rcar_i2c_request_dma(priv, msgs + i);
- 
+ 	DEF_DIV6P1("canfd",	R8A77970_CLK_CANFD, CLK_PLL1_DIV4, 0x244),
+ 	DEF_DIV6P1("mso",	R8A77970_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
 -- 
-2.11.0
+2.17.1
