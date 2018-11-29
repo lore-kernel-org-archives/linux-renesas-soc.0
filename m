@@ -1,44 +1,70 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor1.renesas.com ([210.160.252.171]:12977 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730393AbeK3EJ0 (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:09:26 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/6] soc: renesas: r8a77965-sysc: Remove non-existent A3IR power domain
-Date: Thu, 29 Nov 2018 11:56:14 +0100
-Message-Id: <20181129105619.10695-2-geert+renesas@glider.be>
-In-Reply-To: <20181129105619.10695-1-geert+renesas@glider.be>
-References: <20181129105619.10695-1-geert+renesas@glider.be>
-Sender: devicetree-owner@vger.kernel.org
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 4/4] ARM: dts: iwg23s-sbc: Enable RTC
+Date: Thu, 29 Nov 2018 16:54:46 +0000
+Message-Id: <1543510486-29532-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
-removed the A3IR power domain on R-Car M3-N, as this SoC does not have
-an Image Processing Unit (IMP-X5).
+Enable NXP pcf85263 real time clock for the iWave SBC based on RZ/G1C.
 
-The definition in the DT bindings header cannot be removed yet, until
-its (incorrect) user has been removed.
-
-Fixes: a527709b78b3c997 ("soc: renesas: rcar-sysc: Add R-Car M3-N support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/soc/renesas/r8a77965-sysc.c | 1 -
- 1 file changed, 1 deletion(-)
+V1-->V2 no change
+---
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/soc/renesas/r8a77965-sysc.c b/drivers/soc/renesas/r8a77965-sysc.c
-index d7f7928e3c071b45..e0533beb50fd7063 100644
---- a/drivers/soc/renesas/r8a77965-sysc.c
-+++ b/drivers/soc/renesas/r8a77965-sysc.c
-@@ -28,7 +28,6 @@ static const struct rcar_sysc_area r8a77965_areas[] __initconst = {
- 	{ "a2vc1",	0x3c0, 1, R8A77965_PD_A2VC1,	R8A77965_PD_A3VC },
- 	{ "3dg-a",	0x100, 0, R8A77965_PD_3DG_A,	R8A77965_PD_ALWAYS_ON },
- 	{ "3dg-b",	0x100, 1, R8A77965_PD_3DG_B,	R8A77965_PD_3DG_A },
--	{ "a3ir",	0x180, 0, R8A77965_PD_A3IR,	R8A77965_PD_ALWAYS_ON },
+diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+index 40b7f98..77d1824 100644
+--- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
++++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
+@@ -84,12 +84,30 @@
+ 	clock-frequency = <20000000>;
  };
  
- const struct rcar_sysc_info r8a77965_sysc_info __initconst = {
++&i2c3 {
++	pinctrl-0 = <&i2c3_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++	clock-frequency = <400000>;
++
++	rtc@51 {
++		compatible = "nxp,pcf85263";
++		reg = <0x51>;
++	};
++};
++
+ &pfc {
+ 	avb_pins: avb {
+ 		groups = "avb_mdio", "avb_gmii_tx_rx";
+ 		function = "avb";
+ 	};
+ 
++	i2c3_pins: i2c3 {
++		groups = "i2c3_c";
++		function = "i2c3";
++	};
++
+ 	mmc_pins_uhs: mmc_uhs {
+ 		groups = "mmc_data8", "mmc_ctrl";
+ 		function = "mmc";
 -- 
-2.17.1
+2.7.4
