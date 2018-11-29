@@ -1,153 +1,51 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:12977 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729682AbeK3EJW (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41456 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728111AbeK2VzY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 23:09:22 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
-Date: Thu, 29 Nov 2018 16:54:44 +0000
-Message-Id: <1543510486-29532-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 29 Nov 2018 16:55:24 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 13/13] clk: renesas: r8a77995: Simplify PLL3 multiplier/divider
+Date: Thu, 29 Nov 2018 11:50:08 +0100
+Message-Id: <20181129105008.10239-14-geert+renesas@glider.be>
+In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
+References: <20181129105008.10239-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for NXP pcf85263 real-time clock. pcf85263 rtc is compatible
-with pcf85363,except that pcf85363 has additional 64 bytes of RAM.
+116/6 can be simplified to 58/3.
 
-1 byte of nvmem is supported and exposed in sysfs (# is the instance
-number,starting with 0): /sys/bus/nvmem/devices/pcf85x63-#/nvmem
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- V1-->V2 Incorporated Alexandre and Geert's review comment.
----
- drivers/rtc/rtc-pcf85363.c | 72 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 57 insertions(+), 15 deletions(-)
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index c04a1ed..9c567c8 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -311,7 +311,30 @@ static int pcf85363_nvram_write(void *priv, unsigned int offset, void *val,
- 				 val, bytes);
- }
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index b9745665731fac7e..eee3874865a95b1a 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -191,14 +191,14 @@ static const unsigned int r8a77995_crit_mod_clks[] __initconst = {
+  * MD19		EXTAL (MHz)	PLL0		PLL1		PLL3
+  *--------------------------------------------------------------------
+  * 0		48 x 1		x250/4		x100/3		x100/3
+- * 1		48 x 1		x250/4		x100/3		x116/6
++ * 1		48 x 1		x250/4		x100/3		x58/3
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	(((md) & BIT(19)) >> 19)
  
--static const struct regmap_config regmap_config = {
-+static int pcf85x63_nvram_read(void *priv, unsigned int offset, void *val,
-+			       size_t bytes)
-+{
-+	struct pcf85363 *pcf85363 = priv;
-+
-+	return regmap_read(pcf85363->regmap, CTRL_RAMBYTE, val);
-+}
-+
-+static int pcf85x63_nvram_write(void *priv, unsigned int offset, void *val,
-+				size_t bytes)
-+{
-+	struct pcf85363 *pcf85363 = priv;
-+
-+	return regmap_write(pcf85363->regmap, CTRL_RAMBYTE,
-+				*((unsigned int *)val));
-+}
-+
-+static const struct regmap_config pcf_85263_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = 0x2f,
-+};
-+
-+static const struct regmap_config pcf_85363_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = 0x7f,
-@@ -321,15 +344,25 @@ static int pcf85363_probe(struct i2c_client *client,
- 			  const struct i2c_device_id *id)
- {
- 	struct pcf85363 *pcf85363;
--	struct nvmem_config nvmem_cfg = {
--		.name = "pcf85363-",
--		.word_size = 1,
--		.stride = 1,
--		.size = NVRAM_SIZE,
--		.reg_read = pcf85363_nvram_read,
--		.reg_write = pcf85363_nvram_write,
-+	const struct regmap_config *regmap_config = &pcf_85363_regmap_config;
-+	struct nvmem_config nvmem_cfg[] = {
-+		{
-+			.name = "pcf85x63-",
-+			.word_size = 1,
-+			.stride = 1,
-+			.size = 1,
-+			.reg_read = pcf85x63_nvram_read,
-+			.reg_write = pcf85x63_nvram_write,
-+		}, {
-+			.name = "pcf85363-",
-+			.word_size = 1,
-+			.stride = 1,
-+			.size = NVRAM_SIZE,
-+			.reg_read = pcf85363_nvram_read,
-+			.reg_write = pcf85363_nvram_write,
-+		},
- 	};
--	int ret;
-+	int ret, i, num_nvmem = 2;
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
- 		return -ENODEV;
-@@ -339,7 +372,13 @@ static int pcf85363_probe(struct i2c_client *client,
- 	if (!pcf85363)
- 		return -ENOMEM;
- 
--	pcf85363->regmap = devm_regmap_init_i2c(client, &regmap_config);
-+	if (of_device_get_match_data(&client->dev) ==
-+					&pcf_85263_regmap_config) {
-+		regmap_config = &pcf_85263_regmap_config;
-+		num_nvmem = 1;
-+	}
-+
-+	pcf85363->regmap = devm_regmap_init_i2c(client, regmap_config);
- 	if (IS_ERR(pcf85363->regmap)) {
- 		dev_err(&client->dev, "regmap allocation failed\n");
- 		return PTR_ERR(pcf85363->regmap);
-@@ -370,15 +409,18 @@ static int pcf85363_probe(struct i2c_client *client,
- 
- 	ret = rtc_register_device(pcf85363->rtc);
- 
--	nvmem_cfg.priv = pcf85363;
--	rtc_nvmem_register(pcf85363->rtc, &nvmem_cfg);
-+	for (i = 0; i < num_nvmem ; i++) {
-+		nvmem_cfg[i].priv = pcf85363;
-+		rtc_nvmem_register(pcf85363->rtc, &nvmem_cfg[i]);
-+	}
- 
- 	return ret;
- }
- 
- static const struct of_device_id dev_ids[] = {
--	{ .compatible = "nxp,pcf85363" },
--	{}
-+	{ .compatible = "nxp,pcf85263", .data = &pcf_85263_regmap_config },
-+	{ .compatible = "nxp,pcf85363", .data = &pcf_85363_regmap_config },
-+	{ /* sentinel */ }
+ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[2] __initconst = {
+ 	/* EXTAL div	PLL1 mult/div	PLL3 mult/div */
+ 	{ 1,		100,	3,	100,	3,	},
+-	{ 1,		100,	3,	116,	6,	},
++	{ 1,		100,	3,	58,	3,	},
  };
- MODULE_DEVICE_TABLE(of, dev_ids);
  
-@@ -393,5 +435,5 @@ static struct i2c_driver pcf85363_driver = {
- module_i2c_driver(pcf85363_driver);
- 
- MODULE_AUTHOR("Eric Nelson");
--MODULE_DESCRIPTION("pcf85363 I2C RTC driver");
-+MODULE_DESCRIPTION("pcf85263/pcf85363 I2C RTC driver");
- MODULE_LICENSE("GPL");
+ static int __init r8a77995_cpg_mssr_init(struct device *dev)
 -- 
-2.7.4
+2.17.1
