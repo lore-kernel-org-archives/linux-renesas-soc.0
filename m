@@ -1,78 +1,50 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1410100.outbound.protection.outlook.com ([40.107.141.100]:62514
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726039AbeKUREi (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:37580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbeK3I4a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 12:04:38 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "balbi@kernel.org" <balbi@kernel.org>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] usb: renesas_usbhs: Remove dummy runtime PM callbacks
-Date: Wed, 21 Nov 2018 06:31:23 +0000
-Message-ID: <1542781735-8548-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1542781735-8548-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1542781735-8548-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 30 Nov 2018 03:56:30 -0500
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20181129105008.10239-1-geert+renesas@glider.be>
+Message-ID: <154352817823.88331.1370701337973571144@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 00/13] clk: renesas: Miscellaneous fixes
+Date: Thu, 29 Nov 2018 13:49:38 -0800
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Quoting Geert Uytterhoeven (2018-11-29 02:49:55)
+>         Hi Mike, Stephen, Laurent, Kieran,
+> =
 
-Platform drivers don't need dummy runtime PM callbacks that just return
-success in order to have runtime PM happening. This has changed since
-following commits:
+> This patch series contains several fixes for the Renesas Clock drivers
+> and DT bindings, and a small simplification:
+>   - Removal of non-existent clocks,
+>   - Addition of the CPEX clocks, which can be used a source for a timer
+>     (CMT1),
+>   - Correction of DU parent clocks.
+> Most of these have been found by skimming the Hardware Manual Errata.
+> =
 
-commit 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm callbacks")
-commit 543f2503a956 ("PM / platform_bus: Allow runtime PM by default")
-commit 8b313a38ecff ("PM / Platform: Use generic runtime PM callbacks direc=
-tly")
+> This has been boot-tested on Salvator-X(S) (R-Car H3, M3-W, M3-N), Eagle
+> (R-Car V3M), and Draak (R-Car D3), except for the DU parts.
+> Testing of the DU on R-Car D3 and E3 would be appreciated, as the DU
+> driver may have a workaround for the incorrect parent clock rates.
+> =
 
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-[shimoda: revise git commit description style]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/renesas_usbhs/common.c | 14 --------------
- 1 file changed, 14 deletions(-)
+> I intend to queue this in clk-renesas-for-v4.21.
+> =
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs=
-/common.c
-index a3e1290..0e760f2 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -874,23 +874,9 @@ static int usbhsc_resume(struct device *dev)
- 	return 0;
- }
-=20
--static int usbhsc_runtime_nop(struct device *dev)
--{
--	/* Runtime PM callback shared between ->runtime_suspend()
--	 * and ->runtime_resume(). Simply returns success.
--	 *
--	 * This driver re-initializes all registers after
--	 * pm_runtime_get_sync() anyway so there is no need
--	 * to save and restore registers here.
--	 */
--	return 0;
--}
--
- static const struct dev_pm_ops usbhsc_pm_ops =3D {
- 	.suspend		=3D usbhsc_suspend,
- 	.resume			=3D usbhsc_resume,
--	.runtime_suspend	=3D usbhsc_runtime_nop,
--	.runtime_resume		=3D usbhsc_runtime_nop,
- };
-=20
- static struct platform_driver renesas_usbhs_driver =3D {
---=20
-1.9.1
+
+Ok. For the whole series:
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
