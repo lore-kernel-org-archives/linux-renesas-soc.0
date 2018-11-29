@@ -1,67 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46230 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeKZBb3 (ORCPT
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:48069 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbeK2Lok (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 25 Nov 2018 20:31:29 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [PATCH 4/5] arm64: dts: renesas: r8a77995: draak: Add backlight
-Date: Sun, 25 Nov 2018 16:40:30 +0200
-Message-Id: <20181125144031.4407-5-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20181125144031.4407-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20181125144031.4407-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 29 Nov 2018 06:44:40 -0500
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] clk: renesas: rcar-gen3: add documentation for SD clocks
+Date: Thu, 29 Nov 2018 01:39:48 +0100
+Message-Id: <20181129003949.19984-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181129003949.19984-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20181129003949.19984-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the backlight device for the LVDS1 output, in preparation for panel
-support.
+Document the known use cases of the different clock settings. This is
+useful as different SoC and ES versions uses different settings to do
+the same thing as there are more then one combination to achieve the
+same SDn clock speed.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- .../arm64/boot/dts/renesas/r8a77995-draak.dts | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/clk/renesas/rcar-gen3-cpg.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 2405eaad0296..cd067319e6f3 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -24,6 +24,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm1 0 50000>;
-+
-+		brightness-levels = <256 128 64 16 8 4 0>;
-+		default-brightness-level = <6>;
-+
-+		power-supply = <&reg_12p0v>;
-+		enable-gpios = <&gpio4 0 GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	composite-in {
- 		compatible = "composite-video-connector";
- 
-@@ -104,6 +115,15 @@
- 		regulator-always-on;
- 	};
- 
-+	reg_12p0v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D12.0V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vga {
- 		compatible = "vga-connector";
- 
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index f6335357c85505df..bca6c7f51de18db7 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -232,13 +232,13 @@ struct sd_clock {
+  *                     sd_srcfc   sd_fc   div
+  * stp_hck   stp_ck    (div)      (div)     = sd_srcfc x sd_fc
+  *-------------------------------------------------------------------
+- *  0         0         0 (1)      1 (4)      4
+- *  0         0         1 (2)      1 (4)      8
+- *  1         0         2 (4)      1 (4)     16
+- *  1         0         3 (8)      1 (4)     32
++ *  0         0         0 (1)      1 (4)      4 : SDR104 / HS200 / HS400 (8 TAP)
++ *  0         0         1 (2)      1 (4)      8 : SDR50
++ *  1         0         2 (4)      1 (4)     16 : HS / SDR25
++ *  1         0         3 (8)      1 (4)     32 : NS / SDR12
+  *  1         0         4 (16)     1 (4)     64
+  *  0         0         0 (1)      0 (2)      2
+- *  0         0         1 (2)      0 (2)      4
++ *  0         0         1 (2)      0 (2)      4 : SDR104 / HS200 / HS400 (4 TAP)
+  *  1         0         2 (4)      0 (2)      8
+  *  1         0         3 (8)      0 (2)     16
+  *  1         0         4 (16)     0 (2)     32
 -- 
-Regards,
-
-Laurent Pinchart
+2.19.1
