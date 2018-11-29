@@ -1,93 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:49331 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725888AbeKPI1l (ORCPT
+Received: from bombadil.infradead.org ([198.137.202.133]:56640 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728136AbeK3Di5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:41 -0500
-From: Fernando Ramos <greenfoo@gluegarage.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: [PATCH 7/9] drm: remove deprecated "drm_framebuffer_[un]reference" functions
-Date: Thu, 15 Nov 2018 23:16:27 +0100
-Message-Id: <20181115221634.22715-8-greenfoo@gluegarage.com>
-In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+        Thu, 29 Nov 2018 22:38:57 -0500
+Date: Thu, 29 Nov 2018 08:32:58 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Greg Ungerer <gerg@linux-m68k.org>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org
+Subject: Re: [PATCH v6 3/6] m68k: coldfire: Add clk_get_optional() function
+Message-ID: <20181129163258.GA26511@infradead.org>
+References: <20181116145937.27660-1-phil.edworthy@renesas.com>
+ <20181116145937.27660-4-phil.edworthy@renesas.com>
+ <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-There are no more places where this (deprecated) function is being used
-from, thus it can now be removed.
+On Thu, Nov 29, 2018 at 09:54:37PM +1000, Greg Ungerer wrote:
+> Hi Phil,
+> 
+> On 17/11/18 12:59 am, Phil Edworthy wrote:
+> > clk_get_optional() returns NULL if not found instead of -ENOENT,
+> > otherwise the behaviour is the same as clk_get().
+> > 
+> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> 
+> Acked-by: Greg Ungerer <gerg@@linux-m68k.org>
+> 
+> Looks good. Do you want me to take this in the m68knommu git tree?
+> Or is the whole series going through some other tree?
 
-Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
----
- include/drm/drm_framebuffer.h | 24 ------------------------
- 1 file changed, 24 deletions(-)
-
-diff --git a/include/drm/drm_framebuffer.h b/include/drm/drm_framebuffer.h
-index c50502c656e5..c94acedfb08e 100644
---- a/include/drm/drm_framebuffer.h
-+++ b/include/drm/drm_framebuffer.h
-@@ -240,30 +240,6 @@ static inline void drm_framebuffer_put(struct drm_framebuffer *fb)
- 	drm_mode_object_put(&fb->base);
- }
- 
--/**
-- * drm_framebuffer_reference - acquire a framebuffer reference
-- * @fb: DRM framebuffer
-- *
-- * This is a compatibility alias for drm_framebuffer_get() and should not be
-- * used by new code.
-- */
--static inline void drm_framebuffer_reference(struct drm_framebuffer *fb)
--{
--	drm_framebuffer_get(fb);
--}
--
--/**
-- * drm_framebuffer_unreference - release a framebuffer reference
-- * @fb: DRM framebuffer
-- *
-- * This is a compatibility alias for drm_framebuffer_put() and should not be
-- * used by new code.
-- */
--static inline void drm_framebuffer_unreference(struct drm_framebuffer *fb)
--{
--	drm_framebuffer_put(fb);
--}
--
- /**
-  * drm_framebuffer_read_refcount - read the framebuffer reference count.
-  * @fb: framebuffer
--- 
-2.19.1
+Any chance we could just get coldfire moved over to the common clock
+framework?
