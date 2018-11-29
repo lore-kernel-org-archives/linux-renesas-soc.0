@@ -1,339 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay10.mail.gandi.net ([217.70.178.230]:45849 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727029AbeKIBnw (ORCPT
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37544 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731826AbeK3CBR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:43:52 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, horms@verge.net.au,
-        laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v5 2/6] pinctrl: sh-pfc: r8a77965: Add VIN[4|5] groups/functions
-Date: Thu,  8 Nov 2018 17:07:23 +0100
-Message-Id: <1541693247-15599-3-git-send-email-jacopo+renesas@jmondi.org>
-In-Reply-To: <1541693247-15599-1-git-send-email-jacopo+renesas@jmondi.org>
-References: <1541693247-15599-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 29 Nov 2018 21:01:17 -0500
+Received: by mail-io1-f68.google.com with SMTP id a3so1789263ioc.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 29 Nov 2018 06:55:40 -0800 (PST)
+MIME-Version: 1.0
+References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+ <CACRpkdZmTSo02yQeU=qe9WyJMXEq76CNmc2kkFEHuwdo=HKPJw@mail.gmail.com>
+ <20181121094233.GN4266@phenom.ffwll.local> <CACRpkdaXUFwSiQnMqv2WBXr2ytn7kx3CeAuamkj9ZYU1C6bpnw@mail.gmail.com>
+ <20181126141241.GM4266@phenom.ffwll.local> <CACRpkdYmBSVKBvu=YOV87zWK8WCC+pcn9ux_W4VEYwzRzexQ_A@mail.gmail.com>
+In-Reply-To: <CACRpkdYmBSVKBvu=YOV87zWK8WCC+pcn9ux_W4VEYwzRzexQ_A@mail.gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Date: Thu, 29 Nov 2018 15:55:28 +0100
+Message-ID: <CAKMK7uF9Q-LySAXg=kT9B-ueFR9qhr_B0N3y1g1D_OTc-+Vbdg@mail.gmail.com>
+Subject: Re: [PATCH 0/9] drm: remove deprecated functions
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: greenfoo@gluegarage.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:VIRTIO CORE, NET..."
+        <virtualization@lists.linux-foundation.org>,
+        etnaviv@lists.freedesktop.org,
+        "open list:DRM DRIVERS FOR RENESAS"
+        <linux-renesas-soc@vger.kernel.org>, cocci@systeme.lip6.fr
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The VIN4 and VIN5 interfaces supports parallel video input.
-Add pin, mux and functions definitions for VIN4 and VIN5 for R-Car M3-N.
+On Thu, Nov 29, 2018 at 3:45 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Mon, Nov 26, 2018 at 3:12 PM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > On Sat, Nov 24, 2018 at 10:17:13PM +0100, Linus Walleij wrote:
+>
+> > > It was especially scary.
+> > >
+> > > But I think I managed to apply the patches and push the
+> > > branch now.
+> >
+> > Except when you're racing with someone else you should only see conflicts
+> > with stuff you've just pushed. Or if someone forgot to fix up their mess.
+> > What was the conflict?
+>
+> dim push-branches was complaining that one of the commits was
+> missing the proper committer sign-off, it was the bottom commit under
+> mine (IIRC "drm/atomic-helper: WARN if fake_commit->hw_done is not
+> completed as expected")
+> and dim update-branches seemed to rebase and fix up my patches
+> and then everything was fine.
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+This sounds like you (or dim?) accidentaly amended that commit (which
+changes the committer and results in the warning), and a rebase would
+indeed have fixed that. If the first patch conflicts this can happen
+because dim apply-branch doesn't bail out correctly. Or at least did
+in the past, I recently fixed that in
 
----
-v4 -> v5:
-- Add definitions for 10, 12 and 20 pin groups for VIN4 as suggested by Geert
-- Add definitions for 10 and 12 pin groups for VIN5 as suggested by Geert
-- s/union vin_data/union vin_data16/ for VIN5 pins and mux as suggested by Geert
+commit ee299e510ae468aab27610bcbc4fdd4de932f74b
+Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Wed Oct 17 08:53:00 2018 +0200
 
----
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 270 ++++++++++++++++++++++++++++++++++
- 1 file changed, 270 insertions(+)
+    dim: make apply-patch fail again
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index dfdd982984d4..0159e80d29c3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -3725,6 +3725,216 @@ static const unsigned int usb30_mux[] = {
- 	USB30_PWEN_MARK, USB30_OVC_MARK,
- };
+> I just felt slightly out of control :D
 
-+/* - VIN4 ------------------------------------------------------------------- */
-+static const unsigned int vin4_data18_a_pins[] = {
-+	RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
-+	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+	RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+	RCAR_GP_PIN(1, 2),  RCAR_GP_PIN(1, 3),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-+	RCAR_GP_PIN(0, 2),  RCAR_GP_PIN(0, 3),
-+	RCAR_GP_PIN(0, 4),  RCAR_GP_PIN(0, 5),
-+	RCAR_GP_PIN(0, 6),  RCAR_GP_PIN(0, 7),
-+};
-+
-+static const unsigned int vin4_data18_a_mux[] = {
-+	VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
-+	VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
-+	VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
-+	VI4_DATA10_MARK,  VI4_DATA11_MARK,
-+	VI4_DATA12_MARK,  VI4_DATA13_MARK,
-+	VI4_DATA14_MARK,  VI4_DATA15_MARK,
-+	VI4_DATA18_MARK,  VI4_DATA19_MARK,
-+	VI4_DATA20_MARK,  VI4_DATA21_MARK,
-+	VI4_DATA22_MARK,  VI4_DATA23_MARK,
-+};
-+
-+static const union vin_data vin4_data_a_pins = {
-+	.data24 = {
-+		RCAR_GP_PIN(0, 8),  RCAR_GP_PIN(0, 9),
-+		RCAR_GP_PIN(0, 10), RCAR_GP_PIN(0, 11),
-+		RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+		RCAR_GP_PIN(0, 14), RCAR_GP_PIN(0, 15),
-+		RCAR_GP_PIN(1, 0),  RCAR_GP_PIN(1, 1),
-+		RCAR_GP_PIN(1, 2),  RCAR_GP_PIN(1, 3),
-+		RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-+		RCAR_GP_PIN(0, 0),  RCAR_GP_PIN(0, 1),
-+		RCAR_GP_PIN(0, 2),  RCAR_GP_PIN(0, 3),
-+		RCAR_GP_PIN(0, 4),  RCAR_GP_PIN(0, 5),
-+		RCAR_GP_PIN(0, 6),  RCAR_GP_PIN(0, 7),
-+	},
-+};
-+
-+static const union vin_data vin4_data_a_mux = {
-+	.data24 = {
-+		VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
-+		VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
-+		VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
-+		VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
-+		VI4_DATA8_MARK,   VI4_DATA9_MARK,
-+		VI4_DATA10_MARK,  VI4_DATA11_MARK,
-+		VI4_DATA12_MARK,  VI4_DATA13_MARK,
-+		VI4_DATA14_MARK,  VI4_DATA15_MARK,
-+		VI4_DATA16_MARK,  VI4_DATA17_MARK,
-+		VI4_DATA18_MARK,  VI4_DATA19_MARK,
-+		VI4_DATA20_MARK,  VI4_DATA21_MARK,
-+		VI4_DATA22_MARK,  VI4_DATA23_MARK,
-+	},
-+};
-+
-+static const unsigned int vin4_data18_b_pins[] = {
-+	RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
-+	RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
-+	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
-+	RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
-+	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+};
-+
-+static const unsigned int vin4_data18_b_mux[] = {
-+	VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
-+	VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
-+	VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
-+	VI4_DATA10_MARK,  VI4_DATA11_MARK,
-+	VI4_DATA12_MARK,  VI4_DATA13_MARK,
-+	VI4_DATA14_MARK,  VI4_DATA15_MARK,
-+	VI4_DATA18_MARK,  VI4_DATA19_MARK,
-+	VI4_DATA20_MARK,  VI4_DATA21_MARK,
-+	VI4_DATA22_MARK,  VI4_DATA23_MARK,
-+};
-+
-+static const union vin_data vin4_data_b_pins = {
-+	.data24 = {
-+		RCAR_GP_PIN(2, 0), RCAR_GP_PIN(2, 1),
-+		RCAR_GP_PIN(2, 2), RCAR_GP_PIN(2, 3),
-+		RCAR_GP_PIN(2, 4), RCAR_GP_PIN(2, 5),
-+		RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
-+		RCAR_GP_PIN(1, 0), RCAR_GP_PIN(1, 1),
-+		RCAR_GP_PIN(1, 2), RCAR_GP_PIN(1, 3),
-+		RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+		RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+		RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+		RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+		RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+	},
-+};
-+
-+static const union vin_data vin4_data_b_mux = {
-+	.data24 = {
-+		VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
-+		VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
-+		VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
-+		VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
-+		VI4_DATA8_MARK,   VI4_DATA9_MARK,
-+		VI4_DATA10_MARK,  VI4_DATA11_MARK,
-+		VI4_DATA12_MARK,  VI4_DATA13_MARK,
-+		VI4_DATA14_MARK,  VI4_DATA15_MARK,
-+		VI4_DATA16_MARK,  VI4_DATA17_MARK,
-+		VI4_DATA18_MARK,  VI4_DATA19_MARK,
-+		VI4_DATA20_MARK,  VI4_DATA21_MARK,
-+		VI4_DATA22_MARK,  VI4_DATA23_MARK,
-+	},
-+};
-+
-+static const unsigned int vin4_sync_pins[] = {
-+	/* VSYNC_N, HSYNC_N */
-+	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 18),
-+};
-+
-+static const unsigned int vin4_sync_mux[] = {
-+	VI4_HSYNC_N_MARK, VI4_VSYNC_N_MARK,
-+};
-+
-+static const unsigned int vin4_field_pins[] = {
-+	RCAR_GP_PIN(1, 16),
-+};
-+
-+static const unsigned int vin4_field_mux[] = {
-+	VI4_FIELD_MARK,
-+};
-+
-+static const unsigned int vin4_clkenb_pins[] = {
-+	RCAR_GP_PIN(1, 19),
-+};
-+
-+static const unsigned int vin4_clkenb_mux[] = {
-+	VI4_CLKENB_MARK,
-+};
-+
-+static const unsigned int vin4_clk_pins[] = {
-+	RCAR_GP_PIN(1, 27),
-+};
-+
-+static const unsigned int vin4_clk_mux[] = {
-+	VI4_CLK_MARK,
-+};
-+
-+/* - VIN5 ------------------------------------------------------------------- */
-+static const union vin_data16 vin5_data_pins = {
-+	.data16 = {
-+		RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+		RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+		RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+		RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+		RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-+		RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
-+		RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-+	},
-+};
-+
-+static const union vin_data16 vin5_data_mux = {
-+	.data16 = {
-+		VI5_DATA0_MARK, VI5_DATA1_MARK,
-+		VI5_DATA2_MARK, VI5_DATA3_MARK,
-+		VI5_DATA4_MARK, VI5_DATA5_MARK,
-+		VI5_DATA6_MARK, VI5_DATA7_MARK,
-+		VI5_DATA8_MARK,  VI5_DATA9_MARK,
-+		VI5_DATA10_MARK, VI5_DATA11_MARK,
-+		VI5_DATA12_MARK, VI5_DATA13_MARK,
-+		VI5_DATA14_MARK, VI5_DATA15_MARK,
-+	},
-+};
-+
-+static const unsigned int vin5_sync_pins[] = {
-+	/* VSYNC_N, HSYNC_N */
-+	RCAR_GP_PIN(1, 9), RCAR_GP_PIN(1, 10),
-+};
-+
-+static const unsigned int vin5_sync_mux[] = {
-+	VI5_HSYNC_N_MARK, VI5_VSYNC_N_MARK,
-+};
-+
-+static const unsigned int vin5_field_pins[] = {
-+	RCAR_GP_PIN(1, 11),
-+};
-+
-+static const unsigned int vin5_field_mux[] = {
-+	VI5_FIELD_MARK,
-+};
-+
-+static const unsigned int vin5_clkenb_pins[] = {
-+	RCAR_GP_PIN(1, 20),
-+};
-+
-+static const unsigned int vin5_clkenb_mux[] = {
-+	VI5_CLKENB_MARK,
-+};
-+
-+static const unsigned int vin5_clk_pins[] = {
-+	RCAR_GP_PIN(1, 21),
-+};
-+
-+static const unsigned int vin5_clk_mux[] = {
-+	VI5_CLK_MARK,
-+};
-+
- static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(audio_clk_a_a),
- 	SH_PFC_PIN_GROUP(audio_clk_a_b),
-@@ -4000,6 +4210,32 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb30),
-+	VIN_DATA_PIN_GROUP(vin4_data, 8, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 10, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 12, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 16, _a),
-+	SH_PFC_PIN_GROUP(vin4_data18_a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 20, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 24, _a),
-+	VIN_DATA_PIN_GROUP(vin4_data, 8, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 10, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 12, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 16, _b),
-+	SH_PFC_PIN_GROUP(vin4_data18_b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 20, _b),
-+	VIN_DATA_PIN_GROUP(vin4_data, 24, _b),
-+	SH_PFC_PIN_GROUP(vin4_sync),
-+	SH_PFC_PIN_GROUP(vin4_field),
-+	SH_PFC_PIN_GROUP(vin4_clkenb),
-+	SH_PFC_PIN_GROUP(vin4_clk),
-+	VIN_DATA_PIN_GROUP(vin5_data, 8),
-+	VIN_DATA_PIN_GROUP(vin5_data, 10),
-+	VIN_DATA_PIN_GROUP(vin5_data, 12),
-+	VIN_DATA_PIN_GROUP(vin5_data, 16),
-+	SH_PFC_PIN_GROUP(vin5_sync),
-+	SH_PFC_PIN_GROUP(vin5_field),
-+	SH_PFC_PIN_GROUP(vin5_clkenb),
-+	SH_PFC_PIN_GROUP(vin5_clk),
- };
-
- static const char * const audio_clk_groups[] = {
-@@ -4392,6 +4628,38 @@ static const char * const usb30_groups[] = {
- 	"usb30",
- };
-
-+static const char * const vin4_groups[] = {
-+	"vin4_data8_a",
-+	"vin4_data10_a",
-+	"vin4_data12_a",
-+	"vin4_data16_a",
-+	"vin4_data18_a",
-+	"vin4_data20_a",
-+	"vin4_data24_a",
-+	"vin4_data8_b",
-+	"vin4_data10_b",
-+	"vin4_data12_b",
-+	"vin4_data16_b",
-+	"vin4_data18_b",
-+	"vin4_data20_b",
-+	"vin4_data24_b",
-+	"vin4_sync",
-+	"vin4_field",
-+	"vin4_clkenb",
-+	"vin4_clk",
-+};
-+
-+static const char * const vin5_groups[] = {
-+	"vin5_data8",
-+	"vin5_data10",
-+	"vin5_data12",
-+	"vin5_data16",
-+	"vin5_sync",
-+	"vin5_field",
-+	"vin5_clkenb",
-+	"vin5_clk",
-+};
-+
- static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(audio_clk),
- 	SH_PFC_FUNCTION(avb),
-@@ -4432,6 +4700,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb30),
-+	SH_PFC_FUNCTION(vin4),
-+	SH_PFC_FUNCTION(vin5),
- };
-
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
---
-2.7.4
+If your dim didn't have the above commit and you had a conflict it's
+all explained. Otherwise I'm not sure what's been going on ...
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
