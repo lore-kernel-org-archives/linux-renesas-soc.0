@@ -1,100 +1,473 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:46922 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeKESLi (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40392 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbeK2Xsd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 13:11:38 -0500
-Received: by mail-vs1-f67.google.com with SMTP id r14so4599007vsc.13
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Nov 2018 00:53:00 -0800 (PST)
+        Thu, 29 Nov 2018 18:48:33 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Convert live DT patches to sugar syntax
+Date: Thu, 29 Nov 2018 14:43:43 +0200
+Message-ID: <1754701.jL1l6Xu3AY@avalon>
+In-Reply-To: <20181129105850.10953-1-geert+renesas@glider.be>
+References: <20181129105850.10953-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <1540071349-27483-1-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1540071349-27483-1-git-send-email-ykaneko0929@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 5 Nov 2018 09:52:48 +0100
-Message-ID: <CAMuHMdV=ZinKOWZco9t4rGncYY5BqghXxGE6w9qCNW55UVSa+A@mail.gmail.com>
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add I2C-DVFS device node
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Kaneko-san,
+Hi Geert,
 
-On Sat, Oct 20, 2018 at 11:35 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds I2C-DVFS device node for the R8A77990 SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Thank you for the patch.
 
-Thanks for your patch!
+On Thursday, 29 November 2018 12:58:50 EET Geert Uytterhoeven wrote:
+> Using overlay sugar syntax makes the DTS files easier to read (and
+> write).
+> 
+> Overlay syntactic sugar for generating target-path fragments is
+> supported by the version of dtc supplied with the kernel since commit
+> 50aafd60898a8b3e ("scripts/dtc: Update to upstream version
+> v1.4.6-21-g84e414b0b5bc").
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> The generated dtbs before/after are identical.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> @@ -22,7 +22,8 @@
->                 i2c4 = &i2c4;
->                 i2c5 = &i2c5;
->                 i2c6 = &i2c6;
-> -               i2c7 = &i2c7;
-> +               i2c7 = &i2c_dvfs;
-> +               i2c8 = &i2c7;
+I was going to ask whether you had tested the patch, but this should be good 
+enough :-)
 
-Please don't change existing aliases.
-While this makes the use of i2c7 for PMIC access uniform across the
-range of R-Car Gen3 SoCs that have it, I think this is a bad idea, and that
-it is better not to rely on I2C aliases at all.
+The result is nicer to read, thanks.
 
-I guess the BSP did this to configure the BD9571 PMIC for DDR backup
-mode using i2cset? Upstream has another method, avoiding the need for
-i2cset, cfr. Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
->         };
->
->         cpus {
-> @@ -337,6 +338,22 @@
->                         reg = <0 0xe6060000 0 0x508>;
->                 };
->
-> +               i2c_dvfs: i2c@e60b0000 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       compatible = "renesas,iic-r8a77990",
+and taken in my tree.
 
-"renesas,iic-r8a77990" is not yet documented.
-
-> +                                    "renesas,rcar-gen3-iic",
-> +                                    "renesas,rmobile-iic";
-
-Also, IIC on R-Car E3 does not have the automatic transmission registers.
-Does this affect claiming compatibility with the family-specific or generic
-compatible values?
-
-> +                       reg = <0 0xe60b0000 0 0x34>;
-
-Why 0x34? Last (byte-sized) register documented is at 0x14 => 0x15?
-
-> +                       interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&cpg CPG_MOD 926>;
-> +                       power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-> +                       resets = <&cpg 926>;
-> +                       dmas = <&dmac0 0x11>, <&dmac0 0x10>;
-> +                       dma-names = "tx", "rx";
-> +                       status = "disabled";
-> +               };
+> ---
+>  .../drm/rcar-du/rcar_du_of_lvds_r8a7790.dts   | 93 +++++++++----------
+>  .../drm/rcar-du/rcar_du_of_lvds_r8a7791.dts   | 53 +++++------
+>  .../drm/rcar-du/rcar_du_of_lvds_r8a7793.dts   | 53 +++++------
+>  .../drm/rcar-du/rcar_du_of_lvds_r8a7795.dts   | 53 +++++------
+>  .../drm/rcar-du/rcar_du_of_lvds_r8a7796.dts   | 53 +++++------
+>  5 files changed, 135 insertions(+), 170 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+> b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts index
+> 579753e04f3b3712..8bee4e787a0ab4eb 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts
+> @@ -7,70 +7,63 @@
+> 
+>  /dts-v1/;
+>  /plugin/;
+> -/ {
+> -	fragment@0 {
+> -		target-path = "/";
+> -		__overlay__ {
+> -			#address-cells = <2>;
+> -			#size-cells = <2>;
+> 
+> -			lvds@feb90000 {
+> -				compatible = "renesas,r8a7790-lvds";
+> -				reg = <0 0xfeb90000 0 0x1c>;
+> +&{/} {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> 
+> -				ports {
+> -					#address-cells = <1>;
+> -					#size-cells = <0>;
+> +	lvds@feb90000 {
+> +		compatible = "renesas,r8a7790-lvds";
+> +		reg = <0 0xfeb90000 0 0x1c>;
+> 
+> -					port@0 {
+> -						reg = <0>;
+> -						lvds0_input: endpoint {
+> -						};
+> -					};
+> -					port@1 {
+> -						reg = <1>;
+> -						lvds0_out: endpoint {
+> -						};
+> -					};
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
 > +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds0_input: endpoint {
+>  				};
+>  			};
+> -
+> -			lvds@feb94000 {
+> -				compatible = "renesas,r8a7790-lvds";
+> -				reg = <0 0xfeb94000 0 0x1c>;
+> -
+> -				ports {
+> -					#address-cells = <1>;
+> -					#size-cells = <0>;
+> -
+> -					port@0 {
+> -						reg = <0>;
+> -						lvds1_input: endpoint {
+> -						};
+> -					};
+> -					port@1 {
+> -						reg = <1>;
+> -						lvds1_out: endpoint {
+> -						};
+> -					};
+> +			port@1 {
+> +				reg = <1>;
+> +				lvds0_out: endpoint {
+>  				};
+>  			};
+>  		};
+>  	};
+> 
+> -	fragment@1 {
+> -		target-path = "/display@feb00000/ports";
+> -		__overlay__ {
+> -			port@1 {
+> -				endpoint {
+> -					remote-endpoint = <&lvds0_input>;
+> +	lvds@feb94000 {
+> +		compatible = "renesas,r8a7790-lvds";
+> +		reg = <0 0xfeb94000 0 0x1c>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds1_input: endpoint {
+>  				};
+>  			};
+> -			port@2 {
+> -				endpoint {
+> -					remote-endpoint = <&lvds1_input>;
+> +			port@1 {
+> +				reg = <1>;
+> +				lvds1_out: endpoint {
+>  				};
+>  			};
+>  		};
+>  	};
+>  };
+> +
+> +&{/display@feb00000/ports} {
+> +	port@1 {
+> +		endpoint {
+> +			remote-endpoint = <&lvds0_input>;
+> +		};
+> +	};
+> +	port@2 {
+> +		endpoint {
+> +			remote-endpoint = <&lvds1_input>;
+> +		};
+> +	};
+> +};
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+> b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts index
+> cb9da1f3942b5b30..92c0509971ec3df5 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts
+> @@ -7,44 +7,37 @@
+> 
+>  /dts-v1/;
+>  /plugin/;
+> -/ {
+> -	fragment@0 {
+> -		target-path = "/";
+> -		__overlay__ {
+> -			#address-cells = <2>;
+> -			#size-cells = <2>;
+> 
+> -			lvds@feb90000 {
+> -				compatible = "renesas,r8a7791-lvds";
+> -				reg = <0 0xfeb90000 0 0x1c>;
+> +&{/} {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> 
+> -				ports {
+> -					#address-cells = <1>;
+> -					#size-cells = <0>;
+> +	lvds@feb90000 {
+> +		compatible = "renesas,r8a7791-lvds";
+> +		reg = <0 0xfeb90000 0 0x1c>;
+> 
+> -					port@0 {
+> -						reg = <0>;
+> -						lvds0_input: endpoint {
+> -						};
+> -					};
+> -					port@1 {
+> -						reg = <1>;
+> -						lvds0_out: endpoint {
+> -						};
+> -					};
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds0_input: endpoint {
+>  				};
+>  			};
+> -		};
+> -	};
+> -
+> -	fragment@1 {
+> -		target-path = "/display@feb00000/ports";
+> -		__overlay__ {
+>  			port@1 {
+> -				endpoint {
+> -					remote-endpoint = <&lvds0_input>;
+> +				reg = <1>;
+> +				lvds0_out: endpoint {
+>  				};
+>  			};
+>  		};
+>  	};
+>  };
+> +
+> +&{/display@feb00000/ports} {
+> +	port@1 {
+> +		endpoint {
+> +			remote-endpoint = <&lvds0_input>;
+> +		};
+> +	};
+> +};
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+> b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts index
+> e7b8804dc3c1a1c5..c8b93f21de0fbb8e 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts
+> @@ -7,44 +7,37 @@
+> 
+>  /dts-v1/;
+>  /plugin/;
+> -/ {
+> -	fragment@0 {
+> -		target-path = "/";
+> -		__overlay__ {
+> -			#address-cells = <2>;
+> -			#size-cells = <2>;
+> 
+> -			lvds@feb90000 {
+> -				compatible = "renesas,r8a7793-lvds";
+> -				reg = <0 0xfeb90000 0 0x1c>;
+> +&{/} {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> 
+> -				ports {
+> -					#address-cells = <1>;
+> -					#size-cells = <0>;
+> +	lvds@feb90000 {
+> +		compatible = "renesas,r8a7793-lvds";
+> +		reg = <0 0xfeb90000 0 0x1c>;
+> 
+> -					port@0 {
+> -						reg = <0>;
+> -						lvds0_input: endpoint {
+> -						};
+> -					};
+> -					port@1 {
+> -						reg = <1>;
+> -						lvds0_out: endpoint {
+> -						};
+> -					};
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds0_input: endpoint {
+>  				};
+>  			};
+> -		};
+> -	};
+> -
+> -	fragment@1 {
+> -		target-path = "/display@feb00000/ports";
+> -		__overlay__ {
+>  			port@1 {
+> -				endpoint {
+> -					remote-endpoint = <&lvds0_input>;
+> +				reg = <1>;
+> +				lvds0_out: endpoint {
+>  				};
+>  			};
+>  		};
+>  	};
+>  };
+> +
+> +&{/display@feb00000/ports} {
+> +	port@1 {
+> +		endpoint {
+> +			remote-endpoint = <&lvds0_input>;
+> +		};
+> +	};
+> +};
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+> b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts index
+> a1327443e6fa4d31..16c2d03cb016c470 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts
+> @@ -7,44 +7,37 @@
+> 
+>  /dts-v1/;
+>  /plugin/;
+> -/ {
+> -	fragment@0 {
+> -		target-path = "/soc";
+> -		__overlay__ {
+> -			#address-cells = <2>;
+> -			#size-cells = <2>;
+> 
+> -			lvds@feb90000 {
+> -				compatible = "renesas,r8a7795-lvds";
+> -				reg = <0 0xfeb90000 0 0x14>;
+> +&{/soc} {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> 
+> -				ports {
+> -					#address-cells = <1>;
+> -					#size-cells = <0>;
+> +	lvds@feb90000 {
+> +		compatible = "renesas,r8a7795-lvds";
+> +		reg = <0 0xfeb90000 0 0x14>;
+> 
+> -					port@0 {
+> -						reg = <0>;
+> -						lvds0_input: endpoint {
+> -						};
+> -					};
+> -					port@1 {
+> -						reg = <1>;
+> -						lvds0_out: endpoint {
+> -						};
+> -					};
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds0_input: endpoint {
+> +				};
+> +			};
+> +			port@1 {
+> +				reg = <1>;
+> +				lvds0_out: endpoint {
+>  				};
+>  			};
+>  		};
+>  	};
+> +};
+> 
+> -	fragment@1 {
+> -		target-path = "/soc/display@feb00000/ports";
+> -		__overlay__ {
+> -			port@3 {
+> -				endpoint {
+> -					remote-endpoint = <&lvds0_input>;
+> -				};
+> -			};
+> +&{/soc/display@feb00000/ports} {
+> +	port@3 {
+> +		endpoint {
+> +			remote-endpoint = <&lvds0_input>;
+>  		};
+>  	};
+>  };
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
+> b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts index
+> b23d6466c4152b6f..680e923ac036c932 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts
+> @@ -7,44 +7,37 @@
+> 
+>  /dts-v1/;
+>  /plugin/;
+> -/ {
+> -	fragment@0 {
+> -		target-path = "/soc";
+> -		__overlay__ {
+> -			#address-cells = <2>;
+> -			#size-cells = <2>;
+> 
+> -			lvds@feb90000 {
+> -				compatible = "renesas,r8a7796-lvds";
+> -				reg = <0 0xfeb90000 0 0x14>;
+> +&{/soc} {
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> 
+> -				ports {
+> -					#address-cells = <1>;
+> -					#size-cells = <0>;
+> +	lvds@feb90000 {
+> +		compatible = "renesas,r8a7796-lvds";
+> +		reg = <0 0xfeb90000 0 0x14>;
+> 
+> -					port@0 {
+> -						reg = <0>;
+> -						lvds0_input: endpoint {
+> -						};
+> -					};
+> -					port@1 {
+> -						reg = <1>;
+> -						lvds0_out: endpoint {
+> -						};
+> -					};
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				lvds0_input: endpoint {
+> +				};
+> +			};
+> +			port@1 {
+> +				reg = <1>;
+> +				lvds0_out: endpoint {
+>  				};
+>  			};
+>  		};
+>  	};
+> +};
+> 
+> -	fragment@1 {
+> -		target-path = "/soc/display@feb00000/ports";
+> -		__overlay__ {
+> -			port@3 {
+> -				endpoint {
+> -					remote-endpoint = <&lvds0_input>;
+> -				};
+> -			};
+> +&{/soc/display@feb00000/ports} {
+> +	port@3 {
+> +		endpoint {
+> +			remote-endpoint = <&lvds0_input>;
+>  		};
+>  	};
+>  };
 
-Gr{oetje,eeting}s,
+-- 
+Regards,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
