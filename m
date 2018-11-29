@@ -1,83 +1,47 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 13/30] media: entity: Add only connected pads to the pipeline
-Date: Fri,  2 Nov 2018 00:31:27 +0100
-Message-Id: <20181101233144.31507-14-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from relmlor2.renesas.com ([210.160.252.172]:63208 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729157AbeK3ELh (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 29 Nov 2018 23:11:37 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 3/4] ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
+Date: Thu, 29 Nov 2018 16:57:06 +0000
+Message-Id: <1543510626-33570-1-git-send-email-biju.das@bp.renesas.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase hardware
+support enable the driver in the shmobile_defconfig multiplatform
+configuration.
 
-A single entity may contain multiple pipelines. Only add pads that were
-connected to the pad through which the entity was reached to the pipeline.
-
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/media/media-entity.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+V1-->V2 no change.
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-index cdf3805dec755ec5..a5bb257d5a68f755 100644
---- a/drivers/media/media-entity.c
-+++ b/drivers/media/media-entity.c
-@@ -460,15 +460,13 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
- 
- 	while ((pad = media_graph_walk_next(graph))) {
- 		struct media_entity *entity = pad->entity;
--		unsigned int i;
-+		struct media_pad *iter;
- 		bool skip_validation = pad->pipe;
- 
- 		DECLARE_BITMAP(active, MEDIA_ENTITY_MAX_PADS);
- 		DECLARE_BITMAP(has_no_links, MEDIA_ENTITY_MAX_PADS);
- 
--		for (i = 0; i < entity->num_pads; i++) {
--			struct media_pad *iter = &entity->pads[i];
--
-+		media_entity_for_routed_pads(pad, iter) {
- 			if (iter->pipe && WARN_ON(iter->pipe != pipe))
- 				ret = -EBUSY;
- 			else
-@@ -553,12 +551,9 @@ __must_check int __media_pipeline_start(struct media_pad *pad,
- 	media_graph_walk_start(graph, pad_err);
- 
- 	while ((pad_err = media_graph_walk_next(graph))) {
--		struct media_entity *entity_err = pad_err->entity;
--		unsigned int i;
--
--		for (i = 0; i < entity_err->num_pads; i++) {
--			struct media_pad *iter = &entity_err->pads[i];
-+		struct media_pad *iter;
- 
-+		media_entity_for_routed_pads(pad_err, iter) {
- 			/* Sanity check for negative stream_count */
- 			if (!WARN_ON_ONCE(iter->stream_count <= 0)) {
- 				--iter->stream_count;
-@@ -611,12 +606,9 @@ void __media_pipeline_stop(struct media_pad *pad)
- 	media_graph_walk_start(graph, pad);
- 
- 	while ((pad = media_graph_walk_next(graph))) {
--		struct media_entity *entity = pad->entity;
--		unsigned int i;
--
--		for (i = 0; i < entity->num_pads; i++) {
--			struct media_pad *iter = &entity->pads[i];
-+		struct media_pad *iter;
- 
-+		media_entity_for_routed_pads(pad, iter) {
- 			/* Sanity check for negative stream_count */
- 			if (!WARN_ON_ONCE(iter->stream_count <= 0)) {
- 				iter->stream_count--;
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 9e5a5ad..fdac4e4 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -177,6 +177,7 @@ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_RS5C372=y
++CONFIG_RTC_DRV_PCF85363=y
+ CONFIG_RTC_DRV_BQ32K=y
+ CONFIG_RTC_DRV_S35390A=y
+ CONFIG_RTC_DRV_RX8581=y
 -- 
-2.19.1
+2.7.4
