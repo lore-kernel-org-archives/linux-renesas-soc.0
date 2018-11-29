@@ -1,77 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeK2AFD (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:54616 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728096AbeK2VzY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:05:03 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/16] ARM: dts: r8a77470: Add SDHI0 support
-Date: Wed, 28 Nov 2018 14:03:05 +0100
-Message-Id: <15aa5a95e820e8183aa34535131e7c97789b8504.1543409901.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
-References: <cover.1543409901.git.horms+renesas@verge.net.au>
+        Thu, 29 Nov 2018 16:55:24 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 02/13] dt-bindings: clock: r8a7796: Remove CSIREF clock
+Date: Thu, 29 Nov 2018 11:49:57 +0100
+Message-Id: <20181129105008.10239-3-geert+renesas@glider.be>
+In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
+References: <20181129105008.10239-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+The R-Car Gen3 HardWare Manual Errata for Rev. 0.52 (Nov 30, 2016)
+removed the CSI reference clock on R-Car M3-W.
 
-RZ/G1C comes with two different types of IP for the SDHI
-interfaces, SDHI0 and SDHI2 share the same IP type, and
-such an IP is also compatible with the one found in R-Car
-Gen2. SDHI1 IP on the other hand is compatible with R-Car
-Gen3 with internal DMA.
-This patch completes the SDHI support of the R-Car Gen2
-compatible IPs, including fixing the max-frequency
-definition of SDHI2, as it turns out there is a bug in
-Section 1.3.9 of the RZ/G1C Hardware User's Manual (Rev.
-1.00 Oct. 2017).
+As this definition was never used, it can just be removed.
+The freed slot in the DT bindings header must not be reused, though.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 972610fb23b08dd5 ("clk: renesas: Add r8a7796 CPG Core Clock Definitions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ include/dt-bindings/clock/r8a7796-cpg-mssr.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 9611a936e1b8..ab2e0223f8a1 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -490,6 +490,21 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a77470",
-+				     "renesas,rcar-gen2-sdhi";
-+			reg = <0 0xee100000 0 0x328>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+			       <&dmac1 0xcd>, <&dmac1 0xce>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <156000000>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
-+		};
-+
- 		sdhi2: sd@ee160000 {
- 			compatible = "renesas,sdhi-r8a77470",
- 				     "renesas,rcar-gen2-sdhi";
-@@ -499,7 +514,7 @@
- 			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
- 			       <&dmac1 0xd3>, <&dmac1 0xd4>;
- 			dma-names = "tx", "rx", "tx", "rx";
--			max-frequency = <97500000>;
-+			max-frequency = <78000000>;
- 			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
- 			resets = <&cpg 312>;
- 			status = "disabled";
+diff --git a/include/dt-bindings/clock/r8a7796-cpg-mssr.h b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+index e6087f2f7e3aff4a..c0957cf458403bfb 100644
+--- a/include/dt-bindings/clock/r8a7796-cpg-mssr.h
++++ b/include/dt-bindings/clock/r8a7796-cpg-mssr.h
+@@ -56,7 +56,7 @@
+ #define R8A7796_CLK_CANFD		45
+ #define R8A7796_CLK_HDMI		46
+ #define R8A7796_CLK_CSI0		47
+-#define R8A7796_CLK_CSIREF		48
++/* CLK_CSIREF was removed */
+ #define R8A7796_CLK_CP			49
+ #define R8A7796_CLK_CPEX		50
+ #define R8A7796_CLK_R			51
 -- 
-2.11.0
+2.17.1
