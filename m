@@ -1,202 +1,78 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:24899 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728079AbeKQBNA (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55694 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeK3GE6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:13:00 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 30 Nov 2018 01:04:58 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-        <u.kleine-koenig@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 2/6] clk: Add (devm_)clk_get_optional() functions
-Date: Fri, 16 Nov 2018 14:59:33 +0000
-Message-Id: <20181116145937.27660-3-phil.edworthy@renesas.com>
-In-Reply-To: <20181116145937.27660-1-phil.edworthy@renesas.com>
-References: <20181116145937.27660-1-phil.edworthy@renesas.com>
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: adv748x: make data-lanes property mandatory for CSI-2 endpoints
+Date: Thu, 29 Nov 2018 20:58:59 +0200
+Message-ID: <4738724.38cIGBxbul@avalon>
+In-Reply-To: <20181129020147.22115-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20181129020147.22115-1-niklas.soderlund+renesas@ragnatech.se> <20181129020147.22115-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This adds clk_get_optional() and devm_clk_get_optional() functions to get
-optional clocks.
-They behave the same as (devm_)clk_get except where there is no clock
-producer. In this case, instead of returning -ENOENT, the function
-returns NULL. This makes error checking simpler and allows
-clk_prepare_enable, etc to be called on the returned reference
-without additional checks.
+Hi Niklas,
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v6:
- - Add doxygen style comment for devm_clk_get_optional() args
-v5:
- - No changes.
-v4:
- - No changes.
-v3:
- - No changes.
----
- drivers/clk/clk-devres.c | 18 ++++++++++++++++--
- drivers/clk/clkdev.c     | 17 +++++++++++++++--
- include/linux/clk.h      | 32 ++++++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+), 4 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 12c87457eca1..be07536725a2 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -14,7 +14,7 @@ static void devm_clk_release(struct device *dev, void *res)
- 	clk_put(*(struct clk **)res);
- }
- 
--struct clk *devm_clk_get(struct device *dev, const char *id)
-+static struct clk *__devm_clk_get(struct device *dev, const char *id, bool optional)
- {
- 	struct clk **ptr, *clk;
- 
-@@ -22,7 +22,10 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
--	clk = clk_get(dev, id);
-+	if (!optional)
-+		clk = clk_get(dev, id);
-+	else
-+		clk = clk_get_optional(dev, id);
- 	if (!IS_ERR(clk)) {
- 		*ptr = clk;
- 		devres_add(dev, ptr);
-@@ -32,8 +35,19 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- 
- 	return clk;
- }
-+
-+struct clk *devm_clk_get(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, false);
-+}
- EXPORT_SYMBOL(devm_clk_get);
- 
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	return __devm_clk_get(dev, id, true);
-+}
-+EXPORT_SYMBOL(devm_clk_get_optional);
-+
- struct clk_bulk_devres {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 0c655d1ba1d9..ebf3afef4371 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -241,21 +241,34 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- }
- EXPORT_SYMBOL(clk_get_sys);
- 
--struct clk *clk_get(struct device *dev, const char *con_id)
-+static struct clk *internal_clk_get(struct device *dev, const char *con_id,
-+				    bool optional)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
- 	struct clk *clk;
- 
- 	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id, false);
-+		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id,
-+					   optional);
- 		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
- 			return clk;
- 	}
- 
- 	return clk_get_sys(dev_id, con_id);
- }
-+
-+struct clk *clk_get(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, false);
-+}
- EXPORT_SYMBOL(clk_get);
- 
-+struct clk *clk_get_optional(struct device *dev, const char *con_id)
-+{
-+	return internal_clk_get(dev, con_id, true);
-+}
-+EXPORT_SYMBOL(clk_get_optional);
-+
- void clk_put(struct clk *clk)
- {
- 	__clk_put(clk);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 84512b3ecf5c..58bebc32133e 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -290,6 +290,16 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
-  */
- struct clk *clk_get(struct device *dev, const char *id);
- 
-+/**
-+ * clk_get_optional - lookup and obtain a reference to optional clock producer.
-+ * @dev: device for clock "consumer"
-+ * @id: clock consumer ID
-+ *
-+ * Behaves the same as clk_get except where there is no clock producer. In this
-+ * case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *clk_get_optional(struct device *dev, const char *id);
-+
- /**
-  * clk_bulk_get - lookup and obtain a number of references to clock producer.
-  * @dev: device for clock "consumer"
-@@ -383,6 +393,17 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
-  */
- struct clk *devm_clk_get(struct device *dev, const char *id);
- 
-+/**
-+ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-+ *			   clock producer.
-+ * @dev: device for clock "consumer"
-+ * @id: clock consumer ID
-+ *
-+ * Behaves the same as devm_clk_get except where there is no clock producer. In
-+ * this case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-+
- /**
-  * devm_get_clk_from_child - lookup and obtain a managed reference to a
-  *			     clock producer from child node.
-@@ -701,6 +722,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 					    struct clk_bulk_data *clks)
- {
-@@ -718,6 +744,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *devm_clk_get_optional(struct device *dev,
-+						const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 						 struct clk_bulk_data *clks)
- {
--- 
-2.17.1
+On Thursday, 29 November 2018 04:01:44 EET Niklas S=F6derlund wrote:
+> The CSI-2 transmitters can use a different number of lanes to transmit
+> data. Make the data-lanes mandatory for the endpoints that describe the
+> transmitters as no good default can be set to fallback on.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> * Changes since v3
+> - Add paragraph to describe the accepted values for the source endpoint
+>   data-lane property. Thanks Jacopo for pointing this out and sorry for
+>   missing this in v2.
+> * Changes since v2
+> - Update paragraph according to Laurents comments.
+> ---
+>  .../devicetree/bindings/media/i2c/adv748x.txt         | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> b/Documentation/devicetree/bindings/media/i2c/adv748x.txt index
+> 5dddc95f9cc46084..4f91686e54a6b939 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
+> @@ -48,7 +48,16 @@ are numbered as follows.
+>  	  TXA		source		10
+>  	  TXB		source		11
+>=20
+> -The digital output port nodes must contain at least one endpoint.
+> +The digital output port nodes, when present, shall contain at least one
+> +endpoint. Each of those endpoints shall contain the data-lanes property =
+as
+> +described in video-interfaces.txt.
+> +
+> +Required source endpoint properties:
+> +  - data-lanes: an array of physical data lane indexes
+> +    The accepted value(s) for this property depends on which of the two
+> +    sources are described. For TXA 1, 2 or 4 data lanes can be described
+> +    while for TXB only 1 data lane is valid. See video-interfaces.txt
+> +    for detailed description.
+>=20
+>  Ports are optional if they are not connected to anything at the hardware
+> level.
+
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
