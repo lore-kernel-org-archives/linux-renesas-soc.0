@@ -1,87 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:10914 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726585AbeLACpk (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:48338 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727880AbeK2VzY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:45:40 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 20/21] ARM: dts: r8a7744: Add thermal device to DT
-Date: Fri, 30 Nov 2018 15:26:34 +0000
-Message-Id: <1543591595-37861-21-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 29 Nov 2018 16:55:24 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 03/13] clk: renesas: r8a774a1: Add CPEX clock
+Date: Thu, 29 Nov 2018 11:49:58 +0100
+Message-Id: <20181129105008.10239-4-geert+renesas@glider.be>
+In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
+References: <20181129105008.10239-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch instantiates the thermal sensor module with thermal-zone
-support.
+Implement support for the CPEX clock on RZ/G2M.  This clock can be
+selected as a clock source for CMT1 (Compare Match Timer Type 1).
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-V1-->V2
-   * No Change
----
- arch/arm/boot/dts/r8a7744.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 91096c3..937c800 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -317,6 +317,17 @@
- 			resets = <&cpg 407>;
- 		};
+diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+index b0da34217bdf428e..10e852518870c9ab 100644
+--- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+@@ -100,6 +100,7 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
  
-+		thermal: thermal@e61f0000 {
-+			compatible = "renesas,thermal-r8a7744",
-+				     "renesas,rcar-gen2-thermal";
-+			reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		icram0:	sram@e63a0000 {
- 			compatible = "mmio-sram";
- 			reg = <0 0xe63a0000 0 0x12000>;
-@@ -1351,6 +1362,26 @@
- 		};
- 	};
+ 	DEF_FIXED("cl",         R8A774A1_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
+ 	DEF_FIXED("cp",         R8A774A1_CLK_CP,    CLK_EXTAL,      2, 1),
++	DEF_FIXED("cpex",       R8A774A1_CLK_CPEX,  CLK_EXTAL,      2, 1),
  
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature = <95000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 	DEF_DIV6P1("csi0",      R8A774A1_CLK_CSI0,  CLK_PLL1_DIV4, 0x00c),
+ 	DEF_DIV6P1("mso",       R8A774A1_CLK_MSO,   CLK_PLL1_DIV4, 0x014),
 -- 
-2.7.4
+2.17.1
