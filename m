@@ -1,52 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45317 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeK2AFX (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:12977 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729818AbeK3EJR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Nov 2018 19:05:23 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 16/16] ARM: dts: r9a06g032: Correct the GIC DT node name
-Date: Wed, 28 Nov 2018 14:03:18 +0100
-Message-Id: <673df60a880f060e3e94920c7b5f7a9ed8aa65f2.1543409901.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543409901.git.horms+renesas@verge.net.au>
-References: <cover.1543409901.git.horms+renesas@verge.net.au>
+        Thu, 29 Nov 2018 23:09:17 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 0/4] Add NXP pcf85263 real-time clock support
+Date: Thu, 29 Nov 2018 16:54:42 +0000
+Message-Id: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+This patch set aims to add support for NXP pcf85263 real-time clock. 
+pcf85263 rtc is compatible with pcf85363 rtc except that pcf85363 has
+64 bytes additional RAM. 
 
-Harmless mistake, but it's incorrect. The DT spec provides recommendations
-for the node names:
-"The name of a node should be somewhat generic, reflecting the function
-of the device and not its precise programming model. If appropriate, the
-name should be one of the following choices:
-...
-interrupt-controller"
+1 byte of nvmem is supported in pcf85263 and is exposed through sysfs.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The details of pcf85363 and pcf85263 can be found in the below data sheets.
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index 2322268bc862..4c1ab49c7d39 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -173,7 +173,7 @@
- 			status = "okay";
- 		};
- 
--		gic: gic@44101000 {
-+		gic: interrupt-controller@44101000 {
- 			compatible = "arm,cortex-a7-gic", "arm,gic-400";
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
+https://www.nxp.com/docs/en/data-sheet/PCF85363A.pdf
+
+https://www.nxp.com/docs/en/data-sheet/PCF85263A.pdf
+
+This patch is tested against linux-next.
+
+V1-->V2
+   * Incorporated simon's review comment for binding patch.
+   * Incorporated Geert and Alexandre's review comments.
+
+Biju Das (4):
+  dt-bindings: rtc: pcf85363: Document pcf85263 real-time clock
+  rtc: pcf85363: Add support for NXP pcf85263 rtc
+  ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
+  ARM: dts: iwg23s-sbc: Enable RTC
+
+ Documentation/devicetree/bindings/rtc/pcf85363.txt |  4 +-
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          | 18 ++++++
+ arch/arm/configs/shmobile_defconfig                |  1 +
+ drivers/rtc/rtc-pcf85363.c                         | 72 +++++++++++++++++-----
+ 4 files changed, 78 insertions(+), 17 deletions(-)
+
 -- 
-2.11.0
+2.7.4
