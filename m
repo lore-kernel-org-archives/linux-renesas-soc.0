@@ -1,47 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:43749 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbeK3UIX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:35973 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728695AbeK3B44 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:08:23 -0500
-MIME-Version: 1.0
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com> <1543319795-48325-11-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543319795-48325-11-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Nov 2018 09:59:34 +0100
-Message-ID: <CAMuHMdX-yj98VFJ3y4r6RqtJA4OFNF0knyqjbx05Q0sEcoetQg@mail.gmail.com>
-Subject: Re: [PATCH 10/22] ARM: dts: r8a7744: Add audio support
+        Thu, 29 Nov 2018 20:56:56 -0500
+Date: Thu, 29 Nov 2018 15:51:15 +0100
+From: Simon Horman <horms@verge.net.au>
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 10/22] ARM: dts: r8a7744: Add audio support
+Message-ID: <20181129145110.zzdvjmou7giy46jl@verge.net.au>
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+ <1543319795-48325-11-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543319795-48325-11-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
+On Tue, Nov 27, 2018 at 11:56:23AM +0000, Biju Das wrote:
 > Add sound support for the RZ/G1N SoC (a.k.a. R8A7744).
->
+> 
 > This work is based on similar work done on the R8A7743 SoC.
->
+> 
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks,
 
-Gr{oetje,eeting}s,
+This looks fine to me but I will wait to see if there are other reviews
+before applying.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
