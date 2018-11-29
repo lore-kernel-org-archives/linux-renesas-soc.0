@@ -1,32 +1,46 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:51934 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeK3V0E (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 16:26:04 -0500
-Date: Fri, 30 Nov 2018 11:17:12 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a7795-es1: Add missing power
- domains to IPMMU nodes
-Message-ID: <20181130101711.nvxen2resskismvl@verge.net.au>
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a7795-es1: Add missing power domains to IPMMU nodes
+Date: Thu, 29 Nov 2018 11:34:35 +0100
+Message-Id: <20181129103435.9260-3-geert+renesas@glider.be>
+In-Reply-To: <20181129103435.9260-1-geert+renesas@glider.be>
 References: <20181129103435.9260-1-geert+renesas@glider.be>
- <20181129103435.9260-3-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181129103435.9260-3-geert+renesas@glider.be>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 29, 2018 at 11:34:35AM +0100, Geert Uytterhoeven wrote:
-> While commit 3b7e7848f0e88b36 ("arm64: dts: renesas: r8a7795: Add IPMMU
-> device nodes") for R-Car H3 ES2.0 did include power-domains properties,
-> they were forgotten in the counterpart for older R-Car H3 ES1.x SoCs.
-> 
-> Fixes: e4b9a493df45075b ("arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+While commit 3b7e7848f0e88b36 ("arm64: dts: renesas: r8a7795: Add IPMMU
+device nodes") for R-Car H3 ES2.0 did include power-domains properties,
+they were forgotten in the counterpart for older R-Car H3 ES1.x SoCs.
 
-Thanks, applied for v4.21.
+Fixes: e4b9a493df45075b ("arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 0fb84c219b2feaca..40d10daca85201aa 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -28,6 +28,7 @@
+ 		compatible = "renesas,ipmmu-r8a7795";
+ 		reg = <0 0xec680000 0 0x1000>;
+ 		renesas,ipmmu-main = <&ipmmu_mm 5>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		#iommu-cells = <1>;
+ 	};
+ 
+@@ -35,6 +36,7 @@
+ 		compatible = "renesas,ipmmu-r8a7795";
+ 		reg = <0 0xe7730000 0 0x1000>;
+ 		renesas,ipmmu-main = <&ipmmu_mm 8>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		#iommu-cells = <1>;
+ 	};
+ 
+-- 
+2.17.1
