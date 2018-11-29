@@ -1,148 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:10914 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726585AbeLACpY (ORCPT
+Received: from xavier.telenet-ops.be ([195.130.132.52]:46832 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728113AbeK2VzY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:45:24 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 14/21] ARM: dts: r8a7744: USB 2.0 host support
-Date: Fri, 30 Nov 2018 15:26:28 +0000
-Message-Id: <1543591595-37861-15-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+        Thu, 29 Nov 2018 16:55:24 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 11/13] clk: renesas: r8a77995: Remove non-existent SSP clocks
+Date: Thu, 29 Nov 2018 11:50:06 +0100
+Message-Id: <20181129105008.10239-12-geert+renesas@glider.be>
+In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
+References: <20181129105008.10239-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe internal PCI bridge devices, USB phy device and
-link PCI USB devices to USB phy.
+The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Dec 22, 2017, and
+Feb 28, 2018) removed the SSPSRC, SSP1, and SSP2 clocks on R-Car D3, as
+this SoC does not have a Stream and Security Processor.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-   * No Change
----
- arch/arm/boot/dts/r8a7744.dtsi | 77 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 72 insertions(+), 5 deletions(-)
+As these definitions were never used, they can just be removed.
+The freed slots in the DT bindings header must not be reused, though.
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 3f7674b..1d4cb5e 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -454,8 +454,25 @@
- 		};
+Fixes: 714c53aa2e2d6d60 ("clk: renesas: Add r8a77995 CPG Core Clock Definitions")
+Fixes: d71e851d82c6cfe5 ("clk: renesas: cpg-mssr: Add R8A77995 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a77995-cpg-mssr.c       | 1 -
+ include/dt-bindings/clock/r8a77995-cpg-mssr.h | 4 ++--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index 5cbdabc311f73de5..f2636a34c96c08ca 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -42,7 +42,6 @@ enum clk_ids {
+ 	CLK_S2,
+ 	CLK_S3,
+ 	CLK_SDSRC,
+-	CLK_SSPSRC,
+ 	CLK_RINT,
+ 	CLK_OCO,
  
- 		usbphy: usb-phy@e6590100 {
-+			compatible = "renesas,usb-phy-r8a7744",
-+				     "renesas,rcar-gen2-usb-phy";
- 			reg = <0 0xe6590100 0 0x100>;
--			/* placeholder */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			clocks = <&cpg CPG_MOD 704>;
-+			clock-names = "usbhs";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 704>;
-+			status = "disabled";
-+
-+			usb0: usb-channel@0 {
-+				reg = <0>;
-+				#phy-cells = <1>;
-+			};
-+			usb2: usb-channel@2 {
-+				reg = <2>;
-+				#phy-cells = <1>;
-+			};
- 		};
- 
- 		dmac0: dma-controller@e6700000 {
-@@ -847,23 +864,73 @@
- 		};
- 
- 		pci0: pci@ee090000 {
--			reg = <0 0xee090000 0 0xc00>;
-+			compatible = "renesas,pci-r8a7744",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee090000 0 0xc00>,
-+			      <0 0xee080000 0 0x1100>;
-+			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
- 
- 			bus-range = <0 0>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			#interrupt-cells = <1>;
--			/* placeholder */
-+			ranges = <0x02000000 0 0xee080000 0 0xee080000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x800 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x1000 0 0 0 0>;
-+				phys = <&usb0 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		pci1: pci@ee0d0000 {
--			reg = <0 0xee0d0000 0 0xc00>;
-+			compatible = "renesas,pci-r8a7744",
-+				     "renesas,pci-rcar-gen2";
-+			device_type = "pci";
-+			reg = <0 0xee0d0000 0 0xc00>,
-+			      <0 0xee0c0000 0 0x1100>;
-+			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 703>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 703>;
-+			status = "disabled";
- 
- 			bus-range = <1 1>;
- 			#address-cells = <3>;
- 			#size-cells = <2>;
- 			#interrupt-cells = <1>;
--			/* placeholder */
-+			ranges = <0x02000000 0 0xee0c0000 0 0xee0c0000 0 0x00010000>;
-+			interrupt-map-mask = <0xff00 0 0 0x7>;
-+			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
-+					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			usb@1,0 {
-+				reg = <0x10800 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
-+
-+			usb@2,0 {
-+				reg = <0x11000 0 0 0 0>;
-+				phys = <&usb2 0>;
-+				phy-names = "usb";
-+			};
- 		};
- 
- 		sdhi0: sd@ee100000 {
+diff --git a/include/dt-bindings/clock/r8a77995-cpg-mssr.h b/include/dt-bindings/clock/r8a77995-cpg-mssr.h
+index 1eb11acfa563dbd8..80b3c5ec9118b544 100644
+--- a/include/dt-bindings/clock/r8a77995-cpg-mssr.h
++++ b/include/dt-bindings/clock/r8a77995-cpg-mssr.h
+@@ -35,8 +35,8 @@
+ #define R8A77995_CLK_CRD2		24
+ #define R8A77995_CLK_SD0H		25
+ #define R8A77995_CLK_SD0		26
+-#define R8A77995_CLK_SSP2		27
+-#define R8A77995_CLK_SSP1		28
++/* CLK_SSP2 was removed */
++/* CLK_SSP1 was removed */
+ #define R8A77995_CLK_RPC		29
+ #define R8A77995_CLK_RPCD2		30
+ #define R8A77995_CLK_ZA2		31
 -- 
-2.7.4
+2.17.1
