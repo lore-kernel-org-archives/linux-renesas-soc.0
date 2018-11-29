@@ -1,111 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48292 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732875AbeKMWpr (ORCPT
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:36025 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbeK2XcC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Nov 2018 17:45:47 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] reset: Add reset_control_get_count()
-Date: Tue, 13 Nov 2018 13:47:44 +0100
-Message-Id: <20181113124744.7769-1-geert+renesas@glider.be>
+        Thu, 29 Nov 2018 18:32:02 -0500
+MIME-Version: 1.0
+References: <1540544153-48098-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1540544153-48098-1-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Nov 2018 13:26:36 +0100
+Message-ID: <CAMuHMdWaa+FHYD=4OeRzFJPepqqM5ffSepeZ4ej8ERZCM9aDFg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a77470 support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently the reset core has internal support for counting the number of
-resets for a device described in DT.  Generalize this to devices using
-lookup resets, and export it for public use.
+On Fri, Oct 26, 2018 at 11:03 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> RZ/G1C (R8A77470) watchdog implementation is compatible with R-Car
+> Gen2, therefore add relevant documentation.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-This will be used by generic drivers that need to be sure a device is
-controlled by a single, dedicated reset line (e.g. vfio-platform).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-See https://lore.kernel.org/lkml/1539003437.11512.20.camel@pengutronix.de/
-for the rationale to ensure a single, dedicated reset line.
+Gr{oetje,eeting}s,
 
- drivers/reset/core.c  | 41 +++++++++++++++++++++++++++++++++++++++++
- include/linux/reset.h |  7 +++++++
- 2 files changed, 48 insertions(+)
+                        Geert
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 654e20ff2d5da9d4..c32b755ec373c338 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -859,3 +859,44 @@ devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
- 	return rstc;
- }
- EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
-+
-+static int reset_control_get_count_from_lookup(struct device *dev)
-+{
-+	const struct reset_control_lookup *lookup;
-+	const char *dev_id = dev_name(dev);
-+	int count = 0;
-+
-+	if (!dev)
-+		return -EINVAL;
-+
-+	mutex_lock(&reset_lookup_mutex);
-+
-+	list_for_each_entry(lookup, &reset_lookup_list, list) {
-+		if (!strcmp(lookup->dev_id, dev_id))
-+			count++;
-+	}
-+
-+	mutex_unlock(&reset_lookup_mutex);
-+
-+	if (count == 0)
-+		count = -ENOENT;
-+
-+	return count;
-+}
-+
-+/**
-+ * of_reset_control_get_count - Count number of resets available with a device
-+ *
-+ * @dev: device for which to return the number of resets
-+ *
-+ * Returns positive reset count on success, or error number on failure and
-+ * on count being zero.
-+ */
-+int reset_control_get_count(struct device *dev)
-+{
-+	if (dev->of_node)
-+		return of_reset_control_get_count(dev->of_node);
-+
-+	return reset_control_get_count_from_lookup(dev);
-+}
-+EXPORT_SYMBOL_GPL(reset_control_get_count);
-diff --git a/include/linux/reset.h b/include/linux/reset.h
-index f0b094130686bf32..2698b36bd1eb3e0c 100644
---- a/include/linux/reset.h
-+++ b/include/linux/reset.h
-@@ -32,6 +32,8 @@ struct reset_control *devm_reset_control_array_get(struct device *dev,
- struct reset_control *of_reset_control_array_get(struct device_node *np,
- 						 bool shared, bool optional);
- 
-+int reset_control_get_count(struct device *dev);
-+
- #else
- 
- static inline int reset_control_reset(struct reset_control *rstc)
-@@ -97,6 +99,11 @@ of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
- 	return optional ? NULL : ERR_PTR(-ENOTSUPP);
- }
- 
-+static inline int reset_control_get_count(struct device *dev)
-+{
-+	return -ENOENT;
-+}
-+
- #endif /* CONFIG_RESET_CONTROLLER */
- 
- static inline int __must_check device_reset(struct device *dev)
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
