@@ -1,319 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:57029 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbeKEVTL (ORCPT
+Received: from sauhun.de ([88.99.104.3]:57550 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbeK3Wmy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 16:19:11 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: geert+renesas@glider.be, horms@verge.net.au,
-        laurent.pinchart@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, linus.walleij@linaro.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH] pinctrl: sh-pfc: r8a77990: Add VIN pins, groups and functions
-Date: Mon,  5 Nov 2018 12:59:33 +0100
-Message-Id: <1541419173-22729-1-git-send-email-jacopo+renesas@jmondi.org>
+        Fri, 30 Nov 2018 17:42:54 -0500
+Date: Fri, 30 Nov 2018 12:33:53 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] mmc: tmio: fix reset operation
+Message-ID: <20181130113353.3ljkc6sjvfdtkxyi@ninjato>
+References: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181126170247.4076-3-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6iuffavcnk4vmiuu"
+Content-Disposition: inline
+In-Reply-To: <20181126170247.4076-3-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds VIN{4,5} pins, groups and functions to the R8A77990 SoC.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+--6iuffavcnk4vmiuu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-This patch requires the VIN_DATA_PIN_GROUP_VER macro introduced by patch:
-[PATCH 1/2] pinctrl: sh-pfc: Introduce VIN_DATA_PIN_GROUP_VER
+On Mon, Nov 26, 2018 at 06:02:46PM +0100, Niklas S=C3=B6derlund wrote:
+> SD / MMC did not operate properly when suspend transition failed.
+> Because the SCC was not reset at resume, issue of the command failed.
+> Call the host specific reset function and reset the hardware in order to
+> add reset of SCC. This change also fixes tuning on some stubborn cards
+> on Gen2.
+>=20
+> Based on work from Masaharu Hayakawa.
+>=20
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-Patch based on v4.20-rc1
+Tested on M3-N and H3 ES2.0. eMMC cards were succesfully probed and
+transfer speeds were satisfying.
 
-v2 -> v3:
-- Rebased on v4.20-rc1
-- Use the newly introduced VIN_DATA_PIN_GROUP_VER macro
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Incorporate Geert's comments:
-- vin5_data8_b is only used with 8 pins: use regular SH_PFC_PIN_GROUP()
-- remove stf groups for vin4/vin5
-- confirmed that pins [23-8] of vin4's groups 'a' and 'b' are shared
-- confirmed with HW team the synchronism pins in vin5 are only for group 'a'
 
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 244 ++++++++++++++++++++++++++++++++++
- 1 file changed, 244 insertions(+)
+--6iuffavcnk4vmiuu
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 1fdafa4..16fd139 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -2433,6 +2433,190 @@ static const unsigned int usb30_id_mux[] = {
- 	USB3HS0_ID_MARK,
- };
+-----BEGIN PGP SIGNATURE-----
 
-+/* - VIN4 ------------------------------------------------------------------- */
-+static const union vin_data vin4_data_a_pins = {
-+	.data24 = {
-+		RCAR_GP_PIN(2, 6),  RCAR_GP_PIN(2, 7),
-+		RCAR_GP_PIN(2, 8),  RCAR_GP_PIN(2, 9),
-+		RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 11),
-+		RCAR_GP_PIN(2, 12), RCAR_GP_PIN(2, 13),
-+		RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-+		RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 10),
-+		RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 14),
-+		RCAR_GP_PIN(1, 9),  RCAR_GP_PIN(1, 12),
-+		RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 16),
-+		RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 18),
-+		RCAR_GP_PIN(1, 19), RCAR_GP_PIN(0, 1),
-+	},
-+};
-+
-+static const union vin_data vin4_data_a_mux = {
-+	.data24 = {
-+		VI4_DATA0_A_MARK, VI4_DATA1_A_MARK,
-+		VI4_DATA2_A_MARK, VI4_DATA3_A_MARK,
-+		VI4_DATA4_A_MARK, VI4_DATA5_A_MARK,
-+		VI4_DATA6_A_MARK, VI4_DATA7_A_MARK,
-+		VI4_DATA8_MARK,   VI4_DATA9_MARK,
-+		VI4_DATA10_MARK,  VI4_DATA11_MARK,
-+		VI4_DATA12_MARK,  VI4_DATA13_MARK,
-+		VI4_DATA14_MARK,  VI4_DATA15_MARK,
-+		VI4_DATA16_MARK,  VI4_DATA17_MARK,
-+		VI4_DATA18_MARK,  VI4_DATA19_MARK,
-+		VI4_DATA20_MARK,  VI4_DATA21_MARK,
-+		VI4_DATA22_MARK,  VI4_DATA23_MARK,
-+	},
-+};
-+
-+static const union vin_data vin4_data_b_pins = {
-+	.data24 = {
-+		RCAR_GP_PIN(1, 8),  RCAR_GP_PIN(1, 11),
-+		RCAR_GP_PIN(1, 21), RCAR_GP_PIN(1, 22),
-+		RCAR_GP_PIN(0, 5),  RCAR_GP_PIN(0, 6),
-+		RCAR_GP_PIN(0, 16), RCAR_GP_PIN(0, 17),
-+		RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-+		RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 10),
-+		RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 14),
-+		RCAR_GP_PIN(1, 9),  RCAR_GP_PIN(1, 12),
-+		RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 15),
-+		RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 18),
-+		RCAR_GP_PIN(1, 19), RCAR_GP_PIN(0, 1),
-+	},
-+};
-+
-+static const union vin_data vin4_data_b_mux = {
-+	.data24 = {
-+		VI4_DATA0_B_MARK, VI4_DATA1_B_MARK,
-+		VI4_DATA2_B_MARK, VI4_DATA3_B_MARK,
-+		VI4_DATA4_B_MARK, VI4_DATA5_B_MARK,
-+		VI4_DATA6_B_MARK, VI4_DATA7_B_MARK,
-+		VI4_DATA8_MARK,   VI4_DATA9_MARK,
-+		VI4_DATA10_MARK,  VI4_DATA11_MARK,
-+		VI4_DATA12_MARK,  VI4_DATA13_MARK,
-+		VI4_DATA14_MARK,  VI4_DATA15_MARK,
-+		VI4_DATA16_MARK,  VI4_DATA17_MARK,
-+		VI4_DATA18_MARK,  VI4_DATA19_MARK,
-+		VI4_DATA20_MARK,  VI4_DATA21_MARK,
-+		VI4_DATA22_MARK,  VI4_DATA23_MARK,
-+	},
-+};
-+
-+static const unsigned int vin4_sync_pins[] = {
-+	/* HSYNC, VSYNC */
-+	RCAR_GP_PIN(2, 25), RCAR_GP_PIN(2, 24),
-+};
-+
-+static const unsigned int vin4_sync_mux[] = {
-+	VI4_HSYNC_N_MARK, VI4_VSYNC_N_MARK,
-+};
-+
-+static const unsigned int vin4_field_pins[] = {
-+	RCAR_GP_PIN(2, 23),
-+};
-+
-+static const unsigned int vin4_field_mux[] = {
-+	VI4_FIELD_MARK,
-+};
-+
-+static const unsigned int vin4_clkenb_pins[] = {
-+	RCAR_GP_PIN(1, 2),
-+};
-+
-+static const unsigned int vin4_clkenb_mux[] = {
-+	VI4_CLKENB_MARK,
-+};
-+
-+static const unsigned int vin4_clk_pins[] = {
-+	RCAR_GP_PIN(2, 22),
-+};
-+
-+static const unsigned int vin4_clk_mux[] = {
-+	VI4_CLK_MARK,
-+};
-+
-+/* - VIN5 ------------------------------------------------------------------- */
-+static const union vin_data vin5_data_a_pins = {
-+	.data16 = {
-+		RCAR_GP_PIN(1, 1),  RCAR_GP_PIN(1, 2),
-+		RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 12),
-+		RCAR_GP_PIN(1, 15), RCAR_GP_PIN(1, 16),
-+		RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 18),
-+		RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
-+		RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 11),
-+		RCAR_GP_PIN(0, 8),  RCAR_GP_PIN(0, 10),
-+		RCAR_GP_PIN(0, 2),  RCAR_GP_PIN(0, 3),
-+	},
-+};
-+
-+static const union vin_data vin5_data_a_mux = {
-+	.data16 = {
-+		VI5_DATA0_A_MARK,  VI5_DATA1_A_MARK,
-+		VI5_DATA2_A_MARK,  VI5_DATA3_A_MARK,
-+		VI5_DATA4_A_MARK,  VI5_DATA5_A_MARK,
-+		VI5_DATA6_A_MARK,  VI5_DATA7_A_MARK,
-+		VI5_DATA8_A_MARK,  VI5_DATA9_A_MARK,
-+		VI5_DATA10_A_MARK, VI5_DATA11_A_MARK,
-+		VI5_DATA12_A_MARK, VI5_DATA13_A_MARK,
-+		VI5_DATA14_A_MARK, VI5_DATA15_A_MARK,
-+	},
-+};
-+
-+static const unsigned int vin5_data8_b_pins[] = {
-+	RCAR_GP_PIN(2, 23), RCAR_GP_PIN(0, 4),
-+	RCAR_GP_PIN(0, 7),  RCAR_GP_PIN(0, 12),
-+	RCAR_GP_PIN(0, 13), RCAR_GP_PIN(0, 14),
-+	RCAR_GP_PIN(0, 16), RCAR_GP_PIN(0, 17),
-+};
-+
-+static const unsigned int vin5_data8_b_mux[] = {
-+	VI5_DATA0_B_MARK,  VI5_DATA1_B_MARK,
-+	VI5_DATA2_B_MARK,  VI5_DATA3_B_MARK,
-+	VI5_DATA4_B_MARK,  VI5_DATA5_B_MARK,
-+	VI5_DATA6_B_MARK,  VI5_DATA7_B_MARK,
-+};
-+
-+static const unsigned int vin5_sync_a_pins[] = {
-+	/* HSYNC_N, VSYNC_N */
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 9),
-+};
-+
-+static const unsigned int vin5_sync_a_mux[] = {
-+	VI5_HSYNC_N_A_MARK, VI5_VSYNC_N_A_MARK,
-+};
-+
-+static const unsigned int vin5_field_a_pins[] = {
-+	RCAR_GP_PIN(1, 10),
-+};
-+
-+static const unsigned int vin5_field_a_mux[] = {
-+	VI5_FIELD_A_MARK,
-+};
-+
-+static const unsigned int vin5_clkenb_a_pins[] = {
-+	RCAR_GP_PIN(0, 1),
-+};
-+
-+static const unsigned int vin5_clkenb_a_mux[] = {
-+	VI5_CLKENB_A_MARK,
-+};
-+
-+static const unsigned int vin5_clk_a_pins[] = {
-+	RCAR_GP_PIN(1, 0),
-+};
-+
-+static const unsigned int vin5_clk_a_mux[] = {
-+	VI5_CLK_A_MARK,
-+};
-+
-+static const unsigned int vin5_clk_b_pins[] = {
-+	RCAR_GP_PIN(2, 22),
-+};
-+
-+static const unsigned int vin5_clk_b_mux[] = {
-+	VI5_CLK_B_MARK,
-+};
-+
- static const struct {
- 	struct sh_pfc_pin_group common[123];
- 	struct sh_pfc_pin_group automotive[0];
-@@ -2561,6 +2745,32 @@ static const struct {
- 		SH_PFC_PIN_GROUP(usb0_id),
- 		SH_PFC_PIN_GROUP(usb30),
- 		SH_PFC_PIN_GROUP(usb30_id),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, a, 8),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, a, 10),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, a, 12),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, a, 16),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, a, 20),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, a, 24),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, b, 8),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, b, 10),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, b, 12),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, b, 16),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, b, 20),
-+		VIN_DATA_PIN_GROUP_VER(vin4_data, b, 24),
-+		SH_PFC_PIN_GROUP(vin4_sync),
-+		SH_PFC_PIN_GROUP(vin4_field),
-+		SH_PFC_PIN_GROUP(vin4_clkenb),
-+		SH_PFC_PIN_GROUP(vin4_clk),
-+		VIN_DATA_PIN_GROUP_VER(vin5_data, a, 8),
-+		VIN_DATA_PIN_GROUP_VER(vin5_data, a, 10),
-+		VIN_DATA_PIN_GROUP_VER(vin5_data, a, 12),
-+		VIN_DATA_PIN_GROUP_VER(vin5_data, a, 16),
-+		SH_PFC_PIN_GROUP(vin5_data8_b),
-+		SH_PFC_PIN_GROUP(vin5_sync_a),
-+		SH_PFC_PIN_GROUP(vin5_field_a),
-+		SH_PFC_PIN_GROUP(vin5_clkenb_a),
-+		SH_PFC_PIN_GROUP(vin5_clk_a),
-+		SH_PFC_PIN_GROUP(vin5_clk_b),
- 	}
- };
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwBICEACgkQFA3kzBSg
+KbaY9Q//UFnix0Z09O+jIle1JLZi6xGYNnegYBE3l2CHNgm51RNn+aU0lGzC+5rj
+Xu0JLwP8EgWh8IL4ekJLV20ggBVbU+uqR+ZsfyQ4OGDOszBCMyM1876oP/jji8kT
+EViR8/9TY5C0cIUSviXtpvNSxwfdL60ZBHNsbGAGY76mviwHfE+5u9WiERFi+dp/
+MsEVF/DdbU3z+qmREHUt/Tz5wdW0VXNB7qNglD6nhCKaa6S7hCKEo/5vzROQ768z
+pi9PR2c1dOL9h5gZoP4ZQFw0BS7JNzD68fCVYMNpJtFI+UdKS71V1sDX4ujNUzZv
+lMHYVeHhn7A1ii8vtI5IvNFYM/8YfWz2YWJ3drgZ5t+XE3H76aEpt1h7TRYlPMjX
+eVcgEMQEU6lFq35l8UFnD/RDa65hjbG7ew0fX2Ex9F3+DvIoPlSqttZNL+UL88Gs
+vzjl76O+tMVujmXt9Lx+I3dxtaYF2MI5+tIN0XB7xlkRgLFLsBP7YzwkYh2nex8B
+cbapZPmbwSADt4KuljFBwg/0qijwNWfZyklsCnvWyQYsSMqMk47pvthUzznKbrx4
+8g6TdTGtz5LETrZSp46+CHGBGsPddRpRzVJyCWGmofT9vOWDwVON1uUYtmCFBWY4
+HF0OJJlT18vqRQt6lxo8h68jXFpQrRllHik4toiwpNuOna41skU=
+=WTSr
+-----END PGP SIGNATURE-----
 
-@@ -2774,6 +2984,38 @@ static const char * const usb30_groups[] = {
- 	"usb30_id",
- };
-
-+static const char * const vin4_groups[] = {
-+	"vin4_data8_a",
-+	"vin4_data10_a",
-+	"vin4_data12_a",
-+	"vin4_data16_a",
-+	"vin4_data20_a",
-+	"vin4_data24_a",
-+	"vin4_data8_b",
-+	"vin4_data10_b",
-+	"vin4_data12_b",
-+	"vin4_data16_b",
-+	"vin4_data20_b",
-+	"vin4_data24_b",
-+	"vin4_sync",
-+	"vin4_field",
-+	"vin4_clkenb",
-+	"vin4_clk",
-+};
-+
-+static const char * const vin5_groups[] = {
-+	"vin5_data8_a",
-+	"vin5_data10_a",
-+	"vin5_data12_a",
-+	"vin5_data16_a",
-+	"vin5_data8_b",
-+	"vin5_sync_a",
-+	"vin5_field_a",
-+	"vin5_clkenb_a",
-+	"vin5_clk_a",
-+	"vin5_clk_b",
-+};
-+
- static const struct {
- 	struct sh_pfc_function common[29];
- 	struct sh_pfc_function automotive[0];
-@@ -2808,6 +3050,8 @@ static const struct {
- 		SH_PFC_FUNCTION(scif_clk),
- 		SH_PFC_FUNCTION(usb0),
- 		SH_PFC_FUNCTION(usb30),
-+		SH_PFC_FUNCTION(vin4),
-+		SH_PFC_FUNCTION(vin5),
- 	}
- };
-
---
-2.7.4
+--6iuffavcnk4vmiuu--
