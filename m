@@ -1,75 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from twhmllg4.macronix.com ([211.75.127.132]:21751 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727728AbeKSVOC (ORCPT
+Received: from sauhun.de ([88.99.104.3]:57606 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726512AbeK3WqP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:14:02 -0500
-Received: from TWHMLLG4.macronix.com (localhost [127.0.0.2] (may be forged))
-        by TWHMLLG4.macronix.com with ESMTP id wAJA2ZZm036572
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Nov 2018 18:02:35 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From: Mason Yang <masonccyang@mxic.com.tw>
-To: broonie@kernel.org, tpiepho@impinj.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc: boris.brezillon@bootlin.com, juliensu@mxic.com.tw,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
-Subject: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC controller bindings
-Date: Mon, 19 Nov 2018 18:01:30 +0800
-Message-Id: <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
-In-Reply-To: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+        Fri, 30 Nov 2018 17:46:15 -0500
+Date: Fri, 30 Nov 2018 12:37:14 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Niklas =?utf-8?Q?S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] mmc: renesas_sdhi: extend quirk selection to
+ handle ES revisions
+Message-ID: <20181130113714.57t6fuxya6wuz5oh@ninjato>
+References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="k3etslkga2x7e5jo"
+Content-Disposition: inline
+In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the bindings used by the Renesas R-Car D3 RPC controller.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+--k3etslkga2x7e5jo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-new file mode 100644
-index 0000000..8286cc8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-@@ -0,0 +1,33 @@
-+Renesas R-Car D3 RPC controller Device Tree Bindings
-+----------------------------------------------------
-+
-+Required properties:
-+- compatible: should be "renesas,rpc-r8a77995"
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+- reg: should contain 2 entries, one for the registers and one for the direct
-+       mapping area
-+- reg-names: should contain "rpc_regs" and "dirmap"
-+- interrupts: interrupt line connected to the RPC SPI controller
-+- clock-names: should contain "clk_rpc"
-+- clocks: should contain 1 entries for the CPG Module 917 clocks
-+
-+Example:
-+
-+	rpc: spi@ee200000 {
-+		compatible = "renesas,rpc-r8a77995";
-+		reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
-+		reg-names = "rpc_regs", "dirmap";
-+		clocks = <&cpg CPG_MOD 917>;
-+		clock-names = "clk_rpc";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <40000000>;
-+			spi-tx-bus-width = <1>;
-+			spi-rx-bus-width = <1>;
-+		};
-+	};
--- 
-1.9.1
+On Wed, Nov 28, 2018 at 05:18:26PM +0100, Niklas S=C3=B6derlund wrote:
+> Hi,
+>=20
+> Recent datasheet updates have made it clear that some quirks are not SoC
+> specific but SoC + ES version specific. Currently the quirks are
+> selected using compatibility values but whit this new information that
+> is not enough.
+>=20
+> Patch 1/3 adds support to select quirks based on SoC + ES revision using
+> soc_device_match() and converts the only existing quirk. Patch 2/3
+> Removes the old method to select quirk based on compatibility string.
+> While Patch 3/3 adds a new quirk from the BSP which blacklists some
+> known problematic ES versions for HS400. HS400 is not yet enabled
+> upstream so blacklisting these ES versions is not a regression of
+> functionality.
+>=20
+> Based on mmc/next and tested on H3 and M3-N.
+
+For the record: Tested with H3 ES2.0 and M3N where HS400 was sucesfully
+detected. Tested with H3 ES1.0 and M3-W ES1.0 where HS400 was rightfully
+discarded and HS200 was used.
+
+
+--k3etslkga2x7e5jo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwBIOYACgkQFA3kzBSg
+KbbSDRAAnGeSUAbbfvpMLR0ytii6ZwfeEskuCgBoua55L9fapAPJIbLWSwlHhyKX
+IKeB3bZPYsvHliF75RCUOmR/WLk3dCk9SNmbUf2hMTZfu7fHOCHEbkwedVN10Rs1
+JEXXuu2ONIuanH8NRN2sEOi57D4xGzjXiq2lc6LXY8kzof7HQpCt6JGw79tc7kjl
+mXnpj3uOjVLD+yPaoAyIxoiSkhAQENede6pMlfmuDoqmaVrsDs/3OlfU4TBDg3VA
+HBYZsZ+otCSnYiO7DH8Y8hN2shafOEmYgU6NJQ2jbRPWJWJQ8JRBCCsp79hG9aW8
+I16oeTRVpsd34n8C9VpkGrbXOYh/GTY5wrFqs42bDcTz97SR2loDfpSQ7YaDPnDN
+ZiBamGcrBE4VEbcP6Kk1Pti4v5dgAoPhZbJerGWH8vlaEpl63PNw6DOW4QNMLSq0
+FuexAfnqkqHUlzUbaEOuKzixMtkOCZv5BHBAxkfQlXKjH5C73Zbj4jp8ip9ThYa6
+LSRGiqv60ihGe5L9bZ/it8xLBRhP4Aae6ysMOc1Ne9BIhs1ITxgcYeu5iZVTF88L
+yxst4zDs0zVbM0m72Fawjz90dWOcav+/EglI00f9vDEiHTAP512w1xHl2menlOyp
+t0RXAVq5cTU7yN8+JlfT6Kriclbh3/gYZq1deZmH07PYhBUzyd0=
+=a+zT
+-----END PGP SIGNATURE-----
+
+--k3etslkga2x7e5jo--
