@@ -1,69 +1,40 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:38882 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbeKBEty (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:51982 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeK3V2b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Nov 2018 00:49:54 -0400
-Date: Thu, 1 Nov 2018 20:45:29 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: Simon Horman <horms@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH] arm64: dts: renesas: enable HS400 on R-Car Gen3
-Message-ID: <20181101194528.GS2433@kunai>
-References: <20181031233125.2800-1-niklas.soderlund@ragnatech.se>
+        Fri, 30 Nov 2018 16:28:31 -0500
+Date: Fri, 30 Nov 2018 11:19:39 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/6] soc: renesas: r8a77970-sysc: Correct names of
+ A2DP/A2CN power domains
+Message-ID: <20181130101938.l2qlhekm7b3amh5z@verge.net.au>
+References: <20181129105619.10695-1-geert+renesas@glider.be>
+ <20181129105619.10695-4-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="R+WA+n3pAWWgNWUs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181031233125.2800-1-niklas.soderlund@ragnatech.se>
+In-Reply-To: <20181129105619.10695-4-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+On Thu, Nov 29, 2018 at 11:56:16AM +0100, Geert Uytterhoeven wrote:
+> The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
+> renamed the A2IR2 and A2IR3 power domains on R-Car V3M to A2DP resp.
+> A2CN.
+> 
+> As these definitions are not yet used from DT, they can just be renamed.
+> 
+> While at it, fix the indentation of the A3IR definition.
+> 
+> Fixes: 833bdb47c826a1a6 ("dt-bindings: power: add R8A77970 SYSC power domain definitions")
+> Fixes: bab9b2a74fe9da96 ("soc: renesas: rcar-sysc: add R8A77970 support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---R+WA+n3pAWWgNWUs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> This patch have quiet a few dependencies I'm afraid, let me know if you=
-=20
-> wish to be notified once they all upstream. I don't think it's a good=20
-> idea to pick this up before all dependencies are resolved.
-
-Yes, we should do that. Ping Simon once all dependencies are in next. It
-is still fine to have this patch here in case people want to test. BTW
-did you mention your branch somewhere where you collected all these
-patches to make HS400 working/enabled?
-
-For this patch already:
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---R+WA+n3pAWWgNWUs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvbV9gACgkQFA3kzBSg
-KbZP+g/9HrORmEp8Oxhr2TPjg9Ah5WS0SRvSrKmpvo3N5tpJ1XdRez31NSfAN0Tc
-gEsdTGJ1ZGtuIYjS9WF9f4ThzyXaFdYa3H6kzkbqxM29XWsKrqTWIhVZQ7OBDvaJ
-Cq/jW26oJAWZfjkkQ9dT3UnvPnWNkwNd1RZ2q4WMNWhTRBtULX3AAtf6yWPetFR5
-TkVU6NOX0eHXD69B2WGg81IprppdcNVQZlq3GJZ9eS410S1ruxy/hfnNLfY8Paiq
-TCMd1VcMQyrdoqNdYMgEpAI5rpAXjn6TzQdR8FubtPD4L3BECx8yrPvMCy/kJ0ej
-jgkybU/1+zxH9Sj6jJuItkoaXuh8nCXUHisJKIAACdrzvxIhfEDZk85uPLAJEP7Y
-iKxZEKnrMRLVFFhs5hHqEUpDCdQJw/ivRj+gxtm1GK8LbXFH83NCocYKZY8UXocY
-pFRDKjcYbiRHvHnPrLufbKnWiapdDKBtCw9AU3FSXK40iKtDNizBmO0f6uuTksbH
-ua3DS+LEA+Bh4jmtkNK7ACyInvKRSGeKRyLMgplsiVfn2Y07Zhd1xj7F7ShJ8ExL
-M19j91mebiv5UCKnJ/Y9K862NL1b4M30iM21Cq5p7FL1HlKkCdAzQDYQrx+SiT0y
-+VxjfyexDEPsxlFNiUgye3J4fl0nRUiaRiZS2v3vBFd4QGrdUNs=
-=CqKK
------END PGP SIGNATURE-----
-
---R+WA+n3pAWWgNWUs--
+Thanks, applied for v4.21.
