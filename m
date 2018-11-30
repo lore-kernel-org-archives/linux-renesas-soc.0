@@ -1,65 +1,52 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:38168 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbeLADNU (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 22:13:20 -0500
-MIME-Version: 1.0
-References: <20181129130559.66732-1-chris.brandt@renesas.com>
- <20181129130559.66732-2-chris.brandt@renesas.com> <20181130115500.twmtwnu352ukjm73@verge.net.au>
- <OSAPR01MB15534822E5E9CC52AA0BCE778AD30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
- <20181130122229.4iv6qgsnjyswoiiq@verge.net.au>
-In-Reply-To: <20181130122229.4iv6qgsnjyswoiiq@verge.net.au>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Nov 2018 17:03:19 +0100
-Message-ID: <CAMuHMdWDa-_8-DQzLa6KnoFTk+23oKVwo4Wq0TQNunsA1ubXMQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: r7s9210: Initial SoC device tree
-To: Simon Horman <horms@verge.net.au>
-Cc: Chris Brandt <Chris.Brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 30 Nov 2018 13:22:35 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] ARM: dts: r7s9210: Initial SoC device tree
+Message-ID: <20181130122229.4iv6qgsnjyswoiiq@verge.net.au>
+References: <20181129130559.66732-1-chris.brandt@renesas.com>
+ <20181129130559.66732-2-chris.brandt@renesas.com>
+ <20181130115500.twmtwnu352ukjm73@verge.net.au>
+ <OSAPR01MB15534822E5E9CC52AA0BCE778AD30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSAPR01MB15534822E5E9CC52AA0BCE778AD30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+On Fri, Nov 30, 2018 at 12:04:57PM +0000, Chris Brandt wrote:
+> Hi Simon,
+> 
+> 
+> On Friday, November 30, 2018, Simon Horman wrote:
+> > > +	cpg: clock-controller@fcfe0020 {
+> > > +		compatible = "renesas,r7s9210-cpg-mssr";
+> > > +		reg = <0xfcfe0010 0x455>;
+> > 
+> > There is a discrepancy here between the base address, fcfe0020
+> > and the start address of the register range, 0xfcfe0010.
+> 
+> Good catch! Thank you.
+> 
+> 
+> > > +	ostm0: timer@e803b000 {
+> > > +		compatible = "renesas,r7s9210-ostm", "renesas,ostm";
+> > > +		reg = <0xe803b000 0x30>;
+> > 
+> > 
+> > Its not clear to me why the size of the register range is 0x30.
+> 
+> Because when reviewing the bindings docs, I was putting in 'exact' 
+> values, but Geert said "those are ugly, just round up to make it look
+> nicer".
+> So instead of 0x21, I put 0x30.
+> 
+> You know...the standard answer: Throw Geert under the bus ;)
 
-On Fri, Nov 30, 2018 at 1:23 PM Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Nov 30, 2018 at 12:04:57PM +0000, Chris Brandt wrote:
-> > On Friday, November 30, 2018, Simon Horman wrote:
-> > > > + ostm0: timer@e803b000 {
-> > > > +         compatible = "renesas,r7s9210-ostm", "renesas,ostm";
-> > > > +         reg = <0xe803b000 0x30>;
-> > >
-> > >
-> > > Its not clear to me why the size of the register range is 0x30.
-> >
-> > Because when reviewing the bindings docs, I was putting in 'exact'
-> > values, but Geert said "those are ugly, just round up to make it look
-> > nicer".
-> > So instead of 0x21, I put 0x30.
-> >
-> > You know...the standard answer: Throw Geert under the bus ;)
->
-> Lets leave 0x30 :)
-
-Pfew...
-
-BTW, I'd be surprised the hardware address decoder would route all
-addresses in the range 0xe803b000..0xe803b02f to the OSTM.
-0xe803b000..0xe803b03f sounds more logical to me, as it requires less gates.
-But hey, who said hardware designers are logical? ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lets leave 0x30 :)
