@@ -1,48 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59216 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbeK2VzX (ORCPT
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:46406 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbeK3VNB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:55:23 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/13] dt-bindings: clock: r8a7795: Remove CSIREF clock
-Date: Thu, 29 Nov 2018 11:49:56 +0100
-Message-Id: <20181129105008.10239-2-geert+renesas@glider.be>
-In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
-References: <20181129105008.10239-1-geert+renesas@glider.be>
+        Fri, 30 Nov 2018 16:13:01 -0500
+MIME-Version: 1.0
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com> <1543319795-48325-13-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543319795-48325-13-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 11:04:02 +0100
+Message-ID: <CAMuHMdWX2p=j-0SxC9Vyw29y7WPWqcD4H+-=PQVJ_cQ8eVagDQ@mail.gmail.com>
+Subject: Re: [PATCH 12/22] ARM: dts: r8a7744-iwg20d-q7-dbcm-ca: Add device
+ tree for camera DB
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 0.52 (Nov 30, 2016)
-removed the CSI reference clock on R-Car H3.
+On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> This patch adds support for the camera daughter board which is
+> connected to iWave's RZ/G1N Qseven carrier board.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-As this definition was never used, it can just be removed.
-The freed slot in the DT bindings header must not be reused, though.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Fixes: 9d0c3c682033d3f1 ("clk: shmobile: Add r8a7795 CPG Core Clock Definitions")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/dt-bindings/clock/r8a7795-cpg-mssr.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/include/dt-bindings/clock/r8a7795-cpg-mssr.h b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-index 9483896415654706..92b3e2a95179d25c 100644
---- a/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a7795-cpg-mssr.h
-@@ -50,7 +50,7 @@
- #define R8A7795_CLK_CANFD		39
- #define R8A7795_CLK_HDMI		40
- #define R8A7795_CLK_CSI0		41
--#define R8A7795_CLK_CSIREF		42
-+/* CLK_CSIREF was removed */
- #define R8A7795_CLK_CP			43
- #define R8A7795_CLK_CPEX		44
- #define R8A7795_CLK_R			45
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
