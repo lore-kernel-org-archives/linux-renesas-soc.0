@@ -1,55 +1,34 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35091 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbeKZXsh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:48:37 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/16] ARM: dts: r8a77470: Add watchdog support to SoC dtsi
-Date: Mon, 26 Nov 2018 13:54:10 +0100
-Message-Id: <0a3dd0aad20d2bac25b0bd5c834377379b23fe36.1543236456.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543236456.git.horms+renesas@verge.net.au>
-References: <cover.1543236456.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+Date: Fri, 30 Nov 2018 11:20:41 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 5/6] soc: renesas: r8a77980-sysc: Correct A3VIP[012]
+ power domain hierarchy
+Message-ID: <20181130102040.vl6r7cj6lijfuleb@verge.net.au>
+References: <20181129105619.10695-1-geert+renesas@glider.be>
+ <20181129105619.10695-6-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129105619.10695-6-geert+renesas@glider.be>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Thu, Nov 29, 2018 at 11:56:18AM +0100, Geert Uytterhoeven wrote:
+> The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
+> renamed the A3VIP power domain on R-Car V3H to A3VIP0, and clarified the
+> power domain hierarchy for the A3VIP[012] power domains.
+> 
+> As the definition for the A3VIP0 domain is not yet used from DT, it can
+> just be renamed.
+> 
+> Fixes: 7755b40d07a8dba7 ("dt-bindings: power: add R8A77980 SYSC power domain definitions")
+> Fixes: 41d6d8bd8ae94ca9 ("soc: renesas: rcar-sysc: add R8A77980 support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds watchdog support to the r8a77470 SoC dtsi.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-[simon: moved node to preserve sort order]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 6ac7f467065e..a703b74cc1f9 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -79,6 +79,16 @@
- 		#size-cells = <2>;
- 		ranges;
- 
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a77470-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a77470",
- 				     "renesas,rcar-gen2-gpio";
--- 
-2.11.0
+Thanks, applied for v4.21.
