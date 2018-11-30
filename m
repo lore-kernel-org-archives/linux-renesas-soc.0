@@ -1,122 +1,415 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:37381 "EHLO
+Received: from relmlor1.renesas.com ([210.160.252.171]:29760 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732728AbeKMXMj (ORCPT
+        by vger.kernel.org with ESMTP id S1726616AbeLACo4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:12:39 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
+        Fri, 30 Nov 2018 21:44:56 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 1/2] dt-bindings/interrupt-controller: rzn1: Add RZ/N1 gpio irq mux binding
-Date: Tue, 13 Nov 2018 13:09:09 +0000
-Message-Id: <20181113130910.22130-2-phil.edworthy@renesas.com>
-In-Reply-To: <20181113130910.22130-1-phil.edworthy@renesas.com>
-References: <20181113130910.22130-1-phil.edworthy@renesas.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 02/21] ARM: dts: r8a7744: Initial SoC device tree
+Date: Fri, 30 Nov 2018 15:26:16 +0000
+Message-Id: <1543591595-37861-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add device binding documentation for the Renesas RZ/N1 GPIO interrupt
-multiplexer.
+Basic support for the RZ/G1N (R8A7744) SoC. Added placeholders
+to avoid compilation error with the common platform code.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v3:
- - Use 'interrupt-map' DT property correctly.
-v2:
- - Use interrupt-map to allow the GPIO controller info to be specified
-   as part of the irq.
- - Don't show status in binding examples.
- - Don't show the soc/board split in binding doc.
+V1-->V2
+   * Fixed pfc register size, GIC_CPU_MASK_SIMPLE in gic/timer nodes
 ---
- .../interrupt-controller/renesas,rzn1-mux.txt | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+ arch/arm/boot/dts/r8a7744.dtsi | 369 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 369 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7744.dtsi
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
 new file mode 100644
-index 000000000000..6515880e25cc
+index 0000000..f4d0abd
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
-@@ -0,0 +1,73 @@
-+* Renesas RZ/N1 GPIO Interrupt Multiplexer
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -0,0 +1,369 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the r8a7744 SoC
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
 +
-+On Renesas RZ/N1 devices, there are several GPIO Controllers each with a number
-+of interrupt outputs. All of the interrupts from the GPIO Controllers are passed
-+to the GPIO Interrupt Multiplexer, which selects a sub-set of the interrupts to
-+pass onto the system interrupt controller.
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/r8a7744-cpg-mssr.h>
++#include <dt-bindings/power/r8a7744-sysc.h>
 +
-+A single node in the device tree is used to describe the GPIO IRQ Muxer.
++/ {
++	compatible = "renesas,r8a7744";
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+Required properties:
-+- compatible: SoC-specific compatible string "renesas,<soc-specific>-gpioirqmux"
-+  followed by "renesas,rzn1-gpioirqmux" as fallback. The SoC-specific compatible
-+  strings must be one of:
-+	"renesas,r9a06g032-gpioirqmux" for RZ/N1D
-+	"renesas,r9a06g033-gpioirqmux" for RZ/N1S
-+- reg: Base address and size of GPIO IRQ Muxer registers.
-+- interrupts: List of output interrupts.
-+- #interrupt-cells: Numder of cells in the input interrupt specifier, must be 1.
-+- #address-cells: Must be 0.
-+- interrupt-map-mask: must be 127.
-+- interrupt-map: Standard property detailing the maps between input irqs and the
-+  corresponding output irq. This consist of a list of:
-+	<input-irq-spec phandle-to-interrupt-controller output-irq-spec>
-+  The input-irq-spec is from 0 to 95, corresponding to the outputs of the GPIO
-+  Controllers.
-+
-+Example:
-+
-+	The following is an example for the RZ/N1D SoC.
-+
-+	gpioirqmux: gpioirqmux@51000480 {
-+		compatible = "renesas,r9a06g032-gpioirqmux",
-+				"renesas,rzn1-gpioirqmux";
-+		reg = <0x51000480 0x20>;
-+		interrupts =
-+			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		#interrupt-cells = <1>;
-+		#address-cells = <0>;
-+		interrupt-map-mask = <127>;
-+		interrupt-map =
-+			/* gpio2a 24, pin 146: ETH Port 1 IRQ */
-+			<88 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			/* gpio2a 26, pin 148: TouchSCRN_IRQ */
-+			<90 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++	/*
++	 * The external audio clocks are configured as 0 Hz fixed frequency
++	 * clocks by default.
++	 * Boards that provide audio clocks should override them.
++	 */
++	audio_clk_a: audio_clk_a {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
 +	};
 +
-+	gpio2: gpio@5000d000 {
-+		compatible = "snps,dw-apb-gpio";
-+		reg = <0x5000d000 0x80>;
++	audio_clk_b: audio_clk_b {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	audio_clk_c: audio_clk_c {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	/* External CAN clock */
++	can_clk: can {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	cpus {
 +		#address-cells = <1>;
 +		#size-cells = <0>;
-+		clock-names = "bus";
-+		clocks = <&sysctrl R9A06G032_HCLK_GPIO2>;
 +
-+		gpio2a: gpio-controller@0 {
-+			compatible = "snps,dw-apb-gpio-port";
-+			bank-name = "gpio2a";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			snps,nr-gpios = <32>;
++		cpu0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a15";
 +			reg = <0>;
++			clock-frequency = <1500000000>;
++			clocks = <&cpg CPG_CORE R8A7744_CLK_Z>;
++			clock-latency = <300000>; /* 300 us */
++			power-domains = <&sysc R8A7744_PD_CA15_CPU0>;
++			next-level-cache = <&L2_CA15>;
 +
-+			interrupt-controller;
-+			interrupt-parent = <&gpioirqmux>;
-+			interrupts =  < 64 65 66 67 68 69 70 71
-+					72 73 74 75 76 77 78 79
-+					80 81 82 83 84 85 86 87
-+					88 89 90 91 92 93 94 95 >;
-+			#interrupt-cells = <2>;
++			/* kHz - uV - OPPs unknown yet */
++			operating-points = <1500000 1000000>,
++					   <1312500 1000000>,
++					   <1125000 1000000>,
++					   < 937500 1000000>,
++					   < 750000 1000000>,
++					   < 375000 1000000>;
++		};
++
++		L2_CA15: cache-controller-0 {
++			compatible = "cache";
++			cache-unified;
++			cache-level = <2>;
++			power-domains = <&sysc R8A7744_PD_CA15_SCU>;
 +		};
 +	};
++
++	/* External root clock */
++	extal_clk: extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	/* External PCIe clock - can be overridden by the board */
++	pcie_bus_clk: pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <0>;
++	};
++
++	pmu {
++		compatible = "arm,cortex-a15-pmu";
++		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>;
++	};
++
++	/* External SCIF clock */
++	scif_clk: scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		/* This value must be overridden by the board. */
++		clock-frequency = <0>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <&gic>;
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		gpio0: gpio@e6050000 {
++			reg = <0 0xe6050000 0 0x50>;
++			#gpio-cells = <2>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			/* placeholder */
++		};
++
++		gpio1: gpio@e6051000 {
++			reg = <0 0xe6051000 0 0x50>;
++			#gpio-cells = <2>;
++			/* placeholder */
++		};
++
++		gpio2: gpio@e6052000 {
++			reg = <0 0xe6052000 0 0x50>;
++			#gpio-cells = <2>;
++			/* placeholder */
++		};
++
++		gpio6: gpio@e6055400 {
++			reg = <0 0xe6055400 0 0x50>;
++			#gpio-cells = <2>;
++			/* placeholder */
++		};
++
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a7744";
++			reg = <0 0xe6060000 0 0x250>;
++		};
++
++		cpg: clock-controller@e6150000 {
++			compatible = "renesas,r8a7744-cpg-mssr";
++			reg = <0 0xe6150000 0 0x1000>;
++			clocks = <&extal_clk>, <&usb_extal_clk>;
++			clock-names = "extal", "usb_extal";
++			#clock-cells = <2>;
++			#power-domain-cells = <0>;
++			#reset-cells = <1>;
++		};
++
++		rst: reset-controller@e6160000 {
++			compatible = "renesas,r8a7744-rst";
++			reg = <0 0xe6160000 0 0x100>;
++		};
++
++		sysc: system-controller@e6180000 {
++			compatible = "renesas,r8a7744-sysc";
++			reg = <0 0xe6180000 0 0x200>;
++			#power-domain-cells = <1>;
++		};
++
++		icram0:	sram@e63a0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63a0000 0 0x12000>;
++		};
++
++		icram1:	sram@e63c0000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe63c0000 0 0x1000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0 0 0xe63c0000 0x1000>;
++
++			smp-sram@0 {
++				compatible = "renesas,smp-sram";
++				reg = <0 0x100>;
++			};
++		};
++
++		icram2:	sram@e6300000 {
++			compatible = "mmio-sram";
++			reg = <0 0xe6300000 0 0x40000>;
++		};
++
++		i2c2: i2c@e6530000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0 0xe6530000 0 0x40>;
++			/* placeholder */
++		};
++
++		i2c5: i2c@e6528000 {
++			/* doesn't need pinmux */
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0 0xe6528000 0 0x40>;
++			/* placeholder */
++		};
++
++		hsusb: usb@e6590000 {
++			reg = <0 0xe6590000 0 0x100>;
++			/* placeholder */
++		};
++
++		usbphy: usb-phy@e6590100 {
++			reg = <0 0xe6590100 0 0x100>;
++			/* placeholder */
++		};
++
++		avb: ethernet@e6800000 {
++			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			/* placeholder */
++		};
++
++		scifb1: serial@e6c30000 {
++			reg = <0 0xe6c30000 0 0x100>;
++			/* placeholder */
++		};
++
++		scif0: serial@e6e60000 {
++			compatible = "renesas,scif-r8a7744",
++				     "renesas,rcar-gen2-scif", "renesas,scif";
++			reg = <0 0xe6e60000 0 0x40>;
++			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 721>,
++				 <&cpg CPG_CORE R8A7744_CLK_ZS>, <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 721>;
++			status = "disabled";
++		};
++
++		scif1: serial@e6e68000 {
++			reg = <0 0xe6e68000 0 0x40>;
++			/* placeholder */
++		};
++
++		hscif1: serial@e62c8000 {
++			reg = <0 0xe62c8000 0 0x60>;
++			/* placeholder */
++		};
++
++		can0: can@e6e80000 {
++			reg = <0 0xe6e80000 0 0x1000>;
++			/* placeholder */
++		};
++
++		can1: can@e6e88000 {
++			reg = <0 0xe6e88000 0 0x1000>;
++			/* placeholder */
++		};
++
++		rcar_sound: sound@ec500000 {
++			reg = <0 0xec500000 0 0x1000>;
++
++			rcar_sound,dvc {
++				dvc0: dvc-0 {};
++				dvc1: dvc-1 {};
++			};
++
++			rcar_sound,src {
++				src2: src-2 {};
++				src3: src-3 {};
++			};
++
++			rcar_sound,ssi {
++				ssi0: ssi-0 {};
++				ssi1: ssi-1 {};
++			};
++			/* placeholder */
++		};
++
++		pci0: pci@ee090000 {
++			reg = <0 0xee090000 0 0xc00>;
++
++			bus-range = <0 0>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			/* placeholder */
++		};
++
++		pci1: pci@ee0d0000 {
++			reg = <0 0xee0d0000 0 0xc00>;
++
++			bus-range = <1 1>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			/* placeholder */
++		};
++
++		sdhi1: sd@ee140000 {
++			reg = <0 0xee140000 0 0x100>;
++			/* placeholder */
++		};
++
++		sdhi2: sd@ee160000 {
++			reg = <0 0xee160000 0 0x100>;
++			/* placeholder */
++		};
++
++		gic: interrupt-controller@f1001000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <3>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
++			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
++			clocks = <&cpg CPG_MOD 408>;
++			clock-names = "clk";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 408>;
++		};
++
++		du: display@feb00000 {
++			reg = <0 0xfeb00000 0 0x40000>,
++			      <0 0xfeb90000 0 0x1c>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++					};
++				};
++			};
++			/* placeholder */
++		};
++
++		prr: chipid@ff000044 {
++			compatible = "renesas,prr";
++			reg = <0 0xff000044 0 4>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv7-timer";
++		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
++				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
++	};
++
++	/* External USB clock - can be overridden by the board */
++	usb_extal_clk: usb_extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <48000000>;
++	};
++};
 -- 
-2.17.1
+2.7.4
