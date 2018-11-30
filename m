@@ -1,69 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:50522 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387987AbeKOVcY (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:29760 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726616AbeLACpB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:32:24 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ARM: shmobile: Restrict SCU support to SoCs that have it
-Date: Thu, 15 Nov 2018 10:56:38 +0100
-Message-Id: <20181115095639.17206-2-geert+renesas@glider.be>
-In-Reply-To: <20181115095639.17206-1-geert+renesas@glider.be>
-References: <20181115095639.17206-1-geert+renesas@glider.be>
+        Fri, 30 Nov 2018 21:45:01 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 06/21] ARM: dts: r8a7744: Add Ethernet AVB support
+Date: Fri, 30 Nov 2018 15:26:20 +0000
+Message-Id: <1543591595-37861-7-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently support for the ARM Cortex-A9 Snoop Control Unit is included
-unconditionally, while only Renesas multicore Cortex-A9 SoCs have this
-kind of SCU.
+Add Ethernet AVB support for R8A7744 SoC.
 
-This decreases kernel image size by ca. 300 bytes on SoCs without such
-an SCU.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/Kconfig | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+V1-->V2
+   * No Change
+---
+ arch/arm/boot/dts/r8a7744.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index b100c26a858f9015..32f8297d993ac10e 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -30,7 +30,6 @@ menuconfig ARCH_RENESAS
- 	depends on ARCH_MULTI_V7 && MMU
- 	select ARM_GIC
- 	select GPIOLIB
--	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select NO_IOPORT_MAP
- 	select PINCTRL
-@@ -43,6 +42,7 @@ if ARCH_RENESAS
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index ea1a782..4d4ddba 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -376,10 +376,16 @@
+ 		};
  
- config ARCH_EMEV2
- 	bool "Emma Mobile EV2"
-+	select HAVE_ARM_SCU if SMP
- 	select SYS_SUPPORTS_EM_STI
+ 		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a7744",
++				     "renesas,etheravb-rcar-gen2";
+ 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
++			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 812>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			/* placeholder */
++			status = "disabled";
+ 		};
  
- config ARCH_R7S72100
-@@ -94,6 +94,7 @@ config ARCH_R8A7778
- 
- config ARCH_R8A7779
- 	bool "R-Car H1 (R8A77790)"
-+	select HAVE_ARM_SCU if SMP
- 	select ARCH_RCAR_GEN1
- 
- config ARCH_R8A7790
-@@ -135,5 +136,6 @@ config ARCH_RZN1
- config ARCH_SH73A0
- 	bool "SH-Mobile AG5 (R8A73A00)"
- 	select ARCH_RMOBILE
-+	select HAVE_ARM_SCU if SMP
- 	select RENESAS_INTC_IRQPIN
- endif
+ 		scifb1: serial@e6c30000 {
 -- 
-2.17.1
+2.7.4
