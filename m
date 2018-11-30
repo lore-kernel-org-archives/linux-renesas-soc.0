@@ -1,9 +1,4 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:9727 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387592AbeKVUBv (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 15:01:51 -0500
+Return-Path: <devicetree-owner@vger.kernel.org>
 From: Biju Das <biju.das@bp.renesas.com>
 To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
@@ -14,83 +9,62 @@ Cc: Biju Das <biju.das@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 7/7] ARM: dts: r8a7744: Add SMP support
-Date: Thu, 22 Nov 2018 09:14:35 +0000
-Message-Id: <1542878075-61314-8-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
-References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Subject: [PATCH v2 18/21] ARM: dts: r8a7744: Add CAN support
+Date: Fri, 30 Nov 2018 15:26:32 +0000
+Message-Id: <1543591595-37861-19-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add DT node for the Advanced Power Management Unit (APMU), add the
-second CPU core, and use "renesas,apmu" as "enable-method".
-
-Also add cpu1 phandle node to the PMU interrupt-affinity property.
+Add the definitions for can0 and can1 to the r8a7744 SoC dtsi.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+V1-->V2
+   * No Change
+---
+ arch/arm/boot/dts/r8a7744.dtsi | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 046ed94..79e75e7 100644
+index cb6dfb5..87187f2 100644
 --- a/arch/arm/boot/dts/r8a7744.dtsi
 +++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -49,6 +49,7 @@
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		enable-method = "renesas,apmu";
- 
- 		cpu0: cpu@0 {
- 			device_type = "cpu";
-@@ -69,6 +70,25 @@
- 					   < 375000 1000000>;
+@@ -884,13 +884,31 @@
  		};
  
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7744_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7744_PD_CA15_CPU1>;
-+			next-level-cache = <&L2_CA15>;
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
-+		};
-+
- 		L2_CA15: cache-controller-0 {
- 			compatible = "cache";
- 			cache-unified;
-@@ -96,7 +116,7 @@
- 		compatible = "arm,cortex-a15-pmu";
- 		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
- 				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-affinity = <&cpu0>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
- 	};
- 
- 	/* External SCIF clock */
-@@ -250,6 +270,12 @@
- 			#reset-cells = <1>;
+ 		can0: can@e6e80000 {
++			compatible = "renesas,can-r8a7744",
++				     "renesas,rcar-gen2-can";
+ 			reg = <0 0xe6e80000 0 0x1000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>,
++				 <&cpg CPG_CORE R8A7744_CLK_RCAN>,
++				 <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 916>;
++			status = "disabled";
  		};
  
-+		apmu@e6152000 {
-+			compatible = "renesas,r8a7744-apmu", "renesas,apmu";
-+			reg = <0 0xe6152000 0 0x188>;
-+			cpus = <&cpu0 &cpu1>;
-+		};
-+
- 		rst: reset-controller@e6160000 {
- 			compatible = "renesas,r8a7744-rst";
- 			reg = <0 0xe6160000 0 0x100>;
+ 		can1: can@e6e88000 {
++			compatible = "renesas,can-r8a7744",
++				     "renesas,rcar-gen2-can";
+ 			reg = <0 0xe6e88000 0 0x1000>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>,
++				 <&cpg CPG_CORE R8A7744_CLK_RCAN>,
++				 <&can_clk>;
++			clock-names = "clkp1", "clkp2", "can_clk";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 915>;
++			status = "disabled";
+ 		};
+ 
+ 		rcar_sound: sound@ec500000 {
 -- 
 2.7.4
