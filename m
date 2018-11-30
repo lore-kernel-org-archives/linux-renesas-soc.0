@@ -1,93 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42024 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731347AbeKWKLJ (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:10914 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726585AbeLACp0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Nov 2018 05:11:09 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hoan <na-hoan@jinso.co.jp>
-Cc: linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: Re: [PATCH] drm: rcar-du: Re-update the DSYSR register value for start/stop
-Date: Fri, 23 Nov 2018 01:29:43 +0200
-Message-ID: <3349301.P10tNOHi3G@avalon>
-In-Reply-To: <8c596c7e-608b-dc99-cead-f2fb85c6d132@jinso.co.jp>
-References: <1540189854-14726-1-git-send-email-na-hoan@jinso.co.jp> <35008313.pubLakprOv@avalon> <8c596c7e-608b-dc99-cead-f2fb85c6d132@jinso.co.jp>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Nov 2018 21:45:26 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 15/21] ARM: dts: r8a7744: Add USB-DMAC and HSUSB device nodes
+Date: Fri, 30 Nov 2018 15:26:29 +0000
+Message-Id: <1543591595-37861-16-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Hoan,
+Add usb dmac and hsusb device nodes on RZ/G1N SoC dtsi.
 
-On Tuesday, 23 October 2018 04:01:19 EET Hoan wrote:
-> On 2018/10/22 20:23, Laurent Pinchart wrote:
-> > On Monday, 22 October 2018 09:30:54 EEST Nguyen An Hoan wrote:
-> >> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> >>=20
-> >>  From previous commit 0521ccb "drm: rcar-du: Cache DSYSR value to ensu=
-re
-> >>=20
-> >> known initial value"
-> >=20
-> > What exact commit are you referring to ? The mainline commit that has t=
-his
-> > subject is 9144adc5e5a99577bce0d4ee2ca3615f53b9d296.
->=20
-> Seems I have cited the wrong Commit-ID=E3=80=81it is
->=20
-> 9144adc5e5a99577bce0d4ee2ca3615f53b9d296
-> drm: rcar-du: Cache DSYSR value to ensure known initial value
->=20
-> >> We only need to update DSYSR0, DSYSR2 for start/stop.
-> >> So using rgrp-> mmio_offset is enough, the change back from rcar_du_cr=
-tc
-> >> ->rcar_du_group -> rcar_du_crtc leading to mmio addresses for DSYSR may
-> >> be different.
-> >=20
-> > Is this fixing an actual problem ? If you look at the code, the line
-> >=20
-> > 	struct rcar_du_crtc *rcrtc =3D &rgrp->dev->crtcs[rgrp->index * 2];
-> >=20
-> > makes sure that we select DU0 or DU2 only, so the register write
-> >=20
-> > 	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN,
-> > 				   start ? DSYSR_DEN : DSYSR_DRES);
-> >=20
-> > should only access DSYSR0 and DSYSR2.
->=20
-> This seems I think to fix the rcar-du problem with M3N-r8a77965,
->=20
-> With M3N-R8a77965 we have DU0, DU1, DU3
-> So, when Laurent-san divide objetcs into rcar_du_group, rcar_du_crtc.
->=20
-> DU0, DU1 -> du_group[0]  rgrp-> mmio_offset =3D DU0_REG_OFFSET
-> DU3->du_group[1] and rgrp-> mmio_offset =3D DU2_REG_OFFSET, but=20
-> rcrtc->mmio_offset=3DDU3_REG_OFFSET (with M3N)
->=20
-> M3N-R8a77965 not have DU2, So after the command:
->=20
-> struct rcar_du_crtc *rcrtc =3D &rgrp->dev->crtcs[rgrp->index * 2];
->=20
-> So in fact, with M3N we are updating DSYSR3 (In this my TC, this
-> reference to start/stop DU3-RGB)
->=20
-> This will not affect H3, since the H3 lines always have enough DU0,
-> DU1,DU2,DU3.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+V1-->V2
+   * No Change
+---
+ arch/arm/boot/dts/r8a7744.dtsi | 42 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
-You're absolutely right. I'm sorry for introducing the bug in the first pla=
-ce,=20
-and for failing to understand your patch.
-
-I would however prefer a different fix, as switching back to=20
-rcar_du_group_write() defeats the purpose of the "drm: rcar-du: Cache DSYSR=
-=20
-value to ensure known initial value" patch. I will submit a patch and CC yo=
-u.
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 1d4cb5e..cf05ce0 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -449,8 +449,20 @@
+ 		};
+ 
+ 		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a7744",
++				     "renesas,rcar-gen2-usbhs";
+ 			reg = <0 0xe6590000 0 0x100>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 704>;
++			renesas,buswait = <4>;
++			phys = <&usb0 1>;
++			phy-names = "usb";
++			status = "disabled";
+ 		};
+ 
+ 		usbphy: usb-phy@e6590100 {
+@@ -475,6 +487,34 @@
+ 			};
+ 		};
+ 
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a7744-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a7744-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7744",
+ 				     "renesas,rcar-dmac";
+-- 
+2.7.4
