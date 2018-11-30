@@ -1,49 +1,55 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40087 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387580AbeKFHBX (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:01:23 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-mmc@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+Return-Path: <devicetree-owner@vger.kernel.org>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] mmc: renesas_sdhi: Whitelist R8A77990 SDHI
-Date: Mon,  5 Nov 2018 22:39:35 +0100
-Message-Id: <20181105213935.11572-1-marek.vasut+renesas@gmail.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 16/21] ARM: dts: r8a7744: Add RWDT node
+Date: Fri, 30 Nov 2018 15:26:30 +0000
+Message-Id: <1543591595-37861-17-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Whitelist R8A77990 E3 SoC in the SDHI driver. The SDHI core
-present in the SoC is an 8tap variant of the Gen3 SDHI core.
+Add a device node for the Watchdog Timer (RWDT) controller on the Renesas
+RZ/G1N (r8a7744) SoC.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- 1 file changed, 1 insertion(+)
+V1-->V2
+   * Moved rwdt node before gpio.
+---
+ arch/arm/boot/dts/r8a7744.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index b6f54102bfdd..ede7eec9b9aa 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -304,6 +304,7 @@ static const struct soc_device_attribute soc_whitelist[] = {
- 	{ .soc_id = "r8a77965" },
- 	{ .soc_id = "r8a77970" },
- 	{ .soc_id = "r8a77980" },
-+	{ .soc_id = "r8a77990" },
- 	{ .soc_id = "r8a77995" },
- 	{ /* sentinel */ }
- };
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index cf05ce0..fabc7f9 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -135,6 +135,16 @@
+ 		#size-cells = <2>;
+ 		ranges;
+ 
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a7744-wdt",
++				     "renesas,rcar-gen2-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		gpio0: gpio@e6050000 {
+ 			compatible = "renesas,gpio-r8a7744",
+ 				     "renesas,rcar-gen2-gpio";
 -- 
-2.18.0
+2.7.4
