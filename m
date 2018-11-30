@@ -1,15 +1,15 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:41286 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbeK3UCA (ORCPT
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:40804 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeK3T5f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:02:00 -0500
+        Fri, 30 Nov 2018 14:57:35 -0500
 MIME-Version: 1.0
 References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com> <1542878075-61314-3-git-send-email-biju.das@bp.renesas.com>
 In-Reply-To: <1542878075-61314-3-git-send-email-biju.das@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Nov 2018 09:53:12 +0100
-Message-ID: <CAMuHMdUzPDW=3569eN1XLSC90=TXiRE272KgBdv8cf7iw=XRbw@mail.gmail.com>
+Date: Fri, 30 Nov 2018 09:48:48 +0100
+Message-ID: <CAMuHMdUiWDtafBtHvKH5CAOx1ntBdHrmE-d__nrayykKdZYdDg@mail.gmail.com>
 Subject: Re: [PATCH 2/7] ARM: dts: r8a7744: Initial SoC device tree
 To: Biju Das <biju.das@bp.renesas.com>
 Cc: Rob Herring <robh+dt@kernel.org>,
@@ -34,38 +34,27 @@ On Thu, Nov 22, 2018 at 10:23 AM Biju Das <biju.das@bp.renesas.com> wrote:
 >
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
+Thanks for your patch!
+
 > --- /dev/null
 > +++ b/arch/arm/boot/dts/r8a7744.dtsi
-> @@ -0,0 +1,369 @@
 
 > +       soc {
 
-> +               gic: interrupt-controller@f1001000 {
-> +                       compatible = "arm,gic-400";
-> +                       #interrupt-cells = <3>;
-> +                       #address-cells = <0>;
-> +                       interrupt-controller;
-> +                       reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
-> +                             <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
-> +                       interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
+> +               pfc: pin-controller@e6060000 {
+> +                       compatible = "renesas,pfc-r8a7744";
+> +                       reg = <0 0xe6060000 0 0x164>;
 
-Tehcnically, this mask should be GIC_CPU_MASK_SIMPLE(1)
-until you add the second CPU node.
+Given the datasheet mentions (reserved) registers up to offset 0x24c,
+you may want to use 0x250 for the register block length.
 
-> +       timer {
-> +               compatible = "arm,armv7-timer";
-> +               interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                                     <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                                     <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +                                     <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-
-Likewise.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
