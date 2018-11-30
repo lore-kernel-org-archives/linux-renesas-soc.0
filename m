@@ -1,70 +1,45 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:33795 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeK3T6M (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Nov 2018 14:58:12 -0500
+MIME-Version: 1.0
+References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com> <1542878075-61314-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1542878075-61314-5-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 09:49:24 +0100
+Message-ID: <CAMuHMdXPVeYrNG=D2zvic7B3r6-94rkEO=aHCC8buVXqDd9+=Q@mail.gmail.com>
+Subject: Re: [PATCH 4/7] ARM: dts: r8a7744: Add SYS-DMAC support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 18/21] ARM: dts: r8a7744: Add CAN support
-Date: Fri, 30 Nov 2018 15:26:32 +0000
-Message-Id: <1543591595-37861-19-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add the definitions for can0 and can1 to the r8a7744 SoC dtsi.
+On Thu, Nov 22, 2018 at 10:23 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Describe SYS-DMAC0/1 in the R8A7744 device tree.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-   * No Change
----
- arch/arm/boot/dts/r8a7744.dtsi | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index cb6dfb5..87187f2 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -884,13 +884,31 @@
- 		};
- 
- 		can0: can@e6e80000 {
-+			compatible = "renesas,can-r8a7744",
-+				     "renesas,rcar-gen2-can";
- 			reg = <0 0xe6e80000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 916>,
-+				 <&cpg CPG_CORE R8A7744_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 916>;
-+			status = "disabled";
- 		};
- 
- 		can1: can@e6e88000 {
-+			compatible = "renesas,can-r8a7744",
-+				     "renesas,rcar-gen2-can";
- 			reg = <0 0xe6e88000 0 0x1000>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 915>,
-+				 <&cpg CPG_CORE R8A7744_CLK_RCAN>,
-+				 <&can_clk>;
-+			clock-names = "clkp1", "clkp2", "can_clk";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 915>;
-+			status = "disabled";
- 		};
- 
- 		rcar_sound: sound@ec500000 {
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
