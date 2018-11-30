@@ -1,80 +1,37 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:59212 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbeK2VzX (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:52091 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeK3ViY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Nov 2018 16:55:23 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/13] clk: renesas: Miscellaneous fixes
-Date: Thu, 29 Nov 2018 11:49:55 +0100
-Message-Id: <20181129105008.10239-1-geert+renesas@glider.be>
+        Fri, 30 Nov 2018 16:38:24 -0500
+Date: Fri, 30 Nov 2018 11:29:30 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: shmobile: R-Mobile: Move pm-rmobile to
+ drivers/soc/renesas/
+Message-ID: <20181130102929.cctoby2vxp7uv3ld@verge.net.au>
+References: <20181129110931.11783-1-geert+renesas@glider.be>
+ <20181129110931.11783-3-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129110931.11783-3-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Mike, Stephen, Laurent, Kieran,
+On Thu, Nov 29, 2018 at 12:09:31PM +0100, Geert Uytterhoeven wrote:
+> The pm-rmobile driver is really a driver for the System Controller
+> (SYSC) found in R-Mobile SoCs.  An equivalent driver for R-Car SoCs is
+> already located under drivers/soc/renesas/.
+> 
+> Hence move the pm-rmobile driver from arch/arm/mach-shmobile/ to
+> drivers/soc/renesas/, and rename it to rmobile-sysc.
+> 
+> Enable compile-testing on non-ARM and non-R-Mobile SoCs.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch series contains several fixes for the Renesas Clock drivers
-and DT bindings, and a small simplification:
-  - Removal of non-existent clocks,
-  - Addition of the CPEX clocks, which can be used a source for a timer
-    (CMT1),
-  - Correction of DU parent clocks.
-Most of these have been found by skimming the Hardware Manual Errata.
-
-This has been boot-tested on Salvator-X(S) (R-Car H3, M3-W, M3-N), Eagle
-(R-Car V3M), and Draak (R-Car D3), except for the DU parts.
-Testing of the DU on R-Car D3 and E3 would be appreciated, as the DU
-driver may have a workaround for the incorrect parent clock rates.
-
-I intend to queue this in clk-renesas-for-v4.21.
-
-Thanks!
-
-Geert Uytterhoeven (12):
-  dt-bindings: clock: r8a7795: Remove CSIREF clock
-  dt-bindings: clock: r8a7796: Remove CSIREF clock
-  clk: renesas: r8a774a1: Add CPEX clock
-  clk: renesas: r8a7795: Add CPEX clock
-  clk: renesas: r8a7796: Add CPEX clock
-  clk: renesas: r8a77965: Add CPEX clock
-  clk: renesas: r8a77970: Add CPEX clock
-  clk: renesas: r8a77995: Correct parent clock of DU
-  clk: renesas: r8a77995: Remove non-existent VIN5-7 module clocks
-  clk: renesas: r8a77995: Remove non-existent SSP clocks
-  clk: renesas: r8a77995: Add missing CPEX clock
-  clk: renesas: r8a77995: Simplify PLL3 multiplier/divider
-
-Takeshi Kihara (1):
-  clk: renesas: r8a77990: Correct parent clock of DU
-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c       |  1 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c        |  1 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c        |  1 +
- drivers/clk/renesas/r8a77965-cpg-mssr.c       |  1 +
- drivers/clk/renesas/r8a77970-cpg-mssr.c       |  1 +
- drivers/clk/renesas/r8a77990-cpg-mssr.c       |  4 ++--
- drivers/clk/renesas/r8a77995-cpg-mssr.c       | 15 ++++++---------
- include/dt-bindings/clock/r8a7795-cpg-mssr.h  |  2 +-
- include/dt-bindings/clock/r8a7796-cpg-mssr.h  |  2 +-
- include/dt-bindings/clock/r8a77995-cpg-mssr.h |  5 +++--
- 10 files changed, 18 insertions(+), 15 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Thanks, applied for v4.21.
