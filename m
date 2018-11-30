@@ -1,133 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1410110.outbound.protection.outlook.com ([40.107.141.110]:43168
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729773AbeKWCoA (ORCPT
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:44290 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeK3UHk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:44:00 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
+        Fri, 30 Nov 2018 15:07:40 -0500
+MIME-Version: 1.0
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com> <1543319795-48325-10-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543319795-48325-10-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 09:58:51 +0100
+Message-ID: <CAMuHMdXochKEPzgThx6_wTc2t4kC4jy9hbdD+q23bx-BCqq9rw@mail.gmail.com>
+Subject: Re: [PATCH 09/22] ARM: dts: r8a7744: Add RWDT node
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: RE: [PATCH v2 3/5] drm: rcar-du: Add r8a77470 support
-Date: Thu, 22 Nov 2018 16:03:44 +0000
-Message-ID: <TY1PR01MB177016AB58C4AC9023F8F684C0DB0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1539709139-20342-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <2608669.V0TntACJSi@avalon>
-In-Reply-To: <2608669.V0TntACJSi@avalon>
-Content-Language: en-US
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Laurent,
+Hi Biju,
 
-> From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-owner@vg=
-er.kernel.org> On Behalf Of Laurent Pinchart
-> Sent: 17 October 2018 07:52
-> Subject: Re: [PATCH v2 3/5] drm: rcar-du: Add r8a77470 support
+On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add a device node for the Watchdog Timer (RWDT) controller on the Renesas
+> RZ/G1N (r8a7744) SoC.
 >
-> Hi Fabrizio,
->
-> Thank you for the patch.
->
-> On Tuesday, 16 October 2018 19:58:59 EEST Fabrizio Castro wrote:
-> > Add RZ/G1C (a.k.a. r8a77470) support to the R-Car DU driver.
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >
-> > ---
-> > v1->v2:
-> > * Added flags RCAR_DU_FEATURE_INTERLACED and RCAR_DU_FEATURE_TVM_SYNC
-> > * Reworked comment
->
-> This looks all good, applied to my tree.
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-It looks like I can't find the patch, which tree is it?
+Thanks for your patch!
 
-Thanks,
-Fab
+> --- a/arch/arm/boot/dts/r8a7744.dtsi
+> +++ b/arch/arm/boot/dts/r8a7744.dtsi
+> @@ -293,6 +293,16 @@
+>                         reg = <0 0xe6160000 0 0x100>;
+>                 };
+>
+> +               rwdt: watchdog@e6020000 {
 
->
-> >  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 28 +++++++++++++++++++++++++++=
-+
-> >  1 file changed, 28 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 084f58d..d8a02c4 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> > @@ -77,6 +77,33 @@ static const struct rcar_du_device_info
-> > rzg1_du_r8a7745_info =3D { },
-> >  };
-> >
-> > +static const struct rcar_du_device_info rzg1_du_r8a77470_info =3D {
-> > +.gen =3D 2,
-> > +.features =3D RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-> > +  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-> > +  | RCAR_DU_FEATURE_INTERLACED
-> > +  | RCAR_DU_FEATURE_TVM_SYNC,
-> > +.channels_mask =3D BIT(1) | BIT(0),
-> > +.routes =3D {
-> > +/*
-> > + * R8A77470 has two RGB outputs, one LVDS output, and
-> > + * one (currently unsupported) analog video output
-> > + */
-> > +[RCAR_DU_OUTPUT_DPAD0] =3D {
-> > +.possible_crtcs =3D BIT(0),
-> > +.port =3D 0,
-> > +},
-> > +[RCAR_DU_OUTPUT_DPAD1] =3D {
-> > +.possible_crtcs =3D BIT(1),
-> > +.port =3D 1,
-> > +},
-> > +[RCAR_DU_OUTPUT_LVDS0] =3D {
-> > +.possible_crtcs =3D BIT(0) | BIT(1),
-> > +.port =3D 2,
-> > +},
-> > +},
-> > +};
-> > +
-> >  static const struct rcar_du_device_info rcar_du_r8a7779_info =3D {
-> >  .gen =3D 2,
-> >  .features =3D RCAR_DU_FEATURE_INTERLACED
-> > @@ -342,6 +369,7 @@ static const struct rcar_du_device_info
-> > rcar_du_r8a7799x_info =3D { static const struct of_device_id
-> > rcar_du_of_table[] =3D {
-> >  { .compatible =3D "renesas,du-r8a7743", .data =3D &rzg1_du_r8a7743_inf=
-o },
-> >  { .compatible =3D "renesas,du-r8a7745", .data =3D &rzg1_du_r8a7745_inf=
-o },
-> > +{ .compatible =3D "renesas,du-r8a77470", .data =3D &rzg1_du_r8a77470_i=
-nfo },
-> >  { .compatible =3D "renesas,du-r8a7779", .data =3D &rcar_du_r8a7779_inf=
-o },
-> >  { .compatible =3D "renesas,du-r8a7790", .data =3D &rcar_du_r8a7790_inf=
-o },
-> >  { .compatible =3D "renesas,du-r8a7791", .data =3D &rcar_du_r8a7791_inf=
-o },
->
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
+Please preserve sort order (by address, per group of devices), by
+inserting before gpio@e6050000.
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
 
+                        Geert
 
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
