@@ -1,76 +1,114 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37191 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbeKFA0m (ORCPT
+Received: from mail-eopbgr1400127.outbound.protection.outlook.com ([40.107.140.127]:2471
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726467AbeK3Un0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Nov 2018 19:26:42 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p2-v6so8361922wmc.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 05 Nov 2018 07:06:33 -0800 (PST)
-Subject: Re: [PATCH 4/5] thermal: st: st_thermal: simplify getting
- .driver_data
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-pm@vger.kernel.org
-References: <20181021200053.2194-1-wsa+renesas@sang-engineering.com>
- <20181021200053.2194-5-wsa+renesas@sang-engineering.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <0c7d3c84-c073-087e-eafb-c93bb5d43ea7@linaro.org>
-Date: Mon, 5 Nov 2018 16:06:30 +0100
-MIME-Version: 1.0
-In-Reply-To: <20181021200053.2194-5-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
+        Fri, 30 Nov 2018 15:43:26 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH 11/22] ARM: dts: r8a7744: Add DU support
+Date: Fri, 30 Nov 2018 09:34:23 +0000
+Message-ID: <OSBPR01MB2103DC4DC448288E1E1EE8F1B8D30@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+ <1543319795-48325-12-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdWq=dP77rrdC2GzPT8gEzKgxKLpqxkzcXOS=ThFu_9=fA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWq=dP77rrdC2GzPT8gEzKgxKLpqxkzcXOS=ThFu_9=fA@mail.gmail.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 21/10/2018 22:00, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-> ---
-> 
-> Build tested only. buildbot is happy.
-> 
->  drivers/thermal/st/st_thermal.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
-> index be637e6b01d2..b2bbdf6eb02b 100644
-> --- a/drivers/thermal/st/st_thermal.c
-> +++ b/drivers/thermal/st/st_thermal.c
-> @@ -277,8 +277,7 @@ EXPORT_SYMBOL_GPL(st_thermal_unregister);
->  #ifdef CONFIG_PM_SLEEP
->  static int st_thermal_suspend(struct device *dev)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
-> +	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
->  
->  	return st_thermal_sensor_off(sensor);
->  }
-> @@ -286,8 +285,7 @@ static int st_thermal_suspend(struct device *dev)
->  static int st_thermal_resume(struct device *dev)
->  {
->  	int ret;
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
-> +	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
->  
->  	ret = st_thermal_sensor_on(sensor);
->  	if (ret)
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggMTEvMjJdIEFSTTogZHRzOiByOGE3NzQ0OiBBZGQgRFUgc3VwcG9ydA0KPg0KPiBIaSBC
+aWp1LA0KPg0KPiBPbiBUdWUsIE5vdiAyNywgMjAxOCBhdCAxOjA1IFBNIEJpanUgRGFzIDxiaWp1
+LmRhc0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gQWRkIGR1IG5vZGUgdG8gcjhhNzc0NCBT
+b0MgRFQuIEJvYXJkcyB0aGF0IHdhbnQgdG8gZW5hYmxlIHRoZSBEVSBuZWVkDQo+ID4gdG8gc3Bl
+Y2lmeSB0aGUgb3V0cHV0IHRvcG9sb2d5Lg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBE
+YXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPg0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2gh
+DQo+DQo+ID4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc0NC5kdHNpDQo+ID4gKysrIGIv
+YXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc0NC5kdHNpDQo+ID4gQEAgLTEzMDAsOCArMTMwMCwxNyBA
+QA0KPiA+ICAgICAgICAgICAgICAgICB9Ow0KPiA+DQo+ID4gICAgICAgICAgICAgICAgIGR1OiBk
+aXNwbGF5QGZlYjAwMDAwIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBjb21wYXRpYmxl
+ID0gInJlbmVzYXMsZHUtcjhhNzc0NCI7DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgcmVn
+ID0gPDAgMHhmZWIwMDAwMCAwIDB4NDAwMDA+LA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIDwwIDB4ZmViOTAwMDAgMCAweDFjPjsNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
+ICByZWctbmFtZXMgPSAiZHUiLCAibHZkcy4wIjsNCj4NCj4gUGxlYXNlIHVzZSB0aGUgbmV3IERV
+L0xWRFMgYmluZGluZ3MsIHVzaW5nIGEgc2VwYXJhdGUgbm9kZSBmb3IgTFZEUy4NCj4NCj4gQlRX
+LCBJIGJlbGlldmUgdGhlIGRpc3BsYXkgd29uJ3Qgd29yayB3aXRoIGEgcmVjZW50IHRyZWUsIHVu
+bGVzcyB5b3UndmUNCj4gYWRkZWQgYSBEVCBsaXZlIHBhdGNoIGRyaXZlcnMvZ3B1L2RybS9yY2Fy
+LQ0KPiBkdS9yY2FyX2R1X29mX2x2ZHNfcjhhNzc0NC5kdHM/DQo+DQo+IFRoZSBzYW1lIGlzIHRy
+dWUgZm9yIFJaL0cxTS4NCg0KU28gZmFyIHdlIGhhdmVuJ3QgZW5hYmxlZCBMVkRTIHBhbmVsIG9u
+IGJvYXJkIHNwZWNpZmljIGR0c2kuDQoNCkkgaGF2ZSB0ZXN0ZWQgZHUgIHdpdGggYmVsb3cgcmVu
+ZXNhcy1kZXYga2VybmVsIHZlcnNpb24NCg0KTGludXggdmVyc2lvbiA0LjIwLjAtcmM0LTAwMTI3
+LWc1YWQ4YWM4IChiaWp1QGJlMXlvY3RvKSAoZ2NjIHZlcnNpb24gNy4yLjEgMjAxNzEwMTEgKExp
+bmFybyBHQ0MgNy4yLTIwMTcuMTEpKSAjNTYgU01QIEZyaSBOb3YgMzAgMDg6MDM6MjEgR01UIDIw
+MTgNCg0KWyAgICAxLjk0MjYwM10gW2RybV0gRGV2aWNlIGZlYjAwMDAwLmRpc3BsYXkgcHJvYmVk
+DQpyb290QGl3ZzIwbTp+IyBtb2RldGVzdCAtTSByY2FyLWR1DQpFbmNvZGVyczoNCmlkICAgICAg
+Y3J0YyAgICB0eXBlICAgIHBvc3NpYmxlIGNydGNzICBwb3NzaWJsZSBjbG9uZXMNCjU0ICAgICAg
+NTIgICAgICBub25lICAgIDB4MDAwMDAwMDMgICAgICAweDAwMDAwMDAxDQoNCkNvbm5lY3RvcnM6
+DQppZCAgICAgIGVuY29kZXIgc3RhdHVzICAgICAgICAgIG5hbWUgICAgICAgICAgICBzaXplICht
+bSkgICAgICAgbW9kZXMgICBlbmNvZGVycw0KNTUgICAgICA1NCAgICAgIGNvbm5lY3RlZCAgICAg
+ICBIRE1JLUEtMSAgICAgICAgNTIweDMyMCAgICAgICAgIDI3ICAgICAgNTQNCiAgbW9kZXM6DQog
+ICAgICAgIG5hbWUgcmVmcmVzaCAoSHopIGhkaXNwIGhzcyBoc2UgaHRvdCB2ZGlzcCB2c3MgdnNl
+IHZ0b3QpDQogIDE5MjB4MTA4MCA2MCAxOTIwIDE5NjggMjAwMCAyMDgwIDEwODAgMTA4MiAxMDg3
+IDExMTEgMTM4MDAwIGZsYWdzOiBwaHN5bmMsIG52c3luYzsgdHlwZTogcHJlZmVycmVkLCBkcml2
+ZXINCiAgMTkyMHgxMDgwIDYwIDE5MjAgMjAwOCAyMDUyIDIyMDAgMTA4MCAxMDg0IDEwODkgMTEy
+NSAxNDg1MDAgZmxhZ3M6IHBoc3luYywgcHZzeW5jOyB0eXBlOiBkcml2ZXINCiAgMTkyMHgxMDgw
+IDYwIDE5MjAgMjAwOCAyMDUyIDIyMDAgMTA4MCAxMDg0IDEwODkgMTEyNSAxNDgzNTIgZmxhZ3M6
+IHBoc3luYywgcHZzeW5jOyB0eXBlOiBkcml2ZXINCiAgMTI4MHgxMDI0IDc1IDEyODAgMTI5NiAx
+NDQwIDE2ODggMTAyNCAxMDI1IDEwMjggMTA2NiAxMzUwMDAgZmxhZ3M6IHBoc3luYywgcHZzeW5j
+OyB0eXBlOiBkcml2ZXINCiAgMTI4MHgxMDI0IDYwIDEyODAgMTMyOCAxNDQwIDE2ODggMTAyNCAx
+MDI1IDEwMjggMTA2NiAxMDgwMDAgZmxhZ3M6IHBoc3luYywgcHZzeW5jOyB0eXBlOiBkcml2ZXIN
+CiAgMTE1Mng4NjQgNzUgMTE1MiAxMjE2IDEzNDQgMTYwMCA4NjQgODY1IDg2OCA5MDAgMTA4MDAw
+IGZsYWdzOiBwaHN5bmMsIHB2c3luYzsgdHlwZTogZHJpdmVyDQogIDEyODB4NzIwIDYwIDEyODAg
+MTM5MCAxNDMwIDE2NTAgNzIwIDcyNSA3MzAgNzUwIDc0MjUwIGZsYWdzOiBwaHN5bmMsIHB2c3lu
+YzsgdHlwZTogZHJpdmVyDQogIDEyODB4NzIwIDYwIDEyODAgMTM5MCAxNDMwIDE2NTAgNzIwIDcy
+NSA3MzAgNzUwIDc0MTc2IGZsYWdzOiBwaHN5bmMsIHB2c3luYzsgdHlwZTogZHJpdmVyDQogIDEy
+ODB4NzIwIDUwIDEyODAgMTcyMCAxNzYwIDE5ODAgNzIwIDcyNSA3MzAgNzUwIDc0MjUwIGZsYWdz
+OiBwaHN5bmMsIHB2c3luYzsgdHlwZTogZHJpdmVyDQogIDEwMjR4NzY4IDc1IDEwMjQgMTA0MCAx
+MTM2IDEzMTIgNzY4IDc2OSA3NzIgODAwIDc4NzUwIGZsYWdzOiBwaHN5bmMsIHB2c3luYzsgdHlw
+ZTogZHJpdmVyDQogIDEwMjR4NzY4IDcwIDEwMjQgMTA0OCAxMTg0IDEzMjggNzY4IDc3MSA3Nzcg
+ODA2IDc1MDAwIGZsYWdzOiBuaHN5bmMsIG52c3luYzsgdHlwZTogZHJpdmVyDQogIDEwMjR4NzY4
+IDYwIDEwMjQgMTA0OCAxMTg0IDEzNDQgNzY4IDc3MSA3NzcgODA2IDY1MDAwIGZsYWdzOiBuaHN5
+bmMsIG52c3luYzsgdHlwZTogZHJpdmVyDQogIDEwODB4NjA3IDYwIDEwODAgMTEyMCAxMjMyIDEz
+ODQgNjA3IDYwOCA2MTEgNjI5IDUyMjEwIGZsYWdzOiBuaHN5bmMsIHB2c3luYzsgdHlwZToNCiAg
+ODMyeDYyNCA3NSA4MzIgODY0IDkyOCAxMTUyIDYyNCA2MjUgNjI4IDY2NyA1NzI4NCBmbGFnczog
+bmhzeW5jLCBudnN5bmM7IHR5cGU6IGRyaXZlcg0KICA4MDB4NjAwIDc1IDgwMCA4MTYgODk2IDEw
+NTYgNjAwIDYwMSA2MDQgNjI1IDQ5NTAwIGZsYWdzOiBwaHN5bmMsIHB2c3luYzsgdHlwZTogZHJp
+dmVyDQogIDgwMHg2MDAgNzIgODAwIDg1NiA5NzYgMTA0MCA2MDAgNjM3IDY0MyA2NjYgNTAwMDAg
+ZmxhZ3M6IHBoc3luYywgcHZzeW5jOyB0eXBlOiBkcml2ZXINCiAgODAweDYwMCA2MCA4MDAgODQw
+IDk2OCAxMDU2IDYwMCA2MDEgNjA1IDYyOCA0MDAwMCBmbGFnczogcGhzeW5jLCBwdnN5bmM7IHR5
+cGU6IGRyaXZlcg0KICA4MDB4NjAwIDU2IDgwMCA4MjQgODk2IDEwMjQgNjAwIDYwMSA2MDMgNjI1
+IDM2MDAwIGZsYWdzOiBwaHN5bmMsIHB2c3luYzsgdHlwZTogZHJpdmVyDQogIDcyMHg1NzYgNTAg
+NzIwIDczMiA3OTYgODY0IDU3NiA1ODEgNTg2IDYyNSAyNzAwMCBmbGFnczogbmhzeW5jLCBudnN5
+bmM7IHR5cGU6IGRyaXZlcg0KICA3MjB4NDgwIDYwIDcyMCA3MzYgNzk4IDg1OCA0ODAgNDg5IDQ5
+NSA1MjUgMjcwMjcgZmxhZ3M6IG5oc3luYywgbnZzeW5jOyB0eXBlOiBkcml2ZXINCiAgNzIweDQ4
+MCA2MCA3MjAgNzM2IDc5OCA4NTggNDgwIDQ4OSA0OTUgNTI1IDI3MDAwIGZsYWdzOiBuaHN5bmMs
+IG52c3luYzsgdHlwZTogZHJpdmVyDQogIDY0MHg0ODAgNzUgNjQwIDY1NiA3MjAgODQwIDQ4MCA0
+ODEgNDg0IDUwMCAzMTUwMCBmbGFnczogbmhzeW5jLCBudnN5bmM7IHR5cGU6IGRyaXZlcg0KICA2
+NDB4NDgwIDczIDY0MCA2NjQgNzA0IDgzMiA0ODAgNDg5IDQ5MiA1MjAgMzE1MDAgZmxhZ3M6IG5o
+c3luYywgbnZzeW5jOyB0eXBlOiBkcml2ZXINCiAgNjQweDQ4MCA2NyA2NDAgNzA0IDc2OCA4NjQg
+NDgwIDQ4MyA0ODYgNTI1IDMwMjQwIGZsYWdzOiBuaHN5bmMsIG52c3luYzsgdHlwZTogZHJpdmVy
+DQogIDY0MHg0ODAgNjAgNjQwIDY1NiA3NTIgODAwIDQ4MCA0OTAgNDkyIDUyNSAyNTIwMCBmbGFn
+czogbmhzeW5jLCBudnN5bmM7IHR5cGU6IGRyaXZlcg0KICA2NDB4NDgwIDYwIDY0MCA2NTYgNzUy
+IDgwMCA0ODAgNDkwIDQ5MiA1MjUgMjUxNzUgZmxhZ3M6IG5oc3luYywgbnZzeW5jOyB0eXBlOiBk
+cml2ZXINCiAgNzIweDQwMCA3MCA3MjAgNzM4IDg0NiA5MDAgNDAwIDQxMiA0MTQgNDQ5IDI4MzIw
+IGZsYWdzOiBuaHN5bmMsIHB2c3luYzsgdHlwZTogZHJpdmVyDQoNCg0KQWxzbyB0ZXN0ZWQgbGli
+ZHJtL2ttcyB0ZXN0cy4gIEl0IHdvcmtzIGZpbmUgd2l0aCA0LjIwLjAtcmM0IGtlcm5lbCBvbiBy
+ZW5lc2FzLWRldiBicmFuY2guDQoNClJlZ2FyZHMsDQpCaWp1DQoNCg0KDQpSZW5lc2FzIEVsZWN0
+cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBF
+bmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAm
+IFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
