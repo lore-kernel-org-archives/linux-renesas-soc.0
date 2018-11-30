@@ -1,67 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:5643 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728079AbeKQBMf (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46158 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeLAACW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:12:35 -0500
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-        <u.kleine-koenig@pengutronix.de>, linux-m68k@lists.linux-m68k.org,
-        linux-mips@linux-mips.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 0/6] clk: Add functions to get optional clocks
-Date: Fri, 16 Nov 2018 14:59:31 +0000
-Message-Id: <20181116145937.27660-1-phil.edworthy@renesas.com>
+        Fri, 30 Nov 2018 19:02:22 -0500
+MIME-Version: 1.0
+References: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
+ <1543510486-29532-3-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdXmS6cCZhX_b+oszDjt+t8zgAkCGApweOX-k0Uq05=AEg@mail.gmail.com> <20181130123213.GM8952@piout.net>
+In-Reply-To: <20181130123213.GM8952@piout.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 13:52:56 +0100
+Message-ID: <CAMuHMdW6=B5n8CEmqVEaqxtLD9tO3ue7_A1sTBVgi+2SPfVa8g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-rtc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Quite a few drivers get an optional clock, e.g. a bus clock required to 
-access peripheral's registers that is always enabled on some devices. This
-series adds of_clk_get_by_name_optional(), clk_get_optional() and
-devm_clk_get_optional() functions for this purpose.
+Hi Alexandre,
 
-The functions behave the same as of_clk_get_by_name(), clk_get() and
-devm_clk_get() except that they will return NULL instead of -ENOENT. This
-allows for simpler error handling in the callers.
+On Fri, Nov 30, 2018 at 1:32 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> On 30/11/2018 12:05:16+0100, Geert Uytterhoeven wrote:
+> > On Thu, Nov 29, 2018 at 6:03 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > > Add support for NXP pcf85263 real-time clock. pcf85263 rtc is compatible
+> > > with pcf85363,except that pcf85363 has additional 64 bytes of RAM.
+> > >
+> > > 1 byte of nvmem is supported and exposed in sysfs (# is the instance
+> > > number,starting with 0): /sys/bus/nvmem/devices/pcf85x63-#/nvmem
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > ---
+> > >  V1-->V2 Incorporated Alexandre and Geert's review comment.
+> >
+> > Thanks for the update!
+> >
+> > > --- a/drivers/rtc/rtc-pcf85363.c
+> > > +++ b/drivers/rtc/rtc-pcf85363.c
+> >
+> > > @@ -321,15 +344,25 @@ static int pcf85363_probe(struct i2c_client *client,
+> > >                           const struct i2c_device_id *id)
+> > >  {
+> > >         struct pcf85363 *pcf85363;
+> > > -       struct nvmem_config nvmem_cfg = {
+> > > -               .name = "pcf85363-",
+> > > -               .word_size = 1,
+> > > -               .stride = 1,
+> > > -               .size = NVRAM_SIZE,
+> > > -               .reg_read = pcf85363_nvram_read,
+> > > -               .reg_write = pcf85363_nvram_write,
+> > > +       const struct regmap_config *regmap_config = &pcf_85363_regmap_config;
+> > > +       struct nvmem_config nvmem_cfg[] = {
+> >
+> > static?
+> >
+> > Although the nvmem_config is copied, and thus static is not needed, I
+> > guess using static will decrease kernel size.
+> >
+>
+> Hum, I don't think, this is on the stack anyway.
 
-*Note*
-This changes the return values for of_clk_get_by_name() in some cases, see
-[PATCH 1/6] clk: Add of_clk_get_by_name_optional() function.
+If you make it static, it's no longer allocated on the stack, and gcc has no
+longer to emit code to initialize all members.
 
-v6:
- - Rework the __of_clk_get_by_name() logic so as to avoid duplicate tests.
- - Add doxygen style comment for devm_clk_get_optional() args
- - Add clk_get_optional() to archs that don't use the commom clk framework.
+Gr{oetje,eeting}s,
 
-Phil Edworthy (6):
-  clk: Add of_clk_get_by_name_optional() function
-  clk: Add functions to get optional clocks
-  m68k: coldfire: Add clk_get_optional() function
-  MIPS: AR7: Add clk_get_optional() function
-  MIPS: Loongson 2F: Add clk_get_optional() function
-  arch/unicore32/kernel/clock.c: Add clk_get_optional() function
-
- arch/m68k/coldfire/clk.c               | 11 ++++
- arch/mips/ar7/clock.c                  | 11 ++++
- arch/mips/loongson64/lemote-2f/clock.c | 11 ++++
- arch/unicore32/kernel/clock.c          | 11 ++++
- drivers/clk/clk-devres.c               | 18 ++++-
- drivers/clk/clkdev.c                   | 91 ++++++++++++++++++++++----
- include/linux/clk.h                    | 38 +++++++++++
- 7 files changed, 175 insertions(+), 16 deletions(-)
+                        Geert
 
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
