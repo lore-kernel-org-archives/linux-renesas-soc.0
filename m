@@ -1,68 +1,38 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:43427 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:51945 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbeKUWqC (ORCPT
+        with ESMTP id S1726618AbeK3V1R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:46:02 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2] arm64: dts: renesas: r8a77990: Add I2C-DVFS device node
-Date: Wed, 21 Nov 2018 13:11:39 +0100
-Message-Id: <20181121121139.25493-1-horms+renesas@verge.net.au>
+        Fri, 30 Nov 2018 16:27:17 -0500
+Date: Fri, 30 Nov 2018 11:18:25 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/6] soc: renesas: r8a77965-sysc: Remove non-existent
+ A3IR power domain
+Message-ID: <20181130101824.xh4lxkndyzqt55ta@verge.net.au>
+References: <20181129105619.10695-1-geert+renesas@glider.be>
+ <20181129105619.10695-2-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129105619.10695-2-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, Nov 29, 2018 at 11:56:14AM +0100, Geert Uytterhoeven wrote:
+> The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
+> removed the A3IR power domain on R-Car M3-N, as this SoC does not have
+> an Image Processing Unit (IMP-X5).
+> 
+> The definition in the DT bindings header cannot be removed yet, until
+> its (incorrect) user has been removed.
+> 
+> Fixes: a527709b78b3c997 ("soc: renesas: rcar-sysc: Add R-Car M3-N support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch adds I2C-DVFS device node for the R8A77990 SoC.
-
-v2
-* Drop aliases update as in upstream it is not required to configure the
-  BD9571 PMIC for DDR backup, nor is the use of i2c are aliases desired.
-* Do not describe the device as compatible with "renesas,rcar-gen3-iic" or
-  "renesas,rmobile-iic" fallback compat strings. The absence of automatic
-  transmission registers leads us to declare the r8a77990 IIC controller as
-  incompatible.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-[simon: drop aliases hunk and fallback compat string usage]
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
- Based on renesas-devel-20181121-v4.20-rc3
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index b0398e05e8ed..4ce07ce791b4 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -357,6 +357,20 @@
- 			reg = <0 0xe6060000 0 0x508>;
- 		};
- 
-+		i2c_dvfs: i2c@e60b0000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			compatible = "renesas,iic-r8a77990";
-+			reg = <0 0xe60b0000 0 0x34>;
-+			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 926>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 926>;
-+			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
-+			dma-names = "tx", "rx";
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77990-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
--- 
-2.11.0
+Thanks, applied for v4.21.
