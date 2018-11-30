@@ -1,87 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55534 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387580AbeKFHDJ (ORCPT
+Received: from mail-eopbgr1400122.outbound.protection.outlook.com ([40.107.140.122]:19200
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726507AbeK3WLK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:03:09 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Fri, 30 Nov 2018 17:11:10 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/2] arm64: dts: r8a77990: Add SDHI device nodes
-Date: Mon,  5 Nov 2018 22:41:16 +0100
-Message-Id: <20181105214117.11734-1-marek.vasut+renesas@gmail.com>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH 19/22] ARM: dts: r8a7744-iwg20m: Add SPI NOR support
+Date: Fri, 30 Nov 2018 11:02:08 +0000
+Message-ID: <OSBPR01MB21036C33152005C92E19853DB8D30@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
+ <1543319795-48325-20-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVhON=3hgZAdeeP9zwebVaZQNG=wsvqX3W3MVmQOWanbw@mail.gmail.com>
+ <OSBPR01MB21038E1B2F3E83248DCCD298B8D30@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <CAMuHMdX7ghhyZcvrgit_zrNwTyVcizB0nbySYNeL-38ux9VJQw@mail.gmail.com>
+In-Reply-To: <CAMuHMdX7ghhyZcvrgit_zrNwTyVcizB0nbySYNeL-38ux9VJQw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-
-This patch adds SDHI{0,1,3} device nodes for the r8a77990 SoC.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 36 +++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 9509dc05665f..fb0818d07cdb 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -826,6 +826,42 @@
- 			status = "disabled";
- 		};
- 
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a77990",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee100000 0 0x2000>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
-+		};
-+
-+		sdhi1: sd@ee120000 {
-+			compatible = "renesas,sdhi-r8a77990",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee120000 0 0x2000>;
-+			interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 313>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 313>;
-+			status = "disabled";
-+		};
-+
-+		sdhi3: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a77990",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee160000 0 0x2000>;
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			max-frequency = <200000000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 311>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
--- 
-2.18.0
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggMTkvMjJdIEFSTTogZHRzOiByOGE3NzQ0LWl3ZzIwbTogQWRkIFNQSSBOT1Igc3VwcG9y
+dA0KPg0KPiBIaSBCaWp1LA0KPg0KPiBPbiBGcmksIE5vdiAzMCwgMjAxOCBhdCAxMTozNCBBTSBC
+aWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+ID4gU3ViamVjdDog
+UmU6IFtQQVRDSCAxOS8yMl0gQVJNOiBkdHM6IHI4YTc3NDQtaXdnMjBtOiBBZGQgU1BJIE5PUg0K
+PiA+ID4gc3VwcG9ydCBPbiBUdWUsIE5vdiAyNywgMjAxOCBhdCAxOjA1IFBNIEJpanUgRGFzDQo+
+IDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gPiA+IEFkZCBzdXBwb3J0IGZv
+ciB0aGUgU1BJIE5PUiBkZXZpY2UgdXNlZCB0byBib290IHVwIHRoZSBzeXN0ZW0gdG8NCj4gPiA+
+ID4gdGhlIGlXYXZlIFJaL0cxTiBRc2V2ZW4gU3lzdGVtIE9uIE1vZHVsZSBEVC4NCj4gPiA+ID4N
+Cj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29t
+Pg0KPiA+ID4NCj4gPiA+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4gPiA+DQo+ID4gPiA+IC0t
+LSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3NDQtaXdnMjBtLmR0c2kNCj4gPiA+ID4gKysrIGIv
+YXJjaC9hcm0vYm9vdC9kdHMvcjhhNzc0NC1pd2cyMG0uZHRzaQ0KPiA+ID4NCj4gPiA+ID4gQEAg
+LTUzLDYgKzU4LDI3IEBADQo+ID4gPiA+ICAgICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiA+ID4g
+PiAgfTsNCj4gPiA+ID4NCj4gPiA+ID4gKyZxc3BpIHsNCj4gPiA+ID4gKyAgICAgICBwaW5jdHJs
+LTAgPSA8JnFzcGlfcGlucz47DQo+ID4gPiA+ICsgICAgICAgcGluY3RybC1uYW1lcyA9ICJkZWZh
+dWx0IjsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICAgIHN0YXR1cyA9ICJva2F5IjsNCj4gPiA+
+ID4gKw0KPiA+ID4gPiArICAgICAgIC8qIFdBUk5JTkcgLSBUaGlzIGRldmljZSBjb250YWlucyB0
+aGUgYm9vdGxvYWRlci4gSGFuZGxlIHdpdGgNCj4gY2FyZS4NCj4gPiA+ICovDQo+ID4gPiA+ICsg
+ICAgICAgZmxhc2g6IGZsYXNoQDAgew0KPiA+ID4gPiArICAgICAgICAgICAgICAgI2FkZHJlc3Mt
+Y2VsbHMgPSA8MT47DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAjc2l6ZS1jZWxscyA9IDwxPjsN
+Cj4gPiA+ID4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic3N0LHNzdDI1dmYwMTZiIiwg
+ImplZGVjLHNwaS1ub3IiOw0KPiA+ID4NCj4gPiA+IEFjY29yZGluZyB0byB0aGUgc2NoZW1hdGlj
+cywgdGhpcyBpcyBhbiBJU1NJIElTMjVMUDAxNkQ/DQo+ID4gPiBJU1NJIHdhcyBhY3F1aXJlZCBi
+eSBHaWdhRGV2aWNlLCBhY2NvcmRpbmcgdG8gV2lraXBlZGlhLg0KPiA+ID4gV2hpbGUgU1NUIGlz
+IG5vdyBNaWNyb0NoaXAuDQo+ID4NCj4gPiBBcyBwZXIgdGhlIHNjaGVtYXRpYyBhbmQgQm9NLCAg
+aXQgaXMuDQo+ID4gSUMgRkxBU0ggMTZNQklUIDUwTUhaIDhTT0lDIFNTVDI1VkYwMTZCLTUwLTRJ
+LVMyQUYgTWljcm9jaGlwDQo+ID4gVGVjaG5vbG9neSAxIFUxDQo+DQo+IE9oLCB0aGlzIHNlZW1z
+IHRvIGRpZmZlciBmb3IgZGlmZmVyZW50IHJldmlzaW9ucyBvZiB0aGUgc2NoZW1hdGljcy4NCj4g
+UjUuMSBoYXMgdGhlIElTU0kgcGFydCwgUjMuNCBoYXMgdGhlIFNTVCBwYXJ0Lg0KPg0KPiBEdWUg
+dG8gImplZGVjLHNwaS1ub3IiLCBpdCB3aWxsIGF1dG8tZGV0ZWN0LCBidXQgSUlSQywgdGhlIGRy
+aXZlciB3aWxsIHdhcm4gaWYgdGhlDQo+IGNvbXBhdGlibGUgZG9lc24ndCBtYXRjaCB0aGUgZGV0
+ZWN0ZWQgcGFydCwgd2hpY2ggdGh1cyBtYXkgaGFwcGVuIGZvcg0KPiBzb21lIGJvYXJkcy4NCg0K
+T0suIFdpbGwgcmVtb3ZlICJzc3QiIHBhcnQgZm9yIHRoZSBjb21wYXRpYmxlIHN0cmluZy4NCg0K
+PiA+ID4gPiArICAgICAgICAgICAgICAgcmVnID0gPDA+Ow0KPiA+ID4gPiArICAgICAgICAgICAg
+ICAgc3BpLW1heC1mcmVxdWVuY3kgPSA8NTAwMDAwMDA+Ow0KPiA+ID4gPiArICAgICAgICAgICAg
+ICAgc3BpLXR4LWJ1cy13aWR0aCA9IDwxPjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIHNwaS1y
+eC1idXMtd2lkdGggPSA8MT47DQo+ID4gPg0KPiA+ID4gPDE+IGlzIHRoZSBkZWZhdWx0LCBidXQg
+aXQncyBpbmRlZWQgZ29vZCB0byBtYWtlIHRoaXMgZXhwbGljaXQsIGFzDQo+ID4gPiB0aGlzIGlz
+IGEgUVNQSSBkZXZpY2Ugd2l0aCAyIHVud2lyZWQgZGF0YSBwaW5zLg0KPiA+ID4gSG93ZXZlciwg
+YXMgdGhlIGRldmljZSBzZWVtcyB0byBzdXBwb3J0IGR1YWwgdHJhbnNmZXJzLCBhbmQgZHVhbA0K
+PiA+ID4gbW9kZSB1c2VzIHRoZSBzdGFuZGFyZCBNT1NJL01JU08gcGlucywgeW91IHNob3VsZCB1
+c2UgPDI+IGZvciBib3RoLg0KPiA+ID4gVGhlIFJTUEkgZHJpdmVyIHN1cHBvcnRzIHRoaXMuDQo+
+ID4gPg0KPiA+ID4gVGhlIHNhbWUgYXBwbGllcyB0byB0aGUgUlovRzFNIHZlcnNpb24uDQo+ID4N
+Cj4gPiBTU1QyNVZGMDE2QiB0aGlzIGRvZXNuJ3Qgc3VwcG9ydCBkdWFsIG1vZGUuDQo+DQo+IE9L
+Lg0KPg0KPiBTbyBzb21lIGJvYXJkcyBoYXZlIGEgZHVhbC1jYXBhYmxlIHBhcnQsIG90aGVycyBk
+b24ndC4NCj4NCj4gSSdtIG5vdCAxMDAlIHN1cmUsIGJ1dCBJIHRoaW5rIHdyaXRpbmcgPDI+IHdp
+bGwgc3RpbGwgd29yaywgYXMgdGhlIGRyaXZlciB3b24ndA0KPiB1c2UgZHVhbCBtb2RlIG9uIHRo
+ZSBTU1QyNVZGMDE2QiBwYXJ0LCBkdWUgdG8gbGFjayBvZg0KPiBTUElfTk9SX0RVQUxfUkVBRCBp
+biB0aGUgZW50cnkgaW4gdGhlIHNwaS1ub3IgZHJpdmVyLg0KDQpPSy4gV2lsbCBjaGVjayB0aGlz
+Lg0KDQpSZWdhcmRzLA0KQmlqdQ0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRk
+LCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5naGFtc2hp
+cmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlciBSZWdp
+c3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
