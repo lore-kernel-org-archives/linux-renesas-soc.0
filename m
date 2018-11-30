@@ -1,49 +1,98 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47956 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbeKTOC4 (ORCPT
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:47091 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbeK3UEj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Nov 2018 09:02:56 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [PATCH] drm: rcar-du: Reject modes that fail CRTC timing requirements
-Date: Tue, 20 Nov 2018 05:36:04 +0200
-Message-Id: <20181120033604.11109-1-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 30 Nov 2018 15:04:39 -0500
+MIME-Version: 1.0
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com> <1543319795-48325-3-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543319795-48325-3-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 09:55:50 +0100
+Message-ID: <CAMuHMdVt2DDQJ9Ud6i=GWAeWW0TdpF5xiCxtRiv0dZTGCPEt8A@mail.gmail.com>
+Subject: Re: [PATCH 02/22] ARM: dts: r8a7744: Add I2C and IIC support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The hardware requires the HDSR and VDSR registers to be set to 1 or
-higher. This translates to a minimum combined horizontal sync and back
-porch of 20 pixels and a minimum vertical back porch of 3 lines. Reject
-modes that fail those requirements.
+Hi Biju,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add the I2C[0-5] and IIC[0,1,3] devices nodes to the R8A7744 device tree.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 79021d7aa3ce..9d425894e000 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -739,6 +739,15 @@ enum drm_mode_status rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
- 	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
- 		return MODE_NO_INTERLACE;
- 
-+	/*
-+	 * The hardware requires a minimum combined horizontal sync and back
-+	 * porch of 20 pixels and a minimum vertical back porch of 3 lines.
-+	 */
-+	if (mode->htotal - mode->hsync_start < 20)
-+		return MODE_HBLANK_NARROW;
-+	if (mode->crtc_vtotal - mode->crtc_vsync_end < 3)
-+		return MODE_VBLANK_NARROW;
-+
- 	return MODE_OK;
- }
- 
--- 
-Regards,
+Thanks for your patch!
 
-Laurent Pinchart
+> --- a/arch/arm/boot/dts/r8a7744.dtsi
+> +++ b/arch/arm/boot/dts/r8a7744.dtsi
+> @@ -15,6 +15,18 @@
+>         #address-cells = <2>;
+>         #size-cells = <2>;
+>
+> +       aliases {
+> +               i2c0 = &i2c0;
+> +               i2c1 = &i2c1;
+> +               i2c2 = &i2c2;
+> +               i2c3 = &i2c3;
+> +               i2c4 = &i2c4;
+> +               i2c5 = &i2c5;
+> +               i2c6 = &iic0;
+> +               i2c7 = &iic1;
+> +               i2c8 = &iic3;
+> +       };
+
+Please drop the i2c aliases. If needed at all, device aliases are board-specific
+(for ports labeled e.g. "i2c0").
+
+> +               iic3: i2c@e60b0000 {
+> +                       /* doesn't need pinmux */
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       compatible = "renesas,iic-r8a7744",
+> +                                    "renesas,rcar-gen2-iic",
+> +                                    "renesas,rmobile-iic";
+
+It seems iic3 on RZ/G1N is different, in that it does not support
+automatic transmission.
+This is a bit similar like on R-Car E3, where we dropped compatibility
+with the generic version to indicate this.  But on RZ/G1N we cannot use
+the same solution, as the limitation does not apply to all instances.
+
+RZ/G1H and RZ/G1M have the same issue.
+
+> +                       reg = <0 0xe60b0000 0 0x425>;
+> +                       interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&cpg CPG_MOD 926>;
+> +                       dmas = <&dmac0 0x77>, <&dmac0 0x78>,
+> +                              <&dmac1 0x77>, <&dmac1 0x78>;
+> +                       dma-names = "tx", "rx", "tx", "rx";
+> +                       power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
+> +                       resets = <&cpg 926>;
+> +                       status = "disabled";
+>                 };
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
