@@ -1,38 +1,148 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:46888 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727752AbeKGXUa (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:10914 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726585AbeLACpY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Nov 2018 18:20:30 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jiri Kosina <trivial@kernel.org>
-Cc: linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [trivial] mfd: tmio: Typo s/use use/use/
-Date: Wed,  7 Nov 2018 14:50:01 +0100
-Message-Id: <20181107135001.14543-1-geert+renesas@glider.be>
+        Fri, 30 Nov 2018 21:45:24 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 14/21] ARM: dts: r8a7744: USB 2.0 host support
+Date: Fri, 30 Nov 2018 15:26:28 +0000
+Message-Id: <1543591595-37861-15-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
+References: <1543591595-37861-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- include/linux/mfd/tmio.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Describe internal PCI bridge devices, USB phy device and
+link PCI USB devices to USB phy.
 
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 1e70060c92ce0a11..aa696bcb1d12e750 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -83,7 +83,7 @@
- /* Some controllers have a CBSY bit */
- #define TMIO_MMC_HAVE_CBSY		BIT(11)
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+V1-->V2
+   * No Change
+---
+ arch/arm/boot/dts/r8a7744.dtsi | 77 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 72 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 3f7674b..1d4cb5e 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -454,8 +454,25 @@
+ 		};
  
--/* Some controllers that support HS400 use use 4 taps while others use 8. */
-+/* Some controllers that support HS400 use 4 taps while others use 8. */
- #define TMIO_MMC_HAVE_4TAP_HS400	BIT(13)
+ 		usbphy: usb-phy@e6590100 {
++			compatible = "renesas,usb-phy-r8a7744",
++				     "renesas,rcar-gen2-usb-phy";
+ 			reg = <0 0xe6590100 0 0x100>;
+-			/* placeholder */
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&cpg CPG_MOD 704>;
++			clock-names = "usbhs";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 704>;
++			status = "disabled";
++
++			usb0: usb-channel@0 {
++				reg = <0>;
++				#phy-cells = <1>;
++			};
++			usb2: usb-channel@2 {
++				reg = <2>;
++				#phy-cells = <1>;
++			};
+ 		};
  
- int tmio_core_mmc_enable(void __iomem *cnf, int shift, unsigned long base);
+ 		dmac0: dma-controller@e6700000 {
+@@ -847,23 +864,73 @@
+ 		};
+ 
+ 		pci0: pci@ee090000 {
+-			reg = <0 0xee090000 0 0xc00>;
++			compatible = "renesas,pci-r8a7744",
++				     "renesas,pci-rcar-gen2";
++			device_type = "pci";
++			reg = <0 0xee090000 0 0xc00>,
++			      <0 0xee080000 0 0x1100>;
++			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
++			status = "disabled";
+ 
+ 			bus-range = <0 0>;
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			#interrupt-cells = <1>;
+-			/* placeholder */
++			ranges = <0x02000000 0 0xee080000 0 0xee080000 0 0x00010000>;
++			interrupt-map-mask = <0xff00 0 0 0x7>;
++			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
++					 0x0800 0 0 1 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH
++					 0x1000 0 0 2 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
++
++			usb@1,0 {
++				reg = <0x800 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
++
++			usb@2,0 {
++				reg = <0x1000 0 0 0 0>;
++				phys = <&usb0 0>;
++				phy-names = "usb";
++			};
+ 		};
+ 
+ 		pci1: pci@ee0d0000 {
+-			reg = <0 0xee0d0000 0 0xc00>;
++			compatible = "renesas,pci-r8a7744",
++				     "renesas,pci-rcar-gen2";
++			device_type = "pci";
++			reg = <0 0xee0d0000 0 0xc00>,
++			      <0 0xee0c0000 0 0x1100>;
++			interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 703>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 703>;
++			status = "disabled";
+ 
+ 			bus-range = <1 1>;
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			#interrupt-cells = <1>;
+-			/* placeholder */
++			ranges = <0x02000000 0 0xee0c0000 0 0xee0c0000 0 0x00010000>;
++			interrupt-map-mask = <0xff00 0 0 0x7>;
++			interrupt-map = <0x0000 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
++					 0x0800 0 0 1 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH
++					 0x1000 0 0 2 &gic GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
++
++			usb@1,0 {
++				reg = <0x10800 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
++			};
++
++			usb@2,0 {
++				reg = <0x11000 0 0 0 0>;
++				phys = <&usb2 0>;
++				phy-names = "usb";
++			};
+ 		};
+ 
+ 		sdhi0: sd@ee100000 {
 -- 
-2.17.1
+2.7.4
