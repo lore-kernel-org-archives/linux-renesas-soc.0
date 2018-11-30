@@ -1,60 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:38244 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732953AbeKOVcX (ORCPT
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:46682 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726590AbeK3UNx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:32:23 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: shmobile: Restrict TWD support to SoCs that have it
-Date: Thu, 15 Nov 2018 10:56:39 +0100
-Message-Id: <20181115095639.17206-3-geert+renesas@glider.be>
-In-Reply-To: <20181115095639.17206-1-geert+renesas@glider.be>
-References: <20181115095639.17206-1-geert+renesas@glider.be>
+        Fri, 30 Nov 2018 15:13:53 -0500
+MIME-Version: 1.0
+References: <1543423111-19745-1-git-send-email-biju.das@bp.renesas.com> <1543423111-19745-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543423111-19745-4-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 10:05:02 +0100
+Message-ID: <CAMuHMdWiAziak-EGwLY5-5AqAFxszdUHOXjPJZEh-3LRpRLEFA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] ARM: dts: r8a7744: Add IPMMU DT nodes
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Currently support for the ARM Timer and Watchdog Unit is included
-unconditionally, while only some Renesas multicore Cortex-A9 SoCs have
-a TWD.
+On Wed, Nov 28, 2018 at 5:47 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add the six IPMMU instances found in the r8a7744 to DT with a disabled
+> status.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-This decreases kernel image size by ca. 2 KiB on SoCs without a TWD.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/mach-shmobile/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 32f8297d993ac10e..a35eb5913dfdf4ba 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -30,7 +30,6 @@ menuconfig ARCH_RENESAS
- 	depends on ARCH_MULTI_V7 && MMU
- 	select ARM_GIC
- 	select GPIOLIB
--	select HAVE_ARM_TWD if SMP
- 	select NO_IOPORT_MAP
- 	select PINCTRL
- 	select SOC_BUS
-@@ -95,6 +94,7 @@ config ARCH_R8A7778
- config ARCH_R8A7779
- 	bool "R-Car H1 (R8A77790)"
- 	select HAVE_ARM_SCU if SMP
-+	select HAVE_ARM_TWD if SMP
- 	select ARCH_RCAR_GEN1
- 
- config ARCH_R8A7790
-@@ -137,5 +137,6 @@ config ARCH_SH73A0
- 	bool "SH-Mobile AG5 (R8A73A00)"
- 	select ARCH_RMOBILE
- 	select HAVE_ARM_SCU if SMP
-+	select HAVE_ARM_TWD if SMP
- 	select RENESAS_INTC_IRQPIN
- endif
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
