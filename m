@@ -1,76 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:35272 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeKZXtT (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:41448 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeK3U7k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Nov 2018 18:49:19 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Fri, 30 Nov 2018 15:59:40 -0500
+MIME-Version: 1.0
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com> <1543319795-48325-7-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543319795-48325-7-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 10:50:44 +0100
+Message-ID: <CAMuHMdU9J4KOk6nZbuNHxjakxRQTc_LML+n32K7tAmLgO0NO6A@mail.gmail.com>
+Subject: Re: [PATCH 06/22] ARM: dts: r8a7744-iwg20m: Enable SDHI10 controller
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 05/40] arm64: dts: renesas: r8a77990: Add DMA properties to MSIOF nodes
-Date: Mon, 26 Nov 2018 13:54:31 +0100
-Message-Id: <8517042060b55a37c1b7d3cbb04e131bfe61c13a.1543229515.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1543229515.git.horms+renesas@verge.net.au>
-References: <cover.1543229515.git.horms+renesas@verge.net.au>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Enable the SDHI0 controller on iWave RZ/G1N Qseven System On Module.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-This patch adds DMA properties to the MSIOF device nodes of R8A77990 SoC.
-
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 7278cd52891d..6d5efeb9f363 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -700,6 +700,9 @@
- 			reg = <0 0xe6e90000 0 0x0064>;
- 			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 211>;
-+			dmas = <&dmac1 0x41>, <&dmac1 0x40>,
-+			       <&dmac2 0x41>, <&dmac2 0x40>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 211>;
- 			#address-cells = <1>;
-@@ -713,6 +716,9 @@
- 			reg = <0 0xe6ea0000 0 0x0064>;
- 			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 210>;
-+			dmas = <&dmac1 0x43>, <&dmac1 0x42>,
-+			       <&dmac2 0x43>, <&dmac2 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 210>;
- 			#address-cells = <1>;
-@@ -726,6 +732,8 @@
- 			reg = <0 0xe6c00000 0 0x0064>;
- 			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 209>;
-+			dmas = <&dmac0 0x45>, <&dmac0 0x44>;
-+			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 209>;
- 			#address-cells = <1>;
-@@ -739,6 +747,8 @@
- 			reg = <0 0xe6c10000 0 0x0064>;
- 			interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x47>, <&dmac0 0x46>;
-+			dma-names = "tx", "rx";
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 208>;
- 			#address-cells = <1>;
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
