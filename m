@@ -1,100 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-os2jpn01on0090.outbound.protection.outlook.com ([104.47.92.90]:2177
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727656AbeKIV1R (ORCPT
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:35448 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbeK3T7D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:27:17 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: balbi@kernel.org
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: gadget: udc: renesas_usb3: add a safety connection way for forced_b_device
-Date: Fri,  9 Nov 2018 20:44:36 +0900
-Message-Id: <1541763876-19622-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 30 Nov 2018 14:59:03 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1542878075-61314-1-git-send-email-biju.das@bp.renesas.com> <1542878075-61314-7-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1542878075-61314-7-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 09:50:15 +0100
+Message-ID: <CAMuHMdX36U9RnK8r1ShFA0b3Cb2r3jrNvzWypHpQ2ODFhRscTg@mail.gmail.com>
+Subject: Re: [PATCH 6/7] ARM: dts: r8a7744: Add Ethernet AVB support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds a safety connection way for "forced_b_device" with
-"workaround_for_vbus" like below:
+On Thu, Nov 22, 2018 at 10:23 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add Ethernet AVB support for R8A7744 SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-< Example for R-Car E3 Ebisu >
- # modprobe <any usb gadget driver>
- # echo 1 > /sys/kernel/debug/ee020000.usb/b_device
- (connect a usb cable to host side.)
- # echo 2 > /sys/kernel/debug/ee020000.usb/b_device
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Previous code should have connected a usb cable before the "b_device"
-is set to 1 on the Ebisu board. However, if xHCI driver on the board
-is probed, it causes some troubles:
- - Conflicts USB VBUS/signals between the board and another host.
- - "Cannot enable. Maybe the USB cable is bad?" might happen on
-   both the board and another host with a usb hub.
- - Cannot enumerate a usb gadget correctly because an interruption
-   of VBUS change happens unexpectedly.
+Gr{oetje,eeting}s,
 
-Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/udc/renesas_usb3.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+                        Geert
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index cdffbd1..6e34f95 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -358,6 +358,7 @@ struct renesas_usb3 {
- 	bool extcon_host;		/* check id and set EXTCON_USB_HOST */
- 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
- 	bool forced_b_device;
-+	bool start_to_connect;
- };
- 
- #define gadget_to_renesas_usb3(_gadget)	\
-@@ -476,7 +477,8 @@ static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
- static void usb3_init_epc_registers(struct renesas_usb3 *usb3)
- {
- 	usb3_write(usb3, ~0, USB3_USB_INT_STA_1);
--	usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
-+	if (!usb3->workaround_for_vbus)
-+		usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
- }
- 
- static bool usb3_wakeup_usb2_phy(struct renesas_usb3 *usb3)
-@@ -700,8 +702,7 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- 	usb3_set_mode_by_role_sw(usb3, host);
- 	usb3_vbus_out(usb3, a_dev);
- 	/* for A-Peripheral or forced B-device mode */
--	if ((!host && a_dev) ||
--	    (usb3->workaround_for_vbus && usb3->forced_b_device))
-+	if ((!host && a_dev) || usb3->start_to_connect)
- 		usb3_connect(usb3);
- 	spin_unlock_irqrestore(&usb3->lock, flags);
- }
-@@ -2432,7 +2433,11 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
- 		return -EFAULT;
- 
--	if (!strncmp(buf, "1", 1))
-+	usb3->start_to_connect = false;
-+	if (usb3->workaround_for_vbus && usb3->forced_b_device &&
-+	    !strncmp(buf, "2", 1))
-+		usb3->start_to_connect = true;
-+	else if (!strncmp(buf, "1", 1))
- 		usb3->forced_b_device = true;
- 	else
- 		usb3->forced_b_device = false;
-@@ -2440,7 +2445,7 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (usb3->workaround_for_vbus)
- 		usb3_disconnect(usb3);
- 
--	/* Let this driver call usb3_connect() anyway */
-+	/* Let this driver call usb3_connect() if needed */
- 	usb3_check_id(usb3);
- 
- 	return count;
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
