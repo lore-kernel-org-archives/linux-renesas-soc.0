@@ -1,58 +1,32 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: "andrew@lunn.ch" <andrew@lunn.ch>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/2] net: phy: micrel: add tobling phy reset
-Date: Wed, 28 Nov 2018 09:02:41 +0000
-Message-ID: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:51934 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbeK3V0E (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Nov 2018 16:26:04 -0500
+Date: Fri, 30 Nov 2018 11:17:12 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a7795-es1: Add missing power
+ domains to IPMMU nodes
+Message-ID: <20181130101711.nvxen2resskismvl@verge.net.au>
+References: <20181129103435.9260-1-geert+renesas@glider.be>
+ <20181129103435.9260-3-geert+renesas@glider.be>
 MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129103435.9260-3-geert+renesas@glider.be>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch set is for R-Car Gen3 Salvator-XS boards. If we do
-the following method, the phy cannot link up correctly.
+On Thu, Nov 29, 2018 at 11:34:35AM +0100, Geert Uytterhoeven wrote:
+> While commit 3b7e7848f0e88b36 ("arm64: dts: renesas: r8a7795: Add IPMMU
+> device nodes") for R-Car H3 ES2.0 did include power-domains properties,
+> they were forgotten in the counterpart for older R-Car H3 ES1.x SoCs.
+> 
+> Fixes: e4b9a493df45075b ("arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- 1) Kernel boots by using initramfs.
- --> No open the nic, so phy_device_register() and phy_probe()
-     deasserts the reset.
- 2) Kernel enters the suspend.
- --> So, keep the reset signal as deassert.
- --> On R-Car Salvator-XS board, unfortunately, the board power is
-     turned off.
- 3) Kernel returns from suspend.
- 4) ifconfig eth0 up
- --> Then, since edge signal of the reset doesn't happen,
-     it cannot link up.
- 5) ifconfig eth0 down
- 6) ifconfig eth0 up
- --> In this case, it can link up.
-
-When resolving this issue after I got feedback from Andrew and Heiner,
-I found an issue that the phy_device.c didn't call phy_resume()
-if the PHY was not attached. So, patch 1 fixes it and add toggling
-the phy reset to the micrel phy driver.
-
-Changes from v1 (as RFC):
- - No remove the current code of phy_device.c to avoid any side effects.
- - Fix the mdio_bus_phy_resume() in phy_device.c.
- - Add toggling the phy reset in micrel.c if the PHY is not attached.
-
-Yoshihiro Shimoda (2):
-  net: phy: Fix not to call phy_resume() if PHY is not attached
-  net: phy: micrel: add toggling phy reset if PHY is not attached
-
- drivers/net/phy/micrel.c     |  8 ++++++++
- drivers/net/phy/phy_device.c | 11 ++++++-----
- 2 files changed, 14 insertions(+), 5 deletions(-)
-
---=20
-1.9.1
+Thanks, applied for v4.21.
