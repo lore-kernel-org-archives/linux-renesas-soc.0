@@ -1,7 +1,18 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Rob Herring <robh+dt@kernel.org>,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:39230 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726507AbeK3U7A (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Fri, 30 Nov 2018 15:59:00 -0500
+MIME-Version: 1.0
+References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com> <1543319795-48325-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1543319795-48325-6-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 30 Nov 2018 10:50:03 +0100
+Message-ID: <CAMuHMdVrPimL2yRNfb7xm6vM6Rm-LPr2hwY0mHfMTr_3O+KjmA@mail.gmail.com>
+Subject: Re: [PATCH 05/22] ARM: dts: r8a7744-iwg20m: Add eMMC support
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -11,34 +22,27 @@ CC: Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH 05/22] ARM: dts: r8a7744-iwg20m: Add eMMC support
-Date: Fri, 30 Nov 2018 10:43:05 +0000
-Message-ID: <OSBPR01MB2103A7E014E262348194B586B8D30@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
- <1543319795-48325-6-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdVrPimL2yRNfb7xm6vM6Rm-LPr2hwY0mHfMTr_3O+KjmA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVrPimL2yRNfb7xm6vM6Rm-LPr2hwY0mHfMTr_3O+KjmA@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-Sender: devicetree-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggMDUvMjJdIEFSTTogZHRzOiByOGE3NzQ0LWl3ZzIwbTogQWRkIGVNTUMgc3VwcG9ydA0K
-Pg0KPiBPbiBUdWUsIE5vdiAyNywgMjAxOCBhdCAxOjA1IFBNIEJpanUgRGFzIDxiaWp1LmRhc0Bi
-cC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gQWRkIGVNTUMgc3VwcG9ydCBmb3IgaVdhdmUgUlov
-RzFOIFFzZXZlbiBTeXN0ZW0gT24gTW9kdWxlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogQmlq
-dSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPg0KPiBSZXZpZXdlZC1ieTogR2VlcnQg
-VXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT4NCj4NCj4gSSBhc3N1bWUgdGhl
-IFBDQiBpcyB0aGUgc2FtZSBmb3IgUlovRzFNIGFuZCBSWi9HMU4sIHNvIHBlcmhhcHMgdGhpcyBj
-YW4NCj4gYmUgZmFjdG9yZWQgb3V0IGluIGEgY29tbW9uIC5kdHNpIGZpbGUsIGxpa2Ugd2UgZGlk
-IGZvciBTYWx2YXRvci1YKFMpPw0KDQpTb00gaXMgZGlmZmVyZW50IGJldHdlZW4gUlovRzFNIGFu
-ZCBSWi9HMU4gaW4gdGVybXMgb2YgbWVtb3J5IGFuZCBQQ2llL1NBVEEuDQoNClRoZSBvbmx5IGNv
-bW1vbiBwYXJ0IGluIFNvTSBpcyBlTU1DLFNESEkwIGFuZCBRU1BJIGZsYXNoLiBTbyBpdCBkb2Vz
-bid0IG1ha2Ugc2Vuc2UgdG8gZmFjdG9yZWQgaXQgb3V0Lg0KDQpXaGF0IGRvIHlvdSB0aGluaz8N
-Cg0KUmVnYXJkcywNCkJpanUNCg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwg
-RHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJl
-LCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0
-ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add eMMC support for iWave RZ/G1N Qseven System On Module.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I assume the PCB is the same for RZ/G1M and RZ/G1N, so perhaps this
+can be factored out in a common .dtsi file, like we did for Salvator-X(S)?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
