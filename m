@@ -1,177 +1,161 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:22481 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727763AbeLFJEn (ORCPT
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55097 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbeLBTga (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:04:43 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
-Date: Thu,  6 Dec 2018 08:55:57 +0000
-Message-Id: <1544086559-47141-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
-References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
+        Sun, 2 Dec 2018 14:36:30 -0500
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 12/14] gpio: pca953x: Zap ad-hoc reg_output cache
+Date: Sun,  2 Dec 2018 20:35:51 +0100
+Message-Id: <20181202193553.29704-12-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
+References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for NXP pcf85263 real-time clock. pcf85263 rtc is compatible
-with pcf85363,except that pcf85363 has additional 64 bytes of RAM.
+Replace the ad-hoc reg_output output register caching with generic
+regcache cache. Drop pca953x_write_single() which is no longer used.
+This reduces code duplication.
 
-1 byte of nvmem is supported and exposed in sysfs (# is the instance
-number,starting with 0): /sys/bus/nvmem/devices/pcf85x63-#/nvmem
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-V1-->V2
-	* Incorporated Alexandre and Geert's review comment.
-V2-->V3
-	* Incorporated Geert's review comment.
----
- drivers/rtc/rtc-pcf85363.c | 87 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 69 insertions(+), 18 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 65 +++++++++----------------------------
+ 1 file changed, 15 insertions(+), 50 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index c04a1ed..6a0a994 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -120,6 +120,11 @@ struct pcf85363 {
- 	struct regmap		*regmap;
- };
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index a01e9f158439..8155f1dd667b 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -141,7 +141,6 @@ static const struct pca953x_reg_config pca957x_regs = {
  
-+struct pcf85x63_config {
-+	struct regmap_config regmap;
-+	unsigned int num_nvram;
-+};
-+
- static int pcf85363_rtc_read_time(struct device *dev, struct rtc_time *tm)
- {
- 	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-@@ -311,25 +316,68 @@ static int pcf85363_nvram_write(void *priv, unsigned int offset, void *val,
- 				 val, bytes);
+ struct pca953x_chip {
+ 	unsigned gpio_start;
+-	u8 reg_output[MAX_BANK];
+ 	struct mutex i2c_lock;
+ 	struct regmap *regmap;
+ 
+@@ -340,21 +339,6 @@ static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
+ 	return 0;
  }
  
--static const struct regmap_config regmap_config = {
--	.reg_bits = 8,
--	.val_bits = 8,
--	.max_register = 0x7f,
-+static int pcf85x63_nvram_read(void *priv, unsigned int offset, void *val,
-+			       size_t bytes)
-+{
-+	struct pcf85363 *pcf85363 = priv;
-+
-+	return regmap_read(pcf85363->regmap, CTRL_RAMBYTE, val);
-+}
-+
-+static int pcf85x63_nvram_write(void *priv, unsigned int offset, void *val,
-+				size_t bytes)
-+{
-+	struct pcf85363 *pcf85363 = priv;
-+
-+	return regmap_write(pcf85363->regmap, CTRL_RAMBYTE,
-+				*((unsigned int *)val));
-+}
-+
-+static const struct pcf85x63_config pcf_85263_config = {
-+	{
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x2f,
-+	},
-+	1
-+};
-+
-+static const struct pcf85x63_config pcf_85363_config = {
-+	{
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x7f,
-+	},
-+	2
- };
- 
- static int pcf85363_probe(struct i2c_client *client,
- 			  const struct i2c_device_id *id)
- {
- 	struct pcf85363 *pcf85363;
--	struct nvmem_config nvmem_cfg = {
--		.name = "pcf85363-",
--		.word_size = 1,
--		.stride = 1,
--		.size = NVRAM_SIZE,
--		.reg_read = pcf85363_nvram_read,
--		.reg_write = pcf85363_nvram_write,
-+	const struct pcf85x63_config *config = &pcf_85363_config;
-+	const void *data = of_device_get_match_data(&client->dev);
-+	static struct nvmem_config nvmem_cfg[] = {
-+		{
-+			.name = "pcf85x63-",
-+			.word_size = 1,
-+			.stride = 1,
-+			.size = 1,
-+			.reg_read = pcf85x63_nvram_read,
-+			.reg_write = pcf85x63_nvram_write,
-+		}, {
-+			.name = "pcf85363-",
-+			.word_size = 1,
-+			.stride = 1,
-+			.size = NVRAM_SIZE,
-+			.reg_read = pcf85363_nvram_read,
-+			.reg_write = pcf85363_nvram_write,
-+		},
- 	};
+-static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
+-				int off)
+-{
+-	u8 regaddr = pca953x_recalc_addr(chip, reg, off, true, false);
 -	int ret;
-+	int ret, i;
-+
-+	if (data)
-+		config = data;
+-
+-	ret = regmap_write(chip->regmap, regaddr, val);
+-	if (ret < 0) {
+-		dev_err(&chip->client->dev, "failed writing register\n");
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+ 	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, true, true);
+@@ -403,25 +387,17 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+ 	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
+ 					true, false);
++	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
++					true, false);
+ 	u8 bit = BIT(off % BANK_SZ);
+-	u8 reg_val;
+ 	int ret;
  
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
- 		return -ENODEV;
-@@ -339,7 +387,7 @@ static int pcf85363_probe(struct i2c_client *client,
- 	if (!pcf85363)
- 		return -ENOMEM;
+ 	mutex_lock(&chip->i2c_lock);
+ 	/* set output level */
+-	if (val)
+-		reg_val = chip->reg_output[off / BANK_SZ]
+-			| (1u << (off % BANK_SZ));
+-	else
+-		reg_val = chip->reg_output[off / BANK_SZ]
+-			& ~(1u << (off % BANK_SZ));
+-
+-	ret = pca953x_write_single(chip, chip->regs->output, reg_val, off);
++	ret = regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
+ 	if (ret)
+ 		goto exit;
  
--	pcf85363->regmap = devm_regmap_init_i2c(client, &regmap_config);
-+	pcf85363->regmap = devm_regmap_init_i2c(client, &config->regmap);
- 	if (IS_ERR(pcf85363->regmap)) {
- 		dev_err(&client->dev, "regmap allocation failed\n");
- 		return PTR_ERR(pcf85363->regmap);
-@@ -370,15 +418,18 @@ static int pcf85363_probe(struct i2c_client *client,
+-	chip->reg_output[off / BANK_SZ] = reg_val;
+-
+ 	/* then direction */
+ 	ret = regmap_write_bits(chip->regmap, dirreg, bit, 0);
+ exit:
+@@ -452,23 +428,12 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ {
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+-	u8 reg_val;
+-	int ret;
++	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
++					true, false);
++	u8 bit = BIT(off % BANK_SZ);
  
- 	ret = rtc_register_device(pcf85363->rtc);
- 
--	nvmem_cfg.priv = pcf85363;
--	rtc_nvmem_register(pcf85363->rtc, &nvmem_cfg);
-+	for (i = 0; i < config->num_nvram; i++) {
-+		nvmem_cfg[i].priv = pcf85363;
-+		rtc_nvmem_register(pcf85363->rtc, &nvmem_cfg[i]);
-+	}
- 
- 	return ret;
+ 	mutex_lock(&chip->i2c_lock);
+-	if (val)
+-		reg_val = chip->reg_output[off / BANK_SZ]
+-			| (1u << (off % BANK_SZ));
+-	else
+-		reg_val = chip->reg_output[off / BANK_SZ]
+-			& ~(1u << (off % BANK_SZ));
+-
+-	ret = pca953x_write_single(chip, chip->regs->output, reg_val, off);
+-	if (ret)
+-		goto exit;
+-
+-	chip->reg_output[off / BANK_SZ] = reg_val;
+-exit:
++	regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
+ 	mutex_unlock(&chip->i2c_lock);
  }
  
- static const struct of_device_id dev_ids[] = {
--	{ .compatible = "nxp,pcf85363" },
--	{}
-+	{ .compatible = "nxp,pcf85263", .data = &pcf_85263_config },
-+	{ .compatible = "nxp,pcf85363", .data = &pcf_85363_config },
-+	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dev_ids);
+@@ -500,7 +465,10 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 	int ret;
  
-@@ -393,5 +444,5 @@ static struct i2c_driver pcf85363_driver = {
- module_i2c_driver(pcf85363_driver);
+ 	mutex_lock(&chip->i2c_lock);
+-	memcpy(reg_val, chip->reg_output, NBANK(chip));
++	ret = pca953x_read_regs(chip, chip->regs->output, reg_val);
++	if (ret)
++		goto exit;
++
+ 	for (bank = 0; bank < NBANK(chip); bank++) {
+ 		bank_mask = mask[bank / sizeof(*mask)] >>
+ 			   ((bank % sizeof(*mask)) * 8);
+@@ -512,11 +480,7 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 		}
+ 	}
  
- MODULE_AUTHOR("Eric Nelson");
--MODULE_DESCRIPTION("pcf85363 I2C RTC driver");
-+MODULE_DESCRIPTION("pcf85263/pcf85363 I2C RTC driver");
- MODULE_LICENSE("GPL");
+-	ret = pca953x_write_regs(chip, chip->regs->output, reg_val);
+-	if (ret)
+-		goto exit;
+-
+-	memcpy(chip->reg_output, reg_val, NBANK(chip));
++	pca953x_write_regs(chip, chip->regs->output, reg_val);
+ exit:
+ 	mutex_unlock(&chip->i2c_lock);
+ }
+@@ -815,8 +779,9 @@ static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
+ 	int ret;
+ 	u8 val[MAX_BANK];
+ 
+-	ret = pca953x_read_regs(chip, chip->regs->output, chip->reg_output);
+-	if (ret)
++	ret = regcache_sync_region(chip->regmap, chip->regs->output,
++				   chip->regs->output + NBANK(chip));
++	if (ret != 0)
+ 		goto out;
+ 
+ 	ret = regcache_sync_region(chip->regmap, chip->regs->direction,
 -- 
-2.7.4
+2.18.0
