@@ -1,84 +1,62 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:43630 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbeLGODq (ORCPT
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39114 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbeLBTgZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 09:03:46 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a77990: Add support for pull-up only pins
-Date: Fri,  7 Dec 2018 15:03:43 +0100
-Message-Id: <20181207140343.5197-1-geert+renesas@glider.be>
+        Sun, 2 Dec 2018 14:36:25 -0500
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 08/14] gpio: pca953x: Zap ad-hoc I2C block write in multi GPIO set
+Date: Sun,  2 Dec 2018 20:35:47 +0100
+Message-Id: <20181202193553.29704-8-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
+References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Jul 2, 2018) states
-that the USB30_OVC pin supports pull-up only.  It has a bit assigned in
-the pull-enable register (PUEN5), but not in the pull-up/down control
-register (PUD5).
+The ad-hoc i2c block write can be replaced by standard register accessor
+function, which correctly handles all the chip details and differences.
+Do so to simplify the code.
 
-Add a check for this, to prevent configuring a prohibited setting.
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Fixes: 83f6941a42a5e773 ("pinctrl: sh-pfc: r8a77990: Add bias pinconf support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-To be queued in sh-pfc-for-v4.22.
+ drivers/gpio/gpio-pca953x.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 8c06d72753890e32..784d4400c3e0e7ea 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -4914,6 +4914,17 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ /* sentinel */ },
- };
- 
-+static bool pin_has_pud(unsigned int pin)
-+{
-+	/* Some pins are pull-up only */
-+	switch (pin) {
-+	case RCAR_GP_PIN(6, 9):	/* USB30_OVC  */
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- static unsigned int r8a77990_pinmux_get_bias(struct sh_pfc *pfc,
- 					     unsigned int pin)
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index dc691bd52a79..b3386819c550 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -364,8 +364,6 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 				      unsigned long *mask, unsigned long *bits)
  {
-@@ -4926,7 +4937,7 @@ static unsigned int r8a77990_pinmux_get_bias(struct sh_pfc *pfc,
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+-	int bank_shift = pca953x_bank_shift(chip);
+-	u32 regaddr = chip->regs->output << bank_shift;
+ 	unsigned int bank_mask, bank_val;
+ 	int bank;
+ 	u8 reg_val[MAX_BANK];
+@@ -384,14 +382,7 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 		}
+ 	}
  
- 	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
- 		return PIN_CONFIG_BIAS_DISABLE;
--	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
-+	else if (!pin_has_pud(pin) || (sh_pfc_read(pfc, reg->pud) & BIT(bit)))
- 		return PIN_CONFIG_BIAS_PULL_UP;
- 	else
- 		return PIN_CONFIG_BIAS_PULL_DOWN;
-@@ -4947,11 +4958,13 @@ static void r8a77990_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 	if (bias != PIN_CONFIG_BIAS_DISABLE)
- 		enable |= BIT(bit);
- 
--	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
--	if (bias == PIN_CONFIG_BIAS_PULL_UP)
--		updown |= BIT(bit);
-+	if (pin_has_pud(pin)) {
-+		updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
-+		if (bias == PIN_CONFIG_BIAS_PULL_UP)
-+			updown |= BIT(bit);
- 
--	sh_pfc_write(pfc, reg->pud, updown);
-+		sh_pfc_write(pfc, reg->pud, updown);
-+	}
- 	sh_pfc_write(pfc, reg->puen, enable);
- }
+-	/* PCA9575 needs address-increment on multi-byte writes */
+-	if ((PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) &&
+-	    (NBANK(chip) > 1)) {
+-		regaddr |= REG_ADDR_AI;
+-	}
+-
+-	ret = i2c_smbus_write_i2c_block_data(chip->client, regaddr,
+-					     NBANK(chip), reg_val);
++	ret = pca953x_write_regs(chip, chip->regs->output, reg_val);
+ 	if (ret)
+ 		goto exit;
  
 -- 
-2.17.1
+2.18.0
