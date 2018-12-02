@@ -1,135 +1,141 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45874 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbeLGMuw (ORCPT
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56094 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbeLBTgX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:50:52 -0500
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 3/5] drm: rcar-du: Disable unused DPAD outputs
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org
-References: <20181125144031.4407-1-laurent.pinchart+renesas@ideasonboard.com>
- <20181125144031.4407-4-laurent.pinchart+renesas@ideasonboard.com>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Message-ID: <9151597e-50a3-d9a6-507a-96e505d7b3da@ideasonboard.com>
-Date: Fri, 7 Dec 2018 12:50:47 +0000
-MIME-Version: 1.0
-In-Reply-To: <20181125144031.4407-4-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Sun, 2 Dec 2018 14:36:23 -0500
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 06/14] gpio: pca953x: Unify pca953x_{read,write}_regs_{8,mul}()
+Date: Sun,  2 Dec 2018 20:35:45 +0100
+Message-Id: <20181202193553.29704-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
+References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Laurent,
+At this point, the pca953x_{read,write}_regs_mul() can read single bank
+PCA953x GPIO chips as well. Merge the _8 and _mul functions together to
+simplify the code a bit.
 
-Thank you for the patch,
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-pca953x.c | 54 ++++++-------------------------------
+ 1 file changed, 8 insertions(+), 46 deletions(-)
 
-On 25/11/2018 14:40, Laurent Pinchart wrote:
-> DU channels are routed to DPAD outputs in an SoC-dependent way. The
-> routing can be fixed (e.g. DU3 to DPAD0 on H3) or configurable (e.g. DU0
-> or DU1 to DPAD0 on D3/E3). The hardware offers no option to disconnect
-> DPAD outputs, which are thus always driven by a DU channel.
-> 
-> On SoCs that have less DU channels than DU outputs, such as D3 and E3,
-> the DPAD output is always driven when all channels are in used by other
-
-s/used/use/
-
-
-> outputs (such as the internal LVDS and HDMI encoders). This creates an
-> unwanted clone on the DPAD output.
-> 
-> However, the parallel output of the DU channels routed to DPAD can be
-> set to fixed levels in the DU channels themselves through the DOFLR
-> group register. Use this to turn the DPAD on or off by driving fixed
-> signals at the output of any DU channel not routed to a DPAD output.
-> This doesn't affect the DU output signals going to other outputs.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-Only spelling and bikeshedding here - so:
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_group.c | 42 +++++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> index 7e440f61977f..5aaf41b7a2ca 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> @@ -287,6 +287,46 @@ int rcar_du_set_dpad0_vsp1_routing(struct rcar_du_device *rcdu)
->  	return 0;
->  }
->  
-> +static void rcar_du_group_set_output_levels(struct rcar_du_group *rgrp)
-> +{
-> +	static const u32 doflr_values[2] = {
-> +		DOFLR_HSYCFL0 | DOFLR_VSYCFL0 | DOFLR_ODDFL0 |
-> +		DOFLR_DISPFL0 | DOFLR_CDEFL0  | DOFLR_RGBFL0,
-> +		DOFLR_HSYCFL1 | DOFLR_VSYCFL1 | DOFLR_ODDFL1 |
-> +		DOFLR_DISPFL1 | DOFLR_CDEFL1  | DOFLR_RGBFL1,
-> +	};
-> +	static const u32 dpad_mask = BIT(RCAR_DU_OUTPUT_DPAD1)
-> +				   | BIT(RCAR_DU_OUTPUT_DPAD0);
-> +	struct rcar_du_device *rcdu = rgrp->dev;
-> +	u32 doflr = DOFLR_CODE;
-> +	unsigned int i;
-> +
-> +	if (rcdu->info->gen < 2)
-> +		return;
-> +
-> +	/*
-> +	 * The DPAD outputs can't be controlled directly. However, the parallel
-> +	 * output of the DU channels routed to DPAD can be set to fixed levels
-> +	 * through the DOFLR group register. Use this to turn the DPAD on or off
-> +	 * by driving fixed signals at the output of any DU channel not routed
-> +	 * to a DPAD output. This doesn't affect the DU output signals going to
-> +	 * other outputs, such as the internal LVDS and HDMI encoders.
-
-Perhaps more out of interest - what /fixed/ levels do we output.
-High/Low/Hi-Z ?
-
-
-> +	 */
-> +
-> +	for (i = 0; i < rgrp->num_crtcs; ++i) {
-> +		struct rcar_du_crtc_state *rstate;
-> +		struct rcar_du_crtc *rcrtc;
-> +
-> +		rcrtc = &rcdu->crtcs[rgrp->index * 2 + i];> +		rstate = to_rcar_crtc_state(rcrtc->crtc.state);
-> +
-> +		if (!(rstate->outputs & dpad_mask))
-> +			doflr |= doflr_values[i];> +	}
-> +
-> +	rcar_du_group_write(rgrp, DOFLR, doflr);
-> +}
-> +
->  int rcar_du_group_set_routing(struct rcar_du_group *rgrp)
->  {
->  	struct rcar_du_device *rcdu = rgrp->dev;
-> @@ -306,5 +346,7 @@ int rcar_du_group_set_routing(struct rcar_du_group *rgrp)
->  
->  	rcar_du_group_write(rgrp, DORCR, dorcr);
->  
-> +	rcar_du_group_set_output_levels(rgrp);
-
-Shouldn't this be:
-
-  rcar_du_group_set_dpad_levels()
-
-Anyway - that's just bikeshedding - I'll leave the decision (even if
-that's keeping this as is) to you.
-
-> +
->  	return rcar_du_set_dpad0_vsp1_routing(rgrp->dev);
->  }
-> 
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 551fa69661b2..09fd8cde9ca9 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -154,9 +154,6 @@ struct pca953x_chip {
+ 	struct regulator *regulator;
+ 
+ 	const struct pca953x_reg_config *regs;
+-
+-	int (*write_regs)(struct pca953x_chip *, int, u8 *);
+-	int (*read_regs)(struct pca953x_chip *, int, u8 *);
+ };
+ 
+ static int pca953x_bank_shift(struct pca953x_chip *chip)
+@@ -201,17 +198,13 @@ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
+ 	return 0;
+ }
+ 
+-static int pca953x_write_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
+-{
+-	return i2c_smbus_write_byte_data(chip->client, reg, *val);
+-}
+-
+-static int pca953x_write_regs_mul(struct pca953x_chip *chip, int reg, u8 *val)
++static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+ 	int bank_shift = pca953x_bank_shift(chip);
+ 	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+ 	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+ 	u8 regaddr = pinctrl | addr;
++	int ret;
+ 
+ 	/* Chips with 24 and more GPIOs always support Auto Increment */
+ 	if (NBANK(chip) > 2)
+@@ -221,15 +214,8 @@ static int pca953x_write_regs_mul(struct pca953x_chip *chip, int reg, u8 *val)
+ 	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)
+ 		regaddr |= REG_ADDR_AI;
+ 
+-	return i2c_smbus_write_i2c_block_data(chip->client, regaddr,
+-					      NBANK(chip), val);
+-}
+-
+-static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+-{
+-	int ret = 0;
+-
+-	ret = chip->write_regs(chip, reg, val);
++	ret = i2c_smbus_write_i2c_block_data(chip->client, regaddr,
++					     NBANK(chip), val);
+ 	if (ret < 0) {
+ 		dev_err(&chip->client->dev, "failed writing register\n");
+ 		return ret;
+@@ -238,36 +224,20 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ 	return 0;
+ }
+ 
+-static int pca953x_read_regs_8(struct pca953x_chip *chip, int reg, u8 *val)
+-{
+-	int ret;
+-
+-	ret = i2c_smbus_read_byte_data(chip->client, reg);
+-	*val = ret;
+-
+-	return ret;
+-}
+-
+-static int pca953x_read_regs_mul(struct pca953x_chip *chip, int reg, u8 *val)
++static int pca953x_read_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+ 	int bank_shift = pca953x_bank_shift(chip);
+ 	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+ 	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+ 	u8 regaddr = pinctrl | addr;
++	int ret;
+ 
+ 	/* Chips with 24 and more GPIOs always support Auto Increment */
+ 	if (NBANK(chip) > 2)
+ 		regaddr |= REG_ADDR_AI;
+ 
+-	return i2c_smbus_read_i2c_block_data(chip->client, regaddr,
+-					     NBANK(chip), val);
+-}
+-
+-static int pca953x_read_regs(struct pca953x_chip *chip, int reg, u8 *val)
+-{
+-	int ret;
+-
+-	ret = chip->read_regs(chip, reg, val);
++	ret = i2c_smbus_read_i2c_block_data(chip->client, regaddr,
++					    NBANK(chip), val);
+ 	if (ret < 0) {
+ 		dev_err(&chip->client->dev, "failed reading register\n");
+ 		return ret;
+@@ -872,14 +842,6 @@ static int pca953x_probe(struct i2c_client *client,
+ 	 */
+ 	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
+ 
+-	if (chip->gpio_chip.ngpio <= 8) {
+-		chip->write_regs = pca953x_write_regs_8;
+-		chip->read_regs = pca953x_read_regs_8;
+-	} else {
+-		chip->write_regs = pca953x_write_regs_mul;
+-		chip->read_regs = pca953x_read_regs_mul;
+-	}
+-
+ 	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
+ 		ret = device_pca953x_init(chip, invert);
+ 	else
 -- 
-Regards
---
-Kieran
+2.18.0
