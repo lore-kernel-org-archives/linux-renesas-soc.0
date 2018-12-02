@@ -1,168 +1,192 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbeLFWAG (ORCPT
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55094 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbeLBTg3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:00:06 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 8/9] ARM: shmobile: R-Mobile: Clean up struct rmobile_pm_domain
-Date: Thu,  6 Dec 2018 13:59:33 -0800
-Message-Id: <445aeb081bc7131c0dcb0818f0326a8dd5a14a14.1544132474.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
-References: <cover.1544132474.git.horms+renesas@verge.net.au>
+        Sun, 2 Dec 2018 14:36:29 -0500
+From: Marek Vasut <marek.vasut@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 11/14] gpio: pca953x: Zap ad-hoc reg_direction cache
+Date: Sun,  2 Dec 2018 20:35:50 +0100
+Message-Id: <20181202193553.29704-11-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
+References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Replace the ad-hoc reg_direction direction register caching with generic
+regcache cache. This reduces code duplication.
 
-Commit 59b89af1d5551c12 ("ARM: shmobile: sh7372: Remove Legacy C
-SoC code") removed the last user of the rmobile_pm_domain.resume()
-callback.
-
-Commit 44d88c754e57a6d9 ("ARM: shmobile: Remove legacy SoC code
-for R-Mobile A1") removed the last user of the rmobile_pm_domain.no_debug
-flag and of the "pm-rmobile.h" header file (outside the actual driver).
-
-Hence remove no longer used rmobile_pm_domain members, and absorb the
-header file into the driver.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-shmobile/pm-rmobile.c | 37 ++++++++++++++++++-------------------
- arch/arm/mach-shmobile/pm-rmobile.h | 22 ----------------------
- 2 files changed, 18 insertions(+), 41 deletions(-)
- delete mode 100644 arch/arm/mach-shmobile/pm-rmobile.h
+ drivers/gpio/gpio-pca953x.c | 52 ++++++++++++++++++++-----------------
+ 1 file changed, 28 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index c6a11b5ec6db..421ae1c887d8 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -18,12 +18,11 @@
- #include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/pm_clock.h>
-+#include <linux/pm_domain.h>
- #include <linux/slab.h>
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 389fa891f342..a01e9f158439 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -142,7 +142,6 @@ static const struct pca953x_reg_config pca957x_regs = {
+ struct pca953x_chip {
+ 	unsigned gpio_start;
+ 	u8 reg_output[MAX_BANK];
+-	u8 reg_direction[MAX_BANK];
+ 	struct mutex i2c_lock;
+ 	struct regmap *regmap;
  
- #include <asm/io.h>
- 
--#include "pm-rmobile.h"
--
- /* SYSC */
- #define SPDCR		0x08	/* SYS Power Down Control Register */
- #define SWUCR		0x14	/* SYS Wakeup Control Register */
-@@ -32,6 +31,14 @@
- #define PSTR_RETRIES	100
- #define PSTR_DELAY_US	10
- 
-+struct rmobile_pm_domain {
-+	struct generic_pm_domain genpd;
-+	struct dev_power_governor *gov;
-+	int (*suspend)(void);
-+	void __iomem *base;
-+	unsigned int bit_shift;
-+};
-+
- static inline
- struct rmobile_pm_domain *to_rmobile_pd(struct generic_pm_domain *d)
+@@ -387,18 +386,13 @@ static int pca953x_read_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned off)
  {
-@@ -65,16 +72,13 @@ static int rmobile_pd_power_down(struct generic_pm_domain *genpd)
- 		}
- 	}
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
+-	u8 reg_val;
++	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
++					true, false);
++	u8 bit = BIT(off % BANK_SZ);
+ 	int ret;
  
--	if (!rmobile_pd->no_debug)
--		pr_debug("%s: Power off, 0x%08x -> PSTR = 0x%08x\n",
--			 genpd->name, mask,
--			 __raw_readl(rmobile_pd->base + PSTR));
-+	pr_debug("%s: Power off, 0x%08x -> PSTR = 0x%08x\n", genpd->name, mask,
-+		 __raw_readl(rmobile_pd->base + PSTR));
- 
- 	return 0;
- }
- 
--static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd,
--				 bool do_resume)
-+static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd)
- {
- 	unsigned int mask;
- 	unsigned int retry_count;
-@@ -85,7 +89,7 @@ static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd,
- 
- 	mask = BIT(rmobile_pd->bit_shift);
- 	if (__raw_readl(rmobile_pd->base + PSTR) & mask)
--		goto out;
-+		return ret;
- 
- 	__raw_writel(mask, rmobile_pd->base + SWUCR);
- 
-@@ -100,21 +104,16 @@ static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd,
- 	if (!retry_count)
- 		ret = -EIO;
- 
--	if (!rmobile_pd->no_debug)
--		pr_debug("%s: Power on, 0x%08x -> PSTR = 0x%08x\n",
--			 rmobile_pd->genpd.name, mask,
--			 __raw_readl(rmobile_pd->base + PSTR));
+ 	mutex_lock(&chip->i2c_lock);
+-	reg_val = chip->reg_direction[off / BANK_SZ] | (1u << (off % BANK_SZ));
 -
--out:
--	if (ret == 0 && rmobile_pd->resume && do_resume)
--		rmobile_pd->resume();
-+	pr_debug("%s: Power on, 0x%08x -> PSTR = 0x%08x\n",
-+		 rmobile_pd->genpd.name, mask,
-+		 __raw_readl(rmobile_pd->base + PSTR));
- 
+-	ret = pca953x_write_single(chip, chip->regs->direction, reg_val, off);
+-	if (ret)
+-		goto exit;
+-
+-	chip->reg_direction[off / BANK_SZ] = reg_val;
+-exit:
++	ret = regmap_write_bits(chip->regmap, dirreg, bit, bit);
+ 	mutex_unlock(&chip->i2c_lock);
  	return ret;
  }
- 
- static int rmobile_pd_power_up(struct generic_pm_domain *genpd)
+@@ -407,6 +401,9 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 		unsigned off, int val)
  {
--	return __rmobile_pd_power_up(to_rmobile_pd(genpd), true);
-+	return __rmobile_pd_power_up(to_rmobile_pd(genpd));
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
++	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
++					true, false);
++	u8 bit = BIT(off % BANK_SZ);
+ 	u8 reg_val;
+ 	int ret;
+ 
+@@ -426,12 +423,7 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 	chip->reg_output[off / BANK_SZ] = reg_val;
+ 
+ 	/* then direction */
+-	reg_val = chip->reg_direction[off / BANK_SZ] & ~(1u << (off % BANK_SZ));
+-	ret = pca953x_write_single(chip, chip->regs->direction, reg_val, off);
+-	if (ret)
+-		goto exit;
+-
+-	chip->reg_direction[off / BANK_SZ] = reg_val;
++	ret = regmap_write_bits(chip->regmap, dirreg, bit, 0);
+ exit:
+ 	mutex_unlock(&chip->i2c_lock);
+ 	return ret;
+@@ -483,16 +475,19 @@ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+ static int pca953x_gpio_get_direction(struct gpio_chip *gc, unsigned off)
+ {
+ 	struct pca953x_chip *chip = gpiochip_get_data(gc);
++	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
++					true, false);
++	u8 bit = BIT(off % BANK_SZ);
+ 	u32 reg_val;
+ 	int ret;
+ 
+ 	mutex_lock(&chip->i2c_lock);
+-	ret = pca953x_read_single(chip, chip->regs->direction, &reg_val, off);
++	ret = regmap_read(chip->regmap, dirreg, &reg_val);
+ 	mutex_unlock(&chip->i2c_lock);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return !!(reg_val & (1u << (off % BANK_SZ)));
++	return !!(reg_val & bit);
  }
  
- static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
-@@ -127,7 +126,7 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 	genpd->power_on			= rmobile_pd_power_up;
- 	genpd->attach_dev		= cpg_mstp_attach_dev;
- 	genpd->detach_dev		= cpg_mstp_detach_dev;
--	__rmobile_pd_power_up(rmobile_pd, false);
-+	__rmobile_pd_power_up(rmobile_pd);
- 	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
- }
+ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+@@ -580,6 +575,9 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ 	u8 new_irqs;
+ 	int level, i;
+ 	u8 invert_irq_mask[MAX_BANK];
++	u8 reg_direction[MAX_BANK];
++
++	regmap_read(chip->regmap, chip->regs->direction, reg_direction);
  
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.h b/arch/arm/mach-shmobile/pm-rmobile.h
-deleted file mode 100644
-index 69f839259b09..000000000000
---- a/arch/arm/mach-shmobile/pm-rmobile.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0
-- *
-- * Copyright (C) 2012 Renesas Solutions Corp.
-- *
-- * Kuninori Morimoto <morimoto.kuninori@renesas.com>
-- */
--#ifndef PM_RMOBILE_H
--#define PM_RMOBILE_H
--
--#include <linux/pm_domain.h>
--
--struct rmobile_pm_domain {
--	struct generic_pm_domain genpd;
--	struct dev_power_governor *gov;
--	int (*suspend)(void);
--	void (*resume)(void);
--	void __iomem *base;
--	unsigned int bit_shift;
--	bool no_debug;
--};
--
--#endif /* PM_RMOBILE_H */
+ 	if (chip->driver_data & PCA_PCAL) {
+ 		/* Enable latch on interrupt-enabled inputs */
+@@ -595,7 +593,7 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ 	/* Look for any newly setup interrupt */
+ 	for (i = 0; i < NBANK(chip); i++) {
+ 		new_irqs = chip->irq_trig_fall[i] | chip->irq_trig_raise[i];
+-		new_irqs &= ~chip->reg_direction[i];
++		new_irqs &= reg_direction[i];
+ 
+ 		while (new_irqs) {
+ 			level = __ffs(new_irqs);
+@@ -660,6 +658,7 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
+ 	bool pending_seen = false;
+ 	bool trigger_seen = false;
+ 	u8 trigger[MAX_BANK];
++	u8 reg_direction[MAX_BANK];
+ 	int ret, i;
+ 
+ 	if (chip->driver_data & PCA_PCAL) {
+@@ -690,8 +689,9 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
+ 		return false;
+ 
+ 	/* Remove output pins from the equation */
++	regmap_read(chip->regmap, chip->regs->direction, reg_direction);
+ 	for (i = 0; i < NBANK(chip); i++)
+-		cur_stat[i] &= chip->reg_direction[i];
++		cur_stat[i] &= reg_direction[i];
+ 
+ 	memcpy(old_stat, chip->irq_stat, NBANK(chip));
+ 
+@@ -745,6 +745,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
+ 			     int irq_base)
+ {
+ 	struct i2c_client *client = chip->client;
++	u8 reg_direction[MAX_BANK];
+ 	int ret, i;
+ 
+ 	if (client->irq && irq_base != -1
+@@ -759,8 +760,9 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
+ 		 * interrupt.  We have to rely on the previous read for
+ 		 * this purpose.
+ 		 */
++		regmap_read(chip->regmap, chip->regs->direction, reg_direction);
+ 		for (i = 0; i < NBANK(chip); i++)
+-			chip->irq_stat[i] &= chip->reg_direction[i];
++			chip->irq_stat[i] &= reg_direction[i];
+ 		mutex_init(&chip->irq_lock);
+ 
+ 		ret = devm_request_threaded_irq(&client->dev,
+@@ -817,9 +819,9 @@ static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
+ 	if (ret)
+ 		goto out;
+ 
+-	ret = pca953x_read_regs(chip, chip->regs->direction,
+-				chip->reg_direction);
+-	if (ret)
++	ret = regcache_sync_region(chip->regmap, chip->regs->direction,
++				   chip->regs->direction + NBANK(chip));
++	if (ret != 0)
+ 		goto out;
+ 
+ 	/* set platform specific polarity inversion */
+@@ -937,6 +939,8 @@ static int pca953x_probe(struct i2c_client *client,
+ 		goto err_exit;
+ 	}
+ 
++	regcache_mark_dirty(chip->regmap);
++
+ 	mutex_init(&chip->i2c_lock);
+ 	/*
+ 	 * In case we have an i2c-mux controlled by a GPIO provided by an
 -- 
-2.11.0
+2.18.0
