@@ -1,54 +1,99 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55792 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbeLFV5j (ORCPT
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:36561 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeLCIZr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:57:39 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+        Mon, 3 Dec 2018 03:25:47 -0500
+Received: by mail-vk1-f194.google.com with SMTP id t132so2688348vkc.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Dec 2018 00:25:43 -0800 (PST)
+MIME-Version: 1.0
+References: <1543675408-11382-1-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1543675408-11382-1-git-send-email-ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Dec 2018 09:25:30 +0100
+Message-ID: <CAMuHMdXvGEZpuDr6oWH0QGxVtfx-EUiQJ+_Jt33dZhn_Lw4EYQ@mail.gmail.com>
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990-ebisu: Add BD9571 PMIC
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/3] arm64: dts: renesas: r8a77965: Remove non-existent IPMMU-IR
-Date: Thu,  6 Dec 2018 13:57:30 -0800
-Message-Id: <d8c6557bc93be73ed1abe5b13fa1e46e59da028b.1544126426.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544126426.git.horms+renesas@verge.net.au>
-References: <cover.1544126426.git.horms+renesas@verge.net.au>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Kaneko-san,
 
-The R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Aug 24, 2018)
-removed the IPMMU-IR IOMMU instance on R-Car M3-N, as this SoC does not
-have an Image Processing Unit (IMP-X5) nor the A3IR power domain.
+On Sat, Dec 1, 2018 at 3:43 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds the regulator definition required for operation of
+> S2RAM.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
-Fixes: 55697cbb44e4f7ea ("arm64: dts: renesas: r8a779{65,80,90}: Add IPMMU devices nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 8 --------
- 1 file changed, 8 deletions(-)
+Thanks for your patch!
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 1c86e6f4dc71..6dc9b1fef830 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -795,14 +795,6 @@
- 			#iommu-cells = <1>;
- 		};
- 
--		ipmmu_ir: mmu@ff8b0000 {
--			compatible = "renesas,ipmmu-r8a77965";
--			reg = <0 0xff8b0000 0 0x1000>;
--			renesas,ipmmu-main = <&ipmmu_mm 3>;
--			power-domains = <&sysc R8A77965_PD_A3IR>;
--			#iommu-cells = <1>;
--		};
--
- 		ipmmu_mm: mmu@e67b0000 {
- 			compatible = "renesas,ipmmu-r8a77965";
- 			reg = <0 0xe67b0000 0 0x1000>;
+> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> @@ -425,6 +425,26 @@
+>         };
+>  };
+>
+> +&i2c_dvfs {
+> +       status = "okay";
+> +
+> +       clock-frequency = <400000>;
+> +
+> +       pmic: pmic@30 {
+> +               pinctrl-0 = <&irq0_pins>;
+> +               pinctrl-names = "default";
+> +
+> +               compatible = "rohm,bd9571mwv";
+> +               reg = <0x30>;
+> +               interrupt-parent = <&intc_ex>;
+> +               interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+> +               interrupt-controller;
+> +               #interrupt-cells = <2>;
+> +               gpio-controller;
+> +               #gpio-cells = <2>;
+
+Just adding this node is not sufficient to make S2RAM work.
+As per Documentation/devicetree/bindings/mfd/bd9571mwv.txt, you also have
+to describe the DDR-Backup Power configuration.
+
+On the Ebisu-4D development board, only the DDR0 power rail is used, and
+needs to be kept powered when backup mode is enabled.
+
+        rohm,ddr-backup-power = <0x1>;
+        rohm,rstbmode-level;
+
+Unfortunately resume from s2ram doesn't work with this, probably due to an
+issue in ATF.  This may have been fixed in IPL and Secure Monitor Rev1.0.22,
+which claims to add support for the Ebisu-4D board.
+
+I don't know if plain Ebisu needs a different configuration.
+
+> +       };
+> +};
+> +
+>  &lvds0 {
+>         status = "okay";
+>
+
+The rest is fine, hence with the above fixed and tested:
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
