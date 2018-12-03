@@ -1,53 +1,61 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:46374 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbeLEPjv (ORCPT
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36118 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbeLCJho (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:39:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] soc: renesas: rcar-sysc: Miscellaneous fixes and cleanups
-Date: Wed,  5 Dec 2018 16:39:41 +0100
-Message-Id: <20181205153945.13767-1-geert+renesas@glider.be>
+        Mon, 3 Dec 2018 04:37:44 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x23so10309200oix.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 03 Dec 2018 01:37:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com> <20181202193553.29704-2-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181202193553.29704-2-marek.vasut+renesas@gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date: Mon, 3 Dec 2018 10:37:18 +0100
+Message-ID: <CAMpxmJW=dSmisZ9=V_ymJiX1t9mQ0zohopp4L1JkqoX740d1tw@mail.gmail.com>
+Subject: Re: [PATCH 02/14] gpio: pca953x: Fix AI overflow on PCAL6524
+To: Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-gpio <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        marek.vasut+renesas@gmail.com,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+niedz., 2 gru 2018 o 20:36 Marek Vasut <marek.vasut@gmail.com> napisa=C5=82=
+(a):
+>
+> The PCAL_PINCTRL_MASK is too large. The extended register block on
+> PCAL6524, which is the largest chip with this block, has the block
+> limited to address range 0x40..0x7f. This is because the bit 7 in
+> the command register is used for the Address Increment functionality.
+>
+> Trim the mask to 0x60 to match the datasheet and to prevent accidental
+> overwrite of the AI bit.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/gpio/gpio-pca953x.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 31e3b1b52330..4e9c79ca69c5 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -58,7 +58,7 @@
+>  #define PCA_GPIO_MASK          0x00FF
+>
+>  #define PCAL_GPIO_MASK         0x1f
+> -#define PCAL_PINCTRL_MASK      0xe0
+> +#define PCAL_PINCTRL_MASK      0x60
+>
+>  #define PCA_INT                        0x0100
+>  #define PCA_PCAL               0x0200
+> --
+> 2.18.0
+>
 
-This series (against renesas-devel-20181204-v4.20-rc5) contains
-miscellaneous fixes and cleanups for the R-Car SYSC driver.
-
-This has been tested on R-Car Gen2 (H2 and M2-W) and R-Car Gen3 (H3
-ES1.0, H3 ES2.0, M3-W, M3-N, D3, E3, and V3M) (without 3DG).
-
-This not been tested on R-Car H1 and R-Car V3H.
-
-Thanks!
-
-Geert Uytterhoeven (4):
-  soc: renesas: r8a77990-sysc: Fix initialization order of 3DG-{A,B}
-  soc: renesas: rcar-sysc: Remove rcar_sysc_power_{down,up}() helpers
-  soc: renesas: rcar-sysc: Merge PM Domain registration and linking
-  soc: renesas: rcar-sysc: Fix power domain control after system resume
-
- drivers/soc/renesas/r8a77990-sysc.c | 23 ++--------
- drivers/soc/renesas/rcar-sysc.c     | 65 ++++++++---------------------
- 2 files changed, 22 insertions(+), 66 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
