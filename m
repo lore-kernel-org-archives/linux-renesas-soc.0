@@ -1,75 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:22481 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727763AbeLFJEt (ORCPT
+Received: from sauhun.de ([88.99.104.3]:56924 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726638AbeLCQPU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:04:49 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v3 4/4] ARM: dts: iwg23s-sbc: Enable RTC
-Date: Thu,  6 Dec 2018 08:55:59 +0000
-Message-Id: <1544086559-47141-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
-References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 3 Dec 2018 11:15:20 -0500
+Date: Mon, 3 Dec 2018 17:15:11 +0100
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Avri.Altman@wdc.com
+Subject: Re: [PATCH] mmc: document 'Reliable Write' bit in uapi header
+Message-ID: <20181203161511.GA1604@kunai>
+References: <20181203142644.3038-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdX+skNFbUiCjzU=vuR3PfTFib5ad+C1yDp=Kc6i2A=Hyw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX+skNFbUiCjzU=vuR3PfTFib5ad+C1yDp=Kc6i2A=Hyw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable NXP pcf85263 real time clock for the iWave SBC based on RZ/G1C.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-V1-->V2
-	* No change
-V2-->V3
-	* No change
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 40b7f98..77d1824 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -84,12 +84,30 @@
- 	clock-frequency = <20000000>;
- };
- 
-+&i2c3 {
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc@51 {
-+		compatible = "nxp,pcf85263";
-+		reg = <0x51>;
-+	};
-+};
-+
- &pfc {
- 	avb_pins: avb {
- 		groups = "avb_mdio", "avb_gmii_tx_rx";
- 		function = "avb";
- 	};
- 
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3_c";
-+		function = "i2c3";
-+	};
-+
- 	mmc_pins_uhs: mmc_uhs {
- 		groups = "mmc_data8", "mmc_ctrl";
- 		function = "mmc";
--- 
-2.7.4
+
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thanks, Geert!
+
+> > -       /* Implies direction of data.  true =3D write, false =3D read */
+> > +       /*
+> > +        * Implies direction of data.  true =3D write, false =3D read.
+>=20
+> nonzero =3D write, zero =3D read?
+
+Yes, even better. Will update.
+
+> > +        * Bit 31 selects 'Reliable Write' for RPMB.
+>=20
+> Perhaps having a #define for this would be nice?
+> Can also be used by the driver, instead of 1 << 31, which some static
+> analyzers may complain about.
+
+Maybe. Should be an incremental patch then, I'd say.
+
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwFVosACgkQFA3kzBSg
+KbY6/RAAnE0TmzyNVIcsv46g2H1s2vTzD8rcSEVMMdzUrK0gzQqj6FXIMrp6fmee
+6qUVZLoZC7rfWr7wApcbfWt1Jr3APphD88+mRUzXWWkQZ0gLeBNPTYg80fTuTx80
+4zczAo6LWBB6/gZUQtFN7rccrCAe1Z8Z/mYl0tG0iReWYqyGXpS2s2WLUWavT7Bu
+gA8+OCHwrQBlp259kmkFozY1SVK0rv2OK3Fa+r33irPSYdrePunpdVzRMZceQRim
++Aw2ETz5oqq9zfyIM7azRPwEbY4xF0yFBHUrOeBy3eQO9FqQdNpxbGAm5qJ/TOJ3
+CA86yW9gnLb3Ue549fuEm0+HhpERibfGnKEDifebvlhpo6kcLTv76NWB+T3DqHq+
+ol0Zpee8cxl/+QUzJGfDWc/0ZwJgUUCF/Tz+cehJkRp4vVnu8DsMPfN4rKAFO4zX
+WwKQSAyqxpD6h7tS/6FZ0pQAxxYxCWS5hN6GM1u8sJ38OsjD990TOiTatCKx7TCC
+XquL2FpJKSRzGF70XROFVNolFEGYTZDBhquzXgQ/IVILXNHzluEXZzrfSEh06+7P
+C1Ssf9nbXQyOvweV4E9dYhos7PMPkWaNH1xCFsV7mVYvY01pFLGMav/ZxfmOHyD8
+UMIRotMIZxYKheeELYMgsY5hrWSzH134EpNX8jNOJI4ZXQirNBM=
+=d2es
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
