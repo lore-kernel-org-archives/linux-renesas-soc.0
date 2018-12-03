@@ -1,81 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41956 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbeLDW4G (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:60066 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbeLCPMv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:56:06 -0500
-Date: Tue, 4 Dec 2018 16:56:03 -0600
-From: Rob Herring <robh@kernel.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: can: rcar_canfd: document r8a77965
- support
-Message-ID: <20181204225603.GA16478@bogus>
-References: <20181118173201.4645-1-marek.vasut+renesas@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181118173201.4645-1-marek.vasut+renesas@gmail.com>
+        Mon, 3 Dec 2018 10:12:51 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] arm: dts: renesas: Convert remaining boards to new LVDS DT bindings
+Date: Mon,  3 Dec 2018 16:12:40 +0100
+Message-Id: <20181203151242.25875-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Nov 18, 2018 at 06:32:00PM +0100, Marek Vasut wrote:
-> Document the support for rcar_canfd on R8A77965 SoC devices.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Eugeniu Rosca <erosca@de.adit-jv.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Marc Kleine-Budde <mkl@pengutronix.de>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
->  .../devicetree/bindings/net/can/rcar_canfd.txt      | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> index ac71daa46195..4720e916fbdd 100644
-> --- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> +++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> @@ -6,6 +6,7 @@ Required properties:
->    - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
->    - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
->    - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3-W) compatible controller.
-> +  - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
->    - "renesas,r8a77970-canfd" for R8A77970 (R-Car V3M) compatible controller.
->    - "renesas,r8a77980-canfd" for R8A77980 (R-Car V3H) compatible controller.
->  
-> @@ -26,12 +27,12 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
->  child node supports the "status" property only, which is used to
->  enable/disable the respective channel.
->  
-> -Required properties for "renesas,r8a7795-canfd" and "renesas,r8a7796-canfd"
-> -compatible:
-> -In R8A7795 and R8A7796 SoCs, canfd clock is a div6 clock and can be used by both
-> -CAN and CAN FD controller at the same time. It needs to be scaled to maximum
-> -frequency if any of these controllers use it. This is done using the below
-> -properties:
-> +Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd" and
-> +"renesas,r8a77965-canfd" compatible:
-> +In R8A7795, R8A7796 and R8A77965 SoCs, canfd clock is a div6 clock and can
+	Hi Simon, Magnus, Laurent, Marek,
 
-Do we have to list the SoCs twice so that the paragraph has to be 
-reformatted every time? Just the compatibles above should be enough.
+As of commit 6d2ca85279becdff ("dt-bindings: display: renesas: Deprecate
+LVDS support in the DU bindings"), the internal LVDS encoder has DT
+bindings separate from the DU.  Most board device trees were ported over
+to the new model, but Stout with R-Car H2 and Salvator-XS with R-Car
+M3-W were forgotten.
 
-> +be used by both CAN and CAN FD controller at the same time. It needs to be
-> +scaled to maximum frequency if any of these controllers use it. This is done
-> +using the below properties:
->  
->  - assigned-clocks: phandle of canfd clock.
->  - assigned-clock-rates: maximum frequency of this clock.
-> -- 
-> 2.18.0
-> 
+This patch series converts the remaining boards.
+Both patches were compiled-tested only.
+
+Thanks!
+
+Geert Uytterhoeven (2):
+  ARM: dts: stout: Convert to new LVDS DT bindings
+  arm64: dts: renesas: r8a7796: salvator-xs: Convert to new LVDS DT
+    bindings
+
+ arch/arm/boot/dts/r8a7790-stout.dts               | 15 ++++++++++++---
+ .../boot/dts/renesas/r8a7796-salvator-xs.dts      |  3 +--
+ 2 files changed, 13 insertions(+), 5 deletions(-)
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
