@@ -1,247 +1,121 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:28260 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728138AbeLEVp3 (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36480 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725910AbeLDPSV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:45:29 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
+        Tue, 4 Dec 2018 10:18:21 -0500
+MIME-Version: 1.0
+References: <20181129130559.66732-1-chris.brandt@renesas.com> <20181129130559.66732-2-chris.brandt@renesas.com>
+In-Reply-To: <20181129130559.66732-2-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Dec 2018 16:18:07 +0100
+Message-ID: <CAMuHMdVZdQF1Q75zCfRB2+po_J3Q9C4G=s_PNWvhJNZfcDDDeQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: r7s9210: Initial SoC device tree
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 1/2] ARM: dts: r7s9210: Initial SoC device tree
-Date: Wed,  5 Dec 2018 16:44:48 -0500
-Message-Id: <20181205214449.52165-2-chris.brandt@renesas.com>
-In-Reply-To: <20181205214449.52165-1-chris.brandt@renesas.com>
-References: <20181205214449.52165-1-chris.brandt@renesas.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Basic support for the RZ/A2 (R7S9210) SoC.
+Hi Chris,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * Fixed cpg node name to match reg address
- * Removed the clocks subnode
- * SCIF register range 18 to 0x18
- * Removed 'reset-cells' from cpg because resets not supported (yet?)
- * Sorted nodes by address (per group of device
----
- arch/arm/boot/dts/r7s9210.dtsi | 204 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 204 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s9210.dtsi
+On Thu, Nov 29, 2018 at 2:07 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Basic support for the RZ/A2 (R7S9210) SoC.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-diff --git a/arch/arm/boot/dts/r7s9210.dtsi b/arch/arm/boot/dts/r7s9210.dtsi
-new file mode 100644
-index 000000000000..2b589226895e
---- /dev/null
-+++ b/arch/arm/boot/dts/r7s9210.dtsi
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the R7S9210 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corporation
-+ *
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r7s9210-cpg-mssr.h>
-+
-+/ {
-+	compatible = "renesas,r7s9210";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+
-+	bsid: chipid@fcfe8004 {
-+		compatible = "renesas,bsid";
-+		reg = <0xfcfe8004 4>;
-+	};
-+
-+	/* External clocks */
-+	extal_clk: extal {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* Value must be set by board */
-+		clock-frequency = <0>;
-+	};
-+
-+	rtc_x1_clk: rtc_x1 {
-+		#clock-cells = <0>;
-+		compatible = "fixed-clock";
-+		/* If clk present, value (32678) must be set by board */
-+		clock-frequency = <0>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+			clock-frequency = <528000000>;
-+			next-level-cache = <&L2>;
-+		};
-+	};
-+
-+	L2: cache-controller@1f003000 {
-+		compatible = "arm,pl310-cache";
-+		reg = <0x1f003000 0x1000>;
-+		interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-+		arm,early-bresp-disable;
-+		arm,full-line-zero-disable;
-+		cache-unified;
-+		cache-level = <2>;
-+	};
-+
-+	gic: interrupt-controller@e8221000 {
-+		compatible = "arm,gic-400";
-+		#interrupt-cells = <3>;
-+		#address-cells = <0>;
-+		interrupt-controller;
-+		reg = <0xe8221000 0x1000>,
-+		      <0xe8222000 0x1000>;
-+	};
-+
-+	cpg: clock-controller@fcfe0010 {
-+		compatible = "renesas,r7s9210-cpg-mssr";
-+		reg = <0xfcfe0010 0x455>;
-+		clocks = <&extal_clk>;
-+		clock-names = "extal";
-+		#clock-cells = <2>;
-+		#power-domain-cells = <0>;
-+	};
-+
-+	wdt: watchdog@fcfe7000 {
-+		compatible = "renesas,r7s9210-wdt", "renesas,rza-wdt";
-+		reg = <0xfcfe7000 0x26>;
-+		interrupts = <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cpg CPG_CORE R7S9210_CLK_P0>;
-+	};
-+
-+	pinctrl: pin-controller@fcffe000 {
-+		compatible = "renesas,r7s9210-pinctrl";
-+		reg = <0xfcffe000 0x1000>;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-ranges = <&pinctrl 0 0 176>;
-+	};
-+
-+	scif0: serial@e8007000 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8007000 0x18>;
-+		interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 47>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif1: serial@e8007800 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8007800 0x18>;
-+		interrupts = <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 272 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 271 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 46>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif2: serial@e8008000 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8008000 0x18>;
-+		interrupts = <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 279 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 280 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 45>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif3: serial@e8008800 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8008800 0x18>;
-+		interrupts = <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 44>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	scif4: serial@e8009000 {
-+		compatible = "renesas,scif-r7s9210";
-+		reg = <0xe8009000 0x18>;
-+		interrupts = <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 291 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 289 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "eri", "rxi", "txi", "bri", "dri", "tei";
-+		clocks = <&cpg CPG_MOD 43>;
-+		clock-names = "fck";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	ostm0: timer@e803b000 {
-+		compatible = "renesas,r7s9210-ostm", "renesas,ostm";
-+		reg = <0xe803b000 0x30>;
-+		interrupts = <GIC_SPI 56 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&cpg CPG_MOD 36>;
-+		clock-names = "ostm0";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	ostm1: timer@e803c000 {
-+		compatible = "renesas,r7s9210-ostm", "renesas,ostm";
-+		reg = <0xe803c000 0x30>;
-+		interrupts = <GIC_SPI 57 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&cpg CPG_MOD 35>;
-+		clock-names = "ostm1";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+
-+	ostm2: timer@e803d000 {
-+		compatible = "renesas,r7s9210-ostm", "renesas,ostm";
-+		reg = <0xe803d000 0x30>;
-+		interrupts = <GIC_SPI 58 IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&cpg CPG_MOD 34>;
-+		clock-names = "ostm2";
-+		power-domains = <&cpg>;
-+		status = "disabled";
-+	};
-+};
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r7s9210.dtsi
+> @@ -0,0 +1,211 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Device Tree Source for the R7S9210 SoC
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Corporation
+> + *
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/clock/r7s9210-cpg-mssr.h>
+> +
+> +/ {
+
+> +       clocks {
+
+Please remove the clocks subnode.
+These days clocks live at the root node.
+
+> +       gic: interrupt-controller@e8221000 {
+> +               compatible = "arm,gic-400";
+> +               #interrupt-cells = <3>;
+> +               #address-cells = <0>;
+> +               interrupt-controller;
+> +               reg = <0xe8221000 0x1000>,
+> +                     <0xe8222000 0x1000>;
+> +       };
+> +
+> +       L2: cache-controller@1f003000 {
+
+Please sort nodes by address (per group of devices).
+
+> +               compatible = "arm,pl310-cache";
+> +               reg = <0x1f003000 0x1000>;
+> +               interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+> +               arm,early-bresp-disable;
+> +               arm,full-line-zero-disable;
+> +               cache-unified;
+> +               cache-level = <2>;
+> +       };
+> +
+> +       cpg: clock-controller@fcfe0020 {
+
+fcfe0010, as pointed out by Simon.
+
+> +               compatible = "renesas,r7s9210-cpg-mssr";
+> +               reg = <0xfcfe0010 0x455>;
+> +               clocks = <&extal_clk>;
+> +               clock-names = "extal";
+> +               #clock-cells = <2>;
+> +               #power-domain-cells = <0>;
+> +               #reset-cells = <1>;
+
+Note that resets are not yet supported by the driver.
+But probably they will use #reset-cells = <1>, if ever implemented.
+
+> +       };
+> +
+> +       ostm0: timer@e803b000 {
+> +               compatible = "renesas,r7s9210-ostm", "renesas,ostm";
+> +               reg = <0xe803b000 0x30>;
+> +               interrupts = <GIC_SPI 56 IRQ_TYPE_EDGE_RISING>;
+> +               clocks = <&cpg CPG_MOD 36>;
+> +               clock-names = "ostm0";
+
+The clock-names property is not documented in the DT bindings.
+Moreover, using different names for the clock inputs of the different
+channels is strange.
+
+> +       scif0: serial@e8007000 {
+> +               compatible = "renesas,scif-r7s9210";
+> +               reg = <0xe8007000 18>;
+
+0x18 (for all scif instances)
+
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.16.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
