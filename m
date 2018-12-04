@@ -1,64 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbeLFV66 (ORCPT
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:46748 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbeLDFUL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:58:58 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/34] ARM: dts: r8a7744-iwg20m: Enable SDHI0 controller
-Date: Thu,  6 Dec 2018 13:58:09 -0800
-Message-Id: <f9a3d5f23b6c8e4029a3474945971477d1f9365a.1544125558.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
-References: <cover.1544125558.git.horms+renesas@verge.net.au>
+        Tue, 4 Dec 2018 00:20:11 -0500
+Subject: Re: [PATCH v2] phy: renesas: rcar-gen3-usb2: follow the hardware
+ manual procedure
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>
+References: <1543561257-27594-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <TY2PR01MB229720D5323203C501260AACD8D30@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <6886d7a2-6ab6-cecf-cc11-c0da70048bab@ti.com>
+Date: Tue, 4 Dec 2018 10:49:57 +0530
+MIME-Version: 1.0
+In-Reply-To: <TY2PR01MB229720D5323203C501260AACD8D30@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
 
-Enable the SDHI0 controller on iWave RZ/G1N Qseven System On Module.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On 30/11/18 12:39 PM, Yoshihiro Shimoda wrote:
+>> From: Yoshihiro Shimoda, Sent: Friday, November 30, 2018 4:01 PM
+>>
+> <snip>
+>> Also, this is the first email I send after changing the email server
+>> to avoid using quoted-printable encoding.
+> 
+> This seems to work :)
+> https://lore.kernel.org/lkml/1543561257-27594-1-git-send-email-yoshihiro.shimoda.uh@renesas.com/raw
 
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-index 1e57b1f9baed..503583e2c852 100644
---- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -35,6 +35,12 @@
- 		groups = "mmc_data8_b", "mmc_ctrl";
- 		function = "mmc";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
- };
- 
- &mmcif0 {
-@@ -46,3 +52,13 @@
- 	non-removable;
- 	status = "okay";
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-names = "default";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_3p3v>;
-+	cd-gpios = <&gpio7 11 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
--- 
-2.11.0
+merged now, thanks.
+
+-Kishon
+> 
+> Best regards,
+> Yoshihiro Shimoda
+> 
