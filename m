@@ -1,71 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeLFV6h (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33640 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbeLDPvz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:58:37 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 02/34] ARM: dts: r8a7744-iwg20m: Add iWave RZ/G1N Qseven SOM
-Date: Thu,  6 Dec 2018 13:57:57 -0800
-Message-Id: <3c248aefe73b5586347dae74b0a8d40aea1018b3.1544125558.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
-References: <cover.1544125558.git.horms+renesas@verge.net.au>
+        Tue, 4 Dec 2018 10:51:55 -0500
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests PATCH 3/7] vsp-lib: Provide command line argument parsing
+Date: Tue,  4 Dec 2018 15:51:42 +0000
+Message-Id: <20181204155146.9726-4-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
+References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Extend the vsp-lib to support command line parsing for all tests.  The
+arguments parsed here should be common to all tests, and initially
+provide shell level verbose debug output, and the option to easily keep
+frames output by the VSP1.
 
-Add support for iWave RZ/G1N Qseven System On Module.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+ scripts/vsp-lib.sh | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-new file mode 100644
-index 000000000000..6166ae053060
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the iWave RZ/G1N Qseven SOM
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
+diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+index 0f3992a7827e..56969606382f 100755
+--- a/scripts/vsp-lib.sh
++++ b/scripts/vsp-lib.sh
+@@ -1094,3 +1094,37 @@ test_complete() {
+ test_run() {
+ 	test_main | ./logger.sh error >> $logfile
+ }
 +
-+#include "r8a7744.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
++# ------------------------------------------------------------------------------
++# Common argument parsing
++#
++# non-recognised arguments are restored, to allow tests to implement their own
++# parsing if necessary.
 +
-+/ {
-+	compatible = "iwave,g20m", "renesas,r8a7744";
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x40000000>;
-+	};
-+
-+	reg_3p3v: 3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "3P3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&extal_clk {
-+	clock-frequency = <20000000>;
-+};
++POSITIONAL=()
++while [[ $# -gt 0 ]]
++do
++case $1 in
++	-x|--debug)
++		set -x;
++		shift
++		;;
++	-k|--keep-frames)
++		export VSP_KEEP_FRAMES=1
++		shift
++		;;
++	-h|--help)
++		echo "$(basename $0): VSP Test library"
++		echo "  -x|--debug          enable shell debug"
++		echo "  -k|--keep-frames    keep generated and captured frames"
++		echo "  -h|--help           this help"
++		exit
++		shift
++		;;
++	*)    # unknown option
++		POSITIONAL+=("$1") # save it in an array for later
++		shift # past argument
++		;;
++esac
++done
++set -- "${POSITIONAL[@]}" # restore positional parameters
 -- 
-2.11.0
+2.17.1
