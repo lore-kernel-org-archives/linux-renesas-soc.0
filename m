@@ -1,63 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbeLFWAA (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:41321 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbeLDOI3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:00:00 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 3/9] ARM: shmobile: Restrict TWD support to SoCs that have it
-Date: Thu,  6 Dec 2018 13:59:28 -0800
-Message-Id: <94cf946b8c19f90c39a0f01f0e2fe2ff32383b35.1544132474.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
-References: <cover.1544132474.git.horms+renesas@verge.net.au>
+        Tue, 4 Dec 2018 09:08:29 -0500
+Received: by mail-ua1-f66.google.com with SMTP id z24so5801520ual.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Dec 2018 06:08:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20181129003949.19984-1-niklas.soderlund+renesas@ragnatech.se> <20181129003949.19984-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181129003949.19984-3-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Dec 2018 15:08:16 +0100
+Message-ID: <CAMuHMdVBmTuAGR1TKK_smoCkp_j8CBGC=bdtH5D9HY3rOBTC2w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: renesas: rcar-gen3: add HS400 quirk for SD clock
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Nov 29, 2018 at 1:41 AM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> On H3 (ES1.x, ES2.0) and M3-W (ES1.0, ES1.1) the clock setting for HS400
+> needs a quirk to function properly. The reason for the quirk is that
+> there are two settings which produces same divider value for the SDn
+> clock. On the effected boards the one currently selected results in
+> HS400 not working.
+>
+> This change uses the same method as the Gen2 CPG driver and simply
+> ignores the first clock setting as this is the offending one when
+> selecting the settings. Which of the two possible settings is used have
+> no effect for SDR104.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>
+> ---
+> * Changes since v1
+> - Fixed spelling in commit message, thanks Sergei and Geert!
+> - Reworked the whole patch per Geerts suggestion. Instead of only
+>   skipping the first row on the effected boards when setting the clock
+>   rete totally ignore it. This is made possible by another change to the
+>   clock driver posted separately from this series and which this patch
+>   now depends on [1].
+>
+>   1. [PATCH] clk: renesas: rcar-gen3: set state when registering SD clocks
 
-Currently support for the ARM Timer and Watchdog Unit is included
-unconditionally, while only some Renesas multicore Cortex-A9 SoCs have
-a TWD.
+Thanks for the update!
 
-This decreases kernel image size by ca. 2 KiB on SoCs without a TWD.
+With s/rete/rate/:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 32f8297d993a..a35eb5913dfd 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -30,7 +30,6 @@ menuconfig ARCH_RENESAS
- 	depends on ARCH_MULTI_V7 && MMU
- 	select ARM_GIC
- 	select GPIOLIB
--	select HAVE_ARM_TWD if SMP
- 	select NO_IOPORT_MAP
- 	select PINCTRL
- 	select SOC_BUS
-@@ -95,6 +94,7 @@ config ARCH_R8A7778
- config ARCH_R8A7779
- 	bool "R-Car H1 (R8A77790)"
- 	select HAVE_ARM_SCU if SMP
-+	select HAVE_ARM_TWD if SMP
- 	select ARCH_RCAR_GEN1
- 
- config ARCH_R8A7790
-@@ -137,5 +137,6 @@ config ARCH_SH73A0
- 	bool "SH-Mobile AG5 (R8A73A00)"
- 	select ARCH_RMOBILE
- 	select HAVE_ARM_SCU if SMP
-+	select HAVE_ARM_TWD if SMP
- 	select RENESAS_INTC_IRQPIN
- endif
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
