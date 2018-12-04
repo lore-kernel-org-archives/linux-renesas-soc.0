@@ -1,94 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:32901 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbeLDS11 (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33638 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbeLDPv6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:27:27 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clk: vc5: Add suspend/resume support
-Date: Tue,  4 Dec 2018 19:27:21 +0100
-Message-Id: <20181204182721.28258-1-marek.vasut+renesas@gmail.com>
+        Tue, 4 Dec 2018 10:51:58 -0500
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests PATCH 5/7] vsp-lib: Allow forcing pixel perfect comparisons
+Date: Tue,  4 Dec 2018 15:51:44 +0000
+Message-Id: <20181204155146.9726-6-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
+References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add simple suspend/resume handlers to the driver to restore the chip
-configuration after resume. It is possible that the chip was configured
-with non-default values before suspend-resume cycle and that the chip
-is powered down during this cycle, so the configuration could get lost.
+Provide a means for the tester to request pixel perfect matches on tests.
+This can be either through setting the environment variable VSP_PIXEL_PERFECT, or
+by passing either '-p' or '--pixel-perfect' on the test command line.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
- drivers/clk/clk-versaclock5.c | 36 +++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ scripts/vsp-lib.sh | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index decffb3826ec..ac90fb36af1a 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -906,6 +906,39 @@ static int vc5_remove(struct i2c_client *client)
- 	return 0;
- }
+diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+index cf15a045ea8c..9140254c7459 100755
+--- a/scripts/vsp-lib.sh
++++ b/scripts/vsp-lib.sh
+@@ -287,7 +287,11 @@ compare_frames() {
+ 	params=${params//)/_}
+ 	params=$pipe-$in_fmt-$out_fmt-$size$params
  
-+#ifdef CONFIG_PM_SLEEP
-+static int vc5_suspend(struct device *dev)
-+{
-+	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = regcache_sync(vc5->regmap);
-+	if (ret != 0) {
-+		dev_err(dev, "Failed to save register map: %d\n", ret);
-+		return ret;
-+	}
-+	regcache_cache_only(vc5->regmap, true);
-+	regcache_mark_dirty(vc5->regmap);
-+
-+	return 0;
-+}
-+
-+static int vc5_resume(struct device *dev)
-+{
-+	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
-+	int ret;
-+
-+	regcache_cache_only(vc5->regmap, false);
-+	ret = regcache_sync(vc5->regmap);
-+	if (ret != 0) {
-+		dev_err(dev, "Failed to restore register map: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
- static const struct vc5_chip_info idt_5p49v5923_info = {
- 	.model = IDT_VC5_5P49V5923,
- 	.clk_fod_cnt = 2,
-@@ -961,9 +994,12 @@ static const struct of_device_id clk_vc5_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
+-	if [ x$__vsp_pixel_perfect != xtrue ] ; then
++	# The system can hint when pixel-perfection is not supported,
++	# however the user can override to force this requirement with
++	# VSP_PIXEL_PERFECT=1 in the environment or by passing -p, or
++	# --pixel-perfect on the commandline.
++	if [ x$__vsp_pixel_perfect != xtrue -a x$VSP_PIXEL_PERFECT != x1 ] ; then
+ 		method=fuzzy
+ 	fi
  
-+static SIMPLE_DEV_PM_OPS(vc5_pm_ops, vc5_suspend, vc5_resume);
-+
- static struct i2c_driver vc5_driver = {
- 	.driver = {
- 		.name = "vc5",
-+		.pm	= &vc5_pm_ops,
- 		.of_match_table = clk_vc5_of_match,
- 	},
- 	.probe		= vc5_probe,
+@@ -1113,10 +1117,15 @@ case $1 in
+ 		export VSP_KEEP_FRAMES=1
+ 		shift
+ 		;;
++	-p|--pixel-perfect)
++		export VSP_PIXEL_PERFECT=1
++		shift
++		;;
+ 	-h|--help)
+ 		echo "$(basename $0): VSP Test library"
+ 		echo "  -x|--debug          enable shell debug"
+ 		echo "  -k|--keep-frames    keep generated and captured frames"
++		echo "  -p|--pixel-perfect  frames must match with pixel perfection"
+ 		echo "  -h|--help           this help"
+ 		exit
+ 		shift
 -- 
-2.18.0
+2.17.1
