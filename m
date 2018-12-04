@@ -1,69 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:39544 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbeLGVpc (ORCPT
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44405 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbeLDPUj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 16:45:32 -0500
-Date: Fri, 7 Dec 2018 22:45:29 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+        Tue, 4 Dec 2018 10:20:39 -0500
 Subject: Re: [RFC] watchdog: renesas_wdt: don't keep timer value during
  suspend/resume
-Message-ID: <20181207214528.GA2853@kunai>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 References: <20181204120146.1923-1-wsa+renesas@sang-engineering.com>
- <476b6d6c-657d-7e10-d0a8-a7aafe61eae9@roeck-us.net>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <476b6d6c-657d-7e10-d0a8-a7aafe61eae9@roeck-us.net>
+Date: Tue, 4 Dec 2018 07:20:34 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <476b6d6c-657d-7e10-d0a8-a7aafe61eae9@roeck-us.net>
+In-Reply-To: <20181204120146.1923-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Guenter, all,
-
-> > After discussing this mail thread [1] again, we concluded that giving
-> > userspace enough time to prepare is our favourite option. So, do not
-> > keep the time value when suspended but reset it when resuming.
-> > 
-> > [1] https://patchwork.kernel.org/patch/10252209/
-> > 
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 12/4/18 4:01 AM, Wolfram Sang wrote:
+> After discussing this mail thread [1] again, we concluded that giving
+> userspace enough time to prepare is our favourite option. So, do not
+> keep the time value when suspended but reset it when resuming.
 > 
-> Above exchange says it all, no need to repeat.
+> [1] https://patchwork.kernel.org/patch/10252209/
 > 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks.
+Above exchange says it all, no need to repeat.
 
-I can relate to the policy argument, though. Regardless of this patch, I
-wonder if we can make it configurable from userspace. A draft:
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-#define	WDIOF_RESUME_OPTS	0x0800
-
-#define	WDIOS_RESUME_KEEP	0x0008
-#define	WDIOS_RESUME_RESET	0x0010
-
-and then in watchdog_ioctl() under WDIOC_SETOPTIONS:
-
-	if (!(wdd->info->options & WDIOF_RESUME_OPTS))
-		err = -EOPNOTSUPP;
-		goto break;
-
-	if (val & WDIOS_RESUME_KEEP)
-		wdd->status |= WDOG_KEEP_TIMER_WHEN_RESUME;
-
-	if (val & WDIOS_RESUME_RESET)
-		wdd->status ~= ~WDOG_KEEP_TIMER_WHEN_RESUME;
-
-So, drivers with WDIOF_RESUME_OPTS could act on the
-WDOG_KEEP_TIMER_WHEN_RESUME flag.
-
-Opinions?
-
-Thanks,
-
-   Wolfram
+> ---
+> 
+> Fabrizio: can you agree to that? The R-Car BSP team and we (the R-Car upstream
+> team) would prefer it this way (knowing it is also not perfect).
+> 
+>   drivers/watchdog/renesas_wdt.c | 11 ++++-------
+>   1 file changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index b570962e84f3..9f2307bf727b 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -48,7 +48,6 @@ struct rwdt_priv {
+>   	void __iomem *base;
+>   	struct watchdog_device wdev;
+>   	unsigned long clk_rate;
+> -	u16 time_left;
+>   	u8 cks;
+>   };
+>   
+> @@ -263,10 +262,9 @@ static int __maybe_unused rwdt_suspend(struct device *dev)
+>   {
+>   	struct rwdt_priv *priv = dev_get_drvdata(dev);
+>   
+> -	if (watchdog_active(&priv->wdev)) {
+> -		priv->time_left = readw(priv->base + RWTCNT);
+> +	if (watchdog_active(&priv->wdev))
+>   		rwdt_stop(&priv->wdev);
+> -	}
+> +
+>   	return 0;
+>   }
+>   
+> @@ -274,10 +272,9 @@ static int __maybe_unused rwdt_resume(struct device *dev)
+>   {
+>   	struct rwdt_priv *priv = dev_get_drvdata(dev);
+>   
+> -	if (watchdog_active(&priv->wdev)) {
+> +	if (watchdog_active(&priv->wdev))
+>   		rwdt_start(&priv->wdev);
+> -		rwdt_write(priv, priv->time_left, RWTCNT);
+> -	}
+> +
+>   	return 0;
+>   }
+>   
+> 
