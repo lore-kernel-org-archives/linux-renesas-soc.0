@@ -1,108 +1,113 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbeLFWAH (ORCPT
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:32483 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeLDJnk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 17:00:07 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Tue, 4 Dec 2018 04:43:40 -0500
+Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Add supports the hwmon
+ thermal sysfs
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 9/9] ARM: shmobile: R-Mobile: Move pm-rmobile to drivers/soc/renesas/
-Date: Thu,  6 Dec 2018 13:59:34 -0800
-Message-Id: <2ed29e15e4b2500ae78de658a18f4482e7ac288b.1544132474.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
-References: <cover.1544132474.git.horms+renesas@verge.net.au>
+        Wolfram Sang <wsa@sang-engineering.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        =?UTF-8?B?RHVuZ++8muS6ug==?= =?UTF-8?B?44K9?=
+        <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz?= =?UTF-8?B?44O744OJ44Oz?=
+        <cv-dong@jinso.co.jp>, Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+References: <1542091543-31597-1-git-send-email-na-hoan@jinso.co.jp>
+ <CAMuHMdVXN3ZpXwbODrOWThCE+y0mxkOriDOjDGo2rXEG1asOaw@mail.gmail.com>
+ <20181113115718.327dw3maw26bzkcd@ninjato>
+From: Hoan <na-hoan@jinso.co.jp>
+Message-ID: <399490a1-e54b-2d99-bec0-c1b780155412@jinso.co.jp>
+Date: Tue, 4 Dec 2018 18:43:36 +0900
+MIME-Version: 1.0
+In-Reply-To: <20181113115718.327dw3maw26bzkcd@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Dear Geert-san, Wolfram-san
 
-The pm-rmobile driver is really a driver for the System Controller
-(SYSC) found in R-Mobile SoCs.  An equivalent driver for R-Car SoCs is
-already located under drivers/soc/renesas/.
+I'm sorry for the delay at the comments of this patch.
 
-Hence move the pm-rmobile driver from arch/arm/mach-shmobile/ to
-drivers/soc/renesas/, and rename it to rmobile-sysc.
+And I think it's not hurry!
 
-Enable compile-testing on non-ARM and non-R-Mobile SoCs.
+> +               /* Enable hwmon thermal sysfs */
+> +               tsc->zone->tzp->no_hwmon = false;
+> +               ret = thermal_add_hwmon_sysfs(tsc->zone);
+> +               if (ret)
+> +                       dev_err(dev, "Can't register hwmon sysfs\n");
+> +
+>                  dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
+>          }
+>
+> You forgot to call thermal_remove_hwmon_sysfs() in the .remove()
+> callback?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/mach-shmobile/Kconfig                                     | 5 -----
- arch/arm/mach-shmobile/Makefile                                    | 1 -
- drivers/soc/renesas/Kconfig                                        | 7 ++++++-
- drivers/soc/renesas/Makefile                                       | 1 +
- .../pm-rmobile.c => drivers/soc/renesas/rmobile-sysc.c             | 0
- 5 files changed, 7 insertions(+), 7 deletions(-)
- rename arch/arm/mach-shmobile/pm-rmobile.c => drivers/soc/renesas/rmobile-sysc.c (100%)
+I got it, Thanks!
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index 9b798c9dffe4..3683d6f10973 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -1,9 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--config PM_RMOBILE
--	bool
--	select PM
--	select PM_GENERIC_DOMAINS
--
- menuconfig ARCH_RENESAS
- 	bool "Renesas ARM SoCs"
- 	depends on ARCH_MULTI_V7 && MMU
-diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
-index 5591646cb9bb..f7bf17b7abae 100644
---- a/arch/arm/mach-shmobile/Makefile
-+++ b/arch/arm/mach-shmobile/Makefile
-@@ -35,7 +35,6 @@ smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
- 
- # PM objects
- obj-$(CONFIG_SUSPEND)		+= suspend.o
--obj-$(CONFIG_PM_RMOBILE)	+= pm-rmobile.o
- obj-$(CONFIG_ARCH_RCAR_GEN2)	+= pm-rcar-gen2.o
- 
- # Framework support
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index fe7f58616cdd..4d8012e1205c 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -34,9 +34,11 @@ config ARCH_RCAR_GEN3
- 
- config ARCH_RMOBILE
- 	bool
--	select PM_RMOBILE
-+	select PM
-+	select PM_GENERIC_DOMAINS
- 	select SYS_SUPPORTS_SH_CMT
- 	select SYS_SUPPORTS_SH_TMU
-+	select SYSC_RMOBILE
- 
- config ARCH_RZN1
- 	bool
-@@ -297,4 +299,7 @@ config RST_RCAR
- config SYSC_RCAR
- 	bool "R-Car System Controller support" if COMPILE_TEST
- 
-+config SYSC_RMOBILE
-+	bool "R-Mobile System Controller support" if COMPILE_TEST
-+
- endif # SOC_RENESAS
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 3bdd7dbc38a9..00764d5a60b3 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -27,3 +27,4 @@ endif
- # Family
- obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
- obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
-+obj-$(CONFIG_SYSC_RMOBILE)	+= rmobile-sysc.o
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/drivers/soc/renesas/rmobile-sysc.c
-similarity index 100%
-rename from arch/arm/mach-shmobile/pm-rmobile.c
-rename to drivers/soc/renesas/rmobile-sysc.c
--- 
-2.11.0
+On 2018/11/13 20:57, Wolfram Sang wrote:
+> Hi Hoan,
+>
+>> +		/* Enable hwmon thermal sysfs */
+>> +		tsc->zone->tzp->no_hwmon = false;
+> A driver diving so deep into core structures always looks suspicious.
+> Questions I have:
+>
+> 1)
+>
+> We have that code also in rcar_thermal.c, but the commit introducing
+> it[1] has a reason which does not apply for this driver, or?
+
+This is not the reason to apply this patch.
+
+I would say here are the general Linux systems, or as if the systems
+
+that thermal was registered by "thermal_zone_device_register()".
+
+The Linux community has developed tools that use this, such as 
+"lm-sensors",
+
+my Ubuntu and rcar-Gen2 are still compatible with lm-sensors but Gen3 
+does not.
+
+Although I do not want to say paradoxical that the kernel drivers must 
+be compatible
+
+with the user-space applications.
+
+> 2)
+>
+> of_parse_thermal_zones() intentionally sets this flag with this
+> comment:
+>
+> /* No hwmon because there might be hwmon drivers registering */
+>
+> Why does it not apply for us?
+I think so it should be registered separately.
+> 3)
+>
+> If it turns out, we really need it, there should be some thermal core
+> helper or flag for it, I'd think...
+
+Yes, It up to you!
+
+> Regards,
+>
+>     Wolfram
+>
+> [1] 64a411e8042e ("thermal: rcar-thermal: enable hwmon when thermal_zone_of_sensor_register is used")
+>
+Thank you very much for your comments :-)!
+
+Hoan.
