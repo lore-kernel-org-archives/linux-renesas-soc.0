@@ -1,49 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:7471 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727146AbeLJMGk (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42111 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbeLDNhT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:06:40 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH] ARM: dts: r8a7743: Remove generic compatible string from iic3
-Date: Mon, 10 Dec 2018 11:57:57 +0000
-Message-Id: <1544443077-49827-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 4 Dec 2018 08:37:19 -0500
+Date: Tue, 4 Dec 2018 05:37:14 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Olof Johansson <olof@lixom.net>
+Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [GIT PULL v2] Renesas ARM Based SoC DT Updates for v4.21
+Message-ID: <20181204133710.quietvso7c7bblbv@verge.net.au>
+References: <cover.1543409901.git.horms+renesas@verge.net.au>
+ <20181130230826.5kjtfyq2wdr73iwl@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130230826.5kjtfyq2wdr73iwl@localhost>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The iic3 block on RZ/G1M does not support automatic transmission, unlike
-other R-Car SoC's. So dropping the compatibility with the generic version.
+On Fri, Nov 30, 2018 at 03:08:26PM -0800, Olof Johansson wrote:
+> On Wed, Nov 28, 2018 at 02:02:12PM +0100, Simon Horman wrote:
+> > Hi Olof, Hi Kevin, Hi Arnd,
+> > 
+> > Please consider these Renesas ARM based SoC DT updates for v4.21.
+> > 
+> > I am sending out this pull-request at this time as there are a number
+> > of patches queued up in my arm (32) DT branch and I hope that this
+> > will ease the burden later on in the development cycle. I expect to
+> > send a follow-up pull-request for this branch at the usual pre-rc6 timing.
+> > 
+> > Changes since v1:
+> > * Correct garbled Reviewed-by tag in
+> >   "[PATCH 01/16] ARM: dts: r9a06g032: Add pinctrl node"
+> > 
+> > The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+> > 
+> >   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> > 
+> > are available in the git repository at:
+> > 
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt-for-v4.21
+> > 
+> > for you to fetch changes up to 673df60a880f060e3e94920c7b5f7a9ed8aa65f2:
+> >   ARM: dts: r9a06g032: Correct the GIC DT node name (2018-11-28 13:55:30 +0100)
+> > 
+> > ----------------------------------------------------------------
+> > Renesas ARM Based SoC DT Updates for v4.21
+> > 
+> > * RZ/N1D (r9a06g032) SoC:
+> >   - Correct GIC DT node name
+> >   - Enable pin controller
+> > 
+> > * RZ/G1C (r8a77470) iWave g23S single board computer
+> >   - Add QSPI flash support
+> >   - Add pinctl support for EtherAVB
+> >   - Enable CMT0 (Renesas R-Car Compare Match Timer)
+> >   - Enable RWDT (Renesas Watchdog Timer)
+> >   - Enable uSD and eMMC support
+> > 
+> > * RZ/G1C (r8a77470) SoC:
+> >   - Describe USB-DMAC and I2C devices in DT
+> > 
+> > * R-Mobile A1 (r8a7740), Emma Mobile EV2 (emev2) and
+> >   SH-Mobile AG5 (sh72a0) SoCs:
+> >   - Include SoC name in DTSI
+> > 
+> > * R-Car H2 (r8a7790) based lager, and
+> >   R-Car M2-W (r8a7791) based koelsch and porter boards:
+> >   - Disable unconnected LVDS encoders
+> 
+> Hi,
+> 
+> If you revise a previous pull request, please do it as a new tag (and
+> delete the old one so our pull will fail), or at least please reply to
+> it so I see a "please don't pull this, I've respun a v2" threaded reply.
+> 
+> No harm done in this case, since you rewrote with the previous tag,
+> but it made me scratch my head when I saw the previous one and the hash
+> didn't match the email. ;)
 
-Fixes: f523405f2a22cc0c307 ("ARM: dts: r8a7743: Add IIC cores to dtsi")
+Thanks Olof,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 7b731c7..182464d 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -564,9 +564,7 @@
- 			/* doesn't need pinmux */
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,iic-r8a7743",
--				     "renesas,rcar-gen2-iic",
--				     "renesas,rmobile-iic";
-+			compatible = "renesas,iic-r8a7743";
- 			reg = <0 0xe60b0000 0 0x425>;
- 			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 926>;
--- 
-2.7.4
+next time I'll create a new tag.
