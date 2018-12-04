@@ -1,75 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from twhmllg4.macronix.com ([211.75.127.132]:27269 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbeLGLN6 (ORCPT
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:38998 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbeLDN0g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:13:58 -0500
-From: Mason Yang <masonccyang@mxic.com.tw>
-To: broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
-Subject: [PATCH v3 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC controller bindings
-Date: Fri,  7 Dec 2018 19:13:19 +0800
-Message-Id: <1544181199-3373-3-git-send-email-masonccyang@mxic.com.tw>
-In-Reply-To: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+        Tue, 4 Dec 2018 08:26:36 -0500
+Received: by mail-vk1-f194.google.com with SMTP id q80so3752907vka.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Dec 2018 05:26:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20181129001538.17974-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181129001538.17974-1-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Dec 2018 14:26:22 +0100
+Message-ID: <CAMuHMdWquKgVuji=Sdain+ZMifkz5j-Ma-09X6t6UCS3x=hjrg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: set state when registering SD clocks
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Document the bindings used by the Renesas R-Car Gen3 RPC controller.
+Hi Niklas,
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+On Thu, Nov 29, 2018 at 1:16 AM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> The driver tries to figure out which state a SD clock is in when the
+> clock is register instead of setting a known state. This can be
+> problematic for two reasons.
+>
+> 1. If the clock driver can't figure out the state of the clock
+>    registration of the clock fails and setting of a known state by a
+>    clock user is not possible.
+>
+> 2. The state of the clock depends on if and how the bootloader
+>    configured it. The driver only checks that the rate is known not if
+>    the clock is stopped or not for example.
+>
+> Fix this by setting a known state and make sure the clock is stopped.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-new file mode 100644
-index 0000000..a191f70
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-@@ -0,0 +1,38 @@
-+Renesas R-Car Gen3 RPC controller Device Tree Bindings
-+------------------------------------------------------
-+
-+Required properties:
-+- compatible: should be "renesas,r8a77995-rpc"
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+- reg: should contain 2 entries, one for the registers and one for the direct
-+       mapping area
-+- reg-names: should contain "rpc_regs" and "dirmap"
-+- interrupts: interrupt line connected to the RPC controller
-+- clock-names: should contain "clk_rpc"
-+- clocks: should contain 1 entries for the module's clock
-+- rpc-mode: should contain "rpc-spi-flash" for rpc spi mode or
-+			   "rpc-hyperflash" for rpc hyerflash mode.
-+
-+Example:
-+
-+	rpc: rpc@ee200000 {
-+		compatible = "renesas,r8a77995-rpc";
-+		reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
-+		reg-names = "rpc_regs", "dirmap";
-+		clocks = <&cpg CPG_MOD 917>;
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		clock-names = "clk_rpc";
-+		rpc-mode = "rpc-spi-flash";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <40000000>;
-+			spi-tx-bus-width = <1>;
-+			spi-rx-bus-width = <1>;
-+		};
-+	};
+Thanks for your patch!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+One minor nit below.
+
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -360,7 +360,7 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+>         struct sd_clock *clock;
+>         struct clk *clk;
+>         unsigned int i;
+> -       u32 sd_fc;
+> +       u32 val;
+>
+>         clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+>         if (!clock)
+> @@ -377,17 +377,11 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
+>         clock->div_table = cpg_sd_div_table;
+>         clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
+>
+> -       sd_fc = readl(clock->csn.reg) & CPG_SD_FC_MASK;
+> -       for (i = 0; i < clock->div_num; i++)
+> -               if (sd_fc == (clock->div_table[i].val & CPG_SD_FC_MASK))
+> -                       break;
+> -
+> -       if (WARN_ON(i >= clock->div_num)) {
+> -               kfree(clock);
+> -               return ERR_PTR(-EINVAL);
+> -       }
+> +       val = readl(clock->csn.reg) & ~CPG_SD_FC_MASK;
+> +       val |= CPG_SD_STP_MASK | (clock->div_table[0].val & CPG_SD_FC_MASK);
+> +       writel(val, clock->csn.reg);
+>
+> -       clock->cur_div_idx = i;
+> +       clock->cur_div_idx = 0;
+
+I think this line can just be dropped, as the object was allocated using
+kzalloc().
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
