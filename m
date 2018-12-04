@@ -1,84 +1,70 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:61244 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725985AbeLGIcC (ORCPT
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45133 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbeLDTts (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:32:02 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: thierry.reding@gmail.com
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/5] pwm: rcar: add rcar_pwm_calc_counter() to calculate PWMCNT value only
-Date: Fri,  7 Dec 2018 17:29:29 +0900
-Message-Id: <1544171373-29618-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 4 Dec 2018 14:49:48 -0500
+Received: by mail-lj1-f193.google.com with SMTP id s5-v6so16057104ljd.12
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Dec 2018 11:49:46 -0800 (PST)
+Subject: [PATCH v2 2/4] clk: renesas: rcar-gen3-cpg: add spinlock
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org
+References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
+Message-ID: <eef5ee23-311a-4367-43b5-b793357f06ef@cogentembedded.com>
+Date: Tue, 4 Dec 2018 22:49:44 +0300
+MIME-Version: 1.0
+In-Reply-To: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To add a workaround in the future, this patch adds a function
-rcar_pwm_calc_counter() from rcar_pwm_set_counter().
-The rcar_pwm_calc_counter() calculates PWMCNT value only, and
-rcar_pwm_set_counter() set the PWMCNT register by using
-the calculated value. No change in behavior.
+Protect the CPG register read-modify-write sequence with a spinlock.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/pwm/pwm-rcar.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+Changes in version 2:
+- new patch.
 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index a41812f..9cf4567 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -36,6 +36,7 @@ struct rcar_pwm_chip {
- 	struct pwm_chip chip;
- 	void __iomem *base;
- 	struct clk *clk;
-+	u32 pwmcnt;
+ drivers/clk/renesas/rcar-gen3-cpg.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+Index: renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.c
++++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -30,14 +30,19 @@
+ 
+ #define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
+ 
++static spinlock_t cpg_lock;
++
+ static void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
+ {
++	unsigned long flags;
+ 	u32 val;
+ 
++	spin_lock_irqsave(&cpg_lock, flags);
+ 	val = readl(reg);
+ 	val &= ~clear;
+ 	val |= set;
+ 	writel(val, reg);
++	spin_unlock_irqrestore(&cpg_lock, flags);
  };
  
- static inline struct rcar_pwm_chip *to_rcar_pwm_chip(struct pwm_chip *chip)
-@@ -102,8 +103,8 @@ static void rcar_pwm_set_clock_control(struct rcar_pwm_chip *rp,
- 	rcar_pwm_write(rp, value, RCAR_PWMCR);
- }
- 
--static int rcar_pwm_set_counter(struct rcar_pwm_chip *rp, int div, int duty_ns,
--				int period_ns)
-+static void rcar_pwm_calc_counter(struct rcar_pwm_chip *rp, int div,
-+				  int duty_ns, int period_ns)
- {
- 	unsigned long long one_cycle, tmp;	/* 0.01 nanoseconds */
- 	unsigned long clk_rate = clk_get_rate(rp->clk);
-@@ -120,11 +121,17 @@ static int rcar_pwm_set_counter(struct rcar_pwm_chip *rp, int div, int duty_ns,
- 	do_div(tmp, one_cycle);
- 	ph = tmp & RCAR_PWMCNT_PH0_MASK;
- 
-+	rp->pwmcnt = cyc | ph;
-+}
+ struct cpg_simple_notifier {
+@@ -604,5 +609,8 @@ int __init rcar_gen3_cpg_init(const stru
+ 	if (attr)
+ 		cpg_quirks = (uintptr_t)attr->data;
+ 	pr_debug("%s: mode = 0x%x quirks = 0x%x\n", __func__, mode, cpg_quirks);
 +
-+static int rcar_pwm_set_counter(struct rcar_pwm_chip *rp)
-+{
- 	/* Avoid prohibited setting */
--	if (cyc == 0 || ph == 0)
-+	if ((rp->pwmcnt & RCAR_PWMCNT_CYC0_MASK) == 0 ||
-+	    (rp->pwmcnt & RCAR_PWMCNT_PH0_MASK) == 0)
- 		return -EINVAL;
- 
--	rcar_pwm_write(rp, cyc | ph, RCAR_PWMCNT);
-+	rcar_pwm_write(rp, rp->pwmcnt, RCAR_PWMCNT);
- 
++	spin_lock_init(&cpg_lock);
++
  	return 0;
  }
-@@ -159,7 +166,8 @@ static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 
- 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
- 
--	ret = rcar_pwm_set_counter(rp, div, duty_ns, period_ns);
-+	rcar_pwm_calc_counter(rp, div, duty_ns, period_ns);
-+	ret = rcar_pwm_set_counter(rp);
- 	if (!ret)
- 		rcar_pwm_set_clock_control(rp, div);
- 
--- 
-1.9.1
