@@ -1,110 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:18986 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726030AbeLGIcF (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:38005 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbeLDO4u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:32:05 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: thierry.reding@gmail.com
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 4/5] pwm: rcar: remove legacy APIs
-Date: Fri,  7 Dec 2018 17:29:32 +0900
-Message-Id: <1544171373-29618-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 4 Dec 2018 09:56:50 -0500
+MIME-Version: 1.0
+References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-26-robh@kernel.org>
+In-Reply-To: <20181203213223.16986-26-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 4 Dec 2018 15:56:36 +0100
+Message-ID: <CAMuHMdXLpAR=EJnyhRFvTPEBVe8EhGiDd814sM9NkKYwePJdww@mail.gmail.com>
+Subject: Re: [PATCH v2 25/34] dt-bindings: arm: renesas: Move 'renesas,prr'
+ binding to its own doc
+To: Rob Herring <robh@kernel.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        darknighte@darknighte.com, Frank Rowand <frowand.list@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch removes legacy APIs. Since rcar_pwm_{en,dis}able()
-functions are reused on "atomic" API, this patch changes
-the arguments of these functions. No change in behavior.
+On Mon, Dec 3, 2018 at 10:35 PM Rob Herring <robh@kernel.org> wrote:
+> In preparation to convert board-level bindings to json-schema, move
+> various misc SoC bindings out to their own file.
+>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pwm/pwm-rcar.c | 45 ++++-----------------------------------------
- 1 file changed, 4 insertions(+), 41 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 1bcb662..e479b6a 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -146,40 +146,8 @@ static void rcar_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- 	pm_runtime_put(chip->dev);
- }
- 
--static int rcar_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
--			   int duty_ns, int period_ns)
-+static int rcar_pwm_enable(struct rcar_pwm_chip *rp)
- {
--	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
--	int div, ret;
--
--	div = rcar_pwm_get_clock_division(rp, period_ns);
--	if (div < 0)
--		return div;
--
--	/*
--	 * Let the core driver set pwm->period if disabled and duty_ns == 0.
--	 * But, this driver should prevent to set the new duty_ns if current
--	 * duty_cycle is not set
--	 */
--	if (!pwm_is_enabled(pwm) && !duty_ns && !pwm->state.duty_cycle)
--		return 0;
--
--	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
--
--	rcar_pwm_calc_counter(rp, div, duty_ns, period_ns);
--	ret = rcar_pwm_set_counter(rp);
--	if (!ret)
--		rcar_pwm_set_clock_control(rp, div);
--
--	/* The SYNC should be set to 0 even if rcar_pwm_set_counter failed */
--	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, 0, RCAR_PWMCR);
--
--	return ret;
--}
--
--static int rcar_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
--{
--	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
- 	u32 value;
- 
- 	/* Don't enable the PWM device if CYC0 or PH0 is 0 */
-@@ -193,10 +161,8 @@ static int rcar_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	return 0;
- }
- 
--static void rcar_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
-+static void rcar_pwm_disable(struct rcar_pwm_chip *rp)
- {
--	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
--
- 	rcar_pwm_update(rp, RCAR_PWMCR_EN0, 0, RCAR_PWMCR);
- }
- 
-@@ -221,10 +187,10 @@ static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, 0, RCAR_PWMCR);
- 
- 	if (!ret && state->enabled)
--		ret = rcar_pwm_enable(chip, pwm);
-+		ret = rcar_pwm_enable(rp);
- 
- 	if (!state->enabled) {
--		rcar_pwm_disable(chip, pwm);
-+		rcar_pwm_disable(rp);
- 		ret = 0;
- 	}
- 
-@@ -234,9 +200,6 @@ static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- static const struct pwm_ops rcar_pwm_ops = {
- 	.request = rcar_pwm_request,
- 	.free = rcar_pwm_free,
--	.config = rcar_pwm_config,
--	.enable = rcar_pwm_enable,
--	.disable = rcar_pwm_disable,
- 	.apply = rcar_pwm_apply,
- 	.owner = THIS_MODULE,
- };
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-1.9.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
