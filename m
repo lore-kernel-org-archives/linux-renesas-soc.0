@@ -1,10 +1,10 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42858 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:42762 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbeLDOeR (ORCPT
+        with ESMTP id S1725956AbeLDO2p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:34:17 -0500
-Date: Tue, 4 Dec 2018 06:34:13 -0800
+        Tue, 4 Dec 2018 09:28:45 -0500
+Date: Tue, 4 Dec 2018 06:28:41 -0800
 From: Simon Horman <horms@verge.net.au>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Biju Das <biju.das@bp.renesas.com>,
@@ -17,21 +17,21 @@ Cc: Biju Das <biju.das@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 20/22] ARM: dts: r8a7744: Add MSIOF[012] support
-Message-ID: <20181204143412.utmtm4upazeyeuwh@verge.net.au>
+Subject: Re: [PATCH 18/22] ARM: dts: r8a7744: Add QSPI support
+Message-ID: <20181204142840.dsj5lagggznunxko@verge.net.au>
 References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
- <1543319795-48325-21-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdU4puVT82eL9RXYY4rFEqcxvXdG_uSwX0xQDSmVrgsLMw@mail.gmail.com>
+ <1543319795-48325-19-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdWDAvTubKLp1_z9sJuakBYkU3DH7-xN+2P4s0d5H7WL2A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdU4puVT82eL9RXYY4rFEqcxvXdG_uSwX0xQDSmVrgsLMw@mail.gmail.com>
+In-Reply-To: <CAMuHMdWDAvTubKLp1_z9sJuakBYkU3DH7-xN+2P4s0d5H7WL2A@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 30, 2018 at 10:02:49AM +0100, Geert Uytterhoeven wrote:
+On Fri, Nov 30, 2018 at 10:02:16AM +0100, Geert Uytterhoeven wrote:
 > On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> > Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
+> > Add the DT node for the QSPI interface to the SoC dtsi.
 > >
 > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > 
