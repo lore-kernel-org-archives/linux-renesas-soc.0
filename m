@@ -1,62 +1,85 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39114 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbeLBTgZ (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33638 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbeLDPv4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 2 Dec 2018 14:36:25 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 08/14] gpio: pca953x: Zap ad-hoc I2C block write in multi GPIO set
-Date: Sun,  2 Dec 2018 20:35:47 +0100
-Message-Id: <20181202193553.29704-8-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
-References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
+        Tue, 4 Dec 2018 10:51:56 -0500
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests PATCH 2/7] tests: Provide copy test to validate 1xN streams
+Date: Tue,  4 Dec 2018 15:51:41 +0000
+Message-Id: <20181204155146.9726-3-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
+References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The ad-hoc i2c block write can be replaced by standard register accessor
-function, which correctly handles all the chip details and differences.
-Do so to simplify the code.
+Validate that a 1xN stream can be read through the RPF and written
+through the WPF.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The test framework does not currently support processing images where
+the stride does not match the output width - so the testing is currently
+limited to testing only the vertical direction in this aspect.
+
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
- drivers/gpio/gpio-pca953x.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ tests/vsp-unit-test-0025.sh | 45 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100755 tests/vsp-unit-test-0025.sh
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index dc691bd52a79..b3386819c550 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -364,8 +364,6 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 				      unsigned long *mask, unsigned long *bits)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
--	int bank_shift = pca953x_bank_shift(chip);
--	u32 regaddr = chip->regs->output << bank_shift;
- 	unsigned int bank_mask, bank_val;
- 	int bank;
- 	u8 reg_val[MAX_BANK];
-@@ -384,14 +382,7 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 		}
- 	}
- 
--	/* PCA9575 needs address-increment on multi-byte writes */
--	if ((PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) &&
--	    (NBANK(chip) > 1)) {
--		regaddr |= REG_ADDR_AI;
--	}
--
--	ret = i2c_smbus_write_i2c_block_data(chip->client, regaddr,
--					     NBANK(chip), reg_val);
-+	ret = pca953x_write_regs(chip, chip->regs->output, reg_val);
- 	if (ret)
- 		goto exit;
- 
+diff --git a/tests/vsp-unit-test-0025.sh b/tests/vsp-unit-test-0025.sh
+new file mode 100755
+index 000000000000..57a1fac6e369
+--- /dev/null
++++ b/tests/vsp-unit-test-0025.sh
+@@ -0,0 +1,45 @@
++#!/bin/sh
++
++#
++# Test pipelines which have a single pixel dimension. Use a RPF -> WPF
++# pipeline with identical input and output formats to generate our output.
++#
++
++. ./vsp-lib.sh
++
++features="rpf.0 uds wpf.0"
++formats="RGB24 ARGB32"
++
++# Input is directly copied to the output. No change in format or size.
++test_copy() {
++	local format=$1
++	local insize=$2
++
++	test_start "copying $insize in $format"
++
++	pipe_configure rpf-wpf 0 0
++	format_configure rpf-wpf 0 0 $format $insize $format
++
++	vsp_runner rpf.0 &
++	vsp_runner wpf.0
++
++	local result=$(compare_frames)
++
++	test_complete $result
++}
++
++test_main() {
++	local format
++
++	for format in $formats ; do
++		test_copy $format 1024x768
++		test_copy $format 128x128
++		test_copy $format 128x1
++
++		# Skipped : Test framework does not yet support strides != width
++		#test_copy $format 1x128
++	done
++}
++
++test_init $0 "$features"
++test_run
 -- 
-2.18.0
+2.17.1
