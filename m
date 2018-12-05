@@ -1,12 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41251 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeLEVzT (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41318 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727297AbeLES5B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:55:19 -0500
+        Wed, 5 Dec 2018 13:57:01 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k15-v6so1865445ljc.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 10:57:00 -0800 (PST)
 Subject: Re: [PATCH v2 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
  controller bindings
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+To: Marek Vasut <marek.vasut@gmail.com>,
         Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
         linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
@@ -16,40 +18,29 @@ Cc: juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
 References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
  <1543828720-18345-3-git-send-email-masonccyang@mxic.com.tw>
  <2e719883-4cfd-b456-b894-853e99515092@gmail.com>
- <8de55806-ee08-69c6-df1b-45b1eba607a6@cogentembedded.com>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <c1c8fc5a-3829-01ee-5ac4-cb6ab154bdce@gmail.com>
-Date: Wed, 5 Dec 2018 22:55:15 +0100
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <8de55806-ee08-69c6-df1b-45b1eba607a6@cogentembedded.com>
+Date: Wed, 5 Dec 2018 21:56:57 +0300
 MIME-Version: 1.0
-In-Reply-To: <8de55806-ee08-69c6-df1b-45b1eba607a6@cogentembedded.com>
+In-Reply-To: <2e719883-4cfd-b456-b894-853e99515092@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/05/2018 07:56 PM, Sergei Shtylyov wrote:
-> On 12/04/2018 09:19 PM, Marek Vasut wrote:
-> 
->>> Document the bindings used by the Renesas R-Car Gen3 RPC SPI controller.
->>
->> RPC is SPI and HF controller, it is not a pure SPI controller.
->>
->> How does this deal with the HF part ? Keep in mind the bindings are ABI
->> and it will be difficult to redo them later.
-> 
->    Perhaps we need a "mode" prop, maybe w/vendor prefix? 
+On 12/04/2018 09:19 PM, Marek Vasut wrote:
 
-Or, like I said last time, discern it based on the DT subnode. It can be
-either SPI NOR or CFI NOR.
-
->>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> [...]
+>> Document the bindings used by the Renesas R-Car Gen3 RPC SPI controller.
 > 
-> MBR, Sergei
+> RPC is SPI and HF controller, it is not a pure SPI controller.
 > 
+> How does this deal with the HF part ? Keep in mind the bindings are ABI
+> and it will be difficult to redo them later.
 
+   Perhaps we need a "mode" prop, maybe w/vendor prefix? 
 
--- 
-Best regards,
-Marek Vasut
+>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+[...]
+
+MBR, Sergei
