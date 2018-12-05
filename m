@@ -1,48 +1,66 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeLFV7w (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:52 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/3] dt-bindings: arm: renesas: Document iWave RZ/G1N SOM
-Date: Thu,  6 Dec 2018 13:59:11 -0800
-Message-Id: <1deb430d291270f9d0067061a5dc7409819dfcfb.1544124873.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544124873.git.horms+renesas@verge.net.au>
-References: <cover.1544124873.git.horms+renesas@verge.net.au>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <devicetree-owner@vger.kernel.org>
+MIME-Version: 1.0
+References: <20181205195050.4759-5-robh@kernel.org>
+In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Dec 2018 22:16:45 +0100
+Message-ID: <CAMuHMdXqww7c26SAc52b8Uum5cUfYm9dQEkQ3SYmhgCDOSn_xQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
+To: Rob Herring <robh@kernel.org>
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)"
+        <linux-omap@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: devicetree-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Wed, Dec 5, 2018 at 8:50 PM Rob Herring <robh@kernel.org> wrote:
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which all of these are.
+>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Document the iW-RainboW-G20M-RZ/G1N Qseven device tree bindings,
-listing it as a supported system on module.
-
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-index f5e0f82fd503..4cfb56787a90 100644
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ b/Documentation/devicetree/bindings/arm/shmobile.txt
-@@ -101,6 +101,8 @@ Boards:
-     compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
-   - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-     compatible = "iwave,g20m", "renesas,r8a7743"
-+  - iWave Systems RZ/G1N Qseven System On Module (iW-RainboW-G20M-Qseven)
-+    compatible = "iwave,g20m", "renesas,r8a7744"
-   - Kingfisher (SBEV-RCAR-KF-M03)
-     compatible = "shimafuji,kingfisher"
-   - Koelsch (RTP0RC7791SEB00010S)
+> ---
+>  drivers/clk/renesas/clk-mstp.c   |  2 +-
+>  drivers/clk/ti/clkctrl.c         |  2 +-
+>  drivers/clk/ti/dpll.c            |  2 +-
+>  drivers/clk/ux500/u8500_of_clk.c | 10 +++++-----
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+
+For drivers/clk/renesas/clk-mstp.c :
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
