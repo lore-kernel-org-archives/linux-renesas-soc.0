@@ -1,65 +1,65 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeLFV73 (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46583 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeLEOX6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:29 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 31/34] ARM: dts: r8a7744: Add xhci support
-Date: Thu,  6 Dec 2018 13:58:26 -0800
-Message-Id: <54234e80858cf3730917d71af80a13ac4b8f26dc.1544125558.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
-References: <cover.1544125558.git.horms+renesas@verge.net.au>
+        Wed, 5 Dec 2018 09:23:58 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n10so3337174vso.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 06:23:58 -0800 (PST)
+MIME-Version: 1.0
+References: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181128161829.27266-1-niklas.soderlund+renesas@ragnatech.se>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 5 Dec 2018 15:23:21 +0100
+Message-ID: <CAPDyKFpBakCPokRP-ggPtnJ-v8Ex93uM4x8BowZErtH1fLKqrQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] mmc: renesas_sdhi: extend quirk selection to
+ handle ES revisions
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Wed, 28 Nov 2018 at 17:19, Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+>
+> Hi,
+>
+> Recent datasheet updates have made it clear that some quirks are not SoC
+> specific but SoC + ES version specific. Currently the quirks are
+> selected using compatibility values but whit this new information that
+> is not enough.
+>
+> Patch 1/3 adds support to select quirks based on SoC + ES revision using
+> soc_device_match() and converts the only existing quirk. Patch 2/3
+> Removes the old method to select quirk based on compatibility string.
+> While Patch 3/3 adds a new quirk from the BSP which blacklists some
+> known problematic ES versions for HS400. HS400 is not yet enabled
+> upstream so blacklisting these ES versions is not a regression of
+> functionality.
+>
+> Based on mmc/next and tested on H3 and M3-N.
+>
+> Niklas S=C3=B6derlund (3):
+>   mmc: renesas_sdhi: handle 4tap hs400 mode quirk based on SoC revision
+>   mmc: renesas_sdhi: align compatibility properties for H3 and M3-W
+>   mmc: renesas_sdhi: disable HS400 on H3 ES1.x and M3-W ES1.[012]
+>
+>  drivers/mmc/host/renesas_sdhi_core.c          | 36 +++++++++++++++++++
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 20 ++---------
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 20 ++---------
+>  3 files changed, 41 insertions(+), 35 deletions(-)
+>
+> --
+> 2.19.1
+>
 
-Add a device node for the xhci controller on the Renesas
-RZ/G1N (r8a7744) SoC.
+Applied for next, thanks!
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7744.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 992d622b5393..33e15c5f21c9 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1424,6 +1424,26 @@
- 			dma-channels = <13>;
- 		};
- 
-+		/*
-+		 * pci1 and xhci share the same phy, therefore only one of them
-+		 * can be active at any one time. If both of them are enabled,
-+		 * a race condition will determine who'll control the phy.
-+		 * A firmware file is needed by the xhci driver in order for
-+		 * USB 3.0 to work properly.
-+		 */
-+		xhci: usb@ee000000 {
-+			compatible = "renesas,xhci-r8a7744",
-+				     "renesas,rcar-gen2-xhci";
-+			reg = <0 0xee000000 0 0xc00>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 328>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 328>;
-+			phys = <&usb2 1>;
-+			phy-names = "usb";
-+			status = "disabled";
-+		};
-+
- 		pci0: pci@ee090000 {
- 			compatible = "renesas,pci-r8a7744",
- 				     "renesas,pci-rcar-gen2";
--- 
-2.11.0
+Kind regards
+Uffe
