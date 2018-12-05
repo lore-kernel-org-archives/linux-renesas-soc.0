@@ -1,89 +1,47 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400093.outbound.protection.outlook.com ([40.107.140.93]:9563
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727094AbeLENmb (ORCPT
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46445 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbeLEGM1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 08:42:31 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: Alessandro Zummo <a.zummo@towertech.it>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        Wed, 5 Dec 2018 01:12:27 -0500
+Date: Tue, 4 Dec 2018 22:12:23 -0800
+From: Eduardo Valentin <edubezval@gmail.com>
+To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
-Date: Wed, 5 Dec 2018 13:42:23 +0000
-Message-ID: <OSBPR01MB2103838867CA5A733C9FE9C2B8A80@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
- <1543510486-29532-3-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdXmS6cCZhX_b+oszDjt+t8zgAkCGApweOX-k0Uq05=AEg@mail.gmail.com>
- <20181130123213.GM8952@piout.net>
- <CAMuHMdW6=B5n8CEmqVEaqxtLD9tO3ue7_A1sTBVgi+2SPfVa8g@mail.gmail.com>
-In-Reply-To: <CAMuHMdW6=B5n8CEmqVEaqxtLD9tO3ue7_A1sTBVgi+2SPfVa8g@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFT 0/2] thermal: add suport for R8A77990
+Message-ID: <20181205061221.GA21626@localhost.localdomain>
+References: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgR2VlcnQgYW5kIEFsZXhhbmRyZSwNCg0KVGhhbmtzIGZvciB0aGUgZmVlZGJhY2suDQoNCj4g
-U3ViamVjdDogUmU6IFtQQVRDSCB2MiAyLzRdIHJ0YzogcGNmODUzNjM6IEFkZCBzdXBwb3J0IGZv
-ciBOWFAgcGNmODUyNjMgcnRjDQo+DQo+IEhpIEFsZXhhbmRyZSwNCj4NCj4gT24gRnJpLCBOb3Yg
-MzAsIDIwMTggYXQgMTozMiBQTSBBbGV4YW5kcmUgQmVsbG9uaQ0KPiA8YWxleGFuZHJlLmJlbGxv
-bmlAYm9vdGxpbi5jb20+IHdyb3RlOg0KPiA+IE9uIDMwLzExLzIwMTggMTI6MDU6MTYrMDEwMCwg
-R2VlcnQgVXl0dGVyaG9ldmVuIHdyb3RlOg0KPiA+ID4gT24gVGh1LCBOb3YgMjksIDIwMTggYXQg
-NjowMyBQTSBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+IHdyb3RlOg0KPiA+
-ID4gPiBBZGQgc3VwcG9ydCBmb3IgTlhQIHBjZjg1MjYzIHJlYWwtdGltZSBjbG9jay4gcGNmODUy
-NjMgcnRjIGlzDQo+ID4gPiA+IGNvbXBhdGlibGUgd2l0aCBwY2Y4NTM2MyxleGNlcHQgdGhhdCBw
-Y2Y4NTM2MyBoYXMgYWRkaXRpb25hbCA2NCBieXRlcw0KPiBvZiBSQU0uDQo+ID4gPiA+DQo+ID4g
-PiA+IDEgYnl0ZSBvZiBudm1lbSBpcyBzdXBwb3J0ZWQgYW5kIGV4cG9zZWQgaW4gc3lzZnMgKCMg
-aXMgdGhlDQo+ID4gPiA+IGluc3RhbmNlIG51bWJlcixzdGFydGluZyB3aXRoIDApOg0KPiA+ID4g
-PiAvc3lzL2J1cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYzLSMvbnZtZW0NCj4gPiA+ID4NCj4gPiA+
-ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+
-ID4gPiAtLS0NCj4gPiA+ID4gIFYxLS0+VjIgSW5jb3Jwb3JhdGVkIEFsZXhhbmRyZSBhbmQgR2Vl
-cnQncyByZXZpZXcgY29tbWVudC4NCj4gPiA+DQo+ID4gPiBUaGFua3MgZm9yIHRoZSB1cGRhdGUh
-DQo+ID4gPg0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL3J0Yy9ydGMtcGNmODUzNjMuYw0KPiA+ID4g
-PiArKysgYi9kcml2ZXJzL3J0Yy9ydGMtcGNmODUzNjMuYw0KPiA+ID4NCj4gPiA+ID4gQEAgLTMy
-MSwxNSArMzQ0LDI1IEBAIHN0YXRpYyBpbnQgcGNmODUzNjNfcHJvYmUoc3RydWN0IGkyY19jbGll
-bnQNCj4gKmNsaWVudCwNCj4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBz
-dHJ1Y3QgaTJjX2RldmljZV9pZCAqaWQpICB7DQo+ID4gPiA+ICAgICAgICAgc3RydWN0IHBjZjg1
-MzYzICpwY2Y4NTM2MzsNCj4gPiA+ID4gLSAgICAgICBzdHJ1Y3QgbnZtZW1fY29uZmlnIG52bWVt
-X2NmZyA9IHsNCj4gPiA+ID4gLSAgICAgICAgICAgICAgIC5uYW1lID0gInBjZjg1MzYzLSIsDQo+
-ID4gPiA+IC0gICAgICAgICAgICAgICAud29yZF9zaXplID0gMSwNCj4gPiA+ID4gLSAgICAgICAg
-ICAgICAgIC5zdHJpZGUgPSAxLA0KPiA+ID4gPiAtICAgICAgICAgICAgICAgLnNpemUgPSBOVlJB
-TV9TSVpFLA0KPiA+ID4gPiAtICAgICAgICAgICAgICAgLnJlZ19yZWFkID0gcGNmODUzNjNfbnZy
-YW1fcmVhZCwNCj4gPiA+ID4gLSAgICAgICAgICAgICAgIC5yZWdfd3JpdGUgPSBwY2Y4NTM2M19u
-dnJhbV93cml0ZSwNCj4gPiA+ID4gKyAgICAgICBjb25zdCBzdHJ1Y3QgcmVnbWFwX2NvbmZpZyAq
-cmVnbWFwX2NvbmZpZyA9DQo+ICZwY2ZfODUzNjNfcmVnbWFwX2NvbmZpZzsNCj4gPiA+ID4gKyAg
-ICAgICBzdHJ1Y3QgbnZtZW1fY29uZmlnIG52bWVtX2NmZ1tdID0gew0KPiA+ID4NCj4gPiA+IHN0
-YXRpYz8NCj4gPiA+DQo+ID4gPiBBbHRob3VnaCB0aGUgbnZtZW1fY29uZmlnIGlzIGNvcGllZCwg
-YW5kIHRodXMgc3RhdGljIGlzIG5vdCBuZWVkZWQsDQo+ID4gPiBJIGd1ZXNzIHVzaW5nIHN0YXRp
-YyB3aWxsIGRlY3JlYXNlIGtlcm5lbCBzaXplLg0KPiA+ID4NCj4gPg0KPiA+IEh1bSwgSSBkb24n
-dCB0aGluaywgdGhpcyBpcyBvbiB0aGUgc3RhY2sgYW55d2F5Lg0KPg0KPiBJZiB5b3UgbWFrZSBp
-dCBzdGF0aWMsIGl0J3Mgbm8gbG9uZ2VyIGFsbG9jYXRlZCBvbiB0aGUgc3RhY2ssIGFuZCBnY2Mg
-aGFzIG5vDQo+IGxvbmdlciB0byBlbWl0IGNvZGUgdG8gaW5pdGlhbGl6ZSBhbGwgbWVtYmVycy4N
-Cj4NCg0KSSBoYXZlIHVzZWQgInNpemUiIGNvbW1hbmQgdG8gY2hlY2sgdGhlIHNpemUgb2Ygdm1s
-aW51eCB3aXRoIGFuZCB3aXRob3V0IHN0YXRpYy4gUGxlYXNlIGZpbmQgdGhlIHJlc3VsdHMuDQoN
-CldpdGhvdXQgc3RhdGljDQo9PT09PT09PT09PQ0KJCBzaXplIHZtbGludXgNCiAgIHRleHQgICBk
-YXRhICAgIGJzcyAgICBkZWMgICAgaGV4ZmlsZW5hbWUNCjcxNDczNjAyNjI1OTgyIDI5MjYwODEw
-MDY1OTUwIDk5OTgxZXZtbGludXgNCg0KV2l0aCBzdGF0aWMgdmFyaWFibGUNCj09PT09PT09PT09
-PT09PT09PQ0KJCBzaXplIHZtbGludXgNCiAgIHRleHQgICBkYXRhICAgIGJzcyAgICBkZWMgICAg
-aGV4ZmlsZW5hbWUNCjcxNDcyMDAyNjI2MTEwIDI5MjYwODEwMDY1OTE4IDk5OTdmZXZtbGludXgN
-Cg0KU28gb3ZlcmFsbCB3aXRoIHN0YXRpYywgdGhlcmUgaXMgYSByZWR1Y3Rpb24gaW4ga2VybmVs
-IHNpemUuIEkgd2lsbCBzZW5kIFYzIHdpdGggZGVjbGFyaW5nIGl0IGFzIHN0YXRpYy4NCg0KUmVn
-YXJkcywNCkJpanUNCg0KDQpbaHR0cHM6Ly93d3cyLnJlbmVzYXMuZXUvbWVkaWEvZW1haWwvdW5p
-Y2VmLmpwZ10NCg0KVGhpcyBDaHJpc3RtYXMsIGluc3RlYWQgb2Ygc2VuZGluZyBvdXQgY2FyZHMs
-IFJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIGhhdmUgZGVjaWRlZCB0byBzdXBwb3J0IFVuaWNl
-ZiB3aXRoIGEgZG9uYXRpb24uIEZvciBmdXJ0aGVyIGRldGFpbHMgY2xpY2sgaGVyZTxodHRwczov
-L3d3dy51bmljZWYub3JnLz4gdG8gZmluZCBvdXQgYWJvdXQgdGhlIHZhbHVhYmxlIHdvcmsgdGhl
-eSBkbywgaGVscGluZyBjaGlsZHJlbiBhbGwgb3ZlciB0aGUgd29ybGQuDQpXZSB3b3VsZCBsaWtl
-IHRvIHRha2UgdGhpcyBvcHBvcnR1bml0eSB0byB3aXNoIHlvdSBhIE1lcnJ5IENocmlzdG1hcyBh
-bmQgYSBwcm9zcGVyb3VzIE5ldyBZZWFyLg0KDQoNCg0KUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJv
-cGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBSb2FkLCBCb3VybmUgRW5kLCBCdWNraW5n
-aGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3RlcmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRl
-ciBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4NCg==
+Hello Yoshihiro,
+
+On Mon, Oct 15, 2018 at 11:11:57PM +0900, Yoshihiro Kaneko wrote:
+> This series adds thermal support for R-Car E3 (R8A77990).
+> 
+> This series is based on the next branch of Eduardo Valentin's linux-soc-thermal
+> tree.
+
+Sorry for the late response, but would you be able to refresh your
+series to latest linus master branch?
+
+> 
+> Yoshihiro Kaneko (2):
+>   dt-bindings: thermal: rcar-thermal: add R8A77990 support
+>   thermal: rcar_thermal: add R8A77990 support
+> 
+>  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
+>  drivers/thermal/rcar_thermal.c                             | 4 ++++
+>  2 files changed, 7 insertions(+), 2 deletions(-)
+> 
+> -- 
+> 1.9.1
+> 
