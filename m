@@ -1,77 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:61244 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726003AbeLGIcD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:36646 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727388AbeLET4c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:32:03 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: thierry.reding@gmail.com
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/5] pwm: rcar: Add support "atomic" API
-Date: Fri,  7 Dec 2018 17:29:30 +0900
-Message-Id: <1544171373-29618-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 5 Dec 2018 14:56:32 -0500
+Date: Wed, 5 Dec 2018 11:56:24 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH v2 3/5] ARM: dts: r8a7744: Add DU support
+Message-ID: <20181205195624.upiljxcwo6zu4bcz@verge.net.au>
+References: <1544000815-28069-1-git-send-email-biju.das@bp.renesas.com>
+ <1544000815-28069-4-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544000815-28069-4-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch adds support for "atomic" API. Behavior is the same as
-when using legacy APIs.
+On Wed, Dec 05, 2018 at 09:06:53AM +0000, Biju Das wrote:
+> Add du node to r8a7744 SoC DT. Boards that want to enable the DU
+> need to specify the output topology.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> V1-->V2
+> 	* Removed LVDS encoder definition from DU node.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pwm/pwm-rcar.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+I would like this and the remaining patches in this series to
+receive some review before I apply them. This likely means they
+will be accepted for v4.22 as I am planning to close the
+renesas tree for non-bugfixes for v4.21 later today.
 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 9cf4567..a5ea0f3 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -200,12 +200,44 @@ static void rcar_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	rcar_pwm_update(rp, RCAR_PWMCR_EN0, 0, RCAR_PWMCR);
- }
- 
-+static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-+			  struct pwm_state *state)
-+{
-+	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
-+	int div, ret;
-+
-+	div = rcar_pwm_get_clock_division(rp, state->period);
-+	if (div < 0)
-+		return div;
-+
-+	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
-+
-+	rcar_pwm_calc_counter(rp, div, state->duty_cycle, state->period);
-+	ret = rcar_pwm_set_counter(rp);
-+	if (!ret)
-+		rcar_pwm_set_clock_control(rp, div);
-+
-+	/* The SYNC should be set to 0 even if rcar_pwm_set_counter failed */
-+	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, 0, RCAR_PWMCR);
-+
-+	if (!ret && state->enabled)
-+		ret = rcar_pwm_enable(chip, pwm);
-+
-+	if (!state->enabled) {
-+		rcar_pwm_disable(chip, pwm);
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+
- static const struct pwm_ops rcar_pwm_ops = {
- 	.request = rcar_pwm_request,
- 	.free = rcar_pwm_free,
- 	.config = rcar_pwm_config,
- 	.enable = rcar_pwm_enable,
- 	.disable = rcar_pwm_disable,
-+	.apply = rcar_pwm_apply,
- 	.owner = THIS_MODULE,
- };
- 
--- 
-1.9.1
+b
+
+> ---
+>  arch/arm/boot/dts/r8a7744.dtsi | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+> index 04148d6..6a51b16 100644
+> --- a/arch/arm/boot/dts/r8a7744.dtsi
+> +++ b/arch/arm/boot/dts/r8a7744.dtsi
+> @@ -1645,8 +1645,14 @@
+>  		};
+>  
+>  		du: display@feb00000 {
+> -			reg = <0 0xfeb00000 0 0x40000>,
+> -			      <0 0xfeb90000 0 0x1c>;
+> +			compatible = "renesas,du-r8a7744";
+> +			reg = <0 0xfeb00000 0 0x40000>;
+> +			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 724>,
+> +				 <&cpg CPG_MOD 723>;
+> +			clock-names = "du.0", "du.1";
+> +			status = "disabled";
+>  
+>  			ports {
+>  				#address-cells = <1>;
+> @@ -1663,7 +1669,6 @@
+>  					};
+>  				};
+>  			};
+> -			/* placeholder */
+>  		};
+>  
+>  		prr: chipid@ff000044 {
+> -- 
+> 2.7.4
+> 
