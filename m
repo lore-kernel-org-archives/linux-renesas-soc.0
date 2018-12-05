@@ -1,47 +1,43 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:2934 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726909AbeLEJPc (ORCPT
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:19522 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeLEBRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:15:32 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 0/5] Add more support to RZ/G1N
-Date: Wed,  5 Dec 2018 09:06:50 +0000
-Message-Id: <1544000815-28069-1-git-send-email-biju.das@bp.renesas.com>
+        Tue, 4 Dec 2018 20:17:39 -0500
+From: Ulrich Hecht <uli+renesas@fpond.eu>
+To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de
+Cc: devicetree@vger.kernel.org, linux-can@vger.kernel.org,
+        robh@kernel.org, geert+renesas@glider.be,
+        horms+renesas@verge.net.au, Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH v3 0/2] dt-bindings: can: rcar_can*: add R-Car D3
+Date: Wed,  5 Dec 2018 09:17:03 +0800
+Message-Id: <1543972625-11267-1-git-send-email-uli+renesas@fpond.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This patch series aims to add support for some more interfaces to 
-RZ/G1N SoC/iwg20d based board (Display and QSPI).
+Hi!
 
-This patch series tested against renesas-dev.
+These are the bindings for CAN and CAN FD controllers on R-Car D3
+(R8A77995).
 
-V1--> V2
-	* Add SPI NOR support : Incorporated Geert's review comment.
-	* Add DU support : Removed LVDS definition from DU node.
+Changes since v2:
+- rebased
+- made wording less redundant in rcar_canfd.txt
+- added dt-bindings prefix to subjects
 
-Biju Das (5):
-  ARM: dts: iwg20d-q7-common: Move cmt/rwdt node out of RZ/G1M SOM
-  ARM: dts: r8a7744-iwg20m: Add SPI NOR support
-  ARM: dts: r8a7744: Add DU support
-  ARM: dts: r8a7743: Remove LVDS encoder from du node
-  ARM: dts: r8a7744: Fix sorting of vsp and msiof nodes
+CU
+Uli
 
- arch/arm/boot/dts/iwg20d-q7-common.dtsi |   9 ++
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi   |   9 --
- arch/arm/boot/dts/r8a7743.dtsi          |   9 +-
- arch/arm/boot/dts/r8a7744-iwg20m.dtsi   |  26 ++++++
- arch/arm/boot/dts/r8a7744.dtsi          | 161 ++++++++++++++++----------------
- 5 files changed, 121 insertions(+), 93 deletions(-)
+
+Ulrich Hecht (2):
+  dt-bindings: can: rcar_can: add r8a77995 (R-Car D3) compatibility
+    strings
+  dt-bindings: can: rcar_canfd: add r8a77995 (R-Car D3) compatibility
+    strings
+
+ Documentation/devicetree/bindings/net/can/rcar_can.txt   | 3 ++-
+ Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 8 ++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
 -- 
 2.7.4
