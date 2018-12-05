@@ -1,89 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbeLFV64 (ORCPT
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41593 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbeLEOYG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:58:56 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 11/34] ARM: dts: r8a7744: Add SDHI nodes
-Date: Thu,  6 Dec 2018 13:58:06 -0800
-Message-Id: <b591e323b271fdc2ffdc40eaf06e926a1e272994.1544125558.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
-References: <cover.1544125558.git.horms+renesas@verge.net.au>
+        Wed, 5 Dec 2018 09:24:06 -0500
+Received: by mail-vs1-f66.google.com with SMTP id t17so12150175vsc.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 06:24:05 -0800 (PST)
+MIME-Version: 1.0
+References: <20181203195647.6261-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181203195647.6261-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 5 Dec 2018 15:23:28 +0100
+Message-ID: <CAPDyKFoRbmpcv=5OAW0vy-tR9aE9qy82LZ3+1bowL+ZMPdds+g@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: document 'Reliable Write' bit in uapi header
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Avri Altman <Avri.Altman@wdc.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+On Mon, 3 Dec 2018 at 20:56, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> If we use it this way, people should know about it. Also, replace
+> true/false with nonzero/zero because the flag is not strictly a bool
+> anymore.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add SDHI nodes to the DT of the r8a7744 SoC.
+Applied for next, thanks!
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7744.dtsi | 39 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 57e0be34b989..97b417c1b5f9 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -866,14 +866,49 @@
- 			/* placeholder */
- 		};
- 
-+		sdhi0: sd@ee100000 {
-+			compatible = "renesas,sdhi-r8a7744",
-+				     "renesas,rcar-gen2-sdhi";
-+			reg = <0 0xee100000 0 0x328>;
-+			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 314>;
-+			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
-+			       <&dmac1 0xcd>, <&dmac1 0xce>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <195000000>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 314>;
-+			status = "disabled";
-+		};
-+
- 		sdhi1: sd@ee140000 {
-+			compatible = "renesas,sdhi-r8a7744",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee140000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 312>;
-+			dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
-+			       <&dmac1 0xc1>, <&dmac1 0xc2>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <97500000>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 312>;
-+			status = "disabled";
- 		};
- 
- 		sdhi2: sd@ee160000 {
-+			compatible = "renesas,sdhi-r8a7744",
-+				     "renesas,rcar-gen2-sdhi";
- 			reg = <0 0xee160000 0 0x100>;
--			/* placeholder */
-+			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 311>;
-+			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
-+			       <&dmac1 0xd3>, <&dmac1 0xd4>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			max-frequency = <97500000>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 311>;
-+			status = "disabled";
- 		};
- 
- 		gic: interrupt-controller@f1001000 {
--- 
-2.11.0
+> ---
+>
+> Change since V1:
+> * reworded first line of comment as well. Thanks, Geert!
+>
+> Still not super happy about shifting into the sign bit, but yeah...
+> don't break userspace, I guess.
+>
+>  include/uapi/linux/mmc/ioctl.h | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/mmc/ioctl.h b/include/uapi/linux/mmc/ioctl.h
+> index 45f369dc0a42..00c08120f3ba 100644
+> --- a/include/uapi/linux/mmc/ioctl.h
+> +++ b/include/uapi/linux/mmc/ioctl.h
+> @@ -5,7 +5,10 @@
+>  #include <linux/types.h>
+>
+>  struct mmc_ioc_cmd {
+> -       /* Implies direction of data.  true = write, false = read */
+> +       /*
+> +        * Direction of data: nonzero = write, zero = read.
+> +        * Bit 31 selects 'Reliable Write' for RPMB.
+> +        */
+>         int write_flag;
+>
+>         /* Application-specific command.  true = precede with CMD55 */
+> --
+> 2.11.0
+>
