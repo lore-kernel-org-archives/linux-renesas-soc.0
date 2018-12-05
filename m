@@ -1,420 +1,109 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
-From: Rob Herring <robh@kernel.org>
-To: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, arm@kernel.org,
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-eopbgr1410101.outbound.protection.outlook.com ([40.107.141.101]:18144
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727025AbeLENom (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Dec 2018 08:44:42 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Alessandro Zummo <a.zummo@towertech.it>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 26/34] dt-bindings: arm: Convert Renesas board/soc bindings to json-schema
-Date: Mon,  3 Dec 2018 15:32:15 -0600
-Message-Id: <20181203213223.16986-27-robh@kernel.org>
-In-Reply-To: <20181203213223.16986-1-robh@kernel.org>
-References: <20181203213223.16986-1-robh@kernel.org>
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
+Date: Wed, 5 Dec 2018 13:44:37 +0000
+Message-ID: <OSBPR01MB210377306858580604748E92B8A80@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1543510486-29532-1-git-send-email-biju.das@bp.renesas.com>
+ <1543510486-29532-3-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdXmS6cCZhX_b+oszDjt+t8zgAkCGApweOX-k0Uq05=AEg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXmS6cCZhX_b+oszDjt+t8zgAkCGApweOX-k0Uq05=AEg@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: devicetree-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Convert Renesas SoC bindings to DT schema format using json-schema.
-
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/arm/shmobile.txt      | 151 ------------
- .../devicetree/bindings/arm/shmobile.yaml     | 218 ++++++++++++++++++
- 2 files changed, 218 insertions(+), 151 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
- create mode 100644 Documentation/devicetree/bindings/arm/shmobile.yaml
-
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
-deleted file mode 100644
-index 5f18ce9cdbb8..000000000000
---- a/Documentation/devicetree/bindings/arm/shmobile.txt
-+++ /dev/null
-@@ -1,151 +0,0 @@
--Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
----------------------------------------------------------------------
--
--SoCs:
--
--  - Emma Mobile EV2
--    compatible = "renesas,emev2"
--  - RZ/A1H (R7S72100)
--    compatible = "renesas,r7s72100"
--  - RZ/A2 (R7S9210)
--    compatible = "renesas,r7s9210"
--  - SH-Mobile AG5 (R8A73A00/SH73A0)
--    compatible = "renesas,sh73a0"
--  - R-Mobile APE6 (R8A73A40)
--    compatible = "renesas,r8a73a4"
--  - R-Mobile A1 (R8A77400)
--    compatible = "renesas,r8a7740"
--  - RZ/G1H (R8A77420)
--    compatible = "renesas,r8a7742"
--  - RZ/G1M (R8A77430)
--    compatible = "renesas,r8a7743"
--  - RZ/G1N (R8A77440)
--    compatible = "renesas,r8a7744"
--  - RZ/G1E (R8A77450)
--    compatible = "renesas,r8a7745"
--  - RZ/G1C (R8A77470)
--    compatible = "renesas,r8a77470"
--  - RZ/G2M (R8A774A1)
--    compatible = "renesas,r8a774a1"
--  - RZ/G2E (R8A774C0)
--    compatible = "renesas,r8a774c0"
--  - R-Car M1A (R8A77781)
--    compatible = "renesas,r8a7778"
--  - R-Car H1 (R8A77790)
--    compatible = "renesas,r8a7779"
--  - R-Car H2 (R8A77900)
--    compatible = "renesas,r8a7790"
--  - R-Car M2-W (R8A77910)
--    compatible = "renesas,r8a7791"
--  - R-Car V2H (R8A77920)
--    compatible = "renesas,r8a7792"
--  - R-Car M2-N (R8A77930)
--    compatible = "renesas,r8a7793"
--  - R-Car E2 (R8A77940)
--    compatible = "renesas,r8a7794"
--  - R-Car H3 (R8A77950)
--    compatible = "renesas,r8a7795"
--  - R-Car M3-W (R8A77960)
--    compatible = "renesas,r8a7796"
--  - R-Car M3-N (R8A77965)
--    compatible = "renesas,r8a77965"
--  - R-Car V3M (R8A77970)
--    compatible = "renesas,r8a77970"
--  - R-Car V3H (R8A77980)
--    compatible = "renesas,r8a77980"
--  - R-Car E3 (R8A77990)
--    compatible = "renesas,r8a77990"
--  - R-Car D3 (R8A77995)
--    compatible = "renesas,r8a77995"
--  - RZ/N1D (R9A06G032)
--    compatible = "renesas,r9a06g032"
--
--Boards:
--
--  - Alt (RTP0RC7794SEB00010S)
--    compatible = "renesas,alt", "renesas,r8a7794"
--  - APE6-EVM
--    compatible = "renesas,ape6evm", "renesas,r8a73a4"
--  - Atmark Techno Armadillo-800 EVA
--    compatible = "renesas,armadillo800eva", "renesas,r8a7740"
--  - Blanche (RTP0RC7792SEB00010S)
--    compatible = "renesas,blanche", "renesas,r8a7792"
--  - BOCK-W
--    compatible = "renesas,bockw", "renesas,r8a7778"
--  - Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
--    compatible = "renesas,condor", "renesas,r8a77980"
--  - Draak (RTP0RC77995SEB0010S)
--    compatible = "renesas,draak", "renesas,r8a77995"
--  - Eagle (RTP0RC77970SEB0010S)
--    compatible = "renesas,eagle", "renesas,r8a77970"
--  - Ebisu (RTP0RC77990SEB0010S)
--    compatible = "renesas,ebisu", "renesas,r8a77990"
--  - Genmai (RTK772100BC00000BR)
--    compatible = "renesas,genmai", "renesas,r7s72100"
--  - GR-Peach (X28A-M01-E/F)
--    compatible = "renesas,gr-peach", "renesas,r7s72100"
--  - Gose (RTP0RC7793SEB00010S)
--    compatible = "renesas,gose", "renesas,r8a7793"
--  - H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
--    H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
--    compatible = "renesas,h3ulcb", "renesas,r8a7795"
--  - Henninger
--    compatible = "renesas,henninger", "renesas,r8a7791"
--  - iWave Systems RZ/G1C Single Board Computer (iW-RainboW-G23S)
--    compatible = "iwave,g23s", "renesas,r8a77470"
--  - iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
--    compatible = "iwave,g22d", "iwave,g22m", "renesas,r8a7745"
--  - iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
--    compatible = "iwave,g22m", "renesas,r8a7745"
--  - iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
--    compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
--  - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
--    compatible = "iwave,g20m", "renesas,r8a7743"
--  - Kingfisher (SBEV-RCAR-KF-M03)
--    compatible = "shimafuji,kingfisher"
--  - Koelsch (RTP0RC7791SEB00010S)
--    compatible = "renesas,koelsch", "renesas,r8a7791"
--  - Kyoto Microcomputer Co. KZM-A9-Dual
--    compatible = "renesas,kzm9d", "renesas,emev2"
--  - Kyoto Microcomputer Co. KZM-A9-GT
--    compatible = "renesas,kzm9g", "renesas,sh73a0"
--  - Lager (RTP0RC7790SEB00010S)
--    compatible = "renesas,lager", "renesas,r8a7790"
--  - M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
--    compatible = "renesas,m3ulcb", "renesas,r8a7796"
--  - M3NULCB (R-Car Starter Kit Pro, RTP0RC77965SKBX010SA00 (M3-N ES1.1))
--    compatible = "renesas,m3nulcb", "renesas,r8a77965"
--  - Marzen (R0P7779A00010S)
--    compatible = "renesas,marzen", "renesas,r8a7779"
--  - Porter (M2-LCDP)
--    compatible = "renesas,porter", "renesas,r8a7791"
--  - RSKRZA1 (YR0K77210C000BE)
--    compatible = "renesas,rskrza1", "renesas,r7s72100"
--  - RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
--    compatible = "renesas,rzn1d400-db", "renesas,r9a06g032"
--  - Salvator-X (RTP0RC7795SIPB0010S)
--    compatible = "renesas,salvator-x", "renesas,r8a7795"
--  - Salvator-X (RTP0RC7796SIPB0011S)
--    compatible = "renesas,salvator-x", "renesas,r8a7796"
--  - Salvator-X (RTP0RC7796SIPB0011S (M3-N))
--    compatible = "renesas,salvator-x", "renesas,r8a77965"
--  - Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
--    compatible = "renesas,salvator-xs", "renesas,r8a7795"
--  - Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
--    compatible = "renesas,salvator-xs", "renesas,r8a7796"
--  - Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
--    compatible = "renesas,salvator-xs", "renesas,r8a77965"
--  - SILK (RTP0RC7794LCB00011S)
--    compatible = "renesas,silk", "renesas,r8a7794"
--  - SK-RZG1E (YR8A77450S000BE)
--    compatible = "renesas,sk-rzg1e", "renesas,r8a7745"
--  - SK-RZG1M (YR8A77430S000BE)
--    compatible = "renesas,sk-rzg1m", "renesas,r8a7743"
--  - Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
--    compatible = "renesas,stout", "renesas,r8a7790"
--  - V3HSK (Y-ASK-RCAR-V3H-WS10)
--    compatible = "renesas,v3hsk", "renesas,r8a77980"
--  - V3MSK (Y-ASK-RCAR-V3M-WS10)
--    compatible = "renesas,v3msk", "renesas,r8a77970"
--  - Wheat (RTP0RC7792ASKB0000JE)
--    compatible = "renesas,wheat", "renesas,r8a7792"
-diff --git a/Documentation/devicetree/bindings/arm/shmobile.yaml b/Documentation/devicetree/bindings/arm/shmobile.yaml
-new file mode 100644
-index 000000000000..bc2ad4539482
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/shmobile.yaml
-@@ -0,0 +1,218 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/shmobile.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas SH-Mobile, R-Mobile, and R-Car Platform Device Tree Bindings
-+
-+maintainers:
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: Emma Mobile EV2
-+        items:
-+          - enum:
-+              - renesas,kzm9d # Kyoto Microcomputer Co. KZM-A9-Dual
-+          - const: renesas,emev2
-+
-+      - description: RZ/A1H (R7S72100)
-+        items:
-+          - enum:
-+              - renesas,genmai # Genmai (RTK772100BC00000BR)
-+              - renesas,gr-peach # GR-Peach (X28A-M01-E/F)
-+              - renesas,rskrza1 # RSKRZA1 (YR0K77210C000BE)
-+          - const: renesas,r7s72100
-+
-+      - description: RZ/A2 (R7S9210)
-+        items:
-+          - const: renesas,r7s9210
-+
-+      - description: SH-Mobile AG5 (R8A73A00/SH73A0)
-+        items:
-+          - enum:
-+              - renesas,kzm9g # Kyoto Microcomputer Co. KZM-A9-GT
-+          - const: renesas,sh73a0
-+
-+      - description: R-Mobile APE6 (R8A73A40)
-+        items:
-+          - enum:
-+              - renesas,ape6evm
-+          - const: renesas,r8a73a4
-+
-+      - description: R-Mobile A1 (R8A77400)
-+        items:
-+          - enum:
-+              - renesas,armadillo800eva # Atmark Techno Armadillo-800 EVA
-+          - const: renesas,r8a7740
-+
-+      - description: RZ/G1H (R8A77420)
-+        items:
-+          - const: renesas,r8a7742
-+
-+      - description: RZ/G1M (R8A77430)
-+        items:
-+          - enum:
-+              # iWave Systems RZ/G1M Qseven Development Platform (iW-RainboW-G20D-Qseven)
-+              - iwave,g20d
-+          - const: iwave,g20m
-+          - const: renesas,r8a7743
-+
-+      - items:
-+          - enum:
-+              # iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
-+              - iwave,g20m
-+              - renesas,sk-rzg1m # SK-RZG1M (YR8A77430S000BE)
-+          - const: renesas,r8a7743
-+
-+      - description: RZ/G1N (R8A77440)
-+        items:
-+          - const: renesas,r8a7744
-+
-+      - description: RZ/G1E (R8A77450)
-+        items:
-+          - enum:
-+              - iwave,g22m # iWave Systems RZ/G1E SODIMM System On Module (iW-RainboW-G22M-SM)
-+              - renesas,sk-rzg1e # SK-RZG1E (YR8A77450S000BE)
-+          - const: renesas,r8a7745
-+
-+      - description: iWave Systems RZ/G1E SODIMM SOM Development Platform (iW-RainboW-G22D)
-+        items:
-+          - const: iwave,g22d
-+          - const: iwave,g22m
-+          - const: renesas,r8a7745
-+
-+      - description: RZ/G1C (R8A77470)
-+        items:
-+          - enum:
-+              - iwave,g23s #iWave Systems RZ/G1C Single Board Computer (iW-RainboW-G23S)
-+          - const: renesas,r8a77470
-+
-+      - description: RZ/G2M (R8A774A1)
-+        items:
-+          - const: renesas,r8a774a1
-+
-+      - description: RZ/G2E (R8A774C0)
-+        items:
-+          - const: renesas,r8a774c0
-+
-+      - description: R-Car M1A (R8A77781)
-+        items:
-+          - enum:
-+              - renesas,bockw
-+          - const: renesas,r8a7778
-+
-+      - description: R-Car H1 (R8A77790)
-+        items:
-+          - enum:
-+              - renesas,marzen # Marzen (R0P7779A00010S)
-+              - renesas,stout # Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
-+          - const: renesas,r8a7779
-+
-+      - description: R-Car H2 (R8A77900)
-+        items:
-+          - enum:
-+              - renesas,lager # Lager (RTP0RC7790SEB00010S)
-+          - const: renesas,r8a7790
-+
-+      - description: R-Car M2-W (R8A77910)
-+        items:
-+          - enum:
-+              - renesas,henninger
-+              - renesas,koelsch # Koelsch (RTP0RC7791SEB00010S)
-+              - renesas,porter # Porter (M2-LCDP)
-+          - const: renesas,r8a7791
-+
-+      - description: R-Car V2H (R8A77920)
-+        items:
-+          - enum:
-+              - renesas,blanche # Blanche (RTP0RC7792SEB00010S)
-+              - renesas,wheat # Wheat (RTP0RC7792ASKB0000JE)
-+          - const: renesas,r8a7792
-+
-+      - description: R-Car M2-N (R8A77930)
-+        items:
-+          - enum:
-+              - renesas,gose # Gose (RTP0RC7793SEB00010S)
-+          - const: renesas,r8a7793
-+
-+      - description: R-Car E2 (R8A77940)
-+        items:
-+          - enum:
-+              - renesas,alt # Alt (RTP0RC7794SEB00010S)
-+              - renesas,silk # SILK (RTP0RC7794LCB00011S)
-+          - const: renesas,r8a7794
-+
-+      - description: R-Car H3 (R8A77950)
-+        items:
-+          - enum:
-+                # H3ULCB (R-Car Starter Kit Premier, RTP0RC7795SKBX0010SA00 (H3 ES1.1))
-+                # H3ULCB (R-Car Starter Kit Premier, RTP0RC77951SKBX010SA00 (H3 ES2.0))
-+              - renesas,h3ulcb
-+              - renesas,salvator-x # Salvator-X (RTP0RC7795SIPB0010S)
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7795SIPB0012S)
-+          - const: renesas,r8a7795
-+
-+      - description: R-Car M3-W (R8A77960)
-+        items:
-+          - enum:
-+              - renesas,m3ulcb # M3ULCB (R-Car Starter Kit Pro, RTP0RC7796SKBX0010SA09 (M3 ES1.0))
-+              - renesas,salvator-x # Salvator-X (RTP0RC7796SIPB0011S)
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
-+          - const: renesas,r8a7796
-+
-+      - description: Kingfisher (SBEV-RCAR-KF-M03)
-+        items:
-+          - const: shimafuji,kingfisher
-+          - enum:
-+              - renesas,h3ulcb
-+              - renesas,m3ulcb
-+          - enum:
-+              - renesas,r8a7795
-+              - renesas,r8a7796
-+
-+      - description: R-Car M3-N (R8A77965)
-+        items:
-+          - enum:
-+              - renesas,m3nulcb # M3NULCB (R-Car Starter Kit Pro, RTP0RC77965SKBX010SA00 (M3-N ES1.1))
-+              - renesas,salvator-x # Salvator-X (RTP0RC7796SIPB0011S (M3-N))
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC77965SIPB012S)
-+          - const: renesas,r8a77965
-+
-+      - description: R-Car V3M (R8A77970)
-+        items:
-+          - enum:
-+              - renesas,eagle # Eagle (RTP0RC77970SEB0010S)
-+              - renesas,v3msk # V3MSK (Y-ASK-RCAR-V3M-WS10)
-+          - const: renesas,r8a77970
-+
-+      - description: R-Car V3H (R8A77980)
-+        items:
-+          - enum:
-+              - renesas,condor # Condor (RTP0RC77980SEB0010SS/RTP0RC77980SEB0010SA01)
-+              - renesas,v3hsk # V3HSK (Y-ASK-RCAR-V3H-WS10)
-+          - const: renesas,r8a77980
-+
-+      - description: R-Car E3 (R8A77990)
-+        items:
-+          - enum:
-+              - renesas,ebisu # Ebisu (RTP0RC77990SEB0010S)
-+          - const: renesas,r8a77990
-+
-+      - description: R-Car D3 (R8A77995)
-+        items:
-+          - enum:
-+              - renesas,draak # Draak (RTP0RC77995SEB0010S)
-+          - const: renesas,r8a77995
-+
-+      - description: RZ/N1D (R9A06G032)
-+        items:
-+          - enum:
-+              - renesas,rzn1d400-db # RZN1D-DB (RZ/N1D Demo Board for the RZ/N1D 400 pins package)
-+          - const: renesas,r9a06g032
-+
-+...
--- 
-2.19.1
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggdjIgMi80XSBydGM6IHBjZjg1MzYzOiBBZGQgc3VwcG9ydCBmb3IgTlhQIHBjZjg1MjYz
+IHJ0Yw0KPg0KPiBIaSBCaWp1LA0KPg0KPiBPbiBUaHUsIE5vdiAyOSwgMjAxOCBhdCA2OjAzIFBN
+IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gQWRkIHN1cHBv
+cnQgZm9yIE5YUCBwY2Y4NTI2MyByZWFsLXRpbWUgY2xvY2suIHBjZjg1MjYzIHJ0YyBpcw0KPiA+
+IGNvbXBhdGlibGUgd2l0aCBwY2Y4NTM2MyxleGNlcHQgdGhhdCBwY2Y4NTM2MyBoYXMgYWRkaXRp
+b25hbCA2NCBieXRlcyBvZg0KPiBSQU0uDQo+ID4NCj4gPiAxIGJ5dGUgb2YgbnZtZW0gaXMgc3Vw
+cG9ydGVkIGFuZCBleHBvc2VkIGluIHN5c2ZzICgjIGlzIHRoZSBpbnN0YW5jZQ0KPiA+IG51bWJl
+cixzdGFydGluZyB3aXRoIDApOiAvc3lzL2J1cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYzLSMvbnZt
+ZW0NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2Fz
+LmNvbT4NCj4gPiAtLS0NCj4gPiAgVjEtLT5WMiBJbmNvcnBvcmF0ZWQgQWxleGFuZHJlIGFuZCBH
+ZWVydCdzIHJldmlldyBjb21tZW50Lg0KPg0KPiBUaGFua3MgZm9yIHRoZSB1cGRhdGUhDQo+DQo+
+ID4gLS0tIGEvZHJpdmVycy9ydGMvcnRjLXBjZjg1MzYzLmMNCj4gPiArKysgYi9kcml2ZXJzL3J0
+Yy9ydGMtcGNmODUzNjMuYw0KPg0KPiA+IEBAIC0zMjEsMTUgKzM0NCwyNSBAQCBzdGF0aWMgaW50
+IHBjZjg1MzYzX3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQsDQo+ID4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICBjb25zdCBzdHJ1Y3QgaTJjX2RldmljZV9pZCAqaWQpICB7DQo+ID4g
+ICAgICAgICBzdHJ1Y3QgcGNmODUzNjMgKnBjZjg1MzYzOw0KPiA+IC0gICAgICAgc3RydWN0IG52
+bWVtX2NvbmZpZyBudm1lbV9jZmcgPSB7DQo+ID4gLSAgICAgICAgICAgICAgIC5uYW1lID0gInBj
+Zjg1MzYzLSIsDQo+ID4gLSAgICAgICAgICAgICAgIC53b3JkX3NpemUgPSAxLA0KPiA+IC0gICAg
+ICAgICAgICAgICAuc3RyaWRlID0gMSwNCj4gPiAtICAgICAgICAgICAgICAgLnNpemUgPSBOVlJB
+TV9TSVpFLA0KPiA+IC0gICAgICAgICAgICAgICAucmVnX3JlYWQgPSBwY2Y4NTM2M19udnJhbV9y
+ZWFkLA0KPiA+IC0gICAgICAgICAgICAgICAucmVnX3dyaXRlID0gcGNmODUzNjNfbnZyYW1fd3Jp
+dGUsDQo+ID4gKyAgICAgICBjb25zdCBzdHJ1Y3QgcmVnbWFwX2NvbmZpZyAqcmVnbWFwX2NvbmZp
+ZyA9DQo+ICZwY2ZfODUzNjNfcmVnbWFwX2NvbmZpZzsNCj4gPiArICAgICAgIHN0cnVjdCBudm1l
+bV9jb25maWcgbnZtZW1fY2ZnW10gPSB7DQo+DQo+IHN0YXRpYz8NCj4NCj4gQWx0aG91Z2ggdGhl
+IG52bWVtX2NvbmZpZyBpcyBjb3BpZWQsIGFuZCB0aHVzIHN0YXRpYyBpcyBub3QgbmVlZGVkLCBJ
+IGd1ZXNzDQo+IHVzaW5nIHN0YXRpYyB3aWxsIGRlY3JlYXNlIGtlcm5lbCBzaXplLg0KPg0KPiA+
+ICsgICAgICAgICAgICAgICB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgLm5hbWUgPSAi
+cGNmODV4NjMtIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAud29yZF9zaXplID0gMSwN
+Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAuc3RyaWRlID0gMSwNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICAuc2l6ZSA9IDEsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgLnJl
+Z19yZWFkID0gcGNmODV4NjNfbnZyYW1fcmVhZCwNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
+ICAucmVnX3dyaXRlID0gcGNmODV4NjNfbnZyYW1fd3JpdGUsDQo+ID4gKyAgICAgICAgICAgICAg
+IH0sIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAubmFtZSA9ICJwY2Y4NTM2My0iLA0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgIC53b3JkX3NpemUgPSAxLA0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIC5zdHJpZGUgPSAxLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+IC5zaXplID0gTlZSQU1fU0laRSwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAucmVnX3Jl
+YWQgPSBwY2Y4NTM2M19udnJhbV9yZWFkLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIC5y
+ZWdfd3JpdGUgPSBwY2Y4NTM2M19udnJhbV93cml0ZSwNCj4gPiArICAgICAgICAgICAgICAgfSwN
+Cj4gPiAgICAgICAgIH07DQo+ID4gLSAgICAgICBpbnQgcmV0Ow0KPiA+ICsgICAgICAgaW50IHJl
+dCwgaSwgbnVtX252bWVtID0gMjsNCj4gPg0KPiA+ICAgICAgICAgaWYgKCFpMmNfY2hlY2tfZnVu
+Y3Rpb25hbGl0eShjbGllbnQtPmFkYXB0ZXIsIEkyQ19GVU5DX0kyQykpDQo+ID4gICAgICAgICAg
+ICAgICAgIHJldHVybiAtRU5PREVWOw0KPiA+IEBAIC0zMzksNyArMzcyLDEzIEBAIHN0YXRpYyBp
+bnQgcGNmODUzNjNfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4gPiAgICAgICAg
+IGlmICghcGNmODUzNjMpDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiAtRU5PTUVNOw0KPiA+
+DQo+ID4gLSAgICAgICBwY2Y4NTM2My0+cmVnbWFwID0gZGV2bV9yZWdtYXBfaW5pdF9pMmMoY2xp
+ZW50LCAmcmVnbWFwX2NvbmZpZyk7DQo+ID4gKyAgICAgICBpZiAob2ZfZGV2aWNlX2dldF9tYXRj
+aF9kYXRhKCZjbGllbnQtPmRldikgPT0NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgJnBjZl84NTI2M19yZWdtYXBfY29uZmlnKSB7DQo+ID4gKyAgICAgICAgICAg
+ICAgIHJlZ21hcF9jb25maWcgPSAmcGNmXzg1MjYzX3JlZ21hcF9jb25maWc7DQo+ID4gKyAgICAg
+ICAgICAgICAgIG51bV9udm1lbSA9IDE7DQo+DQo+IEkgdGhpbmsgaXQncyBjbGVhbmVyIGlmIHlv
+dSBzdG9yZSB0aGUgZnVsbCBjb25maWcgKHJlZ21hcF9jb25maWcgKyBudW1fbnZtZW0pDQo+IGlu
+IG9mX2RldmljZV9pZC5kYXRhLCBpbnN0ZWFkIG9mIGp1c3QgdGhlIHJlZ21hcF9jb25maWcsIHVz
+aW5nDQo+DQo+ICAgICBzdHJ1Y3QgcGNmODV4NjNfY29uZmlnIHsNCj4gICAgICAgICAgICAgc3Ry
+dWN0IHJlZ21hcF9jb25maWcgcmVnbWFwOw0KPiAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgbnVt
+X252cmFtOw0KPiAgICAgfTsNCj4NCj4gICAgIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcGNmODV4NjNf
+Y29uZmlnIHBjZjg1MjYzX2NvbmZpZyA9IHsgLi4uIH07DQo+ICAgICBzdGF0aWMgY29uc3Qgc3Ry
+dWN0IHBjZjg1eDYzX2NvbmZpZyBwY2Y4NTM2M19jb25maWcgPSB7IC4uLiB9Ow0KPg0KPiAgICAg
+c3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZGV2X2lkc1tdID0gew0KPiAgICAgICAg
+ICAgICB7IC5jb21wYXRpYmxlID0gIm54cCxwY2Y4NTI2MyIsIC5kYXRhID0gJnBjZl84NTI2M19j
+b25maWcgfSwNCj4gICAgICAgICAgICAgeyAuY29tcGF0aWJsZSA9ICJueHAscGNmODUzNjMiLCAu
+ZGF0YSA9ICZwY2ZfODUzNjNfY29uZmlnIH0sDQo+ICAgICAgICAgICAgIHsgLyogc2VudGluZWwg
+Ki8gfQ0KPiAgICAgfTsNCj4NCj4gVGhlbiB5b3UgY2FuIGp1c3QgZG8NCj4NCj4gICAgICAgICBz
+dHJ1Y3QgcGNmODV4NjNfY29uZmlnICpjb25maWcgPSAmcGNmODUzNjNfY29uZmlnOyAvKiBkZWZh
+dWx0IGZvciBub24tRFQNCj4gKi8NCj4gICAgICAgICB2b2lkICpkYXRhID0gb2ZfZGV2aWNlX2dl
+dF9tYXRjaF9kYXRhKCZjbGllbnQtPmRldik7DQo+ICAgICAgICAgaWYgKGRhdGEpDQo+ICAgICAg
+ICAgICAgICAgICBjb25maWcgPSBkYXRhOw0KPg0KPiA+ICsgICAgICAgfQ0KDQpXaWxsIHNlbmQg
+VjMgd2l0aCBhYm92ZSBjaGFuZ2VzLg0KDQpSZWdhcmRzLA0KQmlqdQ0KDQoNCltodHRwczovL3d3
+dzIucmVuZXNhcy5ldS9tZWRpYS9lbWFpbC91bmljZWYuanBnXQ0KDQpUaGlzIENocmlzdG1hcywg
+aW5zdGVhZCBvZiBzZW5kaW5nIG91dCBjYXJkcywgUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUg
+aGF2ZSBkZWNpZGVkIHRvIHN1cHBvcnQgVW5pY2VmIHdpdGggYSBkb25hdGlvbi4gRm9yIGZ1cnRo
+ZXIgZGV0YWlscyBjbGljayBoZXJlPGh0dHBzOi8vd3d3LnVuaWNlZi5vcmcvPiB0byBmaW5kIG91
+dCBhYm91dCB0aGUgdmFsdWFibGUgd29yayB0aGV5IGRvLCBoZWxwaW5nIGNoaWxkcmVuIGFsbCBv
+dmVyIHRoZSB3b3JsZC4NCldlIHdvdWxkIGxpa2UgdG8gdGFrZSB0aGlzIG9wcG9ydHVuaXR5IHRv
+IHdpc2ggeW91IGEgTWVycnkgQ2hyaXN0bWFzIGFuZCBhIHByb3NwZXJvdXMgTmV3IFllYXIuDQoN
+Cg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJv
+YXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lz
+dGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
