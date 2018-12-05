@@ -1,13 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40693 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFI4s (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35193 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeLENe1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:56:48 -0500
+        Wed, 5 Dec 2018 08:34:27 -0500
 Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
  driver
-To: masonccyang@mxic.com.tw, Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: masonccyang@mxic.com.tw,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
@@ -16,190 +17,139 @@ Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
         linux-spi <linux-spi@vger.kernel.org>, zhengxunli@mxic.com.tw
 References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
  <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw>
- <CAMuHMdWEiOTSSM=rKu67r-kgJ=TyAi7p7ndhAS4d5-6gccmmoQ@mail.gmail.com>
- <OFE69673FB.D4270C56-ON4825835B.001C7201-4825835B.00209DC7@mxic.com.tw>
+ <cebe44a3-80be-9091-e70b-acba6f3fff4f@gmail.com>
+ <OF0ED3C578.141B72CA-ON4825835A.0025CA62-4825835A.002A7BDF@mxic.com.tw>
+ <84e3c55b-687e-28f6-0a7c-1c48c822ef05@gmail.com>
+ <CAMuHMdV-Ca5sderSKmdbtovKrd-Z7piwVZbwDtB6vVXPa8Q5AA@mail.gmail.com>
+ <8e667f91-70bd-795c-094f-23c919c3802c@gmail.com>
+ <CAMuHMdXF9PtWgjUKaTomkr4X_00HARQ_1uZPROWUr910HLVMCA@mail.gmail.com>
 From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <2c6c23fc-299a-f64d-c81f-4b4123f1577b@gmail.com>
-Date: Thu, 6 Dec 2018 09:56:43 +0100
+Message-ID: <941aca45-185a-fb99-f5d1-d12b3bcad6de@gmail.com>
+Date: Wed, 5 Dec 2018 14:34:22 +0100
 MIME-Version: 1.0
-In-Reply-To: <OFE69673FB.D4270C56-ON4825835B.001C7201-4825835B.00209DC7@mxic.com.tw>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAMuHMdXF9PtWgjUKaTomkr4X_00HARQ_1uZPROWUr910HLVMCA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/06/2018 06:56 AM, masonccyang@mxic.com.tw wrote:
-> Hi Geert,
-> 
->> "Geert Uytterhoeven" <geert@linux-m68k.org>
->> 2018/12/05 下午 05:06
->>
->> To
->>
->> masonccyang@mxic.com.tw,
->>
->> cc
->>
->> "Mark Brown" <broonie@kernel.org>, "Marek Vasut"
->> <marek.vasut@gmail.com>, "Linux Kernel Mailing List" <linux-
->> kernel@vger.kernel.org>, "linux-spi" <linux-spi@vger.kernel.org>,
->> "Boris Brezillon" <boris.brezillon@bootlin.com>, "Linux-Renesas"
->> <linux-renesas-soc@vger.kernel.org>, "Geert Uytterhoeven" <geert
->> +renesas@glider.be>, juliensu@mxic.com.tw, "Simon Horman"
->> <horms@verge.net.au>, zhengxunli@mxic.com.tw
->>
->> Subject
->>
->> Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller driver
->>
->> Hi Mason,
->>
->> On Mon, Dec 3, 2018 at 10:19 AM Mason Yang <masonccyang@mxic.com.tw>
-> wrote:
->> > Add a driver for Renesas R-Car Gen3 RPC SPI controller.
->> >
->> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->>
->> Thanks for your patch!
->>
->> > --- a/drivers/spi/Kconfig
->> > +++ b/drivers/spi/Kconfig
->> > @@ -528,6 +528,12 @@ config SPI_RSPI
->> >         help
->> >           SPI driver for Renesas RSPI and QSPI blocks.
->> >
->> > +config SPI_RENESAS_RPC
->> > +       tristate "Renesas R-Car Gen3 RPC SPI controller"
->> > +       depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
->>
->> So this driver is intended for SuperH SoCs, too?
->> If not, please drop the dependency.
->>
-> 
-> okay, I will drop "SUPERH".
-> 
->> > --- /dev/null
->> > +++ b/drivers/spi/spi-renesas-rpc.c
->>
->> > +#ifdef CONFIG_RESET_CONTROLLER
->> > +static int rpc_spi_do_reset(struct rpc_spi *rpc)
->>
->> What's the purpose of the reset routine?
-> 
-> in case RPC xfer is time-out due to something wrong in RPC module,
-> as Marek comments.
-> 
->> Given the #ifdef, is it optional or required?
->>
->> > +{
->> > +       int i, ret;
->> > +
->> > +       ret = reset_control_reset(rpc->rstc);
->> > +       if (ret)
->> > +               return ret;
->> > +
->> > +       for (i = 0; i < LOOP_TIMEOUT; i++) {
->> > +               ret = reset_control_status(rpc->rstc);
->> > +               if (ret == 0)
->> > +                       return 0;
->> > +               usleep_range(0, 1);
->> > +       }
->>
->> Why do you need this loop?
->> The delay in cpg_mssr_reset() should be sufficient.
->>
-> 
-> yup, I know there is already 35 us delay in cpg_mssr_reset().
-> If you think reset_control_status()checking is not necessary,
-> I will drop it.
-> 
->> > +
->> > +       return -ETIMEDOUT;
->> > +}
->> > +#else
->> > +static int rpc_spi_do_reset(struct rpc_spi *rpc)
->> > +{
->> > +       return -ETIMEDOUT;
->> > +}
->> > +#endif
->>
->> > +static int rpc_spi_transfer_one_message(struct spi_master *master,
->> > +                                       struct spi_message *msg)
->> > +{
->> > +       struct rpc_spi *rpc = spi_master_get_devdata(master);
->> > +       struct spi_transfer *t;
->> > +       int ret;
->> > +
->> > +       rpc_spi_transfer_setup(rpc, msg);
->> > +
->> > +       list_for_each_entry(t, &msg->transfers, transfer_list) {
->> > +               if (!list_is_last(&t->transfer_list, &msg->transfers))
->> > +                       continue;
->> > +               ret = rpc_spi_xfer_message(rpc, t);
->>
->> rpc_spi_xfer_message() sounds like a bad name to me, given it operates
->> on a transfer, not on a message.
->>
-> 
-> Because RPC send a entire SPI message at one time, not separately,
-> that is the 1'st transfer is for command, the 2'nd transfer is for
-> address/data
-> and so on.
-> The reason is CS# pin control restriction in RPC HW module.
-> 
-> 
->> > +               if (ret)
->> > +                       goto out;
->> > +       }
->> > +
->> > +       msg->status = 0;
->> > +       msg->actual_length = rpc->totalxferlen;
->> > +out:
->> > +       spi_finalize_current_message(master);
->> > +       return 0;
->> > +}
->>
->>
->> > +static int rpc_spi_probe(struct platform_device *pdev)
->> > +{
->>
->> > +       rpc->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
->> > +       if (IS_ERR(rpc->rstc))
->> > +               return PTR_ERR(rpc->rstc);
->>
->> This will return an error if CONFIG_RESET_CONTROLLER is not set, hence
->> the #ifdef above is moot.
->>
-> 
-> You are right.
-> so, I should do
-> Option 1: remove #CONFIG_RESET_CONTROLLER
-> Option 2: add #CONFIG_RESET_CONTROLLER for
-> devm_reset_control_get_exclusive()
-> 
-> please comments on it, thanks.
-> 
-> 
->> > +
->> > +       pm_runtime_enable(&pdev->dev);
->> > +       master->auto_runtime_pm = true;
->> > +
->> > +       master->num_chipselect = 1;
->> > +       master->mem_ops = &rpc_spi_mem_ops;
->> > +       master->transfer_one_message = rpc_spi_transfer_one_message;
->>
->> Is there any reason you cannot use the standard
->> spi_transfer_one_message, i.e. provide spi_controller.transfer_one()
->> instead of spi_controller.transfer_one_message()?
->>
-> 
-> It seems there is a RPC HW restriction in CS# pin control.
-> Therefore, it can't send the 1'st spi-transfer for command and then
-> keeping CS# pin goes low for the 2'nd spi-transfer for address/data and
-> so on.
+On 12/05/2018 02:31 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
-Isn't register DRCR bit SSLN/SSLE exactly for this purpose ?
+Hi,
+
+> On Wed, Dec 5, 2018 at 2:25 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 12/05/2018 02:15 PM, Geert Uytterhoeven wrote:
+>>> On Wed, Dec 5, 2018 at 1:57 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>> On 12/05/2018 08:44 AM, masonccyang@mxic.com.tw wrote:
+>>>>>> "Marek Vasut" <marek.vasut@gmail.com>
+>>>>>> 2018/12/05 上午 10:04
+>>>>>> On 12/03/2018 10:18 AM, Mason Yang wrote:
+>>>>>>> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+>>>>>>>
+>>>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+>>>
+>>>>>>> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+>>>>>>> +{
+>>>>>>> +   /*
+>>>>>>> +    * NOTE: The 0x260 are undocumented bits, but they must be set.
+>>>>>>> +    *   RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+>>>>>>> +    *   0x0 : the delay is biggest,
+>>>>>>> +    *   0x1 : the delay is 2nd biggest,
+>>>>>>> +    *   0x3 or 0x6 is a recommended value.
+>>>>>>> +    */
+>>>>>>
+>>>>>> Doesn't this vary by SoC ? I think H3 ES1.0 had different value here,
+>>>>>> but I might be wrong.
+>>>>>
+>>>>> I check the Renesas bare-metal code, mini_monitor v4.01.
+>>>>> It set 0x03 or 0x0 and I test them w/ 0x0, 0x3 and 0x6 are all OK.
+>>>>
+>>>> Shouldn't this somehow use the soc_device_match() then and configure it
+>>>> accordingly for various chips ? Like eg. the r8a7795-cpg-mssr driver does.
+>>>
+>>> Please don't use soc_device_match() for per-SoC configuration, if
+>>> you already have of_device_id.data.
+>>
+>> I mean, the value is different on H3 ES1 and ES2 iirc, that's what
+>> soc_device_match() is for, right ?
+> 
+> Oh, it differs between revisions, too?
+> Yes, in that case you need soc_device_match().
+> 
+>>> BTW, this drivers support r8a7795 only (for now), as per the compatible
+>>> value.
+>>
+>> 77995
+> 
+> Sorry, typo on my side. So H3 is not yet supported ;-)
+
+It's coming the minute this lands mainline, so we should make it easy to
+add.
+
+>>>>>>> +#ifdef CONFIG_RESET_CONTROLLER
+>>>>>>
+>>>>>> Just make the driver depend on reset controller.
+>>>>>
+>>>>> ?
+>>>>> please refer to
+>>>>> https://github.com/torvalds/linux/blob/master/drivers/clk/renesas/renesas-cpg-mssr.c
+>>>>>
+>>>>> line 124 ~ 126
+>>>>
+>>>> This seems like a stopgap measure for systems which do not have a reset
+>>>> api compatible controller. Geert ?
+>>>
+>>> So far CONFIG_RESET_CONTROLLER is optional.
+>>
+>> My understanding is that for this IP, it can well be mandatory, since
+>> all the chips have a reset wired to the IP internally.
+> 
+> That's what I was trying to find out, hence my question about the purpose.
+> 
+>>>>>>> +         regmap_write(rpc->regmap, RPC_SMWDR0,
+>>>>>>> +                 *(u32 *)(tx_buf + pos));
+>>>>>>
+>>>>>> *(u32 *) cast is probably not needed , fix casts globally.
+>>>>>
+>>>>> It must have it!
+>>>>
+>>>> Why ?
+>>>
+>>> Else you get a compiler warning, as tx_bug is void *.
+>>
+>> Don't you need some get_unaligned() in that case ? txbuf+pos can well be
+>> unaligned if it's void * .
+> 
+> True, but IIRC, arm64 can handle that, right?
+> Don't know about SuperH.
+
+Oh, that's right, there are SH systems with RPC. Right.
+
+>>>>>>> +#ifdef CONFIG_PM_SLEEP
+>>>>>>> +static int rpc_spi_suspend(struct device *dev)
+>>>>>>> +{
+>>>>>>> +   struct platform_device *pdev = to_platform_device(dev);
+>>>>>>> +   struct spi_master *master = platform_get_drvdata(pdev);
+>>>>>>> +
+>>>>>>> +   return spi_master_suspend(master);
+>>>>>>
+>>>>>> Won't the SPI NOR lose state across suspend ? Is that a problem ?
+>>>>>
+>>>>> I don't think so.
+>>>>> Because when the device is not in operation and CS# is high,
+>>>>> it is put in stand-by mode.
+>>>>
+>>>> Is the power to the SPI NOR retained ?
+>>>
+>>> Not if PSCI system suspend turns of power to the SoC.
+>>
+>> And is that a problem ?
+> 
+> Good question!
+
+That's what we need an answer to :)
 
 -- 
 Best regards,
