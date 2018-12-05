@@ -1,71 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1410119.outbound.protection.outlook.com ([40.107.141.119]:24395
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727783AbeLFJrw (ORCPT
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34216 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbeLEVqd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:47:52 -0500
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 5 Dec 2018 16:46:33 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p6so15891917lfc.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 13:46:31 -0800 (PST)
+MIME-Version: 1.0
+References: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com> <1542727156-31432-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1542727156-31432-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 5 Dec 2018 22:46:17 +0100
+Message-ID: <CACRpkdbf+MpB24etuXUGypOwHUW_w4ECu-iFFT3aEB10wG0Huw@mail.gmail.com>
+Subject: Re: [RFC v3 1/2] pinctrl: core: Add pinctrl_mux_gpio_request_enable
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [RFC v3 1/2] pinctrl: core: Add pinctrl_mux_gpio_request_enable
-Date: Thu, 6 Dec 2018 09:47:06 +0000
-Message-ID: <TY1PR01MB177090970EE98AC699E22E3CC0A90@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1542727156-31432-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CACRpkdbf+MpB24etuXUGypOwHUW_w4ECu-iFFT3aEB10wG0Huw@mail.gmail.com>
-In-Reply-To: <CACRpkdbf+MpB24etuXUGypOwHUW_w4ECu-iFFT3aEB10wG0Huw@mail.gmail.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGVsbG8gTGludXMsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBGcm9tOiBM
-aW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQo+IFNlbnQ6IDA1IERlY2Vt
-YmVyIDIwMTggMjE6NDYNCj4gU3ViamVjdDogUmU6IFtSRkMgdjMgMS8yXSBwaW5jdHJsOiBjb3Jl
-OiBBZGQgcGluY3RybF9tdXhfZ3Bpb19yZXF1ZXN0X2VuYWJsZQ0KPg0KPiBPbiBUdWUsIE5vdiAy
-MCwgMjAxOCBhdCA0OjE5IFBNIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJw
-LnJlbmVzYXMuY29tPiB3cm90ZToNCj4NCj4gPiBTb21ldGltZXMgdGhlcmUgaXMgdGhlIG5lZWQg
-dG8gY2hhbmdlIHRoZSBtdXhpbmcgb2YgYSBwaW4gdG8gbWFrZSBpdA0KPiA+IGEgR1BJTyB3aXRo
-b3V0IGdvaW5nIHRocm91Z2ggZ3Bpb2xpYi4NCj4gPiBUaGlzIHBhdGNoIGFkZHMgcGluY3RybF9t
-dXhfZ3Bpb19yZXF1ZXN0X2VuYWJsZSB0byBkZWFsIHdpdGggdGhpcyBuZXcNCj4gPiB1c2UgY2Fz
-ZSBmcm9tIGNvZGUgdGhhdCBoYXMgbm90aGluZyB0byBkbyB3aXRoIHBpbmN0cmwuDQo+DQo+IEl0
-IGhhcyBhIGxvdCB0byBkbyB3aXRoIHBpbmN0cmwgSSB0aGluaywgc28gSSBnZXQgY29uZnVzZWQg
-YnkgdGhpcw0KPiBjb21taXQgbWVzc2FnZS4NCg0KSSBjYW4gaW1wcm92ZSB0aGF0DQoNCj4NCj4g
-PiAgZXh0ZXJuIGludCBwaW5jdHJsX2dwaW9fcmVxdWVzdCh1bnNpZ25lZCBncGlvKTsNCj4gPiAr
-ZXh0ZXJuIGludCBwaW5jdHJsX211eF9ncGlvX3JlcXVlc3RfZW5hYmxlKHVuc2lnbmVkIGdwaW8p
-Ow0KPg0KPiBXaGF0J3Mgd3Jvbmcgd2l0aCBqdXN0IHVzaW5nIHRoZSBleGlzdGluZyBjYWxsDQo+
-IHBpbmN0cmxfZ3Bpb19yZXF1ZXN0KCkgcmlnaHQgYWJvdmUgeW91ciBuZXcgb25lPw0KPg0KPiBJ
-dCdzIG5vdCBsaWtlIHdlJ3JlIHJlZmVyZW5jZSBjb3VudGluZyBvciBzb21ldGhpbmcsIGl0J3Mg
-anVzdA0KPiBhIGNhbGxiYWNrLiBTcHJpbmtsZSBzb21lIGNvbW1lbnRzIHRvIHNob3cgd2hhdCdz
-IGdvaW5nDQo+IG9uLg0KDQpJIHRyaWVkIHRoYXQsIGFuZCBpdCB3YXMgd29ya2luZyBmb3IgbWUs
-IHRoZW4gc29tZXRoaW5nIGNoYW5nZWQgbGF0ZWx5DQppbiBncGlvbGliIHRoYXQgYnJva2UgdGhh
-dCBzb2x1dGlvbiwgYW5kIEdlZXJ0IHBpY2tlZCBpdCB1cCBvbiBoaXMgZW5kLg0KUGxlYXNlIHNl
-ZSB0aGlzOg0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDY3MTMyNS8NCg0K
-VGhpcyBwYXRjaCB3YXMgbWFkZSB0byBvdmVyY29tZSB0aGUgcHJvYmxlbXMgb2YgdGhlIHByZXZp
-b3VzIHBhdGNoLg0KDQo+DQo+IElmIHlvdSBmb3Igc29tZSByZWFzb24gbmVlZCBhIG5ldyBjYWxs
-IGZvciB0aGlzIHNwZWNpZmljDQo+IHVzZSBjYXNlLCBpdCBuZWVkcyB0byBiZSBuYW1lZCBhZnRl
-ciB0aGUgdXNlIGNhc2UsDQo+IGxpa2UgcGluY3RybF9ncGlvX3JlcXVlc3RfZm9yX2lycSgpDQo+
-IHNvIGl0IGlzIG9idmlvdXMgd2hhdCB0aGUgZnVuY3Rpb24gaXMgZG9pbmcuDQoNCkkgY2FuIGRv
-IHRoYXQsIGJ1dCBJIHdvdWxkIGxpa2UgdG8gaGVhciBmcm9tIEdlZXJ0IGZpcnN0LCBubyBwb2lu
-dCBpbiBnb2luZw0KYXJvdW5kIGluIGNpcmNsZSBpZiB0aGlzIHNvbHV0aW9uIGlzIG5vdCBhY2Nl
-cHRhYmxlIHRvIGhpbS4NCg0KR2VlcnQsIHdoYXQgZG8geW91IHRoaW5rPw0KDQpUaGFua3MhDQpG
-YWINCg0KPg0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQoNCltodHRwczovL3d3dzIucmVu
-ZXNhcy5ldS9tZWRpYS9lbWFpbC91bmljZWYuanBnXQ0KDQpUaGlzIENocmlzdG1hcywgaW5zdGVh
-ZCBvZiBzZW5kaW5nIG91dCBjYXJkcywgUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgaGF2ZSBk
-ZWNpZGVkIHRvIHN1cHBvcnQgVW5pY2VmIHdpdGggYSBkb25hdGlvbi4gRm9yIGZ1cnRoZXIgZGV0
-YWlscyBjbGljayBoZXJlPGh0dHBzOi8vd3d3LnVuaWNlZi5vcmcvPiB0byBmaW5kIG91dCBhYm91
-dCB0aGUgdmFsdWFibGUgd29yayB0aGV5IGRvLCBoZWxwaW5nIGNoaWxkcmVuIGFsbCBvdmVyIHRo
-ZSB3b3JsZC4NCldlIHdvdWxkIGxpa2UgdG8gdGFrZSB0aGlzIG9wcG9ydHVuaXR5IHRvIHdpc2gg
-eW91IGEgTWVycnkgQ2hyaXN0bWFzIGFuZCBhIHByb3NwZXJvdXMgTmV3IFllYXIuDQoNCg0KDQpS
-ZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJv
-YWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQg
-aW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+On Tue, Nov 20, 2018 at 4:19 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+
+> Sometimes there is the need to change the muxing of a pin to make it
+> a GPIO without going through gpiolib.
+> This patch adds pinctrl_mux_gpio_request_enable to deal with this new
+> use case from code that has nothing to do with pinctrl.
+
+It has a lot to do with pinctrl I think, so I get confused by this
+commit message.
+
+>  extern int pinctrl_gpio_request(unsigned gpio);
+> +extern int pinctrl_mux_gpio_request_enable(unsigned gpio);
+
+What's wrong with just using the existing call
+pinctrl_gpio_request() right above your new one?
+
+It's not like we're reference counting or something, it's just
+a callback. Sprinkle some comments to show what's going
+on.
+
+If you for some reason need a new call for this specific
+use case, it needs to be named after the use case,
+like pinctrl_gpio_request_for_irq()
+so it is obvious what the function is doing.
+
+Yours,
+Linus Walleij
