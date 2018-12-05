@@ -1,46 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41318 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeLES5B (ORCPT
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40323 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728064AbeLEM5y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 13:57:01 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k15-v6so1865445ljc.8
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 10:57:00 -0800 (PST)
+        Wed, 5 Dec 2018 07:57:54 -0500
 Subject: Re: [PATCH v2 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
  controller bindings
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
+To: masonccyang@mxic.com.tw
+Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, zhengxunli@mxic.com.tw
 References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
  <1543828720-18345-3-git-send-email-masonccyang@mxic.com.tw>
  <2e719883-4cfd-b456-b894-853e99515092@gmail.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8de55806-ee08-69c6-df1b-45b1eba607a6@cogentembedded.com>
-Date: Wed, 5 Dec 2018 21:56:57 +0300
+ <OF71F19EC8.23C369C1-ON4825835A.002EB699-4825835A.002F949D@mxic.com.tw>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <4976dae8-222f-b7a1-ca5b-4abf3c5f26db@gmail.com>
+Date: Wed, 5 Dec 2018 13:53:16 +0100
 MIME-Version: 1.0
-In-Reply-To: <2e719883-4cfd-b456-b894-853e99515092@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <OF71F19EC8.23C369C1-ON4825835A.002EB699-4825835A.002F949D@mxic.com.tw>
+Content-Type: text/plain; charset=big5
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/04/2018 09:19 PM, Marek Vasut wrote:
+On 12/05/2018 09:39 AM, masonccyang@mxic.com.tw wrote:
+> Hi Marek,
 
->> Document the bindings used by the Renesas R-Car Gen3 RPC SPI controller.
+Hi,
+
+>> "Marek Vasut" <marek.vasut@gmail.com>
+>> 2018/12/05 �W�� 10:04
+>>
+>> To
+>>
+>> "Mason Yang" <masonccyang@mxic.com.tw>, broonie@kernel.org, linux-
+>> kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+>> boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+>> "Geert Uytterhoeven" <geert+renesas@glider.be>,
+>>
+>> cc
+>>
+>> juliensu@mxic.com.tw, "Simon Horman" <horms@verge.net.au>,
+>> zhengxunli@mxic.com.tw
+>>
+>> Subject
+>>
+>> Re: [PATCH v2 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
+>> controller bindings
+>>
+>> On 12/03/2018 10:18 AM, Mason Yang wrote:
+>> > Document the bindings used by the Renesas R-Car Gen3 RPC SPI controller.
+>>
+>> RPC is SPI and HF controller, it is not a pure SPI controller.
+>>
+>> How does this deal with the HF part ? Keep in mind the bindings are ABI
+>> and it will be difficult to redo them later.
 > 
-> RPC is SPI and HF controller, it is not a pure SPI controller.
+> After checking HF datasheet,
+> 512_MBIT_256_MBIT_128_MBIT_HYPERFLASH_FAMILY_Datasheet.pdf.
 > 
-> How does this deal with the HF part ? Keep in mind the bindings are ABI
-> and it will be difficult to redo them later.
+> 
+> 
+> From my point of view,
+> HyperFlash is a kind of standard NOR Flash with high-speed SPI interface.
+> But I might be wrong.
+It behaves as a Parallel CFI NOR internally, and so it fits and works
+with the CFI NOR drivers (see the U-Boot driver), except the interface
+between the HF controller and the chip is custom. It's not SPI per-se.
 
-   Perhaps we need a "mode" prop, maybe w/vendor prefix? 
-
->> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-[...]
-
-MBR, Sergei
+-- 
+Best regards,
+Marek Vasut
