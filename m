@@ -1,36 +1,39 @@
-Return-Path: <devicetree-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:56074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728434AbeLEUnW (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 5 Dec 2018 15:43:22 -0500
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181205195050.4759-5-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+To: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Stephen Boyd <sboyd@kernel.org>
 In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Dec 2018 22:16:45 +0100
-Message-ID: <CAMuHMdXqww7c26SAc52b8Uum5cUfYm9dQEkQ3SYmhgCDOSn_xQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
-To: Rob Herring <robh@kernel.org>
-Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)"
-        <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Sender: devicetree-owner@vger.kernel.org
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20181205195050.4759-5-robh@kernel.org>
+Message-ID: <154404260092.88331.601190671449905138@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
+Date: Wed, 05 Dec 2018 12:43:20 -0800
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, Dec 5, 2018 at 8:50 PM Rob Herring <robh@kernel.org> wrote:
+Quoting Rob Herring (2018-12-05 11:50:21)
 > Convert string compares of DT node names to use of_node_name_eq helper
 > instead. This removes direct access to the node name pointer.
->
+> =
+
 > For instances using of_node_cmp, this has the side effect of now using
 > case sensitive comparisons. This should not matter for any FDT based
 > system which all of these are.
->
+> =
+
 > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
@@ -41,26 +44,6 @@ On Wed, Dec 5, 2018 at 8:50 PM Rob Herring <robh@kernel.org> wrote:
 > Cc: linux-omap@vger.kernel.org
 > Cc: linux-arm-kernel@lists.infradead.org
 > Signed-off-by: Rob Herring <robh@kernel.org>
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
 > ---
->  drivers/clk/renesas/clk-mstp.c   |  2 +-
->  drivers/clk/ti/clkctrl.c         |  2 +-
->  drivers/clk/ti/dpll.c            |  2 +-
->  drivers/clk/ux500/u8500_of_clk.c | 10 +++++-----
->  4 files changed, 8 insertions(+), 8 deletions(-)
 
-For drivers/clk/renesas/clk-mstp.c :
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Looks ok at a glance. I'll wait for some people to ack or test it.
