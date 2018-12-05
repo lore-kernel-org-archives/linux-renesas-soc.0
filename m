@@ -1,100 +1,90 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:46590 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbeLEOYC (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:59146 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727927AbeLEPud (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:24:02 -0500
-Received: by mail-vs1-f68.google.com with SMTP id n10so3337289vso.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 06:24:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20181119131357.28648-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181119131357.28648-1-wsa+renesas@sang-engineering.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 5 Dec 2018 15:23:25 +0100
-Message-ID: <CAPDyKFp2HzVa_BTWZEbofLCji=rSTgHibJt3Q=9DuO_dMF1g7g@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tmio: introduce mask for 'always 1' bits
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 5 Dec 2018 10:50:33 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [RFC PATCH 3/7] soc: renesas: r8a7796-sysc: Fix power request conflicts
+Date: Wed,  5 Dec 2018 16:50:24 +0100
+Message-Id: <20181205155028.14335-4-geert+renesas@glider.be>
+In-Reply-To: <20181205155028.14335-1-geert+renesas@glider.be>
+References: <20181205155028.14335-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, 19 Nov 2018 at 14:14, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Some variants (namely Renesas SDHI) have bits in the STATS and IRQ_MASK
-> registers which are 'always 1' and should be written as such. Introduce
-> a seperate mask for this and apply it whenever such a register is
-> written.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Describe the location and contents of the SYSCEXTMASK register on R-Car
+M3-W, to prevent conflicts between internal and external power requests.
 
-Applied for next, thanks!
+This register does not exist on R-Car M3-W ES1.x.
 
-Kind regards
-Uffe
+Based on a patch in the BSP by Dien Pham <dien.pham.ry@renesas.com>.
 
-> ---
->
-> This is my response to BSP patches modifying all the register writes directly
-> (BSP commits 2d339800bbc73d and f73d5eb86097df). This seems much more future
-> proof to me.
->
-> Yamada-san: could you check if your HW has 'always 1' bits, too?
->
-> Tested on a R-Car M3-N. No regression and no performance impacts when reading
-> large files from eMMC or UHS-SD cards.
->
->  drivers/mmc/host/renesas_sdhi_core.c | 1 +
->  drivers/mmc/host/tmio_mmc.h          | 5 +++++
->  2 files changed, 6 insertions(+)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index a049b01206f1..31a351a20dc0 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -722,6 +722,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->                 host->ops.card_busy = renesas_sdhi_card_busy;
->                 host->ops.start_signal_voltage_switch =
->                         renesas_sdhi_start_signal_voltage_switch;
-> +               host->sdcard_irq_setbit_mask = TMIO_STAT_ALWAYS_SET_27;
->         }
->
->         /* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
-> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-> index 5f6dfb86e43e..c03529e3f01a 100644
-> --- a/drivers/mmc/host/tmio_mmc.h
-> +++ b/drivers/mmc/host/tmio_mmc.h
-> @@ -70,6 +70,7 @@
->  #define TMIO_STAT_DAT0         BIT(23) /* only known on R-Car so far */
->  #define TMIO_STAT_RXRDY         BIT(24)
->  #define TMIO_STAT_TXRQ          BIT(25)
-> +#define TMIO_STAT_ALWAYS_SET_27        BIT(27) /* only known on R-Car 2+ so far */
->  #define TMIO_STAT_ILL_FUNC      BIT(29) /* only when !TMIO_MMC_HAS_IDLE_WAIT */
->  #define TMIO_STAT_SCLKDIVEN     BIT(29) /* only when TMIO_MMC_HAS_IDLE_WAIT */
->  #define TMIO_STAT_CMD_BUSY      BIT(30)
-> @@ -154,6 +155,7 @@ struct tmio_mmc_host {
->         u32                     sdcard_irq_mask;
->         u32                     sdio_irq_mask;
->         unsigned int            clk_cache;
-> +       u32                     sdcard_irq_setbit_mask;
->
->         spinlock_t              lock;           /* protect host private data */
->         unsigned long           last_req_ts;
-> @@ -268,6 +270,9 @@ static inline void sd_ctrl_write16_rep(struct tmio_mmc_host *host, int addr,
->  static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host,
->                                                 int addr, u32 val)
->  {
-> +       if (addr == CTL_IRQ_MASK || addr == CTL_STATUS)
-> +               val |= host->sdcard_irq_setbit_mask;
-> +
->         iowrite16(val & 0xffff, host->ctl + (addr << host->bus_shift));
->         iowrite16(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
->  }
-> --
-> 2.11.0
->
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/soc/renesas/r8a7796-sysc.c | 22 +++++++++++++++++++++-
+ drivers/soc/renesas/rcar-sysc.h    |  2 +-
+ 2 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/soc/renesas/r8a7796-sysc.c b/drivers/soc/renesas/r8a7796-sysc.c
+index 1b06f868b6e81c79..a4eaa8d1f5d0f49d 100644
+--- a/drivers/soc/renesas/r8a7796-sysc.c
++++ b/drivers/soc/renesas/r8a7796-sysc.c
+@@ -5,8 +5,10 @@
+  * Copyright (C) 2016 Glider bvba
+  */
+ 
++#include <linux/bits.h>
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/sys_soc.h>
+ 
+ #include <dt-bindings/power/r8a7796-sysc.h>
+ 
+@@ -39,7 +41,25 @@ static const struct rcar_sysc_area r8a7796_areas[] __initconst = {
+ 	{ "a3ir",	0x180, 0, R8A7796_PD_A3IR,	R8A7796_PD_ALWAYS_ON },
+ };
+ 
+-const struct rcar_sysc_info r8a7796_sysc_info __initconst = {
++
++/* Fixups for R-Car M3-W ES1.x revision */
++static const struct soc_device_attribute r8a7796es1[] __initconst = {
++	{ .soc_id = "r8a7796", .revision = "ES1.*" },
++	{ /* sentinel */ }
++};
++
++static int __init r8a7796_sysc_init(void)
++{
++	if (soc_device_match(r8a7796es1))
++		r8a7796_sysc_info.extmask_val = 0;
++
++	return 0;
++}
++
++struct rcar_sysc_info r8a7796_sysc_info __initdata = {
++	.init = r8a7796_sysc_init,
+ 	.areas = r8a7796_areas,
+ 	.num_areas = ARRAY_SIZE(r8a7796_areas),
++	.extmask_offs = 0x2f8,
++	.extmask_val = BIT(0),
+ };
+diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
+index 499797a9e18c2f10..64c2a0fa7945d80b 100644
+--- a/drivers/soc/renesas/rcar-sysc.h
++++ b/drivers/soc/renesas/rcar-sysc.h
+@@ -60,7 +60,7 @@ extern const struct rcar_sysc_info r8a7791_sysc_info;
+ extern const struct rcar_sysc_info r8a7792_sysc_info;
+ extern const struct rcar_sysc_info r8a7794_sysc_info;
+ extern struct rcar_sysc_info r8a7795_sysc_info;
+-extern const struct rcar_sysc_info r8a7796_sysc_info;
++extern struct rcar_sysc_info r8a7796_sysc_info;
+ extern const struct rcar_sysc_info r8a77965_sysc_info;
+ extern const struct rcar_sysc_info r8a77970_sysc_info;
+ extern const struct rcar_sysc_info r8a77980_sysc_info;
+-- 
+2.17.1
