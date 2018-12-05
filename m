@@ -1,54 +1,87 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:60066 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbeLCPMv (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:33032 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbeLEOXx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:12:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] arm: dts: renesas: Convert remaining boards to new LVDS DT bindings
-Date: Mon,  3 Dec 2018 16:12:40 +0100
-Message-Id: <20181203151242.25875-1-geert+renesas@glider.be>
+        Wed, 5 Dec 2018 09:23:53 -0500
+Received: by mail-vs1-f68.google.com with SMTP id p74so12179991vsc.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 06:23:51 -0800 (PST)
+MIME-Version: 1.0
+References: <20181126133814.1185-1-wsa+renesas@sang-engineering.com> <20181126133814.1185-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181126133814.1185-3-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 5 Dec 2018 15:23:14 +0100
+Message-ID: <CAPDyKFqbbW0vyi=+p1M9rP6TOr=zAF78H2Juh+J4TXURaJPP+g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mmc: core: remove obsolete mmc_set_blockcount() function
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Avri Altman <Avri.Altman@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus, Laurent, Marek,
+On Mon, 26 Nov 2018 at 14:38, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> The only user was converted to fill a sbc command which is the proper
+> way to do it because of AutoCMD23 feature of some hosts.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Tested-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
 
-As of commit 6d2ca85279becdff ("dt-bindings: display: renesas: Deprecate
-LVDS support in the DU bindings"), the internal LVDS encoder has DT
-bindings separate from the DU.  Most board device trees were ported over
-to the new model, but Stout with R-Car H2 and Salvator-XS with R-Car
-M3-W were forgotten.
+Applied for next, thanks!
 
-This patch series converts the remaining boards.
-Both patches were compiled-tested only.
+Kind regards
+Uffe
 
-Thanks!
-
-Geert Uytterhoeven (2):
-  ARM: dts: stout: Convert to new LVDS DT bindings
-  arm64: dts: renesas: r8a7796: salvator-xs: Convert to new LVDS DT
-    bindings
-
- arch/arm/boot/dts/r8a7790-stout.dts               | 15 ++++++++++++---
- .../boot/dts/renesas/r8a7796-salvator-xs.dts      |  3 +--
- 2 files changed, 13 insertions(+), 5 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> ---
+>  drivers/mmc/core/core.c | 14 --------------
+>  drivers/mmc/core/core.h |  2 --
+>  2 files changed, 16 deletions(-)
+>
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index 50a5c340307b..d3085f70e9a4 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -2413,20 +2413,6 @@ int mmc_set_blocklen(struct mmc_card *card, unsign=
+ed int blocklen)
+>  }
+>  EXPORT_SYMBOL(mmc_set_blocklen);
+>
+> -int mmc_set_blockcount(struct mmc_card *card, unsigned int blockcount,
+> -                       bool is_rel_write)
+> -{
+> -       struct mmc_command cmd =3D {};
+> -
+> -       cmd.opcode =3D MMC_SET_BLOCK_COUNT;
+> -       cmd.arg =3D blockcount & 0x0000FFFF;
+> -       if (is_rel_write)
+> -               cmd.arg |=3D 1 << 31;
+> -       cmd.flags =3D MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+> -       return mmc_wait_for_cmd(card->host, &cmd, 5);
+> -}
+> -EXPORT_SYMBOL(mmc_set_blockcount);
+> -
+>  static void mmc_hw_reset_for_init(struct mmc_host *host)
+>  {
+>         mmc_pwrseq_reset(host);
+> diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+> index 087ba68b2920..8fb6bc37f808 100644
+> --- a/drivers/mmc/core/core.h
+> +++ b/drivers/mmc/core/core.h
+> @@ -118,8 +118,6 @@ int mmc_erase_group_aligned(struct mmc_card *card, un=
+signed int from,
+>  unsigned int mmc_calc_max_discard(struct mmc_card *card);
+>
+>  int mmc_set_blocklen(struct mmc_card *card, unsigned int blocklen);
+> -int mmc_set_blockcount(struct mmc_card *card, unsigned int blockcount,
+> -                       bool is_rel_write);
+>
+>  int __mmc_claim_host(struct mmc_host *host, struct mmc_ctx *ctx,
+>                      atomic_t *abort);
+> --
+> 2.11.0
+>
