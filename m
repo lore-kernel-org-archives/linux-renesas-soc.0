@@ -1,80 +1,100 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from xavier.telenet-ops.be ([195.130.132.52]:46380 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727679AbeLEPjv (ORCPT
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:46590 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbeLEOYC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:39:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/4] soc: renesas: rcar-sysc: Merge PM Domain registration and linking
-Date: Wed,  5 Dec 2018 16:39:44 +0100
-Message-Id: <20181205153945.13767-4-geert+renesas@glider.be>
-In-Reply-To: <20181205153945.13767-1-geert+renesas@glider.be>
-References: <20181205153945.13767-1-geert+renesas@glider.be>
+        Wed, 5 Dec 2018 09:24:02 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n10so3337289vso.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 06:24:01 -0800 (PST)
+MIME-Version: 1.0
+References: <20181119131357.28648-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181119131357.28648-1-wsa+renesas@sang-engineering.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 5 Dec 2018 15:23:25 +0100
+Message-ID: <CAPDyKFp2HzVa_BTWZEbofLCji=rSTgHibJt3Q=9DuO_dMF1g7g@mail.gmail.com>
+Subject: Re: [PATCH] mmc: tmio: introduce mask for 'always 1' bits
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Commit 977d5ba4507dfe5b ("soc: renesas: rcar-sysc: Make PM domain
-initialization more robust") split PM Domain registration and the
-linking of children to their parents, to accommodate PM Domain tables
-that list child domains before their parents.
+On Mon, 19 Nov 2018 at 14:14, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Some variants (namely Renesas SDHI) have bits in the STATS and IRQ_MASK
+> registers which are 'always 1' and should be written as such. Introduce
+> a seperate mask for this and apply it whenever such a register is
+> written.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-However, this failed to realize that parent power domains must be
-powered up before their children anyway, and that this thus must be
-reflected by the order in the PM Domain tables.
+Applied for next, thanks!
 
-Revert the split, as it did not help anyway.
+Kind regards
+Uffe
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/soc/renesas/rcar-sysc.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 73fae6a9728df9ae..123e553510e826f5 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -381,9 +381,6 @@ static int __init rcar_sysc_pd_init(void)
- 	pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
- 	iowrite32(syscier, base + SYSCIER);
- 
--	/*
--	 * First, create all PM domains
--	 */
- 	for (i = 0; i < info->num_areas; i++) {
- 		const struct rcar_sysc_area *area = &info->areas[i];
- 		struct rcar_sysc_pd *pd;
-@@ -411,22 +408,17 @@ static int __init rcar_sysc_pd_init(void)
- 			goto out_put;
- 
- 		domains->domains[area->isr_bit] = &pd->genpd;
--	}
- 
--	/*
--	 * Second, link all PM domains to their parents
--	 */
--	for (i = 0; i < info->num_areas; i++) {
--		const struct rcar_sysc_area *area = &info->areas[i];
--
--		if (!area->name || area->parent < 0)
-+		if (area->parent < 0)
- 			continue;
- 
- 		error = pm_genpd_add_subdomain(domains->domains[area->parent],
--					       domains->domains[area->isr_bit]);
--		if (error)
-+					       &pd->genpd);
-+		if (error) {
- 			pr_warn("Failed to add PM subdomain %s to parent %u\n",
- 				area->name, area->parent);
-+			goto out_put;
-+		}
- 	}
- 
- 	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
--- 
-2.17.1
+> ---
+>
+> This is my response to BSP patches modifying all the register writes directly
+> (BSP commits 2d339800bbc73d and f73d5eb86097df). This seems much more future
+> proof to me.
+>
+> Yamada-san: could you check if your HW has 'always 1' bits, too?
+>
+> Tested on a R-Car M3-N. No regression and no performance impacts when reading
+> large files from eMMC or UHS-SD cards.
+>
+>  drivers/mmc/host/renesas_sdhi_core.c | 1 +
+>  drivers/mmc/host/tmio_mmc.h          | 5 +++++
+>  2 files changed, 6 insertions(+)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index a049b01206f1..31a351a20dc0 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -722,6 +722,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+>                 host->ops.card_busy = renesas_sdhi_card_busy;
+>                 host->ops.start_signal_voltage_switch =
+>                         renesas_sdhi_start_signal_voltage_switch;
+> +               host->sdcard_irq_setbit_mask = TMIO_STAT_ALWAYS_SET_27;
+>         }
+>
+>         /* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
+> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+> index 5f6dfb86e43e..c03529e3f01a 100644
+> --- a/drivers/mmc/host/tmio_mmc.h
+> +++ b/drivers/mmc/host/tmio_mmc.h
+> @@ -70,6 +70,7 @@
+>  #define TMIO_STAT_DAT0         BIT(23) /* only known on R-Car so far */
+>  #define TMIO_STAT_RXRDY         BIT(24)
+>  #define TMIO_STAT_TXRQ          BIT(25)
+> +#define TMIO_STAT_ALWAYS_SET_27        BIT(27) /* only known on R-Car 2+ so far */
+>  #define TMIO_STAT_ILL_FUNC      BIT(29) /* only when !TMIO_MMC_HAS_IDLE_WAIT */
+>  #define TMIO_STAT_SCLKDIVEN     BIT(29) /* only when TMIO_MMC_HAS_IDLE_WAIT */
+>  #define TMIO_STAT_CMD_BUSY      BIT(30)
+> @@ -154,6 +155,7 @@ struct tmio_mmc_host {
+>         u32                     sdcard_irq_mask;
+>         u32                     sdio_irq_mask;
+>         unsigned int            clk_cache;
+> +       u32                     sdcard_irq_setbit_mask;
+>
+>         spinlock_t              lock;           /* protect host private data */
+>         unsigned long           last_req_ts;
+> @@ -268,6 +270,9 @@ static inline void sd_ctrl_write16_rep(struct tmio_mmc_host *host, int addr,
+>  static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host,
+>                                                 int addr, u32 val)
+>  {
+> +       if (addr == CTL_IRQ_MASK || addr == CTL_STATUS)
+> +               val |= host->sdcard_irq_setbit_mask;
+> +
+>         iowrite16(val & 0xffff, host->ctl + (addr << host->bus_shift));
+>         iowrite16(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
+>  }
+> --
+> 2.11.0
+>
