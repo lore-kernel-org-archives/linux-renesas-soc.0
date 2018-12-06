@@ -1,54 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:22042 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725994AbeLGIcD (ORCPT
+Received: from mail-eopbgr1410119.outbound.protection.outlook.com ([40.107.141.119]:24395
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727783AbeLFJrw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:32:03 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: thierry.reding@gmail.com
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 3/5] pwm: rcar: Use "atomic" API on rcar_pwm_resume()
-Date: Fri,  7 Dec 2018 17:29:31 +0900
-Message-Id: <1544171373-29618-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Thu, 6 Dec 2018 04:47:52 -0500
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [RFC v3 1/2] pinctrl: core: Add pinctrl_mux_gpio_request_enable
+Date: Thu, 6 Dec 2018 09:47:06 +0000
+Message-ID: <TY1PR01MB177090970EE98AC699E22E3CC0A90@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1542727156-31432-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CACRpkdbf+MpB24etuXUGypOwHUW_w4ECu-iFFT3aEB10wG0Huw@mail.gmail.com>
+In-Reply-To: <CACRpkdbf+MpB24etuXUGypOwHUW_w4ECu-iFFT3aEB10wG0Huw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To remove legacy API related functions in the future, this patch
-uses "atomic" related function instead. No change in behavior.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pwm/pwm-rcar.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index a5ea0f3..1bcb662 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -319,18 +319,16 @@ static int rcar_pwm_suspend(struct device *dev)
- static int rcar_pwm_resume(struct device *dev)
- {
- 	struct pwm_device *pwm = rcar_pwm_dev_to_pwm_dev(dev);
-+	struct pwm_state state;
- 
- 	if (!test_bit(PWMF_REQUESTED, &pwm->flags))
- 		return 0;
- 
- 	pm_runtime_get_sync(dev);
- 
--	rcar_pwm_config(pwm->chip, pwm, pwm->state.duty_cycle,
--			pwm->state.period);
--	if (pwm_is_enabled(pwm))
--		rcar_pwm_enable(pwm->chip, pwm);
-+	pwm_get_state(pwm, &state);
- 
--	return 0;
-+	return rcar_pwm_apply(pwm->chip, pwm, &state);
- }
- #endif /* CONFIG_PM_SLEEP */
- static SIMPLE_DEV_PM_OPS(rcar_pwm_pm_ops, rcar_pwm_suspend, rcar_pwm_resume);
--- 
-1.9.1
+SGVsbG8gTGludXMsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBGcm9tOiBM
+aW51cyBXYWxsZWlqIDxsaW51cy53YWxsZWlqQGxpbmFyby5vcmc+DQo+IFNlbnQ6IDA1IERlY2Vt
+YmVyIDIwMTggMjE6NDYNCj4gU3ViamVjdDogUmU6IFtSRkMgdjMgMS8yXSBwaW5jdHJsOiBjb3Jl
+OiBBZGQgcGluY3RybF9tdXhfZ3Bpb19yZXF1ZXN0X2VuYWJsZQ0KPg0KPiBPbiBUdWUsIE5vdiAy
+MCwgMjAxOCBhdCA0OjE5IFBNIEZhYnJpemlvIENhc3Rybw0KPiA8ZmFicml6aW8uY2FzdHJvQGJw
+LnJlbmVzYXMuY29tPiB3cm90ZToNCj4NCj4gPiBTb21ldGltZXMgdGhlcmUgaXMgdGhlIG5lZWQg
+dG8gY2hhbmdlIHRoZSBtdXhpbmcgb2YgYSBwaW4gdG8gbWFrZSBpdA0KPiA+IGEgR1BJTyB3aXRo
+b3V0IGdvaW5nIHRocm91Z2ggZ3Bpb2xpYi4NCj4gPiBUaGlzIHBhdGNoIGFkZHMgcGluY3RybF9t
+dXhfZ3Bpb19yZXF1ZXN0X2VuYWJsZSB0byBkZWFsIHdpdGggdGhpcyBuZXcNCj4gPiB1c2UgY2Fz
+ZSBmcm9tIGNvZGUgdGhhdCBoYXMgbm90aGluZyB0byBkbyB3aXRoIHBpbmN0cmwuDQo+DQo+IEl0
+IGhhcyBhIGxvdCB0byBkbyB3aXRoIHBpbmN0cmwgSSB0aGluaywgc28gSSBnZXQgY29uZnVzZWQg
+YnkgdGhpcw0KPiBjb21taXQgbWVzc2FnZS4NCg0KSSBjYW4gaW1wcm92ZSB0aGF0DQoNCj4NCj4g
+PiAgZXh0ZXJuIGludCBwaW5jdHJsX2dwaW9fcmVxdWVzdCh1bnNpZ25lZCBncGlvKTsNCj4gPiAr
+ZXh0ZXJuIGludCBwaW5jdHJsX211eF9ncGlvX3JlcXVlc3RfZW5hYmxlKHVuc2lnbmVkIGdwaW8p
+Ow0KPg0KPiBXaGF0J3Mgd3Jvbmcgd2l0aCBqdXN0IHVzaW5nIHRoZSBleGlzdGluZyBjYWxsDQo+
+IHBpbmN0cmxfZ3Bpb19yZXF1ZXN0KCkgcmlnaHQgYWJvdmUgeW91ciBuZXcgb25lPw0KPg0KPiBJ
+dCdzIG5vdCBsaWtlIHdlJ3JlIHJlZmVyZW5jZSBjb3VudGluZyBvciBzb21ldGhpbmcsIGl0J3Mg
+anVzdA0KPiBhIGNhbGxiYWNrLiBTcHJpbmtsZSBzb21lIGNvbW1lbnRzIHRvIHNob3cgd2hhdCdz
+IGdvaW5nDQo+IG9uLg0KDQpJIHRyaWVkIHRoYXQsIGFuZCBpdCB3YXMgd29ya2luZyBmb3IgbWUs
+IHRoZW4gc29tZXRoaW5nIGNoYW5nZWQgbGF0ZWx5DQppbiBncGlvbGliIHRoYXQgYnJva2UgdGhh
+dCBzb2x1dGlvbiwgYW5kIEdlZXJ0IHBpY2tlZCBpdCB1cCBvbiBoaXMgZW5kLg0KUGxlYXNlIHNl
+ZSB0aGlzOg0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9yZy9wYXRjaC8xMDY3MTMyNS8NCg0K
+VGhpcyBwYXRjaCB3YXMgbWFkZSB0byBvdmVyY29tZSB0aGUgcHJvYmxlbXMgb2YgdGhlIHByZXZp
+b3VzIHBhdGNoLg0KDQo+DQo+IElmIHlvdSBmb3Igc29tZSByZWFzb24gbmVlZCBhIG5ldyBjYWxs
+IGZvciB0aGlzIHNwZWNpZmljDQo+IHVzZSBjYXNlLCBpdCBuZWVkcyB0byBiZSBuYW1lZCBhZnRl
+ciB0aGUgdXNlIGNhc2UsDQo+IGxpa2UgcGluY3RybF9ncGlvX3JlcXVlc3RfZm9yX2lycSgpDQo+
+IHNvIGl0IGlzIG9idmlvdXMgd2hhdCB0aGUgZnVuY3Rpb24gaXMgZG9pbmcuDQoNCkkgY2FuIGRv
+IHRoYXQsIGJ1dCBJIHdvdWxkIGxpa2UgdG8gaGVhciBmcm9tIEdlZXJ0IGZpcnN0LCBubyBwb2lu
+dCBpbiBnb2luZw0KYXJvdW5kIGluIGNpcmNsZSBpZiB0aGlzIHNvbHV0aW9uIGlzIG5vdCBhY2Nl
+cHRhYmxlIHRvIGhpbS4NCg0KR2VlcnQsIHdoYXQgZG8geW91IHRoaW5rPw0KDQpUaGFua3MhDQpG
+YWINCg0KPg0KPiBZb3VycywNCj4gTGludXMgV2FsbGVpag0KDQoNCltodHRwczovL3d3dzIucmVu
+ZXNhcy5ldS9tZWRpYS9lbWFpbC91bmljZWYuanBnXQ0KDQpUaGlzIENocmlzdG1hcywgaW5zdGVh
+ZCBvZiBzZW5kaW5nIG91dCBjYXJkcywgUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgaGF2ZSBk
+ZWNpZGVkIHRvIHN1cHBvcnQgVW5pY2VmIHdpdGggYSBkb25hdGlvbi4gRm9yIGZ1cnRoZXIgZGV0
+YWlscyBjbGljayBoZXJlPGh0dHBzOi8vd3d3LnVuaWNlZi5vcmcvPiB0byBmaW5kIG91dCBhYm91
+dCB0aGUgdmFsdWFibGUgd29yayB0aGV5IGRvLCBoZWxwaW5nIGNoaWxkcmVuIGFsbCBvdmVyIHRo
+ZSB3b3JsZC4NCldlIHdvdWxkIGxpa2UgdG8gdGFrZSB0aGlzIG9wcG9ydHVuaXR5IHRvIHdpc2gg
+eW91IGEgTWVycnkgQ2hyaXN0bWFzIGFuZCBhIHByb3NwZXJvdXMgTmV3IFllYXIuDQoNCg0KDQpS
+ZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJv
+YWQsIEJvdXJuZSBFbmQsIEJ1Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQg
+aW4gRW5nbGFuZCAmIFdhbGVzIHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
