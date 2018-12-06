@@ -1,55 +1,72 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbeLFV7B (ORCPT
+        with ESMTP id S1726083AbeLFV75 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:01 -0500
+        Thu, 6 Dec 2018 16:59:57 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/34] ARM: dts: r8a7744: Add RWDT node
-Date: Thu,  6 Dec 2018 13:58:12 -0800
-Message-Id: <336a425ce67d151fe1e275389aeccd08d66d9833.1544125558.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
-References: <cover.1544125558.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/9] ARM: shmobile: Restrict SCU support to SoCs that have it
+Date: Thu,  6 Dec 2018 13:59:27 -0800
+Message-Id: <af3a03cded07f4d6637e5b3660b6622cf60af338.1544132474.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
+References: <cover.1544132474.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add a device node for the Watchdog Timer (RWDT) controller on the Renesas
-RZ/G1N (r8a7744) SoC.
+Currently support for the ARM Cortex-A9 Snoop Control Unit is included
+unconditionally, while only Renesas multicore Cortex-A9 SoCs have this
+kind of SCU.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This decreases kernel image size by ca. 300 bytes on SoCs without such
+an SCU.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/mach-shmobile/Kconfig | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index cf05ce05bba1..fabc7f990952 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -135,6 +135,16 @@
- 		#size-cells = <2>;
- 		ranges;
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index b100c26a858f..32f8297d993a 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -30,7 +30,6 @@ menuconfig ARCH_RENESAS
+ 	depends on ARCH_MULTI_V7 && MMU
+ 	select ARM_GIC
+ 	select GPIOLIB
+-	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select NO_IOPORT_MAP
+ 	select PINCTRL
+@@ -43,6 +42,7 @@ if ARCH_RENESAS
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7744-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7744",
- 				     "renesas,rcar-gen2-gpio";
+ config ARCH_EMEV2
+ 	bool "Emma Mobile EV2"
++	select HAVE_ARM_SCU if SMP
+ 	select SYS_SUPPORTS_EM_STI
+ 
+ config ARCH_R7S72100
+@@ -94,6 +94,7 @@ config ARCH_R8A7778
+ 
+ config ARCH_R8A7779
+ 	bool "R-Car H1 (R8A77790)"
++	select HAVE_ARM_SCU if SMP
+ 	select ARCH_RCAR_GEN1
+ 
+ config ARCH_R8A7790
+@@ -135,5 +136,6 @@ config ARCH_RZN1
+ config ARCH_SH73A0
+ 	bool "SH-Mobile AG5 (R8A73A00)"
+ 	select ARCH_RMOBILE
++	select HAVE_ARM_SCU if SMP
+ 	select RENESAS_INTC_IRQPIN
+ endif
 -- 
 2.11.0
