@@ -1,102 +1,77 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from andre.telenet-ops.be ([195.130.132.53]:59362 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728161AbeLEPuc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbeLFV7F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:50:32 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 16:59:05 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC PATCH 1/7] soc: renesas: rcar-sysc: Prepare for fixing power request conflicts
-Date: Wed,  5 Dec 2018 16:50:22 +0100
-Message-Id: <20181205155028.14335-2-geert+renesas@glider.be>
-In-Reply-To: <20181205155028.14335-1-geert+renesas@glider.be>
-References: <20181205155028.14335-1-geert+renesas@glider.be>
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 23/34] ARM: dts: r8a7744: add VIN dt support
+Date: Thu,  6 Dec 2018 13:58:18 -0800
+Message-Id: <10fabcb817c5e37aeb8a1b79a95468c8df45898c.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Recent R-Car Gen3 SoCs added an External Request Mask Register to the
-System Controller (SYSC).  This register allows to mask external power
-requests for CPU or 3DG domains, to prevent conflicts when Linux changes
-the state of a power domain through SYSC, which could lead to system
-lock-ups.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Add support for making use of this register.  Take into account that the
-register is optional, and that its location and contents are
-SoC-specific.
+Add VIN[012] support to SoC dt.
 
-Inspired by a patch in the BSP by Dien Pham <dien.pham.ry@renesas.com>.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/rcar-sysc.c | 16 ++++++++++++++++
- drivers/soc/renesas/rcar-sysc.h |  3 +++
- 2 files changed, 19 insertions(+)
+ arch/arm/boot/dts/r8a7744.dtsi | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 0c80fab4f8de6bc8..b28955e21a9868e0 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -63,6 +63,7 @@ struct rcar_sysc_ch {
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 8f43fb41ec91..094e1c4107e9 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -942,6 +942,39 @@
+ 			status = "disabled";
+ 		};
  
- static void __iomem *rcar_sysc_base;
- static DEFINE_SPINLOCK(rcar_sysc_lock); /* SMP CPUs + I/O devices */
-+static u32 rcar_sysc_extmask_offs, rcar_sysc_extmask_val;
- 
- static int rcar_sysc_pwr_on_off(const struct rcar_sysc_ch *sysc_ch, bool on)
- {
-@@ -105,6 +106,14 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
- 
- 	spin_lock_irqsave(&rcar_sysc_lock, flags);
- 
-+	/*
-+	 * Mask external power requests for CPU or 3DG domains
-+	 */
-+	if (rcar_sysc_extmask_val) {
-+		iowrite32(rcar_sysc_extmask_val,
-+			  rcar_sysc_base + rcar_sysc_extmask_offs);
-+	}
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a7744",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 811>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 811>;
++			status = "disabled";
++		};
 +
- 	/*
- 	 * The interrupt source needs to be enabled, but masked, to prevent the
- 	 * CPU from receiving it.
-@@ -148,6 +157,9 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
- 	iowrite32(isr_mask, rcar_sysc_base + SYSCISCR);
- 
-  out:
-+	if (rcar_sysc_extmask_val)
-+		iowrite32(0, rcar_sysc_base + rcar_sysc_extmask_offs);
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a7744",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 810>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 810>;
++			status = "disabled";
++		};
 +
- 	spin_unlock_irqrestore(&rcar_sysc_lock, flags);
- 
- 	pr_debug("sysc power %s domain %d: %08x -> %d\n", on ? "on" : "off",
-@@ -361,6 +373,10 @@ static int __init rcar_sysc_pd_init(void)
- 
- 	rcar_sysc_base = base;
- 
-+	/* Optional External Request Mask Register */
-+	rcar_sysc_extmask_offs = info->extmask_offs;
-+	rcar_sysc_extmask_val = info->extmask_val;
++		vin2: video@e6ef2000 {
++			compatible = "renesas,vin-r8a7744",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 809>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 809>;
++			status = "disabled";
++		};
 +
- 	domains = kzalloc(sizeof(*domains), GFP_KERNEL);
- 	if (!domains) {
- 		error = -ENOMEM;
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 485520a5b295c13e..21ee3ff8620bbafe 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -44,6 +44,9 @@ struct rcar_sysc_info {
- 	int (*init)(void);	/* Optional */
- 	const struct rcar_sysc_area *areas;
- 	unsigned int num_areas;
-+	/* Optional External Request Mask Register */
-+	u32 extmask_offs;	/* SYSCEXTMASK register offset */
-+	u32 extmask_val;	/* SYSCEXTMASK register mask value */
- };
- 
- extern const struct rcar_sysc_info r8a7743_sysc_info;
+ 		rcar_sound: sound@ec500000 {
+ 			/*
+ 			 * #sound-dai-cells is required
 -- 
-2.17.1
+2.11.0
