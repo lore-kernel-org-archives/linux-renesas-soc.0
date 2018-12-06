@@ -1,161 +1,182 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55097 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbeLBTga (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbeLFV6v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 2 Dec 2018 14:36:30 -0500
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 12/14] gpio: pca953x: Zap ad-hoc reg_output cache
-Date: Sun,  2 Dec 2018 20:35:51 +0100
-Message-Id: <20181202193553.29704-12-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
-References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
+        Thu, 6 Dec 2018 16:58:51 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 10/34] ARM: dts: r8a7744: Add I2C and IIC support
+Date: Thu,  6 Dec 2018 13:58:05 -0800
+Message-Id: <fb64de56dfd9e8efe05d12adca7e2885ce1b9e17.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Replace the ad-hoc reg_output output register caching with generic
-regcache cache. Drop pca953x_write_single() which is no longer used.
-This reduces code duplication.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Add the I2C[0-5] and IIC[0,1,3] devices nodes to the R8A7744 device tree.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/gpio/gpio-pca953x.c | 65 +++++++++----------------------------
- 1 file changed, 15 insertions(+), 50 deletions(-)
+ arch/arm/boot/dts/r8a7744.dtsi | 127 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 125 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index a01e9f158439..8155f1dd667b 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -141,7 +141,6 @@ static const struct pca953x_reg_config pca957x_regs = {
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 1fe694d0215b..57e0be34b989 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -310,19 +310,142 @@
+ 			reg = <0 0xe6300000 0 0x40000>;
+ 		};
  
- struct pca953x_chip {
- 	unsigned gpio_start;
--	u8 reg_output[MAX_BANK];
- 	struct mutex i2c_lock;
- 	struct regmap *regmap;
- 
-@@ -340,21 +339,6 @@ static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
- 	return 0;
- }
- 
--static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
--				int off)
--{
--	u8 regaddr = pca953x_recalc_addr(chip, reg, off, true, false);
--	int ret;
--
--	ret = regmap_write(chip->regmap, regaddr, val);
--	if (ret < 0) {
--		dev_err(&chip->client->dev, "failed writing register\n");
--		return ret;
--	}
--
--	return 0;
--}
--
- static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
- {
- 	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, true, true);
-@@ -403,25 +387,17 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
- 					true, false);
-+	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
-+					true, false);
- 	u8 bit = BIT(off % BANK_SZ);
--	u8 reg_val;
- 	int ret;
- 
- 	mutex_lock(&chip->i2c_lock);
- 	/* set output level */
--	if (val)
--		reg_val = chip->reg_output[off / BANK_SZ]
--			| (1u << (off % BANK_SZ));
--	else
--		reg_val = chip->reg_output[off / BANK_SZ]
--			& ~(1u << (off % BANK_SZ));
--
--	ret = pca953x_write_single(chip, chip->regs->output, reg_val, off);
-+	ret = regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
- 	if (ret)
- 		goto exit;
- 
--	chip->reg_output[off / BANK_SZ] = reg_val;
--
- 	/* then direction */
- 	ret = regmap_write_bits(chip->regmap, dirreg, bit, 0);
- exit:
-@@ -452,23 +428,12 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
- static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
--	u8 reg_val;
--	int ret;
-+	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
-+					true, false);
-+	u8 bit = BIT(off % BANK_SZ);
- 
- 	mutex_lock(&chip->i2c_lock);
--	if (val)
--		reg_val = chip->reg_output[off / BANK_SZ]
--			| (1u << (off % BANK_SZ));
--	else
--		reg_val = chip->reg_output[off / BANK_SZ]
--			& ~(1u << (off % BANK_SZ));
--
--	ret = pca953x_write_single(chip, chip->regs->output, reg_val, off);
--	if (ret)
--		goto exit;
--
--	chip->reg_output[off / BANK_SZ] = reg_val;
--exit:
-+	regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
- 	mutex_unlock(&chip->i2c_lock);
- }
- 
-@@ -500,7 +465,10 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 	int ret;
- 
- 	mutex_lock(&chip->i2c_lock);
--	memcpy(reg_val, chip->reg_output, NBANK(chip));
-+	ret = pca953x_read_regs(chip, chip->regs->output, reg_val);
-+	if (ret)
-+		goto exit;
++		/* The memory map in the User's Manual maps the cores to
++		 * bus numbers
++		 */
++		i2c0: i2c@e6508000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a7744",
++				     "renesas,rcar-gen2-i2c";
++			reg = <0 0xe6508000 0 0x40>;
++			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 931>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 931>;
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
++		};
 +
- 	for (bank = 0; bank < NBANK(chip); bank++) {
- 		bank_mask = mask[bank / sizeof(*mask)] >>
- 			   ((bank % sizeof(*mask)) * 8);
-@@ -512,11 +480,7 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 		}
- 	}
++		i2c1: i2c@e6518000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a7744",
++				     "renesas,rcar-gen2-i2c";
++			reg = <0 0xe6518000 0 0x40>;
++			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 930>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 930>;
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
++		};
++
+ 		i2c2: i2c@e6530000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a7744",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6530000 0 0x40>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 929>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 929>;
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@e6540000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a7744",
++				     "renesas,rcar-gen2-i2c";
++			reg = <0 0xe6540000 0 0x40>;
++			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 928>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 928>;
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
++		};
++
++		i2c4: i2c@e6520000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a7744",
++				     "renesas,rcar-gen2-i2c";
++			reg = <0 0xe6520000 0 0x40>;
++			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 927>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 927>;
++			i2c-scl-internal-delay-ns = <6>;
++			status = "disabled";
+ 		};
  
--	ret = pca953x_write_regs(chip, chip->regs->output, reg_val);
--	if (ret)
--		goto exit;
--
--	memcpy(chip->reg_output, reg_val, NBANK(chip));
-+	pca953x_write_regs(chip, chip->regs->output, reg_val);
- exit:
- 	mutex_unlock(&chip->i2c_lock);
- }
-@@ -815,8 +779,9 @@ static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
- 	int ret;
- 	u8 val[MAX_BANK];
+ 		i2c5: i2c@e6528000 {
+ 			/* doesn't need pinmux */
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			compatible = "renesas,i2c-r8a7744",
++				     "renesas,rcar-gen2-i2c";
+ 			reg = <0 0xe6528000 0 0x40>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 925>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 925>;
++			i2c-scl-internal-delay-ns = <110>;
++			status = "disabled";
++		};
++
++		iic0: i2c@e6500000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7744",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6500000 0 0x425>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 318>;
++			dmas = <&dmac0 0x61>, <&dmac0 0x62>,
++			       <&dmac1 0x61>, <&dmac1 0x62>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 318>;
++			status = "disabled";
++		};
++
++		iic1: i2c@e6510000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7744",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe6510000 0 0x425>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 323>;
++			dmas = <&dmac0 0x65>, <&dmac0 0x66>,
++			       <&dmac1 0x65>, <&dmac1 0x66>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 323>;
++			status = "disabled";
++		};
++
++		iic3: i2c@e60b0000 {
++			/* doesn't need pinmux */
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7744";
++			reg = <0 0xe60b0000 0 0x425>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++			       <&dmac1 0x77>, <&dmac1 0x78>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			status = "disabled";
+ 		};
  
--	ret = pca953x_read_regs(chip, chip->regs->output, chip->reg_output);
--	if (ret)
-+	ret = regcache_sync_region(chip->regmap, chip->regs->output,
-+				   chip->regs->output + NBANK(chip));
-+	if (ret != 0)
- 		goto out;
- 
- 	ret = regcache_sync_region(chip->regmap, chip->regs->direction,
+ 		hsusb: usb@e6590000 {
 -- 
-2.18.0
+2.11.0
