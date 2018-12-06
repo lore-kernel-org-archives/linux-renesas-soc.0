@@ -1,77 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32906 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbeLGU3F (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbeLFV77 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 15:29:05 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c14so5001484wrr.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Dec 2018 12:29:04 -0800 (PST)
-From: Marek Vasut <marek.vasut@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Thu, 6 Dec 2018 16:59:59 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ARM: shmobile: Fix R-Car Gen2 regulator quirk
-Date: Fri,  7 Dec 2018 21:28:58 +0100
-Message-Id: <20181207202858.17129-1-marek.vasut+renesas@gmail.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 1/9] arm64: renesas: Enable GPIOLIB to allow GPIO driver selection
+Date: Thu,  6 Dec 2018 13:59:26 -0800
+Message-Id: <9374eee32b666c92cf821a98eb3aeaa0bf4d5dd5.1544132474.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
+References: <cover.1544132474.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The quirk code currently detects all compatible I2C chips with a shared
-IRQ line on all I2C busses, adds them into a list, and registers a bus
-notifier. For every chip for which the bus notifier triggers, the quirk
-code performs I2C transfer on that I2C bus for all addresses in the list.
-The problem is that this may generate transfers to non-existing chips on
-systems with multiple I2C busses.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch adds a check to verify that the I2C bus to which the chip with
-shared IRQ is attached to matches the I2C bus of the chip which triggered
-the bus notifier and only starts the I2C transfer if they match.
+The R-Car GPIO driver cannot be enabled when Renesas SoC's ARCH configs
+(ARCH_RENESAS, ARCH_R8A7795, ARCH_R8A7796 and ARCH_R8A77965) are enabled
+only.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org
+As GPIOs are a critical resource for proper operation on Renesas
+platforms, this patch selects GPIOLIB, just like is done for other SoC
+vendors, and on Renesas arm32 SoCs.
+
+Reported-by: Alexandru Gheorghe <Alexandru_Gheorghe@mentor.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[geert: Improve patch description]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-index d4774d8ff997..f78e5348bd4c 100644
---- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
-@@ -40,6 +40,7 @@
- struct regulator_quirk {
- 	struct list_head		list;
- 	const struct of_device_id	*id;
-+	struct device_node		*np;
- 	struct of_phandle_args		irq_args;
- 	struct i2c_msg			i2c_msg;
- 	bool				shared;	/* IRQ line is shared */
-@@ -102,6 +103,9 @@ static int regulator_quirk_notify(struct notifier_block *nb,
- 		if (!pos->shared)
- 			continue;
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 51bc479334a4..2eb02734ae45 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -157,6 +157,7 @@ config ARCH_REALTEK
  
-+		if (pos->np->parent != client->dev.parent->of_node)
-+			continue;
-+
- 		dev_info(&client->dev, "clearing %s@0x%02x interrupts\n",
- 			 pos->id->compatible, pos->i2c_msg.addr);
- 
-@@ -167,6 +171,7 @@ static int __init rcar_gen2_regulator_quirk(void)
- 		memcpy(&quirk->i2c_msg, id->data, sizeof(quirk->i2c_msg));
- 
- 		quirk->id = id;
-+		quirk->np = np;
- 		quirk->i2c_msg.addr = addr;
- 
- 		ret = of_irq_parse_one(np, 0, argsa);
+ config ARCH_RENESAS
+ 	bool "Renesas SoC Platforms"
++	select GPIOLIB
+ 	select PINCTRL
+ 	select PM
+ 	select PM_GENERIC_DOMAINS
 -- 
-2.18.0
+2.11.0
