@@ -1,189 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46645 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbeLDTvm (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbeLFV6e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:51:42 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f23so12886062lfc.13
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Dec 2018 11:51:40 -0800 (PST)
-Subject: [PATCH v2 3/4] clk: renesas: rcar-gen3-cpg: add RPC clocks
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To: linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
+        Thu, 6 Dec 2018 16:58:34 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
-Message-ID: <29eba2fe-942a-6b71-afc1-e30ac603f162@cogentembedded.com>
-Date: Tue, 4 Dec 2018 22:51:37 +0300
-MIME-Version: 1.0
-In-Reply-To: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 01/34] ARM: dts: r8a7743: Remove legacy "renesas,rcar-thermal" compatibility
+Date: Thu,  6 Dec 2018 13:57:56 -0800
+Message-Id: <6d2372fc77e45f23b1d20d9fe2844d2978ad9c93.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The RPCSRC internal clock is controlled by the RPCCKCR.DIV[4:3] on all
-the R-Car gen3 SoCs except V3M (R8A77970) but the encoding of this field
-is different between SoCs; it makes sense to support the most common case
-of this encoding in the R-Car gen3 CPG driver...
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-After adding the RPCSRC clock, we can add the RPC[D2] clocks derived from
-it and controlled by the RPCCKCR register on all the R-Car gen3 SoCs except
-V3M (R8A77970); the composite clock driver seems handy for this task, using
-the spinlock added in the previous patch...
+The thermal hardware description for the RZ/G1M SoC was added to its DTS
+after the introduction of support for thermal zones, and included a
+thermal-zones node from the beginning.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hence there is no need to claim compatibility with
+"renesas,rcar-thermal", which would be needed only for backwards
+compatibility with kernels predating thermal zone support.
 
+Fixes: 6c76b4f7d89e89f0 ("ARM: dts: r8a7743: Add thermal device to DT")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-Changes in version 2:
-- merged in the RPCD2 clock support from the next patch;
-- moved in the RPCSRC clock support from the R8A77980 CPG/MSSR driver patch;
-- switched the RPC and RPCSD2 clock support to the composite clock driver;
-- changed the 1st parameter of cpg_rpc[d2]_clk_register();
-- rewrote the patch description, renamed the patch.
+ arch/arm/boot/dts/r8a7743.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- drivers/clk/renesas/rcar-gen3-cpg.c |   99 ++++++++++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen3-cpg.h |    4 +
- 2 files changed, 103 insertions(+)
-
-Index: renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -415,6 +415,90 @@ free_clock:
- 	return clk;
- }
+diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
+index 24715f74ae08..3cc33f7ff7fe 100644
+--- a/arch/arm/boot/dts/r8a7743.dtsi
++++ b/arch/arm/boot/dts/r8a7743.dtsi
+@@ -348,8 +348,7 @@
  
-+struct rpc_clock {
-+	struct clk_divider div;
-+	struct clk_gate gate;
-+	struct cpg_simple_notifier csn;
-+};
-+
-+static const struct clk_div_table cpg_rpcsrc_div_table[] = {
-+	{ 2, 5 }, { 3, 6 }, { 0, 0 },
-+};
-+
-+static const struct clk_div_table cpg_rpc_div_table[] = {
-+	{ 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 0, 0 },
-+};
-+
-+static struct clk * __init cpg_rpc_clk_register(const char *name,
-+	void __iomem *base, const char *parent_name,
-+	struct raw_notifier_head *notifiers)
-+{
-+	struct rpc_clock *rpc;
-+	struct clk *clk;
-+
-+	rpc = kzalloc(sizeof(*rpc), GFP_KERNEL);
-+	if (!rpc)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rpc->div.reg = base + CPG_RPCCKCR;
-+	rpc->div.width = 3;
-+	rpc->div.table = cpg_rpc_div_table;
-+	rpc->div.lock = &cpg_lock;
-+
-+	rpc->gate.reg = base + CPG_RPCCKCR;
-+	rpc->gate.bit_idx = 8;
-+	rpc->gate.flags = CLK_GATE_SET_TO_DISABLE;
-+	rpc->gate.lock = &cpg_lock;
-+
-+	rpc->csn.reg = base + CPG_RPCCKCR;
-+
-+	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
-+				     &rpc->div.hw,  &clk_divider_ops,
-+				     &rpc->gate.hw, &clk_gate_ops, 0);
-+	if (IS_ERR(clk))
-+		kfree(rpc);
-+
-+	cpg_simple_notifier_register(notifiers, &rpc->csn);
-+	return clk;
-+}
-+
-+static struct clk * __init cpg_rpcd2_clk_register(const char *name,
-+						  void __iomem *base,
-+						  const char *parent_name)
-+{
-+	struct clk_fixed_factor *fixed;
-+	struct clk_gate *gate;
-+	struct clk *clk;
-+
-+	fixed = kzalloc(sizeof(*fixed), GFP_KERNEL);
-+	if (!fixed)
-+		return ERR_PTR(-ENOMEM);
-+
-+	fixed->mult = 1;
-+	fixed->div = 2;
-+
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate) {
-+		kfree(fixed);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	gate->reg = base + CPG_RPCCKCR;
-+	gate->bit_idx = 9;
-+	gate->flags = CLK_GATE_SET_TO_DISABLE;
-+	gate->lock = &cpg_lock;
-+
-+	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
-+				     &fixed->hw, &clk_fixed_factor_ops,
-+				     &gate->hw,  &clk_gate_ops, 0);
-+	if (IS_ERR(clk)) {
-+		kfree(fixed);
-+		kfree(gate);
-+	}
-+
-+	return clk;
-+}
-+
- 
- static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
- static unsigned int cpg_clk_extalr __initdata;
-@@ -589,6 +673,21 @@ struct clk * __init rcar_gen3_cpg_clk_re
- 		}
- 		break;
- 
-+	case CLK_TYPE_GEN3_RPCSRC:
-+		return clk_register_divider_table(NULL, core->name,
-+						  __clk_get_name(parent), 0,
-+						  base + CPG_RPCCKCR, 3, 2, 0,
-+						  cpg_rpcsrc_div_table,
-+						  &cpg_lock);
-+
-+	case CLK_TYPE_GEN3_RPC:
-+		return cpg_rpc_clk_register(core->name, base,
-+					    __clk_get_name(parent), notifiers);
-+
-+	case CLK_TYPE_GEN3_RPCD2:
-+		return cpg_rpcd2_clk_register(core->name, base,
-+					      __clk_get_name(parent));
-+
- 	default:
- 		return ERR_PTR(-EINVAL);
- 	}
-Index: renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.h
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -23,6 +23,9 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_Z2,
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
- 	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
-+	CLK_TYPE_GEN3_RPCSRC,
-+	CLK_TYPE_GEN3_RPC,
-+	CLK_TYPE_GEN3_RPCD2,
- 
- 	/* SoC specific definitions start here */
- 	CLK_TYPE_GEN3_SOC_BASE,
-@@ -57,6 +60,7 @@ struct rcar_gen3_cpg_pll_config {
- 	u8 osc_prediv;
- };
- 
-+#define CPG_RPCCKCR	0x238
- #define CPG_RCKCR	0x240
- 
- struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
+ 		thermal: thermal@e61f0000 {
+ 			compatible = "renesas,thermal-r8a7743",
+-				     "renesas,rcar-gen2-thermal",
+-				     "renesas,rcar-thermal";
++				     "renesas,rcar-gen2-thermal";
+ 			reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
+ 			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 522>;
+-- 
+2.11.0
