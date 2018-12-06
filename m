@@ -1,15 +1,14 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34960 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFJTr (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36901 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFJOV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:19:47 -0500
+        Thu, 6 Dec 2018 04:14:21 -0500
 Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
  driver
-To: masonccyang@mxic.com.tw
+To: Geert Uytterhoeven <geert@linux-m68k.org>, masonccyang@mxic.com.tw
 Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
         Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -17,55 +16,54 @@ Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
         linux-spi <linux-spi@vger.kernel.org>, zhengxunli@mxic.com.tw
 References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
  <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw>
- <CAMuHMdWEiOTSSM=rKu67r-kgJ=TyAi7p7ndhAS4d5-6gccmmoQ@mail.gmail.com>
- <OFE69673FB.D4270C56-ON4825835B.001C7201-4825835B.00209DC7@mxic.com.tw>
- <2c6c23fc-299a-f64d-c81f-4b4123f1577b@gmail.com>
- <OF62002C8B.5D0A4315-ON4825835B.0031F545-4825835B.003310A3@mxic.com.tw>
+ <cebe44a3-80be-9091-e70b-acba6f3fff4f@gmail.com>
+ <OF0ED3C578.141B72CA-ON4825835A.0025CA62-4825835A.002A7BDF@mxic.com.tw>
+ <84e3c55b-687e-28f6-0a7c-1c48c822ef05@gmail.com>
+ <OFC9FB54F8.34B3A8B7-ON4825835B.00267480-4825835B.0029455C@mxic.com.tw>
+ <CAMuHMdWspyRq_K2Vd6Xk2tqft-oUoMvVhj-zKS-fuhv_edXb8Q@mail.gmail.com>
 From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <c7fe7eb3-b13d-2e90-12de-3edeadd9d5b0@gmail.com>
-Date: Thu, 6 Dec 2018 10:19:10 +0100
+Message-ID: <915d772b-616b-9f2e-8f4e-16d9d349e0cf@gmail.com>
+Date: Thu, 6 Dec 2018 10:14:17 +0100
 MIME-Version: 1.0
-In-Reply-To: <OF62002C8B.5D0A4315-ON4825835B.0031F545-4825835B.003310A3@mxic.com.tw>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAMuHMdWspyRq_K2Vd6Xk2tqft-oUoMvVhj-zKS-fuhv_edXb8Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/06/2018 10:17 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
-
-Hi,
-
->> >> > +
->> >> > + � � � pm_runtime_enable(&pdev->dev);
->> >> > + � � � master->auto_runtime_pm = true;
->> >> > +
->> >> > + � � � master->num_chipselect = 1;
->> >> > + � � � master->mem_ops = &rpc_spi_mem_ops;
->> >> > + � � � master->transfer_one_message = rpc_spi_transfer_one_message;
->> >>
->> >> Is there any reason you cannot use the standard
->> >> spi_transfer_one_message, i.e. provide spi_controller.transfer_one()
->> >> instead of spi_controller.transfer_one_message()?
->> >>
->> >
->> > It seems there is a RPC HW restriction in CS# pin control.
->> > Therefore, it can't send the 1'st spi-transfer for command and then
->> > keeping CS# pin goes low for the 2'nd spi-transfer for address/data and
->> > so on.
->>
->> Isn't register DRCR bit SSLN/SSLE exactly for this purpose ?
->>
+On 12/06/2018 10:12 AM, Geert Uytterhoeven wrote:
+> Hi Mason,
 > 
-> DRCR is for RPC module works in external space read mode, using memcpy( ).
-> It is not for _spi_sync().
+> On Thu, Dec 6, 2018 at 8:31 AM <masonccyang@mxic.com.tw> wrote:
+>>>>> Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller driver
+>>>>>
+>>>>> On 12/03/2018 10:18 AM, Mason Yang wrote:
+>>>>>> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+>>>>>>
+>>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 > 
-> I only could use manual I/O mode by SMCR@bit-8 SSLKP and I found it has
-> some
-> restrictions in manual I/O mode to control CS# pin.
+>>>>>> +   xfercnt = xferpos;
+>>>>>> +   rpc->xferlen = xfer[--xferpos].len;
+>>>>>> +   rpc->cmd = RPC_SMCMR_CMD(((u8 *)xfer[0].tx_buf)[0]);
+>>>>>
+>>>>> Is the cast needed ?
+>>>>
+>>>> yes!
+>>>
+>>> Why ?
+>>
+>> Get a compiler warning due to tx_bug is void *, as Geert replied.
+>>
+>> Using get_unaligned(), patched code would be
+>> ---------------------------------------------------------------
+>>  rpc->cmd = RPC_SMCMR_CMD(get_unaligned((u8 *)xfer[0].tx_buf));
+>> ----------------------------------------------------------------
+> 
+> Using get_unaligned(0 is a bit strange for accessing a single byte quantity.
+> Please keep the normal pointer dereference (including the cast).
 
-What restrictions are those ? I am aware of some, maybe there is more.
+Oh, right, for single bytes this is OK.
 
 -- 
 Best regards,
