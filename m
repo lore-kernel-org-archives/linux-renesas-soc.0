@@ -1,74 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:57992 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbeLCPMu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbeLFV6h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:12:50 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 16:58:37 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/2] ARM: dts: stout: Convert to new LVDS DT bindings
-Date: Mon,  3 Dec 2018 16:12:41 +0100
-Message-Id: <20181203151242.25875-2-geert+renesas@glider.be>
-In-Reply-To: <20181203151242.25875-1-geert+renesas@glider.be>
-References: <20181203151242.25875-1-geert+renesas@glider.be>
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 02/34] ARM: dts: r8a7744-iwg20m: Add iWave RZ/G1N Qseven SOM
+Date: Thu,  6 Dec 2018 13:57:57 -0800
+Message-Id: <3c248aefe73b5586347dae74b0a8d40aea1018b3.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit 6d2ca85279becdff ("dt-bindings: display: renesas: Deprecate
-LVDS support in the DU bindings"), the internal LVDS encoder has DT
-bindings separate from the DU.  The Lager device tree was ported over to
-the new model, but the Stout device tree was forgotten.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Fixes: 15a1ff30d8f9bd83 ("ARM: dts: r8a7790: Convert to new LVDS DT bindings")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- arch/arm/boot/dts/r8a7790-stout.dts | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Add support for iWave RZ/G1N Qseven System On Module.
 
-diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
-index 629da4cee1b971d6..7a7d3b84d1a6b21d 100644
---- a/arch/arm/boot/dts/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/r8a7790-stout.dts
-@@ -94,9 +94,8 @@
- 	status = "okay";
- 
- 	clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>, <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 726>, <&cpg CPG_MOD 725>,
- 		 <&osc1_clk>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0", "lvds.1", "dclkin.0";
-+	clock-names = "du.0", "du.1", "du.2", "dclkin.0";
- 
- 	ports {
- 		port@0 {
-@@ -104,11 +103,21 @@
- 				remote-endpoint = <&adv7511_in>;
- 			};
- 		};
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+
+diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+new file mode 100644
+index 000000000000..6166ae053060
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+@@ -0,0 +1,31 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the iWave RZ/G1N Qseven SOM
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
++
++#include "r8a7744.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++
++/ {
++	compatible = "iwave,g20m", "renesas,r8a7744";
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x40000000>;
++	};
++
++	reg_3p3v: 3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "3P3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
++		regulator-boot-on;
 +	};
 +};
 +
-+&lvds0 {
-+	ports {
- 		port@1 {
- 			lvds_connector0: endpoint {
- 			};
- 		};
--		port@2 {
-+	};
++&extal_clk {
++	clock-frequency = <20000000>;
 +};
-+
-+&lvds1 {
-+	ports {
-+		port@1 {
- 			lvds_connector1: endpoint {
- 			};
- 		};
 -- 
-2.17.1
+2.11.0
