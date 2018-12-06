@@ -1,116 +1,63 @@
 Return-Path: <masonccyang@mxic.com.tw>
-In-Reply-To: <93bb36af-8bdb-c90e-3777-62fe1a48f76a@gmail.com>
-References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw> <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw> <cebe44a3-80be-9091-e70b-acba6f3fff4f@gmail.com> <OF0ED3C578.141B72CA-ON4825835A.0025CA62-4825835A.002A7BDF@mxic.com.tw> <84e3c55b-687e-28f6-0a7c-1c48c822ef05@gmail.com> <OFC9FB54F8.34B3A8B7-ON4825835B.00267480-4825835B.0029455C@mxic.com.tw> <93bb36af-8bdb-c90e-3777-62fe1a48f76a@gmail.com>
+In-Reply-To: <2c6c23fc-299a-f64d-c81f-4b4123f1577b@gmail.com>
+References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw> <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw> <CAMuHMdWEiOTSSM=rKu67r-kgJ=TyAi7p7ndhAS4d5-6gccmmoQ@mail.gmail.com> <OFE69673FB.D4270C56-ON4825835B.001C7201-4825835B.00209DC7@mxic.com.tw> <2c6c23fc-299a-f64d-c81f-4b4123f1577b@gmail.com>
 To: "Marek Vasut" <marek.vasut@gmail.com>
-Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
+Cc: "Boris Brezillon" <boris.brezillon@bootlin.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
         "Geert Uytterhoeven"<geert+renesas@glider.be>,
         "Simon Horman" <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, zhengxunli@mxic.com.tw
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Linux-Renesas" <linux-renesas-soc@vger.kernel.org>,
+        "linux-spi" <linux-spi@vger.kernel.org>, zhengxunli@mxic.com.tw
 Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller driver
 MIME-Version: 1.0
-Message-ID: <OF0CE74C5C.20959BA6-ON4825835C.0026C7BC-4825835C.0028B3A4@mxic.com.tw>
+Message-ID: <OF62002C8B.5D0A4315-ON4825835B.0031F545-4825835B.003310A3@mxic.com.tw>
 From: masonccyang@mxic.com.tw
-Date: Fri, 7 Dec 2018 15:24:34 +0800
-Content-Type: multipart/alternative; boundary="=_alternative 0028B3A14825835C_="
+Date: Thu, 6 Dec 2018 17:17:45 +0800
+Content-Type: multipart/alternative; boundary="=_alternative 003310A24825835B_="
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 This is a multipart message in MIME format.
---=_alternative 0028B3A14825835C_=
+--=_alternative 003310A24825835B_=
 Content-Type: text/plain; charset="US-ASCII"
 
 
 Hi Marek,
 
-> >> >> > +
-> >> >> > +         regmap_write(rpc->regmap, RPC_SMWDR0,
-> >> >> > +                 *(u32 *)(tx_buf + pos));
-> >> >>
-> >> >> *(u32 *) cast is probably not needed , fix casts globally.
-> >> >
-> >> > It must have it!
+> >> > +
+> >> > +       pm_runtime_enable(&pdev->dev);
+> >> > +       master->auto_runtime_pm = true;
+> >> > +
+> >> > +       master->num_chipselect = 1;
+> >> > +       master->mem_ops = &rpc_spi_mem_ops;
+> >> > +       master->transfer_one_message = 
+rpc_spi_transfer_one_message;
 > >>
-> >> Why ?
-> > 
-> > Get a compiler warning due to tx_bug is void *, as Geert replied.
-> 
-> The compiler warning is usually an indication that this is something to
-> check, not silence with a type cast.
-> 
-> > Using get_unaligned(), patched code would be
-> > -----------------------------------------------------
-> > regmap_write(rpc->regmap, RPC_SMWDR0,
-> >                  get_unaligned((u32 *)(tx_buf + pos)));               
- 
-> > ----------------------------------------------------
-> 
-> Do you need the cast if you use get_unaligned() ?
-
-yes!
-
-> >> >> > +
-> >> >> > +static const struct regmap_range rpc_spi_volatile_ranges[] = {
-> >> >> > +   regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),
-> >> >> > +   regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),
-> >> >>
-> >> >> Why is SMWDR volatile ?
-> >> >
-> >> > No matter is write-back or write-through.
+> >> Is there any reason you cannot use the standard
+> >> spi_transfer_one_message, i.e. provide spi_controller.transfer_one()
+> >> instead of spi_controller.transfer_one_message()?
 > >>
-> >> Oh, do you want to assure the SMWDR value is always written directly 
-to
-> >> the hardware ?
 > > 
-> > yes,
-> > 
-> >>
-> >> btw. I think SMRDR should be precious ?
-> > 
-> > so, you think I should drop
-> > regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0)
+> > It seems there is a RPC HW restriction in CS# pin control.
+> > Therefore, it can't send the 1'st spi-transfer for command and then
+> > keeping CS# pin goes low for the 2'nd spi-transfer for address/data 
+and
+> > so on.
 > 
-> No, I am asking whether SMRDR should be marked precious or not.
+> Isn't register DRCR bit SSLN/SSLE exactly for this purpose ?
 > 
 
-I don't think so,
-precious_reg: the register should not be read outside of
-call from driver, i.e,. a clear on read interrupt status register.
+DRCR is for RPC module works in external space read mode, using memcpy( ).
+It is not for _spi_sync().
 
+I only could use manual I/O mode by SMCR@bit-8 SSLKP and I found it has 
+some 
+restrictions in manual I/O mode to control CS# pin.
 
-> [...]
-> 
-> > CONFIDENTIALITY NOTE:
-> > 
-> > This e-mail and any attachments may contain confidential information
-> > and/or personal data, which is protected by applicable laws. Please be
-> > reminded that duplication, disclosure, distribution, or use of this
-> > e-mail (and/or its attachments) or any part thereof is prohibited. If
-> > you receive this e-mail in error, please notify us immediately and
-> > delete this mail as well as its attachment(s) from your system. In
-> > addition, please be informed that collection, processing, and/or use 
-of
-> > personal data is prohibited unless expressly permitted by personal 
-data
-> > protection laws. Thank you for your attention and cooperation.
-> > 
-> > Macronix International Co., Ltd.
-> 
-> Can you do something about this ^ please ?
-> 
-
-I submit the patch file is by another remote git-server, which
-supports git-format patch, git send-mail and so on.
-But it can't receive email.
-
-I get/send email are by office PC w/ Notes system and 
-this "CONFx NOTE:" is appended automatically by Notes mail-server.
-
-Please just never mind it.
 
 thanks & best regards,
 Mason
-
-
 
 CONFIDENTIALITY NOTE:
 
@@ -140,117 +87,48 @@ Macronix International Co., Ltd.
 
 =====================================================================
 
---=_alternative 0028B3A14825835C_=
+--=_alternative 003310A24825835B_=
 Content-Type: text/html; charset="US-ASCII"
 
 
-<tt><font size=2><br>
-Hi Marek,<br>
+<tt><font size=2>Hi Marek,</font></tt>
 <br>
-&gt; &gt;&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; regmap_write(rpc-&gt;regmap,
-RPC_SMWDR0,<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; *(u32 *)(tx_buf + pos));<br>
-&gt; &gt;&gt; &gt;&gt;<br>
-&gt; &gt;&gt; &gt;&gt; *(u32 *) cast is probably not needed , fix casts
-globally.<br>
-&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt; It must have it!<br>
+<br><tt><font size=2>&gt; &gt;&gt; &gt; +<br>
+&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; pm_runtime_enable(&amp;pdev-&gt;dev);<br>
+&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; master-&gt;auto_runtime_pm =
+true;<br>
+&gt; &gt;&gt; &gt; +<br>
+&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; master-&gt;num_chipselect = 1;<br>
+&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; master-&gt;mem_ops = &amp;rpc_spi_mem_ops;<br>
+&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; master-&gt;transfer_one_message
+= rpc_spi_transfer_one_message;<br>
 &gt; &gt;&gt;<br>
-&gt; &gt;&gt; Why ?<br>
-&gt; &gt; <br>
-&gt; &gt; Get a compiler warning due to tx_bug is void *, as Geert replied.<br>
-&gt; <br>
-&gt; The compiler warning is usually an indication that this is something
-to<br>
-&gt; check, not silence with a type cast.<br>
-&gt; <br>
-&gt; &gt; Using get_unaligned(), patched code would be<br>
-&gt; &gt; -----------------------------------------------------<br>
-&gt; &gt; regmap_write(rpc-&gt;regmap, RPC_SMWDR0,<br>
-&gt; &gt; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;get_unaligned((u32
-*)(tx_buf + pos))); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br>
-&gt; &gt; ----------------------------------------------------<br>
-&gt; <br>
-&gt; Do you need the cast if you use get_unaligned() ?</font></tt>
-<br>
-<br><tt><font size=2>yes!</font></tt>
-<br><tt><font size=2><br>
-&gt; &gt;&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt;&gt; &gt; +static const struct regmap_range rpc_spi_volatile_ranges[]
-= {<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + &nbsp; regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),<br>
-&gt; &gt;&gt; &gt;&gt; &gt; + &nbsp; regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),<br>
-&gt; &gt;&gt; &gt;&gt;<br>
-&gt; &gt;&gt; &gt;&gt; Why is SMWDR volatile ?<br>
-&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt; No matter is write-back or write-through.<br>
+&gt; &gt;&gt; Is there any reason you cannot use the standard<br>
+&gt; &gt;&gt; spi_transfer_one_message, i.e. provide spi_controller.transfer_one()<br>
+&gt; &gt;&gt; instead of spi_controller.transfer_one_message()?<br>
 &gt; &gt;&gt;<br>
-&gt; &gt;&gt; Oh, do you want to assure the SMWDR value is always written
-directly to<br>
-&gt; &gt;&gt; the hardware ?<br>
 &gt; &gt; <br>
-&gt; &gt; yes,<br>
-&gt; &gt; <br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; btw. I think SMRDR should be precious ?<br>
-&gt; &gt; <br>
-&gt; &gt; so, you think I should drop<br>
-&gt; &gt; regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0)<br>
-&gt; <br>
-&gt; No, I am asking whether SMRDR should be marked precious or not.<br>
-&gt; </font></tt>
-<br>
-<br><tt><font size=2>I don't think so,</font></tt>
-<br><tt><font size=2>precious_reg: the register should not be read outside
-of</font></tt>
-<br><tt><font size=2>call from driver, i.e,. a clear on read interrupt
-status register.</font></tt>
-<br>
-<br><tt><font size=2><br>
-&gt; [...]<br>
-&gt; <br>
-&gt; &gt; CONFIDENTIALITY NOTE:<br>
-&gt; &gt; <br>
-&gt; &gt; This e-mail and any attachments may contain confidential information<br>
-&gt; &gt; and/or personal data, which is protected by applicable laws.
-Please be<br>
-&gt; &gt; reminded that duplication, disclosure, distribution, or use of
-this<br>
-&gt; &gt; e-mail (and/or its attachments) or any part thereof is prohibited.
-If<br>
-&gt; &gt; you receive this e-mail in error, please notify us immediately
+&gt; &gt; It seems there is a RPC HW restriction in CS# pin control.<br>
+&gt; &gt; Therefore, it can't send the 1'st spi-transfer for command and
+then<br>
+&gt; &gt; keeping CS# pin goes low for the 2'nd spi-transfer for address/data
 and<br>
-&gt; &gt; delete this mail as well as its attachment(s) from your system.
-In<br>
-&gt; &gt; addition, please be informed that collection, processing, and/or
-use of<br>
-&gt; &gt; personal data is prohibited unless expressly permitted by personal
-data<br>
-&gt; &gt; protection laws. Thank you for your attention and cooperation.<br>
-&gt; &gt; <br>
-&gt; &gt; Macronix International Co., Ltd.<br>
+&gt; &gt; so on.<br>
 &gt; <br>
-&gt; Can you do something about this ^ please ?<br>
+&gt; Isn't register DRCR bit SSLN/SSLE exactly for this purpose ?<br>
 &gt; </font></tt>
 <br>
-<br><tt><font size=2>I submit the patch file is by another remote git-server,
-which</font></tt>
-<br><tt><font size=2>supports git-format patch, git send-mail and so on.</font></tt>
-<br><tt><font size=2>But it can't receive email.</font></tt>
+<br><tt><font size=2>DRCR is for RPC module works in external space read
+mode, using memcpy( ).</font></tt>
+<br><tt><font size=2>It is not for _spi_sync().</font></tt>
 <br>
-<br><tt><font size=2>I get/send email are by office PC w/ Notes system
-and </font></tt>
-<br><tt><font size=2>this &quot;CONFx NOTE:&quot; is appended automatically
-by Notes mail-server.</font></tt>
-<br>
-<br><tt><font size=2>Please just never mind it.</font></tt>
-<br>
+<br><tt><font size=2>I only could use manual I/O mode by SMCR@bit-8 SSLKP
+and I found it has some </font></tt>
+<br><tt><font size=2>restrictions in manual I/O mode to control CS# pin.</font></tt>
+<br><tt><font size=2><br>
+</font></tt>
 <br><tt><font size=2>thanks &amp; best regards,</font></tt>
 <br><tt><font size=2>Mason<br>
-<br>
-<br>
 <br>
 CONFIDENTIALITY NOTE:<br>
 <br>
@@ -269,4 +147,4 @@ Macronix International Co., Ltd.<br>
 =====================================================================<br>
 </font></tt>
 
---=_alternative 0028B3A14825835C_=--
+--=_alternative 003310A24825835B_=--
