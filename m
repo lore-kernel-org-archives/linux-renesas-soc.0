@@ -1,40 +1,49 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42762 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbeLDO2p (ORCPT
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:37731 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbeLFJN5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:28:45 -0500
-Date: Tue, 4 Dec 2018 06:28:41 -0800
-From: Simon Horman <horms@verge.net.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Biju Das <biju.das@bp.renesas.com>,
+        Thu, 6 Dec 2018 04:13:57 -0500
+MIME-Version: 1.0
+References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com> <1544086559-47141-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1544086559-47141-2-git-send-email-biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Dec 2018 10:13:43 +0100
+Message-ID: <CAMuHMdV5tsqNN+_vR47J2OTCt5W0QqFLEm0u1JV+UAC+_vFn6g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: rtc: pcf85363: Document pcf85263
+ real-time clock
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 18/22] ARM: dts: r8a7744: Add QSPI support
-Message-ID: <20181204142840.dsj5lagggznunxko@verge.net.au>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
- <1543319795-48325-19-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdWDAvTubKLp1_z9sJuakBYkU3DH7-xN+2P4s0d5H7WL2A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWDAvTubKLp1_z9sJuakBYkU3DH7-xN+2P4s0d5H7WL2A@mail.gmail.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 30, 2018 at 10:02:16AM +0100, Geert Uytterhoeven wrote:
-> On Tue, Nov 27, 2018 at 1:05 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> > Add the DT node for the QSPI interface to the SoC dtsi.
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Dec 6, 2018 at 10:04 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> The pcf85263 RTC is compatible with the pcf85363 RTC.
+>
+> The difference between the pcf85263 and pcf85363 RTC is that the latter has
+> 64 bytes more RAM. This renders them incompatible from a DT point of view.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Thanks, applied for v4.21.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
