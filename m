@@ -1,92 +1,63 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbeLFV72 (ORCPT
+        with ESMTP id S1726057AbeLFWAA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:28 -0500
+        Thu, 6 Dec 2018 17:00:00 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 30/34] ARM: dts: r8a7744: Add MSIOF[012] support
-Date: Thu,  6 Dec 2018 13:58:25 -0800
-Message-Id: <491e70588805a8895bff6ac5a626c8bb481fea1c.1544125558.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
-References: <cover.1544125558.git.horms+renesas@verge.net.au>
+Subject: [PATCH 3/9] ARM: shmobile: Restrict TWD support to SoCs that have it
+Date: Thu,  6 Dec 2018 13:59:28 -0800
+Message-Id: <94cf946b8c19f90c39a0f01f0e2fe2ff32383b35.1544132474.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
+References: <cover.1544132474.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
+Currently support for the ARM Timer and Watchdog Unit is included
+unconditionally, while only some Renesas multicore Cortex-A9 SoCs have
+a TWD.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This decreases kernel image size by ca. 2 KiB on SoCs without a TWD.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 48 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ arch/arm/mach-shmobile/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 28fea2aaa0cf..992d622b5393 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1068,6 +1068,54 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 32f8297d993a..a35eb5913dfd 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -30,7 +30,6 @@ menuconfig ARCH_RENESAS
+ 	depends on ARCH_MULTI_V7 && MMU
+ 	select ARM_GIC
+ 	select GPIOLIB
+-	select HAVE_ARM_TWD if SMP
+ 	select NO_IOPORT_MAP
+ 	select PINCTRL
+ 	select SOC_BUS
+@@ -95,6 +94,7 @@ config ARCH_R8A7778
+ config ARCH_R8A7779
+ 	bool "R-Car H1 (R8A77790)"
+ 	select HAVE_ARM_SCU if SMP
++	select HAVE_ARM_TWD if SMP
+ 	select ARCH_RCAR_GEN1
  
-+		msiof0: spi@e6e20000 {
-+			compatible = "renesas,msiof-r8a7744",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e20000 0 0x0064>;
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 000>;
-+			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
-+			       <&dmac1 0x51>, <&dmac1 0x52>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 000>;
-+			status = "disabled";
-+		};
-+
-+		msiof1: spi@e6e10000 {
-+			compatible = "renesas,msiof-r8a7744",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e10000 0 0x0064>;
-+			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 208>;
-+			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
-+			       <&dmac1 0x55>, <&dmac1 0x56>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 208>;
-+			status = "disabled";
-+		};
-+
-+		msiof2: spi@e6e00000 {
-+			compatible = "renesas,msiof-r8a7744",
-+				     "renesas,rcar-gen2-msiof";
-+			reg = <0 0xe6e00000 0 0x0064>;
-+			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 205>;
-+			dmas = <&dmac0 0x41>, <&dmac0 0x42>,
-+			       <&dmac1 0x41>, <&dmac1 0x42>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			resets = <&cpg 205>;
-+			status = "disabled";
-+		};
-+
- 		can0: can@e6e80000 {
- 			compatible = "renesas,can-r8a7744",
- 				     "renesas,rcar-gen2-can";
+ config ARCH_R8A7790
+@@ -137,5 +137,6 @@ config ARCH_SH73A0
+ 	bool "SH-Mobile AG5 (R8A73A00)"
+ 	select ARCH_RMOBILE
+ 	select HAVE_ARM_SCU if SMP
++	select HAVE_ARM_TWD if SMP
+ 	select RENESAS_INTC_IRQPIN
+ endif
 -- 
 2.11.0
