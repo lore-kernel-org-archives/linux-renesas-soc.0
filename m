@@ -1,95 +1,165 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:39080 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeLJI7c (ORCPT
+        with ESMTP id S1725978AbeLFV7O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 03:59:32 -0500
+        Thu, 6 Dec 2018 16:59:14 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH/RFT net] ravb: expand rx descriptor data to accommodate hw checksum
-Date: Mon, 10 Dec 2018 09:59:17 +0100
-Message-Id: <20181210085917.23056-1-horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 06/34] ARM: dts: r8a7744: Add GPIO support
+Date: Thu,  6 Dec 2018 13:58:01 -0800
+Message-Id: <78ce1559b2f1c741ceda6f511c80beee57b1b71e.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Simon Horman <horms@verge.net.au>
+From: Biju Das <biju.das@bp.renesas.com>
 
-EtherAVB may provide a checksum of packet data appended to packet data. In
-order to allow this checksum to be received by the host descriptor data
-needs to be enlarged by 2 bytes to accommodate the checksum.
+Describe GPIO blocks in the R8A7744 device tree.
 
-In the case of MTU-sized packets without a VLAN tag the
-checksum were already accommodated by virtue of the space reserved for the
-VLAN tag. However, a packet of MTU-size with a  VLAN tag consumed all
-packet data space provided by a descriptor leaving no space for the
-trailing checksum.
-
-This was not detected by the driver which incorrectly used the last two
-bytes of packet data as the checksum and truncate the packet by two bytes.
-This resulted all such packets being dropped.
-
-A work around is to disable rx checksum offload
- # ethtool -K eth0 rx off
-
-This patch resolves this problem by increasing the size available for
-packet data in rx descriptors by two bytes. It also introduces
-RAVB_CSUM_LEN to make things a little clearer than "2" sprinkled lightly
-over the driver.
-
-Tested on R-Car E3 (r8a77990) ES1.0 based Ebisu-4D board
-
-Fixes: 4d86d3818627 ("ravb: RX checksum offload")
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/r8a7744.dtsi | 102 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 98 insertions(+), 4 deletions(-)
 
- I have marked this patch as RTF as I would like it to see further testing
- before being applied.
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index defed0d0c51d..f7f130cf61e4 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -40,6 +40,8 @@
- 		 NETIF_MSG_RX_ERR | \
- 		 NETIF_MSG_TX_ERR)
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 732c5d71191c..ea1a78288707 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -116,29 +116,123 @@
+ 		ranges;
  
-+#define RAVB_CSUM_LEN 2
+ 		gpio0: gpio@e6050000 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6050000 0 0x50>;
++			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 0 32>;
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-			/* placeholder */
++			clocks = <&cpg CPG_MOD 912>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 912>;
+ 		};
+ 
+ 		gpio1: gpio@e6051000 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6051000 0 0x50>;
++			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+-			/* placeholder */
++			gpio-controller;
++			gpio-ranges = <&pfc 0 32 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 911>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 911>;
+ 		};
+ 
+ 		gpio2: gpio@e6052000 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6052000 0 0x50>;
++			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+-			/* placeholder */
++			gpio-controller;
++			gpio-ranges = <&pfc 0 64 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 910>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 910>;
++		};
 +
- static const char *ravb_rx_irqs[NUM_RX_QUEUE] = {
- 	"ch0", /* RAVB_BE */
- 	"ch1", /* RAVB_NC */
-@@ -350,7 +352,7 @@ static int ravb_ring_init(struct net_device *ndev, int q)
- 	int i;
++		gpio3: gpio@e6053000 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6053000 0 0x50>;
++			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 96 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 909>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 909>;
++		};
++
++		gpio4: gpio@e6054000 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6054000 0 0x50>;
++			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 128 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 908>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 908>;
++		};
++
++		gpio5: gpio@e6055000 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6055000 0 0x50>;
++			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 160 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
+ 		};
  
- 	priv->rx_buf_sz = (ndev->mtu <= 1492 ? PKT_BUF_SZ : ndev->mtu) +
--		ETH_HLEN + VLAN_HLEN;
-+		ETH_HLEN + VLAN_HLEN + RAVB_CSUM_LEN;
+ 		gpio6: gpio@e6055400 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
+ 			reg = <0 0xe6055400 0 0x50>;
++			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+ 			#gpio-cells = <2>;
+-			/* placeholder */
++			gpio-controller;
++			gpio-ranges = <&pfc 0 192 32>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 905>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 905>;
++		};
++
++		gpio7: gpio@e6055800 {
++			compatible = "renesas,gpio-r8a7744",
++				     "renesas,rcar-gen2-gpio";
++			reg = <0 0xe6055800 0 0x50>;
++			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++			#gpio-cells = <2>;
++			gpio-controller;
++			gpio-ranges = <&pfc 0 224 26>;
++			#interrupt-cells = <2>;
++			interrupt-controller;
++			clocks = <&cpg CPG_MOD 904>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 904>;
+ 		};
  
- 	/* Allocate RX and TX skb rings */
- 	priv->rx_skb[q] = kcalloc(priv->num_rx_ring[q],
-@@ -533,13 +535,15 @@ static void ravb_rx_csum(struct sk_buff *skb)
- {
- 	u8 *hw_csum;
- 
--	/* The hardware checksum is 2 bytes appended to packet data */
--	if (unlikely(skb->len < 2))
-+	/* The hardware checksum is contained in RAVB_CSUM_LEN (2) bytes
-+	 * appended to packet data
-+	 */
-+	if (unlikely(skb->len < RAVB_CSUM_LEN))
- 		return;
--	hw_csum = skb_tail_pointer(skb) - 2;
-+	hw_csum = skb_tail_pointer(skb) - RAVB_CSUM_LEN;
- 	skb->csum = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
- 	skb->ip_summed = CHECKSUM_COMPLETE;
--	skb_trim(skb, skb->len - 2);
-+	skb_trim(skb, skb->len - RAVB_CSUM_LEN);
- }
- 
- /* Packet receive function for Ethernet AVB */
+ 		pfc: pin-controller@e6060000 {
 -- 
 2.11.0
