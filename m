@@ -1,41 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55731 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbeLFV5T (ORCPT
+        with ESMTP id S1726155AbeLFV7c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:57:19 -0500
+        Thu, 6 Dec 2018 16:59:32 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/3] arm64: defconfig: Enable scu-simple-card driver
-Date: Thu,  6 Dec 2018 13:57:07 -0800
-Message-Id: <595096daf0ac9c1741b6182eb72d636802a21006.1544126077.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544126077.git.horms+renesas@verge.net.au>
-References: <cover.1544126077.git.horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC Drivers Updates for v4.21
+Date: Thu,  6 Dec 2018 13:58:53 -0800
+Message-Id: <cover.1544131943.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable the scu-simple-card which is used by
-the R-Car E3 (r8a77990) based Ebisu board.
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Please consider these Renesas ARM based SoC drivers updates for v4.21.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f88190463481..9d0b42d96f03 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -491,6 +491,7 @@ CONFIG_SND_SOC_RT5514=m
- CONFIG_SND_SOC_RT5514_SPI=m
- CONFIG_SND_SOC_RT5645=m
- CONFIG_SND_SIMPLE_CARD=m
-+CONFIG_SND_SIMPLE_SCU_CARD=y
- CONFIG_SND_AUDIO_GRAPH_CARD=m
- CONFIG_I2C_HID=m
- CONFIG_USB=y
--- 
-2.11.0
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-drivers-for-v4.21
+
+for you to fetch changes up to 7fc4650cc2417d7a2907a000f6f88240baa42018:
+
+  soc: renesas: rcar-sysc: Fix power domain control after system resume (2018-12-06 12:10:10 -0800)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC Drivers Updates for v4.21
+
+SYSC Driver:
+* Common
+  - Fix power domain control after system resume
+  - Merge PM Domain registration and linking
+  - Remove rcar_sysc_power_{down,up}() helpers
+* R-Car E3 (r8a77990) SoC
+  - Fix initialization order of 3DG-{A,B}
+* R-Car V3H (r8a77980) SoC
+  - Correct A3VIP[012] power domain hierarchy
+  - Correct names of A2DP[01] power domains
+* R-Car V3M (r8a77970) SoC
+  - Correct names of A2DP/A2CN power domains
+  - emove non-existent CR7 power domain
+* R-Car M3-N (r8a77965) SoC
+  - Remove non-existent A3IR power domain
+
+----------------------------------------------------------------
+Geert Uytterhoeven (9):
+      soc: renesas: r8a77965-sysc: Remove non-existent A3IR power domain
+      soc: renesas: r8a77970-sysc: Remove non-existent CR7 power domain
+      soc: renesas: r8a77970-sysc: Correct names of A2DP/A2CN power domains
+      soc: renesas: r8a77980-sysc: Correct names of A2DP[01] power domains
+      soc: renesas: r8a77980-sysc: Correct A3VIP[012] power domain hierarchy
+      soc: renesas: r8a77990-sysc: Fix initialization order of 3DG-{A,B}
+      soc: renesas: rcar-sysc: Remove rcar_sysc_power_{down,up}() helpers
+      soc: renesas: rcar-sysc: Merge PM Domain registration and linking
+      soc: renesas: rcar-sysc: Fix power domain control after system resume
+
+ drivers/soc/renesas/r8a77965-sysc.c       |  1 -
+ drivers/soc/renesas/r8a77970-sysc.c       |  5 +--
+ drivers/soc/renesas/r8a77980-sysc.c       | 10 ++---
+ drivers/soc/renesas/r8a77990-sysc.c       | 23 ++---------
+ drivers/soc/renesas/rcar-sysc.c           | 65 +++++++++----------------------
+ include/dt-bindings/power/r8a77970-sysc.h |  7 ++--
+ include/dt-bindings/power/r8a77980-sysc.h |  6 +--
+ 7 files changed, 35 insertions(+), 82 deletions(-)
