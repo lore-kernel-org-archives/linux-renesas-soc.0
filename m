@@ -1,53 +1,88 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:58088 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbeLCT4z (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeLFV7s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:56:55 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-mmc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Avri Altman <Avri.Altman@wdc.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] mmc: document 'Reliable Write' bit in uapi header
-Date: Mon,  3 Dec 2018 20:56:47 +0100
-Message-Id: <20181203195647.6261-1-wsa+renesas@sang-engineering.com>
+        Thu, 6 Dec 2018 16:59:48 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/3] dt-bindings: arm: renesas: Move 'renesas,prr' binding to its own doc
+Date: Thu,  6 Dec 2018 13:59:13 -0800
+Message-Id: <74791d15fd7c405511e3cc097c2f043171ecbdb0.1544124873.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544124873.git.horms+renesas@verge.net.au>
+References: <cover.1544124873.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-If we use it this way, people should know about it. Also, replace
-true/false with nonzero/zero because the flag is not strictly a bool
-anymore.
+From: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+In preparation to convert board-level bindings to json-schema, move
+various misc SoC bindings out to their own file.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ .../devicetree/bindings/arm/renesas,prr.txt          | 20 ++++++++++++++++++++
+ Documentation/devicetree/bindings/arm/shmobile.txt   | 18 ------------------
+ 2 files changed, 20 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/renesas,prr.txt
 
-Change since V1:
-* reworded first line of comment as well. Thanks, Geert!
-
-Still not super happy about shifting into the sign bit, but yeah...
-don't break userspace, I guess.
-
- include/uapi/linux/mmc/ioctl.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/mmc/ioctl.h b/include/uapi/linux/mmc/ioctl.h
-index 45f369dc0a42..00c08120f3ba 100644
---- a/include/uapi/linux/mmc/ioctl.h
-+++ b/include/uapi/linux/mmc/ioctl.h
-@@ -5,7 +5,10 @@
- #include <linux/types.h>
- 
- struct mmc_ioc_cmd {
--	/* Implies direction of data.  true = write, false = read */
-+	/*
-+	 * Direction of data: nonzero = write, zero = read.
-+	 * Bit 31 selects 'Reliable Write' for RPMB.
-+	 */
- 	int write_flag;
- 
- 	/* Application-specific command.  true = precede with CMD55 */
+diff --git a/Documentation/devicetree/bindings/arm/renesas,prr.txt b/Documentation/devicetree/bindings/arm/renesas,prr.txt
+new file mode 100644
+index 000000000000..08e482e953ca
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/renesas,prr.txt
+@@ -0,0 +1,20 @@
++Renesas Product Register
++
++Most Renesas ARM SoCs have a Product Register or Boundary Scan ID Register that
++allows to retrieve SoC product and revision information.  If present, a device
++node for this register should be added.
++
++Required properties:
++  - compatible: Must be one of:
++    "renesas,prr"
++    "renesas,bsid"
++  - reg: Base address and length of the register block.
++
++
++Examples
++--------
++
++	prr: chipid@ff000044 {
++		compatible = "renesas,prr";
++		reg = <0 0xff000044 0 4>;
++	};
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 144f045a9f4b..92cda17870d3 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -153,21 +153,3 @@ Boards:
+     compatible = "renesas,v3msk", "renesas,r8a77970"
+   - Wheat (RTP0RC7792ASKB0000JE)
+     compatible = "renesas,wheat", "renesas,r8a7792"
+-
+-
+-Most Renesas ARM SoCs have a Product Register or Boundary Scan ID Register that
+-allows to retrieve SoC product and revision information.  If present, a device
+-node for this register should be added.
+-
+-Required properties:
+-  - compatible: Must be "renesas,prr" or "renesas,bsid"
+-  - reg: Base address and length of the register block.
+-
+-
+-Examples
+---------
+-
+-	prr: chipid@ff000044 {
+-		compatible = "renesas,prr";
+-		reg = <0 0xff000044 0 4>;
+-	};
 -- 
 2.11.0
