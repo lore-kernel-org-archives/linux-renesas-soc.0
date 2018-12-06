@@ -1,50 +1,92 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:5937 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbeLGJnI (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbeLFV72 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 04:43:08 -0500
-From: <Tudor.Ambarus@microchip.com>
-To: <fabrizio.castro@bp.renesas.com>, <broonie@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <geert+renesas@glider.be>, <horms@verge.net.au>, <richard@nod.at>
-CC: <devicetree@vger.kernel.org>, <Chris.Paterson2@renesas.com>,
-        <magnus.damm@gmail.com>, <linux-spi@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 2/4] mtd: spi-nor: Add support for is25lp016d
-Date: Fri, 7 Dec 2018 09:43:05 +0000
-Message-ID: <4996db3a-26eb-2035-3d98-7aba2bc8630c@microchip.com>
-References: <1541075705-1333-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1541075705-1333-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1541075705-1333-3-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D3685F6842A18A45BBF47B11B6FC306D@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Thu, 6 Dec 2018 16:59:28 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 30/34] ARM: dts: r8a7744: Add MSIOF[012] support
+Date: Thu,  6 Dec 2018 13:58:25 -0800
+Message-Id: <491e70588805a8895bff6ac5a626c8bb481fea1c.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-DQoNCk9uIDExLzAxLzIwMTggMDI6MzUgUE0sIEZhYnJpemlvIENhc3RybyB3cm90ZToNCj4gVGhl
-IGlzMjVscDAxNmQgaXMgZm91bmQgb24gdGhlIGl3ZzIzcyBmcm9tIGlXYXZlLCB0aGVyZWZvcmUN
-Cj4gYWRkIGRyaXZlciBzdXBwb3J0IGZvciBpdCBzbyB0aGF0IHdlIGNhbiB1cHN0cmVhbSBib2Fy
-ZCBzdXBwb3J0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXpp
-by5jYXN0cm9AYnAucmVuZXNhcy5jb20+DQoNClJldmlld2VkLWJ5OiBUdWRvciBBbWJhcnVzIDx0
-dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQoNCj4gLS0tDQo+ICBkcml2ZXJzL210ZC9zcGkt
-bm9yL3NwaS1ub3IuYyB8IDIgKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykN
-Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyBiL2RyaXZl
-cnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+IGluZGV4IDk0MDdjYTUuLjg1ZDg2OWIgMTAwNjQ0
-DQo+IC0tLSBhL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+ICsrKyBiL2RyaXZlcnMv
-bXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+IEBAIC0xMzUyLDYgKzEzNTIsOCBAQCBzdGF0aWMgY29u
-c3Qgc3RydWN0IGZsYXNoX2luZm8gc3BpX25vcl9pZHNbXSA9IHsNCj4gIAl7ICJpczI1Y2Q1MTIi
-LCAgSU5GTygweDdmOWQyMCwgMCwgMzIgKiAxMDI0LCAgIDIsIFNFQ1RfNEspIH0sDQo+ICAJeyAi
-aXMyNWxxMDQwYiIsIElORk8oMHg5ZDQwMTMsIDAsIDY0ICogMTAyNCwgICA4LA0KPiAgCQkJU0VD
-VF80SyB8IFNQSV9OT1JfRFVBTF9SRUFEIHwgU1BJX05PUl9RVUFEX1JFQUQpIH0sDQo+ICsJeyAi
-aXMyNWxwMDE2ZCIsIElORk8oMHg5ZDYwMTUsIDAsIDY0ICogMTAyNCwgIDMyLA0KPiArCQkJU0VD
-VF80SyB8IFNQSV9OT1JfRFVBTF9SRUFEIHwgU1BJX05PUl9RVUFEX1JFQUQpIH0sDQo+ICAJeyAi
-aXMyNWxwMDgwZCIsIElORk8oMHg5ZDYwMTQsIDAsIDY0ICogMTAyNCwgIDE2LA0KPiAgCQkJU0VD
-VF80SyB8IFNQSV9OT1JfRFVBTF9SRUFEIHwgU1BJX05PUl9RVUFEX1JFQUQpIH0sDQo+ICAJeyAi
-aXMyNWxwMTI4IiwgIElORk8oMHg5ZDYwMTgsIDAsIDY0ICogMTAyNCwgMjU2LA0KPiANCg==
+From: Biju Das <biju.das@bp.renesas.com>
+
+Add the DT nodes needed by MSIOF[012] interfaces to the SoC dtsi.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7744.dtsi | 48 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 28fea2aaa0cf..992d622b5393 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -1068,6 +1068,54 @@
+ 			status = "disabled";
+ 		};
+ 
++		msiof0: spi@e6e20000 {
++			compatible = "renesas,msiof-r8a7744",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e20000 0 0x0064>;
++			interrupts = <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 000>;
++			dmas = <&dmac0 0x51>, <&dmac0 0x52>,
++			       <&dmac1 0x51>, <&dmac1 0x52>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 000>;
++			status = "disabled";
++		};
++
++		msiof1: spi@e6e10000 {
++			compatible = "renesas,msiof-r8a7744",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e10000 0 0x0064>;
++			interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 208>;
++			dmas = <&dmac0 0x55>, <&dmac0 0x56>,
++			       <&dmac1 0x55>, <&dmac1 0x56>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 208>;
++			status = "disabled";
++		};
++
++		msiof2: spi@e6e00000 {
++			compatible = "renesas,msiof-r8a7744",
++				     "renesas,rcar-gen2-msiof";
++			reg = <0 0xe6e00000 0 0x0064>;
++			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 205>;
++			dmas = <&dmac0 0x41>, <&dmac0 0x42>,
++			       <&dmac1 0x41>, <&dmac1 0x42>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			resets = <&cpg 205>;
++			status = "disabled";
++		};
++
+ 		can0: can@e6e80000 {
+ 			compatible = "renesas,can-r8a7744",
+ 				     "renesas,rcar-gen2-can";
+-- 
+2.11.0
