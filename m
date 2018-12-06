@@ -1,57 +1,66 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:5386 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725988AbeLGLgg (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbeLFWAC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:36:36 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Simon Horman <horms@verge.net.au>
-Cc: Biju Das <biju.das@bp.renesas.com>,
+        Thu, 6 Dec 2018 17:00:02 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v4 4/5] ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
-Date: Fri,  7 Dec 2018 11:27:45 +0000
-Message-Id: <1544182066-31528-5-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
-References: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/9] ARM: shmobile: Hide ARCH_RZN1 to improve consistency
+Date: Thu,  6 Dec 2018 13:59:30 -0800
+Message-Id: <79aac4b9b2081235ecf9fb1683aa765e539dc0e2.1544132474.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
+References: <cover.1544132474.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase hardware
-support enable the driver in the shmobile_defconfig multiplatform
-configuration.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-	* No change.
-V2-->V3
-	* No change.
-V3-->V4
-	* No Change.
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Unlike all other family-specific Kconfig symbols for Renesas ARM SoCs,
+ARCH_RZN1 is user-visible.  As this symbol is already selected by the
+SoC-specific ARCH_R9A06G032 symbol, there is no need for that.
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 9e5a5ad..fdac4e4 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -177,6 +177,7 @@ CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_RS5C372=y
-+CONFIG_RTC_DRV_PCF85363=y
- CONFIG_RTC_DRV_BQ32K=y
- CONFIG_RTC_DRV_S35390A=y
- CONFIG_RTC_DRV_RX8581=y
+Hide ARCH_RZN1 from the user, and move it up, where all other
+family-specific Kconfig symbols live.  Drop the select of CPU_V7, as
+this is already implied by the dependency of ARCH_RENESAS on
+ARCH_MULTI_V7.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/Kconfig | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index a35eb5913dfd..70c6f557f8cd 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -25,6 +25,10 @@ config ARCH_RMOBILE
+ 	select SYS_SUPPORTS_SH_CMT
+ 	select SYS_SUPPORTS_SH_TMU
+ 
++config ARCH_RZN1
++	bool
++	select ARM_AMBA
++
+ menuconfig ARCH_RENESAS
+ 	bool "Renesas ARM SoCs"
+ 	depends on ARCH_MULTI_V7 && MMU
+@@ -128,11 +132,6 @@ config ARCH_R9A06G032
+ 	bool "RZ/N1D (R9A06G032)"
+ 	select ARCH_RZN1
+ 
+-config ARCH_RZN1
+-	bool "RZ/N1 (R9A06G0xx) Family"
+-	select ARM_AMBA
+-	select CPU_V7
+-
+ config ARCH_SH73A0
+ 	bool "SH-Mobile AG5 (R8A73A00)"
+ 	select ARCH_RMOBILE
 -- 
-2.7.4
+2.11.0
