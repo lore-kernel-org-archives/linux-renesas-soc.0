@@ -1,66 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:41321 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbeLDOI3 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbeLFV7L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:08:29 -0500
-Received: by mail-ua1-f66.google.com with SMTP id z24so5801520ual.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Dec 2018 06:08:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20181129003949.19984-1-niklas.soderlund+renesas@ragnatech.se> <20181129003949.19984-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181129003949.19984-3-niklas.soderlund+renesas@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Dec 2018 15:08:16 +0100
-Message-ID: <CAMuHMdVBmTuAGR1TKK_smoCkp_j8CBGC=bdtH5D9HY3rOBTC2w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: rcar-gen3: add HS400 quirk for SD clock
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Thu, 6 Dec 2018 16:59:11 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 28/34] ARM: dts: r8a7744-iwg20d-q7-dbcm-ca: Add device tree for camera DB
+Date: Thu,  6 Dec 2018 13:58:23 -0800
+Message-Id: <7fbbfe07b588cd81c1046a1846345a5cf614589a.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Nov 29, 2018 at 1:41 AM Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> On H3 (ES1.x, ES2.0) and M3-W (ES1.0, ES1.1) the clock setting for HS400
-> needs a quirk to function properly. The reason for the quirk is that
-> there are two settings which produces same divider value for the SDn
-> clock. On the effected boards the one currently selected results in
-> HS400 not working.
->
-> This change uses the same method as the Gen2 CPG driver and simply
-> ignores the first clock setting as this is the offending one when
-> selecting the settings. Which of the two possible settings is used have
-> no effect for SDR104.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->
-> ---
-> * Changes since v1
-> - Fixed spelling in commit message, thanks Sergei and Geert!
-> - Reworked the whole patch per Geerts suggestion. Instead of only
->   skipping the first row on the effected boards when setting the clock
->   rete totally ignore it. This is made possible by another change to the
->   clock driver posted separately from this series and which this patch
->   now depends on [1].
->
->   1. [PATCH] clk: renesas: rcar-gen3: set state when registering SD clocks
+From: Biju Das <biju.das@bp.renesas.com>
 
-Thanks for the update!
+This patch adds support for the camera daughter board which is
+connected to iWave's RZ/G1N Qseven carrier board.
 
-With s/rete/rate/:
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/Makefile                      |  1 +
+ arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts | 17 +++++++++++++++++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index aba5a25b7eac..9cf6fdfd1f3a 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -830,6 +830,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r8a7743-iwg20d-q7-dbcm-ca.dtb \
+ 	r8a7743-sk-rzg1m.dtb \
+ 	r8a7744-iwg20d-q7.dtb \
++	r8a7744-iwg20d-q7-dbcm-ca.dtb \
+ 	r8a7745-iwg22d-sodimm.dtb \
+ 	r8a7745-iwg22d-sodimm-dbhd-ca.dtb \
+ 	r8a7745-sk-rzg1e.dtb \
+diff --git a/arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
+new file mode 100644
+index 000000000000..3e58c2e92e03
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7744-iwg20d-q7-dbcm-ca.dts
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the iWave Systems RZ/G1N Qseven board development
++ * platform with camera daughter board
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a7744-iwg20m.dtsi"
++#include "iwg20d-q7-common.dtsi"
++#include "iwg20d-q7-dbcm-ca.dtsi"
++
++/ {
++	model = "iWave Systems RZ/G1N Qseven development platform with camera add-on";
++	compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7744";
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
