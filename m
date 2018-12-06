@@ -1,18 +1,18 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeLFV7H (ORCPT
+        with ESMTP id S1726038AbeLFV7a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:07 -0500
+        Thu, 6 Dec 2018 16:59:30 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/34] ARM: dts: r8a7744: Add PWM SoC support
-Date: Thu,  6 Dec 2018 13:58:21 -0800
-Message-Id: <cebc31e8b59445aaf84b8810ff76b2fcc246fea2.1544125558.git.horms+renesas@verge.net.au>
+Subject: [PATCH 33/34] ARM: dts: iwg20d-q7-common: Move cmt/rwdt node out of RZ/G1M SOM
+Date: Thu,  6 Dec 2018 13:58:28 -0800
+Message-Id: <b72ce26cb73afd042d65f737971f560a491e1275.1544125558.git.horms+renesas@verge.net.au>
 In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
 References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -20,95 +20,72 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Add the definitions for pwm[0123456] to the SoC dtsi.
+The iWave RZ/G1N board is almost identical to RZ/G1M. cmt and rwdt modules
+are SoC specific and should be part of board dts rather than SoM dtsi. By
+moving these nodes to the common dtsi it allows cmt and rwdt to be enabled
+on both of these boards with less lines of code.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 70 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi | 9 +++++++++
+ arch/arm/boot/dts/r8a7743-iwg20m.dtsi   | 9 ---------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 06952f5a1e9f..181aa0732ce1 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -972,6 +972,76 @@
- 			status = "disabled";
- 		};
+diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+index ca9154dd8052..e2b1ab9b56e5 100644
+--- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
++++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
+@@ -116,6 +116,10 @@
+ 	status = "okay";
+ };
  
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
++&cmt0 {
++	status = "okay";
++};
 +
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
+ &hsusb {
+ 	status = "okay";
+ 	pinctrl-0 = <&usb0_pins>;
+@@ -230,6 +234,11 @@
+ 	};
+ };
+ 
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
++};
 +
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a7744", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
- 		can0: can@e6e80000 {
- 			compatible = "renesas,can-r8a7744",
- 				     "renesas,rcar-gen2-can";
+ &scif0 {
+ 	pinctrl-0 = <&scif0_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+index 0e2e033cc849..b3fee1d61c87 100644
+--- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
+@@ -31,10 +31,6 @@
+ 	};
+ };
+ 
+-&cmt0 {
+-	status = "okay";
+-};
+-
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
+@@ -88,11 +84,6 @@
+ 	};
+ };
+ 
+-&rwdt {
+-	timeout-sec = <60>;
+-	status = "okay";
+-};
+-
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.11.0
