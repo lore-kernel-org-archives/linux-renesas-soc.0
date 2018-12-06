@@ -1,124 +1,46 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:34287 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeLDQBu (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55731 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbeLFV5P (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:01:50 -0500
-MIME-Version: 1.0
-References: <20181129130559.66732-1-chris.brandt@renesas.com> <20181129130559.66732-3-chris.brandt@renesas.com>
-In-Reply-To: <20181129130559.66732-3-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 4 Dec 2018 17:01:35 +0100
-Message-ID: <CAMuHMdX-kqoVRs-VouhwEwv+gHmUsyHcUH9iyAaZyRQE-VWJ9A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: r7s9210-rza2mevb: Add support for RZ/A2M EVB
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 6 Dec 2018 16:57:15 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 3/3] arm64: defconfig: Enable CONFIG_PHY_RCAR_GEN3_PCIE
+Date: Thu,  6 Dec 2018 13:57:08 -0800
+Message-Id: <fe16bcd6d44f1a2bccc4618119463d9d23a6ae92.1544126077.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544126077.git.horms+renesas@verge.net.au>
+References: <cover.1544126077.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Chris,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Nov 29, 2018 at 2:07 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add support for Renesas RZ/A2M evaluation board.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Enable R-Car Gen3 PCIe PHY support, which is needed for PCIe to function
+on the Renesas Condor board.
 
-Thanks for your patch!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> index 000000000000..9570aeb8f1ce
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
-> @@ -0,0 +1,133 @@
-> +/*
-> + * Device Tree Source for the RZA2MEVB board
-> + *
-> + * Copyright (C) 2018 Renesas Electronics
-> + *
-> + * This file is dual-licensed: you can use it either under the terms
-> + * of the GPL or the X11 license, at your option. Note that this dual
-> + * licensing only applies to this file, and not this project as a
-> + * whole.
-
-Let's see about the license...
-
-> +/ {
-> +       model = "RZA2MEVB";
-> +       compatible = "renesas,rza2mevb", "renesas,r7s9210";
-> +
-> +       aliases {
-> +               serial0 = &scif4;
-> +       };
-> +
-> +       chosen {
-> +               bootargs = "ignore_loglevel earlycon rootfstype=cramfs root=mtd:rootfs";
-
-I wouldn't put "earlycon" in the default bootargs.
-It's meant for debugging.
-
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +
-> +       memory@80000000 {
-
-40000000
-
-> +               device_type = "memory";
-> +               reg = <0x40000000 0x00800000>;   /* HyperRAM */
-> +       };
-> +
-> +       lbsc {
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +       };
-> +
-> +       leds {
-> +               status = "okay";
-
-Please drop this line, "okay" is the default.
-
-> +               compatible = "gpio-leds";
-> +
-> +               led0 {
-> +                       gpios = <&pinctrl RZA2_PIN(PORT6, 0) GPIO_ACTIVE_HIGH>;
-
-There's a second (yellow green) LED connected to PC_1.
-Hence
-
-        red {
-                gpios = <&pinctrl RZA2_PIN(PORT6, 0) GPIO_ACTIVE_HIGH>;
-        };
-        green {
-                gpios = <&pinctrl RZA2_PIN(PORTC, 1) GPIO_ACTIVE_HIGH>;
-        }
-
-> +               };
-> +       };
-
-> +&pinctrl {
-> +
-
-Please drop this blank line.
-
-> +       /* Serial Console */
-> +       scif4_pins: serial4 {
-> +               pinmux = <RZA2_PINMUX(PORT9, 0, 4)>,    /* TxD4 */
-> +                        <RZA2_PINMUX(PORT9, 1, 4)>;    /* RxD4 */
-> +       };
-> +};
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 9d0b42d96f03..77f98a7e860b 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -657,6 +657,7 @@ CONFIG_PHY_HISI_INNO_USB2=y
+ CONFIG_PHY_MVEBU_CP110_COMPHY=y
+ CONFIG_PHY_QCOM_QMP=m
+ CONFIG_PHY_QCOM_USB_HS=y
++CONFIG_PHY_RCAR_GEN3_PCIE=y
+ CONFIG_PHY_RCAR_GEN3_USB2=y
+ CONFIG_PHY_RCAR_GEN3_USB3=m
+ CONFIG_PHY_ROCKCHIP_EMMC=y
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.11.0
