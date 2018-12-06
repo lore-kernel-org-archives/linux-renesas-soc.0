@@ -1,137 +1,47 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH] Add support to reset device controls
-Date: Mon,  3 Dec 2018 12:03:31 +0000
-Message-Id: <20181203120331.4097-1-kieran.bingham@ideasonboard.com>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbeLFV7u (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:59:50 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] dt-bindings: arm: renesas: Document iW-RainboW-G20D-Qseven-RZG1N board
+Date: Thu,  6 Dec 2018 13:59:12 -0800
+Message-Id: <ea456bf918e31a0f755c5c02963b4e10513fa82c.1544124873.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544124873.git.horms+renesas@verge.net.au>
+References: <cover.1544124873.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Provide a new option '--reset-controls' which will enumerate the
-available controls on a device or sub-device, and re-initialise them to
-defaults.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Document the iW-RainboW-G20D-Qseven-RZG1N device tree bindings,
+listing it as a supported board.
 
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+ Documentation/devicetree/bindings/arm/shmobile.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-This 'extends' the video_list_controls() function with an extra bool
-flag for 'reset' to prevent duplicating the iteration functionality.
-
-The patch could also pass the same flag into 'video_print_control()'
-rather than implementing 'video_reset_control()' which necessitates
-calling query_control() a second time.
-
-I have chosen to add the extra call, as I feel it makes the code
-cleaner, and pollutes the existing implementation less. The cost of the
-extra query, while a little redundant should be minimal and produces a
-simple function to reset the control independently.
----
- yavta.c | 41 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
-
-diff --git a/yavta.c b/yavta.c
-index c7986bd9e031..30022c45ed5b 100644
---- a/yavta.c
-+++ b/yavta.c
-@@ -1186,7 +1186,28 @@ static int video_print_control(struct device *dev, unsigned int id, bool full)
- 	return query.id;
- }
- 
--static void video_list_controls(struct device *dev)
-+static int video_reset_control(struct device *dev, unsigned int id)
-+{
-+	struct v4l2_queryctrl query;
-+	int ret;
-+
-+	ret = query_control(dev, id, &query);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (query.flags & V4L2_CTRL_FLAG_DISABLED)
-+		return query.id;
-+
-+	if (query.type == V4L2_CTRL_TYPE_CTRL_CLASS)
-+		return query.id;
-+
-+	printf("Reset control 0x%08x to %d:\n", query.id, query.default_value);
-+	set_control(dev, query.id, query.default_value);
-+
-+	return query.id;
-+}
-+
-+static void video_list_controls(struct device *dev, bool reset)
- {
- 	unsigned int nctrls = 0;
- 	unsigned int id;
-@@ -1207,6 +1228,12 @@ static void video_list_controls(struct device *dev)
- 		if (ret < 0)
- 			break;
- 
-+		if (reset) {
-+			ret = video_reset_control(dev, id);
-+			if (ret < 0)
-+				break;
-+		}
-+
- 		id = ret;
- 		nctrls++;
- 	}
-@@ -1837,6 +1864,7 @@ static void usage(const char *argv0)
- 	printf("    --offset			User pointer buffer offset from page start\n");
- 	printf("    --premultiplied		Color components are premultiplied by alpha value\n");
- 	printf("    --queue-late		Queue buffers after streamon, not before\n");
-+	printf("    --reset-controls		Enumerate available controls and reset to defaults\n");
- 	printf("    --requeue-last		Requeue the last buffers before streamoff\n");
- 	printf("    --timestamp-source		Set timestamp source on output buffers [eof, soe]\n");
- 	printf("    --skip n			Skip the first n frames\n");
-@@ -1860,6 +1888,7 @@ static void usage(const char *argv0)
- #define OPT_PREMULTIPLIED	269
- #define OPT_QUEUE_LATE		270
- #define OPT_DATA_PREFIX		271
-+#define OPT_RESET_CONTROLS	272
- 
- static struct option opts[] = {
- 	{"buffer-size", 1, 0, OPT_BUFFER_SIZE},
-@@ -1888,6 +1917,7 @@ static struct option opts[] = {
- 	{"queue-late", 0, 0, OPT_QUEUE_LATE},
- 	{"get-control", 1, 0, 'r'},
- 	{"requeue-last", 0, 0, OPT_REQUEUE_LAST},
-+	{"reset-controls", 0, 0, OPT_RESET_CONTROLS},
- 	{"realtime", 2, 0, 'R'},
- 	{"size", 1, 0, 's'},
- 	{"set-control", 1, 0, 'w'},
-@@ -1915,6 +1945,7 @@ int main(int argc, char *argv[])
- 	int do_enum_formats = 0, do_set_format = 0;
- 	int do_enum_inputs = 0, do_set_input = 0;
- 	int do_list_controls = 0, do_get_control = 0, do_set_control = 0;
-+	int do_reset_controls = 0;
- 	int do_sleep_forever = 0, do_requeue_last = 0;
- 	int do_rt = 0, do_log_status = 0;
- 	int no_query = 0, do_queue_late = 0;
-@@ -2107,6 +2138,9 @@ int main(int argc, char *argv[])
- 		case OPT_QUEUE_LATE:
- 			do_queue_late = 1;
- 			break;
-+		case OPT_RESET_CONTROLS:
-+			do_reset_controls = 1;
-+			break;
- 		case OPT_REQUEUE_LAST:
- 			do_requeue_last = 1;
- 			break;
-@@ -2185,7 +2219,10 @@ int main(int argc, char *argv[])
- 		set_control(&dev, ctrl_name, ctrl_value);
- 
- 	if (do_list_controls)
--		video_list_controls(&dev);
-+		video_list_controls(&dev, false);
-+
-+	if (do_reset_controls)
-+		video_list_controls(&dev, true);
- 
- 	if (do_enum_formats) {
- 		printf("- Available formats:\n");
+diff --git a/Documentation/devicetree/bindings/arm/shmobile.txt b/Documentation/devicetree/bindings/arm/shmobile.txt
+index 4cfb56787a90..144f045a9f4b 100644
+--- a/Documentation/devicetree/bindings/arm/shmobile.txt
++++ b/Documentation/devicetree/bindings/arm/shmobile.txt
+@@ -101,6 +101,8 @@ Boards:
+     compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7743"
+   - iWave Systems RZ/G1M Qseven System On Module (iW-RainboW-G20M-Qseven)
+     compatible = "iwave,g20m", "renesas,r8a7743"
++  - iWave Systems RZ/G1N Qseven Development Platform (iW-RainboW-G20D-Qseven)
++    compatible = "iwave,g20d", "iwave,g20m", "renesas,r8a7744"
+   - iWave Systems RZ/G1N Qseven System On Module (iW-RainboW-G20M-Qseven)
+     compatible = "iwave,g20m", "renesas,r8a7744"
+   - Kingfisher (SBEV-RCAR-KF-M03)
 -- 
-2.17.1
+2.11.0
