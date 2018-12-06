@@ -1,51 +1,45 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34124 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728052AbeLEPuc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbeLFV7z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:50:32 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 16:59:55 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC PATCH 7/7] soc: renesas: r8a77990-sysc: Fix power request conflicts
-Date: Wed,  5 Dec 2018 16:50:28 +0100
-Message-Id: <20181205155028.14335-8-geert+renesas@glider.be>
-In-Reply-To: <20181205155028.14335-1-geert+renesas@glider.be>
-References: <20181205155028.14335-1-geert+renesas@glider.be>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] ARM: shmobile: sh73a0: Remove obsolete inclusion of <asm/smp_twd.h>
+Date: Thu,  6 Dec 2018 13:59:29 -0800
+Message-Id: <e743454a0f42b5acf17b5fddce9811d53e4bf24b.1544132474.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
+References: <cover.1544132474.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the location and contents of the SYSCEXTMASK register on R-Car
-E3, to prevent conflicts between internal and external power requests.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Based on a patch in the BSP by Dien Pham <dien.pham.ry@renesas.com>.
+As of commit 9a9863987bf7307f ("ARM: shmobile: Remove legacy SoC code
+for SH-Mobile AG5"), this header file is no longer used.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/r8a77990-sysc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/mach-shmobile/smp-sh73a0.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/soc/renesas/r8a77990-sysc.c b/drivers/soc/renesas/r8a77990-sysc.c
-index 664b244eb1dd9d95..1d2432020b7a15d2 100644
---- a/drivers/soc/renesas/r8a77990-sysc.c
-+++ b/drivers/soc/renesas/r8a77990-sysc.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2018 Renesas Electronics Corp.
-  */
+diff --git a/arch/arm/mach-shmobile/smp-sh73a0.c b/arch/arm/mach-shmobile/smp-sh73a0.c
+index 9bc543faba96..0403aa8629dd 100644
+--- a/arch/arm/mach-shmobile/smp-sh73a0.c
++++ b/arch/arm/mach-shmobile/smp-sh73a0.c
+@@ -12,7 +12,6 @@
+ #include <linux/delay.h>
  
-+#include <linux/bits.h>
- #include <linux/bug.h>
- #include <linux/kernel.h>
- #include <linux/sys_soc.h>
-@@ -50,4 +51,6 @@ const struct rcar_sysc_info r8a77990_sysc_info __initconst = {
- 	.init = r8a77990_sysc_init,
- 	.areas = r8a77990_areas,
- 	.num_areas = ARRAY_SIZE(r8a77990_areas),
-+	.extmask_offs = 0x2f8,
-+	.extmask_val = BIT(0),
- };
+ #include <asm/smp_plat.h>
+-#include <asm/smp_twd.h>
+ 
+ #include "common.h"
+ #include "sh73a0.h"
 -- 
-2.17.1
+2.11.0
