@@ -1,108 +1,168 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46568 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbeLEOXz (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbeLFWAG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 09:23:55 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v24so7136967uap.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Dec 2018 06:23:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20181126170247.4076-1-niklas.soderlund+renesas@ragnatech.se>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 5 Dec 2018 15:23:17 +0100
-Message-ID: <CAPDyKFrgk4MmPQ3k=6+La5MO_J-iJTOvbKjyE5HFTsA7Y5zFgg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] mmc: tmio: fix reset operation
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 6 Dec 2018 17:00:06 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 8/9] ARM: shmobile: R-Mobile: Clean up struct rmobile_pm_domain
+Date: Thu,  6 Dec 2018 13:59:33 -0800
+Message-Id: <445aeb081bc7131c0dcb0818f0326a8dd5a14a14.1544132474.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
+References: <cover.1544132474.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Mon, 26 Nov 2018 at 18:03, Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
->
-> Hi,
->
-> While looking at the Renesas BSP kernel I found patches which improves
-> the state of the hardware at probe and after runtime resume.
->
-> Patch 1/3 make sure the module clock is enabled after resuming before
-> register are accessed. Patch 2/3 is the real change in this series and
-> brings in reset of the vendor specific callback when resetting (SCC in
-> the Renesas case). While 3/3 simply make sure that the IRQ mask for
-> Renesas boards (Gen2 and later) are in a good shape after probe (and
-> reset).
->
-> In addition to addressing the state after resuming it helped unbreak a
-> SD card I have which are very problematic on Koelsch. Without this
-> series inserting the card results in:
->
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> sh_mobile_sdhi ee100000.sd: Tuning procedure failed
-> mmc0: tuning execution failed: -5
-> mmc0: error -5 whilst initialising SD card
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
->
-> While with this series applied (patch 2/3):
->
-> sh_mobile_sdhi ee100000.sd: timeout waiting for hardware interrupt (CMD19=
-)
-> mmc0: new ultra high speed SDR50 SDHC card at address aaaa
-> mmcblk0: mmc0:aaaa SU04G 3.69 GiB
->  mmcblk0: p1 p2
->
-> Patch 1/3 was previously part of 2/3 but as it deals with a unrelated
-> issue it's here broken out to a separate patch. Patch 3/3 have once been
-> posted outside this series bit after comments from Wolfram it's brought
-> back as it now deepens on 2/3.
->
-> Most changes in this series are based on similar work from Masaharu
-> Hayakawa but for this version all changes now differ quiet a lot from
-> his work.  All mails sent to him bounce with a "Undelivered Mail
-> Returned to Sender" error. I therefor felt the need to claim authorship
-> as I don't want to post blame of my (potential) mistakes on some else.
->
-> Niklas S=C3=B6derlund (3):
->   mmc: tmio: enable module clock before resetting when resuming
->   mmc: tmio: fix reset operation
->   mmc: renesas_sdhi: add initial setting of interrupt mask register
->
->  drivers/mmc/host/renesas_sdhi_core.c |  4 ++++
->  drivers/mmc/host/tmio_mmc.h          |  1 +
->  drivers/mmc/host/tmio_mmc_core.c     | 27 +++++++++++++++------------
->  3 files changed, 20 insertions(+), 12 deletions(-)
->
-> --
-> 2.19.1
->
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Applied for next, thanks!
+Commit 59b89af1d5551c12 ("ARM: shmobile: sh7372: Remove Legacy C
+SoC code") removed the last user of the rmobile_pm_domain.resume()
+callback.
 
-Kind regards
-Uffe
+Commit 44d88c754e57a6d9 ("ARM: shmobile: Remove legacy SoC code
+for R-Mobile A1") removed the last user of the rmobile_pm_domain.no_debug
+flag and of the "pm-rmobile.h" header file (outside the actual driver).
+
+Hence remove no longer used rmobile_pm_domain members, and absorb the
+header file into the driver.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/pm-rmobile.c | 37 ++++++++++++++++++-------------------
+ arch/arm/mach-shmobile/pm-rmobile.h | 22 ----------------------
+ 2 files changed, 18 insertions(+), 41 deletions(-)
+ delete mode 100644 arch/arm/mach-shmobile/pm-rmobile.h
+
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
+index c6a11b5ec6db..421ae1c887d8 100644
+--- a/arch/arm/mach-shmobile/pm-rmobile.c
++++ b/arch/arm/mach-shmobile/pm-rmobile.c
+@@ -18,12 +18,11 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/pm_clock.h>
++#include <linux/pm_domain.h>
+ #include <linux/slab.h>
+ 
+ #include <asm/io.h>
+ 
+-#include "pm-rmobile.h"
+-
+ /* SYSC */
+ #define SPDCR		0x08	/* SYS Power Down Control Register */
+ #define SWUCR		0x14	/* SYS Wakeup Control Register */
+@@ -32,6 +31,14 @@
+ #define PSTR_RETRIES	100
+ #define PSTR_DELAY_US	10
+ 
++struct rmobile_pm_domain {
++	struct generic_pm_domain genpd;
++	struct dev_power_governor *gov;
++	int (*suspend)(void);
++	void __iomem *base;
++	unsigned int bit_shift;
++};
++
+ static inline
+ struct rmobile_pm_domain *to_rmobile_pd(struct generic_pm_domain *d)
+ {
+@@ -65,16 +72,13 @@ static int rmobile_pd_power_down(struct generic_pm_domain *genpd)
+ 		}
+ 	}
+ 
+-	if (!rmobile_pd->no_debug)
+-		pr_debug("%s: Power off, 0x%08x -> PSTR = 0x%08x\n",
+-			 genpd->name, mask,
+-			 __raw_readl(rmobile_pd->base + PSTR));
++	pr_debug("%s: Power off, 0x%08x -> PSTR = 0x%08x\n", genpd->name, mask,
++		 __raw_readl(rmobile_pd->base + PSTR));
+ 
+ 	return 0;
+ }
+ 
+-static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd,
+-				 bool do_resume)
++static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd)
+ {
+ 	unsigned int mask;
+ 	unsigned int retry_count;
+@@ -85,7 +89,7 @@ static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd,
+ 
+ 	mask = BIT(rmobile_pd->bit_shift);
+ 	if (__raw_readl(rmobile_pd->base + PSTR) & mask)
+-		goto out;
++		return ret;
+ 
+ 	__raw_writel(mask, rmobile_pd->base + SWUCR);
+ 
+@@ -100,21 +104,16 @@ static int __rmobile_pd_power_up(struct rmobile_pm_domain *rmobile_pd,
+ 	if (!retry_count)
+ 		ret = -EIO;
+ 
+-	if (!rmobile_pd->no_debug)
+-		pr_debug("%s: Power on, 0x%08x -> PSTR = 0x%08x\n",
+-			 rmobile_pd->genpd.name, mask,
+-			 __raw_readl(rmobile_pd->base + PSTR));
+-
+-out:
+-	if (ret == 0 && rmobile_pd->resume && do_resume)
+-		rmobile_pd->resume();
++	pr_debug("%s: Power on, 0x%08x -> PSTR = 0x%08x\n",
++		 rmobile_pd->genpd.name, mask,
++		 __raw_readl(rmobile_pd->base + PSTR));
+ 
+ 	return ret;
+ }
+ 
+ static int rmobile_pd_power_up(struct generic_pm_domain *genpd)
+ {
+-	return __rmobile_pd_power_up(to_rmobile_pd(genpd), true);
++	return __rmobile_pd_power_up(to_rmobile_pd(genpd));
+ }
+ 
+ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+@@ -127,7 +126,7 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
+ 	genpd->power_on			= rmobile_pd_power_up;
+ 	genpd->attach_dev		= cpg_mstp_attach_dev;
+ 	genpd->detach_dev		= cpg_mstp_detach_dev;
+-	__rmobile_pd_power_up(rmobile_pd, false);
++	__rmobile_pd_power_up(rmobile_pd);
+ 	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
+ }
+ 
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.h b/arch/arm/mach-shmobile/pm-rmobile.h
+deleted file mode 100644
+index 69f839259b09..000000000000
+--- a/arch/arm/mach-shmobile/pm-rmobile.h
++++ /dev/null
+@@ -1,22 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0
+- *
+- * Copyright (C) 2012 Renesas Solutions Corp.
+- *
+- * Kuninori Morimoto <morimoto.kuninori@renesas.com>
+- */
+-#ifndef PM_RMOBILE_H
+-#define PM_RMOBILE_H
+-
+-#include <linux/pm_domain.h>
+-
+-struct rmobile_pm_domain {
+-	struct generic_pm_domain genpd;
+-	struct dev_power_governor *gov;
+-	int (*suspend)(void);
+-	void (*resume)(void);
+-	void __iomem *base;
+-	unsigned int bit_shift;
+-	bool no_debug;
+-};
+-
+-#endif /* PM_RMOBILE_H */
+-- 
+2.11.0
