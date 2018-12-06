@@ -1,49 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:56696 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbeLEPuc (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeLFV7E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:50:32 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 16:59:04 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC PATCH 6/7] soc: renesas: r8a77980-sysc: Fix power request conflicts
-Date: Wed,  5 Dec 2018 16:50:27 +0100
-Message-Id: <20181205155028.14335-7-geert+renesas@glider.be>
-In-Reply-To: <20181205155028.14335-1-geert+renesas@glider.be>
-References: <20181205155028.14335-1-geert+renesas@glider.be>
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 22/34] ARM: dts: r8a7744: Add CMT SoC specific support
+Date: Thu,  6 Dec 2018 13:58:17 -0800
+Message-Id: <90bcf80c37df5d76d953673717cdd5082776d98e.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Describe the location and contents of the SYSCEXTMASK register on R-Car
-V3H, to prevent conflicts between internal and external power requests.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add CMT[01] support to SoC DT.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/r8a77980-sysc.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/r8a7744.dtsi | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/drivers/soc/renesas/r8a77980-sysc.c b/drivers/soc/renesas/r8a77980-sysc.c
-index a8dbe55e8ba82d7e..e3b5ee1b3091dee1 100644
---- a/drivers/soc/renesas/r8a77980-sysc.c
-+++ b/drivers/soc/renesas/r8a77980-sysc.c
-@@ -6,6 +6,7 @@
-  * Copyright (C) 2018 Cogent Embedded, Inc.
-  */
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 937c800b2415..8f43fb41ec91 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -1360,6 +1360,38 @@
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xff000044 0 4>;
+ 		};
++
++		cmt0: timer@ffca0000 {
++			compatible = "renesas,r8a7744-cmt0",
++				     "renesas,rcar-gen2-cmt0";
++			reg = <0 0xffca0000 0 0x1004>;
++			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
++
++		cmt1: timer@e6130000 {
++			compatible = "renesas,r8a7744-cmt1",
++				     "renesas,rcar-gen2-cmt1";
++			reg = <0 0xe6130000 0 0x1004>;
++			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 329>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 329>;
++			status = "disabled";
++		};
+ 	};
  
-+#include <linux/bits.h>
- #include <linux/bug.h>
- #include <linux/kernel.h>
- 
-@@ -49,4 +50,6 @@ static const struct rcar_sysc_area r8a77980_areas[] __initconst = {
- const struct rcar_sysc_info r8a77980_sysc_info __initconst = {
- 	.areas = r8a77980_areas,
- 	.num_areas = ARRAY_SIZE(r8a77980_areas),
-+	.extmask_offs = 0x138,
-+	.extmask_val = BIT(0),
- };
+ 	thermal-zones {
 -- 
-2.17.1
+2.11.0
