@@ -1,86 +1,70 @@
-Return-Path: <linux-media-owner@vger.kernel.org>
-Date: Tue, 4 Dec 2018 00:16:29 +0200
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 00/30] v4l: add support for multiplexed streams
-Message-ID: <20181203221628.rzb7sz5purso4uak@kekkonen.localdomain>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
-Sender: linux-media-owner@vger.kernel.org
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbeLFV7k (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:59:40 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 5/9] soc: renesas: r8a77980-sysc: Correct A3VIP[012] power domain hierarchy
+Date: Thu,  6 Dec 2018 13:58:53 -0800
+Message-Id: <160bfa7c724b348a90a12dd9694f351927a15b8e.1544131943.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544131943.git.horms+renesas@verge.net.au>
+References: <cover.1544131943.git.horms+renesas@verge.net.au>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Niklas,
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Fri, Nov 02, 2018 at 12:31:14AM +0100, Niklas S�derlund wrote:
-> Hi all,
-> 
-> This series adds support for multiplexed streams within a media device
-> link. The use-case addressed in this series covers CSI-2 Virtual
-> Channels on the Renesas R-Car Gen3 platforms. The v4l2 changes have been
-> a joint effort between Sakari and Laurent and floating around for some
-> time [1].
-> 
-> I have added driver support for the devices used on the Renesas Gen3
-> platforms, a ADV7482 connected to the R-Car CSI-2 receiver. With these
-> changes I can control which of the analog inputs of the ADV7482 the
-> video source is captured from and on which CSI-2 virtual channel the
-> video is transmitted on to the R-Car CSI-2 receiver.
-> 
-> The series adds two new subdev IOCTLs [GS]_ROUTING which allows
-> user-space to get and set routes inside a subdevice. I have added RFC
-> support for these to v4l-utils [2] which can be used to test this
-> series, example:
-> 
->     Check the internal routing of the adv748x csi-2 transmitter:
->     v4l2-ctl -d /dev/v4l-subdev24 --get-routing
->     0/0 -> 1/0 [ENABLED]
->     0/0 -> 1/1 []
->     0/0 -> 1/2 []
->     0/0 -> 1/3 []
-> 
-> 
->     Select that video should be outputed on VC 2 and check the result:
->     $ v4l2-ctl -d /dev/v4l-subdev24 --set-routing '0/0 -> 1/2 [1]'
-> 
->     $ v4l2-ctl -d /dev/v4l-subdev24 --get-routing
->     0/0 -> 1/0 []
->     0/0 -> 1/1 []
->     0/0 -> 1/2 [ENABLED]
->     0/0 -> 1/3 []
-> 
-> This series is tested on R-Car M3-N and for your testing needs this
-> series is available at
-> 
->     git://git.ragnatech.se/linux v4l2/mux
-> 
-> * Changes since v1
-> - Rebased on latest media-tree.
-> - Incorporated changes to patch 'v4l: subdev: compat: Implement handling 
->   for VIDIOC_SUBDEV_[GS]_ROUTING' by Sakari.
-> - Added review tags.
+The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
+renamed the A3VIP power domain on R-Car V3H to A3VIP0, and clarified the
+power domain hierarchy for the A3VIP[012] power domains.
 
-I was looking at the patches and they seem very nice to me. It's not that
-I've written most of them, but I still. X-)
+As the definition for the A3VIP0 domain is not yet used from DT, it can
+just be renamed.
 
-I noticed that the new [GS]_ROUTING interface has no documentation
-currently. Could you write it?
+Fixes: 7755b40d07a8dba7 ("dt-bindings: power: add R8A77980 SYSC power domain definitions")
+Fixes: 41d6d8bd8ae94ca9 ("soc: renesas: rcar-sysc: add R8A77980 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/soc/renesas/r8a77980-sysc.c       | 6 +++---
+ include/dt-bindings/power/r8a77980-sysc.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-Also what I'd like to see is the media graph of a device that is driven by
-these drivers. That'd help to better understand the use case also for those
-who haven't worked with the patches.
-
-Thanks.
-
+diff --git a/drivers/soc/renesas/r8a77980-sysc.c b/drivers/soc/renesas/r8a77980-sysc.c
+index dbb2621ce4e3..a8dbe55e8ba8 100644
+--- a/drivers/soc/renesas/r8a77980-sysc.c
++++ b/drivers/soc/renesas/r8a77980-sysc.c
+@@ -41,9 +41,9 @@ static const struct rcar_sysc_area r8a77980_areas[] __initconst = {
+ 	{ "a2dp0",	0x400, 11, R8A77980_PD_A2DP0,	R8A77980_PD_A3IR },
+ 	{ "a2dp1",	0x400, 12, R8A77980_PD_A2DP1,	R8A77980_PD_A3IR },
+ 	{ "a2cn",	0x400, 13, R8A77980_PD_A2CN,	R8A77980_PD_A3IR },
+-	{ "a3vip",	0x2c0, 0, R8A77980_PD_A3VIP,	R8A77980_PD_ALWAYS_ON },
+-	{ "a3vip1",	0x300, 0, R8A77980_PD_A3VIP1,	R8A77980_PD_A3VIP },
+-	{ "a3vip2",	0x280, 0, R8A77980_PD_A3VIP2,	R8A77980_PD_A3VIP },
++	{ "a3vip0",	0x2c0, 0, R8A77980_PD_A3VIP0,	R8A77980_PD_ALWAYS_ON },
++	{ "a3vip1",	0x300, 0, R8A77980_PD_A3VIP1,	R8A77980_PD_ALWAYS_ON },
++	{ "a3vip2",	0x280, 0, R8A77980_PD_A3VIP2,	R8A77980_PD_ALWAYS_ON },
+ };
+ 
+ const struct rcar_sysc_info r8a77980_sysc_info __initconst = {
+diff --git a/include/dt-bindings/power/r8a77980-sysc.h b/include/dt-bindings/power/r8a77980-sysc.h
+index 7bebe7e8dbdb..e12c8587b87e 100644
+--- a/include/dt-bindings/power/r8a77980-sysc.h
++++ b/include/dt-bindings/power/r8a77980-sysc.h
+@@ -22,7 +22,7 @@
+ #define R8A77980_PD_CA53_CPU2		7
+ #define R8A77980_PD_CA53_CPU3		8
+ #define R8A77980_PD_A2CN		10
+-#define R8A77980_PD_A3VIP		11
++#define R8A77980_PD_A3VIP0		11
+ #define R8A77980_PD_A2IR5		12
+ #define R8A77980_PD_CR7			13
+ #define R8A77980_PD_A2IR4		15
 -- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.11.0
