@@ -1,102 +1,89 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:44353 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727745AbeLJOyM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbeLFV64 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 09:54:12 -0500
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
-To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        kieran.bingham@ideasonboard.com
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] media: rcar-csi2: Fix PHTW table values for E3/V3M
-Date: Mon, 10 Dec 2018 15:53:55 +0100
-Message-Id: <1544453635-16359-1-git-send-email-jacopo+renesas@jmondi.org>
+        Thu, 6 Dec 2018 16:58:56 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 11/34] ARM: dts: r8a7744: Add SDHI nodes
+Date: Thu,  6 Dec 2018 13:58:06 -0800
+Message-Id: <b591e323b271fdc2ffdc40eaf06e926a1e272994.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The PHTW selection algorithm implemented in rcsi2_phtw_write_mbps() checks for
-lower bound of the interval used to match the desired bandwidth. Use that
-in place of the currently used upport bound.
+From: Biju Das <biju.das@bp.renesas.com>
 
-Fixes: 10c08812fe60 ("media: rcar: rcar-csi2: Update V3M/E3 PHTW tables")
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Add SDHI nodes to the DT of the r8a7744 SoC.
+
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/media/platform/rcar-vin/rcar-csi2.c | 62 ++++++++++++++---------------
- 1 file changed, 31 insertions(+), 31 deletions(-)
+ arch/arm/boot/dts/r8a7744.dtsi | 39 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 80ad906d1136..7e9cb8bcfe70 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -152,37 +152,37 @@ static const struct rcsi2_mbps_reg phtw_mbps_h3_v3h_m3n[] = {
- };
-
- static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
--	{ .mbps =   89, .reg = 0x00 },
--	{ .mbps =   99, .reg = 0x20 },
--	{ .mbps =  109, .reg = 0x40 },
--	{ .mbps =  129, .reg = 0x02 },
--	{ .mbps =  139, .reg = 0x22 },
--	{ .mbps =  149, .reg = 0x42 },
--	{ .mbps =  169, .reg = 0x04 },
--	{ .mbps =  179, .reg = 0x24 },
--	{ .mbps =  199, .reg = 0x44 },
--	{ .mbps =  219, .reg = 0x06 },
--	{ .mbps =  239, .reg = 0x26 },
--	{ .mbps =  249, .reg = 0x46 },
--	{ .mbps =  269, .reg = 0x08 },
--	{ .mbps =  299, .reg = 0x28 },
--	{ .mbps =  329, .reg = 0x0a },
--	{ .mbps =  359, .reg = 0x2a },
--	{ .mbps =  399, .reg = 0x4a },
--	{ .mbps =  449, .reg = 0x0c },
--	{ .mbps =  499, .reg = 0x2c },
--	{ .mbps =  549, .reg = 0x0e },
--	{ .mbps =  599, .reg = 0x2e },
--	{ .mbps =  649, .reg = 0x10 },
--	{ .mbps =  699, .reg = 0x30 },
--	{ .mbps =  749, .reg = 0x12 },
--	{ .mbps =  799, .reg = 0x32 },
--	{ .mbps =  849, .reg = 0x52 },
--	{ .mbps =  899, .reg = 0x72 },
--	{ .mbps =  949, .reg = 0x14 },
--	{ .mbps =  999, .reg = 0x34 },
--	{ .mbps = 1049, .reg = 0x54 },
--	{ .mbps = 1099, .reg = 0x74 },
-+	{ .mbps =   80, .reg = 0x00 },
-+	{ .mbps =   90, .reg = 0x20 },
-+	{ .mbps =  100, .reg = 0x40 },
-+	{ .mbps =  110, .reg = 0x02 },
-+	{ .mbps =  130, .reg = 0x22 },
-+	{ .mbps =  140, .reg = 0x42 },
-+	{ .mbps =  150, .reg = 0x04 },
-+	{ .mbps =  170, .reg = 0x24 },
-+	{ .mbps =  180, .reg = 0x44 },
-+	{ .mbps =  200, .reg = 0x06 },
-+	{ .mbps =  220, .reg = 0x26 },
-+	{ .mbps =  240, .reg = 0x46 },
-+	{ .mbps =  250, .reg = 0x08 },
-+	{ .mbps =  270, .reg = 0x28 },
-+	{ .mbps =  300, .reg = 0x0a },
-+	{ .mbps =  330, .reg = 0x2a },
-+	{ .mbps =  360, .reg = 0x4a },
-+	{ .mbps =  400, .reg = 0x0c },
-+	{ .mbps =  450, .reg = 0x2c },
-+	{ .mbps =  500, .reg = 0x0e },
-+	{ .mbps =  550, .reg = 0x2e },
-+	{ .mbps =  600, .reg = 0x10 },
-+	{ .mbps =  650, .reg = 0x30 },
-+	{ .mbps =  700, .reg = 0x12 },
-+	{ .mbps =  750, .reg = 0x32 },
-+	{ .mbps =  800, .reg = 0x52 },
-+	{ .mbps =  850, .reg = 0x72 },
-+	{ .mbps =  900, .reg = 0x14 },
-+	{ .mbps =  950, .reg = 0x34 },
-+	{ .mbps = 1000, .reg = 0x54 },
-+	{ .mbps = 1050, .reg = 0x74 },
- 	{ .mbps = 1125, .reg = 0x16 },
- 	{ /* sentinel */ },
- };
---
-2.7.4
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 57e0be34b989..97b417c1b5f9 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -866,14 +866,49 @@
+ 			/* placeholder */
+ 		};
+ 
++		sdhi0: sd@ee100000 {
++			compatible = "renesas,sdhi-r8a7744",
++				     "renesas,rcar-gen2-sdhi";
++			reg = <0 0xee100000 0 0x328>;
++			interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 314>;
++			dmas = <&dmac0 0xcd>, <&dmac0 0xce>,
++			       <&dmac1 0xcd>, <&dmac1 0xce>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <195000000>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 314>;
++			status = "disabled";
++		};
++
+ 		sdhi1: sd@ee140000 {
++			compatible = "renesas,sdhi-r8a7744",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee140000 0 0x100>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 312>;
++			dmas = <&dmac0 0xc1>, <&dmac0 0xc2>,
++			       <&dmac1 0xc1>, <&dmac1 0xc2>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <97500000>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 312>;
++			status = "disabled";
+ 		};
+ 
+ 		sdhi2: sd@ee160000 {
++			compatible = "renesas,sdhi-r8a7744",
++				     "renesas,rcar-gen2-sdhi";
+ 			reg = <0 0xee160000 0 0x100>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 311>;
++			dmas = <&dmac0 0xd3>, <&dmac0 0xd4>,
++			       <&dmac1 0xd3>, <&dmac1 0xd4>;
++			dma-names = "tx", "rx", "tx", "rx";
++			max-frequency = <97500000>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 311>;
++			status = "disabled";
+ 		};
+ 
+ 		gic: interrupt-controller@f1001000 {
+-- 
+2.11.0
