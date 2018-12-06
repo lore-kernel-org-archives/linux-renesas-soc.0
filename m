@@ -1,62 +1,108 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:55916 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725914AbeLCNkD (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbeLFWAH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Dec 2018 08:40:03 -0500
-Date: Mon, 3 Dec 2018 14:38:57 +0100
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 17:00:07 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] watchdog: renesas_wdt: Fix typos
-Message-ID: <20181203133857.r7man7cmqfkjpbkk@ninjato>
-References: <1541415227-4991-1-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zrbv3qdnqob3r7fp"
-Content-Disposition: inline
-In-Reply-To: <1541415227-4991-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 9/9] ARM: shmobile: R-Mobile: Move pm-rmobile to drivers/soc/renesas/
+Date: Thu,  6 Dec 2018 13:59:34 -0800
+Message-Id: <2ed29e15e4b2500ae78de658a18f4482e7ac288b.1544132474.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
+References: <cover.1544132474.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
---zrbv3qdnqob3r7fp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The pm-rmobile driver is really a driver for the System Controller
+(SYSC) found in R-Mobile SoCs.  An equivalent driver for R-Car SoCs is
+already located under drivers/soc/renesas/.
 
-On Mon, Nov 05, 2018 at 10:53:47AM +0000, Fabrizio Castro wrote:
-> Do not use "," but ";" to separate instructions.
+Hence move the pm-rmobile driver from arch/arm/mach-shmobile/ to
+drivers/soc/renesas/, and rename it to rmobile-sysc.
 
-This sentence would even be better as $subject, because current $subject
-sounds like fixing a comment or so. Other than that:
+Enable compile-testing on non-ARM and non-R-Mobile SoCs.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/mach-shmobile/Kconfig                                     | 5 -----
+ arch/arm/mach-shmobile/Makefile                                    | 1 -
+ drivers/soc/renesas/Kconfig                                        | 7 ++++++-
+ drivers/soc/renesas/Makefile                                       | 1 +
+ .../pm-rmobile.c => drivers/soc/renesas/rmobile-sysc.c             | 0
+ 5 files changed, 7 insertions(+), 7 deletions(-)
+ rename arch/arm/mach-shmobile/pm-rmobile.c => drivers/soc/renesas/rmobile-sysc.c (100%)
 
-
---zrbv3qdnqob3r7fp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwFMe0ACgkQFA3kzBSg
-KbbkkxAAoSuwu+qH0zDsr7kMrpFDDW5gTHCDw2ti3u+J+hLLVjSz10UennNAVL8g
-p8NK3VbXwZnj5+IuWHv43XYMdEPxr+onao1fqCNMP/wA1MuvX9J1cFRMemZnTW9V
-l/rtePAL9+Gl1IQZavjVscGUodYmHpE2qhweGEqLnR4Jdx5OkRU0fyF7jDxAFJtM
-pnSJ7ZQk4W/LLtFli0CNPwxA+1MsAMzARLYJte0pM7sYjn4OlBtUeDIlj/UXsUua
-N14ush/pWmzE9c334NvBnr60ObVEClQAxlElmFZKGQb8aGBESvxqo5xU2r72mc3d
-j99lYqdAAYB2iOkMXGT3Ku92CSW5Y/J0rs3+EhzLz1qxp2F6WarRmkD8CcLwcGWf
-cvPqkKUiSm6eNpqPNES5MJhxS8uwNP5cxf2j170CJICRaBAJDaEgvgYSUm3nl5HT
-6k6T2gZBejRYuu6TRJA/q3vlTv21qDqmQr86/4tDj2gTUX9dikVHwOCgiX4tsRws
-59LdWKjC1J1LDCQgGtomOVttKdwLABBbrE4/6FKVEBSnUAcdmKt6h/t1coWLO0df
-Cr1jFX739+pHEkdp9qDGb/wtcg8ii7xr55nVKx1jzbGdwBtZykajXGJ7H6Ie0CEI
-XpGCqbDgGyn6ukjHUtaCy6qzrmq7vf9L8Mvn4PGxnePkOgOlmGc=
-=h21u
------END PGP SIGNATURE-----
-
---zrbv3qdnqob3r7fp--
+diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
+index 9b798c9dffe4..3683d6f10973 100644
+--- a/arch/arm/mach-shmobile/Kconfig
++++ b/arch/arm/mach-shmobile/Kconfig
+@@ -1,9 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-config PM_RMOBILE
+-	bool
+-	select PM
+-	select PM_GENERIC_DOMAINS
+-
+ menuconfig ARCH_RENESAS
+ 	bool "Renesas ARM SoCs"
+ 	depends on ARCH_MULTI_V7 && MMU
+diff --git a/arch/arm/mach-shmobile/Makefile b/arch/arm/mach-shmobile/Makefile
+index 5591646cb9bb..f7bf17b7abae 100644
+--- a/arch/arm/mach-shmobile/Makefile
++++ b/arch/arm/mach-shmobile/Makefile
+@@ -35,7 +35,6 @@ smp-$(CONFIG_ARCH_EMEV2)	+= smp-emev2.o headsmp-scu.o platsmp-scu.o
+ 
+ # PM objects
+ obj-$(CONFIG_SUSPEND)		+= suspend.o
+-obj-$(CONFIG_PM_RMOBILE)	+= pm-rmobile.o
+ obj-$(CONFIG_ARCH_RCAR_GEN2)	+= pm-rcar-gen2.o
+ 
+ # Framework support
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index fe7f58616cdd..4d8012e1205c 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -34,9 +34,11 @@ config ARCH_RCAR_GEN3
+ 
+ config ARCH_RMOBILE
+ 	bool
+-	select PM_RMOBILE
++	select PM
++	select PM_GENERIC_DOMAINS
+ 	select SYS_SUPPORTS_SH_CMT
+ 	select SYS_SUPPORTS_SH_TMU
++	select SYSC_RMOBILE
+ 
+ config ARCH_RZN1
+ 	bool
+@@ -297,4 +299,7 @@ config RST_RCAR
+ config SYSC_RCAR
+ 	bool "R-Car System Controller support" if COMPILE_TEST
+ 
++config SYSC_RMOBILE
++	bool "R-Mobile System Controller support" if COMPILE_TEST
++
+ endif # SOC_RENESAS
+diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+index 3bdd7dbc38a9..00764d5a60b3 100644
+--- a/drivers/soc/renesas/Makefile
++++ b/drivers/soc/renesas/Makefile
+@@ -27,3 +27,4 @@ endif
+ # Family
+ obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
+ obj-$(CONFIG_SYSC_RCAR)		+= rcar-sysc.o
++obj-$(CONFIG_SYSC_RMOBILE)	+= rmobile-sysc.o
+diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/drivers/soc/renesas/rmobile-sysc.c
+similarity index 100%
+rename from arch/arm/mach-shmobile/pm-rmobile.c
+rename to drivers/soc/renesas/rmobile-sysc.c
+-- 
+2.11.0
