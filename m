@@ -1,611 +1,335 @@
 Return-Path: <masonccyang@mxic.com.tw>
-In-Reply-To: <84e3c55b-687e-28f6-0a7c-1c48c822ef05@gmail.com>
-References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw> <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw> <cebe44a3-80be-9091-e70b-acba6f3fff4f@gmail.com> <OF0ED3C578.141B72CA-ON4825835A.0025CA62-4825835A.002A7BDF@mxic.com.tw> <84e3c55b-687e-28f6-0a7c-1c48c822ef05@gmail.com>
-To: "Marek Vasut" <marek.vasut@gmail.com>
-Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
+In-Reply-To: <CAMuHMdWEiOTSSM=rKu67r-kgJ=TyAi7p7ndhAS4d5-6gccmmoQ@mail.gmail.com>
+References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw> <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw> <CAMuHMdWEiOTSSM=rKu67r-kgJ=TyAi7p7ndhAS4d5-6gccmmoQ@mail.gmail.com>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc: "Boris Brezillon" <boris.brezillon@bootlin.com>,
+        "Mark Brown" <broonie@kernel.org>,
         "Geert Uytterhoeven"<geert+renesas@glider.be>,
         "Simon Horman" <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, zhengxunli@mxic.com.tw
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Linux-Renesas" <linux-renesas-soc@vger.kernel.org>,
+        "linux-spi" <linux-spi@vger.kernel.org>,
+        "Marek Vasut" <marek.vasut@gmail.com>, zhengxunli@mxic.com.tw
 Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller driver
 MIME-Version: 1.0
-Message-ID: <OFC9FB54F8.34B3A8B7-ON4825835B.00267480-4825835B.0029455C@mxic.com.tw>
+Message-ID: <OFE69673FB.D4270C56-ON4825835B.001C7201-4825835B.00209DC7@mxic.com.tw>
 From: masonccyang@mxic.com.tw
-Date: Thu, 6 Dec 2018 15:30:47 +0800
-Content-Type: multipart/alternative; boundary="=_alternative 0029455B4825835B_="
+Date: Thu, 6 Dec 2018 13:56:15 +0800
+Content-Type: multipart/alternative; boundary="=_alternative 00209DC74825835B_="
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 This is a multipart message in MIME format.
---=_alternative 0029455B4825835B_=
-Content-Type: text/plain; charset="US-ASCII"
+--=_alternative 00209DC74825835B_=
+Content-Type: text/plain; charset="Big5"
+Content-Transfer-Encoding: base64
 
 
-Hi Marek,
+SGkgR2VlcnQsDQoNCj4gIkdlZXJ0IFV5dHRlcmhvZXZlbiIgPGdlZXJ0QGxpbnV4LW02OGsub3Jn
+PiANCj4gMjAxOC8xMi8wNSCkVaTIIDA1OjA2DQo+IA0KPiBUbw0KPiANCj4gbWFzb25jY3lhbmdA
+bXhpYy5jb20udHcsIA0KPiANCj4gY2MNCj4gDQo+ICJNYXJrIEJyb3duIiA8YnJvb25pZUBrZXJu
+ZWwub3JnPiwgIk1hcmVrIFZhc3V0IiANCj4gPG1hcmVrLnZhc3V0QGdtYWlsLmNvbT4sICJMaW51
+eCBLZXJuZWwgTWFpbGluZyBMaXN0IiA8bGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+
+LCAibGludXgtc3BpIiA8bGludXgtc3BpQHZnZXIua2VybmVsLm9yZz4sIA0KPiAiQm9yaXMgQnJl
+emlsbG9uIiA8Ym9yaXMuYnJlemlsbG9uQGJvb3RsaW4uY29tPiwgIkxpbnV4LVJlbmVzYXMiIA0K
+PiA8bGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3JnPiwgIkdlZXJ0IFV5dHRlcmhvZXZl
+biIgPGdlZXJ0DQo+ICtyZW5lc2FzQGdsaWRlci5iZT4sIGp1bGllbnN1QG14aWMuY29tLnR3LCAi
+U2ltb24gSG9ybWFuIiANCj4gPGhvcm1zQHZlcmdlLm5ldC5hdT4sIHpoZW5neHVubGlAbXhpYy5j
+b20udHcNCj4gDQo+IFN1YmplY3QNCj4gDQo+IFJlOiBbUEFUQ0ggdjIgMS8yXSBzcGk6IEFkZCBS
+ZW5lc2FzIFItQ2FyIEdlbjMgUlBDIFNQSSBjb250cm9sbGVyIGRyaXZlcg0KPiANCj4gSGkgTWFz
+b24sDQo+IA0KPiBPbiBNb24sIERlYyAzLCAyMDE4IGF0IDEwOjE5IEFNIE1hc29uIFlhbmcgPG1h
+c29uY2N5YW5nQG14aWMuY29tLnR3PiANCndyb3RlOg0KPiA+IEFkZCBhIGRyaXZlciBmb3IgUmVu
+ZXNhcyBSLUNhciBHZW4zIFJQQyBTUEkgY29udHJvbGxlci4NCj4gPg0KPiA+IFNpZ25lZC1vZmYt
+Ynk6IE1hc29uIFlhbmcgPG1hc29uY2N5YW5nQG14aWMuY29tLnR3Pg0KPiANCj4gVGhhbmtzIGZv
+ciB5b3VyIHBhdGNoIQ0KPiANCj4gPiAtLS0gYS9kcml2ZXJzL3NwaS9LY29uZmlnDQo+ID4gKysr
+IGIvZHJpdmVycy9zcGkvS2NvbmZpZw0KPiA+IEBAIC01MjgsNiArNTI4LDEyIEBAIGNvbmZpZyBT
+UElfUlNQSQ0KPiA+ICAgICAgICAgaGVscA0KPiA+ICAgICAgICAgICBTUEkgZHJpdmVyIGZvciBS
+ZW5lc2FzIFJTUEkgYW5kIFFTUEkgYmxvY2tzLg0KPiA+DQo+ID4gK2NvbmZpZyBTUElfUkVORVNB
+U19SUEMNCj4gPiArICAgICAgIHRyaXN0YXRlICJSZW5lc2FzIFItQ2FyIEdlbjMgUlBDIFNQSSBj
+b250cm9sbGVyIg0KPiA+ICsgICAgICAgZGVwZW5kcyBvbiBTVVBFUkggfHwgQVJDSF9SRU5FU0FT
+IHx8IENPTVBJTEVfVEVTVA0KPiANCj4gU28gdGhpcyBkcml2ZXIgaXMgaW50ZW5kZWQgZm9yIFN1
+cGVySCBTb0NzLCB0b28/DQo+IElmIG5vdCwgcGxlYXNlIGRyb3AgdGhlIGRlcGVuZGVuY3kuDQo+
+IA0KDQpva2F5LCBJIHdpbGwgZHJvcCAiU1VQRVJIIi4NCg0KPiA+IC0tLSAvZGV2L251bGwNCj4g
+PiArKysgYi9kcml2ZXJzL3NwaS9zcGktcmVuZXNhcy1ycGMuYw0KPiANCj4gPiArI2lmZGVmIENP
+TkZJR19SRVNFVF9DT05UUk9MTEVSDQo+ID4gK3N0YXRpYyBpbnQgcnBjX3NwaV9kb19yZXNldChz
+dHJ1Y3QgcnBjX3NwaSAqcnBjKQ0KPiANCj4gV2hhdCdzIHRoZSBwdXJwb3NlIG9mIHRoZSByZXNl
+dCByb3V0aW5lPw0KDQppbiBjYXNlIFJQQyB4ZmVyIGlzIHRpbWUtb3V0IGR1ZSB0byBzb21ldGhp
+bmcgd3JvbmcgaW4gUlBDIG1vZHVsZSwNCmFzIE1hcmVrIGNvbW1lbnRzLg0KDQo+IEdpdmVuIHRo
+ZSAjaWZkZWYsIGlzIGl0IG9wdGlvbmFsIG9yIHJlcXVpcmVkPw0KPiANCj4gPiArew0KPiA+ICsg
+ICAgICAgaW50IGksIHJldDsNCj4gPiArDQo+ID4gKyAgICAgICByZXQgPSByZXNldF9jb250cm9s
+X3Jlc2V0KHJwYy0+cnN0Yyk7DQo+ID4gKyAgICAgICBpZiAocmV0KQ0KPiA+ICsgICAgICAgICAg
+ICAgICByZXR1cm4gcmV0Ow0KPiA+ICsNCj4gPiArICAgICAgIGZvciAoaSA9IDA7IGkgPCBMT09Q
+X1RJTUVPVVQ7IGkrKykgew0KPiA+ICsgICAgICAgICAgICAgICByZXQgPSByZXNldF9jb250cm9s
+X3N0YXR1cyhycGMtPnJzdGMpOw0KPiA+ICsgICAgICAgICAgICAgICBpZiAocmV0ID09IDApDQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIDA7DQo+ID4gKyAgICAgICAgICAgICAg
+IHVzbGVlcF9yYW5nZSgwLCAxKTsNCj4gPiArICAgICAgIH0NCj4gDQo+IFdoeSBkbyB5b3UgbmVl
+ZCB0aGlzIGxvb3A/DQo+IFRoZSBkZWxheSBpbiBjcGdfbXNzcl9yZXNldCgpIHNob3VsZCBiZSBz
+dWZmaWNpZW50Lg0KPiANCg0KeXVwLCBJIGtub3cgdGhlcmUgaXMgYWxyZWFkeSAzNSB1cyBkZWxh
+eSBpbiBjcGdfbXNzcl9yZXNldCgpLg0KSWYgeW91IHRoaW5rIHJlc2V0X2NvbnRyb2xfc3RhdHVz
+KCljaGVja2luZyBpcyBub3QgbmVjZXNzYXJ5LA0KSSB3aWxsIGRyb3AgaXQuDQoNCj4gPiArDQo+
+ID4gKyAgICAgICByZXR1cm4gLUVUSU1FRE9VVDsNCj4gPiArfQ0KPiA+ICsjZWxzZQ0KPiA+ICtz
+dGF0aWMgaW50IHJwY19zcGlfZG9fcmVzZXQoc3RydWN0IHJwY19zcGkgKnJwYykNCj4gPiArew0K
+PiA+ICsgICAgICAgcmV0dXJuIC1FVElNRURPVVQ7DQo+ID4gK30NCj4gPiArI2VuZGlmDQo+IA0K
+PiA+ICtzdGF0aWMgaW50IHJwY19zcGlfdHJhbnNmZXJfb25lX21lc3NhZ2Uoc3RydWN0IHNwaV9t
+YXN0ZXIgKm1hc3RlciwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgc3RydWN0IHNwaV9tZXNzYWdlICptc2cpDQo+ID4gK3sNCj4gPiArICAgICAgIHN0cnVjdCBy
+cGNfc3BpICpycGMgPSBzcGlfbWFzdGVyX2dldF9kZXZkYXRhKG1hc3Rlcik7DQo+ID4gKyAgICAg
+ICBzdHJ1Y3Qgc3BpX3RyYW5zZmVyICp0Ow0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArDQo+
+ID4gKyAgICAgICBycGNfc3BpX3RyYW5zZmVyX3NldHVwKHJwYywgbXNnKTsNCj4gPiArDQo+ID4g
+KyAgICAgICBsaXN0X2Zvcl9lYWNoX2VudHJ5KHQsICZtc2ctPnRyYW5zZmVycywgdHJhbnNmZXJf
+bGlzdCkgew0KPiA+ICsgICAgICAgICAgICAgICBpZiAoIWxpc3RfaXNfbGFzdCgmdC0+dHJhbnNm
+ZXJfbGlzdCwgJm1zZy0+dHJhbnNmZXJzKSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBj
+b250aW51ZTsNCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gcnBjX3NwaV94ZmVyX21lc3NhZ2Uo
+cnBjLCB0KTsNCj4gDQo+IHJwY19zcGlfeGZlcl9tZXNzYWdlKCkgc291bmRzIGxpa2UgYSBiYWQg
+bmFtZSB0byBtZSwgZ2l2ZW4gaXQgb3BlcmF0ZXMNCj4gb24gYSB0cmFuc2Zlciwgbm90IG9uIGEg
+bWVzc2FnZS4NCj4gDQoNCkJlY2F1c2UgUlBDIHNlbmQgYSBlbnRpcmUgU1BJIG1lc3NhZ2UgYXQg
+b25lIHRpbWUsIG5vdCBzZXBhcmF0ZWx5LA0KdGhhdCBpcyB0aGUgMSdzdCB0cmFuc2ZlciBpcyBm
+b3IgY29tbWFuZCwgdGhlIDInbmQgdHJhbnNmZXIgaXMgZm9yIA0KYWRkcmVzcy9kYXRhIA0KYW5k
+IHNvIG9uLg0KVGhlIHJlYXNvbiBpcyBDUyMgcGluIGNvbnRyb2wgcmVzdHJpY3Rpb24gaW4gUlBD
+IEhXIG1vZHVsZS4NCg0KDQo+ID4gKyAgICAgICAgICAgICAgIGlmIChyZXQpDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgZ290byBvdXQ7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsg
+ICAgICAgbXNnLT5zdGF0dXMgPSAwOw0KPiA+ICsgICAgICAgbXNnLT5hY3R1YWxfbGVuZ3RoID0g
+cnBjLT50b3RhbHhmZXJsZW47DQo+ID4gK291dDoNCj4gPiArICAgICAgIHNwaV9maW5hbGl6ZV9j
+dXJyZW50X21lc3NhZ2UobWFzdGVyKTsNCj4gPiArICAgICAgIHJldHVybiAwOw0KPiA+ICt9DQo+
+IA0KPiANCj4gPiArc3RhdGljIGludCBycGNfc3BpX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
+Y2UgKnBkZXYpDQo+ID4gK3sNCj4gDQo+ID4gKyAgICAgICBycGMtPnJzdGMgPSBkZXZtX3Jlc2V0
+X2NvbnRyb2xfZ2V0X2V4Y2x1c2l2ZSgmcGRldi0+ZGV2LCANCk5VTEwpOw0KPiA+ICsgICAgICAg
+aWYgKElTX0VSUihycGMtPnJzdGMpKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gUFRSX0VS
+UihycGMtPnJzdGMpOw0KPiANCj4gVGhpcyB3aWxsIHJldHVybiBhbiBlcnJvciBpZiBDT05GSUdf
+UkVTRVRfQ09OVFJPTExFUiBpcyBub3Qgc2V0LCBoZW5jZQ0KPiB0aGUgI2lmZGVmIGFib3ZlIGlz
+IG1vb3QuDQo+IA0KDQpZb3UgYXJlIHJpZ2h0Lg0Kc28sIEkgc2hvdWxkIGRvIA0KT3B0aW9uIDE6
+IHJlbW92ZSAjQ09ORklHX1JFU0VUX0NPTlRST0xMRVINCk9wdGlvbiAyOiBhZGQgI0NPTkZJR19S
+RVNFVF9DT05UUk9MTEVSIGZvciANCmRldm1fcmVzZXRfY29udHJvbF9nZXRfZXhjbHVzaXZlKCkN
+Cg0KcGxlYXNlIGNvbW1lbnRzIG9uIGl0LCB0aGFua3MuDQoNCg0KPiA+ICsNCj4gPiArICAgICAg
+IHBtX3J1bnRpbWVfZW5hYmxlKCZwZGV2LT5kZXYpOw0KPiA+ICsgICAgICAgbWFzdGVyLT5hdXRv
+X3J1bnRpbWVfcG0gPSB0cnVlOw0KPiA+ICsNCj4gPiArICAgICAgIG1hc3Rlci0+bnVtX2NoaXBz
+ZWxlY3QgPSAxOw0KPiA+ICsgICAgICAgbWFzdGVyLT5tZW1fb3BzID0gJnJwY19zcGlfbWVtX29w
+czsNCj4gPiArICAgICAgIG1hc3Rlci0+dHJhbnNmZXJfb25lX21lc3NhZ2UgPSBycGNfc3BpX3Ry
+YW5zZmVyX29uZV9tZXNzYWdlOw0KPiANCj4gSXMgdGhlcmUgYW55IHJlYXNvbiB5b3UgY2Fubm90
+IHVzZSB0aGUgc3RhbmRhcmQNCj4gc3BpX3RyYW5zZmVyX29uZV9tZXNzYWdlLCBpLmUuIHByb3Zp
+ZGUgc3BpX2NvbnRyb2xsZXIudHJhbnNmZXJfb25lKCkNCj4gaW5zdGVhZCBvZiBzcGlfY29udHJv
+bGxlci50cmFuc2Zlcl9vbmVfbWVzc2FnZSgpPw0KPiANCg0KSXQgc2VlbXMgdGhlcmUgaXMgYSBS
+UEMgSFcgcmVzdHJpY3Rpb24gaW4gQ1MjIHBpbiBjb250cm9sLg0KVGhlcmVmb3JlLCBpdCBjYW4n
+dCBzZW5kIHRoZSAxJ3N0IHNwaS10cmFuc2ZlciBmb3IgY29tbWFuZCBhbmQgdGhlbg0Ka2VlcGlu
+ZyBDUyMgcGluIGdvZXMgbG93IGZvciB0aGUgMiduZCBzcGktdHJhbnNmZXIgZm9yIGFkZHJlc3Mv
+ZGF0YSBhbmQgc28gDQpvbi4NCg0KPiBHcntvZXRqZSxlZXRpbmd9cywNCj4gDQo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0g
+VGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIA0KPiBnZWVydEBsaW51eC1tNjhr
+Lm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3aXRoIHRlY2huaWNhbCBwZW9w
+bGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIA0KQnV0DQo+IHdoZW4gSSdtIHRhbGtpbmcgdG8g
+am91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nbGlrZSANCnRo
+YXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMN
+Cg0KDQp0aGFua3MgYWdhaW4gZm9yIHlvdXIgcmV2aWV3ICYgaGVscC4NCk1hc29uDQoNCg0KDQoN
+CkNPTkZJREVOVElBTElUWSBOT1RFOg0KDQpUaGlzIGUtbWFpbCBhbmQgYW55IGF0dGFjaG1lbnRz
+IG1heSBjb250YWluIGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiANCmFuZC9vciBwZXJzb25hbCBk
+YXRhLCB3aGljaCBpcyBwcm90ZWN0ZWQgYnkgYXBwbGljYWJsZSBsYXdzLiBQbGVhc2UgYmUgDQpy
+ZW1pbmRlZCB0aGF0IGR1cGxpY2F0aW9uLCBkaXNjbG9zdXJlLCBkaXN0cmlidXRpb24sIG9yIHVz
+ZSBvZiB0aGlzIGUtbWFpbCANCihhbmQvb3IgaXRzIGF0dGFjaG1lbnRzKSBvciBhbnkgcGFydCB0
+aGVyZW9mIGlzIHByb2hpYml0ZWQuIElmIHlvdSByZWNlaXZlIA0KdGhpcyBlLW1haWwgaW4gZXJy
+b3IsIHBsZWFzZSBub3RpZnkgdXMgaW1tZWRpYXRlbHkgYW5kIGRlbGV0ZSB0aGlzIG1haWwgYXMg
+DQp3ZWxsIGFzIGl0cyBhdHRhY2htZW50KHMpIGZyb20geW91ciBzeXN0ZW0uIEluIGFkZGl0aW9u
+LCBwbGVhc2UgYmUgDQppbmZvcm1lZCB0aGF0IGNvbGxlY3Rpb24sIHByb2Nlc3NpbmcsIGFuZC9v
+ciB1c2Ugb2YgcGVyc29uYWwgZGF0YSBpcyANCnByb2hpYml0ZWQgdW5sZXNzIGV4cHJlc3NseSBw
+ZXJtaXR0ZWQgYnkgcGVyc29uYWwgZGF0YSBwcm90ZWN0aW9uIGxhd3MuIA0KVGhhbmsgeW91IGZv
+ciB5b3VyIGF0dGVudGlvbiBhbmQgY29vcGVyYXRpb24uDQoNCk1hY3Jvbml4IEludGVybmF0aW9u
+YWwgQ28uLCBMdGQuDQoNCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KDQoNCg0KPT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0K
+DQpDT05GSURFTlRJQUxJVFkgTk9URToNCg0KVGhpcyBlLW1haWwgYW5kIGFueSBhdHRhY2htZW50
+cyBtYXkgY29udGFpbiBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gYW5kL29yIHBlcnNvbmFsIGRh
+dGEsIHdoaWNoIGlzIHByb3RlY3RlZCBieSBhcHBsaWNhYmxlIGxhd3MuIFBsZWFzZSBiZSByZW1p
+bmRlZCB0aGF0IGR1cGxpY2F0aW9uLCBkaXNjbG9zdXJlLCBkaXN0cmlidXRpb24sIG9yIHVzZSBv
+ZiB0aGlzIGUtbWFpbCAoYW5kL29yIGl0cyBhdHRhY2htZW50cykgb3IgYW55IHBhcnQgdGhlcmVv
+ZiBpcyBwcm9oaWJpdGVkLiBJZiB5b3UgcmVjZWl2ZSB0aGlzIGUtbWFpbCBpbiBlcnJvciwgcGxl
+YXNlIG5vdGlmeSB1cyBpbW1lZGlhdGVseSBhbmQgZGVsZXRlIHRoaXMgbWFpbCBhcyB3ZWxsIGFz
+IGl0cyBhdHRhY2htZW50KHMpIGZyb20geW91ciBzeXN0ZW0uIEluIGFkZGl0aW9uLCBwbGVhc2Ug
+YmUgaW5mb3JtZWQgdGhhdCBjb2xsZWN0aW9uLCBwcm9jZXNzaW5nLCBhbmQvb3IgdXNlIG9mIHBl
+cnNvbmFsIGRhdGEgaXMgcHJvaGliaXRlZCB1bmxlc3MgZXhwcmVzc2x5IHBlcm1pdHRlZCBieSBw
+ZXJzb25hbCBkYXRhIHByb3RlY3Rpb24gbGF3cy4gVGhhbmsgeW91IGZvciB5b3VyIGF0dGVudGlv
+biBhbmQgY29vcGVyYXRpb24uDQoNCk1hY3Jvbml4IEludGVybmF0aW9uYWwgQ28uLCBMdGQuDQoN
+Cj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PQ0K
 
-> >> Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller 
-driver
-> >>
-> >> On 12/03/2018 10:18 AM, Mason Yang wrote:
-> >> > Add a driver for Renesas R-Car Gen3 RPC SPI controller.
-> >> >
-> >> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> >>
-> >> What changed in this V2 ?
-> >>
-> >> [...]
-> > 
-> > see some description in [PATH v2 0/2]
-> 
-> I don't see any V2: list there.
-> 
-
-including 
-1) remove RPC clock enable/dis-able control,
-2) patch run time PM, 
-3) add RPC module software reset, 
-4) add regmap,
-5) other coding style and so on.
-
-
-> >> > +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
-> >> > +            const void *tx_buf, void *rx_buf)
-> >> > +{
-> >> > +   u32 smenr, smcr, data, pos = 0;
-> >> > +   int ret = 0;
-> >> > +
-> >> > +   regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | 
-RPC_CMNCR_SFDE |
-> >> > +              RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-> >> > +              RPC_CMNCR_BSZ(0));
-> >> > +   regmap_write(rpc->regmap, RPC_SMDRENR, 0x0);
-> >> > +   regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-> >> > +   regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
-> >> > +   regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
-> >> > +
-> >> > +   if (tx_buf) {
-> >> > +      smenr = rpc->smenr;
-> >> > +
-> >> > +      while (pos < rpc->xferlen) {
-> >> > +         u32 nbytes = rpc->xferlen  - pos;
-> >> > +
-> >> > +         regmap_write(rpc->regmap, RPC_SMWDR0,
-> >> > +                 *(u32 *)(tx_buf + pos));
-> >>
-> >> *(u32 *) cast is probably not needed , fix casts globally.
-> > 
-> > It must have it!
-> 
-> Why ?
-
-Get a compiler warning due to tx_bug is void *, as Geert replied.
-
-Using get_unaligned(), patched code would be
------------------------------------------------------
-regmap_write(rpc->regmap, RPC_SMWDR0,
-                 get_unaligned((u32 *)(tx_buf + pos))); 
-----------------------------------------------------
-
-
-> >> > +         rpc->xferlen = *(u32 *)len;
-> >> > +         rpc->totalxferlen += *(u32 *)len;
-> >> > +      } else {
-> >> > +         rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer
-> >> > +               (op->data.nbytes)) | RPC_SMENR_SPIDB
-> >> > +               (fls(op->data.buswidth >> 1));
-> >>
-> >> Drop parenthesis around fls()
-> > 
-> > ?
-> > no way.
-> 
-> I would really appreciate it if you could explain things instead.
-> 
-> Geert already did so, by pointing out this is a confusing code
-> formatting problem and how it should be fixed, so no need to repeat
-> that. But I hope you understand how that sort of explanation is far more
-> valuable than "no way" kind of reply.
-
-okay, understood.
-
-
-> >> > +
-> >> > +   xfercnt = xferpos;
-> >> > +   rpc->xferlen = xfer[--xferpos].len;
-> >> > +   rpc->cmd = RPC_SMCMR_CMD(((u8 *)xfer[0].tx_buf)[0]);
-> >>
-> >> Is the cast needed ?
-> > 
-> > yes!
-> 
-> Why ?
-
-Get a compiler warning due to tx_bug is void *, as Geert replied.
-
-Using get_unaligned(), patched code would be
----------------------------------------------------------------
- rpc->cmd = RPC_SMCMR_CMD(get_unaligned((u8 *)xfer[0].tx_buf)); 
-----------------------------------------------------------------
-
-
-> 
-> >> > +   rpc->smenr = RPC_SMENR_CDE | RPC_SMENR_CDB(fls(xfer[0].tx_nbits
-> >>> 1));
-> >> > +   rpc->addr = 0;
-> >> > +
-> >> > +   if (xfercnt > 2 && xfer[1].len && xfer[1].tx_buf) {
-> >> > +      rpc->smenr |= RPC_SMENR_ADB(fls(xfer[1].tx_nbits >> 1));
-> >> > +      for (i = 0; i < xfer[1].len; i++)
-> >> > +         rpc->addr |= (u32)((u8 *)xfer[1].tx_buf)[i]
-> >> > +               << (8 * (xfer[1].len - i - 1));
-> >> > +
-> >> > +      if (xfer[1].len == 4)
-> >> > +         rpc->smenr |= RPC_SMENR_ADE(0xf);
-> >> > +      else
-> >> > +         rpc->smenr |= RPC_SMENR_ADE(0x7);
-> >> > +   }
-> >> > +
-> >> > +   switch (xfercnt) {
-> >> > +   case 2:
-> >> > +      if (xfer[1].rx_buf) {
-> >> > +         rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer
-> >> > +                  (xfer[1].len)) | RPC_SMENR_SPIDB(fls
-> >> > +                  (xfer[1].rx_nbits >> 1));
-> >> > +      } else if (xfer[1].tx_buf) {
-> >> > +         rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer
-> >> > +                  (xfer[1].len)) | RPC_SMENR_SPIDB(fls
-> >> > +                  (xfer[1].tx_nbits >> 1));
-> >> > +      }
-> >> > +      break;
-> >> > +
-> >> > +   case 3:
-> >> > +      if (xfer[2].len && xfer[2].rx_buf && !xfer[2].tx_buf) {
-> >> > +         rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer
-> >> > +                  (xfer[2].len)) | RPC_SMENR_SPIDB(fls
-> >> > +                  (xfer[2].rx_nbits >> 1));
-> >>
-> >> It seems this SMENR pattern repeats itself throughout the driver, can
-> >> this be improved / deduplicated ?
-> > 
-> > It seems no way!
-> 
-> Why ?
-
-okay, I patch this with for( ) loop.
-
-> 
-> >> > +      } else if (xfer[2].len && xfer[2].tx_buf && !xfer[2].rx_buf) 
-{
-> >> > +         rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer
-> >> > +                  (xfer[2].len)) | RPC_SMENR_SPIDB(fls
-> >> > +                  (xfer[2].tx_nbits >> 1));
-> >> > +      }
-> >> > +      break;
-> >> > +
-> >> > +   case 4:
-> >> > +      if (xfer[2].len && xfer[2].tx_buf) {
-> >> > +         rpc->smenr |= RPC_SMENR_DME;
-> >> > +         rpc->dummy = RPC_SMDMCR_DMCYC(xfer[2].len);
-> >> > +      }
-> >> > +
-> >> > +      if (xfer[3].len && xfer[3].rx_buf) {
-> >> > +         rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer
-> >> > +                  (xfer[3].len)) | RPC_SMENR_SPIDB(fls
-> >> > +                  (xfer[3].rx_nbits >> 1));
-> >> > +      }
-> >> > +      break;
-> >> > +
-> >> > +   default:
-> >> > +      break;
-> >> > +   }
-> >> > +}
-> >> > +
-> >> > +static int rpc_spi_xfer_message(struct rpc_spi *rpc, struct
-> >> spi_transfer *t)
-> >> > +{
-> >> > +   int ret;
-> >> > +
-> >> > +   ret = rpc_spi_set_freq(rpc, t->speed_hz);
-> >> > +   if (ret)
-> >> > +      return ret;
-> >> > +
-> >> > +   ret = rpc_spi_io_xfer(rpc,
-> >> > +               rpc->xfer_dir == SPI_MEM_DATA_OUT ?
-> >> > +               t->tx_buf : NULL,
-> >> > +               rpc->xfer_dir == SPI_MEM_DATA_IN ?
-> >> > +               t->rx_buf : NULL);
-> >> > +
-> >> > +   return ret;
-> >> > +}
-> >> > +
-> >> > +static int rpc_spi_transfer_one_message(struct spi_master *master,
-> >> > +               struct spi_message *msg)
-> >> > +{
-> >> > +   struct rpc_spi *rpc = spi_master_get_devdata(master);
-> >> > +   struct spi_transfer *t;
-> >> > +   int ret;
-> >> > +
-> >> > +   rpc_spi_transfer_setup(rpc, msg);
-> >> > +
-> >> > +   list_for_each_entry(t, &msg->transfers, transfer_list) {
-> >> > +      if (!list_is_last(&t->transfer_list, &msg->transfers))
-> >> > +         continue;
-> >> > +      ret = rpc_spi_xfer_message(rpc, t);
-> >> > +      if (ret)
-> >> > +         goto out;
-> >> > +   }
-> >> > +
-> >> > +   msg->status = 0;
-> >> > +   msg->actual_length = rpc->totalxferlen;
-> >> > +out:
-> >> > +   spi_finalize_current_message(master);
-> >> > +   return 0;
-> >> > +}
-> >> > +
-> >> > +static const struct regmap_range rpc_spi_volatile_ranges[] = {
-> >> > +   regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),
-> >> > +   regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),
-> >>
-> >> Why is SMWDR volatile ?
-> > 
-> > No matter is write-back or write-through.
-> 
-> Oh, do you want to assure the SMWDR value is always written directly to
-> the hardware ?
-
-yes,
-
-> 
-> btw. I think SMRDR should be precious ?
-
-so, you think I should drop
-regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0)
+--=_alternative 00209DC74825835B_=
+Content-Type: text/html; charset="Big5"
+Content-Transfer-Encoding: base64
 
 
-thanks again for your review.
-best regards,
-Mason
+PHR0Pjxmb250IHNpemU9Mj5IaSBHZWVydCw8YnI+DQo8YnI+DQomZ3Q7ICZxdW90O0dlZXJ0IFV5
+dHRlcmhvZXZlbiZxdW90OyAmbHQ7Z2VlcnRAbGludXgtbTY4ay5vcmcmZ3Q7IDwvZm9udD48L3R0
+Pg0KPGJyPjx0dD48Zm9udCBzaXplPTI+Jmd0OyAyMDE4LzEyLzA1IKRVpMggMDU6MDY8L2ZvbnQ+
+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPiZndDsgPGJyPg0KJmd0OyBUbzwvZm9udD48L3R0
+Pg0KPGJyPjx0dD48Zm9udCBzaXplPTI+Jmd0OyA8YnI+DQomZ3Q7IG1hc29uY2N5YW5nQG14aWMu
+Y29tLnR3LCA8L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPiZndDsgPGJyPg0KJmd0
+OyBjYzwvZm9udD48L3R0Pg0KPGJyPjx0dD48Zm9udCBzaXplPTI+Jmd0OyA8YnI+DQomZ3Q7ICZx
+dW90O01hcmsgQnJvd24mcXVvdDsgJmx0O2Jyb29uaWVAa2VybmVsLm9yZyZndDssICZxdW90O01h
+cmVrIFZhc3V0JnF1b3Q7DQo8YnI+DQomZ3Q7ICZsdDttYXJlay52YXN1dEBnbWFpbC5jb20mZ3Q7
+LCAmcXVvdDtMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0JnF1b3Q7DQombHQ7bGludXgtPGJyPg0K
+Jmd0OyBrZXJuZWxAdmdlci5rZXJuZWwub3JnJmd0OywgJnF1b3Q7bGludXgtc3BpJnF1b3Q7ICZs
+dDtsaW51eC1zcGlAdmdlci5rZXJuZWwub3JnJmd0OywNCjxicj4NCiZndDsgJnF1b3Q7Qm9yaXMg
+QnJlemlsbG9uJnF1b3Q7ICZsdDtib3Jpcy5icmV6aWxsb25AYm9vdGxpbi5jb20mZ3Q7LCAmcXVv
+dDtMaW51eC1SZW5lc2FzJnF1b3Q7DQo8YnI+DQomZ3Q7ICZsdDtsaW51eC1yZW5lc2FzLXNvY0B2
+Z2VyLmtlcm5lbC5vcmcmZ3Q7LCAmcXVvdDtHZWVydCBVeXR0ZXJob2V2ZW4mcXVvdDsNCiZsdDtn
+ZWVydDxicj4NCiZndDsgK3JlbmVzYXNAZ2xpZGVyLmJlJmd0OywganVsaWVuc3VAbXhpYy5jb20u
+dHcsICZxdW90O1NpbW9uIEhvcm1hbiZxdW90Ow0KPGJyPg0KJmd0OyAmbHQ7aG9ybXNAdmVyZ2Uu
+bmV0LmF1Jmd0Oywgemhlbmd4dW5saUBteGljLmNvbS50dzwvZm9udD48L3R0Pg0KPGJyPjx0dD48
+Zm9udCBzaXplPTI+Jmd0OyA8YnI+DQomZ3Q7IFN1YmplY3Q8L2ZvbnQ+PC90dD4NCjxicj48dHQ+
+PGZvbnQgc2l6ZT0yPiZndDsgPGJyPg0KJmd0OyBSZTogW1BBVENIIHYyIDEvMl0gc3BpOiBBZGQg
+UmVuZXNhcyBSLUNhciBHZW4zIFJQQyBTUEkgY29udHJvbGxlcg0KZHJpdmVyPC9mb250PjwvdHQ+
+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj4mZ3Q7IDxicj4NCiZndDsgSGkgTWFzb24sPGJyPg0KJmd0
+OyA8YnI+DQomZ3Q7IE9uIE1vbiwgRGVjIDMsIDIwMTggYXQgMTA6MTkgQU0gTWFzb24gWWFuZyAm
+bHQ7bWFzb25jY3lhbmdAbXhpYy5jb20udHcmZ3Q7DQp3cm90ZTo8YnI+DQomZ3Q7ICZndDsgQWRk
+IGEgZHJpdmVyIGZvciBSZW5lc2FzIFItQ2FyIEdlbjMgUlBDIFNQSSBjb250cm9sbGVyLjxicj4N
+CiZndDsgJmd0Ozxicj4NCiZndDsgJmd0OyBTaWduZWQtb2ZmLWJ5OiBNYXNvbiBZYW5nICZsdDtt
+YXNvbmNjeWFuZ0BteGljLmNvbS50dyZndDs8YnI+DQomZ3Q7IDxicj4NCiZndDsgVGhhbmtzIGZv
+ciB5b3VyIHBhdGNoITxicj4NCiZndDsgPGJyPg0KJmd0OyAmZ3Q7IC0tLSBhL2RyaXZlcnMvc3Bp
+L0tjb25maWc8YnI+DQomZ3Q7ICZndDsgKysrIGIvZHJpdmVycy9zcGkvS2NvbmZpZzxicj4NCiZn
+dDsgJmd0OyBAQCAtNTI4LDYgKzUyOCwxMiBAQCBjb25maWcgU1BJX1JTUEk8YnI+DQomZ3Q7ICZn
+dDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IGhlbHA8YnI+DQomZ3Q7ICZndDsgJm5ic3A7
+ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBTUEkgZHJpdmVyIGZvciBSZW5lc2FzIFJTUEkN
+CmFuZCBRU1BJIGJsb2Nrcy48YnI+DQomZ3Q7ICZndDs8YnI+DQomZ3Q7ICZndDsgK2NvbmZpZyBT
+UElfUkVORVNBU19SUEM8YnI+DQomZ3Q7ICZndDsgKyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB0cmlz
+dGF0ZSAmcXVvdDtSZW5lc2FzIFItQ2FyIEdlbjMgUlBDDQpTUEkgY29udHJvbGxlciZxdW90Ozxi
+cj4NCiZndDsgJmd0OyArICZuYnNwOyAmbmJzcDsgJm5ic3A7IGRlcGVuZHMgb24gU1VQRVJIIHx8
+IEFSQ0hfUkVORVNBUyB8fCBDT01QSUxFX1RFU1Q8YnI+DQomZ3Q7IDxicj4NCiZndDsgU28gdGhp
+cyBkcml2ZXIgaXMgaW50ZW5kZWQgZm9yIFN1cGVySCBTb0NzLCB0b28/PGJyPg0KJmd0OyBJZiBu
+b3QsIHBsZWFzZSBkcm9wIHRoZSBkZXBlbmRlbmN5Ljxicj4NCiZndDsgPC9mb250PjwvdHQ+DQo8
+YnI+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj5va2F5LCBJIHdpbGwgZHJvcCAmcXVvdDtTVVBFUkgm
+cXVvdDsuPC9mb250PjwvdHQ+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj48YnI+DQomZ3Q7ICZndDsg
+LS0tIC9kZXYvbnVsbDxicj4NCiZndDsgJmd0OyArKysgYi9kcml2ZXJzL3NwaS9zcGktcmVuZXNh
+cy1ycGMuYzxicj4NCiZndDsgPGJyPg0KJmd0OyAmZ3Q7ICsjaWZkZWYgQ09ORklHX1JFU0VUX0NP
+TlRST0xMRVI8YnI+DQomZ3Q7ICZndDsgK3N0YXRpYyBpbnQgcnBjX3NwaV9kb19yZXNldChzdHJ1
+Y3QgcnBjX3NwaSAqcnBjKTxicj4NCiZndDsgPGJyPg0KJmd0OyBXaGF0J3MgdGhlIHB1cnBvc2Ug
+b2YgdGhlIHJlc2V0IHJvdXRpbmU/PC9mb250PjwvdHQ+DQo8YnI+DQo8YnI+PHR0Pjxmb250IHNp
+emU9Mj5pbiBjYXNlIFJQQyB4ZmVyIGlzIHRpbWUtb3V0IGR1ZSB0byBzb21ldGhpbmcgd3JvbmcN
+CmluIFJQQyBtb2R1bGUsPC9mb250PjwvdHQ+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj5hcyBNYXJl
+ayBjb21tZW50cy48L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPjxicj4NCiZndDsg
+R2l2ZW4gdGhlICNpZmRlZiwgaXMgaXQgb3B0aW9uYWwgb3IgcmVxdWlyZWQ/PGJyPg0KJmd0OyA8
+YnI+DQomZ3Q7ICZndDsgK3s8YnI+DQomZ3Q7ICZndDsgKyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBp
+bnQgaSwgcmV0Ozxicj4NCiZndDsgJmd0OyArPGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNw
+OyAmbmJzcDsgcmV0ID0gcmVzZXRfY29udHJvbF9yZXNldChycGMtJmd0O3JzdGMpOzxicj4NCiZn
+dDsgJmd0OyArICZuYnNwOyAmbmJzcDsgJm5ic3A7IGlmIChyZXQpPGJyPg0KJmd0OyAmZ3Q7ICsg
+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHJldHVybiBy
+ZXQ7PGJyPg0KJmd0OyAmZ3Q7ICs8YnI+DQomZ3Q7ICZndDsgKyAmbmJzcDsgJm5ic3A7ICZuYnNw
+OyBmb3IgKGkgPSAwOyBpICZsdDsgTE9PUF9USU1FT1VUOyBpKyspDQp7PGJyPg0KJmd0OyAmZ3Q7
+ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHJldCA9
+IHJlc2V0X2NvbnRyb2xfc3RhdHVzKHJwYy0mZ3Q7cnN0Yyk7PGJyPg0KJmd0OyAmZ3Q7ICsgJm5i
+c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IGlmIChyZXQgPT0N
+CjApPGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsNCiZuYnNwOyAmbmJzcDsgcmV0dXJuIDA7PGJyPg0K
+Jmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
+c3A7IHVzbGVlcF9yYW5nZSgwLA0KMSk7PGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgfTxicj4NCiZndDsgPGJyPg0KJmd0OyBXaHkgZG8geW91IG5lZWQgdGhpcyBsb29wPzxi
+cj4NCiZndDsgVGhlIGRlbGF5IGluIGNwZ19tc3NyX3Jlc2V0KCkgc2hvdWxkIGJlIHN1ZmZpY2ll
+bnQuPGJyPg0KJmd0OyA8L2ZvbnQ+PC90dD4NCjxicj4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPnl1
+cCwgSSBrbm93IHRoZXJlIGlzIGFscmVhZHkgMzUgdXMgZGVsYXkgaW4gY3BnX21zc3JfcmVzZXQo
+KS48L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPklmIHlvdSB0aGluayByZXNldF9j
+b250cm9sX3N0YXR1cygpY2hlY2tpbmcgaXMgbm90DQpuZWNlc3NhcnksPC9mb250PjwvdHQ+DQo8
+YnI+PHR0Pjxmb250IHNpemU9Mj5JIHdpbGwgZHJvcCBpdC48L2ZvbnQ+PC90dD4NCjxicj48dHQ+
+PGZvbnQgc2l6ZT0yPjxicj4NCiZndDsgJmd0OyArPGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZu
+YnNwOyAmbmJzcDsgcmV0dXJuIC1FVElNRURPVVQ7PGJyPg0KJmd0OyAmZ3Q7ICt9PGJyPg0KJmd0
+OyAmZ3Q7ICsjZWxzZTxicj4NCiZndDsgJmd0OyArc3RhdGljIGludCBycGNfc3BpX2RvX3Jlc2V0
+KHN0cnVjdCBycGNfc3BpICpycGMpPGJyPg0KJmd0OyAmZ3Q7ICt7PGJyPg0KJmd0OyAmZ3Q7ICsg
+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgcmV0dXJuIC1FVElNRURPVVQ7PGJyPg0KJmd0OyAmZ3Q7ICt9
+PGJyPg0KJmd0OyAmZ3Q7ICsjZW5kaWY8YnI+DQomZ3Q7IDxicj4NCiZndDsgJmd0OyArc3RhdGlj
+IGludCBycGNfc3BpX3RyYW5zZmVyX29uZV9tZXNzYWdlKHN0cnVjdCBzcGlfbWFzdGVyICptYXN0
+ZXIsPGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsNCiZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBzdHJ1Y3QNCnNwaV9tZXNz
+YWdlICptc2cpPGJyPg0KJmd0OyAmZ3Q7ICt7PGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNw
+OyAmbmJzcDsgc3RydWN0IHJwY19zcGkgKnJwYyA9IHNwaV9tYXN0ZXJfZ2V0X2RldmRhdGEobWFz
+dGVyKTs8YnI+DQomZ3Q7ICZndDsgKyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBzdHJ1Y3Qgc3BpX3Ry
+YW5zZmVyICp0Ozxicj4NCiZndDsgJmd0OyArICZuYnNwOyAmbmJzcDsgJm5ic3A7IGludCByZXQ7
+PGJyPg0KJmd0OyAmZ3Q7ICs8YnI+DQomZ3Q7ICZndDsgKyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBy
+cGNfc3BpX3RyYW5zZmVyX3NldHVwKHJwYywgbXNnKTs8YnI+DQomZ3Q7ICZndDsgKzxicj4NCiZn
+dDsgJmd0OyArICZuYnNwOyAmbmJzcDsgJm5ic3A7IGxpc3RfZm9yX2VhY2hfZW50cnkodCwgJmFt
+cDttc2ctJmd0O3RyYW5zZmVycywNCnRyYW5zZmVyX2xpc3QpIHs8YnI+DQomZ3Q7ICZndDsgKyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgaWYgKCFsaXN0
+X2lzX2xhc3QoJmFtcDt0LSZndDt0cmFuc2Zlcl9saXN0LA0KJmFtcDttc2ctJmd0O3RyYW5zZmVy
+cykpPGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsNCiZuYnNwOyAmbmJzcDsgY29udGludWU7PGJyPg0K
+Jmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
+c3A7IHJldCA9IHJwY19zcGlfeGZlcl9tZXNzYWdlKHJwYywNCnQpOzxicj4NCiZndDsgPGJyPg0K
+Jmd0OyBycGNfc3BpX3hmZXJfbWVzc2FnZSgpIHNvdW5kcyBsaWtlIGEgYmFkIG5hbWUgdG8gbWUs
+IGdpdmVuIGl0IG9wZXJhdGVzPGJyPg0KJmd0OyBvbiBhIHRyYW5zZmVyLCBub3Qgb24gYSBtZXNz
+YWdlLjxicj4NCiZndDsgPC9mb250PjwvdHQ+DQo8YnI+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj5C
+ZWNhdXNlIFJQQyBzZW5kIGEgZW50aXJlIFNQSSBtZXNzYWdlIGF0IG9uZSB0aW1lLA0Kbm90IHNl
+cGFyYXRlbHksPC9mb250PjwvdHQ+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj50aGF0IGlzIHRoZSAx
+J3N0IHRyYW5zZmVyIGlzIGZvciBjb21tYW5kLCB0aGUgMiduZA0KdHJhbnNmZXIgaXMgZm9yIGFk
+ZHJlc3MvZGF0YSA8L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPmFuZCBzbyBvbi48
+L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPlRoZSByZWFzb24gaXMgQ1MjIHBpbiBj
+b250cm9sIHJlc3RyaWN0aW9uIGluIFJQQyBIVw0KbW9kdWxlLjwvZm9udD48L3R0Pg0KPGJyPg0K
+PGJyPjx0dD48Zm9udCBzaXplPTI+PGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IGlmIChyZXQpPGJyPg0KJmd0OyAmZ3Q7ICsg
+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsNCiZuYnNwOyAmbmJzcDsgZ290byBvdXQ7PGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZu
+YnNwOyAmbmJzcDsgfTxicj4NCiZndDsgJmd0OyArPGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZu
+YnNwOyAmbmJzcDsgbXNnLSZndDtzdGF0dXMgPSAwOzxicj4NCiZndDsgJmd0OyArICZuYnNwOyAm
+bmJzcDsgJm5ic3A7IG1zZy0mZ3Q7YWN0dWFsX2xlbmd0aCA9IHJwYy0mZ3Q7dG90YWx4ZmVybGVu
+Ozxicj4NCiZndDsgJmd0OyArb3V0Ojxicj4NCiZndDsgJmd0OyArICZuYnNwOyAmbmJzcDsgJm5i
+c3A7IHNwaV9maW5hbGl6ZV9jdXJyZW50X21lc3NhZ2UobWFzdGVyKTs8YnI+DQomZ3Q7ICZndDsg
+KyAmbmJzcDsgJm5ic3A7ICZuYnNwOyByZXR1cm4gMDs8YnI+DQomZ3Q7ICZndDsgK308YnI+DQom
+Z3Q7IDxicj4NCiZndDsgPGJyPg0KJmd0OyAmZ3Q7ICtzdGF0aWMgaW50IHJwY19zcGlfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldik8YnI+DQomZ3Q7ICZndDsgK3s8YnI+DQomZ3Q7
+IDxicj4NCiZndDsgJmd0OyArICZuYnNwOyAmbmJzcDsgJm5ic3A7IHJwYy0mZ3Q7cnN0YyA9IGRl
+dm1fcmVzZXRfY29udHJvbF9nZXRfZXhjbHVzaXZlKCZhbXA7cGRldi0mZ3Q7ZGV2LA0KTlVMTCk7
+PGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgaWYgKElTX0VSUihycGMtJmd0
+O3JzdGMpKTxicj4NCiZndDsgJmd0OyArICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsgJm5ic3A7ICZuYnNwOyByZXR1cm4gUFRSX0VSUihycGMtJmd0O3JzdGMpOzxicj4NCiZndDsg
+PGJyPg0KJmd0OyBUaGlzIHdpbGwgcmV0dXJuIGFuIGVycm9yIGlmIENPTkZJR19SRVNFVF9DT05U
+Uk9MTEVSIGlzIG5vdCBzZXQsIGhlbmNlPGJyPg0KJmd0OyB0aGUgI2lmZGVmIGFib3ZlIGlzIG1v
+b3QuPGJyPg0KJmd0OyA8L2ZvbnQ+PC90dD4NCjxicj4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPllv
+dSBhcmUgcmlnaHQuPC9mb250PjwvdHQ+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj5zbywgSSBzaG91
+bGQgZG8gPC9mb250PjwvdHQ+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj5PcHRpb24gMTogcmVtb3Zl
+ICNDT05GSUdfUkVTRVRfQ09OVFJPTExFUjwvZm9udD48L3R0Pg0KPGJyPjx0dD48Zm9udCBzaXpl
+PTI+T3B0aW9uIDI6IGFkZCAjQ09ORklHX1JFU0VUX0NPTlRST0xMRVIgZm9yIGRldm1fcmVzZXRf
+Y29udHJvbF9nZXRfZXhjbHVzaXZlKCk8L2ZvbnQ+PC90dD4NCjxicj4NCjxicj48dHQ+PGZvbnQg
+c2l6ZT0yPnBsZWFzZSBjb21tZW50cyBvbiBpdCwgdGhhbmtzLjwvZm9udD48L3R0Pg0KPGJyPg0K
+PGJyPjx0dD48Zm9udCBzaXplPTI+PGJyPg0KJmd0OyAmZ3Q7ICs8YnI+DQomZ3Q7ICZndDsgKyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyBwbV9ydW50aW1lX2VuYWJsZSgmYW1wO3BkZXYtJmd0O2Rldik7
+PGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgbWFzdGVyLSZndDthdXRvX3J1
+bnRpbWVfcG0gPSB0cnVlOzxicj4NCiZndDsgJmd0OyArPGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7
+ICZuYnNwOyAmbmJzcDsgbWFzdGVyLSZndDtudW1fY2hpcHNlbGVjdCA9IDE7PGJyPg0KJmd0OyAm
+Z3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgbWFzdGVyLSZndDttZW1fb3BzID0gJmFtcDtycGNf
+c3BpX21lbV9vcHM7PGJyPg0KJmd0OyAmZ3Q7ICsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgbWFzdGVy
+LSZndDt0cmFuc2Zlcl9vbmVfbWVzc2FnZSA9IHJwY19zcGlfdHJhbnNmZXJfb25lX21lc3NhZ2U7
+PGJyPg0KJmd0OyA8YnI+DQomZ3Q7IElzIHRoZXJlIGFueSByZWFzb24geW91IGNhbm5vdCB1c2Ug
+dGhlIHN0YW5kYXJkPGJyPg0KJmd0OyBzcGlfdHJhbnNmZXJfb25lX21lc3NhZ2UsIGkuZS4gcHJv
+dmlkZSBzcGlfY29udHJvbGxlci50cmFuc2Zlcl9vbmUoKTxicj4NCiZndDsgaW5zdGVhZCBvZiBz
+cGlfY29udHJvbGxlci50cmFuc2Zlcl9vbmVfbWVzc2FnZSgpPzxicj4NCiZndDsgPC9mb250Pjwv
+dHQ+DQo8YnI+DQo8YnI+PHR0Pjxmb250IHNpemU9Mj5JdCBzZWVtcyB0aGVyZSBpcyBhIFJQQyBI
+VyByZXN0cmljdGlvbiBpbiBDUyMgcGluDQpjb250cm9sLjwvZm9udD48L3R0Pg0KPGJyPjx0dD48
+Zm9udCBzaXplPTI+VGhlcmVmb3JlLCBpdCBjYW4ndCBzZW5kIHRoZSAxJ3N0IHNwaS10cmFuc2Zl
+ciBmb3INCmNvbW1hbmQgYW5kIHRoZW48L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0y
+PmtlZXBpbmcgQ1MjIHBpbiBnb2VzIGxvdyBmb3IgdGhlIDInbmQgc3BpLXRyYW5zZmVyDQpmb3Ig
+YWRkcmVzcy9kYXRhIGFuZCBzbyBvbi48L2ZvbnQ+PC90dD4NCjxicj48dHQ+PGZvbnQgc2l6ZT0y
+Pjxicj4NCiZndDsgR3J7b2V0amUsZWV0aW5nfXMsPGJyPg0KJmd0OyA8YnI+DQomZ3Q7ICZuYnNw
+OyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
+ICZuYnNwOw0KJm5ic3A7ICZuYnNwOyBHZWVydDxicj4NCiZndDsgPGJyPg0KJmd0OyAtLTxicj4N
+CiZndDsgR2VlcnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQg
+aWEzMiAtLSA8YnI+DQomZ3Q7IGdlZXJ0QGxpbnV4LW02OGsub3JnPGJyPg0KJmd0OyA8YnI+DQom
+Z3Q7IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNh
+bGwgbXlzZWxmIGEgaGFja2VyLg0KQnV0PGJyPg0KJmd0OyB3aGVuIEknbSB0YWxraW5nIHRvIGpv
+dXJuYWxpc3RzIEkganVzdCBzYXkgJnF1b3Q7cHJvZ3JhbW1lciZxdW90Ow0Kb3Igc29tZXRoaW5n
+bGlrZSB0aGF0Ljxicj4NCiZndDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7DQombmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAtLSBMaW51cyBUb3J2YWxkczxicj4NCjwvZm9udD48L3R0Pg0K
+PGJyPg0KPGJyPjx0dD48Zm9udCBzaXplPTI+dGhhbmtzIGFnYWluIGZvciB5b3VyIHJldmlldyAm
+YW1wOyBoZWxwLjwvZm9udD48L3R0Pg0KPGJyPjx0dD48Zm9udCBzaXplPTI+TWFzb248L2ZvbnQ+
+PC90dD4NCjxicj4NCjxicj4NCjxicj48dHQ+PGZvbnQgc2l6ZT0yPjxicj4NCjxicj4NCkNPTkZJ
+REVOVElBTElUWSBOT1RFOjxicj4NCjxicj4NClRoaXMgZS1tYWlsIGFuZCBhbnkgYXR0YWNobWVu
+dHMgbWF5IGNvbnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0aW9uIGFuZC9vcg0KcGVyc29uYWwg
+ZGF0YSwgd2hpY2ggaXMgcHJvdGVjdGVkIGJ5IGFwcGxpY2FibGUgbGF3cy4gUGxlYXNlIGJlIHJl
+bWluZGVkDQp0aGF0IGR1cGxpY2F0aW9uLCBkaXNjbG9zdXJlLCBkaXN0cmlidXRpb24sIG9yIHVz
+ZSBvZiB0aGlzIGUtbWFpbCAoYW5kL29yDQppdHMgYXR0YWNobWVudHMpIG9yIGFueSBwYXJ0IHRo
+ZXJlb2YgaXMgcHJvaGliaXRlZC4gSWYgeW91IHJlY2VpdmUgdGhpcw0KZS1tYWlsIGluIGVycm9y
+LCBwbGVhc2Ugbm90aWZ5IHVzIGltbWVkaWF0ZWx5IGFuZCBkZWxldGUgdGhpcyBtYWlsIGFzIHdl
+bGwNCmFzIGl0cyBhdHRhY2htZW50KHMpIGZyb20geW91ciBzeXN0ZW0uIEluIGFkZGl0aW9uLCBw
+bGVhc2UgYmUgaW5mb3JtZWQNCnRoYXQgY29sbGVjdGlvbiwgcHJvY2Vzc2luZywgYW5kL29yIHVz
+ZSBvZiBwZXJzb25hbCBkYXRhIGlzIHByb2hpYml0ZWQNCnVubGVzcyBleHByZXNzbHkgcGVybWl0
+dGVkIGJ5IHBlcnNvbmFsIGRhdGEgcHJvdGVjdGlvbiBsYXdzLiBUaGFuayB5b3UNCmZvciB5b3Vy
+IGF0dGVudGlvbiBhbmQgY29vcGVyYXRpb24uPGJyPg0KPGJyPg0KTWFjcm9uaXggSW50ZXJuYXRp
+b25hbCBDby4sIEx0ZC48YnI+DQo8YnI+DQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT08YnI+DQo8L2ZvbnQ+PC90dD4N
+Cg==
 
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information 
-and/or personal data, which is protected by applicable laws. Please be 
-reminded that duplication, disclosure, distribution, or use of this e-mail 
-(and/or its attachments) or any part thereof is prohibited. If you receive 
-this e-mail in error, please notify us immediately and delete this mail as 
-well as its attachment(s) from your system. In addition, please be 
-informed that collection, processing, and/or use of personal data is 
-prohibited unless expressly permitted by personal data protection laws. 
-Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
-
-
-============================================================================
-
-CONFIDENTIALITY NOTE:
-
-This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-
-Macronix International Co., Ltd.
-
-=====================================================================
-
---=_alternative 0029455B4825835B_=
-Content-Type: text/html; charset="US-ASCII"
-
-
-<tt><font size=2>Hi Marek,</font></tt>
-<br><tt><font size=2><br>
-&gt; &gt;&gt; Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
-driver<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; On 12/03/2018 10:18 AM, Mason Yang wrote:<br>
-&gt; &gt;&gt; &gt; Add a driver for Renesas R-Car Gen3 RPC SPI controller.<br>
-&gt; &gt;&gt; &gt;<br>
-&gt; &gt;&gt; &gt; Signed-off-by: Mason Yang &lt;masonccyang@mxic.com.tw&gt;<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; What changed in this V2 ?<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; [...]<br>
-&gt; &gt; <br>
-&gt; &gt; see some description in [PATH v2 0/2]<br>
-&gt; <br>
-&gt; I don't see any V2: list there.<br>
-&gt; <br>
-</font></tt>
-<br><tt><font size=2>including </font></tt>
-<br><tt><font size=2>1) remove RPC clock enable/dis-able control,<br>
-2) patch run time PM, </font></tt>
-<br><tt><font size=2>3) add RPC module software reset, </font></tt>
-<br><tt><font size=2>4) add regmap,</font></tt>
-<br><tt><font size=2>5) other coding style and so on.</font></tt>
-<br>
-<br><tt><font size=2><br>
-&gt; &gt;&gt; &gt; +static int rpc_spi_io_xfer(struct rpc_spi *rpc,<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const void
-*tx_buf, void *rx_buf)<br>
-&gt; &gt;&gt; &gt; +{<br>
-&gt; &gt;&gt; &gt; + &nbsp; u32 smenr, smcr, data, pos = 0;<br>
-&gt; &gt;&gt; &gt; + &nbsp; int ret = 0;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; regmap_write(rpc-&gt;regmap, RPC_CMNCR, RPC_CMNCR_MD
-| RPC_CMNCR_SFDE |<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;RPC_CMNCR_MOIIO_HIZ
-| RPC_CMNCR_IOFV_HIZ |<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;RPC_CMNCR_BSZ(0));<br>
-&gt; &gt;&gt; &gt; + &nbsp; regmap_write(rpc-&gt;regmap, RPC_SMDRENR, 0x0);<br>
-&gt; &gt;&gt; &gt; + &nbsp; regmap_write(rpc-&gt;regmap, RPC_SMCMR, rpc-&gt;cmd);<br>
-&gt; &gt;&gt; &gt; + &nbsp; regmap_write(rpc-&gt;regmap, RPC_SMDMCR, rpc-&gt;dummy);<br>
-&gt; &gt;&gt; &gt; + &nbsp; regmap_write(rpc-&gt;regmap, RPC_SMADR, rpc-&gt;addr);<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; if (tx_buf) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;smenr = rpc-&gt;smenr;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;while (pos &lt; rpc-&gt;xferlen)
-{<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; u32 nbytes = rpc-&gt;xferlen
-&nbsp;- pos;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; regmap_write(rpc-&gt;regmap,
-RPC_SMWDR0,<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-*(u32 *)(tx_buf + pos));<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; *(u32 *) cast is probably not needed , fix casts globally.</font></tt>
-<br><tt><font size=2>&gt; &gt; <br>
-&gt; &gt; It must have it!<br>
-&gt; <br>
-&gt; Why ?</font></tt>
-<br>
-<br><tt><font size=2>Get a compiler warning due to tx_bug is void *, as
-Geert replied.</font></tt>
-<br>
-<br><tt><font size=2>Using get_unaligned(), patched code would be</font></tt>
-<br><tt><font size=2>-----------------------------------------------------</font></tt>
-<br><tt><font size=2>regmap_write(rpc-&gt;regmap, RPC_SMWDR0,</font></tt>
-<br><tt><font size=2>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp;get_unaligned((u32 *)(tx_buf + pos))); &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</font></tt>
-<br><tt><font size=2>----------------------------------------------------</font></tt>
-<br><tt><font size=2><br>
-<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;xferlen = *(u32
-*)len;<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;totalxferlen +=
-*(u32 *)len;<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;} else {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (op-&gt;data.nbytes))
-| RPC_SMENR_SPIDB<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (fls(op-&gt;data.buswidth
-&gt;&gt; 1));<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; Drop parenthesis around fls()<br>
-&gt; &gt; <br>
-&gt; &gt; ?<br>
-&gt; &gt; no way.<br>
-&gt; <br>
-&gt; I would really appreciate it if you could explain things instead.<br>
-&gt; <br>
-&gt; Geert already did so, by pointing out this is a confusing code<br>
-&gt; formatting problem and how it should be fixed, so no need to repeat<br>
-&gt; that. But I hope you understand how that sort of explanation is far
-more<br>
-&gt; valuable than &quot;no way&quot; kind of reply.</font></tt>
-<br>
-<br><tt><font size=2>okay, understood.</font></tt>
-<br><tt><font size=2><br>
-<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; xfercnt = xferpos;<br>
-&gt; &gt;&gt; &gt; + &nbsp; rpc-&gt;xferlen = xfer[--xferpos].len;<br>
-&gt; &gt;&gt; &gt; + &nbsp; rpc-&gt;cmd = RPC_SMCMR_CMD(((u8 *)xfer[0].tx_buf)[0]);<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; Is the cast needed ?<br>
-&gt; &gt; <br>
-&gt; &gt; yes!<br>
-&gt; <br>
-&gt; Why ?</font></tt>
-<br>
-<br><tt><font size=2>Get a compiler warning due to tx_bug is void *, as
-Geert replied.</font></tt>
-<br>
-<br><tt><font size=2>Using get_unaligned(), patched code would be</font></tt>
-<br><tt><font size=2>---------------------------------------------------------------</font></tt>
-<br><tt><font size=2>&nbsp;rpc-&gt;cmd = RPC_SMCMR_CMD(get_unaligned((u8
-*)xfer[0].tx_buf)); </font></tt>
-<br><tt><font size=2>----------------------------------------------------------------</font></tt>
-<br>
-<br><tt><font size=2><br>
-&gt; <br>
-&gt; &gt;&gt; &gt; + &nbsp; rpc-&gt;smenr = RPC_SMENR_CDE | RPC_SMENR_CDB(fls(xfer[0].tx_nbits<br>
-&gt; &gt;&gt;&gt; 1));<br>
-&gt; &gt;&gt; &gt; + &nbsp; rpc-&gt;addr = 0;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; if (xfercnt &gt; 2 &amp;&amp; xfer[1].len &amp;&amp;
-xfer[1].tx_buf) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;rpc-&gt;smenr |= RPC_SMENR_ADB(fls(xfer[1].tx_nbits
-&gt;&gt; 1));<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;for (i = 0; i &lt; xfer[1].len;
-i++)<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;addr |= (u32)((u8
-*)xfer[1].tx_buf)[i]<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &lt;&lt;
-(8 * (xfer[1].len - i - 1));<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;if (xfer[1].len == 4)<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_ADE(0xf);<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;else<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_ADE(0x7);<br>
-&gt; &gt;&gt; &gt; + &nbsp; }<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; switch (xfercnt) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; case 2:<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;if (xfer[1].rx_buf) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[1].len)) | RPC_SMENR_SPIDB(fls<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[1].rx_nbits &gt;&gt; 1));<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;} else if (xfer[1].tx_buf) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[1].len)) | RPC_SMENR_SPIDB(fls<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[1].tx_nbits &gt;&gt; 1));<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;}<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;break;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; case 3:<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;if (xfer[2].len &amp;&amp; xfer[2].rx_buf
-&amp;&amp; !xfer[2].tx_buf) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[2].len)) | RPC_SMENR_SPIDB(fls<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[2].rx_nbits &gt;&gt; 1));<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; It seems this SMENR pattern repeats itself throughout the
-driver, can<br>
-&gt; &gt;&gt; this be improved / deduplicated ?<br>
-&gt; &gt; <br>
-&gt; &gt; It seems no way!<br>
-&gt; <br>
-&gt; Why ?</font></tt>
-<br>
-<br><tt><font size=2>okay, I patch this with for( ) loop.</font></tt>
-<br><tt><font size=2><br>
-&gt; <br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;} else if (xfer[2].len &amp;&amp;
-xfer[2].tx_buf &amp;&amp; !xfer[2].rx_buf) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[2].len)) | RPC_SMENR_SPIDB(fls<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[2].tx_nbits &gt;&gt; 1));<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;}<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;break;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; case 4:<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;if (xfer[2].len &amp;&amp; xfer[2].tx_buf)
-{<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_DME;<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;dummy = RPC_SMDMCR_DMCYC(xfer[2].len);<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;}<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;if (xfer[3].len &amp;&amp; xfer[3].rx_buf)
-{<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;smenr |= RPC_SMENR_SPIDE(rpc_bits_xfer<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[3].len)) | RPC_SMENR_SPIDB(fls<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp;(xfer[3].rx_nbits &gt;&gt; 1));<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;}<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;break;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; default:<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;break;<br>
-&gt; &gt;&gt; &gt; + &nbsp; }<br>
-&gt; &gt;&gt; &gt; +}<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; +static int rpc_spi_xfer_message(struct rpc_spi *rpc,
-struct<br>
-&gt; &gt;&gt; spi_transfer *t)<br>
-&gt; &gt;&gt; &gt; +{<br>
-&gt; &gt;&gt; &gt; + &nbsp; int ret;</font></tt>
-<br><tt><font size=2>&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; ret = rpc_spi_set_freq(rpc, t-&gt;speed_hz);<br>
-&gt; &gt;&gt; &gt; + &nbsp; if (ret)<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;return ret;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; ret = rpc_spi_io_xfer(rpc,<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;xfer_dir
-== SPI_MEM_DATA_OUT ?<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; t-&gt;tx_buf
-: NULL,<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rpc-&gt;xfer_dir
-== SPI_MEM_DATA_IN ?<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; t-&gt;rx_buf
-: NULL);<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; return ret;<br>
-&gt; &gt;&gt; &gt; +}<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; +static int rpc_spi_transfer_one_message(struct spi_master
-*master,<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; struct
-spi_message *msg)<br>
-&gt; &gt;&gt; &gt; +{<br>
-&gt; &gt;&gt; &gt; + &nbsp; struct rpc_spi *rpc = spi_master_get_devdata(master);<br>
-&gt; &gt;&gt; &gt; + &nbsp; struct spi_transfer *t;<br>
-&gt; &gt;&gt; &gt; + &nbsp; int ret;<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; rpc_spi_transfer_setup(rpc, msg);<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; list_for_each_entry(t, &amp;msg-&gt;transfers,
-transfer_list) {<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;if (!list_is_last(&amp;t-&gt;transfer_list,
-&amp;msg-&gt;transfers))<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; continue;<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;ret = rpc_spi_xfer_message(rpc,
-t);<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp;if (ret)<br>
-&gt; &gt;&gt; &gt; + &nbsp; &nbsp; &nbsp; &nbsp; goto out;<br>
-&gt; &gt;&gt; &gt; + &nbsp; }<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; + &nbsp; msg-&gt;status = 0;<br>
-&gt; &gt;&gt; &gt; + &nbsp; msg-&gt;actual_length = rpc-&gt;totalxferlen;<br>
-&gt; &gt;&gt; &gt; +out:<br>
-&gt; &gt;&gt; &gt; + &nbsp; spi_finalize_current_message(master);<br>
-&gt; &gt;&gt; &gt; + &nbsp; return 0;<br>
-&gt; &gt;&gt; &gt; +}<br>
-&gt; &gt;&gt; &gt; +<br>
-&gt; &gt;&gt; &gt; +static const struct regmap_range rpc_spi_volatile_ranges[]
-= {<br>
-&gt; &gt;&gt; &gt; + &nbsp; regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),<br>
-&gt; &gt;&gt; &gt; + &nbsp; regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; Why is SMWDR volatile ?<br>
-&gt; &gt; <br>
-&gt; &gt; No matter is write-back or write-through.<br>
-&gt; <br>
-&gt; Oh, do you want to assure the SMWDR value is always written directly
-to<br>
-&gt; the hardware ?</font></tt>
-<br>
-<br><tt><font size=2>yes,</font></tt>
-<br><tt><font size=2><br>
-&gt; <br>
-&gt; btw. I think SMRDR should be precious ?</font></tt>
-<br>
-<br><tt><font size=2>so, you think I should drop</font></tt>
-<br><tt><font size=2>regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0)</font></tt>
-<br>
-<br><tt><font size=2><br>
-thanks again for your review.</font></tt>
-<br><tt><font size=2>best regards,</font></tt>
-<br><tt><font size=2>Mason<br>
-<br>
-<br>
-CONFIDENTIALITY NOTE:<br>
-<br>
-This e-mail and any attachments may contain confidential information and/or
-personal data, which is protected by applicable laws. Please be reminded
-that duplication, disclosure, distribution, or use of this e-mail (and/or
-its attachments) or any part thereof is prohibited. If you receive this
-e-mail in error, please notify us immediately and delete this mail as well
-as its attachment(s) from your system. In addition, please be informed
-that collection, processing, and/or use of personal data is prohibited
-unless expressly permitted by personal data protection laws. Thank you
-for your attention and cooperation.<br>
-<br>
-Macronix International Co., Ltd.<br>
-<br>
-=====================================================================<br>
-</font></tt>
-
---=_alternative 0029455B4825835B_=--
+--=_alternative 00209DC74825835B_=--
