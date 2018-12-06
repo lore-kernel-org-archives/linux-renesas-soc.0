@@ -1,125 +1,122 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:44865 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeLFPh1 (ORCPT
+Received: from mail-eopbgr1400127.outbound.protection.outlook.com ([40.107.140.127]:3040
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725862AbeLFPYz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 10:37:27 -0500
-MIME-Version: 1.0
-References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
- <1544086559-47141-3-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdVv262dM8JGWN4w3h2kq4Y4ftRczn8TF-kM_fecF4GXnw@mail.gmail.com> <OSBPR01MB21039D89E5E8852574A18893B8A90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB21039D89E5E8852574A18893B8A90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Dec 2018 16:37:13 +0100
-Message-ID: <CAMuHMdWRz-iutKD54vtmJxnLsb3vtm1juYDw-k1+RFCNUVsjkg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Thu, 6 Dec 2018 10:24:55 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Alessandro Zummo <a.zummo@towertech.it>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH v3 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
+Date: Thu, 6 Dec 2018 15:24:48 +0000
+Message-ID: <OSBPR01MB21039D89E5E8852574A18893B8A90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
+ <1544086559-47141-3-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVv262dM8JGWN4w3h2kq4Y4ftRczn8TF-kM_fecF4GXnw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVv262dM8JGWN4w3h2kq4Y4ftRczn8TF-kM_fecF4GXnw@mail.gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Biju,
-
-On Thu, Dec 6, 2018 at 4:24 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> > Subject: Re: [PATCH v3 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
-> > CC nvmem maintainer
-> >
-> > On Thu, Dec 6, 2018 at 10:04 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> > > Add support for NXP pcf85263 real-time clock. pcf85263 rtc is
-> > > compatible with pcf85363,except that pcf85363 has additional 64 bytes of
-> > RAM.
-
-> > > --- a/drivers/rtc/rtc-pcf85363.c
-> > > +++ b/drivers/rtc/rtc-pcf85363.c
-> > > @@ -120,6 +120,11 @@ struct pcf85363 {
-> > >         struct regmap           *regmap;
-> > >  };
-> > >
-> > > +struct pcf85x63_config {
-> > > +       struct regmap_config regmap;
-> > > +       unsigned int num_nvram;
-> > > +};
-> > > +
-> > >  static int pcf85363_rtc_read_time(struct device *dev, struct rtc_time
-> > > *tm)  {
-> > >         struct pcf85363 *pcf85363 = dev_get_drvdata(dev); @@ -311,25
-> > > +316,68 @@ static int pcf85363_nvram_write(void *priv, unsigned int
-> > offset, void *val,
-> > >                                  val, bytes);  }
-> > >
-> > > -static const struct regmap_config regmap_config = {
-> > > -       .reg_bits = 8,
-> > > -       .val_bits = 8,
-> > > -       .max_register = 0x7f,
-> > > +static int pcf85x63_nvram_read(void *priv, unsigned int offset, void *val,
-> > > +                              size_t bytes)
-> >
-> > Given bytes should be 1, val should be a pointer to a single byte...
-> > What if bytes == 0?
->
-> I doubt we get "bytes==0" because of the checks in " drivers/nvmem/core.c"
-> Function " bin_attr_nvmem_read/ bin_attr_nvmem_write".
-
-Depends. There are other functions calling nvmem_reg_{read,write}(),
-e.g. nvmem_device_{read,write}().
-
->
-> > > +{> +       struct pcf85363 *pcf85363 = priv;
-> > > +
-> > > +       return regmap_read(pcf85363->regmap, CTRL_RAMBYTE, val);
-> >
-> > However, regmap_read() has an unsigned int output parameter!
-> > So it's writing too many bytes, and only writing the actual data byte to the
-> > correct address on little-endian systems.
-> > Hence you need to use an intermediate variable to convert from unsigned int
-> > to byte.
->
-> OK. Will use an intermediate integer variable.
->
-> > > +}
-> > > +
-> > > +static int pcf85x63_nvram_write(void *priv, unsigned int offset, void *val,
-> > > +                               size_t bytes) {
-> > > +       struct pcf85363 *pcf85363 = priv;
-> > > +
-> > > +       return regmap_write(pcf85363->regmap, CTRL_RAMBYTE,
-> > > +                               *((unsigned int *)val));
-> >
-> > Likewise for writing.
-> >
-> > > +}
-> >
-> > BTW, while the nvmem_device_{read,write}() public API is documented, the
-> > nvmem_device.reg_{read,write}() driver API isn't.
-> > And the behavior might be confusing.
-> >
-> > E.g.
-> >  * Return: length of successful bytes read on success and negative
-> >  * error code on error.
-> >
-> > The public API seems to assume the driver API returns zero on success, and
-> > replaces the zero by the number of bytes requested.
-> > If the requested number of bytes is too large, a zero success would be
-> > converted to a value that's larger than the actual number of bytes
-> > transferred!
-> > However, the driver API can return a smaller (positive) number, which
-> > matches "standard" read/write() APIs.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgZmVlZGJhY2suDQoNCj4gU3ViamVjdDogUmU6IFtQQVRD
+SCB2MyAyLzRdIHJ0YzogcGNmODUzNjM6IEFkZCBzdXBwb3J0IGZvciBOWFAgcGNmODUyNjMgcnRj
+DQo+DQo+IEhpIEJpanUsDQo+DQo+IENDIG52bWVtIG1haW50YWluZXINCj4NCj4gT24gVGh1LCBE
+ZWMgNiwgMjAxOCBhdCAxMDowNCBBTSBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+
+IHdyb3RlOg0KPiA+IEFkZCBzdXBwb3J0IGZvciBOWFAgcGNmODUyNjMgcmVhbC10aW1lIGNsb2Nr
+LiBwY2Y4NTI2MyBydGMgaXMNCj4gPiBjb21wYXRpYmxlIHdpdGggcGNmODUzNjMsZXhjZXB0IHRo
+YXQgcGNmODUzNjMgaGFzIGFkZGl0aW9uYWwgNjQgYnl0ZXMgb2YNCj4gUkFNLg0KPiA+DQo+ID4g
+MSBieXRlIG9mIG52bWVtIGlzIHN1cHBvcnRlZCBhbmQgZXhwb3NlZCBpbiBzeXNmcyAoIyBpcyB0
+aGUgaW5zdGFuY2UNCj4gPiBudW1iZXIsc3RhcnRpbmcgd2l0aCAwKTogL3N5cy9idXMvbnZtZW0v
+ZGV2aWNlcy9wY2Y4NXg2My0jL252bWVtDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERh
+cyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+DQo+ID4gLS0tDQo+ID4gVjEtLT5WMg0KPiA+ICAg
+ICAgICAgKiBJbmNvcnBvcmF0ZWQgQWxleGFuZHJlIGFuZCBHZWVydCdzIHJldmlldyBjb21tZW50
+Lg0KPiA+IFYyLS0+VjMNCj4gPiAgICAgICAgICogSW5jb3Jwb3JhdGVkIEdlZXJ0J3MgcmV2aWV3
+IGNvbW1lbnQuDQo+DQo+IFRoYW5rcyBmb3IgdGhlIHVwZGF0ZSENCj4NCj4gPiAtLS0gYS9kcml2
+ZXJzL3J0Yy9ydGMtcGNmODUzNjMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvcnRjL3J0Yy1wY2Y4NTM2
+My5jDQo+ID4gQEAgLTEyMCw2ICsxMjAsMTEgQEAgc3RydWN0IHBjZjg1MzYzIHsNCj4gPiAgICAg
+ICAgIHN0cnVjdCByZWdtYXAgICAgICAgICAgICpyZWdtYXA7DQo+ID4gIH07DQo+ID4NCj4gPiAr
+c3RydWN0IHBjZjg1eDYzX2NvbmZpZyB7DQo+ID4gKyAgICAgICBzdHJ1Y3QgcmVnbWFwX2NvbmZp
+ZyByZWdtYXA7DQo+ID4gKyAgICAgICB1bnNpZ25lZCBpbnQgbnVtX252cmFtOw0KPiA+ICt9Ow0K
+PiA+ICsNCj4gPiAgc3RhdGljIGludCBwY2Y4NTM2M19ydGNfcmVhZF90aW1lKHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc3RydWN0IHJ0Y190aW1lDQo+ID4gKnRtKSAgew0KPiA+ICAgICAgICAgc3RydWN0
+IHBjZjg1MzYzICpwY2Y4NTM2MyA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOyBAQCAtMzExLDI1DQo+
+ID4gKzMxNiw2OCBAQCBzdGF0aWMgaW50IHBjZjg1MzYzX252cmFtX3dyaXRlKHZvaWQgKnByaXYs
+IHVuc2lnbmVkIGludA0KPiBvZmZzZXQsIHZvaWQgKnZhbCwNCj4gPiAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICB2YWwsIGJ5dGVzKTsgIH0NCj4gPg0KPiA+IC1zdGF0aWMgY29uc3Qg
+c3RydWN0IHJlZ21hcF9jb25maWcgcmVnbWFwX2NvbmZpZyA9IHsNCj4gPiAtICAgICAgIC5yZWdf
+Yml0cyA9IDgsDQo+ID4gLSAgICAgICAudmFsX2JpdHMgPSA4LA0KPiA+IC0gICAgICAgLm1heF9y
+ZWdpc3RlciA9IDB4N2YsDQo+ID4gK3N0YXRpYyBpbnQgcGNmODV4NjNfbnZyYW1fcmVhZCh2b2lk
+ICpwcml2LCB1bnNpZ25lZCBpbnQgb2Zmc2V0LCB2b2lkICp2YWwsDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHNpemVfdCBieXRlcykNCj4NCj4gR2l2ZW4gYnl0ZXMgc2hvdWxk
+IGJlIDEsIHZhbCBzaG91bGQgYmUgYSBwb2ludGVyIHRvIGEgc2luZ2xlIGJ5dGUuLi4NCj4gV2hh
+dCBpZiBieXRlcyA9PSAwPw0KDQpJIGRvdWJ0IHdlIGdldCAiYnl0ZXM9PTAiIGJlY2F1c2Ugb2Yg
+dGhlIGNoZWNrcyBpbiAiIGRyaXZlcnMvbnZtZW0vY29yZS5jIg0KRnVuY3Rpb24gIiBiaW5fYXR0
+cl9udm1lbV9yZWFkLyBiaW5fYXR0cl9udm1lbV93cml0ZSIuDQoNCg0KPiA+ICt7PiArICAgICAg
+IHN0cnVjdCBwY2Y4NTM2MyAqcGNmODUzNjMgPSBwcml2Ow0KPiA+ICsNCj4gPiArICAgICAgIHJl
+dHVybiByZWdtYXBfcmVhZChwY2Y4NTM2My0+cmVnbWFwLCBDVFJMX1JBTUJZVEUsIHZhbCk7DQo+
+DQo+IEhvd2V2ZXIsIHJlZ21hcF9yZWFkKCkgaGFzIGFuIHVuc2lnbmVkIGludCBvdXRwdXQgcGFy
+YW1ldGVyIQ0KPiBTbyBpdCdzIHdyaXRpbmcgdG9vIG1hbnkgYnl0ZXMsIGFuZCBvbmx5IHdyaXRp
+bmcgdGhlIGFjdHVhbCBkYXRhIGJ5dGUgdG8gdGhlDQo+IGNvcnJlY3QgYWRkcmVzcyBvbiBsaXR0
+bGUtZW5kaWFuIHN5c3RlbXMuDQo+IEhlbmNlIHlvdSBuZWVkIHRvIHVzZSBhbiBpbnRlcm1lZGlh
+dGUgdmFyaWFibGUgdG8gY29udmVydCBmcm9tIHVuc2lnbmVkIGludA0KPiB0byBieXRlLg0KDQpP
+Sy4gV2lsbCB1c2UgYW4gaW50ZXJtZWRpYXRlIGludGVnZXIgdmFyaWFibGUuDQoNCj4gPiArfQ0K
+PiA+ICsNCj4gPiArc3RhdGljIGludCBwY2Y4NXg2M19udnJhbV93cml0ZSh2b2lkICpwcml2LCB1
+bnNpZ25lZCBpbnQgb2Zmc2V0LCB2b2lkICp2YWwsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBzaXplX3QgYnl0ZXMpIHsNCj4gPiArICAgICAgIHN0cnVjdCBwY2Y4NTM2MyAq
+cGNmODUzNjMgPSBwcml2Ow0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiByZWdtYXBfd3JpdGUo
+cGNmODUzNjMtPnJlZ21hcCwgQ1RSTF9SQU1CWVRFLA0KPiA+ICsgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgKigodW5zaWduZWQgaW50ICopdmFsKSk7DQo+DQo+IExpa2V3aXNlIGZvciB3
+cml0aW5nLg0KPg0KPiA+ICt9DQo+DQo+IEJUVywgd2hpbGUgdGhlIG52bWVtX2RldmljZV97cmVh
+ZCx3cml0ZX0oKSBwdWJsaWMgQVBJIGlzIGRvY3VtZW50ZWQsIHRoZQ0KPiBudm1lbV9kZXZpY2Uu
+cmVnX3tyZWFkLHdyaXRlfSgpIGRyaXZlciBBUEkgaXNuJ3QuDQo+IEFuZCB0aGUgYmVoYXZpb3Ig
+bWlnaHQgYmUgY29uZnVzaW5nLg0KPg0KPiBFLmcuDQo+ICAqIFJldHVybjogbGVuZ3RoIG9mIHN1
+Y2Nlc3NmdWwgYnl0ZXMgcmVhZCBvbiBzdWNjZXNzIGFuZCBuZWdhdGl2ZQ0KPiAgKiBlcnJvciBj
+b2RlIG9uIGVycm9yLg0KPg0KPiBUaGUgcHVibGljIEFQSSBzZWVtcyB0byBhc3N1bWUgdGhlIGRy
+aXZlciBBUEkgcmV0dXJucyB6ZXJvIG9uIHN1Y2Nlc3MsIGFuZA0KPiByZXBsYWNlcyB0aGUgemVy
+byBieSB0aGUgbnVtYmVyIG9mIGJ5dGVzIHJlcXVlc3RlZC4NCj4gSWYgdGhlIHJlcXVlc3RlZCBu
+dW1iZXIgb2YgYnl0ZXMgaXMgdG9vIGxhcmdlLCBhIHplcm8gc3VjY2VzcyB3b3VsZCBiZQ0KPiBj
+b252ZXJ0ZWQgdG8gYSB2YWx1ZSB0aGF0J3MgbGFyZ2VyIHRoYW4gdGhlIGFjdHVhbCBudW1iZXIg
+b2YgYnl0ZXMNCj4gdHJhbnNmZXJyZWQhDQo+IEhvd2V2ZXIsIHRoZSBkcml2ZXIgQVBJIGNhbiBy
+ZXR1cm4gYSBzbWFsbGVyIChwb3NpdGl2ZSkgbnVtYmVyLCB3aGljaA0KPiBtYXRjaGVzICJzdGFu
+ZGFyZCIgcmVhZC93cml0ZSgpIEFQSXMuDQo+DQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcGNm
+ODV4NjNfY29uZmlnIHBjZl84NTI2M19jb25maWcgPSB7DQo+ID4gKyAgICAgICB7DQo+ID4gKyAg
+ICAgICAgICAgICAgIC5yZWdfYml0cyA9IDgsDQo+ID4gKyAgICAgICAgICAgICAgIC52YWxfYml0
+cyA9IDgsDQo+ID4gKyAgICAgICAgICAgICAgIC5tYXhfcmVnaXN0ZXIgPSAweDJmLA0KPiA+ICsg
+ICAgICAgfSwNCj4gPiArICAgICAgIDENCj4NCj4gVGhlICIxIiBsb29rcyBmdW5ueS4gUGxlYXNl
+IHVzZSBDOTkgaW5pdGlhbGl6ZXJzIGZvciBhbGwgc3RydWN0IG1lbWJlcnMuDQoNCk9LIHdpbGwg
+Zml4IHRoaXMuDQo+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IHBjZjg1
+eDYzX2NvbmZpZyBwY2ZfODUzNjNfY29uZmlnID0gew0KPiA+ICsgICAgICAgew0KPiA+ICsgICAg
+ICAgICAgICAgICAucmVnX2JpdHMgPSA4LA0KPiA+ICsgICAgICAgICAgICAgICAudmFsX2JpdHMg
+PSA4LA0KPiA+ICsgICAgICAgICAgICAgICAubWF4X3JlZ2lzdGVyID0gMHg3ZiwNCj4gPiArICAg
+ICAgIH0sDQo+ID4gKyAgICAgICAyDQo+DQo+IExpa2V3aXNlLg0KDQogT0sgd2lsbCBmaXggdGhp
+cy4NCg0KUmVnYXJkcywNCkJpanUNCg0KPiBUaGUgcmVzdCBsb29rcyBnb29kIHRvIG1lLCBzbw0K
+PiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5i
+ZT4NCj4NCj4gR3J7b2V0amUsZWV0aW5nfXMsDQo+DQo+ICAgICAgICAgICAgICAgICAgICAgICAg
+IEdlZXJ0DQo+DQo+IC0tDQo+IEdlZXJ0IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2Yg
+TGludXggYmV5b25kIGlhMzIgLS0gZ2VlcnRAbGludXgtDQo+IG02OGsub3JnDQo+DQo+IEluIHBl
+cnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxm
+IGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qg
+c2F5ICJwcm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KW2h0dHBzOi8vd3d3Mi5y
+ZW5lc2FzLmV1L21lZGlhL2VtYWlsL3VuaWNlZi5qcGddDQoNClRoaXMgQ2hyaXN0bWFzLCBpbnN0
+ZWFkIG9mIHNlbmRpbmcgb3V0IGNhcmRzLCBSZW5lc2FzIEVsZWN0cm9uaWNzIEV1cm9wZSBoYXZl
+IGRlY2lkZWQgdG8gc3VwcG9ydCBVbmljZWYgd2l0aCBhIGRvbmF0aW9uLiBGb3IgZnVydGhlciBk
+ZXRhaWxzIGNsaWNrIGhlcmU8aHR0cHM6Ly93d3cudW5pY2VmLm9yZy8+IHRvIGZpbmQgb3V0IGFi
+b3V0IHRoZSB2YWx1YWJsZSB3b3JrIHRoZXkgZG8sIGhlbHBpbmcgY2hpbGRyZW4gYWxsIG92ZXIg
+dGhlIHdvcmxkLg0KV2Ugd291bGQgbGlrZSB0byB0YWtlIHRoaXMgb3Bwb3J0dW5pdHkgdG8gd2lz
+aCB5b3UgYSBNZXJyeSBDaHJpc3RtYXMgYW5kIGEgcHJvc3Blcm91cyBOZXcgWWVhci4NCg0KDQoN
+ClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQg
+Um9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJl
+ZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
