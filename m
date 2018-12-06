@@ -1,72 +1,69 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
 Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbeLFV75 (ORCPT
+        with ESMTP id S1726208AbeLFV7i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:57 -0500
+        Thu, 6 Dec 2018 16:59:38 -0500
 From: Simon Horman <horms+renesas@verge.net.au>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 2/9] ARM: shmobile: Restrict SCU support to SoCs that have it
-Date: Thu,  6 Dec 2018 13:59:27 -0800
-Message-Id: <af3a03cded07f4d6637e5b3660b6622cf60af338.1544132474.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544132474.git.horms+renesas@verge.net.au>
-References: <cover.1544132474.git.horms+renesas@verge.net.au>
+Subject: [PATCH 4/9] soc: renesas: r8a77980-sysc: Correct names of A2DP[01] power domains
+Date: Thu,  6 Dec 2018 13:58:52 -0800
+Message-Id: <97473bc85b22ac610b1810b6a9a4669a6cb0b7b0.1544131943.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544131943.git.horms+renesas@verge.net.au>
+References: <cover.1544131943.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Currently support for the ARM Cortex-A9 Snoop Control Unit is included
-unconditionally, while only Renesas multicore Cortex-A9 SoCs have this
-kind of SCU.
+The R-Car Gen3 HardWare Manual Errata for Rev. 0.80 (Feb 28, 2018)
+renamed the A2PD0 and A2DP0 power domains on R-Car V3H to A2DP0 resp.
+A2DP1.
 
-This decreases kernel image size by ca. 300 bytes on SoCs without such
-an SCU.
+As these definitions are not yet used from DT, they can just be renamed.
 
+Fixes: 7755b40d07a8dba7 ("dt-bindings: power: add R8A77980 SYSC power domain definitions")
+Fixes: 41d6d8bd8ae94ca9 ("soc: renesas: rcar-sysc: add R8A77980 support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/mach-shmobile/Kconfig | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/soc/renesas/r8a77980-sysc.c       | 4 ++--
+ include/dt-bindings/power/r8a77980-sysc.h | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/Kconfig b/arch/arm/mach-shmobile/Kconfig
-index b100c26a858f..32f8297d993a 100644
---- a/arch/arm/mach-shmobile/Kconfig
-+++ b/arch/arm/mach-shmobile/Kconfig
-@@ -30,7 +30,6 @@ menuconfig ARCH_RENESAS
- 	depends on ARCH_MULTI_V7 && MMU
- 	select ARM_GIC
- 	select GPIOLIB
--	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select NO_IOPORT_MAP
- 	select PINCTRL
-@@ -43,6 +42,7 @@ if ARCH_RENESAS
- 
- config ARCH_EMEV2
- 	bool "Emma Mobile EV2"
-+	select HAVE_ARM_SCU if SMP
- 	select SYS_SUPPORTS_EM_STI
- 
- config ARCH_R7S72100
-@@ -94,6 +94,7 @@ config ARCH_R8A7778
- 
- config ARCH_R8A7779
- 	bool "R-Car H1 (R8A77790)"
-+	select HAVE_ARM_SCU if SMP
- 	select ARCH_RCAR_GEN1
- 
- config ARCH_R8A7790
-@@ -135,5 +136,6 @@ config ARCH_RZN1
- config ARCH_SH73A0
- 	bool "SH-Mobile AG5 (R8A73A00)"
- 	select ARCH_RMOBILE
-+	select HAVE_ARM_SCU if SMP
- 	select RENESAS_INTC_IRQPIN
- endif
+diff --git a/drivers/soc/renesas/r8a77980-sysc.c b/drivers/soc/renesas/r8a77980-sysc.c
+index 9265fb525ef3..dbb2621ce4e3 100644
+--- a/drivers/soc/renesas/r8a77980-sysc.c
++++ b/drivers/soc/renesas/r8a77980-sysc.c
+@@ -38,8 +38,8 @@ static const struct rcar_sysc_area r8a77980_areas[] __initconst = {
+ 	{ "a2sc2",	0x400, 8, R8A77980_PD_A2SC2,	R8A77980_PD_A3IR },
+ 	{ "a2sc3",	0x400, 9, R8A77980_PD_A2SC3,	R8A77980_PD_A3IR },
+ 	{ "a2sc4",	0x400, 10, R8A77980_PD_A2SC4,	R8A77980_PD_A3IR },
+-	{ "a2pd0",	0x400, 11, R8A77980_PD_A2PD0,	R8A77980_PD_A3IR },
+-	{ "a2pd1",	0x400, 12, R8A77980_PD_A2PD1,	R8A77980_PD_A3IR },
++	{ "a2dp0",	0x400, 11, R8A77980_PD_A2DP0,	R8A77980_PD_A3IR },
++	{ "a2dp1",	0x400, 12, R8A77980_PD_A2DP1,	R8A77980_PD_A3IR },
+ 	{ "a2cn",	0x400, 13, R8A77980_PD_A2CN,	R8A77980_PD_A3IR },
+ 	{ "a3vip",	0x2c0, 0, R8A77980_PD_A3VIP,	R8A77980_PD_ALWAYS_ON },
+ 	{ "a3vip1",	0x300, 0, R8A77980_PD_A3VIP1,	R8A77980_PD_A3VIP },
+diff --git a/include/dt-bindings/power/r8a77980-sysc.h b/include/dt-bindings/power/r8a77980-sysc.h
+index 2c90c1237725..7bebe7e8dbdb 100644
+--- a/include/dt-bindings/power/r8a77980-sysc.h
++++ b/include/dt-bindings/power/r8a77980-sysc.h
+@@ -15,8 +15,8 @@
+ #define R8A77980_PD_A2SC2		0
+ #define R8A77980_PD_A2SC3		1
+ #define R8A77980_PD_A2SC4		2
+-#define R8A77980_PD_A2PD0		3
+-#define R8A77980_PD_A2PD1		4
++#define R8A77980_PD_A2DP0		3
++#define R8A77980_PD_A2DP1		4
+ #define R8A77980_PD_CA53_CPU0		5
+ #define R8A77980_PD_CA53_CPU1		6
+ #define R8A77980_PD_CA53_CPU2		7
 -- 
 2.11.0
