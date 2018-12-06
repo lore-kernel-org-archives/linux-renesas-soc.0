@@ -1,97 +1,83 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from laurent.telenet-ops.be ([195.130.137.89]:54424 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728000AbeLEPjv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbeLFV7X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:39:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 16:59:23 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] soc: renesas: rcar-sysc: Remove rcar_sysc_power_{down,up}() helpers
-Date: Wed,  5 Dec 2018 16:39:43 +0100
-Message-Id: <20181205153945.13767-3-geert+renesas@glider.be>
-In-Reply-To: <20181205153945.13767-1-geert+renesas@glider.be>
-References: <20181205153945.13767-1-geert+renesas@glider.be>
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 21/34] ARM: dts: r8a7744: Add thermal device to DT
+Date: Thu,  6 Dec 2018 13:58:16 -0800
+Message-Id: <ef9d757c06e9b0258b10fcb19c3be2d8cbbc0a30.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Until commit 7e8a50df26f4e700 ("soc: renesas: rcar-sysc: Drop legacy
-handling"), the rcar_sysc_power_{down,up}() helpers were public, as they
-were called by the legacy (pre-DT) CPU power management code on R-Car H1
-and R-Car Gen2 before.
+From: Biju Das <biju.das@bp.renesas.com>
 
-As they are just one-line wrappers around rcar_sysc_power(), it makes
-sense to just remove them.
+This patch instantiates the thermal sensor module with thermal-zone
+support.
 
-This also avoids a bool/helper/bool conversion in rcar_sysc_power_cpu(),
-where a bool is checked to call one of two helper functions, which
-just call rcar_sysc_power() with hardcoded boolean values again.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/rcar-sysc.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ arch/arm/boot/dts/r8a7744.dtsi | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index af53363eda0374ce..73fae6a9728df9ae 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -146,16 +146,6 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
- 	return ret;
- }
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 91096c36dcac..937c800b2415 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -317,6 +317,17 @@
+ 			resets = <&cpg 407>;
+ 		};
  
--static int rcar_sysc_power_down(const struct rcar_sysc_ch *sysc_ch)
--{
--	return rcar_sysc_power(sysc_ch, false);
--}
--
--static int rcar_sysc_power_up(const struct rcar_sysc_ch *sysc_ch)
--{
--	return rcar_sysc_power(sysc_ch, true);
--}
--
- static bool rcar_sysc_power_is_off(const struct rcar_sysc_ch *sysc_ch)
- {
- 	unsigned int st;
-@@ -184,7 +174,7 @@ static int rcar_sysc_pd_power_off(struct generic_pm_domain *genpd)
- 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
++		thermal: thermal@e61f0000 {
++			compatible = "renesas,thermal-r8a7744",
++				     "renesas,rcar-gen2-thermal";
++			reg = <0 0xe61f0000 0 0x10>, <0 0xe61f0100 0 0x38>;
++			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 522>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 522>;
++			#thermal-sensor-cells = <0>;
++		};
++
+ 		icram0:	sram@e63a0000 {
+ 			compatible = "mmio-sram";
+ 			reg = <0 0xe63a0000 0 0x12000>;
+@@ -1351,6 +1362,26 @@
+ 		};
+ 	};
  
- 	pr_debug("%s: %s\n", __func__, genpd->name);
--	return rcar_sysc_power_down(&pd->ch);
-+	return rcar_sysc_power(&pd->ch, false);
- }
- 
- static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
-@@ -192,7 +182,7 @@ static int rcar_sysc_pd_power_on(struct generic_pm_domain *genpd)
- 	struct rcar_sysc_pd *pd = to_rcar_pd(genpd);
- 
- 	pr_debug("%s: %s\n", __func__, genpd->name);
--	return rcar_sysc_power_up(&pd->ch);
-+	return rcar_sysc_power(&pd->ch, true);
- }
- 
- static bool has_cpg_mstp;
-@@ -252,7 +242,7 @@ static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
- 		goto finalize;
- 	}
- 
--	rcar_sysc_power_up(&pd->ch);
-+	rcar_sysc_power(&pd->ch, true);
- 
- finalize:
- 	error = pm_genpd_init(genpd, gov, false);
-@@ -478,8 +468,7 @@ static int rcar_sysc_power_cpu(unsigned int idx, bool on)
- 		if (!(pd->flags & PD_CPU) || pd->ch.chan_bit != idx)
- 			continue;
- 
--		return on ? rcar_sysc_power_up(&pd->ch)
--			  : rcar_sysc_power_down(&pd->ch);
-+		return rcar_sysc_power(&pd->ch, on);
- 	}
- 
- 	return -ENOENT;
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			polling-delay-passive = <0>;
++			polling-delay = <0>;
++
++			thermal-sensors = <&thermal>;
++
++			trips {
++				cpu-crit {
++					temperature = <95000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++
++			cooling-maps {
++			};
++		};
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
-2.17.1
+2.11.0
