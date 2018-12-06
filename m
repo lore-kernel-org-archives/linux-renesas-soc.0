@@ -1,35 +1,58 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44116 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbeLDTn5 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbeLFV6y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:43:57 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k19-v6so16022941lji.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Dec 2018 11:43:56 -0800 (PST)
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH v2 0/4] Renesas R8A77980 CPG/MSSR RPC clock support
-To: linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-Message-ID: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
-Date: Tue, 4 Dec 2018 22:43:53 +0300
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Dec 2018 16:58:54 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 13/34] ARM: dts: r8a7744-iwg20m: Add eMMC support
+Date: Thu,  6 Dec 2018 13:58:08 -0800
+Message-Id: <266d863eece3f0b1e333203f9efe8fa89e042b3b.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello!
+From: Biju Das <biju.das@bp.renesas.com>
 
-Here's the set of 4 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo. We're adding support for the R8A77980 CPG/MSSR RPC clocks...
+Add eMMC support for iWave RZ/G1N Qseven System On Module.
 
-[1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
-[2/4] clk: renesas: rcar-gen3-cpg: add spinlock
-[3/4] clk: renesas: rcar-gen3-cpg: add RPC clocks
-[4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7744-iwg20m.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-MBR, Sergei
+diff --git a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+index 6166ae053060..1e57b1f9baed 100644
+--- a/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
++++ b/arch/arm/boot/dts/r8a7744-iwg20m.dtsi
+@@ -29,3 +29,20 @@
+ &extal_clk {
+ 	clock-frequency = <20000000>;
+ };
++
++&pfc {
++	mmcif0_pins: mmc {
++		groups = "mmc_data8_b", "mmc_ctrl";
++		function = "mmc";
++	};
++};
++
++&mmcif0 {
++	pinctrl-0 = <&mmcif0_pins>;
++	pinctrl-names = "default";
++
++	vmmc-supply = <&reg_3p3v>;
++	bus-width = <8>;
++	non-removable;
++	status = "okay";
++};
+-- 
+2.11.0
