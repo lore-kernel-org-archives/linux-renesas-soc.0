@@ -1,12 +1,20 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:40675 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbeLJLM3 (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:51876 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbeLFTi5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 06:12:29 -0500
-Date: Mon, 10 Dec 2018 12:12:23 +0100
-From: Simon Horman <horms@verge.net.au>
-To: Rob Herring <robh@kernel.org>
+        Thu, 6 Dec 2018 14:38:57 -0500
+MIME-Version: 1.0
+References: <20181203213223.16986-1-robh@kernel.org> <20181203213223.16986-27-robh@kernel.org>
+ <20181204144822.uqonsto45u7ysdu5@verge.net.au> <CAMuHMdV5brJyAmP0Bj7Bp7wruLNM1tSWkj_AyN5HCx4vdg-nrg@mail.gmail.com>
+ <CAL_JsqJX9eb58piavQayXM5j5GXxsGxmy93m5oRKtghMFvkhuA@mail.gmail.com> <20181205194419.p6u56h57yk63xshj@verge.net.au>
+In-Reply-To: <20181205194419.p6u56h57yk63xshj@verge.net.au>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 6 Dec 2018 13:38:42 -0600
+Message-ID: <CAL_JsqKHwYhHSb7GNFgOtBCqEeMshbRnU+0ONe_yW8OOiRC=SA@mail.gmail.com>
+Subject: Re: [PATCH v2 26/34] dt-bindings: arm: Convert Renesas board/soc
+ bindings to json-schema
+To: Simon Horman <horms@verge.net.au>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, Kumar Gala <kumar.gala@linaro.org>,
@@ -21,70 +29,74 @@ Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 26/34] dt-bindings: arm: Convert Renesas board/soc
- bindings to json-schema
-Message-ID: <20181210111223.fstjmazyo3vof7kc@verge.net.au>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-27-robh@kernel.org>
- <20181204144822.uqonsto45u7ysdu5@verge.net.au>
- <CAMuHMdV5brJyAmP0Bj7Bp7wruLNM1tSWkj_AyN5HCx4vdg-nrg@mail.gmail.com>
- <CAL_JsqJX9eb58piavQayXM5j5GXxsGxmy93m5oRKtghMFvkhuA@mail.gmail.com>
- <20181205194419.p6u56h57yk63xshj@verge.net.au>
- <CAL_JsqKHwYhHSb7GNFgOtBCqEeMshbRnU+0ONe_yW8OOiRC=SA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKHwYhHSb7GNFgOtBCqEeMshbRnU+0ONe_yW8OOiRC=SA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 06, 2018 at 01:38:42PM -0600, Rob Herring wrote:
-> On Wed, Dec 5, 2018 at 1:44 PM Simon Horman <horms@verge.net.au> wrote:
-> >
-> > On Tue, Dec 04, 2018 at 09:08:57AM -0600, Rob Herring wrote:
-> > > On Tue, Dec 4, 2018 at 8:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Wed, Dec 5, 2018 at 1:44 PM Simon Horman <horms@verge.net.au> wrote:
+>
+> On Tue, Dec 04, 2018 at 09:08:57AM -0600, Rob Herring wrote:
+> > On Tue, Dec 4, 2018 at 8:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > >
+> > > Hi Simon,
+> > >
+> > > On Tue, Dec 4, 2018 at 3:48 PM Simon Horman <horms@verge.net.au> wrote:
+> > > > On Mon, Dec 03, 2018 at 03:32:15PM -0600, Rob Herring wrote:
+> > > > > Convert Renesas SoC bindings to DT schema format using json-schema.
+> > > > >
+> > > > > Cc: Simon Horman <horms@verge.net.au>
+> > > > > Cc: Magnus Damm <magnus.damm@gmail.com>
+> > > > > Cc: Mark Rutland <mark.rutland@arm.com>
+> > > > > Cc: linux-renesas-soc@vger.kernel.org
+> > > > > Cc: devicetree@vger.kernel.org
+> > > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > > > ---
+> > > > >  .../devicetree/bindings/arm/shmobile.txt      | 151 ------------
+> > > > >  .../devicetree/bindings/arm/shmobile.yaml     | 218 ++++++++++++++++++
+> > > > >  2 files changed, 218 insertions(+), 151 deletions(-)
+> > > > >  delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
+> > > > >  create mode 100644 Documentation/devicetree/bindings/arm/shmobile.yaml
 > > > >
-> > > > Hi Simon,
+> > > > Hi Rob,
 > > > >
-> > > > On Tue, Dec 4, 2018 at 3:48 PM Simon Horman <horms@verge.net.au> wrote:
-> > > > > On Mon, Dec 03, 2018 at 03:32:15PM -0600, Rob Herring wrote:
-> > > > > > Convert Renesas SoC bindings to DT schema format using json-schema.
-> > > > > >
-> > > > > > Cc: Simon Horman <horms@verge.net.au>
-> > > > > > Cc: Magnus Damm <magnus.damm@gmail.com>
-> > > > > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > > > > Cc: linux-renesas-soc@vger.kernel.org
-> > > > > > Cc: devicetree@vger.kernel.org
-> > > > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > > > > ---
-> > > > > >  .../devicetree/bindings/arm/shmobile.txt      | 151 ------------
-> > > > > >  .../devicetree/bindings/arm/shmobile.yaml     | 218 ++++++++++++++++++
-> > > > > >  2 files changed, 218 insertions(+), 151 deletions(-)
-> > > > > >  delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/arm/shmobile.yaml
-> > > > >
-> > > > > Hi Rob,
-> > > > >
-> > > > > what is this based on? I get a conflict when applying the .txt change
-> > > > > and if I knew the base for this patch it would be rather easy to work
-> > > > > out what has changed.
-> > >
-> > > 4.20-rc2
-> > >
-> > > > >
-> > > > > Also, should we do an s/shmobile.txt/shmobile.yaml/ in MAINTAINERS?
-> > >
-> > > Yes. Though it was pointed out that get_maintainers.pl can pull emails
-> > > out of this file. We'd need to get that to work by default though.
-> > >
-> > > > Probably even s/shmobile.yaml/renesas.yaml/, while at it?
-> > >
-> > > Sure, if that's what you all want.
+> > > > what is this based on? I get a conflict when applying the .txt change
+> > > > and if I knew the base for this patch it would be rather easy to work
+> > > > out what has changed.
 > >
-> > How about this?
-> 
-> LGTM
+> > 4.20-rc2
+> >
+> > > >
+> > > > Also, should we do an s/shmobile.txt/shmobile.yaml/ in MAINTAINERS?
+> >
+> > Yes. Though it was pointed out that get_maintainers.pl can pull emails
+> > out of this file. We'd need to get that to work by default though.
+> >
+> > > Probably even s/shmobile.yaml/renesas.yaml/, while at it?
+> >
+> > Sure, if that's what you all want.
+>
+> How about this?
 
-Thanks.
+LGTM
 
-As my tree is already closed for v4.21 I have applied this for v4.22.
+> From: Rob Herring <robh@kernel.org>
+> Subject: [PATCH v2.1] dt-bindings: arm: Convert Renesas board/soc bindings to
+>  json-schema
+>
+> Convert Renesas SoC bindings to DT schema format using json-schema.
+>
+> v2.1 [Simon Horman]
+> - rebased on renesas-devel-20181204-v4.20-rc5
+>   + Added r8a7744 development platform and SoM
+>   + Correct RZ/G2E part number
+> - Update MAINTAINERS
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  Documentation/devicetree/bindings/arm/renesas.yaml | 228 +++++++++++++++++++++
+>  Documentation/devicetree/bindings/arm/shmobile.txt | 155 --------------
+>  MAINTAINERS                                        |   4 +-
+>  3 files changed, 230 insertions(+), 157 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/renesas.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/arm/shmobile.txt
