@@ -1,47 +1,54 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46445 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbeLEGM1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbeLFV7J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:12:27 -0500
-Date: Tue, 4 Dec 2018 22:12:23 -0800
-From: Eduardo Valentin <edubezval@gmail.com>
-To: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 16:59:09 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFT 0/2] thermal: add suport for R8A77990
-Message-ID: <20181205061221.GA21626@localhost.localdomain>
-References: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH 27/34] ARM: dts: r8a7744: Add TPU support
+Date: Thu,  6 Dec 2018 13:58:22 -0800
+Message-Id: <eb83d144978e9f21aaa1372d75b50f3eec22ed48.1544125558.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
+References: <cover.1544125558.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hello Yoshihiro,
+From: Biju Das <biju.das@bp.renesas.com>
 
-On Mon, Oct 15, 2018 at 11:11:57PM +0900, Yoshihiro Kaneko wrote:
-> This series adds thermal support for R-Car E3 (R8A77990).
-> 
-> This series is based on the next branch of Eduardo Valentin's linux-soc-thermal
-> tree.
+Add TPU support to SoC DT.
 
-Sorry for the late response, but would you be able to refresh your
-series to latest linus master branch?
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm/boot/dts/r8a7744.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> 
-> Yoshihiro Kaneko (2):
->   dt-bindings: thermal: rcar-thermal: add R8A77990 support
->   thermal: rcar_thermal: add R8A77990 support
-> 
->  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
->  drivers/thermal/rcar_thermal.c                             | 4 ++++
->  2 files changed, 7 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 1.9.1
-> 
+diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+index 181aa0732ce1..bab78d43b5db 100644
+--- a/arch/arm/boot/dts/r8a7744.dtsi
++++ b/arch/arm/boot/dts/r8a7744.dtsi
+@@ -270,6 +270,16 @@
+ 			reg = <0 0xe6060000 0 0x250>;
+ 		};
+ 
++		tpu: pwm@e60f0000 {
++			compatible = "renesas,tpu-r8a7744", "renesas,tpu";
++			reg = <0 0xe60f0000 0 0x148>;
++			clocks = <&cpg CPG_MOD 304>;
++			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
++			resets = <&cpg 304>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a7744-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
+-- 
+2.11.0
