@@ -1,132 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35699 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbeLGMFf (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34960 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbeLFJTr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 07:05:35 -0500
+        Thu, 6 Dec 2018 04:19:47 -0500
 Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
  driver
 To: masonccyang@mxic.com.tw
-Cc: boris.brezillon@bootlin.com, broonie@kernel.org,
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, zhengxunli@mxic.com.tw
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>, zhengxunli@mxic.com.tw
 References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
  <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw>
- <cebe44a3-80be-9091-e70b-acba6f3fff4f@gmail.com>
- <OF0ED3C578.141B72CA-ON4825835A.0025CA62-4825835A.002A7BDF@mxic.com.tw>
- <84e3c55b-687e-28f6-0a7c-1c48c822ef05@gmail.com>
- <OFC9FB54F8.34B3A8B7-ON4825835B.00267480-4825835B.0029455C@mxic.com.tw>
- <93bb36af-8bdb-c90e-3777-62fe1a48f76a@gmail.com>
- <OF0CE74C5C.20959BA6-ON4825835C.0026C7BC-4825835C.0028B3A4@mxic.com.tw>
+ <CAMuHMdWEiOTSSM=rKu67r-kgJ=TyAi7p7ndhAS4d5-6gccmmoQ@mail.gmail.com>
+ <OFE69673FB.D4270C56-ON4825835B.001C7201-4825835B.00209DC7@mxic.com.tw>
+ <2c6c23fc-299a-f64d-c81f-4b4123f1577b@gmail.com>
+ <OF62002C8B.5D0A4315-ON4825835B.0031F545-4825835B.003310A3@mxic.com.tw>
 From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <8517f472-4981-db32-f5d8-056b70584e86@gmail.com>
-Date: Fri, 7 Dec 2018 13:01:24 +0100
+Message-ID: <c7fe7eb3-b13d-2e90-12de-3edeadd9d5b0@gmail.com>
+Date: Thu, 6 Dec 2018 10:19:10 +0100
 MIME-Version: 1.0
-In-Reply-To: <OF0CE74C5C.20959BA6-ON4825835C.0026C7BC-4825835C.0028B3A4@mxic.com.tw>
+In-Reply-To: <OF62002C8B.5D0A4315-ON4825835B.0031F545-4825835B.003310A3@mxic.com.tw>
 Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On 12/07/2018 08:24 AM, masonccyang@mxic.com.tw wrote:
-> 
+On 12/06/2018 10:17 AM, masonccyang@mxic.com.tw wrote:
 > Hi Marek,
 
 Hi,
 
->> >> >> > +
->> >> >> > + � � � � regmap_write(rpc->regmap, RPC_SMWDR0,
->> >> >> > + � � � � � � � � *(u32 *)(tx_buf + pos));
->> >> >>
->> >> >> *(u32 *) cast is probably not needed , fix casts globally.
->> >> >
->> >> > It must have it!
+>> >> > +
+>> >> > + � � � pm_runtime_enable(&pdev->dev);
+>> >> > + � � � master->auto_runtime_pm = true;
+>> >> > +
+>> >> > + � � � master->num_chipselect = 1;
+>> >> > + � � � master->mem_ops = &rpc_spi_mem_ops;
+>> >> > + � � � master->transfer_one_message = rpc_spi_transfer_one_message;
 >> >>
->> >> Why ?
->> >
->> > Get a compiler warning due to tx_bug is void *, as Geert replied.
->>
->> The compiler warning is usually an indication that this is something to
->> check, not silence with a type cast.
->>
->> > Using get_unaligned(), patched code would be
->> > -----------------------------------------------------
->> > regmap_write(rpc->regmap, RPC_SMWDR0,
->> > � � � � � � � � �get_unaligned((u32 *)(tx_buf + pos))); � � � � � � � �
->> > ----------------------------------------------------
->>
->> Do you need the cast if you use get_unaligned() ?
-> 
-> yes!
-
-Why ? (you can drop one iteration here by explaining why right away,
-since I'll ask for that explanation for sure)
-
->> >> >> > +
->> >> >> > +static const struct regmap_range rpc_spi_volatile_ranges[] = {
->> >> >> > + � regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),
->> >> >> > + � regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),
->> >> >>
->> >> >> Why is SMWDR volatile ?
->> >> >
->> >> > No matter is write-back or write-through.
+>> >> Is there any reason you cannot use the standard
+>> >> spi_transfer_one_message, i.e. provide spi_controller.transfer_one()
+>> >> instead of spi_controller.transfer_one_message()?
 >> >>
->> >> Oh, do you want to assure the SMWDR value is always written directly to
->> >> the hardware ?
 >> >
->> > yes,
->> >
->> >>
->> >> btw. I think SMRDR should be precious ?
->> >
->> > so, you think I should drop
->> > regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0)
+>> > It seems there is a RPC HW restriction in CS# pin control.
+>> > Therefore, it can't send the 1'st spi-transfer for command and then
+>> > keeping CS# pin goes low for the 2'nd spi-transfer for address/data and
+>> > so on.
 >>
->> No, I am asking whether SMRDR should be marked precious or not.
+>> Isn't register DRCR bit SSLN/SSLE exactly for this purpose ?
 >>
 > 
-> I don't think so,
-> precious_reg: the register should not be read outside of
-> call from driver, i.e,. a clear on read interrupt status register.
+> DRCR is for RPC module works in external space read mode, using memcpy( ).
+> It is not for _spi_sync().
+> 
+> I only could use manual I/O mode by SMCR@bit-8 SSLKP and I found it has
+> some
+> restrictions in manual I/O mode to control CS# pin.
 
-If you read the reg outside of the call from driver, it will mess up the
-internal FIFO and the whole driver will get into undefined state, right?
-Maybe Mark can chime in ?
-
->> [...]
->>
->> > CONFIDENTIALITY NOTE:
->> >
->> > This e-mail and any attachments may contain confidential information
->> > and/or personal data, which is protected by applicable laws. Please be
->> > reminded that duplication, disclosure, distribution, or use of this
->> > e-mail (and/or its attachments) or any part thereof is prohibited. If
->> > you receive this e-mail in error, please notify us immediately and
->> > delete this mail as well as its attachment(s) from your system. In
->> > addition, please be informed that collection, processing, and/or use of
->> > personal data is prohibited unless expressly permitted by personal data
->> > protection laws. Thank you for your attention and cooperation.
->> >
->> > Macronix International Co., Ltd.
->>
->> Can you do something about this ^ please ?
->>
-> 
-> I submit the patch file is by another remote git-server, which
-> supports git-format patch, git send-mail and so on.
-> But it can't receive email.
-> 
-> I get/send email are by office PC w/ Notes system and
-> this "CONFx NOTE:" is appended automatically by Notes mail-server.
-> 
-> Please just never mind it.
-
-I am concerned MXIC can sue everyone on the CC list of this email based
-solely on your suggestion to ignore this paragraph. That's not a good
-position to be in.
+What restrictions are those ? I am aware of some, maybe there is more.
 
 -- 
 Best regards,
