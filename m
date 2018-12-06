@@ -1,48 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37379 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeLFJlS (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:36133 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727763AbeLFJEq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 04:41:18 -0500
-MIME-Version: 1.0
-References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com> <1544086559-47141-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544086559-47141-4-git-send-email-biju.das@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Dec 2018 10:41:04 +0100
-Message-ID: <CAMuHMdWTwfRu-NQSf3GbhG=r64uAiq5OHSHix8v13d8TLB5esA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
+        Thu, 6 Dec 2018 04:04:46 -0500
+From: Biju Das <biju.das@bp.renesas.com>
+To: Simon Horman <horms@verge.net.au>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Russell King <linux@armlinux.org.uk>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v3 3/4] ARM: shmobile: Enable NXP pcf85363 rtc in shmobile_defconfig
+Date: Thu,  6 Dec 2018 08:55:58 +0000
+Message-Id: <1544086559-47141-4-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
+References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, Dec 6, 2018 at 10:04 AM Biju Das <biju.das@bp.renesas.com> wrote:
->
-> The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase hardware
-> support enable the driver in the shmobile_defconfig multiplatform
-> configuration.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase hardware
+support enable the driver in the shmobile_defconfig multiplatform
+configuration.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+V1-->V2
+	* No change.
+V2-->V3
+	* No change.
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index 9e5a5ad..fdac4e4 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -177,6 +177,7 @@ CONFIG_LEDS_CLASS=y
+ CONFIG_LEDS_GPIO=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_RS5C372=y
++CONFIG_RTC_DRV_PCF85363=y
+ CONFIG_RTC_DRV_BQ32K=y
+ CONFIG_RTC_DRV_S35390A=y
+ CONFIG_RTC_DRV_RX8581=y
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.7.4
