@@ -1,53 +1,48 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([23.128.96.9]:49546 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbeLCXU6 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:55833 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbeLFV5v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Dec 2018 18:20:58 -0500
-Date: Mon, 03 Dec 2018 15:20:57 -0800 (PST)
-Message-Id: <20181203.152057.61263535375452379.davem@davemloft.net>
-To: yoshihiro.shimoda.uh@renesas.com
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] net: phy: micrel: add tobling phy reset
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1543395612-5430-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Thu, 6 Dec 2018 16:57:51 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: arm@kernel.org
+Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Renesas ARM Based SoC Defconfig Updates for v4.21
+Date: Thu,  6 Dec 2018 13:57:46 -0800
+Message-Id: <cover.1544124535.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Date: Wed, 28 Nov 2018 09:02:41 +0000
+Hi Olof, Hi Kevin, Hi Arnd,
 
-> This patch set is for R-Car Gen3 Salvator-XS boards. If we do
-> the following method, the phy cannot link up correctly.
-> 
->  1) Kernel boots by using initramfs.
->  --> No open the nic, so phy_device_register() and phy_probe()
->      deasserts the reset.
->  2) Kernel enters the suspend.
->  --> So, keep the reset signal as deassert.
->  --> On R-Car Salvator-XS board, unfortunately, the board power is
->      turned off.
->  3) Kernel returns from suspend.
->  4) ifconfig eth0 up
->  --> Then, since edge signal of the reset doesn't happen,
->      it cannot link up.
->  5) ifconfig eth0 down
->  6) ifconfig eth0 up
->  --> In this case, it can link up.
-> 
-> When resolving this issue after I got feedback from Andrew and Heiner,
-> I found an issue that the phy_device.c didn't call phy_resume()
-> if the PHY was not attached. So, patch 1 fixes it and add toggling
-> the phy reset to the micrel phy driver.
-> 
-> Changes from v1 (as RFC):
->  - No remove the current code of phy_device.c to avoid any side effects.
->  - Fix the mdio_bus_phy_resume() in phy_device.c.
->  - Add toggling the phy reset in micrel.c if the PHY is not attached.
+Please consider these Renesas ARM based SoC defconfig updates for v4.21.
 
-Series applied, thank you.
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-defconfig-for-v4.21
+
+for you to fetch changes up to 65a8c17a39f62fd646950fa43efcced0d6fe029c:
+
+  ARM: shmobile: defconfig: Enable SII902X (2018-11-05 12:41:09 +0100)
+
+----------------------------------------------------------------
+Renesas ARM Based SoC Defconfig Updates for v4.21
+
+* Enable SII902X in shmobile defconfig
+
+----------------------------------------------------------------
+Fabrizio Castro (1):
+      ARM: shmobile: defconfig: Enable SII902X
+
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
