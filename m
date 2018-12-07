@@ -1,78 +1,76 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38810 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbeLDQ4i (ORCPT
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:38761 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbeLGKTD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:56:38 -0500
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH 4/5] arm64: dts: renesas: r8a77995: draak: Add backlight
-Date: Tue, 04 Dec 2018 18:57:10 +0200
-Message-ID: <8308294.3zTFQA3UeO@avalon>
-In-Reply-To: <20181125144031.4407-5-laurent.pinchart+renesas@ideasonboard.com>
-References: <20181125144031.4407-1-laurent.pinchart+renesas@ideasonboard.com> <20181125144031.4407-5-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 7 Dec 2018 05:19:03 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <1544086559-47141-1-git-send-email-biju.das@bp.renesas.com>
+ <1544086559-47141-3-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVv262dM8JGWN4w3h2kq4Y4ftRczn8TF-kM_fecF4GXnw@mail.gmail.com>
+ <OSBPR01MB21039D89E5E8852574A18893B8A90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <CAMuHMdWRz-iutKD54vtmJxnLsb3vtm1juYDw-k1+RFCNUVsjkg@mail.gmail.com>
+ <OSBPR01MB2103A13E75634AD81CFD1628B8A90@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20181206165202.GC8952@piout.net> <OSBPR01MB2103D626F5A58D86D726E721B8AA0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <CAMuHMdUXPPEqKiXC6reGkEUUAMUEK5Ku+zbDv0BS7KMVUYQGhQ@mail.gmail.com> <OSBPR01MB21030916075015094519D0F2B8AA0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB21030916075015094519D0F2B8AA0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Dec 2018 11:18:50 +0100
+Message-ID: <CAMuHMdVkWw-nrnTB-v8788fT74q9xU3EQAcma3zzZ57aL4HNVg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-rtc@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Simon,
+Hi Biju,
 
-Could you please consider taking this patch in your tree ? It's independent 
-from the rest of the series.
+On Fri, Dec 7, 2018 at 11:16 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH v3 2/4] rtc: pcf85363: Add support for NXP pcf85263 rtc
+> > On Fri, Dec 7, 2018 at 10:34 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> > > > Subject: Re: [PATCH v3 2/4] rtc: pcf85363: Add support for NXP
+> > > > pcf85263 rtc
+> > > > I think it is probably better to ensure the nvmem core never passes
+> > > > an invalid number of bytes. All the ther RTC drivers make that
+> > assumption.
+> > >
+> > > In that case, I will do following checks in
+> > > nvmem_device_{read,write}() before calling nvmem_reg_{read,write}(),
+> > >
+> > > nvmem_device_read
+> > >
+> > > /* Stop the user from reading */
+> > > if (offset  >= nvmem->size)
+> > > return 0;
+> > >
+> > > if (bytes == 0)
+> > > return -EINVAL;
+> >
+> > Why not 0?
+>
+> Ok. Will merge with above check.
+>
+> if ((offset  >= nvmem->size)  && (bytes == 0))
 
-On Sunday, 25 November 2018 16:40:30 EET Laurent Pinchart wrote:
-> Add the backlight device for the LVDS1 output, in preparation for panel
-> support.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  .../arm64/boot/dts/renesas/r8a77995-draak.dts | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index
-> 2405eaad0296..cd067319e6f3 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> @@ -24,6 +24,17 @@
->  		stdout-path = "serial0:115200n8";
->  	};
-> 
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&pwm1 0 50000>;
-> +
-> +		brightness-levels = <256 128 64 16 8 4 0>;
-> +		default-brightness-level = <6>;
-> +
-> +		power-supply = <&reg_12p0v>;
-> +		enable-gpios = <&gpio4 0 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
->  	composite-in {
->  		compatible = "composite-video-connector";
-> 
-> @@ -104,6 +115,15 @@
->  		regulator-always-on;
->  	};
-> 
-> +	reg_12p0v: regulator1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "D12.0V";
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
->  	vga {
->  		compatible = "vga-connector";
+"||" ;-)
+
+>         return 0;
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
