@@ -1,79 +1,59 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:5386 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725988AbeLGLgj (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34456 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeLGSXp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:36:39 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v4 5/5] ARM: dts: iwg23s-sbc: Enable RTC
-Date: Fri,  7 Dec 2018 11:27:46 +0000
-Message-Id: <1544182066-31528-6-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
-References: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 7 Dec 2018 13:23:45 -0500
+Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
+ <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw>
+ <0bd07d30-1c0a-ef5b-24ae-dcae3c4721ce@cogentembedded.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <ef6446d0-8b7f-08b1-df99-799f75578474@gmail.com>
+Date: Fri, 7 Dec 2018 19:23:41 +0100
+MIME-Version: 1.0
+In-Reply-To: <0bd07d30-1c0a-ef5b-24ae-dcae3c4721ce@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Enable NXP pcf85263 real time clock for the iWave SBC based on RZ/G1C.
+On 12/07/2018 07:17 PM, Sergei Shtylyov wrote:
+> Hello!
+> 
+>    I'd already started the v2 driver review before you posted v3, so here goes...
+> 
+> On 12/03/2018 12:18 PM, Mason Yang wrote:
+> 
+>> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+>>
+>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> [...]
+>> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+>> new file mode 100644
+>> index 0000000..ac9094e
+>> --- /dev/null
+>> +++ b/drivers/spi/spi-renesas-rpc.c
+>> @@ -0,0 +1,808 @@
+> [...]
+>> +#define RPC_CMNCR		0x0000	/* R/W */
+>> +#define RPC_CMNCR_MD		BIT(31)
+>> +#define RPC_CMNCR_SFDE		BIT(24)
+> 
+>    This bit is undocumented as of the gen3 manual v1.0. I'd like this to be reflected
+> in a comment...
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2
-	* No change
-V2-->V3
-	* No change
-V3-->V4
-	* No change
----
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+FYI, not even in v1.50 .
 
-diff --git a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-index 40b7f98..77d1824 100644
---- a/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-+++ b/arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts
-@@ -84,12 +84,30 @@
- 	clock-frequency = <20000000>;
- };
- 
-+&i2c3 {
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	rtc@51 {
-+		compatible = "nxp,pcf85263";
-+		reg = <0x51>;
-+	};
-+};
-+
- &pfc {
- 	avb_pins: avb {
- 		groups = "avb_mdio", "avb_gmii_tx_rx";
- 		function = "avb";
- 	};
- 
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3_c";
-+		function = "i2c3";
-+	};
-+
- 	mmc_pins_uhs: mmc_uhs {
- 		groups = "mmc_data8", "mmc_ctrl";
- 		function = "mmc";
 -- 
-2.7.4
+Best regards,
+Marek Vasut
