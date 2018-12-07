@@ -1,85 +1,68 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33638 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726151AbeLDPv4 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42846 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbeLGWGj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 10:51:56 -0500
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [VSP-Tests PATCH 2/7] tests: Provide copy test to validate 1xN streams
-Date: Tue,  4 Dec 2018 15:51:41 +0000
-Message-Id: <20181204155146.9726-3-kieran.bingham@ideasonboard.com>
-In-Reply-To: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
-References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
+        Fri, 7 Dec 2018 17:06:39 -0500
+Date: Fri, 7 Dec 2018 14:06:36 -0800
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/3] arm64: defconfig: Enable scu-simple-card driver
+Message-ID: <20181207220635.v2el5xvwalenm66q@verge.net.au>
+References: <cover.1544126077.git.horms+renesas@verge.net.au>
+ <595096daf0ac9c1741b6182eb72d636802a21006.1544126077.git.horms+renesas@verge.net.au>
+ <CAMuHMdUZSqaW_Vk9GjrtKjRUKdmbFMC5CEswGc_wDWQ-d515hw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUZSqaW_Vk9GjrtKjRUKdmbFMC5CEswGc_wDWQ-d515hw@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Validate that a 1xN stream can be read through the RPF and written
-through the WPF.
+On Fri, Dec 07, 2018 at 09:28:22AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Thu, Dec 6, 2018 at 10:58 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> > Enable the scu-simple-card which is used by
+> > the R-Car E3 (r8a77990) based Ebisu board.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> >  arch/arm64/configs/defconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > index f88190463481..9d0b42d96f03 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -491,6 +491,7 @@ CONFIG_SND_SOC_RT5514=m
+> >  CONFIG_SND_SOC_RT5514_SPI=m
+> >  CONFIG_SND_SOC_RT5645=m
+> >  CONFIG_SND_SIMPLE_CARD=m
+> > +CONFIG_SND_SIMPLE_SCU_CARD=y
+> 
+> Shouldn't this be "m"?
 
-The test framework does not currently support processing images where
-the stride does not match the output width - so the testing is currently
-limited to testing only the vertical direction in this aspect.
+Thanks Geert,
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
- tests/vsp-unit-test-0025.sh | 45 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100755 tests/vsp-unit-test-0025.sh
+I'll look into an incremental update for that.
 
-diff --git a/tests/vsp-unit-test-0025.sh b/tests/vsp-unit-test-0025.sh
-new file mode 100755
-index 000000000000..57a1fac6e369
---- /dev/null
-+++ b/tests/vsp-unit-test-0025.sh
-@@ -0,0 +1,45 @@
-+#!/bin/sh
-+
-+#
-+# Test pipelines which have a single pixel dimension. Use a RPF -> WPF
-+# pipeline with identical input and output formats to generate our output.
-+#
-+
-+. ./vsp-lib.sh
-+
-+features="rpf.0 uds wpf.0"
-+formats="RGB24 ARGB32"
-+
-+# Input is directly copied to the output. No change in format or size.
-+test_copy() {
-+	local format=$1
-+	local insize=$2
-+
-+	test_start "copying $insize in $format"
-+
-+	pipe_configure rpf-wpf 0 0
-+	format_configure rpf-wpf 0 0 $format $insize $format
-+
-+	vsp_runner rpf.0 &
-+	vsp_runner wpf.0
-+
-+	local result=$(compare_frames)
-+
-+	test_complete $result
-+}
-+
-+test_main() {
-+	local format
-+
-+	for format in $formats ; do
-+		test_copy $format 1024x768
-+		test_copy $format 128x128
-+		test_copy $format 128x1
-+
-+		# Skipped : Test framework does not yet support strides != width
-+		#test_copy $format 1x128
-+	done
-+}
-+
-+test_init $0 "$features"
-+test_run
--- 
-2.17.1
+> 
+> >  CONFIG_SND_AUDIO_GRAPH_CARD=m
+> >  CONFIG_I2C_HID=m
+> >  CONFIG_USB=y
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
