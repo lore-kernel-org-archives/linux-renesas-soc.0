@@ -1,55 +1,44 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:31248 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbeLEBRx (ORCPT
+Received: from mail.kernel.org ([198.145.29.99]:54594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726008AbeLGUl6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 20:17:53 -0500
-From: Ulrich Hecht <uli+renesas@fpond.eu>
-To: linux-renesas-soc@vger.kernel.org, wsa@the-dreams.de
-Cc: devicetree@vger.kernel.org, linux-can@vger.kernel.org,
-        robh@kernel.org, geert+renesas@glider.be,
-        horms+renesas@verge.net.au,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Subject: [PATCH v3 1/2] dt-bindings: can: rcar_can: add r8a77995 (R-Car D3) compatibility strings
-Date: Wed,  5 Dec 2018 09:17:04 +0800
-Message-Id: <1543972625-11267-2-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1543972625-11267-1-git-send-email-uli+renesas@fpond.eu>
-References: <1543972625-11267-1-git-send-email-uli+renesas@fpond.eu>
+        Fri, 7 Dec 2018 15:41:58 -0500
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-2-sboyd@kernel.org> <CAMuHMdVWbcoVr9E9nmKvhrUAAf4817wEQnQ6QrF1sWeHpgL_2g@mail.gmail.com>
+Subject: Re: [PATCH 1/8] clk: renesas: Remove usage of CLK_IS_BASIC
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Message-ID: <154421531739.168715.18141681984476948631@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAMuHMdVWbcoVr9E9nmKvhrUAAf4817wEQnQ6QrF1sWeHpgL_2g@mail.gmail.com>
+Date: Fri, 07 Dec 2018 12:41:57 -0800
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Quoting Geert Uytterhoeven (2018-12-07 00:27:11)
+> Hi Stephen,
+>=20
+> On Thu, Dec 6, 2018 at 10:59 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > This flag doesn't look to be used by any code, just set in various clk
+> > init structures and then never tested again. Remove it from these
+> > drivers as it doesn't provide any benefit.
+> >
+> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: <linux-renesas-soc@vger.kernel.org>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+>=20
+> Thanks!
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> I assume you want to apply this yourself, with the rest of the series?
+>=20
 
-Adds compatible strings for the R-Car CAN controller in the D3 SoC.
-
-Signed-off-by: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 9936b9e..a72ced1 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -16,6 +16,7 @@ Required properties:
- 	      "renesas,can-r8a7795" if CAN controller is a part of R8A7795 SoC.
- 	      "renesas,can-r8a7796" if CAN controller is a part of R8A7796 SoC.
- 	      "renesas,can-r8a77965" if CAN controller is a part of R8A77965 SoC.
-+	      "renesas,can-r8a77995" if CAN controller is a part of R8A77995 SoC.
- 	      "renesas,rcar-gen1-can" for a generic R-Car Gen1 compatible device.
- 	      "renesas,rcar-gen2-can" for a generic R-Car Gen2 or RZ/G1
- 	      compatible device.
-@@ -37,7 +38,7 @@ Required properties:
- - pinctrl-0: pin control group to be used for this controller.
- - pinctrl-names: must be "default".
- 
--Required properties for R8A7795, R8A7796 and R8A77965:
-+Required properties for R8A7795, R8A7796, R8A77965 and R8A77995:
- For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
- be used by both CAN and CAN FD controller at the same time. It needs to be
- scaled to maximum frequency if any of these controllers use it. This is done
--- 
-2.7.4
+Yes I'll apply it to clk-next. Thanks.
