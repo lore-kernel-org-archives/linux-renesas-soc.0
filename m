@@ -1,63 +1,79 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:12374 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725967AbeLGIcD (ORCPT
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36672 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbeLGQbT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 03:32:03 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: thierry.reding@gmail.com
-Cc: linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low level
-Date: Fri,  7 Dec 2018 17:29:33 +0900
-Message-Id: <1544171373-29618-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 7 Dec 2018 11:31:19 -0500
+Subject: Re: [PATCH v3 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
+ controller bindings
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+ <1544181199-3373-3-git-send-email-masonccyang@mxic.com.tw>
+ <b89fb13a-4fe2-d3ca-7e12-7ac6b11455f6@cogentembedded.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <8564903b-b162-a451-296e-be3ec199e248@gmail.com>
+Date: Fri, 7 Dec 2018 17:31:14 +0100
+MIME-Version: 1.0
+In-Reply-To: <b89fb13a-4fe2-d3ca-7e12-7ac6b11455f6@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This PWM Timer cannot output low because setting 0x000 is prohibited
-on PWMCNT.PH0 (High-Level Period) bitfields. So, avoiding
-the prohibited, this patch adds a workaround function to change
-the value from 0 to 1 as pseudo low level.
+On 12/07/2018 05:03 PM, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 12/07/2018 02:13 PM, Mason Yang wrote:
+> 
+>> Document the bindings used by the Renesas R-Car Gen3 RPC controller.
+>>
+>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+>> ---
+>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 38 ++++++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> new file mode 100644
+>> index 0000000..a191f70
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> @@ -0,0 +1,38 @@
+>> +Renesas R-Car Gen3 RPC controller Device Tree Bindings
+>> +------------------------------------------------------
+>> +
+>> +Required properties:
+>> +- compatible: should be "renesas,r8a77995-rpc"
+>> +- #address-cells: should be 1
+>> +- #size-cells: should be 0
+>> +- reg: should contain 2 entries, one for the registers and one for the direct
+>> +       mapping area
+>> +- reg-names: should contain "rpc_regs" and "dirmap"
+> 
+>    Please drop this "rpc_" thing, I think "regs" should be enough.
+> 
+>> +- interrupts: interrupt line connected to the RPC controller
+>> +- clock-names: should contain "clk_rpc"
+> 
+>    Please drop this "clk_" thing. BTW, what's with the RPCD2 clock?
+> 
+>> +- clocks: should contain 1 entries for the module's clock
+>> +- rpc-mode: should contain "rpc-spi-flash" for rpc spi mode or
+>> +			   "rpc-hyperflash" for rpc hyerflash mode.
+> 
+>    I think the prop should be called "renesas,rpc-mode" and the values should be
+> just "spi" and "hyperflash". 
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pwm/pwm-rcar.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Like I said before, you can determine the mode from the subnode attached
+to the controller, we don't need special prop for that.
 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index e479b6a..888cb37 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -166,6 +166,20 @@ static void rcar_pwm_disable(struct rcar_pwm_chip *rp)
- 	rcar_pwm_update(rp, RCAR_PWMCR_EN0, 0, RCAR_PWMCR);
- }
- 
-+static void rcar_pwm_workaround_output_low(struct rcar_pwm_chip *rp)
-+{
-+	/*
-+	 * This PWM Timer cannot output low because setting 0x000 is
-+	 * prohibited on PWMCNT.PH0 (High-Level Period) bitfields. So, avoiding
-+	 * the prohibited, this function changes the value from 0 to 1 as
-+	 * pseudo low level.
-+	 *
-+	 * TODO: Add GPIO handling to output low level.
-+	 */
-+	if ((rp->pwmcnt & RCAR_PWMCNT_PH0_MASK) == 0)
-+		rp->pwmcnt |= 1;
-+}
-+
- static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 			  struct pwm_state *state)
- {
-@@ -179,6 +193,7 @@ static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
- 
- 	rcar_pwm_calc_counter(rp, div, state->duty_cycle, state->period);
-+	rcar_pwm_workaround_output_low(rp);
- 	ret = rcar_pwm_set_counter(rp);
- 	if (!ret)
- 		rcar_pwm_set_clock_control(rp, div);
 -- 
-1.9.1
+Best regards,
+Marek Vasut
