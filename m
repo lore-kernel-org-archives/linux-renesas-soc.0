@@ -1,79 +1,73 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-eopbgr1400125.outbound.protection.outlook.com ([40.107.140.125]:13080
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726292AbeLJEtW (ORCPT
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47717 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbeLGJNm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 9 Dec 2018 23:49:22 -0500
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To: =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?=
+        Fri, 7 Dec 2018 04:13:42 -0500
+Date: Fri, 7 Dec 2018 10:13:37 +0100
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
         <u.kleine-koenig@pengutronix.de>
-CC: "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low
  level
-Date: Mon, 10 Dec 2018 04:49:17 +0000
-Message-ID: <OSBPR01MB229351E3EC1B66339E6C9635D8A50@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Message-ID: <20181207091337.mvrzzbgqa77adgbd@pengutronix.de>
 References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
  <1544171373-29618-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20181207091337.mvrzzbgqa77adgbd@pengutronix.de>
-In-Reply-To: <20181207091337.mvrzzbgqa77adgbd@pengutronix.de>
-Content-Language: ja-JP
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544171373-29618-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Uwem
+On Fri, Dec 07, 2018 at 05:29:33PM +0900, Yoshihiro Shimoda wrote:
+> This PWM Timer cannot output low because setting 0x000 is prohibited
+> on PWMCNT.PH0 (High-Level Period) bitfields. So, avoiding
+> the prohibited, this patch adds a workaround function to change
+> the value from 0 to 1 as pseudo low level.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/pwm/pwm-rcar.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+> index e479b6a..888cb37 100644
+> --- a/drivers/pwm/pwm-rcar.c
+> +++ b/drivers/pwm/pwm-rcar.c
+> @@ -166,6 +166,20 @@ static void rcar_pwm_disable(struct rcar_pwm_chip *rp)
+>  	rcar_pwm_update(rp, RCAR_PWMCR_EN0, 0, RCAR_PWMCR);
+>  }
+>  
+> +static void rcar_pwm_workaround_output_low(struct rcar_pwm_chip *rp)
+> +{
+> +	/*
+> +	 * This PWM Timer cannot output low because setting 0x000 is
+> +	 * prohibited on PWMCNT.PH0 (High-Level Period) bitfields. So, avoiding
+> +	 * the prohibited, this function changes the value from 0 to 1 as
+> +	 * pseudo low level.
+> +	 *
+> +	 * TODO: Add GPIO handling to output low level.
+> +	 */
+> +	if ((rp->pwmcnt & RCAR_PWMCNT_PH0_MASK) == 0)
+> +		rp->pwmcnt |= 1;
 
-Thank you for your review!
+In my eyes this is too broken to do. Not sure I have the complete
+picture, but given a small period (say 2) this 1 cycle might result in
+50 % duty cycle. Depending on how the hardware behaves if you disable
+it, better do this instead.
 
-> From: Uwe Kleine-Konig, Sent: Friday, December 7, 2018 6:14 PM
->=20
-> On Fri, Dec 07, 2018 at 05:29:33PM +0900, Yoshihiro Shimoda wrote:
-<snip>
-> > +static void rcar_pwm_workaround_output_low(struct rcar_pwm_chip *rp)
-> > +{
-> > +	/*
-> > +	 * This PWM Timer cannot output low because setting 0x000 is
-> > +	 * prohibited on PWMCNT.PH0 (High-Level Period) bitfields. So, avoidi=
-ng
-> > +	 * the prohibited, this function changes the value from 0 to 1 as
-> > +	 * pseudo low level.
-> > +	 *
-> > +	 * TODO: Add GPIO handling to output low level.
-> > +	 */
-> > +	if ((rp->pwmcnt & RCAR_PWMCNT_PH0_MASK) =3D=3D 0)
-> > +		rp->pwmcnt |=3D 1;
->=20
-> In my eyes this is too broken to do. Not sure I have the complete
-> picture, but given a small period (say 2) this 1 cycle might result in
-> 50 % duty cycle. Depending on how the hardware behaves if you disable
-> it, better do this instead.
+Are you aware of the series adding such gpio support to the imx driver?
 
-You're right.
+@Thierry: So there are three drivers now that could benefit for a
+generic approach.
 
-> Are you aware of the series adding such gpio support to the imx driver?
+Best regards
+Uwe
 
-I didn't know that.
-
-> @Thierry: So there are three drivers now that could benefit for a
-> generic approach.
-
-Should I wait for Thierry's opinion whether PWM subsystem will have
-a generic approach or not?
-
-Best regards,
-Yoshihiro Shimoda
-
-> Best regards
-> Uwe
->=20
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
-  |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
+-- 
+Pengutronix e.K.                           | Uwe Kleine-K�nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
