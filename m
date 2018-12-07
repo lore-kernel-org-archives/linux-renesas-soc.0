@@ -1,96 +1,55 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:2934 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727006AbeLEJPe (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:60742 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbeLGMTc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 04:15:34 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 1/5] ARM: dts: iwg20d-q7-common: Move cmt/rwdt node out of RZ/G1M SOM
-Date: Wed,  5 Dec 2018 09:06:51 +0000
-Message-Id: <1544000815-28069-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544000815-28069-1-git-send-email-biju.das@bp.renesas.com>
-References: <1544000815-28069-1-git-send-email-biju.das@bp.renesas.com>
+        Fri, 7 Dec 2018 07:19:32 -0500
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v4.21
+Date: Fri,  7 Dec 2018 13:19:24 +0100
+Message-Id: <20181207121924.32364-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The iWave RZ/G1N board is almost identical to RZ/G1M. cmt and rwdt modules
-are SoC specific and should be part of board dts rather than SoM dtsi. By
-moving these nodes to the common dtsi it allows cmt and rwdt to be enabled
-on both of these boards with less lines of code.
+	Hi Linus,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->v2 
-	* No change
----
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 9 +++++++++
- arch/arm/boot/dts/r8a7743-iwg20m.dtsi   | 9 ---------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+The following changes since commit b59d0e782706785b7042539e820e95df3be4d04c:
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index ca9154dd..e2b1ab9 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -116,6 +116,10 @@
- 	status = "okay";
- };
- 
-+&cmt0 {
-+	status = "okay";
-+};
-+
- &hsusb {
- 	status = "okay";
- 	pinctrl-0 = <&usb0_pins>;
-@@ -230,6 +234,11 @@
- 	};
- };
- 
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif0 {
- 	pinctrl-0 = <&scif0_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-index 0e2e033..b3fee1d 100644
---- a/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-+++ b/arch/arm/boot/dts/r8a7743-iwg20m.dtsi
-@@ -31,10 +31,6 @@
- 	};
- };
- 
--&cmt0 {
--	status = "okay";
--};
--
- &extal_clk {
- 	clock-frequency = <20000000>;
- };
-@@ -88,11 +84,6 @@
- 	};
- };
- 
--&rwdt {
--	timeout-sec = <60>;
--	status = "okay";
--};
--
- &sdhi0 {
- 	pinctrl-0 = <&sdhi0_pins>;
- 	pinctrl-names = "default";
--- 
-2.7.4
+  pinctrl: Add RZ/A2 pin and gpio controller (2018-11-23 09:30:27 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.21-tag2
+
+for you to fetch changes up to 3f3327dbc5596076f94695d8d4cc66da3d5027fb:
+
+  pinctrl: rzn1: Fix of_get_child_count() error check (2018-12-04 10:33:49 +0100)
+
+----------------------------------------------------------------
+pinctrl: sh-pfc: Updates for v4.21 (take two)
+
+  - Two small fixes for RZ/N1.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Phil Edworthy (2):
+      pinctrl: rzn1: Fix check for used MDIO bus
+      pinctrl: rzn1: Fix of_get_child_count() error check
+
+ drivers/pinctrl/pinctrl-rzn1.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
