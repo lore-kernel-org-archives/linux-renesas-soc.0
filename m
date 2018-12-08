@@ -1,54 +1,39 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from albert.telenet-ops.be ([195.130.137.90]:43134 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbeLCPMw (ORCPT
+Received: from mail.bootlin.com ([62.4.15.54]:56896 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726121AbeLHMag (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:12:52 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a7796: salvator-xs: Convert to new LVDS DT bindings
-Date: Mon,  3 Dec 2018 16:12:42 +0100
-Message-Id: <20181203151242.25875-3-geert+renesas@glider.be>
-In-Reply-To: <20181203151242.25875-1-geert+renesas@glider.be>
-References: <20181203151242.25875-1-geert+renesas@glider.be>
+        Sat, 8 Dec 2018 07:30:36 -0500
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Richard Weinberger <richard@nod.at>
+Cc: devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [v2,1/3] mtd: spi-nor: Add support for is25lp016d
+Date: Sat,  8 Dec 2018 13:30:31 +0100
+Message-Id: <20181208123031.9847-1-boris.brezillon@bootlin.com>
+In-Reply-To: <1541696684-21235-2-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-As of commit 6d2ca85279becdff ("dt-bindings: display: renesas: Deprecate
-LVDS support in the DU bindings"), the internal LVDS encoder has DT
-bindings separate from the DU.  The device trees for all R-Car H3 and
-M3-W development boards were ported over to the new model, but
-Salvator-XS boards equipped with an R-Car M3-W SoC were forgotten.
+On Thu, 2018-11-08 at 17:04:41 UTC, Fabrizio Castro wrote:
+> The is25lp016d is found on the iwg23s from iWave, therefore
+> add driver support for it so that we can upstream board support.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Fixes: 58e8ed2ee9abe718 ("arm64: dts: renesas: Convert to new LVDS DT bindings")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Applied to http://git.infradead.org/linux-mtd.git spi-nor/next, thanks.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
-index 8860be65342e4f38..31f12059355ee02b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a7796-salvator-xs.dts
-@@ -29,11 +29,10 @@
- 	clocks = <&cpg CPG_MOD 724>,
- 		 <&cpg CPG_MOD 723>,
- 		 <&cpg CPG_MOD 722>,
--		 <&cpg CPG_MOD 727>,
- 		 <&versaclock6 1>,
- 		 <&x21_clk>,
- 		 <&versaclock6 2>;
--	clock-names = "du.0", "du.1", "du.2", "lvds.0",
-+	clock-names = "du.0", "du.1", "du.2",
- 		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
- 
--- 
-2.17.1
+Boris
