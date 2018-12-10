@@ -1,104 +1,79 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>
-Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/4] serial: sh-sci: Fix locking in sci_submit_rx()
-Date: Mon, 10 Dec 2018 19:21:51 +0100
-Message-Id: <20181210182154.20357-2-geert+renesas@glider.be>
-In-Reply-To: <20181210182154.20357-1-geert+renesas@glider.be>
-References: <20181210182154.20357-1-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:36738 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729927AbeLJVDU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:03:20 -0500
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC/RFT 07/10] i2c: sprd: use core helper to mark adapter suspended
+Date: Mon, 10 Dec 2018 22:03:05 +0100
+Message-Id: <20181210210310.12677-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some callers of sci_submit_rx() hold the port spinlock, others don't.
-During fallback to PIO, the driver needs to obtain the port spinlock.
-If the lock was already held, spinlock recursion is detected, causing a
-deadlock: BUG: spinlock recursion on CPU#0.
+Rejecting transfers should be handled by the core.
 
-Fix this by adding a flag parameter to sci_submit_rx() for the caller to
-indicate the port spinlock is already held, so spinlock recursion can be
-avoided.
-
-Move the spin_lock_irqsave() up, so all DMA disable steps are protected,
-which is safe as the recently introduced dmaengine_terminate_async() can
-be called in atomic context.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-v3:
-  - Split in multiple patches.
----
- drivers/tty/serial/sh-sci.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/i2c/busses/i2c-sprd.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 8146d9cef0cbe2d0..2a08039f792235e5 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	dma_release_channel(chan);
- }
+diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+index e266d8a713d9..acbaf5fd29ee 100644
+--- a/drivers/i2c/busses/i2c-sprd.c
++++ b/drivers/i2c/busses/i2c-sprd.c
+@@ -86,7 +86,6 @@ struct sprd_i2c {
+ 	u32 count;
+ 	int irq;
+ 	int err;
+-	bool is_suspended;
+ };
  
--static void sci_submit_rx(struct sci_port *s)
-+static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
+ static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
+@@ -284,9 +283,6 @@ static int sprd_i2c_master_xfer(struct i2c_adapter *i2c_adap,
+ 	struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
+ 	int im, ret;
+ 
+-	if (i2c_dev->is_suspended)
+-		return -EBUSY;
+-
+ 	ret = pm_runtime_get_sync(i2c_dev->dev);
+ 	if (ret < 0)
+ 		return ret;
+@@ -590,10 +586,7 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
  {
- 	struct dma_chan *chan = s->chan_rx;
- 	struct uart_port *port = &s->port;
-@@ -1362,16 +1362,18 @@ static void sci_submit_rx(struct sci_port *s)
- 	return;
+ 	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
  
- fail:
-+	/* Switch to PIO */
-+	if (!port_lock_held)
-+		spin_lock_irqsave(&port->lock, flags);
- 	if (i)
- 		dmaengine_terminate_async(chan);
- 	for (i = 0; i < 2; i++)
- 		s->cookie_rx[i] = -EINVAL;
- 	s->active_rx = -EINVAL;
--	/* Switch to PIO */
--	spin_lock_irqsave(&port->lock, flags);
- 	s->chan_rx = NULL;
- 	sci_start_rx(port);
--	spin_unlock_irqrestore(&port->lock, flags);
-+	if (!port_lock_held)
-+		spin_unlock_irqrestore(&port->lock, flags);
+-	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-
++	i2c_mark_adapter_suspended(&i2c_dev->adap, true);
+ 	return pm_runtime_force_suspend(dev);
  }
  
- static void work_fn_tx(struct work_struct *work)
-@@ -1491,7 +1493,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
- 	}
+@@ -601,10 +594,7 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
+ {
+ 	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
  
- 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--		sci_submit_rx(s);
-+		sci_submit_rx(s, true);
- 
- 	/* Direct new serial port interrupts back to CPU */
- 	scr = serial_port_in(port, SCSCR);
-@@ -1617,7 +1619,7 @@ static void sci_request_dma(struct uart_port *port)
- 		s->chan_rx_saved = s->chan_rx = chan;
- 
- 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--			sci_submit_rx(s);
-+			sci_submit_rx(s, false);
- 	}
+-	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_dev->is_suspended = false;
+-	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-
++	i2c_mark_adapter_suspended(&i2c_dev->adap, false);
+ 	return pm_runtime_force_resume(dev);
  }
  
-@@ -1667,7 +1669,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			scr |= SCSCR_RDRQE;
- 		} else {
- 			scr &= ~SCSCR_RIE;
--			sci_submit_rx(s);
-+			sci_submit_rx(s, false);
- 		}
- 		serial_port_out(port, SCSCR, scr);
- 		/* Clear current interrupt */
 -- 
-2.17.1
+2.11.0
