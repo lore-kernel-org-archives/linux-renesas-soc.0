@@ -1,89 +1,49 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([88.99.104.3]:36726 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727967AbeLJVDT (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:03:19 -0500
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC/RFT 06/10] i2c: sprd: don't use pdev as variable name for struct device *
-Date: Mon, 10 Dec 2018 22:03:04 +0100
-Message-Id: <20181210210310.12677-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>
+Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/4] serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
+Date: Mon, 10 Dec 2018 19:21:52 +0100
+Message-Id: <20181210182154.20357-3-geert+renesas@glider.be>
+In-Reply-To: <20181210182154.20357-1-geert+renesas@glider.be>
+References: <20181210182154.20357-1-geert+renesas@glider.be>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-The pointer to a device is usually named 'dev'. These 'pdev' here look
-much like copy&paste errors. Fix them to avoid confusion.
+When falling back to PIO, active_rx must be set to a different value
+than cookie_rx[i], else sci_dma_rx_find_active() will incorrectly find a
+match, leading to a NULL pointer dereference in rx_timer_fn() later.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Use zero instead, which is the same value as after driver
+initialization.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/i2c/busses/i2c-sprd.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+v3:
+  - Split in multiple patches.
+---
+ drivers/tty/serial/sh-sci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-index a94e724f51dc..e266d8a713d9 100644
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -586,40 +586,40 @@ static int sprd_i2c_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
-+static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
- {
--	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
- 
- 	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 	i2c_dev->is_suspended = true;
- 	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 
--	return pm_runtime_force_suspend(pdev);
-+	return pm_runtime_force_suspend(dev);
- }
- 
--static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
-+static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
- {
--	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
- 
- 	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 	i2c_dev->is_suspended = false;
- 	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
- 
--	return pm_runtime_force_resume(pdev);
-+	return pm_runtime_force_resume(dev);
- }
- 
--static int __maybe_unused sprd_i2c_runtime_suspend(struct device *pdev)
-+static int __maybe_unused sprd_i2c_runtime_suspend(struct device *dev)
- {
--	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
- 
- 	clk_disable_unprepare(i2c_dev->clk);
- 
- 	return 0;
- }
- 
--static int __maybe_unused sprd_i2c_runtime_resume(struct device *pdev)
-+static int __maybe_unused sprd_i2c_runtime_resume(struct device *dev)
- {
--	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
- 	int ret;
- 
- 	ret = clk_prepare_enable(i2c_dev->clk);
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 2a08039f792235e5..e353e03ce2602559 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1369,7 +1369,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
+ 		dmaengine_terminate_async(chan);
+ 	for (i = 0; i < 2; i++)
+ 		s->cookie_rx[i] = -EINVAL;
+-	s->active_rx = -EINVAL;
++	s->active_rx = 0;
+ 	s->chan_rx = NULL;
+ 	sci_start_rx(port);
+ 	if (!port_lock_held)
 -- 
-2.11.0
+2.17.1
