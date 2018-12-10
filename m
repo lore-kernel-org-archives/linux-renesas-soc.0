@@ -1,410 +1,123 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55914 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbeLFV6l (ORCPT
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40759 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbeLJPYy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:58:41 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 03/34] ARM: dts: r8a7744: Initial SoC device tree
-Date: Thu,  6 Dec 2018 13:57:58 -0800
-Message-Id: <d83010f87ab31861eacac1ffe1278f655a376268.1544125558.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1544125558.git.horms+renesas@verge.net.au>
-References: <cover.1544125558.git.horms+renesas@verge.net.au>
+        Mon, 10 Dec 2018 10:24:54 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v5so8274032lfe.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Dec 2018 07:24:53 -0800 (PST)
+Date: Mon, 10 Dec 2018 16:24:50 +0100
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: rcar-csi2: Fix PHTW table values for E3/V3M
+Message-ID: <20181210152450.GJ17972@bigcity.dyn.berto.se>
+References: <1544453635-16359-1-git-send-email-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544453635-16359-1-git-send-email-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-From: Biju Das <biju.das@bp.renesas.com>
+Hi Jacopo,
 
-Basic support for the RZ/G1N (R8A7744) SoC. Added placeholders
-to avoid compilation error with the common platform code.
+Thanks for fixing this.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7744.dtsi | 369 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 369 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7744.dtsi
+On 2018-12-10 15:53:55 +0100, Jacopo Mondi wrote:
+> The PHTW selection algorithm implemented in rcsi2_phtw_write_mbps() checks for
+> lower bound of the interval used to match the desired bandwidth. Use that
+> in place of the currently used upport bound.
+> 
+> Fixes: 10c08812fe60 ("media: rcar: rcar-csi2: Update V3M/E3 PHTW tables")
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-new file mode 100644
-index 000000000000..f4d0abde3f56
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -0,0 +1,369 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a7744 SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r8a7744-cpg-mssr.h>
-+#include <dt-bindings/power/r8a7744-sysc.h>
-+
-+/ {
-+	compatible = "renesas,r8a7744";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1500000000>;
-+			clocks = <&cpg CPG_CORE R8A7744_CLK_Z>;
-+			clock-latency = <300000>; /* 300 us */
-+			power-domains = <&sysc R8A7744_PD_CA15_CPU0>;
-+			next-level-cache = <&L2_CA15>;
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1500000 1000000>,
-+					   <1312500 1000000>,
-+					   <1125000 1000000>,
-+					   < 937500 1000000>,
-+					   < 750000 1000000>,
-+					   < 375000 1000000>;
-+		};
-+
-+		L2_CA15: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-level = <2>;
-+			power-domains = <&sysc R8A7744_PD_CA15_SCU>;
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		gpio0: gpio@e6050000 {
-+			reg = <0 0xe6050000 0 0x50>;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			/* placeholder */
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			reg = <0 0xe6051000 0 0x50>;
-+			#gpio-cells = <2>;
-+			/* placeholder */
-+		};
-+
-+		gpio2: gpio@e6052000 {
-+			reg = <0 0xe6052000 0 0x50>;
-+			#gpio-cells = <2>;
-+			/* placeholder */
-+		};
-+
-+		gpio6: gpio@e6055400 {
-+			reg = <0 0xe6055400 0 0x50>;
-+			#gpio-cells = <2>;
-+			/* placeholder */
-+		};
-+
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a7744";
-+			reg = <0 0xe6060000 0 0x250>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a7744-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a7744-rst";
-+			reg = <0 0xe6160000 0 0x100>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7744-sysc";
-+			reg = <0 0xe6180000 0 0x200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		icram0:	sram@e63a0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63a0000 0 0x12000>;
-+		};
-+
-+		icram1:	sram@e63c0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63c0000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe63c0000 0x1000>;
-+
-+			smp-sram@0 {
-+				compatible = "renesas,smp-sram";
-+				reg = <0 0x100>;
-+			};
-+		};
-+
-+		icram2:	sram@e6300000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe6300000 0 0x40000>;
-+		};
-+
-+		i2c2: i2c@e6530000 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0xe6530000 0 0x40>;
-+			/* placeholder */
-+		};
-+
-+		i2c5: i2c@e6528000 {
-+			/* doesn't need pinmux */
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0xe6528000 0 0x40>;
-+			/* placeholder */
-+		};
-+
-+		hsusb: usb@e6590000 {
-+			reg = <0 0xe6590000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		usbphy: usb-phy@e6590100 {
-+			reg = <0 0xe6590100 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		avb: ethernet@e6800000 {
-+			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			/* placeholder */
-+		};
-+
-+		scifb1: serial@e6c30000 {
-+			reg = <0 0xe6c30000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a7744",
-+				     "renesas,rcar-gen2-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 0x40>;
-+			interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 721>,
-+				 <&cpg CPG_CORE R8A7744_CLK_ZS>, <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 721>;
-+			status = "disabled";
-+		};
-+
-+		scif1: serial@e6e68000 {
-+			reg = <0 0xe6e68000 0 0x40>;
-+			/* placeholder */
-+		};
-+
-+		hscif1: serial@e62c8000 {
-+			reg = <0 0xe62c8000 0 0x60>;
-+			/* placeholder */
-+		};
-+
-+		can0: can@e6e80000 {
-+			reg = <0 0xe6e80000 0 0x1000>;
-+			/* placeholder */
-+		};
-+
-+		can1: can@e6e88000 {
-+			reg = <0 0xe6e88000 0 0x1000>;
-+			/* placeholder */
-+		};
-+
-+		rcar_sound: sound@ec500000 {
-+			reg = <0 0xec500000 0 0x1000>;
-+
-+			rcar_sound,dvc {
-+				dvc0: dvc-0 {};
-+				dvc1: dvc-1 {};
-+			};
-+
-+			rcar_sound,src {
-+				src2: src-2 {};
-+				src3: src-3 {};
-+			};
-+
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {};
-+				ssi1: ssi-1 {};
-+			};
-+			/* placeholder */
-+		};
-+
-+		pci0: pci@ee090000 {
-+			reg = <0 0xee090000 0 0xc00>;
-+
-+			bus-range = <0 0>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			/* placeholder */
-+		};
-+
-+		pci1: pci@ee0d0000 {
-+			reg = <0 0xee0d0000 0 0xc00>;
-+
-+			bus-range = <1 1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			#interrupt-cells = <1>;
-+			/* placeholder */
-+		};
-+
-+		sdhi1: sd@ee140000 {
-+			reg = <0 0xee140000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		sdhi2: sd@ee160000 {
-+			reg = <0 0xee160000 0 0x100>;
-+			/* placeholder */
-+		};
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
-+			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		du: display@feb00000 {
-+			reg = <0 0xfeb00000 0 0x40000>,
-+			      <0 0xfeb90000 0 0x1c>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
-+			/* placeholder */
-+		};
-+
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
-+};
+Acked-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 62 ++++++++++++++---------------
+>  1 file changed, 31 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> index 80ad906d1136..7e9cb8bcfe70 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -152,37 +152,37 @@ static const struct rcsi2_mbps_reg phtw_mbps_h3_v3h_m3n[] = {
+>  };
+> 
+>  static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
+> -	{ .mbps =   89, .reg = 0x00 },
+> -	{ .mbps =   99, .reg = 0x20 },
+> -	{ .mbps =  109, .reg = 0x40 },
+> -	{ .mbps =  129, .reg = 0x02 },
+> -	{ .mbps =  139, .reg = 0x22 },
+> -	{ .mbps =  149, .reg = 0x42 },
+> -	{ .mbps =  169, .reg = 0x04 },
+> -	{ .mbps =  179, .reg = 0x24 },
+> -	{ .mbps =  199, .reg = 0x44 },
+> -	{ .mbps =  219, .reg = 0x06 },
+> -	{ .mbps =  239, .reg = 0x26 },
+> -	{ .mbps =  249, .reg = 0x46 },
+> -	{ .mbps =  269, .reg = 0x08 },
+> -	{ .mbps =  299, .reg = 0x28 },
+> -	{ .mbps =  329, .reg = 0x0a },
+> -	{ .mbps =  359, .reg = 0x2a },
+> -	{ .mbps =  399, .reg = 0x4a },
+> -	{ .mbps =  449, .reg = 0x0c },
+> -	{ .mbps =  499, .reg = 0x2c },
+> -	{ .mbps =  549, .reg = 0x0e },
+> -	{ .mbps =  599, .reg = 0x2e },
+> -	{ .mbps =  649, .reg = 0x10 },
+> -	{ .mbps =  699, .reg = 0x30 },
+> -	{ .mbps =  749, .reg = 0x12 },
+> -	{ .mbps =  799, .reg = 0x32 },
+> -	{ .mbps =  849, .reg = 0x52 },
+> -	{ .mbps =  899, .reg = 0x72 },
+> -	{ .mbps =  949, .reg = 0x14 },
+> -	{ .mbps =  999, .reg = 0x34 },
+> -	{ .mbps = 1049, .reg = 0x54 },
+> -	{ .mbps = 1099, .reg = 0x74 },
+> +	{ .mbps =   80, .reg = 0x00 },
+> +	{ .mbps =   90, .reg = 0x20 },
+> +	{ .mbps =  100, .reg = 0x40 },
+> +	{ .mbps =  110, .reg = 0x02 },
+> +	{ .mbps =  130, .reg = 0x22 },
+> +	{ .mbps =  140, .reg = 0x42 },
+> +	{ .mbps =  150, .reg = 0x04 },
+> +	{ .mbps =  170, .reg = 0x24 },
+> +	{ .mbps =  180, .reg = 0x44 },
+> +	{ .mbps =  200, .reg = 0x06 },
+> +	{ .mbps =  220, .reg = 0x26 },
+> +	{ .mbps =  240, .reg = 0x46 },
+> +	{ .mbps =  250, .reg = 0x08 },
+> +	{ .mbps =  270, .reg = 0x28 },
+> +	{ .mbps =  300, .reg = 0x0a },
+> +	{ .mbps =  330, .reg = 0x2a },
+> +	{ .mbps =  360, .reg = 0x4a },
+> +	{ .mbps =  400, .reg = 0x0c },
+> +	{ .mbps =  450, .reg = 0x2c },
+> +	{ .mbps =  500, .reg = 0x0e },
+> +	{ .mbps =  550, .reg = 0x2e },
+> +	{ .mbps =  600, .reg = 0x10 },
+> +	{ .mbps =  650, .reg = 0x30 },
+> +	{ .mbps =  700, .reg = 0x12 },
+> +	{ .mbps =  750, .reg = 0x32 },
+> +	{ .mbps =  800, .reg = 0x52 },
+> +	{ .mbps =  850, .reg = 0x72 },
+> +	{ .mbps =  900, .reg = 0x14 },
+> +	{ .mbps =  950, .reg = 0x34 },
+> +	{ .mbps = 1000, .reg = 0x54 },
+> +	{ .mbps = 1050, .reg = 0x74 },
+>  	{ .mbps = 1125, .reg = 0x16 },
+>  	{ /* sentinel */ },
+>  };
+> --
+> 2.7.4
+> 
+
 -- 
-2.11.0
+Regards,
+Niklas S�derlund
