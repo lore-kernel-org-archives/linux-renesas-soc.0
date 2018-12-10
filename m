@@ -1,187 +1,176 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:5386 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725988AbeLGLge (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:56808 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbeLJMar (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Dec 2018 06:36:34 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 3/5] rtc: pcf85363: Add support for NXP pcf85263 rtc
-Date: Fri,  7 Dec 2018 11:27:44 +0000
-Message-Id: <1544182066-31528-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
-References: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 10 Dec 2018 07:30:47 -0500
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2] Add support to reset device controls
+Date: Mon, 10 Dec 2018 14:31:26 +0200
+Message-ID: <4883627.Rd9fpa0Ayh@avalon>
+In-Reply-To: <20181210111808.10890-1-kieran.bingham@ideasonboard.com>
+References: <20181210111808.10890-1-kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add support for NXP pcf85263 real-time clock. pcf85263 rtc is compatible
-with pcf85363,except that pcf85363 has additional 64 bytes of RAM.
+Hi Kieran,
 
-1 byte of nvmem is supported and exposed in sysfs (# is the instance
-number,starting with 0): /sys/bus/nvmem/devices/pcf85x63-#/nvmem
+Thank you for the patch.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-V1-->V2
-	* Incorporated Alexandre and Geert's review comment.
-V2-->V3
-	* Incorporated Geert's review comment.
-V3-->V4
-	* Incorporated Geert's and Alexandre's review comment.
----
- drivers/rtc/rtc-pcf85363.c | 94 +++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 76 insertions(+), 18 deletions(-)
+On Monday, 10 December 2018 13:18:08 EET Kieran Bingham wrote:
+> Provide a new option '--reset-controls' which will enumerate the
+> available controls on a device or sub-device, and re-initialise them to
+> defaults.
+> 
+> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> ---
+> 
+> v2:
+>  - Rebase and rework to sit on top of the compound control changes
+> 
+> With this patch, and the updated VSP-Tests series, the M3-N now
+> successfully passes all of the tests using the VSP1.
+> 
+> This patch is available on the 'vsp' branch at:
+>   https://github.com/kbingham/yavta.git
+> 
+> 
+>  yavta.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 54 insertions(+), 2 deletions(-)
+> 
+> diff --git a/yavta.c b/yavta.c
+> index 625a93ba879d..656ead0f0a37 100644
+> --- a/yavta.c
+> +++ b/yavta.c
+> @@ -1547,7 +1547,43 @@ static void video_set_control(struct device *dev,
+> unsigned int id, free(ctrl.ptr);
+>  }
+> 
+> -static void video_list_controls(struct device *dev)
+> +static int video_reset_control(struct device *dev, unsigned int id)
+> +{
+> +	struct v4l2_query_ext_ctrl query;
+> +	struct v4l2_ext_control ctrl;
+> +	int ret;
+> +
+> +	ret = query_control(dev, id, &query);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (query.type == V4L2_CTRL_TYPE_CTRL_CLASS)
+> +		return query.id;
+> +
+> +	/* Skip controls that we cannot (or should not) update. */
+> +	if (query.flags & (V4L2_CTRL_FLAG_DISABLED
+> +			|  V4L2_CTRL_FLAG_VOLATILE
+> +			|  V4L2_CTRL_FLAG_READ_ONLY))
+> +		return query.id;
+> +
+> +	ctrl.id = query.id;
+> +	ctrl.value = query.default_value;
+> +
+> +	ret = set_control(dev, &query, &ctrl);
+> +	if (ret < 0) {
+> +		printf("unable to reset control 0x%8.8x: %s (%d).\n",
+> +			id, strerror(errno), errno);
+> +	} else {
+> +		printf("control 0x%08x reset to ", id);
+> +
+> +		video_print_control_value(&query, &ctrl);
+> +		printf("\n");
+> +	}
+> +
+> +	return query.id;
+> +}
+> +
+> +static void video_list_controls(struct device *dev, bool reset)
+>  {
+>  	unsigned int nctrls = 0;
+>  	unsigned int id;
+> @@ -1568,6 +1604,12 @@ static void video_list_controls(struct device *dev)
+>  		if (ret < 0)
+>  			break;
+> 
+> +		if (reset) {
+> +			ret = video_reset_control(dev, id);
+> +			if (ret < 0)
+> +				break;
+> +		}
+> +
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index c04a1ed..a398807 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -120,6 +120,11 @@ struct pcf85363 {
- 	struct regmap		*regmap;
- };
- 
-+struct pcf85x63_config {
-+	struct regmap_config regmap;
-+	unsigned int num_nvram;
-+};
-+
- static int pcf85363_rtc_read_time(struct device *dev, struct rtc_time *tm)
- {
- 	struct pcf85363 *pcf85363 = dev_get_drvdata(dev);
-@@ -311,25 +316,75 @@ static int pcf85363_nvram_write(void *priv, unsigned int offset, void *val,
- 				 val, bytes);
- }
- 
--static const struct regmap_config regmap_config = {
--	.reg_bits = 8,
--	.val_bits = 8,
--	.max_register = 0x7f,
-+static int pcf85x63_nvram_read(void *priv, unsigned int offset, void *val,
-+			       size_t bytes)
-+{
-+	struct pcf85363 *pcf85363 = priv;
-+	unsigned int tmp_val;
-+	int ret;
-+
-+	ret = regmap_read(pcf85363->regmap, CTRL_RAMBYTE, &tmp_val);
-+	(*(unsigned char *) val) = (unsigned char) tmp_val;
-+
-+	return ret;
-+}
-+
-+static int pcf85x63_nvram_write(void *priv, unsigned int offset, void *val,
-+				size_t bytes)
-+{
-+	struct pcf85363 *pcf85363 = priv;
-+	unsigned char tmp_val;
-+
-+	tmp_val = *((unsigned char *)val);
-+	return regmap_write(pcf85363->regmap, CTRL_RAMBYTE,
-+				(unsigned int)tmp_val);
-+}
-+
-+static const struct pcf85x63_config pcf_85263_config = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x2f,
-+	},
-+	.num_nvram = 1
-+};
-+
-+static const struct pcf85x63_config pcf_85363_config = {
-+	.regmap = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x7f,
-+	},
-+	.num_nvram = 2
- };
- 
- static int pcf85363_probe(struct i2c_client *client,
- 			  const struct i2c_device_id *id)
- {
- 	struct pcf85363 *pcf85363;
--	struct nvmem_config nvmem_cfg = {
--		.name = "pcf85363-",
--		.word_size = 1,
--		.stride = 1,
--		.size = NVRAM_SIZE,
--		.reg_read = pcf85363_nvram_read,
--		.reg_write = pcf85363_nvram_write,
-+	const struct pcf85x63_config *config = &pcf_85363_config;
-+	const void *data = of_device_get_match_data(&client->dev);
-+	static struct nvmem_config nvmem_cfg[] = {
-+		{
-+			.name = "pcf85x63-",
-+			.word_size = 1,
-+			.stride = 1,
-+			.size = 1,
-+			.reg_read = pcf85x63_nvram_read,
-+			.reg_write = pcf85x63_nvram_write,
-+		}, {
-+			.name = "pcf85363-",
-+			.word_size = 1,
-+			.stride = 1,
-+			.size = NVRAM_SIZE,
-+			.reg_read = pcf85363_nvram_read,
-+			.reg_write = pcf85363_nvram_write,
-+		},
- 	};
--	int ret;
-+	int ret, i;
-+
-+	if (data)
-+		config = data;
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
- 		return -ENODEV;
-@@ -339,7 +394,7 @@ static int pcf85363_probe(struct i2c_client *client,
- 	if (!pcf85363)
- 		return -ENOMEM;
- 
--	pcf85363->regmap = devm_regmap_init_i2c(client, &regmap_config);
-+	pcf85363->regmap = devm_regmap_init_i2c(client, &config->regmap);
- 	if (IS_ERR(pcf85363->regmap)) {
- 		dev_err(&client->dev, "regmap allocation failed\n");
- 		return PTR_ERR(pcf85363->regmap);
-@@ -370,15 +425,18 @@ static int pcf85363_probe(struct i2c_client *client,
- 
- 	ret = rtc_register_device(pcf85363->rtc);
- 
--	nvmem_cfg.priv = pcf85363;
--	rtc_nvmem_register(pcf85363->rtc, &nvmem_cfg);
-+	for (i = 0; i < config->num_nvram; i++) {
-+		nvmem_cfg[i].priv = pcf85363;
-+		rtc_nvmem_register(pcf85363->rtc, &nvmem_cfg[i]);
-+	}
- 
- 	return ret;
- }
- 
- static const struct of_device_id dev_ids[] = {
--	{ .compatible = "nxp,pcf85363" },
--	{}
-+	{ .compatible = "nxp,pcf85263", .data = &pcf_85263_config },
-+	{ .compatible = "nxp,pcf85363", .data = &pcf_85363_config },
-+	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, dev_ids);
- 
-@@ -393,5 +451,5 @@ static struct i2c_driver pcf85363_driver = {
- module_i2c_driver(pcf85363_driver);
- 
- MODULE_AUTHOR("Eric Nelson");
--MODULE_DESCRIPTION("pcf85363 I2C RTC driver");
-+MODULE_DESCRIPTION("pcf85263/pcf85363 I2C RTC driver");
- MODULE_LICENSE("GPL");
+How about resetting all controls in one go using the VIDIOC_S_EXT_CTRLS API ? 
+You can query the default values of all controls in one go as well with 
+VIDIOC_G_EXT_CTRLS, so that would be two ioctl calls only.
+
+>  		id = ret;
+>  		nctrls++;
+>  	}
+> @@ -2206,6 +2248,7 @@ static void usage(const char *argv0)
+>  	printf("    --offset			User pointer buffer offset from page start\n");
+>  	printf("    --premultiplied		Color components are premultiplied by alpha
+> value\n"); printf("    --queue-late		Queue buffers after streamon, not
+> before\n"); +	printf("    --reset-controls		Enumerate available 
+controls
+> and reset to defaults\n"); printf("    --requeue-last		Requeue the last
+> buffers before streamoff\n"); printf("    --timestamp-source		Set 
+timestamp
+> source on output buffers [eof, soe]\n"); printf("    --skip n			Skip 
+the
+> first n frames\n");
+> @@ -2229,6 +2272,7 @@ static void usage(const char *argv0)
+>  #define OPT_PREMULTIPLIED	269
+>  #define OPT_QUEUE_LATE		270
+>  #define OPT_DATA_PREFIX		271
+> +#define OPT_RESET_CONTROLS	272
+> 
+>  static struct option opts[] = {
+>  	{"buffer-size", 1, 0, OPT_BUFFER_SIZE},
+> @@ -2257,6 +2301,7 @@ static struct option opts[] = {
+>  	{"queue-late", 0, 0, OPT_QUEUE_LATE},
+>  	{"get-control", 1, 0, 'r'},
+>  	{"requeue-last", 0, 0, OPT_REQUEUE_LAST},
+> +	{"reset-controls", 0, 0, OPT_RESET_CONTROLS},
+>  	{"realtime", 2, 0, 'R'},
+>  	{"size", 1, 0, 's'},
+>  	{"set-control", 1, 0, 'w'},
+> @@ -2284,6 +2329,7 @@ int main(int argc, char *argv[])
+>  	int do_enum_formats = 0, do_set_format = 0;
+>  	int do_enum_inputs = 0, do_set_input = 0;
+>  	int do_list_controls = 0, do_get_control = 0, do_set_control = 0;
+> +	int do_reset_controls = 0;
+>  	int do_sleep_forever = 0, do_requeue_last = 0;
+>  	int do_rt = 0, do_log_status = 0;
+>  	int no_query = 0, do_queue_late = 0;
+> @@ -2476,6 +2522,9 @@ int main(int argc, char *argv[])
+>  		case OPT_QUEUE_LATE:
+>  			do_queue_late = 1;
+>  			break;
+> +		case OPT_RESET_CONTROLS:
+> +			do_reset_controls = 1;
+> +			break;
+>  		case OPT_REQUEUE_LAST:
+>  			do_requeue_last = 1;
+>  			break;
+> @@ -2560,7 +2609,10 @@ int main(int argc, char *argv[])
+>  		video_set_control(&dev, ctrl_name, ctrl_value);
+> 
+>  	if (do_list_controls)
+> -		video_list_controls(&dev);
+> +		video_list_controls(&dev, false);
+> +
+> +	if (do_reset_controls)
+> +		video_list_controls(&dev, true);
+> 
+>  	if (do_enum_formats) {
+>  		printf("- Available formats:\n");
+
 -- 
-2.7.4
+Regards,
+
+Laurent Pinchart
