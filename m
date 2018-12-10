@@ -1,73 +1,102 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:34126 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728100AbeLEPuc (ORCPT
+Received: from mail-eopbgr1410123.outbound.protection.outlook.com ([40.107.141.123]:8835
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726224AbeLJE6w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:50:32 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [RFC PATCH 0/7] soc: renesas: rcar-gen3-sysc: Fix power request conflicts
-Date: Wed,  5 Dec 2018 16:50:21 +0100
-Message-Id: <20181205155028.14335-1-geert+renesas@glider.be>
+        Sun, 9 Dec 2018 23:58:52 -0500
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To: =?iso-8859-2?Q?Uwe_Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Thierry Reding <thierry.reding@gmail.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        =?iso-8859-2?Q?Michal_Vok=E1=E8?= <Michal.Vokac@ysoft.com>
+Subject: RE: [PATCH 2/5] pwm: rcar: Add support "atomic" API
+Date: Mon, 10 Dec 2018 04:58:46 +0000
+Message-ID: <OSBPR01MB229367B0C11DD720F20CF823D8A50@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1544171373-29618-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20181207090717.qht2q6r3xzo2mzu4@pengutronix.de>
+ <CAMuHMdUfrQ0u3eJ2Dmgmbb2Dt_DRmFNXXDzS=W0MmsoemU61ag@mail.gmail.com>
+ <20181207104548.cuwlavf62f2f4hdk@pengutronix.de>
+In-Reply-To: <20181207104548.cuwlavf62f2f4hdk@pengutronix.de>
+Content-Language: ja-JP
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Simon, Magnus,
+Hi Uwe,
 
-Recent R-Car Gen3 SoCs added an External Request Mask Register to the
-System Controller (SYSC).  This register allows to mask external power
-requests for CPU or 3DG domains, to prevent conflicts when Linux changes
-the state of a power domain through SYSC, which could lead to system
-lock-ups.
+> From: Uwe Kleine-K=F6nig, Sent: Friday, December 7, 2018 7:46 PM
+>=20
+> Hello,
+>=20
+> On Fri, Dec 07, 2018 at 10:57:48AM +0100, Geert Uytterhoeven wrote:
+> > > Is the documentation for this hardware publically available?
+> >
+> > Please check Section 59 of the "User's Manual: Hardware" at
+> > https://www.renesas.com/eu/en/products/microcontrollers-microprocessors=
+/rz/rzg/rzg1m.html
+>=20
+> Thanks.
+>=20
+> So the ugly things here are:
+>=20
+>  a) if the pwm is stopped (PWMCR.ENO =3D 0) the output is set to high aft=
+er
+>     completion of the currently running period.
+>  b) setting a duty_cycle of 0 is forbidden
 
-This RFC patch series starts making use of this register.  Note that the
-register is optional, and that its location and contents are
-SoC-specific.
+Thank you for checking the hardware specification.
 
-This was inspired by a patch in the BSP by Dien Pham
-<dien.pham.ry@renesas.com>.
+> both are bad. A workaround for both is implementation of something
+> similar to the switch to a gpio suggested by Michal for imx. But this
+> cannot be done reliably because the current period's end isn't
+> observable.
 
-This has been boot-tested on R-Car H3 ES1.0, H3 ES2.0, M3-W ES1.0, M3-N,
-V3M, and E3 (only the last 3 have this register!), and regression-tested
-on R-Car Gen2.
+I agree. This R-Car PWM needs special handling when the driver disable the =
+PWM.
 
-This has not been tested on R-Car H3 ES3.0, M3-W ES2.0, and V3H.
+> Alternatively a confirmation from the Renesas engineers that PWMCNT.PHO
+> can be set to 0 with the intended effect despite being forbidden in the
+> reference manual would be great. Did someone with access to such
+> hardware test what happens if the PHO field is set to 0? Maybe the
+> forbidden value is just a wrong copy&paste from the CYCO field?
 
-Thanks for your comments!
+I'm asking HW guy about this specification now.
+# According to the state machine in the manual, it seems the PWM cannot out=
+put
+# low level when the PWM is enabled though...
 
-Geert Uytterhoeven (7):
-  soc: renesas: rcar-sysc: Prepare for fixing power request conflicts
-  soc: renesas: r8a7795-sysc: Fix power request conflicts
-  soc: renesas: r8a7796-sysc: Fix power request conflicts
-  soc: renesas: r8a77965-sysc: Fix power request conflicts
-  soc: renesas: r8a77970-sysc: Fix power request conflicts
-  soc: renesas: r8a77980-sysc: Fix power request conflicts
-  soc: renesas: r8a77990-sysc: Fix power request conflicts
+> I think it would be a good idea to add the link to the documentation
+> into a comment at the top of the driver.
 
- drivers/soc/renesas/r8a7795-sysc.c  | 32 ++++++++++++++++++++++++-----
- drivers/soc/renesas/r8a7796-sysc.c  | 22 +++++++++++++++++++-
- drivers/soc/renesas/r8a77965-sysc.c |  3 +++
- drivers/soc/renesas/r8a77970-sysc.c |  3 +++
- drivers/soc/renesas/r8a77980-sysc.c |  3 +++
- drivers/soc/renesas/r8a77990-sysc.c |  3 +++
- drivers/soc/renesas/rcar-sysc.c     | 16 +++++++++++++++
- drivers/soc/renesas/rcar-sysc.h     |  7 +++++--
- 8 files changed, 81 insertions(+), 8 deletions(-)
+I think so.
 
--- 
-2.17.1
+Best regards,
+Yoshihiro Shimoda
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> @Thierry: Given that nobody seems to have an overview about the features
+> and ugly implementation details of all the PWMs, what about documenting
+> them in the driver files in a greppable way. For the rcar driver
+> something like:
+>=20
+>  - duty-counter-bits: 10
+>  - period-counter-bits: 10
+>  - hardware-polarity-support: false
+>  - uglyness:
+>    - OUTPUT-ACTIVE-ON-DISABLE
+>    - NO-ZERO-DUTY-CYCLE
+>=20
+> Best regards
+> Uwe
+>=20
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
+  |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|
