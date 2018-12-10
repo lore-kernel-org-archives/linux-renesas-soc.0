@@ -1,81 +1,63 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>
-Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/4] serial: sh-sci: Fix fallback to PIO on DMA failure
-Date: Mon, 10 Dec 2018 19:21:50 +0100
-Message-Id: <20181210182154.20357-1-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-lf1-f49.google.com ([209.85.167.49]:35672 "EHLO
+        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727410AbeLJUMB (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Dec 2018 15:12:01 -0500
+Received: by mail-lf1-f49.google.com with SMTP id e26so8992997lfc.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Dec 2018 12:12:00 -0800 (PST)
+Subject: Re: [PATCH/RFT net] ravb: expand rx descriptor data to accommodate hw
+ checksum
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+To: David Miller <davem@davemloft.net>, horms+renesas@verge.net.au
+Cc: magnus.damm@gmail.com, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20181210085917.23056-1-horms+renesas@verge.net.au>
+ <20181210.114403.1590402440504388038.davem@davemloft.net>
+ <364a7abd-6050-eaa6-5dbe-1c2aaf31c0bc@cogentembedded.com>
+Message-ID: <c0e7450e-3d15-e7bd-d0a6-125b725f6870@cogentembedded.com>
+Date: Mon, 10 Dec 2018 23:11:57 +0300
+MIME-Version: 1.0
+In-Reply-To: <364a7abd-6050-eaa6-5dbe-1c2aaf31c0bc@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-	Hi Greg, Jiri,
+On 12/10/2018 10:51 PM, Sergei Shtylyov wrote:
 
-When submitting a DMA request fails, the sh-sci driver is supposed to
-fall back to PIO.  However, this never really worked due to various
-reasons (sh-sci driver issues and dmaengine framework limitations).
+>>> +#define RAVB_CSUM_LEN 2
+>>> +
+>>  ...
+>>>  	priv->rx_buf_sz = (ndev->mtu <= 1492 ? PKT_BUF_SZ : ndev->mtu) +
+>>> -		ETH_HLEN + VLAN_HLEN;
+>>> +		ETH_HLEN + VLAN_HLEN + RAVB_CSUM_LEN;
+>>  ...
+>>> +	if (unlikely(skb->len < RAVB_CSUM_LEN))
+>>  ...
+>>> -	hw_csum = skb_tail_pointer(skb) - 2;
+>>> +	hw_csum = skb_tail_pointer(skb) - RAVB_CSUM_LEN;
+>>  ...
+>>> -	skb_trim(skb, skb->len - 2);
+>>> +	skb_trim(skb, skb->len - RAVB_CSUM_LEN);
+>>
+>> Unlike Sergei, I think this macro define should be kept in the fix.
+>>
+>> It is absolutely crucial for anyone reading this code to understand
+>> what this value is all about.
+>>
+>> People reading the code aren't able to go automatically back to a
+>> commit to learn what this value means, and even if they could they
+>> shouldn't have to do so for a bunch of magic '2' constants placed all
+>> over.
+> 
+>    We already have a comment in ravb_tx_csum(), I only asked for another one
 
-There are three places where DMA submission can fail, and the driver
-should fall back to PIO:
-  1. sci_dma_rx_complete(),
-  2. sci_submit_rx(),
-  3. work_fn_tx().
+   Sorry, ravb_rx_csum(), of course. Those keys are dangerously close to each other. :-)
 
-This patch series fixes fallback to PIO in the receive path (cases 1 and
-2).
-Fallback to PIO in the transmit path (case 3) already seems to work
-fine.
+> (the place where we fix up the packet size). 
 
-Changes compared to v2:
-  - Add missing definition of "u16 scr" to sci_dma_rx_complete(),
-  - Move label handle_pio inside #ifdef to kill defined but not used
-    compiler warning when CONFIG_SERIAL_SH_SCI_DMA=n,
-  - Move call to dmaengine_terminate_async() in sci_dma_rx_complete()
-    inside the spinlock, for symmetry with sci_submit_rx(),
-  - Move the call sci_submit_rx() in sci_rx_interrupt() up, as it may
-    fail, rendering the modification of scr unused,
-  - Split in multiple patches,
-  - Drop RFC status.
+[...]
 
-Changes compared to v1:
-  - Fix fallback in sci_dma_rx_complete(),
-  - Fallback in the transmit path already works fine,
-  - Widen audience, but keep RFC.
-
-This has been tested on r8a7791/koelsch, using SCIF1 on debug serial 1,
-and SCIFA3 on EXIO-B, by introducing random failures in DMA submission
-code.  For testing, this series is also available in the
-topic/scif-pio-fallback-v3 branch of my renesas-drivers git repository
-at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-Thanks!
-
-Geert Uytterhoeven (4):
-  serial: sh-sci: Fix locking in sci_submit_rx()
-  serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
-  serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
-  serial: sh-sci: Fix fallback to PIO in sci_dma_rx_complete()
-
- drivers/tty/serial/sh-sci.c | 39 +++++++++++++++++++++++++++----------
- 1 file changed, 29 insertions(+), 10 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+MBR. Sergei
