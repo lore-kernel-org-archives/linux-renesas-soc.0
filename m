@@ -1,98 +1,95 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from michel.telenet-ops.be ([195.130.137.88]:34352 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728108AbeLEPjv (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:39080 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbeLJI7c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 10:39:51 -0500
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] soc: renesas: rcar-sysc: Fix power domain control after system resume
-Date: Wed,  5 Dec 2018 16:39:45 +0100
-Message-Id: <20181205153945.13767-5-geert+renesas@glider.be>
-In-Reply-To: <20181205153945.13767-1-geert+renesas@glider.be>
-References: <20181205153945.13767-1-geert+renesas@glider.be>
+        Mon, 10 Dec 2018 03:59:32 -0500
+From: Simon Horman <horms+renesas@verge.net.au>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFT net] ravb: expand rx descriptor data to accommodate hw checksum
+Date: Mon, 10 Dec 2018 09:59:17 +0100
+Message-Id: <20181210085917.23056-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-To control power to a power domain, the System Controller (SYSC) needs
-the corresponding interrupt source to be enabled, but masked, to prevent
-the CPU from receiving it.
+From: Simon Horman <horms@verge.net.au>
 
-Currently this is handled in the driver's probe() routine, and set up
-for every domain present, even if it will not be controlled directly by
-SYSC (CPU domains are powered through the APMU on R-Car Gen2 and later).
+EtherAVB may provide a checksum of packet data appended to packet data. In
+order to allow this checksum to be received by the host descriptor data
+needs to be enlarged by 2 bytes to accommodate the checksum.
 
-On R-Car Gen3, PSCI powers down the SoC during system suspend, thus
-loosing any configured interrupt state.  Hence after system resume, power
-domains not controlled through the APMU (e.g. A3IR, A3VC, A3VP) fail to
-power up.
+In the case of MTU-sized packets without a VLAN tag the
+checksum were already accommodated by virtue of the space reserved for the
+VLAN tag. However, a packet of MTU-size with a  VLAN tag consumed all
+packet data space provided by a descriptor leaving no space for the
+trailing checksum.
 
-Fix this by replacing the global interrupt setup in the probe() routine
-by a domain-specific interrupt setup in rcar_sysc_power(), where the
-domain's power is actually controlled.  This brings the code more in
-line with the flowchart in the Hardware User's Manual.
+This was not detected by the driver which incorrectly used the last two
+bytes of packet data as the checksum and truncate the packet by two bytes.
+This resulted all such packets being dropped.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+A work around is to disable rx checksum offload
+ # ethtool -K eth0 rx off
+
+This patch resolves this problem by increasing the size available for
+packet data in rx descriptors by two bytes. It also introduces
+RAVB_CSUM_LEN to make things a little clearer than "2" sprinkled lightly
+over the driver.
+
+Tested on R-Car E3 (r8a77990) ES1.0 based Ebisu-4D board
+
+Fixes: 4d86d3818627 ("ravb: RX checksum offload")
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- drivers/soc/renesas/rcar-sysc.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 123e553510e826f5..0c80fab4f8de6bc8 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -105,6 +105,15 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
+ I have marked this patch as RTF as I would like it to see further testing
+ before being applied.
+
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index defed0d0c51d..f7f130cf61e4 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -40,6 +40,8 @@
+ 		 NETIF_MSG_RX_ERR | \
+ 		 NETIF_MSG_TX_ERR)
  
- 	spin_lock_irqsave(&rcar_sysc_lock, flags);
- 
-+	/*
-+	 * The interrupt source needs to be enabled, but masked, to prevent the
-+	 * CPU from receiving it.
-+	 */
-+	iowrite32(ioread32(rcar_sysc_base + SYSCIMR) | isr_mask,
-+		  rcar_sysc_base + SYSCIMR);
-+	iowrite32(ioread32(rcar_sysc_base + SYSCIER) | isr_mask,
-+		  rcar_sysc_base + SYSCIER);
++#define RAVB_CSUM_LEN 2
 +
- 	iowrite32(isr_mask, rcar_sysc_base + SYSCISCR);
+ static const char *ravb_rx_irqs[NUM_RX_QUEUE] = {
+ 	"ch0", /* RAVB_BE */
+ 	"ch1", /* RAVB_NC */
+@@ -350,7 +352,7 @@ static int ravb_ring_init(struct net_device *ndev, int q)
+ 	int i;
  
- 	/* Submit power shutoff or resume request until it was accepted */
-@@ -324,7 +333,6 @@ static int __init rcar_sysc_pd_init(void)
- 	const struct of_device_id *match;
- 	struct rcar_pm_domains *domains;
- 	struct device_node *np;
--	u32 syscier, syscimr;
- 	void __iomem *base;
- 	unsigned int i;
- 	int error;
-@@ -363,24 +371,6 @@ static int __init rcar_sysc_pd_init(void)
- 	domains->onecell_data.num_domains = ARRAY_SIZE(domains->domains);
- 	rcar_sysc_onecell_data = &domains->onecell_data;
+ 	priv->rx_buf_sz = (ndev->mtu <= 1492 ? PKT_BUF_SZ : ndev->mtu) +
+-		ETH_HLEN + VLAN_HLEN;
++		ETH_HLEN + VLAN_HLEN + RAVB_CSUM_LEN;
  
--	for (i = 0, syscier = 0; i < info->num_areas; i++)
--		syscier |= BIT(info->areas[i].isr_bit);
--
--	/*
--	 * Mask all interrupt sources to prevent the CPU from receiving them.
--	 * Make sure not to clear reserved bits that were set before.
--	 */
--	syscimr = ioread32(base + SYSCIMR);
--	syscimr |= syscier;
--	pr_debug("%pOF: syscimr = 0x%08x\n", np, syscimr);
--	iowrite32(syscimr, base + SYSCIMR);
--
--	/*
--	 * SYSC needs all interrupt sources enabled to control power.
--	 */
--	pr_debug("%pOF: syscier = 0x%08x\n", np, syscier);
--	iowrite32(syscier, base + SYSCIER);
--
- 	for (i = 0; i < info->num_areas; i++) {
- 		const struct rcar_sysc_area *area = &info->areas[i];
- 		struct rcar_sysc_pd *pd;
+ 	/* Allocate RX and TX skb rings */
+ 	priv->rx_skb[q] = kcalloc(priv->num_rx_ring[q],
+@@ -533,13 +535,15 @@ static void ravb_rx_csum(struct sk_buff *skb)
+ {
+ 	u8 *hw_csum;
+ 
+-	/* The hardware checksum is 2 bytes appended to packet data */
+-	if (unlikely(skb->len < 2))
++	/* The hardware checksum is contained in RAVB_CSUM_LEN (2) bytes
++	 * appended to packet data
++	 */
++	if (unlikely(skb->len < RAVB_CSUM_LEN))
+ 		return;
+-	hw_csum = skb_tail_pointer(skb) - 2;
++	hw_csum = skb_tail_pointer(skb) - RAVB_CSUM_LEN;
+ 	skb->csum = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
+ 	skb->ip_summed = CHECKSUM_COMPLETE;
+-	skb_trim(skb, skb->len - 2);
++	skb_trim(skb, skb->len - RAVB_CSUM_LEN);
+ }
+ 
+ /* Packet receive function for Ethernet AVB */
 -- 
-2.17.1
+2.11.0
