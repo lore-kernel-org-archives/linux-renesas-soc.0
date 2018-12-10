@@ -1,49 +1,48 @@
-Return-Path: <geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>
-Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/4] serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
-Date: Mon, 10 Dec 2018 19:21:52 +0100
-Message-Id: <20181210182154.20357-3-geert+renesas@glider.be>
-In-Reply-To: <20181210182154.20357-1-geert+renesas@glider.be>
-References: <20181210182154.20357-1-geert+renesas@glider.be>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from mail-it1-f194.google.com ([209.85.166.194]:39078 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbeLJSJv (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Dec 2018 13:09:51 -0500
+Received: by mail-it1-f194.google.com with SMTP id a6so19671244itl.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Dec 2018 10:09:50 -0800 (PST)
+Subject: Re: [PATCH] sata_rcar: fix deferred probing
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-ide@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+References: <b28a6c60-1f20-e054-7f2a-c5a6cafde8a1@cogentembedded.com>
+ <0c36c87a-fc2c-1534-97e8-618101b71263@cogentembedded.com>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <d5fb2b03-9163-1159-1791-f7cbf6a5b9d4@kernel.dk>
+Date: Mon, 10 Dec 2018 11:09:47 -0700
+MIME-Version: 1.0
+In-Reply-To: <0c36c87a-fc2c-1534-97e8-618101b71263@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-When falling back to PIO, active_rx must be set to a different value
-than cookie_rx[i], else sci_dma_rx_find_active() will incorrectly find a
-match, leading to a NULL pointer dereference in rx_timer_fn() later.
+On 12/10/18 9:41 AM, Sergei Shtylyov wrote:
+> On 11/24/2018 09:14 PM, Sergei Shtylyov wrote:
+> 
+>> The driver overrides the error codes returned by platform_get_irq() to
+>> -EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
+>> permanently instead of the deferred probing. Switch to propagating the
+>> error code upstream, still checking/overriding IRQ0 as libata regards it
+>> as "no IRQ" (thus polling) anyway...
+>>
+>> Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>>
+>> ---
+>> This patch is against the 'master' branch of Jens Axboe's 'linux-block.git'
+>> repo.
+> 
+>    Jens, what about this patch? 2 weeks passed, there were 2 R-b tags, and
+> that's all...
 
-Use zero instead, which is the same value as after driver
-initialization.
+I'll queue it up, thanks.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Split in multiple patches.
----
- drivers/tty/serial/sh-sci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 2a08039f792235e5..e353e03ce2602559 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1369,7 +1369,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- 		dmaengine_terminate_async(chan);
- 	for (i = 0; i < 2; i++)
- 		s->cookie_rx[i] = -EINVAL;
--	s->active_rx = -EINVAL;
-+	s->active_rx = 0;
- 	s->chan_rx = NULL;
- 	sci_start_rx(port);
- 	if (!port_lock_held)
 -- 
-2.17.1
+Jens Axboe
