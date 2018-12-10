@@ -1,56 +1,37 @@
-Return-Path: <biju.das@bp.renesas.com>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-CC: Simon Horman <horms@verge.net.au>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo
-	<a.zummo@towertech.it>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] nvmem: check invalid number of bytes in
+Return-Path: <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2] nvmem: check invalid number of bytes in
  nvmem_{read,write}()
-Date: Tue, 11 Dec 2018 08:16:57 +0000
-Message-ID: 
- <OSBPR01MB2103C137219528C37165A317B8A60@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Simon Horman <horms@verge.net.au>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Chris Paterson <Chris.Paterson2@renesas.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Fabrizio Castro <fabrizio.castro@bp.renesas.com>, linux-rtc@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
 References: <1544455701-5720-1-git-send-email-biju.das@bp.renesas.com>
- <eb72f5b7-2920-b3b5-8387-d2b6b2d310cd@linaro.org>
-In-Reply-To: <eb72f5b7-2920-b3b5-8387-d2b6b2d310cd@linaro.org>
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <eb72f5b7-2920-b3b5-8387-d2b6b2d310cd@linaro.org>
+Date: Mon, 10 Dec 2018 18:34:09 +0000
 MIME-Version: 1.0
+In-Reply-To: <1544455701-5720-1-git-send-email-biju.das@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-SGkgU3JpbmksDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjJdIG52bWVtOiBjaGVjayBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBpbg0KPiBudm1l
-bV97cmVhZCx3cml0ZX0oKQ0KPg0KPg0KPg0KPiBPbiAxMC8xMi8xOCAxNToyOCwgQmlqdSBEYXMg
-d3JvdGU6DQo+ID4gKy8qIFN0b3AgdGhlIHVzZXIgZnJvbSB3cml0aW5nICovDQo+ID4gK2lmIChv
-ZmZzZXQgPj0gbnZtZW0tPnNpemUpDQo+ID4gK3JldHVybiAtRU5PU1BDOw0KPiA+ICsNCj4gVGhp
-cyBzaG91bGQgYmUgInJldHVybiAtRUZCSUciIHRvIG1ha2UgdXRpbGl0aWVzIGxpa2UgZGQgb3Ig
-c2ggaGFwcHkuDQo+DQo+IExvb2sgYXQgMzhiMDc3NGMwNTk4YyAoIm52bWVtOiBjb3JlOiByZXR1
-cm4gRUZCSUcgb24gb3V0LW9mLXJhbmdlDQo+IHdyaXRlIikgZm9yIG1vcmUgaW5mby4NCg0KcmV0
-dXJuIC1FTk9TUEMgYWxzbyBtYWtlIGRkIG9yIHNoIGhhcHB5LiBQbGVhc2UgbGV0IG1lIGtub3cg
-d2hpY2ggaXMgYXBwcm9wcmlhdGUgYnkgdGhlIGJlbG93IHJlc3VsdHMuIEJhc2VkIG9uIHlvdXIg
-ZmVlZGJhY2ssIElmIG5lZWRlZCwgSSBjYW4gc2VuZCBhIHBhdGNoIHdpdGggInJldHVybiAtRUZC
-SUciDQoNCldpdGggLUVOT1NQQw0KLS0tLS0tLS0tLS0tDQpkZCBpZj0xLmJpbiBvZj0vc3lzL2J1
-cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYzLTAvbnZtZW0gYnM9MSBjb3VudD0yDQpkZDogd3JpdGlu
-ZyAnL3N5cy9idXMvbnZtZW0vZGV2aWNlcy9wY2Y4NXg2My0wL252bWVtJzogTm8gc3BhY2UgbGVm
-dCBvbiBkZXZpY2UNCjIrMCByZWNvcmRzIGluDQoxKzAgcmVjb3JkcyBvdXQNCg0KZWNobyAiMTIz
-NCIgPiAvc3lzL2J1cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYzLTAvbnZtZW0NCi1zaDogZWNobzog
-d3JpdGUgZXJyb3I6IE5vIHNwYWNlIGxlZnQgb24gZGV2aWNlDQoNCndpdGggLUVGQklHDQotLS0t
-LS0tLS0tLS0NCmRkIGlmPTEuYmluIG9mPS9zeXMvYnVzL252bWVtL2RldmljZXMvcGNmODV4NjMt
-MC9udm1lbSBicz0xIGNvdW50DQpkZDogd3JpdGluZyAnL3N5cy9idXMvbnZtZW0vZGV2aWNlcy9w
-Y2Y4NXg2My0wL252bWVtJzogRmlsZSB0b28gbGFyZ2UNCjIrMCByZWNvcmRzIGluDQoxKzAgcmVj
-b3JkcyBvdXQNCg0KZWNobyAiMTIzNCIgPiAvc3lzL2J1cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYz
-LTAvbnZtZW0NCi1zaDogZWNobzogd3JpdGUgZXJyb3I6IEZpbGUgdG9vIGxhcmdlDQoNClJlZ2Fy
-ZHMsDQpCaWp1DQoNCg0KDQoNCltodHRwczovL3d3dzIucmVuZXNhcy5ldS9tZWRpYS9lbWFpbC91
-bmljZWYuanBnXQ0KDQpUaGlzIENocmlzdG1hcywgaW5zdGVhZCBvZiBzZW5kaW5nIG91dCBjYXJk
-cywgUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgaGF2ZSBkZWNpZGVkIHRvIHN1cHBvcnQgVW5p
-Y2VmIHdpdGggYSBkb25hdGlvbi4gRm9yIGZ1cnRoZXIgZGV0YWlscyBjbGljayBoZXJlPGh0dHBz
-Oi8vd3d3LnVuaWNlZi5vcmcvPiB0byBmaW5kIG91dCBhYm91dCB0aGUgdmFsdWFibGUgd29yayB0
-aGV5IGRvLCBoZWxwaW5nIGNoaWxkcmVuIGFsbCBvdmVyIHRoZSB3b3JsZC4NCldlIHdvdWxkIGxp
-a2UgdG8gdGFrZSB0aGlzIG9wcG9ydHVuaXR5IHRvIHdpc2ggeW91IGEgTWVycnkgQ2hyaXN0bWFz
-IGFuZCBhIHByb3NwZXJvdXMgTmV3IFllYXIuDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1
-cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tp
-bmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVu
-ZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+
+
+On 10/12/18 15:28, Biju Das wrote:
+> +	/* Stop the user from writing */
+> +	if (offset >= nvmem->size)
+> +		return -ENOSPC;
+> +
+This should be "return -EFBIG" to make utilities like dd or sh happy.
+
+Look at 38b0774c0598c ("nvmem: core: return EFBIG on out-of-range 
+write") for more info.
+
+other than that, patch looks fine to me!
+
+--srini
