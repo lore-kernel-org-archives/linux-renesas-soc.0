@@ -1,39 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:56896 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbeLHMag (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42471 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeLJM6v (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Dec 2018 07:30:36 -0500
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Mark Brown <broonie@kernel.org>,
+        Mon, 10 Dec 2018 07:58:51 -0500
+Date: Mon, 10 Dec 2018 13:58:45 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Biju Das <biju.das@bp.renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Richard Weinberger <richard@nod.at>
-Cc: devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [v2,1/3] mtd: spi-nor: Add support for is25lp016d
-Date: Sat,  8 Dec 2018 13:30:31 +0100
-Message-Id: <20181208123031.9847-1-boris.brezillon@bootlin.com>
-In-Reply-To: <1541696684-21235-2-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH v2 5/5] ARM: dts: r8a7744: Fix sorting of vsp and msiof
+ nodes
+Message-ID: <20181210125840.4cyzhveempuqkggr@verge.net.au>
+References: <1544000815-28069-1-git-send-email-biju.das@bp.renesas.com>
+ <1544000815-28069-6-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdW0KdhZVt91NJ5sE8zZ14KTuwG1BWwJeL8LBR5ej5ONqQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdW0KdhZVt91NJ5sE8zZ14KTuwG1BWwJeL8LBR5ej5ONqQ@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Thu, 2018-11-08 at 17:04:41 UTC, Fabrizio Castro wrote:
-> The is25lp016d is found on the iwg23s from iWave, therefore
-> add driver support for it so that we can upstream board support.
+On Mon, Dec 10, 2018 at 01:31:40PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Dec 5, 2018 at 10:15 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> > This patch fixes sorting of vsp and msiof nodes.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Applied to http://git.infradead.org/linux-mtd.git spi-nor/next, thanks.
-
-Boris
+Thanks, applied for v4.22.
