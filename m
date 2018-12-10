@@ -1,83 +1,81 @@
-Return-Path: <linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Subject: [RFC/RFT 01/10] i2c: add 'is_suspended' flag for i2c adapters
-Date: Mon, 10 Dec 2018 22:02:59 +0100
-Message-Id: <20181210210310.12677-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Wolfram Sang <wsa@the-dreams.de>, linux-pm@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>
+Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/4] serial: sh-sci: Fix fallback to PIO on DMA failure
+Date: Mon, 10 Dec 2018 19:21:50 +0100
+Message-Id: <20181210182154.20357-1-geert+renesas@glider.be>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Some drivers open code handling of suspended adapters. It should be
-handled by the core, though, to ensure generic handling. This patch adds
-the flag and an accessor function.
+	Hi Greg, Jiri,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 1 +
- include/linux/i2c.h         | 9 +++++++++
- 2 files changed, 10 insertions(+)
+When submitting a DMA request fails, the sh-sci driver is supposed to
+fall back to PIO.  However, this never really worked due to various
+reasons (sh-sci driver issues and dmaengine framework limitations).
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 28460f6a60cc..9f89e258c8ff 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1232,6 +1232,7 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
- 	if (!adap->lock_ops)
- 		adap->lock_ops = &i2c_adapter_lock_ops;
- 
-+	adap->is_suspended = false;
- 	rt_mutex_init(&adap->bus_lock);
- 	rt_mutex_init(&adap->mux_lock);
- 	mutex_init(&adap->userspace_clients_lock);
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 65b4eaed1d96..9852038ee3a7 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -680,6 +680,7 @@ struct i2c_adapter {
- 	int timeout;			/* in jiffies */
- 	int retries;
- 	struct device dev;		/* the adapter device */
-+	unsigned int is_suspended:1;	/* owned by the I2C core */
- 
- 	int nr;
- 	char name[48];
-@@ -762,6 +763,14 @@ i2c_unlock_bus(struct i2c_adapter *adapter, unsigned int flags)
- 	adapter->lock_ops->unlock_bus(adapter, flags);
- }
- 
-+static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap,
-+					      bool suspended)
-+{
-+	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-+	adap->is_suspended = suspended;
-+	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
-+}
-+
- /*flags for the client struct: */
- #define I2C_CLIENT_PEC		0x04	/* Use Packet Error Checking */
- #define I2C_CLIENT_TEN		0x10	/* we have a ten bit chip address */
+There are three places where DMA submission can fail, and the driver
+should fall back to PIO:
+  1. sci_dma_rx_complete(),
+  2. sci_submit_rx(),
+  3. work_fn_tx().
+
+This patch series fixes fallback to PIO in the receive path (cases 1 and
+2).
+Fallback to PIO in the transmit path (case 3) already seems to work
+fine.
+
+Changes compared to v2:
+  - Add missing definition of "u16 scr" to sci_dma_rx_complete(),
+  - Move label handle_pio inside #ifdef to kill defined but not used
+    compiler warning when CONFIG_SERIAL_SH_SCI_DMA=n,
+  - Move call to dmaengine_terminate_async() in sci_dma_rx_complete()
+    inside the spinlock, for symmetry with sci_submit_rx(),
+  - Move the call sci_submit_rx() in sci_rx_interrupt() up, as it may
+    fail, rendering the modification of scr unused,
+  - Split in multiple patches,
+  - Drop RFC status.
+
+Changes compared to v1:
+  - Fix fallback in sci_dma_rx_complete(),
+  - Fallback in the transmit path already works fine,
+  - Widen audience, but keep RFC.
+
+This has been tested on r8a7791/koelsch, using SCIF1 on debug serial 1,
+and SCIFA3 on EXIO-B, by introducing random failures in DMA submission
+code.  For testing, this series is also available in the
+topic/scif-pio-fallback-v3 branch of my renesas-drivers git repository
+at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+Thanks!
+
+Geert Uytterhoeven (4):
+  serial: sh-sci: Fix locking in sci_submit_rx()
+  serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
+  serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
+  serial: sh-sci: Fix fallback to PIO in sci_dma_rx_complete()
+
+ drivers/tty/serial/sh-sci.c | 39 +++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
+
 -- 
-2.11.0
+2.17.1
 
+Gr{oetje,eeting}s,
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
