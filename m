@@ -1,43 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor1.renesas.com ([210.160.252.171]:28260 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727309AbeLEVp1 (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:41781 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbeLJMQ1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:45:27 -0500
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Simon Horman <horms@verge.net.au>,
+        Mon, 10 Dec 2018 07:16:27 -0500
+Date: Mon, 10 Dec 2018 13:16:23 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 0/2] Add Initial Device Tree for RZ/A2
-Date: Wed,  5 Dec 2018 16:44:47 -0500
-Message-Id: <20181205214449.52165-1-chris.brandt@renesas.com>
+        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] dt-bindings: rtc: pcf85363: Document pcf85263
+ real-time clock
+Message-ID: <20181210121622.zhxv35c3pqrwo43o@verge.net.au>
+References: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
+ <1544182066-31528-3-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544182066-31528-3-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add a Device Tree for RZ/A2 and the existing eval board.
+On Fri, Dec 07, 2018 at 11:27:43AM +0000, Biju Das wrote:
+> The pcf85263 RTC is compatible with the pcf85363 RTC.
+> 
+> The difference between the pcf85263 and pcf85363 RTC is that the latter has
+> 64 bytes more RAM. This renders them incompatible from a DT point of view.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Once these get approved, I'll start piling on the other drivers in
-another patch series.
-
-
-NOTE:
-Since Rob is in the middle of converting shmobile.txt to renesas.yaml,
-I'll wait till that is finisehd before I add this RZ/A2M EVB board.
-
-
-
-Chris Brandt (2):
-  ARM: dts: r7s9210: Initial SoC device tree
-  ARM: dts: r7s9210-rza2mevb: Add support for RZ/A2M EVB
-
- arch/arm/boot/dts/Makefile             |   1 +
- arch/arm/boot/dts/r7s9210-rza2mevb.dts |  98 ++++++++++++++++
- arch/arm/boot/dts/r7s9210.dtsi         | 204 +++++++++++++++++++++++++++++++++
- 3 files changed, 303 insertions(+)
- create mode 100644 arch/arm/boot/dts/r7s9210-rza2mevb.dts
- create mode 100644 arch/arm/boot/dts/r7s9210.dtsi
-
--- 
-2.16.1
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
