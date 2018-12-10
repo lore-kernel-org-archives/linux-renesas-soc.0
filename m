@@ -2,37 +2,37 @@ Return-Path: <SRS0=Zu5O=OT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0E5C04EB8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B922C5CFFE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D9452082F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:21:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D9452082F
+	by mail.kernel.org (Postfix) with ESMTP id 2CA262082F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:22:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA262082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbeLJSV7 (ORCPT
+        id S1728341AbeLJSV7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 10 Dec 2018 13:21:59 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:41616 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728341AbeLJSV6 (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40756 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728484AbeLJSV6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 10 Dec 2018 13:21:58 -0500
 Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id AJMv1z00e3XaVaC01JMvKo; Mon, 10 Dec 2018 19:21:57 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id AJMv1z00c3XaVaC01JMvor; Mon, 10 Dec 2018 19:21:57 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gWQBn-00021Q-SI; Mon, 10 Dec 2018 19:21:55 +0100
+        id 1gWQBn-00021K-Qk; Mon, 10 Dec 2018 19:21:55 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gWQBn-0005JI-R6; Mon, 10 Dec 2018 19:21:55 +0100
+        id 1gWQBn-0005J9-O4; Mon, 10 Dec 2018 19:21:55 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
@@ -43,88 +43,77 @@ Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
         linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
         linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/4] serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
-Date:   Mon, 10 Dec 2018 19:21:53 +0100
-Message-Id: <20181210182154.20357-4-geert+renesas@glider.be>
+Subject: [PATCH v3 0/4] serial: sh-sci: Fix fallback to PIO on DMA failure
+Date:   Mon, 10 Dec 2018 19:21:50 +0100
+Message-Id: <20181210182154.20357-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181210182154.20357-1-geert+renesas@glider.be>
-References: <20181210182154.20357-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181210182153.1N_QGTutH5aZ4h4XaF_ayDGHqHLe2uH1QdLrMyIkMyY@z>
+Message-ID: <20181210182150.XRLhXMdzOjJkFtnHK2TyMsGCfnrDMbu_ARjG-acT-u0@z>
 
-On (H)SCIF, sci_submit_rx() is called in the receive interrupt handler.
-Hence if DMA submission fails, the interrupt handler should resume
-handling reception using PIO, else no more data is received.
+	Hi Greg, Jiri,
 
-Make sci_submit_rx() return an error indicator, so the receive interrupt
-handler can act appropriately.
+When submitting a DMA request fails, the sh-sci driver is supposed to
+fall back to PIO.  However, this never really worked due to various
+reasons (sh-sci driver issues and dmaengine framework limitations).
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
+There are three places where DMA submission can fail, and the driver
+should fall back to PIO:
+  1. sci_dma_rx_complete(),
+  2. sci_submit_rx(),
+  3. work_fn_tx().
+
+This patch series fixes fallback to PIO in the receive path (cases 1 and
+2).
+Fallback to PIO in the transmit path (case 3) already seems to work
+fine.
+
+Changes compared to v2:
+  - Add missing definition of "u16 scr" to sci_dma_rx_complete(),
   - Move label handle_pio inside #ifdef to kill defined but not used
     compiler warning when CONFIG_SERIAL_SH_SCI_DMA=n,
+  - Move call to dmaengine_terminate_async() in sci_dma_rx_complete()
+    inside the spinlock, for symmetry with sci_submit_rx(),
   - Move the call sci_submit_rx() in sci_rx_interrupt() up, as it may
     fail, rendering the modification of scr unused,
-  - Split in multiple patches.
----
- drivers/tty/serial/sh-sci.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+  - Split in multiple patches,
+  - Drop RFC status.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index e353e03ce2602559..d8672336d4ff9b65 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	dma_release_channel(chan);
- }
- 
--static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
-+static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
- {
- 	struct dma_chan *chan = s->chan_rx;
- 	struct uart_port *port = &s->port;
-@@ -1359,7 +1359,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- 	s->active_rx = s->cookie_rx[0];
- 
- 	dma_async_issue_pending(chan);
--	return;
-+	return 0;
- 
- fail:
- 	/* Switch to PIO */
-@@ -1374,6 +1374,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- 	sci_start_rx(port);
- 	if (!port_lock_held)
- 		spin_unlock_irqrestore(&port->lock, flags);
-+	return -1;
- }
- 
- static void work_fn_tx(struct work_struct *work)
-@@ -1668,8 +1669,10 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			disable_irq_nosync(irq);
- 			scr |= SCSCR_RDRQE;
- 		} else {
-+			if (sci_submit_rx(s, false))
-+				goto handle_pio;
-+
- 			scr &= ~SCSCR_RIE;
--			sci_submit_rx(s, false);
- 		}
- 		serial_port_out(port, SCSCR, scr);
- 		/* Clear current interrupt */
-@@ -1681,6 +1684,8 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 
- 		return IRQ_HANDLED;
- 	}
-+
-+handle_pio:
- #endif
- 
- 	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0) {
+Changes compared to v1:
+  - Fix fallback in sci_dma_rx_complete(),
+  - Fallback in the transmit path already works fine,
+  - Widen audience, but keep RFC.
+
+This has been tested on r8a7791/koelsch, using SCIF1 on debug serial 1,
+and SCIFA3 on EXIO-B, by introducing random failures in DMA submission
+code.  For testing, this series is also available in the
+topic/scif-pio-fallback-v3 branch of my renesas-drivers git repository
+at
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+
+Thanks!
+
+Geert Uytterhoeven (4):
+  serial: sh-sci: Fix locking in sci_submit_rx()
+  serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
+  serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
+  serial: sh-sci: Fix fallback to PIO in sci_dma_rx_complete()
+
+ drivers/tty/serial/sh-sci.c | 39 +++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
