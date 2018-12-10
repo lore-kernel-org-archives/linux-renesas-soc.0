@@ -1,55 +1,41 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:55718 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41218 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbeLFV5M (ORCPT
+        with ESMTP id S1727597AbeLJLr4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:57:12 -0500
-From: Simon Horman <horms+renesas@verge.net.au>
-To: arm@kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+        Mon, 10 Dec 2018 06:47:56 -0500
+Date: Mon, 10 Dec 2018 12:47:51 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v4.21
-Date: Thu,  6 Dec 2018 13:57:02 -0800
-Message-Id: <cover.1544126077.git.horms+renesas@verge.net.au>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/4] soc: renesas: rcar-sysc: Miscellaneous fixes and
+ cleanups
+Message-ID: <20181210114751.65amaa7b7tjtcp5w@verge.net.au>
+References: <20181205153945.13767-1-geert+renesas@glider.be>
+ <CAMuHMdU89s997JhFpWOaDTFohcy4+Ym5deUUuv1EO7EybdJrkg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU89s997JhFpWOaDTFohcy4+Ym5deUUuv1EO7EybdJrkg@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Olof, Hi Kevin, Hi Arnd,
+On Thu, Dec 06, 2018 at 10:02:07AM +0100, Geert Uytterhoeven wrote:
+> On Wed, Dec 5, 2018 at 4:39 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > This series (against renesas-devel-20181204-v4.20-rc5) contains
+> > miscellaneous fixes and cleanups for the R-Car SYSC driver.
+> >
+> > This has been tested on R-Car Gen2 (H2 and M2-W) and R-Car Gen3 (H3
+> > ES1.0, H3 ES2.0, M3-W, M3-N, D3, E3, and V3M) (without 3DG).
+> >
+> > This not been tested on R-Car H1 and R-Car V3H.
+> 
+> Now tested on R-Car H1 (Marzen), with no ill effects on secondary CPU
+> boot and CPU hotplug.
 
-Please consider these Renesas ARM64 based SoC defconfig updates for v4.21.
-
-
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
-
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v4.21
-
-for you to fetch changes up to fe16bcd6d44f1a2bccc4618119463d9d23a6ae92:
-
-  arm64: defconfig: Enable CONFIG_PHY_RCAR_GEN3_PCIE (2018-11-16 06:56:49 -0800)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC Defconfig Updates for v4.21
-
-* Enable in arm64 defconfig:
-  - Renesas R-Car Gen3 PCIe PHY driver
-  - Renesas R-Car thermal driver
-  - ASoC simple SCU sound card support
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      arm64: defconfig: Enable CONFIG_PHY_RCAR_GEN3_PCIE
-
-Simon Horman (2):
-      arm64: defconfig: Enable R-Car thermal driver
-      arm64: defconfig: Enable scu-simple-card driver
-
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks for following-up, good to know.
