@@ -1,72 +1,71 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from relmlor2.renesas.com ([210.160.252.172]:23480 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726871AbeLJMBN (ORCPT
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36253 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbeLJIET (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:01:13 -0500
-From: Biju Das <biju.das@bp.renesas.com>
-To: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH] ARM: dts: r8a7743: Fix sorting of rwdt node
-Date: Mon, 10 Dec 2018 11:52:30 +0000
-Message-Id: <1544442750-39442-1-git-send-email-biju.das@bp.renesas.com>
+        Mon, 10 Dec 2018 03:04:19 -0500
+Date: Mon, 10 Dec 2018 09:04:13 +0100
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>, kernel@pengutronix.de
+Subject: Re: pwm: rcar: improve calculation of divider
+Message-ID: <20181210080413.6367nhxhoj6ecqhl@pengutronix.de>
+References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20181207214932.xckuuarcka733v7y@pengutronix.de>
+ <1828832.OCLkmioh6N@avalon>
+ <OSBPR01MB2293ED3087627127A1A884A4D8A50@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <OSBPR01MB2293ED3087627127A1A884A4D8A50@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Watchdog node is incorrectly placed on r8a7743 SoC dtsi. This patch fixes
-the sorting order.
+Hello,
 
-Fixes: b5beb5d4c81c358f50a8310108 ("ARM: dts: r8a7743: Add watchdog support to SoC dtsi")
+On Mon, Dec 10, 2018 at 05:09:31AM +0000, Yoshihiro Shimoda wrote:
+> Thank you very much for your patches!
+> I tested patches and both codes work correctly.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm/boot/dts/r8a7743.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 3cc33f7..7b731c7 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -154,6 +154,16 @@
- 		#size-cells = <2>;
- 		ranges;
+\o/, that's actually better than I expected :-)
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a7743-wdt",
-+				     "renesas,rcar-gen2-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
-+		};
-+
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a7743",
- 				     "renesas,rcar-gen2-gpio";
-@@ -310,16 +320,6 @@
- 			reg = <0 0xe6160000 0 0x100>;
- 		};
+> > > The value of div should be calculatable without a loop. Something like:
+> > >
+> > >    divider = NSEC_PER_SEC * RCAR_PWM_MAX_CYCLE;
+> > >    tmp = (unsigned long long)period_ns * clk_rate + (divider - 1);
+> > >    do_div(tmp, divider);
+> 
+> This should be do_div64_u64() because the divider is 1,023,000,000,000 (over 32-bits).
+
+Yes, I think Laurent did this part right.
  
--		rwdt: watchdog@e6020000 {
--			compatible = "renesas,r8a7743-wdt",
--				     "renesas,rcar-gen2-wdt";
--			reg = <0 0xe6020000 0 0x0c>;
--			clocks = <&cpg CPG_MOD 402>;
--			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
--			resets = <&cpg 402>;
--			status = "disabled";
--		};
--
- 		sysc: system-controller@e6180000 {
- 			compatible = "renesas,r8a7743-sysc";
- 			reg = <0 0xe6180000 0 0x200>;
+> > >    div = ilog2(tmp - 1) + 1;
+> > >
+> > > You might want to check if my maths are right, I didn't test.
+> > 
+> > I've noticed the same, and wrote the following patch last week, also untested.
+> > I was planning to give it a try before sending it out, but as you've noticed
+> > the same issue, here's the code if anyone wants to give it a try before I can.
+> > Our calculations are similar, the main difference is the last line, and I
+> > think yours read better.
+> 
+> So, I'd like to apply Uwe's code to mainline. Uwe, may I send such a patch
+> with your author and Singed-off-by?
+
+Please no, I cannot sing good enough for this :-)
+
+Honestly: If you take the authorship and write something like "Algorithm
+suggested by Uwe Kleine-K�nig and Laurent Pinchart" that's IMHO fine.
+
+Best regards
+Uwe
+
 -- 
-2.7.4
+Pengutronix e.K.                           | Uwe Kleine-K�nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
