@@ -1,64 +1,89 @@
-Return-Path: <linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:36726 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727967AbeLJVDT (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:03:19 -0500
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
-Subject: [RFC/RFT 03/10] i2c: synquacer: remove unused is_suspended flag
-Date: Mon, 10 Dec 2018 22:03:01 +0100
-Message-Id: <20181210210310.12677-4-wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [RFC/RFT 06/10] i2c: sprd: don't use pdev as variable name for struct device *
+Date: Mon, 10 Dec 2018 22:03:04 +0100
+Message-Id: <20181210210310.12677-7-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
 References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, linux-pm@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
- linux-arm-kernel@lists.infradead.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-This flag was defined and checked but never set a value. Remove it.
+The pointer to a device is usually named 'dev'. These 'pdev' here look
+much like copy&paste errors. Fix them to avoid confusion.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-synquacer.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/i2c/busses/i2c-sprd.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-synquacer.c b/drivers/i2c/busses/i2c-synquacer.c
-index 2184b7c3580e..d18b0941b71a 100644
---- a/drivers/i2c/busses/i2c-synquacer.c
-+++ b/drivers/i2c/busses/i2c-synquacer.c
-@@ -144,8 +144,6 @@ struct synquacer_i2c {
- 	u32			timeout_ms;
- 	enum i2c_state		state;
- 	struct i2c_adapter	adapter;
--
--	bool			is_suspended;
- };
+diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+index a94e724f51dc..e266d8a713d9 100644
+--- a/drivers/i2c/busses/i2c-sprd.c
++++ b/drivers/i2c/busses/i2c-sprd.c
+@@ -586,40 +586,40 @@ static int sprd_i2c_remove(struct platform_device *pdev)
+ 	return 0;
+ }
  
- static inline int is_lastmsg(struct synquacer_i2c *i2c)
-@@ -316,9 +314,6 @@ static int synquacer_i2c_doxfer(struct synquacer_i2c *i2c,
- 	unsigned long timeout;
+-static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
++static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
+ {
+-	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
++	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+ 
+ 	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+ 	i2c_dev->is_suspended = true;
+ 	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+ 
+-	return pm_runtime_force_suspend(pdev);
++	return pm_runtime_force_suspend(dev);
+ }
+ 
+-static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
++static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
+ {
+-	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
++	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+ 
+ 	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+ 	i2c_dev->is_suspended = false;
+ 	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+ 
+-	return pm_runtime_force_resume(pdev);
++	return pm_runtime_force_resume(dev);
+ }
+ 
+-static int __maybe_unused sprd_i2c_runtime_suspend(struct device *pdev)
++static int __maybe_unused sprd_i2c_runtime_suspend(struct device *dev)
+ {
+-	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
++	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+ 
+ 	clk_disable_unprepare(i2c_dev->clk);
+ 
+ 	return 0;
+ }
+ 
+-static int __maybe_unused sprd_i2c_runtime_resume(struct device *pdev)
++static int __maybe_unused sprd_i2c_runtime_resume(struct device *dev)
+ {
+-	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
++	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
  	int ret;
  
--	if (i2c->is_suspended)
--		return -EBUSY;
--
- 	synquacer_i2c_hw_init(i2c);
- 	bsr = readb(i2c->base + SYNQUACER_I2C_REG_BSR);
- 	if (bsr & SYNQUACER_I2C_BSR_BB) {
+ 	ret = clk_prepare_enable(i2c_dev->clk);
 -- 
 2.11.0
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
