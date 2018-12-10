@@ -4,205 +4,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762A5C65BB3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 15:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCAAC04EB8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1BC2082F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 15:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1BC2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id EAAF42084C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:21:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAAF42084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeLJPhE (ORCPT
+        id S1728377AbeLJSV7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Dec 2018 10:37:04 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:56574 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727313AbeLJPhE (ORCPT
+        Mon, 10 Dec 2018 13:21:59 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40762 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728521AbeLJSV6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 10:37:04 -0500
-X-IronPort-AV: E=Sophos;i="5.56,338,1539615600"; 
-   d="scan'208";a="2433823"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Dec 2018 00:37:02 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DB65B4022BED;
-        Tue, 11 Dec 2018 00:36:59 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] nvmem: check invalid number of bytes in nvmem_{read,write}()
-Date:   Mon, 10 Dec 2018 15:28:21 +0000
-Message-Id: <1544455701-5720-1-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 10 Dec 2018 13:21:58 -0500
+Received: from ramsan ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id AJMv1z00a3XaVaC01JMvoq; Mon, 10 Dec 2018 19:21:57 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gWQBn-00021O-RQ; Mon, 10 Dec 2018 19:21:55 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gWQBn-0005JD-QO; Mon, 10 Dec 2018 19:21:55 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-serial@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/4] serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
+Date:   Mon, 10 Dec 2018 19:21:52 +0100
+Message-Id: <20181210182154.20357-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181210182154.20357-1-geert+renesas@glider.be>
+References: <20181210182154.20357-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181210152821.O4EfV--r5Ri5aDLxeRgYypNX-De3J_E1WeRfWsmkvqA@z>
+Message-ID: <20181210182152.05FXWy6V4XYVqALFFvHT8GmIM-O3Oz9vcWv6cGkF9fQ@z>
 
-Add check in nvmem_{read,write}()to ensure that nvmem core never passes
-an invalid number of bytes.
+When falling back to PIO, active_rx must be set to a different value
+than cookie_rx[i], else sci_dma_rx_find_active() will incorrectly find a
+match, leading to a NULL pointer dereference in rx_timer_fn() later.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Use zero instead, which is the same value as after driver
+initialization.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-V1-->V2
-	* Moved checks from bin_attr_nvmem_{read/write} into nvmem_reg_{read,write}
-	* Removed checks from nvmem_devicenvmem_device_{read,write}()_{read,write}
+v3:
+  - Split in multiple patches.
 ---
- drivers/nvmem/core.c | 97 ++++++++++++++++++++++++++--------------------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+ drivers/tty/serial/sh-sci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index f7301bb..dfbc8ff 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -76,19 +76,60 @@ static struct lock_class_key eeprom_lock_key;
- static int nvmem_reg_read(struct nvmem_device *nvmem, unsigned int offset,
- 			  void *val, size_t bytes)
- {
--	if (nvmem->reg_read)
--		return nvmem->reg_read(nvmem->priv, offset, val, bytes);
-+	int rc;
-+	size_t new_bytes;
-+
-+	/* Stop the user from reading */
-+	if ((offset >= nvmem->size) || (bytes == 0))
-+		return 0;
-+
-+	if ((nvmem->reg_read == NULL) || (bytes < nvmem->word_size))
-+		return -EINVAL;
-+
-+	if (unlikely(check_add_overflow(bytes, offset, &new_bytes)))
-+		return -EOVERFLOW;
- 
--	return -EINVAL;
-+	if (new_bytes > nvmem->size)
-+		bytes = nvmem->size - offset;
-+
-+	bytes = round_down(bytes, nvmem->word_size);
-+	rc = nvmem->reg_read(nvmem->priv, offset, val, bytes);
-+
-+	if (rc)
-+		return rc;
-+
-+	return bytes;
- }
- 
- static int nvmem_reg_write(struct nvmem_device *nvmem, unsigned int offset,
- 			   void *val, size_t bytes)
- {
--	if (nvmem->reg_write)
--		return nvmem->reg_write(nvmem->priv, offset, val, bytes);
-+	int rc;
-+	size_t new_bytes;
-+
-+	/* Stop the user from writing */
-+	if (offset >= nvmem->size)
-+		return -ENOSPC;
-+
-+	if (bytes == 0)
-+		return 0;
-+
-+	if ((nvmem->reg_write == NULL) || (bytes < nvmem->word_size))
-+		return -EINVAL;
-+
-+	if (unlikely(check_add_overflow(bytes, offset, &new_bytes)))
-+		return -EOVERFLOW;
-+
-+	if (new_bytes > nvmem->size)
-+		bytes = nvmem->size - offset;
-+
-+	bytes = round_down(bytes, nvmem->word_size);
-+	rc = nvmem->reg_write(nvmem->priv, offset, val, bytes);
-+
-+	if (rc)
-+		return rc;
- 
--	return -EINVAL;
-+	return bytes;
- }
- 
- static ssize_t type_show(struct device *dev,
-@@ -111,33 +152,13 @@ static ssize_t bin_attr_nvmem_read(struct file *filp, struct kobject *kobj,
- 				    char *buf, loff_t pos, size_t count)
- {
- 	struct device *dev;
--	struct nvmem_device *nvmem;
--	int rc;
- 
- 	if (attr->private)
- 		dev = attr->private;
- 	else
- 		dev = container_of(kobj, struct device, kobj);
--	nvmem = to_nvmem_device(dev);
--
--	/* Stop the user from reading */
--	if (pos >= nvmem->size)
--		return 0;
--
--	if (count < nvmem->word_size)
--		return -EINVAL;
--
--	if (pos + count > nvmem->size)
--		count = nvmem->size - pos;
--
--	count = round_down(count, nvmem->word_size);
--
--	rc = nvmem_reg_read(nvmem, pos, buf, count);
--
--	if (rc)
--		return rc;
- 
--	return count;
-+	return nvmem_reg_read(to_nvmem_device(dev), pos, buf, count);
- }
- 
- static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
-@@ -145,33 +166,13 @@ static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
- 				     char *buf, loff_t pos, size_t count)
- {
- 	struct device *dev;
--	struct nvmem_device *nvmem;
--	int rc;
- 
- 	if (attr->private)
- 		dev = attr->private;
- 	else
- 		dev = container_of(kobj, struct device, kobj);
--	nvmem = to_nvmem_device(dev);
--
--	/* Stop the user from writing */
--	if (pos >= nvmem->size)
--		return -EFBIG;
--
--	if (count < nvmem->word_size)
--		return -EINVAL;
--
--	if (pos + count > nvmem->size)
--		count = nvmem->size - pos;
--
--	count = round_down(count, nvmem->word_size);
--
--	rc = nvmem_reg_write(nvmem, pos, buf, count);
--
--	if (rc)
--		return rc;
- 
--	return count;
-+	return nvmem_reg_write(to_nvmem_device(dev), pos, buf, count);
- }
- 
- /* default read/write permissions */
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 2a08039f792235e5..e353e03ce2602559 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1369,7 +1369,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
+ 		dmaengine_terminate_async(chan);
+ 	for (i = 0; i < 2; i++)
+ 		s->cookie_rx[i] = -EINVAL;
+-	s->active_rx = -EINVAL;
++	s->active_rx = 0;
+ 	s->chan_rx = NULL;
+ 	sci_start_rx(port);
+ 	if (!port_lock_held)
 -- 
-2.7.4
+2.17.1
 
