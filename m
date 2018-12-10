@@ -6,103 +6,94 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1DEC5CFFE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 21:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 542A5C04EB8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 21:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76DBE2082F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 21:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DBE2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 0E8D72084C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 21:03:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8D72084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbeLJVBC (ORCPT
+        id S1729753AbeLJVDQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:01:02 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:34119 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727143AbeLJVBB (ORCPT
+        Mon, 10 Dec 2018 16:03:16 -0500
+Received: from sauhun.de ([88.99.104.3]:36676 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727967AbeLJVDP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:01:01 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MYvPq-1h1Cuy3AYa-00UuJb; Mon, 10 Dec 2018 22:00:36 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: shmobile: fix build regressions
-Date:   Mon, 10 Dec 2018 22:00:23 +0100
-Message-Id: <20181210210033.3276054-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:dP0m1Lr68VWEmnpEQiiX5DpZfPi93rokPZF52SeRdzwu1eqQg7x
- L8O9gjgnmZCQA+FTohNwwJOwKPFaQr+IycHRx/0TdrNaTlLqqgXonSbgDl4LPTVg5cE+O8R
- y6TcLDpN8Eq8JZkvsiG6waajSVuJ3SgHXUhQFZZgoYN11ddoyP5FAlXD1LG61xyk64qKcva
- ebNcV7rOISwhtyEAQsvSQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5ZBJWCYxsR4=:MglSuOS2QNtml4UUKFdfxG
- bIiduu1CDJ7c3KbOlQN9DZLMNCviekExhTKIyrvFSR1HpsyL4x2c9Ka5NwABkUuvdi+EgAOj6
- YV2JlV/74pa/uoYlkSQHYAIUKA9zv0wvcnu5BXrkph0KZWRmpKtmzYT5VIfUuYsaP21nhfCvl
- fxZCYq0XVjhJbIsw9ZUIvo10e0KQ41cX2SbjTgRi5GMnjD/cQJSW2mYQLi1QEjkT+Oevmc0Vd
- kb4WXdMvvaBx1E5EU1T1fV8fS7jqv3NoJjvll6ZB42kci9+397T8VFGwms8wix92iL3MC8Ujy
- 0oZ4vlOHIgQp+ddH8OeMYnLFM4GTSkSVJ03TXBvPi0R3wr7MhWCGD//qfaZUys8SDCMu5eZew
- NPzg2ha8Tt9BQ6U4vsnmgAA/DMWDZHGTHVC4qemrWjELnKMt4k60//Nz/nwyb8BI7RgY9UaLf
- E4qtN0/skzHsTbpc4VdLnjJbVZV5/eNHxyk6ejtXHsYnhMNxT22GNy1agMcYbtoxOCx9FfJPX
- A953s784n9YI08x4u/7pWjogYZHJXyOmaPp5NcITzZhT24fFGMkqY2OgddP7R5gyuMQ8gBIdx
- PqtBf8EYDr+n3CinUQdJMFo8NOaWjfF97CwfzwX6I642bHwqhhc2IIAv9pnZIs3YYSsYTIkIe
- ZYdgtACMEK5HtMvG+ovAfvtwxkmpwyMp04IKQrJPR3KAANd1B4N0Hu8YgFFcPpaI8iIIB9hFw
- LoYeg4b5m4yZGRrXOfRqSpqdnykt5ToPHjtOfg==
+        Mon, 10 Dec 2018 16:03:15 -0500
+Received: from localhost (p54B335CF.dip0.t-ipconnect.de [84.179.53.207])
+        by pokefinder.org (Postfix) with ESMTPSA id BC9124C2010;
+        Mon, 10 Dec 2018 22:03:13 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
+Subject: [RFC/RFT 01/10] i2c: add 'is_suspended' flag for i2c adapters
+Date:   Mon, 10 Dec 2018 22:02:59 +0100
+Message-Id: <20181210210310.12677-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181210210023.kwkJCz2M25IjyPFripIf6pRFyVa_oED8v6uYH0GLboA@z>
+Message-ID: <20181210210259.LGchNsYVQ_CegML1EfplPKMenPtcybY5Mn-hBKjwJog@z>
 
-A number of Kconfig options have become available now to random ARM
-platforms outside of ARCH_MULTIPLATFORM, which now causes Kconfig
-warnings, and other build errors when those select options that
-lack additonal dependencies, e.g.:
+Some drivers open code handling of suspended adapters. It should be
+handled by the core, though, to ensure generic handling. This patch adds
+the flag and an accessor function.
 
-WARNING: unmet direct dependencies detected for HAVE_ARM_ARCH_TIMER
-  Depends on [n]: CPU_V7 [=n]
-  Selected by [y]:
-  - ARCH_RCAR_GEN2 [=y] && SOC_RENESAS [=y]
-  - ARCH_R8A73A4 [=y] && SOC_RENESAS [=y] && ARM [=y]
-
-WARNING: unmet direct dependencies detected for SYS_SUPPORTS_EM_STI
-  Depends on [n]: GENERIC_CLOCKEVENTS [=n]
-  Selected by [y]:
-  - ARCH_EMEV2 [=y] && SOC_RENESAS [=y] && ARM [=y]
-
-Put the old dependency on ARCH_RENESAS back for the moment to restore
-the previous behavior.
-
-Fixes: 062887bf5ef7 ("ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/soc/renesas/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/i2c-core-base.c | 1 +
+ include/linux/i2c.h         | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 4d8012e1205c..68bfca6f20dd 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -44,7 +44,7 @@ config ARCH_RZN1
- 	bool
- 	select ARM_AMBA
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 28460f6a60cc..9f89e258c8ff 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1232,6 +1232,7 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+ 	if (!adap->lock_ops)
+ 		adap->lock_ops = &i2c_adapter_lock_ops;
  
--if ARM
-+if ARM && ARCH_RENESAS
++	adap->is_suspended = false;
+ 	rt_mutex_init(&adap->bus_lock);
+ 	rt_mutex_init(&adap->mux_lock);
+ 	mutex_init(&adap->userspace_clients_lock);
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 65b4eaed1d96..9852038ee3a7 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -680,6 +680,7 @@ struct i2c_adapter {
+ 	int timeout;			/* in jiffies */
+ 	int retries;
+ 	struct device dev;		/* the adapter device */
++	unsigned int is_suspended:1;	/* owned by the I2C core */
  
- #comment "Renesas ARM SoCs System Type"
+ 	int nr;
+ 	char name[48];
+@@ -762,6 +763,14 @@ i2c_unlock_bus(struct i2c_adapter *adapter, unsigned int flags)
+ 	adapter->lock_ops->unlock_bus(adapter, flags);
+ }
  
++static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap,
++					      bool suspended)
++{
++	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
++	adap->is_suspended = suspended;
++	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
++}
++
+ /*flags for the client struct: */
+ #define I2C_CLIENT_PEC		0x04	/* Use Packet Error Checking */
+ #define I2C_CLIENT_TEN		0x10	/* we have a ten bit chip address */
 -- 
-2.20.0
+2.11.0
 
