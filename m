@@ -1,66 +1,60 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37906 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726487AbeLDQgM (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:42735 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeLJNWb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 11:36:12 -0500
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [PATCH v2] drm: rcar-du: dw-hdmi: Reject modes with a too high clock frequency
-Date: Tue,  4 Dec 2018 18:36:40 +0200
-Message-Id: <20181204163640.316-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 10 Dec 2018 08:22:31 -0500
+Date: Mon, 10 Dec 2018 14:22:27 +0100
+From: Simon Horman <horms@verge.net.au>
+To: Biju Das <biju.das@bp.renesas.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org"
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH v4 4/5] ARM: shmobile: Enable NXP pcf85363 rtc in
+ shmobile_defconfig
+Message-ID: <20181210132226.ppn74nzto6bv3mm3@verge.net.au>
+References: <1544182066-31528-1-git-send-email-biju.das@bp.renesas.com>
+ <1544182066-31528-5-git-send-email-biju.das@bp.renesas.com>
+ <20181210121340.iuwyq5myk4woezpg@verge.net.au>
+ <OSBPR01MB2103861EF91EE6456EB3E03BB8A50@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2103861EF91EE6456EB3E03BB8A50@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Implement a .mode_valid() handler in the R-Car glue layer to reject
-modes with an unsupported clock frequency.
+On Mon, Dec 10, 2018 at 12:35:35PM +0000, Biju Das wrote:
+> Hi Simon,
+> 
+> Thanks for the feedback.
+> 
+> > Subject: Re: [PATCH v4 4/5] ARM: shmobile: Enable NXP pcf85363 rtc in
+> > shmobile_defconfig
+> >
+> > On Fri, Dec 07, 2018 at 11:27:45AM +0000, Biju Das wrote:
+> > > The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase hardware
+> > > support enable the driver in the shmobile_defconfig multiplatform
+> > > configuration.
+> > >
+> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Thanks, applied for v4.22.
+> >
+> > Is a similar change for multi_v7_defconfig also appropriate?
+> 
+> Will send a separate patch for adding it to the "multi_v7_defconfig"
+> 
+> CONFIG_RTC_DRV_PCF85363=m
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-Changes since v1:
-
-- Add a comment to explain where the limit comes from
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-index 75490a3e0a2a..603bb340e8cf 100644
---- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
-@@ -35,6 +35,20 @@ static const struct rcar_hdmi_phy_params rcar_hdmi_phy_params[] = {
- 	{ ~0UL,      0x0000, 0x0000, 0x0000 },
- };
- 
-+static enum drm_mode_status
-+rcar_hdmi_mode_valid(struct drm_connector *connector,
-+		     const struct drm_display_mode *mode)
-+{
-+	/*
-+	 * The maximum supported clock frequency is 297 MHz, as shown in the PHY
-+	 * parameters table.
-+	 */
-+	if (mode->clock > 297000)
-+		return MODE_CLOCK_HIGH;
-+
-+	return MODE_OK;
-+}
-+
- static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
- 				   const struct dw_hdmi_plat_data *pdata,
- 				   unsigned long mpixelclock)
-@@ -59,6 +73,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
- }
- 
- static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
-+	.mode_valid = rcar_hdmi_mode_valid,
- 	.configure_phy	= rcar_hdmi_phy_configure,
- };
- 
--- 
-Regards,
-
-Laurent Pinchart
+Great, thanks.
