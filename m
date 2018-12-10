@@ -2,142 +2,102 @@ Return-Path: <SRS0=Zu5O=OT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60ABC04EB8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890DEC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5EB32084C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:22:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5EB32084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 4EE102082F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 18:34:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DJ3yK8zG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE102082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbeLJSWB (ORCPT
+        id S1726798AbeLJSeO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Dec 2018 13:22:01 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40778 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbeLJSV7 (ORCPT
+        Mon, 10 Dec 2018 13:34:14 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50818 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727964AbeLJSeN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 13:21:59 -0500
-Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id AJMv1z00Z3XaVaC01JMvop; Mon, 10 Dec 2018 19:21:57 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gWQBn-00021L-Qm; Mon, 10 Dec 2018 19:21:55 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gWQBn-0005JB-Pl; Mon, 10 Dec 2018 19:21:55 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 1/4] serial: sh-sci: Fix locking in sci_submit_rx()
-Date:   Mon, 10 Dec 2018 19:21:51 +0100
-Message-Id: <20181210182154.20357-2-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181210182154.20357-1-geert+renesas@glider.be>
-References: <20181210182154.20357-1-geert+renesas@glider.be>
+        Mon, 10 Dec 2018 13:34:13 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n190so12086998wmd.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Dec 2018 10:34:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4XjguLCPmvqXsinOMfhdCLLALm7XQdUdXNpo9tOI29g=;
+        b=DJ3yK8zGABKESeslMVjfrtrMynZBbErrQSUyhyZQPwB7EMYNDGT99pWGzmIMQB90mo
+         Mc2RRSrtU42GwddxD2UIZV9cNSGfjMWPy5bd4tQ8tQo/T2YmQ5j+7MQGCZHv1B4IrSim
+         oOJVRyEl9ii6Qmw1MWJt+ipTSYZUbNRN+zNpc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4XjguLCPmvqXsinOMfhdCLLALm7XQdUdXNpo9tOI29g=;
+        b=MqwHokMiDVvYz1M2/IEvpG8Yl5Sa2jzHh6vmr23/tWsBI6MgHz9o4YuGVnbopJMzZo
+         dAMCtl83SKRpAxlrMd2aEa7WMiO09WNqAzx5GUDif+RVNJC2O5LVPUZd5au6PreiDFS1
+         G0qjikp51cVoNSO0x4IWIQypy5oSp5iv40tdWF+GPIo/IRmc7perAopWvuw3vWhbK8ZE
+         AbLP0Dn/ZanSMv1Qc0kJleTNSytHPUZkOGhRyCSls7PEfgEKF6ooIV+lSatXn4A9cGqc
+         7AclE29DiLvm77vIfF4nBLIauVQdAP1YUvtl6HK5I45BGfDl+m7ffNPdp3RyZWNkmxKF
+         1DPw==
+X-Gm-Message-State: AA+aEWbKB6TJKJVC+/MshCDqEOzJaAnY9n/KO1XZz3I9TWidNZgCJzN2
+        tbM2kv/p/QAYuWs6KK8XPMMPrkRfaYU=
+X-Google-Smtp-Source: AFSGD/X9pb8vQsgrzrn2pdjPLhdofjYg0RuWVIgD0bimS5z5h1/Z2G7gk80IXKJkEmaOBDG3wx6T0g==
+X-Received: by 2002:a1c:dc02:: with SMTP id t2mr5231203wmg.78.1544466851525;
+        Mon, 10 Dec 2018 10:34:11 -0800 (PST)
+Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id 202sm18521983wmt.8.2018.12.10.10.34.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 10:34:10 -0800 (PST)
+Subject: Re: [PATCH v2] nvmem: check invalid number of bytes in
+ nvmem_{read,write}()
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1544455701-5720-1-git-send-email-biju.das@bp.renesas.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <eb72f5b7-2920-b3b5-8387-d2b6b2d310cd@linaro.org>
+Date:   Mon, 10 Dec 2018 18:34:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <1544455701-5720-1-git-send-email-biju.das@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181210182151.dHSGL8IlSmuVrSIxdE6DQOjJX33MayYtPlS9uxQJYu8@z>
+Message-ID: <20181210183409.cVdvSQfmbdFsHVf2OHPcKz4kaPGDzLWqensM3JNcIlo@z>
 
-Some callers of sci_submit_rx() hold the port spinlock, others don't.
-During fallback to PIO, the driver needs to obtain the port spinlock.
-If the lock was already held, spinlock recursion is detected, causing a
-deadlock: BUG: spinlock recursion on CPU#0.
 
-Fix this by adding a flag parameter to sci_submit_rx() for the caller to
-indicate the port spinlock is already held, so spinlock recursion can be
-avoided.
 
-Move the spin_lock_irqsave() up, so all DMA disable steps are protected,
-which is safe as the recently introduced dmaengine_terminate_async() can
-be called in atomic context.
+On 10/12/18 15:28, Biju Das wrote:
+> +	/* Stop the user from writing */
+> +	if (offset >= nvmem->size)
+> +		return -ENOSPC;
+> +
+This should be "return -EFBIG" to make utilities like dd or sh happy.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - Split in multiple patches.
----
- drivers/tty/serial/sh-sci.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Look at 38b0774c0598c ("nvmem: core: return EFBIG on out-of-range 
+write") for more info.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 8146d9cef0cbe2d0..2a08039f792235e5 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	dma_release_channel(chan);
- }
- 
--static void sci_submit_rx(struct sci_port *s)
-+static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- {
- 	struct dma_chan *chan = s->chan_rx;
- 	struct uart_port *port = &s->port;
-@@ -1362,16 +1362,18 @@ static void sci_submit_rx(struct sci_port *s)
- 	return;
- 
- fail:
-+	/* Switch to PIO */
-+	if (!port_lock_held)
-+		spin_lock_irqsave(&port->lock, flags);
- 	if (i)
- 		dmaengine_terminate_async(chan);
- 	for (i = 0; i < 2; i++)
- 		s->cookie_rx[i] = -EINVAL;
- 	s->active_rx = -EINVAL;
--	/* Switch to PIO */
--	spin_lock_irqsave(&port->lock, flags);
- 	s->chan_rx = NULL;
- 	sci_start_rx(port);
--	spin_unlock_irqrestore(&port->lock, flags);
-+	if (!port_lock_held)
-+		spin_unlock_irqrestore(&port->lock, flags);
- }
- 
- static void work_fn_tx(struct work_struct *work)
-@@ -1491,7 +1493,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
- 	}
- 
- 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--		sci_submit_rx(s);
-+		sci_submit_rx(s, true);
- 
- 	/* Direct new serial port interrupts back to CPU */
- 	scr = serial_port_in(port, SCSCR);
-@@ -1617,7 +1619,7 @@ static void sci_request_dma(struct uart_port *port)
- 		s->chan_rx_saved = s->chan_rx = chan;
- 
- 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--			sci_submit_rx(s);
-+			sci_submit_rx(s, false);
- 	}
- }
- 
-@@ -1667,7 +1669,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			scr |= SCSCR_RDRQE;
- 		} else {
- 			scr &= ~SCSCR_RIE;
--			sci_submit_rx(s);
-+			sci_submit_rx(s, false);
- 		}
- 		serial_port_out(port, SCSCR, scr);
- 		/* Clear current interrupt */
--- 
-2.17.1
+other than that, patch looks fine to me!
+
+--srini
+
+
 
