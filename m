@@ -1,89 +1,53 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42111 "EHLO
+Received: from kirsty.vergenet.net ([202.4.237.240]:41201 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbeLDNhT (ORCPT
+        with ESMTP id S1727369AbeLJLrc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:37:19 -0500
-Date: Tue, 4 Dec 2018 05:37:14 -0800
+        Mon, 10 Dec 2018 06:47:32 -0500
+Date: Mon, 10 Dec 2018 12:47:28 +0100
 From: Simon Horman <horms@verge.net.au>
-To: Olof Johansson <olof@lixom.net>
-Cc: arm@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL v2] Renesas ARM Based SoC DT Updates for v4.21
-Message-ID: <20181204133710.quietvso7c7bblbv@verge.net.au>
-References: <cover.1543409901.git.horms+renesas@verge.net.au>
- <20181130230826.5kjtfyq2wdr73iwl@localhost>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] soc: renesas: rcar-sysc: Fix power domain control
+ after system resume
+Message-ID: <20181210114727.patvtrdtpzobzqgt@verge.net.au>
+References: <20181205153945.13767-1-geert+renesas@glider.be>
+ <20181205153945.13767-5-geert+renesas@glider.be>
+ <20181205212112.2ls6ta27ok3yiyco@verge.net.au>
+ <CAMuHMdW9kt3QyoJRkKA6c8OpCB7N-jEAo=qcxjhmy3nD2a0A9Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181130230826.5kjtfyq2wdr73iwl@localhost>
+In-Reply-To: <CAMuHMdW9kt3QyoJRkKA6c8OpCB7N-jEAo=qcxjhmy3nD2a0A9Q@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Fri, Nov 30, 2018 at 03:08:26PM -0800, Olof Johansson wrote:
-> On Wed, Nov 28, 2018 at 02:02:12PM +0100, Simon Horman wrote:
-> > Hi Olof, Hi Kevin, Hi Arnd,
-> > 
-> > Please consider these Renesas ARM based SoC DT updates for v4.21.
-> > 
-> > I am sending out this pull-request at this time as there are a number
-> > of patches queued up in my arm (32) DT branch and I hope that this
-> > will ease the burden later on in the development cycle. I expect to
-> > send a follow-up pull-request for this branch at the usual pre-rc6 timing.
-> > 
-> > Changes since v1:
-> > * Correct garbled Reviewed-by tag in
-> >   "[PATCH 01/16] ARM: dts: r9a06g032: Add pinctrl node"
-> > 
-> > The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
-> > 
-> >   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-> > 
-> > are available in the git repository at:
-> > 
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm-dt-for-v4.21
-> > 
-> > for you to fetch changes up to 673df60a880f060e3e94920c7b5f7a9ed8aa65f2:
-> >   ARM: dts: r9a06g032: Correct the GIC DT node name (2018-11-28 13:55:30 +0100)
-> > 
-> > ----------------------------------------------------------------
-> > Renesas ARM Based SoC DT Updates for v4.21
-> > 
-> > * RZ/N1D (r9a06g032) SoC:
-> >   - Correct GIC DT node name
-> >   - Enable pin controller
-> > 
-> > * RZ/G1C (r8a77470) iWave g23S single board computer
-> >   - Add QSPI flash support
-> >   - Add pinctl support for EtherAVB
-> >   - Enable CMT0 (Renesas R-Car Compare Match Timer)
-> >   - Enable RWDT (Renesas Watchdog Timer)
-> >   - Enable uSD and eMMC support
-> > 
-> > * RZ/G1C (r8a77470) SoC:
-> >   - Describe USB-DMAC and I2C devices in DT
-> > 
-> > * R-Mobile A1 (r8a7740), Emma Mobile EV2 (emev2) and
-> >   SH-Mobile AG5 (sh72a0) SoCs:
-> >   - Include SoC name in DTSI
-> > 
-> > * R-Car H2 (r8a7790) based lager, and
-> >   R-Car M2-W (r8a7791) based koelsch and porter boards:
-> >   - Disable unconnected LVDS encoders
+On Thu, Dec 06, 2018 at 09:22:24AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> Hi,
+> On Wed, Dec 5, 2018 at 10:21 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Dec 05, 2018 at 04:39:45PM +0100, Geert Uytterhoeven wrote:
+> > > To control power to a power domain, the System Controller (SYSC) needs
+> > > the corresponding interrupt source to be enabled, but masked, to prevent
+> > > the CPU from receiving it.
+> > >
+> > > Currently this is handled in the driver's probe() routine, and set up
+> > > for every domain present, even if it will not be controlled directly by
+> > > SYSC (CPU domains are powered through the APMU on R-Car Gen2 and later).
+> > >
+> > > On R-Car Gen3, PSCI powers down the SoC during system suspend, thus
+> > > loosing any configured interrupt state.  Hence after system resume, power
+> > > domains not controlled through the APMU (e.g. A3IR, A3VC, A3VP) fail to
+> > > power up.
+> >
+> > I corrected the spelling of losing when applying this patch.
 > 
-> If you revise a previous pull request, please do it as a new tag (and
-> delete the old one so our pull will fail), or at least please reply to
-> it so I see a "please don't pull this, I've respun a v2" threaded reply.
-> 
-> No harm done in this case, since you rewrote with the previous tag,
-> but it made me scratch my head when I saw the previous one and the hash
-> didn't match the email. ;)
+> Checkpatch complained about that as well, so I did some investigation, and
+> decided to keep it... Was I wrong?
 
-Thanks Olof,
-
-next time I'll create a new tag.
+I will not claim to be an expert but  at the time I thought
+checkpatch was right.
