@@ -1,73 +1,74 @@
-Return-Path: <linux-pm-owner@vger.kernel.org>
+Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([88.99.104.3]:36750 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729928AbeLJVDU (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:03:20 -0500
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
-Subject: [RFC/RFT 04/10] i2c: brcmstb: use core helper to mark adapter suspended
-Date: Mon, 10 Dec 2018 22:03:02 +0100
-Message-Id: <20181210210310.12677-5-wsa+renesas@sang-engineering.com>
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC/RFT 08/10] i2c: exynos5: use core helper to mark adapter suspended
+Date: Mon, 10 Dec 2018 22:03:06 +0100
+Message-Id: <20181210210310.12677-9-wsa+renesas@sang-engineering.com>
 In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
 References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-Sender: linux-pm-owner@vger.kernel.org
+Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Rejecting transfers should be handled by the core.
+Rejecting transfers should be handled by the core. Also, this will
+ensure proper locking which was forgotten in this open coded version.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-brcmstb.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ drivers/i2c/busses/i2c-exynos5.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
-index 826d32049996..05c822e5a3f6 100644
---- a/drivers/i2c/busses/i2c-brcmstb.c
-+++ b/drivers/i2c/busses/i2c-brcmstb.c
-@@ -170,7 +170,6 @@ struct brcmstb_i2c_dev {
- 	struct bsc_regs *bsc_regmap;
- 	struct i2c_adapter adapter;
- 	struct completion done;
--	bool is_suspended;
- 	u32 clk_freq_hz;
- 	int data_regsz;
- };
-@@ -467,9 +466,6 @@ static int brcmstb_i2c_xfer(struct i2c_adapter *adapter,
- 	int xfersz = brcmstb_i2c_get_xfersz(dev);
- 	u32 cond, cond_per_msg;
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index c1ce2299a76e..fe2f2031ea36 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -183,7 +183,6 @@ enum i2c_type_exynos {
  
--	if (dev->is_suspended)
--		return -EBUSY;
+ struct exynos5_i2c {
+ 	struct i2c_adapter	adap;
+-	unsigned int		suspended:1;
+ 
+ 	struct i2c_msg		*msg;
+ 	struct completion	msg_complete;
+@@ -715,11 +714,6 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+ 	struct exynos5_i2c *i2c = adap->algo_data;
+ 	int i, ret;
+ 
+-	if (i2c->suspended) {
+-		dev_err(i2c->dev, "HS-I2C is not initialized.\n");
+-		return -EIO;
+-	}
 -
- 	/* Loop through all messages */
- 	for (i = 0; i < num; i++) {
- 		pmsg = &msgs[i];
-@@ -689,10 +685,7 @@ static int brcmstb_i2c_suspend(struct device *dev)
+ 	ret = clk_enable(i2c->clk);
+ 	if (ret)
+ 		return ret;
+@@ -847,8 +841,7 @@ static int exynos5_i2c_suspend_noirq(struct device *dev)
  {
- 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+ 	struct exynos5_i2c *i2c = dev_get_drvdata(dev);
  
--	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
--	i2c_dev->is_suspended = true;
--	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-	i2c->suspended = 1;
 -
-+	i2c_mark_adapter_suspended(&i2c_dev->adapter, true);
++	i2c_mark_adapter_suspended(&i2c->adap, true);
+ 	clk_unprepare(i2c->clk);
+ 
  	return 0;
- }
+@@ -871,7 +864,7 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
  
-@@ -700,10 +693,8 @@ static int brcmstb_i2c_resume(struct device *dev)
- {
- 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 
--	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
--	i2c_dev->is_suspended = false;
--	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
-+	i2c_mark_adapter_suspended(&i2c_dev->adapter, false);
+ 	exynos5_i2c_init(i2c);
+ 	clk_disable(i2c->clk);
+-	i2c->suspended = 0;
++	i2c_mark_adapter_suspended(&i2c->adap, false);
  
  	return 0;
  }
