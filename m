@@ -1,9 +1,11 @@
 Return-Path: <linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org>
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-i2c@vger.kernel.org
-Subject: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the core
-Date: Mon, 10 Dec 2018 22:02:58 +0100
-Message-Id: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+Subject: [RFC/RFT 02/10] i2c: reject new transfers when adapters are suspended
+Date: Mon, 10 Dec 2018 22:03:00 +0100
+Message-Id: <20181210210310.12677-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -11,10 +13,9 @@ List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
 List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
 List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-samsung-soc@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Hans de Goede <hdegoede@redhat.com>, bcm-kernel-feedback-list@broadcom.com,
+Cc: Wolfram Sang <wsa@the-dreams.de>, linux-pm@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
  linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,48 +24,27 @@ Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Finally, here is the implementation Hans and I agreed on. Plus, all potential
-users I could spot already converted. Renesas R-Car driver was added on top.
-This series was tested on a Renesas Lager board (R-Car H2). I had to hack some
-error cases into the code to verify the workings. I couldn't create an error
-case otherwise, this is why further testing with more complex setups is very
-welcome.
+Using the new 'is_suspended' flag, we now reject new transfers if the
+adapter is already marked suspended.
 
-For my taste, there is still too much boilerplate code for drivers left. Plus,
-it is also too easy to put it too early or too late. But I haven't come up with
-a better idea yet. And it is time to get this somehow forward.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/i2c-core-base.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Please comment, review, test... a branch can be found here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/core-pm-helpers
-
-Thanks,
-
-   Wolfram
-
-Wolfram Sang (10):
-  i2c: add 'is_suspended' flag for i2c adapters
-  i2c: reject new transfers when adapters are suspended
-  i2c: synquacer: remove unused is_suspended flag
-  i2c: brcmstb: use core helper to mark adapter suspended
-  i2c: zx2967: use core helper to mark adapter suspended
-  i2c: sprd: don't use pdev as variable name for struct device *
-  i2c: sprd: use core helper to mark adapter suspended
-  i2c: exynos5: use core helper to mark adapter suspended
-  i2c: s3c2410: use core helper to mark adapter suspended
-  i2c: rcar: add suspend/resume support
-
- drivers/i2c/busses/i2c-brcmstb.c   | 13 ++-----------
- drivers/i2c/busses/i2c-exynos5.c   | 11 ++---------
- drivers/i2c/busses/i2c-rcar.c      | 25 +++++++++++++++++++++++++
- drivers/i2c/busses/i2c-s3c2410.c   |  8 ++------
- drivers/i2c/busses/i2c-sprd.c      | 34 ++++++++++++----------------------
- drivers/i2c/busses/i2c-synquacer.c |  5 -----
- drivers/i2c/busses/i2c-zx2967.c    |  8 ++------
- drivers/i2c/i2c-core-base.c        |  3 +++
- include/linux/i2c.h                |  9 +++++++++
- 9 files changed, 57 insertions(+), 59 deletions(-)
-
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 9f89e258c8ff..5b2078a902f8 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1866,6 +1866,8 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 
+ 	if (WARN_ON(!msgs || num < 1))
+ 		return -EINVAL;
++	if (WARN_ON(adap->is_suspended))
++		return -ESHUTDOWN;
+ 
+ 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
+ 		return -EOPNOTSUPP;
 -- 
 2.11.0
 
