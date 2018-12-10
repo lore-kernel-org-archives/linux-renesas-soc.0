@@ -1,172 +1,104 @@
-Return-Path: <biju.das@bp.renesas.com>
-From: Biju Das <biju.das@bp.renesas.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-	Simon Horman <horms@verge.net.au>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Alessandro Zummo <a.zummo@towertech.it>,
-	Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-	linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] nvmem: check invalid number of bytes in nvmem_{read,write}()
-Date: Mon, 10 Dec 2018 15:28:21 +0000
-Message-Id: <1544455701-5720-1-git-send-email-biju.das@bp.renesas.com>
+Return-Path: <geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>
+Cc: Ulrich Hecht <uli+renesas@fpond.eu>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/4] serial: sh-sci: Fix locking in sci_submit_rx()
+Date: Mon, 10 Dec 2018 19:21:51 +0100
+Message-Id: <20181210182154.20357-2-geert+renesas@glider.be>
+In-Reply-To: <20181210182154.20357-1-geert+renesas@glider.be>
+References: <20181210182154.20357-1-geert+renesas@glider.be>
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Add check in nvmem_{read,write}()to ensure that nvmem core never passes
-an invalid number of bytes.
+Some callers of sci_submit_rx() hold the port spinlock, others don't.
+During fallback to PIO, the driver needs to obtain the port spinlock.
+If the lock was already held, spinlock recursion is detected, causing a
+deadlock: BUG: spinlock recursion on CPU#0.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-V1-->V2
-	* Moved checks from bin_attr_nvmem_{read/write} into nvmem_reg_{read,write}
-	* Removed checks from nvmem_devicenvmem_device_{read,write}()_{read,write}
----
- drivers/nvmem/core.c | 97 ++++++++++++++++++++++++++--------------------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+Fix this by adding a flag parameter to sci_submit_rx() for the caller to
+indicate the port spinlock is already held, so spinlock recursion can be
+avoided.
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index f7301bb..dfbc8ff 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -76,19 +76,60 @@ static struct lock_class_key eeprom_lock_key;
- static int nvmem_reg_read(struct nvmem_device *nvmem, unsigned int offset,
- 			  void *val, size_t bytes)
- {
--	if (nvmem->reg_read)
--		return nvmem->reg_read(nvmem->priv, offset, val, bytes);
-+	int rc;
-+	size_t new_bytes;
-+
-+	/* Stop the user from reading */
-+	if ((offset >= nvmem->size) || (bytes == 0))
-+		return 0;
-+
-+	if ((nvmem->reg_read == NULL) || (bytes < nvmem->word_size))
-+		return -EINVAL;
-+
-+	if (unlikely(check_add_overflow(bytes, offset, &new_bytes)))
-+		return -EOVERFLOW;
- 
--	return -EINVAL;
-+	if (new_bytes > nvmem->size)
-+		bytes = nvmem->size - offset;
-+
-+	bytes = round_down(bytes, nvmem->word_size);
-+	rc = nvmem->reg_read(nvmem->priv, offset, val, bytes);
-+
-+	if (rc)
-+		return rc;
-+
-+	return bytes;
+Move the spin_lock_irqsave() up, so all DMA disable steps are protected,
+which is safe as the recently introduced dmaengine_terminate_async() can
+be called in atomic context.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - Split in multiple patches.
+---
+ drivers/tty/serial/sh-sci.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 8146d9cef0cbe2d0..2a08039f792235e5 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
+ 	dma_release_channel(chan);
  }
  
- static int nvmem_reg_write(struct nvmem_device *nvmem, unsigned int offset,
- 			   void *val, size_t bytes)
+-static void sci_submit_rx(struct sci_port *s)
++static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
  {
--	if (nvmem->reg_write)
--		return nvmem->reg_write(nvmem->priv, offset, val, bytes);
-+	int rc;
-+	size_t new_bytes;
-+
-+	/* Stop the user from writing */
-+	if (offset >= nvmem->size)
-+		return -ENOSPC;
-+
-+	if (bytes == 0)
-+		return 0;
-+
-+	if ((nvmem->reg_write == NULL) || (bytes < nvmem->word_size))
-+		return -EINVAL;
-+
-+	if (unlikely(check_add_overflow(bytes, offset, &new_bytes)))
-+		return -EOVERFLOW;
-+
-+	if (new_bytes > nvmem->size)
-+		bytes = nvmem->size - offset;
-+
-+	bytes = round_down(bytes, nvmem->word_size);
-+	rc = nvmem->reg_write(nvmem->priv, offset, val, bytes);
-+
-+	if (rc)
-+		return rc;
+ 	struct dma_chan *chan = s->chan_rx;
+ 	struct uart_port *port = &s->port;
+@@ -1362,16 +1362,18 @@ static void sci_submit_rx(struct sci_port *s)
+ 	return;
  
--	return -EINVAL;
-+	return bytes;
+ fail:
++	/* Switch to PIO */
++	if (!port_lock_held)
++		spin_lock_irqsave(&port->lock, flags);
+ 	if (i)
+ 		dmaengine_terminate_async(chan);
+ 	for (i = 0; i < 2; i++)
+ 		s->cookie_rx[i] = -EINVAL;
+ 	s->active_rx = -EINVAL;
+-	/* Switch to PIO */
+-	spin_lock_irqsave(&port->lock, flags);
+ 	s->chan_rx = NULL;
+ 	sci_start_rx(port);
+-	spin_unlock_irqrestore(&port->lock, flags);
++	if (!port_lock_held)
++		spin_unlock_irqrestore(&port->lock, flags);
  }
  
- static ssize_t type_show(struct device *dev,
-@@ -111,33 +152,13 @@ static ssize_t bin_attr_nvmem_read(struct file *filp, struct kobject *kobj,
- 				    char *buf, loff_t pos, size_t count)
- {
- 	struct device *dev;
--	struct nvmem_device *nvmem;
--	int rc;
+ static void work_fn_tx(struct work_struct *work)
+@@ -1491,7 +1493,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
+ 	}
  
- 	if (attr->private)
- 		dev = attr->private;
- 	else
- 		dev = container_of(kobj, struct device, kobj);
--	nvmem = to_nvmem_device(dev);
--
--	/* Stop the user from reading */
--	if (pos >= nvmem->size)
--		return 0;
--
--	if (count < nvmem->word_size)
--		return -EINVAL;
--
--	if (pos + count > nvmem->size)
--		count = nvmem->size - pos;
--
--	count = round_down(count, nvmem->word_size);
--
--	rc = nvmem_reg_read(nvmem, pos, buf, count);
--
--	if (rc)
--		return rc;
+ 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+-		sci_submit_rx(s);
++		sci_submit_rx(s, true);
  
--	return count;
-+	return nvmem_reg_read(to_nvmem_device(dev), pos, buf, count);
+ 	/* Direct new serial port interrupts back to CPU */
+ 	scr = serial_port_in(port, SCSCR);
+@@ -1617,7 +1619,7 @@ static void sci_request_dma(struct uart_port *port)
+ 		s->chan_rx_saved = s->chan_rx = chan;
+ 
+ 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+-			sci_submit_rx(s);
++			sci_submit_rx(s, false);
+ 	}
  }
  
- static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
-@@ -145,33 +166,13 @@ static ssize_t bin_attr_nvmem_write(struct file *filp, struct kobject *kobj,
- 				     char *buf, loff_t pos, size_t count)
- {
- 	struct device *dev;
--	struct nvmem_device *nvmem;
--	int rc;
- 
- 	if (attr->private)
- 		dev = attr->private;
- 	else
- 		dev = container_of(kobj, struct device, kobj);
--	nvmem = to_nvmem_device(dev);
--
--	/* Stop the user from writing */
--	if (pos >= nvmem->size)
--		return -EFBIG;
--
--	if (count < nvmem->word_size)
--		return -EINVAL;
--
--	if (pos + count > nvmem->size)
--		count = nvmem->size - pos;
--
--	count = round_down(count, nvmem->word_size);
--
--	rc = nvmem_reg_write(nvmem, pos, buf, count);
--
--	if (rc)
--		return rc;
- 
--	return count;
-+	return nvmem_reg_write(to_nvmem_device(dev), pos, buf, count);
- }
- 
- /* default read/write permissions */
+@@ -1667,7 +1669,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+ 			scr |= SCSCR_RDRQE;
+ 		} else {
+ 			scr &= ~SCSCR_RIE;
+-			sci_submit_rx(s);
++			sci_submit_rx(s, false);
+ 		}
+ 		serial_port_out(port, SCSCR, scr);
+ 		/* Clear current interrupt */
 -- 
-2.7.4
+2.17.1
