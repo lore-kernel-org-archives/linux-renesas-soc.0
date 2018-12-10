@@ -2,102 +2,107 @@ Return-Path: <SRS0=Zu5O=OT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED288C5CFFE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 19:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1DEC5CFFE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 21:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C7820672
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 19:00:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C7820672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 76DBE2082F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 21:01:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76DBE2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbeLJTA4 (ORCPT
+        id S1728178AbeLJVBC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Dec 2018 14:00:56 -0500
-Received: from sauhun.de ([88.99.104.3]:35626 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728823AbeLJTAz (ORCPT
+        Mon, 10 Dec 2018 16:01:02 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:34119 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727143AbeLJVBB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 14:00:55 -0500
-Received: from localhost (p54B335CF.dip0.t-ipconnect.de [84.179.53.207])
-        by pokefinder.org (Postfix) with ESMTPSA id AFE244C0ECB;
-        Mon, 10 Dec 2018 20:00:52 +0100 (CET)
-Date:   Mon, 10 Dec 2018 20:00:52 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Mon, 10 Dec 2018 16:01:01 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MYvPq-1h1Cuy3AYa-00UuJb; Mon, 10 Dec 2018 22:00:36 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] serial: sh-sci: Resume PIO in sci_rx_interrupt()
- on DMA failure
-Message-ID: <20181210190052.admylepukreo23j3@ninjato>
-References: <20181210182154.20357-1-geert+renesas@glider.be>
- <20181210182154.20357-4-geert+renesas@glider.be>
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: shmobile: fix build regressions
+Date:   Mon, 10 Dec 2018 22:00:23 +0100
+Message-Id: <20181210210033.3276054-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="5tpyya7ld3dzzz5w"
-Content-Disposition: inline
-In-Reply-To: <20181210182154.20357-4-geert+renesas@glider.be>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:dP0m1Lr68VWEmnpEQiiX5DpZfPi93rokPZF52SeRdzwu1eqQg7x
+ L8O9gjgnmZCQA+FTohNwwJOwKPFaQr+IycHRx/0TdrNaTlLqqgXonSbgDl4LPTVg5cE+O8R
+ y6TcLDpN8Eq8JZkvsiG6waajSVuJ3SgHXUhQFZZgoYN11ddoyP5FAlXD1LG61xyk64qKcva
+ ebNcV7rOISwhtyEAQsvSQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5ZBJWCYxsR4=:MglSuOS2QNtml4UUKFdfxG
+ bIiduu1CDJ7c3KbOlQN9DZLMNCviekExhTKIyrvFSR1HpsyL4x2c9Ka5NwABkUuvdi+EgAOj6
+ YV2JlV/74pa/uoYlkSQHYAIUKA9zv0wvcnu5BXrkph0KZWRmpKtmzYT5VIfUuYsaP21nhfCvl
+ fxZCYq0XVjhJbIsw9ZUIvo10e0KQ41cX2SbjTgRi5GMnjD/cQJSW2mYQLi1QEjkT+Oevmc0Vd
+ kb4WXdMvvaBx1E5EU1T1fV8fS7jqv3NoJjvll6ZB42kci9+397T8VFGwms8wix92iL3MC8Ujy
+ 0oZ4vlOHIgQp+ddH8OeMYnLFM4GTSkSVJ03TXBvPi0R3wr7MhWCGD//qfaZUys8SDCMu5eZew
+ NPzg2ha8Tt9BQ6U4vsnmgAA/DMWDZHGTHVC4qemrWjELnKMt4k60//Nz/nwyb8BI7RgY9UaLf
+ E4qtN0/skzHsTbpc4VdLnjJbVZV5/eNHxyk6ejtXHsYnhMNxT22GNy1agMcYbtoxOCx9FfJPX
+ A953s784n9YI08x4u/7pWjogYZHJXyOmaPp5NcITzZhT24fFGMkqY2OgddP7R5gyuMQ8gBIdx
+ PqtBf8EYDr+n3CinUQdJMFo8NOaWjfF97CwfzwX6I642bHwqhhc2IIAv9pnZIs3YYSsYTIkIe
+ ZYdgtACMEK5HtMvG+ovAfvtwxkmpwyMp04IKQrJPR3KAANd1B4N0Hu8YgFFcPpaI8iIIB9hFw
+ LoYeg4b5m4yZGRrXOfRqSpqdnykt5ToPHjtOfg==
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181210190052.6TrcTp1NS0avhwMzdfUOpa0dJ4WMHfyBXUO5bImqGj4@z>
+Message-ID: <20181210210023.kwkJCz2M25IjyPFripIf6pRFyVa_oED8v6uYH0GLboA@z>
 
+A number of Kconfig options have become available now to random ARM
+platforms outside of ARCH_MULTIPLATFORM, which now causes Kconfig
+warnings, and other build errors when those select options that
+lack additonal dependencies, e.g.:
 
---5tpyya7ld3dzzz5w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+WARNING: unmet direct dependencies detected for HAVE_ARM_ARCH_TIMER
+  Depends on [n]: CPU_V7 [=n]
+  Selected by [y]:
+  - ARCH_RCAR_GEN2 [=y] && SOC_RENESAS [=y]
+  - ARCH_R8A73A4 [=y] && SOC_RENESAS [=y] && ARM [=y]
 
-Hi Geert,
+WARNING: unmet direct dependencies detected for SYS_SUPPORTS_EM_STI
+  Depends on [n]: GENERIC_CLOCKEVENTS [=n]
+  Selected by [y]:
+  - ARCH_EMEV2 [=y] && SOC_RENESAS [=y] && ARM [=y]
 
->  	if (!port_lock_held)
->  		spin_unlock_irqrestore(&port->lock, flags);
-> +	return -1;
+Put the old dependency on ARCH_RENESAS back for the moment to restore
+the previous behavior.
 
--Esomething here...
+Fixes: 062887bf5ef7 ("ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/soc/renesas/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  		} else {
-> +			if (sci_submit_rx(s, false))
-> +				goto handle_pio;
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 4d8012e1205c..68bfca6f20dd 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -44,7 +44,7 @@ config ARCH_RZN1
+ 	bool
+ 	select ARM_AMBA
+ 
+-if ARM
++if ARM && ARCH_RENESAS
+ 
+ #comment "Renesas ARM SoCs System Type"
+ 
+-- 
+2.20.0
 
-and 'sci_submit_rx() < 0' here? I think it makes it more readable that
-this is an error case then. 'if sci_submit_rx() do_something' sounds a
-bit like the good case if boolean logic was used.
-
-Thanks for picking this up again,
-
-   Wolfram
-
-
---5tpyya7ld3dzzz5w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwOt+AACgkQFA3kzBSg
-KbYjoA//TB9WHPJ3lfL102I7I3tkN6qFdL7OIMPExLCZ21eaeC+DhOA81Dl04Hs/
-auF2u2QiSkpLG8JApsZHOG9D5CybAeYVGH8DbXetyied02KaKrsCWEdH8HQfpn5A
-1g4eGKGmoF91gDoNfJnJPuSadthetYvIG+tlNEFbbHyf//U6LaDpaEK97rsEztGR
-LqdZcSL+CUsON4X/UoqQnoHkX/dimN28GVOsscqHuSnfXXij8R0zQttjx6vvtuNA
-HEnXIGLPAAlAZoArfbYfCgwLzG+Cl1LgEGJIb7avh9qS+5YapSKOvTN3NeF6pyTH
-uJUIE5hOoTKtacfFmIubRXQHAH2HyGH/eOteAN33NDtYL9X5R3GRCQwjcFF177jE
-gNgBAOqPL+x6Y/NZOS0PvPI+j+hWo5U8Gubj/jNib1S6wj4ifRP4GlRcgoY5vuAf
-XgbaMFEXsETeNWVk4H/7UeEh+tRx4MkBVqDKwR/ijVp23XuRUuuz+Pkl0rGSmPA7
-gVRok/3TgXupprRtMcdepcNtz33fF82EowDyhGLzsDTg545Y7L1x+kfkcN5o3vRU
-DysWALiWPcPC/X6Ei8gbvB0p3cncWgLA7WIst92mzAz8NWuT6ZvB6/PDZe67Xa/F
-fT0GIpjxiK9jOiF2gyeli9ENkdWnA8iuVVPRCtuDVFP5LcYEwiM=
-=iOlm
------END PGP SIGNATURE-----
-
---5tpyya7ld3dzzz5w--
