@@ -1,45 +1,75 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42718 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbeLDO1g (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:27:36 -0500
-Date: Tue, 4 Dec 2018 06:27:32 -0800
-From: Simon Horman <horms@verge.net.au>
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 17/22] ARM: dts: iwg20d-q7-common: Move cmt/rwdt node out
- of RZ/G1M SOM
-Message-ID: <20181204142732.p6ksk2nakt653b3o@verge.net.au>
-References: <1543319795-48325-1-git-send-email-biju.das@bp.renesas.com>
- <1543319795-48325-18-git-send-email-biju.das@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543319795-48325-18-git-send-email-biju.das@bp.renesas.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Return-Path: <linux-pm-owner@vger.kernel.org>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
+Subject: [RFC/RFT 04/10] i2c: brcmstb: use core helper to mark adapter suspended
+Date: Mon, 10 Dec 2018 22:03:02 +0100
+Message-Id: <20181210210310.12677-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+Sender: linux-pm-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Tue, Nov 27, 2018 at 11:56:30AM +0000, Biju Das wrote:
-> The iWave RZ/G1N board is almost identical to RZ/G1M. cmt and rwdt modules
-> are SoC specific and should be part of board dts rather than SoM dtsi. By
-> moving these nodes to the common dtsi it allows cmt and rwdt to be enabled
-> on both of these boards with less lines of code.
-> 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Rejecting transfers should be handled by the core.
 
-Thanks,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-brcmstb.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-
-Geert, did you miss this one when reviewing this series?
+diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
+index 826d32049996..05c822e5a3f6 100644
+--- a/drivers/i2c/busses/i2c-brcmstb.c
++++ b/drivers/i2c/busses/i2c-brcmstb.c
+@@ -170,7 +170,6 @@ struct brcmstb_i2c_dev {
+ 	struct bsc_regs *bsc_regmap;
+ 	struct i2c_adapter adapter;
+ 	struct completion done;
+-	bool is_suspended;
+ 	u32 clk_freq_hz;
+ 	int data_regsz;
+ };
+@@ -467,9 +466,6 @@ static int brcmstb_i2c_xfer(struct i2c_adapter *adapter,
+ 	int xfersz = brcmstb_i2c_get_xfersz(dev);
+ 	u32 cond, cond_per_msg;
+ 
+-	if (dev->is_suspended)
+-		return -EBUSY;
+-
+ 	/* Loop through all messages */
+ 	for (i = 0; i < num; i++) {
+ 		pmsg = &msgs[i];
+@@ -689,10 +685,7 @@ static int brcmstb_i2c_suspend(struct device *dev)
+ {
+ 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+ 
+-	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-
++	i2c_mark_adapter_suspended(&i2c_dev->adapter, true);
+ 	return 0;
+ }
+ 
+@@ -700,10 +693,8 @@ static int brcmstb_i2c_resume(struct device *dev)
+ {
+ 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+ 
+-	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+ 	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
+-	i2c_dev->is_suspended = false;
+-	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
++	i2c_mark_adapter_suspended(&i2c_dev->adapter, false);
+ 
+ 	return 0;
+ }
+-- 
+2.11.0
