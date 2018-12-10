@@ -1,37 +1,26 @@
 Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56732 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:56582 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbeLJM3Q (ORCPT
+        with ESMTP id S1727172AbeLJMIA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 07:29:16 -0500
+        Mon, 10 Dec 2018 07:08:00 -0500
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Jacopo Mondi <jacopo@jmondi.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2] media: i2c: adv748x: Fix video standard selection register setting
-Date: Mon, 10 Dec 2018 12:29:01 +0000
-Message-Id: <20181210122901.14600-1-kieran.bingham+renesas@ideasonboard.com>
+To: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: [PATCH] media: i2c: adv748x: Fix video standard selection register setting
+Date: Mon, 10 Dec 2018 12:07:55 +0000
+Message-Id: <20181210120755.12966-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
 From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-The ADV7481 Register Control Manual states that bit 2 in the Video
-Standard Selection register is reserved with the value of 1.
+By video decoder user's manual, the bit 2 in Video Standard
+Selection register must be reserved with the value of 1.
+This driver cleared it with 0 when writing back.
+This patch corrects it.
 
-The bit is otherwise undocumented, and currently cleared by the driver
-when setting the video standard selection.
-
-Define the bit as reserved, and ensure that it is always set when
-writing to the SDP_VID_SEL register.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-[Kieran: Updated commit message, utilised BIT macro]
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
  drivers/media/i2c/adv748x/adv748x-afe.c | 3 ++-
  drivers/media/i2c/adv748x/adv748x.h     | 1 +
@@ -52,14 +41,14 @@ index 71714634efb0..c4d9ffc50702 100644
  
  static int adv748x_afe_s_input(struct adv748x_afe *afe, unsigned int input)
 diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index b482c7fe6957..778aa55a741a 100644
+index b482c7fe6957..f1f513f4327b 100644
 --- a/drivers/media/i2c/adv748x/adv748x.h
 +++ b/drivers/media/i2c/adv748x/adv748x.h
 @@ -265,6 +265,7 @@ struct adv748x_state {
  #define ADV748X_SDP_INSEL		0x00	/* user_map_rw_reg_00 */
  
  #define ADV748X_SDP_VID_SEL		0x02	/* user_map_rw_reg_02 */
-+#define ADV748X_SDP_VID_RESERVED_BIT	BIT(2)	/* undocumented reserved bit */
++#define ADV748X_SDP_VID_RESERVED_BIT	0x04
  #define ADV748X_SDP_VID_SEL_MASK	0xf0
  #define ADV748X_SDP_VID_SEL_SHIFT	4
  
