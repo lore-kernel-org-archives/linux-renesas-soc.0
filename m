@@ -2,244 +2,172 @@ Return-Path: <SRS0=uxQs=OU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65ED7C07E85
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 11:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF2CC07E85
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 14:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9C252082F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 11:33:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C252082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id C87EE2082F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 14:57:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WW+IOsdk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C87EE2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeLKLdz (ORCPT
+        id S1726231AbeLKO5i (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:33:55 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:37991 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeLKLdz (ORCPT
+        Tue, 11 Dec 2018 09:57:38 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:44482 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbeLKO5h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:33:55 -0500
-X-Originating-IP: 2.224.242.101
-Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 5563860002;
-        Tue, 11 Dec 2018 11:33:51 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 12:33:49 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: rcar-csi2: Fix PHTW table values for E3/V3M
-Message-ID: <20181211113349.GH5597@w540>
-References: <1544453635-16359-1-git-send-email-jacopo+renesas@jmondi.org>
- <2063363.Wr8td8jMvS@avalon>
- <20181211020115.GK17972@bigcity.dyn.berto.se>
+        Tue, 11 Dec 2018 09:57:37 -0500
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8673F55A;
+        Tue, 11 Dec 2018 15:57:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1544540255;
+        bh=1QqOHNGp8Q6K4Bojpe3q0f7gj8bhUA4LGf5j+XAZyHA=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=WW+IOsdkUxNd4miRKh32f6j0yY8shSpVzhOUvB/NXkBxU/Poam59yXIc8MRYUkmsq
+         HKq7r0Boe/fdHW/6tQrdX14iUKPR4iuKNQYuBafIC0pkwdrjGdyoH1EuzxrOTwLqWY
+         JTGoYDAAHKuPkqMA29WrhTzsSSUNV5U6VzYx3df4=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2] drm: rcar-du: dw-hdmi: Reject modes with a too high
+ clock frequency
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org
+References: <20181204163640.316-1-laurent.pinchart+renesas@ideasonboard.com>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <e5c1c9e5-fb5b-cfd7-5f6f-99647bbb5879@ideasonboard.com>
+Date:   Tue, 11 Dec 2018 14:57:33 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JIpyCmsTxyPLrmrM"
-Content-Disposition: inline
-In-Reply-To: <20181211020115.GK17972@bigcity.dyn.berto.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181204163640.316-1-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Laurent,
 
---JIpyCmsTxyPLrmrM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/12/2018 16:36, Laurent Pinchart wrote:
+> Implement a .mode_valid() handler in the R-Car glue layer to reject
+> modes with an unsupported clock frequency.
 
-Hi Laurent, Niklas,
+Thank you, I believe my concerns were addressed;
+ (and my misunderstandings are now understandings)
 
-On Tue, Dec 11, 2018 at 03:01:15AM +0100, Niklas S=C3=B6derlund wrote:
-> Hi Laurent,
->
-> Thanks for your feedback,
->
-> On 2018-12-10 22:16:52 +0200, Laurent Pinchart wrote:
-> > Hi Jacopo,
-> >
-> > Thank you for the patch.
-> >
-> > On Monday, 10 December 2018 16:53:55 EET Jacopo Mondi wrote:
-> > > The PHTW selection algorithm implemented in rcsi2_phtw_write_mbps() c=
-hecks
-> > > for lower bound of the interval used to match the desired bandwidth. =
-Use
-> > > that in place of the currently used upport bound.
-> >
-> > The rcsi2_phtw_write_mbps() function performs the following (error hand=
-ling
-> > removed):
-> >
-> >         const struct rcsi2_mbps_reg *value;
-> >
-> >         for (value =3D values; value->mbps; value++)
-> >                 if (value->mbps >=3D mbps)
-> >                         break;
-> >
-> >         return rcsi2_phtw_write(priv, value->reg, code);
-> >
-> > With this patch, an mbps value of 85 will match the second entry in the
-> > phtw_mbps_v3m_e3 table:
-> >
-> > [0]	{ .mbps =3D   80, .reg =3D 0x00 },
-> > [1]	{ .mbps =3D   90, .reg =3D 0x20 },
-> > ...
-> >
-> > The datasheet however documents the range 80-89 to map to 0x00.
-> >
-> > What am I missing ?
->
-> I'm afraid you are missing a issue with the original implementation of
-> the rcar-csi2 driver (my fault). The issue you point out is a problem
-> with the current freq selection logic not the tables themself which
-> needs to be corrected.
->
-> This patch aligns the table with the other tables in the driver and is
-> sound. A patch (Jacopo care to submit it?) is needed to resolve the
-> faulty logic in the driver. It should select the range according to
-> Laurents findings and not the range above it as the current code does.
->
-> >
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-I've been notified my previous patch broke the matching logic in the
-CSI-2 driver, and so to keep it consistent, I basically reverted what
-I've done.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Anyway, a re-work of those matching loop and tables is welcome, and as
-you suggested in your last email, it should be done not only for PHTW
-but for other tables as well.
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> Changes since v1:
+> 
+> - Add a comment to explain where the limit comes from
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> index 75490a3e0a2a..603bb340e8cf 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+> @@ -35,6 +35,20 @@ static const struct rcar_hdmi_phy_params rcar_hdmi_phy_params[] = {
+>  	{ ~0UL,      0x0000, 0x0000, 0x0000 },
+>  };
+>  
+> +static enum drm_mode_status
+> +rcar_hdmi_mode_valid(struct drm_connector *connector,
+> +		     const struct drm_display_mode *mode)
+> +{
+> +	/*
+> +	 * The maximum supported clock frequency is 297 MHz, as shown in the PHY
+> +	 * parameters table.
+> +	 */
+> +	if (mode->clock > 297000)
 
-In the meantime, I think this patch should go in (afaik there have
-been no functional changes on E3/V3M) so that we start from a
-(slightly suboptimal) fixed point.
+It's still a bit of a shame that it's not clear that the mode->clock is
+expressed in KHz (unless you already know that, which I didn't)
+ - but I'll let that slide for now.
 
-Thanks
-   j
+--
+KB
 
-> > > Fixes: 10c08812fe60 ("media: rcar: rcar-csi2: Update V3M/E3 PHTW tabl=
-es")
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  drivers/media/platform/rcar-vin/rcar-csi2.c | 62 ++++++++++++-------=
-------
-> > >  1 file changed, 31 insertions(+), 31 deletions(-)
-> > >
-> > > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > > b/drivers/media/platform/rcar-vin/rcar-csi2.c index
-> > > 80ad906d1136..7e9cb8bcfe70 100644
-> > > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > > @@ -152,37 +152,37 @@ static const struct rcsi2_mbps_reg
-> > > phtw_mbps_h3_v3h_m3n[] =3D { };
-> > >
-> > >  static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] =3D {
-> > > -	{ .mbps =3D   89, .reg =3D 0x00 },
-> > > -	{ .mbps =3D   99, .reg =3D 0x20 },
-> > > -	{ .mbps =3D  109, .reg =3D 0x40 },
-> > > -	{ .mbps =3D  129, .reg =3D 0x02 },
-> > > -	{ .mbps =3D  139, .reg =3D 0x22 },
-> > > -	{ .mbps =3D  149, .reg =3D 0x42 },
-> > > -	{ .mbps =3D  169, .reg =3D 0x04 },
-> > > -	{ .mbps =3D  179, .reg =3D 0x24 },
-> > > -	{ .mbps =3D  199, .reg =3D 0x44 },
-> > > -	{ .mbps =3D  219, .reg =3D 0x06 },
-> > > -	{ .mbps =3D  239, .reg =3D 0x26 },
-> > > -	{ .mbps =3D  249, .reg =3D 0x46 },
-> > > -	{ .mbps =3D  269, .reg =3D 0x08 },
-> > > -	{ .mbps =3D  299, .reg =3D 0x28 },
-> > > -	{ .mbps =3D  329, .reg =3D 0x0a },
-> > > -	{ .mbps =3D  359, .reg =3D 0x2a },
-> > > -	{ .mbps =3D  399, .reg =3D 0x4a },
-> > > -	{ .mbps =3D  449, .reg =3D 0x0c },
-> > > -	{ .mbps =3D  499, .reg =3D 0x2c },
-> > > -	{ .mbps =3D  549, .reg =3D 0x0e },
-> > > -	{ .mbps =3D  599, .reg =3D 0x2e },
-> > > -	{ .mbps =3D  649, .reg =3D 0x10 },
-> > > -	{ .mbps =3D  699, .reg =3D 0x30 },
-> > > -	{ .mbps =3D  749, .reg =3D 0x12 },
-> > > -	{ .mbps =3D  799, .reg =3D 0x32 },
-> > > -	{ .mbps =3D  849, .reg =3D 0x52 },
-> > > -	{ .mbps =3D  899, .reg =3D 0x72 },
-> > > -	{ .mbps =3D  949, .reg =3D 0x14 },
-> > > -	{ .mbps =3D  999, .reg =3D 0x34 },
-> > > -	{ .mbps =3D 1049, .reg =3D 0x54 },
-> > > -	{ .mbps =3D 1099, .reg =3D 0x74 },
-> > > +	{ .mbps =3D   80, .reg =3D 0x00 },
-> > > +	{ .mbps =3D   90, .reg =3D 0x20 },
-> > > +	{ .mbps =3D  100, .reg =3D 0x40 },
-> > > +	{ .mbps =3D  110, .reg =3D 0x02 },
-> > > +	{ .mbps =3D  130, .reg =3D 0x22 },
-> > > +	{ .mbps =3D  140, .reg =3D 0x42 },
-> > > +	{ .mbps =3D  150, .reg =3D 0x04 },
-> > > +	{ .mbps =3D  170, .reg =3D 0x24 },
-> > > +	{ .mbps =3D  180, .reg =3D 0x44 },
-> > > +	{ .mbps =3D  200, .reg =3D 0x06 },
-> > > +	{ .mbps =3D  220, .reg =3D 0x26 },
-> > > +	{ .mbps =3D  240, .reg =3D 0x46 },
-> > > +	{ .mbps =3D  250, .reg =3D 0x08 },
-> > > +	{ .mbps =3D  270, .reg =3D 0x28 },
-> > > +	{ .mbps =3D  300, .reg =3D 0x0a },
-> > > +	{ .mbps =3D  330, .reg =3D 0x2a },
-> > > +	{ .mbps =3D  360, .reg =3D 0x4a },
-> > > +	{ .mbps =3D  400, .reg =3D 0x0c },
-> > > +	{ .mbps =3D  450, .reg =3D 0x2c },
-> > > +	{ .mbps =3D  500, .reg =3D 0x0e },
-> > > +	{ .mbps =3D  550, .reg =3D 0x2e },
-> > > +	{ .mbps =3D  600, .reg =3D 0x10 },
-> > > +	{ .mbps =3D  650, .reg =3D 0x30 },
-> > > +	{ .mbps =3D  700, .reg =3D 0x12 },
-> > > +	{ .mbps =3D  750, .reg =3D 0x32 },
-> > > +	{ .mbps =3D  800, .reg =3D 0x52 },
-> > > +	{ .mbps =3D  850, .reg =3D 0x72 },
-> > > +	{ .mbps =3D  900, .reg =3D 0x14 },
-> > > +	{ .mbps =3D  950, .reg =3D 0x34 },
-> > > +	{ .mbps =3D 1000, .reg =3D 0x54 },
-> > > +	{ .mbps =3D 1050, .reg =3D 0x74 },
-> > >  	{ .mbps =3D 1125, .reg =3D 0x16 },
-> > >  	{ /* sentinel */ },
-> > >  };
-> >
-> > --
-> > Regards,
-> >
-> > Laurent Pinchart
-> >
-> >
-> >
->
-> --
-> Regards,
-> Niklas S=C3=B6derlund
+> +		return MODE_CLOCK_HIGH;
+> +
+> +	return MODE_OK;
+> +}
+> +
+>  static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+>  				   const struct dw_hdmi_plat_data *pdata,
+>  				   unsigned long mpixelclock)
+> @@ -59,6 +73,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi,
+>  }
+>  
+>  static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
+> +	.mode_valid = rcar_hdmi_mode_valid,
+>  	.configure_phy	= rcar_hdmi_phy_configure,
+>  };
+>  
+> 
 
---JIpyCmsTxyPLrmrM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJcD6CdAAoJEHI0Bo8WoVY8LrEP/ifxKEILs3LRPi76pJlV7Z3K
-8AAnqoXX78AqQCwXyjzgwvjM5YVoiOe+FHZOCAF3ODgXJ3S+uvdSvwlNLH021JCU
-edp3NIbqRwVwMEWUxuqU+QgI4RJpBIm+KzRlbM9aLIHDd/OmXgvpJv8aN2ac47C4
-6hhTNu38Tc6mrZZgRJj35WNP5aUb6d6Vrox8UXiL8MDK4owUSdOiic7FhqtTQHar
-JE7ysru3OH1lyJI1BJibZqpOHqQOoa73zpRkzxfCRncj7YKo8dWYFLk5E4ZKIz64
-Wstnoxb5DMlPlTPrk20Wshc2gy/URFVKF9wL/S+FKcGUYu6ig4Vikwuyb6rJTser
-S8gJU5bevTOPS8GMiAEzlce+mCl3KVHbP8RpfkumHoKjRvj9Y38bBTsEauBVrEbj
-m7Rk5EXg1PBFJOCBYZZRkdWwUiqySA9SY4M48lZvJKRBzNw66uPtbLnzzok7KY5s
-cXmRYq/7WOicUTbNrQa72xqDtaQz8yRm6jJqf2k4PilnkBuhwD94uGMBlLXrl94k
-D4z50IXoKQCfErYTzTXVn5gn1p5Ag6S8oWDXPgtHqWboCSE16seGB7t7g/b4N6bI
-tGVitN3cmb+htnTEf9PBhunRDb7bFlMhtIS9N4jQFZ44hiAYQ4uJlwN4wTtW5SH6
-FBPWw7UdS2GMMVK4J2gG
-=vkHW
------END PGP SIGNATURE-----
-
---JIpyCmsTxyPLrmrM--
+-- 
+Regards
+--
+Kieran
