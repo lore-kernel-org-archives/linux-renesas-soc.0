@@ -2,385 +2,139 @@ Return-Path: <SRS0=uxQs=OU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93536C5CFFE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 19:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A276AC5CFFE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 19:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5403220811
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 19:24:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5403220811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FACB20879
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 19:45:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="RORL+k6C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FACB20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbeLKTYu (ORCPT
+        id S1726206AbeLKTpd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:24:50 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38313 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbeLKTYp (ORCPT
+        Tue, 11 Dec 2018 14:45:33 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33657 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeLKTpd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:24:45 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so15306551wrw.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 11:24:42 -0800 (PST)
+        Tue, 11 Dec 2018 14:45:33 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i26so11719643lfc.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 11:45:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jikI26sd6oTgWeXyOwyGMkr6RXQ0K0RYCFbgY70rXG8=;
+        b=RORL+k6C8HGdYhtF8OBNQrZ2qkt9NwV1Yi3GUrM5c/uxDE9tbtBd8yD2ViyCTrGQa1
+         ekTQ5sDU+1ggJJMUQVe0u590oi3SxtClcxytmONBW2RyrkwxxU64BNNuic7IZOTZqR3Y
+         ylnuFs3+LZs64Vqehwh4BCqSDQz/rhy7Wh3VDN/WFSKj6p1mTPTopyAzPIx0BdP/F6nw
+         VlOTHiq6I9yY3/7AegxeKqoK9PlT616TkLVoZ//ZleVL8l9fqmCYuRXLSN/T2k4U+qd4
+         yhDaWQozzYpWP4Yr4G8wi0k5YelBiVO+WdpLSxZCK5TwcYRZk3lnvLhrZc76oBmvlyY3
+         AmTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=Cy1I1QIv6l6AkYbB4UhpvdYY/8HkxsvTQ/OyW6wCDxw=;
-        b=n66CnwAtVHKEMl2HO7zOyVJJ+e0caakxwR0H+VkQ3p2CqUxnV3MEJ0OBb0yIt7kd4n
-         oSwtz3lIBNstJo7jcTk/S0pfFnWePWQcV/dBBUwtRp6UMBeA6g/AudGoa/8QF4Z4IDc7
-         wsI+zlm4eyM5/yb5cOEG3l+4oWVgzoOSE+26nHnYWSTRC/6Zm0n0PfrtDGZqhC5MBDpI
-         rE8TdA32nbgHasUd8bff6aUsVU8yBTujuSGAeE+hsmt3y1t4Do4pct2sjdkA945sYN2C
-         88OlU/gNIQRnBymiL+5n43WbfRUVbbPIZVGPSDiNdfO6woTXsmZCNu3QSIblkGMWDQfV
-         HVMA==
-X-Gm-Message-State: AA+aEWZ3iqvtxvg9U+dZO1ttgrGZAoP19XT9LmXi9UDh0jZiGjY3DyIt
-        tQL+fdiDijOA0tBgyxaKsEUA1A==
-X-Google-Smtp-Source: AFSGD/UhgQLuY5A8IY7OAVkOXUXdeNoBwxf4VYEL1opYV16P9NVPvvTQBOMTfwsdEsEQ42J/LxOcug==
-X-Received: by 2002:adf:e383:: with SMTP id e3mr14379189wrm.31.1544556281905;
-        Tue, 11 Dec 2018 11:24:41 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id r77sm1303450wmd.22.2018.12.11.11.24.40
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=jikI26sd6oTgWeXyOwyGMkr6RXQ0K0RYCFbgY70rXG8=;
+        b=WOEnsKuotSnEudnjG96lZimSd7MYHlMvEXIvnw/bG6ldKYQSzubbJJTsejtR49vBW6
+         COTwPd/CIRMm+bEsnTcvw0nHpEHC3+bn2Jd+eQv9Oi6tKxh3ui9x0LVFTKhuz9vlGLT4
+         3RLhLmogdNt8cZSdgoa1OHfDlnXZBPqKnr6PLY5B4Fn0MQkWtWOYMYqW8NWs6oh6zk01
+         gpW5K8n0UXQT+g7IjSwCBpYE577NitQKZILVv2nhpqM7fLzE8CHRTYuBJpsRtj+589F8
+         CBmoK1UalYdh/aRaXoCZCWuStXhc7Kfj4fc682aDJ/o/dgPaR7Su1Nn6QLatywpRdB3U
+         Akfw==
+X-Gm-Message-State: AA+aEWaBwb/wEyvoEq6DNAxit9ozAi9UABr2uTGpARVemzK/VKKDgHG5
+        fGzEis4s0vdA4BiM/bgMliV87A==
+X-Google-Smtp-Source: AFSGD/UibA0dDZJ4efJB1p2aOG3ImOXAvS89SjWI3KeTc41xZPgjqqzj0D0x+N4/SQhKfwPdSmUPDg==
+X-Received: by 2002:a19:5a05:: with SMTP id o5mr10929365lfb.140.1544557531468;
+        Tue, 11 Dec 2018 11:45:31 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.85.248])
+        by smtp.gmail.com with ESMTPSA id h3sm2727086lfj.25.2018.12.11.11.45.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 11:24:41 -0800 (PST)
-Subject: Re: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the
- core
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <2094a0d4-733f-7f74-abd2-bdb28edd0f80@redhat.com>
-Date:   Tue, 11 Dec 2018 20:24:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 11 Dec 2018 11:45:30 -0800 (PST)
+Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+ <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <b638fedc-551a-63e4-9654-f9fed8d0e292@cogentembedded.com>
+Date:   Tue, 11 Dec 2018 22:45:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-Content-Type: multipart/mixed;
- boundary="------------5EB9D799064076BC26E44817"
-Content-Language: en-US
+In-Reply-To: <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------5EB9D799064076BC26E44817
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On 12/07/2018 02:13 PM, Mason Yang wrote:
 
-Hi Wolfram,
-
-On 10-12-18 22:02, Wolfram Sang wrote:
-> Finally, here is the implementation Hans and I agreed on. Plus, all potential
-> users I could spot already converted. Renesas R-Car driver was added on top.
-> This series was tested on a Renesas Lager board (R-Car H2). I had to hack some
-> error cases into the code to verify the workings. I couldn't create an error
-> case otherwise, this is why further testing with more complex setups is very
-> welcome.
+> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
 > 
-> For my taste, there is still too much boilerplate code for drivers left. Plus,
-> it is also too easy to put it too early or too late. But I haven't come up with
-> a better idea yet. And it is time to get this somehow forward.
-> 
-> Please comment, review, test... a branch can be found here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/core-pm-helpers
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..cec5669
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,776 @@
+[...]
+> +static const struct soc_device_attribute r8a7795es1[] __initconst = {
 
-So I've been testing this patch-set on some Intel devices with
-an i2c-designware controller, combined with a patch to make the
-suspend/resume methods of the controller call i2c_mark_adapter_suspended()
+   This __initconst shouldn't be there, it causes a build warning.
 
-The results were ... interesting:
+> +	{ .soc_id = "r8a7795", .revision = "ES1.*" },
 
-Take 1:
-4.20-rc6 + your branch + i2c-designw-patch (+ some unrelated patches which are in my personal tree).
-*i2c transfers no longer work*, because the controller runtime suspends and the pm_runtime_get_sync
-to undo this is called from the driver's master_xfer function and the
-is_suspended check happens before this.
+   Wait, the driver doesn't really probe on R8A7795 yet!
 
-Take 2:
-Kernel from 1 with a patch added (attached) to make the core call
-pm_runtime_get_sync from __i2c_transfer() if a flag is set +
-i2c-designware changes to set this flag
-*i2c transfers still do not work*, because __i2c_transfer is
-called with the bus-lock held and the pm_runtime_get_sync calls
-the adapters resume callback which calls i2c_mark_adapter_suspended()
-which tries to take the bus-lock again -> deadlock
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+> +{
+> +	int strtim;
+> +	/*
+> +	 * NOTE: The 0x260 are undocumented bits, but they must be set.
+> +	 *	RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+> +	 *	0x0 : the delay is biggest,
+> +	 *	0x1 : the delay is 2nd biggest,
+> +	 *	On H3 ES1.x, the value should be 0, while on others,
+> +	 *	the value should be 6.
+> +	 */
+> +	if (soc_device_match(r8a7795es1))
+> +		strtim = 0;
+> +	else
+> +		strtim = 6;
+[...]
+> +static const struct of_device_id rpc_spi_of_ids[] = {
+> +	{ .compatible = "renesas,r8a77995-rpc", },
 
-Take 3:
-Kernel from 2 with the i2c-designware suspend/callback patches
-modified to directly set adapter.is_suspended. To avoid the deadlock.
-Ok, this works.  Note I've not tested reverting one of my recent
-ACPI suspend ordering patches yet, which should actually trigger the
-WARN_ON, I've ran out of steam just getting things to work with
-the patches present.
+   We only support R8A77995 now.
 
-I'm attaching 2 patches as I'm using them in Take 3.
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rpc_spi_of_ids);
+[...]
 
-Note that the i2c-sprd driver changes in your patchset also get close
-to triggering this problem, but they dodge the bullet because there
-are separate system-wide and runtime suspend handlers and only the
-system-wide handlers call the new i2c_mark_adapter_suspended() function.
-
-As I explain in the commit message of the first attached patch
-simply always using split handlers is not really an option because
-of adapter drivers using DPM_FLAG_SMART_PREPARE or
-DPM_FLAG_SMART_SUSPEND.
-
-So I'm afraid that this is way messier then I would like it to be,
-we could go with my flag solution combined with not protecting
-the is_suspended flag under the bus lock. That would make the
-WARN_ON slightly racy, so we might fail to trigger the warning
-under some rare circumstances, reverting to the old behavior of
-continuing with the transfer on a suspended adapter, but I don't
-think that is all that bad.
-
-Regards,
-
-Hans
-
-
-
-> Wolfram Sang (10):
->    i2c: add 'is_suspended' flag for i2c adapters
->    i2c: reject new transfers when adapters are suspended
->    i2c: synquacer: remove unused is_suspended flag
->    i2c: brcmstb: use core helper to mark adapter suspended
->    i2c: zx2967: use core helper to mark adapter suspended
->    i2c: sprd: don't use pdev as variable name for struct device *
->    i2c: sprd: use core helper to mark adapter suspended
->    i2c: exynos5: use core helper to mark adapter suspended
->    i2c: s3c2410: use core helper to mark adapter suspended
->    i2c: rcar: add suspend/resume support
-> 
->   drivers/i2c/busses/i2c-brcmstb.c   | 13 ++-----------
->   drivers/i2c/busses/i2c-exynos5.c   | 11 ++---------
->   drivers/i2c/busses/i2c-rcar.c      | 25 +++++++++++++++++++++++++
->   drivers/i2c/busses/i2c-s3c2410.c   |  8 ++------
->   drivers/i2c/busses/i2c-sprd.c      | 34 ++++++++++++----------------------
->   drivers/i2c/busses/i2c-synquacer.c |  5 -----
->   drivers/i2c/busses/i2c-zx2967.c    |  8 ++------
->   drivers/i2c/i2c-core-base.c        |  3 +++
->   include/linux/i2c.h                |  9 +++++++++
->   9 files changed, 57 insertions(+), 59 deletions(-)
-> 
-
---------------5EB9D799064076BC26E44817
-Content-Type: text/x-patch;
- name="0001-i2c-add-I2C_AQ_RUNTIME_PM-adapter-quirk-flag.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="0001-i2c-add-I2C_AQ_RUNTIME_PM-adapter-quirk-flag.patch"
-
-From 7781ff0b5033436c1d2740570364b1739017e03d Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Tue, 11 Dec 2018 19:19:17 +0100
-Subject: [PATCH 1/2] i2c: add I2C_AQ_RUNTIME_PM adapter quirk flag
-
-Add a new I2C_AQ_RUNTIME_PM adapter quirk flag, when this flag is set
-then the i2c-core will all pm_runtime_get_sync() before calling an
-adapter's master_xfer function and call pm_runtime_mark_last_busy() +
-pm_runtime_put_autosuspend() after the master_xfer function.
-
-Moving these runtime pm calls into the core for adapters which use them
-is necessary for the WARN_ON(adap->is_suspended) to not trigger when
-runtime-suspend is used. Another approach would be to only call
-i2c_mark_adapter_suspended() from the adapter's regular suspend/resume
-callbacks and not from the runtime-resume ones, but that would circumvent
-the check also on system suspend when using DPM_FLAG_SMART_PREPARE or
-DPM_FLAG_SMART_SUSPEND.
-
-Note that of the 20 adapter drivers which call pm_runtime_get_sync() from
-there master_xfer function, 16 call pm_runtime_put_autosuspend() when done.
-i2c-nomadik.c and i2c-sh_mobile.c use pm_runtime_put_sync() and
-i2c-tegra.c and i2c-rcar.c use pm_runtime_put(), so these will need to be
-modified to use these new flag, or they will need another flag for their
-special case.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/i2c/i2c-core-base.c | 16 ++++++++++++++--
- include/linux/i2c.h         |  2 ++
- 2 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 5b2078a902f8..acff1e4c09d9 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1866,12 +1866,18 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 
- 	if (WARN_ON(!msgs || num < 1))
- 		return -EINVAL;
--	if (WARN_ON(adap->is_suspended))
--		return -ESHUTDOWN;
- 
- 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
- 		return -EOPNOTSUPP;
- 
-+	if (adap->quirks && (adap->quirks->flags & I2C_AQ_RUNTIME_PM))
-+		pm_runtime_get_sync(adap->dev.parent);
-+
-+	if (WARN_ON(adap->is_suspended)) {
-+		ret = -ESHUTDOWN;
-+		goto out;
-+	}
-+
- 	/*
- 	 * i2c_trace_msg_key gets enabled when tracepoint i2c_transfer gets
- 	 * enabled.  This is an efficient way of keeping the for-loop from
-@@ -1904,6 +1910,12 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 		trace_i2c_result(adap, num, ret);
- 	}
- 
-+out:
-+	if (adap->quirks && (adap->quirks->flags & I2C_AQ_RUNTIME_PM)) {
-+		pm_runtime_mark_last_busy(adap->dev.parent);
-+		pm_runtime_put_autosuspend(adap->dev.parent);
-+	}
-+
- 	return ret;
- }
- EXPORT_SYMBOL(__i2c_transfer);
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 9852038ee3a7..96b9cac6c01e 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -661,6 +661,8 @@ struct i2c_adapter_quirks {
- #define I2C_AQ_NO_ZERO_LEN_READ		BIT(5)
- #define I2C_AQ_NO_ZERO_LEN_WRITE	BIT(6)
- #define I2C_AQ_NO_ZERO_LEN		(I2C_AQ_NO_ZERO_LEN_READ | I2C_AQ_NO_ZERO_LEN_WRITE)
-+/* core must call pm_runtime_get_sync / put_autosuspend around master_xfer */
-+#define I2C_AQ_RUNTIME_PM		BIT(7)
- 
- /*
-  * i2c_adapter is the structure used to identify a physical i2c bus along
--- 
-2.19.2
-
-
---------------5EB9D799064076BC26E44817
-Content-Type: text/x-patch;
- name="0002-i2c-designware-Set-is_suspended-flag-when-suspended.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0002-i2c-designware-Set-is_suspended-flag-when-suspended.pat";
- filename*1="ch"
-
-From ba156b9419629a24fd2a82cc34d6d588585f637f Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Tue, 11 Dec 2018 15:29:44 +0100
-Subject: [PATCH 2/2] i2c: designware: Set is_suspended flag when suspended
-
-Set the is_suspended flag when suspended so that the i2c-core will warn
-if we get called while the controller is (system-wide) suspended. Note
-this also switches the runtime-pm handling in i2c-designware-master.c
-to the new I2C_AQ_RUNTIME_PM flag, as this is required for the
-is_suspended flag to work properly in combination with runtime-pm.
-
-On most Intel Bay- and Cherry-Trail systems the PMIC is connected over I2C
-and the PMIC is accessed through various means by the _PS0 and _PS3 ACPI
-methods (power on / off methods) of various devices.
-
-This leads to suspend/resume ordering problems where a device may be
-resumed and get its _PS0 method executed before the I2C controller is
-resumed. On Cherry Trail this leads to errors like these:
-
-     i2c_designware 808622C1:06: controller timed out
-     ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
-     ACPI Error: Method parse/execution failed \_SB.P18W._ON, AE_ERROR
-     video LNXVIDEO:00: Failed to change power state to D0
-
-But on Bay Trail this caused I2C reads to seem to succeed, but they end
-up returning wrong data, which ends up getting written back by the typical
-read-modify-write cycle done to turn on various power-resources.
-
-Debugging the problems caused by this silent data corruption is quite
-nasty.
-
-This commit properly marks the adapter as suspended until our resume
-callback has run, triggering the i2c-core's WARN_ON when i2c_transfer gets
-called on a suspended adapter.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/i2c/busses/i2c-designware-master.c  | 11 ++---------
- drivers/i2c/busses/i2c-designware-platdrv.c |  4 ++++
- 2 files changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-index 8d1bc44d2530..ebb2b8368f6f 100644
---- a/drivers/i2c/busses/i2c-designware-master.c
-+++ b/drivers/i2c/busses/i2c-designware-master.c
-@@ -424,8 +424,6 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 
- 	dev_dbg(dev->dev, "%s: msgs: %d\n", __func__, num);
- 
--	pm_runtime_get_sync(dev->dev);
--
- 	reinit_completion(&dev->cmd_complete);
- 	dev->msgs = msgs;
- 	dev->msgs_num = num;
-@@ -439,7 +437,7 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 
- 	ret = i2c_dw_acquire_lock(dev);
- 	if (ret)
--		goto done_nolock;
-+		return ret;
- 
- 	ret = i2c_dw_wait_bus_not_busy(dev);
- 	if (ret < 0)
-@@ -493,11 +491,6 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 
- done:
- 	i2c_dw_release_lock(dev);
--
--done_nolock:
--	pm_runtime_mark_last_busy(dev->dev);
--	pm_runtime_put_autosuspend(dev->dev);
--
- 	return ret;
- }
- 
-@@ -507,7 +500,7 @@ static const struct i2c_algorithm i2c_dw_algo = {
- };
- 
- static const struct i2c_adapter_quirks i2c_dw_quirks = {
--	.flags = I2C_AQ_NO_ZERO_LEN,
-+	.flags = I2C_AQ_NO_ZERO_LEN | I2C_AQ_RUNTIME_PM,
- };
- 
- static u32 i2c_dw_read_clear_intrbits(struct dw_i2c_dev *dev)
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 9eaac3be1f63..e220336f34ae 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -454,6 +454,8 @@ static int dw_i2c_plat_suspend(struct device *dev)
- {
- 	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
- 
-+	i_dev->adapter.is_suspended = true;
-+
- 	if (i_dev->shared_with_punit)
- 		return 0;
- 
-@@ -472,6 +474,8 @@ static int dw_i2c_plat_resume(struct device *dev)
- 
- 	i_dev->init(i_dev);
- 
-+	i_dev->adapter.is_suspended = false;
-+
- 	return 0;
- }
- 
--- 
-2.19.2
-
-
---------------5EB9D799064076BC26E44817--
+MBR, Sergei
