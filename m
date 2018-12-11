@@ -2,185 +2,102 @@ Return-Path: <SRS0=uxQs=OU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA9CC07E85
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C1AC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 09:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49D802084C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 772182082F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 09:55:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PKT2Tzdi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D802084C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="flWk/xtd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 772182082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbeLKJnM (ORCPT
+        id S1726117AbeLKJzr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:43:12 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:39911 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKJnM (ORCPT
+        Tue, 11 Dec 2018 04:55:47 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33457 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbeLKJzr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:43:12 -0500
-Received: by mail-ua1-f68.google.com with SMTP id k10so4891273ual.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 01:43:11 -0800 (PST)
+        Tue, 11 Dec 2018 04:55:47 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c14so13420151wrr.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 01:55:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qiCVCqL8DPBEqqUZ9Lkm11QkiqOa+zItnYetZ5jc2W4=;
-        b=PKT2Tzdi+fV9EVYj6CKY2Cr5xBcsIDOxBV+AGZS7uXXQjH7fzOY9HCOX8AvFVH6A4U
-         jt8YA3KPthxCPzuab73HPP54OyR5L7bBQlpAD+CrQbRmFionC9TJt+RgubFP+23weoZJ
-         3fbfSobZXGULbOJjULjvM9u0aSu6+JPxo+XEs=
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Ma+3LrckplbHCMdn+o7ywGisiWmlS7CTJKqJkXNdMog=;
+        b=flWk/xtdby+3CEFX5xxW/elbG5GPHecO5KdSzKchuZ6OlguEnJKRnbWfcRG/L5tq35
+         HHR2pjAzJs0z0eCHsa4F0VK1r0EHq/LMjv1SfHuf5iB6yN40W/mx6AvmCkKyHN44aRM9
+         TKp4ilUtBMj5t26G49SNwYV5g37m/AqXBGI0c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qiCVCqL8DPBEqqUZ9Lkm11QkiqOa+zItnYetZ5jc2W4=;
-        b=ugPd7QV05EUAUqmEtpc/QlNHjtrY8namzJRCMfv453xbunw2qSaDFT6uVYxR4FF3nL
-         aCXqmTADaZv1nfGr7lyo8/3NO6lo/IhLLuRNhmgNe0j8Fu4KoztmCnUnl4+qNQBJyg+M
-         3zq59+MSg7EgYzKsbICDec9DFjqJuybT/weVuZD+j1eJLnB2CB3HivEaTA7NWfrrfoSG
-         yXCAXihcVQ2ttfhBb+0AzdduoJMKb0hAkt7ciut4O117VAVJYj7D8HQ8eQtqWq15LXoO
-         BYHI5fADx6dhbJwaU2Fm7si8r7/7lETNxiz8SRzRqQYYooeXovmliGAYFX+qnd4LlxB5
-         wV5A==
-X-Gm-Message-State: AA+aEWZcWa5UDXAbdm4NZzLi86/kxr/rPSOFEEqM2ppK9xcUY6+7o3qH
-        64mURugUYUVsKmk+gtVmhYAfyYWzqRsQKw6MY0H9ow==
-X-Google-Smtp-Source: AFSGD/VGXOGhRU+5j41SWhMn/JGDx25SC/LQU9uF8R3wQtVvb2xPc1rTO8zBx+jYhJwht90zrDsmaHjc4MhvvQPkVx8=
-X-Received: by 2002:ab0:3484:: with SMTP id c4mr6993247uar.39.1544521391423;
- Tue, 11 Dec 2018 01:43:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20181205195050.4759-5-robh@kernel.org>
-In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 11 Dec 2018 10:42:35 +0100
-Message-ID:
- <CAPDyKFq2x=BKVc36xqyjjjh5xMZa_Ws=-wv9bwadiNkBEgmsdA@mail.gmail.com>
-Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Ma+3LrckplbHCMdn+o7ywGisiWmlS7CTJKqJkXNdMog=;
+        b=r8fFRDfiYqfAKMSn7ZYQhcHAlgJCj6McQ9SusxqTVQiAFmbfr//dwzpBhLHJw17BbP
+         gIXIWlhVXk4RA3nWvEKDPrJyWjJbliN91EmlqRc1eMloPzAiXIJ1BZUHO0ClgRqALfG7
+         hTRwF82hU9udURw0SIKPgACJ2NnxHAZmZRMie6gGxGfpES/PQp37vBHpxgIdKsBvoOO5
+         O1UQHtIUL6WA548Xvef35KK1x3rZj7HM9e8vy+eyHpgQzZXCvpsk+kaipn1ZAwg+okPy
+         TU4H0H4nvb1NbB6UpuT4RFbmDjEoaGJE1LbWw/V4REQvb62ZKoHo+x6oOg55xQk9Gx/E
+         TT1Q==
+X-Gm-Message-State: AA+aEWZARkSa7kCDvC0hRMckeuf7qstm1DnfOZeIzgSCSyHYo79G4sS6
+        s/dcYHnptTXIxWL6rlLUgVtZKrpZc50=
+X-Google-Smtp-Source: AFSGD/VDSJntlDob4nN3baG1IoYZfmaYuVSDrIcUj2m40i3OGzKUK2r+YiVrliYou+3Blm2HVHRA1w==
+X-Received: by 2002:a5d:6907:: with SMTP id t7mr12505249wru.226.1544522145099;
+        Tue, 11 Dec 2018 01:55:45 -0800 (PST)
+Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id c10sm15325279wrw.49.2018.12.11.01.55.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 01:55:44 -0800 (PST)
+Subject: Re: [PATCH v3] nvmem: check invalid number of bytes in
+ nvmem_{read,write}()
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <1544520254-4210-1-git-send-email-biju.das@bp.renesas.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <9f1a2851-58ca-2971-69d5-c1322b20130c@linaro.org>
+Date:   Tue, 11 Dec 2018 09:55:43 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <1544520254-4210-1-git-send-email-biju.das@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181211094235.qVenOQJxr3b4vkMlmOx342PP59cF_Enfftgo8bJpqP0@z>
 
-On Wed, 5 Dec 2018 at 20:50, Rob Herring <robh@kernel.org> wrote:
->
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
->
-> For instances using of_node_cmp, this has the side effect of now using
-> case sensitive comparisons. This should not matter for any FDT based
-> system which all of these are.
->
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
 
-For the ux500 part:
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+After applying this patch I get below errors with W=1 C=1
 
-Kind regards
-Uffe
+On 11/12/18 09:24, Biju Das wrote:
+> +	if (unlikely(check_add_overflow(bytes, offset, &new_bytes)))
+> +		return -EOVERFLOW;
+>   drivers/nvmem/core.c:82:13: error: incompatible types in comparison 
+expression (different type sizes)
+drivers/nvmem/core.c:82:13: error: incompatible types in comparison 
+expression (different type sizes)
+drivers/nvmem/core.c:113:13: error: incompatible types in comparison 
+expression (different type sizes)
+drivers/nvmem/core.c:113:13: error: incompatible types in comparison 
+expression (different type sizes)
 
-> ---
->  drivers/clk/renesas/clk-mstp.c   |  2 +-
->  drivers/clk/ti/clkctrl.c         |  2 +-
->  drivers/clk/ti/dpll.c            |  2 +-
->  drivers/clk/ux500/u8500_of_clk.c | 10 +++++-----
->  4 files changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 1c1768c2cc82..765175d1148a 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -280,7 +280,7 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
->                         goto found;
->
->                 /* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock */
-> -               if (!strcmp(clkspec.np->name, "zb_clk"))
-> +               if (of_node_name_eq(clkspec.np, "zb_clk"))
->                         goto found;
->
->                 of_node_put(clkspec.np);
-> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-> index 469f560ae1cf..40630eb950fc 100644
-> --- a/drivers/clk/ti/clkctrl.c
-> +++ b/drivers/clk/ti/clkctrl.c
-> @@ -448,7 +448,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
->         char *c;
->
->         if (!(ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) &&
-> -           !strcmp(node->name, "clk"))
-> +           of_node_name_eq(node, "clk"))
->                 ti_clk_features.flags |= TI_CLK_CLKCTRL_COMPAT;
->
->         addrp = of_get_address(node, 0, NULL, NULL);
-> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-> index 92e28af7afba..6c3329bc116f 100644
-> --- a/drivers/clk/ti/dpll.c
-> +++ b/drivers/clk/ti/dpll.c
-> @@ -410,7 +410,7 @@ static void __init of_ti_omap3_dpll_setup(struct device_node *node)
->
->         if ((of_machine_is_compatible("ti,omap3630") ||
->              of_machine_is_compatible("ti,omap36xx")) &&
-> -           !strcmp(node->name, "dpll5_ck"))
-> +            of_node_name_eq(node, "dpll5_ck"))
->                 of_ti_dpll_setup(node, &omap3_dpll5_ck_ops, &dd);
->         else
->                 of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
-> diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
-> index d5888591e1a9..18a3c4522831 100644
-> --- a/drivers/clk/ux500/u8500_of_clk.c
-> +++ b/drivers/clk/ux500/u8500_of_clk.c
-> @@ -545,21 +545,21 @@ static void u8500_clk_init(struct device_node *np)
->         for_each_child_of_node(np, child) {
->                 static struct clk_onecell_data clk_data;
->
-> -               if (!of_node_cmp(child->name, "prcmu-clock")) {
-> +               if (of_node_name_eq(child, "prcmu-clock")) {
->                         clk_data.clks = prcmu_clk;
->                         clk_data.clk_num = ARRAY_SIZE(prcmu_clk);
->                         of_clk_add_provider(child, of_clk_src_onecell_get, &clk_data);
->                 }
-> -               if (!of_node_cmp(child->name, "prcc-periph-clock"))
-> +               if (of_node_name_eq(child, "prcc-periph-clock"))
->                         of_clk_add_provider(child, ux500_twocell_get, prcc_pclk);
->
-> -               if (!of_node_cmp(child->name, "prcc-kernel-clock"))
-> +               if (of_node_name_eq(child, "prcc-kernel-clock"))
->                         of_clk_add_provider(child, ux500_twocell_get, prcc_kclk);
->
-> -               if (!of_node_cmp(child->name, "rtc32k-clock"))
-> +               if (of_node_name_eq(child, "rtc32k-clock"))
->                         of_clk_add_provider(child, of_clk_src_simple_get, rtc_clk);
->
-> -               if (!of_node_cmp(child->name, "smp-twd-clock"))
-> +               if (of_node_name_eq(child, "smp-twd-clock"))
->                         of_clk_add_provider(child, of_clk_src_simple_get, twd_clk);
->         }
->  }
-> --
-> 2.19.1
->
+
+
+--srini
