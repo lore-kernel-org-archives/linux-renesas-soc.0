@@ -2,408 +2,385 @@ Return-Path: <SRS0=uxQs=OU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0B8C07E85
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 16:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93536C5CFFE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 19:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CD220855
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 16:46:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="GoJbhVug"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CD220855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 5403220811
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 19:24:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5403220811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbeLKQqo (ORCPT
+        id S1726870AbeLKTYu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:46:44 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43115 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbeLKQqo (ORCPT
+        Tue, 11 Dec 2018 14:24:50 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38313 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbeLKTYp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:46:44 -0500
-Received: by mail-lf1-f66.google.com with SMTP id u18so11268892lff.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 08:46:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mE+DOnG/N93adP3nFsgJZRT1RtWswaWjXjJJ96M2m3A=;
-        b=GoJbhVugW9xV7rkpWgZ0QkiKx+yao+EF99DxTJq4gdSeRcXtlVMbU7Jxscse1OvrEt
-         FqydjMRPn+Bfd0sIsKqSm5GCenlYD6UExTgMlEcl+e1nJMJWummZUXPD6+lJ2cA7k/56
-         I+cOJ4bPeNg6H0Biwi6QgAf5wVVOzdyigvz71dALTFPcF53mYPnKdsgj+n+pBYeOXPlQ
-         gduMlPiKiYyE7c2mw6PKEHoR9pcFadz9XPI+gN/OdKOtgTkbfYrv/f2AY+qVL5G13uoC
-         f6fkEtmEFLnLjt24P/FVfWHNe7A6FCBsWmuZ5uq+jSHfCGSewjJtwTLbv8FupmPmbQbC
-         UHew==
+        Tue, 11 Dec 2018 14:24:45 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so15306551wrw.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 11:24:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=mE+DOnG/N93adP3nFsgJZRT1RtWswaWjXjJJ96M2m3A=;
-        b=QbtSV729fprrRE/0U1PMBqzu6w/HlG7sFx1Q7waYs/7GqzR5kEEXp+oP65V/CTMwdw
-         8J9YP9FH20o35AI0Ozk7HqAPdx17u1fLeM+AfESBBvQeOLCXpXd4TkqqT19oAhd2Xd2g
-         ftK6jO0AZPOqljCJm1Vnv4SgSwrBQyIZ8xMCkGl8GysdEyUGZOgZhhiKLneoVjlYxgXv
-         NtHijjxYHhKBeBc0rX6EIRNOuxPCznKmqsb5wRgpReeKAKKL+59apbEP/bsyykvAGHpU
-         2Lpckh7rYg+Ks1YonTFWjv0bi3imGH4KeIzZKI7EEf8UUnzECWXhezAnhidyr+/o45C4
-         bnCA==
-X-Gm-Message-State: AA+aEWb1eVBsFY5sW0rRH34+pl7j7knZdWH5KHR9ubGXHaVbyzHwQzjp
-        HPm0sFlg/BHWkcAd8NL5YU3tvw==
-X-Google-Smtp-Source: AFSGD/XhjPpXeKnRVC7Dv7Jnl7ecPDUCFhW8SbP6hRtoHz6ITQsq/BkFVcX0fpa52hlWf1n11U/F0Q==
-X-Received: by 2002:a19:1019:: with SMTP id f25mr9562011lfi.54.1544546800763;
-        Tue, 11 Dec 2018 08:46:40 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.85.248])
-        by smtp.gmail.com with ESMTPSA id a62sm2748931lfa.37.2018.12.11.08.46.39
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language;
+        bh=Cy1I1QIv6l6AkYbB4UhpvdYY/8HkxsvTQ/OyW6wCDxw=;
+        b=n66CnwAtVHKEMl2HO7zOyVJJ+e0caakxwR0H+VkQ3p2CqUxnV3MEJ0OBb0yIt7kd4n
+         oSwtz3lIBNstJo7jcTk/S0pfFnWePWQcV/dBBUwtRp6UMBeA6g/AudGoa/8QF4Z4IDc7
+         wsI+zlm4eyM5/yb5cOEG3l+4oWVgzoOSE+26nHnYWSTRC/6Zm0n0PfrtDGZqhC5MBDpI
+         rE8TdA32nbgHasUd8bff6aUsVU8yBTujuSGAeE+hsmt3y1t4Do4pct2sjdkA945sYN2C
+         88OlU/gNIQRnBymiL+5n43WbfRUVbbPIZVGPSDiNdfO6woTXsmZCNu3QSIblkGMWDQfV
+         HVMA==
+X-Gm-Message-State: AA+aEWZ3iqvtxvg9U+dZO1ttgrGZAoP19XT9LmXi9UDh0jZiGjY3DyIt
+        tQL+fdiDijOA0tBgyxaKsEUA1A==
+X-Google-Smtp-Source: AFSGD/UhgQLuY5A8IY7OAVkOXUXdeNoBwxf4VYEL1opYV16P9NVPvvTQBOMTfwsdEsEQ42J/LxOcug==
+X-Received: by 2002:adf:e383:: with SMTP id e3mr14379189wrm.31.1544556281905;
+        Tue, 11 Dec 2018 11:24:41 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id r77sm1303450wmd.22.2018.12.11.11.24.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 08:46:39 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v2 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1543828720-18345-1-git-send-email-masonccyang@mxic.com.tw>
- <1543828720-18345-2-git-send-email-masonccyang@mxic.com.tw>
- <0bd07d30-1c0a-ef5b-24ae-dcae3c4721ce@cogentembedded.com>
- <OF1EDC1518.914B7F08-ON48258360.0022FD71-48258360.0033D3DE@mxic.com.tw>
-Organization: Cogent Embedded
-Message-ID: <c0a83699-05e1-26fa-ca74-ba6f0850cb7b@cogentembedded.com>
-Date:   Tue, 11 Dec 2018 19:46:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 11 Dec 2018 11:24:41 -0800 (PST)
+Subject: Re: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the
+ core
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <2094a0d4-733f-7f74-abd2-bdb28edd0f80@redhat.com>
+Date:   Tue, 11 Dec 2018 20:24:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <OF1EDC1518.914B7F08-ON48258360.0022FD71-48258360.0033D3DE@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+Content-Type: multipart/mixed;
+ boundary="------------5EB9D799064076BC26E44817"
+Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+This is a multi-part message in MIME format.
+--------------5EB9D799064076BC26E44817
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 12/11/2018 12:26 PM, masonccyang@mxic.com.tw wrote:
+Hi Wolfram,
 
-[...]
->>    I'd already started the v2 driver review before you posted v3, so
->> here goes...
->>
->> On 12/03/2018 12:18 PM, Mason Yang wrote:
->>
->>> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
->>>
->>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->> [...]
->>> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
->>> new file mode 100644
->>> index 0000000..ac9094e
->>> --- /dev/null
->>> +++ b/drivers/spi/spi-renesas-rpc.c
->>> @@ -0,0 +1,808 @@
->> [...]
->>> +#define RPC_DRCR      0x000C   /* R/W */
->>> +#define RPC_DRCR_SSLN      BIT(24)
->>> +#define RPC_DRCR_RBURST(v)   (((v) & 0x1F) << 16)
->>
->>    More like ((v) - 1), like in another register...
-
-   I mean you can pass the read data burst length as a # of data units,
-thus just substracting 1, like you did in the other case...
-
->> [...]
->>> +#define RPC_DREAR      0x0014   /* R/W */
->>> +#define RPC_DREAR_EAC      BIT(0)
->>
->>    The manual says it takes bits 0 to 2...
+On 10-12-18 22:02, Wolfram Sang wrote:
+> Finally, here is the implementation Hans and I agreed on. Plus, all potential
+> users I could spot already converted. Renesas R-Car driver was added on top.
+> This series was tested on a Renesas Lager board (R-Car H2). I had to hack some
+> error cases into the code to verify the workings. I couldn't create an error
+> case otherwise, this is why further testing with more complex setups is very
+> welcome.
 > 
-> yup, EAC[2:0]
-> but as datasheet description, either 0 or 1 is OK to BIT(0),
-> other than above setting is prohibited
-
-   I'd prefer that this matches the manual. #define the values or
-just pass them to RPC_DREAR_EAC(v).
-
->> [...]
->>> +#define RPC_SMADR      0x0028   /* R/W */
->>> +#define RPC_SMOPR      0x002C   /* R/W */
->>> +#define RPC_SMOPR_OPD0(o)   (((o) & 0xFF) << 0)
->>> +#define RPC_SMOPR_OPD1(o)   (((o) & 0xFF) << 8)
->>> +#define RPC_SMOPR_OPD2(o)   (((o) & 0xFF) << 16)
->>> +#define RPC_SMOPR_OPD3(o)   (((o) & 0xFF) << 24)
->>
->>   You either go in descending or ascending order, not both. :-)
+> For my taste, there is still too much boilerplate code for drivers left. Plus,
+> it is also too easy to put it too early or too late. But I haven't come up with
+> a better idea yet. And it is time to get this somehow forward.
 > 
-> I can't get your point.
-
-   You #define in the ascending order of the bit # (shift count) here and
-in the descending order elsewhere.
-
-[...]
->>> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
->>> +{
->>> +   /*
->>> +    * NOTE: The 0x260 are undocumented bits, but they must be set.
->>> +    *   RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
->>> +    *   0x0 : the delay is biggest,
->>> +    *   0x1 : the delay is 2nd biggest,
->>> +    *   0x3 or 0x6 is a recommended value.
->>> +    */
->>> +   regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
->>> +              RPC_PHYCNT_STRTIM(0x6) | 0x260);
->>> +
->>> +   /*
->>> +    * NOTE: The 0x31511144 and 0x431 are undocumented bits,
->>> +    *    but they must be set for RPC_PHYOFFSET1 & RPC_PHYOFFSET2.
->>> +    */
->>> +   regmap_write(rpc->regmap, RPC_PHYOFFSET1, 0x31511144);
->>> +   regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x431);
->>
->>    0x400 is actually documented, bits 0..7 are read only and defaultto 0x31...
-
-> I got these values from R-Car bare-metal code, mini-Monitor v4.01.
+> Please comment, review, test... a branch can be found here:
 > 
-> What should I describe these bits 0x400 and 0x31 if it is needed?
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/core-pm-helpers
 
-#define PHYOFFSET2_OCTTMG(v)	((v) & 0x7) << 8)
+So I've been testing this patch-set on some Intel devices with
+an i2c-designware controller, combined with a patch to make the
+suspend/resume methods of the controller call i2c_mark_adapter_suspended()
 
-   The read-modify-write operation ios preferred in this casa, so that
-0x31 doesn't appear anywhere.
+The results were ... interesting:
 
-[...]
->>> +
->>> +         if (nbytes > 4) {
->>> +            nbytes = 4;
->>> +            smcr = rpc->smcr |
->>> +                   RPC_SMCR_SPIE | RPC_SMCR_SSLKP;
->>> +         } else {
->>> +            smcr = rpc->smcr | RPC_SMCR_SPIE;
->>> +         }
->>
->>    Please do this repeated part outside *if*:
+Take 1:
+4.20-rc6 + your branch + i2c-designw-patch (+ some unrelated patches which are in my personal tree).
+*i2c transfers no longer work*, because the controller runtime suspends and the pm_runtime_get_sync
+to undo this is called from the driver's master_xfer function and the
+is_suspended check happens before this.
+
+Take 2:
+Kernel from 1 with a patch added (attached) to make the core call
+pm_runtime_get_sync from __i2c_transfer() if a flag is set +
+i2c-designware changes to set this flag
+*i2c transfers still do not work*, because __i2c_transfer is
+called with the bus-lock held and the pm_runtime_get_sync calls
+the adapters resume callback which calls i2c_mark_adapter_suspended()
+which tries to take the bus-lock again -> deadlock
+
+Take 3:
+Kernel from 2 with the i2c-designware suspend/callback patches
+modified to directly set adapter.is_suspended. To avoid the deadlock.
+Ok, this works.  Note I've not tested reverting one of my recent
+ACPI suspend ordering patches yet, which should actually trigger the
+WARN_ON, I've ran out of steam just getting things to work with
+the patches present.
+
+I'm attaching 2 patches as I'm using them in Take 3.
+
+Note that the i2c-sprd driver changes in your patchset also get close
+to triggering this problem, but they dodge the bullet because there
+are separate system-wide and runtime suspend handlers and only the
+system-wide handlers call the new i2c_mark_adapter_suspended() function.
+
+As I explain in the commit message of the first attached patch
+simply always using split handlers is not really an option because
+of adapter drivers using DPM_FLAG_SMART_PREPARE or
+DPM_FLAG_SMART_SUSPEND.
+
+So I'm afraid that this is way messier then I would like it to be,
+we could go with my flag solution combined with not protecting
+the is_suspended flag under the bus lock. That would make the
+WARN_ON slightly racy, so we might fail to trigger the warning
+under some rare circumstances, reverting to the old behavior of
+continuing with the transfer on a suspended adapter, but I don't
+think that is all that bad.
+
+Regards,
+
+Hans
+
+
+
+> Wolfram Sang (10):
+>    i2c: add 'is_suspended' flag for i2c adapters
+>    i2c: reject new transfers when adapters are suspended
+>    i2c: synquacer: remove unused is_suspended flag
+>    i2c: brcmstb: use core helper to mark adapter suspended
+>    i2c: zx2967: use core helper to mark adapter suspended
+>    i2c: sprd: don't use pdev as variable name for struct device *
+>    i2c: sprd: use core helper to mark adapter suspended
+>    i2c: exynos5: use core helper to mark adapter suspended
+>    i2c: s3c2410: use core helper to mark adapter suspended
+>    i2c: rcar: add suspend/resume support
 > 
-> ?
-> The procedure is different !
-
-   Where?!
-
->>          smcr = rpc->smcr | RPC_SMCR_SPIE;
->>          if (nbytes > 4) {
->>             nbytes = 4;
->>             smcr |= RPC_SMCR_SSLKP;
->>          }
-[...]
->>> +
->>> +         if (nbytes > 4)
->>> +            nbytes = 4;
->>> +
->>> +         regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
->>> +         regmap_write(rpc->regmap, RPC_SMCR,
->>> +                 rpc->smcr | RPC_SMCR_SPIE);
->>> +         ret = wait_msg_xfer_end(rpc);
->>> +         if (ret)
->>> +            goto out;
->>> +
->>> +         regmap_read(rpc->regmap, RPC_SMRDR0, &data);
->>> +         memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
->>
->>    What?! The 'data' variable is not in a MMIO region, you can use
->> plain memcpy().
->> Not sure about the endianness tho...
+>   drivers/i2c/busses/i2c-brcmstb.c   | 13 ++-----------
+>   drivers/i2c/busses/i2c-exynos5.c   | 11 ++---------
+>   drivers/i2c/busses/i2c-rcar.c      | 25 +++++++++++++++++++++++++
+>   drivers/i2c/busses/i2c-s3c2410.c   |  8 ++------
+>   drivers/i2c/busses/i2c-sprd.c      | 34 ++++++++++++----------------------
+>   drivers/i2c/busses/i2c-synquacer.c |  5 -----
+>   drivers/i2c/busses/i2c-zx2967.c    |  8 ++------
+>   drivers/i2c/i2c-core-base.c        |  3 +++
+>   include/linux/i2c.h                |  9 +++++++++
+>   9 files changed, 57 insertions(+), 59 deletions(-)
 > 
-> yup, the 'data' variable is not in MMIO region!
-> patch it to memcpy() rather than memcpy_fromio().
 
-   Also, pointer casts to 'void *' are automatic...
+--------------5EB9D799064076BC26E44817
+Content-Type: text/x-patch;
+ name="0001-i2c-add-I2C_AQ_RUNTIME_PM-adapter-quirk-flag.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="0001-i2c-add-I2C_AQ_RUNTIME_PM-adapter-quirk-flag.patch"
 
-[...]
->>> +static ssize_t rpc_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
->>> +                   u64 offs, size_t len, void *buf)
->>> +{
->>> +   struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
->>> +   int ret;
->>> +
->>> +   if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
->>> +      return -EINVAL;
->>> +
->>> +   ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
->>> +   if (ret)
->>> +      return ret;
->>> +
->>> +   rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
->>> +                &desc->info.op_tmpl, &offs, &len);
->>> +
->>> +   regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_SFDE |
->>> +           RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
->>> +           RPC_CMNCR_BSZ(0));
->>> +   regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RBURST(0x1f) |
->>
->>    RPC_DRCR_RBURST(32), please.
-> 
-> ?
-> the max value is 31 = 0x1f
+From 7781ff0b5033436c1d2740570364b1739017e03d Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Tue, 11 Dec 2018 19:19:17 +0100
+Subject: [PATCH 1/2] i2c: add I2C_AQ_RUNTIME_PM adapter quirk flag
 
-   See above!
+Add a new I2C_AQ_RUNTIME_PM adapter quirk flag, when this flag is set
+then the i2c-core will all pm_runtime_get_sync() before calling an
+adapter's master_xfer function and call pm_runtime_mark_last_busy() +
+pm_runtime_put_autosuspend() after the master_xfer function.
 
-[...]
->>> +   regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
->>> +   regmap_write(rpc->regmap, RPC_DRDRENR, 0);
->>> +
->>> +   memcpy_fromio(buf, rpc->linear.map + desc->info.offset + offs, len);
->>
->>    What if the read direct-mapped area is less than U32_MAX in size
->> (and it will be,
->> according to your bindings)?
-> 
-> the max direct mapping read area is 64 KByte description in DTS.
+Moving these runtime pm calls into the core for adapters which use them
+is necessary for the WARN_ON(adap->is_suspended) to not trigger when
+runtime-suspend is used. Another approach would be to only call
+i2c_mark_adapter_suspended() from the adapter's regular suspend/resume
+callbacks and not from the runtime-resume ones, but that would circumvent
+the check also on system suspend when using DPM_FLAG_SMART_PREPARE or
+DPM_FLAG_SMART_SUSPEND.
 
-   You don't check for this before reading (but you do for writing)!
+Note that of the 20 adapter drivers which call pm_runtime_get_sync() from
+there master_xfer function, 16 call pm_runtime_put_autosuspend() when done.
+i2c-nomadik.c and i2c-sh_mobile.c use pm_runtime_put_sync() and
+i2c-tegra.c and i2c-rcar.c use pm_runtime_put(), so these will need to be
+modified to use these new flag, or they will need another flag for their
+special case.
 
-[...]
->>> +static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
->>> +               u64 offs, size_t len, const void *buf)
->>> +{
->>> +   struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
->>> +   int ret;
->>> +
->>> +   if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
->>> +      return -EINVAL;
->>> +
->>> +   if (WARN_ON(len > RPC_WBUF_SIZE))
->>> +      return -EIO;
->>
->>    Why not write 256 bytes and return w/that?
-> 
-> in manual 62.3.13 Write Buffer Operation,
-> transfer size to device is 256-byte unit.
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/i2c/i2c-core-base.c | 16 ++++++++++++++--
+ include/linux/i2c.h         |  2 ++
+ 2 files changed, 16 insertions(+), 2 deletions(-)
 
-   Why not write 256 bytes max and just return 256? 
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 5b2078a902f8..acff1e4c09d9 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1866,12 +1866,18 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 
+ 	if (WARN_ON(!msgs || num < 1))
+ 		return -EINVAL;
+-	if (WARN_ON(adap->is_suspended))
+-		return -ESHUTDOWN;
+ 
+ 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
+ 		return -EOPNOTSUPP;
+ 
++	if (adap->quirks && (adap->quirks->flags & I2C_AQ_RUNTIME_PM))
++		pm_runtime_get_sync(adap->dev.parent);
++
++	if (WARN_ON(adap->is_suspended)) {
++		ret = -ESHUTDOWN;
++		goto out;
++	}
++
+ 	/*
+ 	 * i2c_trace_msg_key gets enabled when tracepoint i2c_transfer gets
+ 	 * enabled.  This is an efficient way of keeping the for-loop from
+@@ -1904,6 +1910,12 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 		trace_i2c_result(adap, num, ret);
+ 	}
+ 
++out:
++	if (adap->quirks && (adap->quirks->flags & I2C_AQ_RUNTIME_PM)) {
++		pm_runtime_mark_last_busy(adap->dev.parent);
++		pm_runtime_put_autosuspend(adap->dev.parent);
++	}
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL(__i2c_transfer);
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 9852038ee3a7..96b9cac6c01e 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -661,6 +661,8 @@ struct i2c_adapter_quirks {
+ #define I2C_AQ_NO_ZERO_LEN_READ		BIT(5)
+ #define I2C_AQ_NO_ZERO_LEN_WRITE	BIT(6)
+ #define I2C_AQ_NO_ZERO_LEN		(I2C_AQ_NO_ZERO_LEN_READ | I2C_AQ_NO_ZERO_LEN_WRITE)
++/* core must call pm_runtime_get_sync / put_autosuspend around master_xfer */
++#define I2C_AQ_RUNTIME_PM		BIT(7)
+ 
+ /*
+  * i2c_adapter is the structure used to identify a physical i2c bus along
+-- 
+2.19.2
 
-[...]
->> [...]
 
->>> +static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
->>> +               struct spi_message *msg)
->>> +{
->>> +   struct spi_transfer *t, xfer[4] = { };
->>> +   u32 i, xfercnt, xferpos = 0;
->>> +
->>> +   rpc->totalxferlen = 0;
->>> +   rpc->xfer_dir = SPI_MEM_NO_DATA;
->>> +
->>> +   list_for_each_entry(t, &msg->transfers, transfer_list) {
->>> +      if (t->tx_buf) {
->>> +         xfer[xferpos].tx_buf = t->tx_buf;
->>> +         xfer[xferpos].tx_nbits = t->tx_nbits;
->>> +      }
->>> +
->>> +      if (t->rx_buf) {
->>> +         xfer[xferpos].rx_buf = t->rx_buf;
->>> +         xfer[xferpos].rx_nbits = t->rx_nbits;
->>> +      }
->>> +
->>> +      if (t->len) {
->>> +         xfer[xferpos++].len = t->len;
->>> +         rpc->totalxferlen += t->len;
->>> +      }
->>> +
->>> +      if (list_is_last(&t->transfer_list, &msg->transfers)) {
->>> +         if (xferpos > 1 && t->rx_buf) {
->>> +            rpc->xfer_dir = SPI_MEM_DATA_IN;
->>> +            rpc->smcr = RPC_SMCR_SPIRE;
->>> +         } else if (xferpos > 1 && t->tx_buf) {
->>
->>    Why check 'xferpos' twice?
->>
->>> +            rpc->xfer_dir = SPI_MEM_DATA_OUT;
->>> +            rpc->smcr = RPC_SMCR_SPIWE;
->>> +         }
->>> +      }
->>> +   }
-> 
-> patch it to check 'xferpos' only one time.
-> -------------------------------------------------------------
->                  if (list_is_last(&t->transfer_list, &msg->transfers)) {
->                          if (xferpos > 1) {
->                                         if (tx->rx_buf) {                                                
->                                  rpc->xfer_dir = SPI_MEM_DATA_IN;
->                                  rpc->smcr = RPC_SMCR_SPIRE;
->                                  } else if (t->tx_buf) {
->                                  rpc->xfer_dir = SPI_MEM_DATA_OUT;
->                                  rpc->smcr = RPC_SMCR_SPIWE;
->                                  }
->                                 }
->                  }
-> ----------------------------------------------------------
+--------------5EB9D799064076BC26E44817
+Content-Type: text/x-patch;
+ name="0002-i2c-designware-Set-is_suspended-flag-when-suspended.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0002-i2c-designware-Set-is_suspended-flag-when-suspended.pat";
+ filename*1="ch"
 
-   You got the idea but please reformat this properly..
+From ba156b9419629a24fd2a82cc34d6d588585f637f Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Tue, 11 Dec 2018 15:29:44 +0100
+Subject: [PATCH 2/2] i2c: designware: Set is_suspended flag when suspended
 
-[...]
->>
->>> +      for (i = 0; i < xfer[1].len; i++)
->>> +         rpc->addr |= (u32)((u8 *)xfer[1].tx_buf)[i]
->>> +               << (8 * (xfer[1].len - i - 1));
->>
->>    Ugh, you need get_unaligned_*()...
-> 
-> for accessing a single byte quantity, ((u8 *)xfer[1].tx_buf)[i] ?
+Set the is_suspended flag when suspended so that the i2c-core will warn
+if we get called while the controller is (system-wide) suspended. Note
+this also switches the runtime-pm handling in i2c-designware-master.c
+to the new I2C_AQ_RUNTIME_PM flag, as this is required for the
+is_suspended flag to work properly in combination with runtime-pm.
 
-   Ugh, never start a new line with an operator, lease it on a 1st, broken up line.
+On most Intel Bay- and Cherry-Trail systems the PMIC is connected over I2C
+and the PMIC is accessed through various means by the _PS0 and _PS3 ACPI
+methods (power on / off methods) of various devices.
 
-[...]
->>> +static const struct regmap_config rpc_spi_regmap_config = {
->>> +   .reg_bits = 32,
->>> +   .val_bits = 32,
->>> +   .reg_stride = 4,
->>> +   .fast_io = true,
->>> +   .max_register = RPC_WBUF + RPC_WBUF_SIZE,
->>
->>    Ugh... 0x8100/4 regs, of which the majority isn't used... :-/
+This leads to suspend/resume ordering problems where a device may be
+resumed and get its _PS0 method executed before the I2C controller is
+resumed. On Cherry Trail this leads to errors like these:
 
-   Seriously, you don't use regmap for the write buffer anyway...
+     i2c_designware 808622C1:06: controller timed out
+     ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
+     ACPI Error: Method parse/execution failed \_SB.P18W._ON, AE_ERROR
+     video LNXVIDEO:00: Failed to change power state to D0
 
-[...]
->> > +err_put_master:
->> > +   spi_master_put(master);
->> > +   pm_runtime_disable(&pdev->dev);
->> > +
->> > +   return ret;
->> > +}
->> > +
->> > +static int rpc_spi_remove(struct platform_device *pdev)
->> > +{
->> > +   struct spi_master *master = platform_get_drvdata(pdev);
->> > +
->> > +   pm_runtime_disable(&pdev->dev);
->> > +   spi_unregister_master(master);
->>
->>    No spi_master_put() here?
-> 
-> put_device() in spi_unregister_master().
+But on Bay Trail this caused I2C reads to seem to succeed, but they end
+up returning wrong data, which ends up getting written back by the typical
+read-modify-write cycle done to turn on various power-resources.
 
-   Why call spi_master_put() in the probe() method's error path?
+Debugging the problems caused by this silent data corruption is quite
+nasty.
 
-> best regards,
-> Mason
+This commit properly marks the adapter as suspended until our resume
+callback has run, triggering the i2c-core's WARN_ON when i2c_transfer gets
+called on a suspended adapter.
 
-> CONFIDENTIALITY NOTE:
-> 
-> This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
-> 
-> Macronix International Co., Ltd.
-> 
-> =====================================================================
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/i2c/busses/i2c-designware-master.c  | 11 ++---------
+ drivers/i2c/busses/i2c-designware-platdrv.c |  4 ++++
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-   Please consider sending patches from e.g. your GMail account to avoid this legelese
-crap.
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index 8d1bc44d2530..ebb2b8368f6f 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -424,8 +424,6 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 
+ 	dev_dbg(dev->dev, "%s: msgs: %d\n", __func__, num);
+ 
+-	pm_runtime_get_sync(dev->dev);
+-
+ 	reinit_completion(&dev->cmd_complete);
+ 	dev->msgs = msgs;
+ 	dev->msgs_num = num;
+@@ -439,7 +437,7 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 
+ 	ret = i2c_dw_acquire_lock(dev);
+ 	if (ret)
+-		goto done_nolock;
++		return ret;
+ 
+ 	ret = i2c_dw_wait_bus_not_busy(dev);
+ 	if (ret < 0)
+@@ -493,11 +491,6 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 
+ done:
+ 	i2c_dw_release_lock(dev);
+-
+-done_nolock:
+-	pm_runtime_mark_last_busy(dev->dev);
+-	pm_runtime_put_autosuspend(dev->dev);
+-
+ 	return ret;
+ }
+ 
+@@ -507,7 +500,7 @@ static const struct i2c_algorithm i2c_dw_algo = {
+ };
+ 
+ static const struct i2c_adapter_quirks i2c_dw_quirks = {
+-	.flags = I2C_AQ_NO_ZERO_LEN,
++	.flags = I2C_AQ_NO_ZERO_LEN | I2C_AQ_RUNTIME_PM,
+ };
+ 
+ static u32 i2c_dw_read_clear_intrbits(struct dw_i2c_dev *dev)
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 9eaac3be1f63..e220336f34ae 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -454,6 +454,8 @@ static int dw_i2c_plat_suspend(struct device *dev)
+ {
+ 	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+ 
++	i_dev->adapter.is_suspended = true;
++
+ 	if (i_dev->shared_with_punit)
+ 		return 0;
+ 
+@@ -472,6 +474,8 @@ static int dw_i2c_plat_resume(struct device *dev)
+ 
+ 	i_dev->init(i_dev);
+ 
++	i_dev->adapter.is_suspended = false;
++
+ 	return 0;
+ }
+ 
+-- 
+2.19.2
 
-MBR, Sergei
+
+--------------5EB9D799064076BC26E44817--
