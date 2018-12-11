@@ -1,124 +1,225 @@
-Return-Path: <SRS0=Zu5O=OT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=uxQs=OU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5E3C5CFFE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 22:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF14C67839
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 02:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5A8620821
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Dec 2018 22:10:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 839A220645
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 02:01:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QzqIroGI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A8620821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="VJvaJfpL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 839A220645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ragnatech.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbeLJWKM (ORCPT
+        id S1725993AbeLKCBV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Dec 2018 17:10:12 -0500
-Received: from mail-pg1-f180.google.com ([209.85.215.180]:47043 "EHLO
-        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbeLJWKM (ORCPT
+        Mon, 10 Dec 2018 21:01:21 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38810 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbeLKCBU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 17:10:12 -0500
-Received: by mail-pg1-f180.google.com with SMTP id w7so5600723pgp.13;
-        Mon, 10 Dec 2018 14:10:10 -0800 (PST)
+        Mon, 10 Dec 2018 21:01:20 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p86so9554443lfg.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Dec 2018 18:01:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WbkuC2nausPddEQL+qtbtFQYhQ7ckB6klvXfPRceBBo=;
-        b=QzqIroGI37KVPPbH/IINVYffMhWNpEwdTKmq6OgsanSrehKLIRWjpIih3TZeXGKGV7
-         +qGMQpoZ3xor4Af7++IUVYKuVp0jfl9LwoJS9SFO9aWEk+TLS3wdvSstvO49cKD+Jn5u
-         6lxvZb00f7een5uVDnoRF4OfIFa8nZzs3HIEKV0uWsQgxBO3k4q0sV/6FBWzRyAaQpEf
-         ztxmsypFLVDK1FA0ucmV0gxJ+hYxkd8zxjMplONCIl9LxV7yZBVTnRWRTU9WsYAB/DUz
-         +ld6lt62Q8+zYAheOZ0Usz6PpGegomEJcu6DkMQpD/CWBcKze17+skYvZxSyNDvB0YdB
-         pidw==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rpavOHoYVOD9aFk6Of4jko/V+yblDtpcBgskZ1ndeJY=;
+        b=VJvaJfpLcbajmjyXCi2NrbCmsv08Xm5n6JPmfD03XqPu+4yQdXHF6NAyy6MQ7+C0I9
+         q3cQTPKg+VWe5fjtkQ0tf+BgszTTA5rO/LHe752tWuti/wPNdLomkT5BH2ODG9KeOwI1
+         sQIhW0yu6FOKvGWGUfv/LGrYQfw3IyCHas0+vD4j/8eiJCjiOO5XHE4mfVkbbFwu1/Je
+         W5u61PdZA9h2RydvSR21XhtoZxgUKIZ+wQqt6/x19TCtCKr+bwnca4AWMODmGoAN520T
+         et6/hHcnHZQcCk+eJyvmldoIDy9EhZARNJMgjJw/yiPa8PxL3Vzmzqy8TNlGR6jOqziC
+         MQhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WbkuC2nausPddEQL+qtbtFQYhQ7ckB6klvXfPRceBBo=;
-        b=h9WVgkSEb3ks1F/u1E7wZ6y2s/3v9GP0xxuqzfzxC5pCQ84vXKsV4MP3qW95Co0pVj
-         w5BAo7dOpaPk+lZPCGBvor+JJC8Ah7X6e9PU2AyuhbKmBXA/V2GS/7oMdx6TgyCvKjH4
-         9C0K/CRccs5I0bWm19ltVKEcLdV1pFlMC+mahSJvjRYt9U/9giRvgM+CxQzr/0W4RQIM
-         c/ixZwF8z3y9iL6iEU11RDItVj3MU6tiN2mL/F3GRwGipIJoQQDSI9OJziOvC9dzJiII
-         zljtpTwnllle6qMaxDjr7iE7kE8skqm6I7xLW9rO8wilLqxNzwoME7+cWKZZFZPQbY8V
-         xi/w==
-X-Gm-Message-State: AA+aEWZ3dOtGAEg72Op+Cjpjv0NoViGnKrD+3hkXJcKdUluLhdyf3sxL
-        NmDtd6+Kpp1k3jkBHyb8zt8=
-X-Google-Smtp-Source: AFSGD/Wqm/nz00o0IHjw/iWeuTuoPL1JzDXgZQBoaz483tFve5YvSh+JhT2YFE2v6TWaxm3l3eBHfg==
-X-Received: by 2002:a63:d450:: with SMTP id i16mr12170128pgj.246.1544479810583;
-        Mon, 10 Dec 2018 14:10:10 -0800 (PST)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id k26sm30965737pgf.65.2018.12.10.14.10.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 14:10:09 -0800 (PST)
-Subject: Re: phandles using absolute paths in DT overlays
-To:     David Gibson <david@gibson.dropbear.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Devicetree Compiler <devicetree-compiler@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <CAMuHMdUgYFkYrpnpOdrE5ce-pHSUqLPPs=gheitp5sAnu=srEQ@mail.gmail.com>
- <20181207013513.GV768@umbus.fritz.box>
- <CAMuHMdUdPKb6go3U46fJsWdfDrx057SPem-ZDi9wOJhfaeCENQ@mail.gmail.com>
- <20181210054928.GR4261@umbus.fritz.box>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <0039cd72-2ad1-529e-67b4-44f9eb318d54@gmail.com>
-Date:   Mon, 10 Dec 2018 14:10:08 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rpavOHoYVOD9aFk6Of4jko/V+yblDtpcBgskZ1ndeJY=;
+        b=rmha4ntdkpXH7MQ8krZ7ScITidTb+LiENu1CC09YUqUJ1FkTTS6ryWAl07qhrUH6ih
+         RRkCBtfKhkAd2W0npkYxQzwIWcUWrbQituY38hj6o5eyy+bqyR5bkTuomXjSM0n+M0dh
+         XmmpmC4U4gSGjOJMtoOtq37Nxc370tQrTYj8MBME76hkmrADRqY+n6Ic2cusAPagBGf1
+         GzGNBcCqzuIvtCxklosW92MrbOsFFjXmYPGgd3DijBKc61032mhpxTlQEXk1JH6v94n1
+         SeSUs0VtxNfgF9aDl2m4sLWU1oTvGv/1ltmPVvl6exLEwd0no7BXdD7oVIZm3LCg61I/
+         TLSQ==
+X-Gm-Message-State: AA+aEWazcWdp+HcYp42+810/2I+cRTXQCIY63V1mTDeRL8Z0cWizJf5c
+        PL0RyEmxGC3XH+koIJ4Ohp98DQ==
+X-Google-Smtp-Source: AFSGD/WYTBIr7r1joYJ8FPs7UNBtLTxYYMvdzWo9qBK93QYGxMPaBx+ER5bvTbW77gFj1hidB3PhVA==
+X-Received: by 2002:a19:d5:: with SMTP id 204mr7586683lfa.116.1544493677241;
+        Mon, 10 Dec 2018 18:01:17 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id u21-v6sm2446930lju.46.2018.12.10.18.01.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 18:01:16 -0800 (PST)
+Date:   Tue, 11 Dec 2018 03:01:15 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: rcar-csi2: Fix PHTW table values for E3/V3M
+Message-ID: <20181211020115.GK17972@bigcity.dyn.berto.se>
+References: <1544453635-16359-1-git-send-email-jacopo+renesas@jmondi.org>
+ <2063363.Wr8td8jMvS@avalon>
 MIME-Version: 1.0
-In-Reply-To: <20181210054928.GR4261@umbus.fritz.box>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2063363.Wr8td8jMvS@avalon>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181210221008.n9so9MjJXtQkIj0QqjxPdVZ-JvlwRZoW65nvk4-6HtQ@z>
+Message-ID: <20181211020115.XV5m1LhDeJZqXgOUsNWQhY3XvY8XHDOeRjkhHgCe_yg@z>
 
-Hi Geert,
+Hi Laurent,
 
-On 12/9/18 9:49 PM, David Gibson wrote:
-> On Fri, Dec 07, 2018 at 09:19:24AM +0100, Geert Uytterhoeven wrote:
->> Hi David,
->>
->> Thanks for your answer!
->>
->> On Fri, Dec 7, 2018 at 2:44 AM David Gibson <david@gibson.dropbear.id.au> wrote:
->>> On Thu, Dec 06, 2018 at 01:56:45PM +0100, Geert Uytterhoeven wrote:
->>>> Some early revisions of SoCs may have hardware bugs that need to be
->>>> fixed up in DT.  Currently we are handling this by including DTS files
->>>> and fixing up nodes and properties, to create different DTB files for
->>>> different SoC revisons (see arch/arm64/boot/dts/renesas/*es1*).
->>>>
->>>> As an alternative, I'm envisioning the use of DT overlays and the
->>>> fdtoverlay tool, in the hope of simplifying the generation of DTBs for
->>>> the various SoC/board combinations.
->>>>
->>>> Ideally, such DTBs would not contain symbols, to avoid inflating DTB
->>>> size.  Hence if fixup overlays would not contain symbolic references,
->>>> there would be no need for symbols.
->>>>
->>>> For anchors, the "&{/path/to/node@address}" syntax is working fine.
->>>> For phandles, while documented on
->>>> https://elinux.org/Device_Tree_Mysteries, and while working fine for the
->>>> non-overlay case, dtc seems to have issues interpreting the DTB:
+Thanks for your feedback,
 
-< snip >
+On 2018-12-10 22:16:52 +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+> 
+> Thank you for the patch.
+> 
+> On Monday, 10 December 2018 16:53:55 EET Jacopo Mondi wrote:
+> > The PHTW selection algorithm implemented in rcsi2_phtw_write_mbps() checks
+> > for lower bound of the interval used to match the desired bandwidth. Use
+> > that in place of the currently used upport bound.
+> 
+> The rcsi2_phtw_write_mbps() function performs the following (error handling 
+> removed):
+> 
+>         const struct rcsi2_mbps_reg *value;
+> 
+>         for (value = values; value->mbps; value++)
+>                 if (value->mbps >= mbps)
+>                         break;
+> 
+>         return rcsi2_phtw_write(priv, value->reg, code);
+> 
+> With this patch, an mbps value of 85 will match the second entry in the 
+> phtw_mbps_v3m_e3 table:
+> 
+> [0]	{ .mbps =   80, .reg = 0x00 },
+> [1]	{ .mbps =   90, .reg = 0x20 },
+> ...
+> 
+> The datasheet however documents the range 80-89 to map to 0x00.
+> 
+> What am I missing ?
 
-I have updated elinux.org with the limitation for overlays that you report
-and that David explained.
+I'm afraid you are missing a issue with the original implementation of 
+the rcar-csi2 driver (my fault). The issue you point out is a problem 
+with the current freq selection logic not the tables themself which 
+needs to be corrected.
 
--Frank
+This patch aligns the table with the other tables in the driver and is 
+sound. A patch (Jacopo care to submit it?) is needed to resolve the 
+faulty logic in the driver. It should select the range according to 
+Laurents findings and not the range above it as the current code does.
+
+> 
+> > Fixes: 10c08812fe60 ("media: rcar: rcar-csi2: Update V3M/E3 PHTW tables")
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 62 ++++++++++++-------------
+> >  1 file changed, 31 insertions(+), 31 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > b/drivers/media/platform/rcar-vin/rcar-csi2.c index
+> > 80ad906d1136..7e9cb8bcfe70 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > @@ -152,37 +152,37 @@ static const struct rcsi2_mbps_reg
+> > phtw_mbps_h3_v3h_m3n[] = { };
+> > 
+> >  static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
+> > -	{ .mbps =   89, .reg = 0x00 },
+> > -	{ .mbps =   99, .reg = 0x20 },
+> > -	{ .mbps =  109, .reg = 0x40 },
+> > -	{ .mbps =  129, .reg = 0x02 },
+> > -	{ .mbps =  139, .reg = 0x22 },
+> > -	{ .mbps =  149, .reg = 0x42 },
+> > -	{ .mbps =  169, .reg = 0x04 },
+> > -	{ .mbps =  179, .reg = 0x24 },
+> > -	{ .mbps =  199, .reg = 0x44 },
+> > -	{ .mbps =  219, .reg = 0x06 },
+> > -	{ .mbps =  239, .reg = 0x26 },
+> > -	{ .mbps =  249, .reg = 0x46 },
+> > -	{ .mbps =  269, .reg = 0x08 },
+> > -	{ .mbps =  299, .reg = 0x28 },
+> > -	{ .mbps =  329, .reg = 0x0a },
+> > -	{ .mbps =  359, .reg = 0x2a },
+> > -	{ .mbps =  399, .reg = 0x4a },
+> > -	{ .mbps =  449, .reg = 0x0c },
+> > -	{ .mbps =  499, .reg = 0x2c },
+> > -	{ .mbps =  549, .reg = 0x0e },
+> > -	{ .mbps =  599, .reg = 0x2e },
+> > -	{ .mbps =  649, .reg = 0x10 },
+> > -	{ .mbps =  699, .reg = 0x30 },
+> > -	{ .mbps =  749, .reg = 0x12 },
+> > -	{ .mbps =  799, .reg = 0x32 },
+> > -	{ .mbps =  849, .reg = 0x52 },
+> > -	{ .mbps =  899, .reg = 0x72 },
+> > -	{ .mbps =  949, .reg = 0x14 },
+> > -	{ .mbps =  999, .reg = 0x34 },
+> > -	{ .mbps = 1049, .reg = 0x54 },
+> > -	{ .mbps = 1099, .reg = 0x74 },
+> > +	{ .mbps =   80, .reg = 0x00 },
+> > +	{ .mbps =   90, .reg = 0x20 },
+> > +	{ .mbps =  100, .reg = 0x40 },
+> > +	{ .mbps =  110, .reg = 0x02 },
+> > +	{ .mbps =  130, .reg = 0x22 },
+> > +	{ .mbps =  140, .reg = 0x42 },
+> > +	{ .mbps =  150, .reg = 0x04 },
+> > +	{ .mbps =  170, .reg = 0x24 },
+> > +	{ .mbps =  180, .reg = 0x44 },
+> > +	{ .mbps =  200, .reg = 0x06 },
+> > +	{ .mbps =  220, .reg = 0x26 },
+> > +	{ .mbps =  240, .reg = 0x46 },
+> > +	{ .mbps =  250, .reg = 0x08 },
+> > +	{ .mbps =  270, .reg = 0x28 },
+> > +	{ .mbps =  300, .reg = 0x0a },
+> > +	{ .mbps =  330, .reg = 0x2a },
+> > +	{ .mbps =  360, .reg = 0x4a },
+> > +	{ .mbps =  400, .reg = 0x0c },
+> > +	{ .mbps =  450, .reg = 0x2c },
+> > +	{ .mbps =  500, .reg = 0x0e },
+> > +	{ .mbps =  550, .reg = 0x2e },
+> > +	{ .mbps =  600, .reg = 0x10 },
+> > +	{ .mbps =  650, .reg = 0x30 },
+> > +	{ .mbps =  700, .reg = 0x12 },
+> > +	{ .mbps =  750, .reg = 0x32 },
+> > +	{ .mbps =  800, .reg = 0x52 },
+> > +	{ .mbps =  850, .reg = 0x72 },
+> > +	{ .mbps =  900, .reg = 0x14 },
+> > +	{ .mbps =  950, .reg = 0x34 },
+> > +	{ .mbps = 1000, .reg = 0x54 },
+> > +	{ .mbps = 1050, .reg = 0x74 },
+> >  	{ .mbps = 1125, .reg = 0x16 },
+> >  	{ /* sentinel */ },
+> >  };
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+> 
+> 
+
+-- 
+Regards,
+Niklas Söderlund
