@@ -2,224 +2,75 @@ Return-Path: <SRS0=uxQs=OU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF14C67839
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 02:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0BFC04EB8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 02:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 839A220645
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 02:01:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="VJvaJfpL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 839A220645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ragnatech.se
+	by mail.kernel.org (Postfix) with ESMTP id B12642081F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 02:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544494380;
+	bh=1OSvtFaQq6P1XEzWAYQcCvidSvCuOqcP/zeyayT5R/4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bEalI1JR3JEIZQb7HycOTl0Hga2T2NhTvC1JtgIae0KKd/WDJrov6YzN5t4ZKfqEr
+	 BV/eCyn0FqWF3rDnaxVein3eOcJ6Ys0EnYZiAkaxPL+vGLgi88l1ExAEJZmxz+JTUr
+	 VUKtD/MulKjKtpdVguqyA1iHk4tluA5hvzj+SVaM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12642081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725993AbeLKCBV (ORCPT
+        id S1729546AbeLKCNA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Dec 2018 21:01:21 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38810 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbeLKCBU (ORCPT
+        Mon, 10 Dec 2018 21:13:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43178 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727485AbeLKCNA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Dec 2018 21:01:20 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p86so9554443lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 10 Dec 2018 18:01:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rpavOHoYVOD9aFk6Of4jko/V+yblDtpcBgskZ1ndeJY=;
-        b=VJvaJfpLcbajmjyXCi2NrbCmsv08Xm5n6JPmfD03XqPu+4yQdXHF6NAyy6MQ7+C0I9
-         q3cQTPKg+VWe5fjtkQ0tf+BgszTTA5rO/LHe752tWuti/wPNdLomkT5BH2ODG9KeOwI1
-         sQIhW0yu6FOKvGWGUfv/LGrYQfw3IyCHas0+vD4j/8eiJCjiOO5XHE4mfVkbbFwu1/Je
-         W5u61PdZA9h2RydvSR21XhtoZxgUKIZ+wQqt6/x19TCtCKr+bwnca4AWMODmGoAN520T
-         et6/hHcnHZQcCk+eJyvmldoIDy9EhZARNJMgjJw/yiPa8PxL3Vzmzqy8TNlGR6jOqziC
-         MQhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rpavOHoYVOD9aFk6Of4jko/V+yblDtpcBgskZ1ndeJY=;
-        b=rmha4ntdkpXH7MQ8krZ7ScITidTb+LiENu1CC09YUqUJ1FkTTS6ryWAl07qhrUH6ih
-         RRkCBtfKhkAd2W0npkYxQzwIWcUWrbQituY38hj6o5eyy+bqyR5bkTuomXjSM0n+M0dh
-         XmmpmC4U4gSGjOJMtoOtq37Nxc370tQrTYj8MBME76hkmrADRqY+n6Ic2cusAPagBGf1
-         GzGNBcCqzuIvtCxklosW92MrbOsFFjXmYPGgd3DijBKc61032mhpxTlQEXk1JH6v94n1
-         SeSUs0VtxNfgF9aDl2m4sLWU1oTvGv/1ltmPVvl6exLEwd0no7BXdD7oVIZm3LCg61I/
-         TLSQ==
-X-Gm-Message-State: AA+aEWazcWdp+HcYp42+810/2I+cRTXQCIY63V1mTDeRL8Z0cWizJf5c
-        PL0RyEmxGC3XH+koIJ4Ohp98DQ==
-X-Google-Smtp-Source: AFSGD/WYTBIr7r1joYJ8FPs7UNBtLTxYYMvdzWo9qBK93QYGxMPaBx+ER5bvTbW77gFj1hidB3PhVA==
-X-Received: by 2002:a19:d5:: with SMTP id 204mr7586683lfa.116.1544493677241;
-        Mon, 10 Dec 2018 18:01:17 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id u21-v6sm2446930lju.46.2018.12.10.18.01.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 10 Dec 2018 18:01:16 -0800 (PST)
-Date:   Tue, 11 Dec 2018 03:01:15 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: rcar-csi2: Fix PHTW table values for E3/V3M
-Message-ID: <20181211020115.GK17972@bigcity.dyn.berto.se>
-References: <1544453635-16359-1-git-send-email-jacopo+renesas@jmondi.org>
- <2063363.Wr8td8jMvS@avalon>
+        Mon, 10 Dec 2018 21:13:00 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 815F820672;
+        Tue, 11 Dec 2018 02:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544494379;
+        bh=1OSvtFaQq6P1XEzWAYQcCvidSvCuOqcP/zeyayT5R/4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wux8QDHHAwXG7XertLHqx8AaFDNfDFGgirzfr1QUFIxq8I5pkfOw1gBdR0WCw/tD3
+         q5nwhqqalXbW3MuBcOOeb5UqRswO9L8r9h3Th20hV3L8TL9OFrOpVzzIQ96xmt9CfD
+         eNHzr0+68KHq4hY/Vp0vDhEa23Ku6n2uVT4uhBa4=
+Date:   Tue, 11 Dec 2018 10:12:06 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jun Nie <jun.nie@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC/RFT 05/10] i2c: zx2967: use core helper to mark adapter
+ suspended
+Message-ID: <20181211021205.GS3987@dragon>
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+ <20181210210310.12677-6-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2063363.Wr8td8jMvS@avalon>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181210210310.12677-6-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181211020115.XV5m1LhDeJZqXgOUsNWQhY3XvY8XHDOeRjkhHgCe_yg@z>
+Message-ID: <20181211021206.qtgvsJIypF2TNKL-w-eSrtbdeBuxTeWMcCTFB8epHKc@z>
 
-Hi Laurent,
+On Mon, Dec 10, 2018 at 10:03:03PM +0100, Wolfram Sang wrote:
+> Rejecting transfers should be handled by the core. Also, this will
+> ensure proper locking which was forgotten in this open coded version
+> and make sure resume mark is set after enabling clocks (not before).
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks for your feedback,
-
-On 2018-12-10 22:16:52 +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
-> 
-> Thank you for the patch.
-> 
-> On Monday, 10 December 2018 16:53:55 EET Jacopo Mondi wrote:
-> > The PHTW selection algorithm implemented in rcsi2_phtw_write_mbps() checks
-> > for lower bound of the interval used to match the desired bandwidth. Use
-> > that in place of the currently used upport bound.
-> 
-> The rcsi2_phtw_write_mbps() function performs the following (error handling 
-> removed):
-> 
->         const struct rcsi2_mbps_reg *value;
-> 
->         for (value = values; value->mbps; value++)
->                 if (value->mbps >= mbps)
->                         break;
-> 
->         return rcsi2_phtw_write(priv, value->reg, code);
-> 
-> With this patch, an mbps value of 85 will match the second entry in the 
-> phtw_mbps_v3m_e3 table:
-> 
-> [0]	{ .mbps =   80, .reg = 0x00 },
-> [1]	{ .mbps =   90, .reg = 0x20 },
-> ...
-> 
-> The datasheet however documents the range 80-89 to map to 0x00.
-> 
-> What am I missing ?
-
-I'm afraid you are missing a issue with the original implementation of 
-the rcar-csi2 driver (my fault). The issue you point out is a problem 
-with the current freq selection logic not the tables themself which 
-needs to be corrected.
-
-This patch aligns the table with the other tables in the driver and is 
-sound. A patch (Jacopo care to submit it?) is needed to resolve the 
-faulty logic in the driver. It should select the range according to 
-Laurents findings and not the range above it as the current code does.
-
-> 
-> > Fixes: 10c08812fe60 ("media: rcar: rcar-csi2: Update V3M/E3 PHTW tables")
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 62 ++++++++++++-------------
-> >  1 file changed, 31 insertions(+), 31 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > b/drivers/media/platform/rcar-vin/rcar-csi2.c index
-> > 80ad906d1136..7e9cb8bcfe70 100644
-> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > @@ -152,37 +152,37 @@ static const struct rcsi2_mbps_reg
-> > phtw_mbps_h3_v3h_m3n[] = { };
-> > 
-> >  static const struct rcsi2_mbps_reg phtw_mbps_v3m_e3[] = {
-> > -	{ .mbps =   89, .reg = 0x00 },
-> > -	{ .mbps =   99, .reg = 0x20 },
-> > -	{ .mbps =  109, .reg = 0x40 },
-> > -	{ .mbps =  129, .reg = 0x02 },
-> > -	{ .mbps =  139, .reg = 0x22 },
-> > -	{ .mbps =  149, .reg = 0x42 },
-> > -	{ .mbps =  169, .reg = 0x04 },
-> > -	{ .mbps =  179, .reg = 0x24 },
-> > -	{ .mbps =  199, .reg = 0x44 },
-> > -	{ .mbps =  219, .reg = 0x06 },
-> > -	{ .mbps =  239, .reg = 0x26 },
-> > -	{ .mbps =  249, .reg = 0x46 },
-> > -	{ .mbps =  269, .reg = 0x08 },
-> > -	{ .mbps =  299, .reg = 0x28 },
-> > -	{ .mbps =  329, .reg = 0x0a },
-> > -	{ .mbps =  359, .reg = 0x2a },
-> > -	{ .mbps =  399, .reg = 0x4a },
-> > -	{ .mbps =  449, .reg = 0x0c },
-> > -	{ .mbps =  499, .reg = 0x2c },
-> > -	{ .mbps =  549, .reg = 0x0e },
-> > -	{ .mbps =  599, .reg = 0x2e },
-> > -	{ .mbps =  649, .reg = 0x10 },
-> > -	{ .mbps =  699, .reg = 0x30 },
-> > -	{ .mbps =  749, .reg = 0x12 },
-> > -	{ .mbps =  799, .reg = 0x32 },
-> > -	{ .mbps =  849, .reg = 0x52 },
-> > -	{ .mbps =  899, .reg = 0x72 },
-> > -	{ .mbps =  949, .reg = 0x14 },
-> > -	{ .mbps =  999, .reg = 0x34 },
-> > -	{ .mbps = 1049, .reg = 0x54 },
-> > -	{ .mbps = 1099, .reg = 0x74 },
-> > +	{ .mbps =   80, .reg = 0x00 },
-> > +	{ .mbps =   90, .reg = 0x20 },
-> > +	{ .mbps =  100, .reg = 0x40 },
-> > +	{ .mbps =  110, .reg = 0x02 },
-> > +	{ .mbps =  130, .reg = 0x22 },
-> > +	{ .mbps =  140, .reg = 0x42 },
-> > +	{ .mbps =  150, .reg = 0x04 },
-> > +	{ .mbps =  170, .reg = 0x24 },
-> > +	{ .mbps =  180, .reg = 0x44 },
-> > +	{ .mbps =  200, .reg = 0x06 },
-> > +	{ .mbps =  220, .reg = 0x26 },
-> > +	{ .mbps =  240, .reg = 0x46 },
-> > +	{ .mbps =  250, .reg = 0x08 },
-> > +	{ .mbps =  270, .reg = 0x28 },
-> > +	{ .mbps =  300, .reg = 0x0a },
-> > +	{ .mbps =  330, .reg = 0x2a },
-> > +	{ .mbps =  360, .reg = 0x4a },
-> > +	{ .mbps =  400, .reg = 0x0c },
-> > +	{ .mbps =  450, .reg = 0x2c },
-> > +	{ .mbps =  500, .reg = 0x0e },
-> > +	{ .mbps =  550, .reg = 0x2e },
-> > +	{ .mbps =  600, .reg = 0x10 },
-> > +	{ .mbps =  650, .reg = 0x30 },
-> > +	{ .mbps =  700, .reg = 0x12 },
-> > +	{ .mbps =  750, .reg = 0x32 },
-> > +	{ .mbps =  800, .reg = 0x52 },
-> > +	{ .mbps =  850, .reg = 0x72 },
-> > +	{ .mbps =  900, .reg = 0x14 },
-> > +	{ .mbps =  950, .reg = 0x34 },
-> > +	{ .mbps = 1000, .reg = 0x54 },
-> > +	{ .mbps = 1050, .reg = 0x74 },
-> >  	{ .mbps = 1125, .reg = 0x16 },
-> >  	{ /* sentinel */ },
-> >  };
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-> 
-> 
-
--- 
-Regards,
-Niklas Söderlund
+Acked-by: Shawn Guo <shawnguo@kernel.org>
