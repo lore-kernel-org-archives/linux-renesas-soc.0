@@ -1,84 +1,71 @@
-Return-Path: <linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Subject: [RFC/RFT 10/10] i2c: rcar: add suspend/resume support
-Date: Mon, 10 Dec 2018 22:03:08 +0100
-Message-Id: <20181210210310.12677-11-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
- linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
- linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org
+Date: Tue, 11 Dec 2018 09:58:05 +0100
+References: <20181210210033.3276054-1-arnd@arndb.de>
+In-Reply-To: <20181210210033.3276054-1-arnd@arndb.de>
+Message-ID: <CAMuHMdV9Xp6J0oiYxYn+5SxmqnOLX78rTts2E7dmH4xzLe_KTg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: shmobile: fix build regressions
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das@bp.renesas.com>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Because the adapter will be set up before every transaction anyhow, we
-just need to mark it as adapted to the I2C core.
+Hi Arnd,
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+On Mon, Dec 10, 2018 at 10:00 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> A number of Kconfig options have become available now to random ARM
+> platforms outside of ARCH_MULTIPLATFORM, which now causes Kconfig
+> warnings, and other build errors when those select options that
+> lack additonal dependencies, e.g.:
+>
+> WARNING: unmet direct dependencies detected for HAVE_ARM_ARCH_TIMER
+>   Depends on [n]: CPU_V7 [=n]
+>   Selected by [y]:
+>   - ARCH_RCAR_GEN2 [=y] && SOC_RENESAS [=y]
+>   - ARCH_R8A73A4 [=y] && SOC_RENESAS [=y] && ARM [=y]
+>
+> WARNING: unmet direct dependencies detected for SYS_SUPPORTS_EM_STI
+>   Depends on [n]: GENERIC_CLOCKEVENTS [=n]
+>   Selected by [y]:
+>   - ARCH_EMEV2 [=y] && SOC_RENESAS [=y] && ARM [=y]
+>
+> Put the old dependency on ARCH_RENESAS back for the moment to restore
+> the previous behavior.
+>
+> Fixes: 062887bf5ef7 ("ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/soc/renesas/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+> index 4d8012e1205c..68bfca6f20dd 100644
+> --- a/drivers/soc/renesas/Kconfig
+> +++ b/drivers/soc/renesas/Kconfig
+> @@ -44,7 +44,7 @@ config ARCH_RZN1
+>         bool
+>         select ARM_AMBA
+>
+> -if ARM
+> +if ARM && ARCH_RENESAS
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 254e6219e538..30cff066e0da 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -1017,10 +1017,35 @@ static int rcar_i2c_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int rcar_i2c_suspend(struct device *dev)
-+{
-+	struct rcar_i2c_priv *priv = dev_get_drvdata(dev);
-+
-+	i2c_mark_adapter_suspended(&priv->adap, true);
-+	return 0;
-+}
-+
-+static int rcar_i2c_resume(struct device *dev)
-+{
-+	struct rcar_i2c_priv *priv = dev_get_drvdata(dev);
-+
-+	i2c_mark_adapter_suspended(&priv->adap, false);
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rcar_i2c_pm_ops, rcar_i2c_suspend, rcar_i2c_resume);
-+
-+#define DEV_PM_OPS (&rcar_i2c_pm_ops)
-+#else
-+#define DEV_PM_OPS NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver rcar_i2c_driver = {
- 	.driver	= {
- 		.name	= "i2c-rcar",
- 		.of_match_table = rcar_i2c_dt_ids,
-+		.pm	= DEV_PM_OPS,
- 	},
- 	.probe		= rcar_i2c_probe,
- 	.remove		= rcar_i2c_remove,
+After a closer look, I think restricting this from ARM to ARCH_MULTI_V7
+should work, too (ARCH_MULTI_V7 selects CPU_V7, and ARCH_MULTIPLATFORM
+selects GENERIC_CLOCKEVENTS).
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
