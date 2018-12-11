@@ -1,110 +1,70 @@
 MIME-Version: 1.0
-Date: Mon, 3 Dec 2018 11:09:31 +0100
-References: <20181202193553.29704-1-marek.vasut+renesas@gmail.com>
-	<20181202193553.29704-3-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181202193553.29704-3-marek.vasut+renesas@gmail.com>
-Message-ID: <CAMuHMdUu6-OKz81n_wMMF1EMyDJFgaeL+yJ0DTXOcScUYWLP5A@mail.gmail.com>
-Subject: Re: [PATCH 03/14] gpio: pca953x: Repair multi-byte IO address
- increment on PCA9575
+Date: Tue, 11 Dec 2018 09:42:16 +0100
+References: <20181113133520.20889-1-geert+renesas@glider.be>
+	<CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
+Message-ID: <CAMuHMdWVFUGPgaChSn2K3schA0uJJVjxs2Z4FB2hb1_UdW3FiA@mail.gmail.com>
+Subject: Re: [PATCH v3] reset: Exclusive resets must be dedicated to a single
+ hardware block
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Marek Vasut <marek.vasut@gmail.com>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+To: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Auger Eric <eric.auger@redhat.com>,
+	Alex Williamson <alex.williamson@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Sun, Dec 2, 2018 at 8:36 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> The multi-byte IO on various pca953x chips requires the auto-increment bit,
-> while other chips toggle the LSbit automatically. Note that LSbit toggling
-> only alternates between two registers during the IO, it is not the same as
-> address auto-increment. The driver currently assumes that #gpios > 16 implies
-> auto-increment, while #gpios <= 16 implies LSbit toggling. This is incorrect
-> at there are chips with 16 GPIOs which require the auto-increment bit.
+Hi Mark, Rob, Frank,
 
-as there
+On Wed, Nov 28, 2018 at 10:28 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Nov 13, 2018 at 2:35 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > In some SoCs multiple hardware blocks may share a reset control.
+> > The reset control API for shared resets will only assert such a reset
+> > when the drivers for all hardware blocks agree.
+> > The exclusive reset control API still allows to assert such a reset, but
+> > that impacts all other hardware blocks sharing the reset.
+> >
+> > While the kernel doc comments clearly state that the API for shared
+> > resets applies to reset controls which are shared between hardware
+> > blocks, the exact meaning of exclusive resets is not documented.
+> > Fix the semantic ambiguity with respect to exclusive access vs.
+> > exclusive reset lines by:
+> >   1. Clarifying that exclusive resets really are intended for use with
+> >      reset controls which are dedicated to a single hardware block,
+> >   2. Ensuring that obtaining an exclusive reset control will fail if the
+> >      reset is shared by multiple hardware blocks, for both DT-based and
+> >      lookup-based reset controls.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Question from Philipp for the DT maintainers:
+> >
+> >    "I'd still like to hear the device tree maintainers' opinion on
+> >     parsing the whole DT for "resets" phandle properties to find shared
+> >     resets like this."
+>
+> Mark, Rob: Ping?
 
->
-> The PCA9575, according to NXP datasheet rev. 4.2 from 16 April 2015, section
-> 7.3 Command Register, the bit 7 in command register is the auto-increment
-> bit, which allows programming multiple registers sequentially.
->
-> Set this bit both in pca953x_gpio_set_multiple(), where it fixes the multi
-> register programming, and in pca957x_write_regs_16(), where is simplifies
+Do you have any comments about this?
+(In case you lost the link to the original patch:
+ https://lore.kernel.org/lkml/20181113133520.20889-1-geert+renesas@glider.be/).
 
-it simplifies
+This is a safeguard dependency for "[PATCH v5] vfio: platform: Add
+generic reset controller support"
+(https://lore.kernel.org/lkml/20181113131508.18246-1-geert+renesas@glider.be/).
 
-> the function. In fact, the pca957x_write_regs_16() now looks rather similar
-> to pca953x_write_regs_24() and pca953x_write_regs_16(), which is intended
-> for subsequent patches.
+Thanks!
 
-for consolidation in?
-
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  drivers/gpio/gpio-pca953x.c | 19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index 4e9c79ca69c5..479fa376bd18 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -215,13 +215,10 @@ static int pca953x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
->
->  static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
->  {
-> -       int ret;
-> -
-> -       ret = i2c_smbus_write_byte_data(chip->client, reg << 1, val[0]);
-> -       if (ret < 0)
-> -               return ret;
-> +       u32 regaddr = (reg << 1) | REG_ADDR_AI;
->
-> -       return i2c_smbus_write_byte_data(chip->client, (reg << 1) + 1, val[1]);
-> +       return i2c_smbus_write_i2c_block_data(chip->client, regaddr,
-> +                                             NBANK(chip), val);
->  }
->
->  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
-> @@ -408,6 +405,7 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
->  {
->         struct pca953x_chip *chip = gpiochip_get_data(gc);
->         int bank_shift = pca953x_bank_shift(chip);
-> +       u32 regaddr = chip->regs->output << bank_shift;
->         unsigned int bank_mask, bank_val;
->         int bank;
->         u8 reg_val[MAX_BANK];
-> @@ -426,8 +424,13 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
->                 }
->         }
->
-> -       ret = i2c_smbus_write_i2c_block_data(chip->client,
-> -                                            chip->regs->output << bank_shift,
-> +       /* PCA9575 needs address-increment on multi-byte writes */
-> +       if ((PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE) &&
-> +           (NBANK(chip) > 1)) {
-> +               regaddr |= REG_ADDR_AI;
-> +       }
-> +
-> +       ret = i2c_smbus_write_i2c_block_data(chip->client, regaddr,
->                                              NBANK(chip), reg_val);
->         if (ret)
->                 goto exit;
-> --
-> 2.18.0
->
-
-
--- 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
