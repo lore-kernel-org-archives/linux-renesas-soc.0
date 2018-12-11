@@ -1,84 +1,65 @@
-Return-Path: <linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org>
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Subject: [RFC/RFT 09/10] i2c: s3c2410: use core helper to mark adapter
- suspended
-Date: Mon, 10 Dec 2018 22:03:07 +0100
-Message-Id: <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: linux-samsung-soc@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
- linux-renesas-soc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
- Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+geert=linux-m68k.org@lists.infradead.org
+Date: Tue, 11 Dec 2018 09:16:59 +0100
+References: <CAMuHMdUgYFkYrpnpOdrE5ce-pHSUqLPPs=gheitp5sAnu=srEQ@mail.gmail.com>
+	<20181207013513.GV768@umbus.fritz.box>
+	<CAMuHMdUdPKb6go3U46fJsWdfDrx057SPem-ZDi9wOJhfaeCENQ@mail.gmail.com>
+	<20181210054928.GR4261@umbus.fritz.box>
+	<0039cd72-2ad1-529e-67b4-44f9eb318d54@gmail.com>
+In-Reply-To: <0039cd72-2ad1-529e-67b4-44f9eb318d54@gmail.com>
+Message-ID: <CAMuHMdVv0vbzydajMN_YdtNA-sB=vv8hD-X0WVVPzgktHuxa8A@mail.gmail.com>
+Subject: Re: phandles using absolute paths in DT overlays
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: David Gibson <david@gibson.dropbear.id.au>, Rob Herring <robh+dt@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Devicetree Compiler <devicetree-compiler@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Rejecting transfers should be handled by the core. Also, this will
-ensure proper locking which was forgotten in this open coded version.
+Hi Frank,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-s3c2410.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+On Mon, Dec 10, 2018 at 11:10 PM Frank Rowand <frowand.list@gmail.com> wrote:
+> On 12/9/18 9:49 PM, David Gibson wrote:
+> > On Fri, Dec 07, 2018 at 09:19:24AM +0100, Geert Uytterhoeven wrote:
+> >> Hi David,
+> >>
+> >> Thanks for your answer!
+> >>
+> >> On Fri, Dec 7, 2018 at 2:44 AM David Gibson <david@gibson.dropbear.id.au> wrote:
+> >>> On Thu, Dec 06, 2018 at 01:56:45PM +0100, Geert Uytterhoeven wrote:
+> >>>> Some early revisions of SoCs may have hardware bugs that need to be
+> >>>> fixed up in DT.  Currently we are handling this by including DTS files
+> >>>> and fixing up nodes and properties, to create different DTB files for
+> >>>> different SoC revisons (see arch/arm64/boot/dts/renesas/*es1*).
+> >>>>
+> >>>> As an alternative, I'm envisioning the use of DT overlays and the
+> >>>> fdtoverlay tool, in the hope of simplifying the generation of DTBs for
+> >>>> the various SoC/board combinations.
+> >>>>
+> >>>> Ideally, such DTBs would not contain symbols, to avoid inflating DTB
+> >>>> size.  Hence if fixup overlays would not contain symbolic references,
+> >>>> there would be no need for symbols.
+> >>>>
+> >>>> For anchors, the "&{/path/to/node@address}" syntax is working fine.
+> >>>> For phandles, while documented on
+> >>>> https://elinux.org/Device_Tree_Mysteries, and while working fine for the
+> >>>> non-overlay case, dtc seems to have issues interpreting the DTB:
+>
+> < snip >
+>
+> I have updated elinux.org with the limitation for overlays that you report
+> and that David explained.
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 2f2e28d60ef5..7c76edb25514 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -104,7 +104,6 @@ enum s3c24xx_i2c_state {
- struct s3c24xx_i2c {
- 	wait_queue_head_t	wait;
- 	kernel_ulong_t		quirks;
--	unsigned int		suspended:1;
- 
- 	struct i2c_msg		*msg;
- 	unsigned int		msg_num;
-@@ -703,9 +702,6 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	unsigned long timeout;
- 	int ret;
- 
--	if (i2c->suspended)
--		return -EIO;
--
- 	ret = s3c24xx_i2c_set_master(i2c);
- 	if (ret != 0) {
- 		dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
-@@ -1246,7 +1242,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
- {
- 	struct s3c24xx_i2c *i2c = dev_get_drvdata(dev);
- 
--	i2c->suspended = 1;
-+	i2c_mark_adapter_suspended(&i2c->adap, true);
- 
- 	if (!IS_ERR(i2c->sysreg))
- 		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
-@@ -1267,7 +1263,7 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
- 		return ret;
- 	s3c24xx_i2c_init(i2c);
- 	clk_disable(i2c->clk);
--	i2c->suspended = 0;
-+	i2c_mark_adapter_suspended(&i2c->adap, false);
- 
- 	return 0;
- }
+Thanks, LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
