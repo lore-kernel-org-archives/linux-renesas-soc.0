@@ -1,70 +1,49 @@
 MIME-Version: 1.0
-Date: Tue, 11 Dec 2018 09:42:16 +0100
-References: <20181113133520.20889-1-geert+renesas@glider.be>
-	<CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
-Message-ID: <CAMuHMdWVFUGPgaChSn2K3schA0uJJVjxs2Z4FB2hb1_UdW3FiA@mail.gmail.com>
-Subject: Re: [PATCH v3] reset: Exclusive resets must be dedicated to a single
- hardware block
+Date: Tue, 11 Dec 2018 09:16:03 +0100
+References: <20181210182154.20357-1-geert+renesas@glider.be>
+	<20181210182154.20357-4-geert+renesas@glider.be>
+	<20181210190052.admylepukreo23j3@ninjato>
+In-Reply-To: <20181210190052.admylepukreo23j3@ninjato>
+Message-ID: <CAMuHMdUXUz8+2Mher9_-x4F04qdP+o39a89t+QiwnyS8OSk1AQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] serial: sh-sci: Resume PIO in sci_rx_interrupt()
+ on DMA failure
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-	Frank Rowand <frowand.list@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Greg KH <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>, uli+renesas@fpond.eu,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
 	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Auger Eric <eric.auger@redhat.com>,
-	Alex Williamson <alex.williamson@redhat.com>
+	Linux-sh list <linux-sh@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-Hi Mark, Rob, Frank,
+Hi Wolfram,
 
-On Wed, Nov 28, 2018 at 10:28 AM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Tue, Nov 13, 2018 at 2:35 PM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > In some SoCs multiple hardware blocks may share a reset control.
-> > The reset control API for shared resets will only assert such a reset
-> > when the drivers for all hardware blocks agree.
-> > The exclusive reset control API still allows to assert such a reset, but
-> > that impacts all other hardware blocks sharing the reset.
-> >
-> > While the kernel doc comments clearly state that the API for shared
-> > resets applies to reset controls which are shared between hardware
-> > blocks, the exact meaning of exclusive resets is not documented.
-> > Fix the semantic ambiguity with respect to exclusive access vs.
-> > exclusive reset lines by:
-> >   1. Clarifying that exclusive resets really are intended for use with
-> >      reset controls which are dedicated to a single hardware block,
-> >   2. Ensuring that obtaining an exclusive reset control will fail if the
-> >      reset is shared by multiple hardware blocks, for both DT-based and
-> >      lookup-based reset controls.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Question from Philipp for the DT maintainers:
-> >
-> >    "I'd still like to hear the device tree maintainers' opinion on
-> >     parsing the whole DT for "resets" phandle properties to find shared
-> >     resets like this."
+On Mon, Dec 10, 2018 at 8:00 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+> >       if (!port_lock_held)
+> >               spin_unlock_irqrestore(&port->lock, flags);
+> > +     return -1;
 >
-> Mark, Rob: Ping?
+> -Esomething here...
+>
+> >               } else {
+> > +                     if (sci_submit_rx(s, false))
+> > +                             goto handle_pio;
+>
+> and 'sci_submit_rx() < 0' here? I think it makes it more readable that
+> this is an error case then. 'if sci_submit_rx() do_something' sounds a
+> bit like the good case if boolean logic was used.
 
-Do you have any comments about this?
-(In case you lost the link to the original patch:
- https://lore.kernel.org/lkml/20181113133520.20889-1-geert+renesas@glider.be/).
-
-This is a safeguard dependency for "[PATCH v5] vfio: platform: Add
-generic reset controller support"
-(https://lore.kernel.org/lkml/20181113131508.18246-1-geert+renesas@glider.be/).
-
-Thanks!
+Thanks, will update for v4, using -EAGAIN.
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
