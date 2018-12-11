@@ -1,125 +1,59 @@
-Return-Path: <ulf.hansson@linaro.org>
 MIME-Version: 1.0
-References: <20181205195050.4759-5-robh@kernel.org>
-In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 11 Dec 2018 10:42:35 +0100
-Message-ID: <CAPDyKFq2x=BKVc36xqyjjjh5xMZa_Ws=-wv9bwadiNkBEgmsdA@mail.gmail.com>
-Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
-To: Rob Herring <robh@kernel.org>
-Cc: DTML <devicetree@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Tero Kristo <t-kristo@ti.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 11 Dec 2018 08:42:03 +0100
+References: <1542091543-31597-1-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1542091543-31597-1-git-send-email-na-hoan@jinso.co.jp>
+Message-ID: <CAMuHMdX6rNc65oN1L4s=6NT4_yaP19vVifAgQRedbtb4uBO2aQ@mail.gmail.com>
+Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Add supports the hwmon
+ thermal sysfs
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@sang-engineering.com>,
+	Zhang Rui <rui.zhang@intel.com>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+	=?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+	Hoan Nguyen An <na-hoan@jinso.co.jp>, =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= <cv-dong@jinso.co.jp>,
+	Marek Vasut <marek.vasut@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-On Wed, 5 Dec 2018 at 20:50, Rob Herring <robh@kernel.org> wrote:
+CCing Marek, since he was recently looking into the driver
+
+On Tue, Nov 13, 2018 at 7:46 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
 >
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
+> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 >
-> For instances using of_node_cmp, this has the side effect of now using
-> case sensitive comparisons. This should not matter for any FDT based
-> system which all of these are.
+> Gen3 thermal registered by devm_thermal_zone_of_sensor_register()
+> and this function does not enable hwmon sysfs extensions.
+> This patch enables it to keep compatibility to common systems
 >
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-For the ux500 part:
-
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Kind regards
-Uffe
-
+> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
 > ---
->  drivers/clk/renesas/clk-mstp.c   |  2 +-
->  drivers/clk/ti/clkctrl.c         |  2 +-
->  drivers/clk/ti/dpll.c            |  2 +-
->  drivers/clk/ux500/u8500_of_clk.c | 10 +++++-----
->  4 files changed, 8 insertions(+), 8 deletions(-)
+>  drivers/thermal/rcar_gen3_thermal.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >
-> diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-> index 1c1768c2cc82..765175d1148a 100644
-> --- a/drivers/clk/renesas/clk-mstp.c
-> +++ b/drivers/clk/renesas/clk-mstp.c
-> @@ -280,7 +280,7 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
->                         goto found;
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> index 75786cc..ae172db 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/thermal.h>
 >
->                 /* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock */
-> -               if (!strcmp(clkspec.np->name, "zb_clk"))
-> +               if (of_node_name_eq(clkspec.np, "zb_clk"))
->                         goto found;
+>  #include "thermal_core.h"
+> +#include "thermal_hwmon.h"
 >
->                 of_node_put(clkspec.np);
-> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-> index 469f560ae1cf..40630eb950fc 100644
-> --- a/drivers/clk/ti/clkctrl.c
-> +++ b/drivers/clk/ti/clkctrl.c
-> @@ -448,7 +448,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
->         char *c;
+>  /* Register offsets */
+>  #define REG_GEN3_IRQSTR                0x04
+> @@ -429,6 +430,12 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+>                 if (ret < 0)
+>                         goto error_unregister;
 >
->         if (!(ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) &&
-> -           !strcmp(node->name, "clk"))
-> +           of_node_name_eq(node, "clk"))
->                 ti_clk_features.flags |= TI_CLK_CLKCTRL_COMPAT;
->
->         addrp = of_get_address(node, 0, NULL, NULL);
-> diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-> index 92e28af7afba..6c3329bc116f 100644
-> --- a/drivers/clk/ti/dpll.c
-> +++ b/drivers/clk/ti/dpll.c
-> @@ -410,7 +410,7 @@ static void __init of_ti_omap3_dpll_setup(struct device_node *node)
->
->         if ((of_machine_is_compatible("ti,omap3630") ||
->              of_machine_is_compatible("ti,omap36xx")) &&
-> -           !strcmp(node->name, "dpll5_ck"))
-> +            of_node_name_eq(node, "dpll5_ck"))
->                 of_ti_dpll_setup(node, &omap3_dpll5_ck_ops, &dd);
->         else
->                 of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
-> diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
-> index d5888591e1a9..18a3c4522831 100644
-> --- a/drivers/clk/ux500/u8500_of_clk.c
-> +++ b/drivers/clk/ux500/u8500_of_clk.c
-> @@ -545,21 +545,21 @@ static void u8500_clk_init(struct device_node *np)
->         for_each_child_of_node(np, child) {
->                 static struct clk_onecell_data clk_data;
->
-> -               if (!of_node_cmp(child->name, "prcmu-clock")) {
-> +               if (of_node_name_eq(child, "prcmu-clock")) {
->                         clk_data.clks = prcmu_clk;
->                         clk_data.clk_num = ARRAY_SIZE(prcmu_clk);
->                         of_clk_add_provider(child, of_clk_src_onecell_get, &clk_data);
->                 }
-> -               if (!of_node_cmp(child->name, "prcc-periph-clock"))
-> +               if (of_node_name_eq(child, "prcc-periph-clock"))
->                         of_clk_add_provider(child, ux500_twocell_get, prcc_pclk);
->
-> -               if (!of_node_cmp(child->name, "prcc-kernel-clock"))
-> +               if (of_node_name_eq(child, "prcc-kernel-clock"))
->                         of_clk_add_provider(child, ux500_twocell_get, prcc_kclk);
->
-> -               if (!of_node_cmp(child->name, "rtc32k-clock"))
-> +               if (of_node_name_eq(child, "rtc32k-clock"))
->                         of_clk_add_provider(child, of_clk_src_simple_get, rtc_clk);
->
-> -               if (!of_node_cmp(child->name, "smp-twd-clock"))
-> +               if (of_node_name_eq(child, "smp-twd-clock"))
->                         of_clk_add_provider(child, of_clk_src_simple_get, twd_clk);
+> +               /* Enable hwmon thermal sysfs */
+> +               tsc->zone->tzp->no_hwmon = false;
+> +               ret = thermal_add_hwmon_sysfs(tsc->zone);
+> +               if (ret)
+> +                       dev_err(dev, "Can't register hwmon sysfs\n");
+> +
+>                 dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
 >         }
->  }
-> --
-> 2.19.1
->
