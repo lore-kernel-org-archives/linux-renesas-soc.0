@@ -6,107 +6,118 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF81C07E85
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 08:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D92DC5CFFE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 08:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E868D2081B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 08:38:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E868D2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 0824D2081B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 08:42:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0824D2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726104AbeLKIiT (ORCPT
+        id S1726117AbeLKIma (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:38:19 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38523 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbeLKIiT (ORCPT
+        Tue, 11 Dec 2018 03:42:30 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40978 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbeLKIma (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:38:19 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d19so8129400qkg.5;
-        Tue, 11 Dec 2018 00:38:17 -0800 (PST)
+        Tue, 11 Dec 2018 03:42:30 -0500
+Received: by mail-vs1-f65.google.com with SMTP id t17so8381926vsc.8;
+        Tue, 11 Dec 2018 00:42:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tZt7QKxVXk9ndQlEI7kmMB68Fy8IDJAWcTf8yAG5W+4=;
-        b=MGhQVXkzXH0fDY566J3Ba7cBHXiyNIjdMIa3CqQYwpj/LkMY3pNDrJH/2gCZ6fqYI1
-         YIx3qOMYjuf5R/jMHc+gZqdB7qXLTk/jYk20QIElY2GdR+3hl2r48XRw+qKB2eb58b7j
-         RpWDEhxQK6blgWjnfRPcFcGvnIZN/p4ykPAokQra2ZIV/EXIsuhtJaKFEesmGQT87yhc
-         Xl/j3w/Gc/ywKI4psaBuUafBff74ylmdu38TII2dq1zBu8BfUjTrZeKztq+U1Z3MzQM5
-         o4HkU0w3i+18A0OFX0i/VGK9oIvj8pXHERO656eJ6rELtXiKeY2PQwk0j4wv2+MK8yNB
-         HYAQ==
-X-Gm-Message-State: AA+aEWYjKT25rUOgppnx0LXKdvZ5ldapbgoY/bnor5JDIfPcgby6HENN
-        2bUZGJ8nZ11hh8oGV+KXPJHcCvJn8N+5YkDAM6M=
-X-Google-Smtp-Source: AFSGD/W4aEcrD6QZzZoZGoWYtbEtuO2qHaeg97uaWmSyydk2whcAldtkxB1xFf2U1yfUmVU0FUrsnuiYSjjzzIYoyr8=
-X-Received: by 2002:a37:324a:: with SMTP id y71mr13926330qky.291.1544517497058;
- Tue, 11 Dec 2018 00:38:17 -0800 (PST)
+        bh=eOCeScDpJ+HUcMzfhApTNK8g4kv95VN6HJPOAn8Lzy4=;
+        b=Z8bREjKYkTitZKdoVyzk6Aw221K/zp3DXRJAg9WWifFAJJ8lQm1f81/n7MOW61MT9l
+         bV0ldBEBGkZhzR8PM4hxxKJU++nzeilOQHhrkLRPa/Jf0e/wnBs9owMge7ZZL9/DXUhe
+         NEoKlUjwPYyNJJehZHn5hJ9pKVwtmKqgHj0epijUXJ3ld9psTGX7snaDISkLHk7a11lQ
+         mt21GEtIZX+dXOgyqvLEJ1bAzJL+S2Tuq/btC+qjTfcVimMNPQxGF7xZqQLT3vaSJ/eA
+         GpiPlA/6kbIqEfHKl76XZJrbXkRrQKb8b1s1wDSSKYUnBTGtcZsvGDhdbmrOy3n96IJq
+         quyw==
+X-Gm-Message-State: AA+aEWYOzAi8r8qZGr86HhL6+5X8OvWBNWxSCm6T36cT9iEWyyhLVg8T
+        5K7fTT+SmEYh3L30UsdtIrxp4nP/FcDy/lLi2nc=
+X-Google-Smtp-Source: AFSGD/VxnisM+g0tv4kR4ePqy60E12ufWlEyo3Kf/AAeVrCadES59ihg7kYGihpNthCVhEX5HFL9Vnhriw6egvczEIM=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr6357416vsi.63.1544517748420;
+ Tue, 11 Dec 2018 00:42:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20181210210033.3276054-1-arnd@arndb.de> <CAMuHMdU0fp5p1QoD=h6v=RW9V5NgMvhz-NpoK5_8NNsnMKtjhA@mail.gmail.com>
-In-Reply-To: <CAMuHMdU0fp5p1QoD=h6v=RW9V5NgMvhz-NpoK5_8NNsnMKtjhA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 11 Dec 2018 09:37:59 +0100
+References: <20181113133520.20889-1-geert+renesas@glider.be> <CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdX-X6dTJi6WgRKYVs-w+rxO3cJP8kX5AZwOXNO4qpgcqQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 11 Dec 2018 09:42:16 +0100
 Message-ID:
- <CAK8P3a3d_jTHrgfh1tv-FB2hj5oHf-s+VzJwCY3F8-_yFuQx-g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: fix build regressions
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
+ <CAMuHMdWVFUGPgaChSn2K3schA0uJJVjxs2Z4FB2hb1_UdW3FiA@mail.gmail.com>
+Subject: Re: [PATCH v3] reset: Exclusive resets must be dedicated to a single
+ hardware block
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        biju.das@bp.renesas.com, fabrizio.castro@bp.renesas.com,
-        yoshihiro.shimoda.uh@renesas.com,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-Message-ID: <20181211083759.OoTuS28SV-TK2Xjx5VyLfcDGSkwLw8ApQq5ZAe41NNA@z>
+Message-ID: <20181211084216.9P3aPc321m80Lr-qtFOHZ-cx8jv4rYTFpfeTVsOI-p0@z>
 
-On Tue, Dec 11, 2018 at 9:22 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Arnd,
->
-> On Mon, Dec 10, 2018 at 10:00 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > A number of Kconfig options have become available now to random ARM
-> > platforms outside of ARCH_MULTIPLATFORM, which now causes Kconfig
-> > warnings, and other build errors when those select options that
-> > lack additonal dependencies, e.g.:
+Hi Mark, Rob, Frank,
+
+On Wed, Nov 28, 2018 at 10:28 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, Nov 13, 2018 at 2:35 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > In some SoCs multiple hardware blocks may share a reset control.
+> > The reset control API for shared resets will only assert such a reset
+> > when the drivers for all hardware blocks agree.
+> > The exclusive reset control API still allows to assert such a reset, but
+> > that impacts all other hardware blocks sharing the reset.
 > >
-> > WARNING: unmet direct dependencies detected for HAVE_ARM_ARCH_TIMER
-> >   Depends on [n]: CPU_V7 [=n]
-> >   Selected by [y]:
-> >   - ARCH_RCAR_GEN2 [=y] && SOC_RENESAS [=y]
-> >   - ARCH_R8A73A4 [=y] && SOC_RENESAS [=y] && ARM [=y]
+> > While the kernel doc comments clearly state that the API for shared
+> > resets applies to reset controls which are shared between hardware
+> > blocks, the exact meaning of exclusive resets is not documented.
+> > Fix the semantic ambiguity with respect to exclusive access vs.
+> > exclusive reset lines by:
+> >   1. Clarifying that exclusive resets really are intended for use with
+> >      reset controls which are dedicated to a single hardware block,
+> >   2. Ensuring that obtaining an exclusive reset control will fail if the
+> >      reset is shared by multiple hardware blocks, for both DT-based and
+> >      lookup-based reset controls.
 > >
-> > WARNING: unmet direct dependencies detected for SYS_SUPPORTS_EM_STI
-> >   Depends on [n]: GENERIC_CLOCKEVENTS [=n]
-> >   Selected by [y]:
-> >   - ARCH_EMEV2 [=y] && SOC_RENESAS [=y] && ARM [=y]
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Question from Philipp for the DT maintainers:
 > >
-> > Put the old dependency on ARCH_RENESAS back for the moment to restore
-> > the previous behavior.
+> >    "I'd still like to hear the device tree maintainers' opinion on
+> >     parsing the whole DT for "resets" phandle properties to find shared
+> >     resets like this."
 >
-> Thanks, the build bots must be lazy or overloaded these days...
-> The ARM selects are indeed more troublesome than the ARM64 ones.
->
-> BTW, did you see issues with the ARM64 Kconfig symbol move too,
-> or is that mitigated by ARM64 always selecting GENERIC_CLOCKEVENTS?
+> Mark, Rob: Ping?
 
-I restarted my randconfig builder yesterday, and after a few hundred builds
-on each architecture, I did not see any arm64 failures, so it's
-probably ok there.
-I have a clean build now (about to rebase to today's linux-next, which will
-surely change that).
+Do you have any comments about this?
+(In case you lost the link to the original patch:
+ https://lore.kernel.org/lkml/20181113133520.20889-1-geert+renesas@glider.be/).
 
-> > Fixes: 062887bf5ef7 ("ARM: shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This is a safeguard dependency for "[PATCH v5] vfio: platform: Add
+generic reset controller support"
+(https://lore.kernel.org/lkml/20181113131508.18246-1-geert+renesas@glider.be/).
 
-Thanks.
+Thanks!
 
-     Arnd
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
