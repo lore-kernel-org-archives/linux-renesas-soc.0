@@ -1,100 +1,56 @@
-Return-Path: <linux-renesas-soc-owner@vger.kernel.org>
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53016 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbeLKJbO (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:31:14 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so784592wml.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 01:31:13 -0800 (PST)
-Subject: Re: [PATCH v2] nvmem: check invalid number of bytes in
+Return-Path: <biju.das@bp.renesas.com>
+From: Biju Das <biju.das@bp.renesas.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+CC: Simon Horman <horms@verge.net.au>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Alessandro Zummo
+	<a.zummo@towertech.it>, Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] nvmem: check invalid number of bytes in
  nvmem_{read,write}()
-To: Biju Das <biju.das@bp.renesas.com>
-Cc: Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-        <linux-renesas-soc@vger.kernel.org>
+Date: Tue, 11 Dec 2018 08:16:57 +0000
+Message-ID: 
+ <OSBPR01MB2103C137219528C37165A317B8A60@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 References: <1544455701-5720-1-git-send-email-biju.das@bp.renesas.com>
  <eb72f5b7-2920-b3b5-8387-d2b6b2d310cd@linaro.org>
- <OSBPR01MB2103C137219528C37165A317B8A60@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <ca6c023b-e8a2-09c8-6931-99f9d7b70afe@linaro.org>
-Date: Tue, 11 Dec 2018 09:31:10 +0000
-MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB2103C137219528C37165A317B8A60@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <eb72f5b7-2920-b3b5-8387-d2b6b2d310cd@linaro.org>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-renesas-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 List-ID: <linux-renesas-soc.vger.kernel.org>
 
-
-
-On 11/12/18 08:16, Biju Das wrote:
-> Hi Srini,
-> 
-> Thanks for the feedback.
-> 
->> Subject: Re: [PATCH v2] nvmem: check invalid number of bytes in
->> nvmem_{read,write}()
->>
->>
->>
->> On 10/12/18 15:28, Biju Das wrote:
->>> +/* Stop the user from writing */
->>> +if (offset >= nvmem->size)
->>> +return -ENOSPC;
->>> +
->> This should be "return -EFBIG" to make utilities like dd or sh happy.
->>
->> Look at 38b0774c0598c ("nvmem: core: return EFBIG on out-of-range
->> write") for more info.
-> 
-> return -ENOSPC also make dd or sh happy. Please let me know which is appropriate by the below results. Based on your feedback, If needed, I can send a patch with "return -EFBIG"
-> 
-
-Lets stay with -EFBIG for now! given the fact that it was already in the 
-old code!
-
-
---srini
-
-> With -ENOSPC
-> ------------
-> dd if=1.bin of=/sys/bus/nvmem/devices/pcf85x63-0/nvmem bs=1 count=2
-> dd: writing '/sys/bus/nvmem/devices/pcf85x63-0/nvmem': No space left on device
-> 2+0 records in
-> 1+0 records out
-> 
-> echo "1234" > /sys/bus/nvmem/devices/pcf85x63-0/nvmem
-> -sh: echo: write error: No space left on device
-> 
-> with -EFBIG
-> ------------
-> dd if=1.bin of=/sys/bus/nvmem/devices/pcf85x63-0/nvmem bs=1 count
-> dd: writing '/sys/bus/nvmem/devices/pcf85x63-0/nvmem': File too large
-> 2+0 records in
-> 1+0 records out
-> 
-> echo "1234" > /sys/bus/nvmem/devices/pcf85x63-0/nvmem
-> -sh: echo: write error: File too large
-> 
-> Regards,
-> Biju
-> 
-> 
-> 
-> 
-> [https://www2.renesas.eu/media/email/unicef.jpg]
-> 
-> This Christmas, instead of sending out cards, Renesas Electronics Europe have decided to support Unicef with a donation. For further details click here<https://www.unicef.org/> to find out about the valuable work they do, helping children all over the world.
-> We would like to take this opportunity to wish you a Merry Christmas and a prosperous New Year.
-> 
-> 
-> 
-> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
-> 
+SGkgU3JpbmksDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggdjJdIG52bWVtOiBjaGVjayBpbnZhbGlkIG51bWJlciBvZiBieXRlcyBpbg0KPiBudm1l
+bV97cmVhZCx3cml0ZX0oKQ0KPg0KPg0KPg0KPiBPbiAxMC8xMi8xOCAxNToyOCwgQmlqdSBEYXMg
+d3JvdGU6DQo+ID4gKy8qIFN0b3AgdGhlIHVzZXIgZnJvbSB3cml0aW5nICovDQo+ID4gK2lmIChv
+ZmZzZXQgPj0gbnZtZW0tPnNpemUpDQo+ID4gK3JldHVybiAtRU5PU1BDOw0KPiA+ICsNCj4gVGhp
+cyBzaG91bGQgYmUgInJldHVybiAtRUZCSUciIHRvIG1ha2UgdXRpbGl0aWVzIGxpa2UgZGQgb3Ig
+c2ggaGFwcHkuDQo+DQo+IExvb2sgYXQgMzhiMDc3NGMwNTk4YyAoIm52bWVtOiBjb3JlOiByZXR1
+cm4gRUZCSUcgb24gb3V0LW9mLXJhbmdlDQo+IHdyaXRlIikgZm9yIG1vcmUgaW5mby4NCg0KcmV0
+dXJuIC1FTk9TUEMgYWxzbyBtYWtlIGRkIG9yIHNoIGhhcHB5LiBQbGVhc2UgbGV0IG1lIGtub3cg
+d2hpY2ggaXMgYXBwcm9wcmlhdGUgYnkgdGhlIGJlbG93IHJlc3VsdHMuIEJhc2VkIG9uIHlvdXIg
+ZmVlZGJhY2ssIElmIG5lZWRlZCwgSSBjYW4gc2VuZCBhIHBhdGNoIHdpdGggInJldHVybiAtRUZC
+SUciDQoNCldpdGggLUVOT1NQQw0KLS0tLS0tLS0tLS0tDQpkZCBpZj0xLmJpbiBvZj0vc3lzL2J1
+cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYzLTAvbnZtZW0gYnM9MSBjb3VudD0yDQpkZDogd3JpdGlu
+ZyAnL3N5cy9idXMvbnZtZW0vZGV2aWNlcy9wY2Y4NXg2My0wL252bWVtJzogTm8gc3BhY2UgbGVm
+dCBvbiBkZXZpY2UNCjIrMCByZWNvcmRzIGluDQoxKzAgcmVjb3JkcyBvdXQNCg0KZWNobyAiMTIz
+NCIgPiAvc3lzL2J1cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYzLTAvbnZtZW0NCi1zaDogZWNobzog
+d3JpdGUgZXJyb3I6IE5vIHNwYWNlIGxlZnQgb24gZGV2aWNlDQoNCndpdGggLUVGQklHDQotLS0t
+LS0tLS0tLS0NCmRkIGlmPTEuYmluIG9mPS9zeXMvYnVzL252bWVtL2RldmljZXMvcGNmODV4NjMt
+MC9udm1lbSBicz0xIGNvdW50DQpkZDogd3JpdGluZyAnL3N5cy9idXMvbnZtZW0vZGV2aWNlcy9w
+Y2Y4NXg2My0wL252bWVtJzogRmlsZSB0b28gbGFyZ2UNCjIrMCByZWNvcmRzIGluDQoxKzAgcmVj
+b3JkcyBvdXQNCg0KZWNobyAiMTIzNCIgPiAvc3lzL2J1cy9udm1lbS9kZXZpY2VzL3BjZjg1eDYz
+LTAvbnZtZW0NCi1zaDogZWNobzogd3JpdGUgZXJyb3I6IEZpbGUgdG9vIGxhcmdlDQoNClJlZ2Fy
+ZHMsDQpCaWp1DQoNCg0KDQoNCltodHRwczovL3d3dzIucmVuZXNhcy5ldS9tZWRpYS9lbWFpbC91
+bmljZWYuanBnXQ0KDQpUaGlzIENocmlzdG1hcywgaW5zdGVhZCBvZiBzZW5kaW5nIG91dCBjYXJk
+cywgUmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgaGF2ZSBkZWNpZGVkIHRvIHN1cHBvcnQgVW5p
+Y2VmIHdpdGggYSBkb25hdGlvbi4gRm9yIGZ1cnRoZXIgZGV0YWlscyBjbGljayBoZXJlPGh0dHBz
+Oi8vd3d3LnVuaWNlZi5vcmcvPiB0byBmaW5kIG91dCBhYm91dCB0aGUgdmFsdWFibGUgd29yayB0
+aGV5IGRvLCBoZWxwaW5nIGNoaWxkcmVuIGFsbCBvdmVyIHRoZSB3b3JsZC4NCldlIHdvdWxkIGxp
+a2UgdG8gdGFrZSB0aGlzIG9wcG9ydHVuaXR5IHRvIHdpc2ggeW91IGEgTWVycnkgQ2hyaXN0bWFz
+IGFuZCBhIHByb3NwZXJvdXMgTmV3IFllYXIuDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNzIEV1
+cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1Y2tp
+bmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVzIHVu
+ZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
