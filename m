@@ -2,111 +2,140 @@ Return-Path: <SRS0=uxQs=OU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 242A6C5CFFE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6A0C07E85
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 16:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE5902084E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 16:12:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6C9020855
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Dec 2018 16:44:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Ky0dS2ep"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE5902084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OcNWtioe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C9020855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbeLKQMd (ORCPT
+        id S1727914AbeLKQoX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:12:33 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42918 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727750AbeLKQMa (ORCPT
+        Tue, 11 Dec 2018 11:44:23 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38765 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727400AbeLKQoX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:12:30 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so11186705lfh.9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Dec 2018 08:12:29 -0800 (PST)
+        Tue, 11 Dec 2018 11:44:23 -0500
+Received: by mail-it1-f193.google.com with SMTP id h65so4867916ith.3;
+        Tue, 11 Dec 2018 08:44:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=46fwj8YcReytyr8AzNJalj0w3E7iTBrGitUtFeTjOPE=;
-        b=Ky0dS2eppraBn2KnpC1qjPAh/AjlhYGQLxxeTYeneUGny5x9lZXhrwS4A/fkg/rt98
-         Rlb9wRkB71JB40Fo+mNE49f2g/I6TSgnptNM+ajWyeapn4JHGJ8GrxCLW+3kdlqNpIfJ
-         mNhQ3iVTgvqPe3EPJlGX8MhKMtMxb3bCAsomMGSWl/1fByFbgHhU7DCH0XBm3MejCT0k
-         evuimCJU+Mi3W1UsCY2Ph6EiiOJjfuxcsQElBf/JvZSETouFvxIbW6dpZlSTPPJml3Ga
-         AEwhb7cAPWF8c4s9xYTA8dtuECwtHODeQKTOohTgXMP3WPhrfkT243H/mJ3vswDWL26V
-         11wQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DwyPkcVNlLZnkFsH0IBvFgeaelucitRwz/cnxhMyq00=;
+        b=OcNWtioevuvc/8nzGgqOOYaIHMqoBT6YJ2NyNbql7RMuuxhL4oV92ktm8oRmQnUeIG
+         wu+lLgmvB9xMGXFdQsHo8M2mx3yzMuu2aqVH3iec43sjq6rrdbM2cEGBu5pw3bfMPnXE
+         m3gXAzkzLSipA7Njzg8vduGttGwauGeMi3MGnkoFa0iBjSoQWuJ4lfDEshT+KDbTBz20
+         uswk+V0hIyoh40gz15/V25colYk6DlMJ5dVylZU5NRN3fhBYBhESBBcaylxHsR6U83qp
+         TIHpswi79HBhZWqQX3MD8RU2zYCizeJYDdZ6ynCTDzUqZnQ+ggrITAvsleIPYG2nEg23
+         PiuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=46fwj8YcReytyr8AzNJalj0w3E7iTBrGitUtFeTjOPE=;
-        b=BkTuqepNzF58HWmXXAu/0RZRmHj978C0af5MIvsnbV+AA+nnvbZOKtvGPhPzqP2e5L
-         h4sKJbLdvfKtZzNJPRDaaaG8SFgWyABnd+416nCXkk2dNTysFbuGIQD7yCn6+W2Vcbiv
-         YsHB/nryZoQ0Qg0fiKTqnoMIhfu4YS7aYDf4+H9mwEMdm4xmA5EurPJ65WTaYFAxKa0d
-         Wio4aohIWm0VxYtBAFKfa7nCD+SF84oXRf0MH/ocV/RbBRsICwm6HG+1ON+/nEKEJ/UC
-         Y57amh2JGapvjQ76YnRL9Og8As3JX61+Uq3COImJvBFbACDBh5mNKEOJC+1bHXEH/M+4
-         J4JQ==
-X-Gm-Message-State: AA+aEWYOdBb8YqLvyj3cuQzYhUQpjn5HpkVn59PcBsMT/Gs3MKQJMvlM
-        L5I+R5MLcHvG7ghZHYf9292IpA==
-X-Google-Smtp-Source: AFSGD/UgLMwKeoI+dl+LQVnzZ6eERlBXMBNc0a0heIbI8e5mFeq7mPyxDmmCYjO4afhdcvUs62pnNg==
-X-Received: by 2002:a19:200b:: with SMTP id g11mr9348983lfg.58.1544544748652;
-        Tue, 11 Dec 2018 08:12:28 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id k21-v6sm2748410ljc.15.2018.12.11.08.12.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 08:12:27 -0800 (PST)
-Date:   Tue, 11 Dec 2018 08:04:46 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     arm@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Bindings Updates for v4.21
-Message-ID: <20181211160446.oby2mmxv22wkwcva@localhost>
-References: <cover.1544124873.git.horms+renesas@verge.net.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DwyPkcVNlLZnkFsH0IBvFgeaelucitRwz/cnxhMyq00=;
+        b=qFzEIfVpQ38Z9fV0yhdph44OB8WMsETkP2UQWHrbzDLKw3h6yKjUqLSVS7HXilMdMk
+         GHzWO7fQoRh5wuRXSVfmBwvxG90NPw1ymPHSeBAm050JEV1Hi4wMcu6x09/yz8ba+HaR
+         yhSHqnmXZ5O4OISvejrFnvTnm8ITeyMeRx5tMhA5iJH9HFVAwXtH76WeTMvQlRe+bh7v
+         Z8fWf8m3VirSexNHM5PJ0I8jCOp6BcJUwkQ+fGrEfxViyYgjjXiiRFDi0D6jSmJiB4lZ
+         r5iEQgpp78dAsd2xeSi0n0jHGSn8H4Vs891xnMGRh/AVzrl8tGD32g7GaP2idoMWRRq7
+         KfSA==
+X-Gm-Message-State: AA+aEWZHH1CVTMeLsDJ3bdsXbSyxs37M7UvcpZrLBEThJDQPoCjkh3Ks
+        /PP9RgyacGheyWJzuSzRQjlt7tKCLGEmxufqnXY=
+X-Google-Smtp-Source: AFSGD/X4y0pidDxX9ZH+JY5Xsua9IQ/rzkuT99x+4G01MX0m+PX+crm4EEO57sDth6obt0Ty02P5KX6ZJWvl5R5g/Bg=
+X-Received: by 2002:a24:a701:: with SMTP id a1mr2731659itf.7.1544546661714;
+ Tue, 11 Dec 2018 08:44:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1544124873.git.horms+renesas@verge.net.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com> <20181210210310.12677-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181210210310.12677-5-wsa+renesas@sang-engineering.com>
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+Date:   Tue, 11 Dec 2018 11:44:01 -0500
+Message-ID: <CAC=U0a2cvdhAdBPyowR3i=wpnONDHjBWMZ56D_pJYfhYL=DTbg@mail.gmail.com>
+Subject: Re: [RFC/RFT 04/10] i2c: brcmstb: use core helper to mark adapter suspended
+To:     wsa+renesas@sang-engineering.com
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        hdegoede@redhat.com, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 01:59:10PM -0800, Simon Horman wrote:
-> Hi Olof, Hi Kevin, Hi Arnd,
-> 
-> Please consider these Renesas ARM based SoC DT bindings updates for v4.21.
-> 
-> 
-> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
-> 
->   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-dt-bindings-for-v4.21
-> 
-> for you to fetch changes up to 74791d15fd7c405511e3cc097c2f043171ecbdb0:
-> 
->   dt-bindings: arm: renesas: Move 'renesas,prr' binding to its own doc (2018-12-06 11:33:22 -0800)
-> 
-> ----------------------------------------------------------------
-> Renesas ARM Based SoC DT Bindings Updates for v4.21
-> 
-> * Move 'renesas,prr' binding to its own document
->   - Prepration for converting board-level bindings to json-schema
-> 
-> * Document iW-RainboW-G20D-Qseven-RZG1N board and iWave RZ/G1N SOM
+On Mon, Dec 10, 2018 at 4:03 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Rejecting transfers should be handled by the core.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Merged into next/dt. thanks!
+Reviewed-by: Kamal Dasu <kdasu.kdev@gmail.com>
 
-
--Olof
+> ---
+>  drivers/i2c/busses/i2c-brcmstb.c | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
+> index 826d32049996..05c822e5a3f6 100644
+> --- a/drivers/i2c/busses/i2c-brcmstb.c
+> +++ b/drivers/i2c/busses/i2c-brcmstb.c
+> @@ -170,7 +170,6 @@ struct brcmstb_i2c_dev {
+>         struct bsc_regs *bsc_regmap;
+>         struct i2c_adapter adapter;
+>         struct completion done;
+> -       bool is_suspended;
+>         u32 clk_freq_hz;
+>         int data_regsz;
+>  };
+> @@ -467,9 +466,6 @@ static int brcmstb_i2c_xfer(struct i2c_adapter *adapter,
+>         int xfersz = brcmstb_i2c_get_xfersz(dev);
+>         u32 cond, cond_per_msg;
+>
+> -       if (dev->is_suspended)
+> -               return -EBUSY;
+> -
+>         /* Loop through all messages */
+>         for (i = 0; i < num; i++) {
+>                 pmsg = &msgs[i];
+> @@ -689,10 +685,7 @@ static int brcmstb_i2c_suspend(struct device *dev)
+>  {
+>         struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>
+> -       i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+> -       i2c_dev->is_suspended = true;
+> -       i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+> -
+> +       i2c_mark_adapter_suspended(&i2c_dev->adapter, true);
+>         return 0;
+>  }
+>
+> @@ -700,10 +693,8 @@ static int brcmstb_i2c_resume(struct device *dev)
+>  {
+>         struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+>
+> -       i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+>         brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
+> -       i2c_dev->is_suspended = false;
+> -       i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+> +       i2c_mark_adapter_suspended(&i2c_dev->adapter, false);
+>
+>         return 0;
+>  }
+> --
+> 2.11.0
+>
