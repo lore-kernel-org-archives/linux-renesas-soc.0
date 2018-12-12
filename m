@@ -6,58 +6,60 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC7CC65BAE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 03:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72891C65BAF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 03:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088BF20839
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 03:13:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A5220855
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 03:20:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="JF0r8qEK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088BF20839
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="U28ZWrHV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13A5220855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbeLLDN7 (ORCPT
+        id S1726220AbeLLDU1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 22:13:59 -0500
-Received: from mail-eopbgr1400109.outbound.protection.outlook.com ([40.107.140.109]:28352
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        Tue, 11 Dec 2018 22:20:27 -0500
+Received: from mail-eopbgr1410128.outbound.protection.outlook.com ([40.107.141.128]:50294
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726220AbeLLDN7 (ORCPT
+        id S1726211AbeLLDU1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 22:13:59 -0500
+        Tue, 11 Dec 2018 22:20:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FZt1FMKt7ms3ZiMPXacjOtHDskuiVfG8Ve0Oc5/okfM=;
- b=JF0r8qEKcvgfZLNLJIHMxtVL+h5tU0PZ7fCg0m3K4/ZxuW0fUTBP2b3tly1N+WHFEX3SKLPaCihn2I4KdiCDGx7IP/uJUEz0/nyOzX7N4DJaiYLEf+/1xr1hg0QIobruVlq7B6JntV9LjCmJVjq3OT6s1XttdUGwzgmLHfBp7Qw=
+ bh=wKj+PIdBrbvgiRVfituYBa3urhrxY28oBCEgWtcz5uo=;
+ b=U28ZWrHVkHIv48Szho4yHoXvS6xgHYqYu+6DsOSIIGF90GkgUNz30k1iJHRybAlKyvPP7Xb/CFFtFTNScM0B6489Wsr0zKcCsdw/QujH+fYTiUPvocAu/UVlqACBqn8IJDU0FCB6lstZS/xiXgPswRYfUFbgbI+RFbR53KaxpZY=
 Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com (52.134.243.14) by
- OSBPR01MB2149.jpnprd01.prod.outlook.com (52.134.241.146) with Microsoft SMTP
+ OSBPR01MB3063.jpnprd01.prod.outlook.com (52.134.254.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Wed, 12 Dec 2018 03:13:54 +0000
+ 15.20.1425.19; Wed, 12 Dec 2018 03:19:40 +0000
 Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com
  ([fe80::c070:7362:375f:74c5]) by OSBPR01MB2293.jpnprd01.prod.outlook.com
  ([fe80::c070:7362:375f:74c5%6]) with mapi id 15.20.1404.026; Wed, 12 Dec 2018
- 03:13:54 +0000
+ 03:19:40 +0000
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
         <u.kleine-koenig@pengutronix.de>
-CC:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
         "linux-renesas-soc@vger.kernel.org" 
         <linux-renesas-soc@vger.kernel.org>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: RE: pwm: rcar: improve calculation of divider
-Thread-Topic: pwm: rcar: improve calculation of divider
-Thread-Index: AQHUjna/G/BVsIdLvUaL7PU+E+TEPaV25fgAgACHXuCAADOcgIAC0yXQ
-Date:   Wed, 12 Dec 2018 03:13:54 +0000
-Message-ID: <OSBPR01MB2293D189DCEA1EFB89A1AC34D8A70@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low
+ level
+Thread-Topic: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low
+ level
+Thread-Index: AQHUjgdTBerpWTn1CECvaR8ln4XzYaVy/jaAgARsCnCAADl6gIAC0feg
+Date:   Wed, 12 Dec 2018 03:19:40 +0000
+Message-ID: <OSBPR01MB2293BE0147A4A535136BDF82D8A70@OSBPR01MB2293.jpnprd01.prod.outlook.com>
 References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20181207214932.xckuuarcka733v7y@pengutronix.de> <1828832.OCLkmioh6N@avalon>
- <OSBPR01MB2293ED3087627127A1A884A4D8A50@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <20181210080413.6367nhxhoj6ecqhl@pengutronix.de>
-In-Reply-To: <20181210080413.6367nhxhoj6ecqhl@pengutronix.de>
+ <1544171373-29618-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20181207091337.mvrzzbgqa77adgbd@pengutronix.de>
+ <OSBPR01MB229351E3EC1B66339E6C9635D8A50@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <20181210081103.zxayrzpbxiuvv6hb@pengutronix.de>
+In-Reply-To: <20181210081103.zxayrzpbxiuvv6hb@pengutronix.de>
 Accept-Language: ja-JP, en-US
 Content-Language: ja-JP
 X-MS-Has-Attach: 
@@ -66,32 +68,32 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
 x-originating-ip: [211.11.155.140]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB2149;20:AyucrJvvRlrcWKlK9rJ6SE/+9+FhwpuD3typV6AhzSLqOxxAo9kNMTupANEKP9PCuxGJ7w9aVtglmRB9n/d9+UmckMvSjpsfQ1RrJZBDDT4Ng8bGA2sivmKywUnf21oOjT6MRdzJcyMzFafaUkjgORUsiY+cjaI5huxVUQ8ykjU=
+x-microsoft-exchange-diagnostics: 1;OSBPR01MB3063;20:ZSSVAMZWTbivUjoF39xwxFDzocR805ve9e2xB3aq4WxLT6g4h2wImRY4mcYRnlbndLp/ZSWsp0b5pkRm3l9vNWS0IhVf6j1MvJ/adhV6w3y9sN+UYcT4lCK9ORlaLFYArlDM63aZwozfoN2yiGl3VDm0yHX17yyB0KltoqJgJ1w=
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 5b0905f4-a693-4b9b-ced2-08d65fdfd912
+x-ms-office365-filtering-correlation-id: 8a77aa0c-d8ac-4073-0c0d-08d65fe0a782
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2149;
-x-ms-traffictypediagnostic: OSBPR01MB2149:
-x-microsoft-antispam-prvs: <OSBPR01MB2149C4CC821A5E6451DB4DF4D8A70@OSBPR01MB2149.jpnprd01.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB3063;
+x-ms-traffictypediagnostic: OSBPR01MB3063:
+x-microsoft-antispam-prvs: <OSBPR01MB3063363B34E69E319A309986D8A70@OSBPR01MB3063.jpnprd01.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231472)(944501520)(4982022)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:OSBPR01MB2149;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2149;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(944501520)(4982022)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:OSBPR01MB3063;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB3063;
 x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39860400002)(366004)(346002)(376002)(189003)(199004)(446003)(25786009)(106356001)(11346002)(476003)(478600001)(66066001)(105586002)(3846002)(6116002)(99286004)(966005)(33656002)(93886005)(316002)(54906003)(2906002)(71200400001)(71190400001)(97736004)(561924002)(6916009)(6436002)(7736002)(74316002)(486006)(256004)(5660300001)(305945005)(229853002)(7696005)(26005)(345774005)(4326008)(6246003)(6506007)(102836004)(8936002)(81156014)(39060400002)(81166006)(8676002)(9686003)(68736007)(86362001)(76176011)(53936002)(186003)(6306002)(14454004)(55016002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2149;H:OSBPR01MB2293.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(39860400002)(396003)(136003)(199004)(189003)(55674003)(305945005)(7696005)(33656002)(256004)(74316002)(14444005)(5660300001)(486006)(66066001)(446003)(105586002)(6436002)(476003)(478600001)(6116002)(3846002)(106356001)(11346002)(86362001)(6506007)(966005)(26005)(229853002)(102836004)(186003)(316002)(25786009)(6916009)(2906002)(14454004)(93886005)(97736004)(71200400001)(4326008)(68736007)(76176011)(53936002)(6306002)(54906003)(8936002)(55016002)(81166006)(9686003)(81156014)(8676002)(99286004)(71190400001)(7736002)(39060400002)(66574011)(6246003);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB3063;H:OSBPR01MB2293.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: bA+woNFU6AwWHEpWahrssAMv4TXs7XFNN1U64g/zgjz7Spq36oYCnOIotFxVzKLBO+Wyj+LjDS2rKpnUucJGg/1IU77Ab7hYy/0A1N5tu7X38mYgn9WlABqpveRI6mEK+ayWVodCnearJ9Db1X13cJ9TayXthbysZTZFF1mak8CGm0bZwiZU8YeDWSFUZoEbM7d7YOiX+bhb9eEDk+1DgUcgQ+o+wy49x/eqitR8wTssHBrkSSqCLR70REjKi0NiOjZv0Ggxhwy2k9i5speiDaiE8PXfVkrc4a+yRredEnqe/fH82Xc9Tm/ljXEQDRsx
+x-microsoft-antispam-message-info: bxNUvnCblwsA55Yg8Y6VTJlJvVbP0EWmaKTj7ExivGvk3dkhpNEPBESF9LbErAFUPW/O/JXiQHFxi/HCC1gCgfHKkRDxFidzq5jJgQkw/zM7qxja38QSw6jnDRi1SBNO1TSw24l3cnjV4v+ucUlqxBxZL7ayjKXgqtYgECPscWT4WecTWhojHQ4QczgTgrsHpk3hbWnlIFk5hFF3WlXUQlbOBJUKORyVKdSYx1sUiM2Bf8NFxzj6pck4D9VWxxWXvogiheg6hLjDV5gF+zhZUwaAFd5zjyjKZOaT+wTLXBd1niCOAC6qzM+26gxi+6jR
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b0905f4-a693-4b9b-ced2-08d65fdfd912
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 03:13:54.1706
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a77aa0c-d8ac-4073-0c0d-08d65fe0a782
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 03:19:40.4733
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2149
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3063
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -99,53 +101,76 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Uwe,
 
-> From: Uwe Kleine-K=F6nig, Sent: Monday, December 10, 2018 5:04 PM
+> From: Uwe Kleine-Konig, Sent: Monday, December 10, 2018 5:11 PM
 >=20
 > Hello,
 >=20
-> On Mon, Dec 10, 2018 at 05:09:31AM +0000, Yoshihiro Shimoda wrote:
-> > Thank you very much for your patches!
-> > I tested patches and both codes work correctly.
->=20
-> \o/, that's actually better than I expected :-)
->=20
-> > > > The value of div should be calculatable without a loop. Something l=
-ike:
-> > > >
-> > > >    divider =3D NSEC_PER_SEC * RCAR_PWM_MAX_CYCLE;
-> > > >    tmp =3D (unsigned long long)period_ns * clk_rate + (divider - 1)=
-;
-> > > >    do_div(tmp, divider);
-> >
-> > This should be do_div64_u64() because the divider is 1,023,000,000,000 =
-(over 32-bits).
->=20
-> Yes, I think Laurent did this part right.
->=20
-> > > >    div =3D ilog2(tmp - 1) + 1;
-> > > >
-> > > > You might want to check if my maths are right, I didn't test.
+> On Mon, Dec 10, 2018 at 04:49:17AM +0000, Yoshihiro Shimoda wrote:
+> > > From: Uwe Kleine-Konig, Sent: Friday, December 7, 2018 6:14 PM
 > > >
-> > > I've noticed the same, and wrote the following patch last week, also =
-untested.
-> > > I was planning to give it a try before sending it out, but as you've =
-noticed
-> > > the same issue, here's the code if anyone wants to give it a try befo=
-re I can.
-> > > Our calculations are similar, the main difference is the last line, a=
-nd I
-> > > think yours read better.
+> > > On Fri, Dec 07, 2018 at 05:29:33PM +0900, Yoshihiro Shimoda wrote:
+> > <snip>
+> > > > +static void rcar_pwm_workaround_output_low(struct rcar_pwm_chip *r=
+p)
+> > > > +{
+> > > > +	/*
+> > > > +	 * This PWM Timer cannot output low because setting 0x000 is
+> > > > +	 * prohibited on PWMCNT.PH0 (High-Level Period) bitfields. So, av=
+oiding
+> > > > +	 * the prohibited, this function changes the value from 0 to 1 as
+> > > > +	 * pseudo low level.
+> > > > +	 *
+> > > > +	 * TODO: Add GPIO handling to output low level.
+> > > > +	 */
+> > > > +	if ((rp->pwmcnt & RCAR_PWMCNT_PH0_MASK) =3D=3D 0)
+> > > > +		rp->pwmcnt |=3D 1;
+> > >
+> > > In my eyes this is too broken to do. Not sure I have the complete
+> > > picture, but given a small period (say 2) this 1 cycle might result i=
+n
+> > > 50 % duty cycle. Depending on how the hardware behaves if you disable
+> > > it, better do this instead.
 > >
-> > So, I'd like to apply Uwe's code to mainline. Uwe, may I send such a pa=
-tch
-> > with your author and Singed-off-by?
+> > You're right.
 >=20
-> Please no, I cannot sing good enough for this :-)
+> But in the meantime I learned that the pwm gets active on disable, so
+> this won't help.
 >=20
-> Honestly: If you take the authorship and write something like "Algorithm
-> suggested by Uwe Kleine-K=F6nig and Laurent Pinchart" that's IMHO fine.
+> > > Are you aware of the series adding such gpio support to the imx drive=
+r?
+> >
+> > I didn't know that.
+> >
+> > > @Thierry: So there are three drivers now that could benefit for a
+> > > generic approach.
+> >
+> > Should I wait for Thierry's opinion whether PWM subsystem will have
+> > a generic approach or not?
+>=20
+> Not sure how to preceed here. The needed procedure would be:
+>=20
+> 	set duty_cycle to 0%
+> 	delay long enough to be sure the duty cycle is active
+> 	switch to gpio
+> 	disable the hardware
+>=20
+> The additional blocker for rcar is that it doesn't support duty_cycle
+> 0%.
+>=20
+> So unless your hardware guys confirm that 0% works even though not
+> supported according to the hardware manual I have no good idea.
+>=20
+> In the past I suggested to weaken the requirements after pwm_disable,
+> but Thierry didn't like it.
 
-Thank you for your reply. I got it. I'll make a patch with such comment :)
+I read the following discussion once:
+https://patchwork.ozlabs.org/patch/959776/
+
+I could not understand all this yet, but I think I should try to add a spec=
+ial gpio handling
+to the pwm-rcar.c driver instead of a generic approach because as you menti=
+oned above,
+such special handling needs for the hardware.
 
 Best regards,
 Yoshihiro Shimoda
