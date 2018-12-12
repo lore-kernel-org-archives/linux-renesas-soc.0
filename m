@@ -2,150 +2,194 @@ Return-Path: <SRS0=B/Gi=OV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B81DAC04EB8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 07:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2840C65BAF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 08:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65FB920851
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 07:37:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FB920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 51A5A2084E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 08:16:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A5A2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbeLLHhg (ORCPT
+        id S1726525AbeLLIQc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Dec 2018 02:37:36 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33015 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbeLLHhg (ORCPT
+        Wed, 12 Dec 2018 03:16:32 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36587 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeLLIQc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Dec 2018 02:37:36 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gWz5L-0002DZ-A6; Wed, 12 Dec 2018 08:37:35 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gWz5J-0004kc-Tl; Wed, 12 Dec 2018 08:37:33 +0100
-Date:   Wed, 12 Dec 2018 08:37:33 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low
- level
-Message-ID: <20181212073733.th23v5cvaxfbhy53@pengutronix.de>
-References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1544171373-29618-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20181207091337.mvrzzbgqa77adgbd@pengutronix.de>
- <OSBPR01MB229351E3EC1B66339E6C9635D8A50@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <20181210081103.zxayrzpbxiuvv6hb@pengutronix.de>
- <OSBPR01MB2293BE0147A4A535136BDF82D8A70@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+        Wed, 12 Dec 2018 03:16:32 -0500
+X-Originating-IP: 2.224.242.101
+Received: from w540 (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id A1EA460010;
+        Wed, 12 Dec 2018 08:16:28 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 09:16:26 +0100
+From:   jacopo mondi <jacopo@jmondi.org>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/5] media: adv748x: Rework reset procedure
+Message-ID: <20181212081626.GJ5597@w540>
+References: <1544541373-30044-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1544541373-30044-2-git-send-email-jacopo+renesas@jmondi.org>
+ <32aa95b8-1ae8-9f05-6d57-cf370ff58edf@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="T4Djgzn3z2HSNnx0"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <OSBPR01MB2293BE0147A4A535136BDF82D8A70@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+In-Reply-To: <32aa95b8-1ae8-9f05-6d57-cf370ff58edf@ideasonboard.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 03:19:40AM +0000, Yoshihiro Shimoda wrote:
-> Hi Uwe,
-> 
-> > From: Uwe Kleine-Konig, Sent: Monday, December 10, 2018 5:11 PM
-> > 
-> > Hello,
-> > 
-> > On Mon, Dec 10, 2018 at 04:49:17AM +0000, Yoshihiro Shimoda wrote:
-> > > > From: Uwe Kleine-Konig, Sent: Friday, December 7, 2018 6:14 PM
-> > > >
-> > > > On Fri, Dec 07, 2018 at 05:29:33PM +0900, Yoshihiro Shimoda wrote:
-> > > <snip>
-> > > > > +static void rcar_pwm_workaround_output_low(struct rcar_pwm_chip *rp)
-> > > > > +{
-> > > > > +	/*
-> > > > > +	 * This PWM Timer cannot output low because setting 0x000 is
-> > > > > +	 * prohibited on PWMCNT.PH0 (High-Level Period) bitfields. So, avoiding
-> > > > > +	 * the prohibited, this function changes the value from 0 to 1 as
-> > > > > +	 * pseudo low level.
-> > > > > +	 *
-> > > > > +	 * TODO: Add GPIO handling to output low level.
-> > > > > +	 */
-> > > > > +	if ((rp->pwmcnt & RCAR_PWMCNT_PH0_MASK) == 0)
-> > > > > +		rp->pwmcnt |= 1;
-> > > >
-> > > > In my eyes this is too broken to do. Not sure I have the complete
-> > > > picture, but given a small period (say 2) this 1 cycle might result in
-> > > > 50 % duty cycle. Depending on how the hardware behaves if you disable
-> > > > it, better do this instead.
-> > >
-> > > You're right.
-> > 
-> > But in the meantime I learned that the pwm gets active on disable, so
-> > this won't help.
-> > 
-> > > > Are you aware of the series adding such gpio support to the imx driver?
-> > >
-> > > I didn't know that.
-> > >
-> > > > @Thierry: So there are three drivers now that could benefit for a
-> > > > generic approach.
-> > >
-> > > Should I wait for Thierry's opinion whether PWM subsystem will have
-> > > a generic approach or not?
-> > 
-> > Not sure how to preceed here. The needed procedure would be:
-> > 
-> > 	set duty_cycle to 0%
-> > 	delay long enough to be sure the duty cycle is active
-> > 	switch to gpio
-> > 	disable the hardware
-> > 
-> > The additional blocker for rcar is that it doesn't support duty_cycle
-> > 0%.
-> > 
-> > So unless your hardware guys confirm that 0% works even though not
-> > supported according to the hardware manual I have no good idea.
-> > 
-> > In the past I suggested to weaken the requirements after pwm_disable,
-> > but Thierry didn't like it.
-> 
-> I read the following discussion once:
-> https://patchwork.ozlabs.org/patch/959776/
 
-Yeah, that's (part of) the discussion I meant. Thierry doesn't agree
-though, so for now that's a dead end. My plan is to watch the pwm list
-for a while to get a better picture about the different pwm
-implementations because just one or two problematic cases are not
-enough to justify a generic solution in the core in his eyes.
- 
-> I could not understand all this yet, but I think I should try to add a special gpio handling
-> to the pwm-rcar.c driver instead of a generic approach because as you mentioned above,
-> such special handling needs for the hardware.
+--T4Djgzn3z2HSNnx0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Being able to set PHO to zero would be still better, so I hope you
-follow up on the question to your hardware guys if this is really
-forbidden. (If I had access to such hardware, I'd bluntly try what
-happens.)
+Hi Kieran,
+   thanks for review
 
-Best regards
-Uwe
+On Tue, Dec 11, 2018 at 11:52:03PM +0000, Kieran Bingham wrote:
+> Hi Jacopo,
+>
+> On 11/12/2018 15:16, Jacopo Mondi wrote:
+> > Re-work the chip reset procedure to configure the CP (HDMI) and SD (AFE) cores
+> > before resetting the MIPI CSI-2 TXs.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/i2c/adv748x/adv748x-core.c | 24 ++++++++++--------------
+> >  1 file changed, 10 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> > index d94c63cb6a2e..5495dc7891e8 100644
+> > --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> > +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> > @@ -353,9 +353,8 @@ static const struct adv748x_reg_value adv748x_sw_reset[] = {
+> >  	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+> >  };
+> >
+> > -/* Supported Formats For Script Below */
+> > -/* - 01-29 HDMI to MIPI TxA CSI 4-Lane - RGB888: */
+>
+> Is this information redundant ? (CSI-4Lane, RGB888 configuration?)
+>
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+The CSI-2 data lane configuration has been break out from this table
+by Niklas' patches. I've tried also moving the format configuration
+out of this, but I haven't sent that change. The HDMI video direction
+is now handled at link setup time, so I guess the only relevant
+information is about the RGB888 format configured on the CP backend.
+I'll keep that.
+
+> > -static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
+> > +/* Initialize CP Core. */
+> > +static const struct adv748x_reg_value adv748x_init_hdmi[] = {
+>
+> While we're here - is there much scope - or value in changing these
+> tables to functions with parameters using Niklas' adv748x_write_check() ?
+>
+> The suggestion only has value if there are parameters that we would need
+> to configure. So it might be reasonable to leave these tables.
+>
+
+Right now I don't see much value in that. I would prefer breaking out
+the format configuration from this static tables, but that's for
+later.
+
+> A general Ack on renaming to the function instead of the
+> TX/configuration though - as that makes the purpose clearer.
+>
+>
+> >  	/* Disable chip powerdown & Enable HDMI Rx block */
+> >  	{ADV748X_PAGE_IO, 0x00, 0x40},
+> >
+> > @@ -399,10 +398,8 @@ static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
+> >  	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+> >  };
+> >
+> > -/* 02-01 Analog CVBS to MIPI TX-B CSI 1-Lane - */
+> > -/* Autodetect CVBS Single Ended In Ain 1 - MIPI Out */
+> > -static const struct adv748x_reg_value adv748x_init_txb_1lane[] = {
+> > -
+>
+> Same comments as above really :)
+>
+
+I'll see what I can keep.
+
+Thanks
+  j
+
+> > +/* Initialize AFE core. */
+> > +static const struct adv748x_reg_value adv748x_init_afe[] = {
+> >  	{ADV748X_PAGE_IO, 0x00, 0x30},	/* Disable chip powerdown Rx */
+> >  	{ADV748X_PAGE_IO, 0xf2, 0x01},	/* Enable I2C Read Auto-Increment */
+> >
+> > @@ -445,19 +442,18 @@ static int adv748x_reset(struct adv748x_state *state)
+> >  	if (ret < 0)
+> >  		return ret;
+> >
+> > -	/* Init and power down TXA */
+> > -	ret = adv748x_write_regs(state, adv748x_init_txa_4lane);
+> > +	/* Initialize CP and AFE cores. */
+> > +	ret = adv748x_write_regs(state, adv748x_init_hdmi);
+> >  	if (ret)
+> >  		return ret;
+> >
+> > -	adv748x_tx_power(&state->txa, 1);
+> > -	adv748x_tx_power(&state->txa, 0);
+> > -
+> > -	/* Init and power down TXB */
+> > -	ret = adv748x_write_regs(state, adv748x_init_txb_1lane);
+> > +	ret = adv748x_write_regs(state, adv748x_init_afe);
+> >  	if (ret)
+> >  		return ret;
+> >
+> > +	/* Reset TXA and TXB */
+> > +	adv748x_tx_power(&state->txa, 1);
+> > +	adv748x_tx_power(&state->txa, 0);
+> >  	adv748x_tx_power(&state->txb, 1);
+> >  	adv748x_tx_power(&state->txb, 0);
+> >
+> > --
+> > 2.7.4
+> >
+>
+> --
+> Regards
+> --
+> Kieran
+
+--T4Djgzn3z2HSNnx0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJcEMPaAAoJEHI0Bo8WoVY8VGEQAJR1JWtt4EsxUOENLJn1n02J
+q9aNfmRJc3JWL2VKcK1OnfexSSSAE0x6StR+SJXaF2ZqLFeEyOD7i90wYzwjad3h
+/8bAyOU/ABbsSJHMwcj677EyqecGlhzIS2orV1XiIurYBcis6NET2rNEBJeLo/9B
+8JDipI8HilUNFi4fYKWyh6d/0m5BBrVwsklfI3H2IjYzpDE1FtJp3SyBRplwlT+x
+YlVhZpCAZ2qDUmjhtv29rzPQobRNEHvOz9cUj0IaeMZ8RGvCTjAzgrtqKHRYr6TM
+jCUXw55afsoyhZUTB2N7VQZb6iAc4J2xGvnkeCObtDL/iu61baPXLDFgfV9JmyfB
+knq2adUqBJneFfN7cjA4KTslKibB9v7V1os078quYPkdqCWIrnwfff8JeJlNhaJ7
+U5BH1uypNCebwknSWNigsyB0RTLBYh3dTueyxw7vHT6I0zxrdumqBJCmZtT6XxYy
+qFMEEoPjoRFwW/qpsO90vtRryBLGTSm3yRI0xjjwG3a5ZBkEQYh1DK+/vDvLNIFH
+dvd5Je55/1Z2/MuX7We5NYnhzTRU4mMIKSblAGR9iSRG6V6EcNH8m1ZQZysuP18x
+aDF00kETPf4WRLZ0vQ12brKgGOlOO8mO6HGeywOW+Df/l2Pp0J8wCUK/q976IBja
+V7VloRb1BnuE/cv5754M
+=DL3s
+-----END PGP SIGNATURE-----
+
+--T4Djgzn3z2HSNnx0--
