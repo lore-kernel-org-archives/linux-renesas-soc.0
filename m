@@ -8,56 +8,57 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0EDC6783B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 01:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EACC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 01:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0ADF2081B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 01:40:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20E942081B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Dec 2018 01:40:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/NEJVut"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0ADF2081B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crl1M4gB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E942081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbeLLBka (ORCPT
+        id S1726285AbeLLBkb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Dec 2018 20:40:30 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50356 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbeLLBk3 (ORCPT
+        Tue, 11 Dec 2018 20:40:31 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46530 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbeLLBkb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Dec 2018 20:40:29 -0500
-Received: by mail-wm1-f66.google.com with SMTP id n190so4154583wmd.0;
-        Tue, 11 Dec 2018 17:40:28 -0800 (PST)
+        Tue, 11 Dec 2018 20:40:31 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l9so15970526wrt.13;
+        Tue, 11 Dec 2018 17:40:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rCibx6093XLv0OtPOKaZrSvbB8TaTTmfDw79TizC/XM=;
-        b=P/NEJVutKq97idZtSWRcz/BW+S8LjnLnXDoj+pzPLE+RcZkP62R5vpQFbP5pQqDYIt
-         DWkm70d5iklWxpBfSYkC63rNXtIAAeK1BhMX/0b36yYwFxk7j01fKGETQ1vLK+WXUY7L
-         TbfZY1UePc+6vCkOnIsL8j3uEInCc0cyRNZPeE++wLtdBr4BQGeIidaEVsxGkMMHTtpK
-         WQFgEdFKO2PxmfeLS2Yp6cCSdWpuKuNbkJQiDC/izN3Myxy/qq+I8AnIbnc10WWF/PrZ
-         cADYJzn/pdmhP+ZKXUd8AEBNnA8GrN54bBVBqOEhVjFEz43ftTPEofgWvMSB/WgMqGXf
-         7Smw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=OgIpEdc0NDVKGcQHMl3maDPaoBVLT3/5ZZoqfVJ5oSY=;
+        b=crl1M4gBgYxyefUD1hKpS314r7kp/nq7jYJZtXOVK392lHZXKG+8mq/5/A+FMWh3Pf
+         MrBi5r4KwWkrlSVlx3bKwjOe9tMJmQfTrni0hve6iDfVBdwC6L6LWPDQOW3DNmlza8bJ
+         o+jBKUzWuVaeCxoXYR8UrZj9V+Qc12ojKzCGNhWHJs0/xDv2CSu6oYlwaF/YQvlyIVkC
+         6vjG0xsz6HQatjkly27jOQH8vtBM2CckRbBA4MGy48Wx06T3YMQL6BMb/X0o+uqiSRJ3
+         opVLVaKHdZHWuzORYP+KyFCGHED524LAoka3qQIcPngvWVgPqvsGtzVurk850ymu5P7M
+         PfGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rCibx6093XLv0OtPOKaZrSvbB8TaTTmfDw79TizC/XM=;
-        b=s2+MgM/XxsvXTkTNCSfSQTXITbgGAI/dKedfvCZDWEK+mhQGup23g/l+Y8nHspUUN4
-         6BZfnl8fAzgeeyAWPoCzZ8b82S9FlSPB9rQN2nRh/KMjLvze9zdGvpgYn/BKsjnzs+nO
-         sq9Yz7ZklO9E54wK+kBLpYU8QEq/drn7GOA+H2AqeuS+gtFBjclBVln5UWLjr949dqWw
-         dz8Ov/2nHE++ZG2hSqX2orMjiq+2r3wrtJkPyKbMsh5IKNHS0ArJH59+N6Phtb5DQ2EQ
-         UtaRTRsnUiDkdxJAElg3l/Emtxe8A2jbgj+Q1o/eUroyXpA7dFiDn9VfV5COnHahVsTZ
-         sd9g==
-X-Gm-Message-State: AA+aEWaA8zfqWfd8wnlNXw49EBy5Gp+l4wrBUZJDGJiREvTVRz5u6H0+
-        IVT/J04FaNTLeTrdoiuIla1q6p6H
-X-Google-Smtp-Source: AFSGD/V04La3Fdy7SyhKuslYc6m3IMyse2fMkyRDa0U4OsvA5h6uB37fi+/Er9jn0Ar5KQgKIgU7Eg==
-X-Received: by 2002:a1c:d7d3:: with SMTP id o202mr4677958wmg.135.1544578827462;
-        Tue, 11 Dec 2018 17:40:27 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=OgIpEdc0NDVKGcQHMl3maDPaoBVLT3/5ZZoqfVJ5oSY=;
+        b=GlXjz55/TwJaVyT96ZOPh1a1ExXJqpiOL+QdjCwRsGTjvWH5x9B/SRCQXd60Q/m8cG
+         U4hofREa8luc2a+Z4AJwcBcUu0IektBA1TtgUMxG2eZ71kQHVZQNpbDyG6xULnlAsUVS
+         C1LDmLY6az0efaM1a/WCqmHv+ZxxpmWG1zihyltqIrphum8c9eSGu/aizmBLiUUWrm7/
+         FxROPKuePBhYhTvXaFGvC9HgSRE94a5ajjU3Hj1kjDZS4LEONzv5n6xNdBMQpA1tgdHV
+         7eLpXFon2YtRTqCbvJU/Jl0vFlcFuNDya8plmoBren58hWOPEnvKc8mhSGjnRKOYfLkv
+         xyjg==
+X-Gm-Message-State: AA+aEWYXesZMNW61QXzGO6/x2p5YXiSWMLFyaCSrIc1uxgk7KcbSZXd0
+        z+9NY9RoC+A/fJM9F0s1zkUht5NM
+X-Google-Smtp-Source: AFSGD/V8Jwe0w7gmrnOjkAbMcivFmL+YQnzjYR/UllGCsk+zFduNDkDBcxL559zMvMUmxqr80Mnikg==
+X-Received: by 2002:adf:8342:: with SMTP id 60mr14604756wrd.212.1544578828765;
+        Tue, 11 Dec 2018 17:40:28 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c12sm12719214wrs.82.2018.12.11.17.40.26
+        by smtp.gmail.com with ESMTPSA id c12sm12719214wrs.82.2018.12.11.17.40.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 17:40:26 -0800 (PST)
+        Tue, 11 Dec 2018 17:40:27 -0800 (PST)
 From:   Marek Vasut <marek.vasut@gmail.com>
 X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
 To:     linux-gpio@vger.kernel.org
@@ -65,92 +66,48 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH V2 01/14] gpio: pca953x: Deduplicate the bank_shift
-Date:   Wed, 12 Dec 2018 02:39:49 +0100
-Message-Id: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH V2 02/14] gpio: pca953x: Fix AI overflow on PCAL6524
+Date:   Wed, 12 Dec 2018 02:39:50 +0100
+Message-Id: <20181212014002.4753-2-marek.vasut+renesas@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
+References: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The bank_shift = fls(...) code was duplicated in the driver 5 times,
-pull it into separate function.
+The PCAL_PINCTRL_MASK is too large. The extended register block on
+PCAL6524, which is the largest chip with this block, has the block
+limited to address range 0x40..0x7f. This is because the bit 7 in
+the command register is used for the Address Increment functionality.
+
+Trim the mask to 0x60 to match the datasheet and to prevent accidental
+overwrite of the AI bit.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-V2: Replace bank_size with bank_shift in commit message
+V2: Add RB from Bart
 ---
- drivers/gpio/gpio-pca953x.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 540166443c34..afe6de4c48c4 100644
+index afe6de4c48c4..ec9fd11cd21c 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -159,11 +159,16 @@ struct pca953x_chip {
- 	int (*read_regs)(struct pca953x_chip *, int, u8 *);
- };
+@@ -58,7 +58,7 @@
+ #define PCA_GPIO_MASK		0x00FF
  
-+static int pca953x_bank_shift(struct pca953x_chip *chip)
-+{
-+	return fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-+}
-+
- static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
- 				int off)
- {
- 	int ret;
--	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-+	int bank_shift = pca953x_bank_shift(chip);
- 	int offset = off / BANK_SZ;
+ #define PCAL_GPIO_MASK		0x1f
+-#define PCAL_PINCTRL_MASK	0xe0
++#define PCAL_PINCTRL_MASK	0x60
  
- 	ret = i2c_smbus_read_byte_data(chip->client,
-@@ -182,7 +187,7 @@ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
- 				int off)
- {
- 	int ret;
--	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-+	int bank_shift = pca953x_bank_shift(chip);
- 	int offset = off / BANK_SZ;
- 
- 	ret = i2c_smbus_write_byte_data(chip->client,
-@@ -221,7 +226,7 @@ static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
- 
- static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
- {
--	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-+	int bank_shift = pca953x_bank_shift(chip);
- 	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
- 	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
- 
-@@ -265,7 +270,7 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
- 
- static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
- {
--	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
-+	int bank_shift = pca953x_bank_shift(chip);
- 	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
- 	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
- 
-@@ -402,13 +407,12 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 				      unsigned long *mask, unsigned long *bits)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
-+	int bank_shift = pca953x_bank_shift(chip);
- 	unsigned int bank_mask, bank_val;
--	int bank_shift, bank;
-+	int bank;
- 	u8 reg_val[MAX_BANK];
- 	int ret;
- 
--	bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
--
- 	mutex_lock(&chip->i2c_lock);
- 	memcpy(reg_val, chip->reg_output, NBANK(chip));
- 	for (bank = 0; bank < NBANK(chip); bank++) {
+ #define PCA_INT			0x0100
+ #define PCA_PCAL		0x0200
 -- 
 2.18.0
 
