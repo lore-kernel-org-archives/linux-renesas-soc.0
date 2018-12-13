@@ -2,75 +2,73 @@ Return-Path: <SRS0=gRf3=OW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 869BBC67872
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2B1C65BAE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 502082087F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544730537;
-	bh=rylVSC7jJeP6um1CjbVRtc2oPbnHhFWfSgtqO+GJlfo=;
-	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=Iz8jMKgi127hR5qphsDp8HOs7REj57FLbMixnQEifLWimkN7ZUSRMz3eGQbmj1Zaw
-	 xFir9MPQNabEu05QqwyGoru4pRY/4My1OUeQ2BW7VYnUtf5DRR0coRW4/c69hqTeUs
-	 B61LaIc9RZ4R6rQd9Azk83WOzf9XwHBbPqJyn6r8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 502082087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 54E7120851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E7120851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbeLMTs4 (ORCPT
+        id S1726527AbeLMURw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:48:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbeLMTs4 (ORCPT
+        Thu, 13 Dec 2018 15:17:52 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:50362 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726465AbeLMURw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:48:56 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA6202086D;
-        Thu, 13 Dec 2018 19:48:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544730535;
-        bh=rylVSC7jJeP6um1CjbVRtc2oPbnHhFWfSgtqO+GJlfo=;
-        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=Q0BWAt/kpPYVMp9CN2MMNi4yChTHUAdDADms08aYIS4N5JNN3DpW4+fEgqZXmsoG3
-         5gclOvLbjMm/N0666S8j1zjgS5CKCrv2RirqsgHfLUNMU4db0/bOYAbg5eohqHpFi0
-         D5aQn6HzQSCUTvDHq5oumTAGHAmy5j7urUeugPPQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181206215858.3880-2-sboyd@kernel.org>
-Subject: Re: [PATCH 1/8] clk: renesas: Remove usage of CLK_IS_BASIC
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-2-sboyd@kernel.org>
-Message-ID: <154473053490.19322.3731378889854414729@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Thu, 13 Dec 2018 15:17:52 -0500
+X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
+   d="scan'208";a="2555476"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:17:50 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 940154072C4F;
+        Fri, 14 Dec 2018 05:17:47 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Date:   Thu, 13 Dec 2018 11:48:54 -0800
+Subject: [PATCH] dmaengine: rcar-dmac: Document R8A774C0 bindings
+Date:   Thu, 13 Dec 2018 20:17:43 +0000
+Message-Id: <1544732263-5859-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Stephen Boyd (2018-12-06 13:58:51)
-> This flag doesn't look to be used by any code, just set in various clk
-> init structures and then never tested again. Remove it from these
-> drivers as it doesn't provide any benefit.
->=20
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: <linux-renesas-soc@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+Renesas' RZ/G2E (R8A774C0) SoC has DMA controllers compatible
+with this driver, therefore document RZ/G2E specific bindings.
 
-Applied to clk-next
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+index cdf32b2..5a512c5 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
++++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+@@ -21,6 +21,7 @@ Required Properties:
+ 		- "renesas,dmac-r8a7745" (RZ/G1E)
+ 		- "renesas,dmac-r8a77470" (RZ/G1C)
+ 		- "renesas,dmac-r8a774a1" (RZ/G2M)
++		- "renesas,dmac-r8a774c0" (RZ/G2E)
+ 		- "renesas,dmac-r8a7790" (R-Car H2)
+ 		- "renesas,dmac-r8a7791" (R-Car M2-W)
+ 		- "renesas,dmac-r8a7792" (R-Car V2H)
+-- 
+2.7.4
 
