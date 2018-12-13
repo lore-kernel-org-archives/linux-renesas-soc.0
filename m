@@ -6,69 +6,76 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2B1C65BAE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4568C65BAE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E7120851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:17:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E7120851
+	by mail.kernel.org (Postfix) with ESMTP id 984AF20851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 984AF20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbeLMURw (ORCPT
+        id S1726470AbeLMUSC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:17:52 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:50362 "EHLO
+        Thu, 13 Dec 2018 15:18:02 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:19665 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726465AbeLMURw (ORCPT
+        by vger.kernel.org with ESMTP id S1726465AbeLMUSC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:17:52 -0500
+        Thu, 13 Dec 2018 15:18:02 -0500
 X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2555476"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:17:50 +0900
+   d="scan'208";a="2555482"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:18:00 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 940154072C4F;
-        Fri, 14 Dec 2018 05:17:47 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 94A0D40F76A0;
+        Fri, 14 Dec 2018 05:17:57 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dmaengine: rcar-dmac: Document R8A774C0 bindings
-Date:   Thu, 13 Dec 2018 20:17:43 +0000
-Message-Id: <1544732263-5859-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] serial: sh-sci: Document r8a774c0 bindings
+Date:   Thu, 13 Dec 2018 20:17:54 +0000
+Message-Id: <1544732274-5904-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Renesas' RZ/G2E (R8A774C0) SoC has DMA controllers compatible
-with this driver, therefore document RZ/G2E specific bindings.
+RZ/G2E (R8A774C0) SoC also has the R-Car Gen3 compatible SCIF and
+HSCIF ports, so document the SoC specific bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index cdf32b2..5a512c5 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -21,6 +21,7 @@ Required Properties:
- 		- "renesas,dmac-r8a7745" (RZ/G1E)
- 		- "renesas,dmac-r8a77470" (RZ/G1C)
- 		- "renesas,dmac-r8a774a1" (RZ/G2M)
-+		- "renesas,dmac-r8a774c0" (RZ/G2E)
- 		- "renesas,dmac-r8a7790" (R-Car H2)
- 		- "renesas,dmac-r8a7791" (R-Car M2-W)
- 		- "renesas,dmac-r8a7792" (R-Car V2H)
+---
+
+This patch depends on:
+https://patchwork.kernel.org/patch/10565543/
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index 21526e8..20232ad 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -26,6 +26,8 @@ Required properties:
+     - "renesas,hscif-r8a77470" for R8A77470 (RZ/G1C) HSCIF compatible UART.
+     - "renesas,scif-r8a774a1" for R8A774A1 (RZ/G2M) SCIF compatible UART.
+     - "renesas,hscif-r8a774a1" for R8A774A1 (RZ/G2M) HSCIF compatible UART.
++    - "renesas,scif-r8a774c0" for R8A774C0 (RZ/G2E) SCIF compatible UART.
++    - "renesas,hscif-r8a774c0" for R8A774C0 (RZ/G2E) HSCIF compatible UART.
+     - "renesas,scif-r8a7778" for R8A7778 (R-Car M1) SCIF compatible UART.
+     - "renesas,scif-r8a7779" for R8A7779 (R-Car H1) SCIF compatible UART.
+     - "renesas,scif-r8a7790" for R8A7790 (R-Car H2) SCIF compatible UART.
 -- 
 2.7.4
 
