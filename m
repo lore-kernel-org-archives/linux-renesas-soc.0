@@ -2,132 +2,134 @@ Return-Path: <SRS0=gRf3=OW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F153DC67839
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 21:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F09C65BAE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 21:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B559A2086D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 21:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDAA020870
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 21:58:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gALpfuqI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B559A2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="uNkwx8E6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDAA020870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbeLMVhR (ORCPT
+        id S1726461AbeLMV6G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 16:37:17 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47542 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbeLMVhQ (ORCPT
+        Thu, 13 Dec 2018 16:58:06 -0500
+Received: from mail-eopbgr70127.outbound.protection.outlook.com ([40.107.7.127]:6327
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726435AbeLMV6G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 16:37:16 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D9201568;
-        Thu, 13 Dec 2018 22:37:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1544737034;
-        bh=pJuggsQlPjbL3Z++i+ivLcW7/VIhMWc3WpafDdKKukw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gALpfuqIWDY3QLDWJuRKXk80Av2MR6pjm1qP72LdddxUCISK68ogHyCNbWxlWzgjx
-         A4nuPK3gZrjlYP6ZQPJq2kXV++x9pmet7LL9ztULLQG2NL4GrapGphdQmdG6ejD6Ff
-         I3YuZxJikO5SkzmhHGQujyuu83hHwJ7v3ziTzKmU=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Thu, 13 Dec 2018 16:58:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V1Nn8AYkJIYhRvTSZKpXoWxcEXaaMpOPqNPg5XNJb4E=;
+ b=uNkwx8E64YTKpH4D6ShOVkbmEuEyFTZpa6JbO70u5vmWuGgTxn6irl0mBV5AB5JFB6hIL7GyqChdsA0Yn/0XxxVu0KxvuXX7qUwLXDfPwgqbTcIOeIeEqAoEr5/Q7BfYl78YZdI04q9ji5NzoBmjc8aIZY7QyZ+RBvHcWISaNJ0=
+Received: from VI1PR02MB5119.eurprd02.prod.outlook.com (20.178.13.204) by
+ VI1PR02MB3150.eurprd02.prod.outlook.com (10.170.236.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.17; Thu, 13 Dec 2018 21:57:59 +0000
+Received: from VI1PR02MB5119.eurprd02.prod.outlook.com
+ ([fe80::11d9:9fe:f412:46a8]) by VI1PR02MB5119.eurprd02.prod.outlook.com
+ ([fe80::11d9:9fe:f412:46a8%4]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
+ 21:57:59 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH] drm: rcar-du: Add r8a774c0 device support
-Date:   Thu, 13 Dec 2018 23:38:01 +0200
-Message-ID: <4856258.rJnt87OIyb@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1544732607-7277-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1544732607-7277-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: i2c: sh_mobile: Add r8a774c0 support
+Thread-Topic: [PATCH] dt-bindings: i2c: sh_mobile: Add r8a774c0 support
+Thread-Index: AQHUkyHaYCRg4X56iE+p6PFn52AIlqV9N4sA
+Date:   Thu, 13 Dec 2018 21:57:59 +0000
+Message-ID: <c987f09c-689f-7e89-d496-f53b0ab6c2c1@axentia.se>
+References: <1544732352-6178-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732352-6178-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1P190CA0010.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::20)
+ To VI1PR02MB5119.eurprd02.prod.outlook.com (2603:10a6:803:b7::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR02MB3150;6:2rVhpwUWMyQm0OS/aEo8ff0QABzDmzXI+INV7TPcfos1UBlm5MUUnA1coxoA4Qzwvqx2PK/hvYx8LNSg49z0tMjr5lXpbfifj64F4L/ud2NixPvvUUY/H8t+0D/Hpc3bcdgxEHZiZzA1kMp2iRDr6uNdEnQj8bcMU5cSte0p8AelqVPfbYTwT1dluNT+/FNPyEGdwW3bRxsm/VIX8QG/DWPyYfTq0lLKrJmGk9joQr36KiZpgpPXW4UAN9FzJ1HfGGikwZYOJMOK+7NYaRugv8Soiyxdd83RT3kULZQqXwkvPZglRzQWu8Mg+pvFI+3ESpCibUmtOKwd0pcwRoTFaWwQQNLdDbrnP2TSbTx0vU1vChndv2kQgElvURkLcpV4DCbMeCDxDZ3YRQfhrnBECIqobVZ0ZSLRYVGXupnLQlQegp1mc1uxSUPwAR+mKljRKj3Qe6tMai+ueIilo5ynLw==;5:qB5ElikGqUDWldjrLoKo/wULWEnftUi7xZbTZ4u9/L/E1gaXhXQyqkHFMxINKyJpemExPwietTA8b23vwVpLC1pTSTSe/+SgWu19jscvrEWfzH1qKQ5RLmOOSU9cDT8QS45hB6XSvgUjIn9zJ6cYzRq5oHLWqXk8a6dVhCMnVp0=;7:yIZnKNNZadZu+0AJfrDh9V3n+3Sh35/YwN/8GJX4/csfVPATNVfetWRp8jfLckoWJeG5hhY8g3wUSchIcbF595rfQCoTEIvhEBBldzhWNVEnI0QV+2hrochvU2VQtnaKr+hshCSEh38F1U92LXHauQ==
+x-ms-office365-filtering-correlation-id: c6d650ac-4768-4664-d5a1-08d661460bb5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR02MB3150;
+x-ms-traffictypediagnostic: VI1PR02MB3150:
+x-microsoft-antispam-prvs: <VI1PR02MB31507A4B583A06180B378D38BCA00@VI1PR02MB3150.eurprd02.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(10201501046)(93006095)(93001095)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:VI1PR02MB3150;BCL:0;PCL:0;RULEID:;SRVR:VI1PR02MB3150;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39830400003)(366004)(396003)(376002)(346002)(199004)(189003)(97736004)(52116002)(316002)(446003)(86362001)(11346002)(2906002)(486006)(71200400001)(3846002)(76176011)(71190400001)(476003)(229853002)(6436002)(74482002)(8676002)(31696002)(36756003)(6116002)(65806001)(4001150100001)(256004)(25786009)(14444005)(53936002)(65956001)(4326008)(66066001)(2616005)(68736007)(81156014)(81166006)(58126008)(31686004)(65826007)(5660300001)(105586002)(6246003)(102836004)(186003)(7416002)(53546011)(6506007)(386003)(6486002)(305945005)(26005)(110136005)(64126003)(508600001)(14454004)(99286004)(8936002)(54906003)(106356001)(7736002)(6512007)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR02MB3150;H:VI1PR02MB5119.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: LZ3zkOKgsaSiSH69+K+oi6wa0ZdGXXfx6qNQStPvKskLXVvwAx2ZmfV5DvkVoDXkjHrYi1xuxMF5TcIc2baKL20dfZ7ebKLLqV8EaeIm8iYreNlxMPBpCt2TCzPm7deh+FupPjpFYOxQmV0+QsgI6vwvNg+SC+p8n0vTvR872ee1I99aBjoP23l5QguvgjSzoR8VEbKewD9BA6xmT13xYXVc/b5BcybFiUxCLwbUmHepMBp3uEITijHifXDfo5g+fZ3AgQh6dBpcwXM5EKXGFKgpScXRlYde34PH2xYy089q3TPjIXr2pF/qzoPyPEn7
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C00546CA5CA0A845865B43034AF88AF6@eurprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6d650ac-4768-4664-d5a1-08d661460bb5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 21:57:59.4543
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB3150
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Fabrizio,
-
-Thank you for the patch.
-
-On Thursday, 13 December 2018 22:23:27 EET Fabrizio Castro wrote:
-> Add support for the RZ/G2E (R8A774C0) SoC to the R-Car DU driver.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-and applied to my tree.
-
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> b/drivers/gpu/drm/rcar-du/rcar_du_drv.c index 9caff39..ac32510 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -104,6 +104,33 @@ static const struct rcar_du_device_info
-> rzg1_du_r8a77470_info = { },
->  };
-> 
-> +static const struct rcar_du_device_info rcar_du_r8a774c0_info = {
-> +	.gen = 3,
-> +	.features = RCAR_DU_FEATURE_CRTC_IRQ_CLOCK
-> +		  | RCAR_DU_FEATURE_EXT_CTRL_REGS
-> +		  | RCAR_DU_FEATURE_VSP1_SOURCE,
-> +	.channels_mask = BIT(1) | BIT(0),
-> +	.routes = {
-> +		/*
-> +		 * R8A774C0 has one RGB output and two LVDS outputs
-> +		 */
-> +		[RCAR_DU_OUTPUT_DPAD0] = {
-> +			.possible_crtcs = BIT(0) | BIT(1),
-> +			.port = 0,
-> +		},
-> +		[RCAR_DU_OUTPUT_LVDS0] = {
-> +			.possible_crtcs = BIT(0),
-> +			.port = 1,
-> +		},
-> +		[RCAR_DU_OUTPUT_LVDS1] = {
-> +			.possible_crtcs = BIT(1),
-> +			.port = 2,
-> +		},
-> +	},
-> +	.num_lvds = 2,
-> +	.lvds_clk_mask =  BIT(1) | BIT(0),
-> +};
-> +
->  static const struct rcar_du_device_info rcar_du_r8a7779_info = {
->  	.gen = 2,
->  	.features = RCAR_DU_FEATURE_INTERLACED
-> @@ -371,6 +398,7 @@ static const struct of_device_id rcar_du_of_table[] = {
->  	{ .compatible = "renesas,du-r8a7744", .data = &rzg1_du_r8a7743_info },
->  	{ .compatible = "renesas,du-r8a7745", .data = &rzg1_du_r8a7745_info },
->  	{ .compatible = "renesas,du-r8a77470", .data = &rzg1_du_r8a77470_info },
-> +	{ .compatible = "renesas,du-r8a774c0", .data = &rcar_du_r8a774c0_info },
->  	{ .compatible = "renesas,du-r8a7779", .data = &rcar_du_r8a7779_info },
->  	{ .compatible = "renesas,du-r8a7790", .data = &rcar_du_r8a7790_info },
->  	{ .compatible = "renesas,du-r8a7791", .data = &rcar_du_r8a7791_info },
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
-
+T24gMjAxOC0xMi0xMyAyMToxOSwgRmFicml6aW8gQ2FzdHJvIHdyb3RlOg0KPiBEb2N1bWVudCBS
+Wi9HMkUgKFI4QTc3NEMwKSBTb0MgYmluZGluZ3MuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBGYWJy
+aXppbyBDYXN0cm8gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4NCj4gLS0tDQo+ICBE
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1zaF9tb2JpbGUudHh0IHwg
+MyArKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJj
+L2kyYy1zaF9tb2JpbGUudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ky
+Yy9pMmMtc2hfbW9iaWxlLnR4dA0KPiBpbmRleCBiYzg3NmI3Li4zZGZmODlmIDEwMDY0NA0KPiAt
+LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaTJjL2kyYy1zaF9tb2JpbGUu
+dHh0DQo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLXNo
+X21vYmlsZS50eHQNCj4gQEAgLTgsNiArOCw3IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ICAJ
+CQktICJyZW5lc2FzLGlpYy1yOGE3NzQ0IiAoUlovRzFOKQ0KPiAgCQkJLSAicmVuZXNhcyxpaWMt
+cjhhNzc0NSIgKFJaL0cxRSkNCj4gIAkJCS0gInJlbmVzYXMsaWljLXI4YTc3NGExIiAoUlovRzJN
+KQ0KPiArCQkJLSAicmVuZXNhcyxpaWMtcjhhNzc0YzAiIChSWi9HMkUpDQo+ICAJCQktICJyZW5l
+c2FzLGlpYy1yOGE3NzkwIiAoUi1DYXIgSDIpDQo+ICAJCQktICJyZW5lc2FzLGlpYy1yOGE3Nzkx
+IiAoUi1DYXIgTTItVykNCj4gIAkJCS0gInJlbmVzYXMsaWljLXI4YTc3OTIiIChSLUNhciBWMkgp
+DQo+IEBAIC0zMiw3ICszMyw3IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ICAJCQlXaGVuIGNv
+bXBhdGlibGUgd2l0aCAicmVuZXNhcyxybW9iaWxlLWlpYyIgaXQgc2hvdWxkDQo+ICAJCQliZSB0
+aGUgbGFzdCBjb21wYXRpYmlsaXR5IHN0cmluZyBsaXN0ZWQuDQo+ICANCj4gLQkJCVRoZSByOGE3
+Nzk5MCAoUi1DYXIgRTMpIGNvbnRyb2xsZXIgaXMgbm90DQo+ICsJCQlUaGUgcjhhNzc5OTAgKFIt
+Q2FyIEUzKSBhbmQgUlovRzJFIGNvbnRyb2xsZXJzIGFyZSBub3QNCg0KVGhlIHJlZmVyZW5jZXMg
+dG8gdGhlc2UgdHdvIGNvbnRyb2xsZXJzIGRvIG5vdCBmb2xsb3cgdGhlIHNhbWUgc3R5bGUuDQpJ
+J2QgZWl0aGVyIGRlbGV0ZSByOGE3Nzk5MCBhbmQgZ2V0ICJSLUNhciBFMyBhbmQgUlovRzJFIiBv
+ciBhZGQNCnI4YTc3NGMwIGluIGZyb250IG9mIFJaL0cyRSAoYnJhY2tldGVkKSwgd2l0aCBhIHNs
+aWdodCBwcmVmZXJlbmNlDQpmb3IgdGhlIGxhdHRlci4NCg0KQ2hlZXJzLA0KUGV0ZXINCg0KPiAg
+CQkJY29uc2lkZXJlZCBjb21wYXRpYmxlIHdpdGggInJlbmVzYXMscmNhci1nZW4zLWlpYyINCj4g
+IAkJCW9yICJyZW5lc2FzLHJtb2JpbGUtaWljIiBkdWUgdG8gdGhlIGFic2VuY2Ugb2YNCj4gIAkJ
+CWF1dG9tYXRpYyB0cmFuc21pc3Npb24gcmVnaXN0ZXJzLg0KPiANCg==
