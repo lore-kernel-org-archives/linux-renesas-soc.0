@@ -2,144 +2,218 @@ Return-Path: <SRS0=gRf3=OW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FA2C67872
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 18:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C78C67839
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FE0820851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 18:44:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE0820851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 704342086D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="DWfUfBh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 704342086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726662AbeLMSos (ORCPT
+        id S1728078AbeLMTsH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 13:44:48 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:49214 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbeLMSor (ORCPT
+        Thu, 13 Dec 2018 14:48:07 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39459 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727951AbeLMTsH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:44:47 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id BWkl1z00K3XaVaC01Wklyl; Thu, 13 Dec 2018 19:44:46 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gXVyX-0007qp-Dt; Thu, 13 Dec 2018 19:44:45 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gXVyX-0005i7-CR; Thu, 13 Dec 2018 19:44:45 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-serial@vger.kernel.org,
+        Thu, 13 Dec 2018 14:48:07 -0500
+Received: by mail-lf1-f66.google.com with SMTP id n18so2485705lfh.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 13 Dec 2018 11:48:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pWKbsIdfu6FrnU6d0cazKNK450zlM8oBtt4BJcYKBfg=;
+        b=DWfUfBh+jiP94xaM4kBaBv3xFhHvqRP0kN3XdSwvltNbGAMR2qUlE6P98D6yDZnqPN
+         xjUHhC7qoyaXuOBAC4sXQtxJHUeH19zrhdZit+FRPHqvrATdqG3TlyynOZVxmenaSH5i
+         nFc7pi123Ak/+9j/hGcZ461ldN7kfbXMjtvnzdq5xfHy1E9YasuofNEtdG5YE5tzFqg/
+         RpPj/aJ0JCJQFdb2Zce6Rw7HDuUui+ytbazJiB8SWsekJk1PKGZcJOuY8QNzpagZAJRQ
+         fc4TPjqsBwvgPe3oQKSjGzKt+/9Cp3Che1R4j39qDcHgh6SXYscZ5Z/Rzp0nx83wjxP3
+         rYUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=pWKbsIdfu6FrnU6d0cazKNK450zlM8oBtt4BJcYKBfg=;
+        b=FVdjcG8ixXRWHdi54ZUNw6BrPclMcwi3uHIDSltAHYbAzqLtzUrKJ8F6/90dEkjfZq
+         P+TZK/jrn6Yy27laRsPry+AbAxeoI5Cw3Evmcx/Y6fpiNyGyt+Bst8Lgoq3C6pnj9kvU
+         UF0Yz/BDHUfXRCf8VZz8tKqHZ6mEESO2J5Tj0hlevJJC4dIqlwNw7eRVzB/hxP/7dNqB
+         OFnVT+Jj5oXaK9O+XBMgtJLqfmAbyLLqGDSWJo1lUx5BFAI6DoctaDlJca03f1VFkTXf
+         TMGpPqMYLWGLRfBiBtu2j0R5fCUYmo8GvxE8OG5pdtH1sWhADUh3xNRqScpKoGiVVP1g
+         xlCA==
+X-Gm-Message-State: AA+aEWYmAXQf+NXSFgt9lQM8zkj98Bk9rv2Ro9Ran+3gq6Tm/gPBhKy3
+        sFlaumf0KYIFCWsZ2Q8oLDrpWg==
+X-Google-Smtp-Source: AFSGD/XDmcv0CdsbqBfu5WASkcuMsIUKXk1cZxfx/jZCNdVDK/AduxnFz4nnCucD3gqrjlCgkxKMlw==
+X-Received: by 2002:a19:c801:: with SMTP id y1mr55097lff.53.1544730484903;
+        Thu, 13 Dec 2018 11:48:04 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.84.245])
+        by smtp.gmail.com with ESMTPSA id r4sm510710lfe.60.2018.12.13.11.48.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 11:48:04 -0800 (PST)
+Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 1/4] serial: sh-sci: Fix locking in sci_submit_rx()
-Date:   Thu, 13 Dec 2018 19:44:41 +0100
-Message-Id: <20181213184444.21904-2-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181213184444.21904-1-geert+renesas@glider.be>
-References: <20181213184444.21904-1-geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+ <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <557c8114-2819-7be3-21b8-02918aa89c04@cogentembedded.com>
+Date:   Thu, 13 Dec 2018 22:48:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Some callers of sci_submit_rx() hold the port spinlock, others don't.
-During fallback to PIO, the driver needs to obtain the port spinlock.
-If the lock was already held, spinlock recursion is detected, causing a
-deadlock: BUG: spinlock recursion on CPU#0.
+On 12/07/2018 02:13 PM, Mason Yang wrote:
 
-Fix this by adding a flag parameter to sci_submit_rx() for the caller to
-indicate the port spinlock is already held, so spinlock recursion can be
-avoided.
+> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  drivers/spi/Kconfig           |   6 +
+>  drivers/spi/Makefile          |   1 +
+>  drivers/spi/spi-renesas-rpc.c | 776 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 783 insertions(+)
+>  create mode 100644 drivers/spi/spi-renesas-rpc.c
+> 
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 7d3a5c9..54b40f8 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..cec5669
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,776 @@
+[...]
+> +static int rpc_spi_do_reset(struct rpc_spi *rpc)
+> +{
+> +	int ret;
+> +
+> +	ret = reset_control_reset(rpc->rstc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
 
-Move the spin_lock_irqsave() up, so all DMA disable steps are protected,
-which is safe as the recently introduced dmaengine_terminate_async() can
-be called in atomic context.
+   This degrades to:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v4:
-  - No changes,
+{
+	return reset_control_reset(rpc->rstc);
+}
 
-v3:
-  - Split in multiple patches.
----
- drivers/tty/serial/sh-sci.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+   So, we hardly need this function now...
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 8146d9cef0cbe2d0..2a08039f792235e5 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	dma_release_channel(chan);
- }
- 
--static void sci_submit_rx(struct sci_port *s)
-+static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- {
- 	struct dma_chan *chan = s->chan_rx;
- 	struct uart_port *port = &s->port;
-@@ -1362,16 +1362,18 @@ static void sci_submit_rx(struct sci_port *s)
- 	return;
- 
- fail:
-+	/* Switch to PIO */
-+	if (!port_lock_held)
-+		spin_lock_irqsave(&port->lock, flags);
- 	if (i)
- 		dmaengine_terminate_async(chan);
- 	for (i = 0; i < 2; i++)
- 		s->cookie_rx[i] = -EINVAL;
- 	s->active_rx = -EINVAL;
--	/* Switch to PIO */
--	spin_lock_irqsave(&port->lock, flags);
- 	s->chan_rx = NULL;
- 	sci_start_rx(port);
--	spin_unlock_irqrestore(&port->lock, flags);
-+	if (!port_lock_held)
-+		spin_unlock_irqrestore(&port->lock, flags);
- }
- 
- static void work_fn_tx(struct work_struct *work)
-@@ -1491,7 +1493,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
- 	}
- 
- 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--		sci_submit_rx(s);
-+		sci_submit_rx(s, true);
- 
- 	/* Direct new serial port interrupts back to CPU */
- 	scr = serial_port_in(port, SCSCR);
-@@ -1617,7 +1619,7 @@ static void sci_request_dma(struct uart_port *port)
- 		s->chan_rx_saved = s->chan_rx = chan;
- 
- 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--			sci_submit_rx(s);
-+			sci_submit_rx(s, false);
- 	}
- }
- 
-@@ -1667,7 +1669,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			scr |= SCSCR_RDRQE;
- 		} else {
- 			scr &= ~SCSCR_RIE;
--			sci_submit_rx(s);
-+			sci_submit_rx(s, false);
- 		}
- 		serial_port_out(port, SCSCR, scr);
- 		/* Clear current interrupt */
--- 
-2.17.1
+[...]
+> +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+> +			   const void *tx_buf, void *rx_buf)
+> +{
+> +	u32 smenr, smcr, data, pos = 0;
+> +	int ret = 0;
+> +
+> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+> +				  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> +				  RPC_CMNCR_BSZ(0));
+> +	regmap_write(rpc->regmap, RPC_SMDRENR, 0x0);
+> +	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +	regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
+> +	regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
+> +
+> +	if (tx_buf) {
+> +		smenr = rpc->smenr;
+> +
+> +		while (pos < rpc->xferlen) {
+> +			u32 nbytes = rpc->xferlen  - pos;
+> +
+> +			regmap_write(rpc->regmap, RPC_SMWDR0,
+> +				     get_unaligned((u32 *)(tx_buf + pos)));
+> +
+> +			if (nbytes > 4) {
+> +				nbytes = 4;
+> +				smcr = rpc->smcr |
+> +				       RPC_SMCR_SPIE | RPC_SMCR_SSLKP;
+> +			} else {
+> +				smcr = rpc->smcr | RPC_SMCR_SPIE;
+> +			}
+> +
+> +			regmap_write(rpc->regmap, RPC_SMENR, smenr);
+> +			regmap_write(rpc->regmap, RPC_SMCR, smcr);
+> +			ret = wait_msg_xfer_end(rpc);
+> +			if (ret)
+> +				goto out;
+> +
+> +			pos += nbytes;
+> +			smenr = rpc->smenr & ~RPC_SMENR_CDE &
+> +					     ~RPC_SMENR_ADE(0xf);
+> +		}
+> +	} else if (rx_buf) {
+> +		while (pos < rpc->xferlen) {
+> +			u32 nbytes = rpc->xferlen  - pos;
+> +
+> +			if (nbytes > 4)
+> +				nbytes = 4;
+> +
+> +			regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +			regmap_write(rpc->regmap, RPC_SMCR,
+> +				     rpc->smcr | RPC_SMCR_SPIE);
 
+   Hm... our flash chip (Spansion S25FS512S) doesn't get detected; it sends
+JEDEC ID bytes 0..3 repeatedly, unless I copy the SSLKP logic from the writing
+branch above...
+
+> +			ret = wait_msg_xfer_end(rpc);
+> +			if (ret)
+> +				goto out;
+> +
+> +			regmap_read(rpc->regmap, RPC_SMRDR0, &data);
+> +			memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
+> +			pos += nbytes;
+
+   ... and it skips byte 4 unless I copy the code from the end of the writing
+branch, clearing CDE/ADE. But even then the byte 4 reads as 0x03 instead of 0.
+
+> +			regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +			regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
+> +			regmap_write(rpc->regmap, RPC_SMADR, rpc->addr + pos);
+> +		}
+> +	} else {
+> +		regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +		regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
+> +		ret = wait_msg_xfer_end(rpc);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	return ret;
+> +out:
+> +	return rpc_spi_do_reset(rpc);
+> +}
+[...]
+
+MBR, Sergei
