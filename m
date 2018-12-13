@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 654A7C67839
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F296C65BAE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B23020851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B23020851
+	by mail.kernel.org (Postfix) with ESMTP id 39AFE20851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39AFE20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbeLMUVT (ORCPT
+        id S1726437AbeLMUVa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:21:19 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:38776 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726448AbeLMUVT (ORCPT
+        Thu, 13 Dec 2018 15:21:30 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:17724 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726408AbeLMUV3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:21:19 -0500
+        Thu, 13 Dec 2018 15:21:29 -0500
 X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2555683"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:21:17 +0900
+   d="scan'208";a="2765889"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 05:21:28 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 30B1240F76C4;
-        Fri, 14 Dec 2018 05:21:14 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 393084072C4F;
+        Fri, 14 Dec 2018 05:21:25 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: usb-xhci: Add r8a774c0 support
-Date:   Thu, 13 Dec 2018 20:21:11 +0000
-Message-Id: <1544732471-6730-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add r8a774c0 support
+Date:   Thu, 13 Dec 2018 20:21:21 +0000
+Message-Id: <1544732481-6775-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -54,21 +56,22 @@ Document RZ/G2E (R8A774C0) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/usb/usb-xhci.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/usb-xhci.txt b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-index fea8b15..97400e8 100644
---- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
-+++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
-@@ -10,6 +10,7 @@ Required properties:
-     - "renesas,xhci-r8a7743" for r8a7743 SoC
-     - "renesas,xhci-r8a7744" for r8a7744 SoC
-     - "renesas,xhci-r8a774a1" for r8a774a1 SoC
-+    - "renesas,xhci-r8a774c0" for r8a774c0 SoC
-     - "renesas,xhci-r8a7790" for r8a7790 SoC
-     - "renesas,xhci-r8a7791" for r8a7791 SoC
-     - "renesas,xhci-r8a7793" for r8a7793 SoC
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+index de7b539..ad9c290 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -6,6 +6,8 @@ This file provides information on what the device node for the R-Car generation
+ Required properties:
+ - compatible: "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
+ 	      SoC.
++	      "renesas,usb2-phy-r8a774c0" if the device is a part of an R8A774C0
++	      SoC.
+ 	      "renesas,usb2-phy-r8a7795" if the device is a part of an R8A7795
+ 	      SoC.
+ 	      "renesas,usb2-phy-r8a7796" if the device is a part of an R8A7796
 -- 
 2.7.4
 
