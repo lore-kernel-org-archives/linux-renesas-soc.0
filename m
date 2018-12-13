@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D995FC67839
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33E8C65BAE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A33DE20851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33DE20851
+	by mail.kernel.org (Postfix) with ESMTP id B4FA420851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FA420851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbeLMUV4 (ORCPT
+        id S1726442AbeLMUWI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:21:56 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:53805 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726408AbeLMUV4 (ORCPT
+        Thu, 13 Dec 2018 15:22:08 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:23680 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726408AbeLMUWI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:21:56 -0500
+        Thu, 13 Dec 2018 15:22:08 -0500
 X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2765909"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 05:21:54 +0900
+   d="scan'208";a="2555724"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:22:05 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9257240F76C4;
-        Fri, 14 Dec 2018 05:21:51 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CC9B94072C54;
+        Fri, 14 Dec 2018 05:22:02 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -42,42 +42,56 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] media: dt-bindings: rcar-csi2: Add r8a774c0
-Date:   Thu, 13 Dec 2018 20:21:49 +0000
-Message-Id: <1544732509-6911-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] media: dt-bindings: rcar-vin: Add R8A774C0 support
+Date:   Thu, 13 Dec 2018 20:21:59 +0000
+Message-Id: <1544732519-6956-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the compatible string for RZ/G2E (a.k.a. R8A774C0) to the
-list of supported SoCs.
+Add the compatible string for RZ/G2E (a.k.a. R8A774C0) to the list
+of SoCs supported by rcar-vin driver.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/media/rcar_vin.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-index 2824489..11cf38d 100644
---- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-+++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-@@ -2,12 +2,13 @@ Renesas R-Car MIPI CSI-2
- ------------------------
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
+index 7c878ca..34dcd28 100644
+--- a/Documentation/devicetree/bindings/media/rcar_vin.txt
++++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
+@@ -7,12 +7,13 @@ family of devices.
+ Each VIN instance has a single parallel input that supports RGB and YUV video,
+ with both external synchronization and BT.656 synchronization for the latter.
+ Depending on the instance the VIN input is connected to external SoC pins, or
+-on Gen3 platforms to a CSI-2 receiver.
++on Gen3 and RZ/G2 platforms to a CSI-2 receiver.
  
- The R-Car CSI-2 receiver device provides MIPI CSI-2 capabilities for the
--Renesas R-Car family of devices. It is used in conjunction with the
-+Renesas R-Car and RZ/G2 family of devices. It is used in conjunction with the
- R-Car VIN module, which provides the video capture capabilities.
- 
- Mandatory properties
- --------------------
   - compatible: Must be one or more of the following
-+   - "renesas,r8a774c0-csi2" for the R8A774C0 device.
-    - "renesas,r8a7795-csi2" for the R8A7795 device.
-    - "renesas,r8a7796-csi2" for the R8A7796 device.
-    - "renesas,r8a77965-csi2" for the R8A77965 device.
+    - "renesas,vin-r8a7743" for the R8A7743 device
+    - "renesas,vin-r8a7744" for the R8A7744 device
+    - "renesas,vin-r8a7745" for the R8A7745 device
++   - "renesas,vin-r8a774c0" for the R8A774C0 device
+    - "renesas,vin-r8a7778" for the R8A7778 device
+    - "renesas,vin-r8a7779" for the R8A7779 device
+    - "renesas,vin-r8a7790" for the R8A7790 device
+@@ -60,10 +61,10 @@ The per-board settings Gen2 platforms:
+     - data-enable-active: polarity of CLKENB signal, see [1] for
+       description. Default is active high.
+ 
+-The per-board settings Gen3 platforms:
++The per-board settings Gen3 and RZ/G2 platforms:
+ 
+-Gen3 platforms can support both a single connected parallel input source
+-from external SoC pins (port@0) and/or multiple parallel input sources
++Gen3 and RZ/G2 platforms can support both a single connected parallel input
++source from external SoC pins (port@0) and/or multiple parallel input sources
+ from local SoC CSI-2 receivers (port@1) depending on SoC.
+ 
+ - renesas,id - ID number of the VIN, VINx in the documentation.
 -- 
 2.7.4
 
