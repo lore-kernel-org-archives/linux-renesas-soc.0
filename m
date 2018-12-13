@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF7DC67873
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 18:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FA2C67872
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 18:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A36A220870
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 18:44:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36A220870
+	by mail.kernel.org (Postfix) with ESMTP id 2FE0820851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 18:44:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE0820851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbeLMSos (ORCPT
+        id S1726662AbeLMSos (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 13 Dec 2018 13:44:48 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:57186 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbeLMSor (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:49214 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbeLMSor (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 13 Dec 2018 13:44:47 -0500
 Received: from ramsan ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id BWkl1z00m3XaVaC06WklEH; Thu, 13 Dec 2018 19:44:46 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id BWkl1z00K3XaVaC01Wklyl; Thu, 13 Dec 2018 19:44:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gXVyX-0007qu-F5; Thu, 13 Dec 2018 19:44:45 +0100
+        id 1gXVyX-0007qp-Dt; Thu, 13 Dec 2018 19:44:45 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gXVyX-0005iD-Dz; Thu, 13 Dec 2018 19:44:45 +0100
+        id 1gXVyX-0005i7-CR; Thu, 13 Dec 2018 19:44:45 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
@@ -43,9 +43,9 @@ Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
         linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
         linux-serial@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 3/4] serial: sh-sci: Resume PIO in sci_rx_interrupt() on DMA failure
-Date:   Thu, 13 Dec 2018 19:44:43 +0100
-Message-Id: <20181213184444.21904-4-geert+renesas@glider.be>
+Subject: [PATCH v4 1/4] serial: sh-sci: Fix locking in sci_submit_rx()
+Date:   Thu, 13 Dec 2018 19:44:41 +0100
+Message-Id: <20181213184444.21904-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181213184444.21904-1-geert+renesas@glider.be>
 References: <20181213184444.21904-1-geert+renesas@glider.be>
@@ -54,80 +54,92 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On (H)SCIF, sci_submit_rx() is called in the receive interrupt handler.
-Hence if DMA submission fails, the interrupt handler should resume
-handling reception using PIO, else no more data is received.
+Some callers of sci_submit_rx() hold the port spinlock, others don't.
+During fallback to PIO, the driver needs to obtain the port spinlock.
+If the lock was already held, spinlock recursion is detected, causing a
+deadlock: BUG: spinlock recursion on CPU#0.
 
-Make sci_submit_rx() return an error indicator, so the receive interrupt
-handler can act appropriately.
+Fix this by adding a flag parameter to sci_submit_rx() for the caller to
+indicate the port spinlock is already held, so spinlock recursion can be
+avoided.
+
+Move the spin_lock_irqsave() up, so all DMA disable steps are protected,
+which is safe as the recently introduced dmaengine_terminate_async() can
+be called in atomic context.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v4:
-  - Let sci_submit_rx() return -EAGAIN instead of -1 on failure,
-  - Check for negative error in sci_submit_rx() caller,
+  - No changes,
 
 v3:
-  - Move label handle_pio inside #ifdef to kill defined but not used
-    compiler warning when CONFIG_SERIAL_SH_SCI_DMA=n,
-  - Move the call sci_submit_rx() in sci_rx_interrupt() up, as it may
-    fail, rendering the modification of scr unused,
   - Split in multiple patches.
 ---
- drivers/tty/serial/sh-sci.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index e353e03ce2602559..8df0fd8245203f8b 100644
+index 8146d9cef0cbe2d0..2a08039f792235e5 100644
 --- a/drivers/tty/serial/sh-sci.c
 +++ b/drivers/tty/serial/sh-sci.c
 @@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
  	dma_release_channel(chan);
  }
  
--static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
-+static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
+-static void sci_submit_rx(struct sci_port *s)
++static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
  {
  	struct dma_chan *chan = s->chan_rx;
  	struct uart_port *port = &s->port;
-@@ -1359,7 +1359,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
- 	s->active_rx = s->cookie_rx[0];
- 
- 	dma_async_issue_pending(chan);
--	return;
-+	return 0;
+@@ -1362,16 +1362,18 @@ static void sci_submit_rx(struct sci_port *s)
+ 	return;
  
  fail:
- 	/* Switch to PIO */
-@@ -1374,6 +1374,7 @@ static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
++	/* Switch to PIO */
++	if (!port_lock_held)
++		spin_lock_irqsave(&port->lock, flags);
+ 	if (i)
+ 		dmaengine_terminate_async(chan);
+ 	for (i = 0; i < 2; i++)
+ 		s->cookie_rx[i] = -EINVAL;
+ 	s->active_rx = -EINVAL;
+-	/* Switch to PIO */
+-	spin_lock_irqsave(&port->lock, flags);
+ 	s->chan_rx = NULL;
  	sci_start_rx(port);
- 	if (!port_lock_held)
- 		spin_unlock_irqrestore(&port->lock, flags);
-+	return -EAGAIN;
+-	spin_unlock_irqrestore(&port->lock, flags);
++	if (!port_lock_held)
++		spin_unlock_irqrestore(&port->lock, flags);
  }
  
  static void work_fn_tx(struct work_struct *work)
-@@ -1668,8 +1669,10 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			disable_irq_nosync(irq);
+@@ -1491,7 +1493,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
+ 	}
+ 
+ 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+-		sci_submit_rx(s);
++		sci_submit_rx(s, true);
+ 
+ 	/* Direct new serial port interrupts back to CPU */
+ 	scr = serial_port_in(port, SCSCR);
+@@ -1617,7 +1619,7 @@ static void sci_request_dma(struct uart_port *port)
+ 		s->chan_rx_saved = s->chan_rx = chan;
+ 
+ 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+-			sci_submit_rx(s);
++			sci_submit_rx(s, false);
+ 	}
+ }
+ 
+@@ -1667,7 +1669,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
  			scr |= SCSCR_RDRQE;
  		} else {
-+			if (sci_submit_rx(s, false) < 0)
-+				goto handle_pio;
-+
  			scr &= ~SCSCR_RIE;
--			sci_submit_rx(s, false);
+-			sci_submit_rx(s);
++			sci_submit_rx(s, false);
  		}
  		serial_port_out(port, SCSCR, scr);
  		/* Clear current interrupt */
-@@ -1681,6 +1684,8 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 
- 		return IRQ_HANDLED;
- 	}
-+
-+handle_pio:
- #endif
- 
- 	if (s->rx_trigger > 1 && s->rx_fifo_timeout > 0) {
 -- 
 2.17.1
 
