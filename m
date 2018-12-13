@@ -6,69 +6,80 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47054C67839
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CF2C65BAE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F29120851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F29120851
+	by mail.kernel.org (Postfix) with ESMTP id BFEC220672
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFEC220672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbeLMUUX (ORCPT
+        id S1727476AbeLMUUc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:20:23 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:44555 "EHLO
+        Thu, 13 Dec 2018 15:20:32 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:37492 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727417AbeLMUUX (ORCPT
+        by vger.kernel.org with ESMTP id S1727417AbeLMUUc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:20:23 -0500
+        Thu, 13 Dec 2018 15:20:32 -0500
 X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2555639"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:20:21 +0900
+   d="scan'208";a="2555648"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:20:30 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0903B40F76BF;
-        Fri, 14 Dec 2018 05:20:18 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 29CE34072C4F;
+        Fri, 14 Dec 2018 05:20:26 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: pwm: rcar: Add r8a774c0 support
-Date:   Thu, 13 Dec 2018 20:20:15 +0000
-Message-Id: <1544732415-6453-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH] [media] v4l: vsp1: Add RZ/G support
+Date:   Thu, 13 Dec 2018 20:20:24 +0000
+Message-Id: <1544732424-6498-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document RZ/G2E (R8A774C0) SoC bindings.
+Document RZ/G1 and RZ/G2 support.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/media/renesas,vsp1.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-index 7f31fe7..fbd6a4f 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-@@ -6,6 +6,7 @@ Required Properties:
-  - "renesas,pwm-r8a7744": for RZ/G1N
-  - "renesas,pwm-r8a7745": for RZ/G1E
-  - "renesas,pwm-r8a774a1": for RZ/G2M
-+ - "renesas,pwm-r8a774c0": for RZ/G2E
-  - "renesas,pwm-r8a7778": for R-Car M1A
-  - "renesas,pwm-r8a7779": for R-Car H1
-  - "renesas,pwm-r8a7790": for R-Car H2
+diff --git a/Documentation/devicetree/bindings/media/renesas,vsp1.txt b/Documentation/devicetree/bindings/media/renesas,vsp1.txt
+index 1642701..cd5a955 100644
+--- a/Documentation/devicetree/bindings/media/renesas,vsp1.txt
++++ b/Documentation/devicetree/bindings/media/renesas,vsp1.txt
+@@ -2,13 +2,13 @@
+ 
+ The VSP is a video processing engine that supports up-/down-scaling, alpha
+ blending, color space conversion and various other image processing features.
+-It can be found in the Renesas R-Car second generation SoCs.
++It can be found in the Renesas R-Car Gen2, R-Car Gen3, RZ/G1, and RZ/G2 SoCs.
+ 
+ Required properties:
+ 
+   - compatible: Must contain one of the following values
+-    - "renesas,vsp1" for the R-Car Gen2 VSP1
+-    - "renesas,vsp2" for the R-Car Gen3 VSP2
++    - "renesas,vsp1" for the R-Car Gen2 and RZ/G1 VSP1
++    - "renesas,vsp2" for the R-Car Gen3 and RZ/G2 VSP2
+ 
+   - reg: Base address and length of the registers block for the VSP.
+   - interrupts: VSP interrupt specifier.
 -- 
 2.7.4
 
