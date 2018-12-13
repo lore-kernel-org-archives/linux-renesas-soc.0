@@ -2,167 +2,204 @@ Return-Path: <SRS0=gRf3=OW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DD8C67839
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 10:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C71DC65BAE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 11:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2B93208E7
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 10:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1A9420870
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 11:03:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="DYg7MvtK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2B93208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="E1GClN4m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A9420870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbeLMKxb (ORCPT
+        id S1727647AbeLMLDc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:53:31 -0500
-Received: from mail-eopbgr1400129.outbound.protection.outlook.com ([40.107.140.129]:49012
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726945AbeLMKxb (ORCPT
+        Thu, 13 Dec 2018 06:03:32 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48150 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbeLMLDc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:53:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=67x3zqGp9OZXYQ2LDJRSvOQFKuXrORFwHqkaO+KZbMI=;
- b=DYg7MvtKbvThFzu7j/k1choXCrnLPpWOnTtTqfDj9SMaqEPMXWcQLSvPI7Buykohj3vYBpta5YPGvdlZk8JJaQ+KW1ud1HeVHgboAuEFe3izODBMWhNL078b2BAj1QkU+ffQpZCT9VVa2WuQq1ZeTE724BgHHZW2lCaRePQ/bps=
-Received: from OSAPR01MB2290.jpnprd01.prod.outlook.com (52.134.238.13) by
- OSAPR01MB3956.jpnprd01.prod.outlook.com (20.178.103.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Thu, 13 Dec 2018 10:53:27 +0000
-Received: from OSAPR01MB2290.jpnprd01.prod.outlook.com
- ([fe80::a8ae:bee4:d7e7:e5b7]) by OSAPR01MB2290.jpnprd01.prod.outlook.com
- ([fe80::a8ae:bee4:d7e7:e5b7%2]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 10:53:27 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low
- level
-Thread-Topic: [PATCH 5/5] pwm: rcar: add workaround to output "pseudo" low
- level
-Thread-Index: AQHUjgdTBerpWTn1CECvaR8ln4XzYaVy/jaAgAlz0TCAAAUTAIAADlyg
-Date:   Thu, 13 Dec 2018 10:53:27 +0000
-Message-ID: <OSAPR01MB2290F7F727328F7758955F76D8A00@OSAPR01MB2290.jpnprd01.prod.outlook.com>
-References: <1544171373-29618-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1544171373-29618-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20181207091337.mvrzzbgqa77adgbd@pengutronix.de>
- <OSAPR01MB22900C9E97E3B5AFACB99068D8A00@OSAPR01MB2290.jpnprd01.prod.outlook.com>
- <20181213095238.mys7qulfeow4zuu2@pengutronix.de>
-In-Reply-To: <20181213095238.mys7qulfeow4zuu2@pengutronix.de>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [211.11.155.140]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSAPR01MB3956;20:d5wOjGIUWtgPxvNgf5vWvuLXX4t2W5tWzPadgPpbain5zBqQkQDMbzP4kLivBpXEZ9zKZn8MVVvsoFnLAYPgzplZvecXf96GCmiO5EmpJP0T3cSRI0eIPwSal/7Nu3PORJfK987AJ1R1PTjboo/JmDCT/O4L5Dl5fL/zvlU6fK8=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 55291c96-cf1b-4624-1f8a-08d660e9364e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB3956;
-x-ms-traffictypediagnostic: OSAPR01MB3956:
-x-microsoft-antispam-prvs: <OSAPR01MB3956A36778628640F229EFDBD8A00@OSAPR01MB3956.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231475)(944501520)(4982022)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:OSAPR01MB3956;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB3956;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(396003)(136003)(376002)(39860400002)(189003)(199004)(6116002)(7696005)(229853002)(33656002)(6506007)(74316002)(86362001)(54906003)(186003)(8936002)(14454004)(11346002)(316002)(102836004)(3846002)(8676002)(486006)(476003)(55016002)(446003)(9686003)(76176011)(81166006)(110136005)(99286004)(25786009)(68736007)(478600001)(2501003)(6436002)(6306002)(66066001)(66574011)(81156014)(966005)(97736004)(71190400001)(93886005)(6246003)(7736002)(71200400001)(26005)(5660300001)(4326008)(256004)(105586002)(305945005)(53936002)(39060400002)(2906002)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB3956;H:OSAPR01MB2290.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: K5xcEojJvTzOkROd+ipehnwR+Z3ykv40hO1S1CYDaEgGEG6MgosvozjHhT1L9f+22t+N46NYSXdfDAa/FdGxVnGdjqX1WOelzrkFC4NNtG4tGs4GXhRM4iTzmUAB5mFvA72mmqwiGoP90BHP93GgYdmc85McCDbapuoAi5JyVYKn2BEzgLtMBh+NG44iUjiaTqi/738TXeUi2dGfaq5xbOyvaxiuTumB7ILNCUG2qhH+ozuvsn5cTAmpWlNV/x5OZxcy3IHRTYjurvXVtRY9SSj4Ki/rdw1n5n3bOApdEbFzLUErLiWfaZL2vlKKq8lq
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 13 Dec 2018 06:03:32 -0500
+Received: from [IPv6:2a02:c7f:1887:5d00:a043:492c:f55d:2bdb] (unknown [IPv6:2a02:c7f:1887:5d00:a043:492c:f55d:2bdb])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 732E3549;
+        Thu, 13 Dec 2018 12:03:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1544699009;
+        bh=H4lKYabHwkowQsLq5MmPxjCoKjEjqNJA90zektQujwI=;
+        h=Subject:To:Cc:References:Reply-To:From:Date:In-Reply-To:From;
+        b=E1GClN4m0B1U0rI4ShZZOhTIMiP5ffTDRdHutjhQ1mQ+Z7DDespCSqCvzlAPfBqUx
+         DKTq65mv9npDkDXIP1IeCooKb1zxVEe6643HmqC09hCLDMUNv4JE3/AxJ5mWgNd63Q
+         6hlxv2WoJ9rcZ9H+ERON+si/dlRacl+sSyEOS4Hg=
+Subject: Re: [PATCH V2 01/14] gpio: pca953x: Deduplicate the bank_shift
+To:     Marek Vasut <marek.vasut@gmail.com>, linux-gpio@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
+Reply-To: kieran.bingham@ideasonboard.com
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <2b364543-913a-6c8a-bed7-a7d908c16540@ideasonboard.com>
+Date:   Thu, 13 Dec 2018 11:03:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55291c96-cf1b-4624-1f8a-08d660e9364e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 10:53:27.2268
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3956
+In-Reply-To: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Hi Marek,
 
-> From: Uwe Kleine-Konig, Sent: Thursday, December 13, 2018 6:53 PM
->=20
-> Hello,
->=20
-> On Thu, Dec 13, 2018 at 09:47:00AM +0000, Yoshihiro Shimoda wrote:
-> > > From: Uwe Kleine-Konig, Sent: Friday, December 7, 2018 6:14 PM
-> > > On Fri, Dec 07, 2018 at 05:29:33PM +0900, Yoshihiro Shimoda wrote:
-> > > > +static void rcar_pwm_workaround_output_low(struct rcar_pwm_chip *r=
-p)
-> > > > +{
-> > > > +	/*
-> > > > +	 * This PWM Timer cannot output low because setting 0x000 is
-> > > > +	 * prohibited on PWMCNT.PH0 (High-Level Period) bitfields. So, av=
-oiding
-> > > > +	 * the prohibited, this function changes the value from 0 to 1 as
-> > > > +	 * pseudo low level.
-> > > > +	 *
-> > > > +	 * TODO: Add GPIO handling to output low level.
-> > > > +	 */
-> > > > +	if ((rp->pwmcnt & RCAR_PWMCNT_PH0_MASK) =3D=3D 0)
-> > > > +		rp->pwmcnt |=3D 1;
-> > >
-> > > In my eyes this is too broken to do. Not sure I have the complete
-> > > picture, but given a small period (say 2) this 1 cycle might result i=
-n
-> > > 50 % duty cycle. Depending on how the hardware behaves if you disable
-> > > it, better do this instead.
-> >
-> > My colleague suggests that this workaround code also changes the period
-> > as maximum (1023) to avoid 50 % duty cycle for such a case.
->=20
-> A negative side effect of that is that reenabling the pwm then takes
-> longer, right? For my mileage even a duty cycle of 1/1023 if 0 is
-> requested is rather unfortunate.
+On 12/12/2018 01:39, Marek Vasut wrote:
+> The bank_shift = fls(...) code was duplicated in the driver 5 times,
+> pull it into separate function.
+> 
 
-You're right.
+This looks like a good fix-up to me.
 
-> > What do you think that this idea is acceptable for upstream? Or, should
-> > I add gpio handling that Uwe suggested?
->=20
-> Given that it's impossible to implement a gpio handling that results in
-> well defined periods only I'm not a big fan of that either.
+As it's just a single line, it might have warranted being a macro - but
+I think the function helps a lot and is readable. The compiler will
+likely inline it anyway.
 
-I got it.
 
-By the way, I checked R-Car Gen3 manual again (which is not public yet and
-RZ/G series manual doesn't mention it though), and then changing the pinctr=
-l
-setting at runtime is not guarantee. So, I have no change to use gpio on
-the pwm-rcar.c. So, I only have a workaround about this at the moment...
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-> I let Thierry the joy of deciding here.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-I hope Thierry accepts this workaround.
 
-Best regards,
-Yoshihiro Shimoda
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+> V2: Replace bank_size with bank_shift in commit message
+> ---
+>  drivers/gpio/gpio-pca953x.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 540166443c34..afe6de4c48c4 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -159,11 +159,16 @@ struct pca953x_chip {
+>  	int (*read_regs)(struct pca953x_chip *, int, u8 *);
+>  };
+>  
+> +static int pca953x_bank_shift(struct pca953x_chip *chip)
+> +{
+> +	return fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +}
+> +
+>  static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
+>  				int off)
+>  {
+>  	int ret;
+> -	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +	int bank_shift = pca953x_bank_shift(chip);
+>  	int offset = off / BANK_SZ;
+>  
+>  	ret = i2c_smbus_read_byte_data(chip->client,
+> @@ -182,7 +187,7 @@ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
+>  				int off)
+>  {
+>  	int ret;
+> -	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +	int bank_shift = pca953x_bank_shift(chip);
+>  	int offset = off / BANK_SZ;
+>  
+>  	ret = i2c_smbus_write_byte_data(chip->client,
+> @@ -221,7 +226,7 @@ static int pca957x_write_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+>  
+>  static int pca953x_write_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>  {
+> -	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +	int bank_shift = pca953x_bank_shift(chip);
+>  	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+>  	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+>  
+> @@ -265,7 +270,7 @@ static int pca953x_read_regs_16(struct pca953x_chip *chip, int reg, u8 *val)
+>  
+>  static int pca953x_read_regs_24(struct pca953x_chip *chip, int reg, u8 *val)
+>  {
+> -	int bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> +	int bank_shift = pca953x_bank_shift(chip);
+>  	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+>  	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+>  
+> @@ -402,13 +407,12 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+>  				      unsigned long *mask, unsigned long *bits)
+>  {
+>  	struct pca953x_chip *chip = gpiochip_get_data(gc);
+> +	int bank_shift = pca953x_bank_shift(chip);
+>  	unsigned int bank_mask, bank_val;
+> -	int bank_shift, bank;
+> +	int bank;
+>  	u8 reg_val[MAX_BANK];
+>  	int ret;
+>  
+> -	bank_shift = fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
+> -
+>  	mutex_lock(&chip->i2c_lock);
+>  	memcpy(reg_val, chip->reg_output, NBANK(chip));
+>  	for (bank = 0; bank < NBANK(chip); bank++) {
+> 
 
-> Best regards
-> Uwe
->=20
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=F6nig          =
-  |
-> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
-|
+
+-- 
+Regards
+--
+Kieran
