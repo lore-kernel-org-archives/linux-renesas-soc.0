@@ -2,95 +2,93 @@ Return-Path: <SRS0=gRf3=OW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CFEC65BAE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 16:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFFCC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 16:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D492086D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 16:29:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D492086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id EDD342086D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Dec 2018 16:29:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD342086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729218AbeLMQ3B (ORCPT
+        id S1729599AbeLMQ3E (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:29:01 -0500
-Received: from sauhun.de ([88.99.104.3]:34554 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728059AbeLMQ3B (ORCPT
+        Thu, 13 Dec 2018 11:29:04 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:47926 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbeLMQ3E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:29:01 -0500
-Received: from localhost (p54B335AC.dip0.t-ipconnect.de [84.179.53.172])
-        by pokefinder.org (Postfix) with ESMTPSA id E18EB4C0E8F;
-        Thu, 13 Dec 2018 17:28:58 +0100 (CET)
-Date:   Thu, 13 Dec 2018 17:28:58 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Thu, 13 Dec 2018 11:29:04 -0500
+Received: from ramsan ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id BUV21z00t3XaVaC01UV2lL; Thu, 13 Dec 2018 17:29:03 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gXTrC-0006KF-OK; Thu, 13 Dec 2018 17:29:02 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gXTrC-0003ho-Lu; Thu, 13 Dec 2018 17:29:02 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77990: Fix IOCTRL reg state after
- s2ram on R-Car E3
-Message-ID: <20181213162858.GC2549@kunai>
-References: <20181213162027.13137-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="f0KYrhQ4vYSV2aJu"
-Content-Disposition: inline
-In-Reply-To: <20181213162027.13137-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/6] pinctrl: sh-pfc: Fix number of pins/marks mismatches
+Date:   Thu, 13 Dec 2018 17:28:49 +0100
+Message-Id: <20181213162855.14190-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+	Hi all,
 
---f0KYrhQ4vYSV2aJu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch series fixes several mismatches between the number of pins
+and the number of marks in pin groups for Renesas SoCs.  All of these
+have been detected by the last patch in the series, which adds a
+build-time check for this particular case.
 
-On Thu, Dec 13, 2018 at 05:20:27PM +0100, Geert Uytterhoeven wrote:
-> Due to an interaction with commit 9f2b76a2db3c4387 ("pinctrl: sh-pfc:
-> r8a77990: Add R8A774C0 PFC support"), the state of the I/O Control
-> Registers is saved/restored during s2ram on RZ/G2E, but not on R-Car E3.
-> Hence on R-Car E3, SDHI voltage state is lost after system resume.
->=20
-> Fix this by registering the I/O Control Registers on R-Car E3, too.
->=20
-> Fixes: 33847a71373cd6ae ("pinctrl: sh-pfc: r8a77990: Add voltage switch o=
-perations for SDHI")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I believe none of the affected pins groups are configured by the
+DTS files supplied with the kernel. 
 
-Obviously correct:
+I intend to queue this up in sh-pfc-for-v4.21, as I will probably have
+other fixes to send a PR for anyway.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Thanks for your comments!
 
+Geert Uytterhoeven (6):
+  pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii
+    group
+  pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1
+    group
+  pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b
+    group
+  pinctrl: sh-pfc: r8a7791: Remove bogus marks from vin1_b_data18 group
+  pinctrl: sh-pfc: sh73a0: Add missing TO pin to tpu4_to3 group
+  pinctrl: sh-pfc: Validate pins/marks in pin group at build time
 
---f0KYrhQ4vYSV2aJu
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 3 ++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 6 +-----
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c  | 1 +
+ drivers/pinctrl/sh-pfc/sh_pfc.h      | 3 ++-
+ 4 files changed, 6 insertions(+), 7 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.17.1
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwSiMUACgkQFA3kzBSg
-KbYC6w/9EBRPFwadY8nfmIk8diOOVTkI8LwMGp8cTk/mo4sSFVm98+GSqzdEKqVD
-8l/YMdToplQpec9TNd6B5Lt2KNrWpQissR2/N1OfQAEI246c9OhLt+TzNdvK5iwx
-dzCGi+J9T5tdfxhx3OXOyL3Nx9C4rTHYmDFagqqRTSE8VlAg1zQPgWFn3vnve2V2
-rfI3qUSRoeQQ1/CVG+lR/VfA6xYRMqS/dkmOV3bUEz1WYPei/FS3r1DVIXacydPM
-3dufWD62TrmwVpKXPf8tBxcR7YKd2EiOgk96GHTcmL3pk2zRcn3y6U2EbnYRaExo
-FfB/g7szwndJwQ0BMEppaK1qhBVF5wqbfWz4A/H3GK3njcoXJ9Zn4okI12t2+Iv4
-6UhPEC73tOTEFfl9UJGAzuMIwS5uNW1WBTOfk3PBH2GPWjqIgiU+zZR7X+PTqDsF
-uNwmmRHClCueD/i7AlB+TBMri1JPgom/T6GmLQFo/8H+ca9jXtvCBlYx79WBpiYa
-O8xxPe+jTLLfxfWKbTwtzqXYT4RgMnuPKyqpW5Mz5shxn+s9PswtKKgedFnVX0lE
-S38JLQtNj+x9HSopmCDYxRWkeDFOJIC7tSJvEw2LKobnaFk3XIV8XASAIIiK4Hc7
-CDBrIGOe+B4jyZxto7NaI5qEZS4BePQBpRshI0rc/9p0Mqrbm3Y=
-=p0ye
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---f0KYrhQ4vYSV2aJu--
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
