@@ -2,83 +2,204 @@ Return-Path: <SRS0=qJci=OX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4095BC67839
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41926C67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F8AA20811
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:27:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8AA20811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 058ED2145D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:36:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ofKtQvGU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058ED2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbeLNI1R (ORCPT
+        id S1727526AbeLNIgs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:27:17 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:61763 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726520AbeLNI1Q (ORCPT
+        Fri, 14 Dec 2018 03:36:48 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49598 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNIgs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:27:16 -0500
-X-IronPort-AV: E=Sophos;i="5.56,352,1539615600"; 
-   d="scan'208";a="2834602"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 17:27:14 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 21ABF4068573;
-        Fri, 14 Dec 2018 17:27:10 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] usb: renesas_usbhs: add support for RZ/G2E
-Date:   Fri, 14 Dec 2018 08:27:03 +0000
-Message-Id: <1544776023-13364-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 14 Dec 2018 03:36:48 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AEF71549;
+        Fri, 14 Dec 2018 09:36:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1544776605;
+        bh=G1iU8pDdLnV1DMs6xP4CeXTRBFCwg7yjGM9xNgeTpFg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ofKtQvGUbYPA/DJjLF+/ix5ZtirsfaUUhFalb1EFEGY3A00clYZnspqbIH1sPKF40
+         G93eTh+pSqF0e/pBJcxAak5HIDKl+G1/5aX1ggu8WLJoNw5bbuE5p0eNdkVkvM/2qe
+         /XaopQb+//zljdz+WH73TmmE8EUV/jUDCiJgnECo=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 4/4] rcar-vin: add support for suspend and resume
+Date:   Fri, 14 Dec 2018 10:37:34 +0200
+Message-ID: <1648503.1eWIQ13pqG@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181214061824.10296-5-niklas.soderlund+renesas@ragnatech.se>
+References: <20181214061824.10296-1-niklas.soderlund+renesas@ragnatech.se> <20181214061824.10296-5-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-HS-USB found in RZ/G2E (a.k.a. r8a774c0) is very similar to the
-one found in R-Car E3 (a.k.a. r8a77990), as it needs to release
-the PLL reset by the UGCTRL register like R-Car E3, therefore add
-r8a774c0 support in a similar fashion to what was done for the
-r8a77990.
+Hi Niklas,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/usb/renesas_usbhs/common.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thank you for the patch.
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 2ff7991..249fbee 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -540,6 +540,10 @@ static int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev)
-  */
- static const struct of_device_id usbhs_of_match[] = {
- 	{
-+		.compatible = "renesas,usbhs-r8a774c0",
-+		.data = (void *)USBHS_TYPE_RCAR_GEN3_WITH_PLL,
-+	},
-+	{
- 		.compatible = "renesas,usbhs-r8a7790",
- 		.data = (void *)USBHS_TYPE_RCAR_GEN2,
- 	},
--- 
-2.7.4
+On Friday, 14 December 2018 08:18:24 EET Niklas S=F6derlund wrote:
+> To be able to properly support suspend and resume the VIN and all
+> subdevices involved in a running capture needs to be stopped before the
+> system is suspended. Likewise the whole pipeline needs to be started
+> once the system is resumed if it was running.
+>=20
+> Achieve this by using the existing rvin_{start,stop}_stream() functions
+> while making sure the CSI-2 channel selection is applied to the VIN
+> master before restarting the capture. To be able to do keep track of
+> which VINs should be resumed a new internal state SUSPENDED is added to
+> describe this state.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 51 +++++++++++++++++++++
+>  drivers/media/platform/rcar-vin/rcar-vin.h  | 10 ++--
+>  2 files changed, 57 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c
+> b/drivers/media/platform/rcar-vin/rcar-core.c index
+> f0719ce24b97a9f9..7b34d69a97f4771d 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -862,6 +862,54 @@ static int rvin_mc_init(struct rvin_dev *vin)
+>  	return ret;
+>  }
+>=20
+> +/* ---------------------------------------------------------------------=
+=2D--
+> + * Suspend / Resume
+> + */
+> +
+> +static int __maybe_unused rvin_suspend(struct device *dev)
+> +{
+> +	struct rvin_dev *vin =3D dev_get_drvdata(dev);
+> +
+> +	if (vin->state !=3D RUNNING)
+> +		return 0;
+
+Could this race with userspace starting or stopping a stream ?
+
+> +	rvin_stop_streaming(vin);
+> +
+> +	vin->state =3D SUSPENDED;
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused rvin_resume(struct device *dev)
+> +{
+> +	struct rvin_dev *vin =3D dev_get_drvdata(dev);
+> +
+> +	if (vin->state !=3D SUSPENDED)
+> +		return 0;
+> +
+> +	/*
+> +	 * Restore group master CHSEL setting.
+> +	 *
+> +	 * This needs to be by every VIN resuming not only the master
+> +	 * as we don't know if and in which order the master VINs will
+> +	 * be resumed.
+> +	 */
+> +	if (vin->info->use_mc) {
+> +		unsigned int master_id =3D rvin_group_id_to_master(vin->id);
+> +		struct rvin_dev *master =3D vin->group->vin[master_id];
+> +		int ret;
+> +
+> +		if (WARN_ON(!master))
+> +			return -ENODEV;
+> +
+> +		ret =3D rvin_set_channel_routing(master, master->chsel);
+> +		if (ret)
+> +			return ret;
+
+What happens if the master isn't resumed yet, could it cause access to=20
+hardware with clocks disabled ? I don't expect pm_runtime_get_sync() to=20
+happily handle suspended devices.
+
+> +	}
+> +
+> +	return rvin_start_streaming(vin);
+> +}
+
+Note for later, it would be nice to have suspend/resume helpers in V4L2 tha=
+t=20
+would stop/start streaming and generally exercise the driver through its V4=
+L2=20
+API only, to avoid the need for custom suspend/resume code.
+
+>  /* ---------------------------------------------------------------------=
+=2D--
+>   * Platform Device Driver
+>   */
+> @@ -1313,9 +1361,12 @@ static int rcar_vin_remove(struct platform_device
+> *pdev) return 0;
+>  }
+>=20
+> +static SIMPLE_DEV_PM_OPS(rvin_pm_ops, rvin_suspend, rvin_resume);
+> +
+>  static struct platform_driver rcar_vin_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "rcar-vin",
+> +		.pm =3D &rvin_pm_ops,
+>  		.of_match_table =3D rvin_of_id_table,
+>  	},
+>  	.probe =3D rcar_vin_probe,
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> 700fae1c1225a2f3..9bbc5a57fcb2915e 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -48,16 +48,18 @@ enum rvin_csi_id {
+>  };
+>=20
+>  /**
+> - * STOPPED  - No operation in progress
+> - * STARTING - Capture starting up
+> - * RUNNING  - Operation in progress have buffers
+> - * STOPPING - Stopping operation
+> + * STOPPED   - No operation in progress
+> + * STARTING  - Capture starting up
+> + * RUNNING   - Operation in progress have buffers
+> + * STOPPING  - Stopping operation
+> + * SUSPENDED - Capture is suspended
+
+While at it, could you convert this to proper kerneldoc ?
+
+>   */
+>  enum rvin_dma_state {
+>  	STOPPED =3D 0,
+>  	STARTING,
+>  	RUNNING,
+>  	STOPPING,
+> +	SUSPENDED,
+>  };
+>=20
+>  /**
+
+=2D-=20
+Regards,
+
+Laurent Pinchart
+
+
 
