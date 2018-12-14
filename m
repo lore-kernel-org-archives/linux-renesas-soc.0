@@ -2,66 +2,88 @@ Return-Path: <SRS0=qJci=OX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EA7C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 16:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61646C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 16:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EADF2206E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 16:21:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="QPWz7pZb"
+	by mail.kernel.org (Postfix) with ESMTP id EA8B6206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 16:24:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbeLNQVP (ORCPT
+        id S1729783AbeLNQYB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:21:15 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:36240 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727698AbeLNQVP (ORCPT
+        Fri, 14 Dec 2018 11:24:01 -0500
+Received: from sauhun.de ([88.99.104.3]:45062 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727795AbeLNQYB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:21:15 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id E0C2025B75B;
-        Sat, 15 Dec 2018 03:21:12 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1544804473; bh=YGzAVZHe/2HJBL3HnYg4zii4MqshybAlmz0LUu+DDt4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QPWz7pZbgdJnYQNon4j0lHZF5Hnm/FHYtIEC+jpk0DRWTdfIdgZzbOZ0qTK+UGQ/Y
-         eiVM7LCbTwcpUJ/i6gm2M/dQ54Or+X18iMZyMvBHXG0byjCl/rqzwDIdRpdFN2YKHL
-         8utXW5EWiQ7JSx5ydaJ2GsoZOTKeb9Rl0OqJ+cZs=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 27FB79403C3; Fri, 14 Dec 2018 17:21:11 +0100 (CET)
-Date:   Fri, 14 Dec 2018 17:21:11 +0100
-From:   Simon Horman <horms@verge.net.au>
+        Fri, 14 Dec 2018 11:24:01 -0500
+Received: from localhost (p54B6730A.dip0.t-ipconnect.de [84.182.115.10])
+        by pokefinder.org (Postfix) with ESMTPSA id 6DE064C0E8F;
+        Fri, 14 Dec 2018 17:23:59 +0100 (CET)
+Date:   Fri, 14 Dec 2018 17:23:58 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] thermal: rcar_thermal: add R8A774C0 support
-Message-ID: <20181214162110.az3r6kt6ok62nj76@verge.net.au>
-References: <1544732590-7230-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Whitelist r8a774c0
+Message-ID: <20181214162358.GC4236@kunai>
+References: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uXxzq0nDebZQVNAZ"
 Content-Disposition: inline
-In-Reply-To: <1544732590-7230-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:23:10PM +0000, Fabrizio Castro wrote:
-> Add thermal support for the RZ/G2E SoC (a.k.a. R8A774C0).
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+--uXxzq0nDebZQVNAZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Dec 13, 2018 at 08:22:27PM +0000, Fabrizio Castro wrote:
+> From: Biju Das <biju.das@bp.renesas.com>
+>=20
+> We need r8a774c0 to be whitelisted for SDHI to work on the RZ/G2E,
+> but we don't care about the revision of the SoC, so just whitelist
+> the generic part number.
+>=20
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--uXxzq0nDebZQVNAZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwT2R4ACgkQFA3kzBSg
+KbZ1qA/+NS6qfKjAEvNvhXbRSYG/nFdc9P04h0DnBHKuFEEMuDx+hv2EDOuYwd5p
+0dJSRU5YF9QoxQA/INbz4Nvb63cWdbHfes41G1L6KlZ7/ohJ2uGp5OonxFm4qbXq
+wZSrq/01pYO8dpQg2P7n4Dyirxi0BjPoNYIoWpK4vZSY1c5pTW0zljd/4DcUGBa/
+kAigWo2jNE8xLPoRCjksVW/NxpKJwfzQU6bz57OB6SwmEkUkoR9Te+k0PfGiNW2E
+W5AJaTVkKqOI9UlnLNjHpv5IY5K386bqsa5JFRMBcA6VFVAGMfExqGla/Xp5um+V
+QJONgOdcauAxAUC5Omyd2WC7GVXCC2IgvOkcQMNG8nUA1Jb1DtdZOYTXbO1qQtDC
+maEP0sh8GeAs9S72TOVyq12WJpY6guc0hrfwj/d/N9+a7w86Uv+On+gmhTuV0s+H
+h0sjvIsb0CArAIBSwP1TGZ3EO1bkWAKpivWcrDcXwhYIBcPmz26UWFb0VHj+88VM
+HSoTFrnpa9iHZsrdVZ5c5r9NBLpwve9cBKm++cr6lRM3G+A95TaNPRSnQc+Rium9
+OhicYKYmcuDM9SoKaI6WbcrxQ6fNWvcx6GRyK2c2Ch5phD3M8trK5DkVzlaDDPw8
+eiE9O2LiJ2fJwN9zOkYv5n3wa1DZpjvBBpaBhcZzypIZbS27VNk=
+=Brpm
+-----END PGP SIGNATURE-----
+
+--uXxzq0nDebZQVNAZ--
