@@ -2,256 +2,146 @@ Return-Path: <SRS0=qJci=OX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D82DC67839
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F038C67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D850E2086D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D850E2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CF2520866
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:13:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="cnnhUSnQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF2520866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeLNJKa (ORCPT
+        id S1727256AbeLNJNz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:10:30 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:34099 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726298AbeLNJK3 (ORCPT
+        Fri, 14 Dec 2018 04:13:55 -0500
+Received: from mail-eopbgr1310128.outbound.protection.outlook.com ([40.107.131.128]:6381
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726344AbeLNJNz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:10:29 -0500
-X-IronPort-AV: E=Sophos;i="5.56,352,1539615600"; 
-   d="scan'208";a="2629705"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 18:10:27 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 041D74023AB3;
-        Fri, 14 Dec 2018 18:10:24 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Fri, 14 Dec 2018 04:13:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mDGOT06fj9ZjKpXJHFLb+6clgw3Glmx1s1woaVjWXM8=;
+ b=cnnhUSnQAbslhANy1bYmXt/OLjShSBs7qLRu84qkhpvHlABMR+n6u6bVDP3a31lSMFHoh0lqzL7/X8TIenuGr3Az2S484BHAkLqNCjAtCRyYf9nBWMfxfYBIaw5LHmTWgBhoPce97I5HsBnkF/20vuEJymr2wSqBXCdT8D1iT8g=
+Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com (52.133.184.14) by
+ TY2PR01MB2203.jpnprd01.prod.outlook.com (52.133.184.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Fri, 14 Dec 2018 09:13:47 +0000
+Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com
+ ([fe80::9545:5575:a99a:a145]) by TY2PR01MB2297.jpnprd01.prod.outlook.com
+ ([fe80::9545:5575:a99a:a145%3]) with mapi id 15.20.1404.026; Fri, 14 Dec 2018
+ 09:13:46 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 1/9] arm64: dts: renesas: Initial device tree for r8a774c0
-Date:   Fri, 14 Dec 2018 09:10:05 +0000
-Message-Id: <1544778613-24279-2-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] usb: renesas_usbhs: add support for RZ/G2E
+Thread-Topic: [PATCH] usb: renesas_usbhs: add support for RZ/G2E
+Thread-Index: AQHUk4bU7RL5BooA80yfdpCZpK+pyaV980mA
+Date:   Fri, 14 Dec 2018 09:13:46 +0000
+Message-ID: <TY2PR01MB2297836B080842D4B630696CD8A10@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+References: <1544776023-13364-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544776023-13364-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [118.238.235.108]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY2PR01MB2203;20:jKBysSQpN4q/TWvwgfBj3Eb9Asu8JeIgA9VzTjkvNJD6WJFJh8GQO5okSUoOqinRqBYOyDgntlVX3xlppSbVi9XvlAJmNakzivhgZTwnWhMpY9mM+wVG5fB5WgkBD0S1ao5KTglGotpXBTco4s9vi0VfmW64dKBZHO7DPFc504Y=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(396003)(366004)(136003)(189003)(199004)(105586002)(106356001)(11346002)(5660300001)(446003)(7736002)(4326008)(305945005)(74316002)(486006)(68736007)(7416002)(345774005)(53936002)(6246003)(229853002)(476003)(86362001)(256004)(9686003)(8676002)(81156014)(110136005)(81166006)(66066001)(2906002)(6436002)(186003)(8936002)(478600001)(25786009)(6116002)(99286004)(71190400001)(71200400001)(55016002)(6506007)(3846002)(54906003)(316002)(33656002)(97736004)(7696005)(14454004)(26005)(76176011)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB2203;H:TY2PR01MB2297.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: ca04e39c-06b8-40eb-19b0-08d661a473f0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB2203;
+x-ms-traffictypediagnostic: TY2PR01MB2203:
+x-microsoft-antispam-prvs: <TY2PR01MB22035C57410D6EE7E687905DD8A10@TY2PR01MB2203.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:TY2PR01MB2203;BCL:0;PCL:0;RULEID:;SRVR:TY2PR01MB2203;
+x-forefront-prvs: 08864C38AC
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fAXt/zV/jHjvWzjvH9gNesK7rkW0hgQXOfukV47W6jpj9IyJg4II4c0sywo9URV/ZukdeQzpGm1kMFzbMdQyF+Xog+39C3SxPKacioC4NWyu51gyfi3TvGU1lkXG1SdfFyagzD992uTmp3YrQpg44dPotmzQkuNIOu4LpFOy599Saqlerj0N9fDyPhhXbNndfsUohhbyq7TaSBnEK22Fg5hItpWkniPInWNPt9/HsV6eB8zdQ47Sa6VR/M/EniklxYnkYdh3xRejQQjmBzrgQTSLpE4GrBN+lF7X7E6nkPyTR28YOdL/hmD1EZ7Tre6Q
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca04e39c-06b8-40eb-19b0-08d661a473f0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 09:13:46.5899
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2203
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Basic support for the RZ/G2E SoC (a.k.a. r8a774c0).
+Hi Fabrizio,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 186 ++++++++++++++++++++++++++++++
- 1 file changed, 186 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> From: Fabrizio Castro, Sent: Friday, December 14, 2018 5:27 PM
+>=20
+> HS-USB found in RZ/G2E (a.k.a. r8a774c0) is very similar to the
+> one found in R-Car E3 (a.k.a. r8a77990), as it needs to release
+> the PLL reset by the UGCTRL register like R-Car E3, therefore add
+> r8a774c0 support in a similar fashion to what was done for the
+> r8a77990.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-new file mode 100644
-index 0000000..f425d0b
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZ/G2E (R8A774C0) SoC
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/clock/r8a774c0-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a774c0-sysc.h>
-+
-+/ {
-+	compatible = "renesas,r8a774c0";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	/*
-+	 * The external audio clocks are configured as 0 Hz fixed frequency
-+	 * clocks by default.
-+	 * Boards that provide audio clocks should override them.
-+	 */
-+	audio_clk_a: audio_clk_a {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_b: audio_clk_b {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	audio_clk_c: audio_clk_c {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* 1 core only at this point */
-+		a53_0: cpu@0 {
-+			compatible = "arm,cortex-a53", "arm,armv8";
-+			reg = <0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A774C0_PD_CA53_CPU0>;
-+			next-level-cache = <&L2_CA53>;
-+			enable-method = "psci";
-+		};
-+
-+		L2_CA53: cache-controller-0 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A774C0_PD_CA53_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	/* External PCIe clock - can be overridden by the board */
-+	pcie_bus_clk: pcie_bus {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu_a53 {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts-extended = <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&a53_0>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a774c0-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>;
-+			clock-names = "extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a774c0-rst";
-+			reg = <0 0xe6160000 0 0x0200>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a774c0-sysc";
-+			reg = <0 0xe6180000 0 0x0400>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		scif2: serial@e6e88000 {
-+			compatible = "renesas,scif-r8a774c0",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e88000 0 64>;
-+			interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 310>,
-+				 <&cpg CPG_CORE R8A774C0_CLK_S3D1C>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 310>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@f1010000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1010000 0 0x1000>,
-+			      <0x0 0xf1020000 0 0x20000>,
-+			      <0x0 0xf1040000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x20000>;
-+			interrupts = <GIC_PPI 9
-+					(GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clocks - can be overridden by the board */
-+	usb3s0_clk: usb3s0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+};
--- 
-2.7.4
+Thank you for the patch!
+
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
+
+> ---
+>  drivers/usb/renesas_usbhs/common.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usb=
+hs/common.c
+> index 2ff7991..249fbee 100644
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+> @@ -540,6 +540,10 @@ static int usbhsc_drvcllbck_notify_hotplug(struct pl=
+atform_device *pdev)
+>   */
+>  static const struct of_device_id usbhs_of_match[] =3D {
+>  	{
+> +		.compatible =3D "renesas,usbhs-r8a774c0",
+> +		.data =3D (void *)USBHS_TYPE_RCAR_GEN3_WITH_PLL,
+> +	},
+> +	{
+>  		.compatible =3D "renesas,usbhs-r8a7790",
+>  		.data =3D (void *)USBHS_TYPE_RCAR_GEN2,
+>  	},
+> --
+> 2.7.4
 
