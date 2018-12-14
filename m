@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9BAC6786C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AB9C6786C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3E720672
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B3E720672
+	by mail.kernel.org (Postfix) with ESMTP id E711520672
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E711520672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbeLNJiL (ORCPT
+        id S1729200AbeLNJiO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:38:11 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:40644 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728269AbeLNJiL (ORCPT
+        Fri, 14 Dec 2018 04:38:14 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:57810 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728269AbeLNJiO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:38:11 -0500
+        Fri, 14 Dec 2018 04:38:14 -0500
 X-IronPort-AV: E=Sophos;i="5.56,352,1539615600"; 
-   d="scan'208";a="2632471"
+   d="scan'208";a="2842644"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 18:38:09 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 18:38:12 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0DE3A406B145;
-        Fri, 14 Dec 2018 18:38:06 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CE49B406B147;
+        Fri, 14 Dec 2018 18:38:09 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -40,9 +40,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 08/17] arm64: dts: renesas: r8a774c0: Add PWM support
-Date:   Fri, 14 Dec 2018 09:37:31 +0000
-Message-Id: <1544780260-27590-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 09/17] arm64: dts: renesas: r8a774c0: Add display output support
+Date:   Fri, 14 Dec 2018 09:37:32 +0000
+Message-Id: <1544780260-27590-10-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -51,95 +51,193 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add PWM support to the RZ/G2E (a.k.a. R8A774C0) SoC specific
-device tree.
+The RZ/G2E (a.k.a. R8A774C0) has one RGB output and two LVDS
+outputs connected to DU.
+This patch add support for DU, LVDS encoders, VSP and FCP.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 70 +++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 167 ++++++++++++++++++++++++++++++
+ 1 file changed, 167 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 35b27b8..d876520 100644
+index d876520..f3c4910 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -758,6 +758,76 @@
- 			status = "disabled";
+@@ -1281,6 +1281,173 @@
+ 			resets = <&cpg 408>;
  		};
  
-+		pwm0: pwm@e6e30000 {
-+			compatible = "renesas,pwm-r8a774c0", "renesas,pwm-rcar";
-+			reg = <0 0xe6e30000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
++		vspb0: vsp@fe960000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe960000 0 0x8000>;
++			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 626>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
++			resets = <&cpg 626>;
++			renesas,fcp = <&fcpvb0>;
 +		};
 +
-+		pwm1: pwm@e6e31000 {
-+			compatible = "renesas,pwm-r8a774c0", "renesas,pwm-rcar";
-+			reg = <0 0xe6e31000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
++		fcpvb0: fcp@fe96f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe96f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 607>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
++			resets = <&cpg 607>;
++			iommus = <&ipmmu_vp0 5>;
 +		};
 +
-+		pwm2: pwm@e6e32000 {
-+			compatible = "renesas,pwm-r8a774c0", "renesas,pwm-rcar";
-+			reg = <0 0xe6e32000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
++		vspi0: vsp@fe9a0000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfe9a0000 0 0x8000>;
++			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 631>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
++			resets = <&cpg 631>;
++			renesas,fcp = <&fcpvi0>;
 +		};
 +
-+		pwm3: pwm@e6e33000 {
-+			compatible = "renesas,pwm-r8a774c0", "renesas,pwm-rcar";
-+			reg = <0 0xe6e33000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
++		fcpvi0: fcp@fe9af000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfe9af000 0 0x200>;
++			clocks = <&cpg CPG_MOD 611>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
++			resets = <&cpg 611>;
++			iommus = <&ipmmu_vp0 8>;
 +		};
 +
-+		pwm4: pwm@e6e34000 {
-+			compatible = "renesas,pwm-r8a774c0", "renesas,pwm-rcar";
-+			reg = <0 0xe6e34000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
++		vspd0: vsp@fea20000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea20000 0 0x7000>;
++			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 623>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
++			resets = <&cpg 623>;
++			renesas,fcp = <&fcpvd0>;
 +		};
 +
-+		pwm5: pwm@e6e35000 {
-+			compatible = "renesas,pwm-r8a774c0", "renesas,pwm-rcar";
-+			reg = <0 0xe6e35000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
++		fcpvd0: fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea27000 0 0x200>;
++			clocks = <&cpg CPG_MOD 603>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
++			resets = <&cpg 603>;
++			iommus = <&ipmmu_vi0 8>;
 +		};
 +
-+		pwm6: pwm@e6e36000 {
-+			compatible = "renesas,pwm-r8a774c0", "renesas,pwm-rcar";
-+			reg = <0 0xe6e36000 0 0x8>;
-+			clocks = <&cpg CPG_MOD 523>;
++		vspd1: vsp@fea28000 {
++			compatible = "renesas,vsp2";
++			reg = <0 0xfea28000 0 0x7000>;
++			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 622>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 523>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
++			resets = <&cpg 622>;
++			renesas,fcp = <&fcpvd1>;
 +		};
 +
- 		scif0: serial@e6e60000 {
- 			compatible = "renesas,scif-r8a774c0",
- 				     "renesas,rcar-gen3-scif", "renesas,scif";
++		fcpvd1: fcp@fea2f000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea2f000 0 0x200>;
++			clocks = <&cpg CPG_MOD 602>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 602>;
++			iommus = <&ipmmu_vi0 9>;
++		};
++
++		du: display@feb00000 {
++			compatible = "renesas,du-r8a774c0";
++			reg = <0 0xfeb00000 0 0x80000>;
++			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 724>,
++				 <&cpg CPG_MOD 723>;
++			clock-names = "du.0", "du.1";
++			vsps = <&vspd0 0 &vspd1 0>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					du_out_rgb: endpoint {
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					du_out_lvds0: endpoint {
++						remote-endpoint = <&lvds0_in>;
++					};
++				};
++
++				port@2 {
++					reg = <2>;
++					du_out_lvds1: endpoint {
++						remote-endpoint = <&lvds1_in>;
++					};
++				};
++			};
++		};
++
++		lvds0: lvds-encoder@feb90000 {
++			compatible = "renesas,r8a774c0-lvds";
++			reg = <0 0xfeb90000 0 0x20>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 727>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds0_in: endpoint {
++						remote-endpoint = <&du_out_lvds0>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					lvds0_out: endpoint {
++					};
++				};
++			};
++		};
++
++		lvds1: lvds-encoder@feb90100 {
++			compatible = "renesas,r8a774c0-lvds";
++			reg = <0 0xfeb90100 0 0x20>;
++			clocks = <&cpg CPG_MOD 727>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 726>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					lvds1_in: endpoint {
++						remote-endpoint = <&du_out_lvds1>;
++					};
++				};
++
++				port@1 {
++					reg = <1>;
++					lvds1_out: endpoint {
++					};
++				};
++			};
++		};
++
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
 -- 
 2.7.4
 
