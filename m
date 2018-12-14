@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050ABC6786C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489A2C6786C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6F2A2086D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6F2A2086D
+	by mail.kernel.org (Postfix) with ESMTP id 152EC2086D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152EC2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeLNJLC (ORCPT
+        id S1728947AbeLNJKl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:11:02 -0500
+        Fri, 14 Dec 2018 04:10:41 -0500
 Received: from relmlor2.renesas.com ([210.160.252.172]:62787 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729117AbeLNJKu (ORCPT
+        by vger.kernel.org with ESMTP id S1728998AbeLNJKl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:10:50 -0500
+        Fri, 14 Dec 2018 04:10:41 -0500
 X-IronPort-AV: E=Sophos;i="5.56,352,1539615600"; 
-   d="scan'208";a="2629739"
+   d="scan'208";a="2629723"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 18:10:48 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 18:10:39 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0D46440244AB;
-        Fri, 14 Dec 2018 18:10:45 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 138DE401E516;
+        Fri, 14 Dec 2018 18:10:36 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Simon Horman <horms@verge.net.au>,
@@ -41,9 +41,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-kernel@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 8/9] arm64: dts: renesas: r8a774c0: Add watchdog support
-Date:   Fri, 14 Dec 2018 09:10:12 +0000
-Message-Id: <1544778613-24279-9-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 5/9] arm64: dts: renesas: r8a774c0: Add PFC support
+Date:   Fri, 14 Dec 2018 09:10:09 +0000
+Message-Id: <1544778613-24279-6-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -52,35 +52,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add watchdog support to the RZ/G2E (a.k.a. R8A774C0) SoC
-specific device tree.
+Add PFC support to the RZ/G2E (a.k.a. r8a774c0) SoC specific
+device tree.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index ea40528..a51b6d3 100644
+index 895f407..afb4751 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -105,6 +105,16 @@
+@@ -105,6 +105,11 @@
  		#size-cells = <2>;
  		ranges;
  
-+		rwdt: watchdog@e6020000 {
-+			compatible = "renesas,r8a774c0-wdt",
-+				     "renesas,rcar-gen3-wdt";
-+			reg = <0 0xe6020000 0 0x0c>;
-+			clocks = <&cpg CPG_MOD 402>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 402>;
-+			status = "disabled";
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a774c0";
++			reg = <0 0xe6060000 0 0x508>;
 +		};
 +
- 		gpio0: gpio@e6050000 {
- 			compatible = "renesas,gpio-r8a774c0",
- 				     "renesas,rcar-gen3-gpio";
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a774c0-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
 2.7.4
 
