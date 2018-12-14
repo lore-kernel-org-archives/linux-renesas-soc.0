@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51ACC67839
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 07:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C13C67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 07:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9258D2080F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 07:25:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9258D2080F
+	by mail.kernel.org (Postfix) with ESMTP id EAAAC2080F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 07:25:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAAAC2080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jinso.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeLNHZ3 (ORCPT
+        id S1726615AbeLNHZe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 02:25:29 -0500
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:18890 "EHLO
+        Fri, 14 Dec 2018 02:25:34 -0500
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:18945 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbeLNHZ3 (ORCPT
+        with ESMTP id S1726500AbeLNHZe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 02:25:29 -0500
-Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBE7PR8p037806;
-        Fri, 14 Dec 2018 16:25:27 +0900 (JST)
+        Fri, 14 Dec 2018 02:25:34 -0500
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBE7PWAh037856;
+        Fri, 14 Dec 2018 16:25:32 +0900 (JST)
         (envelope-from na-hoan@jinso.co.jp)
 Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
- Fri, 14 Dec 2018 16:25:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Fri, 14 Dec 2018 16:25:32 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
 Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
         (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBE7PJPR037673
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBE7PRXw037807
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 16:25:26 +0900 (JST)
+        Fri, 14 Dec 2018 16:25:32 +0900 (JST)
         (envelope-from na-hoan@jinso.co.jp)
 From:   Nguyen An Hoan <na-hoan@jinso.co.jp>
 To:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
@@ -44,10 +44,12 @@ To:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
 Cc:     kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
         h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
         cv-dong@jinso.co.jp
-Subject: [PATCH 1/2] drm: rcar-du: Add Standby Mode support
-Date:   Fri, 14 Dec 2018 16:25:17 +0900
-Message-Id: <1544772318-17408-1-git-send-email-na-hoan@jinso.co.jp>
+Subject: [PATCH 2/2] drm: rcar-du: Add Standby Mode to suspend()
+Date:   Fri, 14 Dec 2018 16:25:18 +0900
+Message-Id: <1544772318-17408-2-git-send-email-na-hoan@jinso.co.jp>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1544772318-17408-1-git-send-email-na-hoan@jinso.co.jp>
+References: <1544772318-17408-1-git-send-email-na-hoan@jinso.co.jp>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -55,63 +57,40 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-Add function support for Module Standby Mode
+Enter Standby Mode before suspend by drm
+We will not need to "Release from Module Standby Mode"
+because after resume() is called, this is done.
 
 Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 26 ++++++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  1 +
- 2 files changed, 27 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 90dacab..935cdd1 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -651,6 +651,32 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
- 	rcar_du_group_start_stop(rcrtc->group, false);
- }
- 
-+int rcar_du_crtc_standby(struct rcar_du_crtc *rcrtc)
-+{
-+	u32 val_reg;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 32dba13..1ab3f56 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -426,6 +426,20 @@ static struct drm_driver rcar_du_driver = {
+ static int rcar_du_pm_suspend(struct device *dev)
+ {
+ 	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
++	int ret;
 +	unsigned int i = 0;
 +
-+	/* Enter Standby mode */
-+	rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_DRES | DSYSR_DEN, 0);
-+
-+	for(i = 100; i > 0; i--)
++	for (i = 0; i < rcdu->num_crtcs; i++)
 +	{
-+		val_reg = rcar_du_crtc_read(rcrtc, DSSR);
-+		if(!(val_reg & DSSR_VBK))
-+			break;
-+		udelay(10);
++		struct rcar_du_crtc *rcrtc = &rcdu->crtcs[i];
++
++		ret = rcar_du_crtc_standby(rcrtc);
++		if(ret)
++		{
++			dev_err(dev, "failed to enter Standby mode\n");
++			return ret;
++		}
 +	}
-+
-+	if(!(i > 0))
-+		return -ETIMEDOUT;
-+
-+	/* Stop clock */
-+	clk_set_rate(rcrtc->extclock, 0);
-+	clk_set_rate(rcrtc->clock, 0);
-+
-+	return 0;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * CRTC Functions
-  */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 59ac6e7..6e0de42 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -99,6 +99,7 @@ enum rcar_du_output {
  
- int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 			unsigned int hwindex);
-+int rcar_du_crtc_standby(struct rcar_du_crtc *rcrtc);
- void rcar_du_crtc_suspend(struct rcar_du_crtc *rcrtc);
- void rcar_du_crtc_resume(struct rcar_du_crtc *rcrtc);
- 
+ 	return drm_mode_config_helper_suspend(rcdu->ddev);
+ }
 -- 
 2.7.4
 
