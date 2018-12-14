@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2F5C6786C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735EEC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9947320672
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9947320672
+	by mail.kernel.org (Postfix) with ESMTP id 3E04C20672
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E04C20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeLNJid (ORCPT
+        id S1729275AbeLNJig (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:38:33 -0500
+        Fri, 14 Dec 2018 04:38:36 -0500
 Received: from relmlor2.renesas.com ([210.160.252.172]:53846 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727698AbeLNJid (ORCPT
+        by vger.kernel.org with ESMTP id S1727698AbeLNJif (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:38:33 -0500
+        Fri, 14 Dec 2018 04:38:35 -0500
 X-IronPort-AV: E=Sophos;i="5.56,352,1539615600"; 
-   d="scan'208";a="2632525"
+   d="scan'208";a="2632533"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 18:38:31 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 18:38:34 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 779AE406B145;
-        Fri, 14 Dec 2018 18:38:29 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 45A25406B145;
+        Fri, 14 Dec 2018 18:38:32 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -40,9 +40,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 16/17] arm64: dts: renesas: r8a774c0: Add PCIe device node
-Date:   Fri, 14 Dec 2018 09:37:39 +0000
-Message-Id: <1544780260-27590-17-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 17/17] arm64: dts: renesas: r8a774c0: Add VIN and CSI-2 device nodes
+Date:   Fri, 14 Dec 2018 09:37:40 +0000
+Message-Id: <1544780260-27590-18-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -51,52 +51,120 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds PCI express channel 0 device tree node to the
-RZ/G2E (a.k.a. R8A774C0) SoC dtsi.
+Add device nodes for VIN4, VIN5 and CSI40 to RZ/G2E (a.k.a. R8A774C0)
+SoC specific device tree.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 88 +++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 6247ebc..c13c182 100644
+index c13c182..3970aaf 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1418,6 +1418,33 @@
- 			resets = <&cpg 408>;
+@@ -1057,6 +1057,62 @@
+ 			status = "disabled";
  		};
  
-+		pciec0: pcie@fe000000 {
-+			compatible = "renesas,pcie-r8a774c0",
-+				     "renesas,pcie-rcar-gen3";
-+			reg = <0 0xfe000000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
-+				  0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
-+				  0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
-+				  0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
++		vin4: video@e6ef4000 {
++			compatible = "renesas,vin-r8a774c0";
++			reg = <0 0xe6ef4000 0 0x1000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 807>;
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 319>;
++			resets = <&cpg 807>;
++			renesas,id = <4>;
 +			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin4csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin4>;
++					};
++				};
++			};
 +		};
 +
- 		vspb0: vsp@fe960000 {
- 			compatible = "renesas,vsp2";
- 			reg = <0 0xfe960000 0 0x8000>;
++		vin5: video@e6ef5000 {
++			compatible = "renesas,vin-r8a774c0";
++			reg = <0 0xe6ef5000 0 0x1000>;
++			interrupts = <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 806>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 806>;
++			renesas,id = <5>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					vin5csi40: endpoint@2 {
++						reg = <2>;
++						remote-endpoint= <&csi40vin5>;
++					};
++				};
++			};
++		};
++
+ 		rcar_sound: sound@ec500000 {
+ 			/*
+ 			 * #sound-dai-cells is required
+@@ -1521,6 +1577,38 @@
+ 			iommus = <&ipmmu_vi0 9>;
+ 		};
+ 
++		csi40: csi2@feaa0000 {
++			compatible = "renesas,r8a774c0-csi2",
++				     "renesas,rcar-gen3-csi2";
++			reg = <0 0xfeaa0000 0 0x10000>;
++			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 716>;
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 716>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					reg = <1>;
++
++					csi40vin4: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&vin4csi40>;
++					};
++					csi40vin5: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vin5csi40>;
++					};
++				};
++			};
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a774c0";
+ 			reg = <0 0xfeb00000 0 0x80000>;
 -- 
 2.7.4
 
