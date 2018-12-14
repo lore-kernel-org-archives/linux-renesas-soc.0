@@ -2,74 +2,77 @@ Return-Path: <SRS0=qJci=OX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 453F8C6786C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1A8C67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04EBD20672
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04EBD20672
+	by mail.kernel.org (Postfix) with ESMTP id F2AFA2086D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:03:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AFA2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbeLNJi4 (ORCPT
+        id S1728893AbeLNKDO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:38:56 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46379 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLNJi4 (ORCPT
+        Fri, 14 Dec 2018 05:03:14 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:41368 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNKDO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:38:56 -0500
-Received: by mail-ua1-f65.google.com with SMTP id v24so1759021uap.13;
-        Fri, 14 Dec 2018 01:38:55 -0800 (PST)
+        Fri, 14 Dec 2018 05:03:14 -0500
+Received: by mail-vs1-f67.google.com with SMTP id t17so3010271vsc.8;
+        Fri, 14 Dec 2018 02:03:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cdYTB40LOKAKpXqsapmAITxdRvBck/EgbC9mkOzlrwE=;
-        b=or/rAozb8tucS6PCjD86lq7MfK/zXZkUtUFdPQMTQXLlsjnXb6+ojygTklqx/0Hks9
-         hlhnwWSXShFZ0tPn2vy3OdK++OI6OCWg5BBigijOUEszv1g6O1Xz0RJSWDy09vDMyEia
-         WtwCbOOOZqeixkvmE208mHZ0hotLsCk97oSdd0H71Nc6mo/hm4uBCOTK1uj3lalZZXRo
-         +9LAr7VVMgq/4a4zZ++TIOfm2M4W/jmT/hf9wsSfCyll5vK2YiI/3GzLRM5vlIh+FnrZ
-         8cK08McBwBqcB+aVJqnz8/8pFB49tJUOB14bjyy4Dgqdg4+eNZwugUZVYyNlRFUf85VU
-         08Jw==
-X-Gm-Message-State: AA+aEWaM9rZdUeBeTAnoxXnjto2l1isk4y0v302qZdTALxWE0q5RQF+l
-        d9iGOg1HL4jdBj3H+CPhorBAV8HOGraWdVXb2zQ=
-X-Google-Smtp-Source: AFSGD/Vsj78heE2MDDsmBbL0GYIFaKu/tzUUnhAXnC2x5Ftl5wYmTbEqzh0K+pVa5kG4TFae0npUttKSz/E0o0F67zI=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr1029096uap.0.1544780335103;
- Fri, 14 Dec 2018 01:38:55 -0800 (PST)
+        bh=fiVlcOzIYJeohesd+fVoDMKCy35RcoPGUP6SkNauWYE=;
+        b=G/QsKJbIzu5t8hSLjz278m/j2UDvoBpeK6vgG7L2bKc+eiqjcacyqJeCqZ5hK5z/tD
+         31tHVloLpYJONaq1KUYnxEejnZ0ok5Pd4MPyJllO2p/qWf69H4Oiq1yJf8t6gE/j4/9s
+         ERCNIy0UZTDypBiDBrG9Ka7UOwiHAJ2tpvSIxTbpdy3Lth1iPx/ugzndZk2kY6wu6xl6
+         wMlgiFuP+KD8UnNIck1cJc7w00ZfJ5Q0ik9yD/4wfe3iDuTqCE7Bq+uJko2XB+++gNkO
+         r/91oC0A8GbBbbfMVh+crpkWl8QV9QS26UNod9wtsFc64E44DDrye54RtPRRBS1rq7jb
+         pUfg==
+X-Gm-Message-State: AA+aEWZscX6pj4xRNTzCAiO0ETiuEOZr6EX4yOSQxNboYjtw3zZSmIHq
+        0ZG8lkpibHiT4g+GJLXhuNfu6xIfK4TjBHtEAXA=
+X-Google-Smtp-Source: AFSGD/UlUzzoLBJVHKVKdHjjhX6951hUGN9flNT8+HpBila9DfU+Jc91Ds+vowhs04K3pqLgGEUqCFkGKA1o5k41R6E=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr908111vsi.63.1544781793013;
+ Fri, 14 Dec 2018 02:03:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20181213182714.26094-1-geert+renesas@glider.be>
- <20181213182714.26094-2-geert+renesas@glider.be> <b327b5a0-5d14-447d-629a-a8f89e29dd9c@cogentembedded.com>
-In-Reply-To: <b327b5a0-5d14-447d-629a-a8f89e29dd9c@cogentembedded.com>
+References: <1544732263-5859-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732263-5859-1-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 14 Dec 2018 10:38:42 +0100
-Message-ID: <CAMuHMdWD7c=dvmH+Yaz+ji1YU1LnqbwzvbUVrkAhwDyiJUp=0g@mail.gmail.com>
-Subject: Re: [PATCH 01/15] pinctrl: sh-pfc: r8a77994: Remove bogus IPSR9 field
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Date:   Fri, 14 Dec 2018 11:03:00 +0100
+Message-ID: <CAMuHMdUeZWmtdqRx+BuwXV++1SMqvoB_NJ7L4gBBQ5W+zyHgBA@mail.gmail.com>
+Subject: Re: [PATCH] dmaengine: rcar-dmac: Document R8A774C0 bindings
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Vinod <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+On Thu, Dec 13, 2018 at 9:17 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Renesas' RZ/G2E (R8A774C0) SoC has DMA controllers compatible
+> with this driver, therefore document RZ/G2E specific bindings.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-On Fri, Dec 14, 2018 at 9:00 AM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
->     like I told you on IRC, the subjects of this and next 2 patches has
-> duplicate 9 in the model #s...
-
-Thanks, already fixed locally, as I told you on IRC ;-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
