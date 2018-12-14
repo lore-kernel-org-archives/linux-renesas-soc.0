@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B63EC6786C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D08C67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B8BE20672
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:37:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B8BE20672
+	by mail.kernel.org (Postfix) with ESMTP id 3FE9720672
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 09:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE9720672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbeLNJh4 (ORCPT
+        id S1728951AbeLNJiA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:37:56 -0500
+        Fri, 14 Dec 2018 04:38:00 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:63161 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727693AbeLNJh4 (ORCPT
+        by vger.kernel.org with ESMTP id S1727693AbeLNJh7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:37:56 -0500
+        Fri, 14 Dec 2018 04:37:59 -0500
 X-IronPort-AV: E=Sophos;i="5.56,352,1539615600"; 
-   d="scan'208";a="2842603"
+   d="scan'208";a="2842607"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 18:37:55 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 18:37:58 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0C075406B147;
-        Fri, 14 Dec 2018 18:37:52 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CD197406B147;
+        Fri, 14 Dec 2018 18:37:55 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -40,9 +40,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 03/17] arm64: dts: renesas: r8a774c0: Add IPMMU device nodes
-Date:   Fri, 14 Dec 2018 09:37:26 +0000
-Message-Id: <1544780260-27590-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 04/17] arm64: dts: renesas: r8a774c0: Add CAN nodes
+Date:   Fri, 14 Dec 2018 09:37:27 +0000
+Message-Id: <1544780260-27590-5-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -51,97 +51,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add r8a774c0 IPMMU nodes.
+Add the device nodes for both RZ/G2E CAN channels.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 73 +++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index bf08aba..042e26d 100644
+index 042e26d..446cab1 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -604,6 +604,79 @@
- 			dma-channels = <16>;
+@@ -722,6 +722,30 @@
+ 			status = "disabled";
  		};
  
-+		ipmmu_ds0: mmu@e6740000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe6740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 0>;
++		can0: can@e6c30000 {
++			compatible = "renesas,can-r8a774c0",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c30000 0 0x1000>;
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 916>, <&can_clk>;
++			clock-names = "clkp1", "can_clk";
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
++			resets = <&cpg 916>;
++			status = "disabled";
 +		};
 +
-+		ipmmu_ds1: mmu@e7740000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe7740000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 1>;
++		can1: can@e6c38000 {
++			compatible = "renesas,can-r8a774c0",
++				     "renesas,rcar-gen3-can";
++			reg = <0 0xe6c38000 0 0x1000>;
++			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 915>, <&can_clk>;
++			clock-names = "clkp1", "can_clk";
 +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
++			resets = <&cpg 915>;
++			status = "disabled";
 +		};
 +
-+		ipmmu_hc: mmu@e6570000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe6570000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 2>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mm: mmu@e67b0000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xe67b0000 0 0x1000>;
-+			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_mp: mmu@ec670000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xec670000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 4>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_pv0: mmu@fd800000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfd800000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 6>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vc0: mmu@fe6b0000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfe6b0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 12>;
-+			power-domains = <&sysc R8A774C0_PD_A3VC>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vi0: mmu@febd0000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfebd0000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 14>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
-+		ipmmu_vp0: mmu@fe990000 {
-+			compatible = "renesas,ipmmu-r8a774c0";
-+			reg = <0 0xfe990000 0 0x1000>;
-+			renesas,ipmmu-main = <&ipmmu_mm 16>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			#iommu-cells = <1>;
-+		};
-+
- 		avb: ethernet@e6800000 {
- 			compatible = "renesas,etheravb-r8a774c0",
- 				     "renesas,etheravb-rcar-gen3";
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a774c0",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
 2.7.4
 
