@@ -7,210 +7,154 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B455EC67839
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD633C6786C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A54E20879
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0ED52086D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CoGDp46N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A54E20879
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BvcI1TIE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0ED52086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbeLNIYT (ORCPT
+        id S1727256AbeLNI0g (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:24:19 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49420 "EHLO
+        Fri, 14 Dec 2018 03:26:36 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49490 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbeLNIYS (ORCPT
+        with ESMTP id S1726520AbeLNI0g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:24:18 -0500
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F0AC549;
-        Fri, 14 Dec 2018 09:24:16 +0100 (CET)
+        Fri, 14 Dec 2018 03:26:36 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 35D25549;
+        Fri, 14 Dec 2018 09:26:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1544775856;
-        bh=eWoFxi6s6Ex376b2Sx2VeTsEtW4C8bD5IqbuvNDCUT4=;
-        h=Reply-To:Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=CoGDp46NEuKMRGc4KjmTqLEzOrS8n/fYDYYg3IDAuizBfoQj2w5wD/zk89cVSxL1q
-         4LB0MN7CK25QSD1ixhfNTJpeKRbms/wHTbdSTObiZ1shbVBwJ8m/TSu2UdB9Pv+haB
-         /0DkViJc1QpzIg50LhEGkWCbEuR0XkaE+11P7vd4=
-Reply-To: kieran.bingham+renesas@ideasonboard.com,
-          kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH] drm: rcar-du: Add r8a77965 LVDS dts overlay
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     Nguyen An Hoan <na-hoan@jinso.co.jp>,
-        linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com
-Cc:     kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-References: <1544771885-17023-1-git-send-email-na-hoan@jinso.co.jp>
- <c91bea19-7bbd-1567-1e1e-36cff9cffe99@ideasonboard.com>
-Openpgp: preference=signencrypt
-Organization: Ideas on Board
-Message-ID: <1122dcd7-7fa8-528e-81f9-bab61c71e474@ideasonboard.com>
-Date:   Fri, 14 Dec 2018 08:24:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        s=mail; t=1544775994;
+        bh=MgAufgl2JuzgglUJOvyn0UD4lBG+kOn7h9BviEHBRW4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BvcI1TIEqc+9p+DMNLyejFn1Au8clzdF5H0jCVLw/Ew17uPaxs99+0tAzuKYqJbJT
+         bHKeTbTvGf2AHW1IrwuzgtqpBQMdnmnZRvMs8u8NAH8N13ou/tmtzxzuylWxUxLaTT
+         HvaumrsKWFIvilwmXxI38ZEuPMNbHwGrryuJtjao=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/4] rcar-vin: make rvin_{start,stop}_streaming() available for internal use
+Date:   Fri, 14 Dec 2018 10:27:22 +0200
+Message-ID: <23080491.FYkgn8OxuK@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181214061824.10296-4-niklas.soderlund+renesas@ragnatech.se>
+References: <20181214061824.10296-1-niklas.soderlund+renesas@ragnatech.se> <20181214061824.10296-4-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <c91bea19-7bbd-1567-1e1e-36cff9cffe99@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 14/12/2018 07:48, Kieran Bingham wrote:
-> Hi Hoan-san,
-> 
-> Thank you for the patch,
-> 
-> On 14/12/2018 07:18, Nguyen An Hoan wrote:
->> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->>
->> Add r8a77965 LVDS dts overlay support.
-> 
-> 
-> There has been a recent change to the format of how these files are added.
-> 
-> With thanks to Geert's updates, we have a much simpler way to describe
-> the overlay.
-> 
-> Geert has supplied a patch at:
->   https://patchwork.kernel.org/patch/10704417/
-> 
-> You can see the thread for this topic at:
-> 
-> https://lore.kernel.org/linux-renesas-soc/20181129105850.10953-1-geert+renesas@glider.be/
-> 
-> 
-> Could you convert this file in the same way (and validate the generated
-> output is the same), and repost please?
+Hi Niklas,
 
-My apologies, following Laurent's comments, please disregard this
-suggestion.
+Thank you for the patch.
 
---
-Regards
+On Friday, 14 December 2018 08:18:23 EET Niklas S=F6derlund wrote:
+> To support suspend/resume rvin_{start,stop}_streaming() needs to be
+> accessible from the suspend and resume callbacks. Up until now the only
+> users of these functions have been the callbacks in struct vb2_ops so
+> the arguments to the functions are not suitable for use by the driver it
+> self.
+>=20
+> Fix this by adding wrappers for the struct vb2_ops callbacks which calls
+> the new rvin_{start,stop}_streaming() using more friendly arguments.
+>=20
+> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c | 20 ++++++++++++++------
+>  drivers/media/platform/rcar-vin/rcar-vin.h |  3 +++
+>  2 files changed, 17 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
+> b/drivers/media/platform/rcar-vin/rcar-dma.c index
+> 64f7636f94d6a0a3..d11d4df1906a8962 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -1143,9 +1143,8 @@ static int rvin_set_stream(struct rvin_dev *vin, int
+> on) return ret;
+>  }
+>=20
+> -static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+> +int rvin_start_streaming(struct rvin_dev *vin)
+>  {
+> -	struct rvin_dev *vin =3D vb2_get_drv_priv(vq);
+>  	unsigned long flags;
+>  	int ret;
+>=20
+> @@ -1187,9 +1186,13 @@ static int rvin_start_streaming(struct vb2_queue *=
+vq,
+> unsigned int count) return ret;
+>  }
+>=20
+> -static void rvin_stop_streaming(struct vb2_queue *vq)
+> +static int rvin_start_streaming_vq(struct vb2_queue *vq, unsigned int
+> count)
+> +{
+> +	return rvin_start_streaming(vb2_get_drv_priv(vq));
+> +}
+> +
+> +void rvin_stop_streaming(struct rvin_dev *vin)
+>  {
+> -	struct rvin_dev *vin =3D vb2_get_drv_priv(vq);
+>  	unsigned long flags;
+>  	int retries =3D 0;
+>=20
+> @@ -1238,12 +1241,17 @@ static void rvin_stop_streaming(struct vb2_queue
+> *vq) vin->scratch_phys);
+>  }
+>=20
+> +static void rvin_stop_streaming_vq(struct vb2_queue *vq)
+> +{
+> +	rvin_stop_streaming(vb2_get_drv_priv(vq));
+> +}
 
-Kieran
+You'll need a bit more than this. rvin_stop_streaming() calls=20
+return_all_buffers() and dma_free_coherent() which you don't want at suspen=
+d=20
+time. Buffers should not be returned to userspace but kept for reuse, and i=
+t's=20
+pointless to free the scratch buffer at suspend time to reallocate it at=20
+resume time.
+
+>  static const struct vb2_ops rvin_qops =3D {
+>  	.queue_setup		=3D rvin_queue_setup,
+>  	.buf_prepare		=3D rvin_buffer_prepare,
+>  	.buf_queue		=3D rvin_buffer_queue,
+> -	.start_streaming	=3D rvin_start_streaming,
+> -	.stop_streaming		=3D rvin_stop_streaming,
+> +	.start_streaming	=3D rvin_start_streaming_vq,
+> +	.stop_streaming		=3D rvin_stop_streaming_vq,
+>  	.wait_prepare		=3D vb2_ops_wait_prepare,
+>  	.wait_finish		=3D vb2_ops_wait_finish,
+>  };
+> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
+> b/drivers/media/platform/rcar-vin/rcar-vin.h index
+> d21fc991b7a9da36..700fae1c1225a2f3 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
+> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+> @@ -269,4 +269,7 @@ void rvin_crop_scale_comp(struct rvin_dev *vin);
+>=20
+>  int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
+>=20
+> +int rvin_start_streaming(struct rvin_dev *vin);
+> +void rvin_stop_streaming(struct rvin_dev *vin);
+> +
+>  #endif
 
 
+=2D-=20
+Regards,
 
-> 
-> --
-> Regards
-> 
-> Kieran
-> 
-> 
->>
->> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
->> ---
->>  drivers/gpu/drm/rcar-du/Makefile                   |  4 +-
->>  drivers/gpu/drm/rcar-du/rcar_du_of.c               |  2 +
->>  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts   | 50 ++++++++++++++++++++++
->>  3 files changed, 55 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts
->>
->> diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
->> index 2a3b8d7..9e73a83 100644
->> --- a/drivers/gpu/drm/rcar-du/Makefile
->> +++ b/drivers/gpu/drm/rcar-du/Makefile
->> @@ -11,7 +11,8 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
->>  					   rcar_du_of_lvds_r8a7791.dtb.o \
->>  					   rcar_du_of_lvds_r8a7793.dtb.o \
->>  					   rcar_du_of_lvds_r8a7795.dtb.o \
->> -					   rcar_du_of_lvds_r8a7796.dtb.o
->> +					   rcar_du_of_lvds_r8a7796.dtb.o \
->> +					   rcar_du_of_lvds_r8a77965.dtb.o
->>  rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
->>  
->>  obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
->> @@ -24,3 +25,4 @@ DTC_FLAGS_rcar_du_of_lvds_r8a7791 += -Wno-graph_endpoint
->>  DTC_FLAGS_rcar_du_of_lvds_r8a7793 += -Wno-graph_endpoint
->>  DTC_FLAGS_rcar_du_of_lvds_r8a7795 += -Wno-graph_endpoint
->>  DTC_FLAGS_rcar_du_of_lvds_r8a7796 += -Wno-graph_endpoint
->> +DTC_FLAGS_rcar_du_of_lvds_r8a77965 += -Wno-graph_endpoint
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c b/drivers/gpu/drm/rcar-du/rcar_du_of.c
->> index afef696..56c341c 100644
->> --- a/drivers/gpu/drm/rcar-du/rcar_du_of.c
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
->> @@ -107,6 +107,7 @@ RCAR_DU_OF_DTB(lvds, r8a7791);
->>  RCAR_DU_OF_DTB(lvds, r8a7793);
->>  RCAR_DU_OF_DTB(lvds, r8a7795);
->>  RCAR_DU_OF_DTB(lvds, r8a7796);
->> +RCAR_DU_OF_DTB(lvds, r8a77965);
->>  
->>  static const struct rcar_du_of_overlay rcar_du_lvds_overlays[] __initconst = {
->>  	RCAR_DU_OF_OVERLAY(lvds, r8a7790),
->> @@ -114,6 +115,7 @@ static const struct rcar_du_of_overlay rcar_du_lvds_overlays[] __initconst = {
->>  	RCAR_DU_OF_OVERLAY(lvds, r8a7793),
->>  	RCAR_DU_OF_OVERLAY(lvds, r8a7795),
->>  	RCAR_DU_OF_OVERLAY(lvds, r8a7796),
->> +	RCAR_DU_OF_OVERLAY(lvds, r8a77965),
->>  	{ /* Sentinel */ },
->>  };
->>  
->> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts
->> new file mode 100644
->> index 0000000..34aea91
->> --- /dev/null
->> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts
->> @@ -0,0 +1,50 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * rcar_du_of_lvds_r8a77965.dts - Legacy LVDS DT bindings conversion for R8A77965
->> + *
->> + * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> + */
->> +
->> +/dts-v1/;
->> +/plugin/;
->> +/ {
->> +	fragment@0 {
->> +		target-path = "/soc";
->> +		__overlay__ {
->> +			#address-cells = <2>;
->> +			#size-cells = <2>;
->> +
->> +			lvds@feb90000 {
->> +				compatible = "renesas,r8a77965-lvds";
->> +				reg = <0 0xfeb90000 0 0x14>;
->> +
->> +				ports {
->> +					#address-cells = <1>;
->> +					#size-cells = <0>;
->> +
->> +					port@0 {
->> +						reg = <0>;
->> +						lvds0_input: endpoint {
->> +						};
->> +					};
->> +					port@1 {
->> +						reg = <1>;
->> +						lvds0_out: endpoint {
->> +						};
->> +					};
->> +				};
->> +			};
->> +		};
->> +	};
->> +
->> +	fragment@1 {
->> +		target-path = "/soc/display@feb00000/ports";
->> +		__overlay__ {
->> +			port@2 {
->> +				endpoint {
->> +					remote-endpoint = <&lvds0_input>;
->> +				};
->> +			};
->> +		};
->> +	};
->> +};
->>
-> 
+Laurent Pinchart
+
+
 
