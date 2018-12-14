@@ -3,58 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE53C6786C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E0AC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25202086D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:09:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E25202086D
+	by mail.kernel.org (Postfix) with ESMTP id 95C0F2080F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:13:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95C0F2080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729245AbeLNKJ0 (ORCPT
+        id S1729076AbeLNKNb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:09:26 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34395 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLNKJ0 (ORCPT
+        Fri, 14 Dec 2018 05:13:31 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:37982 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNKNa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:09:26 -0500
-Received: by mail-vs1-f68.google.com with SMTP id y27so3056726vsi.1;
-        Fri, 14 Dec 2018 02:09:25 -0800 (PST)
+        Fri, 14 Dec 2018 05:13:30 -0500
+Received: by mail-ua1-f67.google.com with SMTP id p9so1803373uaa.5;
+        Fri, 14 Dec 2018 02:13:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=J9vsoy2OM6dVLzuxk78wTlK+3eRMo+7QAyTqR/1Uyio=;
-        b=Ppfhw6T3fOGiaUGishHgwTIclZ8Oo//Ew0eglvTjtX3sB09jMiDLgf9cOsjxBfJGXz
-         zGJbvMNk9+Sf03Zhktc4u6PkRoWiwoDmqyGDCJIdpVqBOOqIoICc5iQUBsonGZgrr4qF
-         Dh15Ikq4VRO8ixQNzPDKq/dm/3vAxI/uM22JbWgRDOL2TtL0yS5ehXz+buBN26ByH3j7
-         j4gTt6Pdc0jf/BBd/L5/fRoYyIBwVUqc1XtNkoTl1WzGu91xZMEMHTheN1hhlfAVU7wK
-         L6PVVJ1Kt/6LAxUV/IsOw7RLoD8ckyAv3qlIPOxFlNocUFj5MT56oyDte2EXsznIdsow
-         ei/Q==
-X-Gm-Message-State: AA+aEWZ+iHt4JvvgDBK+iqwVZbjnfm9Isx/ODzg2I/BtB1tUV4HldOzk
-        9cAapM+yGvb6av7uICfyON4zdtE+trAu5P1o5YE=
-X-Google-Smtp-Source: AFSGD/WOzVSoEu19kNohQj5yBqYxrxA9MV0ZpkZqRCRRWl3V2Ie8SRArAzDs7eQVIsOykN97zS/Se/HOfWWWbIXP3Ro=
-X-Received: by 2002:a67:3885:: with SMTP id n5mr852480vsi.96.1544782165291;
- Fri, 14 Dec 2018 02:09:25 -0800 (PST)
+        bh=VTPTCkq3GfHZRvNIsOK9tCvyfvqbBjLPXGrP4drpZpM=;
+        b=d3UTdcMMPPx61IzYFsPvGcgtg02o35d3FcB13TrvuEihtYteJ/AiE1c5xz7d1o2Vo4
+         OvqiWW1ErcFco6nf1eOiX4hOPIlvmBdxhiBMlthgNkjK2smkvOZp9Q2aQAmsAKKhbvW6
+         bE6NLoNuO2usJsONpZVmLPBVyy2/FoAmBIPOE2q7hj6HeWXQRvYXOfx2R+WILjAiXiJr
+         liZYQVh+7VEN/NJAUc8uQX6HrRNUgxy0+ME1PuSbZqPzOF7PmouhOz1QK9d1TAOQroiZ
+         jQmaXsZIcj2ok2H7d70L8f/EwGGWsX4Wxs07eUcV6poazLytOCr+sHQSUp2Zf2Gtm85B
+         9aRg==
+X-Gm-Message-State: AA+aEWafBilHjKAeml2BJTpLfAE8WfmGb2U0FzLWsLytXhQMGOv2XqBD
+        b85hH021VT05n0yjcWndwVven2v6V/sVT8qSdC0=
+X-Google-Smtp-Source: AFSGD/WKkUmRylajwlShKIcgvVplHFX6G1W70cn8vDw3wv1VhspHLRTwr0a8+GvM+kaCcVLUEg8/nIomtGsZpe+4DRE=
+X-Received: by 2002:ab0:210e:: with SMTP id d14mr1042242ual.20.1544782409602;
+ Fri, 14 Dec 2018 02:13:29 -0800 (PST)
 MIME-Version: 1.0
-References: <1544732378-6268-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732378-6268-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 14 Dec 2018 11:09:13 +0100
-Message-ID: <CAMuHMdXCWhA=-9zO4Z4uL3vQgy6ooDQwTEXyX844dP7TQOepsw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: can: rcar_can: Add r8a774c0 support
+Date:   Fri, 14 Dec 2018 11:13:17 +0100
+Message-ID: <CAMuHMdWL6vm56XrKSvwW0HaTJke7JyoFrpp_6g24ci6NOWu2vg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: thermal: rcar-thermal: add R8A774C0 support
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -71,7 +71,7 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Thu, Dec 13, 2018 at 9:19 PM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Document RZ/G2E (r8a774c0) SoC specific bindings.
+> Document RZ/G2E SoC (a.k.a. r8a774c0) bindings.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
