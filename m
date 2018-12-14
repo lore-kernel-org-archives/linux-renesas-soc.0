@@ -2,78 +2,88 @@ Return-Path: <SRS0=qJci=OX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBE8C43612
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 21:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370BCC43612
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 21:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39FAE208C2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 21:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65AEC208C2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 21:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544823888;
-	bh=lYfD3fYFw3YEkcUHTx807/PU2YoiDiZoyhXWz7nMXuE=;
-	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=Iph6zrQOiCApqMf84ipruy0GJJbELdkrXOOVxKgyk5FU7NbCWf3jUfo79A0fft8KN
-	 AklLJwx2+UjEUQJB/DP5VbSv+wF/N+NKbYLJAAWzYdCZy7FEemTn23LSdNAzq/sSit
-	 eXP/D234l+OI+5salTFFS3kAnNN0r5cC6KQ3i4Ts=
+	s=default; t=1544824202;
+	bh=KJ4xo3XlylGcEUsVeQVGwT3irBkYd0CC/9e7cbPK/ns=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=XV1x4xfI/B3lgws/XVlxVrJ1U9WFCrwQVDsmnRwolhSpNar6znwaXYb/VSD+ehcky
+	 ehrPdGVTP69/OiAab4q8PORSb9vOR7HOS7uN1wdNofb766a0yvEYZufUs3aUA4GcAw
+	 ybL2ZIBNI97SU8Q7caKetQ+4bMK3Mt668v1UsrZs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730956AbeLNVor (ORCPT
+        id S1730952AbeLNVuB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:44:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45714 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 16:50:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730952AbeLNVor (ORCPT
+        id S1730734AbeLNVuB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:44:47 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 14 Dec 2018 16:50:01 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C501C2086D;
-        Fri, 14 Dec 2018 21:44:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDADA2086D;
+        Fri, 14 Dec 2018 21:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544823886;
-        bh=lYfD3fYFw3YEkcUHTx807/PU2YoiDiZoyhXWz7nMXuE=;
-        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=rsZiR/kfd5wPFCiAisssFYgCUBVMKlJwD5H/HLyi0DNXQoIRTVg3DXJOpC0u+t7db
-         usJL8Lmuu129mAafMAsRDqRzxgwSaGh+kbmqMWa2GieBOXr8LJ2mz3IVKgwxpZxoAY
-         Wxv0VPtcxqxBaG/Mdm3I5g3LGqxQeOdvng2uvjmI=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181213161528.20318-1-marek.vasut+renesas@gmail.com>
-Subject: Re: [PATCH V3] clk: vc5: Add suspend/resume support
-To:     Marek Vasut <marek.vasut@gmail.com>, linux-clk@vger.kernel.org
-References: <20181213161528.20318-1-marek.vasut+renesas@gmail.com>
-Message-ID: <154482388569.19322.14148018432459812367@swboyd.mtv.corp.google.com>
+        s=default; t=1544824201;
+        bh=KJ4xo3XlylGcEUsVeQVGwT3irBkYd0CC/9e7cbPK/ns=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BC8ANbEO0TGcULe7/GOfYrEyPSVxhYRd8L9Q7pIsBNrzv91GfNBzJxRPoHJT175rz
+         bcbMeYRtA/TJua+P6yV33G1gW9PPZD3nanL43IF4Ft9iOYUaosw/i41jateWl8X/OY
+         aGUtWwyWQihtQvJvI9NTkXVzs+u/ieq/OSpAYFMU=
 From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-Cc:     linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Alexey Firago <alexey_firago@mentor.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Date:   Fri, 14 Dec 2018 13:44:45 -0800
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: vc5: Initialize src in vc5_mux_set_parent()
+Date:   Fri, 14 Dec 2018 13:49:59 -0800
+Message-Id: <20181214214959.162744-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Marek Vasut (2018-12-13 08:15:28)
-> Add simple suspend/resume handlers to the driver to restore the chip
-> configuration after resume. It is possible that the chip was configured
-> with non-default values before suspend-resume cycle and that the chip
-> is powered down during this cycle, so the configuration could get lost.
->=20
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
+It seems that it may be possible to get to the regmap update call
+without ever initializing this variable, so just set it to 0 to be safe.
 
-Applied to clk-next
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 5b393e711e94..026f76276933 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -246,7 +246,7 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	struct vc5_driver_data *vc5 =
+ 		container_of(hw, struct vc5_driver_data, clk_mux);
+ 	const u8 mask = VC5_PRIM_SRC_SHDN_EN_XTAL | VC5_PRIM_SRC_SHDN_EN_CLKIN;
+-	u8 src;
++	u8 src = 0;
+ 
+ 	if ((index > 1) || !vc5->clk_mux_ins)
+ 		return -EINVAL;
+-- 
+Sent by a computer through tubes
 
