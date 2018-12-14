@@ -2,82 +2,68 @@ Return-Path: <SRS0=qJci=OX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCCAC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 14:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 378FAC43174
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 15:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0BFC20449
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 14:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40966206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 15:32:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WbQjx4gF"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="BSgNTRec"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730041AbeLNOur (ORCPT
+        id S1726494AbeLNPcW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:50:47 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34012 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNOur (ORCPT
+        Fri, 14 Dec 2018 10:32:22 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:35556 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbeLNPcW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:50:47 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p6so4463920lfc.1
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Dec 2018 06:50:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=enconwufdaMtd19Uk+A/NnhqSUl+hQm5AjTKAvGt05I=;
-        b=WbQjx4gFi2s/2IPNiua3fG5gjAntBStUUGPmMS+kHH+LGfwJ5Yjz1LOi+4d1Mux3RN
-         iXjmBMmH8UkrQdjZ4zYj6sQavYS2dvPfbXpKKbd2LEQsZSsp5eXaGewkuhnkyW+sqPip
-         yO9RwFCQ/W+k/Vp1F9UB5dX6m8tIB3xp+eY0A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=enconwufdaMtd19Uk+A/NnhqSUl+hQm5AjTKAvGt05I=;
-        b=GaOt4t7WVhlj3IZ7fU+6iSrOqbtmo7oGsBPDhskDX7/oAqn6PfBOch1Ayri7weIJFI
-         /IjLSl9b+jJC3yj3f1/kdTCcFeoJGNSAFEX26oHfkVkUhPL8/JSXcuIhBhAz1c6QFEYs
-         wHcRkdtq7PzYEGImfvqUtIniz/b4grTI5G/etaj34jtmEPbW5lOI2ngdWOe7AvwYO9SW
-         /RSOZ0cNj/UaWtpfSgnkaKtAOMESnPCXzoN57Ci/b/RXipMCBUyYwxo79ADBHx0rcA4v
-         M9kgRJhisWMQYVNsdmIQ28/lu/cVJye6iE4ex/GRhYFqltbepFLJ7Vg/NE8zpooLG8h3
-         ML1A==
-X-Gm-Message-State: AA+aEWb3/JztyWw20b+VlajbRUP9iAUoKDKzm+Qak6JXrs+r2KA1/Vmf
-        B/A3Bl6uUcoyt3Qg1LM9K9jVdO/H8ivEps+FQGe7qQ==
-X-Google-Smtp-Source: AFSGD/UKAhnPALpslRIJdD1JQVotYkUx+VLRMVXy/BnVN2e6DFbBRkrw31G7CC5bQ33G+74VXhc9tMLp4u4aXiWGWio=
-X-Received: by 2002:a19:4849:: with SMTP id v70mr1973288lfa.62.1544799045424;
- Fri, 14 Dec 2018 06:50:45 -0800 (PST)
+        Fri, 14 Dec 2018 10:32:22 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id A116025B770;
+        Sat, 15 Dec 2018 02:32:20 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1544801540; bh=l5CFOtXPUNegNCzXn3tPynUyP9n9L43okD5YvAaNOhs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BSgNTRecNRn2cWw2AfPCPCDaDf4WmfT7dcsxHnLp7/kcT7itQILS8RSVUJj8earGf
+         0BpZRqFTM28+HS4QGX5w3FRx+jImrv8zL20MHiWLmW9xh63MUBxkh7Ykde1tHDM7MA
+         4wdWCpLvNjMwIt06bjm2TRAMWWI6bYj8ZuC7n8uc=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id A821C9403C3; Fri, 14 Dec 2018 16:32:18 +0100 (CET)
+Date:   Fri, 14 Dec 2018 16:32:18 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] clk: renesas: rcar-gen3-cpg: factor out
+ cpg_reg_modify()
+Message-ID: <20181214153218.3b3fv5mcj4kl2l3a@verge.net.au>
+References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
+ <8d3bd6b4-61eb-ceef-dc99-eb26c83f9e03@cogentembedded.com>
 MIME-Version: 1.0
-References: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 14 Dec 2018 15:50:33 +0100
-Message-ID: <CACRpkda_062r5KzTtPE6zf+FDXGiLqCTw=Q1AB3SKLkAa05Qsw@mail.gmail.com>
-Subject: Re: [PATCH V2 01/14] gpio: pca953x: Deduplicate the bank_shift
-To:     Mark Vasut <marek.vasut@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d3bd6b4-61eb-ceef-dc99-eb26c83f9e03@cogentembedded.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I applied the whole series to an immutable branch and pushed to
-kernelorg for testing in zeroday. If it builds fine I will push it
-to devel.
+On Tue, Dec 04, 2018 at 10:48:21PM +0300, Sergei Shtylyov wrote:
+> There's quite often repeated sequence of a CPG register read-modify-write,
+> so it seems worth factoring it out into a function -- this saves 68 bytes
+> of the object code (AArch64 gcc 4.8.5) and simplifies protecting all such
+> sequences with a spinlock in the next patch...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Must say this series is impressive. It's doing away with a whole
-slew of "technical debt" (old code not using modern frameworks).
-
-Strangely this driver doesn't support any pin config, it even seems
-to have per-pin debounce and everything. Some can be quickly
-supported by just adding the .set_config() callback, others like
-pull up/down are more dubious. If it supports open drain in hardware
-we should definately make use of it. Just in case you're interested!
-
-Yours,
-Linus Walleij
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
