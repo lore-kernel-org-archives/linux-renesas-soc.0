@@ -3,59 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A18C6786C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C00CC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8213820879
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8213820879
+	by mail.kernel.org (Postfix) with ESMTP id 3BAB920879
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 10:40:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BAB920879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbeLNKhu (ORCPT
+        id S1729339AbeLNKj7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:37:50 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:38770 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLNKht (ORCPT
+        Fri, 14 Dec 2018 05:39:59 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:36387 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeLNKj7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:37:49 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x64so3082732vsa.5;
-        Fri, 14 Dec 2018 02:37:49 -0800 (PST)
+        Fri, 14 Dec 2018 05:39:59 -0500
+Received: by mail-vs1-f67.google.com with SMTP id v205so3088867vsc.3;
+        Fri, 14 Dec 2018 02:39:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ENn4Za+creVJyn2I1BgReQ+tzZBxG6cSghe70QpF7Ts=;
-        b=oDS0d6Mw3GHVS/BnmwjwhC4zALbefG01p2iQ7dTy3avBlD7b18dCd9FGw6e4Qog8Zr
-         GFMNw7J+Vl+pScANnNVnj4i3cnOUi5sU9ClIiXpJy9e2PAGSenvIvXWpIj+122iw8QhH
-         IjtB2mbLTdpemy6o1tZqvXJePfQ5YDIR7ZsdOZlWreeSH5y6CWISnpXEFzM9DmRZZcNr
-         sf2Svz+brV0q5h6jBGjJ65g3ndxskjpax7d6O9njeI4f5XZipuoSfH+OaQuKUAydnzJf
-         3OvR48oXObZ7AkvX5DIsjlh/+N0zqS203YIBcSkp4coZbsQNHQPr0RorZIzkL5zMfiVt
-         nPvw==
-X-Gm-Message-State: AA+aEWbuKpmlkDPJZfN61bhbTtjctNB7y38qPupAWh7mKL2ee97UlEYp
-        BLtvTO0j+RAdwIcfqj4TjROwUbyDbubuNevJ/PI=
-X-Google-Smtp-Source: AFSGD/UETcpoIn2Qj04r9RGe1PD5AcnOPWcRLhohFFfd5/ItsHsw085ahcz/5TnsMVlZpazlzj/Qg4UHqN+mACSoR/0=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr1043181vsp.166.1544783868584;
- Fri, 14 Dec 2018 02:37:48 -0800 (PST)
+        bh=3kpU0gVyGtk5/K+vbVE8yJLvmw3b1y46qun8kSXBVyk=;
+        b=ZNJqAeDVNB7x8HgUzKppO6raTbjA+dWTe0u7FUHTQ7DyX+TwpRNZzkx2JF3u+7DK8d
+         k7KP/lwzOEJGQoigcZK7lGTg5f8CGkS9+Xrm3jlBtg88NuiO9mIlu17KqdfzlieJ+pqE
+         rOEuzZw07GK3U5syUF00/ZsTD35fyM94Nt55V9Ay7Mh2tVbHABO4yTbDz2ttJEGwwY33
+         3WEqS7kpC8QeFUGkptveB+WTQ5hvn/r302yDreaSZedCIgQ3CwR1Ar889ZxW40tUtG5C
+         4FeARu2y/1gjSkqQBk4QgMDPV8Qd3sJD++Lste/jQ6bKTiQXSl7CPpaE0KrJ+DYxOFBk
+         i+ow==
+X-Gm-Message-State: AA+aEWZdTp8INq7JfsvPscQCOQiSaFGamKa5AjL+49B9+zEUqeK2IV3W
+        7bpKisSJei81P3JLofamHYZjFLy5ytEPhDVP/Vj8VscS
+X-Google-Smtp-Source: AFSGD/Uu+ZLozFkDXMaWjZFJ+QWiFVvKd1VvAlPb0DbgpCDwIEUHTjfh9bgnHyPLKsEPROoLxZ/6nwQxBUId8r5eKQ8=
+X-Received: by 2002:a67:b60d:: with SMTP id d13mr1066820vsm.152.1544783997910;
+ Fri, 14 Dec 2018 02:39:57 -0800 (PST)
 MIME-Version: 1.0
-References: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544776907-17845-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544776907-17845-1-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 14 Dec 2018 11:37:36 +0100
-Message-ID: <CAMuHMdW3_MAFbue0T2sosKQ_YbsLWsw8PXhqc6dbiuo52eyBUw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Whitelist r8a774c0
+Date:   Fri, 14 Dec 2018 11:39:46 +0100
+Message-ID: <CAMuHMdVjccV=xpJ4f25YerR2Y8CxsKfn6CD7Es3P+x3yzGLuYg@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: i2c: sh_mobile: Add r8a774c0 support
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Rosin <peda@axentia.se>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Biju Das <biju.das@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -64,15 +69,15 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 9:22 PM Fabrizio Castro
+On Fri, Dec 14, 2018 at 9:41 AM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
+> Document RZ/G2E (R8A774C0) SoC bindings.
 >
-> We need r8a774c0 to be whitelisted for SDHI to work on the RZ/G2E,
-> but we don't care about the revision of the SoC, so just whitelist
-> the generic part number.
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 >
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> ---
+> v1->v2:
+> * Improved the style according to Peter's comment
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
