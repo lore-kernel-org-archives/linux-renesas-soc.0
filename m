@@ -7,123 +7,210 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57273C67839
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B455EC67839
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E362086D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:22:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A54E20879
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Dec 2018 08:24:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dIRDvlPy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E362086D
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CoGDp46N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A54E20879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbeLNIWj (ORCPT
+        id S1726634AbeLNIYT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:22:39 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49352 "EHLO
+        Fri, 14 Dec 2018 03:24:19 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49420 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbeLNIWj (ORCPT
+        with ESMTP id S1726533AbeLNIYS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:22:39 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56CC0549;
-        Fri, 14 Dec 2018 09:22:37 +0100 (CET)
+        Fri, 14 Dec 2018 03:24:18 -0500
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F0AC549;
+        Fri, 14 Dec 2018 09:24:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1544775757;
-        bh=VNQxDNRgYy027upeTy209RVX7BAXy+qOjg43HA1fgpQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dIRDvlPyDlHWgLCI6yL3GnqvmpYrOaMnB+h6+lPHchRaNtbXzPgHCnmuk/MkPpxDp
-         cbvjc7YZeHeVgfSJqFeBF7XydrjA2Q0MMY4nJ0SjusLwNopCo3jUaGDbTxhAA0smXR
-         pA+uFexJshmurSBMiylKmp6VNdTpNKpcnqJ/HiA4=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?ISO-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/4] rcar-vin: cache the CSI-2 channel selection value
-Date:   Fri, 14 Dec 2018 10:23:25 +0200
-Message-ID: <14327612.kiatMVmQX0@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181214061824.10296-3-niklas.soderlund+renesas@ragnatech.se>
-References: <20181214061824.10296-1-niklas.soderlund+renesas@ragnatech.se> <20181214061824.10296-3-niklas.soderlund+renesas@ragnatech.se>
+        s=mail; t=1544775856;
+        bh=eWoFxi6s6Ex376b2Sx2VeTsEtW4C8bD5IqbuvNDCUT4=;
+        h=Reply-To:Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=CoGDp46NEuKMRGc4KjmTqLEzOrS8n/fYDYYg3IDAuizBfoQj2w5wD/zk89cVSxL1q
+         4LB0MN7CK25QSD1ixhfNTJpeKRbms/wHTbdSTObiZ1shbVBwJ8m/TSu2UdB9Pv+haB
+         /0DkViJc1QpzIg50LhEGkWCbEuR0XkaE+11P7vd4=
+Reply-To: kieran.bingham+renesas@ideasonboard.com,
+          kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH] drm: rcar-du: Add r8a77965 LVDS dts overlay
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     Nguyen An Hoan <na-hoan@jinso.co.jp>,
+        linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com
+Cc:     kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
+References: <1544771885-17023-1-git-send-email-na-hoan@jinso.co.jp>
+ <c91bea19-7bbd-1567-1e1e-36cff9cffe99@ideasonboard.com>
+Openpgp: preference=signencrypt
+Organization: Ideas on Board
+Message-ID: <1122dcd7-7fa8-528e-81f9-bab61c71e474@ideasonboard.com>
+Date:   Fri, 14 Dec 2018 08:24:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <c91bea19-7bbd-1567-1e1e-36cff9cffe99@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+On 14/12/2018 07:48, Kieran Bingham wrote:
+> Hi Hoan-san,
+> 
+> Thank you for the patch,
+> 
+> On 14/12/2018 07:18, Nguyen An Hoan wrote:
+>> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+>>
+>> Add r8a77965 LVDS dts overlay support.
+> 
+> 
+> There has been a recent change to the format of how these files are added.
+> 
+> With thanks to Geert's updates, we have a much simpler way to describe
+> the overlay.
+> 
+> Geert has supplied a patch at:
+>   https://patchwork.kernel.org/patch/10704417/
+> 
+> You can see the thread for this topic at:
+> 
+> https://lore.kernel.org/linux-renesas-soc/20181129105850.10953-1-geert+renesas@glider.be/
+> 
+> 
+> Could you convert this file in the same way (and validate the generated
+> output is the same), and repost please?
 
-Thank you for the patch.
+My apologies, following Laurent's comments, please disregard this
+suggestion.
 
-On Friday, 14 December 2018 08:18:22 EET Niklas S=F6derlund wrote:
-> In preparation of suspend/resume support cache the chsel value when we
-> write it to the register so it can be restored on resume if needed.
->=20
-> Signed-off-by: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-dma.c | 2 ++
->  drivers/media/platform/rcar-vin/rcar-vin.h | 2 ++
->  2 files changed, 4 insertions(+)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c
-> b/drivers/media/platform/rcar-vin/rcar-dma.c index
-> beb9248992a48a74..64f7636f94d6a0a3 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-> @@ -1336,6 +1336,8 @@ int rvin_set_channel_routing(struct rvin_dev *vin, =
-u8
-> chsel)
->=20
->  	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
->=20
-> +	vin->chsel =3D chsel;
-> +
+--
+Regards
 
-Would it be useful to add a
-
-	if (vin->chsel =3D=3D chsel)
-		return 0;
-
-at the beginning of the function, or is that impossible ?
-
->  	/* Restore VNMC. */
->  	rvin_write(vin, vnmc, VNMC_REG);
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h
-> b/drivers/media/platform/rcar-vin/rcar-vin.h index
-> 0b13b34d03e3dce4..d21fc991b7a9da36 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-vin.h
-> +++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-> @@ -170,6 +170,7 @@ struct rvin_info {
->   * @state:		keeps track of operation state
->   *
->   * @is_csi:		flag to mark the VIN as using a CSI-2 subdevice
-> + * @chsel		Cached value of the current CSI-2 channel selection
-
-Nitpicking, the documentation for other fields don't start with a capital=20
-letter.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
->   *
->   * @mbus_code:		media bus format code
->   * @format:		active V4L2 pixel format
-> @@ -207,6 +208,7 @@ struct rvin_dev {
->  	enum rvin_dma_state state;
->=20
->  	bool is_csi;
-> +	unsigned int chsel;
->=20
->  	u32 mbus_code;
->  	struct v4l2_pix_format format;
-
-=2D-=20
-Regards,
-
-Laurent Pinchart
+Kieran
 
 
+
+> 
+> --
+> Regards
+> 
+> Kieran
+> 
+> 
+>>
+>> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+>> ---
+>>  drivers/gpu/drm/rcar-du/Makefile                   |  4 +-
+>>  drivers/gpu/drm/rcar-du/rcar_du_of.c               |  2 +
+>>  .../gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts   | 50 ++++++++++++++++++++++
+>>  3 files changed, 55 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts
+>>
+>> diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
+>> index 2a3b8d7..9e73a83 100644
+>> --- a/drivers/gpu/drm/rcar-du/Makefile
+>> +++ b/drivers/gpu/drm/rcar-du/Makefile
+>> @@ -11,7 +11,8 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
+>>  					   rcar_du_of_lvds_r8a7791.dtb.o \
+>>  					   rcar_du_of_lvds_r8a7793.dtb.o \
+>>  					   rcar_du_of_lvds_r8a7795.dtb.o \
+>> -					   rcar_du_of_lvds_r8a7796.dtb.o
+>> +					   rcar_du_of_lvds_r8a7796.dtb.o \
+>> +					   rcar_du_of_lvds_r8a77965.dtb.o
+>>  rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
+>>  
+>>  obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
+>> @@ -24,3 +25,4 @@ DTC_FLAGS_rcar_du_of_lvds_r8a7791 += -Wno-graph_endpoint
+>>  DTC_FLAGS_rcar_du_of_lvds_r8a7793 += -Wno-graph_endpoint
+>>  DTC_FLAGS_rcar_du_of_lvds_r8a7795 += -Wno-graph_endpoint
+>>  DTC_FLAGS_rcar_du_of_lvds_r8a7796 += -Wno-graph_endpoint
+>> +DTC_FLAGS_rcar_du_of_lvds_r8a77965 += -Wno-graph_endpoint
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+>> index afef696..56c341c 100644
+>> --- a/drivers/gpu/drm/rcar-du/rcar_du_of.c
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+>> @@ -107,6 +107,7 @@ RCAR_DU_OF_DTB(lvds, r8a7791);
+>>  RCAR_DU_OF_DTB(lvds, r8a7793);
+>>  RCAR_DU_OF_DTB(lvds, r8a7795);
+>>  RCAR_DU_OF_DTB(lvds, r8a7796);
+>> +RCAR_DU_OF_DTB(lvds, r8a77965);
+>>  
+>>  static const struct rcar_du_of_overlay rcar_du_lvds_overlays[] __initconst = {
+>>  	RCAR_DU_OF_OVERLAY(lvds, r8a7790),
+>> @@ -114,6 +115,7 @@ static const struct rcar_du_of_overlay rcar_du_lvds_overlays[] __initconst = {
+>>  	RCAR_DU_OF_OVERLAY(lvds, r8a7793),
+>>  	RCAR_DU_OF_OVERLAY(lvds, r8a7795),
+>>  	RCAR_DU_OF_OVERLAY(lvds, r8a7796),
+>> +	RCAR_DU_OF_OVERLAY(lvds, r8a77965),
+>>  	{ /* Sentinel */ },
+>>  };
+>>  
+>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts
+>> new file mode 100644
+>> index 0000000..34aea91
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a77965.dts
+>> @@ -0,0 +1,50 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * rcar_du_of_lvds_r8a77965.dts - Legacy LVDS DT bindings conversion for R8A77965
+>> + *
+>> + * Copyright (C) 2018 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> + */
+>> +
+>> +/dts-v1/;
+>> +/plugin/;
+>> +/ {
+>> +	fragment@0 {
+>> +		target-path = "/soc";
+>> +		__overlay__ {
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +
+>> +			lvds@feb90000 {
+>> +				compatible = "renesas,r8a77965-lvds";
+>> +				reg = <0 0xfeb90000 0 0x14>;
+>> +
+>> +				ports {
+>> +					#address-cells = <1>;
+>> +					#size-cells = <0>;
+>> +
+>> +					port@0 {
+>> +						reg = <0>;
+>> +						lvds0_input: endpoint {
+>> +						};
+>> +					};
+>> +					port@1 {
+>> +						reg = <1>;
+>> +						lvds0_out: endpoint {
+>> +						};
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	fragment@1 {
+>> +		target-path = "/soc/display@feb00000/ports";
+>> +		__overlay__ {
+>> +			port@2 {
+>> +				endpoint {
+>> +					remote-endpoint = <&lvds0_input>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>>
+> 
 
