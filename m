@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42416C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B74B7C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134D12080F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 864582080F
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHOdO9LN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XiL2Z/SM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730355AbeLOO0q (ORCPT
+        id S1730290AbeLOO0s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 15 Dec 2018 09:26:46 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39391 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730290AbeLOO0q (ORCPT
+        Sat, 15 Dec 2018 09:26:48 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54409 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730119AbeLOO0s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Dec 2018 09:26:46 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t27so8074394wra.6;
-        Sat, 15 Dec 2018 06:26:44 -0800 (PST)
+        Sat, 15 Dec 2018 09:26:48 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a62so8244788wmh.4;
+        Sat, 15 Dec 2018 06:26:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/7jAJ+8gDj6c9Z98LDI6KfTAvqF6aPPQlA5P4B1/1Fk=;
-        b=OHOdO9LNseF0Dwya0FUaAtlmO4tHjtnN6HAg2c/QLfcct5JD3hcovSSuRnamcFfHOX
-         GETmUh/zQ1TAVn0YojUggch8BqXTZDSY6LuxWmBrlLjXu8y/tKR1tSM70PYqfvfnrOs3
-         bLRHTD9QkJBsUiZzGCRx+DFXBNSvwq8u3LArh1omTLGu7T6W6V5kHFE/s2AwEdv8drtx
-         glBrFrce5nR/b/dP9AvrxNQhzRTaduaV/qMZevw7rSEKb8I9n4e2IPgLhqrdxGNLca40
-         gBpCcTSEHKMRPYKfWyAy972JvkHcL5Erf07tMrFPKoI+e/LTUpO76trwoOvp/46QNd//
-         mjdA==
+        bh=+mepptQUgkA8WUMVQ649aZezSvaJpTojRTTXZmGA4gs=;
+        b=XiL2Z/SMW4KU6sV4aJDvIIUCfcNBeULeNnS9efV3+WmUFU51sb4JSbbg7cqeZfLKWH
+         D3rWjIg3mFrplSu4QNfPVcRqAHxCPg4zuCin/RfoOdAcdA7b+LnXdOh3v9kzK9+VzKoN
+         P94ZYYDS4ZFRITLuTt2WFWWtqjlDFRumX4sQC63RHN8QoxRgtmrKadPIiNBz2h6J74BO
+         DLGiR8gqtQXBC9RbYQ9ggugH9uUKcolih6qbmKfX/rElP2YogVTIzpS4OIMM5or6FEnp
+         B21pcv45wja4szk8/ArBNZCZ76Bwcl6Urgb3ZsnyGrcx9Bh0nB8PQE5OVVB0ojQdqrML
+         j02A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/7jAJ+8gDj6c9Z98LDI6KfTAvqF6aPPQlA5P4B1/1Fk=;
-        b=X2D6bZSoD5eIvfCLBilYuZMx+s+2d+9Jl/cp7FFnJU5lj1fHnlvzm4Wi9sbDKQDHyh
-         E9SAAU0x8IslwP83BR5iAbk8rUvSdVkvsAAYVEJ1wRKdyf/dTb2HPRyph01+bM9Y1Jua
-         A/yROQjeWH/Qd7ssyyZcm0ScEHo3rJJ2tYJPWLbDaQSp5M5SMXagp37QEz0RtVTkfggk
-         WNWnsNnycKF4RaZgEAp5NU0Lu7DHyvlb/5vJOH1Ox7JM3FojTsFduY4rf6O8ssH/rgMA
-         zWbMU4Gmer/9WAbHrdDU/qT4b7wA+10yLc1eKxZxYohZeQDysec5yoJw67AlNXe6W955
-         8Ryw==
-X-Gm-Message-State: AA+aEWa9u217RD9dnNLXXBrXOY0+kiBTA+LVayvHvx384YaMbmxRVsmU
-        HeoDRjcjFGrtt6yC08NF6KJBmD/S
-X-Google-Smtp-Source: AFSGD/Ucv9HGkggPOc6kFwhVsiRD1ohnk46w7tajycy2zqKVOVB+gUtQ+6Z5qd+n7i/GBVxStKHSjg==
-X-Received: by 2002:adf:9d08:: with SMTP id k8mr5970095wre.203.1544884003288;
-        Sat, 15 Dec 2018 06:26:43 -0800 (PST)
+        bh=+mepptQUgkA8WUMVQ649aZezSvaJpTojRTTXZmGA4gs=;
+        b=miju1E4dKLW86034/mfA3x4o02mV4JAbTtHi5iXweaf8u6KnPqZmH9dcao7aDR6yql
+         uPh19E1ucaaT0QAW6y4zSTeWh9FiQLu7N2sPDTx5EfMcfnCXhqIFY9SjQY0mLWEYfqrQ
+         Ar1CvgbH2dVX0EgnkN6YuU12KgQ/CtfGq4tN6vdofDL/QYHO7mUJABiJVA3kdfX6oGMT
+         LaMcnW8a5TMPP2tSXXrYn0eqV1QS3PpIqdRD/F0j8OT2MYxsRCeZi5J4xkN6jwyMOv9o
+         CDm9jFxL/smeTTlgmPJDbV/6FmJJH43RPU3ssVV8/3/jPivJ4cl5zMbU1yVxDQoVfASX
+         oi+w==
+X-Gm-Message-State: AA+aEWYW7eVhnZUrrMzP002S6pyyS65qWRwFxqbu7QbCOn9IOOORjrRN
+        oNbgK9ZVGeALQcZWtFiTEzdP2sKf
+X-Google-Smtp-Source: AFSGD/X7FKxrLYsvp6xl+pFDiqkZqV/GHmL6xuJ09l8J2y+scmfEDwoBPs5V1+yJ2xRaVgDLpR662w==
+X-Received: by 2002:a1c:9ed7:: with SMTP id h206mr6036890wme.28.1544884004632;
+        Sat, 15 Dec 2018 06:26:44 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.42
+        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Dec 2018 06:26:42 -0800 (PST)
+        Sat, 15 Dec 2018 06:26:43 -0800 (PST)
 From:   Marek Vasut <marek.vasut@gmail.com>
 X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
 To:     linux-gpio@vger.kernel.org
@@ -63,9 +63,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH V3 13/14] gpio: pca953x: Zap single use of pca953x_read_single()
-Date:   Sat, 15 Dec 2018 15:26:04 +0100
-Message-Id: <20181215142605.15397-14-marek.vasut+renesas@gmail.com>
+Subject: [PATCH V3 14/14] gpio: pca953x: Restore registers after suspend/resume cycle
+Date:   Sat, 15 Dec 2018 15:26:05 +0100
+Message-Id: <20181215142605.15397-15-marek.vasut+renesas@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
 References: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
@@ -74,69 +74,130 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Drop pca953x_write_single() which is used in one place.
+It is possible that the PCA953x is powered down during suspend.
+Use regmap cache to assure the registers in the PCA953x are in
+line with the driver state after resume.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
-V2: No change
+V2: - Drop the regcache_sync() calls from suspend callback
+    - Fix build with CONFIG_GPIO_PCA953X_IRQ
 V3: No change
 ---
- drivers/gpio/gpio-pca953x.c | 22 +++++-----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 88 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index a349f68c4025..6f50cf14bb23 100644
+index 6f50cf14bb23..83617fdc661d 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -324,21 +324,6 @@ static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
- 	return regaddr;
+@@ -975,6 +975,91 @@ static int pca953x_remove(struct i2c_client *client)
+ 	return ret;
  }
  
--static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
--				int off)
--{
--	u8 regaddr = pca953x_recalc_addr(chip, reg, off, false, false);
--	int ret;
--
--	ret = regmap_read(chip->regmap, regaddr, val);
--	if (ret < 0) {
--		dev_err(&chip->client->dev, "failed reading register\n");
--		return ret;
--	}
--
--	return 0;
--}
--
- static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
- {
- 	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, true, true);
-@@ -408,11 +393,14 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
- {
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
-+	u8 inreg = pca953x_recalc_addr(chip, chip->regs->input, off,
-+				       true, false);
-+	u8 bit = BIT(off % BANK_SZ);
- 	u32 reg_val;
- 	int ret;
++#ifdef CONFIG_PM_SLEEP
++static int pca953x_regcache_sync(struct device *dev)
++{
++	struct pca953x_chip *chip = dev_get_drvdata(dev);
++	int ret;
++
++	/*
++	 * The ordering between direction and output is important,
++	 * sync these registers first and only then sync the rest.
++	 */
++	ret = regcache_sync_region(chip->regmap, chip->regs->direction,
++				   chip->regs->direction + NBANK(chip));
++	if (ret != 0) {
++		dev_err(dev, "Failed to sync GPIO dir registers: %d\n", ret);
++		return ret;
++	}
++
++	ret = regcache_sync_region(chip->regmap, chip->regs->output,
++				   chip->regs->output + NBANK(chip));
++	if (ret != 0) {
++		dev_err(dev, "Failed to sync GPIO out registers: %d\n", ret);
++		return ret;
++	}
++
++#ifdef CONFIG_GPIO_PCA953X_IRQ
++	if (chip->driver_data & PCA_PCAL) {
++		ret = regcache_sync_region(chip->regmap, PCAL953X_IN_LATCH,
++					   PCAL953X_IN_LATCH + NBANK(chip));
++		if (ret != 0) {
++			dev_err(dev, "Failed to sync INT latch registers: %d\n",
++				ret);
++			return ret;
++		}
++
++		ret = regcache_sync_region(chip->regmap, PCAL953X_INT_MASK,
++					   PCAL953X_INT_MASK + NBANK(chip));
++		if (ret != 0) {
++			dev_err(dev, "Failed to sync INT mask registers: %d\n",
++				ret);
++			return ret;
++		}
++	}
++#endif
++
++	return 0;
++}
++
++static int pca953x_suspend(struct device *dev)
++{
++	struct pca953x_chip *chip = dev_get_drvdata(dev);
++
++	regcache_cache_only(chip->regmap, true);
++
++	regulator_disable(chip->regulator);
++
++	return 0;
++}
++
++static int pca953x_resume(struct device *dev)
++{
++	struct pca953x_chip *chip = dev_get_drvdata(dev);
++	int ret;
++
++	ret = regulator_enable(chip->regulator);
++	if (ret != 0) {
++		dev_err(dev, "Failed to enable regulator: %d\n", ret);
++		return 0;
++	}
++
++	regcache_cache_only(chip->regmap, false);
++	regcache_mark_dirty(chip->regmap);
++	ret = pca953x_regcache_sync(dev);
++	if (ret)
++		return ret;
++
++	ret = regcache_sync(chip->regmap);
++	if (ret != 0) {
++		dev_err(dev, "Failed to restore register map: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++#endif
++
+ /* convenience to stop overlong match-table lines */
+ #define OF_953X(__nrgpio, __int) (void *)(__nrgpio | PCA953X_TYPE | __int)
+ #define OF_957X(__nrgpio, __int) (void *)(__nrgpio | PCA957X_TYPE | __int)
+@@ -1018,9 +1103,12 @@ static const struct of_device_id pca953x_dt_ids[] = {
  
- 	mutex_lock(&chip->i2c_lock);
--	ret = pca953x_read_single(chip, chip->regs->input, &reg_val, off);
-+	ret = regmap_read(chip->regmap, inreg, &reg_val);
- 	mutex_unlock(&chip->i2c_lock);
- 	if (ret < 0) {
- 		/* NOTE:  diagnostic already emitted; that's all we should
-@@ -422,7 +410,7 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
- 		return 0;
- 	}
+ MODULE_DEVICE_TABLE(of, pca953x_dt_ids);
  
--	return (reg_val & (1u << (off % BANK_SZ))) ? 1 : 0;
-+	return !!(reg_val & bit);
- }
- 
- static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
++static SIMPLE_DEV_PM_OPS(pca953x_pm_ops, pca953x_suspend, pca953x_resume);
++
+ static struct i2c_driver pca953x_driver = {
+ 	.driver = {
+ 		.name	= "pca953x",
++		.pm	= &pca953x_pm_ops,
+ 		.of_match_table = pca953x_dt_ids,
+ 		.acpi_match_table = ACPI_PTR(pca953x_acpi_ids),
+ 	},
 -- 
 2.18.0
 
