@@ -2,74 +2,124 @@ Return-Path: <SRS0=gd9z=OY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324BEC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 15:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85766C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 17:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFA612084D
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 15:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 430F32086D
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 17:23:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="IrWSc5e6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQctRXSr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbeLOPXn (ORCPT
+        id S1726533AbeLORXN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 15 Dec 2018 10:23:43 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:47846 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730022AbeLOPXn (ORCPT
+        Sat, 15 Dec 2018 12:23:13 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42443 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeLORXN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Dec 2018 10:23:43 -0500
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 385B625AD76;
-        Sun, 16 Dec 2018 02:23:40 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1544887420; bh=BnovN8daVN+ej1pibbsomJW8ikGxqB/k+4K9/jgohdE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IrWSc5e6wNv2z6o5Kt+9KZzKjmmirzSKFuykS+bsFP3UBXpIxluI2oYXo4VbeJ3fz
-         jMEUtw3w65eP0CuwK3h0vLIJX34MY+0FWm6btVfitNYpBZY88vsjevkaiTZH7l6gp0
-         b75Cc077Vspoe5wuyJxmEaBprlW+oQBPic++aMhE=
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 484EFE20E06; Sat, 15 Dec 2018 07:23:38 -0800 (PST)
-Date:   Sat, 15 Dec 2018 16:23:38 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Sat, 15 Dec 2018 12:23:13 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so4138032pga.9;
+        Sat, 15 Dec 2018 09:23:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zvXuyix1Pq3ekr+7oLnUS37+9cdBf27za1rgIJcjpyI=;
+        b=PQctRXSrYJWYUyTWKx74+ZhUDTcx3/n6ladxEtG25ogkItmwe7tCh4wOQqceevIS7i
+         d/85SeqCDFrh9cfZeSRgL0kBQWLpazoGL/nIrwE8g07Zu19vdGgX8StoBkUwm0Se4WTy
+         nOfZSx6vmc+1uIWzll2vm7pGJAHqTU4gL4gL+VclF7HMlCU5G/7ufTR/HASPmrc5/hgC
+         DrT28ykfrhkZ19T3+HRYuRqeDgd1AgxsD8N7gPH4udd+hHbqtjmaZqPlbTgBbg7lFO/U
+         DMlhrwpjrf3cNMUWk2kCpWdH9UId591ks0+k/USfkpYWTdE4NxZ+XwXAvcLaAKCsU92z
+         V8IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zvXuyix1Pq3ekr+7oLnUS37+9cdBf27za1rgIJcjpyI=;
+        b=Vn7VgTrttiqzyE/1xm8IAGYa+GrhjMj2vGr6Lm0VhuEwmF20W9DFboSlq56rg6ipZ2
+         F/18w+jc2jP/HlrV+aq1wYjOnbgM6tZClcYJDuaNlOo6jBLfXTYEKVojfcSDEcuU220Y
+         qRl9Fw/O9A++dEdTRkURhFDprEV+J7mLRxsC4s5edpfxbyl+gPASqAEcRadmnLzmvjI7
+         iyN8H8vxZWU1RbcnCGbHwT9hF4vYIpRmbGBg7lPT5vWlCjs3AN/jrSs6P8pLKubj0wyQ
+         xNCBSdf2e03GH3H4gTldivVHyt6tyj8lGiBgxtc+meyIkz7SiXTrSkTVGJYFXoBCSdNg
+         P7QQ==
+X-Gm-Message-State: AA+aEWbqPTz8W/D0sC5Edf/7dhoWaApN5icznQOA0DnpBo9qCgdCWjrF
+        JcnzhMMWrUrQEJuZle+JzhA=
+X-Google-Smtp-Source: AFSGD/WzbrxTfo5z0cOzr29Chq9emt1mWW5AVj/xWsP4uzEtfMtMvN0Qfe+bkq+hw+pot4kUcyHhIw==
+X-Received: by 2002:a63:8ac4:: with SMTP id y187mr6699106pgd.446.1544894591651;
+        Sat, 15 Dec 2018 09:23:11 -0800 (PST)
+Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
+        by smtp.gmail.com with ESMTPSA id b2sm11844645pgg.87.2018.12.15.09.23.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 15 Dec 2018 09:23:11 -0800 (PST)
+Date:   Sat, 15 Dec 2018 09:23:09 -0800
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77990: Fix IOCTRL reg state after
- s2ram on R-Car E3
-Message-ID: <20181215152337.km3rr2sx36gkuc7b@verge.net.au>
-References: <20181213162027.13137-1-geert+renesas@glider.be>
+        Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 0/6] thermal: Align
+ devm_thermal_zone_{device,of_sensor}_register
+Message-ID: <20181215172307.GA10311@localhost.localdomain>
+References: <20181212014927.25840-1-marek.vasut+renesas@gmail.com>
+ <20181215020228.GB24528@localhost.localdomain>
+ <38421cfe-7688-88b1-7832-12c058b30124@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181213162027.13137-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <38421cfe-7688-88b1-7832-12c058b30124@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 05:20:27PM +0100, Geert Uytterhoeven wrote:
-> Due to an interaction with commit 9f2b76a2db3c4387 ("pinctrl: sh-pfc:
-> r8a77990: Add R8A774C0 PFC support"), the state of the I/O Control
-> Registers is saved/restored during s2ram on RZ/G2E, but not on R-Car E3.
-> Hence on R-Car E3, SDHI voltage state is lost after system resume.
+On Sat, Dec 15, 2018 at 03:08:07AM +0100, Marek Vasut wrote:
+> On 12/15/2018 03:02 AM, Eduardo Valentin wrote:
+> > On Wed, Dec 12, 2018 at 02:49:21AM +0100, Marek Vasut wrote:
+> >> This patchset attempts to align devm_thermal_zone_{device,of_sensor}_register()
+> >> functions and allow passing tz params to devm_thermal_zone_of_sensor_register()
+> >> to allow settings no_hwmon params without digging into the tz structures.
+> >>
+> >> The approach is as follows:
+> >> 1) Add {devm_,}thermal_zone_of_sensor_register_params(), which behaves just
+> >>    like the old variant without _params() suffix, except it takes the struct
+> >>    thermal_zone_params as an argument. The old _params()-less version of the
+> >>    function is converted to use the new function and pass params = NULL.
+> >>    The old _params()-less versions of the functions are retained to avoid
+> >>    breaking the ABI.
+> >> 2) Add the no_hwmon handling into thermal_zone_of_sensor_register_params(),
+> >>    that's patch 3.
+> >> 3) Convert drivers from devm_thermal_zone_of_sensor_register() with structure
+> >>    diggings to devm_thermal_zone_of_sensor_register_params() without any
+> >>    extra structure digging, that's the rest of the patches.
+> >>
+> >> Marek Vasut (6):
+> >>   thermal: split thermal_zone_of_sensor_register{,_param}()
+> >>   thermal: split devm_thermal_zone_of_sensor_register{,_param}()
+> >>   thermal: Register hwmon in thermal_zone_of_sensor_register_param()
+> >>   thermal: stm32: Convert to
+> >>     devm_thermal_zone_of_sensor_register_params()
+> >>   thermal: rcar_thermal: Convert to
+> >>     devm_thermal_zone_of_sensor_register_params()
+> >>   thermal: rcar_gen3_thermal: Register hwmon sysfs interface
+> >>
+> > 
+> > Fix the errors reported by the bot and also please run checkpatch.pl on
+> > your series.
 > 
-> Fix this by registering the I/O Control Registers on R-Car E3, too.
+> Working on it right now. Can you look at the 0001...0003 patches and
+> tell me if this is a valid approach ?
+
+Yes, the approach seams fine to me,
+
 > 
-> Fixes: 33847a71373cd6ae ("pinctrl: sh-pfc: r8a77990: Add voltage switch operations for SDHI")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> To be queued as a fix in sh-pfc-for-v4.21.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+> -- 
+> Best regards,
+> Marek Vasut
