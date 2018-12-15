@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CFFC43612
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84E2C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4CED2080F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C6B2080F
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uWDJHcWm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqXXIsSC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730309AbeLOO0j (ORCPT
+        id S1730313AbeLOO0l (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 15 Dec 2018 09:26:39 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54399 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730213AbeLOO0j (ORCPT
+        Sat, 15 Dec 2018 09:26:41 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45995 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730290AbeLOO0l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Dec 2018 09:26:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a62so8244531wmh.4;
-        Sat, 15 Dec 2018 06:26:36 -0800 (PST)
+        Sat, 15 Dec 2018 09:26:41 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t6so7894888wrr.12;
+        Sat, 15 Dec 2018 06:26:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=r+kvJhH+BzGdKMl0V+X3Rjd/rHVRApYcyH+fS15GG1U=;
-        b=uWDJHcWmnI3BaqtX6jBsI2aZl5+viGrMlfG0Fzz6mIb0xAhE/3hxS1Olr3T7I5K0rx
-         +0H8fvI+UUL4WLsdirho381M3BtOVvJ91+7m2mGXwTyTcFVQr/pJKNMcDRc3dWgUCPi1
-         ZZCmEGzkFCiJhHmhsqzawuZltonLRK3Kfy5QbxACWr6be2lTyzFc/u+73erVEPpfGxiW
-         ys3h5eNAIB1KxFewi9wJ97Zo5AW/6WL4eIprDxeRpvQmKqJHByjXmE/VjwuYqli8ynZo
-         f/FAmQU0f/CopUeWtR9o2jqDMt8HBDqpSOeEdIYWHPgJNnvddkOnX5xjdoNwhefpo87E
-         Aaqw==
+        bh=tztWRkvfsQqp4qFm4CC6NSKUU0zGyK7TW+JZNWp9ghg=;
+        b=UqXXIsSCaSJ4ZOdYwTVyxTJOKyHH3CiarG3sTvyxaHMGRYdNspsc912R2DukzBYG1i
+         0yIprcC9xgzBrUCdhJ9d63a2XRxH6xIbvKWHHZg5TMQM2N/5Nh+HyzCSVXXn9ukznYrv
+         jpYLLLMqkpY+/Fy6AHM+s247O+S9MOt6FAMPChaLv1JY76WHK3SoP2lV4yNI8MSR3KE0
+         oX9e50NnHubByK5XQ4USn1Lc9FtoMbciMYuIdMq6lZeP9+yNiRtpfbKn/715D1Vapx0f
+         m10MI7PX1WQG2QHDxWglfsQ89KBDT2kNXRao9jNRrhgltCdFh+DEddBuTMp45hkb0uqM
+         BJTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=r+kvJhH+BzGdKMl0V+X3Rjd/rHVRApYcyH+fS15GG1U=;
-        b=cnplrxpgf9R/FAzZon940cY1r4b+d/SMiICriQB9km2LpPy6eta8O88dy5bjxq3P17
-         szRzOEfv+flL82tpX0RGBYUZ2cz9iIj1LG39n3Ve6GMCeeDEt0fiuuH8BwPNsb/hrs3v
-         zHOmlbURSgyTkxCZuqIaPiPwxUnK9YfNRc9YMUyTHEC/YB5hcVsIo5TAKQDkejTwlQEp
-         urcf23mFu2Lx+UFrjRrtmXeSfONXLFM48WXaWpQe6ReIlsCUB7eRGrsh4upj7c5XW+cV
-         2tM2VdKzUMMc4zD2Q0ygeFMhvdRxlCBIOWH1bLbJcWMNSkQuvwTiR66GdiSCfjIuujrh
-         aU9g==
-X-Gm-Message-State: AA+aEWa022aAMXyvCuSxcE5GNVbjkYAXq0i6fCcXdQA23lLUcr2mYT2I
-        l6Olyq/6tIFQnN+IaVdgVdWtoK2u
-X-Google-Smtp-Source: AFSGD/W7xeyT7yyV4B9lg++w9XXSRT059BGzHYnwSuriOIPKFgF2zAQ3mGTxBEDAVDxVknlMGMS8sw==
-X-Received: by 2002:a1c:9ed7:: with SMTP id h206mr6036619wme.28.1544883995302;
-        Sat, 15 Dec 2018 06:26:35 -0800 (PST)
+        bh=tztWRkvfsQqp4qFm4CC6NSKUU0zGyK7TW+JZNWp9ghg=;
+        b=hSwjLWahUsiIKiDpHjSfEkqQDLgv4NO7aNTiXRkcoAAs8mlUAePBt+fT+epCGAeFYT
+         ufqAR3tn+SzjEe69qtcrdqme0pXPHI0/ZufRPWsp0lQGzXvdzvhm5Ut+NXYhec+41jwv
+         1yC14bsFDoXReLGDJvQebPv7I1XTCAksGAU8wGi2634IqAhVS8ocz/e4golbuFmxSEy4
+         O4OPIIw5Vcl0UDdVENx2/89aqzQDNu30Xg9/oq4o2+B9VRauj8luvW62uZ9W49h94J0d
+         MgLk67+V9SbAhRrFbqkCU/7ZrxqLiu4Cun57BDt2o3i7CissYYrA4al9NIoLrKvykwh4
+         fhlw==
+X-Gm-Message-State: AA+aEWZ5RDP4xnt9XbqRSZow4JNKjAtrrZZPi5MO31VQMqmTgb709BD6
+        cm72rsCLYMbvJXCeF3hu0V0Yot5E
+X-Google-Smtp-Source: AFSGD/WriX7uxriYIOHn62+624YQU92ckLHf5bYs647x1Uke6wodO6rhPy1K9wjn6uCck45F16ebvQ==
+X-Received: by 2002:adf:fd50:: with SMTP id h16mr6025552wrs.231.1544883997922;
+        Sat, 15 Dec 2018 06:26:37 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.33
+        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Dec 2018 06:26:34 -0800 (PST)
+        Sat, 15 Dec 2018 06:26:37 -0800 (PST)
 From:   Marek Vasut <marek.vasut@gmail.com>
 X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
 To:     linux-gpio@vger.kernel.org
@@ -63,9 +63,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH V3 07/14] gpio: pca953x: Factor out common code from device_pca95xx_init()
-Date:   Sat, 15 Dec 2018 15:25:58 +0100
-Message-Id: <20181215142605.15397-8-marek.vasut+renesas@gmail.com>
+Subject: [PATCH V3 09/14] gpio: pca953x: Extract the register address mangling to single function
+Date:   Sat, 15 Dec 2018 15:26:00 +0100
+Message-Id: <20181215142605.15397-10-marek.vasut+renesas@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
 References: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
@@ -74,9 +74,9 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The PCA957x and PCA953x init functions are almost the same, except for
-the different register mapping and one extra write to BKEN register in
-case of PCA957x. Factor out the common code.
+Instead of having the I2C register calculation function spread across
+multiple accessor functions, pull it out into a single function which
+returns the adjusted register address.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
@@ -85,100 +85,112 @@ Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 V2: No change
 V3: No change
 ---
- drivers/gpio/gpio-pca953x.c | 35 ++++++++++++-----------------------
- 1 file changed, 12 insertions(+), 23 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 59 ++++++++++++++++++-------------------
+ 1 file changed, 29 insertions(+), 30 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 626cbe040985..d4b8946ea710 100644
+index cbc3b82b9385..b08e071ad48c 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -119,18 +119,21 @@ struct pca953x_reg_config {
- 	int direction;
- 	int output;
- 	int input;
-+	int invert;
- };
- 
- static const struct pca953x_reg_config pca953x_regs = {
- 	.direction = PCA953X_DIRECTION,
- 	.output = PCA953X_OUTPUT,
- 	.input = PCA953X_INPUT,
-+	.invert = PCA953X_INVERT,
- };
- 
- static const struct pca953x_reg_config pca957x_regs = {
- 	.direction = PCA957X_CFG,
- 	.output = PCA957X_OUT,
- 	.input = PCA957X_IN,
-+	.invert = PCA957X_INVRT,
- };
- 
- struct pca953x_chip {
-@@ -679,13 +682,11 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
+@@ -164,17 +164,37 @@ static int pca953x_bank_shift(struct pca953x_chip *chip)
+ 	return fls((chip->gpio_chip.ngpio - 1) / BANK_SZ);
  }
- #endif
  
--static int device_pca953x_init(struct pca953x_chip *chip, u32 invert)
-+static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
++static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
++			      bool write, bool addrinc)
++{
++	int bank_shift = pca953x_bank_shift(chip);
++	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
++	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
++	u8 regaddr = pinctrl | addr | (off / BANK_SZ);
++
++	/* Single byte read doesn't need AI bit set. */
++	if (!addrinc)
++		return regaddr;
++
++	/* Chips with 24 and more GPIOs always support Auto Increment */
++	if (write && NBANK(chip) > 2)
++		regaddr |= REG_ADDR_AI;
++
++	/* PCA9575 needs address-increment on multi-byte writes */
++	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)
++		regaddr |= REG_ADDR_AI;
++
++	return regaddr;
++}
++
+ static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
+ 				int off)
  {
++	u8 regaddr = pca953x_recalc_addr(chip, reg, off, false, false);
  	int ret;
- 	u8 val[MAX_BANK];
+-	int bank_shift = pca953x_bank_shift(chip);
+-	int offset = off / BANK_SZ;
  
--	chip->regs = &pca953x_regs;
+-	ret = i2c_smbus_read_byte_data(chip->client,
+-				(reg << bank_shift) + offset);
++	ret = i2c_smbus_read_byte_data(chip->client, regaddr);
+ 	*val = ret;
 -
- 	ret = pca953x_read_regs(chip, chip->regs->output, chip->reg_output);
- 	if (ret)
- 		goto out;
-@@ -701,7 +702,7 @@ static int device_pca953x_init(struct pca953x_chip *chip, u32 invert)
- 	else
- 		memset(val, 0, NBANK(chip));
- 
--	ret = pca953x_write_regs(chip, PCA953X_INVERT, val);
-+	ret = pca953x_write_regs(chip, chip->regs->invert, val);
- out:
- 	return ret;
- }
-@@ -711,22 +712,7 @@ static int device_pca957x_init(struct pca953x_chip *chip, u32 invert)
+ 	if (ret < 0) {
+ 		dev_err(&chip->client->dev, "failed reading register\n");
+ 		return ret;
+@@ -186,13 +206,10 @@ static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
+ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
+ 				int off)
+ {
++	u8 regaddr = pca953x_recalc_addr(chip, reg, off, true, false);
  	int ret;
- 	u8 val[MAX_BANK];
- 
--	chip->regs = &pca957x_regs;
+-	int bank_shift = pca953x_bank_shift(chip);
+-	int offset = off / BANK_SZ;
 -
--	ret = pca953x_read_regs(chip, chip->regs->output, chip->reg_output);
--	if (ret)
--		goto out;
--	ret = pca953x_read_regs(chip, chip->regs->direction,
--				chip->reg_direction);
--	if (ret)
--		goto out;
+-	ret = i2c_smbus_write_byte_data(chip->client,
+-					(reg << bank_shift) + offset, val);
+ 
++	ret = i2c_smbus_write_byte_data(chip->client, regaddr, val);
+ 	if (ret < 0) {
+ 		dev_err(&chip->client->dev, "failed writing register\n");
+ 		return ret;
+@@ -203,20 +220,9 @@ static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
+ 
+ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+-	int bank_shift = pca953x_bank_shift(chip);
+-	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+-	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+-	u8 regaddr = pinctrl | addr;
++	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, true, true);
+ 	int ret;
+ 
+-	/* Chips with 24 and more GPIOs always support Auto Increment */
+-	if (NBANK(chip) > 2)
+-		regaddr |= REG_ADDR_AI;
 -
--	/* set platform specific polarity inversion */
--	if (invert)
--		memset(val, 0xFF, NBANK(chip));
--	else
--		memset(val, 0, NBANK(chip));
--	ret = pca953x_write_regs(chip, PCA957X_INVRT, val);
-+	ret = device_pca95xx_init(chip, invert);
- 	if (ret)
- 		goto out;
+-	/* PCA9575 needs address-increment on multi-byte writes */
+-	if (PCA_CHIP_TYPE(chip->driver_data) == PCA957X_TYPE)
+-		regaddr |= REG_ADDR_AI;
+-
+ 	ret = i2c_smbus_write_i2c_block_data(chip->client, regaddr,
+ 					     NBANK(chip), val);
+ 	if (ret < 0) {
+@@ -229,16 +235,9 @@ static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
  
-@@ -842,10 +828,13 @@ static int pca953x_probe(struct i2c_client *client,
- 	 */
- 	pca953x_setup_gpio(chip, chip->driver_data & PCA_GPIO_MASK);
+ static int pca953x_read_regs(struct pca953x_chip *chip, int reg, u8 *val)
+ {
+-	int bank_shift = pca953x_bank_shift(chip);
+-	int addr = (reg & PCAL_GPIO_MASK) << bank_shift;
+-	int pinctrl = (reg & PCAL_PINCTRL_MASK) << 1;
+-	u8 regaddr = pinctrl | addr;
++	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, false, true);
+ 	int ret;
  
--	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE)
--		ret = device_pca953x_init(chip, invert);
--	else
-+	if (PCA_CHIP_TYPE(chip->driver_data) == PCA953X_TYPE) {
-+		chip->regs = &pca953x_regs;
-+		ret = device_pca95xx_init(chip, invert);
-+	} else {
-+		chip->regs = &pca957x_regs;
- 		ret = device_pca957x_init(chip, invert);
-+	}
- 	if (ret)
- 		goto err_exit;
- 
+-	/* Chips with 24 and more GPIOs always support Auto Increment */
+-	if (NBANK(chip) > 2)
+-		regaddr |= REG_ADDR_AI;
+-
+ 	ret = i2c_smbus_read_i2c_block_data(chip->client, regaddr,
+ 					    NBANK(chip), val);
+ 	if (ret < 0) {
 -- 
 2.18.0
 
