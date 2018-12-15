@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD28BC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42416C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5802080F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 134D12080F
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pq9ZAtix"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHOdO9LN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbeLOO0p (ORCPT
+        id S1730355AbeLOO0q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 15 Dec 2018 09:26:45 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36702 "EHLO
+        Sat, 15 Dec 2018 09:26:46 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39391 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729707AbeLOO0p (ORCPT
+        with ESMTP id S1730290AbeLOO0q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Dec 2018 09:26:45 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u4so7097559wrp.3;
-        Sat, 15 Dec 2018 06:26:43 -0800 (PST)
+        Sat, 15 Dec 2018 09:26:46 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t27so8074394wra.6;
+        Sat, 15 Dec 2018 06:26:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=c22Xo4JerZfpW1i9fw99SYDqwzQCmVrwRe8O8Sok3NA=;
-        b=pq9ZAtixRGc52vcLBIUW8RGIlh2+c6Z7itSnJgUVDZpt7YC9yof/OHjvrAz71l1Rgi
-         5qLK/8nzhQhSZHP2IQPEhQIZd8QQ8ABs677/llRwxgoPb/4+zDryClLtxQ5fNBKE5oPA
-         71fHhRF6G5zEIoSD8sCXDElXmlHnMF5g5+UcY1+Ui13N5ta1ccACm6Zvsq1DhsnwDA9/
-         ML1RsSc5SIaT3Y1mnckFUJXXpMFoU8PQS3H9nCpH/2QiNLPTTU4ytxg8ZsHt6YCUiYE1
-         LLkjIj7y2EPgQwrYqOHQa9a5qxjYW5tWb6xWwNgAX+5GDekiL19Vr33fPSAP9sF2vCnn
-         OQUw==
+        bh=/7jAJ+8gDj6c9Z98LDI6KfTAvqF6aPPQlA5P4B1/1Fk=;
+        b=OHOdO9LNseF0Dwya0FUaAtlmO4tHjtnN6HAg2c/QLfcct5JD3hcovSSuRnamcFfHOX
+         GETmUh/zQ1TAVn0YojUggch8BqXTZDSY6LuxWmBrlLjXu8y/tKR1tSM70PYqfvfnrOs3
+         bLRHTD9QkJBsUiZzGCRx+DFXBNSvwq8u3LArh1omTLGu7T6W6V5kHFE/s2AwEdv8drtx
+         glBrFrce5nR/b/dP9AvrxNQhzRTaduaV/qMZevw7rSEKb8I9n4e2IPgLhqrdxGNLca40
+         gBpCcTSEHKMRPYKfWyAy972JvkHcL5Erf07tMrFPKoI+e/LTUpO76trwoOvp/46QNd//
+         mjdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=c22Xo4JerZfpW1i9fw99SYDqwzQCmVrwRe8O8Sok3NA=;
-        b=bpm15fCQUNUSOXdxG1dBLZaXvkTcnVk8r9b0sQs6Zwln0G+fLMApiTjs1IRPmVkr5S
-         zalN6J2Y7wAqfgsZlNJidgD13I09e3qCn/SAwGP6HmTS1oDC+g/yggHAAI6Et6rKWgnX
-         9CSiPZLCAJ91W6U7n/zLsENQA0zX2ftzFD7MvoaB8DVBTvN2y6r2p+6CJLC5Vw7+Bmhd
-         I1+tkD8z3YOYPw8AkNlEuQUOLDaCFnH25geRuVMBJEPSzYnaaZXIAWaEWvpsFd02qQna
-         fR/S5jeun9t938CjNzdEYoTyZkCZI+0m3TuRfxD9Q5X0mp1ExB46GLiOa+mfhe30cDti
-         GClg==
-X-Gm-Message-State: AA+aEWYYBU7Yu46N4jSrGQmH+E3a3U48C1FtO7cRoRgHs16O3hTU20sA
-        0UGO6RiGw4VSf7RD7Upx41zPWwi5
-X-Google-Smtp-Source: AFSGD/W+ojI0yAzmiFjFm5kADwMqY8CjzQDnjgIqc3V6YGgSVN1C8DE8WWwgZw8gHFRRBls04AfQHw==
-X-Received: by 2002:a5d:530a:: with SMTP id e10mr5798434wrv.151.1544884002049;
-        Sat, 15 Dec 2018 06:26:42 -0800 (PST)
+        bh=/7jAJ+8gDj6c9Z98LDI6KfTAvqF6aPPQlA5P4B1/1Fk=;
+        b=X2D6bZSoD5eIvfCLBilYuZMx+s+2d+9Jl/cp7FFnJU5lj1fHnlvzm4Wi9sbDKQDHyh
+         E9SAAU0x8IslwP83BR5iAbk8rUvSdVkvsAAYVEJ1wRKdyf/dTb2HPRyph01+bM9Y1Jua
+         A/yROQjeWH/Qd7ssyyZcm0ScEHo3rJJ2tYJPWLbDaQSp5M5SMXagp37QEz0RtVTkfggk
+         WNWnsNnycKF4RaZgEAp5NU0Lu7DHyvlb/5vJOH1Ox7JM3FojTsFduY4rf6O8ssH/rgMA
+         zWbMU4Gmer/9WAbHrdDU/qT4b7wA+10yLc1eKxZxYohZeQDysec5yoJw67AlNXe6W955
+         8Ryw==
+X-Gm-Message-State: AA+aEWa9u217RD9dnNLXXBrXOY0+kiBTA+LVayvHvx384YaMbmxRVsmU
+        HeoDRjcjFGrtt6yC08NF6KJBmD/S
+X-Google-Smtp-Source: AFSGD/Ucv9HGkggPOc6kFwhVsiRD1ohnk46w7tajycy2zqKVOVB+gUtQ+6Z5qd+n7i/GBVxStKHSjg==
+X-Received: by 2002:adf:9d08:: with SMTP id k8mr5970095wre.203.1544884003288;
+        Sat, 15 Dec 2018 06:26:43 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.40
+        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Dec 2018 06:26:41 -0800 (PST)
+        Sat, 15 Dec 2018 06:26:42 -0800 (PST)
 From:   Marek Vasut <marek.vasut@gmail.com>
 X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
 To:     linux-gpio@vger.kernel.org
@@ -63,9 +63,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH V3 12/14] gpio: pca953x: Zap ad-hoc reg_output cache
-Date:   Sat, 15 Dec 2018 15:26:03 +0100
-Message-Id: <20181215142605.15397-13-marek.vasut+renesas@gmail.com>
+Subject: [PATCH V3 13/14] gpio: pca953x: Zap single use of pca953x_read_single()
+Date:   Sat, 15 Dec 2018 15:26:04 +0100
+Message-Id: <20181215142605.15397-14-marek.vasut+renesas@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
 References: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
@@ -74,9 +74,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the ad-hoc reg_output output register caching with generic
-regcache cache. Drop pca953x_write_single() which is no longer used.
-This reduces code duplication.
+Drop pca953x_write_single() which is used in one place.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
@@ -85,34 +83,26 @@ Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 V2: No change
 V3: No change
 ---
- drivers/gpio/gpio-pca953x.c | 65 +++++++++----------------------------
- 1 file changed, 15 insertions(+), 50 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 08fd7c17fcb6..a349f68c4025 100644
+index a349f68c4025..6f50cf14bb23 100644
 --- a/drivers/gpio/gpio-pca953x.c
 +++ b/drivers/gpio/gpio-pca953x.c
-@@ -141,7 +141,6 @@ static const struct pca953x_reg_config pca957x_regs = {
- 
- struct pca953x_chip {
- 	unsigned gpio_start;
--	u8 reg_output[MAX_BANK];
- 	struct mutex i2c_lock;
- 	struct regmap *regmap;
- 
-@@ -340,21 +339,6 @@ static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
- 	return 0;
+@@ -324,21 +324,6 @@ static u8 pca953x_recalc_addr(struct pca953x_chip *chip, int reg, int off,
+ 	return regaddr;
  }
  
--static int pca953x_write_single(struct pca953x_chip *chip, int reg, u32 val,
+-static int pca953x_read_single(struct pca953x_chip *chip, int reg, u32 *val,
 -				int off)
 -{
--	u8 regaddr = pca953x_recalc_addr(chip, reg, off, true, false);
+-	u8 regaddr = pca953x_recalc_addr(chip, reg, off, false, false);
 -	int ret;
 -
--	ret = regmap_write(chip->regmap, regaddr, val);
+-	ret = regmap_read(chip->regmap, regaddr, val);
 -	if (ret < 0) {
--		dev_err(&chip->client->dev, "failed writing register\n");
+-		dev_err(&chip->client->dev, "failed reading register\n");
 -		return ret;
 -	}
 -
@@ -122,100 +112,31 @@ index 08fd7c17fcb6..a349f68c4025 100644
  static int pca953x_write_regs(struct pca953x_chip *chip, int reg, u8 *val)
  {
  	u8 regaddr = pca953x_recalc_addr(chip, reg, 0, true, true);
-@@ -403,25 +387,17 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
- 	struct pca953x_chip *chip = gpiochip_get_data(gc);
- 	u8 dirreg = pca953x_recalc_addr(chip, chip->regs->direction, off,
- 					true, false);
-+	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
-+					true, false);
- 	u8 bit = BIT(off % BANK_SZ);
--	u8 reg_val;
- 	int ret;
- 
- 	mutex_lock(&chip->i2c_lock);
- 	/* set output level */
--	if (val)
--		reg_val = chip->reg_output[off / BANK_SZ]
--			| (1u << (off % BANK_SZ));
--	else
--		reg_val = chip->reg_output[off / BANK_SZ]
--			& ~(1u << (off % BANK_SZ));
--
--	ret = pca953x_write_single(chip, chip->regs->output, reg_val, off);
-+	ret = regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
- 	if (ret)
- 		goto exit;
- 
--	chip->reg_output[off / BANK_SZ] = reg_val;
--
- 	/* then direction */
- 	ret = regmap_write_bits(chip->regmap, dirreg, bit, 0);
- exit:
-@@ -452,23 +428,12 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
- static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
+@@ -408,11 +393,14 @@ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
  {
  	struct pca953x_chip *chip = gpiochip_get_data(gc);
--	u8 reg_val;
--	int ret;
-+	u8 outreg = pca953x_recalc_addr(chip, chip->regs->output, off,
-+					true, false);
++	u8 inreg = pca953x_recalc_addr(chip, chip->regs->input, off,
++				       true, false);
 +	u8 bit = BIT(off % BANK_SZ);
- 
- 	mutex_lock(&chip->i2c_lock);
--	if (val)
--		reg_val = chip->reg_output[off / BANK_SZ]
--			| (1u << (off % BANK_SZ));
--	else
--		reg_val = chip->reg_output[off / BANK_SZ]
--			& ~(1u << (off % BANK_SZ));
--
--	ret = pca953x_write_single(chip, chip->regs->output, reg_val, off);
--	if (ret)
--		goto exit;
--
--	chip->reg_output[off / BANK_SZ] = reg_val;
--exit:
-+	regmap_write_bits(chip->regmap, outreg, bit, val ? bit : 0);
- 	mutex_unlock(&chip->i2c_lock);
- }
- 
-@@ -500,7 +465,10 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
+ 	u32 reg_val;
  	int ret;
  
  	mutex_lock(&chip->i2c_lock);
--	memcpy(reg_val, chip->reg_output, NBANK(chip));
-+	ret = pca953x_read_regs(chip, chip->regs->output, reg_val);
-+	if (ret)
-+		goto exit;
-+
- 	for (bank = 0; bank < NBANK(chip); bank++) {
- 		bank_mask = mask[bank / sizeof(*mask)] >>
- 			   ((bank % sizeof(*mask)) * 8);
-@@ -512,11 +480,7 @@ static void pca953x_gpio_set_multiple(struct gpio_chip *gc,
- 		}
+-	ret = pca953x_read_single(chip, chip->regs->input, &reg_val, off);
++	ret = regmap_read(chip->regmap, inreg, &reg_val);
+ 	mutex_unlock(&chip->i2c_lock);
+ 	if (ret < 0) {
+ 		/* NOTE:  diagnostic already emitted; that's all we should
+@@ -422,7 +410,7 @@ static int pca953x_gpio_get_value(struct gpio_chip *gc, unsigned off)
+ 		return 0;
  	}
  
--	ret = pca953x_write_regs(chip, chip->regs->output, reg_val);
--	if (ret)
--		goto exit;
--
--	memcpy(chip->reg_output, reg_val, NBANK(chip));
-+	pca953x_write_regs(chip, chip->regs->output, reg_val);
- exit:
- 	mutex_unlock(&chip->i2c_lock);
+-	return (reg_val & (1u << (off % BANK_SZ))) ? 1 : 0;
++	return !!(reg_val & bit);
  }
-@@ -818,8 +782,9 @@ static int device_pca95xx_init(struct pca953x_chip *chip, u32 invert)
- 	int ret;
- 	u8 val[MAX_BANK];
  
--	ret = pca953x_read_regs(chip, chip->regs->output, chip->reg_output);
--	if (ret)
-+	ret = regcache_sync_region(chip->regmap, chip->regs->output,
-+				   chip->regs->output + NBANK(chip));
-+	if (ret != 0)
- 		goto out;
- 
- 	ret = regcache_sync_region(chip->regmap, chip->regs->direction,
+ static void pca953x_gpio_set_value(struct gpio_chip *gc, unsigned off, int val)
 -- 
 2.18.0
 
