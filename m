@@ -8,70 +8,66 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1286C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 02:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EF1C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 02:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE6F5206C0
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 02:30:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A82206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 02:30:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="loQn1WLY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oTW9cjRW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbeLOCaa (ORCPT
+        id S1728675AbeLOCab (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Dec 2018 21:30:30 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34352 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbeLOCaa (ORCPT
+        Fri, 14 Dec 2018 21:30:31 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37759 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728260AbeLOCaa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 14 Dec 2018 21:30:30 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so7164652wrw.1;
-        Fri, 14 Dec 2018 18:30:28 -0800 (PST)
+Received: by mail-wm1-f65.google.com with SMTP id g67so7496646wmd.2;
+        Fri, 14 Dec 2018 18:30:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qj2+h8G03LIN+7xOpir1PaBR4t8vEWcRFLgdzSWTPss=;
-        b=loQn1WLYAmkd3WPJ6PFQz1Gk+gPcoFi/GbkeZk2MBNLmcxZoc4MV2AmuVTG3JfLtw4
-         Cm1BGy9o5Lxp3NN3Fdo+riC68oGlqq1o0U9e8WGqiLGZ0pbCAVsoMe6oyUmqKyfDZnCB
-         dsfsiMvnEbVgbkrLvOcqZcNlmNjv/HVEarBMjqmgV7ctc4aXTm8FkHO+QeHxvmZGCzrr
-         rfaVM1hIUyDZLeXASUesnkkW/2UMVPStRBE5i45oBSADqQHMd5qjcRQtsBCYnXoaa+bH
-         bXIbAS1aPctO0V5bTyIxY2g3gOAOfBsFb4nME2u4z7h95cbG2zjTqIayyzKAMIy/1+1I
-         tRVA==
+        bh=mBLnsG24NLVnQZgnf1qFAA0DRrofVID098FjM7rJwVs=;
+        b=oTW9cjRWOi5OwR3PQ+Z/ijeugszAcfc/TvdhOroehZ850zRd6WxjRZEst3y0RcT0NK
+         pxzs6AgI3TzMy7Ffdjzlfbv5C8hzs3vXHnrW1wpcd1uXNrBySkWgsEGcayljsKjE/K+l
+         b1cCMUzuuZXvaPaAGTJgftkW9tPyaWd6SOCzTtHq0WQ1LIlAYuAlHyyynUhvz+q/VaDr
+         cjDhrJO7jrcLF4bMQgPzfX40PVj9VO46GeMdnw6pubm33jVjBRFFDpWGFRA6kOCtVCSS
+         sxAB3tGHuwQuotaTwfm7ITnNl/6YdDjm3DKCybpQSXJoIhX9zTdDgXlIPutxwHA3+TtO
+         JGHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Qj2+h8G03LIN+7xOpir1PaBR4t8vEWcRFLgdzSWTPss=;
-        b=hS9bHWtQtiRcB6gJ96F0UyFnlaKJPTBYj0JI8r7b8M9gs1hPL6GIY1bcQrjUq7NYII
-         bkDp2noixZ054Qf039nwVQojbzA/jRaBkhJBAnEMRk4vAA81ljmlZphknqSFdwn82z03
-         cRBG2J+VFDQporDTjIzlioseIsLa6Rh5lHPdArZqtrdu6mPZCr+26NvJADS17K309I6z
-         XTli3fOFLkxS5OAog2Lfya/02YExiWWyl1V7ldWYlFz3Ck816sFzFzhi7SzFqKioIrJK
-         CpS6i2eZHPpW/AHo0C8C3l/upKYrq/Ges6o8SNV4aDo2ZBICGeoWFc5AesWAknXsSjej
-         NK3w==
-X-Gm-Message-State: AA+aEWZUGOw2D188q3sKOizg63hFq47VIz3Jols77pGOtV6PTlD8HIgd
-        jaPU2g2qjBGpjDjpjgNXKhbKrgm7
-X-Google-Smtp-Source: AFSGD/VtxH3ZmanZ01crNLsBX4vFt/1Qw7NNKVfn0/3b1/bt6N/41xgcFRtgMsTKR3+0pAkRiL2puQ==
-X-Received: by 2002:adf:f504:: with SMTP id q4mr4484350wro.321.1544841027374;
-        Fri, 14 Dec 2018 18:30:27 -0800 (PST)
+        bh=mBLnsG24NLVnQZgnf1qFAA0DRrofVID098FjM7rJwVs=;
+        b=cXqRQ6ArUWIq3FAzNR3yJgp/p0zDvQaA5ltq1bv10TpW+6tX8ceWe9cN4bHwjPHRXT
+         i0FNduxmkrgj3YbipJLDzLiRsqs+DI1Oyb5TW6bSLXu3sd34KmZ02eql30YpmxHDelWZ
+         i5hO2WnXuWq5JWogULxsbqNLbhjS6y85+VTYP0h/5C3i0/0HHnrmSrOou/H/53G9Sls2
+         59j6nS24vXRRTzZj4DunUfWCMbewiXeSdIoSHXgIlOxmRNO/qQvWjENgivtu/UWUCUf+
+         fLHxW8WRkyvkvhVSixP2hP+AtUWBssG7ehGXUZmX6GGBKPmvBOaOZ52YMl4l005cKHB/
+         nfiw==
+X-Gm-Message-State: AA+aEWaf02YPPNiWP9K3oOssj5qqx6V1Wb91r68rBBwJm5PYNIE30JPN
+        8S64YF8sD+djDbnzeYw33ZiezWrl
+X-Google-Smtp-Source: AFSGD/WkPLpuR2u09XHBK1rJWZpnGQJDFA7guI3IAyLudkj2oOniVVtXKyTYuYaIbJmK73wNSsn6ag==
+X-Received: by 2002:a1c:8302:: with SMTP id f2mr5257840wmd.9.1544841028596;
+        Fri, 14 Dec 2018 18:30:28 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id v19sm12151423wrd.46.2018.12.14.18.30.25
+        by smtp.gmail.com with ESMTPSA id v19sm12151423wrd.46.2018.12.14.18.30.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 18:30:26 -0800 (PST)
+        Fri, 14 Dec 2018 18:30:27 -0800 (PST)
 From:   Marek Vasut <marek.vasut@gmail.com>
 X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
 To:     linux-pm@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David HERNANDEZ SANCHEZ <david.hernandezsanchez@st.com>,
         Eduardo Valentin <edubezval@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH V2 4/6] thermal: stm32: Convert to devm_thermal_zone_of_sensor_register_params()
-Date:   Sat, 15 Dec 2018 03:30:08 +0100
-Message-Id: <20181215023010.2857-5-marek.vasut+renesas@gmail.com>
+        Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH V2 5/6] thermal: rcar_thermal: Convert to devm_thermal_zone_of_sensor_register_params()
+Date:   Sat, 15 Dec 2018 03:30:09 +0100
+Message-Id: <20181215023010.2857-6-marek.vasut+renesas@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181215023010.2857-1-marek.vasut+renesas@gmail.com>
 References: <20181215023010.2857-1-marek.vasut+renesas@gmail.com>
@@ -80,85 +76,100 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the stm32 code to devm_thermal_zone_of_sensor_register_params(),
+Convert the rcar code to devm_thermal_zone_of_sensor_register_params(),
 no functional change.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
 Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: David HERNANDEZ SANCHEZ <david.hernandezsanchez@st.com>
 Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: Zhang Rui <rui.zhang@intel.com>
 Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
 To: linux-pm@vger.kernel.org
 ---
-V2: Rename stm_tz_ops to stm_tz_parms to avoid duplicate symbol name
+V2: No change
 ---
- drivers/thermal/st/stm_thermal.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ drivers/thermal/rcar_thermal.c | 33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-index 47623da0f91b..827565d94c20 100644
---- a/drivers/thermal/st/stm_thermal.c
-+++ b/drivers/thermal/st/stm_thermal.c
-@@ -20,7 +20,6 @@
+diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+index 8014a207d8d9..ec70c2119c77 100644
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -19,8 +19,6 @@
+ #include <linux/spinlock.h>
  #include <linux/thermal.h>
  
- #include "../thermal_core.h"
--#include "../thermal_hwmon.h"
+-#include "thermal_hwmon.h"
+-
+ #define IDLE_INTERVAL	5000
  
- /* DTS register offsets */
- #define DTS_CFGR1_OFFSET	0x0
-@@ -103,6 +102,10 @@ struct stm_thermal_sensor {
- 	int t0, fmt0, ramp_coeff;
+ #define COMMON_STR	0x00
+@@ -54,6 +52,10 @@ struct rcar_thermal_chip {
+ 	unsigned int nirqs;
  };
  
-+static struct thermal_zone_params stm_tz_parms = {
++static struct thermal_zone_params rcar_thermal_params = {
 +	.no_hwmon	= false,
 +};
 +
- static irqreturn_t stm_thermal_alarm_irq(int irq, void *sdata)
- {
- 	struct stm_thermal_sensor *sensor = sdata;
-@@ -652,9 +655,8 @@ static int stm_thermal_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	sensor->th_dev = devm_thermal_zone_of_sensor_register(&pdev->dev, 0,
--							      sensor,
--							      &stm_tz_ops);
-+	sensor->th_dev = devm_thermal_zone_of_sensor_register_params(&pdev->dev,
-+				0, sensor, &stm_tz_ops, &stm_tz_parms);
- 
- 	if (IS_ERR(sensor->th_dev)) {
- 		dev_err(&pdev->dev, "%s: thermal zone sensor registering KO\n",
-@@ -711,15 +713,6 @@ static int stm_thermal_probe(struct platform_device *pdev)
- 		goto err_tz;
+ static const struct rcar_thermal_chip rcar_thermal = {
+ 	.use_of_thermal = 0,
+ 	.has_filonoff = 1,
+@@ -458,9 +460,7 @@ static int rcar_thermal_remove(struct platform_device *pdev)
+ 	rcar_thermal_for_each_priv(priv, common) {
+ 		rcar_thermal_irq_disable(priv);
+ 		cancel_delayed_work_sync(&priv->work);
+-		if (priv->chip->use_of_thermal)
+-			thermal_remove_hwmon_sysfs(priv->zone);
+-		else
++		if (!priv->chip->use_of_thermal)
+ 			thermal_zone_device_unregister(priv->zone);
  	}
  
--	/*
--	 * Thermal_zone doesn't enable hwmon as default,
--	 * enable it here
--	 */
--	sensor->th_dev->tzp->no_hwmon = false;
--	ret = thermal_add_hwmon_sysfs(sensor->th_dev);
--	if (ret)
--		goto err_tz;
+@@ -554,16 +554,20 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+ 		if (ret < 0)
+ 			goto error_unregister;
+ 
+-		if (chip->use_of_thermal)
+-			priv->zone = devm_thermal_zone_of_sensor_register(
++		if (chip->use_of_thermal) {
++			priv->zone =
++				devm_thermal_zone_of_sensor_register_params(
+ 						dev, i, priv,
+-						&rcar_thermal_zone_of_ops);
+-		else
++						&rcar_thermal_zone_of_ops,
++						&rcar_thermal_params);
++		} else {
+ 			priv->zone = thermal_zone_device_register(
+ 						"rcar_thermal",
+ 						1, 0, priv,
+ 						&rcar_thermal_zone_ops, NULL, 0,
+ 						idle);
++		}
++
+ 		if (IS_ERR(priv->zone)) {
+ 			dev_err(dev, "can't register thermal zone\n");
+ 			ret = PTR_ERR(priv->zone);
+@@ -571,17 +575,6 @@ static int rcar_thermal_probe(struct platform_device *pdev)
+ 			goto error_unregister;
+ 		}
+ 
+-		if (chip->use_of_thermal) {
+-			/*
+-			 * thermal_zone doesn't enable hwmon as default,
+-			 * but, enable it here to keep compatible
+-			 */
+-			priv->zone->tzp->no_hwmon = false;
+-			ret = thermal_add_hwmon_sysfs(priv->zone);
+-			if (ret)
+-				goto error_unregister;
+-		}
 -
- 	sensor->mode = THERMAL_DEVICE_ENABLED;
+ 		rcar_thermal_irq_enable(priv);
  
- 	dev_info(&pdev->dev, "%s: Driver initialized successfully\n",
-@@ -737,7 +730,6 @@ static int stm_thermal_remove(struct platform_device *pdev)
- 	struct stm_thermal_sensor *sensor = platform_get_drvdata(pdev);
- 
- 	stm_thermal_sensor_off(sensor);
--	thermal_remove_hwmon_sysfs(sensor->th_dev);
- 	thermal_zone_of_sensor_unregister(&pdev->dev, sensor->th_dev);
- 
- 	return 0;
+ 		list_move_tail(&priv->list, &common->head);
 -- 
 2.18.0
 
