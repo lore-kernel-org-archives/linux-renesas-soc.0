@@ -2,58 +2,60 @@ Return-Path: <SRS0=gd9z=OY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7819AC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE516C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3976C2080F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C9142171F
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Dec 2018 14:26:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEjy2FpT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzoJCW+F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbeLOO02 (ORCPT
+        id S1730124AbeLOO0b (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 15 Dec 2018 09:26:28 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33455 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729687AbeLOO02 (ORCPT
+        Sat, 15 Dec 2018 09:26:31 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39371 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729966AbeLOO0a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Dec 2018 09:26:28 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so1254742wmh.0;
-        Sat, 15 Dec 2018 06:26:27 -0800 (PST)
+        Sat, 15 Dec 2018 09:26:30 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so8074056wra.6;
+        Sat, 15 Dec 2018 06:26:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=w2/jKi2gWd7ra3PJllURc7FusMvT+tvLFCzSiMR0aMM=;
-        b=VEjy2FpTCU2t7BO9/xOqh1MVF009VUfdG6oxoHgkpbpSbNBZrX0UCRZ3LyyeTk5Cu5
-         A99M5uiyTLfg2E0npS/svvmtU6FR0v++tLf/ffxLswJymV8i/DkrJhEy0LPVG7mP4Q/B
-         ru+zLstO44aDDt7Dyn+wmVEYxDYfhg5nBRuJCHP0ZyoD12nHfCb3+x3DIFLDTcw+zsYK
-         Wz29xk4qkumGofZmfWS00GSxb2daChYJzRrHAq6ADRKSR9NpQn07CTzhrk0J/iEnr374
-         DKDPnqd9k4bdok1B6RvmTwyudLcTpU+CFScd9eKK6YP3cLlPZhbdp3oOSUdX3Ht4e6bN
-         TL4w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=RcnYYgaTXUb+Yx65IZ1kylrIPvlDEkFf8jCg2D/yNWg=;
+        b=NzoJCW+F5+H7JcLbJB5ijrhlj5t1JOQSwXq4TPqZgWKfWuPDTf2/8JuxX+SHXnqe20
+         QSblCjgymn8dWiSycuYY9WVL8Zd+PRzHeVFXMpyAWqgoNtCSM4SMh4LXAwPj4gKcJiZ8
+         V7+6gh4LqmhZ1SWBVx4FHFFwqEDjsaFHIVqYmVP1VfT3/AHOVBSO4qotZaEeD+vbZUkM
+         YjZ4A6cDa+Cx7GY6JQ7gEODORJBfucdnJ2UYm7YZ2jK5IO2g4pKzj5AUOg3NzBsxLdo4
+         UvU9k+wzmgSwRBUg8Of2gG3Ik82+Y1VobZsroUyyEpECadihHsSb29ReGf9Pa+L2ouYp
+         KPdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=w2/jKi2gWd7ra3PJllURc7FusMvT+tvLFCzSiMR0aMM=;
-        b=VYcFgz9lAlav2+XJfgCitUrOf7nSfEvS7SUmnF+Cycn7Fs4ErwaTXchnBAubEn76Qj
-         m7kgLdgn3OS46/xPYySzq2Plr9v3sRr+UtxdKRtMcwoA6EJqT5ndZYZ1ss/7KSWE1+DW
-         RCr9WfgZwZHM/uUljHqE/McFKIMqZeOU4CzJ0NhD9upKJGJL+go5tsW+FV+Kx9StU3ED
-         UitN/zjupkA5k6f6/cckMuNs4C02839UQJe03Japa79BIyOFuAFXTw4rwN5wIQt/3wa6
-         jz8PJKBI9Kzd2gwu2YbXNdCJBgbwCazyTDnAYldj1e3TC5k5ZYlx51yts4XOmXaM6/1N
-         TPkA==
-X-Gm-Message-State: AA+aEWZCQ6QSLwytMiIq8hCiipo3we4Aht7RKPNFUYK8GkerJS80D/lT
-        0zh1Nmg4cEpxo3bZNb6JBA4PfXuh
-X-Google-Smtp-Source: AFSGD/VBacyHtTC/jNCiasII8MexHbCZ6XKyZhSuwzrM/OhEmlsXI8K2ueJZtgBZQoA2m/RtdZQS/Q==
-X-Received: by 2002:a1c:9dcc:: with SMTP id g195mr6112838wme.153.1544883985755;
-        Sat, 15 Dec 2018 06:26:25 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=RcnYYgaTXUb+Yx65IZ1kylrIPvlDEkFf8jCg2D/yNWg=;
+        b=Pmz0WE/K80RoNfZqcCt9NuzV6dj7lDX+n+GvutOfQqwEjxJ17PKP7DWh4txsvIAU9A
+         H8r6cq5rZGU+Jj51ZzYCFqEFz3QrnYaJzOPbPpfamgh/Ke+F9to+39+/C+L4R9tocnUP
+         8t8qFpLcWjFIAS/flgPCrz5vSApnW2RX6rLD/oAKyzOD37dAiAogqyGZl5aaknlRk5G1
+         h8mbZKd9/zdWeF814DqQR2902w4f2OUJE9L9bLMlK36H2eGtdzMHbUMHYoP7EQjXdnDs
+         tSEL/L4GqAneaQFu7K/EWBDHHuwHAQJdn1kkTDjnUN25Akl2KvaBNQB364tFWW92X1ua
+         3GrQ==
+X-Gm-Message-State: AA+aEWYFcNslciGj8Wirv98Sqg9CVMJ5Z4yHrBEBgNrSVgLnG9eMOMJP
+        cgd7oT3sotyF/+mywO96m6ph8v/s
+X-Google-Smtp-Source: AFSGD/UyHkpdqVfZLTN7CmA5itY4lPM+Nc9wqCOV1tBIpX6GY3NeESFhmC4X6hovvGUbxI2pNdqXeA==
+X-Received: by 2002:adf:f903:: with SMTP id b3mr5932325wrr.82.1544883988456;
+        Sat, 15 Dec 2018 06:26:28 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.24
+        by smtp.gmail.com with ESMTPSA id c7sm15401225wre.64.2018.12.15.06.26.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 15 Dec 2018 06:26:24 -0800 (PST)
+        Sat, 15 Dec 2018 06:26:27 -0800 (PST)
 From:   Marek Vasut <marek.vasut@gmail.com>
 X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
 To:     linux-gpio@vger.kernel.org
@@ -61,45 +63,49 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH V3 00/14] gpio: pca953x: Code cleanup and regmap conversion
-Date:   Sat, 15 Dec 2018 15:25:51 +0100
-Message-Id: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
+Subject: [PATCH V3 02/14] gpio: pca953x: Fix AI overflow on PCAL6524
+Date:   Sat, 15 Dec 2018 15:25:53 +0100
+Message-Id: <20181215142605.15397-3-marek.vasut+renesas@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
+References: <20181215142605.15397-1-marek.vasut+renesas@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Clean the PCA953x driver up, convert to regmap and add suspend/resume support.
+The PCAL_PINCTRL_MASK is too large. The extended register block on
+PCAL6524, which is the largest chip with this block, has the block
+limited to address range 0x40..0x7f. This is because the bit 7 in
+the command register is used for the Address Increment functionality.
 
-Marek Vasut (14):
-  gpio: pca953x: Deduplicate the bank_shift
-  gpio: pca953x: Fix AI overflow on PCAL6524
-  gpio: pca953x: Repair multi-byte IO address increment on PCA9575
-  gpio: pca953x: Unify pca95{3,7}x_write_regs_16()
-  gpio: pca953x: Unify pca953x_{read,write}_regs_{16,24}()
-  gpio: pca953x: Unify pca953x_{read,write}_regs_{8,mul}()
-  gpio: pca953x: Factor out common code from device_pca95xx_init()
-  gpio: pca953x: Zap ad-hoc I2C block write in multi GPIO set
-  gpio: pca953x: Extract the register address mangling to single
-    function
-  gpio: pca953x: Perform basic regmap conversion
-  gpio: pca953x: Zap ad-hoc reg_direction cache
-  gpio: pca953x: Zap ad-hoc reg_output cache
-  gpio: pca953x: Zap single use of pca953x_read_single()
-  gpio: pca953x: Restore registers after suspend/resume cycle
+Trim the mask to 0x60 to match the datasheet and to prevent accidental
+overwrite of the AI bit.
 
- drivers/gpio/Kconfig        |   1 +
- drivers/gpio/gpio-pca953x.c | 484 ++++++++++++++++++++++--------------
- 2 files changed, 303 insertions(+), 182 deletions(-)
-
-V2: Minor fixes in 01,02,14/14
-V3: The only change is in 10/14, where we select REGMAP_I2C in Kconfig,
-    since the driver uses regmap now
-
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+V2: Add RB from Bart
+V3: No change
+---
+ drivers/gpio/gpio-pca953x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index afe6de4c48c4..ec9fd11cd21c 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -58,7 +58,7 @@
+ #define PCA_GPIO_MASK		0x00FF
+ 
+ #define PCAL_GPIO_MASK		0x1f
+-#define PCAL_PINCTRL_MASK	0xe0
++#define PCAL_PINCTRL_MASK	0x60
+ 
+ #define PCA_INT			0x0100
+ #define PCA_PCAL		0x0200
 -- 
 2.18.0
 
