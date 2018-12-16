@@ -2,90 +2,79 @@ Return-Path: <SRS0=VPlw=OZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C73FC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC43FC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5212086C
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D452082F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:32:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfpMG5Er"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rp2LGMOl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbeLPRZu (ORCPT
+        id S1730713AbeLPRcC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 16 Dec 2018 12:25:50 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51151 "EHLO
+        Sun, 16 Dec 2018 12:32:02 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50487 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730449AbeLPRZu (ORCPT
+        with ESMTP id S1730593AbeLPRcC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Dec 2018 12:25:50 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so10155340wmd.0;
-        Sun, 16 Dec 2018 09:25:48 -0800 (PST)
+        Sun, 16 Dec 2018 12:32:02 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n190so10164787wmd.0;
+        Sun, 16 Dec 2018 09:32:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dv29gNdsEgaKN5VzTvn6Xaw+DARBT4jvQJ/wTsKVgSI=;
-        b=mfpMG5ErB5ipsPtuLJEDU4ucNtlHuwFMy8QkIZ7GmKRJN3fJWY0SpQdsxLUYt1P1RW
-         Q78fsl7dNFo4DaqL/1KOXTJlGUjhhrSQ+I7j6XCInxmFr++L9Gwa9LV7OBhsX36nQh/O
-         b8TwO4rE7WAxEeHbGw+5TzzRTywVj9NBxiw4T+K9r8ZFYKHKLikquJC3SWLBjo9wjJLq
-         0ZMTl6DI7n8+4jd+rRb02mCvtmBoVrn0bkhcwKKs8NSYQI6S+Ll9rR0dUH2aygDQVCkH
-         R04vqEddtEsXSAM+48nxWde9YPI4Jhf5S1zLZ0b3BhpiFuvryAR4rD3tjJ+rjPQ/eqoR
-         K7Cw==
+        bh=kWMq3HzIYyud8HfwUFrjBfGtiC7xEt1+qRuhAivdXZY=;
+        b=Rp2LGMOlTMqgGK31j2cx0JxP3HVfirMDyOvwOJWrbT55GHZcogL7Gar+E0aJFIlY3w
+         yjytPLNKGCItRAO5epxrXyOx1ACtGHSQgBwr+kwVWBDXYOfOErhDc0A1JgkquymuxEHS
+         Iw2SOug9fNa6seC5rmT7C3KeTJ71KqItZ3r0boapFPFe810hK80rYNJ41tyITrTuoHl9
+         69zRDeJRwj7tgSJ/9qZemuOYRxkpSrXGMSxO61kBqveePRlf9lTs2ap8uuP8gsex02Ys
+         4BWBkwsDQXjuK693l/N7qMj8jGDAFc104F7j/qs2MIBsgQ31n+AeLi4G8uwSmDPKaTnR
+         CEaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=dv29gNdsEgaKN5VzTvn6Xaw+DARBT4jvQJ/wTsKVgSI=;
-        b=sThgo0+WR3aPwPKYUt9CNV7EudHMtdMIbvPeMwPm8a6WU32NdwxcLjI7tfZbOu4d21
-         mucNoEIYoVmiE5Xk5QEBp6CNr1OPwp4L2SknS0Awy5FEbAIdvpBzN5vDORMeDh5OE8Sj
-         OF66Z8KILh7RvA+oaigNvfvdVGmSHKOdbHyH3sUeg/THCJZEG9Ic2ak2LfNJ99fIx7nu
-         unieXsqDiEubJz+j/99DX1fWL4riln32JhHx1eJ5WIjIFfe08ScBn0uCWvoI0ttw1izU
-         aOR9qkleoL011/AvGcBytI4XY4WpeXDmZAPxBJhkzM8fnzSOeC61LvhO1ejArF7hTqFF
-         vx7Q==
-X-Gm-Message-State: AA+aEWb5UGFxerWibER2CsFySbmit61kjrE2DSI3nolAgxTv6wTJzoLS
-        1fUlDMgUWAhKOEg8xMiyF4c=
-X-Google-Smtp-Source: AFSGD/VyklwVbQoeNHj54Nug285tcY/k7A7XT1GxBBx3390NHPcIgxaz/DtFBqtiVZeH2GUuAIzuuQ==
-X-Received: by 2002:a1c:b70b:: with SMTP id h11mr9584726wmf.72.1544981147157;
-        Sun, 16 Dec 2018 09:25:47 -0800 (PST)
+        bh=kWMq3HzIYyud8HfwUFrjBfGtiC7xEt1+qRuhAivdXZY=;
+        b=Xhdpplp0QFHC3xb2ioBG5MIEOimB6/DRmuDi2GXLZvVIwPVSPiB4n7fuk3YsFwBKsb
+         a7S4I9dCAFZG/vAoUk/iaPbFDDKUux5BrlMo1FDSdfkrARAMlA+zlrJMPYtYXNyktVf3
+         mPtJORmKBAhS36AWVspai4B9SmtGZNwDYj7SjDIXfCa2NMhV1NDgehlQzl3u4qG+GLaR
+         f1/gfFmaHlA+3LQ5rbNSDUqRgwnKRNN4tnP38koabOjPtdWiiSt/+JMUXZCfpRGb8NTV
+         YNC99/wIgEYDhZuonnJtDFrrgq7vY6DyNMs2OQdoEQWWx1Z8IslrEtktYSn1sv+rFa9A
+         3Cjg==
+X-Gm-Message-State: AA+aEWbly6Zf9Z3rtIHrCeN6gtYyqsXd0PVnDvWEXMrd+quhfi0OYDCU
+        EvYjkuOFFLSuY1E6ZD05iE4=
+X-Google-Smtp-Source: AFSGD/VCC+i/x28pvrL+CwnjRssBP+0BWCqPPrEFE7nXerMrjEX7Xkxp3tMDCX/fQqco86b1xaxckw==
+X-Received: by 2002:a1c:13d1:: with SMTP id 200mr9016013wmt.4.1544981520117;
+        Sun, 16 Dec 2018 09:32:00 -0800 (PST)
 Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id w16sm14778953wrp.1.2018.12.16.09.25.45
+        by smtp.gmail.com with ESMTPSA id l15sm8221910wrw.4.2018.12.16.09.31.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 16 Dec 2018 09:25:46 -0800 (PST)
-Subject: Re: [PATCH 1/6] thermal: split
- thermal_zone_of_sensor_register{,_param}()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        Sun, 16 Dec 2018 09:31:59 -0800 (PST)
+Subject: Re: [PATCH V2 01/14] gpio: pca953x: Deduplicate the bank_shift
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20181212014927.25840-1-marek.vasut+renesas@gmail.com>
- <20181212014927.25840-2-marek.vasut+renesas@gmail.com>
- <20181215172351.GB10311@localhost.localdomain>
- <baebd957-e527-fd03-bbaf-cbfa4a7624ed@gmail.com>
- <CAMuHMdWEuiPnZfeNA+T_Gp6W7EAGimrb9Z=rU590OnPz2-MLow@mail.gmail.com>
- <270eeb39-140f-7f55-75d3-c2a6d9ab4034@gmail.com>
- <CAMuHMdUAVYk0Xx56H+V1usFa3627Zk7erewrtP-2HG02neit9A@mail.gmail.com>
- <076ebc8e-32a3-99bf-6d8a-7a0bae22b427@gmail.com>
- <CAMuHMdUJPLu2H5dYZjFG1oKYOoXiQGE6_S8BFK8c7Nue_Dfqzg@mail.gmail.com>
- <09902cc4-ef25-cd36-0d4a-effeabcd233f@gmail.com>
- <CAMuHMdV4jtF6nqH2RMLpg3gQu5Gok050kW+o0p8fzpZYyv9GAQ@mail.gmail.com>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20181212014002.4753-1-marek.vasut+renesas@gmail.com>
+ <CACRpkda_062r5KzTtPE6zf+FDXGiLqCTw=Q1AB3SKLkAa05Qsw@mail.gmail.com>
+ <2bbd5d03-a081-bf87-1c20-79f8eedeb4ad@gmail.com>
+ <CACRpkdZi2kBJj+vBqK-Wf6UqVphBnHzoON=p+WtHpEAFpgPy=w@mail.gmail.com>
 From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <31978c47-cd1b-7c61-0d6a-09e443147b52@gmail.com>
-Date:   Sun, 16 Dec 2018 18:25:45 +0100
+Message-ID: <c2f63838-8c48-2eb5-cfc0-8d39ab1cd561@gmail.com>
+Date:   Sun, 16 Dec 2018 18:18:12 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV4jtF6nqH2RMLpg3gQu5Gok050kW+o0p8fzpZYyv9GAQ@mail.gmail.com>
+In-Reply-To: <CACRpkdZi2kBJj+vBqK-Wf6UqVphBnHzoON=p+WtHpEAFpgPy=w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -94,98 +83,24 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/16/2018 09:39 AM, Geert Uytterhoeven wrote:
-> Hi Marek,
-
-Hi,
-
-> On Sat, Dec 15, 2018 at 9:13 PM Marek Vasut <marek.vasut@gmail.com> wrote:
->> On 12/15/2018 09:00 PM, Geert Uytterhoeven wrote:
->>> On Sat, Dec 15, 2018 at 8:07 PM Marek Vasut <marek.vasut@gmail.com> wrote:
->>>> On 12/15/2018 07:54 PM, Geert Uytterhoeven wrote:
->>>>> On Sat, Dec 15, 2018 at 7:49 PM Marek Vasut <marek.vasut@gmail.com> wrote:
->>>>>> On 12/15/2018 07:47 PM, Geert Uytterhoeven wrote:
->>>>>>> On Sat, Dec 15, 2018 at 7:38 PM Marek Vasut <marek.vasut@gmail.com> wrote:
->>>>>>>> On 12/15/2018 06:23 PM, Eduardo Valentin wrote:
->>>>>>>>> On Wed, Dec 12, 2018 at 02:49:22AM +0100, Marek Vasut wrote:
->>>>>>>>>> Introduce new thermal_zone_of_sensor_register_params() function, which
->>>>>>>>>> allows passing struct thermal_zone_params into it and convert original
->>>>>>>>>> thermal_zone_of_sensor_register() to call it with params set to NULL.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>>>>>
->>>>>>>>> Git complains about mismatch between From: and this SOB.
->>>>>>>>
->>>>>>>> I recall a discussion about gmail stripping the +foo tags from email
->>>>>>>> addresses. I can add a From: tag into the patch to override this
->>>>>>>> braindeath, or is there a better solution ?
->>>>>>>
->>>>>>> Run the "git format-patch" command from a git repo where user.email
->>>>>>> is marek.vasut@gmail.com, so it will retain the original From: tag in the
->>>>>>> email body, as it is different?
->>>>>>
->>>>>> I can also manually patch the From tags or add them, but it's all
->>>>>> workarounds.
->>>>>
->>>>> Use a different outgoing email server? I use my ISP's.
->>>>
->>>> Or maybe it'd make sense to fix git to handle the +tags correctly ?
->>>
->>> What needs to be fixed?
->>> If user.email != From, git format-patch generates a From: header, else
->>> it doesn't. Doesn't that make sense?
+On 12/16/2018 01:27 AM, Linus Walleij wrote:
+> On Sat, Dec 15, 2018 at 5:48 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 12/14/2018 03:50 PM, Linus Walleij wrote:
+> 
+>>> Some can be quickly
+>>> supported by just adding the .set_config() callback, others like
+>>> pull up/down are more dubious. If it supports open drain in hardware
+>>> we should definately make use of it. Just in case you're interested!
 >>
->> I believe the complaint here is that email address in From does not
->> match email address in SoB line, because some SMTP servers scrub the
->> +foo tag from From: and not from SoB-line . And yet, the SoB line is
+>> I went through the hardware I have around and the datasheets to the
+>> PCA953x chips on them, but I couldn't find a board which would have a
+>> PCA953x chip with those extra features. I'll keep my eyes peeled for a
+>> board with one.
 > 
-> Some SMTP servers (Hi Gmail!) scrub the +foo tag from the From: _header_
-> in the email. As the SoB is in the _body_ it is not affected.
-> Hence the solution is to include the correct From: in the _body_.
+> It appears Thomas needs those features so let's let him have a go
+> at it :D
 
-This is basically what I said.
-
-> Git actually does that automatically, assumed your user.email config matches
-> the From: address that is used in your outgoing email delivery path (i.e. the
-> scrubbed one, when using Gmail's SMTP server).
-> If you lie to git in your user.email config, git cannot do the right
-> thing, obviously.
-
-My git user.email obviously matches the From: field , before the
-scrubbing, which I believe is the correct thing to do.
-
->> from the same person/email address as the email address in From, so they
->> are equal.
-> 
-> If they differ, they are not equal ;-)
-
-Depends on how you define 'equal' . Here I think foo+bar@example.com
-should be considered equal to foo@example.com .
-
-> While many mail servers ignore +foo when delivering email to mailboxes,
-> this is not the case for all of them.  So ignoring +foo is not the universal
-> solution.
-> 
->> I think git should just ignore the +foo tag in SoB line.
-> 
-> Where should "git" ignore the +foo tag? Is it actually git that complains?
-> Eduardo: Do you mean checkpatch? ;-)
-
-Possibly. I ran checkpatch after git format-patch and it didn't complain.
-
-> I did enhance checkpatch with a check to verify that patches carry SoB tags
-> from their authors, as too many people got that wrong, causing complaints
-> from sfr in linux-next later. As usual, it's better to get things right as early
-> as possible in the process, to avoid rework.
-
-Aha, so maybe that enhancement needs further enhancement to scrub the
-+tags before the check ?
-
-> So the problem is on the patch sending side, not on the patch verification
-> receiving side.
-> Hence please fix your email setup, thanks!
-
-See above.
+Awesome :-)
 
 -- 
 Best regards,
