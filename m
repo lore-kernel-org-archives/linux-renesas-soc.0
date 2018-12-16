@@ -6,138 +6,133 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC17C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 08:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6846C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 10:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9140C2084D
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 08:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D8262086C
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 10:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbeLPIjU (ORCPT
+        id S1729354AbeLPKDf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 16 Dec 2018 03:39:20 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:46153 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729732AbeLPIjT (ORCPT
+        Sun, 16 Dec 2018 05:03:35 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46590 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbeLPKDe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Dec 2018 03:39:19 -0500
-Received: by mail-vk1-f193.google.com with SMTP id j23so2206128vke.13;
-        Sun, 16 Dec 2018 00:39:18 -0800 (PST)
+        Sun, 16 Dec 2018 05:03:34 -0500
+Received: by mail-vs1-f66.google.com with SMTP id n10so5975066vso.13;
+        Sun, 16 Dec 2018 02:03:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=w3jwtiejl3CW5mq17XZRV/CJFpmLbFfvUHYGdMC/M6Y=;
-        b=qLy4BIW3uYMU18TWa5Wmvi/pLDM/v7idaqDYISedkGAMHjCtxBUglyzK/xh466AJbp
-         gPcSe/TcembOUThmBTdBEEC/H6GSJp7ER6huDAHgxBUDn3LzfxsCs3XTYsbi0EcComnz
-         WcoGmAFaSKGPCFqvHaikuw2rHGxGSrS0JiqPGSDrzc8tA1BELUPuY1aZuUCnSSJaaLpv
-         aI8X6lsAfWpcYQgD62Of8C1mPIIJ3cP8jIhy1Kyv8B5KL4SqdT9sjmgnou8q6TPYLd+s
-         42KnvgODQKt05N+9mgREXX72j/5PVdqEghJuaXSOfDN184zSWjvFEXQSe+bmjNANmYmT
-         QzPA==
-X-Gm-Message-State: AA+aEWYqGsuWc8kM6VIhLCrt5ben3PFbQcZVIWfkZfNMDxO3vQl36Lde
-        cdwR+zLLAFk9iay83RIxcxNNK1cU7VgA2yk6od0=
-X-Google-Smtp-Source: AFSGD/UfH55W48dPfFiF+A3Jd168T1A6M2wiY0Vd8arQPEXt8ryKchXrwgRHT1PgqN50JUQY8bahn+MueOESf+igM+k=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr4209131vkd.74.1544949558322;
- Sun, 16 Dec 2018 00:39:18 -0800 (PST)
+        bh=U/k/MotIeUyjrdIbhHa6zsnRPymkmGbSg+CTGYxCOQA=;
+        b=kaw+RAptzRv39dfZMKe9ckYmcKIhbAGmu/5mup7vEse5HIbcCSByCHcmZ6XDjqTS5r
+         Oy+0xZKLb2ZosoY1qtZz6BAZynKV/2M/EJBuv3Wjh4OBotSQQ1QxYFkvi01Kb5mD1G2Q
+         cDt31XRljXF0GgIYdQfQBZbB5lyji/6cCuEoSjn8uIOLrGxqbz4yhqT1Zde/ZMHEtJln
+         MI7QhkvnrfPrsN0rf7XcRc+tOYRD2W+g3n27MHlFu3p5JwpYh0RwVVZgC5iMzVoV9pU9
+         FcZKsiCUmgPyvoiPL1SoJ6ezwuyhHShxbhQeTXGRl51Mg8d/i9SMJQLRefWP7tqN8U1y
+         gz/w==
+X-Gm-Message-State: AA+aEWbxw4+VSEEIlkUf+8GXmdu/SHyNAOx1iUa4LezZIACX0L1xoRvI
+        p3rlQJGf3IG1wTYut0VRTjFunzE+IYzblAfcmiU=
+X-Google-Smtp-Source: AFSGD/Wy2E0whRnS8/YxFNwzosl+4bVWWr4/B1f6hp7pBjdCjgOsQ7RizwjUbvzJDHSDcOrcIwpTIYjGZbpGxJEbgYY=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr3956941vsi.96.1544954613224;
+ Sun, 16 Dec 2018 02:03:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20181212014927.25840-1-marek.vasut+renesas@gmail.com>
- <20181212014927.25840-2-marek.vasut+renesas@gmail.com> <20181215172351.GB10311@localhost.localdomain>
- <baebd957-e527-fd03-bbaf-cbfa4a7624ed@gmail.com> <CAMuHMdWEuiPnZfeNA+T_Gp6W7EAGimrb9Z=rU590OnPz2-MLow@mail.gmail.com>
- <270eeb39-140f-7f55-75d3-c2a6d9ab4034@gmail.com> <CAMuHMdUAVYk0Xx56H+V1usFa3627Zk7erewrtP-2HG02neit9A@mail.gmail.com>
- <076ebc8e-32a3-99bf-6d8a-7a0bae22b427@gmail.com> <CAMuHMdUJPLu2H5dYZjFG1oKYOoXiQGE6_S8BFK8c7Nue_Dfqzg@mail.gmail.com>
- <09902cc4-ef25-cd36-0d4a-effeabcd233f@gmail.com>
-In-Reply-To: <09902cc4-ef25-cd36-0d4a-effeabcd233f@gmail.com>
+References: <20181210142135.23960-1-vladimir_zapolskiy@mentor.com>
+In-Reply-To: <20181210142135.23960-1-vladimir_zapolskiy@mentor.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 16 Dec 2018 09:39:05 +0100
-Message-ID: <CAMuHMdV4jtF6nqH2RMLpg3gQu5Gok050kW+o0p8fzpZYyv9GAQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] thermal: split thermal_zone_of_sensor_register{,_param}()
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+Date:   Sun, 16 Dec 2018 11:03:21 +0100
+Message-ID: <CAMuHMdVd=TOgs0FM5GxPor7JLYFdN_M1Qs5nsm2EBcz8OJ_KHw@mail.gmail.com>
+Subject: Re: [PATCH] gpio: rcar: select General Output Register to set output states
+To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
+Hi Vladimir,
 
-On Sat, Dec 15, 2018 at 9:13 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 12/15/2018 09:00 PM, Geert Uytterhoeven wrote:
-> > On Sat, Dec 15, 2018 at 8:07 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >> On 12/15/2018 07:54 PM, Geert Uytterhoeven wrote:
-> >>> On Sat, Dec 15, 2018 at 7:49 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >>>> On 12/15/2018 07:47 PM, Geert Uytterhoeven wrote:
-> >>>>> On Sat, Dec 15, 2018 at 7:38 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >>>>>> On 12/15/2018 06:23 PM, Eduardo Valentin wrote:
-> >>>>>>> On Wed, Dec 12, 2018 at 02:49:22AM +0100, Marek Vasut wrote:
-> >>>>>>>> Introduce new thermal_zone_of_sensor_register_params() function, which
-> >>>>>>>> allows passing struct thermal_zone_params into it and convert original
-> >>>>>>>> thermal_zone_of_sensor_register() to call it with params set to NULL.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>>>>>
-> >>>>>>> Git complains about mismatch between From: and this SOB.
-> >>>>>>
-> >>>>>> I recall a discussion about gmail stripping the +foo tags from email
-> >>>>>> addresses. I can add a From: tag into the patch to override this
-> >>>>>> braindeath, or is there a better solution ?
-> >>>>>
-> >>>>> Run the "git format-patch" command from a git repo where user.email
-> >>>>> is marek.vasut@gmail.com, so it will retain the original From: tag in the
-> >>>>> email body, as it is different?
-> >>>>
-> >>>> I can also manually patch the From tags or add them, but it's all
-> >>>> workarounds.
-> >>>
-> >>> Use a different outgoing email server? I use my ISP's.
-> >>
-> >> Or maybe it'd make sense to fix git to handle the +tags correctly ?
-> >
-> > What needs to be fixed?
-> > If user.email != From, git format-patch generates a From: header, else
-> > it doesn't. Doesn't that make sense?
+(increasing review priority due to Linus applying the patch)
+
+On Mon, Dec 10, 2018 at 3:22 PM Vladimir Zapolskiy
+<vladimir_zapolskiy@mentor.com> wrote:
+> R-Car GPIO controller provides two interfaces to set GPIO line output
+> signal state, and for a particular GPIO line the selected interface is
+> determined by OUTDTSEL bit value.
 >
-> I believe the complaint here is that email address in From does not
-> match email address in SoB line, because some SMTP servers scrub the
-> +foo tag from From: and not from SoB-line . And yet, the SoB line is
+> At the moment the driver supports only one of two interfaces, namely
+> OUTDT General Output Register is used to control the output signal.
+>
+> While this selection is the default one on reset, it is not explicitly
+> configured on probe, thus it might be possible that kernel and userspace
+> consumers of a GPIO won't be able to set the wanted GPIO output signal.
+>
+> Below is a simple test case to reproduce the described problem and
+> verify this fix in the kernel on H3 ULCB by setting non-default OUTDTSEL
+> configuration from a bootloader:
+>
+>   u-boot    > mw.l 0xe6055440 0x3000 1
+>   ...
+>   userspace > echo -n default-on > /sys/devices/platform/leds/leds/led5/trigger
+>   userspace > echo -n default-on > /sys/devices/platform/leds/leds/led6/trigger
+>
+> Fixes: 119f5e448d32c ("gpio: Renesas R-Car GPIO driver V3")
+> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-Some SMTP servers (Hi Gmail!) scrub the +foo tag from the From: _header_
-in the email. As the SoB is in the _body_ it is not affected.
-Hence the solution is to include the correct From: in the _body_.
+Thanks for your patch!
 
-Git actually does that automatically, assumed your user.email config matches
-the From: address that is used in your outgoing email delivery path (i.e. the
-scrubbed one, when using Gmail's SMTP server).
-If you lie to git in your user.email config, git cannot do the right
-thing, obviously.
+> The proposed change could be seen as an invitation for a more interesting
+> discussion about a necessity to add a pretty trivial support of the second
+> interface, for instance by selecting between OUTDT and OUTDTH/OUTDTL on
+> basis of read-only value of OUTDTSEL register, or, simply by switching
+> the driver to use the second interface only, because it does not require
+> an additional gpio_rcar_read() call, theoretically it should give noticeably
+> faster rate of bitbanging.
+>
+> For reference the problem with the original interface comes from an inability
+> to set GPIO output signals from an RTOS, which runs in parallel to Linux and
+> wants to control some GPIOs on its own, usage of OUTDTH/OUTDTL excludes
+> a race in concurrent read/write register operations.
+>
+> As a note in my opinion the selection of OUTDT vs. OUTDTH/OUTDTL should
+> NOT be done in DTS, extension to 3-cell values for GPIO consumers seems
+> unreasonable.
 
-> from the same person/email address as the email address in From, so they
-> are equal.
+Indeed, this is pure software configuration, not hardware description, so it
+does not belong in DT.
 
-If they differ, they are not equal ;-)
-While many mail servers ignore +foo when delivering email to mailboxes,
-this is not the case for all of them.  So ignoring +foo is not the universal
-solution.
+> Below is the list of helpful tips for change reviewers, comments are welcome:
+> * I didn't manage to find H1 or M1A User's Manuals to confirm that
+>   OUTDTSEL register and the second OUTDTH/OUTDTL interface is present
+>   on the GPIO controllers found on R-Car Gen1 SoCs,
 
-> I think git should just ignore the +foo tag in SoB line.
+Unfortunately R-Car M1A and H1 do not have the OUTDTSEL nor OUTDTH/OUTDL
+registers. So your patch may break them.
 
-Where should "git" ignore the +foo tag? Is it actually git that complains?
-Eduardo: Do you mean checkpatch? ;-)
+> * Fixes tag here is pretty weak, nevertheless I suppose it is a fix in fact,
 
-I did enhance checkpatch with a check to verify that patches carry SoB tags
-from their authors, as too many people got that wrong, causing complaints
-from sfr in linux-next later. As usual, it's better to get things right as early
-as possible in the process, to avoid rework.
+IMHO the SHA1 is not appropriate, as commit 119f5e448d32c ("gpio: Renesas
+R-Car GPIO driver V3") added support for R-Car Gen1 only, while the OUTDT*
+registers appeared in R-Car Gen2.
 
-So the problem is on the patch sending side, not on the patch verification
-receiving side.
-Hence please fix your email setup, thanks!
+> * gpio_rcar_suspend()/gpio_rcar_resume() don't respect OUTDTSEL/OUTDTH/OUTDTL
+>   values, if there is a reason to dump/restore registers, it might be good
+>   to include them to the list also,
+
+Given resume calls gpio_rcar_direction_{in,out}put(), at least OUTDTSEL
+will be restored for output. Is that sufficient, or should it be restored for
+input, too?
+
+> * alternatively it might be possible to replace the original interface with
+>   OUTDTH/OUTDTL one, it will be a nice valid fix also.
+
+Unfortunately that is not supported by all SoCs supported by the driver.
 
 Gr{oetje,eeting}s,
 
