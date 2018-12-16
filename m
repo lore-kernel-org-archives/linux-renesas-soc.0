@@ -2,80 +2,68 @@ Return-Path: <SRS0=VPlw=OZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED23C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 19:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 229F5C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 19:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C95D621836
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 19:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C6B2082F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 19:42:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c7SGM0VJ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="kQLAuh0j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730768AbeLPTcs (ORCPT
+        id S1730897AbeLPTmK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 16 Dec 2018 14:32:48 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41777 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730688AbeLPTcr (ORCPT
+        Sun, 16 Dec 2018 14:42:10 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:58728 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730673AbeLPTmK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Dec 2018 14:32:47 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k15-v6so9105842ljc.8
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 16 Dec 2018 11:32:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kRFRuUFchj/vB409zTiO4h/kLy97UcR27OpTgY2OdTo=;
-        b=c7SGM0VJyS7Pl6k8Nim5+2KN2mOv+m00VXCj4e42W1tJ1c1Lg516QxYHRgu/8nODHN
-         C9QcRRCbGj5/FngnezSGoZoPxGdP2lWoFsmvz8STiyYuPW9ykqJOLdSneKjxv8/bo8sA
-         JL99wYMxXaRg4oNZNdC2dPnwq7XoOzpm+N7nA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kRFRuUFchj/vB409zTiO4h/kLy97UcR27OpTgY2OdTo=;
-        b=kwPlRBye4nt8i5UvNc+HZkltgIGKnYVKOdZ1p4gX3Rg2ak/PsBSB87JTKW+qhZLPDN
-         4rNU/AnFDCm6xMMMTAipg5BCvvs75v85LPqU7JCPMPvk4WKJUiOJH2s0B/Bxob2p1OCJ
-         cqBigwsBYrdhNA9AsMdxTeYeeeO9hsJx98YisTcu2wjsS2h0LfBIFjzBf4aeVGfd/Vel
-         q5hI1ks0/L+KfqNoKGaIwkHTh27od2ddtVknQFoHVjCocqystO1srR1Hq5DQ7g+24SNn
-         bWBph8JIfnWc0VYDqW7K7+4wwebkPur/1YKe2jOQHLy1Ym9CvDKTXeW6Px7uAdw89zzt
-         bnwA==
-X-Gm-Message-State: AA+aEWYvxG9TBiNeSiyVfVmucldwtg9AaIs32dLTAQVdPARc1L5GEKYi
-        1L2ZG0uiQol7L4ZNYnNtpgPWX9TMk0Ra6FFu7u9VrQ==
-X-Google-Smtp-Source: AFSGD/VOxhhYgDMz53yqtXey1gSnEpwqOw6nWkkPiN57j5dtgV5gRLiF/yoOnYAVoTUfZIcXLtOc6tI5JkA+9HCc6yg=
-X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr458340ljk.4.1544988765607;
- Sun, 16 Dec 2018 11:32:45 -0800 (PST)
+        Sun, 16 Dec 2018 14:42:10 -0500
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0224325B764;
+        Mon, 17 Dec 2018 06:42:08 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1544989328; bh=1Mqs2s1jfakPP5rYdQGBqMeSEaHK7tX4pLzuQFTRaXs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kQLAuh0jDhjOI8dNEabWc8yc0ZrsvrWK8t+iztO7XyF0QpiyVv6/boWDqaK+ZANVf
+         OagLJuCPAhG1kz/snvmBcSTlHnRKwoTNJp79nMZrv/fnJlLX//ybJX2Z6dBEeJXJ6v
+         f2jn22u2uLX2r9cn9IvScxWJXF+pMWZLO6RY4FTQ=
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id D6F3DE211EC; Sun, 16 Dec 2018 11:42:05 -0800 (PST)
+Date:   Sun, 16 Dec 2018 20:42:05 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add r8a774c0 support
+Message-ID: <20181216194201.6emgiudf3wmibxwa@verge.net.au>
+References: <1544732481-6775-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-References: <20181216173858.4125-1-marek.vasut+renesas@gmail.com>
-In-Reply-To: <20181216173858.4125-1-marek.vasut+renesas@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 16 Dec 2018 20:32:33 +0100
-Message-ID: <CACRpkdbwSNGSEnBMfgFkuyWKswMjTXrG0mMe2meDoMGE+v9Y0Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: Add regmap dependency for PCA953x driver
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544732481-6775-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 6:39 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+On Thu, Dec 13, 2018 at 08:21:21PM +0000, Fabrizio Castro wrote:
+> Document RZ/G2E (R8A774C0) SoC bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-> Select REGMAP_I2C in Kconfig, since the driver now depends on regmap
-> and this was missing, thus breaking build on various systems.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Patch applied!
-
-Yours,
-Linus Walleij
