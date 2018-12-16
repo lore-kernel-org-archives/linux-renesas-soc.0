@@ -2,108 +2,140 @@ Return-Path: <SRS0=VPlw=OZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55C0C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EE4C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3DB2084A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 463DB2084D
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 17:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="i7wirkwg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJ9wJRtp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730686AbeLPRLe (ORCPT
+        id S1730746AbeLPROe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 16 Dec 2018 12:11:34 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45760 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730618AbeLPRLe (ORCPT
+        Sun, 16 Dec 2018 12:14:34 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54627 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730618AbeLPROe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Dec 2018 12:11:34 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9211459;
-        Sun, 16 Dec 2018 18:11:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1544980292;
-        bh=ckYzgTEMLhJ4cq81o5scSAUyy3B3oHjX2GJn1MU4OIw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=i7wirkwg+v0n7jqickkAUZtZttVizyhk5kFkmJO1Fj7m9ViOAfmA9G/xmgPUX4HkX
-         LFolPVxwEg4+MXExGogKVuQcQ6lxf6WNW9/42QAJ5zqDVLW8fA9oo/TXH2c2vVghHA
-         72hiooCKVm5Jkr/5zWcmQIzToR3uRcyxXPKi6HCw=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] DU -next branch
-Date:   Sun, 16 Dec 2018 19:12:20 +0200
-Message-ID: <4714815.IyZ5WZzCdP@avalon>
-Organization: Ideas on Board Oy
+        Sun, 16 Dec 2018 12:14:34 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a62so10106175wmh.4;
+        Sun, 16 Dec 2018 09:14:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CBmA82j01timjeeuqbduSdDWCwV27ZThKbESNT7LpTc=;
+        b=dJ9wJRtpTynrcTMy+TnV/MaIcAPQ/Q36XOYI2z96/YlZsdVvfdunPp6zSZ9Xq4hd9t
+         34VSefuG1vX9T5CMn7B0Pao7i9o8SiSamDiPd3B+INow4YA2Q9o+0AOKIVIl87XSKauL
+         i3l2UkIOuGBMve/bMTXtVJLxAskXzqXocBpwMkB9PX3586qvg/QamW+tv8YurCnywRQ2
+         hj2RpQrdl4MykBrAWEG19/+t71V5iy1dGLpCgSFFRaom2H+2Ee1FifFVw8WKzbbblTNJ
+         BwVr8SRw423Dd78ZQrCepWqjPoP+pmR+6PEINgbWYh7YPeaLb85JQEnkODn15GADY6+k
+         a+EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CBmA82j01timjeeuqbduSdDWCwV27ZThKbESNT7LpTc=;
+        b=gEimE8KyVjhThQszBXN9i7sEL4capMwra+by/NO70aAyymkfgfGwiHEgHYR23iVVW1
+         tW+waoX9OW4a4E8+Jzvy5/LkYOTuHmG7Dc2rH8aX8m72HclqYapfW7+Q5Cl6Ah1kEi+I
+         bokhvV5fQhZjuwea+aTgwcSGmsISXylZPdvhswdXaDVRsFP8bUsVisxZ8pVwdfL7Amvq
+         Mm+qCEmqpiqXSRWIRYFZ622KQRDyg7fXOT91r1ReqvZLgfCyiqyyUYJ57AcP5KxNYH9i
+         Z4kMfoM0P5rjHpAcSR0cnkZMdI7tuHIrA2IFx5iihqaxjx7bhnSd2fD2r+E7QUiFxLld
+         lF3g==
+X-Gm-Message-State: AA+aEWYYZLC6bOlp94I8tXeEFNY7IiGzTMYynXPE2ECy2i3s/CRYx0Mb
+        vlgMZq0gZ5USw753bFaKSQk=
+X-Google-Smtp-Source: AFSGD/W+mAlnHwe9K7VewvFNaQg9iacRtrsn0TjhFuby/gA/FHkqMQvWgcjC0H8ftGBmMustXHRUyg==
+X-Received: by 2002:a1c:ae15:: with SMTP id x21mr9012519wme.146.1544980471897;
+        Sun, 16 Dec 2018 09:14:31 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id n15sm19485618wrt.21.2018.12.16.09.14.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Dec 2018 09:14:30 -0800 (PST)
+Subject: Re: [PATCH] clk: vc5: Abort clock configuration without upstream
+ clock
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20181215005519.3695-1-marek.vasut+renesas@gmail.com>
+ <13438812.kSL9ZioSIq@avalon>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <3220bca0-486d-08a8-7575-34c961ed1261@gmail.com>
+Date:   Sun, 16 Dec 2018 18:14:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <13438812.kSL9ZioSIq@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+On 12/16/2018 08:19 AM, Laurent Pinchart wrote:
+> Hi Marek,
+> 
+> Thank you for the patch.
+> 
+> On Saturday, 15 December 2018 02:55:19 EET Marek Vasut wrote:
+>> In case the upstream clock are not set, which can happen in case the
+>> VC5 has no valid upstream clock, the $src variable is used uninited
+>> by regmap_update_bits(). Check for this condition and return -EINVAL
+>> in such case.
+> 
+> Note that the probe() function will fail in this case, so vc5_mux_set_parent() 
+> won't be reached.
+> 
+>> Note that in case the VC5 has no valid upstream clock, the VC5 can
+>> not operate correctly. That is a hardware property of the VC5. The
+>> internal oscilator present in some VC5 models is also considered
+>> upstream clock.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Alexey Firago <alexey_firago@mentor.com>
+>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>> NOTE: This is an updated version of:
+>>       https://patchwork.kernel.org/patch/10731699/
+>> ---
+>>  drivers/clk/clk-versaclock5.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+>> index 5b393e711e94..b10801506518 100644
+>> --- a/drivers/clk/clk-versaclock5.c
+>> +++ b/drivers/clk/clk-versaclock5.c
+>> @@ -262,8 +262,10 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8
+>> index)
+>>
+>>  		if (vc5->clk_mux_ins == VC5_MUX_IN_XIN)
+>>  			src = VC5_PRIM_SRC_SHDN_EN_XTAL;
+>> -		if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
+>> +		else if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
+>>  			src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
+>> +		else
+>> +			return -EINVAL;
+>>  	}
+> 
+> I'd rather go for Stephen's approach if the goal is just to silence a warning 
+> for a condition that can't happen in practice.
 
-The following changes since commit 272c1a9b493986a95219dce674c49877d98cf90f:
-
-  Merge tag 'exynos-drm-next-for-v4.21-v2' of git://git.kernel.org/pub/scm/
-linux/kernel/git/daeinki/drm-exynos into drm-next (2018-12-14 11:27:24 +0100)
-
-are available in the Git repository at:
-
-  git://linuxtv.org/pinchartl/media.git drm/du/next
-
-for you to fetch changes up to e4b271f20598eb17c60a508dcba1e35a4f9d2a8c:
-
-  drm: rcar-du: Disable unused DPAD outputs (2018-12-16 13:55:03 +0200)
-
-They contain all the pending DU patches, scheduled for v4.22, on top of Dave's 
-latest drm-next branch.
-
-----------------------------------------------------------------
-Fabrizio Castro (4):
-      dt-bindings: display: renesas: du: Document r8a774c0 bindings
-      dt-bindings: display: renesas: lvds: Document r8a774c0 bindings
-      drm: rcar-du: Add r8a774c0 device support
-      drm: rcar-du: lvds: add R8A774C0 support
-
-Geert Uytterhoeven (1):
-      drm: rcar-du: Convert live DT patches to sugar syntax
-
-Laurent Pinchart (4):
-      drm: rcar-du: dw-hdmi: Reject modes with a too high clock frequency
-      drm: rcar-du: Replace EXT_CTRL_REGS feature flag with generation check
-      drm: rcar-du: Move CRTC outputs bitmask to private CRTC state
-      drm: rcar-du: Disable unused DPAD outputs
-
- .../devicetree/bindings/display/bridge/renesas,lvds.txt |  3 +-
- .../devicetree/bindings/display/renesas,du.txt          |  2 +
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c                  | 42 ++++++-----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h                  |  7 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.c                   | 41 +++++++----
- drivers/gpu/drm/rcar-du/rcar_du_drv.h                   |  8 +--
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c               | 10 ---
- drivers/gpu/drm/rcar-du/rcar_du_group.c                 | 51 ++++++++++++--
- drivers/gpu/drm/rcar-du/rcar_du_kms.c                   | 22 ++++++
- drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dts     | 93 +++++++---------
- drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7791.dts     | 53 ++++++--------
- drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7793.dts     | 53 ++++++--------
- drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dts     | 53 ++++++--------
- drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7796.dts     | 53 ++++++--------
- drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c                  | 15 ++++
- drivers/gpu/drm/rcar-du/rcar_lvds.c                     |  1 +
- 16 files changed, 278 insertions(+), 229 deletions(-)
+Sure, probe will fail, but it's safer to handle the possibility that
+probe() is broken and this code is reached by properly handling the
+failure instead of doing something obviously wrong (like configuring the
+hardware with value 0).
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Best regards,
+Marek Vasut
