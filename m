@@ -2,169 +2,235 @@ Return-Path: <SRS0=VPlw=OZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5B4C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 20:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53771C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 20:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8351D217FA
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 20:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10790217FA
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 16 Dec 2018 20:17:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="DRe3VPcj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbeLPUIQ (ORCPT
+        id S1730855AbeLPURq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 16 Dec 2018 15:08:16 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:43569 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730746AbeLPUIP (ORCPT
+        Sun, 16 Dec 2018 15:17:46 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:58969 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730828AbeLPURq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 16 Dec 2018 15:08:15 -0500
-Received: by mail-vk1-f195.google.com with SMTP id o130so2400619vke.10;
-        Sun, 16 Dec 2018 12:08:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BkpM/+1/FoGXGEXLi6nAqI/JISwIRxiaGBup+eiwPdw=;
-        b=elnL7nFQpY3/M8PvuAAmDc1qW8r+QZOuuS3l/T5/HUjUUew6e6+uHQ2QYI58DuJt8L
-         yOMghP9AlVl6lRFRPWfxcsZTqv6g8TWNw9xexfaT1ORuvBbGtTJweeyBLGyvTSMPCma2
-         4mouNWWu6W4QcHqwMWf3TbpYA2mRWOMwdnyAsVk/Ygbqt9je3kCP5Ic4rVFp3NlGeETt
-         ibk6oC7TUDOXXfEhbKqEpSYRMxx28vVl0kt8tz8r0BdNR3Ck1H3KPpOPLcKo8tH+rqG/
-         DFdBd1mdWL94xoNapPWhPM+vyLw1RJES9wzSIVUZjaNjqzUifooNtHktzIrRh0NB4NHs
-         vPvg==
-X-Gm-Message-State: AA+aEWaq/CeXYgrbP/OPc7nmQbG6Qm3HDzdGr8VI9C/2wOTVo4JXXaSB
-        6iCKIvy6n3M8SxeUtZ5hqblpUZlP0yWZmSZUKHA=
-X-Google-Smtp-Source: AFSGD/XY5P3ZUfm38Kc06icwBBKvQ5tdw7hes8gnY/mWdR0EiO+l5sQqXggx04a6c5g4WC54FokNxuHa42oKvNNODpo=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr4853389vkd.74.1544990892953;
- Sun, 16 Dec 2018 12:08:12 -0800 (PST)
+        Sun, 16 Dec 2018 15:17:46 -0500
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id A022725B764;
+        Mon, 17 Dec 2018 07:17:43 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1544991464; bh=enJeW2vUocrAUdUmQJ5gPVF5e8D39t5ZITxE7NGL4p4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DRe3VPcjXF6kMSO0VQDERNZT5WszbKVs485gkTDBm0dW9cu+woMlwIPZczaXkjPI/
+         DaM1NWBcTj79kemvjF5uTfo2rGgxKCVHh1eRgM5hqPw3VCx8W8OpJ+lU9TenOLi8Rj
+         5oxs1rtj4hS6Q5zlt7MZWle8RRrJw5E10fqD/140=
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id 901EBE211F6; Sun, 16 Dec 2018 12:17:41 -0800 (PST)
+Date:   Sun, 16 Dec 2018 21:17:41 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH 02/17] arm64: dts: renesas: r8a774c0: Add I2C and
+ IIC-DVFS support
+Message-ID: <20181216201741.qqwmc44ogqifl52e@verge.net.au>
+References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1544780260-27590-3-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-References: <20181212014927.25840-1-marek.vasut+renesas@gmail.com>
- <20181212014927.25840-2-marek.vasut+renesas@gmail.com> <20181215172351.GB10311@localhost.localdomain>
- <baebd957-e527-fd03-bbaf-cbfa4a7624ed@gmail.com> <CAMuHMdWEuiPnZfeNA+T_Gp6W7EAGimrb9Z=rU590OnPz2-MLow@mail.gmail.com>
- <270eeb39-140f-7f55-75d3-c2a6d9ab4034@gmail.com> <CAMuHMdUAVYk0Xx56H+V1usFa3627Zk7erewrtP-2HG02neit9A@mail.gmail.com>
- <076ebc8e-32a3-99bf-6d8a-7a0bae22b427@gmail.com> <CAMuHMdUJPLu2H5dYZjFG1oKYOoXiQGE6_S8BFK8c7Nue_Dfqzg@mail.gmail.com>
- <09902cc4-ef25-cd36-0d4a-effeabcd233f@gmail.com> <CAMuHMdV4jtF6nqH2RMLpg3gQu5Gok050kW+o0p8fzpZYyv9GAQ@mail.gmail.com>
- <31978c47-cd1b-7c61-0d6a-09e443147b52@gmail.com> <CAMuHMdVVoTF0vP_k4Qw8MYqBZEb9ei0LcT2NRJeBRm1tdd4T+Q@mail.gmail.com>
- <04bcb195-0668-4d8d-1f86-c53c3a142183@gmail.com>
-In-Reply-To: <04bcb195-0668-4d8d-1f86-c53c3a142183@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 16 Dec 2018 21:08:00 +0100
-Message-ID: <CAMuHMdUnH5-YeGcQdbyJP2KNZFS=zxhSb7PZ1ZhLCqFxiw=TnQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] thermal: split thermal_zone_of_sensor_register{,_param}()
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544780260-27590-3-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
+On Fri, Dec 14, 2018 at 09:37:25AM +0000, Fabrizio Castro wrote:
+> Add the I2C[0-7] and IIC Bus Interface for DVFS (IIC for DVFS)
+> devices nodes to the r8a774c0 device tree.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-On Sun, Dec 16, 2018 at 6:49 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 12/16/2018 06:42 PM, Geert Uytterhoeven wrote:
-> > On Sun, Dec 16, 2018 at 6:25 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >> On 12/16/2018 09:39 AM, Geert Uytterhoeven wrote:
-> >>> On Sat, Dec 15, 2018 at 9:13 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >>>> On 12/15/2018 09:00 PM, Geert Uytterhoeven wrote:
-> >>>>> On Sat, Dec 15, 2018 at 8:07 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >>>>>> On 12/15/2018 07:54 PM, Geert Uytterhoeven wrote:
-> >>>>>>> On Sat, Dec 15, 2018 at 7:49 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >>>>>>>> On 12/15/2018 07:47 PM, Geert Uytterhoeven wrote:
-> >>>>>>>>> On Sat, Dec 15, 2018 at 7:38 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> >>>>>>>>>> On 12/15/2018 06:23 PM, Eduardo Valentin wrote:
-> >>>>>>>>>>> On Wed, Dec 12, 2018 at 02:49:22AM +0100, Marek Vasut wrote:
-> >>>>>>>>>>>> Introduce new thermal_zone_of_sensor_register_params() function, which
-> >>>>>>>>>>>> allows passing struct thermal_zone_params into it and convert original
-> >>>>>>>>>>>> thermal_zone_of_sensor_register() to call it with params set to NULL.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>>>>>>>>>
-> >>>>>>>>>>> Git complains about mismatch between From: and this SOB.
-> >>>>>>>>>>
-> >>>>>>>>>> I recall a discussion about gmail stripping the +foo tags from email
-> >>>>>>>>>> addresses. I can add a From: tag into the patch to override this
-> >>>>>>>>>> braindeath, or is there a better solution ?
-> >>>>>>>>>
-> >>>>>>>>> Run the "git format-patch" command from a git repo where user.email
-> >>>>>>>>> is marek.vasut@gmail.com, so it will retain the original From: tag in the
-> >>>>>>>>> email body, as it is different?
-> >>>>>>>>
-> >>>>>>>> I can also manually patch the From tags or add them, but it's all
-> >>>>>>>> workarounds.
-> >>>>>>>
-> >>>>>>> Use a different outgoing email server? I use my ISP's.
-> >>>>>>
-> >>>>>> Or maybe it'd make sense to fix git to handle the +tags correctly ?
-> >>>>>
-> >>>>> What needs to be fixed?
-> >>>>> If user.email != From, git format-patch generates a From: header, else
-> >>>>> it doesn't. Doesn't that make sense?
-> >>>>
-> >>>> I believe the complaint here is that email address in From does not
-> >>>> match email address in SoB line, because some SMTP servers scrub the
-> >>>> +foo tag from From: and not from SoB-line . And yet, the SoB line is
-> >>>
-> >>> Some SMTP servers (Hi Gmail!) scrub the +foo tag from the From: _header_
-> >>> in the email. As the SoB is in the _body_ it is not affected.
-> >>> Hence the solution is to include the correct From: in the _body_.
-> >>
-> >> This is basically what I said.
-> >>
-> >>> Git actually does that automatically, assumed your user.email config matches
-> >>> the From: address that is used in your outgoing email delivery path (i.e. the
-> >>> scrubbed one, when using Gmail's SMTP server).
-> >>> If you lie to git in your user.email config, git cannot do the right
-> >>> thing, obviously.
-> >>
-> >> My git user.email obviously matches the From: field , before the
-> >> scrubbing, which I believe is the correct thing to do.
-> >
-> > I disagree, because that is not how the emails are actually going out from the
-> > SMTP server you are using.
->
-> Can you summarize, clearly, what you believe is the right thing to
-> configure and where ?
+Thanks Fabrizo for this patch, it looks good to me with the exception of
+one minor question I have below.
 
-According to git-send-email(1), you can either pass your scrubbed email
-address to --from, or configure it in the sendemail.from config option.
-Does that work for you?
+> ---
+>  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 143 ++++++++++++++++++++++++++++++
+>  1 file changed, 143 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> index 96a71e3..bf08aba 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> @@ -271,6 +271,149 @@
+>  			resets = <&cpg 407>;
+>  		};
+>  
+> +		i2c0: i2c@e6500000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe6500000 0 0x40>;
+> +			interrupts = <GIC_SPI 287 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 931>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 931>;
+> +			dmas = <&dmac1 0x91>, <&dmac1 0x90>,
+> +			       <&dmac2 0x91>, <&dmac2 0x90>;
+> +			dma-names = "tx", "rx", "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <110>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c1: i2c@e6508000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe6508000 0 0x40>;
+> +			interrupts = <GIC_SPI 288 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 930>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 930>;
+> +			dmas = <&dmac1 0x93>, <&dmac1 0x92>,
+> +			       <&dmac2 0x93>, <&dmac2 0x92>;
+> +			dma-names = "tx", "rx", "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c2: i2c@e6510000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe6510000 0 0x40>;
+> +			interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 929>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 929>;
+> +			dmas = <&dmac1 0x95>, <&dmac1 0x94>,
+> +			       <&dmac2 0x95>, <&dmac2 0x94>;
+> +			dma-names = "tx", "rx", "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c3: i2c@e66d0000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe66d0000 0 0x40>;
+> +			interrupts = <GIC_SPI 290 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 928>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 928>;
+> +			dmas = <&dmac0 0x97>, <&dmac0 0x96>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <110>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c4: i2c@e66d8000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe66d8000 0 0x40>;
+> +			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 927>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 927>;
+> +			dmas = <&dmac0 0x99>, <&dmac0 0x98>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c5: i2c@e66e0000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe66e0000 0 0x40>;
+> +			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 919>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 919>;
+> +			dmas = <&dmac0 0x9b>, <&dmac0 0x9a>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c6: i2c@e66e8000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe66e8000 0 0x40>;
+> +			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 918>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 918>;
+> +			dmas = <&dmac0 0x9d>, <&dmac0 0x9c>;
+> +			dma-names = "tx", "rx";
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c7: i2c@e6690000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,i2c-r8a774c0",
+> +				     "renesas,rcar-gen3-i2c";
+> +			reg = <0 0xe6690000 0 0x40>;
+> +			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 1003>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 1003>;
+> +			i2c-scl-internal-delay-ns = <6>;
+> +			status = "disabled";
+> +		};
+> +
+> +		i2c_dvfs: i2c@e60b0000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "renesas,iic-r8a774c0";
+> +			reg = <0 0xe60b0000 0 0x15>;
 
-> >>>> from the same person/email address as the email address in From, so they
-> >>>> are equal.
-> >>>
-> >>> If they differ, they are not equal ;-)
-> >>
-> >> Depends on how you define 'equal' . Here I think foo+bar@example.com
-> >> should be considered equal to foo@example.com .
-> >
-> > That is domain-specific knowledge, which you cannot rely upon.
+My reading of the documentation is that 0x31 would be a more appropriate
+size for the register window.
 
-> >> Aha, so maybe that enhancement needs further enhancement to scrub the
-> >> +tags before the check ?
-> >
-> > Again, that is domain-specific knowledge, which you cannot rely upon.
->
-> How so, please elaborate .
-
-In general, you cannot assume the "+foo" part can be ignored. Only the sender
-knows.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 926>;
+> +			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> +			resets = <&cpg 926>;
+> +			dmas = <&dmac0 0x11>, <&dmac0 0x10>;
+> +			dma-names = "tx", "rx";
+> +			status = "disabled";
+> +		};
+> +
+>  		hscif0: serial@e6540000 {
+>  			compatible = "renesas,hscif-r8a774c0",
+>  				     "renesas,rcar-gen3-hscif",
+> -- 
+> 2.7.4
+> 
