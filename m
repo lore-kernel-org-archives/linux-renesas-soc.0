@@ -2,71 +2,122 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9621DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B1EC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 498B9206A2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47772133F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:48:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="PFlM2283"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="W9bvLI5b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732875AbeLQOry (ORCPT
+        id S1733093AbeLQOsC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:47:54 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:42153 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732216AbeLQOry (ORCPT
+        Mon, 17 Dec 2018 09:48:02 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35369 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732216AbeLQOsC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:47:54 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2423125B781;
-        Tue, 18 Dec 2018 01:47:52 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545058072; bh=4LylHCPnw2uLUDFUYhuHeVvWNE7Exp7IWRoOCDAWJ9E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PFlM2283rhSPquZe4xvfK7zA9Nbz2sRVg7Nvdni4AOt0hU2v6PwDqPoayXHPZPDXq
-         afM18JWRZg32tmj0/8mbsVGiWnGXteOr5Y/GwiOyU3Aurr45d9Cz6A/aVcyN0PXnk7
-         oEdYQt3kuflCfwmNVx1e9WAtDuFP2Q4h9mQI8B7o=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 1594E94048A; Mon, 17 Dec 2018 15:47:50 +0100 (CET)
-Date:   Mon, 17 Dec 2018 15:47:50 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 12/15] pinctrl: sh-pfc: Make
- pinmux_cfg_reg.var_field_width[] variable-length
-Message-ID: <20181217144749.abhi7rwc65vijlhs@verge.net.au>
-References: <20181213182714.26094-1-geert+renesas@glider.be>
- <20181213182714.26094-13-geert+renesas@glider.be>
+        Mon, 17 Dec 2018 09:48:02 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so11229984ljb.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Dec 2018 06:48:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=65fbDHNoNifEP8OsDGmWB581GXczsjSo/TrfBHKoV/E=;
+        b=W9bvLI5bRAZ/ktbNGavd965eVAymVNcsynWif38W3UgAQg09bb1ncZ9/Rd0T4b97tF
+         0tQ3rkGmytLfyOBpoOLrDlOqhLJjPbscpDZ9gOxuFFAkoMmlJr//Wo/U7uELxm9InWAf
+         u4ypsAbzQzgvB6MDdj9wkkh548NRiW7+00r0uAhLrsBd2TNaQF/aDjIA+5a4kt6/RdlF
+         z8MExGQj/X3r/fUPJF94tJDr7AYGUStOiyNyczqv5mIh907RKZjTshV+WAxmOFLkDqB6
+         PJxyn3hN9LWpGZP15/y3v93G7ml8Fbrw64zJ60D2311H709nr7M/BIbyVaAieGoju5nG
+         IaOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=65fbDHNoNifEP8OsDGmWB581GXczsjSo/TrfBHKoV/E=;
+        b=o/+lfaGaTZxZTlmEjoppq4EEEv44QwHX+EFFoF/Bi885vtaJuoaF5dvwA9AUKiB0RG
+         1P7A4+tNRhwNrSzS9JNNYUss8f95ArP6pR2XSGg136aMyScxpiiK+b1EZfxFXGk/EK8O
+         Q5jIdbGvtePQinx7nyxQFjJgq/r5LqXH9JePMNF9FKU2t5Bc52gBR++ZNwbZ1Ya4BRU1
+         pQVSyj6wiSqVEVELb7ryEB3WcwbZDIhqkWNJBCGI5pDGDc9NJAzCyCc6oiphZBDFdLwJ
+         aq/DwJiXYh/C83us7Gl5gCnzPQNhxmvQS7zgY2B17ZmDWZQFXqmVcEe2xYT5Xqrl7w7i
+         hJCQ==
+X-Gm-Message-State: AA+aEWZBEeoahsHSiwcSS+CcX0JrRgtXN0CG6h1mWUXKvSZTQWE5r8nw
+        RqJfQlk2v6FPaxAnI4mvo3Mv+g==
+X-Google-Smtp-Source: AFSGD/WtMFBj8h28+EsyWpARZozdmrnSinSkTmFTDg3RyzDBdYNR9GoUonz2ZwKaqYpDIXAyoxAETQ==
+X-Received: by 2002:a2e:4299:: with SMTP id h25-v6mr7426156ljf.5.1545058080330;
+        Mon, 17 Dec 2018 06:48:00 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id g17sm3042009lfj.36.2018.12.17.06.47.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 17 Dec 2018 06:47:59 -0800 (PST)
+Date:   Mon, 17 Dec 2018 15:47:59 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH] media: rcar-vin: Add support for RZ/G2E
+Message-ID: <20181217144759.GS17972@bigcity.dyn.berto.se>
+References: <1544732644-7414-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181213182714.26094-13-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544732644-7414-1-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 07:27:11PM +0100, Geert Uytterhoeven wrote:
-> pinmux_cfg_reg.var_field_width[] is actually a variable-length array,
-> terminated by a zero, and counting at most r_width entries.
-> Usually the number of entries is much smaller than r_width, so the
-> ability to catch bugs at compile time through an "excess elements in
-> array initializer" warning is fairly limited.
-> 
-> Hence make the array variable-length, decreasing kernel size slightly.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Fabrizio,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks for your work.
+
+On 2018-12-13 20:24:04 +0000, Fabrizio Castro wrote:
+> According to the RZ/G2 User's manual, RZ/G2E and R-Car E3 VIN
+> blocks are identical, therefore use R-Car E3 definitions to add
+> RZ/G2E support.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index cae2166..137edad 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -1118,6 +1118,10 @@ static const struct rvin_info rcar_info_r8a77995 = {
+>  
+>  static const struct of_device_id rvin_of_id_table[] = {
+>  	{
+> +		.compatible = "renesas,vin-r8a774c0",
+> +		.data = &rcar_info_r8a77990,
+> +	},
+> +	{
+>  		.compatible = "renesas,vin-r8a7778",
+>  		.data = &rcar_info_m1,
+>  	},
+> -- 
+> 2.7.4
+> 
+
+-- 
+Regards,
+Niklas Söderlund
