@@ -4,784 +4,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53917C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1003BC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F282420656
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D30E32133F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:17:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="TZe5Bqvj"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="O3TwbRU7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeLQNLB (ORCPT
+        id S1732688AbeLQNR5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:11:01 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:40307 "EHLO
+        Mon, 17 Dec 2018 08:17:57 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:40484 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeLQNLB (ORCPT
+        with ESMTP id S1727464AbeLQNR5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:11:01 -0500
+        Mon, 17 Dec 2018 08:17:57 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5CE4625B781;
-        Tue, 18 Dec 2018 00:10:57 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 9A64325B781;
+        Tue, 18 Dec 2018 00:17:54 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545052257; bh=CkAwgZzhoKjI24SeDO+/g8i+/i0r/6C6mg/JUSuhfw0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TZe5Bqvj8XWSksPoYQbDqRMs/kH4TDx0Uy1I11nXNhEGzWQDQg4ro/4f+emBsPC/j
-         M6gNYCH4XiVuIjw9fEKMdb15dlMBCc9FsJxhjRRFM3WyQG3G7sDDaDX+8kVdxLq2wI
-         uM/I5uVfdRE8q50HLNBZ0OaDudpmSxOW8NiK5vsA=
+        t=1545052674; bh=ZQPTUCkkipnCyPUN7mERJVxjh8EvNYId1ISKWtHgR88=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O3TwbRU7su/FarWB2MNakpje8qs09tccJmDDidWD/ZWaQwY53wWxlMu/ZB9W54IaJ
+         czKCUHQHYsFNBrQ4pBoog3CDmLPs5TEqdcAxNNH2Jzm08Xet9FJHoC8Nf8q8jsvNLv
+         DFgCgleL4RZ8ZxA9Rfnv4gKi4uof73542X//PBG4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 5609194048A; Mon, 17 Dec 2018 14:10:55 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFC] arm64: dts: renesas: sort subnodes of root node in board files
-Date:   Mon, 17 Dec 2018 14:10:52 +0100
-Message-Id: <20181217131052.18790-1-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
+        id 96BF394048A; Mon, 17 Dec 2018 14:17:52 +0100 (CET)
+Date:   Mon, 17 Dec 2018 14:17:52 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] serial: sh-sci: Fix locking in sci_submit_rx()
+Message-ID: <20181217131751.pyhstvri6yustm6v@verge.net.au>
+References: <20181213184444.21904-1-geert+renesas@glider.be>
+ <20181213184444.21904-2-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213184444.21904-2-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Sort subnodes of root node in board files alphabetically by node
-names. This aims to provide a simple rule for consistent
-node placement to reduce maintenance burden.
+On Thu, Dec 13, 2018 at 07:44:41PM +0100, Geert Uytterhoeven wrote:
+> Some callers of sci_submit_rx() hold the port spinlock, others don't.
+> During fallback to PIO, the driver needs to obtain the port spinlock.
+> If the lock was already held, spinlock recursion is detected, causing a
+> deadlock: BUG: spinlock recursion on CPU#0.
+> 
+> Fix this by adding a flag parameter to sci_submit_rx() for the caller to
+> indicate the port spinlock is already held, so spinlock recursion can be
+> avoided.
+> 
+> Move the spin_lock_irqsave() up, so all DMA disable steps are protected,
+> which is safe as the recently introduced dmaengine_terminate_async() can
+> be called in atomic context.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This should not have any run-time effect.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts   |  30 ++--
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts   |  70 +++++-----
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts  |  66 ++++-----
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts   |  12 +-
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts   | 166 +++++++++++------------
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts   |  10 +-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |  84 ++++++------
- arch/arm64/boot/dts/renesas/ulcb.dtsi            |  42 +++---
- 8 files changed, 240 insertions(+), 240 deletions(-)
-
- Based on renesas-devel-20181213-v4.20-rc6
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index b6d53321576b..bd5791699a31 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -23,12 +23,6 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
--	memory@48000000 {
--		device_type = "memory";
--		/* first 128MB is reserved for secure area. */
--		reg = <0x0 0x48000000 0x0 0x38000000>;
--	};
--
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -40,15 +34,6 @@
- 		};
- 	};
- 
--	d3p3: regulator-fixed {
--		compatible = "regulator-fixed";
--		regulator-name = "fixed-3.3V";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-boot-on;
--		regulator-always-on;
--	};
--
- 	lvds-decoder {
- 		compatible = "thine,thc63lvd1024";
- 
-@@ -73,6 +58,21 @@
- 			};
- 		};
- 	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	d3p3: regulator-fixed {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &avb {
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-index 0dbcb4cccc18..cc41eb323158 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -21,6 +21,41 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con: endpoint {
-+				remote-endpoint = <&adv7511_out>;
-+			};
-+		};
-+	};
-+
-+	lvds-decoder {
-+		compatible = "thine,thc63lvd1024";
-+		vcc-supply = <&vcc_d3_3v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				thc63lvd1024_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				thc63lvd1024_out: endpoint {
-+					remote-endpoint = <&adv7511_in>;
-+				};
-+			};
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
-@@ -59,41 +94,6 @@
- 		regulator-boot-on;
- 		regulator-always-on;
- 	};
--
--	lvds-decoder {
--		compatible = "thine,thc63lvd1024";
--		vcc-supply = <&vcc_d3_3v>;
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				thc63lvd1024_in: endpoint {
--					remote-endpoint = <&lvds0_out>;
--				};
--			};
--
--			port@2 {
--				reg = <2>;
--				thc63lvd1024_out: endpoint {
--					remote-endpoint = <&adv7511_in>;
--				};
--			};
--		};
--	};
--
--	hdmi-out {
--		compatible = "hdmi-connector";
--		type = "a";
--
--		port {
--			hdmi_con: endpoint {
--				remote-endpoint = <&adv7511_out>;
--			};
--		};
--	};
- };
- 
- &avb {
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-index 5a7012be0d6a..345ac8616c40 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -22,39 +22,6 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
--	memory@48000000 {
--		device_type = "memory";
--		/* first 128MB is reserved for secure area. */
--		reg = <0 0x48000000 0 0x78000000>;
--	};
--
--	d3_3v: regulator-0 {
--		compatible = "regulator-fixed";
--		regulator-name = "D3.3V";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-boot-on;
--		regulator-always-on;
--	};
--
--	vddq_vin01: regulator-1 {
--		compatible = "regulator-fixed";
--		regulator-name = "VDDQ_VIN01";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-boot-on;
--		regulator-always-on;
--	};
--
--	d1_8v: regulator-2 {
--		compatible = "regulator-fixed";
--		regulator-name = "D1.8V";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-boot-on;
--		regulator-always-on;
--	};
--
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -90,6 +57,39 @@
- 		};
- 	};
- 
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0 0x48000000 0 0x78000000>;
-+	};
-+
-+	d3_3v: regulator-0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddq_vin01: regulator-1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDQ_VIN01";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	d1_8v: regulator-2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "D1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	x1_clk: x1-clock {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-index dd14a41b32cd..adbfd8f07d06 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -22,12 +22,6 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
--	memory@48000000 {
--		device_type = "memory";
--		/* first 128MB is reserved for secure area. */
--		reg = <0 0x48000000 0 0x78000000>;
--	};
--
- 	hdmi-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -63,6 +57,12 @@
- 		};
- 	};
- 
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0 0x48000000 0 0x78000000>;
-+	};
-+
- 	osc1_clk: osc1-clock {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 62bdddcbbae7..7bd0a1a71bc4 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -18,17 +18,6 @@
- 		ethernet0 = &avb;
- 	};
- 
--	chosen {
--		bootargs = "ignore_loglevel";
--		stdout-path = "serial0:115200n8";
--	};
--
--	memory@48000000 {
--		device_type = "memory";
--		/* first 128MB is reserved for secure area. */
--		reg = <0x0 0x48000000 0x0 0x38000000>;
--	};
--
- 	audio_clkout: audio-clkout {
- 		/*
- 		 * This is same as <&rcar_sound 0>
-@@ -39,6 +28,11 @@
- 		clock-frequency = <11289600>;
- 	};
- 
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	cvbs-in {
- 		compatible = "composite-video-connector";
- 		label = "CVBS IN";
-@@ -97,36 +91,10 @@
- 		};
- 	};
- 
--	vga {
--		compatible = "vga-connector";
--
--		port {
--			vga_in: endpoint {
--				remote-endpoint = <&adv7123_out>;
--			};
--		};
--	};
--
--	vga-encoder {
--		compatible = "adi,adv7123";
--
--		ports {
--			#address-cells = <1>;
--			#size-cells = <0>;
--
--			port@0 {
--				reg = <0>;
--				adv7123_in: endpoint {
--					remote-endpoint = <&du_out_rgb>;
--				};
--			};
--			port@1 {
--				reg = <1>;
--				adv7123_out: endpoint {
--					remote-endpoint = <&vga_in>;
--				};
--			};
--		};
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
- 	};
- 
- 	reg_1p8v: regulator0 {
-@@ -158,46 +126,25 @@
- 		enable-active-high;
- 	};
- 
--	rsnd_ak4613: sound {
--		compatible = "simple-scu-audio-card";
--
--		simple-audio-card,name = "rsnd-ak4613";
--		simple-audio-card,format = "left_j";
--		simple-audio-card,bitclock-master = <&sndcpu>;
--		simple-audio-card,frame-master = <&sndcpu>;
--
--		simple-audio-card,prefix = "ak4613";
--		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
--		"DAI0 Capture", "ak4613 Capture";
--		sndcpu: simple-audio-card,cpu {
--			sound-dai = <&rcar_sound>;
--		};
--
--		sndcodec: simple-audio-card,codec {
--			sound-dai = <&ak4613>;
--		};
--	};
-+	vcc_sdhi0: regulator-vcc-sdhi0 {
-+		compatible = "regulator-fixed";
- 
--	x12_clk: x12 {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <24576000>;
--	};
-+		regulator-name = "SDHI0 Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
- 
--	x13_clk: x13 {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <74250000>;
-+		gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
- 	};
- 
--	vcc_sdhi0: regulator-vcc-sdhi0 {
-+	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
--		regulator-name = "SDHI0 Vcc";
-+		regulator-name = "SDHI1 Vcc";
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
- 
--		gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
-+		gpio = <&gpio0 4 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
- 
-@@ -214,17 +161,6 @@
- 			  1800000 0>;
- 	};
- 
--	vcc_sdhi1: regulator-vcc-sdhi1 {
--		compatible = "regulator-fixed";
--
--		regulator-name = "SDHI1 Vcc";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--
--		gpio = <&gpio0 4 GPIO_ACTIVE_HIGH>;
--		enable-active-high;
--	};
--
- 	vccq_sdhi1: regulator-vccq-sdhi1 {
- 		compatible = "regulator-gpio";
- 
-@@ -237,6 +173,70 @@
- 		states = <3300000 1
- 			  1800000 0>;
- 	};
-+
-+	rsnd_ak4613: sound {
-+		compatible = "simple-scu-audio-card";
-+
-+		simple-audio-card,name = "rsnd-ak4613";
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&sndcpu>;
-+		simple-audio-card,frame-master = <&sndcpu>;
-+
-+		simple-audio-card,prefix = "ak4613";
-+		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
-+		"DAI0 Capture", "ak4613 Capture";
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&ak4613>;
-+		};
-+	};
-+
-+	vga {
-+		compatible = "vga-connector";
-+
-+		port {
-+			vga_in: endpoint {
-+				remote-endpoint = <&adv7123_out>;
-+			};
-+		};
-+	};
-+
-+	vga-encoder {
-+		compatible = "adi,adv7123";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				adv7123_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				adv7123_out: endpoint {
-+					remote-endpoint = <&vga_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	x12_clk: x12 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24576000>;
-+	};
-+
-+	x13_clk: x13 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
-+	};
- };
- 
- &audio_clk_a {
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 89df9bc844c0..406d9407a969 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -19,11 +19,6 @@
- 		ethernet0 = &avb;
- 	};
- 
--	chosen {
--		bootargs = "ignore_loglevel";
--		stdout-path = "serial0:115200n8";
--	};
--
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm1 0 50000>;
-@@ -35,6 +30,11 @@
- 		enable-gpios = <&gpio4 0 GPIO_ACTIVE_HIGH>;
- 	};
- 
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	composite-in {
- 		compatible = "composite-video-connector";
- 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a225c2457274..97aca41edc9a 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -37,11 +37,6 @@
- 		ethernet0 = &avb;
- 	};
- 
--	chosen {
--		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
--		stdout-path = "serial0:115200n8";
--	};
--
- 	audio_clkout: audio-clkout {
- 		/*
- 		 * This is same as <&rcar_sound 0>
-@@ -63,6 +58,11 @@
- 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
- 	};
- 
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	cvbs-in {
- 		compatible = "composite-video-connector";
- 		label = "CVBS IN";
-@@ -86,6 +86,28 @@
- 		};
- 	};
- 
-+	hdmi0-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI0 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi0_con: endpoint {
-+			};
-+		};
-+	};
-+
-+	hdmi1-out {
-+		compatible = "hdmi-connector";
-+		label = "HDMI1 OUT";
-+		type = "a";
-+
-+		port {
-+			hdmi1_con: endpoint {
-+			};
-+		};
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -113,14 +135,6 @@
- 		regulator-always-on;
- 	};
- 
--	sound_card: sound {
--		compatible = "audio-graph-card";
--
--		label = "rcar-sound";
--
--		dais = <&rsnd_port0>;
--	};
--
- 	vbus0_usb2: regulator-vbus0-usb2 {
- 		compatible = "regulator-fixed";
- 
-@@ -143,19 +157,6 @@
- 		enable-active-high;
- 	};
- 
--	vccq_sdhi0: regulator-vccq-sdhi0 {
--		compatible = "regulator-gpio";
--
--		regulator-name = "SDHI0 VccQ";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <3300000>;
--
--		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
--		gpios-states = <1>;
--		states = <3300000 1
--			  1800000 0>;
--	};
--
- 	vcc_sdhi3: regulator-vcc-sdhi3 {
- 		compatible = "regulator-fixed";
- 
-@@ -180,26 +181,25 @@
- 			  1800000 0>;
- 	};
- 
--	hdmi0-out {
--		compatible = "hdmi-connector";
--		label = "HDMI0 OUT";
--		type = "a";
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
- 
--		port {
--			hdmi0_con: endpoint {
--			};
--		};
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
- 	};
- 
--	hdmi1-out {
--		compatible = "hdmi-connector";
--		label = "HDMI1 OUT";
--		type = "a";
-+	sound_card: sound {
-+		compatible = "audio-graph-card";
- 
--		port {
--			hdmi1_con: endpoint {
--			};
--		};
-+		label = "rcar-sound";
-+
-+		dais = <&rsnd_port0>;
- 	};
- 
- 	vga {
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index f519d0cf643c..e48cc5903394 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -17,11 +17,6 @@
- 		ethernet0 = &avb;
- 	};
- 
--	chosen {
--		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
--		stdout-path = "serial0:115200n8";
--	};
--
- 	audio_clkout: audio-clkout {
- 		/*
- 		 * This is same as <&rcar_sound 0>
-@@ -32,6 +27,11 @@
- 		clock-frequency = <12288000>;
- 	};
- 
-+	chosen {
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	hdmi0-out {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -83,22 +83,6 @@
- 		regulator-always-on;
- 	};
- 
--	rsnd_ak4613: sound {
--		compatible = "simple-audio-card";
--
--		simple-audio-card,format = "left_j";
--		simple-audio-card,bitclock-master = <&sndcpu>;
--		simple-audio-card,frame-master = <&sndcpu>;
--
--		sndcpu: simple-audio-card,cpu {
--			sound-dai = <&rcar_sound>;
--		};
--
--		sndcodec: simple-audio-card,codec {
--			sound-dai = <&ak4613>;
--		};
--	};
--
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
- 		compatible = "regulator-fixed";
- 
-@@ -123,6 +107,22 @@
- 			  1800000 0>;
- 	};
- 
-+	rsnd_ak4613: sound {
-+		compatible = "simple-audio-card";
-+
-+		simple-audio-card,format = "left_j";
-+		simple-audio-card,bitclock-master = <&sndcpu>;
-+		simple-audio-card,frame-master = <&sndcpu>;
-+
-+		sndcpu: simple-audio-card,cpu {
-+			sound-dai = <&rcar_sound>;
-+		};
-+
-+		sndcodec: simple-audio-card,codec {
-+			sound-dai = <&ak4613>;
-+		};
-+	};
-+
- 	x12_clk: x12 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
--- 
-2.11.0
-
+> ---
+> v4:
+>   - No changes,
+> 
+> v3:
+>   - Split in multiple patches.
+> ---
+>  drivers/tty/serial/sh-sci.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 8146d9cef0cbe2d0..2a08039f792235e5 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1331,7 +1331,7 @@ static void sci_tx_dma_release(struct sci_port *s)
+>  	dma_release_channel(chan);
+>  }
+>  
+> -static void sci_submit_rx(struct sci_port *s)
+> +static void sci_submit_rx(struct sci_port *s, bool port_lock_held)
+>  {
+>  	struct dma_chan *chan = s->chan_rx;
+>  	struct uart_port *port = &s->port;
+> @@ -1362,16 +1362,18 @@ static void sci_submit_rx(struct sci_port *s)
+>  	return;
+>  
+>  fail:
+> +	/* Switch to PIO */
+> +	if (!port_lock_held)
+> +		spin_lock_irqsave(&port->lock, flags);
+>  	if (i)
+>  		dmaengine_terminate_async(chan);
+>  	for (i = 0; i < 2; i++)
+>  		s->cookie_rx[i] = -EINVAL;
+>  	s->active_rx = -EINVAL;
+> -	/* Switch to PIO */
+> -	spin_lock_irqsave(&port->lock, flags);
+>  	s->chan_rx = NULL;
+>  	sci_start_rx(port);
+> -	spin_unlock_irqrestore(&port->lock, flags);
+> +	if (!port_lock_held)
+> +		spin_unlock_irqrestore(&port->lock, flags);
+>  }
+>  
+>  static void work_fn_tx(struct work_struct *work)
+> @@ -1491,7 +1493,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
+>  	}
+>  
+>  	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+> -		sci_submit_rx(s);
+> +		sci_submit_rx(s, true);
+>  
+>  	/* Direct new serial port interrupts back to CPU */
+>  	scr = serial_port_in(port, SCSCR);
+> @@ -1617,7 +1619,7 @@ static void sci_request_dma(struct uart_port *port)
+>  		s->chan_rx_saved = s->chan_rx = chan;
+>  
+>  		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+> -			sci_submit_rx(s);
+> +			sci_submit_rx(s, false);
+>  	}
+>  }
+>  
+> @@ -1667,7 +1669,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+>  			scr |= SCSCR_RDRQE;
+>  		} else {
+>  			scr &= ~SCSCR_RIE;
+> -			sci_submit_rx(s);
+> +			sci_submit_rx(s, false);
+>  		}
+>  		serial_port_out(port, SCSCR, scr);
+>  		/* Clear current interrupt */
+> -- 
+> 2.17.1
+> 
