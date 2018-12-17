@@ -2,173 +2,134 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53BEC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA0A5C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717AF20874
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB8DA21473
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:29:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MliMfipj"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="CtnW8Fsh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbeLQN2o (ORCPT
+        id S1732785AbeLQN3m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:28:44 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36006 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732289AbeLQN2n (ORCPT
+        Mon, 17 Dec 2018 08:29:42 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:40711 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732530AbeLQN3m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:28:43 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a18so12651402wmj.1;
-        Mon, 17 Dec 2018 05:28:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=V8R1oJ8nJqhb/W1B2HOVWcX1IPrFq1TzeRIh4wb5xq4=;
-        b=MliMfipjGx+xNr5MVF8FfCsF1KjNOpsiIj1PY3JRnOjWzkL5XDNzeMLYL1929FIjg/
-         dU+QBee8QScvchIUnkiE10hB+Cxp85+VZrcbKeb1E44lbS+/QV/V6nYBO3gRVvyukJie
-         4A87kTXyan1PGSrM6FDf0v+MkrJDDQ08OKu1jkCYRTr6Q+pqIiULQw2s3yRcOWyzqEKP
-         yt81a628kVo9ea2OjjYSqLyyPoLMjn/g8xQecqySL3vroaf0kgnFEuUmyJkIOqIIH1XI
-         +6dAtGj3ZGaK+VMZcRUySIC79xOx49nHBECIx5meDS+4RW1ZYbIylsSz+Zd0Rw7naOJm
-         kiSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=V8R1oJ8nJqhb/W1B2HOVWcX1IPrFq1TzeRIh4wb5xq4=;
-        b=S6UwlJSgbpiFEBQoNcTO9GOnYH7T/J1NutxaaXg761dOQFPUB3yJ7s7swp8cE3wacm
-         qjb+46L3dXG5q9swqtoKZGWNYSLG10pODElQrb41RkkQgi4h9Vi8JHHt2XjZV7Qrx02e
-         saWIBk0olAcYccVf4uT70H0flV0mrwhXpfnRf3XVC/ENXVoFH84+ZizYADJMKKU8fk6P
-         VqQYA6iRjGb5P9+gWpayWa/sNhl55OlUv77l+PLMmwvgKnGZ80uewWBqXkyY6Q24Ubwt
-         x5DB4XGHuaX5G8QlmWTu0aIXmxik0Fj8FRZNHfWEM4s19dteUHcsyKkxXE4mcgGvdzZb
-         mQpw==
-X-Gm-Message-State: AA+aEWa1drwD5nEk4ArYxDlHp6zL3CvAE/W6DzwrEePn+y4KS9bY8H7X
-        j/oK8UREAZ0gV84QqaoipO4=
-X-Google-Smtp-Source: AFSGD/W1Mvkv9G0JBqqcyc2JpHssbReerPwBM4fo7hBWuJDa4uT67gQn+vRq25WJdBin42zxHWTd8w==
-X-Received: by 2002:a1c:b9d0:: with SMTP id j199mr11528973wmf.114.1545053319818;
-        Mon, 17 Dec 2018 05:28:39 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id h17sm128950wrt.59.2018.12.17.05.28.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 05:28:39 -0800 (PST)
-Subject: Re: [PATCH 1/6] thermal: split
- thermal_zone_of_sensor_register{,_param}()
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mon, 17 Dec 2018 08:29:42 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id C24A125B781;
+        Tue, 18 Dec 2018 00:29:38 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1545053379; bh=xypDDjMg9YhIZ3visNpeM3MCAQPnHFx8ANqY3CCId5w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CtnW8FshpzbgY4UjPCT845TgFlpVkukyHcCn6/aiUVr4Iqjg6Av/3ZMKN5wtApHaP
+         smE0td+TG1vCM+gmon6NVFFSOPUT0HqvChmpYClmUJwpeYrjnYhxIiyLdpJRNN9F4N
+         dAG5CO4bdHWt1g/Dkl2xny3YCL6+0Yw3ku1CNsWU=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id C062D94048A; Mon, 17 Dec 2018 14:29:36 +0100 (CET)
+Date:   Mon, 17 Dec 2018 14:29:36 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20181212014927.25840-1-marek.vasut+renesas@gmail.com>
- <20181212014927.25840-2-marek.vasut+renesas@gmail.com>
- <20181215172351.GB10311@localhost.localdomain>
- <baebd957-e527-fd03-bbaf-cbfa4a7624ed@gmail.com>
- <CAMuHMdWEuiPnZfeNA+T_Gp6W7EAGimrb9Z=rU590OnPz2-MLow@mail.gmail.com>
- <270eeb39-140f-7f55-75d3-c2a6d9ab4034@gmail.com>
- <CAMuHMdUAVYk0Xx56H+V1usFa3627Zk7erewrtP-2HG02neit9A@mail.gmail.com>
- <076ebc8e-32a3-99bf-6d8a-7a0bae22b427@gmail.com>
- <CAMuHMdUJPLu2H5dYZjFG1oKYOoXiQGE6_S8BFK8c7Nue_Dfqzg@mail.gmail.com>
- <09902cc4-ef25-cd36-0d4a-effeabcd233f@gmail.com>
- <CAMuHMdV4jtF6nqH2RMLpg3gQu5Gok050kW+o0p8fzpZYyv9GAQ@mail.gmail.com>
- <31978c47-cd1b-7c61-0d6a-09e443147b52@gmail.com>
- <CAMuHMdVVoTF0vP_k4Qw8MYqBZEb9ei0LcT2NRJeBRm1tdd4T+Q@mail.gmail.com>
- <04bcb195-0668-4d8d-1f86-c53c3a142183@gmail.com>
- <CAMuHMdUnH5-YeGcQdbyJP2KNZFS=zxhSb7PZ1ZhLCqFxiw=TnQ@mail.gmail.com>
- <74305798-9405-4f82-36a6-1f5cc515eaf6@gmail.com>
- <CAMuHMdWUNiCf8GXGq-cThF+h8JwQv6ZQJEC5D4vqQ=AF-9GsOw@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <726916ff-c2d8-374c-a69d-8b19f9a251b5@gmail.com>
-Date:   Mon, 17 Dec 2018 14:28:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] serial: sh-sci: Fix fallback to PIO in
+ sci_dma_rx_complete()
+Message-ID: <20181217132935.iacsscmao22wf4jx@verge.net.au>
+References: <20181213184444.21904-1-geert+renesas@glider.be>
+ <20181213184444.21904-5-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWUNiCf8GXGq-cThF+h8JwQv6ZQJEC5D4vqQ=AF-9GsOw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213184444.21904-5-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/17/2018 02:26 PM, Geert Uytterhoeven wrote:
-> Hi Marek,
+On Thu, Dec 13, 2018 at 07:44:44PM +0100, Geert Uytterhoeven wrote:
+> When submitting a DMA request fails in sci_dma_rx_complete(), the driver
+> tries to fall back to PIO, but that does not work: no more data will be
+> received, or the kernel will even crash.
 > 
-> On Sun, Dec 16, 2018 at 9:50 PM Marek Vasut <marek.vasut@gmail.com> wrote:
->> On 12/16/2018 09:08 PM, Geert Uytterhoeven wrote:
->> [...]
->>
->>>>>>> Git actually does that automatically, assumed your user.email config matches
->>>>>>> the From: address that is used in your outgoing email delivery path (i.e. the
->>>>>>> scrubbed one, when using Gmail's SMTP server).
->>>>>>> If you lie to git in your user.email config, git cannot do the right
->>>>>>> thing, obviously.
->>>>>>
->>>>>> My git user.email obviously matches the From: field , before the
->>>>>> scrubbing, which I believe is the correct thing to do.
->>>>>
->>>>> I disagree, because that is not how the emails are actually going out from the
->>>>> SMTP server you are using.
->>>>
->>>> Can you summarize, clearly, what you believe is the right thing to
->>>> configure and where ?
->>>
->>> According to git-send-email(1), you can either pass your scrubbed email
->>> address to --from, or configure it in the sendemail.from config option.
->>> Does that work for you?
->>
->> So sendemail.from != user.email , the later has the +tag while the
->> former does not ?
+> Fix this similar as in (but not identical to) sci_submit_rx():
+>   - On SCIF, PIO cannot take over if any DMA transactions are pending,
+>     hence they must be terminated first.
+>   - All active cookies must be invalidated, else rx_timer_fn() may
+>     trigger a NULL pointer dereference.
+>   - Restarting the port is not needed, as it is already running, but
+>     serial port interrupts must be directed back from the DMA engine to
+>     the CPU.
 > 
-> Right.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v4:
+>   - No changes,
 > 
->>>>>>>> from the same person/email address as the email address in From, so they
->>>>>>>> are equal.
->>>>>>>
->>>>>>> If they differ, they are not equal ;-)
->>>>>>
->>>>>> Depends on how you define 'equal' . Here I think foo+bar@example.com
->>>>>> should be considered equal to foo@example.com .
->>>>>
->>>>> That is domain-specific knowledge, which you cannot rely upon.
->>>
->>>>>> Aha, so maybe that enhancement needs further enhancement to scrub the
->>>>>> +tags before the check ?
->>>>>
->>>>> Again, that is domain-specific knowledge, which you cannot rely upon.
->>>>
->>>> How so, please elaborate .
->>>
->>> In general, you cannot assume the "+foo" part can be ignored. Only the sender
->>> knows.
->>
->> How so ?
+> v3:
+>   - Add missing definition of "u16 scr",
+>   - Move call to dmaengine_terminate_async() inside the spinlock, for
+>     symmetry with sci_submit_rx(),
+>   - Split in multiple patches.
+> ---
+>  drivers/tty/serial/sh-sci.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 > 
-> It depends on the domain.
-> 
-> Is Bill.Gates@microsoft.com the same email address as
-> Bill.Gates+foo@microsoft.com?
-> Is Bill.Gates+1955@microsoft.com the same?
-> Is Bill.Gates-1955@microsoft.com the same?
-> 
-> I don't know. Only microsoft.com knows.
-> So that's why you should compare email addresses verbatim (but case
-> insensitive).
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 8df0fd8245203f8b..44c29ce3fcc5d894 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1272,6 +1272,8 @@ static void sci_dma_rx_complete(void *arg)
+>  	struct dma_async_tx_descriptor *desc;
+>  	unsigned long flags;
+>  	int active, count = 0;
+> +	unsigned int i;
+> +	u16 scr;
+>  
+>  	dev_dbg(port->dev, "%s(%d) active cookie %d\n", __func__, port->line,
+>  		s->active_rx);
+> @@ -1313,8 +1315,18 @@ static void sci_dma_rx_complete(void *arg)
+>  	dev_warn(port->dev, "Failed submitting Rx DMA descriptor\n");
+>  	/* Switch to PIO */
+>  	spin_lock_irqsave(&port->lock, flags);
+> +	dmaengine_terminate_async(chan);
+> +	for (i = 0; i < 2; i++)
+> +		s->cookie_rx[i] = -EINVAL;
 
-Oh, you mean email-domain. In that case, since gmail treats
-foo@gmail.com the same as foo+bar@gmail.com , checkpatch should treat
-them equally as well. In which case, your checkpatch patch which now
-generates a warning on this is wrong ?
+Invalidating cookie_rx already appears twice, in two different forms.
+Perhaps a helper is appropriate.
 
--- 
-Best regards,
-Marek Vasut
+> +	s->active_rx = 0;
+>  	s->chan_rx = NULL;
+> -	sci_start_rx(port);
+> +	/* Direct new serial port interrupts back to CPU */
+> +	scr = serial_port_in(port, SCSCR);
+> +	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB) {
+> +		scr &= ~SCSCR_RDRQE;
+> +		enable_irq(s->irqs[SCIx_RXI_IRQ]);
+> +	}
+> +	serial_port_out(port, SCSCR, scr | SCSCR_RIE);
+
+Likewise, logic ti redirect interrupts seems to already be present in
+rx_timer_fn().
+
+>  	spin_unlock_irqrestore(&port->lock, flags);
+>  }
+>  
+> -- 
+> 2.17.1
+> 
