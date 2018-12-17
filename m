@@ -6,52 +6,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9AEC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBB0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFE82084D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37949217F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:26:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731641AbeLQJ0O (ORCPT
+        id S1731745AbeLQJ0h (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:26:14 -0500
-Received: from 8bytes.org ([81.169.241.247]:54498 "EHLO theia.8bytes.org"
+        Mon, 17 Dec 2018 04:26:37 -0500
+Received: from 8bytes.org ([81.169.241.247]:54510 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbeLQJ0O (ORCPT
+        id S1726463AbeLQJ0h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 04:26:14 -0500
+        Mon, 17 Dec 2018 04:26:37 -0500
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 0D5F03F4; Mon, 17 Dec 2018 10:26:11 +0100 (CET)
-Date:   Mon, 17 Dec 2018 10:26:10 +0100
+        id 684643F7; Mon, 17 Dec 2018 10:26:36 +0100 (CET)
+Date:   Mon, 17 Dec 2018 10:26:35 +0100
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iommu: ipmmu-vmsa: Add r8a774c0 support
-Message-ID: <20181217092610.iknc2gbajgj5i5zv@8bytes.org>
-References: <1544732368-6223-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] iommu/ipmmu-vmsa: Hook up r8a774c0 DT matching code
+Message-ID: <20181217092634.i67xgmyw2wnbgfwa@8bytes.org>
+References: <1544732564-7185-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544732368-6223-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732564-7185-1-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:19:28PM +0000, Fabrizio Castro wrote:
-> Document RZ/G2E (R8A774C0) SoC bindings.
+On Thu, Dec 13, 2018 at 08:22:44PM +0000, Fabrizio Castro wrote:
+> Support RZ/G2E (a.k.a. R8A774C0) IPMMU.
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > ---
->  Documentation/devicetree/bindings/iommu/renesas,ipmmu-vmsa.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/iommu/ipmmu-vmsa.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 
 Applied, thanks.
