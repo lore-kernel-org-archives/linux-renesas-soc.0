@@ -2,72 +2,106 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E9DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 05:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C07FC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 08:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30462084A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 05:31:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545024688;
-	bh=LLaTC+uYA+88osm+6wwbIKQx4TDGnaLpdUEC+H3TwL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZC66j7V+JfnZJgAqjIjeeasXnaxJxV1K8iVYDFZt+iPt9b4quLueliuIvPMuX0hTa
-	 OvxedKaI1Twdm96ADlpwh+J60LGw6HvaGsGQO8pMydqzPBbGrGCEWn9tp5XDJ3OQnI
-	 B1ixdWieBWXBXJoZlmXrxTiAgwrHZm6RszvP3xgc=
+	by mail.kernel.org (Postfix) with ESMTP id 4ACA220645
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 08:08:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kMzPCvuC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbeLQFbX (ORCPT
+        id S1731673AbeLQIIJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 00:31:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726318AbeLQFbX (ORCPT
+        Mon, 17 Dec 2018 03:08:09 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34137 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731651AbeLQIII (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 00:31:23 -0500
-Received: from localhost (unknown [171.61.92.201])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C13C92084A;
-        Mon, 17 Dec 2018 05:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545024682;
-        bh=LLaTC+uYA+88osm+6wwbIKQx4TDGnaLpdUEC+H3TwL8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Sm3ai4/IqHScUP7+qW4PdLtoYTlVQpO7W+SI/5KiRnLg3C97KRwkFn6RfldAm4jia
-         X0K0Bk030usx4oQRpC+FhZLwAX95NgtsYYZ+HQTPzMTcjxMXhyfyqx1W1cqZ/Rl5i+
-         lh8PKwiNo75c3ttsbdRdBcvNhnFDdyYPXAwNaD9Q=
-Date:   Mon, 17 Dec 2018 11:01:13 +0530
-From:   Vinod Koul <vkoul@kernel.org>
+        Mon, 17 Dec 2018 03:08:08 -0500
+Received: by mail-vs1-f65.google.com with SMTP id y27so7166824vsi.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Dec 2018 00:08:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eqGNsNNTktZm8ZCgrBCB4pdC68D6xlkiRAqMELLxukw=;
+        b=kMzPCvuC7ye0PRiLyB71mokAbLvax0KvUSyrQuo3/ebKy35lMFt4CLovF3zGHVeKp8
+         lg/NiDskjW0hiC221y2x5LvCtQwu1au7CzI8f7vEpHI1aWZAKg+e4bmb71qzKiF0I7SN
+         0FA83IbO3W2ImprIOKU2aV2sBoTCgfsjV2SlY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eqGNsNNTktZm8ZCgrBCB4pdC68D6xlkiRAqMELLxukw=;
+        b=E+v2xfptz97ryhvy0HL7KmkvveeZmXEy7xVY3HiwOeIY6ziUDNoxZEbejiWf5Qq52O
+         rTVHcpEaQLyw4qbdsksmVUp25H+P7vFBgQLBaEnaMK8GhYLVHHmL9I7dr7OhtYTNUBSi
+         HeHKsG0UfQOYrBr6u9c2g38xzRbuLqIMgWmIygXADx1Ab2Ah3D5BOBuR9YZ/JdIKkTt6
+         O3GT6EYB5OzLBlENktj5Tvn/u6Vim+LhHLf66nrDHSMCnF6u3DFtDRAnK/zD6EZWlmny
+         EdOkZ7NG3ZacKt+QnLbsDLZvsxARVD+hFli1y5E4442mTbcO9GCwlQQmqJTDFFHYVUd/
+         Jgtg==
+X-Gm-Message-State: AA+aEWZoo0IttuIAOS5RGd/OG8F680dIuULLHBYdr/KuSzInw2t1a8t0
+        20We+x6oCUpUwBlf1pIkrFqp/US3usqSRrtYIwXCOw==
+X-Google-Smtp-Source: AFSGD/Uo75RN0/J9HrSz15Do99XTDNS+USg37yjiocmoWYYDZ6pVO0T+jedho3vWkB0GF46uKC6goY2DqUtgDOoofC0=
+X-Received: by 2002:a67:d00f:: with SMTP id r15mr5794824vsi.191.1545034087773;
+ Mon, 17 Dec 2018 00:08:07 -0800 (PST)
+MIME-Version: 1.0
+References: <1544732529-7003-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732529-7003-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 17 Dec 2018 09:07:32 +0100
+Message-ID: <CAPDyKFqE2zyCEOJfosqEh4ZE8tXAsHrVOXF9kVAR+O3yZeceNg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: renesas_sdhi: Add r8a774c0 support
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: dmaengine: usb-dmac: Add binding for
- r8a774c0
-Message-ID: <20181217053113.GB2472@vkoul-mobl>
-References: <1544732491-6821-1-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544732491-6821-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 13-12-18, 20:21, Fabrizio Castro wrote:
-> This patch adds bindings for the r8a774c0 (RZ/G2E).
+On Thu, 13 Dec 2018 at 21:22, Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+>
+> Document RZ/G2E (R8A774C0) SoC bindings.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Applied, thanks
+Applied for next, thanks!
 
--- 
-~Vinod
+Kind regards
+Uffe
+
+
+> ---
+>  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> index 27f2eab..4009adb 100644
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -19,6 +19,7 @@ Required properties:
+>                 "renesas,sdhi-r8a7744" - SDHI IP on R8A7744 SoC
+>                 "renesas,sdhi-r8a7745" - SDHI IP on R8A7745 SoC
+>                 "renesas,sdhi-r8a774a1" - SDHI IP on R8A774A1 SoC
+> +               "renesas,sdhi-r8a774c0" - SDHI IP on R8A774C0 SoC
+>                 "renesas,sdhi-r8a77470" - SDHI IP on R8A77470 SoC
+>                 "renesas,sdhi-mmc-r8a77470" - SDHI/MMC IP on R8A77470 SoC
+>                 "renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
+> --
+> 2.7.4
+>
