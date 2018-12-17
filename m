@@ -2,67 +2,185 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8B7C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D86C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B17E20874
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AD0C20874
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:42:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="dgW+53nH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vcyiIMqL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeLQNiN (ORCPT
+        id S1727060AbeLQNmB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:38:13 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:40832 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbeLQNiN (ORCPT
+        Mon, 17 Dec 2018 08:42:01 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37403 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727087AbeLQNmB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:38:13 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id DDCDE25B7CF;
-        Tue, 18 Dec 2018 00:38:10 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545053891; bh=lVqvCqKxLL30iOhJjHBaKZXsFJT84pRnhEKC7cN+L0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dgW+53nH33k1NEVRIu/TkZ3U57o2HxX5P7MNYGG4wypGlGYP77DBC7WsXLQhsIHJx
-         Ms3jJc9yuWsVxlmOAs7oX1EKA17EiglNnuB1YCmwQCdYl957vS7jt1jq87rqOBQ1g3
-         TNGmFpLBpb1prdA5KGaIk3N1vjNgKYA9o/8QwvIg=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id E28F494048A; Mon, 17 Dec 2018 14:38:08 +0100 (CET)
-Date:   Mon, 17 Dec 2018 14:38:08 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 01/15] pinctrl: sh-pfc: r8a77994: Remove bogus IPSR9 field
-Message-ID: <20181217133808.6pxaudvjh5y7u2vq@verge.net.au>
-References: <20181213182714.26094-1-geert+renesas@glider.be>
- <20181213182714.26094-2-geert+renesas@glider.be>
+        Mon, 17 Dec 2018 08:42:01 -0500
+Received: by mail-wr1-f67.google.com with SMTP id s12so11880941wrt.4;
+        Mon, 17 Dec 2018 05:41:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LZSLAIsR2sxUTbAwlZshKe9OGYKHpYRFqwDK540vXUw=;
+        b=vcyiIMqL2Z/CKMaU6uLmsqd8CC2YcEZhbxdoPur2L59HwJZtoWDFbWPfLDNFPjgdWz
+         iLCEUKPbYBCk/sSpM0SXQ441hSrXfq1zN/rHvKFOEWFN4vBP+8mTOBAquESpIAIu0Fka
+         cGp13sDkT0Zpa8SgUh8K22t+h90EnTQjgmOV2IvN2EMddzUr1dsS3ULv6xXUTD9ciHtp
+         LgKTL02iK2jZ1KX2W92ewbl3TyqmjXLV7k2nor+EadHL6hwd1Z1YYr1U4fstDnVTUyWV
+         jpZqyF+S+Mq9GelpwOAfsvrCpE70j8Ulwk2kVh0juu77XVvGttHhFQUT8bOV4qRKM81a
+         ZYAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LZSLAIsR2sxUTbAwlZshKe9OGYKHpYRFqwDK540vXUw=;
+        b=CBAhQdHS3EOUE+iQDWVIfvcsCL1qc5qpxdv/R0M+VhZeSVr6zpdcd5Tj+QOt6TfD8S
+         nnBy4nCZXN0uSa6vBJL6tVrFvfzmkwIZWJ2qoY1ifCiKQt5OV7oNOSQbc3LMVdZnWYvR
+         rj4TKDi1hAFuWNCmQyMb8aGsMGd7O2spBLvz8v5Z+0gHx18e+h4KCwPd26XIys+XUFFY
+         3pYLNRD+/r1gtRjZWNuFxVBfy1GAe/8AOobNa7g2mAFu1NaLvYUjmKPrpJ3vtjf/5wtE
+         9AJKOVK/ERtOduezfFseviL6gcHtmQWmuahCha5n7E/dGBqHNV/DaJ3Un7RJXISoDwzp
+         VPog==
+X-Gm-Message-State: AA+aEWbMBUEoBGBdTzqv4kTWLucUfDBKhMV2aZC3LOj3a+39JpigqtOt
+        DOF/MI3Nv/mWAmffIgynh/I=
+X-Google-Smtp-Source: AFSGD/WsQGPXe9TJg5K15qesS2rYPG6obqLWA6yoHJIir9CgPbWuL0GeZuw6LqYEknLozXl7AjRmNw==
+X-Received: by 2002:adf:bb8d:: with SMTP id q13mr10573814wrg.183.1545054117616;
+        Mon, 17 Dec 2018 05:41:57 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id t12sm384728wrr.65.2018.12.17.05.41.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 17 Dec 2018 05:41:56 -0800 (PST)
+Subject: Re: [PATCH 1/6] thermal: split
+ thermal_zone_of_sensor_register{,_param}()
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Eduardo Valentin <edubezval@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20181212014927.25840-1-marek.vasut+renesas@gmail.com>
+ <CAMuHMdWEuiPnZfeNA+T_Gp6W7EAGimrb9Z=rU590OnPz2-MLow@mail.gmail.com>
+ <270eeb39-140f-7f55-75d3-c2a6d9ab4034@gmail.com>
+ <CAMuHMdUAVYk0Xx56H+V1usFa3627Zk7erewrtP-2HG02neit9A@mail.gmail.com>
+ <076ebc8e-32a3-99bf-6d8a-7a0bae22b427@gmail.com>
+ <CAMuHMdUJPLu2H5dYZjFG1oKYOoXiQGE6_S8BFK8c7Nue_Dfqzg@mail.gmail.com>
+ <09902cc4-ef25-cd36-0d4a-effeabcd233f@gmail.com>
+ <CAMuHMdV4jtF6nqH2RMLpg3gQu5Gok050kW+o0p8fzpZYyv9GAQ@mail.gmail.com>
+ <31978c47-cd1b-7c61-0d6a-09e443147b52@gmail.com>
+ <CAMuHMdVVoTF0vP_k4Qw8MYqBZEb9ei0LcT2NRJeBRm1tdd4T+Q@mail.gmail.com>
+ <04bcb195-0668-4d8d-1f86-c53c3a142183@gmail.com>
+ <CAMuHMdUnH5-YeGcQdbyJP2KNZFS=zxhSb7PZ1ZhLCqFxiw=TnQ@mail.gmail.com>
+ <74305798-9405-4f82-36a6-1f5cc515eaf6@gmail.com>
+ <CAMuHMdWUNiCf8GXGq-cThF+h8JwQv6ZQJEC5D4vqQ=AF-9GsOw@mail.gmail.com>
+ <726916ff-c2d8-374c-a69d-8b19f9a251b5@gmail.com>
+ <CAMuHMdX-qh_LGG8=qZHusp8oMZcOT9dqeoFbBBrpjuOxHAkxxA@mail.gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <a319bd27-bb28-a149-8f04-021c56d13781@gmail.com>
+Date:   Mon, 17 Dec 2018 14:41:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213182714.26094-2-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMuHMdX-qh_LGG8=qZHusp8oMZcOT9dqeoFbBBrpjuOxHAkxxA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 07:27:00PM +0100, Geert Uytterhoeven wrote:
-> The Peripheral Function Select Register 9 contains 12 fields, but the
-> variable field descriptor contains a 13th bogus field of 3 bits.
+On 12/17/2018 02:36 PM, Geert Uytterhoeven wrote:
+> Hi Marek,
 > 
-> Fixes: 43c4436e2f1890a7 ("pinctrl: sh-pfc: add R8A7794 PFC support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> On Mon, Dec 17, 2018 at 2:28 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 12/17/2018 02:26 PM, Geert Uytterhoeven wrote:
+>>> On Sun, Dec 16, 2018 at 9:50 PM Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>> On 12/16/2018 09:08 PM, Geert Uytterhoeven wrote:
+>>>> [...]
+>>>>
+>>>>>>>>> Git actually does that automatically, assumed your user.email config matches
+>>>>>>>>> the From: address that is used in your outgoing email delivery path (i.e. the
+>>>>>>>>> scrubbed one, when using Gmail's SMTP server).
+>>>>>>>>> If you lie to git in your user.email config, git cannot do the right
+>>>>>>>>> thing, obviously.
+>>>>>>>>
+>>>>>>>> My git user.email obviously matches the From: field , before the
+>>>>>>>> scrubbing, which I believe is the correct thing to do.
+>>>>>>>
+>>>>>>> I disagree, because that is not how the emails are actually going out from the
+>>>>>>> SMTP server you are using.
+>>>>>>
+>>>>>> Can you summarize, clearly, what you believe is the right thing to
+>>>>>> configure and where ?
+>>>>>
+>>>>> According to git-send-email(1), you can either pass your scrubbed email
+>>>>> address to --from, or configure it in the sendemail.from config option.
+>>>>> Does that work for you?
+>>>>
+>>>> So sendemail.from != user.email , the later has the +tag while the
+>>>> former does not ?
+>>>
+>>> Right.
+>>>
+>>>>>>>>>> from the same person/email address as the email address in From, so they
+>>>>>>>>>> are equal.
+>>>>>>>>>
+>>>>>>>>> If they differ, they are not equal ;-)
+>>>>>>>>
+>>>>>>>> Depends on how you define 'equal' . Here I think foo+bar@example.com
+>>>>>>>> should be considered equal to foo@example.com .
+>>>>>>>
+>>>>>>> That is domain-specific knowledge, which you cannot rely upon.
+>>>>>
+>>>>>>>> Aha, so maybe that enhancement needs further enhancement to scrub the
+>>>>>>>> +tags before the check ?
+>>>>>>>
+>>>>>>> Again, that is domain-specific knowledge, which you cannot rely upon.
+>>>>>>
+>>>>>> How so, please elaborate .
+>>>>>
+>>>>> In general, you cannot assume the "+foo" part can be ignored. Only the sender
+>>>>> knows.
+>>>>
+>>>> How so ?
+>>>
+>>> It depends on the domain.
+>>>
+>>> Is Bill.Gates@microsoft.com the same email address as
+>>> Bill.Gates+foo@microsoft.com?
+>>> Is Bill.Gates+1955@microsoft.com the same?
+>>> Is Bill.Gates-1955@microsoft.com the same?
+>>>
+>>> I don't know. Only microsoft.com knows.
+>>> So that's why you should compare email addresses verbatim (but case
+>>> insensitive).
+>>
+>> Oh, you mean email-domain. In that case, since gmail treats
+>> foo@gmail.com the same as foo+bar@gmail.com , checkpatch should treat
+>> them equally as well. In which case, your checkpatch patch which now
+>> generates a warning on this is wrong ?
+> 
+> So checkpatch should know about all email domains?
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+If correct handling is domain specific knowledge, as you just said,
+apparently so. Otherwise checkpatch produces false positives.
 
+> Just fix your setup. All patch statistics operate on the author, incl. +foo, so
+> your patches will be attributed wrongly.
+
+Well your suggestion with sendemail.from doesn't seem to change
+anything, but I'll keep it in.
+
+-- 
+Best regards,
+Marek Vasut
