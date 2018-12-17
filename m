@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64633C43444
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20405C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B50B2146E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E42C72133F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:57:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="sIXklN1M"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LCEwQqeq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732597AbeLQL4j (ORCPT
+        id S1732597AbeLQL50 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:56:39 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:39341 "EHLO
+        Mon, 17 Dec 2018 06:57:26 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:39368 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732415AbeLQL4i (ORCPT
+        with ESMTP id S1727255AbeLQL50 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:56:38 -0500
+        Mon, 17 Dec 2018 06:57:26 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id B70A925B781;
-        Mon, 17 Dec 2018 22:56:35 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 315E025B781;
+        Mon, 17 Dec 2018 22:57:23 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545047796; bh=g0jTqRS2boOGanJFfbr7smdRwESdv2eaCF3QN75Uz3A=;
+        t=1545047843; bh=EGALCNTKGVNOaL+dVMKp3+U2bBgnTVySbHLkf7vNckk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sIXklN1MY+SLOfDfZXU0Or+nFURbL8k97DOU0lYRcLz5LS0T5ACeI8yP77hbELdhr
-         dNKapmCKSrEA0ILDd5pMwgUrGFXKVSgItKNuBO6IgIoa/0Pjx10fzqiNou+Wq69mqB
-         7r8eRI2VwtLo6632iz3nrqcQtp+L0awPdWPTyzU0=
+        b=LCEwQqeqDKvxxsDk2aAMSlPLIW6oasXs/GB9Ga1TVdqF23KxrTbP7r39Tz3P3S4Hh
+         W65qBLBhVC3xEucnoaKCMEb3uwJf5e0M2VSrJ3eQ2bKoAnMuX+Tptq5Hf54zb1jGub
+         ZCAJuDQtBHnKzgnyeXI1dYat20NVViw2JvSrxgQ4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 1E39A94048A; Mon, 17 Dec 2018 12:56:34 +0100 (CET)
-Date:   Mon, 17 Dec 2018 12:56:34 +0100
+        id A2C0094048A; Mon, 17 Dec 2018 12:57:21 +0100 (CET)
+Date:   Mon, 17 Dec 2018 12:57:21 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH] [media] v4l: vsp1: Add RZ/G support
-Message-ID: <20181217115633.bt2da7mwktz2tds4@verge.net.au>
-References: <1544732424-6498-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] dt-bindings: display: renesas: lvds: Document r8a774c0
+ bindings
+Message-ID: <20181217115721.vn3u4ayzpwl3m7yq@verge.net.au>
+References: <1544732454-6633-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544732424-6498-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732454-6633-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -61,8 +61,9 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:20:24PM +0000, Fabrizio Castro wrote:
-> Document RZ/G1 and RZ/G2 support.
+On Thu, Dec 13, 2018 at 08:20:54PM +0000, Fabrizio Castro wrote:
+> The RZ/G2E (r8a774c0) supports two LVDS channels. Extend the binding to
+> support them.
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
