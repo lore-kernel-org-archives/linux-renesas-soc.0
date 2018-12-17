@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75679C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5398EC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C9732145D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B99E20675
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387942AbeLQQMa (ORCPT
+        id S2388200AbeLQQNE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:12:30 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46915 "EHLO
+        Mon, 17 Dec 2018 11:13:04 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39476 "EHLO
         mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387614AbeLQQMa (ORCPT
+        with ESMTP id S1727727AbeLQQND (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:12:30 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v24so4599096uap.13;
-        Mon, 17 Dec 2018 08:12:29 -0800 (PST)
+        Mon, 17 Dec 2018 11:13:03 -0500
+Received: by mail-ua1-f66.google.com with SMTP id k10so4609641ual.6;
+        Mon, 17 Dec 2018 08:13:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=feE1MpRayHAWKvVpW1BOAPAs9XE1IaSAhB+yFgVU164=;
-        b=YV6gqAEh3MzpVksCBjc1TUM81qIEiBt6ORCvfYCY3aRJCxSW+Gj1MZzizSTw7cWNfC
-         x2GsrkcR6nwVOf3Y62YQu7uuC4NuLVyEWZJfP3ynnUDL/Ro/AmeETWCm7frJENZkuXWQ
-         rKbJAKmeIDjwgA4hlx5vOxWiZxM3NQEatq/LZ0FJ0/lZvrXXr56mRvMgCYXUUHZNt/VU
-         cqaxtFr1u4use/beAph/8qJrkaTB9hQl5A0qsEYrg2YhTYvPLizKZB0WM2THRrl7DfVZ
-         sX7Sx4QDLzfV2hVdIhT8chC+ddNI02Cs9U0lnLwJUwa7GmtV1H+uGHCLW/MXJyEm1R4T
-         IzuQ==
-X-Gm-Message-State: AA+aEWbbOfU/1A3IWmrjYJyd6dCAranrSOtKSMMWd1xGQD1RhfYxO8gf
-        bm7I+xDTsGITD3sZE9JOq3/MN8v8uGowYLFe8Xg=
-X-Google-Smtp-Source: AFSGD/VXEgq96XSyQOKQtPga7IQDyqawRonERf/cVa07R8nBdrQ6T0UaGw/SllDNiAb1xv3TGADuY3v/PzlgvV13gik=
-X-Received: by 2002:ab0:465:: with SMTP id 92mr6514392uav.28.1545063148589;
- Mon, 17 Dec 2018 08:12:28 -0800 (PST)
+        bh=wPi+XMFVdrJtw/BMAD18fUabHz3x2bNjrpHhTarQhMc=;
+        b=PxGzRKVG1zPaix0gtaHH6X+6WAMh/+M+lZqypzUUbygN1O8wJIsRvMehw8VxVILAia
+         tJV1fM2/Dz5qTUfYiz9dRK8zxwaqn2EZ8X8bsLigbTsXyMoZ/WSKW4C6m1h95Dxucwbm
+         5umVnwmEw/9zy/BSqShnc7Q0f5kC8/A+7bRmIRTvEj8a5rZQpfrdophaG0xw5QE+pwT9
+         y4KCVySczsvu/f+OKxoLhkeQ+XoGl3KcaJzzFLFEEbBdy+NiLKoWAEsnr23I6XCuGr/6
+         kGGvkt1Q//0mWtK1VjhPJPyocCaeyM8neJC8rRJUybNv9cF1m1xNKU8cRJq/PsUekqON
+         cukw==
+X-Gm-Message-State: AA+aEWaudUuKsg9ml6S3VPsEmtNrsWzrkp+q0qkXN4fWNNuCMlV7rrw+
+        gQGZrEqpPnuStQklQQkqQIrtcHyjnYmX8Q1VKeM=
+X-Google-Smtp-Source: AFSGD/WwUH4qd+oleyTbny2MJzZDio6NsAM0AFiMuW8Nd9EyBsaj87eu2zRtRc7rjn0Q/VIMFcG5+zzX3PFzdxFbR5A=
+X-Received: by 2002:ab0:1393:: with SMTP id m19mr6253218uae.75.1545063182519;
+ Mon, 17 Dec 2018 08:13:02 -0800 (PST)
 MIME-Version: 1.0
-References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544780260-27590-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544780260-27590-3-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544780260-27590-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544780260-27590-4-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Dec 2018 17:12:16 +0100
-Message-ID: <CAMuHMdVvGw4-=vxn5CgF7kkb_eYKqjNby0FvD8Mh22EkEt8hTA@mail.gmail.com>
-Subject: Re: [PATCH 02/17] arm64: dts: renesas: r8a774c0: Add I2C and IIC-DVFS support
+Date:   Mon, 17 Dec 2018 17:12:50 +0100
+Message-ID: <CAMuHMdWWV9-LzsW36O9OR3zjG7Hj8jaKrTieGeAwJsaDf7sMUg@mail.gmail.com>
+Subject: Re: [PATCH 03/17] arm64: dts: renesas: r8a774c0: Add IPMMU device nodes
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -64,15 +64,11 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Fri, Dec 14, 2018 at 10:37 AM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Add the I2C[0-7] and IIC Bus Interface for DVFS (IIC for DVFS)
-> devices nodes to the r8a774c0 device tree.
+> Add r8a774c0 IPMMU nodes.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-The register size for IICDVFS can be enlarged later, as the mapping
-includes the full PAGE_SIZE block anyway.
 
 Gr{oetje,eeting}s,
 
