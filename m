@@ -2,113 +2,786 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A98C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 12:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53917C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81E3320656
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 12:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F282420656
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:11:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qBSkUXJP"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="TZe5Bqvj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeLQM6P (ORCPT
+        id S1727498AbeLQNLB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 07:58:15 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35017 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbeLQM6O (ORCPT
+        Mon, 17 Dec 2018 08:11:01 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:40307 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbeLQNLB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 07:58:14 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 81so12034291otj.2;
-        Mon, 17 Dec 2018 04:58:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=m0Vs1ma/WG4VKSqRjE6so+m8oP9GVLdfRaL1Unqa8nI=;
-        b=qBSkUXJPEVT48sa1yO0yZsh668xQFANhD1ih4CtSDXEo1QK+XQLbN5uKLwGDOAVWjy
-         /epPUuZww7i/69xvz2SDgLyTGOH4ZjPjrb/tdq24+tXrOCA+WwsyHTUwY8Ct0EY4P6aX
-         dL5dvJX5yMfInCGT2lVeOY5nqXbUVa2x9E9mwuWMx95wf3T3q+xu2n3h0heceiiqQxt9
-         Lv861qVklZEBr7514aGTm91HHNObt1JvQkOwV8aAZ3UU5Csvjc1/EeDE5K1TPA4BNsOO
-         IDWXRawcP42A6tyuA7K/Fl9dn7eMFfBEns/VXe8oMMRw3XRsfXrTs4VbRDlX/FIx3ETi
-         eNbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=m0Vs1ma/WG4VKSqRjE6so+m8oP9GVLdfRaL1Unqa8nI=;
-        b=U6MRLjWRTKjZbJsyc2cFYSkunhMNhTUeDHPvLwLQPqybWd1rUkhwpSE9TuLqjBXA7O
-         UfO/IRZBL0K7JCgW2M6qDMlhwjmp3/8C7YogJKmesWp0EoSQEypgGadWDNZt9uxVCxnw
-         OJnEFLHHRXSiU6sxTU8Rx10FIw0CrGGRSDF5NllFWAe5wDp2JOuayehpecvsLpQzTrK/
-         vZGTRtg6+2VjtZNALv57HT4HPtG/54ewaoEjOuqxCzLicwx7jJPfGxaEZQzLFGry67Is
-         yUt5eCyr1Ii08bRfSvGgNtc3w1QdkqYnhsQrIpLiBG3MqnlOTYWgpT945TRO1GrUuHOn
-         1msg==
-X-Gm-Message-State: AA+aEWZGKO5t3jDV2Sz3vcz0H2yfUUSg2wn/levYKr/JVO9NDS7BQnHU
-        CylhWhlu2uTbMUXSJVXwYE97AFZqc/SHp1NDYTI=
-X-Google-Smtp-Source: AFSGD/XLzDQJiNPqJ2Vp8ULmy49MUyeRHEmUpmgGY7mB7ghhleTV4XCYtww5AujkG7KNI9+SZ5QiDVU45YByTxRa8vg=
-X-Received: by 2002:a9d:6419:: with SMTP id h25mr10069216otl.34.1545051493215;
- Mon, 17 Dec 2018 04:58:13 -0800 (PST)
-MIME-Version: 1.0
-References: <1539612719-9650-1-git-send-email-ykaneko0929@gmail.com> <20181205061221.GA21626@localhost.localdomain>
-In-Reply-To: <20181205061221.GA21626@localhost.localdomain>
-From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Date:   Mon, 17 Dec 2018 21:58:02 +0900
-Message-ID: <CAH1o70+BgK62TZPRd9zdwyF58MSyewm_qOmFYcZFN0_Ui4NFuQ@mail.gmail.com>
-Subject: Re: [PATCH/RFT 0/2] thermal: add suport for R8A77990
-To:     Eduardo Valentin <edubezval@gmail.com>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Mon, 17 Dec 2018 08:11:01 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 5CE4625B781;
+        Tue, 18 Dec 2018 00:10:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1545052257; bh=CkAwgZzhoKjI24SeDO+/g8i+/i0r/6C6mg/JUSuhfw0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TZe5Bqvj8XWSksPoYQbDqRMs/kH4TDx0Uy1I11nXNhEGzWQDQg4ro/4f+emBsPC/j
+         M6gNYCH4XiVuIjw9fEKMdb15dlMBCc9FsJxhjRRFM3WyQG3G7sDDaDX+8kVdxLq2wI
+         uM/I5uVfdRE8q50HLNBZ0OaDudpmSxOW8NiK5vsA=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 5609194048A; Mon, 17 Dec 2018 14:10:55 +0100 (CET)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH/RFC] arm64: dts: renesas: sort subnodes of root node in board files
+Date:   Mon, 17 Dec 2018 14:10:52 +0100
+Message-Id: <20181217131052.18790-1-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Eduardo,
+Sort subnodes of root node in board files alphabetically by node
+names. This aims to provide a simple rule for consistent
+node placement to reduce maintenance burden.
 
-I am sorry for my late replay.
+This should not have any run-time effect.
 
-2018=E5=B9=B412=E6=9C=885=E6=97=A5(=E6=B0=B4) 15:12 Eduardo Valentin <edube=
-zval@gmail.com>:
->
-> Hello Yoshihiro,
->
-> On Mon, Oct 15, 2018 at 11:11:57PM +0900, Yoshihiro Kaneko wrote:
-> > This series adds thermal support for R-Car E3 (R8A77990).
-> >
-> > This series is based on the next branch of Eduardo Valentin's linux-soc=
--thermal
-> > tree.
->
-> Sorry for the late response, but would you be able to refresh your
-> series to latest linus master branch?
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts   |  30 ++--
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts   |  70 +++++-----
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts  |  66 ++++-----
+ arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts   |  12 +-
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts   | 166 +++++++++++------------
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts   |  10 +-
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi |  84 ++++++------
+ arch/arm64/boot/dts/renesas/ulcb.dtsi            |  42 +++---
+ 8 files changed, 240 insertions(+), 240 deletions(-)
 
-Yes, I will do it.
+ Based on renesas-devel-20181213-v4.20-rc6
 
-Best regards,
-Kaneko
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index b6d53321576b..bd5791699a31 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -23,12 +23,6 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory@48000000 {
+-		device_type = "memory";
+-		/* first 128MB is reserved for secure area. */
+-		reg = <0x0 0x48000000 0x0 0x38000000>;
+-	};
+-
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -40,15 +34,6 @@
+ 		};
+ 	};
+ 
+-	d3p3: regulator-fixed {
+-		compatible = "regulator-fixed";
+-		regulator-name = "fixed-3.3V";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
+-
+ 	lvds-decoder {
+ 		compatible = "thine,thc63lvd1024";
+ 
+@@ -73,6 +58,21 @@
+ 			};
+ 		};
+ 	};
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++
++	d3p3: regulator-fixed {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
+ };
+ 
+ &avb {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+index 0dbcb4cccc18..cc41eb323158 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -21,6 +21,41 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con: endpoint {
++				remote-endpoint = <&adv7511_out>;
++			};
++		};
++	};
++
++	lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++		vcc-supply = <&vcc_d3_3v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				thc63lvd1024_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				thc63lvd1024_out: endpoint {
++					remote-endpoint = <&adv7511_in>;
++				};
++			};
++		};
++	};
++
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
+@@ -59,41 +94,6 @@
+ 		regulator-boot-on;
+ 		regulator-always-on;
+ 	};
+-
+-	lvds-decoder {
+-		compatible = "thine,thc63lvd1024";
+-		vcc-supply = <&vcc_d3_3v>;
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				thc63lvd1024_in: endpoint {
+-					remote-endpoint = <&lvds0_out>;
+-				};
+-			};
+-
+-			port@2 {
+-				reg = <2>;
+-				thc63lvd1024_out: endpoint {
+-					remote-endpoint = <&adv7511_in>;
+-				};
+-			};
+-		};
+-	};
+-
+-	hdmi-out {
+-		compatible = "hdmi-connector";
+-		type = "a";
+-
+-		port {
+-			hdmi_con: endpoint {
+-				remote-endpoint = <&adv7511_out>;
+-			};
+-		};
+-	};
+ };
+ 
+ &avb {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+index 5a7012be0d6a..345ac8616c40 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
+@@ -22,39 +22,6 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory@48000000 {
+-		device_type = "memory";
+-		/* first 128MB is reserved for secure area. */
+-		reg = <0 0x48000000 0 0x78000000>;
+-	};
+-
+-	d3_3v: regulator-0 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "D3.3V";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
+-
+-	vddq_vin01: regulator-1 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "VDDQ_VIN01";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
+-
+-	d1_8v: regulator-2 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "D1.8V";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-		regulator-boot-on;
+-		regulator-always-on;
+-	};
+-
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -90,6 +57,39 @@
+ 		};
+ 	};
+ 
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0 0x48000000 0 0x78000000>;
++	};
++
++	d3_3v: regulator-0 {
++		compatible = "regulator-fixed";
++		regulator-name = "D3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	vddq_vin01: regulator-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDQ_VIN01";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	d1_8v: regulator-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "D1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	x1_clk: x1-clock {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+index dd14a41b32cd..adbfd8f07d06 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
+@@ -22,12 +22,6 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory@48000000 {
+-		device_type = "memory";
+-		/* first 128MB is reserved for secure area. */
+-		reg = <0 0x48000000 0 0x78000000>;
+-	};
+-
+ 	hdmi-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -63,6 +57,12 @@
+ 		};
+ 	};
+ 
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0 0x48000000 0 0x78000000>;
++	};
++
+ 	osc1_clk: osc1-clock {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 62bdddcbbae7..7bd0a1a71bc4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -18,17 +18,6 @@
+ 		ethernet0 = &avb;
+ 	};
+ 
+-	chosen {
+-		bootargs = "ignore_loglevel";
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+-	memory@48000000 {
+-		device_type = "memory";
+-		/* first 128MB is reserved for secure area. */
+-		reg = <0x0 0x48000000 0x0 0x38000000>;
+-	};
+-
+ 	audio_clkout: audio-clkout {
+ 		/*
+ 		 * This is same as <&rcar_sound 0>
+@@ -39,6 +28,11 @@
+ 		clock-frequency = <11289600>;
+ 	};
+ 
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
+ 	cvbs-in {
+ 		compatible = "composite-video-connector";
+ 		label = "CVBS IN";
+@@ -97,36 +91,10 @@
+ 		};
+ 	};
+ 
+-	vga {
+-		compatible = "vga-connector";
+-
+-		port {
+-			vga_in: endpoint {
+-				remote-endpoint = <&adv7123_out>;
+-			};
+-		};
+-	};
+-
+-	vga-encoder {
+-		compatible = "adi,adv7123";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				adv7123_in: endpoint {
+-					remote-endpoint = <&du_out_rgb>;
+-				};
+-			};
+-			port@1 {
+-				reg = <1>;
+-				adv7123_out: endpoint {
+-					remote-endpoint = <&vga_in>;
+-				};
+-			};
+-		};
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
+ 	};
+ 
+ 	reg_1p8v: regulator0 {
+@@ -158,46 +126,25 @@
+ 		enable-active-high;
+ 	};
+ 
+-	rsnd_ak4613: sound {
+-		compatible = "simple-scu-audio-card";
+-
+-		simple-audio-card,name = "rsnd-ak4613";
+-		simple-audio-card,format = "left_j";
+-		simple-audio-card,bitclock-master = <&sndcpu>;
+-		simple-audio-card,frame-master = <&sndcpu>;
+-
+-		simple-audio-card,prefix = "ak4613";
+-		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
+-		"DAI0 Capture", "ak4613 Capture";
+-		sndcpu: simple-audio-card,cpu {
+-			sound-dai = <&rcar_sound>;
+-		};
+-
+-		sndcodec: simple-audio-card,codec {
+-			sound-dai = <&ak4613>;
+-		};
+-	};
++	vcc_sdhi0: regulator-vcc-sdhi0 {
++		compatible = "regulator-fixed";
+ 
+-	x12_clk: x12 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <24576000>;
+-	};
++		regulator-name = "SDHI0 Vcc";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
+ 
+-	x13_clk: x13 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <74250000>;
++		gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
+ 	};
+ 
+-	vcc_sdhi0: regulator-vcc-sdhi0 {
++	vcc_sdhi1: regulator-vcc-sdhi1 {
+ 		compatible = "regulator-fixed";
+ 
+-		regulator-name = "SDHI0 Vcc";
++		regulator-name = "SDHI1 Vcc";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 
+-		gpio = <&gpio5 17 GPIO_ACTIVE_HIGH>;
++		gpio = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
+ 
+@@ -214,17 +161,6 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	vcc_sdhi1: regulator-vcc-sdhi1 {
+-		compatible = "regulator-fixed";
+-
+-		regulator-name = "SDHI1 Vcc";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-
+-		gpio = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+-		enable-active-high;
+-	};
+-
+ 	vccq_sdhi1: regulator-vccq-sdhi1 {
+ 		compatible = "regulator-gpio";
+ 
+@@ -237,6 +173,70 @@
+ 		states = <3300000 1
+ 			  1800000 0>;
+ 	};
++
++	rsnd_ak4613: sound {
++		compatible = "simple-scu-audio-card";
++
++		simple-audio-card,name = "rsnd-ak4613";
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&sndcpu>;
++		simple-audio-card,frame-master = <&sndcpu>;
++
++		simple-audio-card,prefix = "ak4613";
++		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
++		"DAI0 Capture", "ak4613 Capture";
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&ak4613>;
++		};
++	};
++
++	vga {
++		compatible = "vga-connector";
++
++		port {
++			vga_in: endpoint {
++				remote-endpoint = <&adv7123_out>;
++			};
++		};
++	};
++
++	vga-encoder {
++		compatible = "adi,adv7123";
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7123_in: endpoint {
++					remote-endpoint = <&du_out_rgb>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				adv7123_out: endpoint {
++					remote-endpoint = <&vga_in>;
++				};
++			};
++		};
++	};
++
++	x12_clk: x12 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24576000>;
++	};
++
++	x13_clk: x13 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <74250000>;
++	};
+ };
+ 
+ &audio_clk_a {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 89df9bc844c0..406d9407a969 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -19,11 +19,6 @@
+ 		ethernet0 = &avb;
+ 	};
+ 
+-	chosen {
+-		bootargs = "ignore_loglevel";
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm1 0 50000>;
+@@ -35,6 +30,11 @@
+ 		enable-gpios = <&gpio4 0 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
+ 	composite-in {
+ 		compatible = "composite-video-connector";
+ 
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index a225c2457274..97aca41edc9a 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -37,11 +37,6 @@
+ 		ethernet0 = &avb;
+ 	};
+ 
+-	chosen {
+-		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+ 	audio_clkout: audio-clkout {
+ 		/*
+ 		 * This is same as <&rcar_sound 0>
+@@ -63,6 +58,11 @@
+ 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	};
+ 
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
++		stdout-path = "serial0:115200n8";
++	};
++
+ 	cvbs-in {
+ 		compatible = "composite-video-connector";
+ 		label = "CVBS IN";
+@@ -86,6 +86,28 @@
+ 		};
+ 	};
+ 
++	hdmi0-out {
++		compatible = "hdmi-connector";
++		label = "HDMI0 OUT";
++		type = "a";
++
++		port {
++			hdmi0_con: endpoint {
++			};
++		};
++	};
++
++	hdmi1-out {
++		compatible = "hdmi-connector";
++		label = "HDMI1 OUT";
++		type = "a";
++
++		port {
++			hdmi1_con: endpoint {
++			};
++		};
++	};
++
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -113,14 +135,6 @@
+ 		regulator-always-on;
+ 	};
+ 
+-	sound_card: sound {
+-		compatible = "audio-graph-card";
+-
+-		label = "rcar-sound";
+-
+-		dais = <&rsnd_port0>;
+-	};
+-
+ 	vbus0_usb2: regulator-vbus0-usb2 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -143,19 +157,6 @@
+ 		enable-active-high;
+ 	};
+ 
+-	vccq_sdhi0: regulator-vccq-sdhi0 {
+-		compatible = "regulator-gpio";
+-
+-		regulator-name = "SDHI0 VccQ";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <3300000>;
+-
+-		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+-		gpios-states = <1>;
+-		states = <3300000 1
+-			  1800000 0>;
+-	};
+-
+ 	vcc_sdhi3: regulator-vcc-sdhi3 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -180,26 +181,25 @@
+ 			  1800000 0>;
+ 	};
+ 
+-	hdmi0-out {
+-		compatible = "hdmi-connector";
+-		label = "HDMI0 OUT";
+-		type = "a";
++	vccq_sdhi0: regulator-vccq-sdhi0 {
++		compatible = "regulator-gpio";
+ 
+-		port {
+-			hdmi0_con: endpoint {
+-			};
+-		};
++		regulator-name = "SDHI0 VccQ";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
++		gpios-states = <1>;
++		states = <3300000 1
++			  1800000 0>;
+ 	};
+ 
+-	hdmi1-out {
+-		compatible = "hdmi-connector";
+-		label = "HDMI1 OUT";
+-		type = "a";
++	sound_card: sound {
++		compatible = "audio-graph-card";
+ 
+-		port {
+-			hdmi1_con: endpoint {
+-			};
+-		};
++		label = "rcar-sound";
++
++		dais = <&rsnd_port0>;
+ 	};
+ 
+ 	vga {
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index f519d0cf643c..e48cc5903394 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -17,11 +17,6 @@
+ 		ethernet0 = &avb;
+ 	};
+ 
+-	chosen {
+-		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
+-		stdout-path = "serial0:115200n8";
+-	};
+-
+ 	audio_clkout: audio-clkout {
+ 		/*
+ 		 * This is same as <&rcar_sound 0>
+@@ -32,6 +27,11 @@
+ 		clock-frequency = <12288000>;
+ 	};
+ 
++	chosen {
++		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
++		stdout-path = "serial0:115200n8";
++	};
++
+ 	hdmi0-out {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -83,22 +83,6 @@
+ 		regulator-always-on;
+ 	};
+ 
+-	rsnd_ak4613: sound {
+-		compatible = "simple-audio-card";
+-
+-		simple-audio-card,format = "left_j";
+-		simple-audio-card,bitclock-master = <&sndcpu>;
+-		simple-audio-card,frame-master = <&sndcpu>;
+-
+-		sndcpu: simple-audio-card,cpu {
+-			sound-dai = <&rcar_sound>;
+-		};
+-
+-		sndcodec: simple-audio-card,codec {
+-			sound-dai = <&ak4613>;
+-		};
+-	};
+-
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -123,6 +107,22 @@
+ 			  1800000 0>;
+ 	};
+ 
++	rsnd_ak4613: sound {
++		compatible = "simple-audio-card";
++
++		simple-audio-card,format = "left_j";
++		simple-audio-card,bitclock-master = <&sndcpu>;
++		simple-audio-card,frame-master = <&sndcpu>;
++
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
++
++		sndcodec: simple-audio-card,codec {
++			sound-dai = <&ak4613>;
++		};
++	};
++
+ 	x12_clk: x12 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+-- 
+2.11.0
 
->
-> >
-> > Yoshihiro Kaneko (2):
-> >   dt-bindings: thermal: rcar-thermal: add R8A77990 support
-> >   thermal: rcar_thermal: add R8A77990 support
-> >
-> >  Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
-> >  drivers/thermal/rcar_thermal.c                             | 4 ++++
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > --
-> > 1.9.1
-> >
