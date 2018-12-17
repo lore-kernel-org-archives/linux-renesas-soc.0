@@ -2,122 +2,172 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC73C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 774E9C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 17:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA172145D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:46:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="fpSXg3Zy"
+	by mail.kernel.org (Postfix) with ESMTP id 4437720874
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 17:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545066072;
+	bh=d7RFdOT+I4+zlnzsZLHSV76vr7cgmyPTr45Jozo+wI0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=qvVLb5X18WykYFSuA+GvmQIseliCLqNHp7HXFp0tv8r28eyYBvytu3mhiMdlMDMXU
+	 p/hrdmwlQPDV21Sp3RbcSIFwst2MHmRahoSmwu7NRO5VkLJnehOdDewSrJvSRpmazg
+	 +IxZMsIPlFTSkANx3njpePIcUEM0ojCH3eQhc9us=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388292AbeLQQqI (ORCPT
+        id S1728051AbeLQRBM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:46:08 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43679 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727771AbeLQQqH (ORCPT
+        Mon, 17 Dec 2018 12:01:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726657AbeLQRBL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:46:07 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q2-v6so452252lji.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Dec 2018 08:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oyWj8GQLZkzmzSwjiuKRTZ/4Niy2YlTsakQt/1imZg4=;
-        b=fpSXg3Zy4cSaTcXNcefbFmtIi666kJ8GvHIYaqaDUPVQLdDbml8oAIVA41HaMtUl4P
-         JhrPXsV1lDiHO6N5SWk5ZYRXyShEcs4A2lpLNNhcCvR38aJZQq3tpPFgno0mXC4XlW5z
-         dKdo0LcPEbIptyV9i15wve9Jgw2orEwaMOaqeIBo4+wY89ZuOMk3rWYqy1j6Th3zd1Dr
-         jhC51Rt6ft55xsZdq1zW+H9Cr9RhUiCl3XuvT6uMjoXqlUNeIP73HzLu4ocNydyLpxM6
-         fI6ztbp16HeaDHgv/tNgM7ByCqwTcyiRKJP1u17j5+DDEk8tmzlIzmD+bO5N1vJg5Tdp
-         8wFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=oyWj8GQLZkzmzSwjiuKRTZ/4Niy2YlTsakQt/1imZg4=;
-        b=ZhfynH8UrAhvr2fpeqYhetsixR+mICPAQIscs1you3/h93M1VVngmxdwYRdFWAil1i
-         MmmSaYq/BH3SRkFQocBA2AHnr+ZsSgF/mf1DAQijB+oiAbvSNdYpxPwCZcE8sPmJ4QGR
-         MrLJlp25tbZO5GinKuMh9ODS5oDNK92vf6NzImWIJvokIFZ1z6FZVvKGUVCh+4ttPJcE
-         12r4nkNQ4DDOZz3uf2BOSYSr3RBtgpz4eVzKgj6gg9RcmsLESgTi4tPjhEHHAnk6f7fT
-         qWiAcPbF1ix6eKihYSuIWYOiTKxE/aJuIUT1FGJmR7n8I0PrNS1Fc4N9OujaSrAE71xb
-         GwSw==
-X-Gm-Message-State: AA+aEWatfkEidWb2pW7RKt51Q0X5UnLNil3wr2kn7A8IkpEjBOqhse7z
-        GkIF4bRPV4qnuFk9D1Ogmc6ADQ==
-X-Google-Smtp-Source: AFSGD/UrFWxMzHvfWRNrbYUd7hq8EL/6QamUsu95uJbm2ojEpCqdQ8BdObdS3/w/381QZDoA8HJZiA==
-X-Received: by 2002:a2e:5303:: with SMTP id h3-v6mr183752ljb.35.1545065165607;
-        Mon, 17 Dec 2018 08:46:05 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.86.84])
-        by smtp.gmail.com with ESMTPSA id y24-v6sm2577463ljd.20.2018.12.17.08.46.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Dec 2018 08:46:04 -0800 (PST)
-Subject: Re: [PATCH 06/17] arm64: dts: renesas: r8a774c0: Add MSIOF nodes
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1544780260-27590-7-git-send-email-fabrizio.castro@bp.renesas.com>
- <f6834dd2-7a2d-5ca9-0961-2c992ce22002@cogentembedded.com>
- <TY1PR01MB17700E941C41403A2EEF3DE6C0BC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <ae733707-ebab-b85f-c1ab-71bc87339a9f@cogentembedded.com>
-Date:   Mon, 17 Dec 2018 19:46:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 17 Dec 2018 12:01:11 -0500
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E80CB21783;
+        Mon, 17 Dec 2018 17:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545066070;
+        bh=d7RFdOT+I4+zlnzsZLHSV76vr7cgmyPTr45Jozo+wI0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dvDqVv6xCALb3H2BwAQrOwnZQpbglWHYYi3KUS+pFrLwkIu1FUmd60CdkTWtwxyG9
+         9yjtBO5g5qmsTR2Sr+D7nW2Xf9IQ9hJidSFE7kkEzC31kpf32nCTgp5ojYaQp9bQy9
+         4gNAOZwy0u4EPPq7t1xXch9ocK5LAcNrI58YhoFc=
+Received: by mail-qt1-f176.google.com with SMTP id l12so12950994qtf.8;
+        Mon, 17 Dec 2018 09:01:09 -0800 (PST)
+X-Gm-Message-State: AA+aEWYwrfIEwp7iAy+ngAvgS/R9ZdLgZzluA5BtFLJ5NaWHQDTZcCDL
+        vvAkoqdgxtDh+hBNmMVa1h6ndbrfMseOvoRgaQ==
+X-Google-Smtp-Source: AFSGD/WzHwQxyxf3PSqMjpD7rqj+Sn2Zbw5lIFMsyz2eIXAgTpbucjkXV2vTaXF8k2y+EX5ilmb3heXRn/JJAeSOiUI=
+X-Received: by 2002:ac8:1712:: with SMTP id w18mr14040859qtj.76.1545066069065;
+ Mon, 17 Dec 2018 09:01:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB17700E941C41403A2EEF3DE6C0BC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <20181129130559.66732-1-chris.brandt@renesas.com>
+ <20181129130559.66732-3-chris.brandt@renesas.com> <20181212021549.GA26333@bogus>
+ <TYXPR01MB1568DD386FE18BD1F985E5178AA70@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+ <CAL_Jsq+Ah7Xg0VnEaYyn4giFeQme9r9GyRsFDucq78BP+Cw2=A@mail.gmail.com>
+ <TY2SPR01MB0015C0AC923F1CDEC44061D88AA70@TY2SPR01MB0015.jpnprd01.prod.outlook.com>
+ <CAL_JsqL5rLb+6Qhet0zqpHuqeU42wsFRJ+S48N0KPg43KxOiDg@mail.gmail.com> <TYXPR01MB156894C0FEE2A2CF02820A018ABC0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYXPR01MB156894C0FEE2A2CF02820A018ABC0@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 17 Dec 2018 11:00:57 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLkqUTWh7RkG8tdTNhaTOMTOovDstZCqC=croQbAWmJSg@mail.gmail.com>
+Message-ID: <CAL_JsqLkqUTWh7RkG8tdTNhaTOMTOovDstZCqC=croQbAWmJSg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r7s9210-rza2mevb: Add support for RZ/A2M EVB
+To:     Chris Brandt <Chris.Brandt@renesas.com>
+Cc:     Kumar Gala <kumar.gala@linaro.org>,
+        Simon Horman <horms@verge.net.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/17/2018 07:36 PM, Fabrizio Castro wrote:
+On Mon, Dec 17, 2018 at 10:22 AM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+>
+> On Monday, December 17, 2018 1, Rob Herring wrote:
+> > > But, XIP_KERNEL does not seem to be mainstream either.
+> >
+> > Part of the problem there is XIP_KERNEL doesn't work with
+> > multi-platform. I think that is mainly due to the dependency on
+> > run-time phys2virt patching. We should fix that such that either we
+> > can set a default phys_offset or possibly we could do some offline
+> > patching.
+>
+> Not really. I fixed all of that back in 4.6.
+>
+> The issue is more of the 'theoretical' kind.
+>
+> The ARM maintainer defines "multiplatform" as being able to build 1
+> binary image that can be run on multiple SoCs.
+> But...that won't work when you have to define the ROM/RAM area at
+> compile time.
+>
+> I prefer to think of "multiplatform" as a way of grouping like SoCs
+> together (if you need to) and use DT to sort out any differences.
 
-[...]
->>> Add the device nodes for all MSIOF SPI controllers on RZ/G2E SoC.
->>>
->>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->>> ---
->>>  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 62 +++++++++++++++++++++++++++++++
->>>  1 file changed, 62 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
->>> index 9532d29..9bd66b1 100644
->>> --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
->>> +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
->>> @@ -855,6 +855,68 @@
->>>  status = "disabled";
->>>  };
->>>
->>> +msiof0: spi@e6e90000 {
->>> +compatible = "renesas,msiof-r8a774c0",
->>> +     "renesas,rcar-gen3-msiof";
->>> +reg = <0 0xe6e90000 0 0x0064>;
->>
->>    Do we really need the leading zeros in the size cells?
-> 
-> We don't, I just kept it consistent with the same definitions for the other platforms.
-> Do you want me to send a v2 for this?
+Yes, I'm aware of all that. I did a bunch of the work to enable it.
 
-   Ah, consistency is good. Keep it then. :-)
+> Basically, I just need this simple patch in order to build and boot so I
+> can test kernel releases:
+>
+> [arch/arm/Kconfig]
+>
+> config XIP_KERNEL
+>         bool "Kernel Execute-In-Place from ROM"
+> -       depends on !ARM_LPAE && !ARCH_MULTIPLATFORM
+> +       depends on !ARM_LPAE
 
-MBR, Sergei
+Okay, I guess it's not that hard to enable if one wants. Perhaps all
+
+> However...I've given up on trying to get XIP_KERNEL enabled in Kconfig.
+> But, of course still keep an eye on all the 'code' in the ARM core to
+> make sure no one breaks it.
+
+
+> > > At the end of the day, all I want is for the kernel to do an ioremap of
+> > > this area for me so my file system (XIP cramfs in this case) can access
+> > > it. "mtd-rom" does this for me today.
+> >
+> > And partition layout? If it was only what to map, we could add a
+> > property in chosen or perhaps a reserved-memory node. But I doubt it
+> > will remain that simple. What happens when you have clock management
+> > and need to keep the SPI clock enabled for example.
+>
+> Yup...there's the killer!
+> You'll notice that in mainline RZ/A devices, there is no QSPI driver,
+> and also the QSPI clock is left out of the list of HW clocks. Otherwise,
+> as you mentioned, that 'unused' clock would get shut off at the end of
+> boot...and you're whole system would stop immediately.
+
+If you had a simple driver with the binding as I proposed, then it
+could do the ioremap and clock management. And you could also have
+specific SPI and flash drivers for when you need to flashing without
+changing the DT.
+
+> > The other option is just have your platform code instantiate an
+> > mtd-rom device. Either describe the h/w with DT or don't use DT.
+>
+> You mean in a 'board' file?
+
+Yes.
+
+> BTW, I still use board files for things that are too complicated for DT.
+
+As you should.
+
+> > > The other XIP file system that we use more often (AXFS, not in mainline)
+> > > does not require the partitions in DT at all, so it's really only
+> > > needed when using cramfs. So for now, maybe it would be better to just
+> > remove
+> > > this confusing portion of the dts.
+> >
+> > What does AXFS have that cramfs doesn't making it not need partitions?
+>
+> For AXFS, you pass in the physical address to your rootfs on the kernel
+> command line and then AXFS does the ioreapping itself inside the driver.
+>
+> When Nicolas Pitre started adding XIP mode to cramfs last year, he also
+> started out that way. But, that was rejected (as it was also rejected
+> when DAX was first started). The file system people said 'file system
+> drives should not have the ability to map physical memory themselves'.
+
+Right, I remember that now.
+
+> Another thing AXFS can do that Cramfs can't do (yet), is AXFS can within
+> *each file* select what pages will be XIP, and what ones will be
+> compressed. This saves a lot on Flash space when only your executable and
+> const pages are left as uncompressed XIP pages.
+>
+>
+> Chris
+>
