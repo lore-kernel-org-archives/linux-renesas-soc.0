@@ -2,77 +2,127 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8478EC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EED0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B4892084D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D9C12084D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 09:21:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ZRELySwu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731776AbeLQJSp (ORCPT
+        id S1731958AbeLQJVm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:18:45 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55733 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726776AbeLQJSp (ORCPT
+        Mon, 17 Dec 2018 04:21:42 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:37510 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbeLQJVm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 04:18:45 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0CF1AD0D63FA8;
-        Mon, 17 Dec 2018 17:18:43 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Mon, 17 Dec 2018
- 17:18:37 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <laurent.pinchart@ideasonboard.com>,
-        <kieran.bingham+renesas@ideasonboard.com>, <airlied@linux.ie>,
-        <daniel@ffwll.ch>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] drm/shmob: Fix return value check in shmob_drm_probe
-Date:   Mon, 17 Dec 2018 17:18:30 +0800
-Message-ID: <20181217091830.32624-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Mon, 17 Dec 2018 04:21:42 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id B15B425B781;
+        Mon, 17 Dec 2018 20:21:40 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1545038501; bh=p3HLIKUQb5QxJUoTQ/uch11n8f64f/WTjQY02KCx8bM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZRELySwuS9+MhLIOnBuHEMdqXDFhzJELQ/wh06h8Ty4WKxwZ0B1PQWxJPdH9+dx+t
+         M1yUwkVUEUZaJ3zT65vxoEORaeB/eGxD2WIHXzaU8KuYgGYAGdSj7JVWpI3Pin3hNN
+         Dr0JPxRd005JX0W4HCQYYZKX9OKBwjaHyMch8fuQ=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id C56C79402FB; Mon, 17 Dec 2018 10:21:38 +0100 (CET)
+Date:   Mon, 17 Dec 2018 10:21:38 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/3] arm64: defconfig: Enable scu-simple-card driver
+Message-ID: <20181217092138.g5kwssfxabiw7g7f@verge.net.au>
+References: <20181214115650.12443-2-horms+renesas@verge.net.au>
+ <874lbdj97x.wl-kuninori.morimoto.gx@renesas.com>
+ <20181217083642.6s34yp6dh6k56iie@verge.net.au>
+ <871s6gk0mr.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871s6gk0mr.wl-kuninori.morimoto.gx@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check should
-be replaced with IS_ERR().
+On Mon, Dec 17, 2018 at 05:49:34PM +0900, Kuninori Morimoto wrote:
+> 
+> Hi Simon
+> 
+> > Using renesas_defconfig as a base I find that without enabling
+> > CONFIG_SND_SIMPLE_SCU_CARD the following are enabled:
+> > 
+> >    CONFIG_SND_AUDIO_GRAPH_CARD
+> >    CONFIG_SND_SIMPLE_CARD
+> > 
+> > But I see:
+> > 
+> > [   12.209793] ALSA device list:
+> > [   12.212799]   No soundcards found.
+> > 
+> > With CONFIG_SND_SIMPLE_SCU_CARD also enabled (in the defconfig) I see:
+> > 
+> > [   14.087191] ALSA device list:
+> > [   14.090195]   #0: rsnd-ak4613
+> 
+> Thanks.
+> 56629fcba94c698d8c5be3413981506479566869
+> ("arm64: dts: renesas: ebisu: Enable Audio")
+> is using "simple-scu-audio-card", but it should be "simple-audio-card".
+> Can you add and test this patch ?
+> CONFIG_SND_SIMPLE_SCU_CARD is no longer needed, I think.
 
-Fixes: 8f1597c8f1a5 ("drm: shmobile: Perform initialization/cleanup at probe/remove time")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/shmobile/shmob_drm_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-index 8554102..f2cfd16 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-@@ -229,8 +229,8 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	sdev->mmio = devm_ioremap_resource(&pdev->dev, res);
--	if (sdev->mmio == NULL)
--		return -ENOMEM;
-+	if (IS_ERR(sdev->mmio))
-+		return PTR_ERR(sdev->mmio);
- 
- 	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
- 	if (ret < 0)
--- 
-2.7.0
+Thanks Morimoto-san,
 
+I confirm that Sound on Ebisu-4D appears to work with a)
+CONFIG_SND_SIMPLE_SCU_CARD disabled and b) the following patch applied.
 
+> 
+> --------------
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> index 62bdddc..649d3fd 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> @@ -159,16 +159,13 @@
+>  	};
+>  
+>  	rsnd_ak4613: sound {
+> -		compatible = "simple-scu-audio-card";
+> +		compatible = "simple-audio-card";
+>  
+>  		simple-audio-card,name = "rsnd-ak4613";
+>  		simple-audio-card,format = "left_j";
+>  		simple-audio-card,bitclock-master = <&sndcpu>;
+>  		simple-audio-card,frame-master = <&sndcpu>;
+>  
+> -		simple-audio-card,prefix = "ak4613";
+> -		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
+> -		"DAI0 Capture", "ak4613 Capture";
+>  		sndcpu: simple-audio-card,cpu {
+>  			sound-dai = <&rcar_sound>;
+>  		};
+> --------------
+> 
+> 
+> Best regards
+> ---
+> Kuninori Morimoto
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
