@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55497C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11947C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25FBA206A2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5BA5206A2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="AQ7/0oCl"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Gg+p+50t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731759AbeLQLpj (ORCPT
+        id S1732446AbeLQLq2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:45:39 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:39029 "EHLO
+        Mon, 17 Dec 2018 06:46:28 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:39063 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbeLQLpj (ORCPT
+        with ESMTP id S1726642AbeLQLq2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:45:39 -0500
+        Mon, 17 Dec 2018 06:46:28 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id AD1DB25B781;
-        Mon, 17 Dec 2018 22:45:36 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0125825B781;
+        Mon, 17 Dec 2018 22:46:26 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545047137; bh=qruX90xiysWfC7UmVanhzYs1lhPA85pdY2eU5fEPZ38=;
+        t=1545047186; bh=A53Mtttz9VEgYtbNw+jovpnaPOCFMZAG57X0B6zTJCU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AQ7/0oCl5iATuCGhu04aWdfJ1+5ps5MgRREVKOjQthkd52ySUoUIoN1vjpdZ0SZSm
-         M1+Zs7FYVB5WpAhhCWbW6EWK961tGm08KCJapkPuiSVQ1hFqcaJgGT3u4wJMkyfn3r
-         Iwc8v6Uk4Jq+rzrWGS44ETktkYdMgCfsqB07b1/g=
+        b=Gg+p+50tfIwL1OEByGCW8Rm7jn3h0fYUst1IbwzUZskcn3jyK4/wsgj6pO9DPPPJu
+         PIQ1KWJvTwxpWEJU7kxUIy5kd4csXVwfazY9aencEtcMII1qRMOxtJEc12fw8loInH
+         qvxvT0jlDfYY2iAf++DSTjMpOudh/aZlkkiYgVk8=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 1A37C94048A; Mon, 17 Dec 2018 12:45:35 +0100 (CET)
-Date:   Mon, 17 Dec 2018 12:45:35 +0100
+        id 5B7BA94048A; Mon, 17 Dec 2018 12:46:24 +0100 (CET)
+Date:   Mon, 17 Dec 2018 12:46:24 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Marek Vasut <marek.vasut@gmail.com>
 Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
@@ -43,15 +43,15 @@ Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Eduardo Valentin <edubezval@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH V2 5/6] thermal: rcar_thermal: Convert to
- devm_thermal_zone_of_sensor_register_params()
-Message-ID: <20181217114534.6mer5eto67vlyzph@verge.net.au>
+Subject: Re: [PATCH V2 3/6] thermal: Register hwmon in
+ thermal_zone_of_sensor_register_param()
+Message-ID: <20181217114624.pgy6vyiboy7jf7nq@verge.net.au>
 References: <20181215023010.2857-1-marek.vasut+renesas@gmail.com>
- <20181215023010.2857-6-marek.vasut+renesas@gmail.com>
+ <20181215023010.2857-4-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181215023010.2857-6-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181215023010.2857-4-marek.vasut+renesas@gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -59,10 +59,17 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Dec 15, 2018 at 03:30:09AM +0100, Marek Vasut wrote:
-> Convert the rcar code to devm_thermal_zone_of_sensor_register_params(),
-> no functional change.
-> 
+On Sat, Dec 15, 2018 at 03:30:07AM +0100, Marek Vasut wrote:
+> Register hwmon sysfs interface in thermal_zone_of_sensor_register_param()
+> in case thermal_zone_params->no_hwmon is set to false. This behavior is
+> the same as thermal_zone_device_register().
+
+If it is the same then is there any value in a helper function?
+
+Regardless, this patch looks good to me.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 > Cc: Eduardo Valentin <edubezval@gmail.com>
@@ -70,98 +77,50 @@ On Sat, Dec 15, 2018 at 03:30:09AM +0100, Marek Vasut wrote:
 > Cc: Zhang Rui <rui.zhang@intel.com>
 > Cc: linux-renesas-soc@vger.kernel.org
 > To: linux-pm@vger.kernel.org
-
-This patch looks good to me, though I'm not sure why { } need
-to be introduced into the 4th hunk.
-
-That notwithstanding:
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
 > ---
 > V2: No change
 > ---
->  drivers/thermal/rcar_thermal.c | 33 +++++++++++++--------------------
->  1 file changed, 13 insertions(+), 20 deletions(-)
+>  drivers/thermal/of-thermal.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-> index 8014a207d8d9..ec70c2119c77 100644
-> --- a/drivers/thermal/rcar_thermal.c
-> +++ b/drivers/thermal/rcar_thermal.c
-> @@ -19,8 +19,6 @@
->  #include <linux/spinlock.h>
->  #include <linux/thermal.h>
+> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+> index e1a303a5698c..5ccff7b678de 100644
+> --- a/drivers/thermal/of-thermal.c
+> +++ b/drivers/thermal/of-thermal.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/string.h>
 >  
-> -#include "thermal_hwmon.h"
-> -
->  #define IDLE_INTERVAL	5000
+>  #include "thermal_core.h"
+> +#include "thermal_hwmon.h"
 >  
->  #define COMMON_STR	0x00
-> @@ -54,6 +52,10 @@ struct rcar_thermal_chip {
->  	unsigned int nirqs;
->  };
+>  /***   Private data structures to represent thermal device tree data ***/
 >  
-> +static struct thermal_zone_params rcar_thermal_params = {
-> +	.no_hwmon	= false,
-> +};
+> @@ -521,8 +522,15 @@ thermal_zone_of_sensor_register_params(struct device *dev, int sensor_id,
+>  		if (sensor_specs.np == sensor_np && id == sensor_id) {
+>  			tzd = thermal_zone_of_add_sensor(child, sensor_np,
+>  							 data, ops);
+> -			if (!IS_ERR(tzd))
+> +			if (!IS_ERR(tzd)) {
+> +				tzd->tzp = tzp;
+>  				tzd->ops->set_mode(tzd, THERMAL_DEVICE_ENABLED);
+> +				if (!tzp || !tzp->no_hwmon) {
+> +					ret = thermal_add_hwmon_sysfs(tzd);
+> +					if (ret)
+> +						tzd = ERR_PTR(ret);
+> +				}
+> +			}
+>  
+>  			of_node_put(sensor_specs.np);
+>  			of_node_put(child);
+> @@ -605,6 +613,8 @@ void thermal_zone_of_sensor_unregister(struct device *dev,
+>  
+>  	tz = tzd->devdata;
+>  
+> +	thermal_remove_hwmon_sysfs(tzd);
 > +
->  static const struct rcar_thermal_chip rcar_thermal = {
->  	.use_of_thermal = 0,
->  	.has_filonoff = 1,
-> @@ -458,9 +460,7 @@ static int rcar_thermal_remove(struct platform_device *pdev)
->  	rcar_thermal_for_each_priv(priv, common) {
->  		rcar_thermal_irq_disable(priv);
->  		cancel_delayed_work_sync(&priv->work);
-> -		if (priv->chip->use_of_thermal)
-> -			thermal_remove_hwmon_sysfs(priv->zone);
-> -		else
-> +		if (!priv->chip->use_of_thermal)
->  			thermal_zone_device_unregister(priv->zone);
->  	}
->  
-> @@ -554,16 +554,20 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->  		if (ret < 0)
->  			goto error_unregister;
->  
-> -		if (chip->use_of_thermal)
-> -			priv->zone = devm_thermal_zone_of_sensor_register(
-> +		if (chip->use_of_thermal) {
-> +			priv->zone =
-> +				devm_thermal_zone_of_sensor_register_params(
->  						dev, i, priv,
-> -						&rcar_thermal_zone_of_ops);
-> -		else
-> +						&rcar_thermal_zone_of_ops,
-> +						&rcar_thermal_params);
-> +		} else {
->  			priv->zone = thermal_zone_device_register(
->  						"rcar_thermal",
->  						1, 0, priv,
->  						&rcar_thermal_zone_ops, NULL, 0,
->  						idle);
-> +		}
-> +
->  		if (IS_ERR(priv->zone)) {
->  			dev_err(dev, "can't register thermal zone\n");
->  			ret = PTR_ERR(priv->zone);
-> @@ -571,17 +575,6 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->  			goto error_unregister;
->  		}
->  
-> -		if (chip->use_of_thermal) {
-> -			/*
-> -			 * thermal_zone doesn't enable hwmon as default,
-> -			 * but, enable it here to keep compatible
-> -			 */
-> -			priv->zone->tzp->no_hwmon = false;
-> -			ret = thermal_add_hwmon_sysfs(priv->zone);
-> -			if (ret)
-> -				goto error_unregister;
-> -		}
-> -
->  		rcar_thermal_irq_enable(priv);
->  
->  		list_move_tail(&priv->list, &common->head);
+>  	/* no __thermal_zone, nothing to be done */
+>  	if (!tz)
+>  		return;
 > -- 
 > 2.18.0
 > 
