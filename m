@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF86DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B27C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D875206A2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37236206A2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 11:04:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="BjE5cTp5"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="f4e2yHvw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbeLQLDi (ORCPT
+        id S1727009AbeLQLEA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 06:03:38 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38605 "EHLO
+        Mon, 17 Dec 2018 06:04:00 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:38621 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbeLQLDi (ORCPT
+        with ESMTP id S1726463AbeLQLD7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 06:03:38 -0500
+        Mon, 17 Dec 2018 06:03:59 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5E65E25B7CF;
-        Mon, 17 Dec 2018 22:03:35 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2596F25B781;
+        Mon, 17 Dec 2018 22:03:57 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545044615; bh=DeHipYXyAGLHeL9SZMO68oBsYE7tFhYWHhZ33XeaKpo=;
+        t=1545044637; bh=srASeKKiO+FAYSstQB8lVBQZnxWWvRZVNuuAzuDHjD0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BjE5cTp5TXvkx0KCcUbSuW+L7Dsmo7lEPR3i6DTD1LkVp4EgJVyORVxqELT0VksPn
-         8zEW94KAOxUIdIP72u9qzyqFrBe/5dLPxrXaubNBi/trVUs8cGQcLHWwlWmDN+THDe
-         Wuw42JDKmUATi6rKX6Or2QW51hcQ6PXs6ebP+23k=
+        b=f4e2yHvwSgJVDVHXLEAYAGZ762wbh9ccshKo5zuWp6Rrol5uWRJW7g2pvsVkJhJwo
+         JaMokT+bXqgqshcde7uafezhDGX+zUFRwKOTl79labSJ9fCoFlnTBAlIUaOPPShIEx
+         z7qHJadlLtN8zBSFHl/xYbEr2zfk2nibjUHTdtwg=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id A3D0394048A; Mon, 17 Dec 2018 12:03:33 +0100 (CET)
-Date:   Mon, 17 Dec 2018 12:03:33 +0100
+        id 74EE994048A; Mon, 17 Dec 2018 12:03:55 +0100 (CET)
+Date:   Mon, 17 Dec 2018 12:03:55 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -43,15 +43,15 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH 14/17] arm64: dts: renesas: r8a774c0: Connect RZ/G2E AVB
- to IPMMU
-Message-ID: <20181217110333.ywoy762mwbpxtxxp@verge.net.au>
+Subject: Re: [PATCH 15/17] arm64: dts: renesas: r8a774c0: Connect RZ/G2E
+ Audio-DMAC to IPMMU
+Message-ID: <20181217110355.rtxgonrifjl6yguk@verge.net.au>
 References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1544780260-27590-15-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1544780260-27590-16-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544780260-27590-15-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544780260-27590-16-git-send-email-fabrizio.castro@bp.renesas.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -59,8 +59,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:37:37AM +0000, Fabrizio Castro wrote:
-> Hook up the RZ/G2E AVB device to IPMMU-DS0 as stated by the
+On Fri, Dec 14, 2018 at 09:37:38AM +0000, Fabrizio Castro wrote:
+> Hook up the RZ/G2E Audio-DMAC device to IPMMU-MP as stated by the
 > RZ/G2 User's manual.
 > 
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
