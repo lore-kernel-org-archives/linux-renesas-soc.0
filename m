@@ -2,134 +2,92 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9925C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE89BC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F4BF2146E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:26:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3E8620874
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 13:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732691AbeLQN0o (ORCPT
+        id S1732697AbeLQN2A (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 08:26:44 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:43027 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732510AbeLQN0o (ORCPT
+        Mon, 17 Dec 2018 08:28:00 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:34988 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732530AbeLQN2A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 08:26:44 -0500
-Received: by mail-ua1-f65.google.com with SMTP id z11so4398167uaa.10;
-        Mon, 17 Dec 2018 05:26:43 -0800 (PST)
+        Mon, 17 Dec 2018 08:28:00 -0500
+Received: by mail-ua1-f67.google.com with SMTP id d2so4411282ual.2;
+        Mon, 17 Dec 2018 05:27:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pccTC63C+lQdjSZmfnXxolQi1CvHkUj/PbFYZrHdocI=;
-        b=buaOOVRPvjK9+VGcF7SLL3kNLJx4V+Uwf3f+llF6JX/7Ks3IAWGxG/b8Nflr0/Ey8c
-         n8wr7CiU34WdqFtjfZqhxxpXEUDEuNy9NVzsrDEZotsIaSlNMSJ5jQw/8n2wFDc5Ke2F
-         meiC6eoGObUk3CPXTBbFP38DRM743wj5aMtssxeouEokBy2iEd7wmGkZgqYnAe2wcCil
-         V/2WScnTVPKaBEpQDhLWH1M7ZGvh6chJlpTPTGVbyC+00SGQ5yeLpf67EIEBwS/4Sf83
-         msOyyPOAaTdiUAos9zw3KECQT9hE272AFlScbxYgE4LxqT4tGxJ8ogjCUKGPv7GUbKIY
-         XdUw==
-X-Gm-Message-State: AA+aEWaRqBZA/6c0j78IqKBC7uAdEkXzHyXD9wq18mkzfmULexupfrZZ
-        /CTyh1a60NWhFcupU8/trgWBJ5PR6m2UtVAOCzM=
-X-Google-Smtp-Source: AFSGD/VUXAu5QfiEyOaoh4RAGXBRQhlREyE5K4HFOtvAG02dVQtQI9UtTXpzoMxkcWwRE2ndr0FuNubuTenEWdTVYmw=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr6431574uap.0.1545053202594;
- Mon, 17 Dec 2018 05:26:42 -0800 (PST)
+        bh=6MQ5XPudCqK0rROsykO0vnnpSXP4su7j4qzNKEokOU0=;
+        b=JWF50qYge484oiT1cEUd1JHLyW/SfidP/qUBA+WXIceVmpZ61BCeGY0Qku1gh6bfi+
+         ZlsaEuUC8B1V69pk+wEtoJIafcMgo0TaUxDlLzInKiTuT3Z4306cDml8OxleDdfk8BKs
+         ulDRCBsqTbJ+I+33BFigtjrAsYaUpBL9FkEGuXMmpoPmkslAkuggb8dtEiCteVztf5a0
+         H9Upm0Mx9KkwM01UTd4IzXhR3Zbo+PO1Hej8FkViel/thHRvYgz2kgUSQjMJCufkuw7v
+         8Vpj4sZIkBvCoSiV0djvfFeuTMh+ADGehU/3ThOaPQY9mb9Ql5T+yjikvi7vPnmWIzQY
+         JsMQ==
+X-Gm-Message-State: AA+aEWYa7VorS69lWQqQBT8M5Tejcdh8My/4+bezT4CLdsNYZP15lHa/
+        hurj1lc/PZcFgYJ0O5R+CruOEB+6soaI+9Or/v0=
+X-Google-Smtp-Source: AFSGD/WGXNfuZ8q+HpTDeG6HEjQpilpACw4UfpirzUTezXOy/HV+GRYA9nlazmDl5PJdv+ls1hv6DWnjWP3/VjEpfgM=
+X-Received: by 2002:ab0:1393:: with SMTP id m19mr5956580uae.75.1545053278973;
+ Mon, 17 Dec 2018 05:27:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20181212014927.25840-1-marek.vasut+renesas@gmail.com>
- <20181212014927.25840-2-marek.vasut+renesas@gmail.com> <20181215172351.GB10311@localhost.localdomain>
- <baebd957-e527-fd03-bbaf-cbfa4a7624ed@gmail.com> <CAMuHMdWEuiPnZfeNA+T_Gp6W7EAGimrb9Z=rU590OnPz2-MLow@mail.gmail.com>
- <270eeb39-140f-7f55-75d3-c2a6d9ab4034@gmail.com> <CAMuHMdUAVYk0Xx56H+V1usFa3627Zk7erewrtP-2HG02neit9A@mail.gmail.com>
- <076ebc8e-32a3-99bf-6d8a-7a0bae22b427@gmail.com> <CAMuHMdUJPLu2H5dYZjFG1oKYOoXiQGE6_S8BFK8c7Nue_Dfqzg@mail.gmail.com>
- <09902cc4-ef25-cd36-0d4a-effeabcd233f@gmail.com> <CAMuHMdV4jtF6nqH2RMLpg3gQu5Gok050kW+o0p8fzpZYyv9GAQ@mail.gmail.com>
- <31978c47-cd1b-7c61-0d6a-09e443147b52@gmail.com> <CAMuHMdVVoTF0vP_k4Qw8MYqBZEb9ei0LcT2NRJeBRm1tdd4T+Q@mail.gmail.com>
- <04bcb195-0668-4d8d-1f86-c53c3a142183@gmail.com> <CAMuHMdUnH5-YeGcQdbyJP2KNZFS=zxhSb7PZ1ZhLCqFxiw=TnQ@mail.gmail.com>
- <74305798-9405-4f82-36a6-1f5cc515eaf6@gmail.com>
-In-Reply-To: <74305798-9405-4f82-36a6-1f5cc515eaf6@gmail.com>
+References: <20181213184444.21904-1-geert+renesas@glider.be>
+ <20181213184444.21904-3-geert+renesas@glider.be> <20181217132241.4lbaeshn2rnlhjqe@verge.net.au>
+In-Reply-To: <20181217132241.4lbaeshn2rnlhjqe@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Dec 2018 14:26:29 +0100
-Message-ID: <CAMuHMdWUNiCf8GXGq-cThF+h8JwQv6ZQJEC5D4vqQ=AF-9GsOw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] thermal: split thermal_zone_of_sensor_register{,_param}()
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+Date:   Mon, 17 Dec 2018 14:27:47 +0100
+Message-ID: <CAMuHMdUHUUEd0KQ3NP4M_hiYuwcyYRMiET3BamC4Qmrc3oEBBA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] serial: sh-sci: Fix crash in rx_timer_fn() on PIO fallback
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
+Hi Simon,
 
-On Sun, Dec 16, 2018 at 9:50 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 12/16/2018 09:08 PM, Geert Uytterhoeven wrote:
-> [...]
->
-> >>>>> Git actually does that automatically, assumed your user.email config matches
-> >>>>> the From: address that is used in your outgoing email delivery path (i.e. the
-> >>>>> scrubbed one, when using Gmail's SMTP server).
-> >>>>> If you lie to git in your user.email config, git cannot do the right
-> >>>>> thing, obviously.
-> >>>>
-> >>>> My git user.email obviously matches the From: field , before the
-> >>>> scrubbing, which I believe is the correct thing to do.
-> >>>
-> >>> I disagree, because that is not how the emails are actually going out from the
-> >>> SMTP server you are using.
-> >>
-> >> Can you summarize, clearly, what you believe is the right thing to
-> >> configure and where ?
+On Mon, Dec 17, 2018 at 2:22 PM Simon Horman <horms@verge.net.au> wrote:
+> On Thu, Dec 13, 2018 at 07:44:42PM +0100, Geert Uytterhoeven wrote:
+> > When falling back to PIO, active_rx must be set to a different value
+> > than cookie_rx[i], else sci_dma_rx_find_active() will incorrectly find a
+> > match, leading to a NULL pointer dereference in rx_timer_fn() later.
 > >
-> > According to git-send-email(1), you can either pass your scrubbed email
-> > address to --from, or configure it in the sendemail.from config option.
-> > Does that work for you?
->
-> So sendemail.from != user.email , the later has the +tag while the
-> former does not ?
-
-Right.
-
-> >>>>>> from the same person/email address as the email address in From, so they
-> >>>>>> are equal.
-> >>>>>
-> >>>>> If they differ, they are not equal ;-)
-> >>>>
-> >>>> Depends on how you define 'equal' . Here I think foo+bar@example.com
-> >>>> should be considered equal to foo@example.com .
-> >>>
-> >>> That is domain-specific knowledge, which you cannot rely upon.
+> > Use zero instead, which is the same value as after driver
+> > initialization.
 > >
-> >>>> Aha, so maybe that enhancement needs further enhancement to scrub the
-> >>>> +tags before the check ?
-> >>>
-> >>> Again, that is domain-specific knowledge, which you cannot rely upon.
-> >>
-> >> How so, please elaborate .
-> >
-> > In general, you cannot assume the "+foo" part can be ignored. Only the sender
-> > knows.
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> How so ?
+> This looks good so to me long as dmaengine_submit() doesn't return 0.
+> Is that the case?
 
-It depends on the domain.
+include/linux/dmaengine.h:
 
-Is Bill.Gates@microsoft.com the same email address as
-Bill.Gates+foo@microsoft.com?
-Is Bill.Gates+1955@microsoft.com the same?
-Is Bill.Gates-1955@microsoft.com the same?
-
-I don't know. Only microsoft.com knows.
-So that's why you should compare email addresses verbatim (but case
-insensitive).
+/**
+ * typedef dma_cookie_t - an opaque DMA cookie
+ *
+ * if dma_cookie_t is >0 it's a DMA request cookie, <0 it's an error code
+ */
+typedef s32 dma_cookie_t;
+#define DMA_MIN_COOKIE  1
 
 Gr{oetje,eeting}s,
 
