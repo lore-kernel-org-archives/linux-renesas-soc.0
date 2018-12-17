@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3723FC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E20C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12E85206A2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCB5B206A2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:08:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388148AbeLQQHv (ORCPT
+        id S2388037AbeLQQIZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:07:51 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44862 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbeLQQHu (ORCPT
+        Mon, 17 Dec 2018 11:08:25 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40968 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbeLQQIZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:07:50 -0500
-Received: by mail-vs1-f68.google.com with SMTP id g68so8005159vsd.11;
-        Mon, 17 Dec 2018 08:07:50 -0800 (PST)
+        Mon, 17 Dec 2018 11:08:25 -0500
+Received: by mail-vs1-f65.google.com with SMTP id t17so7999007vsc.8;
+        Mon, 17 Dec 2018 08:08:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TEmt9UQL888+1tOfiArcrhyu/Q4JRD75G78ZJLqzNGI=;
-        b=H9mZclj6vI6fsjOmgeeJVKuPRksmjaz+uCKILM6e8fGEM5NKVmOFdWFZRFgMZfhr/5
-         ysXUpfAsCXsf22aQ/q6V9ZswreHHqF+axBbDZE8QC7DVOyUrOVCi/EqfZS6GDNz4pWf8
-         8mDwLfLUME35IwKPRSg7kK8UsH08+M+Jq8ET9yfBRGFkGLL8AbdKfXydHbnH5Qy2lk8D
-         Kh2CtEM8Cwh+l2EOf92ieNLnRetGBjp75awHzj7IsjgNY6/EiQVWDzckI0sm1p4uDC1D
-         Dj1fR646qcUtdjkTUQEpJp1RHGuK5StA49HA4/ivkOkyoJC3qupHcMNs2TQieTDK3Lz6
-         Fnww==
-X-Gm-Message-State: AA+aEWZ2efUkSAGw8v5KGKeDblM0e+wRtPh7OlBnpg9gHie8wedOU+dN
-        2tTx9Mxv8BjLMDY0e3Y3OQ/wrsWiMa9TT3+mkzg=
-X-Google-Smtp-Source: AFSGD/U/4u48KlbYVfsqNL0eznJmiQ9JwTkJrUmR5mKJTVmjDJz9oIvTw+kx1rWHq5t3cdHxmypcYqKSXiHN3u9MfuU=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr6060818vsj.11.1545062869420;
- Mon, 17 Dec 2018 08:07:49 -0800 (PST)
+        bh=fPjILAC2gZ51cWXfJFJJTrPxbjf7fwfC2WhFq/WWvak=;
+        b=AuzBFk9OzGojEvhX+uCaZaLkXd6TfnqT4r+8w10ODgp+s4phABna6JiaXibz844KqK
+         nhBxwDF9xb+Z2/7ifxFVQepzCrBZRFBf/lC4N5xY9X2nk0pT1+C8CpXNuQKMut7XYsqG
+         76TSvOcAUrIXaL0jznnH4VEJWQM2A68B6PTXzOte/Cc67y+xrvl8oEiQGpfBHqIE8gCB
+         VVmWDFrMzvABXMliimJF4Tdr75xInGMUskAc103mKz9gch4G17kHZLoGGbTgq1h0BBZM
+         GfhAJVOjKplCsBk95kAEXUI7zX0wSIppISMdfWp6btEnQSFO+haomRbP1gvbzr4Ze1p9
+         zL6g==
+X-Gm-Message-State: AA+aEWbzFu4ZatjtR+DcfoOLiC+hvwQfBJgJI3Slnx3W8YlMXQ47UvD8
+        zPUe8yVA6JklFoN/IDsHVBZnWmNbr6bdQya5Fqc=
+X-Google-Smtp-Source: AFSGD/UjKE+yFiA/rN63jtFaHqyOseJAaJIF2k3WBnRoFT8gx3I8/pjKKrOnyLbe8VbCCUTNS3PW1RxPHvjqFF8U8Wo=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr6660118vsp.166.1545062903787;
+ Mon, 17 Dec 2018 08:08:23 -0800 (PST)
 MIME-Version: 1.0
-References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544778613-24279-9-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544778613-24279-9-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544778613-24279-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544778613-24279-10-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544778613-24279-10-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Dec 2018 17:07:37 +0100
-Message-ID: <CAMuHMdUW7Ji+amR93HoNJjTu_+HdMrtJOUMcZ-cQGBPaMnPeZw@mail.gmail.com>
-Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a774c0: Add watchdog support
+Date:   Mon, 17 Dec 2018 17:08:11 +0100
+Message-ID: <CAMuHMdV8shJvksgeCXgfVWKPvecyQRBs_rC9jQ5iXtanetC9Tg@mail.gmail.com>
+Subject: Re: [PATCH 9/9] arm64: dts: renesas: r8a774c0: Add secondary CA53 CPU core
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Simon Horman <horms@verge.net.au>,
@@ -65,8 +65,9 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Fri, Dec 14, 2018 at 10:10 AM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Add watchdog support to the RZ/G2E (a.k.a. R8A774C0) SoC
-> specific device tree.
+> Add a device node for the second Cortex-A53 CPU core on the Renesas
+> RZ/G2E (a.k.a r8a774c0) SoC, and adjust the interrupt delivery masks
+> for the ARM Generic Interrupt Controller and Architectured Timer.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
