@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3B1C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D99C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C78820675
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:15:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDD6D20672
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:17:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbeLQQPo (ORCPT
+        id S2387907AbeLQQRl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:15:44 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36825 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbeLQQPn (ORCPT
+        Mon, 17 Dec 2018 11:17:41 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:36465 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbeLQQRl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:15:43 -0500
-Received: by mail-ua1-f66.google.com with SMTP id j3so4619505uap.3;
-        Mon, 17 Dec 2018 08:15:43 -0800 (PST)
+        Mon, 17 Dec 2018 11:17:41 -0500
+Received: by mail-vk1-f194.google.com with SMTP id 185so1286978vkc.3;
+        Mon, 17 Dec 2018 08:17:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UNYYzSLq/Fj9ei5MgQmkB40paznf+UWhlbyVfCJsbVI=;
-        b=QvDvao4r/O7j5T617YLQFPq2f01waSijN9H0vq7zf8YGjemOvWYYF/yAeNkcfGZ4s4
-         prldnUb3olcTayIES4UPdacpgm7XjJVd0d2ZkJ4tNbpUYH1aUEUfBBp60M2LknEdNs61
-         qIWPEEhVVrYVKgO5vVnd+FrJX4xu8BRknD0HYV9SBQPhw33W7IhJrlOo6upwhnR5ByJ7
-         32WaiOdC/75GqnIG+tjnFuLbxnYmAgvkdE1hYxJKcbiuET3hrtDwfwD2HMAKK5sYIYdJ
-         ufC8tnemOz36hYZNN6P7A+5/CcYBXLjjsLFPa3/oUFPhoP4VmgtQgkxDGmb7T/Q7dWkG
-         URyA==
-X-Gm-Message-State: AA+aEWb5ayZFfPhXKoL2wNk9G/gHkqoNu+DXI9TR9ipOmDiMvPBL8wIN
-        Cer9i5Emu6hi0G4/tMayK3neEVoJagfmXqFFl/U=
-X-Google-Smtp-Source: AFSGD/X+kzBH16mvWenXGeXqoFY6+NYb+kNogO10c6/ErrG3dzbv4oRfkpaHdGsn8HvyyLUMRLNHIhm5gDtnPZY+Moo=
-X-Received: by 2002:ab0:1393:: with SMTP id m19mr6258456uae.75.1545063342575;
- Mon, 17 Dec 2018 08:15:42 -0800 (PST)
+        bh=SLjk3hSRMIQigVQdF3yOme1lgHa3AVndtuV8MU1qDHg=;
+        b=HBFMeCv8brYQ6B4c3/x1rqGbp7RQrE+ZCQLWxcPPQhULq2ib6JXzea0/A8Yov2lADV
+         RbQGfcqlFslB0QvR6HE5X+XMVJ8wA/H86zLDfBUX3/ufNtONXdsVZ7MsIITEACUVNj2I
+         SZPGMftcekyyOQR8eMiz4RFkhIMPWuat3ao48CDPCbb2cmcpDMmnTT99xB/1p+7vFWQU
+         5c3gmZUutWXTb2Wgcr9n4ZW+ECHKQ2OfCkSH2B2clIMgb7PCSNO2rzRDDR5PUjcFPP3o
+         oE1fgJCgDQyStVICDmojpufdOjJrgODOkD0kLxsvqSsq9RX2bE/atVjaWVnjKLU950FG
+         Uj8A==
+X-Gm-Message-State: AA+aEWZvEvV1GyFYhiiuq8RLHGvuaMSrhOE3wxdmvLeb1s2hocs2Az8a
+        4MwgtOldj81GU2aaxeYq4XfPxtVsOeI9qRBHbE3eIgz0E9E=
+X-Google-Smtp-Source: AFSGD/XIEmotJEKk87aUhTs9tZEFSt+aXyXFOOv4c3BkflemAN+ayNltrMlLASt7VFFxOoVL9fqRkUJMJrchQaYKi48=
+X-Received: by 2002:a1f:2145:: with SMTP id h66mr6275177vkh.65.1545063459866;
+ Mon, 17 Dec 2018 08:17:39 -0800 (PST)
 MIME-Version: 1.0
-References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544780260-27590-11-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544780260-27590-11-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544780260-27590-12-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544780260-27590-12-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Dec 2018 17:15:29 +0100
-Message-ID: <CAMuHMdWvbKGqYhsJ0nDeeVE6PXQO2iAHcLkkDfcw+B_zEiK=Wg@mail.gmail.com>
-Subject: Re: [PATCH 10/17] arm64: dts: renesas: r8a774c0: Add USB2.0 phy and
- host device nodes
+Date:   Mon, 17 Dec 2018 17:17:26 +0100
+Message-ID: <CAMuHMdVDgp6en5EKC76YFtiono9EyHdF_CKY+C_mZ6SabG7awA@mail.gmail.com>
+Subject: Re: [PATCH 11/17] arm64: dts: renesas: r8a774c0: Add USB-DMAC and
+ HSUSB device nodes
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -65,8 +65,7 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Fri, Dec 14, 2018 at 10:38 AM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Add USB2.0 phy and host (EHCI/OHCI) device tree nodes to the RZ/G2E
-> SoC dtsi.
+> Add usb dmac and hsusb device nodes on RZ/G2E SoC dtsi.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
