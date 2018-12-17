@@ -2,136 +2,80 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 890E8C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 12:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF406C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 12:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C9620672
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 12:41:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56A02133F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 12:42:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="qHF1wjQk"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="TeRN7gWi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeLQMlE (ORCPT
+        id S1727039AbeLQMmQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 07:41:04 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:39833 "EHLO
+        Mon, 17 Dec 2018 07:42:16 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:39859 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726758AbeLQMlE (ORCPT
+        with ESMTP id S1732327AbeLQMmK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 07:41:04 -0500
+        Mon, 17 Dec 2018 07:42:10 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5377E25B781;
-        Mon, 17 Dec 2018 23:41:01 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0DB4F25B781;
+        Mon, 17 Dec 2018 23:42:08 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545050461; bh=z7CLgFZLi0QEyuaHSV/XGCZvmtEx2PVQWBH9X5C52jo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qHF1wjQkKpvFkYiz5r0Qm13POd8ekqEmEsoHlsLUoiE6b9XCWH9SpgNBO4FjPNWN+
-         Pqd6XvA8mOYuf0uS2V5jsEH2bdKrS44zr7l2m+B4hG6LrB9xCgMTQohQimGwldsPg2
-         TcRg9hQsdBV6R4mHM/69nUfgpB9J59ngKUG6A6Ok=
+        t=1545050528; bh=hKNUeS6ZCvROnO3jK+QG3X1kLWLfYpec2QWhreG/Bb0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TeRN7gWiMbmBc9lhXzlSM3Wr8d09WfH/9QyR2kUj6AarEG4Kbj8iJAjW5hsuB5zr3
+         zuGQFhkcd55OH93YPWZhe4eLQxMFbyhFnPHPlJuarNVhRlNeBUnyHuj1buv9+oQORw
+         JRmyI8x22OLMiH3t9sVgMnlt7P0eaPZ4KcJb+KMc=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id CE3F094048A; Mon, 17 Dec 2018 13:40:59 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] arm64: dts: renesas: r8a77990: sort pciec0 node within soc node
-Date:   Mon, 17 Dec 2018 13:40:53 +0100
-Message-Id: <20181217124053.10918-1-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
+        id 7DFDD94048A; Mon, 17 Dec 2018 13:42:06 +0100 (CET)
+Date:   Mon, 17 Dec 2018 13:42:06 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tony Lindgren <tony@atomide.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Olof Johansson <olof@lixom.net>,
+        linux-arm-kernel@lists.infradead.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: Enable NXP pcf85363 rtc
+Message-ID: <20181217124202.mplbirkhxhobw4a2@verge.net.au>
+References: <1544450712-44226-1-git-send-email-biju.das@bp.renesas.com>
+ <20181212103140.3kci64mn6fubuaok@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212103140.3kci64mn6fubuaok@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Move the pciec0 node so that sub-nodes of the soc node are
-sorted by bus address.
+On Wed, Dec 12, 2018 at 11:31:40AM +0100, Simon Horman wrote:
+> On Mon, Dec 10, 2018 at 02:05:12PM +0000, Biju Das wrote:
+> > The iWave RZ/G1C SBC supports RTC (NXP pcf85263). To increase
+> > hardware support enable the driver in the multi_v7_defconfig
+> > multiplatform configuration.
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> 
+> Thanks,
+> 
+> This looks fine to me but I will wait to see if there are other reviews
+> before applying.
 
-This change has no run-time affect.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 54 +++++++++++++++----------------
- 1 file changed, 27 insertions(+), 27 deletions(-)
-
- Based on renesas-devel-20181213-v4.20-rc6
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index b2f606e286ce..bdc7f7d39820 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -1526,6 +1526,33 @@
- 			resets = <&cpg 408>;
- 		};
- 
-+		pciec0: pcie@fe000000 {
-+			compatible = "renesas,pcie-r8a77990",
-+				     "renesas,pcie-rcar-gen3";
-+			reg = <0 0xfe000000 0 0x80000>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			bus-range = <0x00 0xff>;
-+			device_type = "pci";
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
-+				  0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
-+				  0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
-+				  0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			/* Map all possible DDR as inbound ranges */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0>;
-+			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
-+			clock-names = "pcie", "pcie_bus";
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			resets = <&cpg 319>;
-+			status = "disabled";
-+		};
-+
- 		vspb0: vsp@fe960000 {
- 			compatible = "renesas,vsp2";
- 			reg = <0 0xfe960000 0 0x8000>;
-@@ -1724,33 +1751,6 @@
- 			};
- 		};
- 
--		pciec0: pcie@fe000000 {
--			compatible = "renesas,pcie-r8a77990",
--				     "renesas,pcie-rcar-gen3";
--			reg = <0 0xfe000000 0 0x80000>;
--			#address-cells = <3>;
--			#size-cells = <2>;
--			bus-range = <0x00 0xff>;
--			device_type = "pci";
--			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
--				0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
--				0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
--				0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
--			/* Map all possible DDR as inbound ranges */
--			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x40000000>;
--			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
--				<GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
--				<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
--			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &gic GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&cpg CPG_MOD 319>, <&pcie_bus_clk>;
--			clock-names = "pcie", "pcie_bus";
--			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
--			resets = <&cpg 319>;
--			status = "disabled";
--		};
--
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
--- 
-2.11.0
-
+Applied for v4.22.
