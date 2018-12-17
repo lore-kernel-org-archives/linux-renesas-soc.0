@@ -2,108 +2,106 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915FDC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 08:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE71C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 08:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A5A20645
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 08:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7134C2084D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 08:36:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cj+UsPnY"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="q62qYOCP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731686AbeLQIIP (ORCPT
+        id S1731840AbeLQIgr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 03:08:15 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:36918 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731685AbeLQIIM (ORCPT
+        Mon, 17 Dec 2018 03:36:47 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:37114 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731822AbeLQIgr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 03:08:12 -0500
-Received: by mail-vs1-f65.google.com with SMTP id h18so7151702vsj.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Dec 2018 00:08:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2vyBTa9d1fbO1CSmayznBy09h06Na31rJyn+pVPXfpo=;
-        b=Cj+UsPnYkzwCv2azc1+tNPiR6LVLH3EHfjLLmFSwwqxR1o/kNxfhiIjRNIjHhikLpI
-         JTcpGJKCrSE7Du6vbGy5921WVzuhRTB2/MmrbhksPVrReajOSACXGIVKae+RX9qT6+wN
-         +9QcCp0XbCNf0ZLLNI5+vHKfi2uy/TGMPFIAI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2vyBTa9d1fbO1CSmayznBy09h06Na31rJyn+pVPXfpo=;
-        b=DJId7u3v1/pApKrOCyiMflvsGl18d77+CuiECXzP5V/aaHdg//nkel8N1LQpq+BwLd
-         dOcoQAoe7l1brqmpXnMMGY/a8dVNj1qNMAWJlL1BGgKG1oPXyhuc0VYLYm/FWEi593Ni
-         GNrB/sEZK8tp/g6RwEs6hfFcdqd0S7yNtxP8vt1+Z101t+h4hO5N+WigtOyzEIDxpZ9L
-         RU5Qqv7RaosR43f6n5pB5RpdkozH6Wd5iK1ZPJHS66RZ4oyGKI8PHpgcECbG4WMOeyOc
-         BAjCXizwyE822htAyZf9BueCywdVou+maKGHhmtmgwW1FVVos81MZwHcO4SIcKLMRytF
-         pTVA==
-X-Gm-Message-State: AA+aEWa2mORUONkrChO3iHNDfClDOVLj6P8qBA8NsI9Qk/UQKh87KSVZ
-        /l2K5tyjlCMkwBR5VfpSyATt03saJ+dFnFDET73Mxw==
-X-Google-Smtp-Source: AFSGD/U33Se7XQtAoOZKN+doayL/xpYyXhSRxYFMFNn+X///2TTCmS8NvFAe4Stptid7mFRUEGZPxccg/cZgGuorlDM=
-X-Received: by 2002:a67:e002:: with SMTP id c2mr5986572vsl.34.1545034091333;
- Mon, 17 Dec 2018 00:08:11 -0800 (PST)
+        Mon, 17 Dec 2018 03:36:47 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id DA57825B7CF;
+        Mon, 17 Dec 2018 19:36:44 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1545035805; bh=t7G4wx0VP1azrvPhyuUCYC7/nszmJIXCuH2rnTKM2TM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q62qYOCPVWmmfUP6/dRjxDLZKn90PXPb7uslxT+fq+6GfexOF7aA2mcxkxQ6kSpFp
+         fBI0RTcdSTC4tpH6S8G+u9DCk0C230bmE7oLJAnUdbDiE3FG/1SRHEc5KFfIcABtMz
+         E+6wqDcKgbtR2c6oAIv1QmX1JT05jnr92QBeyZWA=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 7D1E19402FB; Mon, 17 Dec 2018 09:36:42 +0100 (CET)
+Date:   Mon, 17 Dec 2018 09:36:42 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 2/3] arm64: defconfig: Enable scu-simple-card driver
+Message-ID: <20181217083642.6s34yp6dh6k56iie@verge.net.au>
+References: <20181214115650.12443-2-horms+renesas@verge.net.au>
+ <874lbdj97x.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-References: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 17 Dec 2018 09:07:35 +0100
-Message-ID: <CAPDyKFpKhweSQtt+LAukZXCuABsAhUyh=gL31h8_6uLps3sLCA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Whitelist r8a774c0
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874lbdj97x.wl-kuninori.morimoto.gx@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 13 Dec 2018 at 21:22, Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
->
-> From: Biju Das <biju.das@bp.renesas.com>
->
-> We need r8a774c0 to be whitelisted for SDHI to work on the RZ/G2E,
-> but we don't care about the revision of the SoC, so just whitelist
-> the generic part number.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+On Mon, Dec 17, 2018 at 09:29:25AM +0900, Kuninori Morimoto wrote:
+> 
+> Hi Simon
+> 
+> > Enable the scu-simple-card which is used by
+> > the R-Car E3 (r8a77990) based Ebisu board.
+> > 
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > ---
+> >  arch/arm64/configs/defconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > index f88190463481..b521159f5f33 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -491,6 +491,7 @@ CONFIG_SND_SOC_RT5514=m
+> >  CONFIG_SND_SOC_RT5514_SPI=m
+> >  CONFIG_SND_SOC_RT5645=m
+> >  CONFIG_SND_SIMPLE_CARD=m
+> > +CONFIG_SND_SIMPLE_SCU_CARD=m
+> >  CONFIG_SND_AUDIO_GRAPH_CARD=m
+> >  CONFIG_I2C_HID=m
+> >  CONFIG_USB=y
+> 
+> Is Ebisu board using SIMPLE_SCU_CARD ?
+> I guess it is SIMPLE or AUDIO_GRAPH CARD, not SCU_CARD.
+> 
 
-Applied for next, thanks!
+Hi Morimoto-san,
 
-Kind regards
-Uffe
+Using renesas_defconfig as a base I find that without enabling
+CONFIG_SND_SIMPLE_SCU_CARD the following are enabled:
+
+   CONFIG_SND_AUDIO_GRAPH_CARD
+   CONFIG_SND_SIMPLE_CARD
+
+But I see:
+
+[   12.209793] ALSA device list:
+[   12.212799]   No soundcards found.
+
+With CONFIG_SND_SIMPLE_SCU_CARD also enabled (in the defconfig) I see:
+
+[   14.087191] ALSA device list:
+[   14.090195]   #0: rsnd-ak4613
 
 
-> ---
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> index b6f5410..909a5c9 100644
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -298,6 +298,7 @@ static const struct soc_device_attribute soc_whitelist[] = {
->           .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
->         /* generic ones */
->         { .soc_id = "r8a774a1" },
-> +       { .soc_id = "r8a774c0" },
->         { .soc_id = "r8a77470" },
->         { .soc_id = "r8a7795" },
->         { .soc_id = "r8a7796" },
-> --
-> 2.7.4
->
+
+The above tested using renesas-drivers-2018-12-04-v4.20-rc5
