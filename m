@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EFBC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3B1C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9E4620675
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C78820675
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 16:15:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387739AbeLQQOm (ORCPT
+        id S1727807AbeLQQPo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:14:42 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:39198 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727564AbeLQQOm (ORCPT
+        Mon, 17 Dec 2018 11:15:44 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:36825 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbeLQQPn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:14:42 -0500
-Received: by mail-vk1-f196.google.com with SMTP id s184so1311160vkd.6;
-        Mon, 17 Dec 2018 08:14:41 -0800 (PST)
+        Mon, 17 Dec 2018 11:15:43 -0500
+Received: by mail-ua1-f66.google.com with SMTP id j3so4619505uap.3;
+        Mon, 17 Dec 2018 08:15:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8bw+NyU0c0m5qswWF+U+6J1x4y2zv3+u4teZruOOQ08=;
-        b=ew7vDB2ZqKhtIwoykInL3imXFXuK7YYkzqXIa76ZYuQTXfO/WknJWltHQUsK6sNxTv
-         ehXcDP7F+9tIcxl031/rgLFPqwJNfKwtG9uN3TRzLnPEdAa9MZUZpDBu0UBo3YNVMjEw
-         1cdc024BgbxfUIbICYS03oLx0+xQnWial1Q06aQ0iweqmEkQEOQOd5GHY7V6FPWmY8vz
-         JBG7hBzqg1oiS2dJ5PesPG+vrc3YqFhn3+LA2WHPmPSIEUP7hbdwbAQ+DN4V+jHbs4V/
-         7e2/8AEWHugvMEtRNHMTUwxn9HUIcf2rIb1xC8PNKUMomOcrmFk6GDgXmLswzy034Lw9
-         ASsA==
-X-Gm-Message-State: AA+aEWaTPeOymOF/kQN2L+QVC5pb+6BZgkiAnRXG3pa8V6rA+oSuzKDa
-        ZeoAN4o9treV1Aj766wcnPRkILgVmwO3I9ji2kE=
-X-Google-Smtp-Source: AFSGD/WrG7QnVpG56wphAylbuOC/uJon5IP4rFfHX4I1Ob8AbQgcJOZVQg+xNAfu6TS/7BcCgDCTOzzenwJPSSt3gMM=
-X-Received: by 2002:a1f:2145:: with SMTP id h66mr6269592vkh.65.1545063281060;
- Mon, 17 Dec 2018 08:14:41 -0800 (PST)
+        bh=UNYYzSLq/Fj9ei5MgQmkB40paznf+UWhlbyVfCJsbVI=;
+        b=QvDvao4r/O7j5T617YLQFPq2f01waSijN9H0vq7zf8YGjemOvWYYF/yAeNkcfGZ4s4
+         prldnUb3olcTayIES4UPdacpgm7XjJVd0d2ZkJ4tNbpUYH1aUEUfBBp60M2LknEdNs61
+         qIWPEEhVVrYVKgO5vVnd+FrJX4xu8BRknD0HYV9SBQPhw33W7IhJrlOo6upwhnR5ByJ7
+         32WaiOdC/75GqnIG+tjnFuLbxnYmAgvkdE1hYxJKcbiuET3hrtDwfwD2HMAKK5sYIYdJ
+         ufC8tnemOz36hYZNN6P7A+5/CcYBXLjjsLFPa3/oUFPhoP4VmgtQgkxDGmb7T/Q7dWkG
+         URyA==
+X-Gm-Message-State: AA+aEWb5ayZFfPhXKoL2wNk9G/gHkqoNu+DXI9TR9ipOmDiMvPBL8wIN
+        Cer9i5Emu6hi0G4/tMayK3neEVoJagfmXqFFl/U=
+X-Google-Smtp-Source: AFSGD/X+kzBH16mvWenXGeXqoFY6+NYb+kNogO10c6/ErrG3dzbv4oRfkpaHdGsn8HvyyLUMRLNHIhm5gDtnPZY+Moo=
+X-Received: by 2002:ab0:1393:: with SMTP id m19mr6258456uae.75.1545063342575;
+ Mon, 17 Dec 2018 08:15:42 -0800 (PST)
 MIME-Version: 1.0
-References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544780260-27590-9-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544780260-27590-9-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544780260-27590-1-git-send-email-fabrizio.castro@bp.renesas.com> <1544780260-27590-11-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544780260-27590-11-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Dec 2018 17:14:29 +0100
-Message-ID: <CAMuHMdWvjaewmkVq0kBJXGjg68xL5y-nm-+T==+n905YyrxZMA@mail.gmail.com>
-Subject: Re: [PATCH 08/17] arm64: dts: renesas: r8a774c0: Add PWM support
+Date:   Mon, 17 Dec 2018 17:15:29 +0100
+Message-ID: <CAMuHMdWvbKGqYhsJ0nDeeVE6PXQO2iAHcLkkDfcw+B_zEiK=Wg@mail.gmail.com>
+Subject: Re: [PATCH 10/17] arm64: dts: renesas: r8a774c0: Add USB2.0 phy and
+ host device nodes
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -64,8 +65,8 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Fri, Dec 14, 2018 at 10:38 AM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Add PWM support to the RZ/G2E (a.k.a. R8A774C0) SoC specific
-> device tree.
+> Add USB2.0 phy and host (EHCI/OHCI) device tree nodes to the RZ/G2E
+> SoC dtsi.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
