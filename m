@@ -2,122 +2,90 @@ Return-Path: <SRS0=IwST=O2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7430C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 823FAC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9742C206A2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50601206A2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Dec 2018 14:50:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="p03OkzZW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AM/qutds"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732825AbeLQOsj (ORCPT
+        id S1732948AbeLQOup (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Dec 2018 09:48:39 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38177 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732609AbeLQOsj (ORCPT
+        Mon, 17 Dec 2018 09:50:45 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45043 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731823AbeLQOup (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Dec 2018 09:48:39 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p86so9657309lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Dec 2018 06:48:37 -0800 (PST)
+        Mon, 17 Dec 2018 09:50:45 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e11so5593523plt.11;
+        Mon, 17 Dec 2018 06:50:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3g/fsF0Ac7fJftbcfBihqbk+RLYMzWHjD7fXaDdPjRE=;
-        b=p03OkzZW7r3Myy/Xs6jnBtIFIdyVsFwqM+7rH0grPnIo3yt1L6HB31fMWEDOLS1oe0
-         IbMq3HPisWHsmiW25cAs1pzS2pZtrHUsDJKy2U2WNTI6PRLmJgIZFKuNaqYLoGH05Sbc
-         z0bwB32vZ0V77Q6kalZ73DROS5+b7jBNvIahhSsjlGgb1WDAXLnHKCLuLLMYRax/8HFv
-         kBl4wfBCUO17q8EgkazbqhigG8e/RCarPt6kzgg6gT+7yIrzRQmrieNwNV/nJtdO/a6F
-         GSFI/0PrAHmdzzDZUkd4Zjyol2WLK0GA6QzcfDbmdDfx65l4+8YiCtbbScM3Z5LWBMri
-         zOvw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EBS5jiErbocA4COne5tnsTAauHKTVAzalX8cWyLdPi0=;
+        b=AM/qutds9GhWMGXsF/Nyg8s1noTC6LXp2nOuF56qj+BUoMrW4Yf2+BumpwxsFNupF0
+         XCvcpNhmLYofGw3uVqfdj//k9sCVqRqBz+o+Q8gDxmXcWLLjMremOXvaATPl1R31vHWg
+         7bpE5EapyJTDD19QrAHxKpy3faowEe5gL4kTSKebUrVZBHgjImB9R13U/ZKDZRZSOIgG
+         YTAbfESIiKrIW4suDXQJHG7tFRAh4fL3HuFITP3r2UGfsjJIhic8BkI+NLRZcTcAsMn0
+         RcpNbUn+CeSjY5LTiJResrVY3h8OQoIJQXyLbQVVOC4Aeo7n1U3GOyzTxHUT/ee1zKZa
+         FBrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3g/fsF0Ac7fJftbcfBihqbk+RLYMzWHjD7fXaDdPjRE=;
-        b=ZZyNC2aTo3D8mCj+hXNkuxnIPTwmOoLBiVrWq+9PKwpybhtIXvldLnqNs6nTyczUS4
-         Z4yX/nTcuC1qDpwX151c+K8ZtZtHpqWBosAqe1XYsQ/6APk0WcrhL1AkZHlo9PMk2Mym
-         6bfKiHx2I/UXtNwGE0wEyg5OTjumILwd9D8v3Ji5Bl6PHVT0+lNDzUEPbBVR/XwWEloq
-         D+56oluSeIAF+YWQlZVsl3XeX0p4DnTmqhMSnLSjA6uL0coAqIZOfHjj+ErAYfhZyd3b
-         WuWX37kDIoeWnB2Wq6TWlaLRLY+U47nGADPKqkBk4I+sPfK2B3QtoxPKmTnRVh33jVfd
-         iHFA==
-X-Gm-Message-State: AA+aEWa2mLgE+eR63d9z9NU4cu5VZulLHhanzieVMlx+5mbut+76WGgK
-        4Zz03unOQuGbMfDClkPKZ+b0yw==
-X-Google-Smtp-Source: AFSGD/W7QMkKZUYgJPkGZ8uyrf3wr0p6/rpqiGfZJ5IlfubHqZrn8LM22o2IJdTp+Pd5fcJFaEWElg==
-X-Received: by 2002:a19:f204:: with SMTP id q4mr7971963lfh.133.1545058116944;
-        Mon, 17 Dec 2018 06:48:36 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id c2-v6sm2568485ljj.41.2018.12.17.06.48.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 06:48:36 -0800 (PST)
-Date:   Mon, 17 Dec 2018 15:48:35 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH] media: rcar-csi2: Add support for RZ/G2E
-Message-ID: <20181217144835.GT17972@bigcity.dyn.berto.se>
-References: <1544732652-7459-1-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544732652-7459-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EBS5jiErbocA4COne5tnsTAauHKTVAzalX8cWyLdPi0=;
+        b=hsOV19uHY/F3p8ayMAWQ4nGvEML6FtrvG4XD4wg7bWvJRGB4zEofmhYjZWP41Sn35+
+         BNp7U92dtI3r6ngMlCMOYBfXFDCaJTn6jUui5EfvH3vn6bNt0MiD1o25wm/2kk3478WU
+         H0cDvxs/0hA2xDvws4JmmI86bytO7gA29vp1t6C47iQV/m0JBLXrYc9zMTYh0lw64l49
+         f1Aa4u9udPf/O6/wk7P1Kq0ZtuzNH8ZlvWpLnVjFVEGs2RGNcgYjkXw8+BjtsKxCzVps
+         /ktRp16jYUlnAOaW+U3ctMmsWUuJdtxkyCSlo6sf0UTQMmghcEbagUxQ3C2RVhoD5Y7x
+         yOew==
+X-Gm-Message-State: AA+aEWasYPCkmAFhRir56Q3WIkuKCosX4fY7/SQI6vHdwcaD+9OkW/3a
+        1gBEeZfdK2Yrhe8f7g3dWoB9SmLL
+X-Google-Smtp-Source: AFSGD/VaixH3J2mw1QIJ3myWj3h38VfgPdUojz8tfn9Kpp/YHf8KTMhYrPlI1V9VtVIB6u38AFzI1A==
+X-Received: by 2002:a17:902:e18d:: with SMTP id cd13mr12977349plb.262.1545058243907;
+        Mon, 17 Dec 2018 06:50:43 -0800 (PST)
+Received: from macc.flets-east.jp (p7732116-ipngn36501marunouchi.tokyo.ocn.ne.jp. [114.158.79.116])
+        by smtp.gmail.com with ESMTPSA id v191sm33312081pgb.77.2018.12.17.06.50.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Dec 2018 06:50:43 -0800 (PST)
+From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFT v2 0/2] thermal: add suport for R8A77990
+Date:   Mon, 17 Dec 2018 23:50:19 +0900
+Message-Id: <1545058221-22529-1-git-send-email-ykaneko0929@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Fabrizio,
+This series adds thermal support for R-Car E3 (R8A77990).
 
-Thanks.
+This series is based on the master branch of Linus Torvalds's linux tree.
 
-On 2018-12-13 20:24:12 +0000, Fabrizio Castro wrote:
-> According to the RZ/G2 User's manual, RZ/G2E and R-Car E3 CSI-2
-> blocks are identical, therefore use R-Car E3 definitions to add
-> RZ/G2E support.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+v2 [Yoshihiro Kaneko]
+- Rebased on latest Linus master branch
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Yoshihiro Kaneko (2):
+  dt-bindings: thermal: rcar-thermal: add R8A77990 support
+  thermal: rcar_thermal: add R8A77990 support
 
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index 80ad906..be7508b 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -979,6 +979,10 @@ static const struct rcar_csi2_info rcar_csi2_info_r8a77990 = {
->  
->  static const struct of_device_id rcar_csi2_of_table[] = {
->  	{
-> +		.compatible = "renesas,r8a774c0-csi2",
-> +		.data = &rcar_csi2_info_r8a77990,
-> +	},
-> +	{
->  		.compatible = "renesas,r8a7795-csi2",
->  		.data = &rcar_csi2_info_r8a7795,
->  	},
-> -- 
-> 2.7.4
-> 
+ Documentation/devicetree/bindings/thermal/rcar-thermal.txt | 5 +++--
+ drivers/thermal/rcar_thermal.c                             | 4 ++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
 -- 
-Regards,
-Niklas Söderlund
+1.9.1
+
