@@ -6,72 +6,81 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2777AC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 12:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FADC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 12:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00DC121850
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 12:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BDD2184C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 12:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbeLRMCY (ORCPT
+        id S1726512AbeLRMC4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Dec 2018 07:02:24 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:51827 "EHLO
+        Tue, 18 Dec 2018 07:02:56 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:56320 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726450AbeLRMCY (ORCPT
+        by vger.kernel.org with ESMTP id S1726450AbeLRMCz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Dec 2018 07:02:24 -0500
+        Tue, 18 Dec 2018 07:02:55 -0500
 X-IronPort-AV: E=Sophos;i="5.56,367,1539615600"; 
-   d="scan'208";a="2945211"
+   d="scan'208";a="2945269"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Dec 2018 21:02:22 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Dec 2018 21:02:53 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4D7374034301;
-        Tue, 18 Dec 2018 21:02:20 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2A260400D0CB;
+        Tue, 18 Dec 2018 21:02:46 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] arm64: dts: renesas: r8a774a1: Fix hsusb reg size
-Date:   Tue, 18 Dec 2018 12:02:14 +0000
-Message-Id: <1545134534-22392-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for r8a774c0
+Date:   Tue, 18 Dec 2018 12:02:42 +0000
+Message-Id: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-HS-USB has registers outside the currently specified memory area,
-therefore change the definition accordingly.
+Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
 
-Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and
-HSUSB device nodes")
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Thank you Simon for spotting this
+v1->v2:
+* Dropped change to the description of "phys" optional property according
+  to Geert's comment
 
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 20745a8..46a8fd2 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -599,7 +599,7 @@
- 		hsusb: usb@e6590000 {
- 			compatible = "renesas,usbhs-r8a774a1",
- 				     "renesas,rcar-gen3-usbhs";
--			reg = <0 0xe6590000 0 0x100>;
-+			reg = <0 0xe6590000 0 0x200>;
- 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 704>;
- 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+index 976ef7b..6904882 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
++++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+@@ -3,6 +3,7 @@
+ Required properties:
+ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+ 	    "renesas,pcie-r8a7744" for the R8A7744 SoC;
++	    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
+ 	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
+ 	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
+ 	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
+@@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+ 	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
+ 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+ 				     RZ/G1 compatible device.
+-	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
++	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
++				     RZ/G2 compatible device.
+ 
+ 	    When compatible with the generic version, nodes must list the
+ 	    SoC-specific version corresponding to the platform first
 -- 
 2.7.4
 
