@@ -2,180 +2,149 @@ Return-Path: <SRS0=VX+A=O3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFADC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 11:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA72C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 11:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32FE02184E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 11:25:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51FE7217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 11:41:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tLxWo5EI"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="jDZ3nxbZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbeLRLY7 (ORCPT
+        id S1726540AbeLRLlt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:24:59 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:53427 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeLRLY7 (ORCPT
+        Tue, 18 Dec 2018 06:41:49 -0500
+Received: from mail-eopbgr1400093.outbound.protection.outlook.com ([40.107.140.93]:48566
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726341AbeLRLls (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:24:59 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181218112457euoutp016a60317f158e4e3ca8ed1a06ec93afbb~xaaNyh1Tf0324903249euoutp01u
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Dec 2018 11:24:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181218112457euoutp016a60317f158e4e3ca8ed1a06ec93afbb~xaaNyh1Tf0324903249euoutp01u
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1545132297;
-        bh=Fn2lPujTaFWPaBPTiAGvyln8G1YyYThIpI0wJbDCuyw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=tLxWo5EIDRBqnRDh7xjmvJ7kULVpTJoj2KCdVB7JQspn6cSrNb20oKVsxC1DKLjkp
-         5U2fULvdtv/vzGXPGGfScaO6TLSDQjceremlxB/BviKb+fkLRhDtEsC8lMbFqtS4oO
-         VbDt+vpvC3YKl7tQZ+7pxgxBzl/bsNFYYvvfK8q4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181218112457eucas1p1591ca5aa0a3e3cdea6268224ca7adbca~xaaNJJ-Ms1106911069eucas1p1N;
-        Tue, 18 Dec 2018 11:24:57 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 2E.E2.04441.809D81C5; Tue, 18
-        Dec 2018 11:24:56 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181218112456eucas1p20bf31d210625499084754ad815be677c~xaaMaXtIb2617226172eucas1p2M;
-        Tue, 18 Dec 2018 11:24:56 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181218112456eusmtrp2dc76df3486418d3280e6832867527508~xaaMLvBx90147001470eusmtrp2I;
-        Tue, 18 Dec 2018 11:24:56 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-9b-5c18d9087ef2
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 39.C0.04128.809D81C5; Tue, 18
-        Dec 2018 11:24:56 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181218112455eusmtip265670bd80d3afdcde1d5c36ecfb2a929~xaaLshy1A3126131261eusmtip21;
-        Tue, 18 Dec 2018 11:24:55 +0000 (GMT)
-Subject: Re: [RFC/RFT 09/10] i2c: s3c2410: use core helper to mark adapter
- suspended
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <2b73c71b-2b73-7132-3629-cf700b251fdb@samsung.com>
-Date:   Tue, 18 Dec 2018 12:24:56 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
-Content-Transfer-Encoding: 7bit
+        Tue, 18 Dec 2018 06:41:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=l+3fBgNnspZ8po3rXrF52ZJHdUS0PkXhgYBiC2bbCKo=;
+ b=jDZ3nxbZ7mZIfqnCpEJhGUyuyUhgTVXGYOaoD1owfiPJRsaenC074lQy7GhB8VDmd/ZLnw/8OLdnhnE+enZJj74MG+Mwm9K6aFeaf0fU64vYDu5e4F/IGLGFDOlp310/qQtAc1JmHDdEPQvEFWJIXmjw4EAqa5xC/H2xoEx7Mf4=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
+ TY1PR01MB1642.jpnprd01.prod.outlook.com (52.133.163.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Tue, 18 Dec 2018 11:41:44 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::dcee:f270:d42b:5b48]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::dcee:f270:d42b:5b48%5]) with mapi id 15.20.1425.023; Tue, 18 Dec 2018
+ 11:41:44 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: i2c: rcar: Add r8a774c0 support
+Thread-Topic: [PATCH] dt-bindings: i2c: rcar: Add r8a774c0 support
+Thread-Index: AQHUkyEcJgA+wpgOfU64mlpSc8tCkKWDiDWAgADeq8A=
+Date:   Tue, 18 Dec 2018 11:41:44 +0000
+Message-ID: <TY1PR01MB1770DD6B3F98F9C1B6B2252FC0BD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1544732342-6131-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20181217222410.dfy2them2skvlnuw@ninjato>
+In-Reply-To: <20181217222410.dfy2them2skvlnuw@ninjato>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djPc7ocNyViDF4ds7R4c3w6k0X/49fM
-        FufPb2C32PT4GqtFx98vjBaXd81hs/jce4TRYuvLd0wWM87vY7LoO+fuwOWxaVUnm8fmJfUe
-        7/ddZfN4tnA9i8fnTXIBrFFcNimpOZllqUX6dglcGWuOxhfs5au4tOUtUwPjLe4uRk4OCQET
-        ieddmxlBbCGBFYwSK5eoQ9hfGCVa1nh2MXIB2Z8ZJSa1NDHBNNxYOIUZIrGcUWLumy/sEB3v
-        GSWmT5QFsYUFwiSWHP4JFhcRCJCY8H8hK0gDs8B0Jonmt6vAJrEJGEp0ve1iA7F5BewkDi45
-        wApiswioSkxbMBksLioQI/G0YR8LRI2gxMmZT4BsDg5OAXeJCzvtQcLMAvIS29/OYYawxSVu
-        PZnPBLJLQuAQu8TshmPsEFe7SGxY94kNwhaWeHV8C1RcRuL/TpiGZkaJ9hmz2CGcHkaJrXN2
-        QHVYSxw+fpEVZDOzgKbE+l36EGFHiUezFzCDhCUE+CRuvBWEOIJPYtK26VBhXomONiGIajWJ
-        WcfXwa09eOES8wRGpVlIPpuF5J1ZSN6ZhbB3ASPLKkbx1NLi3PTUYsO81HK94sTc4tK8dL3k
-        /NxNjMDEdPrf8U87GL9eSjrEKMDBqMTDy3BCPEaINbGsuDL3EKMEB7OSCO+tUokYId6UxMqq
-        1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYyBP81FZ6YeLqhZukv5
-        Ie/DHd81p3jI28W1z9m4fV56n7tjyLraxcrP8mJFd/w6p3NAcW21cxXPCfcGzg1O0mc3pa5f
-        JOj0+JHn48Zlk3e4GL8+4uq49d37W+FpblukAve0mm/f+lOQTeLpvurox1WbMie6h2ronRAP
-        uzFpSaLdj4PeipNXW2YqsRRnJBpqMRcVJwIA+moES0gDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOIsWRmVeSWpSXmKPExsVy+t/xe7ocNyViDF4/Z7Z4c3w6k0X/49fM
-        FufPb2C32PT4GqtFx98vjBaXd81hs/jce4TRYuvLd0wWM87vY7LoO+fuwOWxaVUnm8fmJfUe
-        7/ddZfN4tnA9i8fnTXIBrFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2
-        NimpOZllqUX6dgl6GWuOxhfs5au4tOUtUwPjLe4uRk4OCQETiRsLpzB3MXJxCAksZZRo2nmJ
-        ESIhI3FyWgMrhC0s8edaFxtE0VtGiTMXIYqEBcIklhz+yQ5iiwj4SRxa9o4ZxGYWmM4kcekH
-        H4gtJHCNUWL1XXkQm03AUKLrLcggTg5eATuJg0sOgC1gEVCVmLZgMlCcg0NUIEbi2YJqiBJB
-        iZMzn7CAhDkF3CUu7LSHmK4u8WfeJahN8hLb386BssUlbj2ZzzSBUWgWku5ZSFpmIWmZhaRl
-        ASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMBI3Hbs55YdjF3vgg8xCnAwKvHwMpwQjxFi
-        TSwrrsw9xCjBwawkwnurVCJGiDclsbIqtSg/vqg0J7X4EKMp0GsTmaVEk/OBSSKvJN7Q1NDc
-        wtLQ3Njc2MxCSZz3vEFllJBAemJJanZqakFqEUwfEwenVAMj0/27906duHZnxhyLbUfzW4R/
-        yGuuWHTq65aIlAkzq+a1b1h3xGDx6zrfrYeljKb1XLjVt33LIdbKxnebdKIfvtyTZbV5pnT3
-        dlkvH/PDnjxd1ezsK1RYvmgIzjqwpIbppW3rSctrt0x9oxTuHDiVvOecYu+f/rvbPPZPt/DW
-        k3jzmdU7807+bSWW4oxEQy3mouJEAKQ1mpjaAgAA
-X-CMS-MailID: 20181218112456eucas1p20bf31d210625499084754ad815be677c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181210210451epcas5p2f186c09d2e89f30cdb7106272e5e4709
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181210210451epcas5p2f186c09d2e89f30cdb7106272e5e4709
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
-        <CGME20181210210451epcas5p2f186c09d2e89f30cdb7106272e5e4709@epcas5p2.samsung.com>
-        <20181210210310.12677-10-wsa+renesas@sang-engineering.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1642;20:eOITLy03m1Adi/3SyP5C3IG0eWgjGOra+8l3Qj7Tfkh/PqcuSAac5n+N9+SGpGH1jU4iprN8V7YVKXNpyOe0mRTbsu//lqKxcsNEfr0Ddo9+iN3I4mOPE8+alRN3x5jAHKrcIchgkzKi0D4IlImhwdmKInScuFKmXyExOaVHvaU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: dec5fac7-cf75-4f07-2cb3-08d664ddc95a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1642;
+x-ms-traffictypediagnostic: TY1PR01MB1642:
+x-microsoft-antispam-prvs: <TY1PR01MB1642926000C1EA79BCFCE913C0BD0@TY1PR01MB1642.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1642;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1642;
+x-forefront-prvs: 08902E536D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(346002)(136003)(366004)(396003)(189003)(199004)(316002)(476003)(11346002)(99286004)(229853002)(345774005)(68736007)(446003)(486006)(26005)(44832011)(74316002)(106356001)(305945005)(105586002)(76176011)(186003)(33656002)(6916009)(7696005)(6436002)(5660300001)(71200400001)(86362001)(97736004)(71190400001)(7736002)(102836004)(6116002)(256004)(2906002)(7416002)(8936002)(25786009)(6246003)(53546011)(3846002)(81166006)(54906003)(10126004)(6506007)(39060400002)(4326008)(66066001)(81156014)(14454004)(478600001)(8676002)(6306002)(53936002)(9686003)(55016002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1642;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 6Cy2y4gBTCgGJAKo6ncN1Dx+smpNRcq3ml6XItROo+N5q3xkKJx+/NOu4H/Jxr67Xd1oT08SVfLBuqEhY8B6Y76jYbRNUvgU5TuCWQHIljJZZk8P2v/twajRF95EnFk1XXl2PMmzBtayup0f0eMcVUtIWL7ESVAjpYJA4bwB3WepdbeZfuaJ79jbGS9gQ7YqPz++g485gIu0WXvQciXxd0wbbpLF22GpfWXtcRTC3gwawbZ++Nkwq8Hy5VkQrt79Sn5DPxDd2fWffQxNYiytwO3axooIG2ttHYy12bxEBtDekwA4tBjiAe91NRaJqcyb
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dec5fac7-cf75-4f07-2cb3-08d664ddc95a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2018 11:41:44.6953
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1642
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+Hello Wolfram,
 
-On 2018-12-10 22:03, Wolfram Sang wrote:
-> Rejecting transfers should be handled by the core. Also, this will
-> ensure proper locking which was forgotten in this open coded version.
+> From: Wolfram Sang <wsa@the-dreams.de>
+> Sent: 17 December 2018 22:24
+> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Cc: Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>=
+; Wolfram Sang <wsa+renesas@sang-
+> engineering.com>; Geert Uytterhoeven <geert+renesas@glider.be>; Simon Hor=
+man <horms+renesas@verge.net.au>; Biju Das
+> <biju.das@bp.renesas.com>; Ulrich Hecht <ulrich.hecht+renesas@gmail.com>;=
+ Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com>; Hiromitsu Yamasaki <hiromitsu.yamas=
+aki.ym@renesas.com>; linux-i2c@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Simon Horman <h=
+orms@verge.net.au>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; linux-renesas-soc@vger.kernel.org
+> Subject: Re: [PATCH] dt-bindings: i2c: rcar: Add r8a774c0 support
 >
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Works fine on Odroid U3.
-
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+> On Thu, Dec 13, 2018 at 08:19:02PM +0000, Fabrizio Castro wrote:
+> > Document RZ/G2E (R8A774C0) I2C compatibility with the relevant driver
+> > dt-bindings.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 >
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 2f2e28d60ef5..7c76edb25514 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -104,7 +104,6 @@ enum s3c24xx_i2c_state {
->  struct s3c24xx_i2c {
->  	wait_queue_head_t	wait;
->  	kernel_ulong_t		quirks;
-> -	unsigned int		suspended:1;
->  
->  	struct i2c_msg		*msg;
->  	unsigned int		msg_num;
-> @@ -703,9 +702,6 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
->  	unsigned long timeout;
->  	int ret;
->  
-> -	if (i2c->suspended)
-> -		return -EIO;
-> -
->  	ret = s3c24xx_i2c_set_master(i2c);
->  	if (ret != 0) {
->  		dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
-> @@ -1246,7 +1242,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
->  {
->  	struct s3c24xx_i2c *i2c = dev_get_drvdata(dev);
->  
-> -	i2c->suspended = 1;
-> +	i2c_mark_adapter_suspended(&i2c->adap, true);
->  
->  	if (!IS_ERR(i2c->sysreg))
->  		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
-> @@ -1267,7 +1263,7 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
->  		return ret;
->  	s3c24xx_i2c_init(i2c);
->  	clk_disable(i2c->clk);
-> -	i2c->suspended = 0;
-> +	i2c_mark_adapter_suspended(&i2c->adap, false);
->  
->  	return 0;
->  }
+> Fixed the typo in the commit message and applied to for-next, thanks!
+>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thank you for fixing!
 
+Fab
+
+
+
+[https://www2.renesas.eu/media/email/unicef.jpg]
+
+This Christmas, instead of sending out cards, Renesas Electronics Europe ha=
+ve decided to support Unicef with a donation. For further details click her=
+e<https://www.unicef.org/> to find out about the valuable work they do, hel=
+ping children all over the world.
+We would like to take this opportunity to wish you a Merry Christmas and a =
+prosperous New Year.
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
