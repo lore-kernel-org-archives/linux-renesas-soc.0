@@ -2,125 +2,128 @@ Return-Path: <SRS0=VX+A=O3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1061DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 20:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9BCFC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 21:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D725820815
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 20:17:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B26A2218A4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 21:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbeLRUR3 (ORCPT
+        id S1727254AbeLRVom (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Dec 2018 15:17:29 -0500
-Received: from sauhun.de ([88.99.104.3]:48914 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbeLRUR3 (ORCPT
+        Tue, 18 Dec 2018 16:44:42 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42425 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727029AbeLRVom (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Dec 2018 15:17:29 -0500
-Received: from localhost (p54B3362C.dip0.t-ipconnect.de [84.179.54.44])
-        by pokefinder.org (Postfix) with ESMTPSA id EBF762E3542;
-        Tue, 18 Dec 2018 21:17:25 +0100 (CET)
-Date:   Tue, 18 Dec 2018 21:17:25 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Hans de Goede <hdegoede@redhat.com>
+        Tue, 18 Dec 2018 16:44:42 -0500
+Received: by mail-ed1-f67.google.com with SMTP id y20so9036664edw.9
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Dec 2018 13:44:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/4YM38h5I7FYM3fZcCUxJRlotVc6EBl5uu1FPsKe3r8=;
+        b=InAyoEQv9HEpinicfKMCbbiEnJY9pVMRjP9tb0zrkAdKCbbfqY8JQ1DMWVlRBUfHAK
+         FSDfCHgb+Y/RVvAyky0sfdTakQyLBcOdtb420Nniob7aRFTf6w63eIW9l5cA8UjYl+Hi
+         CoWy5UkXePM/f2UH7n8/o4fnru3fTHFC4tOKJrKwtF2kpjXQrUyT93BQX62jrAvJ8MoF
+         aIy4sljHBuVNNQm7tQlN9YiWtgm5HZ9dLIFC4qexiHEjYSeA/t/yC/pi6eSUSAbQ7NiC
+         9VY4udeqrUn3uZVI1W6NJmgpNxYcHn3g2+iNncu47hgRVpapu4SpgBEOm8ki0GuSgstW
+         2EbA==
+X-Gm-Message-State: AA+aEWbJjJStD5AUMtEfBFTiUg3wsGVkerQqm62FoG0oeSkEpvsc0EY4
+        U98vzmMbZK8xLjvlyF+3tA0b2blYoEg=
+X-Google-Smtp-Source: AFSGD/VHkxHMyI/ltmGdbYIuLESE9T25ZVzawZaz1WNlpDqyn8n1Mb+Jxvt12rWJR7J5C+DetMFWVg==
+X-Received: by 2002:a05:6402:758:: with SMTP id p24mr18247129edy.92.1545169480431;
+        Tue, 18 Dec 2018 13:44:40 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id 24sm4713243eds.97.2018.12.18.13.44.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Dec 2018 13:44:39 -0800 (PST)
+Subject: Re: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the
+ core
+To:     Wolfram Sang <wsa@the-dreams.de>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the
- core
-Message-ID: <20181218201725.2uqfmsethlkasdvc@ninjato>
 References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
  <2094a0d4-733f-7f74-abd2-bdb28edd0f80@redhat.com>
  <20181211234102.GA6701@kunai>
  <e8c68ef5-5085-e304-4959-82c4959f4511@redhat.com>
+ <20181218201725.2uqfmsethlkasdvc@ninjato>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <0e6b0ea6-e472-19f2-bb2f-61a1d66e6091@redhat.com>
+Date:   Tue, 18 Dec 2018 22:44:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xjz6c4seersbpqak"
-Content-Disposition: inline
-In-Reply-To: <e8c68ef5-5085-e304-4959-82c4959f4511@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181218201725.2uqfmsethlkasdvc@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi,
 
---xjz6c4seersbpqak
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 18-12-18 21:17, Wolfram Sang wrote:
+> Hans, all,
+> 
+>>> ... this. I don't know what these flags do (and reading SMART in there
+>>> gives me more a 'uh-oh' feeling)
+>>
+>> On x86 the lines between runtime suspend and system-suspend are blurring
+>> with technologies like "connected standby" and in general devices moving
+>> to suspend2idle as system-suspend state, I guess this also applies to
+>> modern smartphone platforms but I'm not following those closely.
+> 
+> I'd guess so, too. I am not aware of any existing mechanism for that at
+> the moment, though. If somebody does, please enlighten us.
+> 
+>> The "SMART" bit is really not all that smart, SMART_PREPARE means that
+>> the drivers pm prepare callback will return positive non 0 (e.g. 1) to
+>> indicate that the device may not be kept in its runtime suspended
+>> state when transitioning to system-suspend, otoh when the prepare
+>> callback returns 0 and the SMART_PREPARE flag is set then *all* suspend/
+>> resume handling can be skipped during a system suspend.
+> 
+> Thanks for the detailed explanation! Much appreciated.
+> 
+>>> Looking at the open coded version you did for the designware driver, I
+>>> wonder now if it is better to just leave it at driver level? Need to
+>>> sleep over it, though.
+>>
+>> I myself was thinking in the same direction (leave the entire suspended
+>> check at the driver level).
+> 
+> So, I was giving it some more thoughts, and my feeling is to still apply
+> this series with the review comments addressed. Plus, clearly mark the
+> new 'is_suspended' flag and the helper function as *optional* to allow
+> for driver specific solutions as well. The then-to-be-added
+> documentation would state that it is mostly useful for seperated system
+> suspend and runtime suspend. For more complex situations, custom
+> solutions are accepted, too. Which means your patch for designware
+> should be added to the series.
+> 
+> My take is there are enough drivers out there already which can benefit
+> from this new helper. If it turns out to be useless somewhen in the
+> future, we can still remove it.
+> 
+> What do you (and all others, of course) think?
 
-Hans, all,
+I've been thinking along the same lines: your series for the drivers
+with separate runtime and system suspend handlers, "custom" driver
+specific code for troublesome cases like i2c-designware.
 
-> > ... this. I don't know what these flags do (and reading SMART in there
-> > gives me more a 'uh-oh' feeling)
->=20
-> On x86 the lines between runtime suspend and system-suspend are blurring
-> with technologies like "connected standby" and in general devices moving
-> to suspend2idle as system-suspend state, I guess this also applies to
-> modern smartphone platforms but I'm not following those closely.
+Do you want me to send out a new version of my patch for the i2c-designware
+code?
 
-I'd guess so, too. I am not aware of any existing mechanism for that at
-the moment, though. If somebody does, please enlighten us.
+Regards,
 
-> The "SMART" bit is really not all that smart, SMART_PREPARE means that
-> the drivers pm prepare callback will return positive non 0 (e.g. 1) to
-> indicate that the device may not be kept in its runtime suspended
-> state when transitioning to system-suspend, otoh when the prepare
-> callback returns 0 and the SMART_PREPARE flag is set then *all* suspend/
-> resume handling can be skipped during a system suspend.
-
-Thanks for the detailed explanation! Much appreciated.
-
-> > Looking at the open coded version you did for the designware driver, I
-> > wonder now if it is better to just leave it at driver level? Need to
-> > sleep over it, though.
->=20
-> I myself was thinking in the same direction (leave the entire suspended
-> check at the driver level).
-
-So, I was giving it some more thoughts, and my feeling is to still apply
-this series with the review comments addressed. Plus, clearly mark the
-new 'is_suspended' flag and the helper function as *optional* to allow
-for driver specific solutions as well. The then-to-be-added
-documentation would state that it is mostly useful for seperated system
-suspend and runtime suspend. For more complex situations, custom
-solutions are accepted, too. Which means your patch for designware
-should be added to the series.
-
-My take is there are enough drivers out there already which can benefit
-=66rom this new helper. If it turns out to be useless somewhen in the
-future, we can still remove it.
-
-What do you (and all others, of course) think?
-
-Thanks,
-
-   Wolfram
-
---xjz6c4seersbpqak
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwZVdUACgkQFA3kzBSg
-KbZgCg/+Mi5R4bOlSvy+L7fIs79nM05v0QMNCbEAXOZ3EmZKkt9sHHiEeGzFdzKY
-Iiawm2BGLUW+sVrCoxsnav0k+hSl+5TNlKd1C72V3inzemIbkEQTOiVbDPmp7fTV
-0UE5WO6CUfZHirCk3XnA8xNSn8YxfHMKUOq2GuMUZEQcXyIk0mwlO84WPkWXjLTu
-pHNovX+74FM6iGL3IId6KQI6773u79o8d4OA5R3pCOzPD1O7OtWAJjcP2oyD/Ge7
-+45+F1eIH5GupW0zn+ByR4tU2XiDFw7uUX/6WYvPPmqPbpz/6l5Ujs1pGC9nYyPx
-S8TuIAiTU8CEDVBLF1IN2Kh6+TEo0iwXpKL821lCL4lwb0ahTq/NjcyqZR0yeyYK
-3bCaupT4sScf/LACYeHLPCSD3gNzK5WnaddFWnGB8YqAmQeqG1bDB+5wYxV5+FjB
-V8YiuuLm+kwF4jAMZITO+iDJIHeZ5HF62JeCE0lFCf21AqlWS2KoYfcJgjln3WHU
-Lk2CFEQidCTk2Vjb2U1AHBjGiAyzhle/fop8L/gMmXoCv9J+b5Jz4bIgJD+76d/A
-apkIbW9HRg90t+WdzecpdU+R9qJMqeyxeKCTRga7PPO+buBJszke+8ozXvtcN+Dw
-l3nKZh+uXk+nhF1T1mUW9QJ88NuCSX0SOxthrlS85oWRoiko0qk=
-=SIgX
------END PGP SIGNATURE-----
-
---xjz6c4seersbpqak--
+Hans
