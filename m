@@ -2,71 +2,171 @@ Return-Path: <SRS0=VX+A=O3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2062C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 17:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B8BC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 17:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C008217D9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 17:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 099EE217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Dec 2018 17:06:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbeLRRGG (ORCPT
+        id S1727232AbeLRRGH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Dec 2018 12:06:06 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:56243 "EHLO
+        Tue, 18 Dec 2018 12:06:07 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:50994 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726868AbeLRRGF (ORCPT
+        by vger.kernel.org with ESMTP id S1727083AbeLRRGH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Dec 2018 12:06:05 -0500
+        Tue, 18 Dec 2018 12:06:07 -0500
 X-IronPort-AV: E=Sophos;i="5.56,368,1539615600"; 
-   d="scan'208";a="3165493"
+   d="scan'208";a="3165497"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Dec 2018 02:06:03 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 19 Dec 2018 02:06:05 +0900
 Received: from rtamta01.rta.renesas.com (transport.eroom.renesas.com [143.103.48.75])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CDA1440174BA;
-        Wed, 19 Dec 2018 02:06:03 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 298F040174C6;
+        Wed, 19 Dec 2018 02:06:05 +0900 (JST)
 Received: from ubuntu.localdomain (unknown [143.103.58.94])
-        by rtamta01.rta.renesas.com (Postfix) with ESMTP id D62CFA8;
-        Tue, 18 Dec 2018 17:06:02 +0000 (UTC)
+        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 3AA18A8;
+        Tue, 18 Dec 2018 17:06:04 +0000 (UTC)
 From:   Chris Brandt <chris.brandt@renesas.com>
 To:     Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v4 0/2] Add Initial Device Tree for RZ/A2
-Date:   Tue, 18 Dec 2018 12:05:53 -0500
-Message-Id: <20181218170555.121673-1-chris.brandt@renesas.com>
+Subject: [PATCH v4 2/2] ARM: dts: r7s9210-rza2mevb: Add support for RZ/A2M EVB
+Date:   Tue, 18 Dec 2018 12:05:55 -0500
+Message-Id: <20181218170555.121673-3-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20181218170555.121673-1-chris.brandt@renesas.com>
+References: <20181218170555.121673-1-chris.brandt@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a Device Tree for RZ/A2 and the existing eval board.
+Add support for Renesas RZ/A2M evaluation board.
 
-Once these get approved, I'll start piling on the other drivers in
-another patch series
-
-NOTE:
-Since Rob is currently converting shmobile.txt to renesas.yaml,
-I'll wait till renesas.yaml hits -next, then add this RZ/A2M EVB
-board (it's too confusing to me to figure out how to make a patch
-series using multiple different trees)
-
-Chris Brandt (2):
-  ARM: dts: r7s9210: Initial SoC device tree
-  ARM: dts: r7s9210-rza2mevb: Add support for RZ/A2M EVB
-
- arch/arm/boot/dts/Makefile             |   1 +
- arch/arm/boot/dts/r7s9210-rza2mevb.dts |  82 +++++++++++++
- arch/arm/boot/dts/r7s9210.dtsi         | 218 +++++++++++++++++++++++++++++++++
- 3 files changed, 301 insertions(+)
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+v3:
+ * Removed QSPI partition (because half baked at the moment)
+v2:
+ * Removed patch for shmobile.txt
+ * Added SPDX
+ * Removed earlycon from bootargs
+ * Fixed address in memory node name
+ * Removed un-needed "okay" from leds node
+ * Added green LED node
+ * Dropped this blank line in pinctrl node
+---
+ arch/arm/boot/dts/Makefile             |  1 +
+ arch/arm/boot/dts/r7s9210-rza2mevb.dts | 82 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 83 insertions(+)
  create mode 100644 arch/arm/boot/dts/r7s9210-rza2mevb.dts
- create mode 100644 arch/arm/boot/dts/r7s9210.dtsi
 
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 78551c4375d5..b2c1de8da368 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -840,6 +840,7 @@ dtb-$(CONFIG_ARCH_RENESAS) += \
+ 	r7s72100-genmai.dtb \
+ 	r7s72100-gr-peach.dtb \
+ 	r7s72100-rskrza1.dtb \
++	r7s9210-rza2mevb.dtb \
+ 	r8a73a4-ape6evm.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+ 	r8a7743-iwg20d-q7.dtb \
+diff --git a/arch/arm/boot/dts/r7s9210-rza2mevb.dts b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
+new file mode 100644
+index 000000000000..991e09de1219
+--- /dev/null
++++ b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the RZA2MEVB board
++ *
++ * Copyright (C) 2018 Renesas Electronics
++ *
++ */
++
++/dts-v1/;
++#include "r7s9210.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/r7s9210-pinctrl.h>
++
++/ {
++	model = "RZA2MEVB";
++	compatible = "renesas,rza2mevb", "renesas,r7s9210";
++
++	aliases {
++		serial0 = &scif4;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0x40000000 0x00800000>;	 /* HyperRAM */
++	};
++
++	lbsc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		red {
++			gpios = <&pinctrl RZA2_PIN(PORT6, 0) GPIO_ACTIVE_HIGH>;
++		};
++		green {
++			gpios = <&pinctrl RZA2_PIN(PORTC, 1) GPIO_ACTIVE_HIGH>;
++		};
++	};
++};
++
++/* EXTAL */
++&extal_clk {
++	clock-frequency = <24000000>;	/* 24MHz */
++};
++
++/* RTC_X1 */
++&rtc_x1_clk {
++	clock-frequency = <32768>;
++};
++
++&pinctrl {
++	/* Serial Console */
++	scif4_pins: serial4 {
++		pinmux = <RZA2_PINMUX(PORT9, 0, 4)>,	/* TxD4 */
++			 <RZA2_PINMUX(PORT9, 1, 4)>;	/* RxD4 */
++	};
++};
++
++/* High resolution System tick timers */
++&ostm0 {
++	status = "okay";
++};
++
++&ostm1 {
++	status = "okay";
++};
++
++/* Serial Console */
++&scif4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&scif4_pins>;
++
++	status = "okay";
++};
 -- 
 2.16.1
 
