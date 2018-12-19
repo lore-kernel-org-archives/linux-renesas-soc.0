@@ -2,89 +2,91 @@ Return-Path: <SRS0=oRiM=O4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596E0C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 07:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3D7C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24DE121850
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 07:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545204339;
-	bh=1zzyZeJZfb6fePDeHelQgJQbMK/CMaaOhuETqe1wmDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qUsmLM7pO1uYTYgs4mc0dGda5JLTi3sV6Eu4aQ0w7AP4jkz8yITfKnc0U/xtcOhnO
-	 2yAvTaFnjmXLGS4zhGIBoeG9xXCyBsdVrCo0jk/hTUPImIfbbe0o8lfAUWoYzy/qrY
-	 Ecuf3Rf/7U8izE2Rk/bWVchmjgI446w3y7HfbdN8=
+	by mail.kernel.org (Postfix) with ESMTP id 8F6F421850
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 09:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeLSHZi (ORCPT
+        id S1728378AbeLSJjS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 02:25:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49574 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726898AbeLSHZi (ORCPT
+        Wed, 19 Dec 2018 04:39:18 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:45838 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeLSJjR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 02:25:38 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 449EC21841;
-        Wed, 19 Dec 2018 07:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545204337;
-        bh=1zzyZeJZfb6fePDeHelQgJQbMK/CMaaOhuETqe1wmDc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D54ASZSe9neBAa21/MouKWpvxqBS2v98UwNBaHbko+uXEDzIPPGE8x8BPJ0RTynRz
-         U7gLmzSNVGAtEmNtpBW6sabaB36Pz9hx/w3lJWzCkxl+MEVoM5/9A5SMUbPVE9Oq1G
-         FZwRw/rnoyH2C7NkehdO0Ia9P+aDzfSoqyYObFWk=
-Date:   Wed, 19 Dec 2018 08:25:35 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: serial: sh-sci: Document r8a774c0
- bindings
-Message-ID: <20181219072535.GA28473@kroah.com>
-References: <1545134590-22510-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Wed, 19 Dec 2018 04:39:17 -0500
+Received: by mail-vs1-f68.google.com with SMTP id x28so4210632vsh.12;
+        Wed, 19 Dec 2018 01:39:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TuCpSMpWIEaYjQlh0UJtISg8gGP4dUwfsuw6wy6uFmw=;
+        b=JvypdjZQAfQRU/xxr15TP2QQRuk7Oh5dnGonuaK38P3h+XmCuywzqW2pn8UCduS05t
+         IGtP6ojoh0K2WeLA6HqfizoRiAXhAchjpw1FSgTp2+FysatO+ZA7obwz+q6CLR3ELmuN
+         HUp+65wFgVuGATauLjhuAP7TPRJh24piGbn1vxNJX93KDabo/bGtjjd8/xQPVP/kI1JL
+         l0RVENOh/EfdlezGcco0Lbtm9M+WE64Bf1lxYqUSF+MHstol5LgIGHX5g3eHIi2oknSl
+         rcflm0jgQkvgZnx7+c7sOvkvFgGb71pSdAJrdUOpn/dJIeBM7JyY17i7gNdHOexvdw9J
+         GLBA==
+X-Gm-Message-State: AA+aEWbl3c18DTJDxShvfc8Sh6KhVFF/cd7FDl8juJ5hM+zhWepHk2p9
+        CAlcsPVu/O0IaC3GPbR6yCKS3RkT97EyebElgnM=
+X-Google-Smtp-Source: AFSGD/XijFguxsVpS8nAuQ/qBpS26KM2u/bsI7OaRhAOaAO3LpAu/iQ3iPUGkeFRZ8K+nBru+5U/MrJaNIDf8FE7tOs=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr9058755vsj.11.1545212356638;
+ Wed, 19 Dec 2018 01:39:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545134590-22510-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+ <20181210210310.12677-2-wsa+renesas@sang-engineering.com> <a4fdd7f1-be79-48fd-0d13-410276962384@axentia.se>
+ <20181218233354.pie5i3lvrrhq5q2c@ninjato>
+In-Reply-To: <20181218233354.pie5i3lvrrhq5q2c@ninjato>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 19 Dec 2018 10:39:05 +0100
+Message-ID: <CAMuHMdWH-bh=cfZhxrD6MYfqFUYroai5WbyYZ6+H4MQeubN=PA@mail.gmail.com>
+Subject: Re: [RFC/RFT 01/10] i2c: add 'is_suspended' flag for i2c adapters
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Peter Rosin <peda@axentia.se>, Hans de Goede <hdegoede@redhat.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 12:03:10PM +0000, Fabrizio Castro wrote:
-> RZ/G2E (R8A774C0) SoC also has the R-Car Gen3 compatible SCIF and
-> HSCIF ports, so document the SoC specific bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> v1->v2:
-> * Fixed title according to Geert's comment
-> 
-> This patch depends on:
-> https://patchwork.kernel.org/patch/10565543/
+Hi Wolfram,
 
-I don't have that patch in my tree, so can you please resend all of the
-pending patches that you need applied so that I can?  Including this one
-too.
+On Wed, Dec 19, 2018 at 12:34 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > > +   unsigned int is_suspended:1;    /* owned by the I2C core */
+> >
+> > When more stuff is added to this bit field (which always happens at
+> > some point) updates to all members of the bit field will have to use
+> > the same root-adapter-locking, or we will suffer from RMW-races. So
+> > this feels like an invitation for future disaster. Maybe a comment
+> > about that to remind our future selves? Or perhaps the bit field
+> > should be avoided altogether?
+>
+> Changed to bool. Thanks!
 
-thanks,
+Does that help, given bool is smaller than the CPUs word size?
+Is it Alpha that cannot do atomic operations on bytes?
 
-greg k-h
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
