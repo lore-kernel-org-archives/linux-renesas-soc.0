@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B52CC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAE2C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A1B6217D9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9178217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729983AbeLSQsi (ORCPT
+        id S1729912AbeLSQtq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:48:38 -0500
-Received: from sauhun.de ([88.99.104.3]:55876 "EHLO pokefinder.org"
+        Wed, 19 Dec 2018 11:49:46 -0500
+Received: from sauhun.de ([88.99.104.3]:55886 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbeLSQsh (ORCPT
+        id S1729963AbeLSQsi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:48:37 -0500
+        Wed, 19 Dec 2018 11:48:38 -0500
 Received: from localhost (p54B333DA.dip0.t-ipconnect.de [84.179.51.218])
-        by pokefinder.org (Postfix) with ESMTPSA id DFDAA2E35D0;
-        Wed, 19 Dec 2018 17:48:35 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id A29CF2E35D1;
+        Wed, 19 Dec 2018 17:48:36 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 03/10] i2c: synquacer: remove unused is_suspended flag
-Date:   Wed, 19 Dec 2018 17:48:19 +0100
-Message-Id: <20181219164827.20985-4-wsa+renesas@sang-engineering.com>
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 04/10] i2c: brcmstb: use core helper to mark adapter suspended
+Date:   Wed, 19 Dec 2018 17:48:20 +0100
+Message-Id: <20181219164827.20985-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
 References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
@@ -42,37 +45,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This flag was defined and checked but never set a value. Remove it.
+Rejecting transfers should be handled by the core.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Kamal Dasu <kdasu.kdev@gmail.com>
 ---
- drivers/i2c/busses/i2c-synquacer.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/i2c/busses/i2c-brcmstb.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-synquacer.c b/drivers/i2c/busses/i2c-synquacer.c
-index 2184b7c3580e..d18b0941b71a 100644
---- a/drivers/i2c/busses/i2c-synquacer.c
-+++ b/drivers/i2c/busses/i2c-synquacer.c
-@@ -144,8 +144,6 @@ struct synquacer_i2c {
- 	u32			timeout_ms;
- 	enum i2c_state		state;
- 	struct i2c_adapter	adapter;
--
--	bool			is_suspended;
+diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
+index 826d32049996..f4d862234980 100644
+--- a/drivers/i2c/busses/i2c-brcmstb.c
++++ b/drivers/i2c/busses/i2c-brcmstb.c
+@@ -170,7 +170,6 @@ struct brcmstb_i2c_dev {
+ 	struct bsc_regs *bsc_regmap;
+ 	struct i2c_adapter adapter;
+ 	struct completion done;
+-	bool is_suspended;
+ 	u32 clk_freq_hz;
+ 	int data_regsz;
  };
+@@ -467,9 +466,6 @@ static int brcmstb_i2c_xfer(struct i2c_adapter *adapter,
+ 	int xfersz = brcmstb_i2c_get_xfersz(dev);
+ 	u32 cond, cond_per_msg;
  
- static inline int is_lastmsg(struct synquacer_i2c *i2c)
-@@ -316,9 +314,6 @@ static int synquacer_i2c_doxfer(struct synquacer_i2c *i2c,
- 	unsigned long timeout;
- 	int ret;
- 
--	if (i2c->is_suspended)
+-	if (dev->is_suspended)
 -		return -EBUSY;
 -
- 	synquacer_i2c_hw_init(i2c);
- 	bsr = readb(i2c->base + SYNQUACER_I2C_REG_BSR);
- 	if (bsr & SYNQUACER_I2C_BSR_BB) {
+ 	/* Loop through all messages */
+ 	for (i = 0; i < num; i++) {
+ 		pmsg = &msgs[i];
+@@ -689,10 +685,7 @@ static int brcmstb_i2c_suspend(struct device *dev)
+ {
+ 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+ 
+-	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+-
++	i2c_mark_adapter_suspended(&i2c_dev->adapter);
+ 	return 0;
+ }
+ 
+@@ -700,10 +693,8 @@ static int brcmstb_i2c_resume(struct device *dev)
+ {
+ 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+ 
+-	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
+ 	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
+-	i2c_dev->is_suspended = false;
+-	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
++	i2c_mark_adapter_resumed(&i2c_dev->adapter);
+ 
+ 	return 0;
+ }
 -- 
 2.11.0
 
