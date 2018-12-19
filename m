@@ -2,122 +2,125 @@ Return-Path: <SRS0=oRiM=O4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FDEC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 19:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1430C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 22:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1AB21841
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 19:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C440120873
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 22:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbeLSTKO (ORCPT
+        id S1728529AbeLSWdp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 14:10:14 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:53460 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbeLSTKO (ORCPT
+        Wed, 19 Dec 2018 17:33:45 -0500
+Received: from sauhun.de ([88.99.104.3]:57656 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728355AbeLSWdp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 14:10:14 -0500
-Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id DvAB1z00E3XaVaC01vABx4; Wed, 19 Dec 2018 20:10:11 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gZhER-0006GS-4i; Wed, 19 Dec 2018 20:10:11 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gZhER-0002UH-2b; Wed, 19 Dec 2018 20:10:11 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Fixes for v4.21
-Date:   Wed, 19 Dec 2018 20:08:50 +0100
-Message-Id: <20181219190850.9437-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Wed, 19 Dec 2018 17:33:45 -0500
+Received: from localhost (p54B333DA.dip0.t-ipconnect.de [84.179.51.218])
+        by pokefinder.org (Postfix) with ESMTPSA id 349E82E3542;
+        Wed, 19 Dec 2018 23:33:42 +0100 (CET)
+Date:   Wed, 19 Dec 2018 23:33:41 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
+ adapters
+Message-ID: <20181219223341.GA998@kunai>
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+ <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
+ <20181219172250.ytronxeq2yc4vp4r@wunner.de>
+ <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+Content-Disposition: inline
+In-Reply-To: <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus,
 
-The following changes since commit 3f3327dbc5596076f94695d8d4cc66da3d5027fb:
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  pinctrl: rzn1: Fix of_get_child_count() error check (2018-12-04 10:33:49 +0100)
+Hi Lukas, Hans,
 
-are available in the Git repository at:
+On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
+> Hi,
+>=20
+> On 19-12-18 18:22, Lukas Wunner wrote:
+> > On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
+> > > +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *ad=
+ap)
+> > > +{
+> > > +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+> > > +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
+> > > +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+> > > +}
+> >=20
+> > This looks like a duplication of the is_suspended flag in struct dev_pm=
+_info.
+> > Any reason why you can't use that?  If so, it would be good to document=
+ the
+> > reason in the commit message.
+>=20
+> Oh, that is a very good point and that one only gets set on system suspend
+> and not on resume suspend, working around the problems with the i2c-desig=
+nware
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.21-tag3
+Just to make it clear: you mean runtime suspend, not resume suspend, or?
 
-for you to fetch changes up to f83f97684a737f66c9a10437544c92e3436ca4e0:
+> driver.
+>=20
+> I think this might be as simple as adding:
+>=20
+> 	if (WARN_ON(adap->dev.parent->power.is_suspended))
+> 		return -ESHUTDOWN;
 
-  pinctrl: sh-pfc: Make pinmux_cfg_reg.var_field_width[] variable-length (2018-12-18 11:25:56 +0100)
+I have seen this flag but decided against it. One reason is because it
+is marked as "PM core only". The other reason is that it doesn't know
+about the adapter lock. It might get set while a transfer is on going.
+Or even right after the suggested if-block above. The code from this
+series gets the mutex first which ensures that on going transfers are
+completed and no new ones are started in parallel.
 
-----------------------------------------------------------------
-pinctrl: sh-pfc: Fixes for v4.21
+Unless I am totally overlooking something...
 
-  - Miscellaneous fixes,
-  - Build-time validation for pins/marks mismatches.
+Thanks,
 
-This is the third pull request with updates for the Renesas pinctrl
-driver, containing mostly fixes.
+   Wolfram
 
-Thanks for pulling!
 
-----------------------------------------------------------------
-Geert Uytterhoeven (20):
-      pinctrl: sh-pfc: r8a77990: Add support for pull-up only pins
-      pinctrl: sh-pfc: r8a77990: Fix IOCTRL reg state after s2ram on R-Car E3
-      pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
-      pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
-      pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b group
-      pinctrl: sh-pfc: r8a7791: Remove bogus marks from vin1_b_data18 group
-      pinctrl: sh-pfc: sh73a0: Add missing TO pin to tpu4_to3 group
-      pinctrl: sh-pfc: Validate pins/marks in pin groups at build time
-      pinctrl: sh-pfc: r8a7794: Remove bogus IPSR9 field
-      pinctrl: sh-pfc: r8a77970: Add missing MOD_SEL0 field
-      pinctrl: sh-pfc: r8a77980: Add missing MOD_SEL0 field
-      pinctrl: sh-pfc: sh7734: Add missing IPSR11 field
-      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 SEL_I2C1 field width
-      pinctrl: sh-pfc: r8a77995: Remove bogus SEL_PWM[0-3]_3 configurations
-      pinctrl: sh-pfc: sh7264: Fix PFCR3 and PFCR0 register configuration
-      pinctrl: sh-pfc: sh7269: Add missing PCIOR0 field
-      pinctrl: sh-pfc: sh7734: Remove bogus IPSR10 value
-      pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
-      pinctrl: sh-pfc: Print actual field width for variable-width fields
-      pinctrl: sh-pfc: Make pinmux_cfg_reg.var_field_width[] variable-length
+--sdtB3X0nJg68CQEu
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Nicholas Mc Guire (1):
-      pinctrl: rza1: Handle devm_kasprintf() failure cases
+-----BEGIN PGP SIGNATURE-----
 
- drivers/pinctrl/pinctrl-rza1.c        |  5 +++++
- drivers/pinctrl/sh-pfc/core.c         |  2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c  |  3 ++-
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c  |  6 +-----
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c  |  2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c |  2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c |  2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 26 ++++++++++++++++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c |  8 ++++----
- drivers/pinctrl/sh-pfc/pfc-sh7264.c   |  9 +++++++--
- drivers/pinctrl/sh-pfc/pfc-sh7269.c   |  2 +-
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c   |  1 +
- drivers/pinctrl/sh-pfc/pfc-sh7734.c   | 20 ++++++++++----------
- drivers/pinctrl/sh-pfc/sh_pfc.h       |  6 +++---
- 14 files changed, 58 insertions(+), 36 deletions(-)
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwax0EACgkQFA3kzBSg
+KbZnhg/8C3yO6aH4r7ho2ge6VCdCHgidjIZUJUeKIhoL4fSUTvqNLhA4WgnbjkGX
+5BIu4LZOdh5v8QAwNLiflt2UK81dUMYT2OplQkyO866VyZuFTXojh6+ZR2niBl2l
+lfZNcM3F7Rl7Ec/MV5/0ltSA4Z2zfRQBB+nSQ79R2coFpJCBeAPz4Lqs3Tk/zyeT
+htEIu2frSmvsNJVxZaJiG/qrM8H39xoDiPkiix4Lz72HhYMjL82ql/ZPn4iNUyuk
+9+58s2LnnzDbime66NGKjZN2pYElYv6aoO62TJyLoxbOkod82+bqdLiFucz7Ssn/
+A/006EUTdma5Tl7gbgZtW8SOJSdI3Emf+vU0vQ+MKzjHcmvWuNO+UmSJOlBbqDrO
+dDbeAtOcus/p3nCneIu6H9VyYPRwntb66BEyu1wb0wNi4L2L12Ooi9W2fGPTM2cT
+bj0hi7Q3SYkhcUarDdDAjgcNmZIdRu2FTYa9x33YGb39rpq+EnEVeyAhDBw36eH3
+TPGsoknpPXEIecUQZSJOP8ZOoZ3HXf/4bjx0JuTM0yZY1J6kXrlkM5d36qw5Y811
+eE96Xxx+VDuQB72keu5jLsTWuQFjARCW5frFN550cub/p0Ss7kTq925kUeGMQVL0
+eggU8pBpQpeD0IklxMsub7vN6Nv3RGiKmbVaTmh81MeiivC+smk=
+=CxxX
+-----END PGP SIGNATURE-----
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--sdtB3X0nJg68CQEu--
