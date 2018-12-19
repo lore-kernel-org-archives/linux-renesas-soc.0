@@ -2,115 +2,122 @@ Return-Path: <SRS0=oRiM=O4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802A1C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 18:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FDEC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 19:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1E220672
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 18:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D1AB21841
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 19:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbeLSSg5 (ORCPT
+        id S1728215AbeLSTKO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:36:57 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50263 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727589AbeLSSg5 (ORCPT
+        Wed, 19 Dec 2018 14:10:14 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:53460 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbeLSTKO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:36:57 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n190so7093964wmd.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Dec 2018 10:36:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SeMoYYRoyywUMQiBfYtyiBEqpBgxDAi4Kzp38E75PII=;
-        b=n+0WFvlah+NeC+Jf8sUKSsSj/KbRlKv56w1Mn7MCeUEft3Lilsp4zVWGqGmohk+LhN
-         PTbN9nJmaOYpcdiekoWxOaVYFKxAsqsh2bBr0WiQYcHqkDqHhlCWw4QhTio0c/8HYBfN
-         7uBJskFI+iYn5GqLU9Wj81PLz4GXQrALfDJnK1Py90h6BEk0PG/1X+aY84YA866ZkKCq
-         EXRlD8ZHX+mng6NmCzQiEMAjbwE6ommhUyMRiR6y3v28zf4UAM/qGGbV62UIL2sH7ZiZ
-         HLrLbUL4ToxPVYZtlLbSIpo1pOzVMGakdukUApgaFtYGV7uMQoDQwGqAKfi1qRGYj6l8
-         WGxg==
-X-Gm-Message-State: AA+aEWaqa43tPagHxlOSY85t5D8Irx+eHKq/tmUErKujMmtFBZkF5fGm
-        kPnEnIWera3fhv+u9gF67yOY6A==
-X-Google-Smtp-Source: AFSGD/VrV7Pi1wSTXLqwxHensRMP9RR7G+tFOZrNU2YmaOlCRChdKNz2h7R0BLMxLh3iekUWzbv5SA==
-X-Received: by 2002:a1c:d912:: with SMTP id q18mr8153087wmg.122.1545244615827;
-        Wed, 19 Dec 2018 10:36:55 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id x20sm8926562wme.6.2018.12.19.10.36.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 10:36:55 -0800 (PST)
-Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
- adapters
-To:     Lukas Wunner <lukas@wunner.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
- <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
- <20181219172250.ytronxeq2yc4vp4r@wunner.de>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
-Date:   Wed, 19 Dec 2018 19:36:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181219172250.ytronxeq2yc4vp4r@wunner.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 19 Dec 2018 14:10:14 -0500
+Received: from ramsan ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id DvAB1z00E3XaVaC01vABx4; Wed, 19 Dec 2018 20:10:11 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gZhER-0006GS-4i; Wed, 19 Dec 2018 20:10:11 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gZhER-0002UH-2b; Wed, 19 Dec 2018 20:10:11 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Fixes for v4.21
+Date:   Wed, 19 Dec 2018 20:08:50 +0100
+Message-Id: <20181219190850.9437-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+	Hi Linus,
 
-On 19-12-18 18:22, Lukas Wunner wrote:
-> On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
->> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
->> +{
->> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
->> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->> +}
-> 
-> This looks like a duplication of the is_suspended flag in struct dev_pm_info.
-> Any reason why you can't use that?  If so, it would be good to document the
-> reason in the commit message.
+The following changes since commit 3f3327dbc5596076f94695d8d4cc66da3d5027fb:
 
-Oh, that is a very good point and that one only gets set on system suspend
-and not on resume suspend, working around the problems with the i2c-designware
-driver.
+  pinctrl: rzn1: Fix of_get_child_count() error check (2018-12-04 10:33:49 +0100)
 
-I think this might be as simple as adding:
+are available in the Git repository at:
 
-	if (WARN_ON(adap->dev.parent->power.is_suspended))
-		return -ESHUTDOWN;
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.21-tag3
 
-To __i2c_transfer (and document the -ESHUTDOWN) combined with removing
-all the now no longer DIY code from various bus drivers.
+for you to fetch changes up to f83f97684a737f66c9a10437544c92e3436ca4e0:
 
-Regards,
+  pinctrl: sh-pfc: Make pinmux_cfg_reg.var_field_width[] variable-length (2018-12-18 11:25:56 +0100)
 
-Hans
+----------------------------------------------------------------
+pinctrl: sh-pfc: Fixes for v4.21
 
+  - Miscellaneous fixes,
+  - Build-time validation for pins/marks mismatches.
 
+This is the third pull request with updates for the Renesas pinctrl
+driver, containing mostly fixes.
 
+Thanks for pulling!
 
-> 
-> If the point is to constrain refusal of transfers in suspended state to
-> certain drivers, those drivers could opt in to that functionality by
-> setting a flag, and the i2c core could then gate refusal based on
-> that flag and the is_suspended flag in struct dev_pm_info.
-> 
-> Also, why is it necessary to take a lock to perform an atomic bitop?
-> (Sorry if that's a dumb question, seems non-obvious to me.)
-> 
-> Thanks,
-> 
-> Lukas
-> 
+----------------------------------------------------------------
+Geert Uytterhoeven (20):
+      pinctrl: sh-pfc: r8a77990: Add support for pull-up only pins
+      pinctrl: sh-pfc: r8a77990: Fix IOCTRL reg state after s2ram on R-Car E3
+      pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
+      pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
+      pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b group
+      pinctrl: sh-pfc: r8a7791: Remove bogus marks from vin1_b_data18 group
+      pinctrl: sh-pfc: sh73a0: Add missing TO pin to tpu4_to3 group
+      pinctrl: sh-pfc: Validate pins/marks in pin groups at build time
+      pinctrl: sh-pfc: r8a7794: Remove bogus IPSR9 field
+      pinctrl: sh-pfc: r8a77970: Add missing MOD_SEL0 field
+      pinctrl: sh-pfc: r8a77980: Add missing MOD_SEL0 field
+      pinctrl: sh-pfc: sh7734: Add missing IPSR11 field
+      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 SEL_I2C1 field width
+      pinctrl: sh-pfc: r8a77995: Remove bogus SEL_PWM[0-3]_3 configurations
+      pinctrl: sh-pfc: sh7264: Fix PFCR3 and PFCR0 register configuration
+      pinctrl: sh-pfc: sh7269: Add missing PCIOR0 field
+      pinctrl: sh-pfc: sh7734: Remove bogus IPSR10 value
+      pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
+      pinctrl: sh-pfc: Print actual field width for variable-width fields
+      pinctrl: sh-pfc: Make pinmux_cfg_reg.var_field_width[] variable-length
+
+Nicholas Mc Guire (1):
+      pinctrl: rza1: Handle devm_kasprintf() failure cases
+
+ drivers/pinctrl/pinctrl-rza1.c        |  5 +++++
+ drivers/pinctrl/sh-pfc/core.c         |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c  |  3 ++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c  |  6 +-----
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c  |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 26 ++++++++++++++++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c |  8 ++++----
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c   |  9 +++++++--
+ drivers/pinctrl/sh-pfc/pfc-sh7269.c   |  2 +-
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c   |  1 +
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c   | 20 ++++++++++----------
+ drivers/pinctrl/sh-pfc/sh_pfc.h       |  6 +++---
+ 14 files changed, 58 insertions(+), 36 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
