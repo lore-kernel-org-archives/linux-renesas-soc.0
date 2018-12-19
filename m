@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54409C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 10:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1A5C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 10:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23D0B21850
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 10:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C3C021850
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 10:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQAQ0HBP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ghfk18/6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbeLSK0W (ORCPT
+        id S1727705AbeLSK01 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 05:26:22 -0500
-Received: from mail-pl1-f172.google.com ([209.85.214.172]:42733 "EHLO
-        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbeLSK0W (ORCPT
+        Wed, 19 Dec 2018 05:26:27 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43999 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeLSK01 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 05:26:22 -0500
-Received: by mail-pl1-f172.google.com with SMTP id y1so9259465plp.9
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Dec 2018 02:26:22 -0800 (PST)
+        Wed, 19 Dec 2018 05:26:27 -0500
+Received: by mail-pl1-f194.google.com with SMTP id gn14so9269501plb.10
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Dec 2018 02:26:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:date:message-id:in-reply-to:references:subject;
-        bh=LG5nk5wlnsvmt2Z1T3qoPtZ+B8EYU2KfSbnuMbmu+Jg=;
-        b=mQAQ0HBPMIdpALrStdSYkkWRVJb/3tmQ7enUSi3My+Kwl+KEwCcVodvAiTc5qIxMU3
-         ibwl0DmDD5ncQRr2651JXfhkw0kKXrlLkaPkeE/TM2aKqbYeQBUssefVPSrqCINCAUBo
-         9LxK7v6eT0QK8OiI0xVZEq1k47UAKdFleYENpV7AIiwrCkA+7iZ6stgOHzXP+80p6xdD
-         zEgA2deryKhjar/yvs7DeX8cMgwX0hphvhuZK4tW4uKy1ZFuAsNW9sKWcNj0LH5EnEu0
-         ZklIznWlS40dILSHqJlpI8/Ak6IoM9fHQZ7n+T5WCTUSgj1xJ2KOA8pHEMLk/rQ0kyUu
-         waXw==
+        bh=xp0FTTtTS2ZyR8tVgSj7mt3GWSoy64lJYOGe+TszXTk=;
+        b=Ghfk18/6EsiN0Leih4H1DeJOAcUDTAPR1Hu27iOJV9NlbI2c5qy7zA8PBNSSlIapW8
+         GdeS7bkKxzOglSMa2fsg5u499Pa5z22psFU0mkjlLeP6AmaLoIE5HFyv6CgwKCjBSCSo
+         4nIBEBBetlPuWkAs28OgN/8/YKTjqTgrfACMyD8Zmvl2dIotTeUaybuozwzDC5oX05TE
+         xAjLZSpz6685hRujtU2hmFgw4GK1RExnQlt2uQfHKdPYTtD1BkhBuZDEBN3R94aggIs4
+         ERBqjHStakA7QBPC9jUXMU/wXEuTaZGC2E0UZ8mQ5ko2Nmj3+LT6vn2gj0eO6zlJLg8T
+         GZdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
          :references:subject;
-        bh=LG5nk5wlnsvmt2Z1T3qoPtZ+B8EYU2KfSbnuMbmu+Jg=;
-        b=JKJ2jiUJQnrGSvIM4EdXiyHaNrZ72+qPL3Otq7CCh0pcZGaoeDLJQKHDgb2m+4+QUW
-         oAb51/vdarqdaNjPhd1IXgn8GOjE7V5Ir+ej65qXThHnErZ4wNBFAbmcYEysRjCXAbGs
-         c1j7+EaOIte9PbTn4j3htX5rugjypqH0ZEPILIbBHDt8Ssf1dhawh3oCVL4DBX82SVH5
-         TQtYhr8k95bF/giYRP38iiazT5yvhqj7HHuc0VD+Q7sw7Oh9K0px5Z8iwuLE3eO1iioS
-         VxVZwfhnTg9KGfsooQW6xJ9n/YIEDPrSfswb/R7XX5pJemMOuY/Mm6JpmEazff4RQbqI
-         R76A==
-X-Gm-Message-State: AA+aEWajhFErUajWA1/EkH39sKu9FEbXCNRFkh8vvCYOim4v4RsPf2+u
-        wOVKZuSrwj69N2lv8idVl68KT1FZ
-X-Google-Smtp-Source: AFSGD/UHlduN1XYkwMI0T3QcF/LRM0tUoiKzYVyijr2G5Rivepymg0UK0I4fotGqsIf/Q1I6kkAItQ==
-X-Received: by 2002:a17:902:e012:: with SMTP id ca18mr19761958plb.218.1545215176987;
-        Wed, 19 Dec 2018 02:26:16 -0800 (PST)
+        bh=xp0FTTtTS2ZyR8tVgSj7mt3GWSoy64lJYOGe+TszXTk=;
+        b=qb2cC6qHOkW47fEEmx7ZZxB+i9Zv3PYxzQuivy81tTjP4sFvCJWwimUKDKTBPjJ59u
+         vundqaArLKBHvkLNNfJj4QGcTPsZ4qBR1WbVZyR8AkaYF4kdmN83htsPe6IZJV2lJdA1
+         noqBsbsNBvYqNOaOiB29GDUaPJgvNPgSIfjaZ18pB1ujaTtXv5CT7B+nopI/7NkuA715
+         kaWGLnGrIPxRCm8OC0hmBpRMDjbKdjSZgMXlytI7z2Ep24ccGP9WJL7FKiYnvh/0AOsz
+         M/toFKPQeBqrTz1U/KT/R/TfzyDIu1h77mjvkCHZNa5c3GuCmqNGxRtZZU0QrcZoW4H8
+         b4Dg==
+X-Gm-Message-State: AA+aEWZoBAu4xvaRCtIKx9R85VBqWWpSQabbNNKcKxVS8rRXhQoUKWkX
+        NJ1oTeftsMFORlNiDIxeUjGHog3d
+X-Google-Smtp-Source: AFSGD/Uzgm/z+2VAZbGkvzFIlN0E6cuS8Ps9cF572AbTkZ8G5PNvm1oGHLyhEUzwFpkecGVmlMjUzQ==
+X-Received: by 2002:a17:902:47aa:: with SMTP id r39mr19636735pld.219.1545215185934;
+        Wed, 19 Dec 2018 02:26:25 -0800 (PST)
 Received: from [127.0.0.1] (s214090.ppp.asahi-net.or.jp. [220.157.214.90])
-        by smtp.gmail.com with ESMTPSA id l11sm22626638pff.65.2018.12.19.02.26.14
+        by smtp.gmail.com with ESMTPSA id t21sm25021422pgg.24.2018.12.19.02.26.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 02:26:15 -0800 (PST)
+        Wed, 19 Dec 2018 02:26:24 -0800 (PST)
 From:   Magnus Damm <magnus.damm@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Magnus Damm <magnus.damm@gmail.com>
-Date:   Wed, 19 Dec 2018 19:26:45 +0900
-Message-Id: <154521520498.7290.8024893514334504383.sendpatchset@octo>
+Date:   Wed, 19 Dec 2018 19:26:54 +0900
+Message-Id: <154521521391.7290.4647429463617796402.sendpatchset@octo>
 In-Reply-To: <154521516632.7290.5245227863765109428.sendpatchset@octo>
 References: <154521516632.7290.5245227863765109428.sendpatchset@octo>
-Subject: [PATCH 04/09] arm64: dts: renesas: r8a77965: One IMR-LX4 device for R-Car M3-N
+Subject: [PATCH 05/09] arm64: dts: renesas: r8a77970: One IMR-LX4 device for R-Car V3M
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -70,33 +70,32 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Magnus Damm <damm+renesas@opensource.se>
 
-Introduce a single IMR-LX4 device to the r8a77965 dtsi file.
+Introduce a single IMR-LX4 device to the r8a77970 dtsi file.
 
 Not for upstream merge.
 
 Not-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
- arch/arm64/boot/dts/renesas/r8a77965.dtsi |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- 0001/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ work/arch/arm64/boot/dts/renesas/r8a77965.dtsi	2018-12-19 14:50:28.657437885 +0900
-@@ -1929,6 +1929,17 @@
- 			status = "disabled";
+--- 0001/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ work/arch/arm64/boot/dts/renesas/r8a77970.dtsi	2018-12-19 15:38:53.655742270 +0900
+@@ -1055,6 +1055,16 @@
+ 			resets = <&cpg 408>;
  		};
  
-+
 +		imr-lx4@fe860000 {
-+			compatible = "renesas,r8a77965-imr-lx4",
++			compatible = "renesas,r8a77970-imr-lx4",
 +				     "renesas,imr-lx4";
 +			reg = <0 0xfe860000 0 0x2000>;
 +			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 823>;
-+			power-domains = <&sysc R8A77965_PD_A3VC>;
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
 +			resets = <&cpg 823>;
 +		};
 +
- 		fdp1@fe940000 {
- 			compatible = "renesas,fdp1";
- 			reg = <0 0xfe940000 0 0x2400>;
+ 		vspd0: vsp@fea20000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfea20000 0 0x5000>;
