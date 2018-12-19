@@ -6,37 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAE2C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EA9C43444
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9178217D9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4FD1217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 16:49:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729912AbeLSQtq (ORCPT
+        id S1729960AbeLSQsh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 11:49:46 -0500
-Received: from sauhun.de ([88.99.104.3]:55886 "EHLO pokefinder.org"
+        Wed, 19 Dec 2018 11:48:37 -0500
+Received: from sauhun.de ([88.99.104.3]:55846 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729963AbeLSQsi (ORCPT
+        id S1729703AbeLSQsg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 11:48:38 -0500
+        Wed, 19 Dec 2018 11:48:36 -0500
 Received: from localhost (p54B333DA.dip0.t-ipconnect.de [84.179.51.218])
-        by pokefinder.org (Postfix) with ESMTPSA id A29CF2E35D1;
-        Wed, 19 Dec 2018 17:48:36 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 55BAD2E3560;
+        Wed, 19 Dec 2018 17:48:34 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>,
         linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/10] i2c: brcmstb: use core helper to mark adapter suspended
-Date:   Wed, 19 Dec 2018 17:48:20 +0100
-Message-Id: <20181219164827.20985-5-wsa+renesas@sang-engineering.com>
+        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/10] i2c: add suspended flag and accessors for i2c adapters
+Date:   Wed, 19 Dec 2018 17:48:17 +0100
+Message-Id: <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
 References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
@@ -45,60 +41,81 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rejecting transfers should be handled by the core.
+A few drivers open code handling of suspended adapters. It could be
+handled by the core, though, to ensure generic handling. This patch adds
+the flag and accessor functions. The usage of these helpers is optional,
+though. See the kerneldoc in this patch.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Kamal Dasu <kdasu.kdev@gmail.com>
 ---
- drivers/i2c/busses/i2c-brcmstb.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ drivers/i2c/i2c-core-base.c |  1 +
+ include/linux/i2c.h         | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-brcmstb.c b/drivers/i2c/busses/i2c-brcmstb.c
-index 826d32049996..f4d862234980 100644
---- a/drivers/i2c/busses/i2c-brcmstb.c
-+++ b/drivers/i2c/busses/i2c-brcmstb.c
-@@ -170,7 +170,6 @@ struct brcmstb_i2c_dev {
- 	struct bsc_regs *bsc_regmap;
- 	struct i2c_adapter adapter;
- 	struct completion done;
--	bool is_suspended;
- 	u32 clk_freq_hz;
- 	int data_regsz;
- };
-@@ -467,9 +466,6 @@ static int brcmstb_i2c_xfer(struct i2c_adapter *adapter,
- 	int xfersz = brcmstb_i2c_get_xfersz(dev);
- 	u32 cond, cond_per_msg;
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 28460f6a60cc..2c465455b2f6 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1232,6 +1232,7 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+ 	if (!adap->lock_ops)
+ 		adap->lock_ops = &i2c_adapter_lock_ops;
  
--	if (dev->is_suspended)
--		return -EBUSY;
--
- 	/* Loop through all messages */
- 	for (i = 0; i < num; i++) {
- 		pmsg = &msgs[i];
-@@ -689,10 +685,7 @@ static int brcmstb_i2c_suspend(struct device *dev)
- {
- 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
++	adap->locked_flags = 0;
+ 	rt_mutex_init(&adap->bus_lock);
+ 	rt_mutex_init(&adap->mux_lock);
+ 	mutex_init(&adap->userspace_clients_lock);
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 65b4eaed1d96..b7401c55dc83 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -680,6 +680,8 @@ struct i2c_adapter {
+ 	int timeout;			/* in jiffies */
+ 	int retries;
+ 	struct device dev;		/* the adapter device */
++	unsigned long locked_flags;	/* owned by the I2C core */
++#define I2C_ALF_IS_SUSPENDED	0
  
--	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
--	i2c_dev->is_suspended = true;
--	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
--
-+	i2c_mark_adapter_suspended(&i2c_dev->adapter);
- 	return 0;
+ 	int nr;
+ 	char name[48];
+@@ -762,6 +764,38 @@ i2c_unlock_bus(struct i2c_adapter *adapter, unsigned int flags)
+ 	adapter->lock_ops->unlock_bus(adapter, flags);
  }
  
-@@ -700,10 +693,8 @@ static int brcmstb_i2c_resume(struct device *dev)
- {
- 	struct brcmstb_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 
--	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
- 	brcmstb_i2c_set_bsc_reg_defaults(i2c_dev);
--	i2c_dev->is_suspended = false;
--	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
-+	i2c_mark_adapter_resumed(&i2c_dev->adapter);
- 
- 	return 0;
- }
++/**
++ * i2c_mark_adapter_suspended - Report suspended state of the adapter to the core
++ * @adap: Adapter to mark as suspended
++ *
++ * When using this helper to mark an adapter as suspended, the core will reject
++ * further transfers to this adapter. The usage of this helper is optional but
++ * recommended for devices having distinct handlers for systems suspend and
++ * runtime suspend. More complex devices are free to implement custom solutions
++ * to reject transfers when suspended.
++ */
++static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
++{
++	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
++	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
++	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
++}
++
++/**
++ * i2c_mark_adapter_resumed - Report resumed state of the adapter to the core
++ * @adap: Adapter to mark as resumed
++ *
++ * When using this helper to mark an adapter as resumed, the core will allow
++ * further transfers to this adapter. See also further notes to
++ * @i2c_mark_adapter_suspended().
++ */
++static inline void i2c_mark_adapter_resumed(struct i2c_adapter *adap)
++{
++	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
++	clear_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
++	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
++}
++
+ /*flags for the client struct: */
+ #define I2C_CLIENT_PEC		0x04	/* Use Packet Error Checking */
+ #define I2C_CLIENT_TEN		0x10	/* we have a ten bit chip address */
 -- 
 2.11.0
 
