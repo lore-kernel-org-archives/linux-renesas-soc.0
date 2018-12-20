@@ -2,102 +2,140 @@ Return-Path: <SRS0=bqQk=O5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E484C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 08:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E878BC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34D5B21741
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 08:48:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB8AA2176F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725777AbeLTIsu (ORCPT
+        id S1729838AbeLTKAd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Dec 2018 03:48:50 -0500
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:11551 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725771AbeLTIsu (ORCPT
+        Thu, 20 Dec 2018 05:00:33 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34286 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730063AbeLTKAd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Dec 2018 03:48:50 -0500
-Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBK8mmFp003878;
-        Thu, 20 Dec 2018 17:48:48 +0900 (JST)
-        (envelope-from na-hoan@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
- Thu, 20 Dec 2018 17:48:48 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
-Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBK8mgno003851
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 20 Dec 2018 17:48:47 +0900 (JST)
-        (envelope-from na-hoan@jinso.co.jp)
-From:   Nguyen An Hoan <na-hoan@jinso.co.jp>
-To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
-        geert+renesas@glider.be, magnus.damm@gmail.com
-Cc:     kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
-        cv-dong@jinso.co.jp
-Subject: [v1 PATCH] spi: sh-msiof: Reduce the number of times write to and perform the transmission from FIFO
-Date:   Thu, 20 Dec 2018 17:48:42 +0900
-Message-Id: <1545295722-9554-1-git-send-email-na-hoan@jinso.co.jp>
-X-Mailer: git-send-email 2.7.4
+        Thu, 20 Dec 2018 05:00:33 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b3so1215506ede.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Dec 2018 02:00:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ylwzKhANp4Cl8xusWKqb85xW+2cdSkQ3nxCl1I5yYWs=;
+        b=mBK4ey1iF3W/8Q9aXNBI/UUGpc91Fy5sXU1y2sN/u/Y6m2g4QcxJby+5XIO9JsxOZZ
+         3KaBU7oJtoXhA+cThbwM/aaRNvWgptEbALg4K8Lh8dxa0bCi+It0EGJUfrNGM3MEeLPv
+         SB96SayFMRnt4DwGqJWpwJOv99SD80Pl7At4qa6hLYBVk8UaRGJIWwjFqSZFglXuAGS5
+         Afx7mhz5CNRglGbmwaCt07ztFR0kITKqzAqMAbAbU7BJi8R2EF9qVFEVbOUsQKEug5fJ
+         1LPWoVHA7BGDBeK08NoGilUShXnLQtK5kMh+bNWa1utWeLN4LNy4fttT3h+uzt7EI3c2
+         cN7A==
+X-Gm-Message-State: AA+aEWYhwnxhi8xQBOjX50qxqMxS2krggLGR8ZC25SbDEkit28Da3moQ
+        Qqt+EORUerwyG4NyqfIcnZw3zg==
+X-Google-Smtp-Source: AFSGD/U+z0NW0ZSR9XZ3d8SpPEG73Cd5o78YWj37ciMqJWCZXrwore7exMuiLuL3XBB9kBNGDHua7g==
+X-Received: by 2002:a50:d643:: with SMTP id c3mr22291753edj.178.1545300031177;
+        Thu, 20 Dec 2018 02:00:31 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id s3sm6001255edm.31.2018.12.20.02.00.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Dec 2018 02:00:30 -0800 (PST)
+Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
+ adapters
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+ <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
+ <20181219172250.ytronxeq2yc4vp4r@wunner.de>
+ <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
+ <20181219223341.GA998@kunai>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
+Date:   Thu, 20 Dec 2018 11:00:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181219223341.GA998@kunai>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Hi,
 
-The current state of the spi-sh-msiof, in master transfer mode: if t-> bits_per_word <= 8,
-if the data length is divisible by 4 ((len & 3) = 0), the length of each word will be 32 bits
-In case of data length can not be divisible by 4 ((len & 3) != 0), always set each word to be
-8 bits, this will increase the number of times that write to FIFO, increasing the number of
-times it should be transmitted. Assume that the number of bytes of data length more than 64 bytes,
-each transmission will write 64 times into the TFDR then transmit, a maximum one-time
-transmission will transmit 64 bytes if each word is 8 bits long.
+On 19-12-18 23:33, Wolfram Sang wrote:
+> Hi Lukas, Hans,
+> 
+> On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 19-12-18 18:22, Lukas Wunner wrote:
+>>> On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
+>>>> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
+>>>> +{
+>>>> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+>>>> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
+>>>> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+>>>> +}
+>>>
+>>> This looks like a duplication of the is_suspended flag in struct dev_pm_info.
+>>> Any reason why you can't use that?  If so, it would be good to document the
+>>> reason in the commit message.
+>>
+>> Oh, that is a very good point and that one only gets set on system suspend
+>> and not on resume suspend, working around the problems with the i2c-designware
+> 
+> Just to make it clear: you mean runtime suspend, not resume suspend, or?
 
-Switch to setting if t->bits_per_word <= 8, the word length will be 32 bits although the data
-length is not divisible by 4, then if leftover, will transmit the balance and the length of each
-words is 1 byte. The maximum each can transmit up to 64 x 4 (Data Size = 32 bits (4 bytes)) = 256 bytes.
-TMDR2 : Bits 28 to 24  BITLEN1[4:0] Data Size (8 to 32 bits)
-        Bits 23 to 16  WDLEN1[7:0]  Word Count (1 to 64 words)
+Yes I mean runtime-suspend, sorry.
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- drivers/spi/spi-sh-msiof.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+>> driver.
+>>
+>> I think this might be as simple as adding:
+>>
+>> 	if (WARN_ON(adap->dev.parent->power.is_suspended))
+>> 		return -ESHUTDOWN;
+> 
+> I have seen this flag but decided against it. One reason is because it
+> is marked as "PM core only".
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index d495d86..d14b407 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -977,7 +977,7 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- 			return 0;
- 	}
- 
--	if (bits <= 8 && len > 15 && !(len & 3)) {
-+	if (bits <= 8 && len > 15) {
- 		bits = 32;
- 		swab = true;
- 	} else {
-@@ -1038,6 +1038,14 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- 		if (rx_buf)
- 			rx_buf += n * bytes_per_word;
- 		words -= n;
-+
-+		if (words == 0 && (len % bytes_per_word)) {
-+			words = len % bytes_per_word;
-+			bits = t->bits_per_word;
-+			bytes_per_word = 1;
-+			tx_fifo = sh_msiof_spi_write_fifo_8;
-+			rx_fifo = sh_msiof_spi_read_fifo_8;
-+		}
- 	}
- 
- 	return 0;
--- 
-2.7.4
+Right and we definitely should not be touching it, but reading it should
+be fine.
 
+> The other reason is that it doesn't know
+> about the adapter lock. It might get set while a transfer is on going.
+> Or even right after the suggested if-block above. The code from this
+> series gets the mutex first which ensures that on going transfers are
+> completed and no new ones are started in parallel.
+> 
+> Unless I am totally overlooking something...
+
+No you are right, there is a race here, but I don't think we are likely to
+hit that race. Normally there won't be any ongoing i2c-transfers during
+a system suspend and more over, the goal of adding this check is to help
+find problems, so even if the check sometimes does not trigger because
+of the race that is not really a big deal.
+
+I think we need to get really unlucky to have both a suspend ordering
+problem in the first case (already a somewhat rare thing) combined with
+hitting this race in such a way *each time* that we don't trigger the
+WARN_ON.
+
+To me this seems a case of perfect being the enemy of good. When we
+first started discussing this you wanted to not have to modify the
+adapter/bus drivers for the check, using adap->dev.parent->power.is_suspended
+gives us that and it will also work for complex cases like
+the i2c-designware case, so I believe the benefits outway the downsides.
+
+Regards,
+
+Hans
