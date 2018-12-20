@@ -2,107 +2,168 @@ Return-Path: <SRS0=bqQk=O5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16ED5C43612
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 02:37:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C65DC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 05:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9CC020989
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 02:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01D9E20869
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 05:01:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nch3nSoI"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="RARId6oa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbeLTChc (ORCPT
+        id S1725300AbeLTFB0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 21:37:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39636 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbeLTChc (ORCPT
+        Thu, 20 Dec 2018 00:01:26 -0500
+Received: from mail-eopbgr1320139.outbound.protection.outlook.com ([40.107.132.139]:37283
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725306AbeLTFB0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 21:37:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w6so129829pgl.6;
-        Wed, 19 Dec 2018 18:37:31 -0800 (PST)
+        Thu, 20 Dec 2018 00:01:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yHY9CFg0MGRqu3NkeXbhXlFw179ui82AY5bhUgLHPZM=;
-        b=nch3nSoINbw9Lz+d3Hd0yYu32jgxhvJ30r9ue719ZeaCNZVTl3BeiyFXD9SwkSTZQ2
-         o4Wjc+56dfHH6EOnUNajRw9HtkdlBv4qaqgZGKdvaddUC1HXqgLmspbQ3BcAPB4oNZzk
-         yrEytiE5ODmC9dWfcsotUDlk10k81ofca9QCCZdIIcPRzt84gQMNFMgz0wf+XOgV8jsD
-         2y9XbzkbceUTI6r/6S9j60iEmFyeq4F08vSwawU8lFWjmofeqcU41m7SstzX+lEtf7af
-         amh8/BOq1wTUChwsTIzDhLr0wH9+dE3pZXPtceB2yWxTrFN1a7D7MvOwDPqtbczhFdtJ
-         qLVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yHY9CFg0MGRqu3NkeXbhXlFw179ui82AY5bhUgLHPZM=;
-        b=a+VFEeH28NKF46ZlSHU1hprlgpkV0AdTE7ktO9udteiEXo1NMqe90bPxwEes5/EOKJ
-         HM2s6mi+bNVKWWXtT31xiJEJCk4LiEp3t9tgGb4hjw9vusD+f0DfAiif10yO/xbKDTRB
-         kPHvdosJ+gqCwRR9DXvWV/0F05N0IBAABZ3405OP9EKs4Na9F5SIs55LcCCPsHOlPImz
-         8A+pOtrWY+7dSzuTmaGhPLgyxqWX6i8z6hLYNFwZ2KZU5LVO95sbvw57mc2hh42Jc4Z9
-         WFrf3x5jOBEVSk6RGI5TqcboZlyBU0fCmPFqHynYLEoTxVGdUbeEhYXyRd2ErvgYKldi
-         v+vg==
-X-Gm-Message-State: AA+aEWaqtNjTowEHxBiuAUZUaUxpYU6qdoBOw7bfhDNwEV765yd6gcF8
-        +2nrkdA4GUkSqKuTfaz5PnY=
-X-Google-Smtp-Source: AFSGD/U/6H3IOsaeVORBns4r17llJY7KoOlFsTCXeSiPk2qO2WShAsDbR1YEtyKyyqROZBUkYJDzIQ==
-X-Received: by 2002:a62:de06:: with SMTP id h6mr23431245pfg.158.1545273450996;
-        Wed, 19 Dec 2018 18:37:30 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id s9sm27295322pgl.88.2018.12.19.18.37.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 18:37:29 -0800 (PST)
-Date:   Wed, 19 Dec 2018 18:37:28 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BjR9BhIEe007jnYIhDW/JIiO1af7iFLX8uFVFbN7kEE=;
+ b=RARId6oaJZeVEQ30oDO2MavK2kIjTzvkindqAX4rdq5e9ErIx3tW4Q6S0q65Yk3Bq0iSRd6STcs11qf3RAXtvybvfGIUN5JmyduTrGKsIAUZp3JDX+IB0CuxmQ+yYFxfvRaQekxKmIvS9eAByrArTvl/Byu9R1I0PnCtPmUERbs=
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (20.178.132.147) by
+ TY2PR01MB3418.jpnprd01.prod.outlook.com (20.178.142.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.17; Thu, 20 Dec 2018 05:01:18 +0000
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::c0dd:216f:2766:d8d4]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::c0dd:216f:2766:d8d4%6]) with mapi id 15.20.1425.025; Thu, 20 Dec 2018
+ 05:01:16 +0000
+From:   DUNG NGUYEN <dung.nguyen.aj@renesas.com>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: dt-bindings: watchdog: renesas-wdt: Document r8a774c0 support
-Message-ID: <20181220023728.GA10247@roeck-us.net>
-References: <1544732333-6086-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] ARM: shmobile: Fix R-Car Gen2 regulator quirk
+Thread-Topic: [PATCH] ARM: shmobile: Fix R-Car Gen2 regulator quirk
+Thread-Index: AQHUjmuFwt0SAYWBzkWdZE6W6yFUDKWHI5qQ
+Date:   Thu, 20 Dec 2018 05:01:15 +0000
+Message-ID: <TY2PR01MB369237F587AA0FF04484E421D5BF0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+References: <20181207202858.17129-1-marek.vasut+renesas@gmail.com>
+In-Reply-To: <20181207202858.17129-1-marek.vasut+renesas@gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=dung.nguyen.aj@renesas.com; 
+x-originating-ip: [118.238.235.108]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY2PR01MB3418;20:I+U9Cr8OKalZVIOXLFaXwuvxVk7iDgeFaOQz/D+lgD46zzR9sbaCBYyhiNZiPe2FQO0BlD49E9XfrjKbZ5xjG9AP9/AIyOhAP7zf4i3BjXhgM3KRd8XYJcsRJ3dTTCVgByPipb2WlJm1n+rl18DVkPB0Fc32amCPE+GD5COar5g=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(39860400002)(396003)(136003)(366004)(376002)(346002)(199004)(189003)(5660300001)(305945005)(39060400002)(74316002)(486006)(2501003)(7736002)(229853002)(25786009)(4326008)(6246003)(446003)(6436002)(53346004)(11346002)(476003)(14454004)(478600001)(71190400001)(71200400001)(7696005)(105586002)(26005)(110136005)(68736007)(76176011)(99286004)(102836004)(53936002)(6506007)(9686003)(106356001)(186003)(54906003)(81156014)(8936002)(8676002)(97736004)(33656002)(81166006)(86362001)(3846002)(316002)(55016002)(6116002)(2906002)(66066001)(14444005)(5024004)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB3418;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: bb70d21d-f846-4e96-961d-08d666382bf0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB3418;
+x-ms-traffictypediagnostic: TY2PR01MB3418:
+x-microsoft-antispam-prvs: <TY2PR01MB3418B3B7FA88CBB694B9323AD5BF0@TY2PR01MB3418.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TY2PR01MB3418;BCL:0;PCL:0;RULEID:;SRVR:TY2PR01MB3418;
+x-forefront-prvs: 0892FA9A88
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: bIBetSrxZg98aOnFIRgsn71fmyTdLE8E4ilx7DIiGYRIWAzbsq0rSdXknhcONwDxWLVIIfyes+avZneF4svTy/iD9dpeXqI24QtHr1AcD/IFVOl/YN1Vd+HHUiq2GViDwZJzYqkCSbvtcD6wICtIPrHNHbG0G2bUTwm9Fst7KNCrp8lqVzo5PTqJVeeaCJFBxYHlgGaeXugJVzQoWZk4To1V8tMA5uV2uTXA/RcdS9bgJ4lUsO6Q5fYvmHF+POwzrREbJPeFApl+HuRx3/1GliJXq+BXnJtUZAZhD54m4M+NxKTfX5H8X0xWnGSgLhA4
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544732333-6086-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb70d21d-f846-4e96-961d-08d666382bf0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2018 05:01:15.7180
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3418
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:18:53PM +0000, Fabrizio Castro wrote:
-> RZ/G2E (R8A774C0) watchdog implementation is compatible with R-Car
-> Gen3, therefore add relevant documentation.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
+> The quirk code currently detects all compatible I2C chips with a shared I=
+RQ line
+> on all I2C busses, adds them into a list, and registers a bus notifier. F=
+or every
+> chip for which the bus notifier triggers, the quirk code performs I2C tra=
+nsfer on
+> that I2C bus for all addresses in the list.
+> The problem is that this may generate transfers to non-existing chips on
+> systems with multiple I2C busses.
+>=20
+> This patch adds a check to verify that the I2C bus to which the chip with=
+ shared
+> IRQ is attached to matches the I2C bus of the chip which triggered the bu=
+s
+> notifier and only starts the I2C transfer if they match.
+>=20
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: linux-renesas-soc@vger.kernel.org
 > ---
->  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-> index a8ee29f..ef2b97b 100644
-> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
-> @@ -9,6 +9,7 @@ Required properties:
->  		 - "renesas,r8a7744-wdt" (RZ/G1N)
->  		 - "renesas,r8a7745-wdt" (RZ/G1E)
->  		 - "renesas,r8a774a1-wdt" (RZ/G2M)
-> +		 - "renesas,r8a774c0-wdt" (RZ/G2E)
->  	         - "renesas,r8a7790-wdt" (R-Car H2)
->  	         - "renesas,r8a7791-wdt" (R-Car M2-W)
->  	         - "renesas,r8a7792-wdt" (R-Car V2H)
+Hi Mr Marek
+
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+
+I have tested this patch on H2 Lager with mainline v4.20-rc4 kernel.
+Confirmed that the problem is improved by this patch.
+
+Best regards,
+Dung
+
+>  arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> index d4774d8ff997..f78e5348bd4c 100644
+> --- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+> @@ -40,6 +40,7 @@
+>  struct regulator_quirk {
+>  	struct list_head		list;
+>  	const struct of_device_id	*id;
+> +	struct device_node		*np;
+>  	struct of_phandle_args		irq_args;
+>  	struct i2c_msg			i2c_msg;
+>  	bool				shared;	/* IRQ line is shared */
+> @@ -102,6 +103,9 @@ static int regulator_quirk_notify(struct notifier_blo=
+ck
+> *nb,
+>  		if (!pos->shared)
+>  			continue;
+>=20
+> +		if (pos->np->parent !=3D client->dev.parent->of_node)
+> +			continue;
+> +
+>  		dev_info(&client->dev, "clearing %s@0x%02x interrupts\n",
+>  			 pos->id->compatible, pos->i2c_msg.addr);
+>=20
+> @@ -167,6 +171,7 @@ static int __init rcar_gen2_regulator_quirk(void)
+>  		memcpy(&quirk->i2c_msg, id->data,
+> sizeof(quirk->i2c_msg));
+>=20
+>  		quirk->id =3D id;
+> +		quirk->np =3D np;
+>  		quirk->i2c_msg.addr =3D addr;
+>=20
+>  		ret =3D of_irq_parse_one(np, 0, argsa);
+> --
+> 2.18.0
