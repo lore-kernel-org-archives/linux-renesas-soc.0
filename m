@@ -1,148 +1,108 @@
-Return-Path: <SRS0=oRiM=O4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=bqQk=O5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611A6C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 23:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16ED5C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 02:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29FFC20873
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Dec 2018 23:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9CC020989
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 02:37:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmBwJo/H"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nch3nSoI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbeLSXZV (ORCPT
+        id S1727873AbeLTChc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Dec 2018 18:25:21 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38286 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727383AbeLSXZV (ORCPT
+        Wed, 19 Dec 2018 21:37:32 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39636 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbeLTChc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Dec 2018 18:25:21 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m22so173574wml.3;
-        Wed, 19 Dec 2018 15:25:19 -0800 (PST)
+        Wed, 19 Dec 2018 21:37:32 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w6so129829pgl.6;
+        Wed, 19 Dec 2018 18:37:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t10sXTmxjANSjSCoMbtgONdFHbqQerHxb65qlQmMYeI=;
-        b=lmBwJo/Hw6rXTaMiCPUO4uaNA7cKcSYVn+uvfXCVbedsjjNfVx6o95yepxjbbEvT9k
-         C3dxzUuNH1CKfYSnPHsiOj17tXTXfRd5w5MGyeVdYA6iuFHWgXhPzZXPi1eYRk78oQGY
-         NSAO4Q4snoQyiRXBN4uWSD6azX/XpXFUVTKoEpqsJearqd4XxHmhibFYAq2AQ01E5YQf
-         3duwrO6rtcwQlLK8qPUExbaArNaCURiYuAg1bJ1WLAhFW2zIuESqCJV2Xfl5Bl8dn2WM
-         RlYBjWSf/ilGam47+7xCIwSvnIAbaXHd/jYK+YQwjRqkrKnb9EjQzQRdXOmQ6Qqst80P
-         l1Bw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yHY9CFg0MGRqu3NkeXbhXlFw179ui82AY5bhUgLHPZM=;
+        b=nch3nSoINbw9Lz+d3Hd0yYu32jgxhvJ30r9ue719ZeaCNZVTl3BeiyFXD9SwkSTZQ2
+         o4Wjc+56dfHH6EOnUNajRw9HtkdlBv4qaqgZGKdvaddUC1HXqgLmspbQ3BcAPB4oNZzk
+         yrEytiE5ODmC9dWfcsotUDlk10k81ofca9QCCZdIIcPRzt84gQMNFMgz0wf+XOgV8jsD
+         2y9XbzkbceUTI6r/6S9j60iEmFyeq4F08vSwawU8lFWjmofeqcU41m7SstzX+lEtf7af
+         amh8/BOq1wTUChwsTIzDhLr0wH9+dE3pZXPtceB2yWxTrFN1a7D7MvOwDPqtbczhFdtJ
+         qLVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t10sXTmxjANSjSCoMbtgONdFHbqQerHxb65qlQmMYeI=;
-        b=RXQY0ATiMtb8wLYMI/8SeFO5IcIaUntmaYSwYh3TXVQzsxWGBxkW77TBmJPlIFwi8n
-         Ks5uF1ZYAsmSNnvEs4mDV0Mp4AhvF9i2F9S3spJwyeHeF41yeKfVUuFPIFdKThjytlcX
-         4aCMFP0T7KyS26J77eRvWNuBGKu00u2dZnfnpGDNq+WxVDLPymzoshHt3+9FB366Ctg3
-         jjtELYQ8HB1EefOrsbtIAGvWr/IfetcD8C4U4sZYMMwpEsIyYW6bMkb/kKJlORzqAXRR
-         Qku5r8B1hOU8kAtBgdcphlplwd447FiUIt7bm63ItlhWTGq3p9wC3tGRHgfflopRgzGN
-         CghQ==
-X-Gm-Message-State: AA+aEWa3gYKSRXd8EmtDCVNOolxCpNrEXjo4t5Y5RoDayOqGDJylI4ZL
-        07fyGI4jYRm4ecaC+HErnxo=
-X-Google-Smtp-Source: AFSGD/XcTEakA8qPggAg5umIJMD+NpoYCYeZBsoBiDKVFKqfoyKfGstP2DJzkVjMIoZBG+XyB/1O4Q==
-X-Received: by 2002:a1c:7209:: with SMTP id n9mr8664732wmc.5.1545261919012;
-        Wed, 19 Dec 2018 15:25:19 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id 14sm9521894wmv.36.2018.12.19.15.25.17
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yHY9CFg0MGRqu3NkeXbhXlFw179ui82AY5bhUgLHPZM=;
+        b=a+VFEeH28NKF46ZlSHU1hprlgpkV0AdTE7ktO9udteiEXo1NMqe90bPxwEes5/EOKJ
+         HM2s6mi+bNVKWWXtT31xiJEJCk4LiEp3t9tgGb4hjw9vusD+f0DfAiif10yO/xbKDTRB
+         kPHvdosJ+gqCwRR9DXvWV/0F05N0IBAABZ3405OP9EKs4Na9F5SIs55LcCCPsHOlPImz
+         8A+pOtrWY+7dSzuTmaGhPLgyxqWX6i8z6hLYNFwZ2KZU5LVO95sbvw57mc2hh42Jc4Z9
+         WFrf3x5jOBEVSk6RGI5TqcboZlyBU0fCmPFqHynYLEoTxVGdUbeEhYXyRd2ErvgYKldi
+         v+vg==
+X-Gm-Message-State: AA+aEWaqtNjTowEHxBiuAUZUaUxpYU6qdoBOw7bfhDNwEV765yd6gcF8
+        +2nrkdA4GUkSqKuTfaz5PnY=
+X-Google-Smtp-Source: AFSGD/U/6H3IOsaeVORBns4r17llJY7KoOlFsTCXeSiPk2qO2WShAsDbR1YEtyKyyqROZBUkYJDzIQ==
+X-Received: by 2002:a62:de06:: with SMTP id h6mr23431245pfg.158.1545273450996;
+        Wed, 19 Dec 2018 18:37:30 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id s9sm27295322pgl.88.2018.12.19.18.37.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 19 Dec 2018 15:25:18 -0800 (PST)
-Subject: Re: [PATCH V3 5/6] thermal: rcar_thermal: Convert to
- devm_thermal_zone_of_sensor_register_params()
-To:     Simon Horman <horms@verge.net.au>
-Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-References: <20181217155644.29278-1-marek.vasut@gmail.com>
- <20181217155644.29278-6-marek.vasut@gmail.com>
- <20181218110557.rrkrurhuruvzfak2@verge.net.au>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <67eeeefa-10a4-e7b3-244c-e82f785e592c@gmail.com>
-Date:   Thu, 20 Dec 2018 00:25:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 19 Dec 2018 18:37:29 -0800 (PST)
+Date:   Wed, 19 Dec 2018 18:37:28 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: dt-bindings: watchdog: renesas-wdt: Document r8a774c0 support
+Message-ID: <20181220023728.GA10247@roeck-us.net>
+References: <1544732333-6086-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20181218110557.rrkrurhuruvzfak2@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544732333-6086-1-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/18/2018 12:05 PM, Simon Horman wrote:
-> On Mon, Dec 17, 2018 at 04:56:43PM +0100, marek.vasut@gmail.com wrote:
->> From: Marek Vasut <marek.vasut@gmail.com>
->>
->> Convert the rcar code to devm_thermal_zone_of_sensor_register_params(),
->> no functional change.
->>
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Cc: Eduardo Valentin <edubezval@gmail.com>
->> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Cc: Zhang Rui <rui.zhang@intel.com>
->> Cc: linux-renesas-soc@vger.kernel.org
->> To: linux-pm@vger.kernel.org
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> ---
->> V2: No change
->> V3: - Work around the From line and SoB line checkpatch warning
->>     - Reorder the SoB line at the end
+On Thu, Dec 13, 2018 at 08:18:53PM +0000, Fabrizio Castro wrote:
+> RZ/G2E (R8A774C0) watchdog implementation is compatible with R-Car
+> Gen3, therefore add relevant documentation.
 > 
-> As per v2:
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  Documentation/devicetree/bindings/watchdog/renesas-wdt.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> This patch looks good to me, though I'm not sure why { } need
-> to be introduced into the 4th hunk.
-
-Because it's a multi-line code , even though it's just a single
-line-wrapped function call. I can drop that part, but I think it makes
-it visually far more obvious where the conditional block starts/ends and
-I recall seeing something about this in kernel coding style too.
-
-[...]
-
->> @@ -554,16 +554,20 @@ static int rcar_thermal_probe(struct platform_device *pdev)
->>  		if (ret < 0)
->>  			goto error_unregister;
->>  
->> -		if (chip->use_of_thermal)
->> -			priv->zone = devm_thermal_zone_of_sensor_register(
->> +		if (chip->use_of_thermal) {
->> +			priv->zone =
->> +				devm_thermal_zone_of_sensor_register_params(
->>  						dev, i, priv,
->> -						&rcar_thermal_zone_of_ops);
->> -		else
->> +						&rcar_thermal_zone_of_ops,
->> +						&rcar_thermal_params);
->> +		} else {
->>  			priv->zone = thermal_zone_device_register(
->>  						"rcar_thermal",
->>  						1, 0, priv,
->>  						&rcar_thermal_zone_ops, NULL, 0,
->>  						idle);
->> +		}
->> +
->>  		if (IS_ERR(priv->zone)) {
->>  			dev_err(dev, "can't register thermal zone\n");
->>  			ret = PTR_ERR(priv->zone);
-[...]
-
--- 
-Best regards,
-Marek Vasut
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> index a8ee29f..ef2b97b 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas-wdt.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>  		 - "renesas,r8a7744-wdt" (RZ/G1N)
+>  		 - "renesas,r8a7745-wdt" (RZ/G1E)
+>  		 - "renesas,r8a774a1-wdt" (RZ/G2M)
+> +		 - "renesas,r8a774c0-wdt" (RZ/G2E)
+>  	         - "renesas,r8a7790-wdt" (R-Car H2)
+>  	         - "renesas,r8a7791-wdt" (R-Car M2-W)
+>  	         - "renesas,r8a7792-wdt" (R-Car V2H)
