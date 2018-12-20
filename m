@@ -2,140 +2,169 @@ Return-Path: <SRS0=bqQk=O5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E878BC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A37C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 14:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8AA2176F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 10:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F4AE217D8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 14:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbeLTKAd (ORCPT
+        id S1732857AbeLTOCt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Dec 2018 05:00:33 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34286 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730063AbeLTKAd (ORCPT
+        Thu, 20 Dec 2018 09:02:49 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:48562 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732853AbeLTOCs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Dec 2018 05:00:33 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so1215506ede.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 20 Dec 2018 02:00:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ylwzKhANp4Cl8xusWKqb85xW+2cdSkQ3nxCl1I5yYWs=;
-        b=mBK4ey1iF3W/8Q9aXNBI/UUGpc91Fy5sXU1y2sN/u/Y6m2g4QcxJby+5XIO9JsxOZZ
-         3KaBU7oJtoXhA+cThbwM/aaRNvWgptEbALg4K8Lh8dxa0bCi+It0EGJUfrNGM3MEeLPv
-         SB96SayFMRnt4DwGqJWpwJOv99SD80Pl7At4qa6hLYBVk8UaRGJIWwjFqSZFglXuAGS5
-         Afx7mhz5CNRglGbmwaCt07ztFR0kITKqzAqMAbAbU7BJi8R2EF9qVFEVbOUsQKEug5fJ
-         1LPWoVHA7BGDBeK08NoGilUShXnLQtK5kMh+bNWa1utWeLN4LNy4fttT3h+uzt7EI3c2
-         cN7A==
-X-Gm-Message-State: AA+aEWYhwnxhi8xQBOjX50qxqMxS2krggLGR8ZC25SbDEkit28Da3moQ
-        Qqt+EORUerwyG4NyqfIcnZw3zg==
-X-Google-Smtp-Source: AFSGD/U+z0NW0ZSR9XZ3d8SpPEG73Cd5o78YWj37ciMqJWCZXrwore7exMuiLuL3XBB9kBNGDHua7g==
-X-Received: by 2002:a50:d643:: with SMTP id c3mr22291753edj.178.1545300031177;
-        Thu, 20 Dec 2018 02:00:31 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id s3sm6001255edm.31.2018.12.20.02.00.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 20 Dec 2018 02:00:30 -0800 (PST)
-Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
- adapters
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
- <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
- <20181219172250.ytronxeq2yc4vp4r@wunner.de>
- <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
- <20181219223341.GA998@kunai>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
-Date:   Thu, 20 Dec 2018 11:00:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181219223341.GA998@kunai>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 20 Dec 2018 09:02:48 -0500
+Received: from ramsan ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id EE2m1z00D3XaVaC06E2mRn; Thu, 20 Dec 2018 15:02:46 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gZyuU-0007i1-6L; Thu, 20 Dec 2018 15:02:46 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gZyuU-0005KU-3w; Thu, 20 Dec 2018 15:02:46 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC] pinctrl: sh-pfc: r8a77990: Fix MOD_SEL bit numbering
+Date:   Thu, 20 Dec 2018 15:02:41 +0100
+Message-Id: <20181220140241.20442-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On 19-12-18 23:33, Wolfram Sang wrote:
-> Hi Lukas, Hans,
-> 
-> On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
->> Hi,
->>
->> On 19-12-18 18:22, Lukas Wunner wrote:
->>> On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
->>>> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
->>>> +{
->>>> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->>>> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
->>>> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->>>> +}
->>>
->>> This looks like a duplication of the is_suspended flag in struct dev_pm_info.
->>> Any reason why you can't use that?  If so, it would be good to document the
->>> reason in the commit message.
->>
->> Oh, that is a very good point and that one only gets set on system suspend
->> and not on resume suspend, working around the problems with the i2c-designware
-> 
-> Just to make it clear: you mean runtime suspend, not resume suspend, or?
+MOD_SEL register bit numbering was different from R-Car E3 SoC and
+R-Car H3/M3-[WN] SoCs.
 
-Yes I mean runtime-suspend, sorry.
+MOD_SEL 1-bit      H3/M3-[WN]  E3
+===============    ==========  =====
+Set Value = H'0    b'0         b'0
+Set Value = H'1    b'1         b'1
 
->> driver.
->>
->> I think this might be as simple as adding:
->>
->> 	if (WARN_ON(adap->dev.parent->power.is_suspended))
->> 		return -ESHUTDOWN;
-> 
-> I have seen this flag but decided against it. One reason is because it
-> is marked as "PM core only".
+MOD_SEL 2-bits     H3/M3-[WN]  E3
+===============    ==========  =====
+Set Value = H'0    b'00        b'00
+Set Value = H'1    b'01        b'10
+Set Value = H'2    b'10        b'01
+Set Value = H'3    b'11        b'11
 
-Right and we definitely should not be touching it, but reading it should
-be fine.
+MOD_SEL 3-bits     H3/M3-[WN]  E3
+===============    ==========  =====
+Set Value = H'0    b'000       b'000
+Set Value = H'1    b'001       b'100
+Set Value = H'2    b'010       b'010
+Set Value = H'3    b'011       b'110
+Set Value = H'4    b'100       b'001
+Set Value = H'5    b'101       b'101
+Set Value = H'6    b'110       b'011
+Set Value = H'7    b'111       b'111
 
-> The other reason is that it doesn't know
-> about the adapter lock. It might get set while a transfer is on going.
-> Or even right after the suggested if-block above. The code from this
-> series gets the mutex first which ensures that on going transfers are
-> completed and no new ones are started in parallel.
-> 
-> Unless I am totally overlooking something...
+This patch replaces the #define name and value of MOD_SEL.
 
-No you are right, there is a race here, but I don't think we are likely to
-hit that race. Normally there won't be any ongoing i2c-transfers during
-a system suspend and more over, the goal of adding this check is to help
-find problems, so even if the check sometimes does not trigger because
-of the race that is not really a big deal.
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: 6d4036a1e3b3 ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
+[shimoda: Split a patch per SoC and revise the commit log]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[geert: Use macros to do the actual reordering]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Using a macro makes the code easier to writ, read, and maintain.
+Use "git show --color-words" to see the difference.
 
-I think we need to get really unlucky to have both a suspend ordering
-problem in the first case (already a somewhat rare thing) combined with
-hitting this race in such a way *each time* that we don't trigger the
-WARN_ON.
+I'd love to handle the reversal in the PINMUX_CFG_REG_VAR()
+descriptions, but I can't use e.g. REV8(MOD_SEL0_19_18_17) there, as
+MOD_SEL0_19_18_17 is a single parameter, not 8 parameters.
 
-To me this seems a case of perfect being the enemy of good. When we
-first started discussing this you wanted to not have to modify the
-adapter/bus drivers for the check, using adap->dev.parent->power.is_suspended
-gives us that and it will also work for complex cases like
-the i2c-designware case, so I believe the benefits outway the downsides.
+Can this be improved?
 
-Regards,
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 32 +++++++++++++++------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
-Hans
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+index a733534610b36035..d44959d373603f45 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+@@ -391,29 +391,33 @@ FM(IP12_23_20)	IP12_23_20	FM(IP13_23_20)	IP13_23_20	FM(IP14_23_20)	IP14_23_20	FM
+ FM(IP12_27_24)	IP12_27_24	FM(IP13_27_24)	IP13_27_24	FM(IP14_27_24)	IP14_27_24	FM(IP15_27_24)	IP15_27_24 \
+ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM(IP15_31_28)	IP15_31_28
+ 
++/* The bit numbering in MOD_SEL fields is reversed */
++#define REV4(f0, f1, f2, f3)			f0 f2 f1 f3
++#define REV8(f0, f1, f2, f3, f4, f5, f6, f7)	f0 f4 f2 f6 f1 f5 f3 f7
++
+ /* MOD_SEL0 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
+-#define MOD_SEL0_30_29		FM(SEL_ADGB_0)			FM(SEL_ADGB_1)			FM(SEL_ADGB_2)			F_(0, 0)
++#define MOD_SEL0_30_29	   REV4(FM(SEL_ADGB_0),			FM(SEL_ADGB_1),			FM(SEL_ADGB_2),			F_(0, 0))
+ #define MOD_SEL0_28		FM(SEL_DRIF0_0)			FM(SEL_DRIF0_1)
+-#define MOD_SEL0_27_26		FM(SEL_FM_0)			FM(SEL_FM_1)			FM(SEL_FM_2)			F_(0, 0)
++#define MOD_SEL0_27_26	   REV4(FM(SEL_FM_0),			FM(SEL_FM_1),			FM(SEL_FM_2),			F_(0, 0))
+ #define MOD_SEL0_25		FM(SEL_FSO_0)			FM(SEL_FSO_1)
+ #define MOD_SEL0_24		FM(SEL_HSCIF0_0)		FM(SEL_HSCIF0_1)
+ #define MOD_SEL0_23		FM(SEL_HSCIF1_0)		FM(SEL_HSCIF1_1)
+ #define MOD_SEL0_22		FM(SEL_HSCIF2_0)		FM(SEL_HSCIF2_1)
+-#define MOD_SEL0_21_20		FM(SEL_I2C1_0)			FM(SEL_I2C1_1)			FM(SEL_I2C1_2)			FM(SEL_I2C1_3)
+-#define MOD_SEL0_19_18_17	FM(SEL_I2C2_0)			FM(SEL_I2C2_1)			FM(SEL_I2C2_2)			FM(SEL_I2C2_3)		FM(SEL_I2C2_4)		F_(0, 0)	F_(0, 0)	F_(0, 0)
++#define MOD_SEL0_21_20	   REV4(FM(SEL_I2C1_0),			FM(SEL_I2C1_1),			FM(SEL_I2C1_2),			FM(SEL_I2C1_3))
++#define MOD_SEL0_19_18_17  REV8(FM(SEL_I2C2_0),			FM(SEL_I2C2_1),			FM(SEL_I2C2_2),			FM(SEL_I2C2_3),		FM(SEL_I2C2_4),		F_(0, 0),	F_(0, 0),	F_(0, 0))
+ #define MOD_SEL0_16		FM(SEL_NDFC_0)			FM(SEL_NDFC_1)
+ #define MOD_SEL0_15		FM(SEL_PWM0_0)			FM(SEL_PWM0_1)
+ #define MOD_SEL0_14		FM(SEL_PWM1_0)			FM(SEL_PWM1_1)
+-#define MOD_SEL0_13_12		FM(SEL_PWM2_0)			FM(SEL_PWM2_1)			FM(SEL_PWM2_2)			F_(0, 0)
+-#define MOD_SEL0_11_10		FM(SEL_PWM3_0)			FM(SEL_PWM3_1)			FM(SEL_PWM3_2)			F_(0, 0)
++#define MOD_SEL0_13_12	   REV4(FM(SEL_PWM2_0),			FM(SEL_PWM2_1),			FM(SEL_PWM2_2),			F_(0, 0))
++#define MOD_SEL0_11_10	   REV4(FM(SEL_PWM3_0),			FM(SEL_PWM3_1),			FM(SEL_PWM3_2),			F_(0, 0))
+ #define MOD_SEL0_9		FM(SEL_PWM4_0)			FM(SEL_PWM4_1)
+ #define MOD_SEL0_8		FM(SEL_PWM5_0)			FM(SEL_PWM5_1)
+ #define MOD_SEL0_7		FM(SEL_PWM6_0)			FM(SEL_PWM6_1)
+-#define MOD_SEL0_6_5		FM(SEL_REMOCON_0)		FM(SEL_REMOCON_1)		FM(SEL_REMOCON_2)		F_(0, 0)
++#define MOD_SEL0_6_5	   REV4(FM(SEL_REMOCON_0),		FM(SEL_REMOCON_1),		FM(SEL_REMOCON_2),		F_(0, 0))
+ #define MOD_SEL0_4		FM(SEL_SCIF_0)			FM(SEL_SCIF_1)
+ #define MOD_SEL0_3		FM(SEL_SCIF0_0)			FM(SEL_SCIF0_1)
+ #define MOD_SEL0_2		FM(SEL_SCIF2_0)			FM(SEL_SCIF2_1)
+-#define MOD_SEL0_1_0		FM(SEL_SPEED_PULSE_IF_0)	FM(SEL_SPEED_PULSE_IF_1)	FM(SEL_SPEED_PULSE_IF_2)	F_(0, 0)
++#define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
+ 
+ /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
+ #define MOD_SEL1_31		FM(SEL_SIMCARD_0)		FM(SEL_SIMCARD_1)
+@@ -422,18 +426,18 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
+ #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
+ #define MOD_SEL1_26		FM(SEL_DRIF2_0)			FM(SEL_DRIF2_1)
+ #define MOD_SEL1_25		FM(SEL_DRIF3_0)			FM(SEL_DRIF3_1)
+-#define MOD_SEL1_24_23_22	FM(SEL_HSCIF3_0)		FM(SEL_HSCIF3_1)		FM(SEL_HSCIF3_2)		FM(SEL_HSCIF3_3)	FM(SEL_HSCIF3_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
+-#define MOD_SEL1_21_20_19	FM(SEL_HSCIF4_0)		FM(SEL_HSCIF4_1)		FM(SEL_HSCIF4_2)		FM(SEL_HSCIF4_3)	FM(SEL_HSCIF4_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
++#define MOD_SEL1_24_23_22  REV8(FM(SEL_HSCIF3_0),		FM(SEL_HSCIF3_1),		FM(SEL_HSCIF3_2),		FM(SEL_HSCIF3_3),	FM(SEL_HSCIF3_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
++#define MOD_SEL1_21_20_19  REV8(FM(SEL_HSCIF4_0),		FM(SEL_HSCIF4_1),		FM(SEL_HSCIF4_2),		FM(SEL_HSCIF4_3),	FM(SEL_HSCIF4_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
+ #define MOD_SEL1_18		FM(SEL_I2C6_0)			FM(SEL_I2C6_1)
+ #define MOD_SEL1_17		FM(SEL_I2C7_0)			FM(SEL_I2C7_1)
+ #define MOD_SEL1_16		FM(SEL_MSIOF2_0)		FM(SEL_MSIOF2_1)
+ #define MOD_SEL1_15		FM(SEL_MSIOF3_0)		FM(SEL_MSIOF3_1)
+-#define MOD_SEL1_14_13		FM(SEL_SCIF3_0)			FM(SEL_SCIF3_1)			FM(SEL_SCIF3_2)			F_(0, 0)
+-#define MOD_SEL1_12_11		FM(SEL_SCIF4_0)			FM(SEL_SCIF4_1)			FM(SEL_SCIF4_2)			F_(0, 0)
+-#define MOD_SEL1_10_9		FM(SEL_SCIF5_0)			FM(SEL_SCIF5_1)			FM(SEL_SCIF5_2)			F_(0, 0)
++#define MOD_SEL1_14_13	   REV4(FM(SEL_SCIF3_0),		FM(SEL_SCIF3_1),		FM(SEL_SCIF3_2),		F_(0, 0))
++#define MOD_SEL1_12_11	   REV4(FM(SEL_SCIF4_0),		FM(SEL_SCIF4_1),		FM(SEL_SCIF4_2),		F_(0, 0))
++#define MOD_SEL1_10_9	   REV4(FM(SEL_SCIF5_0),		FM(SEL_SCIF5_1),		FM(SEL_SCIF5_2),		F_(0, 0))
+ #define MOD_SEL1_8		FM(SEL_VIN4_0)			FM(SEL_VIN4_1)
+ #define MOD_SEL1_7		FM(SEL_VIN5_0)			FM(SEL_VIN5_1)
+-#define MOD_SEL1_6_5		FM(SEL_ADGC_0)			FM(SEL_ADGC_1)			FM(SEL_ADGC_2)			F_(0, 0)
++#define MOD_SEL1_6_5	   REV4(FM(SEL_ADGC_0),			FM(SEL_ADGC_1),			FM(SEL_ADGC_2),			F_(0, 0))
+ #define MOD_SEL1_4		FM(SEL_SSI9_0)			FM(SEL_SSI9_1)
+ 
+ #define PINMUX_MOD_SELS	\
+-- 
+2.17.1
+
