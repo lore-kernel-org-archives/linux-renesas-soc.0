@@ -2,147 +2,117 @@ Return-Path: <SRS0=RdBT=O6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6773DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 10:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F526C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 10:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3490C218F0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 10:22:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="rL3JU099"
+	by mail.kernel.org (Postfix) with ESMTP id 06CAD21906
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 10:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389479AbeLUKWa (ORCPT
+        id S1730966AbeLUKnR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:22:30 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33557 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388561AbeLUKWa (ORCPT
+        Fri, 21 Dec 2018 05:43:17 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41849 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387641AbeLUKnR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:22:30 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so4268493ljd.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Dec 2018 02:22:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4bcZukLakkWf6+CfNvRBmI9VoGjGKAsi/dt6R8KXiHc=;
-        b=rL3JU099+gWXXtm11ylhAkmC8PxaAQmFtNRaCbW2wKWBZNft89w96D2oL6lX0ktCQP
-         OpEQwd8WKscH0mSMhqG640/TvMJYF/yIOAWTY/OtLRs9cIK28IsATu2535sw0iEL3QP7
-         jxtws8/rl6SP8PiSfWaYdHlR/u0wdR655rMl3Z6XUtXyVEDCuR5VBPjtofBP9UhM9IJi
-         mdcx99EBCqfZcWQYDrHeK9MIR4sqCo0gzaeq6r0onJebUhRCK1W1QBD1r8aq/M5dW53B
-         Nv/YTgop0pgddtKa6ZB4qVgWoPxIpm0fJLxd82MvIxEZwzoIRLE2964b3UxI8ceJKMhr
-         +KFg==
+        Fri, 21 Dec 2018 05:43:17 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x10so4718970wrs.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Dec 2018 02:43:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=4bcZukLakkWf6+CfNvRBmI9VoGjGKAsi/dt6R8KXiHc=;
-        b=ng7bQeoaQOhxQwx5DZCV3AchdcqwI4JwY1bmZYesqjn5tD3izkggi+1liBiCRNiwpH
-         5G1IYhMPORUPMSRyV4JEFG48VY4nx9lKD4miC8cSPARukWpZaaSuaVM8sE107EksbGZd
-         WRIz7sBApYWuEaKOjhYQwVq7NEyMZ4XjkhTc0/absle6efLlxRM2+/z7c7nQAbif9Vhc
-         OPCxb1gEVGrCnDL3G9P8pNUOgLp6fJnJ57r34zZPGsGTcQ1zZbDI2OCzdkH8Xi5Lwtjz
-         CqU2ZwZRYeeG8n/GeBzP5xCjM8UgZ+y4kFjzhEJPZ+RBiNsGUxskk1yCfG+z3gFMg5S8
-         LqFg==
-X-Gm-Message-State: AJcUukeKtKNrcKQ4/IDc0hEkH9pjZzPZwfQTBsKG8jEromQ0W3IdGilm
-        8uYZDKMDePNSZcTwP3Yz48oIrdTAWZc=
-X-Google-Smtp-Source: ALg8bN5iEFaWWXW1jzDXDzl32WH8EAwtjYoGVYGVQBidbIz23YwQ+Af5zerzXXygm361IBn6gw9bGw==
-X-Received: by 2002:a2e:8719:: with SMTP id m25-v6mr1283855lji.121.1545387748169;
-        Fri, 21 Dec 2018 02:22:28 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.81.170])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm4511334ljj.34.2018.12.21.02.22.26
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PaY6D5AxZFKBHi9C+xt5zlOnJi7qkpMTz/zEAfzHGXA=;
+        b=uZCtu1jc6SypqZGrtZfn31FU0TegFznsNBiknFWdcE/1OCoqzWGmhXqVqIyaEKU6T7
+         8x9LX3GbJnt0Si4lwBOuEb1zjpOaFKwxbbR3S5zeQuwQlKgiU+rvIIwdSi43uLLn1ZsB
+         MumXmjnBdrOv6bDX3ZmEQziRF74nD1dO2VXHzdN8yCWDyHw7gqR9WCZ1+4LdShCBPslZ
+         rXa8J049Z3hKG0a+csUp7zBm6HpeAXz5KVEf7ApKZPN2y12IYgqb+wMyD4VCTbeZxTF8
+         ohEK+2Gc/aJmUFr2Ej8lSeF9JjgLNOM0UKenySfphxlI1BV+JuUNS3qUkCd8pwX8020Z
+         P9hw==
+X-Gm-Message-State: AJcUukfnlXpG5seAZu1h5zGnihCHWJ0VVIqZ1uJ5pLAzmhR/6tBITRj7
+        i3HoJzu8AXxZP9LY6Dz/rxwX9Q==
+X-Google-Smtp-Source: ALg8bN7hbughlPeqdI0AY47i8WQKwPU516z2cGN32EPiI/L/zImY8rHSoCJ71BoTDAW1kTH46xCAGw==
+X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr2091384wrx.298.1545388995457;
+        Fri, 21 Dec 2018 02:43:15 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id q3sm16144405wrn.84.2018.12.21.02.43.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 02:22:27 -0800 (PST)
-Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
- <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
- <b638fedc-551a-63e4-9654-f9fed8d0e292@cogentembedded.com>
- <OFC335F545.7543A0F2-ON4825836A.0007E65A-4825836A.0008428D@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <9945f585-ab50-978a-7290-249336b7f107@cogentembedded.com>
-Date:   Fri, 21 Dec 2018 13:22:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 21 Dec 2018 02:43:14 -0800 (PST)
+Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
+ adapters
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Lukas Wunner <lukas@wunner.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+ <20181219223341.GA998@kunai>
+ <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
+ <2368540.q2jLLRDsj0@aspire.rjw.lan>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <6fb7d574-9648-2960-5724-8b02a3348012@redhat.com>
+Date:   Fri, 21 Dec 2018 11:43:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <OFC335F545.7543A0F2-ON4825836A.0007E65A-4825836A.0008428D@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+In-Reply-To: <2368540.q2jLLRDsj0@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+Hi,
 
-On 12/21/2018 04:30 AM, masonccyang@mxic.com.tw wrote:
-
->> > diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
->> > new file mode 100644
->> > index 0000000..cec5669
->> > --- /dev/null
->> > +++ b/drivers/spi/spi-renesas-rpc.c
->> > @@ -0,0 +1,776 @@
->> [...]
->> > +static const struct soc_device_attribute r8a7795es1[] __initconst = {
+On 20-12-18 22:09, Rafael J. Wysocki wrote:
+> On Thursday, December 20, 2018 11:00:29 AM CET Hans de Goede wrote:
+>> Hi,
 >>
->>    This __initconst shouldn't be there, it causes a build warning.
+>> On 19-12-18 23:33, Wolfram Sang wrote:
+>>> Hi Lukas, Hans,
+>>>
+>>> On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
+>>>> Hi,
+>>>>
+>>>> On 19-12-18 18:22, Lukas Wunner wrote:
+>>>>> On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
+>>>>>> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
+>>>>>> +{
+>>>>>> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+>>>>>> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
+>>>>>> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
+>>>>>> +}
+>>>>>
+>>>>> This looks like a duplication of the is_suspended flag in struct dev_pm_info.
+>>>>> Any reason why you can't use that?  If so, it would be good to document the
+>>>>> reason in the commit message.
+>>>>
+>>>> Oh, that is a very good point and that one only gets set on system suspend
+>>>> and not on resume suspend, working around the problems with the i2c-designware
+>>>
+>>> Just to make it clear: you mean runtime suspend, not resume suspend, or?
 >>
->> > +   { .soc_id = "r8a7795", .revision = "ES1.*" },
->>
->>    Wait, the driver doesn't really probe on R8A7795 yet!
+>> Yes I mean runtime-suspend, sorry.
 > 
-> yup, this is for RPC_PHYCNT_STRTIM setting by Marek's comments.
-> 
-> On H3 ES1.x, the value should be 0, while on others, the value should be 6.
-> 
-> ES1.x is r8a7795.
+> The power.is_suspended flag is about system-wide suspend, however.
 
-   Why care if we don't support H3 yet? Add this when the R8A77950 support is added.
+Right, which is why it is good for us to use, when runtime-suspend the
+i2c-adapter drivers transfer function will do a runtime_pm_get and all
+is well, we want to check for someone trying to do i2c-transfers on
+the adapter while it is system-suspended, since then the runtime_pm_get
+is a no-op and things fail.
 
->> > +   { /* sentinel */ }
->> > +};
->> > +
->> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
->> > +{
->> > +   int strtim;
->> > +   /*
->> > +    * NOTE: The 0x260 are undocumented bits, but they must be set.
->> > +    *   RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
->> > +    *   0x0 : the delay is biggest,
->> > +    *   0x1 : the delay is 2nd biggest,
->> > +    *   On H3 ES1.x, the value should be 0, while on others,
->> > +    *   the value should be 6.
->> > +    */
->> > +   if (soc_device_match(r8a7795es1))
->> > +      strtim = 0;
->> > +   else
->> > +      strtim = 6;
->> [...]
->> > +static const struct of_device_id rpc_spi_of_ids[] = {
->> > +   { .compatible = "renesas,r8a77995-rpc", },
->>
->>    We only support R8A77995 now.
-> 
-> see above !
+So for this use case it is a good thing that power.is_suspended flag is about
+system-wide suspend (which is what I was trying to say in the first place).
 
-   There's difference between R8A77995 and R8A77950, right?
+Regards,
 
-[...]
-> thanks & best regards,
-> Mason
+Hans
 
-MBR, Sergei
