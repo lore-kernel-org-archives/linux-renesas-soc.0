@@ -2,60 +2,59 @@ Return-Path: <SRS0=RdBT=O6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635F0C43612
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D5BC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 09:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30F40218E2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A853218E2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 09:03:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBmpMe80"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dkgm+xXZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729154AbeLUI60 (ORCPT
+        id S1725900AbeLUJDX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Dec 2018 03:58:26 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43295 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeLUI60 (ORCPT
+        Fri, 21 Dec 2018 04:03:23 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43583 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbeLUJDX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Dec 2018 03:58:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q2-v6so4022034lji.10
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Dec 2018 00:58:25 -0800 (PST)
+        Fri, 21 Dec 2018 04:03:23 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u18so3358714lff.10
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Dec 2018 01:03:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NpCGsap+4OasCzXUyGm7/loSh1yI6KWWD28dFPZcU1Q=;
-        b=LBmpMe80RCJiJJDepYii2pBc0VEzM6ng7JfMLmFU3TTBJaHPM5wMZ8kD0LHjUVmMol
-         wT8K78U5Uh8/BXcAk39aqoPKPtoKIO0Gw/Vkyur6J3t+163dvth14GXdi8TxOqJk3zbA
-         wjlePJ5ocZLPxHlleGwbXIxooa/lSlAFCAaXU=
+        bh=kMDNDJEbhmw6cJ1gaXs4EtD5SDcFjmkJQrMnPqLksaw=;
+        b=dkgm+xXZk74Cg2BNDCm/20NQdtrWMwIe0yoKv4DArWUbA22TL3cuEXSr9/CNqSHNVw
+         mn5eLVbGIs56liR+SE1pEw2i5Odhz2ETGTAH/tJoXcBHFuAYmvUrTu57WR7JT2UX9hs/
+         l+LuzaxwiUn9sq0tG688SBhVLLbwEY46BvoH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NpCGsap+4OasCzXUyGm7/loSh1yI6KWWD28dFPZcU1Q=;
-        b=GQfksFkQOvc0CqeehmOGFD4eTz/ao1gYMlMWXnvGSCN1766lF8MDN4hR9uPx+1y+5p
-         YyjeWYNieoxOPWhyS77KaIHOpQcT4Fg/X1X5xlCvRUJpha6+T3lll4eGPHX7UVFVRjJu
-         heIR5M4JftAUgkJj1YhuRv/w57Q5wJBNCfm+bjodlfndAMLFMBijxBvxsgjgSyLhyNVv
-         6zS3YulOOjJV7QD8n97SBZMwk0q72rysankHbu2XcsQ7MiulYkS9q1DjKjVITl9FabUZ
-         /KpsPoCL2JDYWsGD0eRGIVHP0omZin2/aCXcLEWltXJZl5ls4qr72JI9Q4gDea8XwIsz
-         bB4A==
-X-Gm-Message-State: AJcUukf2W7dqmz8A8r8kfR2x3n9u1nCht5IzJv3gdMxnoazkqmNsqXD0
-        bVkcL/61hkhFbieoMKzkWYqC5EFlIPXsQ8mnF260QA==
-X-Google-Smtp-Source: ALg8bN6eW/Hn2gIzMscu8uhKuxGFduqv3LK7G9172varKs1DhipCX/v6RKncqi+zuOdlqQZw/ZA9r/U0JjoRnCRnxlo=
-X-Received: by 2002:a2e:449b:: with SMTP id b27-v6mr964640ljf.47.1545382704170;
- Fri, 21 Dec 2018 00:58:24 -0800 (PST)
+        bh=kMDNDJEbhmw6cJ1gaXs4EtD5SDcFjmkJQrMnPqLksaw=;
+        b=NTwB+8OJflh6tV9m8DKluWEGubUyxodyBhaQAI0OLrwroe7t9rw/F/JbXHjXgvOc3S
+         lVPDebF1L45s4/wBDupvEFhQCjCSSrn7xUeiNx3od1xgaT98+M2QS+i4BZYk/wTs3OOv
+         /ZC7V55vtrl7ncS2YS5sgiD2UF5xBgFWuUtPShA/G6xYbkwtUuARz2MtgydRReUWOKOg
+         4upOzxmaIEz7tQjJd+EDb0W8yS8MDHw3qy6Qa/fwex0x0BoIsUuJ8+TJVdbCoQEiWoM7
+         TUfGG4X5kibH3lpsyH3AbZojhjrztGKQ4T8fxMFzqPOTsZlJjUdFEn+sMQnQzW3ilZhm
+         fQGQ==
+X-Gm-Message-State: AA+aEWa2qOz4QtiRUdVt7w3HYlbPzpYDzoPKDlRBw8NEwfOM+cLCWWa6
+        8PbAKEu2cv0Yo/hvR0bwIrF2YEaa4kHjWDtrWnPSYg==
+X-Google-Smtp-Source: AFSGD/WWHVd8zr/biKpKvHjmEj8TL5SWd9I6l53as8Xl+0kFHieFSstFXwVpLi6wMvEseHQRjbY3ODdLwJcmc1Rlkfg=
+X-Received: by 2002:a19:5601:: with SMTP id k1mr781748lfb.99.1545383001128;
+ Fri, 21 Dec 2018 01:03:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com> <20181219164827.20985-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181219164827.20985-7-wsa+renesas@sang-engineering.com>
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com> <20181219164827.20985-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181219164827.20985-8-wsa+renesas@sang-engineering.com>
 From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 21 Dec 2018 16:58:11 +0800
-Message-ID: <CAMz4kuKSepzktF+ZUVsrxD-pAgRDiGUC_f0oLL2CTyBMz3tfoQ@mail.gmail.com>
-Subject: Re: [PATCH 06/10] i2c: sprd: don't use pdev as variable name for
- struct device *
+Date:   Fri, 21 Dec 2018 17:03:09 +0800
+Message-ID: <CAMz4kuLv_s6t6n0OfRP8EW3=z8QD0ezn2=45sKg9aXJs5Agrbg@mail.gmail.com>
+Subject: Re: [PATCH 07/10] i2c: sprd: use core helper to mark adapter suspended
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>,
@@ -75,73 +74,63 @@ Hi Wolfram,
 On Thu, 20 Dec 2018 at 00:48, Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
 >
-> The pointer to a device is usually named 'dev'. These 'pdev' here look
-> much like copy&paste errors. Fix them to avoid confusion.
+> Rejecting transfers should be handled by the core.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks for fixing the copy&paste errors.
+Great to see the I2C core can handle this issue.
 Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
 
 > ---
->  drivers/i2c/busses/i2c-sprd.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+>  drivers/i2c/busses/i2c-sprd.c | 14 ++------------
+>  1 file changed, 2 insertions(+), 12 deletions(-)
 >
 > diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
-> index a94e724f51dc..e266d8a713d9 100644
+> index e266d8a713d9..961123529678 100644
 > --- a/drivers/i2c/busses/i2c-sprd.c
 > +++ b/drivers/i2c/busses/i2c-sprd.c
-> @@ -586,40 +586,40 @@ static int sprd_i2c_remove(struct platform_device *pdev)
->         return 0;
+> @@ -86,7 +86,6 @@ struct sprd_i2c {
+>         u32 count;
+>         int irq;
+>         int err;
+> -       bool is_suspended;
+>  };
+>
+>  static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
+> @@ -284,9 +283,6 @@ static int sprd_i2c_master_xfer(struct i2c_adapter *i2c_adap,
+>         struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
+>         int im, ret;
+>
+> -       if (i2c_dev->is_suspended)
+> -               return -EBUSY;
+> -
+>         ret = pm_runtime_get_sync(i2c_dev->dev);
+>         if (ret < 0)
+>                 return ret;
+> @@ -590,10 +586,7 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
+>  {
+>         struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>
+> -       i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -       i2c_dev->is_suspended = true;
+> -       i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -
+> +       i2c_mark_adapter_suspended(&i2c_dev->adap);
+>         return pm_runtime_force_suspend(dev);
 >  }
 >
-> -static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
+> @@ -601,10 +594,7 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
 >  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>         struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
 >
->         i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->         i2c_dev->is_suspended = true;
->         i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->
-> -       return pm_runtime_force_suspend(pdev);
-> +       return pm_runtime_force_suspend(dev);
+> -       i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -       i2c_dev->is_suspended = false;
+> -       i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+> -
+> +       i2c_mark_adapter_resumed(&i2c_dev->adap);
+>         return pm_runtime_force_resume(dev);
 >  }
 >
-> -static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
->  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->
->         i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->         i2c_dev->is_suspended = false;
->         i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
->
-> -       return pm_runtime_force_resume(pdev);
-> +       return pm_runtime_force_resume(dev);
->  }
->
-> -static int __maybe_unused sprd_i2c_runtime_suspend(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_runtime_suspend(struct device *dev)
->  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->
->         clk_disable_unprepare(i2c_dev->clk);
->
->         return 0;
->  }
->
-> -static int __maybe_unused sprd_i2c_runtime_resume(struct device *pdev)
-> +static int __maybe_unused sprd_i2c_runtime_resume(struct device *dev)
->  {
-> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
->         int ret;
->
->         ret = clk_prepare_enable(i2c_dev->clk);
 > --
 > 2.11.0
 >
