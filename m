@@ -1,81 +1,152 @@
-Return-Path: <SRS0=bqQk=O5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=RdBT=O6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B114C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 23:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 635F0C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCCE121903
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Dec 2018 23:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30F40218E2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 08:58:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="o4FtxOn6"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBmpMe80"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbeLTXme (ORCPT
+        id S1729154AbeLUI60 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Dec 2018 18:42:34 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:41638 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729693AbeLTXme (ORCPT
+        Fri, 21 Dec 2018 03:58:26 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43295 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbeLUI60 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Dec 2018 18:42:34 -0500
-Received: from penelope.horms.nl (g1-27-253-251-228.bmobile.ne.jp [27.253.251.228])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 86B3425BDFF;
-        Fri, 21 Dec 2018 10:42:31 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1545349351; bh=gPwBba0El8wczk78M1r1X612fsNe3RY+zKcDDQtWHEA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o4FtxOn6UYzIII2HBYs2cV9xSf/nCM8UEH27Guu5HQQh63L4YsJ/9QCWy77HYZFnQ
-         NEMHA8FualF1lDd8Lhk+aCPgebQzFT4rboYyVqrQPOsFUQLze3cJh4exI2zGqiUBqq
-         pU9VqZqwYWpz3SjYz7XlRlbBr0duYONSE2mG/yN0=
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 7B8CAE21792; Thu, 20 Dec 2018 15:42:29 -0800 (PST)
-Date:   Fri, 21 Dec 2018 08:42:29 +0900
-From:   Simon Horman <horms@verge.net.au>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [GIT PULL v2 0/3] Renesas ARM64 Based SoC Defconfig Updates for
- v4.21
-Message-ID: <20181220234225.iaodzrfok4d2ifl4@verge.net.au>
-References: <20181214115647.12391-1-horms+renesas@verge.net.au>
- <20181218094407.hfe7aei2hmnsih5u@verge.net.au>
- <CAK8P3a36OO+qM6r0BnrjWEWU6SV4SXu63Y=3Pq0FNt=56mzJXg@mail.gmail.com>
+        Fri, 21 Dec 2018 03:58:26 -0500
+Received: by mail-lj1-f196.google.com with SMTP id q2-v6so4022034lji.10
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Dec 2018 00:58:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NpCGsap+4OasCzXUyGm7/loSh1yI6KWWD28dFPZcU1Q=;
+        b=LBmpMe80RCJiJJDepYii2pBc0VEzM6ng7JfMLmFU3TTBJaHPM5wMZ8kD0LHjUVmMol
+         wT8K78U5Uh8/BXcAk39aqoPKPtoKIO0Gw/Vkyur6J3t+163dvth14GXdi8TxOqJk3zbA
+         wjlePJ5ocZLPxHlleGwbXIxooa/lSlAFCAaXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NpCGsap+4OasCzXUyGm7/loSh1yI6KWWD28dFPZcU1Q=;
+        b=GQfksFkQOvc0CqeehmOGFD4eTz/ao1gYMlMWXnvGSCN1766lF8MDN4hR9uPx+1y+5p
+         YyjeWYNieoxOPWhyS77KaIHOpQcT4Fg/X1X5xlCvRUJpha6+T3lll4eGPHX7UVFVRjJu
+         heIR5M4JftAUgkJj1YhuRv/w57Q5wJBNCfm+bjodlfndAMLFMBijxBvxsgjgSyLhyNVv
+         6zS3YulOOjJV7QD8n97SBZMwk0q72rysankHbu2XcsQ7MiulYkS9q1DjKjVITl9FabUZ
+         /KpsPoCL2JDYWsGD0eRGIVHP0omZin2/aCXcLEWltXJZl5ls4qr72JI9Q4gDea8XwIsz
+         bB4A==
+X-Gm-Message-State: AJcUukf2W7dqmz8A8r8kfR2x3n9u1nCht5IzJv3gdMxnoazkqmNsqXD0
+        bVkcL/61hkhFbieoMKzkWYqC5EFlIPXsQ8mnF260QA==
+X-Google-Smtp-Source: ALg8bN6eW/Hn2gIzMscu8uhKuxGFduqv3LK7G9172varKs1DhipCX/v6RKncqi+zuOdlqQZw/ZA9r/U0JjoRnCRnxlo=
+X-Received: by 2002:a2e:449b:: with SMTP id b27-v6mr964640ljf.47.1545382704170;
+ Fri, 21 Dec 2018 00:58:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a36OO+qM6r0BnrjWEWU6SV4SXu63Y=3Pq0FNt=56mzJXg@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com> <20181219164827.20985-7-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181219164827.20985-7-wsa+renesas@sang-engineering.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 21 Dec 2018 16:58:11 +0800
+Message-ID: <CAMz4kuKSepzktF+ZUVsrxD-pAgRDiGUC_f0oLL2CTyBMz3tfoQ@mail.gmail.com>
+Subject: Re: [PATCH 06/10] i2c: sprd: don't use pdev as variable name for
+ struct device *
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 05:38:45PM +0100, Arnd Bergmann wrote:
-> > > ----------------------------------------------------------------
-> > > Renesas ARM64 Based SoC Defconfig Updates for v4.21 (v2)
-> > >
-> > > * Enable in arm64 defconfig:
-> > >   - Renesas R-Car Gen3 PCIe PHY driver
-> > >   - Renesas R-Car thermal driver
-> > >   - ASoC simple SCU sound card support
-> >
-> > It seems that Morimoto-san has determined that the sound card patch is not
-> > necessary. Rather than move to v3 for these not entirely critical changes I
-> > would prefer to withdraw this pull request and revisit these changes for
-> > v4.22 although if you do happen to pull this then I don't think any harm
-> > would be done.
-> >
-> > I apologise for any inconvenience this may cause.
-> 
-> No worries, I just dropped the pull request from my todo list for 4.21 now.
+Hi Wolfram,
 
-Great, thanks Arnd.
+On Thu, 20 Dec 2018 at 00:48, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> The pointer to a device is usually named 'dev'. These 'pdev' here look
+> much like copy&paste errors. Fix them to avoid confusion.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Thanks for fixing the copy&paste errors.
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+
+> ---
+>  drivers/i2c/busses/i2c-sprd.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+> index a94e724f51dc..e266d8a713d9 100644
+> --- a/drivers/i2c/busses/i2c-sprd.c
+> +++ b/drivers/i2c/busses/i2c-sprd.c
+> @@ -586,40 +586,40 @@ static int sprd_i2c_remove(struct platform_device *pdev)
+>         return 0;
+>  }
+>
+> -static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
+> +static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
+>  {
+> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
+> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>
+>         i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>         i2c_dev->is_suspended = true;
+>         i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>
+> -       return pm_runtime_force_suspend(pdev);
+> +       return pm_runtime_force_suspend(dev);
+>  }
+>
+> -static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
+> +static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
+>  {
+> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
+> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>
+>         i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>         i2c_dev->is_suspended = false;
+>         i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+>
+> -       return pm_runtime_force_resume(pdev);
+> +       return pm_runtime_force_resume(dev);
+>  }
+>
+> -static int __maybe_unused sprd_i2c_runtime_suspend(struct device *pdev)
+> +static int __maybe_unused sprd_i2c_runtime_suspend(struct device *dev)
+>  {
+> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
+> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>
+>         clk_disable_unprepare(i2c_dev->clk);
+>
+>         return 0;
+>  }
+>
+> -static int __maybe_unused sprd_i2c_runtime_resume(struct device *pdev)
+> +static int __maybe_unused sprd_i2c_runtime_resume(struct device *dev)
+>  {
+> -       struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
+> +       struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+>         int ret;
+>
+>         ret = clk_prepare_enable(i2c_dev->clk);
+> --
+> 2.11.0
+>
+
+
+-- 
+Baolin Wang
+Best Regards
