@@ -2,117 +2,84 @@ Return-Path: <SRS0=RdBT=O6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F526C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 10:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05546C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 13:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06CAD21906
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 10:43:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C718E21916
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 13:25:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z9cRHNeL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbeLUKnR (ORCPT
+        id S2390484AbeLUNZo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Dec 2018 05:43:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41849 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387641AbeLUKnR (ORCPT
+        Fri, 21 Dec 2018 08:25:44 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34673 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387870AbeLUNZo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Dec 2018 05:43:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id x10so4718970wrs.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Dec 2018 02:43:16 -0800 (PST)
+        Fri, 21 Dec 2018 08:25:44 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p6so3926993lfc.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Dec 2018 05:25:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jDIb4P4KV9Wi/mZB/UZJxkkk7CB/2NA1Isq9LVli35U=;
+        b=Z9cRHNeLFqQMojWB0Amn+nzOR+/1zAowIEJWKqbIy3IFDLk3OFEtsH4AByySQiEdHv
+         V4iKDbxC3TpdPtJKFmoD1X0Ree/t76NaojhvCp/NEACgaawZziIYFnMmOs75Lsbs3jg5
+         Xe7Elpv2Bay3FdfM3mt02el/7M3pvUlLibIsI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PaY6D5AxZFKBHi9C+xt5zlOnJi7qkpMTz/zEAfzHGXA=;
-        b=uZCtu1jc6SypqZGrtZfn31FU0TegFznsNBiknFWdcE/1OCoqzWGmhXqVqIyaEKU6T7
-         8x9LX3GbJnt0Si4lwBOuEb1zjpOaFKwxbbR3S5zeQuwQlKgiU+rvIIwdSi43uLLn1ZsB
-         MumXmjnBdrOv6bDX3ZmEQziRF74nD1dO2VXHzdN8yCWDyHw7gqR9WCZ1+4LdShCBPslZ
-         rXa8J049Z3hKG0a+csUp7zBm6HpeAXz5KVEf7ApKZPN2y12IYgqb+wMyD4VCTbeZxTF8
-         ohEK+2Gc/aJmUFr2Ej8lSeF9JjgLNOM0UKenySfphxlI1BV+JuUNS3qUkCd8pwX8020Z
-         P9hw==
-X-Gm-Message-State: AJcUukfnlXpG5seAZu1h5zGnihCHWJ0VVIqZ1uJ5pLAzmhR/6tBITRj7
-        i3HoJzu8AXxZP9LY6Dz/rxwX9Q==
-X-Google-Smtp-Source: ALg8bN7hbughlPeqdI0AY47i8WQKwPU516z2cGN32EPiI/L/zImY8rHSoCJ71BoTDAW1kTH46xCAGw==
-X-Received: by 2002:a05:6000:100f:: with SMTP id a15mr2091384wrx.298.1545388995457;
-        Fri, 21 Dec 2018 02:43:15 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id q3sm16144405wrn.84.2018.12.21.02.43.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 02:43:14 -0800 (PST)
-Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
- adapters
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, Lukas Wunner <lukas@wunner.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
- <20181219223341.GA998@kunai>
- <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
- <2368540.q2jLLRDsj0@aspire.rjw.lan>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <6fb7d574-9648-2960-5724-8b02a3348012@redhat.com>
-Date:   Fri, 21 Dec 2018 11:43:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jDIb4P4KV9Wi/mZB/UZJxkkk7CB/2NA1Isq9LVli35U=;
+        b=QRw162goG3sCcRFQHzMK/KAJymrvAKQioK+KG3rGA1IsfyqG4MD2er4qzmKXtCTJwG
+         rU31AcAYfWGlM4NsHiOzxQVHlqF/zoDxot3HCl5Uv01W/DhLWEeyiJTXvU2xIs3QXEUL
+         m8fj6AOTWSg1HDg2dhoow+pX5s+mk/Uo6vVqMpkcDh8ZTuvhpWewXmLOYlemSRI2UbSA
+         KQvojyzXwzyN8QSd8LnvW8CH6TDHtO7jQuqudIbZw4YU8pl/SFO87+Sb0BNrVfGPf+8A
+         MY7HKis8hbOy3jZh+fGsi3UuXoatQyyn27NNEpSnZzvwPQ9zBPD5dOgVZb0CPDGoc7u0
+         AihQ==
+X-Gm-Message-State: AA+aEWbcQhW300GupUFXRHu+HDthBtz9eoZQk3o7sbw6soEMrfx9zQiQ
+        4cvHinyymOfiAPTEmLK7hqD9We7H/XEKvPXeb9W0URK4YGQ=
+X-Google-Smtp-Source: AFSGD/WXsmd2iglVFCpmlVp+jTwNfOvWKdY27l1jG5Gae50P8pjNffy3TbmppxBmWykdR7i/Q60ZEJIxx8v6SPzNkhY=
+X-Received: by 2002:a19:789:: with SMTP id 131mr1516505lfh.11.1545398742094;
+ Fri, 21 Dec 2018 05:25:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2368540.q2jLLRDsj0@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181219190850.9437-1-geert+renesas@glider.be>
+In-Reply-To: <20181219190850.9437-1-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 21 Dec 2018 14:25:30 +0100
+Message-ID: <CACRpkdb76GDdr1gGnXV0OgxO3mABwGuzr7=sA2ftiJjawRVBag@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Fixes for v4.21
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+On Wed, Dec 19, 2018 at 8:10 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On 20-12-18 22:09, Rafael J. Wysocki wrote:
-> On Thursday, December 20, 2018 11:00:29 AM CET Hans de Goede wrote:
->> Hi,
->>
->> On 19-12-18 23:33, Wolfram Sang wrote:
->>> Hi Lukas, Hans,
->>>
->>> On Wed, Dec 19, 2018 at 07:36:54PM +0100, Hans de Goede wrote:
->>>> Hi,
->>>>
->>>> On 19-12-18 18:22, Lukas Wunner wrote:
->>>>> On Wed, Dec 19, 2018 at 05:48:17PM +0100, Wolfram Sang wrote:
->>>>>> +static inline void i2c_mark_adapter_suspended(struct i2c_adapter *adap)
->>>>>> +{
->>>>>> +	i2c_lock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->>>>>> +	set_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags);
->>>>>> +	i2c_unlock_bus(adap, I2C_LOCK_ROOT_ADAPTER);
->>>>>> +}
->>>>>
->>>>> This looks like a duplication of the is_suspended flag in struct dev_pm_info.
->>>>> Any reason why you can't use that?  If so, it would be good to document the
->>>>> reason in the commit message.
->>>>
->>>> Oh, that is a very good point and that one only gets set on system suspend
->>>> and not on resume suspend, working around the problems with the i2c-designware
->>>
->>> Just to make it clear: you mean runtime suspend, not resume suspend, or?
->>
->> Yes I mean runtime-suspend, sorry.
-> 
-> The power.is_suspended flag is about system-wide suspend, however.
+> The following changes since commit 3f3327dbc5596076f94695d8d4cc66da3d5027fb:
+>
+>   pinctrl: rzn1: Fix of_get_child_count() error check (2018-12-04 10:33:49 +0100)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v4.21-tag3
+>
+> for you to fetch changes up to f83f97684a737f66c9a10437544c92e3436ca4e0:
 
-Right, which is why it is good for us to use, when runtime-suspend the
-i2c-adapter drivers transfer function will do a runtime_pm_get and all
-is well, we want to check for someone trying to do i2c-transfers on
-the adapter while it is system-suspended, since then the runtime_pm_get
-is a no-op and things fail.
+Pulled into the pinctrl devel branch!
 
-So for this use case it is a good thing that power.is_suspended flag is about
-system-wide suspend (which is what I was trying to say in the first place).
+Thanks!
 
-Regards,
-
-Hans
-
+Yours,
+Linus Walleij
