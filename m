@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A86E5C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23221C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A5821934
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE1EB21934
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404576AbeLVU0h (ORCPT
+        id S2404418AbeLVU0f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 22 Dec 2018 15:26:37 -0500
-Received: from sauhun.de ([88.99.104.3]:52674 "EHLO pokefinder.org"
+        Sat, 22 Dec 2018 15:26:35 -0500
+Received: from sauhun.de ([88.99.104.3]:52664 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730988AbeLVU0g (ORCPT
+        id S2392813AbeLVU0e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 22 Dec 2018 15:26:36 -0500
+        Sat, 22 Dec 2018 15:26:34 -0500
 Received: from localhost (p54B67A8B.dip0.t-ipconnect.de [84.182.122.139])
-        by pokefinder.org (Postfix) with ESMTPSA id 81B1C2E35D0;
-        Sat, 22 Dec 2018 21:26:34 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 1B15A2E35C9;
+        Sat, 22 Dec 2018 21:26:33 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH v2 3/9] i2c: synquacer: remove unused is_suspended flag
-Date:   Sat, 22 Dec 2018 21:26:17 +0100
-Message-Id: <20181222202623.4521-4-wsa+renesas@sang-engineering.com>
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH v2 2/9] i2c: reject new transfers when adapters are suspended
+Date:   Sat, 22 Dec 2018 21:26:16 +0100
+Message-Id: <20181222202623.4521-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
 References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
@@ -43,37 +43,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This flag was defined and checked but never set a value. Remove it.
+Using the 'is_suspended' flag from the PM core, we now reject new
+transfers if the parent of the adapter is already marked suspended.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/i2c/busses/i2c-synquacer.c | 5 -----
- 1 file changed, 5 deletions(-)
+ Documentation/i2c/fault-codes | 4 ++++
+ drivers/i2c/i2c-core-base.c   | 3 +++
+ drivers/i2c/i2c-core-smbus.c  | 4 ++++
+ 3 files changed, 11 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-synquacer.c b/drivers/i2c/busses/i2c-synquacer.c
-index 2184b7c3580e..d18b0941b71a 100644
---- a/drivers/i2c/busses/i2c-synquacer.c
-+++ b/drivers/i2c/busses/i2c-synquacer.c
-@@ -144,8 +144,6 @@ struct synquacer_i2c {
- 	u32			timeout_ms;
- 	enum i2c_state		state;
- 	struct i2c_adapter	adapter;
--
--	bool			is_suspended;
- };
+diff --git a/Documentation/i2c/fault-codes b/Documentation/i2c/fault-codes
+index 47c25abb7d52..0cee0fc545b4 100644
+--- a/Documentation/i2c/fault-codes
++++ b/Documentation/i2c/fault-codes
+@@ -112,6 +112,10 @@ EPROTO
+ 	case is when the length of an SMBus block data response
+ 	(from the SMBus slave) is outside the range 1-32 bytes.
  
- static inline int is_lastmsg(struct synquacer_i2c *i2c)
-@@ -316,9 +314,6 @@ static int synquacer_i2c_doxfer(struct synquacer_i2c *i2c,
- 	unsigned long timeout;
- 	int ret;
++ESHUTDOWN
++	Returned when a transfer was requested using an adapter
++	which is already suspended.
++
+ ETIMEDOUT
+ 	This is returned by drivers when an operation took too much
+ 	time, and was aborted before it completed.
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 28460f6a60cc..3ce238b782f3 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1865,6 +1865,9 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
  
--	if (i2c->is_suspended)
--		return -EBUSY;
--
- 	synquacer_i2c_hw_init(i2c);
- 	bsr = readb(i2c->base + SYNQUACER_I2C_REG_BSR);
- 	if (bsr & SYNQUACER_I2C_BSR_BB) {
+ 	if (WARN_ON(!msgs || num < 1))
+ 		return -EINVAL;
++	if (WARN(device_is_suspended(adap->dev.parent),
++		 "Accessing already suspended I2C/SMBus adapter"))
++		return -ESHUTDOWN;
+ 
+ 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
+ 		return -EOPNOTSUPP;
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index 9cd66cabb84f..e0f7f22feabd 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -547,6 +547,10 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
+ 	int try;
+ 	s32 res;
+ 
++	if (WARN(device_is_suspended(adapter->dev.parent),
++		 "Accessing already suspended I2C/SMBus adapter"))
++		return -ESHUTDOWN;
++
+ 	/* If enabled, the following two tracepoints are conditional on
+ 	 * read_write and protocol.
+ 	 */
 -- 
 2.19.1
 
