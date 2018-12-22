@@ -1,104 +1,98 @@
-Return-Path: <SRS0=RdBT=O6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=9PEr=O7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FROM,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663B3C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 18:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0442EC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 02:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D12C21927
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Dec 2018 18:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB97F21927
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 02:20:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwR9lfUG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732233AbeLUSut (ORCPT
+        id S1729563AbeLVCUn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Dec 2018 13:50:49 -0500
-Received: from sauhun.de ([88.99.104.3]:45294 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730799AbeLUSut (ORCPT
+        Fri, 21 Dec 2018 21:20:43 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38614 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbeLVCUn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Dec 2018 13:50:49 -0500
-Received: from localhost (p54B334FA.dip0.t-ipconnect.de [84.179.52.250])
-        by pokefinder.org (Postfix) with ESMTPSA id 889542E3542;
-        Fri, 21 Dec 2018 19:50:46 +0100 (CET)
-Date:   Fri, 21 Dec 2018 19:50:46 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Lukas Wunner <lukas@wunner.de>,
+        Fri, 21 Dec 2018 21:20:43 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so7372952wml.3;
+        Fri, 21 Dec 2018 18:20:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=q3IayNCLpuXeDPJkZH0aT5tKZuERcX79BuysqHaFJYc=;
+        b=MwR9lfUGqC/HpdR1zcDfYAv78T/RaSH5isfpl7k+nMXRhlwYGIO9T3hSa2VDFyxac5
+         JfXxlrFvaZitmG3cxe81TfYyfG3CrSSTiLDXP4Gjl+toV9ydvrnL3DdsjGt8rRktt2sg
+         HFkICkpGLc6e07tLRzOb5Gl+MqG2y31/OUfdl+envo5uGpRqrifs4DON+yaGrYLjdl3L
+         ygIl6WjzErM4aRpXcomIFDyCSHVaga9nWzTTFTHquTJ+XgXDffUn+VEF7gcVVY46oKeL
+         IcFKzIgT7x5ieHEydytGr1b+JJqJemxKYypMNOiyOqeWluq4Xgn4/x3cqSdqR1JRbmqE
+         docw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=q3IayNCLpuXeDPJkZH0aT5tKZuERcX79BuysqHaFJYc=;
+        b=QA7QcFhRmVnRjYCbf2/NIIRTvamcdSMp2rytCED99lIe0zxDbtqxMmcZpVg6gX1XjI
+         Ib2Bd3YlFT50qInsjfAWCJvvHA8WPSvfb0Rm21qYGKmjI2ML3xSnfXHk/IP0FAJMOq09
+         gWvMOnjyjT/6XSWlv8GrNxlcgL9efVs91dszGfHgGHF4MwrM8fweyQewtifRvOZuOUdh
+         cfbeWN3vcFyuW55x1HlD2iFDufY9WRoLUaZTOnr5c5Ibbnl/YF7D2GJhA4YokT03NcyR
+         Hk0sSLeCESHfcNwebg3uNAPp/AeIbHtJCy8PL8I2MiMF4GZOTJJ8g0Hy/Aysl2sPiivU
+         CjdA==
+X-Gm-Message-State: AJcUukeE0ot0YQ7oJxMmDW/jWkC05VHglFMDprW4X+DU30zmGHEG/IMO
+        FeVcjeLq7E4EiJ8Cenz/wiM=
+X-Google-Smtp-Source: AFSGD/VCHCt4rQmUmMdo4oDD7nUti099QbweZn8eIXBh1eNBIR58CW7saY9zp8AvRWhXIkpxv4FgTA==
+X-Received: by 2002:a1c:544f:: with SMTP id p15mr4799029wmi.37.1545445241258;
+        Fri, 21 Dec 2018 18:20:41 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id x12sm10179947wrt.20.2018.12.21.18.20.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Dec 2018 18:20:40 -0800 (PST)
+Subject: Re: [PATCH V3 3/6] thermal: Register hwmon in
+ thermal_zone_of_sensor_register_param()
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/10] i2c: add suspended flag and accessors for i2c
- adapters
-Message-ID: <20181221185045.5lw3d4y3znvfdlj3@ninjato>
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
- <20181219164827.20985-2-wsa+renesas@sang-engineering.com>
- <20181219172250.ytronxeq2yc4vp4r@wunner.de>
- <83b17734-2437-5a04-8843-e18ccf7ad398@redhat.com>
- <20181219223341.GA998@kunai>
- <e8bfcadc-7c1a-6659-7173-4ce484ceeca3@redhat.com>
- <20181221145022.umsugdwadw5a5ag6@ninjato>
- <c1518533-ccc0-1a82-31b4-959682fb9b9e@axentia.se>
+        Zhang Rui <rui.zhang@intel.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+References: <20181217155644.29278-1-marek.vasut@gmail.com>
+ <20181217155644.29278-4-marek.vasut@gmail.com> <20181217181227.GA1529@kunai>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <d8e12a26-93b9-b7c0-f68c-ca2985cc23f2@gmail.com>
+Date:   Sat, 22 Dec 2018 03:16:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xapu6r7mgpyebcwy"
-Content-Disposition: inline
-In-Reply-To: <c1518533-ccc0-1a82-31b4-959682fb9b9e@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181217181227.GA1529@kunai>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On 12/17/2018 07:12 PM, Wolfram Sang wrote:
+> 
+>> +			if (!IS_ERR(tzd)) {
+>> +				tzd->tzp = tzp;
+> 
+> I tried to read the thermal core but couldn't really figure it. We are
+> not leaking/overwriting the tzp pointer acquired in of-thermal.c here?
 
---xapu6r7mgpyebcwy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think so, and Eduardo seem to be confirming it, albeit it's rather
+inobvious.
 
-Hi Peter,
-
-> Yes, I agree with that analysis. All mux actions eventually end up with
-
-Good!
-
-> an __i2c_transfer() call on the relevant root adapter. Hmm, but not *all*
-> calls. How about SMBus adapters? Should there not be a similar WARN_ON
-> in __i2c_smbus_xfer?
-
-Yes, there should. Yeah, that's what I like about our way of hacking; I
-somewhen thought to not forget about SMBus, nevertheless forgot about it
-again, and then there is someone else to remind me \o/
-
-Thanks,
-
-   Wolfram
-
-
---xapu6r7mgpyebcwy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwdNgEACgkQFA3kzBSg
-KbaRnA/+Kh2Zw+bQP/rVQJRA+DlW0Pfer3ht2Ot+W456V0UD1pV8LLILytqqit+s
-EUNkI7E0DqTTY0SPmj8UYTWOShV+a+jUpbXLxs9A+KAE2oa11k8Ktyls6DIDv5Xa
-h47CLMIto1P25c568n/j7aT5jo//UqV+7RsSzkrceUgc7qM4M/8s9GD8zRG068I3
-RvieQkk8pUFYaTC8H9jMu7Yz15bP/L7cv5xK1mS1tgiSnFUnYDtWBSl04aCtpbVL
-g3cGmYZZbo1672l1Aj1UYbhNHpI99buQQgaguPgYycYbOC99I4XjlypKoc0AfltX
-JQeJayLzlc5Yl2ljPkwFrRzMLCIvKgX29QFrhdw9qwNm8uTqLtCkqMKpoGfRBg1X
-RAcBzpOBZ47nfqt7YFKKvf4mhKs7OaAVcjkk2xMTja0lzGvVE6Zi+MEqwoLIS8NA
-8rXsfcREPRJ2kV6YhZCl2/P7rhlf7mgQjVuCE7HTTC3hBp2EjgkmNk0JunJXOHfo
-Ci6pcMeZZHIajHAbwZRsS6H7uJHV7ygIWrj0VTD03vaHAQ7+j6uNEmxndrDlN/KX
-orGXFxj4/Ot7xmUSIS/z7IxMrYVIO3aT/BgZuvlevYpud8l/6BnCOKHelktEjGOg
-qz4XWcEKtxc0Z1rbkBqSU12YDXwNKe011FBjwWwK7Lm5azy2b2o=
-=6tUM
------END PGP SIGNATURE-----
-
---xapu6r7mgpyebcwy--
+-- 
+Best regards,
+Marek Vasut
