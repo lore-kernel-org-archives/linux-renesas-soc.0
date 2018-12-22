@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8904C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FCFC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7A3421934
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0D7221934
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405021AbeLVU1U (ORCPT
+        id S2404954AbeLVU0l (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 22 Dec 2018 15:27:20 -0500
-Received: from sauhun.de ([88.99.104.3]:52674 "EHLO pokefinder.org"
+        Sat, 22 Dec 2018 15:26:41 -0500
+Received: from sauhun.de ([88.99.104.3]:52686 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404952AbeLVU0m (ORCPT
+        id S2404936AbeLVU0k (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 22 Dec 2018 15:26:42 -0500
+        Sat, 22 Dec 2018 15:26:40 -0500
 Received: from localhost (p54B67A8B.dip0.t-ipconnect.de [84.182.122.139])
-        by pokefinder.org (Postfix) with ESMTPSA id AEB4A2E3606;
-        Sat, 22 Dec 2018 21:26:40 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 96A002E35D4;
+        Sat, 22 Dec 2018 21:26:38 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         Hans de Goede <hdegoede@redhat.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org
-Subject: [PATCH v2 9/9] i2c: s3c2410: don't open code to reject transfers when suspended
-Date:   Sat, 22 Dec 2018 21:26:23 +0100
-Message-Id: <20181222202623.4521-10-wsa+renesas@sang-engineering.com>
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH v2 7/9] i2c: sprd: don't open code to reject transfers when suspended
+Date:   Sat, 22 Dec 2018 21:26:21 +0100
+Message-Id: <20181222202623.4521-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
 References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
@@ -49,48 +49,53 @@ This is handled by the I2C core meanwhile.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/busses/i2c-s3c2410.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/i2c/busses/i2c-sprd.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 2f2e28d60ef5..eeccd19b5f42 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -104,7 +104,6 @@ enum s3c24xx_i2c_state {
- struct s3c24xx_i2c {
- 	wait_queue_head_t	wait;
- 	kernel_ulong_t		quirks;
--	unsigned int		suspended:1;
+diff --git a/drivers/i2c/busses/i2c-sprd.c b/drivers/i2c/busses/i2c-sprd.c
+index e266d8a713d9..fa2cae3460a6 100644
+--- a/drivers/i2c/busses/i2c-sprd.c
++++ b/drivers/i2c/busses/i2c-sprd.c
+@@ -86,7 +86,6 @@ struct sprd_i2c {
+ 	u32 count;
+ 	int irq;
+ 	int err;
+-	bool is_suspended;
+ };
  
- 	struct i2c_msg		*msg;
- 	unsigned int		msg_num;
-@@ -703,9 +702,6 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	unsigned long timeout;
- 	int ret;
+ static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
+@@ -284,9 +283,6 @@ static int sprd_i2c_master_xfer(struct i2c_adapter *i2c_adap,
+ 	struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
+ 	int im, ret;
  
--	if (i2c->suspended)
--		return -EIO;
+-	if (i2c_dev->is_suspended)
+-		return -EBUSY;
 -
- 	ret = s3c24xx_i2c_set_master(i2c);
- 	if (ret != 0) {
- 		dev_err(i2c->dev, "cannot get bus (error %d)\n", ret);
-@@ -1246,8 +1242,6 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
- {
- 	struct s3c24xx_i2c *i2c = dev_get_drvdata(dev);
- 
--	i2c->suspended = 1;
--
- 	if (!IS_ERR(i2c->sysreg))
- 		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
- 
-@@ -1267,7 +1261,6 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
+ 	ret = pm_runtime_get_sync(i2c_dev->dev);
+ 	if (ret < 0)
  		return ret;
- 	s3c24xx_i2c_init(i2c);
- 	clk_disable(i2c->clk);
--	i2c->suspended = 0;
+@@ -590,10 +586,6 @@ static int __maybe_unused sprd_i2c_suspend_noirq(struct device *dev)
+ {
+ 	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
  
- 	return 0;
+-	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-
+ 	return pm_runtime_force_suspend(dev);
  }
+ 
+@@ -601,10 +593,6 @@ static int __maybe_unused sprd_i2c_resume_noirq(struct device *dev)
+ {
+ 	struct sprd_i2c *i2c_dev = dev_get_drvdata(dev);
+ 
+-	i2c_lock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-	i2c_dev->is_suspended = false;
+-	i2c_unlock_bus(&i2c_dev->adap, I2C_LOCK_ROOT_ADAPTER);
+-
+ 	return pm_runtime_force_resume(dev);
+ }
+ 
 -- 
 2.19.1
 
