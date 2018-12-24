@@ -1,71 +1,93 @@
-Return-Path: <SRS0=9PEr=O7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=zpKQ=PB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291C6C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3F9C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Dec 2018 06:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F266F21934
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2243821736
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Dec 2018 06:53:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392837AbeLVU1s (ORCPT
+        id S1726729AbeLXGxN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 22 Dec 2018 15:27:48 -0500
-Received: from sauhun.de ([88.99.104.3]:52654 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388396AbeLVU0e (ORCPT
+        Mon, 24 Dec 2018 01:53:13 -0500
+Received: from twhmllg3.macronix.com ([122.147.135.201]:10572 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbeLXGxN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 22 Dec 2018 15:26:34 -0500
-Received: from localhost (p54B67A8B.dip0.t-ipconnect.de [84.182.122.139])
-        by pokefinder.org (Postfix) with ESMTPSA id E27E42E3560;
-        Sat, 22 Dec 2018 21:26:31 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 1/9] PM / core: add helper to return suspend status of a device
-Date:   Sat, 22 Dec 2018 21:26:15 +0100
-Message-Id: <20181222202623.4521-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
-References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 24 Dec 2018 01:53:13 -0500
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG3.macronix.com with ESMTP id wBO6qemS051271;
+        Mon, 24 Dec 2018 14:52:40 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH v4 0/2] spi: Add Renesas R-Car Gen3 RPC SPI driver 
+Date:   Mon, 24 Dec 2018 14:52:36 +0800
+Message-Id: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG3.macronix.com wBO6qemS051271
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I2C core would like this to reject transfers on an already suspended
-adapter.
+Hi Mark,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- include/linux/device.h | 5 +++++
- 1 file changed, 5 insertions(+)
+This Renesas R-Car Gen3 RPC SPI driver is based on Boris's new
+spi-mem direct mapping read/write mode [1][2].
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 1b25c7a43f4c..e63d3e06989f 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1138,6 +1138,11 @@ static inline int device_is_registered(struct device *dev)
- 	return dev->kobj.state_in_sysfs;
- }
- 
-+static inline bool device_is_suspended(struct device *dev)
-+{
-+	return dev->power.is_suspended;
-+}
-+
- static inline void device_enable_async_suspend(struct device *dev)
- {
- 	if (!dev->power.is_prepared)
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match()
+2) Drop unused RPC registers
+3) Use ilog2() instead of fls()
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
+
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned()
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
+
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM, 
+3) add RPC module software reset, 
+4) add regmap,
+5) other coding style and so on.
+
+thanks for your review.
+
+best regards,
+Mason
+
+[1] https://patchwork.kernel.org/patch/10670753
+[2] https://patchwork.kernel.org/patch/10670747
+
+
+Mason Yang (2):
+  spi: Add Renesas R-Car Gen3 RPC SPI controller driver
+  dt-bindings: spi: Document Renesas R-Car Gen3 RPC controller bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  37 +
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 788 +++++++++++++++++++++
+ 4 files changed, 832 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+
 -- 
-2.19.1
+1.9.1
 
