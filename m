@@ -1,246 +1,468 @@
-Return-Path: <SRS0=zpKQ=PB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=PopQ=PC=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8838AC64E75
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Dec 2018 21:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68AA6C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Dec 2018 15:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E690218B0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Dec 2018 21:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 242B72177E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Dec 2018 15:49:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="xTvsvrIN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725814AbeLXVdA (ORCPT
+        id S1725837AbeLYPt4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Dec 2018 16:33:00 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41267 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbeLXVc7 (ORCPT
+        Tue, 25 Dec 2018 10:49:56 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41223 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbeLYPt4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Dec 2018 16:32:59 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x10so12481871wrs.8
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Dec 2018 13:32:58 -0800 (PST)
+        Tue, 25 Dec 2018 10:49:56 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k15-v6so12275523ljc.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Dec 2018 07:49:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rG215W49zHwcElAp6dZ9fE0IBh72Qk261pFsNwoGcwE=;
+        b=xTvsvrIN6baLbcL1SxpeC8ad5kx+zpGwyQ3d0ckUgrg417O8HOZVesFutNivqrSlYa
+         ep328uRJCboHeMMqaz/IgtiOalkGoMkRVG0rr2+WVyafcH6gUqLa1vg4akcX3+OuTqbY
+         qkJ+TEYD8ZRzwOCh5XcsbMjI7PKHJ1NbxhakZ3vSKWtN1JNmmX1FidmRDt8kAzmq5icy
+         UpSt2Pqo/mv02s1Rxb2cegQzNvH0ed4mjgVbcgTJeOeHdSQ136K2Vt7fGTJ2+NFzKqrL
+         4Wjn/7UHvHefAY+XNXJ6Ow7bFEZIgpuO/sJYVzyOG+5Pvq9PX7w84MXe+Xy0UvbgGUVs
+         CPeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=wEGryfaejhg6mjVm2qvFTPe18tWQUbjlHrwN1JnARk4=;
-        b=Ya53ljUrZwALM14sbfofFblx832GQfWS1mjpEBMKQd808vlJik7OwB/AJZNUJgtGbI
-         3iPUlpxNAXnPtadcHTNJshfpLcK4Rm9E6MQN555Ex/ankWfB1L/DE/wApGxcxTERxeID
-         itrNqx22xB1FGb33je/KLtvWtejxSHnVjKbnwfHNj0gztUo2w+jQUbv5btI+5VzUbl0d
-         mR8gQ+TTyMggh+G884b5L0VtiTu1T/LI6OSxtUeV9JYSHPLnWAZJVWPOh2yQgnwv9QeJ
-         PCY+81CyWEcj0a3na1OqpW7657gGPYYMOWC/cIDGmC12mlfBzsd0GGe4+yA83S4bvQiB
-         nOcA==
-X-Gm-Message-State: AJcUukfNj7yQLMuP+C/fpC5NZRyesinu7j9hanrT4iE0l9pyISp3O/hA
-        ctaae/04N+YymAGpa1PMh8/x6A==
-X-Google-Smtp-Source: ALg8bN5872VPPSdN/haOgF28eDWn/R1eFPkCj0/A7LR6ojPm6L5if03uBGN3X7vlYQM+q2T/x9WM7g==
-X-Received: by 2002:adf:f691:: with SMTP id v17mr12543563wrp.114.1545687177522;
-        Mon, 24 Dec 2018 13:32:57 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id 143sm22825914wml.14.2018.12.24.13.32.56
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=rG215W49zHwcElAp6dZ9fE0IBh72Qk261pFsNwoGcwE=;
+        b=skHqjzG7/7kIzHH+c1neu43rWOxYKDHAplmSofaeATw+S5dzpBH/D4PGa+/F+qArjm
+         FpOeBhCxH4SgcFbnuxtqrngtiml4kXrheraobVGpNJSUvKOrDjnL73QGYf9oU0sOmasO
+         F8wMSRFd2TlVYGPiLiVPE9zjuar6D9tRs0L2+FEf8MChMQP7UlRhyvC8Wo1LRpv/m54C
+         SZis2R5JbSnmX1rOEqbV16JpTJkyo6E5cE84tAAq5yukDB1EVqXFairR2E8sM4j7wAoc
+         K9cDeUPPDTl1IN2qT6B4ASCDCD60MrPHhqdU1ItUxNLDPhuHfjGFAuuM2u9eUiWdJn5E
+         NO5Q==
+X-Gm-Message-State: AJcUukdLnfnIe3fH69BTuIsayGNh0CcpjMGwpdyzrCK0TmKFeQyMiynQ
+        K1o4ZYhIy9H6WI6oiWG+mTDqGA==
+X-Google-Smtp-Source: ALg8bN4cikb77oU4JKb2HomFXISKnw1zh421utq2dBVXvzyynpaLOIh3nelHWvlhXQBhRKpzjefgZA==
+X-Received: by 2002:a2e:97d7:: with SMTP id m23-v6mr10677010ljj.18.1545752993024;
+        Tue, 25 Dec 2018 07:49:53 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.83.22])
+        by smtp.gmail.com with ESMTPSA id m13-v6sm7061388ljg.56.2018.12.25.07.49.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Dec 2018 13:32:56 -0800 (PST)
-Subject: Re: [PATCH v2 2/9] i2c: reject new transfers when adapters are
- suspended
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>
-References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
- <20181222202623.4521-3-wsa+renesas@sang-engineering.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <5e560c2e-4da9-05ef-9bfa-3391fdd8ad23@redhat.com>
-Date:   Mon, 24 Dec 2018 22:32:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 25 Dec 2018 07:49:52 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v4 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+ <1545634358-17485-2-git-send-email-masonccyang@mxic.com.tw>
+Organization: Cogent Embedded
+Message-ID: <12cb2574-8ec9-d756-756a-d7fbbd5c7069@cogentembedded.com>
+Date:   Tue, 25 Dec 2018 18:49:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181222202623.4521-3-wsa+renesas@sang-engineering.com>
-Content-Type: multipart/mixed;
- boundary="------------34983B75F30C509E4209A341"
-Content-Language: en-US
+In-Reply-To: <1545634358-17485-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------34983B75F30C509E4209A341
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On 12/24/2018 09:52 AM, Mason Yang wrote:
 
-Hi,
-
-Thank you for this new version.
-
-On 22-12-18 21:26, Wolfram Sang wrote:
-> Using the 'is_suspended' flag from the PM core, we now reject new
-> transfers if the parent of the adapter is already marked suspended.
-
-I've been running some tests and I'm afraid that those have
-exposed multiple issues:
-
-1) It seems that adap->dev.parent can be NULL in some cases, specifically
-this patch causes the i915 driver to crash during probe on an Apollo Lake
-laptop with an eDP panel. I've attached a fixup patch which fixes this.
-
-2) There are multiple suspend stages: prepare suspend, suspend_late,
-suspend_no_irq and several devices which need access to i2c-transfers
-suspend from the suspend_late or even the suspend_no_irq handler.
-
-The way this works is that first all devices are moved to the prepared
-state, then a second run is done moving all devices over to suspended,
-then a third run moving all devices over to suspend_late, etc.
-
-To make this work, e.g. the i2c-designware driver has a nop suspend
-callback and does the actual suspend from its suspend_late or
-suspend_no_irq callback. But the is_suspended flag we are testing for
-now gets set during the suspend phase. So when we are then asked to
-do an i2c-transfer during the suspend_late phase we get a false-positive
-triggering of the:
-
-	if (WARN(device_is_suspended(adap->dev.parent),
-		 "Accessing already suspended I2C/SMBus adapter"))
-		return -ESHUTDOWN;
-
-WARN and a return of -ESHUTDOWN, because the adapter is in the
-suspended state, but it has not actually been suspended / moved
-to the D3 low-power state as that happens later when we reach
-e.g. the suspend_no_irq phase of the suspend.
-
-This is not only a problem with the somewhat complex PMIC
-situation on some Cherry Trail devices, but it also breaks the
-i915 driver since as a PCI device the i915 device also only
-really gets turned off from the suspend_no_irq phase of the suspend.
-
-Sorry, this is something which I should have realized before, but
-well I didn't.
-
-TL;DR: really only the adapter driver knows when the device is
-put in such a state that it can no longer do transfers, as it
-actually turns of clks / moves it D3 / etc. Which may happen at
-any of the 3 suspend phases so any "core" based solution is going
-to get this wrong.
-
-I share your desire to have the check for this shared in core code,
-but I'm afraid that just is not going to work.
-
-Regards,
-
-Hans
-
-
-
-
-
-
-
-
-
-
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 > ---
->   Documentation/i2c/fault-codes | 4 ++++
->   drivers/i2c/i2c-core-base.c   | 3 +++
->   drivers/i2c/i2c-core-smbus.c  | 4 ++++
->   3 files changed, 11 insertions(+)
+>  drivers/spi/Kconfig           |   6 +
+>  drivers/spi/Makefile          |   1 +
+>  drivers/spi/spi-renesas-rpc.c | 788 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 795 insertions(+)
+>  create mode 100644 drivers/spi/spi-renesas-rpc.c
 > 
-> diff --git a/Documentation/i2c/fault-codes b/Documentation/i2c/fault-codes
-> index 47c25abb7d52..0cee0fc545b4 100644
-> --- a/Documentation/i2c/fault-codes
-> +++ b/Documentation/i2c/fault-codes
-> @@ -112,6 +112,10 @@ EPROTO
->   	case is when the length of an SMBus block data response
->   	(from the SMBus slave) is outside the range 1-32 bytes.
->   
-> +ESHUTDOWN
-> +	Returned when a transfer was requested using an adapter
-> +	which is already suspended.
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 7d3a5c9..54b40f8 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -528,6 +528,12 @@ config SPI_RSPI
+>  	help
+>  	  SPI driver for Renesas RSPI and QSPI blocks.
+>  
+> +config SPI_RENESAS_RPC
+> +	tristate "Renesas R-Car Gen3 RPC SPI controller"
+
+   Well, technically it's called RPC-IF in the manual, not just RPC...
+
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	help
+> +	  SPI driver for Renesas R-Car Gen3 RPC.
 > +
->   ETIMEDOUT
->   	This is returned by drivers when an operation took too much
->   	time, and was aborted before it completed.
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 28460f6a60cc..3ce238b782f3 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -1865,6 +1865,9 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
->   
->   	if (WARN_ON(!msgs || num < 1))
->   		return -EINVAL;
-> +	if (WARN(device_is_suspended(adap->dev.parent),
-> +		 "Accessing already suspended I2C/SMBus adapter"))
-> +		return -ESHUTDOWN;
->   
->   	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
->   		return -EOPNOTSUPP;
-> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-> index 9cd66cabb84f..e0f7f22feabd 100644
-> --- a/drivers/i2c/i2c-core-smbus.c
-> +++ b/drivers/i2c/i2c-core-smbus.c
-> @@ -547,6 +547,10 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
->   	int try;
->   	s32 res;
->   
-> +	if (WARN(device_is_suspended(adapter->dev.parent),
-> +		 "Accessing already suspended I2C/SMBus adapter"))
-> +		return -ESHUTDOWN;
+>  config SPI_QCOM_QSPI
+>  	tristate "QTI QSPI controller"
+>  	depends on ARCH_QCOM
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..6dd739a
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,788 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
+> +// Copyright (C) 2018 Macronix International Co., Ltd.
+> +//
+> +// R-Car Gen3 RPC SPI/QSPI/Octa driver
+> +//
+> +// Authors:
+> +//	Mason Yang <masonccyang@mxic.com.tw>
+> +//
 > +
->   	/* If enabled, the following two tracepoints are conditional on
->   	 * read_write and protocol.
->   	 */
-> 
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/log2.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/spi/spi-mem.h>
+> +
+> +#include <asm/unaligned.h>
+> +
+> +#define RPC_CMNCR		0x0000	/* R/W */
+> +#define RPC_CMNCR_MD		BIT(31)
+> +#define RPC_CMNCR_SFDE		BIT(24) /* undocumented bit but must be set */
+> +#define RPC_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
+> +#define RPC_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
+> +#define RPC_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
+> +#define RPC_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
+> +#define RPC_CMNCR_MOIIO_HIZ	(RPC_CMNCR_MOIIO0(3) | RPC_CMNCR_MOIIO1(3) | \
+> +				 RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
+> +#define RPC_CMNCR_IO3FV(val)	(((val) & 0x3) << 14)
+> +#define RPC_CMNCR_IO2FV(val)	(((val) & 0x3) << 12)
 
---------------34983B75F30C509E4209A341
-Content-Type: text/x-patch;
- name="0001-FIXUP-i2c-reject-new-transfers-when-adapters-are-sus.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-FIXUP-i2c-reject-new-transfers-when-adapters-are-sus.pa";
- filename*1="tch"
+   Like I said, the above 2 aren't documented in the manual v1.00...
 
-From 0ff431b48f7f2d08bbf299265c67589a598ec5d4 Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Mon, 24 Dec 2018 22:00:31 +0100
-Subject: [PATCH] FIXUP: i2c: reject new transfers when adapters are suspended
+> +#define RPC_CMNCR_IO0FV(val)	(((val) & 0x3) << 8)
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/i2c/i2c-core-base.c  | 2 +-
- drivers/i2c/i2c-core-smbus.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+   Only this one is...
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 3ce238b782f3..e2fae7ec6c95 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1865,7 +1865,7 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 
- 	if (WARN_ON(!msgs || num < 1))
- 		return -EINVAL;
--	if (WARN(device_is_suspended(adap->dev.parent),
-+	if (WARN(adap->dev.parent && device_is_suspended(adap->dev.parent),
- 		 "Accessing already suspended I2C/SMBus adapter"))
- 		return -ESHUTDOWN;
- 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index e0f7f22feabd..1376620ae204 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -547,7 +547,8 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
- 	int try;
- 	s32 res;
- 
--	if (WARN(device_is_suspended(adapter->dev.parent),
-+	if (WARN(adapter->dev.parent &&
-+			device_is_suspended(adapter->dev.parent),
- 		 "Accessing already suspended I2C/SMBus adapter"))
- 		return -ESHUTDOWN;
- 
--- 
-2.20.1
+[...]
+> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+> +{
+> +	/*
+> +	 * NOTE: The 0x260 are undocumented bits, but they must be set.
+> +	 *	RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+> +	 *	0x0 : the delay is biggest,
+> +	 *	0x1 : the delay is 2nd biggest,
+> +	 *	On H3 ES1.x, the value should be 0, while on others,
+> +	 *	the value should be 6.
+> +	 */
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+> +				  RPC_PHYCNT_STRTIM(6) | 0x260);
+> +
+> +	/*
+> +	 * NOTE: The 0x31511144 are undocumented bits, but they must be set
+> +	 *       for RPC_PHYOFFSET1.
+> +	 *	 The 0x31 are undocumented bits, but they must be set
+> +	 *	 for RPC_PHYOFFSET2.
+> +	 */
+> +	regmap_write(rpc->regmap, RPC_PHYOFFSET1, 0x31511144);
 
+  0x30000000 is documented, missed that last time...
 
---------------34983B75F30C509E4209A341--
+[...]
+> +static int rpc_spi_do_reset(struct rpc_spi *rpc)
+> +{
+> +	int ret;
+> +
+> +	ret = reset_control_reset(rpc->rstc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+
+   Like I said, this function folds to a mere reset_control_reset() call...
+
+[...]
+> +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+> +			   const void *tx_buf, void *rx_buf)
+> +{
+> +	u32 smenr, smcr, data, pos = 0;
+> +	int ret = 0;
+
+   Looks like we don't need this variable...
+
+> +
+> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+> +				  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> +				  RPC_CMNCR_BSZ(0));
+> +	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
+> +	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +	regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
+> +	regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
+[...]
+> +	} else if (rx_buf) {
+> +		smenr = rpc->smenr;
+
+   Could be done before the *if*...
+
+> +
+> +		while (pos < rpc->xferlen) {
+> +			u32 nbytes = rpc->xferlen - pos;
+> +
+> +			if (nbytes > 4)
+> +				nbytes = 4;
+> +
+> +			smcr = rpc->smcr | RPC_SMCR_SPIE;
+> +
+> +			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 0)
+> +				smcr |= RPC_SMCR_SSLKP;
+> +
+> +			regmap_write(rpc->regmap, RPC_SMENR, smenr);
+> +			regmap_write(rpc->regmap, RPC_SMCR, smcr);
+> +			ret = wait_msg_xfer_end(rpc);
+> +			if (ret)
+> +				goto out;
+> +
+> +			regmap_read(rpc->regmap, RPC_SMRDR0, &data);
+> +			memcpy(rx_buf + pos, &data, nbytes);
+> +			pos += nbytes;
+> +
+> +			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 4) {
+
+   This looks hackish. What I think matters is whether the address bits are set or not.
+Anyway, maybe it works OK for you but not for me (on V3H), the 4th byte of the JEDEC ID
+is clobbered from 0 to 3... I've been working on a better workaround using Marek's
+approach (reading in extended memory mode) -- should port to v4 of your patch yet...
+
+> +				smenr = rpc->smenr & ~RPC_SMENR_CDE &
+> +					~RPC_SMENR_ADE(0xf);
+> +			} else {
+> +				regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +				regmap_write(rpc->regmap, RPC_SMDMCR,
+> +					     rpc->dummy);
+
+   Not sure why you rewrite these regs again. Where do they change?
+
+> +				regmap_write(rpc->regmap, RPC_SMADR,
+> +					     rpc->addr + pos);
+> +			}
+> +		}
+> +	} else {
+> +		regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +		regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
+> +		ret = wait_msg_xfer_end(rpc);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	return ret;
+
+   Could be *return* 0, we never get here from an error path...
+
+> +
+> +out:
+> +	return rpc_spi_do_reset(rpc);
+> +}
+> +
+> +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
+> +					const struct spi_mem_op *op,
+> +					u64 *offs, size_t *len)
+> +{
+> +	struct rpc_spi *rpc = spi_master_get_devdata(spi->master);
+> +
+> +	rpc->cmd = RPC_SMCMR_CMD(op->cmd.opcode);
+> +	rpc->smenr = RPC_SMENR_CDE |
+> +		     RPC_SMENR_CDB(ilog2(op->cmd.buswidth));
+> +	rpc->totalxferlen = 1;
+> +	rpc->xfer_dir = SPI_MEM_NO_DATA;
+> +	rpc->xferlen = 0;
+> +	rpc->addr = 0;
+> +
+> +	if (op->addr.nbytes) {
+> +		rpc->smenr |= RPC_SMENR_ADB(ilog2(op->addr.buswidth));
+> +		if (op->addr.nbytes == 4)
+> +			rpc->smenr |= RPC_SMENR_ADE(0xf);
+> +		else
+> +			rpc->smenr |= RPC_SMENR_ADE(0x7);
+> +
+> +		if (offs && len)
+> +			rpc->addr = *offs;
+> +		else
+> +			rpc->addr = op->addr.val;
+> +		rpc->totalxferlen += op->addr.nbytes;
+> +	}
+> +
+> +	if (op->dummy.nbytes) {
+> +		rpc->smenr |= RPC_SMENR_DME;
+> +		rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
+> +		rpc->totalxferlen += op->dummy.nbytes;
+> +	}
+> +
+> +	if (op->data.nbytes || (offs && len)) {
+> +		if (op->data.dir == SPI_MEM_DATA_IN) {
+> +			rpc->smcr = RPC_SMCR_SPIRE;
+> +			rpc->xfer_dir = SPI_MEM_DATA_IN;
+> +		} else if (op->data.dir == SPI_MEM_DATA_OUT) {
+> +			rpc->smcr = RPC_SMCR_SPIWE;
+> +			rpc->xfer_dir = SPI_MEM_DATA_OUT;
+> +		}
+
+   Use *switch* instead, please.
+
+[...]
+> +static bool rpc_spi_mem_supports_op(struct spi_mem *mem,
+> +				    const struct spi_mem_op *op)
+> +{
+> +	if (op->data.buswidth > 4 || op->addr.buswidth > 4 ||
+> +	    op->dummy.buswidth > 4 || op->cmd.buswidth > 4 ||
+> +	    op->addr.nbytes > 4)
+> +		return false;
+
+   So we support the dual mode, even though the manual doesn't say we do?
+
+> +
+> +	return true;
+> +}
+> +
+> +static ssize_t rpc_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
+> +				       u64 offs, size_t len, void *buf)
+> +{
+> +	struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
+> +	int ret;
+> +
+> +	if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
+> +		return -EINVAL;
+> +
+> +	if (WARN_ON(len > 0x4000000))
+> +		return -EIO;
+
+   Why not read what can still be read and return 0x4000000?
+
+> +
+> +	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
+> +				    &desc->info.op_tmpl, &offs, &len);
+> +
+> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_SFDE |
+> +		     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> +		     RPC_CMNCR_BSZ(0));
+
+   Why not set this in the probing time and only set/clear the MD bit?
+
+[...]
+> +static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
+> +					u64 offs, size_t len, const void *buf)
+> +{
+> +	struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
+> +	int ret;
+> +
+> +	if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
+> +		return -EINVAL;
+> +
+> +	if (WARN_ON(len > RPC_WBUF_SIZE))
+> +		len = RPC_WBUF_SIZE;
+> +
+> +	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
+> +	if (ret)
+> +		return ret;
+> +
+> +	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
+> +				    &desc->info.op_tmpl, &offs, &len);
+> +
+> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+> +				  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> +				  RPC_CMNCR_BSZ(0));
+> +	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL | 0x260 |
+> +				  RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
+> +
+> +	memcpy_toio(rpc->base + RPC_WBUF, buf, len);
+> +
+> +	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +	regmap_write(rpc->regmap, RPC_SMADR, offs);
+> +	regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +	regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
+> +	ret = wait_msg_xfer_end(rpc);
+> +	if (ret)
+> +		goto out;
+> +
+> +	regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RCF);
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+> +				  RPC_PHYCNT_STRTIM(6) | 0x260);
+
+   Whe not do read-modify-write here and above?
+
+[...]
+> +static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
+> +				   struct spi_message *msg)
+> +{
+[...]
+> +	for (i = xfercnt - 1; i < xfercnt && xfercnt > 1; i++) {
+> +		if (xfer[i].rx_buf) {
+> +			rpc->smenr |=
+> +				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
+> +				RPC_SMENR_SPIDB
+> +				(ilog2((unsigned int)xfer[i].rx_nbits));
+
+   Mhm, I would indent this contination line by 1 extra tab...
+
+> +		} else if (xfer[i].tx_buf) {
+> +			rpc->smenr |=
+> +				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
+> +				RPC_SMENR_SPIDB
+> +				(ilog2((unsigned int)xfer[i].tx_nbits));
+
+   And this one...
+
+[...]
+> +#ifdef CONFIG_PM_SLEEP
+> +static int rpc_spi_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct spi_master *master = platform_get_drvdata(pdev);
+
+   Ugh... not sure how i missed it the last time. :-/ Please, just do this:
+
+	struct spi_master *master = dev_get_drvdata(dev);
+
+> +
+> +	return spi_master_suspend(master);
+> +}
+> +
+> +static int rpc_spi_resume(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct spi_master *master = platform_get_drvdata(pdev);
+
+   Likewise...
+
+[...]
+
+MBR, Sergei
