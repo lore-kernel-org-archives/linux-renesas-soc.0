@@ -2,117 +2,152 @@ Return-Path: <SRS0=WuQX=PD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2A1C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A49C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE84214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83E932148E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeLZLFd (ORCPT
+        id S1726549AbeLZLjb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Dec 2018 06:05:33 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:35986 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeLZLFd (ORCPT
+        Wed, 26 Dec 2018 06:39:31 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36356 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbeLZLjb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Dec 2018 06:05:33 -0500
-Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id Gb5W1z00R3XaVaC01b5Whb; Wed, 26 Dec 2018 12:05:30 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gc70E-0005Im-7J
-        for linux-renesas-soc@vger.kernel.org; Wed, 26 Dec 2018 12:05:30 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gc70E-0003Qc-5B
-        for linux-renesas-soc@vger.kernel.org; Wed, 26 Dec 2018 12:05:30 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2018-12-26-v4.20
-Date:   Wed, 26 Dec 2018 12:05:30 +0100
-Message-Id: <20181226110530.13136-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Wed, 26 Dec 2018 06:39:31 -0500
+Received: by mail-ua1-f68.google.com with SMTP id j3so5021112uap.3;
+        Wed, 26 Dec 2018 03:39:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K8uHQBK+p8bWU3jeZO+0SoK4bhEO6ltE34jcIg+t5uo=;
+        b=WuDf89GR2wJXiJJwpmtdF7vCbVk0A6uC5BlyJfIMF8D8mN1LePsVAxC7TN+aFUWb0a
+         SOV5MpqNRnL6vV7zg/ycjoG9fxgWzUKE3qZCl9eqkaOO56WP4eriz2YvWmfk/ZajV0lh
+         caid5TYn6yxjiMmhgjRNGaLmm7y6j3sAEleQpXkuJTLm4jxlp3fM2eW9SkEeV6dcoMGF
+         N6OqsmBIFj2oyDCc0TwW/XKDh7x8M3ECPYX4U3IZxtuo3/vrYKeY9NPclabFwGLRB5Ed
+         /WUVlkWaOHnnd1KOdWkHnNT9vRh60JFcN+fqkisqM+EaXn051LvHTUd3PSqc43V3Z57E
+         iOIw==
+X-Gm-Message-State: AJcUukfoSEnHdfpRuNPJfAYfhrrtdSTf9OX+y2iKKUdwP+uqak3BQ46g
+        BIN9YfAvMHEr3vmD3I0Mmqgxtp0x8Ir8tDMWVRY=
+X-Google-Smtp-Source: ALg8bN6da+emb0AX8yQqL0KJl8G9h8gRNDz/pB+stWFNT7wXe5k9x4ri+lnIdbVAjTEb7L+UCKZq4EslouklsoXDypI=
+X-Received: by 2002:ab0:216:: with SMTP id 22mr7339580uas.28.1545824369729;
+ Wed, 26 Dec 2018 03:39:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20181218115931.GA21253@localhost.localdomain>
+In-Reply-To: <20181218115931.GA21253@localhost.localdomain>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 26 Dec 2018 12:39:17 +0100
+Message-ID: <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
+Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq support
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I have pushed renesas-drivers-2018-12-26-v4.20 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi Matti,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+On Tue, Dec 18, 2018 at 1:00 PM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+> Add level active IRQ support to regmap-irq irqchip. Change breaks
+> existing regmap-irq type setting. Convert the existing drivers which
 
-Today's version is based on renesas-devel-20181220-v4.20-rc7.
+Indeed it does.
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/scif-pio-fallback-v4
-  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
-  - git://linuxtv.org/pinchartl/media.git#drm/du/next
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
+> use regmap-irq with trigger type setting (gpio-max77620) to work
+> with this new approach. So we do not magically support level-active
+> IRQs on gpio-max77620 - but add support to the regmap-irq for chips
+> which support them =)
+>
+> We do not support distinguishing situation where HW supports rising
+> and falling edge detection but not both. Separating this would require
+> inventing yet another flags for IRQ types.
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 
-Included fixes:
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+This is now upstream as commit 1c2928e3e3212252 ("regmap:
+regmap-irq/gpio-max77620: add level-irq support"), and breaks da9063-rtc
+on the Renesas Koelsch board:
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+    genirq: Setting trigger mode 8 for irq 157 failed
+(regmap_irq_set_type+0x0/0x140)
+    da9063-rtc da9063-rtc: Failed to request ALARM IRQ 157: -524
+    da9063-rtc: probe of da9063-rtc failed with error -524
+
+> ---
+>
+> Version 3 of this patch is intended to be functionally identical to v2.
+> This patch is rebased on top of a tree which contains changes:
+> "regmap: irq: handle HW using separate rising/falling edge interrupts"
+> from Bartosz Golaszewski and the change
+> "regmap: regmap-irq: Remove default irq type setting from core"
+> (proposed here):
+> https://lore.kernel.org/lkml/20181218105813.GA6957@localhost.localdomain/
+>
+> There should not be direct dependency to "regmap: regmap-irq: Remove
+> default irq type setting from core" though. Patch was also tested to
+> apply cleany on regmap-tree.
+>
+> Same statement regarding testing applies - gpio-max77620 are only
+> tested to compile. All real testing would be _HIGHLY_ appreciated.
+>
+>  drivers/base/regmap/regmap-irq.c | 35 ++++++++++-----
+>  drivers/gpio/gpio-max77620.c     | 96 ++++++++++++++++++++++++++--------------
+>  include/linux/regmap.h           | 27 ++++++++---
+>  3 files changed, 110 insertions(+), 48 deletions(-)
+>
+> diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+> index 8b216b2e2c19..31d23c9a5ae7 100644
+> --- a/drivers/base/regmap/regmap-irq.c
+> +++ b/drivers/base/regmap/regmap-irq.c
+> @@ -199,7 +199,7 @@ static void regmap_irq_enable(struct irq_data *data)
+>         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+>         unsigned int mask, type;
+>
+> -       type = irq_data->type_falling_mask | irq_data->type_rising_mask;
+> +       type = irq_data->type.type_falling_val | irq_data->type.type_rising_val;
+>
+>         /*
+>          * The type_in_mask flag means that the underlying hardware uses
+> @@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
+>         struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
+>         struct regmap *map = d->map;
+>         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+> -       int reg = irq_data->type_reg_offset / map->reg_stride;
+> +       int reg;
+> +       const struct regmap_irq_type *t = &irq_data->type;
+>
+> -       if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> -               return 0;
+> +       if ((t->types_supported & type) != type)
+> +               return -ENOTSUPP;
+
+Given types_supported defaults to zero, I think this breaks every existing
+setup using REGMAP_IRQ_REG().
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
