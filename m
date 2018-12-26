@@ -2,138 +2,117 @@ Return-Path: <SRS0=WuQX=PD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B833C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2A1C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46AB5214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE84214C6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:05:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbeLZLCE (ORCPT
+        id S1726611AbeLZLFd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Dec 2018 06:02:04 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37447 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeLZLCE (ORCPT
+        Wed, 26 Dec 2018 06:05:33 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:35986 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeLZLFd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Dec 2018 06:02:04 -0500
-Received: by mail-ua1-f67.google.com with SMTP id u19so4994077uae.4;
-        Wed, 26 Dec 2018 03:02:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9djZcI5bEEy+IbSNFLtmKFWQfpa25K2OdZiC9sF4BpY=;
-        b=AT7pyyGpBVQSXW3la34bf8dV9nAdA/LQG/SXkILO9j007Y8YhnSvvpnDWPHwzqOx+Z
-         2tmK5fiywrOs5/2U8ow3YRyvN5fo4pIHksp0DnRUlicqhzlpbaqm8/6u7Sjz0fzChE3Q
-         BY/SyIcqdwuWNAdBlLDv1SbjLRcsZ+PX55ro0kLLIuXUyxVHoAGZyLS8t7cgsjsaiBUS
-         GSCg/91hgfhDa2EaC35rgVi18cSHTUgiI0ZBGUw+eHMr/cSPMSrHPbS0SduCwd9W3RkL
-         hQvraWpbWehAHRz0X+EXvhu09AapLpCCpiWz5KGtBttH7I9Z6gM1Kmi9R1C1n8YH7xcB
-         u/eg==
-X-Gm-Message-State: AJcUuke0O1eEWsUz9/PLnMD5Tj0yqu1Ss+SkycGD7+jTnbG2tsftZBvj
-        nI5T5zwgf43oy3tPdB0wVWkNHIe1VZCgehRan+Q=
-X-Google-Smtp-Source: ALg8bN4dY3RFRB0xxPZNhEK1cKXLjg9YhmGjgKsCFIeRNeLcG1BR6FmDe5G9GqqBSPQKHOqMzvjjAG09qXfvZQINvDQ=
-X-Received: by 2002:ab0:1393:: with SMTP id m19mr7021867uae.75.1545822121736;
- Wed, 26 Dec 2018 03:02:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Dec 2018 12:01:49 +0100
-Message-ID: <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] i2c: move handling of suspended adapters to the core
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 26 Dec 2018 06:05:33 -0500
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id Gb5W1z00R3XaVaC01b5Whb; Wed, 26 Dec 2018 12:05:30 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gc70E-0005Im-7J
+        for linux-renesas-soc@vger.kernel.org; Wed, 26 Dec 2018 12:05:30 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gc70E-0003Qc-5B
+        for linux-renesas-soc@vger.kernel.org; Wed, 26 Dec 2018 12:05:30 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2018-12-26-v4.20
+Date:   Wed, 26 Dec 2018 12:05:30 +0100
+Message-Id: <20181226110530.13136-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+I have pushed renesas-drivers-2018-12-26-v4.20 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-On Sat, Dec 22, 2018 at 9:26 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Here is the new version without specific I2C helpers but using the
-> 'is_suspended' flag from the PM core. I didn't like messing with the
-> flag directly, so I did a helper in patch 1. So far, I like the
-> approach. The diffstat looks nice, and i2c-rcar.c and i2c-sh_mobile.c
-> rejected rightfully too later transfers without further modifications.
-> Tested on a Renesas Lager board (R-Car H2).
->
-> I dropped a few Tested-by tags because I think this approach is too
-> different from V1 to keep them. I hope you guys can have a look again.
-> Thanks for all the testing, so far!
->
-> A branch can be found here:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/reject-when-suspended
->
-> If this series is acceptable, I'd suggest to take it via my i2c tree
-> after rc1. And then I'll provide an immutable branch for the PM tree to
-> pick. Let me know if this works for you.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-This breaks resume of the CS2000 clock driver on Salvator-X(S) (and
-presumable ULCB, too):
+Today's version is based on renesas-devel-20181220-v4.20-rc7.
 
-    Accessing already suspended I2C/SMBus adapter
-    WARNING: CPU: 1 PID: 1186 at drivers/i2c/i2c-core-smbus.c:551
-__i2c_smbus_xfer+0x38/0x66c
-    Modules linked in:
-    CPU: 1 PID: 1186 Comm: s2idle Not tainted
-4.20.0-salvator-x-08442-ge5992c41ac706409 #264
-    Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
-    pstate: 60400005 (nZCv daif +PAN -UAO)
-    pc : __i2c_smbus_xfer+0x38/0x66c
-    lr : __i2c_smbus_xfer+0x38/0x66c
-    sp : ffffff8013413880
-    x29: ffffff8013413880 x28: ffffffc6f78b4820
-    x27: 0000000000000010 x26: ffffff8010cf6178
-    x25: ffffff8013413976 x24: 0000000000000002
-    x23: 0000000000000016 x22: ffffffc6f7872088
-    x21: 0000000000000000 x20: 000000000000004f
-    x19: ffffffc6f7872088 x18: 000000000000000a
-    x17: 0000000000000000 x16: 0000000000000000
-    x15: 0000000000029c80 x14: 0720072007200720
-    x13: 0720072007200720 x12: 0720072007200720
-    x11: 0720072007200720 x10: 0720072007200720
-    x9 : ffffff801100e6d0 x8 : 6461207375424d53
-    x7 : ffffff8011c825c8 x6 : ffffff8011c82000
-    x5 : 0000000000000000 x4 : ffffff8013414000
-    x3 : ffffff80134136e0 x2 : 00000046ee875000
-    x1 : 82c6d7c720d64000 x0 : 0000000000000000
-    Call trace:
-     __i2c_smbus_xfer+0x38/0x66c
-     i2c_smbus_xfer+0x64/0x98
-     i2c_smbus_read_byte_data+0x40/0x6c
-     cs2000_bset.isra.1+0x2c/0x58
-     __cs2000_set_rate.constprop.7+0x8c/0x134
-     cs2000_resume+0x14/0x1c
-     dpm_run_callback+0x15c/0x2d8
-     device_resume_early+0x98/0xec
-     dpm_resume_early+0x3b0/0x454
-     suspend_devices_and_enter+0x7bc/0xbb0
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/scif-pio-fallback-v4
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://linuxtv.org/pinchartl/media.git#drm/du/next
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
 
-The CS2000 driver uses SET_LATE_SYSTEM_SLEEP_PM_OPS().
+Included fixes:
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
-Suspend/resume of the BD9571 driver works fine, as that one uses
-SET_SYSTEM_SLEEP_PM_OPS().
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
