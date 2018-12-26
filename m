@@ -2,66 +2,79 @@ Return-Path: <SRS0=WuQX=PD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A78C43444
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A50C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 19:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F815214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1BB12171F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 19:07:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uNzxpy0R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbeLZLqo (ORCPT
+        id S1727397AbeLZTHx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Dec 2018 06:46:44 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40247 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeLZLqo (ORCPT
+        Wed, 26 Dec 2018 14:07:53 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37482 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeLZTHx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Dec 2018 06:46:44 -0500
-Received: by mail-ed1-f66.google.com with SMTP id g22so13033481edr.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Dec 2018 03:46:43 -0800 (PST)
+        Wed, 26 Dec 2018 14:07:53 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s12so16375996wrt.4;
+        Wed, 26 Dec 2018 11:07:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZFO+vMdaKlndOmBDCu/FO1yVJAZXLcFFOHafEPkeYQU=;
+        b=uNzxpy0R8bdRvgeYvKCQetHNIwoaobMO+mbAlcc7CZWMRfOMKvzGMGwbMctFFDU8HW
+         zshlmzXJ6qObGAyPynXoGOKsg1Xw4KSWbwkbnbKiLJ8aHuJIO+aq5ZLlVa+FpFAMsmQ7
+         9b6a6JqSPAT+fdkCzdPyhcVXXgPHYIedwZpcEAuZPE40by2novW7K0IwW6fnTjxauJsI
+         0OHLindG6NtB3kkD4a+UvsGCJmpmoEgVSys+gfTs9rZgZdw8qurZ4wsn+x0rxTVlaL60
+         q3cYOHFZBYrL2g216BjfdFL+ZAIusxJkwqeJFQDTIFjkq9oGtySNMKojRvvV+i3jlMUR
+         s8tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=CGQn+i9wfBjYhMCNCjDuvQ8HTY47jfkrcjRlmkBqHcs=;
-        b=LIaLvkg/7qmYHB2ngqek/HegC+VpbcO9pXdTRyZ4/LQCTFgkA4XfG4VOtvI6ONyWAN
-         ul1fNtS1R1YGAcuLkGsZ8oM0Ppa2KCaBL3FxwTyw2Fo0tcOjs+wFzalo1J00pz0bl36O
-         lmUc7qrbXM4O3cPqcALQJ2oudEsyKylO1yJIqY3TPCjcIQ+hSy+0aZe7UZdgdteSlnrE
-         vRENEoVA77qyX6R3cl32OE5zbMG8VnsVeMol4qiNwxXZoKAceWoV0nEDAhtswv3hgcER
-         a9wvaBASy5vL1NDwlyHGP1Xa/P7ctdgRppg7yZcb2ePNJI0pvMkVq1t5dvVaCYWPzwW2
-         ps+w==
-X-Gm-Message-State: AA+aEWZdTxmA8WZr4ofio8dke+RuqJk//38D+NDrh3GI1uKX4OHmtT3q
-        teUegNF8im5EN+MtN1vLziO+Bw==
-X-Google-Smtp-Source: AFSGD/V9I3akP55ATp5Uxhi9MTaWNlJ4HmEfw7iND17e9HiViGSQAsL45gz9RbLYkLcDDAnykZNmwQ==
-X-Received: by 2002:a50:9feb:: with SMTP id c98mr15416662edf.253.1545824802407;
-        Wed, 26 Dec 2018 03:46:42 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id d5sm10414455edb.48.2018.12.26.03.46.40
+        bh=ZFO+vMdaKlndOmBDCu/FO1yVJAZXLcFFOHafEPkeYQU=;
+        b=Pp1QpYAHtlCkk4Jt1kgL0dseaqC6Fq5kXJXhyFGoBx9XzTOdp1I+h5cLSHvHnkpVSl
+         QuJzS7rd8Wk+g3We27AuktionDq8C/taGn8cKzbPFLbQcJtJVoMfSM95kpicjltPL7rB
+         10o0+C2UMlQ2h5Z6P9s0SjFI2IRO0VduE2m2hFUx63Y8t33JyeLpZ5krJuNs212mL2rN
+         +2FfIheHjjYpe9SEFfi+ArDJFIjQr/WhlN8eQZjV/GGM74kh6slaTuHh3EvkFyaAVyY7
+         eSOBdp9dWP/6h4BIKVb3sZy6W5Riu12JaGkz8tqHvkn+E4XND+a6fQvZywkt3BosxHnz
+         +NdA==
+X-Gm-Message-State: AJcUukd+Z45PEbrDXCyi3JXC0ZGJL3cyRj3guqOVVwrl0s4PT1PMBhvk
+        HczHWAZnB6cLEb8qWOhRN+g=
+X-Google-Smtp-Source: ALg8bN4sBu7X5xAV8Nirj5SxyltqBcKANmpRYMXUmSKOR6++VPRNzKLsu3SmXkONbJO1oYnYtr6MZg==
+X-Received: by 2002:a5d:6549:: with SMTP id z9mr18856081wrv.116.1545851270707;
+        Wed, 26 Dec 2018 11:07:50 -0800 (PST)
+Received: from [192.168.42.184] (cst-prg-83-217.cust.vodafone.cz. [46.135.83.217])
+        by smtp.gmail.com with ESMTPSA id z7sm23618543wrw.22.2018.12.26.11.07.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 03:46:41 -0800 (PST)
-Subject: Re: [PATCH v2 0/9] i2c: move handling of suspended adapters to the
- core
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <5ffe2d98-696e-4cc2-51d0-9cc7dc936d7e@redhat.com>
-Date:   Wed, 26 Dec 2018 12:46:40 +0100
+        Wed, 26 Dec 2018 11:07:49 -0800 (PST)
+Subject: Re: [PATCH v4 0/2] spi: Add Renesas R-Car Gen3 RPC SPI driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <80223417-2919-97c7-d9e3-0d0511a5a517@gmail.com>
+Date:   Wed, 26 Dec 2018 20:06:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -69,83 +82,16 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+On 12/24/18 7:52 AM, Mason Yang wrote:
+> Hi Mark,
+> 
+> This Renesas R-Car Gen3 RPC SPI driver is based on Boris's new
+> spi-mem direct mapping read/write mode [1][2].
 
-On 26-12-18 12:01, Geert Uytterhoeven wrote:
-> Hi Wolfram,
-> 
-> On Sat, Dec 22, 2018 at 9:26 PM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
->> Here is the new version without specific I2C helpers but using the
->> 'is_suspended' flag from the PM core. I didn't like messing with the
->> flag directly, so I did a helper in patch 1. So far, I like the
->> approach. The diffstat looks nice, and i2c-rcar.c and i2c-sh_mobile.c
->> rejected rightfully too later transfers without further modifications.
->> Tested on a Renesas Lager board (R-Car H2).
->>
->> I dropped a few Tested-by tags because I think this approach is too
->> different from V1 to keep them. I hope you guys can have a look again.
->> Thanks for all the testing, so far!
->>
->> A branch can be found here:
->>
->> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/reject-when-suspended
->>
->> If this series is acceptable, I'd suggest to take it via my i2c tree
->> after rc1. And then I'll provide an immutable branch for the PM tree to
->> pick. Let me know if this works for you.
-> 
-> This breaks resume of the CS2000 clock driver on Salvator-X(S) (and
-> presumable ULCB, too):
-> 
->      Accessing already suspended I2C/SMBus adapter
->      WARNING: CPU: 1 PID: 1186 at drivers/i2c/i2c-core-smbus.c:551
-> __i2c_smbus_xfer+0x38/0x66c
->      Modules linked in:
->      CPU: 1 PID: 1186 Comm: s2idle Not tainted
-> 4.20.0-salvator-x-08442-ge5992c41ac706409 #264
->      Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
->      pstate: 60400005 (nZCv daif +PAN -UAO)
->      pc : __i2c_smbus_xfer+0x38/0x66c
->      lr : __i2c_smbus_xfer+0x38/0x66c
->      sp : ffffff8013413880
->      x29: ffffff8013413880 x28: ffffffc6f78b4820
->      x27: 0000000000000010 x26: ffffff8010cf6178
->      x25: ffffff8013413976 x24: 0000000000000002
->      x23: 0000000000000016 x22: ffffffc6f7872088
->      x21: 0000000000000000 x20: 000000000000004f
->      x19: ffffffc6f7872088 x18: 000000000000000a
->      x17: 0000000000000000 x16: 0000000000000000
->      x15: 0000000000029c80 x14: 0720072007200720
->      x13: 0720072007200720 x12: 0720072007200720
->      x11: 0720072007200720 x10: 0720072007200720
->      x9 : ffffff801100e6d0 x8 : 6461207375424d53
->      x7 : ffffff8011c825c8 x6 : ffffff8011c82000
->      x5 : 0000000000000000 x4 : ffffff8013414000
->      x3 : ffffff80134136e0 x2 : 00000046ee875000
->      x1 : 82c6d7c720d64000 x0 : 0000000000000000
->      Call trace:
->       __i2c_smbus_xfer+0x38/0x66c
->       i2c_smbus_xfer+0x64/0x98
->       i2c_smbus_read_byte_data+0x40/0x6c
->       cs2000_bset.isra.1+0x2c/0x58
->       __cs2000_set_rate.constprop.7+0x8c/0x134
->       cs2000_resume+0x14/0x1c
->       dpm_run_callback+0x15c/0x2d8
->       device_resume_early+0x98/0xec
->       dpm_resume_early+0x3b0/0x454
->       suspend_devices_and_enter+0x7bc/0xbb0
-> 
-> The CS2000 driver uses SET_LATE_SYSTEM_SLEEP_PM_OPS().
-> 
-> Suspend/resume of the BD9571 driver works fine, as that one uses
-> SET_SYSTEM_SLEEP_PM_OPS().
+Again, the RPC is NOT a SPI controller, it is dual SPI/HF controller.
 
-Ok, so this is the same thing I noticed, the approach using
-the pm-core is_suspend flag only works for adapters which
-suspend during the regular suspend phase and as such that
-approach cannot work everywhere.
+[...]
 
-Regards,
-
-Hans
+-- 
+Best regards,
+Marek Vasut
