@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9C0C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EBAC43444
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899682148E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 628F62148E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbeLZAxy (ORCPT
+        id S1725953AbeLZAx6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:53:54 -0500
+        Tue, 25 Dec 2018 19:53:58 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:51730 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725953AbeLZAxy (ORCPT
+        by vger.kernel.org with ESMTP id S1726000AbeLZAx6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Dec 2018 19:53:54 -0500
-Date:   26 Dec 2018 09:53:52 +0900
+        Tue, 25 Dec 2018 19:53:58 -0500
+Date:   26 Dec 2018 09:53:57 +0900
 X-IronPort-AV: E=Sophos;i="5.56,398,1539615600"; 
-   d="scan'208";a="3759516"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2018 09:53:52 +0900
+   d="scan'208";a="3759518"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2018 09:53:57 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7AAFA4236CEC;
-        Wed, 26 Dec 2018 09:53:52 +0900 (JST)
-Message-ID: <87o9999kxv.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0C08440244CB;
+        Wed, 26 Dec 2018 09:53:57 +0900 (JST)
+Message-ID: <87muot9kxq.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 5/8] arm64: renesas: r8a7796: remove BUSIF0 settings from rcar_sound,ssi
+Subject: [PATCH 6/8] arm64: renesas: r8a77990-ebisu: use simple-audio-card
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org
@@ -43,99 +43,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Before, BUSIF which is needed for DMA transfer was automatically handled
-via SSI, but it cared BUSIF0 only.
-Now, rsnd driver can handle BUSIF0-7 (= for Gen3) BUSIF0-3 (= for Gen2)
-via SSIU, and it is keeping compatibility.
-Thus, BUSIF0 settings via SSI had been kept to avoid git merge timing
-issue / git bisect issue, but it is no longer needed.
-This patch removes it.
+Current Ebisu board is using simple-scu-audio-card
+which is used for Sampling Rate Convert, or MIXer, etc.
+But, Ebisu is not using such feature.
+Then, simple-audio-card is very enough.
+This patch fixup it.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 40 ++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index afedbf5..3a9f8c7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2110,53 +2110,53 @@
- 			rcar_sound,ssi {
- 				ssi0: ssi-0 {
- 					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x01>, <&audma1 0x02>, <&audma0 0x15>, <&audma1 0x16>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x01>, <&audma1 0x02>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi1: ssi-1 {
- 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x03>, <&audma1 0x04>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi2: ssi-2 {
- 					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x05>, <&audma1 0x06>, <&audma0 0x63>, <&audma1 0x64>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x05>, <&audma1 0x06>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi3: ssi-3 {
- 					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x07>, <&audma1 0x08>, <&audma0 0x6f>, <&audma1 0x70>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x07>, <&audma1 0x08>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi4: ssi-4 {
- 					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x09>, <&audma1 0x0a>, <&audma0 0x71>, <&audma1 0x72>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x09>, <&audma1 0x0a>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi5: ssi-5 {
- 					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0b>, <&audma1 0x0c>, <&audma0 0x73>, <&audma1 0x74>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0b>, <&audma1 0x0c>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi6: ssi-6 {
- 					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0d>, <&audma1 0x0e>, <&audma0 0x75>, <&audma1 0x76>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0d>, <&audma1 0x0e>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi7: ssi-7 {
- 					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0f>, <&audma1 0x10>, <&audma0 0x79>, <&audma1 0x7a>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x0f>, <&audma1 0x10>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi8: ssi-8 {
- 					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x11>, <&audma1 0x12>, <&audma0 0x7b>, <&audma1 0x7c>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x11>, <&audma1 0x12>;
-+					dma-names = "rx", "tx";
- 				};
- 				ssi9: ssi-9 {
- 					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x13>, <&audma1 0x14>, <&audma0 0x7d>, <&audma1 0x7e>;
--					dma-names = "rx", "tx", "rxu", "txu";
-+					dmas = <&audma0 0x13>, <&audma1 0x14>;
-+					dma-names = "rx", "tx";
- 				};
- 			};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 62bdddc..649d3fd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -159,16 +159,13 @@
+ 	};
  
+ 	rsnd_ak4613: sound {
+-		compatible = "simple-scu-audio-card";
++		compatible = "simple-audio-card";
+ 
+ 		simple-audio-card,name = "rsnd-ak4613";
+ 		simple-audio-card,format = "left_j";
+ 		simple-audio-card,bitclock-master = <&sndcpu>;
+ 		simple-audio-card,frame-master = <&sndcpu>;
+ 
+-		simple-audio-card,prefix = "ak4613";
+-		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
+-		"DAI0 Capture", "ak4613 Capture";
+ 		sndcpu: simple-audio-card,cpu {
+ 			sound-dai = <&rcar_sound>;
+ 		};
 -- 
 2.7.4
 
