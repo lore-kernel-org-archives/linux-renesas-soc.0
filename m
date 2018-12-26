@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B2BC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA95C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA1812148E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1D222148E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725885AbeLZAxa (ORCPT
+        id S1725912AbeLZAxf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:53:30 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:4159 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725910AbeLZAxa (ORCPT
+        Tue, 25 Dec 2018 19:53:35 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:46504 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725910AbeLZAxf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Dec 2018 19:53:30 -0500
-Date:   26 Dec 2018 09:53:28 +0900
+        Tue, 25 Dec 2018 19:53:35 -0500
+Date:   26 Dec 2018 09:53:34 +0900
 X-IronPort-AV: E=Sophos;i="5.56,398,1539615600"; 
-   d="scan'208";a="3553088"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Dec 2018 09:53:28 +0900
+   d="scan'208";a="3759490"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2018 09:53:34 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4042340244CB;
-        Wed, 26 Dec 2018 09:53:28 +0900 (JST)
-Message-ID: <87tvj19kyj.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 926AB4236CE9;
+        Wed, 26 Dec 2018 09:53:34 +0900 (JST)
+Message-ID: <87sgyl9kyd.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 1/8] arm64: renesas: ulcb: use audio-graph-card
+Subject: [PATCH 2/8] arm64: renesas: ulcb: add HDMI sound support
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org
@@ -46,91 +46,75 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-ULCB can use daughter board which is called as KingFisher.
-It has extra sound interface, thus we want to use it.
-But, basically, ALSA SoC can't use Multiple sound card with single
-CPU sound interface (= SSI). Thus we need to use Single Sound Card
-with multiple DAI interface.
-
-To be easy to expand ULCB sound card on KingFisher, it is better to
-use multi-dai-link style sound card on ULCB sound DT.
-
-Now, "simple-audio-card" / "audio-graph-card" both can support
-multi-dai-link style, but HDMI sound support (which is not yet supported
-on ULCB) needs "audio-graph-card".
-Using audio-graph-card is better selection.
-This patch exchange current sound card to use it.
+This patch adds missing ULCB HDMI sound support.
+To use sound card, HDMI video is mandatory.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 39 ++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 17 deletions(-)
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index f519d0c..209dda7 100644
+index 209dda7..23875bd 100644
 --- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
 +++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -83,20 +83,11 @@
- 		regulator-always-on;
- 	};
+@@ -6,6 +6,14 @@
+  * Copyright (C) 2016 Cogent Embedded, Inc.
+  */
  
--	rsnd_ak4613: sound {
--		compatible = "simple-audio-card";
-+	sound_card: sound {
-+		compatible = "audio-graph-card";
-+		label = "rcar-sound";
++/*
++ * SSI-AK4613
++ *	aplay   -D plughw:0,0 xxx.wav
++ *	arecord -D plughw:0,0 xxx.wav
++ * SSI-HDMI
++ *	aplay   -D plughw:0,1 xxx.wav
++ */
++
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
  
--		simple-audio-card,format = "left_j";
--		simple-audio-card,bitclock-master = <&sndcpu>;
--		simple-audio-card,frame-master = <&sndcpu>;
--
--		sndcpu: simple-audio-card,cpu {
--			sound-dai = <&rcar_sound>;
--		};
--
--		sndcodec: simple-audio-card,codec {
--			sound-dai = <&ak4613>;
--		};
-+		dais = <&rsnd_port0>;
+@@ -87,7 +95,9 @@
+ 		compatible = "audio-graph-card";
+ 		label = "rcar-sound";
+ 
+-		dais = <&rsnd_port0>;
++		dais = <&rsnd_port0	/* ak4613 */
++			&rsnd_port1	/* HDMI0  */
++			>;
  	};
  
  	vcc_sdhi0: regulator-vcc-sdhi0 {
-@@ -211,6 +202,12 @@
- 		asahi-kasei,out4-single-end;
- 		asahi-kasei,out5-single-end;
- 		asahi-kasei,out6-single-end;
-+
-+		port {
-+			ak4613_endpoint: endpoint {
-+				remote-endpoint = <&rsnd_for_ak4613>;
+@@ -173,6 +183,12 @@
+ 				remote-endpoint = <&hdmi0_con>;
+ 			};
+ 		};
++		port@2 {
++			reg = <2>;
++			dw_hdmi0_snd_in: endpoint {
++				remote-endpoint = <&rsnd_for_hdmi>;
 +			};
 +		};
  	};
+ };
  
- 	cs2000: clk-multiplier@4f {
-@@ -384,10 +381,18 @@
- 		 <&audio_clk_c>,
- 		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
- 
--	rcar_sound,dai {
--		dai0 {
--			playback = <&ssi0 &src0 &dvc0>;
--			capture  = <&ssi1 &src1 &dvc1>;
-+	ports {
-+		rsnd_port0: port@0 {
-+			rsnd_for_ak4613: endpoint {
-+				remote-endpoint = <&ak4613_endpoint>;
-+
-+				dai-format = "left_j";
-+				bitclock-master = <&rsnd_for_ak4613>;
-+				frame-master = <&rsnd_for_ak4613>;
-+
-+				playback = <&ssi0 &src0 &dvc0>;
-+				capture  = <&ssi1 &src1 &dvc1>;
-+			};
+@@ -394,6 +410,17 @@
+ 				capture  = <&ssi1 &src1 &dvc1>;
+ 			};
  		};
++		rsnd_port1: port@1 {
++			rsnd_for_hdmi: endpoint {
++				remote-endpoint = <&dw_hdmi0_snd_in>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_for_hdmi>;
++				frame-master = <&rsnd_for_hdmi>;
++
++				playback = <&ssi2>;
++			};
++		};
  	};
  };
+ 
 -- 
 2.7.4
 
