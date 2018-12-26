@@ -2,152 +2,150 @@ Return-Path: <SRS0=WuQX=PD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A49C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A78C43444
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E932148E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F815214C6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 11:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeLZLjb (ORCPT
+        id S1726750AbeLZLqo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Dec 2018 06:39:31 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36356 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbeLZLjb (ORCPT
+        Wed, 26 Dec 2018 06:46:44 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40247 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeLZLqo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Dec 2018 06:39:31 -0500
-Received: by mail-ua1-f68.google.com with SMTP id j3so5021112uap.3;
-        Wed, 26 Dec 2018 03:39:30 -0800 (PST)
+        Wed, 26 Dec 2018 06:46:44 -0500
+Received: by mail-ed1-f66.google.com with SMTP id g22so13033481edr.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Dec 2018 03:46:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K8uHQBK+p8bWU3jeZO+0SoK4bhEO6ltE34jcIg+t5uo=;
-        b=WuDf89GR2wJXiJJwpmtdF7vCbVk0A6uC5BlyJfIMF8D8mN1LePsVAxC7TN+aFUWb0a
-         SOV5MpqNRnL6vV7zg/ycjoG9fxgWzUKE3qZCl9eqkaOO56WP4eriz2YvWmfk/ZajV0lh
-         caid5TYn6yxjiMmhgjRNGaLmm7y6j3sAEleQpXkuJTLm4jxlp3fM2eW9SkEeV6dcoMGF
-         N6OqsmBIFj2oyDCc0TwW/XKDh7x8M3ECPYX4U3IZxtuo3/vrYKeY9NPclabFwGLRB5Ed
-         /WUVlkWaOHnnd1KOdWkHnNT9vRh60JFcN+fqkisqM+EaXn051LvHTUd3PSqc43V3Z57E
-         iOIw==
-X-Gm-Message-State: AJcUukfoSEnHdfpRuNPJfAYfhrrtdSTf9OX+y2iKKUdwP+uqak3BQ46g
-        BIN9YfAvMHEr3vmD3I0Mmqgxtp0x8Ir8tDMWVRY=
-X-Google-Smtp-Source: ALg8bN6da+emb0AX8yQqL0KJl8G9h8gRNDz/pB+stWFNT7wXe5k9x4ri+lnIdbVAjTEb7L+UCKZq4EslouklsoXDypI=
-X-Received: by 2002:ab0:216:: with SMTP id 22mr7339580uas.28.1545824369729;
- Wed, 26 Dec 2018 03:39:29 -0800 (PST)
-MIME-Version: 1.0
-References: <20181218115931.GA21253@localhost.localdomain>
-In-Reply-To: <20181218115931.GA21253@localhost.localdomain>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Dec 2018 12:39:17 +0100
-Message-ID: <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
-Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq support
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CGQn+i9wfBjYhMCNCjDuvQ8HTY47jfkrcjRlmkBqHcs=;
+        b=LIaLvkg/7qmYHB2ngqek/HegC+VpbcO9pXdTRyZ4/LQCTFgkA4XfG4VOtvI6ONyWAN
+         ul1fNtS1R1YGAcuLkGsZ8oM0Ppa2KCaBL3FxwTyw2Fo0tcOjs+wFzalo1J00pz0bl36O
+         lmUc7qrbXM4O3cPqcALQJ2oudEsyKylO1yJIqY3TPCjcIQ+hSy+0aZe7UZdgdteSlnrE
+         vRENEoVA77qyX6R3cl32OE5zbMG8VnsVeMol4qiNwxXZoKAceWoV0nEDAhtswv3hgcER
+         a9wvaBASy5vL1NDwlyHGP1Xa/P7ctdgRppg7yZcb2ePNJI0pvMkVq1t5dvVaCYWPzwW2
+         ps+w==
+X-Gm-Message-State: AA+aEWZdTxmA8WZr4ofio8dke+RuqJk//38D+NDrh3GI1uKX4OHmtT3q
+        teUegNF8im5EN+MtN1vLziO+Bw==
+X-Google-Smtp-Source: AFSGD/V9I3akP55ATp5Uxhi9MTaWNlJ4HmEfw7iND17e9HiViGSQAsL45gz9RbLYkLcDDAnykZNmwQ==
+X-Received: by 2002:a50:9feb:: with SMTP id c98mr15416662edf.253.1545824802407;
+        Wed, 26 Dec 2018 03:46:42 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id d5sm10414455edb.48.2018.12.26.03.46.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 26 Dec 2018 03:46:41 -0800 (PST)
+Subject: Re: [PATCH v2 0/9] i2c: move handling of suspended adapters to the
+ core
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20181222202623.4521-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <5ffe2d98-696e-4cc2-51d0-9cc7dc936d7e@redhat.com>
+Date:   Wed, 26 Dec 2018 12:46:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUyxcYcT7uAhsQ0xa++yzi3TnBhNS90O6Achz3KD6E4dA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Matti,
+Hi,
 
-On Tue, Dec 18, 2018 at 1:00 PM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
-> Add level active IRQ support to regmap-irq irqchip. Change breaks
-> existing regmap-irq type setting. Convert the existing drivers which
+On 26-12-18 12:01, Geert Uytterhoeven wrote:
+> Hi Wolfram,
+> 
+> On Sat, Dec 22, 2018 at 9:26 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>> Here is the new version without specific I2C helpers but using the
+>> 'is_suspended' flag from the PM core. I didn't like messing with the
+>> flag directly, so I did a helper in patch 1. So far, I like the
+>> approach. The diffstat looks nice, and i2c-rcar.c and i2c-sh_mobile.c
+>> rejected rightfully too later transfers without further modifications.
+>> Tested on a Renesas Lager board (R-Car H2).
+>>
+>> I dropped a few Tested-by tags because I think this approach is too
+>> different from V1 to keep them. I hope you guys can have a look again.
+>> Thanks for all the testing, so far!
+>>
+>> A branch can be found here:
+>>
+>> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/reject-when-suspended
+>>
+>> If this series is acceptable, I'd suggest to take it via my i2c tree
+>> after rc1. And then I'll provide an immutable branch for the PM tree to
+>> pick. Let me know if this works for you.
+> 
+> This breaks resume of the CS2000 clock driver on Salvator-X(S) (and
+> presumable ULCB, too):
+> 
+>      Accessing already suspended I2C/SMBus adapter
+>      WARNING: CPU: 1 PID: 1186 at drivers/i2c/i2c-core-smbus.c:551
+> __i2c_smbus_xfer+0x38/0x66c
+>      Modules linked in:
+>      CPU: 1 PID: 1186 Comm: s2idle Not tainted
+> 4.20.0-salvator-x-08442-ge5992c41ac706409 #264
+>      Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
+>      pstate: 60400005 (nZCv daif +PAN -UAO)
+>      pc : __i2c_smbus_xfer+0x38/0x66c
+>      lr : __i2c_smbus_xfer+0x38/0x66c
+>      sp : ffffff8013413880
+>      x29: ffffff8013413880 x28: ffffffc6f78b4820
+>      x27: 0000000000000010 x26: ffffff8010cf6178
+>      x25: ffffff8013413976 x24: 0000000000000002
+>      x23: 0000000000000016 x22: ffffffc6f7872088
+>      x21: 0000000000000000 x20: 000000000000004f
+>      x19: ffffffc6f7872088 x18: 000000000000000a
+>      x17: 0000000000000000 x16: 0000000000000000
+>      x15: 0000000000029c80 x14: 0720072007200720
+>      x13: 0720072007200720 x12: 0720072007200720
+>      x11: 0720072007200720 x10: 0720072007200720
+>      x9 : ffffff801100e6d0 x8 : 6461207375424d53
+>      x7 : ffffff8011c825c8 x6 : ffffff8011c82000
+>      x5 : 0000000000000000 x4 : ffffff8013414000
+>      x3 : ffffff80134136e0 x2 : 00000046ee875000
+>      x1 : 82c6d7c720d64000 x0 : 0000000000000000
+>      Call trace:
+>       __i2c_smbus_xfer+0x38/0x66c
+>       i2c_smbus_xfer+0x64/0x98
+>       i2c_smbus_read_byte_data+0x40/0x6c
+>       cs2000_bset.isra.1+0x2c/0x58
+>       __cs2000_set_rate.constprop.7+0x8c/0x134
+>       cs2000_resume+0x14/0x1c
+>       dpm_run_callback+0x15c/0x2d8
+>       device_resume_early+0x98/0xec
+>       dpm_resume_early+0x3b0/0x454
+>       suspend_devices_and_enter+0x7bc/0xbb0
+> 
+> The CS2000 driver uses SET_LATE_SYSTEM_SLEEP_PM_OPS().
+> 
+> Suspend/resume of the BD9571 driver works fine, as that one uses
+> SET_SYSTEM_SLEEP_PM_OPS().
 
-Indeed it does.
+Ok, so this is the same thing I noticed, the approach using
+the pm-core is_suspend flag only works for adapters which
+suspend during the regular suspend phase and as such that
+approach cannot work everywhere.
 
-> use regmap-irq with trigger type setting (gpio-max77620) to work
-> with this new approach. So we do not magically support level-active
-> IRQs on gpio-max77620 - but add support to the regmap-irq for chips
-> which support them =)
->
-> We do not support distinguishing situation where HW supports rising
-> and falling edge detection but not both. Separating this would require
-> inventing yet another flags for IRQ types.
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Regards,
 
-This is now upstream as commit 1c2928e3e3212252 ("regmap:
-regmap-irq/gpio-max77620: add level-irq support"), and breaks da9063-rtc
-on the Renesas Koelsch board:
-
-    genirq: Setting trigger mode 8 for irq 157 failed
-(regmap_irq_set_type+0x0/0x140)
-    da9063-rtc da9063-rtc: Failed to request ALARM IRQ 157: -524
-    da9063-rtc: probe of da9063-rtc failed with error -524
-
-> ---
->
-> Version 3 of this patch is intended to be functionally identical to v2.
-> This patch is rebased on top of a tree which contains changes:
-> "regmap: irq: handle HW using separate rising/falling edge interrupts"
-> from Bartosz Golaszewski and the change
-> "regmap: regmap-irq: Remove default irq type setting from core"
-> (proposed here):
-> https://lore.kernel.org/lkml/20181218105813.GA6957@localhost.localdomain/
->
-> There should not be direct dependency to "regmap: regmap-irq: Remove
-> default irq type setting from core" though. Patch was also tested to
-> apply cleany on regmap-tree.
->
-> Same statement regarding testing applies - gpio-max77620 are only
-> tested to compile. All real testing would be _HIGHLY_ appreciated.
->
->  drivers/base/regmap/regmap-irq.c | 35 ++++++++++-----
->  drivers/gpio/gpio-max77620.c     | 96 ++++++++++++++++++++++++++--------------
->  include/linux/regmap.h           | 27 ++++++++---
->  3 files changed, 110 insertions(+), 48 deletions(-)
->
-> diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-> index 8b216b2e2c19..31d23c9a5ae7 100644
-> --- a/drivers/base/regmap/regmap-irq.c
-> +++ b/drivers/base/regmap/regmap-irq.c
-> @@ -199,7 +199,7 @@ static void regmap_irq_enable(struct irq_data *data)
->         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
->         unsigned int mask, type;
->
-> -       type = irq_data->type_falling_mask | irq_data->type_rising_mask;
-> +       type = irq_data->type.type_falling_val | irq_data->type.type_rising_val;
->
->         /*
->          * The type_in_mask flag means that the underlying hardware uses
-> @@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
->         struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
->         struct regmap *map = d->map;
->         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
-> -       int reg = irq_data->type_reg_offset / map->reg_stride;
-> +       int reg;
-> +       const struct regmap_irq_type *t = &irq_data->type;
->
-> -       if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
-> -               return 0;
-> +       if ((t->types_supported & type) != type)
-> +               return -ENOTSUPP;
-
-Given types_supported defaults to zero, I think this breaks every existing
-setup using REGMAP_IRQ_REG().
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Hans
