@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D02C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9C0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8D1A2148E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 899682148E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbeLZAxt (ORCPT
+        id S1725995AbeLZAxy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:53:49 -0500
+        Tue, 25 Dec 2018 19:53:54 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:51730 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725877AbeLZAxt (ORCPT
+        by vger.kernel.org with ESMTP id S1725953AbeLZAxy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Dec 2018 19:53:49 -0500
-Date:   26 Dec 2018 09:53:47 +0900
+        Tue, 25 Dec 2018 19:53:54 -0500
+Date:   26 Dec 2018 09:53:52 +0900
 X-IronPort-AV: E=Sophos;i="5.56,398,1539615600"; 
-   d="scan'208";a="3759510"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2018 09:53:47 +0900
+   d="scan'208";a="3759516"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2018 09:53:52 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4EDB440244BE;
-        Wed, 26 Dec 2018 09:53:47 +0900 (JST)
-Message-ID: <87pntp9ky0.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7AAFA4236CEC;
+        Wed, 26 Dec 2018 09:53:52 +0900 (JST)
+Message-ID: <87o9999kxv.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 4/8] arm64: renesas: r8a7795: remove BUSIF0 settings from rcar_sound,ssi
+Subject: [PATCH 5/8] arm64: renesas: r8a7796: remove BUSIF0 settings from rcar_sound,ssi
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org
@@ -55,14 +55,14 @@ This patch removes it.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++----------------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 40 ++++++++++++++++----------------
  1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index af9605d..a81ed2b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2174,53 +2174,53 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index afedbf5..3a9f8c7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2110,53 +2110,53 @@
  			rcar_sound,ssi {
  				ssi0: ssi-0 {
  					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
@@ -72,7 +72,7 @@ index af9605d..a81ed2b 100644
 +					dma-names = "rx", "tx";
  				};
  				ssi1: ssi-1 {
- 					 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
 -					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
 -					dma-names = "rx", "tx", "rxu", "txu";
 +					dmas = <&audma0 0x03>, <&audma1 0x04>;
@@ -135,7 +135,7 @@ index af9605d..a81ed2b 100644
 +					dma-names = "rx", "tx";
  				};
  			};
- 		};
+ 
 -- 
 2.7.4
 
