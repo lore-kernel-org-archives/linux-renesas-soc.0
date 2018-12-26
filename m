@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EBAC43444
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208CDC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628F62148E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:53:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB76D2148E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 00:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbeLZAx6 (ORCPT
+        id S1725983AbeLZAyF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Dec 2018 19:53:58 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:51730 "EHLO
+        Tue, 25 Dec 2018 19:54:05 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:32862 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726000AbeLZAx6 (ORCPT
+        by vger.kernel.org with ESMTP id S1725877AbeLZAyF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Dec 2018 19:53:58 -0500
-Date:   26 Dec 2018 09:53:57 +0900
+        Tue, 25 Dec 2018 19:54:05 -0500
+Date:   26 Dec 2018 09:54:04 +0900
 X-IronPort-AV: E=Sophos;i="5.56,398,1539615600"; 
-   d="scan'208";a="3759518"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2018 09:53:57 +0900
+   d="scan'208";a="3759527"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Dec 2018 09:54:04 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0C08440244CB;
-        Wed, 26 Dec 2018 09:53:57 +0900 (JST)
-Message-ID: <87muot9kxq.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E9DF14236CE8;
+        Wed, 26 Dec 2018 09:54:03 +0900 (JST)
+Message-ID: <87lg4d9kxj.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 6/8] arm64: renesas: r8a77990-ebisu: use simple-audio-card
+Subject: [PATCH 7/8] arm64: defconfig: select Kingfisher Sound related configs
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>, Magnus <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org
@@ -46,39 +46,25 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Current Ebisu board is using simple-scu-audio-card
-which is used for Sampling Rate Convert, or MIXer, etc.
-But, Ebisu is not using such feature.
-Then, simple-audio-card is very enough.
-This patch fixup it.
+This patch selects PCM3168A which is needed for Kingfisher Sound
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index 62bdddc..649d3fd 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -159,16 +159,13 @@
- 	};
- 
- 	rsnd_ak4613: sound {
--		compatible = "simple-scu-audio-card";
-+		compatible = "simple-audio-card";
- 
- 		simple-audio-card,name = "rsnd-ak4613";
- 		simple-audio-card,format = "left_j";
- 		simple-audio-card,bitclock-master = <&sndcpu>;
- 		simple-audio-card,frame-master = <&sndcpu>;
- 
--		simple-audio-card,prefix = "ak4613";
--		simple-audio-card,routing = "ak4613 Playback", "DAI0 Playback",
--		"DAI0 Capture", "ak4613 Capture";
- 		sndcpu: simple-audio-card,cpu {
- 			sound-dai = <&rcar_sound>;
- 		};
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 80c7425..51f536f 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -510,6 +510,7 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
+ CONFIG_SND_SOC_SAMSUNG=y
+ CONFIG_SND_SOC_RCAR=m
+ CONFIG_SND_SOC_AK4613=m
++CONFIG_SND_SOC_PCM3168A_I2C=m
+ CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_SND_SIMPLE_SCU_CARD=m
+ CONFIG_SND_AUDIO_GRAPH_CARD=m
 -- 
 2.7.4
 
