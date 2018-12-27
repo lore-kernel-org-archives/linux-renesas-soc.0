@@ -2,78 +2,70 @@ Return-Path: <SRS0=84+3=PE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8540CC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 19:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6086C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520DF214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 19:08:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 873F721741
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:21:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ZbkMhNTM"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="rCLkWyAZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbeL0TIb (ORCPT
+        id S1729368AbeL0UVU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Dec 2018 14:08:31 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37837 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbeL0TIb (ORCPT
+        Thu, 27 Dec 2018 15:21:20 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38862 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729700AbeL0UVU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Dec 2018 14:08:31 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t18-v6so16991210ljd.4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Dec 2018 11:08:30 -0800 (PST)
+        Thu, 27 Dec 2018 15:21:20 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p86so13347149lfg.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Dec 2018 12:21:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bcKrQ9gd67OeQw6OmETU/NRXnP2TWvhfvETyifLohbY=;
-        b=ZbkMhNTM6MyxDtT4SFUONwOOPtDKS4T+JKF/syW1aKQuZX+2T2c19hRN3TfiTjmf+W
-         OJPseCxndVL8TEg9R2o/iuukWWAQ/MdhEAG9ivTQqBcPuB5+ft5O1qFebthRxl/sH4/J
-         li2pAyVlc6V1LIKTAAVtvkqG4yHp7NT8iLLvfLtIEvzbqIUVEwOUebW93QfG/JoUT/sX
-         T38gojHRiHDtl+EoaTz+xJ87t9t45BymVXL/+foc7nYTDWx5ngWCh2z5IiCzwHZHYYh3
-         EnQg5yn1RCKV8X+e6K2eJjPIBCqQ9rm1YxOX7uAMLKNrxwZlSJjbWX5/iRHWIzD4j5ne
-         D7IQ==
+        h=from:subject:to:organization:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=AenUC8Pnowalg86ojxVvWdZS3jHBPfPKO+kjZKOK3ik=;
+        b=rCLkWyAZRopMRVNRTfvr1jNIk76XKb1z/RxpKnGJbeFBeluu/6zdxDu5fSaaYTZj9g
+         mmyZbFP8NbIdIhrDekqVHcOI5vUJGBoUneftf/M6mx78EEUcxMQyyaPP/SifXF87xi2o
+         IvPqxnnabIgPKEC/CSzeBm26gERd2a3f8fM5GpTjyDR1dFVD7hwhOhrD6lJJfqSTNs/b
+         MeNfGJAVzUuieya+tKa+1Ug+QH/AmwnPVE2UuJvsFphXb3zudP4JkbltkzddvVTBvbDo
+         l4uxWGS9fbroWABqsJps7qUAmNmXPqvzLBwixANBOOTnFXkNZ3dyz87EYjPjMtFb/tEh
+         g0pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=bcKrQ9gd67OeQw6OmETU/NRXnP2TWvhfvETyifLohbY=;
-        b=cK64IJZIaI/sHq2S6PznardQ43YWekoKYsCl5UMuttNaCRBzFRjXMlZFPYChNw8zHS
-         39SEKdTJjeTpDo3a0chpt8dMnm/uuJSfqfiPVRNOEqiymbi2dU6kUIS/jVyn7Iu1B6Yk
-         IfOUYHhFhwKW35Ts1V1JgqVbrWQtjhB9PAjzHRr9ftQPIypDUDJW+EpK0r9Nfte6I/PV
-         /R3m6ct4nwsb24BS5BibVamyVsKWtarz1v2hJbdSfF5IqK2MSbLGv3KeY5RWHWioqFS5
-         GkFNwxzrZJH6uN/uDr/bq3VAfhlSRbi2puTIKF/Bvm8eG5tnBI7i8rELBAioRx2ihQYc
-         SwYg==
-X-Gm-Message-State: AJcUukfitlAOS5DBisy37ZoiOEojQxZZHKZsxCBdmijBuMnNBHQ+7/KQ
-        RzCSMvKBECehVbCc1EN4Xgoivg==
-X-Google-Smtp-Source: ALg8bN7ivjo+l8ZHRtkCF50VvKu9S85wPbxsmTtpfU6mqEli16iuiDROrHGEL58kcZeYJhsEDh9faw==
-X-Received: by 2002:a2e:8945:: with SMTP id b5-v6mr11312828ljk.55.1545937709693;
-        Thu, 27 Dec 2018 11:08:29 -0800 (PST)
+        h=x-gm-message-state:from:subject:to:organization:cc:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=AenUC8Pnowalg86ojxVvWdZS3jHBPfPKO+kjZKOK3ik=;
+        b=aUcTpfj749SIl5OX/elgj6iKqHb/H7VXg8BMQh0BccyQS0w8Af5rBCHkHKCMbJmD69
+         2jjJO7112I0HEtYUYBz2wMCmbtM3IEupJB+C4cBGxA1R3EIFvJ9UMytcHLLnZ9kk+LR6
+         qligL2ULa5OxJWW8vcputpmpJEo5BvysRgVjLpcY067KX7cxMWe1aAfG1jiubWW9txWv
+         0zEghvYEHfKY19UR8/vzPZ+7HkCcINyDkLc6Ye9lTcsZbfXRBbQdLSxOeeQ7EZwgumW1
+         u6JtuzYhnQW4h+SaHJbV95gC3ctSCRGEMWL/03glJMCIin9tSXKhNIARRw8PI0aYRcc+
+         INyw==
+X-Gm-Message-State: AA+aEWZBdiIVlEVpjtM+FbIXBJFLg9mDVR3LcmM9bsxwzDjrLQIZT5X7
+        0vjwIFbPLYrgjMNmKdNe3dgyM1Iehw4=
+X-Google-Smtp-Source: AFSGD/VcBiWZyMls/j5xraTurWRYDuhQXwDS4dfjZiOPqpIJCtbwo6x6y9NkOJ5jg0eXwv/ZKLJA3w==
+X-Received: by 2002:a19:1f54:: with SMTP id f81mr12152090lff.153.1545942077440;
+        Thu, 27 Dec 2018 12:21:17 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.86.93])
-        by smtp.gmail.com with ESMTPSA id d2sm7821032lfg.16.2018.12.27.11.08.27
+        by smtp.gmail.com with ESMTPSA id s20sm7583484lfb.51.2018.12.27.12.21.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 11:08:28 -0800 (PST)
-Subject: Re: [PATCH v4 0/2] spi: Add Renesas R-Car Gen3 RPC SPI driver
-To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+        Thu, 27 Dec 2018 12:21:16 -0800 (PST)
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH RFT] spi-renesas-rpc: manual read issue workaround
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Mason Yang <masonccyang@mxic.com.tw>
 Organization: Cogent Embedded
-Message-ID: <4616a522-63f9-ad70-3a68-9f4d2e038750@cogentembedded.com>
-Date:   Thu, 27 Dec 2018 22:08:26 +0300
+Cc:     linux-renesas-soc@vger.kernel.org
+Message-ID: <76eb5af5-756e-4d54-0be2-55573649d2d1@cogentembedded.com>
+Date:   Thu, 27 Dec 2018 23:21:14 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
@@ -82,12 +74,103 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/24/2018 09:52 AM, Mason Yang wrote:
+Even with the trickery introduced in the latest version of the RPC-IF SPI
+driver, RPC-IF corrupts the data byte 4 for the RDID command, so the flash
+chip is still not detected. It started to work correctly after I tried to
+implement the workaround to this issue using the U-Boot RPC-IF driver's
+approach, i.e. using the external address space read mode.
 
-> Hi Mark,
-> This Renesas R-Car Gen3 RPC SPI driver is based on Boris's new
-> spi-mem direct mapping read/write mode [1][2].
+While at it, I'm removing the aforementioned trickery... 
 
-   Against which repo/branch these pathes were generated?
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-MBR, Sergei
+---
+The patch is against the 'devel' branch of Simon Horman's 'renesas,git' repo
+plus the RPC-IF SPI driver patch [1] and its prerequisites...
+ 
+[1] https://patchwork.kernel.org/patch/10742037/
+
+ drivers/spi/spi-renesas-rpc.c |   66 ++++++++++++++++++++++++++----------------
+ 1 file changed, 42 insertions(+), 24 deletions(-)
+
+Index: renesas/drivers/spi/spi-renesas-rpc.c
+===================================================================
+--- renesas.orig/drivers/spi/spi-renesas-rpc.c
++++ renesas/drivers/spi/spi-renesas-rpc.c
+@@ -270,34 +270,52 @@ static int rpc_spi_io_xfer(struct rpc_sp
+ 	} else if (rx_buf) {
+ 		smenr = rpc->smenr;
+ 
+-		while (pos < rpc->xferlen) {
++		/*
++		 * RPC-IF spoils the data for the commands without an address
++		 * phase (like RDID) in the manual mode, so we'll have to work
++		 * around this issue by using the external address space read
++		 * mode instead; we seem to be able to read 8 bytes at most in
++		 * this mode though...
++		 */
++		if (!(smenr & RPC_SMENR_ADE(0xf))) {
+ 			u32 nbytes = rpc->xferlen - pos;
++			u64 tmp;
+ 
+-			if (nbytes > 4)
+-				nbytes = 4;
++			if (nbytes > 8)
++				nbytes = 8;
+ 
+-			smcr = rpc->smcr | RPC_SMCR_SPIE;
++			regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_SFDE |
++				     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
++				     RPC_CMNCR_BSZ(0));
++			regmap_write(rpc->regmap, RPC_DRCR, 0);
++			regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
++			regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
++			regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
++			regmap_write(rpc->regmap, RPC_DROPR, 0);
++			regmap_write(rpc->regmap, RPC_DRENR, rpc->smenr &
++				     ~RPC_SMENR_SPIDE(0xf));
++
++			tmp = readq(rpc->dirmap);
++			memcpy(rx_buf, &tmp, nbytes);
++		} else {
++			while (pos < rpc->xferlen) {
++				u32 nbytes = rpc->xferlen - pos;
++
++				if (nbytes > 4)
++					nbytes = 4;
++
++				smcr = rpc->smcr | RPC_SMCR_SPIE;
++
++				regmap_write(rpc->regmap, RPC_SMENR, smenr);
++				regmap_write(rpc->regmap, RPC_SMCR, smcr);
++				ret = wait_msg_xfer_end(rpc);
++				if (ret)
++					goto out;
++
++				regmap_read(rpc->regmap, RPC_SMRDR0, &data);
++				memcpy(rx_buf + pos, &data, nbytes);
++				pos += nbytes;
+ 
+-			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 0)
+-				smcr |= RPC_SMCR_SSLKP;
+-
+-			regmap_write(rpc->regmap, RPC_SMENR, smenr);
+-			regmap_write(rpc->regmap, RPC_SMCR, smcr);
+-			ret = wait_msg_xfer_end(rpc);
+-			if (ret)
+-				goto out;
+-
+-			regmap_read(rpc->regmap, RPC_SMRDR0, &data);
+-			memcpy(rx_buf + pos, &data, nbytes);
+-			pos += nbytes;
+-
+-			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 4) {
+-				smenr = rpc->smenr & ~RPC_SMENR_CDE &
+-					~RPC_SMENR_ADE(0xf);
+-			} else {
+-				regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+-				regmap_write(rpc->regmap, RPC_SMDMCR,
+-					     rpc->dummy);
+ 				regmap_write(rpc->regmap, RPC_SMADR,
+ 					     rpc->addr + pos);
+ 			}
