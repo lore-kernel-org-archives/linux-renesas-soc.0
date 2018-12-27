@@ -2,220 +2,119 @@ Return-Path: <SRS0=84+3=PE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF82C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 10:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595ADC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 10:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0563214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 10:11:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lkpcy1jA"
+	by mail.kernel.org (Postfix) with ESMTP id 2FE2721741
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 10:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730241AbeL0KLP (ORCPT
+        id S1730306AbeL0KMi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Dec 2018 05:11:15 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45028 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730171AbeL0KLP (ORCPT
+        Thu, 27 Dec 2018 05:12:38 -0500
+Received: from mail-ua1-f49.google.com ([209.85.222.49]:35038 "EHLO
+        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730171AbeL0KMi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Dec 2018 05:11:15 -0500
-Received: from avalon.pinchart.local (unknown [91.182.109.47])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 42A93553;
-        Thu, 27 Dec 2018 11:11:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1545905473;
-        bh=/q7piWqHLQcOYys8mSff2Gb90QU5zvvZO0LOTElaxwg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lkpcy1jA4R4hNwSkOhqHcktcnq1GxqTv48eqHHMq9cEw5ZvqgW67yD+pxuuaWw96o
-         vKGTKkliO3XSj6wlKceQjUObO6QiZm2BrYmC6v/5gqBTg+jx/8zVul9cPbBb/gS6RX
-         X9ZHcoe7myBKfSQdZBslToUT9YKI9GuuWl9XJvQg=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org, kieran.bingham@ideasonboard.com
-Subject: [PATCH] drm: rcar-du: Remove inclusion of drmP.h
-Date:   Thu, 27 Dec 2018 12:12:06 +0200
-Message-Id: <20181227101206.1143-1-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.19.2
+        Thu, 27 Dec 2018 05:12:38 -0500
+Received: by mail-ua1-f49.google.com with SMTP id d2so5831730ual.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Dec 2018 02:12:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/lscZgQkUNz0u7q5cYSYSFoH/IaHDYTbfuzQMz9DscI=;
+        b=mmPdc+EXCKnN1Um4p8sUJ/LpzAJElQO1AB93QhBc2aDMdH8qGwXZ4XI7mo0ail6/SK
+         rklGeJZiRVO8lpsAb753UfMzbmDTmlAHJKqOX6K6+fAq4OBLaCZfb50Nj6mAzCQy4gUa
+         DCY5K6QWVb2XhJQ8+yFcMOxUc3cOqPPDT/lG6fg+GhwyoVVJPcSUpjDpnYmBs1fsyjJf
+         pWL4bfAB40Idpc1LDQx+nQmOxDP8yN+KTGNGLF5FFB3CVmmrn5EUsUhuxYpuYEUCDBtE
+         GhTXiIeOSf5tBK8jJGIDM8M7gxsd06Js07u7+Ixnf0zRZTP8F5QemYl0sasbp3rGGSkD
+         zEVg==
+X-Gm-Message-State: AJcUukfGmc3zIZiIRMPVWZKiP6k6rjordX7ShJt+LCCvJMaCHeBF7vj+
+        EX7UJvaEKaITQdGuBzKSzNLw+LJbkNmPL1YiVk8=
+X-Google-Smtp-Source: ALg8bN503ME82d+huMxIJ6znUP878YqfL560J+qsgQdLd5/Uk2cKDbfRKTmSvEDMiZSOL3hI0AcOdmrddJ6qmhSbn4Y=
+X-Received: by 2002:ab0:216:: with SMTP id 22mr8715799uas.28.1545905557113;
+ Thu, 27 Dec 2018 02:12:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181226110530.13136-1-geert+renesas@glider.be> <TY2PR01MB48127A0F2DCB00880576DEBCD8B60@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB48127A0F2DCB00880576DEBCD8B60@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 27 Dec 2018 11:12:25 +0100
+Message-ID: <CAMuHMdXjXi1dbpk0sOf-qhzJB+uzMVYyyMVHRqv+QSCeNVVgtQ@mail.gmail.com>
+Subject: Re: renesas-drivers-2018-12-26-v4.20
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The DRM kernel API used to be defined in a handful of headers, pulled in
-through drmP.h. It has since been split in multiple headers for the
-different DRM components, and drmP.h turned into a legacy header that
-just pulls in most of the DRM kernel API (and a large number of other
-miscellaneous kernel headers).
+Hi Shimoda-san,
 
-In order to speed up compilation, replace inclusion of drmP.h with only
-the required headers. It turns out that the rcar-du-drm driver already
-includes most of the necessary headers, so the change is simple.
+Thanks for the report!
 
-While at it, remove unneeder inclusion of other headers, and unneeded
-forward declarations of structures.
+CC Will (commit author), Arnd (compiler collective).
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h    | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_drv.h     | 1 +
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h | 2 --
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_plane.c   | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_plane.h   | 3 +--
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_vsp.h     | 3 +--
- 11 files changed, 3 insertions(+), 13 deletions(-)
+On Thu, Dec 27, 2018 at 2:58 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> > From: Geert Uytterhoeven, Sent: Wednesday, December 26, 2018 8:06 PM
+> > I have pushed renesas-drivers-2018-12-26-v4.20 to
+> > https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+> >
+> > This tree is meant to ease development of platform support and drivers
+> > for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+> > of various subsystem trees and (b) branches with driver code submitted
+> > or planned for submission to maintainers into the development branch of
+> > Simon Horman's renesas.git tree.
+> >
+> > Today's version is based on renesas-devel-20181220-v4.20-rc7.
+>
+> I built this version with "gcc version 5.2.1 20151005 (Linaro GCC 5.2-2015.11-1)",
+> and then the following build error happened:
+>
+>   AS      arch/arm64/kernel/head.o
+> /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S: Assembler messages:
+> /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: missing ')'
+> /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: missing ')'
+> /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: missing ')'
+> /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: unexpected characters following instruction at operand 2 -- `mov x2,#(2)|(2U<<(8))'
+>
+> This error seems to cause the commit 66f16a24512f ("arm64: smp: Rework early feature mismatched detection").
+> And if I modified the code as following, the build error disappeared:
+>
+> ---
+> diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.h
+> index 18955618..e9b9cee 100644
+> --- a/arch/arm64/include/asm/smp.h
+> +++ b/arch/arm64/include/asm/smp.h
+> @@ -30,7 +30,7 @@
+>  #define CPU_PANIC_KERNEL               (3)
+>
+>  #define CPU_STUCK_REASON_52_BIT_VA     (1U << CPU_STUCK_REASON_SHIFT)
+> -#define CPU_STUCK_REASON_NO_GRAN       (2U << CPU_STUCK_REASON_SHIFT)
+> +#define CPU_STUCK_REASON_NO_GRAN       (UL(2) << CPU_STUCK_REASON_SHIFT)
+>
+>  #ifndef __ASSEMBLY__
+> ---
+>
+> So, I think we have to fix this, but what do you think?
+> # I don't know why the line 812 doesn't cause the build error,
+> # but the line 824 causes the build error though...
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 40b7f17159b0..771b460c7216 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -11,7 +11,6 @@
- #include <linux/mutex.h>
- #include <linux/sys_soc.h>
- 
--#include <drm/drmP.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index ec47f164e69b..bcb35b0b7612 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -14,7 +14,6 @@
- #include <linux/spinlock.h>
- #include <linux/wait.h>
- 
--#include <drm/drmP.h>
- #include <drm/drm_crtc.h>
- 
- #include <media/vsp1.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index eef86c48edad..d1f305694367 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -17,7 +17,6 @@
- #include <linux/slab.h>
- #include <linux/wait.h>
- 
--#include <drm/drmP.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_fb_cma_helper.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 752617c73c73..6c187d0bf7c2 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -20,6 +20,7 @@
- struct clk;
- struct device;
- struct drm_device;
-+struct drm_property;
- struct rcar_du_device;
- 
- #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index a123c28ea6ed..f16209499117 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -9,7 +9,6 @@
- 
- #include <linux/export.h>
- 
--#include <drm/drmP.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_panel.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-index ce3cbc85695e..552f2a02e5b5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-@@ -10,10 +10,8 @@
- #ifndef __RCAR_DU_ENCODER_H__
- #define __RCAR_DU_ENCODER_H__
- 
--#include <drm/drm_crtc.h>
- #include <drm/drm_encoder.h>
- 
--struct drm_panel;
- struct rcar_du_device;
- 
- struct rcar_du_encoder {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index d8ef3a86b0b2..e4b248e368d6 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -7,7 +7,6 @@
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  */
- 
--#include <drm/drmP.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 39d5ae3fdf72..fa6b9aabc832 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -7,7 +7,6 @@
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  */
- 
--#include <drm/drmP.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-index 2f223a4c1d33..81bbf207ad0e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-@@ -10,8 +10,7 @@
- #ifndef __RCAR_DU_PLANE_H__
- #define __RCAR_DU_PLANE_H__
- 
--#include <drm/drmP.h>
--#include <drm/drm_crtc.h>
-+#include <drm/drm_plane.h>
- 
- struct rcar_du_format_info;
- struct rcar_du_group;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 4576119e7777..dec314a687e0 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -7,7 +7,6 @@
-  * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
-  */
- 
--#include <drm/drmP.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-index e8c14dc5cb93..db232037f24a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-@@ -10,8 +10,7 @@
- #ifndef __RCAR_DU_VSP_H__
- #define __RCAR_DU_VSP_H__
- 
--#include <drm/drmP.h>
--#include <drm/drm_crtc.h>
-+#include <drm/drm_plane.h>
- 
- struct rcar_du_format_info;
- struct rcar_du_vsp;
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
