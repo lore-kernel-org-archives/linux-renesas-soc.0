@@ -1,122 +1,181 @@
-Return-Path: <SRS0=WuQX=PD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=84+3=PE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABACCC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 19:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52411C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 00:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 758B72171F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Dec 2018 19:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0630D214D8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 00:51:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsX2OGmd"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="BcWgCGAU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeLZTIg (ORCPT
+        id S1727722AbeL0Ava (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Dec 2018 14:08:36 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52772 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727381AbeLZTHz (ORCPT
+        Wed, 26 Dec 2018 19:51:30 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36753 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbeL0Ava (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Dec 2018 14:07:55 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so15154678wml.2;
-        Wed, 26 Dec 2018 11:07:54 -0800 (PST)
+        Wed, 26 Dec 2018 19:51:30 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so15012355ljk.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Dec 2018 16:51:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ALtQWJJu4IBpqbuXLkdpeeA6r1od8nvFyOKnNuiCE7M=;
-        b=bsX2OGmd1+gLCNhqg3UXcK4i/kU9XRfEw/CfS/+FHH09UEFL/n8t7sO+Zap+2iI+x0
-         3y93Esuzqvrf2x3GeYv1bDBv61WvQBYowQXhupBKWOtBJ4VEkAFmNWfBxuVwykjAaaEi
-         cpzJsxeSH+kelv7Fw/VzMFX/nSD4s5qdrQEVJjv2yRmyfUgxJst7msesqU5PvV6rpflz
-         4g9e+yX+TlB90bbSlz4eOh1/amSVK6VpzUa9pZTrfLAXLnpyozDVBn3RZPRyxxPzCCXz
-         xi1UTL3RNWtYVd5WT1rAfxF5VUYPRMmocslpR0R2IzB2SMyCbJeW3LiKcZ5A/kk0a0wF
-         rhwQ==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=uH/pa7SFbafKjIu7Tgwhca4U1gxNiGLmaZb2brlO4XY=;
+        b=BcWgCGAUTyl21MebFT1YNOvIF3YmpJj5ghIPyMj5YbxQ/yfkVtDTwRkkMGk/vKv+CV
+         j09MivrDQ/mUuh3P6/NmR47edxp7oGRFpToy8R69kp6RGFk7WoN7zdgmkS+Zenc7CeHN
+         EdKdjVoRbzY2wJlSALgGp03NOJEDk7dVdPFU6PqP0SH3qktbuVKBn28/1c/Hy+MSRFEz
+         Hy4aIcQF8A095NttKzrulpmoBhr+UT7ywOOIi6uR7Cg5MXB9RnChzhB3ajtIT5+uQh1z
+         HBP4heE3RosypR6XwBSrvy0GxA5agkrQc3H0LB06Bsa7SIMkV4BwhOD1MUbAMXjAxqgs
+         36rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ALtQWJJu4IBpqbuXLkdpeeA6r1od8nvFyOKnNuiCE7M=;
-        b=rlLTOdPozc7mJQlWo2DoBzGHZ4aDgBJnPq2dbS2PSB+9Pk3LI5VU0Vz5T3nS2vtSYn
-         boyG+Sv2QaZEvoW1mLpmXHVoh430unq6fDqRuAQXELT0rSXchqPGce/tIoTyo+lAM09x
-         YLgAxgDbeBFAhnovTJKqnasQs32RdVzdIbAsJvM0GUTf7RMQDL6Ty00S/oEUMZLy1wTr
-         x0UmnUo5lw//G/ebSSbk0nYo+gPIcGrO9ZZ3apYCq+GMMfEJtjzrl3J5wOrCCXY5zj8L
-         58iJu0mZx3POE9QFMiMc/Q3qBYRPSVJDeDPCic4ZpPG6/vSiKY+AZ81boQyDyxfMIg2K
-         sW2Q==
-X-Gm-Message-State: AA+aEWbzjCUxWXfgr6PpQTln4rLPCehCQmLQ0+faDKBaD6wHzjG0txNB
-        DdBV4d3XH7FSjdanNEVFb1U=
-X-Google-Smtp-Source: ALg8bN7TY6RnBnIb/H4SPWRJQo4sgtvl5rDhUnCuw319+vhjW/cpESBdTN/6xcukLbpXVBa9I4CGpQ==
-X-Received: by 2002:a1c:cc19:: with SMTP id h25mr18785453wmb.80.1545851273430;
-        Wed, 26 Dec 2018 11:07:53 -0800 (PST)
-Received: from [192.168.42.184] (cst-prg-83-217.cust.vodafone.cz. [46.135.83.217])
-        by smtp.gmail.com with ESMTPSA id e9sm22044225wro.16.2018.12.26.11.07.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 11:07:52 -0800 (PST)
-Subject: Re: [PATCH v4 2/2] dt-bindings: spi: Document Renesas R-Car Gen3 RPC
- controller bindings
-To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        sergei.shtylyov@cogentembedded.com
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
- <1545634358-17485-3-git-send-email-masonccyang@mxic.com.tw>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <13e662c5-7476-191c-35bb-c451ab900473@gmail.com>
-Date:   Wed, 26 Dec 2018 20:07:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=uH/pa7SFbafKjIu7Tgwhca4U1gxNiGLmaZb2brlO4XY=;
+        b=ohQNMG9PIpP3VpbN96PfPYFimtIowfIUYoseNw+l5Q2MHW9pNuanA55+UjjRQ0ThpW
+         jywBbcDNkBdIfadJD1PdPPxcHIOQS+jrcrTNfL9KhDIb71gGzxwl2QfZfm4Dox9YQ2Ve
+         EZiu3u0hv3JcmpzetgeAR4bzkV6TMGoH+MmIv4rRFD52tJZsyhaqItIIOVj6QuRBTHTy
+         XjQFrq0+tI2UgnwtIKc736E62nvT1e90XTFPZ7oPFIQYdKQcZe0N2cvMboSGYmKMjk57
+         waAoMcnSNR/2QEdUL9RmCNUl0YKCFiq0UJoNlAxhOBxkjtP/TT4068nv/j9vm4e97i6F
+         rH+Q==
+X-Gm-Message-State: AJcUukf8uGj0oGxbqrL1169VdEzS/PLeTb6n/uY5pP3PCsleKKWVTF29
+        PxWvJH0+HDpWU55WchaEYkmPvQ==
+X-Google-Smtp-Source: ALg8bN7VuBZMGPFgoBb6HMtblr60AV2Gq0iL5eTtj5mhwpEnb9PgKU7CiwXqfXVH8Vrxb8uGeX/TIg==
+X-Received: by 2002:a2e:89d7:: with SMTP id c23-v6mr4910848ljk.0.1545871887182;
+        Wed, 26 Dec 2018 16:51:27 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id m10-v6sm7747503ljj.34.2018.12.26.16.51.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Dec 2018 16:51:26 -0800 (PST)
+Date:   Thu, 27 Dec 2018 01:51:25 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - VIN" 
+        <linux-renesas-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] media: rcar-vin: Allow independent VIN link
+ enablement
+Message-ID: <20181227005125.GK19796@bigcity.dyn.berto.se>
+References: <20181225232725.15935-1-slongerbeam@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1545634358-17485-3-git-send-email-masonccyang@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181225232725.15935-1-slongerbeam@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/24/18 7:52 AM, Mason Yang wrote:
-> Document the bindings used by the Renesas R-Car Gen3 RPC controller.
-> 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> ---
->  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> new file mode 100644
-> index 0000000..ba863d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> @@ -0,0 +1,37 @@
-> +Renesas R-Car Gen3 RPC controller Device Tree Bindings
-> +------------------------------------------------------
-> +
-> +Required properties:
-> +- compatible: should be "renesas,r8a77995-rpc"
-> +- #address-cells: should be 1
-> +- #size-cells: should be 0
-> +- reg: should contain 2 entries, one for the registers and one for the direct
-> +       mapping area
-> +- reg-names: should contain "regs" and "dirmap"
-> +- clock-names: should contain "rpc"
-> +- clocks: should contain 1 entries for the module's clock
-> +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
-> +			   	   "hyperflash" for rpc hyerflash mode.
+Hi Steve,
 
-We do not need special property to identify that the controller is in HF
-mode, just attach CFI NOR node or JEDEC SPI NOR underneath it.
+Thanks for your patch.
+
+On 2018-12-25 15:27:25 -0800, Steve Longerbeam wrote:
+> There is a block of code in rvin_group_link_notify() that prevents
+> enabling a link to a VIN node if any entity in the media graph is
+> in use. This prevents enabling a VIN link even if there is an in-use
+> entity somewhere in the graph that is independent of the link's
+> pipeline.
+> 
+> For example, the code block will prevent enabling a link from
+> the first rcar-csi2 receiver to a VIN node even if there is an
+> enabled link somewhere far upstream on the second independent
+> rcar-csi2 receiver pipeline.
+
+Unfortunately this is by design and needed due to the hardware design.  
+The different VIN endpoints shares a configuration register which 
+controls the routing from the CSI-2 receivers to the VIN (register name 
+CHSEL). Modifying the CHSEL register which is what happens when a link 
+is enabled/disabled can have side effects on running streams even if 
+they are not shown to be dependent in the media graph.
+
+There is a CHSEL register in VIN0 which controls the routing from all 
+CSI-2 receivers to VIN0-3 and a CHSEL register in VIN4 which controls 
+the same for VIN4-7.
+
+> 
+> If this code block is meant to prevent modifying a link if the
+> link is actively involved in streaming, there is already such a
+> check in __media_entity_setup_link() that verifies the stream_count
+> of the link's source and sink entities are both zero.
+
+For the reason above the check in __media_entity_setup_link() is not 
+enough :-( This register sharing is my least favorite thing about the 
+VIN on Gen3 and forces the driver to become more complex as all VIN 
+instances needs to know about each other and interact.
+
+> 
+> Remove the code block so that VIN node links can be enabled even if
+> there are other independent in-use entities.
+
+There is room for some improvement in this area disregarding the odd 
+hardware design. It *could* be allowed to change a link terminating in  
+VIN4-7 even if there is a stream running for one or more in VIN0-3.
+
+I would be interested to test such a patch but to allow any link change 
+which is allowed by __media_entity_setup_link() is unfortunately not 
+possible, as I understand it. Maybe someone more clever then me can find 
+ways to unlock even more then just the split between VIN0-3 and VIn4-7.
+
+In essence the CHSEL register can not be changed if it's involved in a 
+running pipeline even if the end result would be that the running 
+pipeline would look the same. This is possible as there are multiple 
+CHSEL settings where the same source is connected to a specific VIN 
+while other members of the "subgroup of VINs" (e.g. VIN0-3) is routed to 
+something else for the two CHSEL settings.
+
+> 
+> Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
+> 
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index f0719ce24b97..b2c9a876969e 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -116,7 +116,6 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+>  						struct rvin_group, mdev);
+>  	unsigned int master_id, channel, mask_new, i;
+>  	unsigned int mask = ~0;
+> -	struct media_entity *entity;
+>  	struct video_device *vdev;
+>  	struct media_pad *csi_pad;
+>  	struct rvin_dev *vin = NULL;
+> @@ -131,11 +130,6 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+>  	    !is_media_entity_v4l2_video_device(link->sink->entity))
+>  		return 0;
+>  
+> -	/* If any entity is in use don't allow link changes. */
+> -	media_device_for_each_entity(entity, &group->mdev)
+> -		if (entity->use_count)
+> -			return -EBUSY;
+> -
+>  	mutex_lock(&group->lock);
+>  
+>  	/* Find the master VIN that controls the routes. */
+> -- 
+> 2.17.1
+> 
 
 -- 
-Best regards,
-Marek Vasut
+Regards,
+Niklas Söderlund
