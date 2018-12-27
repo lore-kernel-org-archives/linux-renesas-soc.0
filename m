@@ -2,175 +2,227 @@ Return-Path: <SRS0=84+3=PE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6086C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB4FC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 873F721741
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:21:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="rCLkWyAZ"
+	by mail.kernel.org (Postfix) with ESMTP id E27CF21741
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:39:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbeL0UVU (ORCPT
+        id S1729592AbeL0UjG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:21:20 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38862 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729700AbeL0UVU (ORCPT
+        Thu, 27 Dec 2018 15:39:06 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:47327 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727940AbeL0UjG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Dec 2018 15:21:20 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p86so13347149lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Dec 2018 12:21:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:organization:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=AenUC8Pnowalg86ojxVvWdZS3jHBPfPKO+kjZKOK3ik=;
-        b=rCLkWyAZRopMRVNRTfvr1jNIk76XKb1z/RxpKnGJbeFBeluu/6zdxDu5fSaaYTZj9g
-         mmyZbFP8NbIdIhrDekqVHcOI5vUJGBoUneftf/M6mx78EEUcxMQyyaPP/SifXF87xi2o
-         IvPqxnnabIgPKEC/CSzeBm26gERd2a3f8fM5GpTjyDR1dFVD7hwhOhrD6lJJfqSTNs/b
-         MeNfGJAVzUuieya+tKa+1Ug+QH/AmwnPVE2UuJvsFphXb3zudP4JkbltkzddvVTBvbDo
-         l4uxWGS9fbroWABqsJps7qUAmNmXPqvzLBwixANBOOTnFXkNZ3dyz87EYjPjMtFb/tEh
-         g0pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:organization:cc:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=AenUC8Pnowalg86ojxVvWdZS3jHBPfPKO+kjZKOK3ik=;
-        b=aUcTpfj749SIl5OX/elgj6iKqHb/H7VXg8BMQh0BccyQS0w8Af5rBCHkHKCMbJmD69
-         2jjJO7112I0HEtYUYBz2wMCmbtM3IEupJB+C4cBGxA1R3EIFvJ9UMytcHLLnZ9kk+LR6
-         qligL2ULa5OxJWW8vcputpmpJEo5BvysRgVjLpcY067KX7cxMWe1aAfG1jiubWW9txWv
-         0zEghvYEHfKY19UR8/vzPZ+7HkCcINyDkLc6Ye9lTcsZbfXRBbQdLSxOeeQ7EZwgumW1
-         u6JtuzYhnQW4h+SaHJbV95gC3ctSCRGEMWL/03glJMCIin9tSXKhNIARRw8PI0aYRcc+
-         INyw==
-X-Gm-Message-State: AA+aEWZBdiIVlEVpjtM+FbIXBJFLg9mDVR3LcmM9bsxwzDjrLQIZT5X7
-        0vjwIFbPLYrgjMNmKdNe3dgyM1Iehw4=
-X-Google-Smtp-Source: AFSGD/VcBiWZyMls/j5xraTurWRYDuhQXwDS4dfjZiOPqpIJCtbwo6x6y9NkOJ5jg0eXwv/ZKLJA3w==
-X-Received: by 2002:a19:1f54:: with SMTP id f81mr12152090lff.153.1545942077440;
-        Thu, 27 Dec 2018 12:21:17 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.86.93])
-        by smtp.gmail.com with ESMTPSA id s20sm7583484lfb.51.2018.12.27.12.21.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Dec 2018 12:21:16 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH RFT] spi-renesas-rpc: manual read issue workaround
-To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Mason Yang <masonccyang@mxic.com.tw>
-Organization: Cogent Embedded
-Cc:     linux-renesas-soc@vger.kernel.org
-Message-ID: <76eb5af5-756e-4d54-0be2-55573649d2d1@cogentembedded.com>
-Date:   Thu, 27 Dec 2018 23:21:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 27 Dec 2018 15:39:06 -0500
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 323F7240006;
+        Thu, 27 Dec 2018 20:39:01 +0000 (UTC)
+Date:   Thu, 27 Dec 2018 21:38:57 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se,
+        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 5/5] media: adv748x: Implement link_setup callback
+Message-ID: <20181227203846.GA909@uno.localdomain>
+References: <1544541373-30044-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1544541373-30044-6-git-send-email-jacopo+renesas@jmondi.org>
+ <2229088.MKf6aupnv1@avalon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
+Content-Disposition: inline
+In-Reply-To: <2229088.MKf6aupnv1@avalon>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Even with the trickery introduced in the latest version of the RPC-IF SPI
-driver, RPC-IF corrupts the data byte 4 for the RDID command, so the flash
-chip is still not detected. It started to work correctly after I tried to
-implement the workaround to this issue using the U-Boot RPC-IF driver's
-approach, i.e. using the external address space read mode.
 
-While at it, I'm removing the aforementioned trickery... 
+--jho1yZJdad60DJr+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Hi Laurent, Kieran,
+  thanks for the review
 
----
-The patch is against the 'devel' branch of Simon Horman's 'renesas,git' repo
-plus the RPC-IF SPI driver patch [1] and its prerequisites...
- 
-[1] https://patchwork.kernel.org/patch/10742037/
+On Thu, Dec 13, 2018 at 11:40:00AM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> Thank you for the patch.
+>
+> On Tuesday, 11 December 2018 17:16:13 EET Jacopo Mondi wrote:
+> > When the adv748x driver is informed about a link being created from HDMI or
+> > AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
+> > sure to implement proper routing management at link setup time, to route
+> > the selected video stream to the desired TX output.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/i2c/adv748x/adv748x-core.c | 63 ++++++++++++++++++++++++++++-
+> >  drivers/media/i2c/adv748x/adv748x.h      |  1 +
+> >  2 files changed, 63 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/i2c/adv748x/adv748x-core.c
+> > b/drivers/media/i2c/adv748x/adv748x-core.c index f3aabbccdfb5..08dc0e89b053
+> > 100644
+> > --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> > +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> > @@ -335,9 +335,70 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
+> >  /* ------------------------------------------------------------------------
+> >   * Media Operations
+> >   */
+> > +static int adv748x_link_setup(struct media_entity *entity,
+> > +			      const struct media_pad *local,
+> > +			      const struct media_pad *remote, u32 flags)
+> > +{
+> > +	struct v4l2_subdev *rsd = media_entity_to_v4l2_subdev(remote->entity);
+> > +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+> > +	struct adv748x_state *state = v4l2_get_subdevdata(sd);
+> > +	struct adv748x_csi2 *tx;
+> > +	struct media_link *link;
+> > +	u8 io10;
+> > +
+> > +	/*
+> > +	 * For each link setup from [HDMI|AFE] to TX we receive two
+> > +	 * notifications: "[HDMI|AFE]->TX" and "TX<-[HDMI|AFE]".
+> > +	 *
+> > +	 * Use the second notification form to make sure we're linking
+> > +	 * to a TX and find out from where, to set up routing properly.
+> > +	 */
+>
+> Why don't you implement the link handler just for the TX entities then ?
+>
 
- drivers/spi/spi-renesas-rpc.c |   66 ++++++++++++++++++++++++++----------------
- 1 file changed, 42 insertions(+), 24 deletions(-)
+Done. Much better
 
-Index: renesas/drivers/spi/spi-renesas-rpc.c
-===================================================================
---- renesas.orig/drivers/spi/spi-renesas-rpc.c
-+++ renesas/drivers/spi/spi-renesas-rpc.c
-@@ -270,34 +270,52 @@ static int rpc_spi_io_xfer(struct rpc_sp
- 	} else if (rx_buf) {
- 		smenr = rpc->smenr;
- 
--		while (pos < rpc->xferlen) {
-+		/*
-+		 * RPC-IF spoils the data for the commands without an address
-+		 * phase (like RDID) in the manual mode, so we'll have to work
-+		 * around this issue by using the external address space read
-+		 * mode instead; we seem to be able to read 8 bytes at most in
-+		 * this mode though...
-+		 */
-+		if (!(smenr & RPC_SMENR_ADE(0xf))) {
- 			u32 nbytes = rpc->xferlen - pos;
-+			u64 tmp;
- 
--			if (nbytes > 4)
--				nbytes = 4;
-+			if (nbytes > 8)
-+				nbytes = 8;
- 
--			smcr = rpc->smcr | RPC_SMCR_SPIE;
-+			regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_SFDE |
-+				     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-+				     RPC_CMNCR_BSZ(0));
-+			regmap_write(rpc->regmap, RPC_DRCR, 0);
-+			regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
-+			regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
-+			regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
-+			regmap_write(rpc->regmap, RPC_DROPR, 0);
-+			regmap_write(rpc->regmap, RPC_DRENR, rpc->smenr &
-+				     ~RPC_SMENR_SPIDE(0xf));
-+
-+			tmp = readq(rpc->dirmap);
-+			memcpy(rx_buf, &tmp, nbytes);
-+		} else {
-+			while (pos < rpc->xferlen) {
-+				u32 nbytes = rpc->xferlen - pos;
-+
-+				if (nbytes > 4)
-+					nbytes = 4;
-+
-+				smcr = rpc->smcr | RPC_SMCR_SPIE;
-+
-+				regmap_write(rpc->regmap, RPC_SMENR, smenr);
-+				regmap_write(rpc->regmap, RPC_SMCR, smcr);
-+				ret = wait_msg_xfer_end(rpc);
-+				if (ret)
-+					goto out;
-+
-+				regmap_read(rpc->regmap, RPC_SMRDR0, &data);
-+				memcpy(rx_buf + pos, &data, nbytes);
-+				pos += nbytes;
- 
--			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 0)
--				smcr |= RPC_SMCR_SSLKP;
--
--			regmap_write(rpc->regmap, RPC_SMENR, smenr);
--			regmap_write(rpc->regmap, RPC_SMCR, smcr);
--			ret = wait_msg_xfer_end(rpc);
--			if (ret)
--				goto out;
--
--			regmap_read(rpc->regmap, RPC_SMRDR0, &data);
--			memcpy(rx_buf + pos, &data, nbytes);
--			pos += nbytes;
--
--			if (rpc->xferlen > 4 && rpc->xferlen < 8 && pos == 4) {
--				smenr = rpc->smenr & ~RPC_SMENR_CDE &
--					~RPC_SMENR_ADE(0xf);
--			} else {
--				regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
--				regmap_write(rpc->regmap, RPC_SMDMCR,
--					     rpc->dummy);
- 				regmap_write(rpc->regmap, RPC_SMADR,
- 					     rpc->addr + pos);
- 			}
+> > +	if ((sd != &state->txa.sd && sd != &state->txb.sd) ||
+> > +	    !(flags & MEDIA_LNK_FL_ENABLED))
+>
+> When disabling the link you should reset the ->source and ->tx pointers.
+>
+
+right
+
+> > +		return 0;
+> > +	tx = adv748x_sd_to_csi2(sd);
+> > +
+> > +	/*
+> > +	 * Now that we're sure we're operating on one of the two TXs,
+> > +	 * make sure there are no enabled links ending there from
+> > +	 * either HDMI or AFE (this can only happens for TXA though).
+> > +	 */
+> > +	if (is_txa(tx))
+> > +		list_for_each_entry(link, &entity->links, list)
+> > +			if (link->sink->entity == entity &&
+> > +			    link->flags & MEDIA_LNK_FL_ENABLED)
+> > +				return -EINVAL;
+>
+> You can simplify this by checking if tx->source == NULL (after resetting tx-
+> >source when disabling the link of course).
+>
+> > +	/* Change video stream routing, according to the newly created link. */
+> > +	io10 = io_read(state, ADV748X_IO_10);
+> > +	if (rsd == &state->afe.sd) {
+> > +		state->afe.tx = tx;
+> > +
+> > +		/*
+> > +		 * If AFE is routed to TXA, make sure TXB is off;
+> > +		 * If AFE goes to TXB, we need TXA powered on.
+> > +		 */
+> > +		if (is_txa(tx)) {
+> > +			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
+> > +			io10 &= ~ADV748X_IO_10_CSI1_EN;
+> > +		} else {
+> > +			io10 |= ADV748X_IO_10_CSI4_EN |
+> > +				ADV748X_IO_10_CSI1_EN;
+> > +		}
+> > +	} else {
+> > +		state->hdmi.tx = tx;
+> > +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
+> > +	}
+> > +	io_write(state, ADV748X_IO_10, io10);
+>
+> Is it guaranteed that the chip will be powered on at this point ? How about
+> writing the register at stream on time instead ?
+
+You know, I struggle to find a better place where to do so...
+- Right now the register gets written at reset time only
+- s_stream: Each subdev (afe, hdmi, txa and txb) has its own s_stream
+  so it's hard to find a centralized place where to write this
+  register that impacts both TXes
+- afe/hdmi s_stream() ops call tx_power_up, but again this is per-TX
+- There doesn't seems to be much concern in the driver in
+  synchronizing register writes with power states already actually. Not
+  that's an excuse, but when I played around and tried to power off
+  the chip's PLLs for real I got into LP-11 state detection issues
+  (again :) I would leave it here if that's fine with you :)
+
+Thanks
+   j
+
+>
+> > +	tx->rsd = rsd;
+> > +
+> > +	return 0;
+> > +}
+> >
+> >  static const struct media_entity_operations adv748x_media_ops = {
+> > -	.link_validate = v4l2_subdev_link_validate,
+> > +	.link_setup	= adv748x_link_setup,
+> > +	.link_validate	= v4l2_subdev_link_validate,
+> >  };
+> >
+> >  /* ------------------------------------------------------------------------
+> > -- diff --git a/drivers/media/i2c/adv748x/adv748x.h
+> > b/drivers/media/i2c/adv748x/adv748x.h index 0ee3b8d5c795..63a17c31c169
+> > 100644
+> > --- a/drivers/media/i2c/adv748x/adv748x.h
+> > +++ b/drivers/media/i2c/adv748x/adv748x.h
+> > @@ -220,6 +220,7 @@ struct adv748x_state {
+> >  #define ADV748X_IO_10_CSI4_EN		BIT(7)
+> >  #define ADV748X_IO_10_CSI1_EN		BIT(6)
+> >  #define ADV748X_IO_10_PIX_OUT_EN	BIT(5)
+> > +#define ADV748X_IO_10_CSI4_IN_SEL_AFE	0x08
+> >
+> >  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
+> >  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+>
+
+--jho1yZJdad60DJr+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlwlOGEACgkQcjQGjxah
+Vjx5nA//dExzkszHRikLIJJDmdvhddZsTsErDBTdePkM8vX2c3fRLPgPS0xZ0BPO
+Pm5LiomngUaBb6vPkrocb8Zfe5hLU0xX/6CCMYf8wCeBsvhAlrfSCzIOnAPZ3pCp
+63JSv+PV+mjcAW66Pm3qv8TFeNifC3rJ54i9RwKqb8sPLgd+f+gnHlucqix+sGX8
+Tskml3HxPlaS4TN1mjAQ3i5tV0Wg8Y1rpDqofGChEJo18WvZRkVz3GaDQxkoMgrb
+KKpYaw0NEtEB5DAtIMI7kZU8c9j/IgPZHQh5jzbNshIECsa8LUWXJ3W2KUF8laBS
+a7zwn881lNKqCF03A2OEpdvCiK1JWl26fllZRVOGEVyflJiK7ejssYkcANG6bAWp
+eyD+/3C+xdiqPNT3bah9qwBNKNU00B2hgPe+spXCpiUa8RAldFJcuGEs6efZTkzj
+GYDLzuS+pz2cog9FswYViFl8GS5eOzKITqPOmBTBwRT8/p73bPhKaqlYUS6P6xv4
+H0EkGVkXZ+o5914eaGLuoZQPp7Nz7XwGvJPQty81gEDUW1zN8csYpJ20Aqk3Urjd
+EfrB94J/FHBxdvMaSOnoSqs5XK+mXJGupbfb17pgwwtYl8tgCaWB0IqEAgRJr/jN
+OWQuAQXs80GoYWHLPM5nYxrHav0HIuUjsTcObQP4NqquzXdkTbs=
+=FHVC
+-----END PGP SIGNATURE-----
+
+--jho1yZJdad60DJr+--
