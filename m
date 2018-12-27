@@ -2,260 +2,92 @@ Return-Path: <SRS0=84+3=PE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519D6C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 12:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8540CC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 19:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 122B62148E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 12:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 520DF214C6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 19:08:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TLFPU1u2"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ZbkMhNTM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbeL0MSr (ORCPT
+        id S1727290AbeL0TIb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Dec 2018 07:18:47 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46194 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbeL0MSr (ORCPT
+        Thu, 27 Dec 2018 14:08:31 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37837 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbeL0TIb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Dec 2018 07:18:47 -0500
-Received: by mail-ed1-f68.google.com with SMTP id o10so15072736edt.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Dec 2018 04:18:45 -0800 (PST)
+        Thu, 27 Dec 2018 14:08:31 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t18-v6so16991210ljd.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Dec 2018 11:08:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mj//mn4XW2T80OZaDc47pxDysex9r1WKaxCJ+vDEwlU=;
-        b=TLFPU1u2BKtzh0QIIRHX1v0LW+/F+1ez8nw/yWWDXcIZ33jh5c0/qTzxDE8BoCu+ax
-         ZzuqptQ0pK6wJ4xtr4/euzXvJabZudx35nwf3EGQK6z2rgLQ5BmwNDgiMUPArIifImbB
-         u6+pqjrd6Ji0X7uXh6sgWkSi8AWmr3vfSbKt4=
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bcKrQ9gd67OeQw6OmETU/NRXnP2TWvhfvETyifLohbY=;
+        b=ZbkMhNTM6MyxDtT4SFUONwOOPtDKS4T+JKF/syW1aKQuZX+2T2c19hRN3TfiTjmf+W
+         OJPseCxndVL8TEg9R2o/iuukWWAQ/MdhEAG9ivTQqBcPuB5+ft5O1qFebthRxl/sH4/J
+         li2pAyVlc6V1LIKTAAVtvkqG4yHp7NT8iLLvfLtIEvzbqIUVEwOUebW93QfG/JoUT/sX
+         T38gojHRiHDtl+EoaTz+xJ87t9t45BymVXL/+foc7nYTDWx5ngWCh2z5IiCzwHZHYYh3
+         EnQg5yn1RCKV8X+e6K2eJjPIBCqQ9rm1YxOX7uAMLKNrxwZlSJjbWX5/iRHWIzD4j5ne
+         D7IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mj//mn4XW2T80OZaDc47pxDysex9r1WKaxCJ+vDEwlU=;
-        b=jqTtYDLLg1a8G8xN3LIQTuHd1xwwQCC+aM9xty+pXPZLtzfsl0NrdlpXUv9tbxBNpi
-         zTxwgUMMjiS35anySIcirr0wNNVRoqpFNqYmRYuQfK31Fpt+Wl+jwCTBBWemOypSqzNN
-         8STDN0+Pf+Ehmakl7oT5HwAtCFO15VMUREiaozLjRz+nuOXhn99xthp+9VToe0BS3cGK
-         bbklXBML3UFUfLU+2lEowS1Mjc+/PUIQEJcJLMICggvVienyevW3PczPCWE2fqbb2RBb
-         688V7QRVhf7K4sDp66vMwlujuyY/REW+aV4D0KtDkpB0atIvhPvNi77ZophekJ0LVXnC
-         bzkA==
-X-Gm-Message-State: AA+aEWbjGMi5IVuwuizln4XCSpCtur46CusrCj6TZCBdZC6vPrIwXqi/
-        RGlnGZVcOlJPi1YxlT4bS7nAtQ==
-X-Google-Smtp-Source: AFSGD/XHircYcpmq5o0meUJvlZmmCtX0Fl7c5Sm/QBmD6v5P6J/77rzil7EfAb0hvahexiXUpVf64g==
-X-Received: by 2002:a17:906:734c:: with SMTP id h12-v6mr15273205ejl.50.1545913124803;
-        Thu, 27 Dec 2018 04:18:44 -0800 (PST)
-Received: from dvetter-linux.ger.corp.intel.com ([194.230.159.220])
-        by smtp.gmail.com with ESMTPSA id g40sm11103643edg.39.2018.12.27.04.18.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 04:18:43 -0800 (PST)
-Date:   Thu, 27 Dec 2018 13:18:41 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH] drm: rcar-du: Remove inclusion of drmP.h
-Message-ID: <20181227121841.GG9058@dvetter-linux.ger.corp.intel.com>
-References: <20181227101206.1143-1-laurent.pinchart+renesas@ideasonboard.com>
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=bcKrQ9gd67OeQw6OmETU/NRXnP2TWvhfvETyifLohbY=;
+        b=cK64IJZIaI/sHq2S6PznardQ43YWekoKYsCl5UMuttNaCRBzFRjXMlZFPYChNw8zHS
+         39SEKdTJjeTpDo3a0chpt8dMnm/uuJSfqfiPVRNOEqiymbi2dU6kUIS/jVyn7Iu1B6Yk
+         IfOUYHhFhwKW35Ts1V1JgqVbrWQtjhB9PAjzHRr9ftQPIypDUDJW+EpK0r9Nfte6I/PV
+         /R3m6ct4nwsb24BS5BibVamyVsKWtarz1v2hJbdSfF5IqK2MSbLGv3KeY5RWHWioqFS5
+         GkFNwxzrZJH6uN/uDr/bq3VAfhlSRbi2puTIKF/Bvm8eG5tnBI7i8rELBAioRx2ihQYc
+         SwYg==
+X-Gm-Message-State: AJcUukfitlAOS5DBisy37ZoiOEojQxZZHKZsxCBdmijBuMnNBHQ+7/KQ
+        RzCSMvKBECehVbCc1EN4Xgoivg==
+X-Google-Smtp-Source: ALg8bN7ivjo+l8ZHRtkCF50VvKu9S85wPbxsmTtpfU6mqEli16iuiDROrHGEL58kcZeYJhsEDh9faw==
+X-Received: by 2002:a2e:8945:: with SMTP id b5-v6mr11312828ljk.55.1545937709693;
+        Thu, 27 Dec 2018 11:08:29 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.86.93])
+        by smtp.gmail.com with ESMTPSA id d2sm7821032lfg.16.2018.12.27.11.08.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 27 Dec 2018 11:08:28 -0800 (PST)
+Subject: Re: [PATCH v4 0/2] spi: Add Renesas R-Car Gen3 RPC SPI driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <4616a522-63f9-ad70-3a68-9f4d2e038750@cogentembedded.com>
+Date:   Thu, 27 Dec 2018 22:08:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227101206.1143-1-laurent.pinchart+renesas@ideasonboard.com>
-X-Operating-System: Linux dvetter-linux.ger.corp.intel.com
- 4.19.10-200.fc28.x86_64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 12:12:06PM +0200, Laurent Pinchart wrote:
-> The DRM kernel API used to be defined in a handful of headers, pulled in
-> through drmP.h. It has since been split in multiple headers for the
-> different DRM components, and drmP.h turned into a legacy header that
-> just pulls in most of the DRM kernel API (and a large number of other
-> miscellaneous kernel headers).
-> 
-> In order to speed up compilation, replace inclusion of drmP.h with only
-> the required headers. It turns out that the rcar-du-drm driver already
-> includes most of the necessary headers, so the change is simple.
-> 
-> While at it, remove unneeder inclusion of other headers, and unneeded
-> forward declarations of structures.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On 12/24/2018 09:52 AM, Mason Yang wrote:
 
-Nice, first driver where all that header cleanup work finally lead
-somewhere useful!
+> Hi Mark,
+> This Renesas R-Car Gen3 RPC SPI driver is based on Boris's new
+> spi-mem direct mapping read/write mode [1][2].
 
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.h    | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_drv.h     | 1 +
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_encoder.h | 2 --
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_plane.c   | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_plane.h   | 3 +--
->  drivers/gpu/drm/rcar-du/rcar_du_vsp.c     | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_vsp.h     | 3 +--
->  11 files changed, 3 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> index 40b7f17159b0..771b460c7216 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> @@ -11,7 +11,6 @@
->  #include <linux/mutex.h>
->  #include <linux/sys_soc.h>
->  
-> -#include <drm/drmP.h>
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc.h>
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-> index ec47f164e69b..bcb35b0b7612 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-> @@ -14,7 +14,6 @@
->  #include <linux/spinlock.h>
->  #include <linux/wait.h>
->  
-> -#include <drm/drmP.h>
->  #include <drm/drm_crtc.h>
->  
->  #include <media/vsp1.h>
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index eef86c48edad..d1f305694367 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -17,7 +17,6 @@
->  #include <linux/slab.h>
->  #include <linux/wait.h>
->  
-> -#include <drm/drmP.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc_helper.h>
->  #include <drm/drm_fb_cma_helper.h>
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> index 752617c73c73..6c187d0bf7c2 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> @@ -20,6 +20,7 @@
->  struct clk;
->  struct device;
->  struct drm_device;
-> +struct drm_property;
->  struct rcar_du_device;
->  
->  #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> index a123c28ea6ed..f16209499117 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> @@ -9,7 +9,6 @@
->  
->  #include <linux/export.h>
->  
-> -#include <drm/drmP.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_crtc_helper.h>
->  #include <drm/drm_panel.h>
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> index ce3cbc85695e..552f2a02e5b5 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> @@ -10,10 +10,8 @@
->  #ifndef __RCAR_DU_ENCODER_H__
->  #define __RCAR_DU_ENCODER_H__
->  
-> -#include <drm/drm_crtc.h>
->  #include <drm/drm_encoder.h>
->  
-> -struct drm_panel;
->  struct rcar_du_device;
->  
->  struct rcar_du_encoder {
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> index d8ef3a86b0b2..e4b248e368d6 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> @@ -7,7 +7,6 @@
->   * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
->   */
->  
-> -#include <drm/drmP.h>
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc.h>
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> index 39d5ae3fdf72..fa6b9aabc832 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> @@ -7,7 +7,6 @@
->   * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
->   */
->  
-> -#include <drm/drmP.h>
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc.h>
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.h b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-> index 2f223a4c1d33..81bbf207ad0e 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.h
-> @@ -10,8 +10,7 @@
->  #ifndef __RCAR_DU_PLANE_H__
->  #define __RCAR_DU_PLANE_H__
->  
-> -#include <drm/drmP.h>
-> -#include <drm/drm_crtc.h>
-> +#include <drm/drm_plane.h>
->  
->  struct rcar_du_format_info;
->  struct rcar_du_group;
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> index 4576119e7777..dec314a687e0 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> @@ -7,7 +7,6 @@
->   * Contact: Laurent Pinchart (laurent.pinchart@ideasonboard.com)
->   */
->  
-> -#include <drm/drmP.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_crtc_helper.h>
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-> index e8c14dc5cb93..db232037f24a 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.h
-> @@ -10,8 +10,7 @@
->  #ifndef __RCAR_DU_VSP_H__
->  #define __RCAR_DU_VSP_H__
->  
-> -#include <drm/drmP.h>
-> -#include <drm/drm_crtc.h>
-> +#include <drm/drm_plane.h>
->  
->  struct rcar_du_format_info;
->  struct rcar_du_vsp;
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+   Against which repo/branch these pathes were generated?
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+MBR, Sergei
