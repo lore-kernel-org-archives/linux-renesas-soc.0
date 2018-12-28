@@ -1,228 +1,228 @@
-Return-Path: <SRS0=84+3=PE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=txgz=PF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB4FC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09867C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 08:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27CF21741
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Dec 2018 20:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C92A32148E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 08:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbeL0UjG (ORCPT
+        id S1728450AbeL1IFk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:39:06 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:47327 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727940AbeL0UjG (ORCPT
+        Fri, 28 Dec 2018 03:05:40 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42318 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbeL1IFk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Dec 2018 15:39:06 -0500
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 323F7240006;
-        Thu, 27 Dec 2018 20:39:01 +0000 (UTC)
-Date:   Thu, 27 Dec 2018 21:38:57 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 5/5] media: adv748x: Implement link_setup callback
-Message-ID: <20181227203846.GA909@uno.localdomain>
-References: <1544541373-30044-1-git-send-email-jacopo+renesas@jmondi.org>
- <1544541373-30044-6-git-send-email-jacopo+renesas@jmondi.org>
- <2229088.MKf6aupnv1@avalon>
+        Fri, 28 Dec 2018 03:05:40 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l15-v6so18063632lja.9;
+        Fri, 28 Dec 2018 00:05:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wUuOMXiAveNS6pMX+WJG4oevliLdJmLbcbPk2PdcfTo=;
+        b=ueAafLHIs0v4NlZVn3fiLftHdzdTp2dt4+xxleS8M6Fcg9ixPTjdgMP6pHItuEdAsb
+         pIrnwaI8Hlka7/6Zu3TPsAomIQ8qofgIpErstVuGgr7zoS+C1MfAqDUSfClM5WW50tJ9
+         4jUy5APZyUBHOMJXGF1IbhVz+cW6Ch7311t707xusUFKSNC8J0wdB4pJ0nHY8qWiVqSe
+         4dmNIYaXtko9qrr/3V5S5Nq+SPjANRwmPHwP7qGvr7HViQ9ah8Nl+nGYtI/5cp/4uMAO
+         ebw6w7aoIOvQ5HpBbebFaHbrglfoyC1Tfog18ti7KSU85ImhX3bms1wrNmcgUTzWc7qJ
+         0Bww==
+X-Gm-Message-State: AA+aEWYKyHdInL1p5ES72Jky1Qo3BTd6/RBEOkGmGJTA7ajvvS5H4X0+
+        OfGgt3pQjMCbBfT2tAwIvbk=
+X-Google-Smtp-Source: ALg8bN4eqVUhMDGmwphsxT0yqOzfZ5ma8mZZ+tTjbCVPxLTaeeWe4sZwLKsT3eXgCDhxa6/wS0HMCQ==
+X-Received: by 2002:a2e:84ca:: with SMTP id q10-v6mr14873052ljh.65.1545984337279;
+        Fri, 28 Dec 2018 00:05:37 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm8409276ljb.80.2018.12.28.00.05.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Dec 2018 00:05:36 -0800 (PST)
+Date:   Fri, 28 Dec 2018 10:05:33 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Message-ID: <20181228080533.GC2461@localhost.localdomain>
+References: <20181218115931.GA21253@localhost.localdomain>
+ <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
+ <20181227073531.GA2461@localhost.localdomain>
+ <20181227075648.GB2461@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2229088.MKf6aupnv1@avalon>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20181227075648.GB2461@localhost.localdomain>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Thu, Dec 27, 2018 at 09:56:48AM +0200, Matti Vaittinen wrote:
+> Hello All,
+> 
+> On Thu, Dec 27, 2018 at 09:35:31AM +0200, Matti Vaittinen wrote:
+> > On Wed, Dec 26, 2018 at 12:39:17PM +0100, Geert Uytterhoeven wrote:
+> > > Hi Matti,
+> > > 
+> > > On Tue, Dec 18, 2018 at 1:00 PM Matti Vaittinen
+> > > <matti.vaittinen@fi.rohmeurope.com> wrote:
+> > > > Add level active IRQ support to regmap-irq irqchip. Change breaks
+> > > > existing regmap-irq type setting. Convert the existing drivers which
+> > > 
+> > > Indeed it does.
+> > > 
+> > > This is now upstream as commit 1c2928e3e3212252 ("regmap:
+> > > regmap-irq/gpio-max77620: add level-irq support"), and breaks da9063-rtc
+> > > on the Renesas Koelsch board:
+> > > 
+> > >     genirq: Setting trigger mode 8 for irq 157 failed
+> > > (regmap_irq_set_type+0x0/0x140)
+> > >     da9063-rtc da9063-rtc: Failed to request ALARM IRQ 157: -524
+> > >     da9063-rtc: probe of da9063-rtc failed with error -524
+> > 
+> > This is strange as I do not see any type setting support code in
+> > drivers/mfd/da9063-irq.c. The type setting registers are neither
+> > specified in static const struct regmap_irq_chip da9063l_irq_chip nor
+> > in static const struct regmap_irq_chip da9063_irq_chip. Hence I don't
+> > understand how the da9063 could have been supporting IRQ type setting in
+> > first place.
+> > 
+> > > > @@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
+> > > >         struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
+> > > >         struct regmap *map = d->map;
+> > > >         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
+> > > > -       int reg = irq_data->type_reg_offset / map->reg_stride;
+> > > > +       int reg;
+> > > > +       const struct regmap_irq_type *t = &irq_data->type;
+> > > >
+> > > > -       if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> > > > -               return 0;
+> > > > +       if ((t->types_supported & type) != type)
+> > > > +               return -ENOTSUPP;
+> > > 
+> > > Given types_supported defaults to zero, I think this breaks every existing
+> > > setup using REGMAP_IRQ_REG().
+> 
+> Right. Now I see what you mean. Original code did:
+> 
+> 	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> 		return 0;
+> 
+> Eg, even when the driver was not able to perform the type-setting this
+> failure was silently ignored, right. So doing:
+>        if ((t->types_supported & type) != type)
+>                return 0;
+> would be functionally equal. It feels like utterly wrong thing to do
+> (to me) - if driver is written to work with edge or level active
+> interrupts - and if the irq controller is not supporting this - then we
+> should warn the user. Just silently ignoring this sounds like asking for
+> irq storm or missed interrupts - but maybe I just don't get this =)
+> 
+> I'll send a patch with 
+> 	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
+> 		return 0;
+> in order to not break existing functionality - but it feels plain wrong
+> to me.
 
---jho1yZJdad60DJr+
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Geert, I did send this patch yesterday. It's here if you wish to try it:
+https://lore.kernel.org/patchwork/patch/1027963/
 
-Hi Laurent, Kieran,
-  thanks for the review
+Last night - just when I was about to get some sleep - it stroke me. I
+think the correct thing to do would be leaving the irq_set_type to NULL
+for those IRQ chips which do not support type setting. If we do that,
+then the irq core will take care of situations where user requests type
+setting but the chip does not support it. Which means the regmap-irq
+would be no different from any other irq chip where type setting is not
+supported.
 
-On Thu, Dec 13, 2018 at 11:40:00AM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Tuesday, 11 December 2018 17:16:13 EET Jacopo Mondi wrote:
-> > When the adv748x driver is informed about a link being created from HDMI or
-> > AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
-> > sure to implement proper routing management at link setup time, to route
-> > the selected video stream to the desired TX output.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/i2c/adv748x/adv748x-core.c | 63 ++++++++++++++++++++++++++++-
-> >  drivers/media/i2c/adv748x/adv748x.h      |  1 +
-> >  2 files changed, 63 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/i2c/adv748x/adv748x-core.c
-> > b/drivers/media/i2c/adv748x/adv748x-core.c index f3aabbccdfb5..08dc0e89b053
-> > 100644
-> > --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> > +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> > @@ -335,9 +335,70 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
-> >  /* ------------------------------------------------------------------------
-> >   * Media Operations
-> >   */
-> > +static int adv748x_link_setup(struct media_entity *entity,
-> > +			      const struct media_pad *local,
-> > +			      const struct media_pad *remote, u32 flags)
-> > +{
-> > +	struct v4l2_subdev *rsd = media_entity_to_v4l2_subdev(remote->entity);
-> > +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
-> > +	struct adv748x_state *state = v4l2_get_subdevdata(sd);
-> > +	struct adv748x_csi2 *tx;
-> > +	struct media_link *link;
-> > +	u8 io10;
-> > +
-> > +	/*
-> > +	 * For each link setup from [HDMI|AFE] to TX we receive two
-> > +	 * notifications: "[HDMI|AFE]->TX" and "TX<-[HDMI|AFE]".
-> > +	 *
-> > +	 * Use the second notification form to make sure we're linking
-> > +	 * to a TX and find out from where, to set up routing properly.
-> > +	 */
->
-> Why don't you implement the link handler just for the TX entities then ?
->
+/// irrelevant ///
+I guess you know the moment of "Hypnagogia" when you are comfortably at
+bed your head feels all dizzy and world is starting to faint away...
+And just a second later you are fully awake thinking of a possible
+solution - and definitely not able to sleep anymore :/
 
-Done. Much better
+https://www.reddit.com/r/ProgrammerHumor/comments/93eq0e/everytime/
+/// irrelevant ends ///
 
-> > +	if ((sd != &state->txa.sd && sd != &state->txb.sd) ||
-> > +	    !(flags & MEDIA_LNK_FL_ENABLED))
->
-> When disabling the link you should reset the ->source and ->tx pointers.
->
+I just took a peek in 
+kernel/irq/manage.c - and found following:
 
-right
+int __irq_set_trigger(struct irq_desc *desc, unsigned long flags)
+{
+	struct irq_chip *chip = desc->irq_data.chip;
+	int ret, unmask = 0;
 
-> > +		return 0;
-> > +	tx = adv748x_sd_to_csi2(sd);
-> > +
-> > +	/*
-> > +	 * Now that we're sure we're operating on one of the two TXs,
-> > +	 * make sure there are no enabled links ending there from
-> > +	 * either HDMI or AFE (this can only happens for TXA though).
-> > +	 */
-> > +	if (is_txa(tx))
-> > +		list_for_each_entry(link, &entity->links, list)
-> > +			if (link->sink->entity == entity &&
-> > +			    link->flags & MEDIA_LNK_FL_ENABLED)
-> > +				return -EINVAL;
->
-> You can simplify this by checking if tx->source == NULL (after resetting tx-
-> >source when disabling the link of course).
->
-> > +	/* Change video stream routing, according to the newly created link. */
-> > +	io10 = io_read(state, ADV748X_IO_10);
-> > +	if (rsd == &state->afe.sd) {
-> > +		state->afe.tx = tx;
-> > +
-> > +		/*
-> > +		 * If AFE is routed to TXA, make sure TXB is off;
-> > +		 * If AFE goes to TXB, we need TXA powered on.
-> > +		 */
-> > +		if (is_txa(tx)) {
-> > +			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> > +			io10 &= ~ADV748X_IO_10_CSI1_EN;
-> > +		} else {
-> > +			io10 |= ADV748X_IO_10_CSI4_EN |
-> > +				ADV748X_IO_10_CSI1_EN;
-> > +		}
-> > +	} else {
-> > +		state->hdmi.tx = tx;
-> > +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> > +	}
-> > +	io_write(state, ADV748X_IO_10, io10);
->
-> Is it guaranteed that the chip will be powered on at this point ? How about
-> writing the register at stream on time instead ?
+	if (!chip || !chip->irq_set_type) {
+		/*
+		 * IRQF_TRIGGER_* but the PIC does not support multiple
+		 * flow-types?
+		 */
+		pr_debug("No set_type function for IRQ %d (%s)\n",
+			 irq_desc_get_irq(desc),
+			 chip ? (chip->name ? : "unknown") : "unknown");
+		return 0;
+	}
 
-You know, I struggle to find a better place where to do so...
-- Right now the register gets written at reset time only
-- s_stream: Each subdev (afe, hdmi, txa and txb) has its own s_stream
-  so it's hard to find a centralized place where to write this
-  register that impacts both TXes
-- afe/hdmi s_stream() ops call tx_power_up, but again this is per-TX
-- There doesn't seems to be much concern in the driver in
-  synchronizing register writes with power states already actually. Not
-  that's an excuse, but when I played around and tried to power off
-  the chip's PLLs for real I got into LP-11 state detection issues
-  (again :) I would leave it here if that's fine with you :)
+...
 
-Thanks
-   j
+so at the moment the IRQ core is also just spilling out the warning and
+then returning zero. But at least we would get the warning from core if
+the irq-chip does not support type config.
 
->
-> > +	tx->rsd = rsd;
-> > +
-> > +	return 0;
-> > +}
-> >
-> >  static const struct media_entity_operations adv748x_media_ops = {
-> > -	.link_validate = v4l2_subdev_link_validate,
-> > +	.link_setup	= adv748x_link_setup,
-> > +	.link_validate	= v4l2_subdev_link_validate,
-> >  };
-> >
-> >  /* ------------------------------------------------------------------------
-> > -- diff --git a/drivers/media/i2c/adv748x/adv748x.h
-> > b/drivers/media/i2c/adv748x/adv748x.h index 0ee3b8d5c795..63a17c31c169
-> > 100644
-> > --- a/drivers/media/i2c/adv748x/adv748x.h
-> > +++ b/drivers/media/i2c/adv748x/adv748x.h
-> > @@ -220,6 +220,7 @@ struct adv748x_state {
-> >  #define ADV748X_IO_10_CSI4_EN		BIT(7)
-> >  #define ADV748X_IO_10_CSI1_EN		BIT(6)
-> >  #define ADV748X_IO_10_PIX_OUT_EN	BIT(5)
-> > +#define ADV748X_IO_10_CSI4_IN_SEL_AFE	0x08
-> >
-> >  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
-> >  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
->
->
+So at the cost of removing "const" from regmap_irq_chip we could do:
 
---jho1yZJdad60DJr+
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index 2a031743f31f..b6aef50ab378 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -298,12 +298,11 @@ static int regmap_irq_set_wake(struct irq_data *data, unsigned int on)
+ 	return 0;
+ }
+ 
+-static const struct irq_chip regmap_irq_chip = {
++static struct irq_chip regmap_irq_chip = {
+ 	.irq_bus_lock		= regmap_irq_lock,
+ 	.irq_bus_sync_unlock	= regmap_irq_sync_unlock,
+ 	.irq_disable		= regmap_irq_disable,
+ 	.irq_enable		= regmap_irq_enable,
+-	.irq_set_type		= regmap_irq_set_type,
+ 	.irq_set_wake		= regmap_irq_set_wake,
+ };
+ 
+@@ -610,6 +609,7 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
+ 
+ 	num_type_reg = chip->type_in_mask ? chip->num_regs : chip->num_type_reg;
+ 	if (num_type_reg) {
++		regmap_irq_chip.irq_set_type = regmap_irq_set_type;
+ 		d->type_buf_def = kcalloc(num_type_reg,
+ 					  sizeof(unsigned int), GFP_KERNEL);
+ 		if (!d->type_buf_def)
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlwlOGEACgkQcjQGjxah
-Vjx5nA//dExzkszHRikLIJJDmdvhddZsTsErDBTdePkM8vX2c3fRLPgPS0xZ0BPO
-Pm5LiomngUaBb6vPkrocb8Zfe5hLU0xX/6CCMYf8wCeBsvhAlrfSCzIOnAPZ3pCp
-63JSv+PV+mjcAW66Pm3qv8TFeNifC3rJ54i9RwKqb8sPLgd+f+gnHlucqix+sGX8
-Tskml3HxPlaS4TN1mjAQ3i5tV0Wg8Y1rpDqofGChEJo18WvZRkVz3GaDQxkoMgrb
-KKpYaw0NEtEB5DAtIMI7kZU8c9j/IgPZHQh5jzbNshIECsa8LUWXJ3W2KUF8laBS
-a7zwn881lNKqCF03A2OEpdvCiK1JWl26fllZRVOGEVyflJiK7ejssYkcANG6bAWp
-eyD+/3C+xdiqPNT3bah9qwBNKNU00B2hgPe+spXCpiUa8RAldFJcuGEs6efZTkzj
-GYDLzuS+pz2cog9FswYViFl8GS5eOzKITqPOmBTBwRT8/p73bPhKaqlYUS6P6xv4
-H0EkGVkXZ+o5914eaGLuoZQPp7Nz7XwGvJPQty81gEDUW1zN8csYpJ20Aqk3Urjd
-EfrB94J/FHBxdvMaSOnoSqs5XK+mXJGupbfb17pgwwtYl8tgCaWB0IqEAgRJr/jN
-OWQuAQXs80GoYWHLPM5nYxrHav0HIuUjsTcObQP4NqquzXdkTbs=
-=FHVC
------END PGP SIGNATURE-----
 
---jho1yZJdad60DJr+--
+Mark, Geert, what do you think? (And maybe same for the .irq_set_wake -
+but I did omit this as I have never looked at the wake functionality
+before).
+
+Br,
+	Matti Vaittinen
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
