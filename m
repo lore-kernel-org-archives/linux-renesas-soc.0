@@ -2,227 +2,88 @@ Return-Path: <SRS0=txgz=PF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09867C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 08:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 131CCC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 10:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92A32148E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 08:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDA0620855
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 10:42:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="rEKIC/uc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728450AbeL1IFk (ORCPT
+        id S1732042AbeL1Km5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Dec 2018 03:05:40 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42318 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728377AbeL1IFk (ORCPT
+        Fri, 28 Dec 2018 05:42:57 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36422 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730497AbeL1Km5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Dec 2018 03:05:40 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l15-v6so18063632lja.9;
-        Fri, 28 Dec 2018 00:05:38 -0800 (PST)
+        Fri, 28 Dec 2018 05:42:57 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a16so14324883lfg.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Dec 2018 02:42:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:organization:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=FchOIF31NQHF5VrF3o61h08IETCzJg/tYPOHD7iIz6E=;
+        b=rEKIC/ucpMw4x5HO6eoJVTyCmMHWZZwZzKXUvUm+fbsZDPrSzDh4LGecDqNBYejg/+
+         2y4oLVwocIh00QqSBODJBJmfCU3cckkBmaqOMr2353r+YMOKqkRoOxISb2e8UZbmsTne
+         N2b6lbl8ut457biX8APT04v6n8X0WB3bivKgE8+9Ur9SBWrzEXeQ7HFe20aiGouwx9k+
+         hfJnUVARHhT5Lqu5y6WTOH9ehhKHj9E2wkc2GXy8IVn4uXrcSvnSYtcPE9s+hwc7WgVb
+         M8RUMclz99doNGdO/QGQZ4tO9uiqQuEaXFA7KpQdzb8+PPoEKpqUF73xcWNsEMld1Tsj
+         nFKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wUuOMXiAveNS6pMX+WJG4oevliLdJmLbcbPk2PdcfTo=;
-        b=ueAafLHIs0v4NlZVn3fiLftHdzdTp2dt4+xxleS8M6Fcg9ixPTjdgMP6pHItuEdAsb
-         pIrnwaI8Hlka7/6Zu3TPsAomIQ8qofgIpErstVuGgr7zoS+C1MfAqDUSfClM5WW50tJ9
-         4jUy5APZyUBHOMJXGF1IbhVz+cW6Ch7311t707xusUFKSNC8J0wdB4pJ0nHY8qWiVqSe
-         4dmNIYaXtko9qrr/3V5S5Nq+SPjANRwmPHwP7qGvr7HViQ9ah8Nl+nGYtI/5cp/4uMAO
-         ebw6w7aoIOvQ5HpBbebFaHbrglfoyC1Tfog18ti7KSU85ImhX3bms1wrNmcgUTzWc7qJ
-         0Bww==
-X-Gm-Message-State: AA+aEWYKyHdInL1p5ES72Jky1Qo3BTd6/RBEOkGmGJTA7ajvvS5H4X0+
-        OfGgt3pQjMCbBfT2tAwIvbk=
-X-Google-Smtp-Source: ALg8bN4eqVUhMDGmwphsxT0yqOzfZ5ma8mZZ+tTjbCVPxLTaeeWe4sZwLKsT3eXgCDhxa6/wS0HMCQ==
-X-Received: by 2002:a2e:84ca:: with SMTP id q10-v6mr14873052ljh.65.1545984337279;
-        Fri, 28 Dec 2018 00:05:37 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id h12-v6sm8409276ljb.80.2018.12.28.00.05.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Dec 2018 00:05:36 -0800 (PST)
-Date:   Fri, 28 Dec 2018 10:05:33 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
- support
-Message-ID: <20181228080533.GC2461@localhost.localdomain>
-References: <20181218115931.GA21253@localhost.localdomain>
- <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
- <20181227073531.GA2461@localhost.localdomain>
- <20181227075648.GB2461@localhost.localdomain>
+        h=x-gm-message-state:from:subject:to:cc:organization:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=FchOIF31NQHF5VrF3o61h08IETCzJg/tYPOHD7iIz6E=;
+        b=ozsJwg5TEBxsMBI6nB5zvQ1dmK8LhX35aaRyuYmIJM6o1Uizztnoab+euE2FfpnORz
+         1N+24dOZTkIGIsX26y1bv2pFA6Nrvyx2RJmTPdBWh5REGkQidgEzVyMCkB7BU0WCsQ3C
+         2f/Alw5rDcUI9zPxT1RaDOSaNTmUXXuMrpsIkFkB2ZddAmRvzyd5sg0g5sJQ2t+oT/d0
+         1N2wsAHIra77gOFHYpTAy/lRFWTByN7NpapIatIXS0LlJ1x8DCKPFh6/HFCOhOErnSgj
+         zZqoJES2zpgK6sNpT9rsSjC2Mwg40ZAzD3W2WDmbw9WOYx7Ha0HQwMLX2p0eTSR/iGLg
+         4SGA==
+X-Gm-Message-State: AA+aEWYoWxlpE0t0SegcihTDp+OzjIitvxAX2zJgNjMtlXrybjdiLk1A
+        51ofbq2ZdizaLPdTJYXJ7Bihzg==
+X-Google-Smtp-Source: AFSGD/XTywt0YhynGmWIpQl37/+w5sHWBfPcVefwFpaQ/OwP4weHRMMIUHkE+FlEJYchwn3JTW7NjA==
+X-Received: by 2002:a19:a28e:: with SMTP id l136mr14777491lfe.87.1545993774903;
+        Fri, 28 Dec 2018 02:42:54 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.86.72])
+        by smtp.gmail.com with ESMTPSA id x24-v6sm9365404ljc.54.2018.12.28.02.42.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 28 Dec 2018 02:42:54 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/2] Add R8A77980 support to the Renesas RPC-IF driver
+To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+Organization: Cogent Embedded
+Message-ID: <72626acd-9d5f-14a1-6464-5fdeba17fece@cogentembedded.com>
+Date:   Fri, 28 Dec 2018 13:42:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227075648.GB2461@localhost.localdomain>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 09:56:48AM +0200, Matti Vaittinen wrote:
-> Hello All,
-> 
-> On Thu, Dec 27, 2018 at 09:35:31AM +0200, Matti Vaittinen wrote:
-> > On Wed, Dec 26, 2018 at 12:39:17PM +0100, Geert Uytterhoeven wrote:
-> > > Hi Matti,
-> > > 
-> > > On Tue, Dec 18, 2018 at 1:00 PM Matti Vaittinen
-> > > <matti.vaittinen@fi.rohmeurope.com> wrote:
-> > > > Add level active IRQ support to regmap-irq irqchip. Change breaks
-> > > > existing regmap-irq type setting. Convert the existing drivers which
-> > > 
-> > > Indeed it does.
-> > > 
-> > > This is now upstream as commit 1c2928e3e3212252 ("regmap:
-> > > regmap-irq/gpio-max77620: add level-irq support"), and breaks da9063-rtc
-> > > on the Renesas Koelsch board:
-> > > 
-> > >     genirq: Setting trigger mode 8 for irq 157 failed
-> > > (regmap_irq_set_type+0x0/0x140)
-> > >     da9063-rtc da9063-rtc: Failed to request ALARM IRQ 157: -524
-> > >     da9063-rtc: probe of da9063-rtc failed with error -524
-> > 
-> > This is strange as I do not see any type setting support code in
-> > drivers/mfd/da9063-irq.c. The type setting registers are neither
-> > specified in static const struct regmap_irq_chip da9063l_irq_chip nor
-> > in static const struct regmap_irq_chip da9063_irq_chip. Hence I don't
-> > understand how the da9063 could have been supporting IRQ type setting in
-> > first place.
-> > 
-> > > > @@ -234,27 +234,42 @@ static int regmap_irq_set_type(struct irq_data *data, unsigned int type)
-> > > >         struct regmap_irq_chip_data *d = irq_data_get_irq_chip_data(data);
-> > > >         struct regmap *map = d->map;
-> > > >         const struct regmap_irq *irq_data = irq_to_regmap_irq(d, data->hwirq);
-> > > > -       int reg = irq_data->type_reg_offset / map->reg_stride;
-> > > > +       int reg;
-> > > > +       const struct regmap_irq_type *t = &irq_data->type;
-> > > >
-> > > > -       if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
-> > > > -               return 0;
-> > > > +       if ((t->types_supported & type) != type)
-> > > > +               return -ENOTSUPP;
-> > > 
-> > > Given types_supported defaults to zero, I think this breaks every existing
-> > > setup using REGMAP_IRQ_REG().
-> 
-> Right. Now I see what you mean. Original code did:
-> 
-> 	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
-> 		return 0;
-> 
-> Eg, even when the driver was not able to perform the type-setting this
-> failure was silently ignored, right. So doing:
->        if ((t->types_supported & type) != type)
->                return 0;
-> would be functionally equal. It feels like utterly wrong thing to do
-> (to me) - if driver is written to work with edge or level active
-> interrupts - and if the irq controller is not supporting this - then we
-> should warn the user. Just silently ignoring this sounds like asking for
-> irq storm or missed interrupts - but maybe I just don't get this =)
-> 
-> I'll send a patch with 
-> 	if (!(irq_data->type_rising_mask | irq_data->type_falling_mask))
-> 		return 0;
-> in order to not break existing functionality - but it feels plain wrong
-> to me.
+Hello!
 
-Geert, I did send this patch yesterday. It's here if you wish to try it:
-https://lore.kernel.org/patchwork/patch/1027963/
+Here's the set of 2 patches against the 'devel' branch of Simon Horman's 'renesas.git'
+repo and the Renesas RPC-IF driver/bindings patches v4. We're adding support for the
+R-Car V3H (R8A77980) RPC-IF...
 
-Last night - just when I was about to get some sleep - it stroke me. I
-think the correct thing to do would be leaving the irq_set_type to NULL
-for those IRQ chips which do not support type setting. If we do that,
-then the irq core will take care of situations where user requests type
-setting but the chip does not support it. Which means the regmap-irq
-would be no different from any other irq chip where type setting is not
-supported.
+[1/2] dt-bindings: spi: renesas-rpc: document R8A77980 bindings
+[2/2] spi-renesas-rpc: add R8A77980 support 
 
-/// irrelevant ///
-I guess you know the moment of "Hypnagogia" when you are comfortably at
-bed your head feels all dizzy and world is starting to faint away...
-And just a second later you are fully awake thinking of a possible
-solution - and definitely not able to sleep anymore :/
-
-https://www.reddit.com/r/ProgrammerHumor/comments/93eq0e/everytime/
-/// irrelevant ends ///
-
-I just took a peek in 
-kernel/irq/manage.c - and found following:
-
-int __irq_set_trigger(struct irq_desc *desc, unsigned long flags)
-{
-	struct irq_chip *chip = desc->irq_data.chip;
-	int ret, unmask = 0;
-
-	if (!chip || !chip->irq_set_type) {
-		/*
-		 * IRQF_TRIGGER_* but the PIC does not support multiple
-		 * flow-types?
-		 */
-		pr_debug("No set_type function for IRQ %d (%s)\n",
-			 irq_desc_get_irq(desc),
-			 chip ? (chip->name ? : "unknown") : "unknown");
-		return 0;
-	}
-
-...
-
-so at the moment the IRQ core is also just spilling out the warning and
-then returning zero. But at least we would get the warning from core if
-the irq-chip does not support type config.
-
-So at the cost of removing "const" from regmap_irq_chip we could do:
-
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index 2a031743f31f..b6aef50ab378 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -298,12 +298,11 @@ static int regmap_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
- }
- 
--static const struct irq_chip regmap_irq_chip = {
-+static struct irq_chip regmap_irq_chip = {
- 	.irq_bus_lock		= regmap_irq_lock,
- 	.irq_bus_sync_unlock	= regmap_irq_sync_unlock,
- 	.irq_disable		= regmap_irq_disable,
- 	.irq_enable		= regmap_irq_enable,
--	.irq_set_type		= regmap_irq_set_type,
- 	.irq_set_wake		= regmap_irq_set_wake,
- };
- 
-@@ -610,6 +609,7 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 
- 	num_type_reg = chip->type_in_mask ? chip->num_regs : chip->num_type_reg;
- 	if (num_type_reg) {
-+		regmap_irq_chip.irq_set_type = regmap_irq_set_type;
- 		d->type_buf_def = kcalloc(num_type_reg,
- 					  sizeof(unsigned int), GFP_KERNEL);
- 		if (!d->type_buf_def)
-
-
-
-Mark, Geert, what do you think? (And maybe same for the .irq_set_wake -
-but I did omit this as I have never looked at the wake functionality
-before).
-
-Br,
-	Matti Vaittinen
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+MBR, Sergei
