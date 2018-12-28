@@ -6,69 +6,66 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 905B9C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 10:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8D0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 10:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587BB20879
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 10:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AA6720855
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Dec 2018 10:48:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="nF6DiesM"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="yaAckREz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731620AbeL1KrN (ORCPT
+        id S1731518AbeL1Ks1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Dec 2018 05:47:13 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44784 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731566AbeL1KrN (ORCPT
+        Fri, 28 Dec 2018 05:48:27 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39801 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731564AbeL1Ks1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Dec 2018 05:47:13 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z13so14300623lfe.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Dec 2018 02:47:11 -0800 (PST)
+        Fri, 28 Dec 2018 05:48:27 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t9-v6so18398273ljh.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 Dec 2018 02:48:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:cc:references:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=0ZCl6ZG0yrPBJNzXP8/AjkaIley30btquvTw03eZwtQ=;
-        b=nF6DiesM1y72tuOLqo2Wt1LvFRArQg82/XtHFdlGSO5Vp2Mxv9odZtg9fBquHf6Lpn
-         TIrMxUGVP8hswbaAIWdBTFaReFXnemWlpS+/XTWIjUcDgcAql1M8HyW3nCnWyCj+Z8BI
-         dQVxWn9jV9vm3kPW96tCyWLK31OoRJUTrxiUTYwKn+9tvF2h/EVZghdS/QiAsMQIWDez
-         W+vcsHAKr967dxTWAboZi6f4DFkgml6nn6ecZbA4zYWhKlJLUKMpQSlh6msgQJNyBx2E
-         RHDm/xWM6f1qKMmFLIELdKWW2UxEaCC78Ii4ecxUqWR/4gXJhkSIWD/0+uzrUh58HiFj
-         RRWQ==
+        bh=bevbyG5jgvnmzKSa0j7XgRc+8pFWLaW5pxBSf+MtZDg=;
+        b=yaAckREzyfTJn6UdFrkZq9H2CuVxCipxnkcmsDQId0mD+ePlMnMv1oeAwOUZyXhjy9
+         JmsVb/QgaR0w90dwRvs8fcUaYrfLMtGdSjWILyYCMJBgs2vqG/1N8o399d/ITX9WhsFT
+         NhS0XMu6aCMULaA2CkzkCql2+X8ejhwIMX+oA2xHpBXAg8lbtzq64uPvXrYk9UZwQ87e
+         LX+NDoX3CXU6UCfpiH8LOAyiWx+qDJnnfz9fypEYbLW1GRCwfKwLpgXj1gjGaAeTkSnp
+         LdM2iBplrc0xyejVMUA0f9gAO6A8pxE8TgkOl+BTH1c3d9cgHZKP3xsO2Wm7lmz5YCNY
+         hGgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:references:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=0ZCl6ZG0yrPBJNzXP8/AjkaIley30btquvTw03eZwtQ=;
-        b=PK1b0fBthEVUZQg8OC3iJ8f8oGgbew3dGZZ4PS80esw4vzw/Jgi0449oJ5cRhya4si
-         YD2Z3zywEI+bdu/o3vzqDotq6ug2m+YcuN6ZUQCb/jEDG45b7iXmzviX/h1i3vNQlAA3
-         sadcMCj1icrOK2xzDAYNY4DI+US79vAEvFfH/i0Aojg55u8jOTPZHa6RLxUH90f7+uqe
-         HtYxl5nad87AUi80JPjPT2o7rAmqy2m6+q6E8qU+Er6QQqB5k61+CU77iHNDpWm1V6HG
-         6IBMFeWpdTQe9DOBUnZoIAjrxyAFHCwqRWh3YxSMWsFQii3cYIPq1o/jdFO2HE0XcTI2
-         5Ftw==
-X-Gm-Message-State: AA+aEWYvnQb2OMODsUAHsjmpTCrmxSU9ELBcbNAYDssZqTcVlXyyAHHI
-        vIMZ2AZhq53mqtXa7XTBsK28Wg==
-X-Google-Smtp-Source: AFSGD/UH97j0gNXWC+a7K8ysEfYj35rNdyVvJhKNRy890e0s97WPNgf9Dii5iCfkwD73AJxxZA4nBA==
-X-Received: by 2002:a19:a9d2:: with SMTP id s201mr13161007lfe.154.1545994031007;
-        Fri, 28 Dec 2018 02:47:11 -0800 (PST)
+        bh=bevbyG5jgvnmzKSa0j7XgRc+8pFWLaW5pxBSf+MtZDg=;
+        b=PYpDhwMHQtBglyWhiFc3+BRru7kIwdRv783pmfMeNjV6w2AZ0KBtuKTSfd3fSrJ3/J
+         nXCrBl1qlIvlzgCjJxdBl7ykvG+oxl6Q2C2dr17dCrXhKNMRVfGxYIJ6SZv/+bSanO2o
+         bc7SNPzpo+73GRRKebHDP8b2lax00HTFynpSNCsve3I/cgR40tC5qTclbpjktPdYkcBa
+         OPJNnIS7/GTCuM8KUG02m/vRKKB5tGyQhcOJWZWBqQZYStMFFsfnANIvwD1EhWc3dVNA
+         O6IZm1nk4xmGLbFnAi5Y5muW9BM5lJ6vII4DNGdSLFI2rkoB6XpX5FEz7sVHPze7mQax
+         7Pjg==
+X-Gm-Message-State: AA+aEWaUHJFyhrLKD/m8Md0GAA2/qxjLy/BEZ8KfoE7S4iChm4iSBUTi
+        h+tmWxPvFLQXGBk+ijfTWMeko8QBvVo=
+X-Google-Smtp-Source: ALg8bN6q+MS76rrW0Rad8XSczj/vS7uIJXUSmGsLZwwWmGQEkz9bJCKxk+GInaxNjiCzxkIcsuXlig==
+X-Received: by 2002:a2e:9783:: with SMTP id y3-v6mr15511975lji.167.1545994104676;
+        Fri, 28 Dec 2018 02:48:24 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.86.72])
-        by smtp.gmail.com with ESMTPSA id s127sm8070677lfe.8.2018.12.28.02.47.09
+        by smtp.gmail.com with ESMTPSA id i143sm8063012lfg.74.2018.12.28.02.48.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Dec 2018 02:47:10 -0800 (PST)
-Subject: [PATCH 1/2] dt-bindings: spi: renesas-rpc: document R8A77980 bindings
+        Fri, 28 Dec 2018 02:48:24 -0800 (PST)
+Subject: [PATCH 2/2] spi-renesas-rpc: add R8A77980 support
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
+        Mason Yang <masonccyang@mxic.com.tw>
+Cc:     linux-renesas-soc@vger.kernel.org
 References: <72626acd-9d5f-14a1-6464-5fdeba17fece@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <08a3ff4d-3ee3-91dd-c048-55a09b6dfc63@cogentembedded.com>
-Date:   Fri, 28 Dec 2018 13:47:09 +0300
+Message-ID: <ad4b9505-6362-ebcf-33c6-52039a0ae706@cogentembedded.com>
+Date:   Fri, 28 Dec 2018 13:48:22 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
@@ -81,25 +78,23 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the R-Car V3H (R8A77980) SoC in the Renesas RPC-IF bindings.
+Add the R-Car V3H (R8A77980) SoC support to the Renesas RPC-IF SPI driver. 
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
- Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-renesas-rpc.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Index: renesas/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+Index: renesas/drivers/spi/spi-renesas-rpc.c
 ===================================================================
---- renesas.orig/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-+++ renesas/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-@@ -2,7 +2,8 @@ Renesas R-Car Gen3 RPC controller Device
- ------------------------------------------------------
+--- renesas.orig/drivers/spi/spi-renesas-rpc.c
++++ renesas/drivers/spi/spi-renesas-rpc.c
+@@ -762,6 +762,7 @@ static int rpc_spi_remove(struct platfor
+ }
  
- Required properties:
--- compatible: should be "renesas,r8a77995-rpc"
-+- compatible: should be "renesas,r8a77980-rpc" or
-+  	      	        "renesas,r8a77995-rpc"
- - #address-cells: should be 1
- - #size-cells: should be 0
- - reg: should contain 2 entries, one for the registers and one for the direct
+ static const struct of_device_id rpc_spi_of_ids[] = {
++	{ .compatible = "renesas,r8a77980-rpc", },
+ 	{ .compatible = "renesas,r8a77995-rpc", },
+ 	{ /* sentinel */ }
+ };
