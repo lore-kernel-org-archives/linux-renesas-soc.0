@@ -2,80 +2,107 @@ Return-Path: <SRS0=RWjW=PK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C834DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 09:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5654CC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 10:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C19F21871
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 09:52:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="qzMv1w55"
+	by mail.kernel.org (Postfix) with ESMTP id 1E513218A4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 10:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbfABJwE (ORCPT
+        id S1728451AbfABKjR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Jan 2019 04:52:04 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:33702 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729120AbfABJwE (ORCPT
+        Wed, 2 Jan 2019 05:39:17 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:41123 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728111AbfABKjR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Jan 2019 04:52:04 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id C3ECD25BE2C;
-        Wed,  2 Jan 2019 20:52:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1546422722; bh=4WXDZ4KzsVVwj77Z3Lu21DiSj9EbcMCdA+GPS+ykhkY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qzMv1w558HEc+hripxBRBb6++TXHRPoYP/1sqpN8q034l3NHEy94OOsfGB48W5csp
-         b7ZU5KaizhJOAJizdxLgXftBHTPaWqtD+NoQCU9aW+wJUKlM/+DyB+3SPeFC3Jbn1a
-         KqkHgZjkiGxEDzZf/fEZ0jC8kzVQ5Dxz5MsJrvOw=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id EF3EF9402C1; Wed,  2 Jan 2019 10:51:59 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
+        Wed, 2 Jan 2019 05:39:17 -0500
+Received: by mail-vs1-f65.google.com with SMTP id t17so18627829vsc.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Jan 2019 02:39:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wy6KgNr9/dUfB0er9a+6CafukdxPACZdF3OKG9gnG04=;
+        b=GuuM18KzSFCYqvpV2fEIJzi3o+zz3qncKYzN+dnCDh3MWIRuKjKqCX4EVlI3BzgZ4b
+         qBP6Sbj4UiPB4wJej0L3Zwb8wEtvcqwcLtv7Ep/AoEh+S7oKomnsYThJZ5jUI1WH/lOd
+         WDgqJVFfodRK1YUKTkcnaHly7ooZn5oSvuoCvSLpp2wYq9VkP4lgpGLdKjgLhi1ugFax
+         5WvpK6NGbT2MHt35JzN35vBUOkXEm8wztkCKwFRxAJ3dJQFlq0fRKtNs9ol62jpGPIvV
+         DXPeb26NdKPbWTfuJ9oR/LPS3nYAadRDE3o/ktXVDT/wq25CIbmLnQ+cOEpx3QssKa/D
+         igUQ==
+X-Gm-Message-State: AA+aEWYoXpKvyGS4zzPA2hWemPmZYDTL5R5vP/SasyVR9ySbifw9Op3+
+        k3WZQCCYOWpZ1OWSxGRvXc19d7xRL8VN9NOE+Rg=
+X-Google-Smtp-Source: AFSGD/Vm8DhpVpN4QkpfOcFPnn4vCKv1sA/1kLcqeFcENaOmJKgd1r3UPv1dPcvanhnvSlzLl6IhH2fz5olE98Blvl0=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr17524801vsp.166.1546425556358;
+ Wed, 02 Jan 2019 02:39:16 -0800 (PST)
+MIME-Version: 1.0
+References: <1544617031-28114-1-git-send-email-biju.das@bp.renesas.com>
+ <20181213111846.qd25vzpnejbzzldg@verge.net.au> <20181214155900.za4xbl74sbbgc4ef@verge.net.au>
+ <20190102093958.e7wjhm7eqeu367s7@verge.net.au>
+In-Reply-To: <20190102093958.e7wjhm7eqeu367s7@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 2 Jan 2019 11:39:03 +0100
+Message-ID: <CAMuHMdX60zMDd49ySuinJJnfTpqNJ_Nzj7DO+YYF7C=HFQ-SkA@mail.gmail.com>
+Subject: Re: [PATCH] soc: renesas: r8a774c0-sysc: Fix initialization order of 3DG-{A,B}
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2] arm64: defconfig: Enable R-Car thermal driver
-Date:   Wed,  2 Jan 2019 10:51:54 +0100
-Message-Id: <20190102095154.25839-1-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable the R-Car thermal driver as a built-in.
+Hi Simon,
 
-This driver is used in conjunction with the R-Car V3M (r8a77970),
-E3 (r8a77990) and D3 (r8a77995) SoCs.
+On Wed, Jan 2, 2019 at 10:40 AM Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Dec 14, 2018 at 04:59:00PM +0100, Simon Horman wrote:
+> > On Thu, Dec 13, 2018 at 12:18:46PM +0100, Simon Horman wrote:
+> > > On Wed, Dec 12, 2018 at 12:17:11PM +0000, Biju Das wrote:
+> > > > The workaround for the wrong hierarchy of the 3DG-{A,B} power domains on
+> > > > RZ/G2E ES1.0 corrected the parent domains. However, the 3DG-{A,B} power
+> > > > domains were still initialized and powered in the wrong order, causing
+> > > > 3DG operation to fail.
+> > > >
+> > > > Fix this by changing the order in the table at runtime, when running on
+> > > > an affected SoC.
+> > > >
+> > > > This work is based on the work done by Geert for R-Car E3.
+> > > >
+> > > > Fixes: f37d211c687588328 ("soc: renesas: rcar-sysc: Add r8a774c0 support")
+> > > >
+> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > >
+> > > Thanks,
+> > >
+> > > This looks fine to me but I will wait to see if there are other reviews
+> > > before applying.
+> > >
+> > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> >
+> > Thanks, v2 sent.
+> >
+>
+> I don't see a v2 or any other review of this patch.
+> Am I missing something?
 
-[v2] Enable as a built-in rather than a module as this seems
-     safer from the point of view of protecting equipment from
-     overheating.
+Presumably the "Thanks, v2 sent." reply (by you!) was a reply meant for
+another thread?
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
- Based on renesas-devel-20190102-v4.20
+                        Geert
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a0801002b537..4530f50f06e5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -377,6 +377,7 @@ CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
- CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
- CONFIG_ROCKCHIP_THERMAL=m
-+CONFIG_RCAR_THERMAL=y
- CONFIG_RCAR_GEN3_THERMAL=y
- CONFIG_ARMADA_THERMAL=y
- CONFIG_BRCMSTB_THERMAL=m
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
