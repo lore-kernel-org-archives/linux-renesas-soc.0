@@ -6,72 +6,68 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3081DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 10:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31AB0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 10:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05CE82171F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 10:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0196C2171F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 10:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfABKnC (ORCPT
+        id S1729102AbfABKpu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:43:02 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46382 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbfABKnC (ORCPT
+        Wed, 2 Jan 2019 05:45:50 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:35255 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728677AbfABKpu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:43:02 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v24so9743012uap.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Jan 2019 02:43:01 -0800 (PST)
+        Wed, 2 Jan 2019 05:45:50 -0500
+Received: by mail-vk1-f193.google.com with SMTP id b18so6479705vke.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Jan 2019 02:45:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qp5NIjPuXYM5zF4tW9maOxFQs2ov1UDqEnJa/fK1I4Q=;
-        b=IE1zCiwMpAmptPtx/xkQ2XTL46uXkxdOOZzIN7B+scvn7nUZUKoKYM51dFcxRV0RtF
-         yqocBYeH6jVt/vkvKxGU/xr9KIMT28FFHpdit+mqexpkNJE85nJkxp/oTsfJpGWvD9J/
-         o8snECB3r7TSVzJTHOJuUNSNdDXr7NYh3MsJXa2rSY4U4NYELz4l7A3EjvnD5ErJ8BjN
-         lhuf+qF8VVAAeLS3n3Cu2UmAlbkb4QZh0MixLUQPz4bNF2Uorx13lb5v60vPA0eMAZ0w
-         1KYVTBPEtnzRYxZUGj4++4sM7S1siD68rL8yYu4xEuglRY6wloAhCFBPwEOcLRup1Z3L
-         EOZQ==
-X-Gm-Message-State: AJcUukcKa/HHyvPFg7WLTk/fPjHPUObWS3kHSiswLILXO/5ebROyoLFV
-        yR3sbRectS/CEfgSObGo8ryqE9keRT+hWViyMjI=
-X-Google-Smtp-Source: ALg8bN5HNxZukQ43XwKMSRXqCwwInGZ5TOvFD5kyjhHQQLtx1N4wOOqEMaDouwGy5R8V9oap1ffbm7VKDeVyK1H5ABI=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr16141522ual.20.1546425780537;
- Wed, 02 Jan 2019 02:43:00 -0800 (PST)
+        bh=awM+1MIONbir+czdxrqyS1TXHcOMBg4YF74JgvwZLX0=;
+        b=e3spUa+pmRywZCl/JaQM04LgpKCvTNpBorGUv5Zm/ZOiwjGOwwcrTF/G4GFLhOfHIn
+         KhDKU8MJh6LqBaNB0Vh2kXP8Xe1GHYRacjYVIJpci3nuo793jWqcYvIX7HhlmjUVUTFM
+         z4XFBtsJoqUpacDYcCQHrdeblgjebweVzpfUFt7nFt3EXXCJDwZqB3dmDlPhGebJWkdp
+         AZeIUo6xjx3k0sIrJC4OEGW9Hs/VZ6Glbass3LIj02R1ntiY/UNM7CzDNPG9fvXIChZj
+         jDOjIsUUvOZaJu3WUM9y4pco8XNHECoPVCT3ND8n9CqOuDqPOKxL4wtVQStSgIkiBUNl
+         U2yw==
+X-Gm-Message-State: AJcUukfKR29oESBxig5VbaHdk+LA+EAVGaxEG3ioQ9/codlzZeCzJBHc
+        NNjOQkVgKweEtIcBBgHLHHgsW4bXOsNPmX0PfTwD0419wZA=
+X-Google-Smtp-Source: ALg8bN7OYBwFPd/csy3iOCTMz/bPfbWowFS5jL1K5rqgOgdeAr+MHIVD3qEdYKeavL+RyehW7rtDanqr6WBskG/1AwU=
+X-Received: by 2002:a1f:2ed7:: with SMTP id u206mr15186748vku.72.1546425949147;
+ Wed, 02 Jan 2019 02:45:49 -0800 (PST)
 MIME-Version: 1.0
-References: <1544617031-28114-1-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1544617031-28114-1-git-send-email-biju.das@bp.renesas.com>
+References: <20190102095154.25839-1-horms+renesas@verge.net.au>
+In-Reply-To: <20190102095154.25839-1-horms+renesas@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 2 Jan 2019 11:42:48 +0100
-Message-ID: <CAMuHMdXhLJpvFOjr42v13sAJVja-ivG+6vnoUjWvAWSQML_0=Q@mail.gmail.com>
-Subject: Re: [PATCH] soc: renesas: r8a774c0-sysc: Fix initialization order of 3DG-{A,B}
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date:   Wed, 2 Jan 2019 11:45:37 +0100
+Message-ID: <CAMuHMdU=aR8mSwd876LV=DG_vh6Bx45zxRTfMXuX3BQpy0M=ow@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: defconfig: Enable R-Car thermal driver
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 1:25 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> The workaround for the wrong hierarchy of the 3DG-{A,B} power domains on
-> RZ/G2E ES1.0 corrected the parent domains. However, the 3DG-{A,B} power
-> domains were still initialized and powered in the wrong order, causing
-> 3DG operation to fail.
+On Wed, Jan 2, 2019 at 10:53 AM Simon Horman <horms+renesas@verge.net.au> wrote:
+> Enable the R-Car thermal driver as a built-in.
 >
-> Fix this by changing the order in the table at runtime, when running on
-> an affected SoC.
->
-> This work is based on the work done by Geert for R-Car E3.
->
-> Fixes: f37d211c687588328 ("soc: renesas: rcar-sysc: Add r8a774c0 support")
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> This driver is used in conjunction with the R-Car V3M (r8a77970),
+> E3 (r8a77990) and D3 (r8a77995) SoCs.
+
+> [v2] Enable as a built-in rather than a module as this seems
+>      safer from the point of view of protecting equipment from
+>      overheating.
+
+Shouldn't the above paragraph be moved below the ---?
+
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
