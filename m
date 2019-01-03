@@ -2,114 +2,129 @@ Return-Path: <SRS0=Tt7D=PL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96ED2C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 15:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4F6C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 17:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F85320815
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 15:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344262073D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 17:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbfACPpL (ORCPT
+        id S1730619AbfACRUV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Jan 2019 10:45:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51806 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729605AbfACPpL (ORCPT
+        Thu, 3 Jan 2019 12:20:21 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:46204 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730243AbfACRUV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Jan 2019 10:45:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 733CBA78;
-        Thu,  3 Jan 2019 07:45:10 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4149E3F575;
-        Thu,  3 Jan 2019 07:45:10 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 6D9AA1AE0BD1; Thu,  3 Jan 2019 15:45:10 +0000 (GMT)
-Date:   Thu, 3 Jan 2019 15:45:10 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: renesas-drivers-2018-12-26-v4.20
-Message-ID: <20190103154510.GH16311@edgewater-inn.cambridge.arm.com>
-References: <20181226110530.13136-1-geert+renesas@glider.be>
- <TY2PR01MB48127A0F2DCB00880576DEBCD8B60@TY2PR01MB4812.jpnprd01.prod.outlook.com>
- <CAMuHMdXjXi1dbpk0sOf-qhzJB+uzMVYyyMVHRqv+QSCeNVVgtQ@mail.gmail.com>
+        Thu, 3 Jan 2019 12:20:21 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x03HJEvP009739;
+        Thu, 3 Jan 2019 11:20:10 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2pp67unwwh-1;
+        Thu, 03 Jan 2019 11:20:10 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 488BE611C8AF;
+        Thu,  3 Jan 2019 11:24:14 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 3 Jan 2019
+ 17:20:09 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id x03HK8PI032642; Thu,
+ 3 Jan 2019 17:20:08 GMT
+Date:   Thu, 3 Jan 2019 17:20:08 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        <mazziesaccount@gmail.com>, <heikki.haikola@fi.rohmeurope.com>,
+        <mikko.mutanen@fi.rohmeurope.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v3] regmap: regmap-irq/gpio-max77620: add level-irq
+ support
+Message-ID: <20190103172008.GO16508@imbe.wolfsonmicro.main>
+References: <20181218115931.GA21253@localhost.localdomain>
+ <CAMuHMdUbXeuemACL+GGx0HFjn2oKUb2UbDUKJedzCrm8JDfNaA@mail.gmail.com>
+ <20181227073531.GA2461@localhost.localdomain>
+ <20181227075648.GB2461@localhost.localdomain>
+ <20181228080533.GC2461@localhost.localdomain>
+ <20181231191127.GL1846@sirena.org.uk>
+ <20190102074251.GA8865@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXjXi1dbpk0sOf-qhzJB+uzMVYyyMVHRqv+QSCeNVVgtQ@mail.gmail.com>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+In-Reply-To: <20190102074251.GA8865@localhost.localdomain>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901030153
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Dec 27, 2018 at 11:12:25AM +0100, Geert Uytterhoeven wrote:
-> Hi Shimoda-san,
+On Wed, Jan 02, 2019 at 09:42:51AM +0200, Matti Vaittinen wrote:
+> On Mon, Dec 31, 2018 at 07:11:27PM +0000, Mark Brown wrote:
+> > On Fri, Dec 28, 2018 at 10:05:33AM +0200, Matti Vaittinen wrote:
+> > 
+> > > Last night - just when I was about to get some sleep - it stroke me. I
+> > > think the correct thing to do would be leaving the irq_set_type to NULL
+> > > for those IRQ chips which do not support type setting. If we do that,
+> > > then the irq core will take care of situations where user requests type
+> > > setting but the chip does not support it. Which means the regmap-irq
+> > > would be no different from any other irq chip where type setting is not
+> > > supported.
+> > 
+> > Yes, this is the best fix - let the framework handle things properly.
+> > We'll need a second set of operations and to select which to use based
+> > on having type information but that's fine.
+> > 
+> > > So at the cost of removing "const" from regmap_irq_chip we could do:
+> > 
+> > ...
+> > 
+> > > Mark, Geert, what do you think? (And maybe same for the .irq_set_wake -
+> > > but I did omit this as I have never looked at the wake functionality
+> > > before).
+> > 
+> > We need a separate struct as otherwise if there's multiple devices with
+> > regmap irq_chip implementations then they'll collide with each other
 > 
-> Thanks for the report!
+> Right. I must admit I didn't notice this! I was about to make a nasty
+> error there...
 > 
-> CC Will (commit author), Arnd (compiler collective).
+
+Looking at the code I think it just copies the struct anyway,
+basically using it as a template so I think this should be fine.
+
+> > you're probably right that we need to do the same thing for the wake
+> > configuration.  I'll still look at applying your patch as a temporary
+> > fix though.
 > 
-> On Thu, Dec 27, 2018 at 2:58 AM Yoshihiro Shimoda
-> <yoshihiro.shimoda.uh@renesas.com> wrote:
-> > > From: Geert Uytterhoeven, Sent: Wednesday, December 26, 2018 8:06 PM
-> > > I have pushed renesas-drivers-2018-12-26-v4.20 to
-> > > https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
-> > >
-> > > This tree is meant to ease development of platform support and drivers
-> > > for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-> > > of various subsystem trees and (b) branches with driver code submitted
-> > > or planned for submission to maintainers into the development branch of
-> > > Simon Horman's renesas.git tree.
-> > >
-> > > Today's version is based on renesas-devel-20181220-v4.20-rc7.
-> >
-> > I built this version with "gcc version 5.2.1 20151005 (Linaro GCC 5.2-2015.11-1)",
-> > and then the following build error happened:
-> >
-> >   AS      arch/arm64/kernel/head.o
-> > /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S: Assembler messages:
-> > /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: missing ')'
-> > /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: missing ')'
-> > /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: missing ')'
-> > /home/shimoda/development/renesas/renesas-drivers/arch/arm64/kernel/head.S:824: Error: unexpected characters following instruction at operand 2 -- `mov x2,#(2)|(2U<<(8))'
-> >
-> > This error seems to cause the commit 66f16a24512f ("arm64: smp: Rework early feature mismatched detection").
-> > And if I modified the code as following, the build error disappeared:
-> >
-> > ---
-> > diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.h
-> > index 18955618..e9b9cee 100644
-> > --- a/arch/arm64/include/asm/smp.h
-> > +++ b/arch/arm64/include/asm/smp.h
-> > @@ -30,7 +30,7 @@
-> >  #define CPU_PANIC_KERNEL               (3)
-> >
-> >  #define CPU_STUCK_REASON_52_BIT_VA     (1U << CPU_STUCK_REASON_SHIFT)
-> > -#define CPU_STUCK_REASON_NO_GRAN       (2U << CPU_STUCK_REASON_SHIFT)
-> > +#define CPU_STUCK_REASON_NO_GRAN       (UL(2) << CPU_STUCK_REASON_SHIFT)
-> >
-> >  #ifndef __ASSEMBLY__
-> > ---
-> >
-> > So, I think we have to fix this, but what do you think?
-> > # I don't know why the line 812 doesn't cause the build error,
-> > # but the line 824 causes the build error though...
+> Thanks Mark. I try to cook a patch with copying of struct irq_chip still
+> at this week but I wont rush it (I have some other topics under work) as
+> the regression should be fixed by the other patch.
+> 
 
-I'm about to queue a flavour of:
+Just to check that is this patch here:
 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-December/622858.html
+https://lore.kernel.org/lkml/20181227084443.GA23991@localhost.localdomain/
 
-to address this.
+Just want to check what will be applied so I know it will fix the
+regression I am seeing as well.
 
-Cheers,
-
-Will
+Thanks,
+Charles
