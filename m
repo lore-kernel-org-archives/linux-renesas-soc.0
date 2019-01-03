@@ -1,165 +1,371 @@
-Return-Path: <SRS0=RWjW=PK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=Tt7D=PL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9176FC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 15:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC352C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 09:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BCF220656
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Jan 2019 15:11:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="kI7P9H4E"
+	by mail.kernel.org (Postfix) with ESMTP id 6D2EA206BB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 09:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728905AbfABPLX (ORCPT
+        id S1727055AbfACJmY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Jan 2019 10:11:23 -0500
-Received: from mail-eopbgr1400139.outbound.protection.outlook.com ([40.107.140.139]:58288
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727864AbfABPLW (ORCPT
+        Thu, 3 Jan 2019 04:42:24 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:50006 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbfACJmX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Jan 2019 10:11:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4rgtvavk5wTZfJtzeKKVQlb3eqoGjiDW8XZetv44Scw=;
- b=kI7P9H4EgqTQ+JL8bH8Vgl5UwDUMTjXDcJ8nNBTAIAlEE4uvrD4IMmEFdFvNbKHNTTcryJ/HDTgW0xJlgrU2UplTCynDyPlimds61t/dsfVtNADPaHVUo1Zcx/nRguiCZZJZlpW3AZBXFFaDd7QqD20P5Jw2xCxp+/lD95+YoBs=
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.241.22) by
- OSBPR01MB1542.jpnprd01.prod.outlook.com (52.134.225.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1471.20; Wed, 2 Jan 2019 15:11:16 +0000
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::35e7:300c:a781:3ef6]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::35e7:300c:a781:3ef6%2]) with mapi id 15.20.1495.005; Wed, 2 Jan 2019
- 15:11:14 +0000
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Simon Horman <horms@verge.net.au>
-CC:     Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH] soc: renesas: r8a774c0-sysc: Fix initialization order of
- 3DG-{A,B}
-Thread-Topic: [PATCH] soc: renesas: r8a774c0-sysc: Fix initialization order of
- 3DG-{A,B}
-Thread-Index: AQHUkhXU+EBeA8bYUEKdefrumcsreqV8hw4AgAHgoACAHXJmAIAAWe2g
-Date:   Wed, 2 Jan 2019 15:11:13 +0000
-Message-ID: <OSBPR01MB2103C55C91F968BE2CD870AEB88C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1544617031-28114-1-git-send-email-biju.das@bp.renesas.com>
- <20181213111846.qd25vzpnejbzzldg@verge.net.au>
- <20181214155900.za4xbl74sbbgc4ef@verge.net.au>
- <20190102093958.e7wjhm7eqeu367s7@verge.net.au>
-In-Reply-To: <20190102093958.e7wjhm7eqeu367s7@verge.net.au>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=biju.das@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB1542;20:/mpbGeROQphOsqZc/9rOhbGQW/gJ8CXn7xGh4/EUNeuWH3lVGBewU3d9Q41r1sVQAAbEPF6GBYD8Xz1Q8okz01rtZqXcFE2Ooo9n+7ZInV5vaPRNm4RphZYzfRAnigtoxNHoTq5p32VKecsxqkvVZaGD2MFdB3sF2T3FlCkZEiE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: ca4d54dc-28b1-4d9c-5c18-08d670c489aa
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1542;
-x-ms-traffictypediagnostic: OSBPR01MB1542:
-x-microsoft-antispam-prvs: <OSBPR01MB1542F6B2786AB5D76FF2493FB88C0@OSBPR01MB1542.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:OSBPR01MB1542;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1542;
-x-forefront-prvs: 0905A6B2C7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(396003)(366004)(376002)(136003)(51914003)(13464003)(189003)(199004)(6436002)(26005)(186003)(68736007)(446003)(86362001)(6306002)(44832011)(9686003)(14454004)(229853002)(6116002)(3846002)(966005)(55016002)(6506007)(478600001)(76176011)(99286004)(53546011)(102836004)(316002)(54906003)(7696005)(33656002)(39060400002)(97736004)(93886005)(71190400001)(305945005)(66066001)(71200400001)(106356001)(105586002)(8936002)(53936002)(11346002)(74316002)(5660300001)(81166006)(2906002)(4326008)(8676002)(486006)(6246003)(25786009)(107886003)(81156014)(6916009)(14444005)(476003)(256004)(7736002)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1542;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +Bq0FTsYAwlpsScS8x4PtlxoZjc5MqTUOQfH3cLh7iH8nqVkNmt6nRmEzQwfwzffWu3Jfo4mUMN9BuO6/9wo8kd1neIT5rDq6L0gvXtLPhpRktX8etDuzqT1GSpjWWPWQ1fgXCGGpdUMOQKUSpbz6aA7ilZH1088g1Nw/IIKuo50qA7NxDZHYEv/oxHDxigc7mFpQdcKEN5UBYGF2UV6mdZzw6mlEkeE75tuQKvbihpcsNHMikozD6F+9Ua/8YvvWa16gdlkAqrSJPavyCAhJ9oOk+8+O0GFwvebtw+I+SFK61QHwLCV6L/X0wI3oUMW
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca4d54dc-28b1-4d9c-5c18-08d670c489aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jan 2019 15:11:13.9735
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1542
+        Thu, 3 Jan 2019 04:42:23 -0500
+Received: from ramsan ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id KliH1z0023XaVaC06liHMx; Thu, 03 Jan 2019 10:42:19 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gezW4-00011F-UN; Thu, 03 Jan 2019 10:42:16 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gezW4-0007Q0-Rp; Thu, 03 Jan 2019 10:42:16 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Peter Maydell <peter.maydell@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     Eric Auger <eric.auger@redhat.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH QEMU v5] hw/arm/sysbus-fdt: Add support for instantiating generic devices
+Date:   Thu,  3 Jan 2019 10:42:11 +0100
+Message-Id: <20190103094211.28473-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+Add a fallback for instantiating generic devices without a type-specific
+or compatible-specific instantiation method.  This will be used when no
+other match is found.
 
-Thanks for the feedback.
+Generic device instantiation avoids having to write device-specific
+instantiation methods for each and every "simple" device using only a
+set of generic properties.  Devices that need more specialized handling
+can still provide their own instantiation methods.
 
-> -----Original Message-----
-> From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-
-> owner@vger.kernel.org> On Behalf Of Simon Horman
-> Sent: 02 January 2019 09:40
-> To: Biju Das <biju.das@bp.renesas.com>
-> Cc: Magnus Damm <magnus.damm@gmail.com>; linux-renesas-
-> soc@vger.kernel.org; Geert Uytterhoeven <geert+renesas@glider.be>;
-> Chris Paterson <Chris.Paterson2@renesas.com>; Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com>
-> Subject: Re: [PATCH] soc: renesas: r8a774c0-sysc: Fix initialization orde=
-r of
-> 3DG-{A,B}
->
-> On Fri, Dec 14, 2018 at 04:59:00PM +0100, Simon Horman wrote:
-> > On Thu, Dec 13, 2018 at 12:18:46PM +0100, Simon Horman wrote:
-> > > On Wed, Dec 12, 2018 at 12:17:11PM +0000, Biju Das wrote:
-> > > > The workaround for the wrong hierarchy of the 3DG-{A,B} power
-> > > > domains on RZ/G2E ES1.0 corrected the parent domains. However, the
-> > > > 3DG-{A,B} power domains were still initialized and powered in the
-> > > > wrong order, causing 3DG operation to fail.
-> > > >
-> > > > Fix this by changing the order in the table at runtime, when
-> > > > running on an affected SoC.
-> > > >
-> > > > This work is based on the work done by Geert for R-Car E3.
-> > > >
-> > > > Fixes: f37d211c687588328 ("soc: renesas: rcar-sysc: Add r8a774c0
-> > > > support")
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > >
-> > > Thanks,
-> > >
-> > > This looks fine to me but I will wait to see if there are other
-> > > reviews before applying.
-> > >
-> > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> >
-> > Thanks, v2 sent.
-> >
->
-> I don't see a v2 or any other review of this patch.
-> Am I missing something?
+The generic instantiation method creates a device node with remapped
+"reg" and (optional) "interrupts" properties, and copies properties from
+the host, if deemed appropriate:
+  - In general, properties without phandles are safe to be copied.
+    Unfortunately, the FDT does not carry type information, hence an
+    explicit whitelist is used, which can be extended when needed.
+  - Properties related to power management (power and/or clock domain),
+    isolation, and pin control, are handled by the host, and must not to
+    be copied.
 
-I guess you have sent v2,
+Devices nodes with subnodes are rejected, as subnodes cannot easily be
+handled in a generic way.
 
-https://patchwork.kernel.org/patch/10731381/
+This has been tested on a Renesas Salvator-XS board (R-Car H3 ES2.0)
+with SATA, using:
 
-based on
+    -device vfio-platform,host=ee300000.sata
 
-https://patchwork.kernel.org/patch/10726065/
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Note: Also tested with GPIO, which needs "vfio: No-IOMMU mode support":
 
-regards,
-Biju
+    -device vfio-platform,host=e6055400.gpio
 
+v5:
+  - Replace copying of a fixed list of properties (and ignoring all
+    others), by scanning all properties on the host, and deciding if
+    they need to be ignored, copied, or rejected,
+  - Reject device nodes with subnodes,
+  - Handle edge interrupts,
 
+v3:
+  - New.
+---
+ hw/arm/sysbus-fdt.c | 238 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 238 insertions(+)
 
+diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
+index ad698d4832c694be..52de8c9a040c282a 100644
+--- a/hw/arm/sysbus-fdt.c
++++ b/hw/arm/sysbus-fdt.c
+@@ -28,6 +28,9 @@
+ #ifdef CONFIG_LINUX
+ #include <linux/vfio.h>
+ #endif
++#ifdef CONFIG_FNMATCH
++#include <fnmatch.h>
++#endif
+ #include "hw/arm/sysbus-fdt.h"
+ #include "qemu/error-report.h"
+ #include "sysemu/device_tree.h"
+@@ -415,6 +418,232 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
+     return 0;
+ }
+ 
++enum GenericPropertyAction {
++    PROP_IGNORE,
++    PROP_WARN,
++    PROP_COPY,
++    PROP_REJECT,
++};
++
++static struct {
++    const char *name;
++    enum GenericPropertyAction action;
++} generic_properties[] = {
++    { "name",            PROP_IGNORE }, /* handled automatically */
++    { "phandle",         PROP_IGNORE }, /* not needed for the generic case */
++
++    /* The following are copied and remapped by dedicated code */
++    { "reg",             PROP_IGNORE },
++    { "interrupts",      PROP_IGNORE },
++
++    /* The following are handled by the host */
++    { "power-domains",   PROP_IGNORE }, /* power management (+ opt. clocks) */
++    { "iommus",          PROP_IGNORE }, /* isolation */
++    { "resets",          PROP_IGNORE }, /* isolation */
++    { "pinctrl-*",       PROP_IGNORE }, /* pin control */
++
++    /* Ignoring the following may or may not work, hence the warning */
++    { "gpio-ranges",     PROP_WARN },   /* no support for pinctrl yet */
++    { "dmas",            PROP_WARN },   /* no support for external DMACs yet */
++
++    /* The following are irrelevant, as corresponding specifiers are ignored */
++    { "clock-names",     PROP_IGNORE },
++    { "reset-names",     PROP_IGNORE },
++    { "dma-names",       PROP_IGNORE },
++
++    /* Whitelist of properties not taking phandles, and thus safe to copy */
++    { "compatible",      PROP_COPY },
++    { "status",          PROP_COPY },
++    { "reg-names",       PROP_COPY },
++    { "interrupt-names", PROP_COPY },
++    { "#*-cells",        PROP_COPY },
++};
++
++#ifndef CONFIG_FNMATCH
++/* Fall back to exact string matching instead of allowing wildcards */
++static inline int fnmatch(const char *pattern, const char *string, int flags)
++{
++        return strcmp(pattern, string);
++}
++#endif
++
++static enum GenericPropertyAction get_generic_property_action(const char *name)
++{
++    unsigned int i;
++
++    for (i = 0; i < ARRAY_SIZE(generic_properties); i++) {
++        if (!fnmatch(generic_properties[i].name, name, 0)) {
++            return generic_properties[i].action;
++        }
++    }
++
++    /*
++     * Unfortunately DT properties do not carry type information,
++     * so we have to assume everything else contains a phandle,
++     * and must be rejected
++     */
++    return PROP_REJECT;
++}
++
++/**
++ * copy_generic_node
++ *
++ * Copy the generic part of a DT node from the host
++ */
++static void copy_generic_node(void *host_fdt, void *guest_fdt, char *host_path,
++                              char *guest_path)
++{
++    int node, prop, len;
++    const void *data;
++    const char *name;
++    enum GenericPropertyAction action;
++
++    node = fdt_path_offset(host_fdt, host_path);
++    if (node < 0) {
++        error_report("Cannot find node %s: %s", host_path, fdt_strerror(node));
++        exit(1);
++    }
++
++    /* Submodes are not yet supported */
++    if (fdt_first_subnode(host_fdt, node) >= 0) {
++        error_report("%s has unsupported subnodes", host_path);
++        goto unsupported;
++    }
++
++    /* Copy generic properties */
++    fdt_for_each_property_offset(prop, host_fdt, node) {
++        data = fdt_getprop_by_offset(host_fdt, prop, &name, &len);
++        if (!data) {
++            error_report("Cannot get property of %s: %s", host_path,
++                         fdt_strerror(len));
++            exit(1);
++        }
++
++        if (!len) {
++            /* Zero-sized properties are safe to copy */
++            action = PROP_COPY;
++        } else if (!strcmp(name, "clocks")) {
++            /* Reject "clocks" if "power-domains" is not present */
++            action = fdt_getprop(host_fdt, node, "power-domains", NULL)
++                     ? PROP_WARN : PROP_REJECT;
++        } else {
++            action = get_generic_property_action(name);
++        }
++
++        switch (action) {
++        case PROP_WARN:
++            warn_report("%s: Ignoring %s property", host_path, name);
++        case PROP_IGNORE:
++            break;
++
++        case PROP_COPY:
++            qemu_fdt_setprop(guest_fdt, guest_path, name, data, len);
++            break;
++
++        case PROP_REJECT:
++            error_report("%s has unsupported %s property", host_path, name);
++            goto unsupported;
++        }
++    }
++    return;
++
++unsupported:
++    error_report("You can ask a wizard to enhance me");
++    exit(1);
++}
++
++/**
++ * add_generic_fdt_node
++ *
++ * Generates a generic DT node by copying properties from the host
++ */
++static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
++{
++    PlatformBusFDTData *data = opaque;
++    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
++    const char *parent_node = data->pbus_node_name;
++    void *guest_fdt = data->fdt, *host_fdt;
++    VFIODevice *vbasedev = &vdev->vbasedev;
++    char **node_path, *node_name, *dt_name;
++    PlatformBusDevice *pbus = data->pbus;
++    uint32_t *reg_attr, *irq_attr;
++    uint64_t mmio_base;
++    int i, irq_number;
++    VFIOINTp *intp;
++
++    host_fdt = load_device_tree_from_sysfs();
++
++    dt_name = sysfs_to_dt_name(vbasedev->name);
++    if (!dt_name) {
++        error_report("%s incorrect sysfs device name %s", __func__,
++                     vbasedev->name);
++        exit(1);
++    }
++    node_path = qemu_fdt_node_path(host_fdt, dt_name, vdev->compat,
++                                   &error_fatal);
++    if (!node_path || !node_path[0]) {
++        error_report("%s unable to retrieve node path for %s/%s", __func__,
++                     dt_name, vdev->compat);
++        exit(1);
++    }
++
++    if (node_path[1]) {
++        error_report("%s more than one node matching %s/%s!", __func__,
++                     dt_name, vdev->compat);
++        exit(1);
++    }
++
++    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
++    node_name = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
++                               vbasedev->name, mmio_base);
++    qemu_fdt_add_subnode(guest_fdt, node_name);
++
++    /* Copy generic parts from host */
++    copy_generic_node(host_fdt, guest_fdt, node_path[0], node_name);
++
++    /* Copy reg (remapped) */
++    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
++    for (i = 0; i < vbasedev->num_regions; i++) {
++        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
++        reg_attr[2 * i] = cpu_to_be32(mmio_base);
++        reg_attr[2 * i + 1] = cpu_to_be32(
++                                memory_region_size(vdev->regions[i]->mem));
++    }
++    qemu_fdt_setprop(guest_fdt, node_name, "reg", reg_attr,
++                     vbasedev->num_regions * 2 * sizeof(uint32_t));
++
++    /* Copy interrupts (remapped) */
++    if (vbasedev->num_irqs) {
++        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
++        for (i = 0; i < vbasedev->num_irqs; i++) {
++            irq_number = platform_bus_get_irqn(pbus, sbdev, i) +
++                         data->irq_start;
++            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
++            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
++            QLIST_FOREACH(intp, &vdev->intp_list, next) {
++                if (intp->pin == i) {
++                    break;
++                }
++            }
++            if (intp->flags & VFIO_IRQ_INFO_AUTOMASKED) {
++                irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
++            } else {
++                irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_EDGE_LO_HI);
++            }
++        }
++        qemu_fdt_setprop(guest_fdt, node_name, "interrupts",
++                         irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
++        g_free(irq_attr);
++    }
++
++    g_free(reg_attr);
++    g_free(node_name);
++    g_strfreev(node_path);
++    g_free(dt_name);
++    g_free(host_fdt);
++    return 0;
++}
++
+ /* DT compatible matching */
+ static bool vfio_platform_match(SysBusDevice *sbdev,
+                                 const BindingEntry *entry)
+@@ -423,6 +652,11 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
+     const char *compat;
+     unsigned int n;
+ 
++    if (!entry->compat) {
++        /* Generic DT fallback */
++        return true;
++    }
++
+     for (n = vdev->num_compat, compat = vdev->compat; n > 0;
+          n--, compat += strlen(compat) + 1) {
+         if (!strcmp(entry->compat, compat)) {
+@@ -459,6 +693,10 @@ static const BindingEntry bindings[] = {
+     VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
+ #endif
+     TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
++#ifdef CONFIG_LINUX
++    /* Generic DT fallback must be last */
++    VFIO_PLATFORM_BINDING(NULL, add_generic_fdt_node),
++#endif
+     TYPE_BINDING("", NULL), /* last element */
+ };
+ 
+-- 
+2.17.1
 
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
