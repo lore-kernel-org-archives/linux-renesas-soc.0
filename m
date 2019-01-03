@@ -2,370 +2,146 @@ Return-Path: <SRS0=Tt7D=PL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC352C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 09:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E8AC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 11:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D2EA206BB
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 09:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CDDE20578
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Jan 2019 11:36:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbfACJmY (ORCPT
+        id S1728951AbfACLgx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Jan 2019 04:42:24 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:50006 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbfACJmX (ORCPT
+        Thu, 3 Jan 2019 06:36:53 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:36383 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727888AbfACLgx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Jan 2019 04:42:23 -0500
-Received: from ramsan ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id KliH1z0023XaVaC06liHMx; Thu, 03 Jan 2019 10:42:19 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gezW4-00011F-UN; Thu, 03 Jan 2019 10:42:16 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gezW4-0007Q0-Rp; Thu, 03 Jan 2019 10:42:16 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     Eric Auger <eric.auger@redhat.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        qemu-arm@nongnu.org, qemu-devel@nongnu.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH QEMU v5] hw/arm/sysbus-fdt: Add support for instantiating generic devices
-Date:   Thu,  3 Jan 2019 10:42:11 +0100
-Message-Id: <20190103094211.28473-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Thu, 3 Jan 2019 06:36:53 -0500
+Received: by mail-ua1-f67.google.com with SMTP id j3so10828588uap.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 03 Jan 2019 03:36:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ol7oCE0rvQI822R1WV7AxNKkdHqcMHNesM16fxzD8ak=;
+        b=BvVcwwsDDceRikQDaNo2xJed6j5vm4frjyuYndBsYyKVSbqfz5gR7CVGDCTB9G4knP
+         Tsbt+/f1J8MAo+Lr5z3kEPI3K+m1Xh5KWIoCVtGF7dHdv3e8pnLCfx49xFyMis1w85IN
+         WcSTe/wo9Gog2qi43B7SYB9JakF3KmrxL6i9D8O9xaY9+mGNsb7oF7uNJzwVBgl5ITQz
+         RJYk12JZItxHJkPE13N/lCdo6LitEm64c/mnco4nowjOYkAh+u9AXLxktF/OwBwDC4g0
+         nuwt8XZu4hrzqkgfgORKZlpHW8o9AtaXw+26+GH2QSiKs1jTtJ/B4DcZDUDWpK8e2319
+         kNQg==
+X-Gm-Message-State: AJcUukck5aPvnpSvJcDeNgtQbviH4bYJr9i0jvki3n8qrKqG2V9IWQLf
+        97mnIIHdkAin4DhMHSsmpPnrD188uVNpMEVolyU=
+X-Google-Smtp-Source: ALg8bN5qUuxu8iNlwZubhFUnvs96xigC45MyURg9PVQQlMkClAoNOOByitx8GnCeiRiyVgqfX7+AgCI6GJDRFYU6l8E=
+X-Received: by 2002:ab0:216:: with SMTP id 22mr17526221uas.28.1546515411952;
+ Thu, 03 Jan 2019 03:36:51 -0800 (PST)
+MIME-Version: 1.0
+References: <152923212426.18394.1638836062311758848.sendpatchset@little-apple>
+ <20180620091416.s4vdg5tgkl3mnoxd@verge.net.au> <20180716074939.76mes7rt5ddqnyy6@verge.net.au>
+In-Reply-To: <20180716074939.76mes7rt5ddqnyy6@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 3 Jan 2019 12:36:40 +0100
+Message-ID: <CAMuHMdUmy0YpGcLmd=nwRRAJxggKE78jqzFXmmznZvE4m6BaJw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/03] arm64: dts: renesas: Add IPMMU device nodes V2
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a fallback for instantiating generic devices without a type-specific
-or compatible-specific instantiation method.  This will be used when no
-other match is found.
+On Mon, Jul 16, 2018 at 9:50 AM Simon Horman <horms@verge.net.au> wrote:
+> On Wed, Jun 20, 2018 at 11:14:17AM +0200, Simon Horman wrote:
+> > On Sun, Jun 17, 2018 at 07:42:04PM +0900, Magnus Damm wrote:
+> > > arm64: dts: renesas: Add IPMMU device nodes V2
+> > >
+> > > [PATCH v2 01/03] arm64: dts: renesas: r8a77965: Add IPMMU devices nodes
+> > > [PATCH v2 02/03] arm64: dts: renesas: r8a77980: Add IPMMU devices nodes
+> > > [PATCH v2 03/03] arm64: dts: renesas: r8a77990: Add IPMMU devices nodes
+> > >
+> > > This series is the second attempt to add IPMMU device nodes to R-Car M3-N,
+> > > R-Car V3H and R-Car E3 SoCs.
+> > >
+> > > The IPMMU DT binding changes are not yet merged upstream however they
+> > > have been documented by the following patches:
+> > >
+> > > [PATCH] iommu/ipmmu-vmsa: Document R-Car M3-N IPMMU DT bindings
+> > > [PATCH] iommu/ipmmu-vmsa: Document R-Car V3H and E3 IPMMU DT bindings
+> > >
+> > > Please see each individual patch for list of changes.
+> >
+> > Hi Magnus,
+> >
+> > as per my comment on v1, did you consider merging these patches into one
+> > patch. Olof has asked that we consider such consolidation.
+>
+> The above dependencies now appear have been accepted for v4.19.
+>
+> I have now applied this series. I took the liberty of squashing all three
+> patches into one. The result is as follows.
+>
+>
+> From: Magnus Damm <damm+renesas@opensource.se>
+> Date: Sun, 17 Jun 2018 19:42:13 +0900
+> Subject: [PATCH] arm64: dts: renesas: r8a779{65,80,90}: Add IPMMU devices
+>  nodes
+>
+> Add IPMMU device nodes for the R-Car M3-N (r8a77965),
+> V3H (r8a77980) and E3 (r8a77990) SoCs.
+>
+> * The r8a77965 IPMMU is quite similar to r8a7796 however VP0
+>   has been added and PV1 has been removed. Also the IMSSTR
+>   bit assignment has been reworked.
 
-Generic device instantiation avoids having to write device-specific
-instantiation methods for each and every "simple" device using only a
-set of generic properties.  Devices that need more specialized handling
-can still provide their own instantiation methods.
+> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
 
-The generic instantiation method creates a device node with remapped
-"reg" and (optional) "interrupts" properties, and copies properties from
-the host, if deemed appropriate:
-  - In general, properties without phandles are safe to be copied.
-    Unfortunately, the FDT does not carry type information, hence an
-    explicit whitelist is used, which can be extended when needed.
-  - Properties related to power management (power and/or clock domain),
-    isolation, and pin control, are handled by the host, and must not to
-    be copied.
+> +               ipmmu_ir: mmu@ff8b0000 {
+> +                       compatible = "renesas,ipmmu-r8a77965";
+> +                       reg = <0 0xff8b0000 0 0x1000>;
+> +                       renesas,ipmmu-main = <&ipmmu_mm 3>;
+> +                       power-domains = <&sysc R8A77965_PD_A3IR>;
+> +                       #iommu-cells = <1>;
+> +               };
 
-Devices nodes with subnodes are rejected, as subnodes cannot easily be
-handled in a generic way.
+Please note that R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Aug 24,
+2018) removed the IPMMU-IR IOMMU instance on R-Car M3-N, as this SoC
+does not have an Image Processing Unit (IMP-X5) nor the A3IR power domain.
 
-This has been tested on a Renesas Salvator-XS board (R-Car H3 ES2.0)
-with SATA, using:
+I've sent a patch to fix that.
 
-    -device vfio-platform,host=ee300000.sata
+> * The r8a77980 IPMMU is quite similar to r8a77970 however VC0
+>   has been added. The IMSSTR bit assignment has also been
+>   reworked. Power domains are also quite different however the
+>   the documentation is rather unclear about this topic.
+>
+>   Until we know better VC0 gets assigned to R8A77980_PD_ALWAYS_ON.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Note: Also tested with GPIO, which needs "vfio: No-IOMMU mode support":
+JFTR, this matches the R-Car Gen3 HardWare Manual Errata for Rev. 1.00
+(Jul 20, 2018).
 
-    -device vfio-platform,host=e6055400.gpio
+> * The r8a77990 IPMMU is similar to r8a77995. Power domains are
+>   however different and the public documentation is still unclear.
+>
+>   Based on preliminary information from the hardware team the R-Car E3
+>   SoC comes with an IPMMU-VP0 device in an Always-on power domain and
+>   the IPMMU-VC0 is placed as expected in the A3VC power domain.
 
-v5:
-  - Replace copying of a fixed list of properties (and ignoring all
-    others), by scanning all properties on the host, and deciding if
-    they need to be ignored, copied, or rejected,
-  - Reject device nodes with subnodes,
-  - Handle edge interrupts,
+JFTR, this matches the R-Car Gen3 HardWare Manual Errata for Rev. 1.00
+(Jul 20, 2018).
 
-v3:
-  - New.
----
- hw/arm/sysbus-fdt.c | 238 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 238 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
-index ad698d4832c694be..52de8c9a040c282a 100644
---- a/hw/arm/sysbus-fdt.c
-+++ b/hw/arm/sysbus-fdt.c
-@@ -28,6 +28,9 @@
- #ifdef CONFIG_LINUX
- #include <linux/vfio.h>
- #endif
-+#ifdef CONFIG_FNMATCH
-+#include <fnmatch.h>
-+#endif
- #include "hw/arm/sysbus-fdt.h"
- #include "qemu/error-report.h"
- #include "sysemu/device_tree.h"
-@@ -415,6 +418,232 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
-     return 0;
- }
- 
-+enum GenericPropertyAction {
-+    PROP_IGNORE,
-+    PROP_WARN,
-+    PROP_COPY,
-+    PROP_REJECT,
-+};
-+
-+static struct {
-+    const char *name;
-+    enum GenericPropertyAction action;
-+} generic_properties[] = {
-+    { "name",            PROP_IGNORE }, /* handled automatically */
-+    { "phandle",         PROP_IGNORE }, /* not needed for the generic case */
-+
-+    /* The following are copied and remapped by dedicated code */
-+    { "reg",             PROP_IGNORE },
-+    { "interrupts",      PROP_IGNORE },
-+
-+    /* The following are handled by the host */
-+    { "power-domains",   PROP_IGNORE }, /* power management (+ opt. clocks) */
-+    { "iommus",          PROP_IGNORE }, /* isolation */
-+    { "resets",          PROP_IGNORE }, /* isolation */
-+    { "pinctrl-*",       PROP_IGNORE }, /* pin control */
-+
-+    /* Ignoring the following may or may not work, hence the warning */
-+    { "gpio-ranges",     PROP_WARN },   /* no support for pinctrl yet */
-+    { "dmas",            PROP_WARN },   /* no support for external DMACs yet */
-+
-+    /* The following are irrelevant, as corresponding specifiers are ignored */
-+    { "clock-names",     PROP_IGNORE },
-+    { "reset-names",     PROP_IGNORE },
-+    { "dma-names",       PROP_IGNORE },
-+
-+    /* Whitelist of properties not taking phandles, and thus safe to copy */
-+    { "compatible",      PROP_COPY },
-+    { "status",          PROP_COPY },
-+    { "reg-names",       PROP_COPY },
-+    { "interrupt-names", PROP_COPY },
-+    { "#*-cells",        PROP_COPY },
-+};
-+
-+#ifndef CONFIG_FNMATCH
-+/* Fall back to exact string matching instead of allowing wildcards */
-+static inline int fnmatch(const char *pattern, const char *string, int flags)
-+{
-+        return strcmp(pattern, string);
-+}
-+#endif
-+
-+static enum GenericPropertyAction get_generic_property_action(const char *name)
-+{
-+    unsigned int i;
-+
-+    for (i = 0; i < ARRAY_SIZE(generic_properties); i++) {
-+        if (!fnmatch(generic_properties[i].name, name, 0)) {
-+            return generic_properties[i].action;
-+        }
-+    }
-+
-+    /*
-+     * Unfortunately DT properties do not carry type information,
-+     * so we have to assume everything else contains a phandle,
-+     * and must be rejected
-+     */
-+    return PROP_REJECT;
-+}
-+
-+/**
-+ * copy_generic_node
-+ *
-+ * Copy the generic part of a DT node from the host
-+ */
-+static void copy_generic_node(void *host_fdt, void *guest_fdt, char *host_path,
-+                              char *guest_path)
-+{
-+    int node, prop, len;
-+    const void *data;
-+    const char *name;
-+    enum GenericPropertyAction action;
-+
-+    node = fdt_path_offset(host_fdt, host_path);
-+    if (node < 0) {
-+        error_report("Cannot find node %s: %s", host_path, fdt_strerror(node));
-+        exit(1);
-+    }
-+
-+    /* Submodes are not yet supported */
-+    if (fdt_first_subnode(host_fdt, node) >= 0) {
-+        error_report("%s has unsupported subnodes", host_path);
-+        goto unsupported;
-+    }
-+
-+    /* Copy generic properties */
-+    fdt_for_each_property_offset(prop, host_fdt, node) {
-+        data = fdt_getprop_by_offset(host_fdt, prop, &name, &len);
-+        if (!data) {
-+            error_report("Cannot get property of %s: %s", host_path,
-+                         fdt_strerror(len));
-+            exit(1);
-+        }
-+
-+        if (!len) {
-+            /* Zero-sized properties are safe to copy */
-+            action = PROP_COPY;
-+        } else if (!strcmp(name, "clocks")) {
-+            /* Reject "clocks" if "power-domains" is not present */
-+            action = fdt_getprop(host_fdt, node, "power-domains", NULL)
-+                     ? PROP_WARN : PROP_REJECT;
-+        } else {
-+            action = get_generic_property_action(name);
-+        }
-+
-+        switch (action) {
-+        case PROP_WARN:
-+            warn_report("%s: Ignoring %s property", host_path, name);
-+        case PROP_IGNORE:
-+            break;
-+
-+        case PROP_COPY:
-+            qemu_fdt_setprop(guest_fdt, guest_path, name, data, len);
-+            break;
-+
-+        case PROP_REJECT:
-+            error_report("%s has unsupported %s property", host_path, name);
-+            goto unsupported;
-+        }
-+    }
-+    return;
-+
-+unsupported:
-+    error_report("You can ask a wizard to enhance me");
-+    exit(1);
-+}
-+
-+/**
-+ * add_generic_fdt_node
-+ *
-+ * Generates a generic DT node by copying properties from the host
-+ */
-+static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
-+{
-+    PlatformBusFDTData *data = opaque;
-+    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
-+    const char *parent_node = data->pbus_node_name;
-+    void *guest_fdt = data->fdt, *host_fdt;
-+    VFIODevice *vbasedev = &vdev->vbasedev;
-+    char **node_path, *node_name, *dt_name;
-+    PlatformBusDevice *pbus = data->pbus;
-+    uint32_t *reg_attr, *irq_attr;
-+    uint64_t mmio_base;
-+    int i, irq_number;
-+    VFIOINTp *intp;
-+
-+    host_fdt = load_device_tree_from_sysfs();
-+
-+    dt_name = sysfs_to_dt_name(vbasedev->name);
-+    if (!dt_name) {
-+        error_report("%s incorrect sysfs device name %s", __func__,
-+                     vbasedev->name);
-+        exit(1);
-+    }
-+    node_path = qemu_fdt_node_path(host_fdt, dt_name, vdev->compat,
-+                                   &error_fatal);
-+    if (!node_path || !node_path[0]) {
-+        error_report("%s unable to retrieve node path for %s/%s", __func__,
-+                     dt_name, vdev->compat);
-+        exit(1);
-+    }
-+
-+    if (node_path[1]) {
-+        error_report("%s more than one node matching %s/%s!", __func__,
-+                     dt_name, vdev->compat);
-+        exit(1);
-+    }
-+
-+    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
-+    node_name = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
-+                               vbasedev->name, mmio_base);
-+    qemu_fdt_add_subnode(guest_fdt, node_name);
-+
-+    /* Copy generic parts from host */
-+    copy_generic_node(host_fdt, guest_fdt, node_path[0], node_name);
-+
-+    /* Copy reg (remapped) */
-+    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
-+    for (i = 0; i < vbasedev->num_regions; i++) {
-+        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
-+        reg_attr[2 * i] = cpu_to_be32(mmio_base);
-+        reg_attr[2 * i + 1] = cpu_to_be32(
-+                                memory_region_size(vdev->regions[i]->mem));
-+    }
-+    qemu_fdt_setprop(guest_fdt, node_name, "reg", reg_attr,
-+                     vbasedev->num_regions * 2 * sizeof(uint32_t));
-+
-+    /* Copy interrupts (remapped) */
-+    if (vbasedev->num_irqs) {
-+        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
-+        for (i = 0; i < vbasedev->num_irqs; i++) {
-+            irq_number = platform_bus_get_irqn(pbus, sbdev, i) +
-+                         data->irq_start;
-+            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
-+            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
-+            QLIST_FOREACH(intp, &vdev->intp_list, next) {
-+                if (intp->pin == i) {
-+                    break;
-+                }
-+            }
-+            if (intp->flags & VFIO_IRQ_INFO_AUTOMASKED) {
-+                irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
-+            } else {
-+                irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_EDGE_LO_HI);
-+            }
-+        }
-+        qemu_fdt_setprop(guest_fdt, node_name, "interrupts",
-+                         irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
-+        g_free(irq_attr);
-+    }
-+
-+    g_free(reg_attr);
-+    g_free(node_name);
-+    g_strfreev(node_path);
-+    g_free(dt_name);
-+    g_free(host_fdt);
-+    return 0;
-+}
-+
- /* DT compatible matching */
- static bool vfio_platform_match(SysBusDevice *sbdev,
-                                 const BindingEntry *entry)
-@@ -423,6 +652,11 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
-     const char *compat;
-     unsigned int n;
- 
-+    if (!entry->compat) {
-+        /* Generic DT fallback */
-+        return true;
-+    }
-+
-     for (n = vdev->num_compat, compat = vdev->compat; n > 0;
-          n--, compat += strlen(compat) + 1) {
-         if (!strcmp(entry->compat, compat)) {
-@@ -459,6 +693,10 @@ static const BindingEntry bindings[] = {
-     VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
- #endif
-     TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
-+#ifdef CONFIG_LINUX
-+    /* Generic DT fallback must be last */
-+    VFIO_PLATFORM_BINDING(NULL, add_generic_fdt_node),
-+#endif
-     TYPE_BINDING("", NULL), /* last element */
- };
- 
--- 
-2.17.1
+                        Geert
 
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
