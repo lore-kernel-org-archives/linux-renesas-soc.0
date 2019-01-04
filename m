@@ -2,244 +2,139 @@ Return-Path: <SRS0=AhbF=PM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88FCC43444
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 13:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC4BC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 16:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67A5121872
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 13:42:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ndIul5is"
+	by mail.kernel.org (Postfix) with ESMTP id 561CA21872
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 16:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbfADNmu (ORCPT
+        id S1726488AbfADQMb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:42:50 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45800 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726616AbfADNmr (ORCPT
+        Fri, 4 Jan 2019 11:12:31 -0500
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:24783 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726256AbfADQMb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Jan 2019 08:42:47 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s5-v6so32440552ljd.12
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Jan 2019 05:42:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Hz4FKSyyeMcPuzMsC3YkEaRIby7eDVYARr1FlIUtrWA=;
-        b=ndIul5isXBTWzcIaDOjyFRpZOadpG5jN41cEUHeQjvX/fJ/AcCkxAaGKLzxIGKIRGL
-         d5QoRblzOiwClU3FMw/qOC4wGVsEOe7hXCLVyGKkFVjHmAcoXz6jKAbp3j7vI6Du3ZHZ
-         aEjnRSC/ROKpuYjUuOtDc3H/TNNqnC6um/Lir+WNMWJF5aQe6+rcP6tG3kSOthPdDHJq
-         VvbkHRgUV0KE6/d5gtmJmt+OKN5IpWq0qJ4+S1F6kndZh1wBuRnA8KbnoSd5aky6CyDd
-         0JQ0OonfypsGFHkcVRT8rmUGIzmIT2UbmAROHeS9d5FGuabKfU12xnBQ5qDUrXru8Ffk
-         UK0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Hz4FKSyyeMcPuzMsC3YkEaRIby7eDVYARr1FlIUtrWA=;
-        b=pDHBW51yIVA7fDgiQfkOZSx/L5RSwIDeR4DhvaUUO7hJsf8D65qvDsx3cyQW8QYIZb
-         C9ZZtMIm+c3bqSve11EIgC4664y1ERv3nBYSOWFGt2Ulh0Vo0oUeKGA0xybsH1e4P5TG
-         vgy0jHe38eNCE2wH8nU7vFAsKbeGUjKFEvyU4+xeqgK1oPsZCVhsjlJsHbfd3+RvAEej
-         kdlpqKOTCcbdnHWvinmAg4d1vydPiVnge40PchDctXGRWbCRAVCclqECrpTZZ6G7OPR9
-         UTwTjwOBO0jFzsuhk0mfi/PiFEsuZnI34K5yhKSQ53lBeOPqfIudODyADUFeYyZQWA95
-         o8vw==
-X-Gm-Message-State: AJcUukdgRyf0i+2XtW5gGXJQJL9HhCU9iQsG3vteokBMoKCoaw8Gngo3
-        EpZBnoWd1PqPfJmoWF2fqsIbYg==
-X-Google-Smtp-Source: ALg8bN4qEs5gcRkGaDk4cEBTxCrtetL2dCOVDhmA38Kp6VeDybgNPxlrLOqbzdp51D1a5Pc1e5BFPQ==
-X-Received: by 2002:a2e:9957:: with SMTP id r23-v6mr27523040ljj.98.1546609364025;
-        Fri, 04 Jan 2019 05:42:44 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.86.82])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm12461684ljg.19.2019.01.04.05.42.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 05:42:43 -0800 (PST)
-Subject: Re: [PATCH v4 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1545634358-17485-1-git-send-email-masonccyang@mxic.com.tw>
- <1545634358-17485-2-git-send-email-masonccyang@mxic.com.tw>
- <12cb2574-8ec9-d756-756a-d7fbbd5c7069@cogentembedded.com>
- <OFC561D699.9746ACDB-ON4825836F.000CB709-4825836F.00184155@mxic.com.tw>
- <0f21cd94-08ad-befa-649e-ba191b0e33bc@cogentembedded.com>
- <OFE79BC6CE.BE217C13-ON48258377.001FBC09-48258377.00243859@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <710badb0-c4db-a44b-dba1-01faf2f51a9d@cogentembedded.com>
-Date:   Fri, 4 Jan 2019 16:42:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 4 Jan 2019 11:12:31 -0500
+X-Halon-ID: 818c4d46-103b-11e9-874f-005056917f90
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (unknown [89.233.230.99])
+        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
+        id 818c4d46-103b-11e9-874f-005056917f90;
+        Fri, 04 Jan 2019 17:12:20 +0100 (CET)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] rcar-vin: remove unneeded locking in async callbacks
+Date:   Fri,  4 Jan 2019 17:12:18 +0100
+Message-Id: <20190104161218.24120-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <OFE79BC6CE.BE217C13-ON48258377.001FBC09-48258377.00243859@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+The locking implemented in the async notifier callbacks are unnecessary
+as the global list_lock in v4l2-async.c is held whenever one of the
+callbacks are called.
 
-On 01/03/2019 09:35 AM, masonccyang@mxic.com.tw wrote:
+The locking in itself is not harmful however it produces a LOCKDEP
+warning between the global v4l2-async list_lock and the rcar-vin local
+locking schema. Remove the rcar-vin locking for the async callbacks to
+reduce complexity and silent the false LOCKDEP warning.
 
-[...]
->> >> > +#define RPC_CMNCR_MOIIO3(val)   (((val) & 0x3) << 22)
->> >> > +#define RPC_CMNCR_MOIIO2(val)   (((val) & 0x3) << 20)
->> >> > +#define RPC_CMNCR_MOIIO1(val)   (((val) & 0x3) << 18)
->> >> > +#define RPC_CMNCR_MOIIO0(val)   (((val) & 0x3) << 16)
->> >> > +#define RPC_CMNCR_MOIIO_HIZ   (RPC_CMNCR_MOIIO0(3) |
->> >> RPC_CMNCR_MOIIO1(3) | \
->> >> > +             RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
->> >> > +#define RPC_CMNCR_IO3FV(val)   (((val) & 0x3) << 14)
->> >> > +#define RPC_CMNCR_IO2FV(val)   (((val) & 0x3) << 12)
->> >>
->> >>    Like I said, the above 2 aren't documented in the manual v1.00...
->> >
->> > okay, add a description as:
->> > /* RPC_CMNCR_IO3FV/IO2FV are undocumented bit, but must be set */
->> > #define RPC_CMNCR_IO3FV(val)    (((val) & 0x3) << 14)
->> > #define RPC_CMNCR_IO2FV(val)    (((val) & 0x3) << 12)
->> > #define RPC_CMNCR_IO0FV(val)    (((val) & 0x3) << 8)
->> > #define RPC_CMNCR_IOFV_HIZ      (RPC_CMNCR_IO0FV(3) | RPC_CMNCR_IO2FV(3) | \
->> >                                   RPC_CMNCR_IO3FV(3))
->> >
->> > is it ok?
->>
->>    Yes. But would have been enough if you just commented with // on
->> the same line --
->> it seems these are legal now...
-> 
-> on the same line is over 80 char,
-> #define RPC_CMNCR_IO3FV(val)    (((val) & 0x3) << 14) // undocumented bit, but must be set
-> #define RPC_CMNCR_IO2FV(val)    (((val) & 0x3) << 12) // undocumented bit, but must be set
-> 
-> or just
-> #define RPC_CMNCR_IO3FV(val)    (((val) & 0x3) << 14) // undocumented bit
-> #define RPC_CMNCR_IO2FV(val)    (((val) & 0x3) << 12) // undocumented bit
-> is it ok ?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 14 --------------
+ 1 file changed, 14 deletions(-)
 
-   The second variant would be enough.
-
-[...]
-
->> >> > +   ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
->> >> > +   if (ret)
->> >> > +      return ret;
->> >> > +
->> >> > +   rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
->> >> > +                &desc->info.op_tmpl, &offs, &len);
->> >> > +
->> >> > +   regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_SFDE |
->> >> > +           RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
->> >> > +           RPC_CMNCR_BSZ(0));
->> >>
->> >>    Why not set this in the probing time and only set/clear the MD bit?
->> >>
->> >
->> > same above!
->> > Make sure the value in these register are setting correctly
->> > before RPC starting a SPI transfer.
->>
->>    You can set it once and only change the bits you need to change afterwards.
->> What's wrong with it?
->>
-> 
-> if so, it will patch to:
-> ------------------------------------------------------
-> regmap_read(rpc->regmap, RPC_CMNCR, &data);
-> data &= ~RPC_CMNCR_MD;
-> regmap_write(rpc->regmap, RPC_CMNCR, data);
-> ------------------------------------------------------
-> Do you think this way is better ?
-
-    No, this one is better:
-
-	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, 0);
-
-> maybe this is better,
-> write(read(rpc->regs + RPC_CMNCR) & ~RPC_CMNCR_MD,
->         rpc->regs + RPC_CMNCR);
-
-   It's effectively the same code as your 1st variant...
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index f0719ce24b97a9f9..0e81b557f3b6e53c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -542,9 +542,7 @@ static void rvin_parallel_notify_unbind(struct v4l2_async_notifier *notifier,
  
-[...]
->> >> > +static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
->> >> > +               struct spi_message *msg)
->> >> > +{
->> >> [...]
->> >> > +   for (i = xfercnt - 1; i < xfercnt && xfercnt > 1; i++) {
->> >> > +      if (xfer[i].rx_buf) {
->> >> > +         rpc->smenr |=
->> >> > +            RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
->> >> > +            RPC_SMENR_SPIDB
->> >> > +            (ilog2((unsigned int)xfer[i].rx_nbits));
->> >>
->> >>    Mhm, I would indent this contination line by 1 extra tab...
->> >>
->> >> > +      } else if (xfer[i].tx_buf) {
->> >> > +         rpc->smenr |=
->> >> > +            RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
->> >> > +            RPC_SMENR_SPIDB
->> >> > +            (ilog2((unsigned int)xfer[i].tx_nbits));
->> >>
->> >>    And this one...
->> >
->> > like this ?
->> > --------------------------------------------------------------------
->> >          for (i = xfercnt - 1; i < xfercnt && xfercnt > 1; i++) {
->> >                  if (xfer[i].rx_buf) {
->> >                          rpc->smenr |=
->> >                                  RPC_SMENR_SPIDE(rpc_bits_set(xfer
->> [i].len)) |
->> >                                  RPC_SMENR_SPIDB(
->> >                                          ilog2((unsigned int)xfer
->> [i].rx_nbits));
->> >                  } else if (xfer[i].tx_buf) {
->> >                          rpc->smenr |=
->> >                                  RPC_SMENR_SPIDE(rpc_bits_set(xfer
->> [i].len)) |
->> >                                  RPC_SMENR_SPIDB(
->> >                                          ilog2((unsigned int)xfer
->> [i].tx_nbits));
->>
->>    I didn't mean you need to leave ( on the first line, can be left
->> on the  new
->> line, as before.
->>
-> 
-> how about this style ?
-> -------------------------------------------------------------------------------------
->          for (i = xfercnt - 1; i < xfercnt && xfercnt > 1; i++) {
->                  if (xfer[i].rx_buf) {
->                          rpc->smenr |= RPC_SMENR_SPIDE(
->                                          rpc_bits_set(xfer[i].len)) |
->                                        RPC_SMENR_SPIDB(
->                                          ilog2((unsigned int)xfer[i].rx_nbits));
->                  } else if (xfer[i].tx_buf) {
->                          rpc->smenr |= RPC_SMENR_SPIDE(
->                                          rpc_bits_set(xfer[i].len)) |
->                                        RPC_SMENR_SPIDB(
->                                          ilog2((unsigned int)xfer[i].tx_nbits));
->                  }
->          }
+ 	vin_dbg(vin, "unbind parallel subdev %s\n", subdev->name);
+ 
+-	mutex_lock(&vin->lock);
+ 	rvin_parallel_subdevice_detach(vin);
+-	mutex_unlock(&vin->lock);
+ }
+ 
+ static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
+@@ -554,9 +552,7 @@ static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
+ 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
+ 	int ret;
+ 
+-	mutex_lock(&vin->lock);
+ 	ret = rvin_parallel_subdevice_attach(vin, subdev);
+-	mutex_unlock(&vin->lock);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -664,7 +660,6 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+ 	}
+ 
+ 	/* Create all media device links between VINs and CSI-2's. */
+-	mutex_lock(&vin->group->lock);
+ 	for (route = vin->info->routes; route->mask; route++) {
+ 		struct media_pad *source_pad, *sink_pad;
+ 		struct media_entity *source, *sink;
+@@ -700,7 +695,6 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+ 			break;
+ 		}
+ 	}
+-	mutex_unlock(&vin->group->lock);
+ 
+ 	return ret;
+ }
+@@ -716,8 +710,6 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+ 		if (vin->group->vin[i])
+ 			rvin_v4l2_unregister(vin->group->vin[i]);
+ 
+-	mutex_lock(&vin->group->lock);
+-
+ 	for (i = 0; i < RVIN_CSI_MAX; i++) {
+ 		if (vin->group->csi[i].fwnode != asd->match.fwnode)
+ 			continue;
+@@ -725,8 +717,6 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+ 		vin_dbg(vin, "Unbind CSI-2 %s from slot %u\n", subdev->name, i);
+ 		break;
+ 	}
+-
+-	mutex_unlock(&vin->group->lock);
+ }
+ 
+ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+@@ -736,8 +726,6 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+ 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
+ 	unsigned int i;
+ 
+-	mutex_lock(&vin->group->lock);
+-
+ 	for (i = 0; i < RVIN_CSI_MAX; i++) {
+ 		if (vin->group->csi[i].fwnode != asd->match.fwnode)
+ 			continue;
+@@ -746,8 +734,6 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+ 		break;
+ 	}
+ 
+-	mutex_unlock(&vin->group->lock);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
 
-   Looks even worse...
-
-> ------------------------------------------------------------------------------------------
-> 
-> best regards,
-> Mason
-
-[...]
-
-MBR, Sergei
