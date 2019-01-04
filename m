@@ -2,207 +2,147 @@ Return-Path: <SRS0=AhbF=PM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC72C43444
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 10:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214A9C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D25A21872
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 10:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9824208E3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 12:53:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="gtypCaWE"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="MCX+oo8H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfADKCH (ORCPT
+        id S1726271AbfADMxd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Jan 2019 05:02:07 -0500
-Received: from mail-eopbgr1410104.outbound.protection.outlook.com ([40.107.141.104]:56079
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726262AbfADKCH (ORCPT
+        Fri, 4 Jan 2019 07:53:33 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46439 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727143AbfADMx2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Jan 2019 05:02:07 -0500
+        Fri, 4 Jan 2019 07:53:28 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y14so6396474lfg.13
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Jan 2019 04:53:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ndx0Q09nx6YLtunscm50iVgrBkrLebWrHB+1u+kreho=;
- b=gtypCaWEDSVWg5U0OIed1Y5LMS+3GLmXX2vOAtMb5hMjOLjf8sqqOeFLh3S9Wz9LMA1fXYyKPLgUunCIztF/4eSIrSX+jqH5GpdXP9GGAxQdcRJiIeGls0fBMFctROp50Tsa+5ulcyeHB+WXe4c7cVIZOvTbMRGyUUboEJhGDp4=
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.241.22) by
- OSBPR01MB2200.jpnprd01.prod.outlook.com (52.134.242.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.7; Fri, 4 Jan 2019 10:02:03 +0000
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::35e7:300c:a781:3ef6]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::35e7:300c:a781:3ef6%2]) with mapi id 15.20.1495.005; Fri, 4 Jan 2019
- 10:02:02 +0000
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Simon Horman <horms@verge.net.au>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH v2 4/5] ARM: dts: r8a7743: Remove LVDS encoder from du
- node
-Thread-Topic: [PATCH v2 4/5] ARM: dts: r8a7743: Remove LVDS encoder from du
- node
-Thread-Index: AQHUjHsZHX2VrqnyIEaV0xiZ3WYDo6WdvK0AgAAIVxCAATs/AIAADUhA
-Date:   Fri, 4 Jan 2019 10:02:02 +0000
-Message-ID: <OSBPR01MB2103D40FC38C4A75476EBC39B88E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1544000815-28069-1-git-send-email-biju.das@bp.renesas.com>
- <1544000815-28069-5-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdW+qVJxu0fjC+j8w-neHU8FOHmJqRbHAtp1JvKYJ+RrXQ@mail.gmail.com>
- <OSBPR01MB2103C5C4C2A5B276E80D047AB88D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20190104090517.bi5et5osmyxmfrwb@verge.net.au>
-In-Reply-To: <20190104090517.bi5et5osmyxmfrwb@verge.net.au>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB2200;20:LoyXNZz7U421kGSYCl2Dn/Im5+hAsuCFXy5Tbb5qwWfU0rKK6qTp/TSvgV/ykHA5ZmHHVSrPJAccpTes71aogkb+4VIq4/CbSwCppfmD+77qlwOSmUuFMThwmvv51byl55Si1ItW56H68z+19inIXWCVvfX7RGW8D1tHFVUGv68=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 71fd5215-07ad-42b0-ef11-08d6722baca5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2200;
-x-ms-traffictypediagnostic: OSBPR01MB2200:
-x-microsoft-antispam-prvs: <OSBPR01MB220087EFB9AFC6F3BEBDC9FDB88E0@OSBPR01MB2200.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(10201501046)(6055026)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:OSBPR01MB2200;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2200;
-x-forefront-prvs: 0907F58A24
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(136003)(39860400002)(376002)(346002)(51914003)(189003)(199004)(105586002)(106356001)(25786009)(6916009)(76176011)(7696005)(26005)(6346003)(66066001)(186003)(55016002)(229853002)(74316002)(102836004)(6246003)(256004)(107886003)(5660300001)(8676002)(14444005)(53936002)(9686003)(81166006)(305945005)(7736002)(478600001)(68736007)(81156014)(3846002)(6116002)(8936002)(4326008)(44832011)(2906002)(39060400002)(11346002)(446003)(476003)(14454004)(6436002)(71190400001)(71200400001)(97736004)(316002)(54906003)(99286004)(53546011)(6506007)(33656002)(486006)(86362001)(93886005);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2200;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=biju.das@bp.renesas.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YnQGxY6iHu+nIrrMB8aUCOl+3bI/o4jG99EkLToVXzCresoCOkPHTpSdUeca04e/yfzBHd2AMOSK1vPoSTu67EEwkbBTye0Zx0lddgkulzyIkp96d9V9uUF9E5WrtVW8hIZY769yfuwqIC3MroQMDjnn5SpQsW/NzVJhrtiXKA1iR0AWF8gJNaEc5DmXOIN6IYYrHMwAadlF9mvE1MpBq5m1GUW949IM9jOHmorTh9WsiC40lz1Jifnd2kXL0d3qVucpOuJGUJIwv8NLpIYs/rA0/g6tnX8p7skWvDmK07t9uzirUQ8sDSedLCggVg57
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:organization:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=zF4iDaIzxJJZqWHJVdecxj/pcWW0/ZY1vAc81ZpDBJg=;
+        b=MCX+oo8HCbsuFVLNYE/ZDz0/AxUmcN9Uk/JjRReenhPjNmZ4wMlEcAhxOK+CYfMAzu
+         wLmnPC33VRf0D1rpWFCQC7lBrZyxnQdTWXQr9KctSw64/mXnvKpNJvTFWen6yZYEvJ5f
+         p42AGumVKOYJ8y/g/moibKrSupnL2WHjC3OX/vVy6sbuituBM28VLiABvcfDLih8Ig2Z
+         dwrTBzPnEWtWzEphl9qXTqExC1wuipdur4RYca/S8paIBn0k9dvMwGSbDvEw++P/6aUO
+         I14Bip1vVjoWjuD1rMQrE5BOcJJjmnQV3PnNFAqckZL2+NfwfoHtLMY1IvbjGcRCN24g
+         nhJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:organization:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=zF4iDaIzxJJZqWHJVdecxj/pcWW0/ZY1vAc81ZpDBJg=;
+        b=t4dFvUy2XVx9tyOlJne201KE9fkVdO7z/70N/k4U065RoIt/lpGTAMBB4KDw30oN7M
+         fVJrLE+Ou9QVzKMEnV/FMefMMytqSyJhnO5UboRnZYUYeseTfjZM61fq4Bbjfimok4eP
+         lOAKS+NgaaJX1UvCKzQ/fHi9w+PuzVOQaCoqtV7aUb3yhBpPO11/GVEYqWXdM9XvRkzO
+         OE0ERdWTOXRrKXoy0p9FssXmczUwRY1Ngx5poaVZ5YA0tcIhjFc/R4y471Jl4iE09DE6
+         rB5a603za/iVO7eYGbbnrQ7RmRL+CV8wCVsBfj2WuPEUPlbTO3PUI3az7ZLSamXwDQhI
+         /cNg==
+X-Gm-Message-State: AA+aEWZ5JGUbk/6NVAp0qxXJsSJGPColaOdYHrAB8NQwAlD3UkDNLaqd
+        zi9oldDDCBU0yad39wVDWBbfdJEgg9U=
+X-Google-Smtp-Source: AFSGD/WPL6i1lfE1SXQNc/6yFL+GxJHEOIygggIJxfvNBt8R0TQAJxqgB0akAWi2FL2CV9vhFitu8w==
+X-Received: by 2002:a19:5402:: with SMTP id i2mr24636533lfb.128.1546606405973;
+        Fri, 04 Jan 2019 04:53:25 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.86.82])
+        by smtp.gmail.com with ESMTPSA id a11sm11165229lff.68.2019.01.04.04.53.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Jan 2019 04:53:25 -0800 (PST)
+To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Cc:     linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH RFT v2] net: sh_eth: add support for SH7786
+Organization: Cogent Embedded
+Message-ID: <cbc7976d-2376-15d4-0fc1-febdf142887b@cogentembedded.com>
+Date:   Fri, 4 Jan 2019 15:53:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71fd5215-07ad-42b0-ef11-08d6722baca5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Jan 2019 10:02:02.3969
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2200
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-Thanks for the feedback.
+This commit adds the sh_eth_cpu_data structure that describes the
+SH7786 variant of the IP.
 
-> Subject: Re: [PATCH v2 4/5] ARM: dts: r8a7743: Remove LVDS encoder from
-> du node
->
-> On Thu, Jan 03, 2019 at 02:34:39PM +0000, Biju Das wrote:
-> > Hi Geert,
-> >
-> > Thanks for the feedback.
-> >
-> > > Subject: Re: [PATCH v2 4/5] ARM: dts: r8a7743: Remove LVDS encoder
-> > > from du node
-> > >
-> > > Hi Biju,
-> > >
-> > > On Wed, Dec 5, 2018 at 10:15 AM Biju Das <biju.das@bp.renesas.com>
-> > > wrote:
-> > > > The internal LVDS encoder now has DT bindings separate from the DU.
-> > > > So remove it from du node.
-> > > >
-> > > > Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to
-> > > > bridge driver")
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > ---
-> > > > V1-->V2
-> > > >         * Removed LVDS encoder definition from DU node.
-> > >
-> > > Shouldn't you add a new node for the LVDS encoder?
-> >
-> > Yes for Soc Dtsi , I will add the new node for LVDS encoder.
->
-> Can I clarify that I should wait for a fresh revision of this and the fol=
-lowing
-> patch?
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 
-My original plan was to submit LVDS encoder patch as separate one.
+---
+The patch is against DaveM's 'net-next.git' repo.
+Not posting it to netdev@vger.kernel.org this time since the 'net-next' repo
+is still closed.
 
-But now we are agreeing for adding  LVDS encoder node as part of the fix (F=
-ixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driv=
-er")
-So I will send V3 with this change.
+Changes in version 2:
+- added a comment before 'sh7786_data' initializer;
+- added now mandatory soft_reset() method;
+- changed the 'register_type' initializer to SH_ETH_REG_FAST_RCAR;
+- added the 'ecsr_value' field initializer;
+- renamed EESR_RTO to EESR_TRO;
+- added the 'fdr_value' field initializer;
+- added the 'no_xdfar'  field initializer.
 
-Regards,
-Biju
-> > > > ---
-> > > >  arch/arm/boot/dts/r8a7743.dtsi | 9 +++------
-> > > >  1 file changed, 3 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/r8a7743.dtsi
-> > > > b/arch/arm/boot/dts/r8a7743.dtsi index 3cc33f7..3ad1efc 100644
-> > > > --- a/arch/arm/boot/dts/r8a7743.dtsi
-> > > > +++ b/arch/arm/boot/dts/r8a7743.dtsi
-> > > > @@ -1681,15 +1681,12 @@
-> > > >
-> > > >                 du: display@feb00000 {
-> > > >                         compatible =3D "renesas,du-r8a7743";
-> > > > -                       reg =3D <0 0xfeb00000 0 0x40000>,
-> > > > -                             <0 0xfeb90000 0 0x1c>;
-> > > > -                       reg-names =3D "du", "lvds.0";
-> > > > +                       reg =3D <0 0xfeb00000 0 0x40000>;
-> > > >                         interrupts =3D <GIC_SPI 256 IRQ_TYPE_LEVEL_=
-HIGH>,
-> > > >                                      <GIC_SPI 268 IRQ_TYPE_LEVEL_HI=
-GH>;
-> > > >                         clocks =3D <&cpg CPG_MOD 724>,
-> > > > -                                <&cpg CPG_MOD 723>,
-> > > > -                                <&cpg CPG_MOD 726>;
-> > > > -                       clock-names =3D "du.0", "du.1", "lvds.0";
-> > > > +                                <&cpg CPG_MOD 723>;
-> > > > +                       clock-names =3D "du.0", "du.1";
-> > > >                         status =3D "disabled";
-> > > >
-> > > >                         ports {
-> > >
-> > > Gr{oetje,eeting}s,
-> > >
-> > >                         Geert
-> > >
-> > > --
-> > > Geert Uytterhoeven -- There's lots of Linux beyond ia32 --
-> > > geert@linux- m68k.org
-> > >
-> > > In personal conversations with technical people, I call myself a
-> > > hacker. But when I'm talking to journalists I just say "programmer" o=
-r
-> something like that.
-> > >                                 -- Linus Torvalds
-> >
-> >
-> >
-> > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne
-> End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under
-> Registered No. 04586709.
+ drivers/net/ethernet/renesas/sh_eth.c |   31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
+Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
++++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+@@ -879,6 +879,36 @@ static struct sh_eth_cpu_data sh7724_dat
+ 	.rpadir		= 1,
+ };
+ 
++/* SH7786 */
++static struct sh_eth_cpu_data sh7786_data = {
++	.soft_reset	= sh_eth_soft_reset,
++
++	.set_duplex	= sh_eth_set_duplex,
++
++	.register_type	= SH_ETH_REG_FAST_RCAR,
++
++	.edtrr_trns	= EDTRR_TRNS_ETHER,
++	.ecsr_value	= ECSR_PSRTO | ECSR_LCHNG | ECSR_ICD,
++	.ecsipr_value	= ECSIPR_PSRTOIP | ECSIPR_LCHNGIP | ECSIPR_ICDIP,
++	.eesipr_value	= EESIPR_RFCOFIP | EESIPR_ADEIP | EESIPR_ECIIP |
++			  EESIPR_FTCIP | EESIPR_TDEIP | EESIPR_TFUFIP |
++			  EESIPR_FRIP | EESIPR_RDEIP | EESIPR_RFOFIP |
++			  EESIPR_RMAFIP | EESIPR_RRFIP |
++			  EESIPR_RTLFIP | EESIPR_RTSFIP |
++			  EESIPR_PREIP | EESIPR_CERFIP,
++
++	.tx_check	= EESR_FTC | EESR_CND | EESR_DLC | EESR_CD | EESR_TRO,
++	.eesr_err_check	= EESR_TWB | EESR_TABT | EESR_RABT | EESR_RFE |
++			  EESR_RDE | EESR_RFRMER | EESR_TFE | EESR_TDE,
++	.fdr_value	= 0x00000f0f,
++
++	.apr		= 1,
++	.mpr		= 1,
++	.tpauser	= 1,
++	.hw_swap	= 1,
++	.no_xdfar	= 1,
++};
++
+ static void sh_eth_set_rate_sh7757(struct net_device *ndev)
+ {
+ 	struct sh_eth_private *mdp = netdev_priv(ndev);
+@@ -3476,6 +3506,7 @@ static const struct platform_device_id s
+ 	{ "sh7757-ether", (kernel_ulong_t)&sh7757_data },
+ 	{ "sh7757-gether", (kernel_ulong_t)&sh7757_data_giga },
+ 	{ "sh7763-gether", (kernel_ulong_t)&sh7763_data },
++	{ "sh7786-ether", (kernel_ulong_t)&sh7786_data },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, sh_eth_id_table);
