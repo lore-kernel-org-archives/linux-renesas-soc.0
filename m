@@ -2,90 +2,115 @@ Return-Path: <SRS0=AhbF=PM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 435E4C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 13:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459ABC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 13:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 113972070C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 13:01:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1643921872
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Jan 2019 13:14:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="RzEvm/uN"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="WAiuLW1s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbfADNBv (ORCPT
+        id S1726143AbfADNON (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Jan 2019 08:01:51 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33341 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbfADNBv (ORCPT
+        Fri, 4 Jan 2019 08:14:13 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:52343 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbfADNON (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Jan 2019 08:01:51 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v1-v6so32424734ljd.0
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 04 Jan 2019 05:01:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wlRib9UcS4i/1SPxcScvruzoEQbpILrU1bnIkhDuoZc=;
-        b=RzEvm/uNIc/tVZOwHmnKh2qcVh+Xo1gKu9akrrucNdjxj7DgJMEgNbmdTO3p55wwUg
-         wAF1ZEU3iq7NScnktKoJFqkXVbxz51o6q4C3JqoKapWHKDV/C4WUsUs4oLpT+Gekzs5Q
-         OsMNRlN8VwbB+7AC6HayVkj50bRXg81GBt699wIrWMEbP03v3B5vf7yL3CyKBHmEO0Kf
-         9Y+QsP/X4LMl97zSb/ajmCwJXDK0pq9Mp2ZfG1SegVj1TibT8qQOOHMl5F799Bkpjydk
-         IO6OY7SOvoyl4fjF7qfhSMz/o1A7ycX4PcRkm3D3rFgLfTrARy3Jv0XptpJEnEmqWI15
-         Ef0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=wlRib9UcS4i/1SPxcScvruzoEQbpILrU1bnIkhDuoZc=;
-        b=j0Sm/VWpCB+jZ4StkDRtCmanY06mobXmH2beAMDgT5wcbcuAc688FsjJ7qh0v+NYTy
-         /tYLp6ecooKxExnlM1anvXF35GEfwo4F6Aj1Eottp+Q/HbaMpCXwYo/S6PqHj3BoQ3Xz
-         8F3pOJmXPar5IwNXbZcODTF43550wrl2BYQ4WUO/y/pFG5J8uLZNNyUpjKacXFsgdZ7Q
-         nKJ/lO4AwqaNCM4nC+y2ruKsK6BNKD39oiB5W/1KS+wwaZUIAB0HGipEtrB15UHsuyAs
-         OFPeNQGAvyLFxCveaV1xEQBmM4IiW+EfkX371AgsmI3iumDPD/R8Trob6W1INxJJDznc
-         88qg==
-X-Gm-Message-State: AJcUukcpZLQccY76OoaubLNfDMvuIouPpcyeNfOh3NhyPS2wjxq3/YMB
-        ZASDB5eWKj3dlgi3NgqK47y4jSAYza0=
-X-Google-Smtp-Source: ALg8bN7otszZPR5dRhna0/1uMxE0FM+tDLZkGCwkgHPlYAfxadJ/1JK4TXht+4/WHE/9f3+E2ccjHA==
-X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr31570922lja.111.1546606909147;
-        Fri, 04 Jan 2019 05:01:49 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.86.82])
-        by smtp.gmail.com with ESMTPSA id c22sm11159955lfd.88.2019.01.04.05.01.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 04 Jan 2019 05:01:48 -0800 (PST)
-Subject: Re: [PATCH RFT v2] net: sh_eth: add support for SH7786
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc:     linux-sh@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <cbc7976d-2376-15d4-0fc1-febdf142887b@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <dd747ba3-5150-6f99-06ee-2c2bb761de57@cogentembedded.com>
-Date:   Fri, 4 Jan 2019 16:01:42 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 4 Jan 2019 08:14:13 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 4026725B747;
+        Sat,  5 Jan 2019 00:14:11 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1546607651; bh=SBiJW1XDgN8Tf64M6wNQnLnBPfFT6f+CgH0N7/PuC2k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WAiuLW1sDXoigLFP8cWMyF8/QkTq8nYXFafNecvBQn+ZA/6HO7Fp9UmlFz4FYkG3+
+         aLdVdkD2BIuGCUuOAfI0/cAuv3eAIOaWPCBC+ZA6MtuEjyp0V2Z3UmP64I0nHkHxLH
+         zhkqVNhIISyOhI01LnWO689cXjqq53beU1U27qh4=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 2BED4940376; Fri,  4 Jan 2019 14:14:09 +0100 (CET)
+Date:   Fri, 4 Jan 2019 14:14:09 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH v2 4/5] ARM: dts: r8a7743: Remove LVDS encoder from du
+ node
+Message-ID: <20190104131408.dytwgjhw3ikn7ik3@verge.net.au>
+References: <1544000815-28069-1-git-send-email-biju.das@bp.renesas.com>
+ <1544000815-28069-5-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdW+qVJxu0fjC+j8w-neHU8FOHmJqRbHAtp1JvKYJ+RrXQ@mail.gmail.com>
+ <OSBPR01MB2103C5C4C2A5B276E80D047AB88D0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20190104090517.bi5et5osmyxmfrwb@verge.net.au>
+ <OSBPR01MB2103D40FC38C4A75476EBC39B88E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <cbc7976d-2376-15d4-0fc1-febdf142887b@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2103D40FC38C4A75476EBC39B88E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 01/04/2019 03:53 PM, Sergei Shtylyov wrote:
-
-> From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+On Fri, Jan 04, 2019 at 10:02:02AM +0000, Biju Das wrote:
+> Hi Simon,
 > 
-> This commit adds the sh_eth_cpu_data structure that describes the
-> SH7786 variant of the IP.
+> Thanks for the feedback.
 > 
-> Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> > Subject: Re: [PATCH v2 4/5] ARM: dts: r8a7743: Remove LVDS encoder from
+> > du node
+> >
+> > On Thu, Jan 03, 2019 at 02:34:39PM +0000, Biju Das wrote:
+> > > Hi Geert,
+> > >
+> > > Thanks for the feedback.
+> > >
+> > > > Subject: Re: [PATCH v2 4/5] ARM: dts: r8a7743: Remove LVDS encoder
+> > > > from du node
+> > > >
+> > > > Hi Biju,
+> > > >
+> > > > On Wed, Dec 5, 2018 at 10:15 AM Biju Das <biju.das@bp.renesas.com>
+> > > > wrote:
+> > > > > The internal LVDS encoder now has DT bindings separate from the DU.
+> > > > > So remove it from du node.
+> > > > >
+> > > > > Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to
+> > > > > bridge driver")
+> > > > >
+> > > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > >
+> > > > Thanks for your patch!
+> > > >
+> > > > > ---
+> > > > > V1-->V2
+> > > > >         * Removed LVDS encoder definition from DU node.
+> > > >
+> > > > Shouldn't you add a new node for the LVDS encoder?
+> > >
+> > > Yes for Soc Dtsi , I will add the new node for LVDS encoder.
+> >
+> > Can I clarify that I should wait for a fresh revision of this and the following
+> > patch?
+> 
+> My original plan was to submit LVDS encoder patch as separate one.
+> 
+> But now we are agreeing for adding  LVDS encoder node as part of the fix (Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
+> So I will send V3 with this change.
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-MBR, Sergei
+Great, thanks!
