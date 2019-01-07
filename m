@@ -2,107 +2,164 @@ Return-Path: <SRS0=nqfF=PP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CFCC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 08:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 568A0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 09:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D3D720675
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 08:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 035E020859
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 09:49:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FR67OoqA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbfAGIeR (ORCPT
+        id S1726586AbfAGJta (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Jan 2019 03:34:17 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34861 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAGIeQ (ORCPT
+        Mon, 7 Jan 2019 04:49:30 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51532 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfAGJta (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Jan 2019 03:34:16 -0500
-Received: by mail-vs1-f65.google.com with SMTP id e7so26232993vsc.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Jan 2019 00:34:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OC2E0lDuBvi+m6jw7aqZiAe73/Ckd9tc9seb3rAx4aY=;
-        b=cQZnh/8nhKaK4EbDd2LjefDGj03cdLDo6JN9m9F9Tc4kKPqqXjmGgXVJghiqbbiVnt
-         36RK8mqL9BKGhWHF0PFNe321UiS/Wn7J1aWAR1SqxcC4IQjjgPuBq4kbMEypOTWjRyAY
-         Cz/zDB5eJoa6s/d5IG1g1c24IEY3fnpgA3ocjY9oiWf5kjiDJCVKNfVf3QbxtfGZAhhQ
-         dJFWsFjrlXAzRoTSaP5+dV3CyKkZFLY6SqxwWXaLmcnY9YT3GlgBDSymQ/2fPnORvYlh
-         r5/g5Xj+97VmrzHyPyPIXvgqP7qMLalhikP4ZeKavP9IXtq75zWtL9YXERxAKZCaprL0
-         4f3g==
-X-Gm-Message-State: AA+aEWY/NQ6/glmjDXrv5R+yLV8+eCoOX4/mH69TCVHpKNZwIuVzaPqZ
-        rE0bR7z1C9JnkR16BjnlQLNb/H8wcrj05PI4ZPI=
-X-Google-Smtp-Source: AFSGD/UA6rUnBF3WG7P37VkofmpCp9hWjkXXaZTxIH5W1qvcsOfSerli2c2IqBmGqfDV2KdzCOo4Q3+1KhDyE6R6kmw=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr24758442vsp.166.1546850054396;
- Mon, 07 Jan 2019 00:34:14 -0800 (PST)
+        Mon, 7 Jan 2019 04:49:30 -0500
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3CF2C530;
+        Mon,  7 Jan 2019 10:49:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1546854568;
+        bh=ZvDdNuYwIUfOmff03I7Q6gK1BxN/KNx0efscbxk3FF0=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FR67OoqAdf9EM9osZ8e9eHzIBs0Bzfzk+UhGU186oOITQ9CXZYZyo3FKbsYUPLDH3
+         eRk01WfJXvxg+23DzCCwzeKCtaZ4+YOdKZLWx3A9slmwwx7tMYUyvbzqJ5wrjoo/vA
+         ziAys6a80jAH+stVpqh2S9TOmD+iTnXzbnDrUfU4=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 1/6] media: adv748x: Add is_txb()
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20190106155413.30666-1-jacopo+renesas@jmondi.org>
+ <20190106155413.30666-2-jacopo+renesas@jmondi.org>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <556804e3-c537-2e85-5335-0194dfe7f83b@ideasonboard.com>
+Date:   Mon, 7 Jan 2019 09:49:25 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <OSBPR01MB2103C55C91F968BE2CD870AEB88C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAMuHMdX60zMDd49ySuinJJnfTpqNJ_Nzj7DO+YYF7C=HFQ-SkA@mail.gmail.com> <20190104090401.d4vuq37vdgfc4tow@verge.net.au>
-In-Reply-To: <20190104090401.d4vuq37vdgfc4tow@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Jan 2019 09:34:02 +0100
-Message-ID: <CAMuHMdWZhXWu9JwiAS1L+M6bN6pMTTRN9jiQMi7voUWifLRb9w@mail.gmail.com>
-Subject: Re: [PATCH] soc: renesas: r8a774c0-sysc: Fix initialization order of 3DG-{A,B}
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190106155413.30666-2-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+Hi Jacopo
 
-On Fri, Jan 4, 2019 at 10:04 AM Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Jan 02, 2019 at 11:39:03AM +0100, Geert Uytterhoeven wrote:
-> > On Wed, Jan 2, 2019 at 10:40 AM Simon Horman <horms@verge.net.au> wrote:
-> > > On Fri, Dec 14, 2018 at 04:59:00PM +0100, Simon Horman wrote:
-> > > > On Thu, Dec 13, 2018 at 12:18:46PM +0100, Simon Horman wrote:
-> > > > > On Wed, Dec 12, 2018 at 12:17:11PM +0000, Biju Das wrote:
-> > > > > > The workaround for the wrong hierarchy of the 3DG-{A,B} power domains on
-> > > > > > RZ/G2E ES1.0 corrected the parent domains. However, the 3DG-{A,B} power
-> > > > > > domains were still initialized and powered in the wrong order, causing
-> > > > > > 3DG operation to fail.
-> > > > > >
-> > > > > > Fix this by changing the order in the table at runtime, when running on
-> > > > > > an affected SoC.
-> > > > > >
-> > > > > > This work is based on the work done by Geert for R-Car E3.
-> > > > > >
-> > > > > > Fixes: f37d211c687588328 ("soc: renesas: rcar-sysc: Add r8a774c0 support")
-> > > > > >
-> > > > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > > >
-> > > > > Thanks,
-> > > > >
-> > > > > This looks fine to me but I will wait to see if there are other reviews
-> > > > > before applying.
+On 06/01/2019 15:54, Jacopo Mondi wrote:
+> Add small is_txb() macro to the existing is_txa() and use it where
+> appropriate.
 
-> I have gone ahead and applied this patch for v4.22.
+Thank you.
 
-Given commit 1585124d9563da64 ("soc: renesas: rcar-sysc: Merge PM Domain
-registration and linking") is in v5.0-rc1, this means the rcar-sysc driver
-will bail out without this fix, not registering any PM Domains.
-Sorry for not realizing this dependency before.
+I think this will make the code much better to read than if (!is_txa).
 
-Hence you may want to queue it as a fix for v5.0 instead.
-Or not, as we won't have a board DTS for RZ/G2E in v5.0-rc1 anyway?
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Gr{oetje,eeting}s,
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-                        Geert
+
+> ---
+>  drivers/media/i2c/adv748x/adv748x-csi2.c | 2 +-
+>  drivers/media/i2c/adv748x/adv748x.h      | 6 +++++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> index 6ce21542ed48..b6b5d8c7ea7c 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> @@ -82,7 +82,7 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
+>  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+>  						  &state->hdmi.sd,
+>  						  ADV748X_HDMI_SOURCE);
+> -	if (!is_txa(tx) && is_afe_enabled(state))
+> +	if (is_txb(tx) && is_afe_enabled(state))
+>  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+>  						  &state->afe.sd,
+>  						  ADV748X_AFE_SOURCE);
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> index b482c7fe6957..bc2da1b5ce29 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -89,8 +89,12 @@ struct adv748x_csi2 {
+>  
+>  #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
+>  #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
+> +
+>  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
+> -#define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
+> +#define __is_tx(_tx, _ab) ((_tx) == &(_tx)->state->tx##_ab)
+> +#define is_txa(_tx) __is_tx(_tx, a)
+> +#define is_txb(_tx) __is_tx(_tx, b)
+
+I would have just duplicated the is_txa() line here... but this is good
+too :)
+
+
+> +
+>  #define is_afe_enabled(_state)					\
+>  	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
+>  	 (_state)->endpoints[ADV748X_PORT_AIN1] != NULL ||	\
+> 
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards
+--
+Kieran
