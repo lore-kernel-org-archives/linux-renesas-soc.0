@@ -2,152 +2,217 @@ Return-Path: <SRS0=nqfF=PP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D547C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 10:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4FEC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 10:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D914720854
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 10:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E44B20859
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 10:35:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IdVG3KSb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfAGKFk (ORCPT
+        id S1726758AbfAGKf6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:05:40 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56969 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfAGKFk (ORCPT
+        Mon, 7 Jan 2019 05:35:58 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54144 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbfAGKf6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:05:40 -0500
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 07823C001C;
-        Mon,  7 Jan 2019 10:05:36 +0000 (UTC)
-Date:   Mon, 7 Jan 2019 11:05:42 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Mon, 7 Jan 2019 05:35:58 -0500
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 21B43530;
+        Mon,  7 Jan 2019 11:35:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1546857355;
+        bh=isYVv/GVQmGjlDjhXN3A2+lz6tm6vVyF6hiLYncZ1ig=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IdVG3KSbAg4ChyAqM5PGP3y5BmbgH2smvhPpKfJzBQk3OWm3vfVEl1voI2eqg9xjC
+         osZArYotyxCOYzPJRPDupxxYzhvdzucuRL7LHlu+t+Ni6NVlkW4pxbn2PgAsHn6IAe
+         DepAEhAhgxW+BO2UagjdkN0qFHHfa9JTkzvEAPNk=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 3/6] media: adv748x: csi2: Link AFE with TXA and TXB
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] media: adv748x: Add is_txb()
-Message-ID: <20190107100542.5qszrtydqzowhzlp@uno.localdomain>
+        niklas.soderlund+renesas@ragnatech.se
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20190106155413.30666-1-jacopo+renesas@jmondi.org>
- <20190106155413.30666-2-jacopo+renesas@jmondi.org>
- <556804e3-c537-2e85-5335-0194dfe7f83b@ideasonboard.com>
+ <20190106155413.30666-4-jacopo+renesas@jmondi.org>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <1800f3fa-fb0d-f6b3-31bb-2de3e520c68a@ideasonboard.com>
+Date:   Mon, 7 Jan 2019 10:35:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="as5spdm3ppxs6sh4"
-Content-Disposition: inline
-In-Reply-To: <556804e3-c537-2e85-5335-0194dfe7f83b@ideasonboard.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190106155413.30666-4-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Jacopo,
 
---as5spdm3ppxs6sh4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On 06/01/2019 15:54, Jacopo Mondi wrote:
+> The ADV748x chip supports routing AFE output to either TXA or TXB.
+> In order to support run-time configuration of video stream path, create an
+> additional (not enabled) "AFE:8->TXA:0" link, and remove the IMMUTABLE flag
+> from existing ones.
 
-Hi Kieran,
+Great - this looks good to me.
+Small nit below - but it's not a big deal.
 
-On Mon, Jan 07, 2019 at 09:49:25AM +0000, Kieran Bingham wrote:
-> Hi Jacopo
->
-> On 06/01/2019 15:54, Jacopo Mondi wrote:
-> > Add small is_txb() macro to the existing is_txa() and use it where
-> > appropriate.
->
-> Thank you.
->
-> I think this will make the code much better to read than if (!is_txa).
->
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->
->
-> > ---
-> >  drivers/media/i2c/adv748x/adv748x-csi2.c | 2 +-
-> >  drivers/media/i2c/adv748x/adv748x.h      | 6 +++++-
-> >  2 files changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > index 6ce21542ed48..b6b5d8c7ea7c 100644
-> > --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > @@ -82,7 +82,7 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
-> >  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> >  						  &state->hdmi.sd,
-> >  						  ADV748X_HDMI_SOURCE);
-> > -	if (!is_txa(tx) && is_afe_enabled(state))
-> > +	if (is_txb(tx) && is_afe_enabled(state))
-> >  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> >  						  &state->afe.sd,
-> >  						  ADV748X_AFE_SOURCE);
-> > diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-> > index b482c7fe6957..bc2da1b5ce29 100644
-> > --- a/drivers/media/i2c/adv748x/adv748x.h
-> > +++ b/drivers/media/i2c/adv748x/adv748x.h
-> > @@ -89,8 +89,12 @@ struct adv748x_csi2 {
-> >
-> >  #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
-> >  #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
-> > +
-> >  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
-> > -#define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
-> > +#define __is_tx(_tx, _ab) ((_tx) == &(_tx)->state->tx##_ab)
-> > +#define is_txa(_tx) __is_tx(_tx, a)
-> > +#define is_txb(_tx) __is_tx(_tx, b)
->
-> I would have just duplicated the is_txa() line here... but this is good
-> too :)
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-I agree it might seem more complex than necessary. I initially made it
-like this as I started from the 'is_tx()' macro this series adds in
-6/6.
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/i2c/adv748x/adv748x-csi2.c | 44 +++++++++++++-----------
+>  1 file changed, 23 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> index b6b5d8c7ea7c..9d391d6f752e 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> @@ -27,6 +27,7 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
+>   * @v4l2_dev: Video registration device
+>   * @src: Source subdevice to establish link
+>   * @src_pad: Pad number of source to link to this @tx
+> + * @enable: Link enabled flag
+>   *
+>   * Ensure that the subdevice is registered against the v4l2_device, and link the
+>   * source pad to the sink pad of the CSI2 bus entity.
+> @@ -34,17 +35,11 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
+>  static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
+>  				      struct v4l2_device *v4l2_dev,
+>  				      struct v4l2_subdev *src,
+> -				      unsigned int src_pad)
+> +				      unsigned int src_pad,
+> +				      bool enable)
+>  {
+> -	int enabled = MEDIA_LNK_FL_ENABLED;
+>  	int ret;
+>  
+> -	/*
+> -	 * Dynamic linking of the AFE is not supported.
+> -	 * Register the links as immutable.
+> -	 */
+> -	enabled |= MEDIA_LNK_FL_IMMUTABLE;
+> -
+>  	if (!src->v4l2_dev) {
+>  		ret = v4l2_device_register_subdev(v4l2_dev, src);
+>  		if (ret)
+> @@ -53,7 +48,7 @@ static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
+>  
+>  	return media_create_pad_link(&src->entity, src_pad,
+>  				     &tx->sd.entity, ADV748X_CSI2_SINK,
+> -				     enabled);
+> +				     enable ? MEDIA_LNK_FL_ENABLED : 0);
+>  }
+>  
+>  /* -----------------------------------------------------------------------------
+> @@ -68,25 +63,32 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
+>  {
+>  	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
+>  	struct adv748x_state *state = tx->state;
+> +	int ret;
+>  
+>  	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
+>  			sd->name);
+>  
+>  	/*
+> -	 * The adv748x hardware allows the AFE to route through the TXA, however
+> -	 * this is not currently supported in this driver.
+> +	 * Link TXA to AFE and HDMI, and TXB to AFE only as TXB cannot output
+> +	 * HDMI.
+>  	 *
+> -	 * Link HDMI->TXA, and AFE->TXB directly.
+> +	 * The HDMI->TXA link is enabled by default, as the AFE->TXB is.
 
-If it is easier to have an '((_tx) == &(_tx)->state->txb)' I can
-change this.
+I might have worded this "as is the AFE->TXB." but it's understandable.
+I can update this when applying if you wish.
 
-Thanks
-   j
 
->
->
-> > +
-> >  #define is_afe_enabled(_state)					\
-> >  	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
-> >  	 (_state)->endpoints[ADV748X_PORT_AIN1] != NULL ||	\
-> >
->
-> --
-> Regards
-> --
-> Kieran
+>  	 */
+> -	if (is_txa(tx) && is_hdmi_enabled(state))
+> -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> -						  &state->hdmi.sd,
+> -						  ADV748X_HDMI_SOURCE);
+> -	if (is_txb(tx) && is_afe_enabled(state))
+> -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> -						  &state->afe.sd,
+> -						  ADV748X_AFE_SOURCE);
+> -	return 0;
+> +	if (is_afe_enabled(state)) {
+> +		ret = adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> +						 &state->afe.sd,
+> +						 ADV748X_AFE_SOURCE,
+> +						 is_txb(tx));
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* Register link to HDMI for TXA only. */
+> +	if (is_txb(tx) || !is_hdmi_enabled(state))
+> +		return 0;
+> +
+> +	return adv748x_csi2_register_link(tx, sd->v4l2_dev, &state->hdmi.sd,
+> +					  ADV748X_HDMI_SOURCE, true);
+>  }
+>  
+>  static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
+> 
 
---as5spdm3ppxs6sh4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlwzJHYACgkQcjQGjxah
-Vjw23w//Yk/8E0smgwkmcSQbutuG670gM/erUDL4qevccy4G3XcUSlz4zXZKPfUE
-Fk/ugScC9PkjmogoXZLLnK+e7e9RDdOgkORjsnivbh+HanXLrP5S2cJHti81heFA
-5qkfRdArbd7smgrBe+vqfd8c/iXcpsywh7+gNaPCGrv+xtKBLyqXv/SQvO7kefn4
-V/GbhrarXVD3Mk2wXS+wHLrcKher+n9Zjm1Er7u4QQU3rz5KWQ4KtIwhojZda9g7
-y2PTaWwek0WnQS58NpogbQMhn6UOuPLaWJ6IpjO8rhPulmVEjKPHekkzeuwwfIsI
-T5kIWrhg8oBPyC6fEc9knWlcQYijkvk1JCweqY4YVfH4fM0FohjOHNeFVGEJQBXl
-gpzCrNqxOOCg7t/b4tP8FOn4zlEdxei5Af1wvZMs9gvJ98oyT0Jt8dERvLMV3zGJ
-ebViREzwHZhwLeG/nG9IANqbf7YaBxFHUtADFiSA92vHD0ccfFbAkTdmn29Ntmxy
-P/73kD0H3RRbKxVMH6tMeg9VY/FjbEAFJ5m3uMd1MWmub0zcJgEmQfl8P8SP4PAe
-sABP01I/qKp8nuTgW+HCtLX8zhsrMFpJ1vZqSKHBOWzs0FP2r9RtCHk2dM711VEb
-XWPzuJajiFDLRcvlctHEruM9EAOs6hfPrUxL14kgyWgJbSxESdg=
-=LNMV
------END PGP SIGNATURE-----
-
---as5spdm3ppxs6sh4--
+-- 
+Regards
+--
+Kieran
