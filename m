@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 568A0C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 09:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB8FC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 09:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035E020859
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 09:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A30D620854
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 09:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FR67OoqA"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZpdAr9CB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfAGJta (ORCPT
+        id S1726562AbfAGJ7y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Jan 2019 04:49:30 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51532 "EHLO
+        Mon, 7 Jan 2019 04:59:54 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51624 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfAGJta (ORCPT
+        with ESMTP id S1726544AbfAGJ7y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Jan 2019 04:49:30 -0500
+        Mon, 7 Jan 2019 04:59:54 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3CF2C530;
-        Mon,  7 Jan 2019 10:49:28 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AD349530;
+        Mon,  7 Jan 2019 10:59:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1546854568;
-        bh=ZvDdNuYwIUfOmff03I7Q6gK1BxN/KNx0efscbxk3FF0=;
+        s=mail; t=1546855190;
+        bh=Wn23wlc2mCL5sSqQ4gFa0dNQRruB7gNL3e0OnXh6CSI=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FR67OoqAdf9EM9osZ8e9eHzIBs0Bzfzk+UhGU186oOITQ9CXZYZyo3FKbsYUPLDH3
-         eRk01WfJXvxg+23DzCCwzeKCtaZ4+YOdKZLWx3A9slmwwx7tMYUyvbzqJ5wrjoo/vA
-         ziAys6a80jAH+stVpqh2S9TOmD+iTnXzbnDrUfU4=
+        b=ZpdAr9CBbHFmAKHthkbnTrdMfjDKm6lsj7qgHP/tDweE0yiQ2Wh9YTtpX8ljEo+S1
+         V/eO89Vf+go7tX3VNxuHyrXVs9mK5S8A2FfA4LRuchpMlM7MlWiTnyxnbxzEJ7IhTb
+         rAABU7KdsW0XG2Pq/zgCzrjiMCuO+/xWZ59sCmP0=
 Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2 1/6] media: adv748x: Add is_txb()
+Subject: Re: [PATCH v2 2/6] media: adv748x: Rename reset procedures
 To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         laurent.pinchart@ideasonboard.com,
         niklas.soderlund+renesas@ragnatech.se
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20190106155413.30666-1-jacopo+renesas@jmondi.org>
- <20190106155413.30666-2-jacopo+renesas@jmondi.org>
+ <20190106155413.30666-3-jacopo+renesas@jmondi.org>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
@@ -87,12 +87,12 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <556804e3-c537-2e85-5335-0194dfe7f83b@ideasonboard.com>
-Date:   Mon, 7 Jan 2019 09:49:25 +0000
+Message-ID: <f196d999-4526-8d68-4d8b-b18883ed6c5f@ideasonboard.com>
+Date:   Mon, 7 Jan 2019 09:59:48 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190106155413.30666-2-jacopo+renesas@jmondi.org>
+In-Reply-To: <20190106155413.30666-3-jacopo+renesas@jmondi.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -101,62 +101,74 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo
+Hi Jacopo,
 
 On 06/01/2019 15:54, Jacopo Mondi wrote:
-> Add small is_txb() macro to the existing is_txa() and use it where
-> appropriate.
-
-Thank you.
-
-I think this will make the code much better to read than if (!is_txa).
-
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
+> Rename the chip reset procedure as they configure the CP (HDMI) and SD
+> (AFE) cores.
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
->  drivers/media/i2c/adv748x/adv748x-csi2.c | 2 +-
->  drivers/media/i2c/adv748x/adv748x.h      | 6 +++++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
+>  drivers/media/i2c/adv748x/adv748x-core.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> index 6ce21542ed48..b6b5d8c7ea7c 100644
-> --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-> +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> @@ -82,7 +82,7 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
->  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
->  						  &state->hdmi.sd,
->  						  ADV748X_HDMI_SOURCE);
-> -	if (!is_txa(tx) && is_afe_enabled(state))
-> +	if (is_txb(tx) && is_afe_enabled(state))
->  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
->  						  &state->afe.sd,
->  						  ADV748X_AFE_SOURCE);
-> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-> index b482c7fe6957..bc2da1b5ce29 100644
-> --- a/drivers/media/i2c/adv748x/adv748x.h
-> +++ b/drivers/media/i2c/adv748x/adv748x.h
-> @@ -89,8 +89,12 @@ struct adv748x_csi2 {
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index d94c63cb6a2e..ad4e6424753a 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -353,9 +353,8 @@ static const struct adv748x_reg_value adv748x_sw_reset[] = {
+>  	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+>  };
 >  
->  #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
->  #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
-> +
->  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
-> -#define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
-> +#define __is_tx(_tx, _ab) ((_tx) == &(_tx)->state->tx##_ab)
-> +#define is_txa(_tx) __is_tx(_tx, a)
-> +#define is_txb(_tx) __is_tx(_tx, b)
-
-I would have just duplicated the is_txa() line here... but this is good
-too :)
-
-
-> +
->  #define is_afe_enabled(_state)					\
->  	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
->  	 (_state)->endpoints[ADV748X_PORT_AIN1] != NULL ||	\
+> -/* Supported Formats For Script Below */
+> -/* - 01-29 HDMI to MIPI TxA CSI 4-Lane - RGB888: */
+> -static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
+> +/* Initialize CP Core with RGB888 format. */
+> +static const struct adv748x_reg_value adv748x_init_hdmi[] = {
+>  	/* Disable chip powerdown & Enable HDMI Rx block */
+>  	{ADV748X_PAGE_IO, 0x00, 0x40},
+>  
+> @@ -399,10 +398,8 @@ static const struct adv748x_reg_value adv748x_init_txa_4lane[] = {
+>  	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+>  };
+>  
+> -/* 02-01 Analog CVBS to MIPI TX-B CSI 1-Lane - */
+> -/* Autodetect CVBS Single Ended In Ain 1 - MIPI Out */
+> -static const struct adv748x_reg_value adv748x_init_txb_1lane[] = {
+> -
+> +/* Initialize AFE core with YUV8 format. */
+> +static const struct adv748x_reg_value adv748x_init_afe[] = {
+>  	{ADV748X_PAGE_IO, 0x00, 0x30},	/* Disable chip powerdown Rx */
+>  	{ADV748X_PAGE_IO, 0xf2, 0x01},	/* Enable I2C Read Auto-Increment */
+>  
+> @@ -445,19 +442,18 @@ static int adv748x_reset(struct adv748x_state *state)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* Init and power down TXA */
+> -	ret = adv748x_write_regs(state, adv748x_init_txa_4lane);
+> +	/* Initialize CP and AFE cores. */
+> +	ret = adv748x_write_regs(state, adv748x_init_hdmi);
+>  	if (ret)
+>  		return ret;
+>  
+> -	adv748x_tx_power(&state->txa, 1);
+> -	adv748x_tx_power(&state->txa, 0);
+> -
+> -	/* Init and power down TXB */
+> -	ret = adv748x_write_regs(state, adv748x_init_txb_1lane);
+> +	ret = adv748x_write_regs(state, adv748x_init_afe);
+>  	if (ret)
+>  		return ret;
+>  
+> +	/* Reset TXA and TXB */
+> +	adv748x_tx_power(&state->txa, 1);
+> +	adv748x_tx_power(&state->txa, 0);
+>  	adv748x_tx_power(&state->txb, 1);
+>  	adv748x_tx_power(&state->txb, 0);
+>  
 > 
 
 -- 
