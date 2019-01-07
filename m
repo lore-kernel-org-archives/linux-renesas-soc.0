@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27051C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42252C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0064A20854
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AF7620854
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfAGDlD (ORCPT
+        id S1726285AbfAGDlL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:41:03 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:29664 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726273AbfAGDlD (ORCPT
+        Sun, 6 Jan 2019 22:41:11 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:62740 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726273AbfAGDlL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:41:03 -0500
-Date:   07 Jan 2019 12:41:01 +0900
+        Sun, 6 Jan 2019 22:41:11 -0500
+Date:   07 Jan 2019 12:41:10 +0900
 X-IronPort-AV: E=Sophos;i="5.56,449,1539615600"; 
-   d="scan'208";a="4301527"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Jan 2019 12:41:01 +0900
+   d="scan'208";a="4506093"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 07 Jan 2019 12:41:10 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4519F403F278;
-        Mon,  7 Jan 2019 12:41:01 +0900 (JST)
-Message-ID: <87bm4tnnzf.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 88C8240BD8C7;
+        Mon,  7 Jan 2019 12:41:09 +0900 (JST)
+Message-ID: <87a7kdnnz7.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v2 4/8] arm64: dts: renesas: r8a7795: remove BUSIF0 settings from rcar_sound,ssi
+Subject: [PATCH v2 5/8] arm64: dts: renesas: r8a7796: remove BUSIF0 settings from rcar_sound,ssi
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>
 Cc:     Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
@@ -60,14 +60,14 @@ v1 -> v2
  - add "dts:" on Subject
  - fixup W=1 warning
 
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++----------------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 40 ++++++++++++++++----------------
  1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index af9605d..a81ed2b 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2174,53 +2174,53 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index afedbf5..3a9f8c7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2110,53 +2110,53 @@
  			rcar_sound,ssi {
  				ssi0: ssi-0 {
  					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
@@ -77,7 +77,7 @@ index af9605d..a81ed2b 100644
 +					dma-names = "rx", "tx";
  				};
  				ssi1: ssi-1 {
- 					 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
 -					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
 -					dma-names = "rx", "tx", "rxu", "txu";
 +					dmas = <&audma0 0x03>, <&audma1 0x04>;
@@ -140,7 +140,7 @@ index af9605d..a81ed2b 100644
 +					dma-names = "rx", "tx";
  				};
  			};
- 		};
+ 
 -- 
 2.7.4
 
