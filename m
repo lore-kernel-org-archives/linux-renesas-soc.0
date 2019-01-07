@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B55C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41590C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB6E20854
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AB8A20854
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfAGDle (ORCPT
+        id S1726273AbfAGDlo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:41:34 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:18391 "EHLO
+        Sun, 6 Jan 2019 22:41:44 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:25489 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726273AbfAGDle (ORCPT
+        by vger.kernel.org with ESMTP id S1726246AbfAGDlo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:41:34 -0500
-Date:   07 Jan 2019 12:41:32 +0900
+        Sun, 6 Jan 2019 22:41:44 -0500
+Date:   07 Jan 2019 12:41:43 +0900
 X-IronPort-AV: E=Sophos;i="5.56,449,1539615600"; 
-   d="scan'208";a="4506112"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Jan 2019 12:41:32 +0900
+   d="scan'208";a="4506134"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 07 Jan 2019 12:41:43 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 942F2403F278;
-        Mon,  7 Jan 2019 12:41:32 +0900 (JST)
-Message-ID: <877efhnnyk.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1B4D140BD8B1;
+        Mon,  7 Jan 2019 12:41:43 +0900 (JST)
+Message-ID: <875zv1nny9.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v2 7/8] arm64: defconfig: select Kingfisher Sound related configs
+Subject: [PATCH v2 8/8] arm64: renesas_defconfig: select Kingfisher Sound related configs
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>
 Cc:     Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
@@ -45,7 +45,8 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-This patch selects PCM3168A which is needed for Kingfisher Sound
+This patch selects PCA954x, PCM3168A which are missing for
+Kingfisher Sound.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
@@ -54,21 +55,29 @@ v1 -> v2
  - add "dts:" on Subject
  - fixup W=1 warning
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/configs/renesas_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f8ee02e..83a73c2 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -509,6 +509,7 @@ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
- CONFIG_SND_SOC_SAMSUNG=y
- CONFIG_SND_SOC_RCAR=m
- CONFIG_SND_SOC_AK4613=m
-+CONFIG_SND_SOC_PCM3168A_I2C=m
- CONFIG_SND_SIMPLE_CARD=m
- CONFIG_SND_AUDIO_GRAPH_CARD=m
- CONFIG_I2C_HID=m
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 8a9266a..4602e93 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -128,6 +128,7 @@ CONFIG_VIRTIO_CONSOLE=y
+ # CONFIG_HW_RANDOM is not set
+ CONFIG_I2C_CHARDEV=y
+ CONFIG_I2C_MUX=y
++CONFIG_I2C_MUX_PCA954x=y
+ CONFIG_I2C_DESIGNWARE_PLATFORM=y
+ CONFIG_I2C_SH_MOBILE=y
+ CONFIG_I2C_RCAR=y
+@@ -233,6 +234,7 @@ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+ CONFIG_SND_SOC_RCAR=y
+ CONFIG_SND_SOC_AK4613=y
++CONFIG_SND_SOC_PCM3168A_I2C=y
+ CONFIG_SND_SIMPLE_CARD=y
+ CONFIG_SND_AUDIO_GRAPH_CARD=y
+ CONFIG_USB=y
 -- 
 2.7.4
 
