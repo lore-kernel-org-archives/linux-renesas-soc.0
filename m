@@ -1,132 +1,63 @@
-Return-Path: <SRS0=4bAx=PO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=nqfF=PP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD14C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  6 Jan 2019 21:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531B8C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 00:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6402070C
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  6 Jan 2019 21:20:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dmLjOxv3"
+	by mail.kernel.org (Postfix) with ESMTP id 1CF0E2085A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 00:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfAFVUc (ORCPT
+        id S1726145AbfAGAyp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 6 Jan 2019 16:20:32 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53316 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbfAFVUc (ORCPT
+        Sun, 6 Jan 2019 19:54:45 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:47448 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726135AbfAGAyp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Jan 2019 16:20:32 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d15so5464374wmb.3;
-        Sun, 06 Jan 2019 13:20:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=l/m278v1FdY2IwqJYejNRD0kA2spZH4uZWxndJarknI=;
-        b=dmLjOxv33a9TIxAdoo9GtkhTVCFassCFTRiEqgMB3RNS/QbUIuCbCimrPpJWRzFiXl
-         VZ93PVsLJzLDzaqZSl4zqu1W67H7oDAq+kepSfIGnGz/8TFTx8uwCA45PPgDn54lH475
-         TWoSlKtbYqMDqXkR76VQH0oTjx0UG3mz0fOViaJt+mr6xbe5rflAS60OIcxB7JBFuppd
-         cvBrobM4YDBUaii20IxoiV25jBrhKH3VtH2FGE0gFiY/tfFKoHs9cFloS5o0igqGnm3P
-         FS0Q7KR1nO8LnssWzT6wudfOlruYzfT5Fcr0HTwCW+kJPnmKOSC3ElXNa2MwiUr1NWZu
-         5Iwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=l/m278v1FdY2IwqJYejNRD0kA2spZH4uZWxndJarknI=;
-        b=UCsiSvCSKB6udRYzfND2VOfczYrccvX41bOEtxQ+jPe5JTFFDLVlnxHaYgV16RNxx3
-         xtudHAcIx+S9lvajrND/gxYuy+8dv/I/nxi5z5u+WE+S74AqJm10pIV45ZK+TnaRXzc3
-         eAfQUmLi0vK5jbVxsB2i6a1qei0/qUmzRW4GCDZ6qzSmTryvJcLVBCUO1yO4dsKCR1UW
-         22SvweHjkz7rFJPoG+y4drBySpgqIIeaMfRPvdnPcL16Ko8TNeeyR3YrN5XYVxxPPLS9
-         Cq4sqIrw8fVbrtyLraLFPFtTuCC0JG/HDYEGuJsG9kuGqw/mNwCJKprOKmr/lNuCWeOo
-         xO9Q==
-X-Gm-Message-State: AJcUukfTA5smXej5dUCl0xf10LkQzrpYpNuisv8erqt2NMSqg1u3tJ6z
-        KKq1E7YckyIHZuWRAyIvVRKid76+
-X-Google-Smtp-Source: ALg8bN56xqHU7busknN2X9AqT+8g8tm68U0LVOkEuDdeHpxOtRXu32z6xvNXIq2oGpxqpwqaux8cqw==
-X-Received: by 2002:a1c:26c1:: with SMTP id m184mr1628258wmm.25.1546809629009;
-        Sun, 06 Jan 2019 13:20:29 -0800 (PST)
-Received: from mappy.world.mentorg.com (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id o81sm10451476wmd.10.2019.01.06.13.20.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 06 Jan 2019 13:20:27 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-renesas-soc@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS
-        - VIN), linux-kernel@vger.kernel.org (open list)
-Subject: [RFC PATCH v2] media: rcar-vin: Allow independent VIN link enablement
-Date:   Sun,  6 Jan 2019 13:20:18 -0800
-Message-Id: <20190106212018.16519-1-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 6 Jan 2019 19:54:45 -0500
+Date:   07 Jan 2019 09:54:43 +0900
+X-IronPort-AV: E=Sophos;i="5.56,448,1539615600"; 
+   d="scan'208";a="4482817"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 07 Jan 2019 09:54:43 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F18844129459;
+        Mon,  7 Jan 2019 09:54:42 +0900 (JST)
+Message-ID: <87pnt9nvol.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 3/8] arm64: renesas: ulcb-kf: add pcm3168 sound codec
+In-Reply-To: <20190102093502.y4vzyv5rsrdp3ak4@verge.net.au>
+References: <87va3h9kzy.wl-kuninori.morimoto.gx@renesas.com>
+        <87r2e59ky6.wl-kuninori.morimoto.gx@renesas.com>
+        <20190102093502.y4vzyv5rsrdp3ak4@verge.net.au>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There is a block of code in rvin_group_link_notify() that loops through
-all entities in the media graph, and prevents enabling a link to a VIN
-node if any entity is in use. This prevents enabling a VIN link even if
-there is an in-use entity somewhere in the graph that is independent of
-the link's pipeline.
 
-For example, the code will prevent enabling a link from the first
-rcar-csi2 receiver to a VIN node even if there is an enabled link
-somewhere far upstream on the second independent rcar-csi2 receiver
-pipeline.
+Hi Simon
 
-If this code is meant to prevent modifying a link if any entity in the
-graph is actively involved in streaming (because modifying the CHSEL
-register fields can disrupt any/all running streams), then the entities
-stream counts should be checked rather than the use counts.
+> > KingFisher has pcm3168 sound codec. This patch enables it.
+> > Because pcm3168 can't handle symmetric channel on playback/
+> > capture, we need to handle it as different DAI.
+> 
+> Hi Morimoto-san,
+> 
+> as per my response to other patches in this series I have found,
+> hopefully, minor problems, when applying this patch.
+> 
+> When compiling I see:
+> # make W=1 dtbs
 
-(There is already such a check in __media_entity_setup_link() that verifies
-the stream_count of the link's source and sink entities are both zero,
-but that is insufficient, since there should be no running streams in
-the entire graph).
-
-Modify the media_device_for_each_entity() loop to check the entity
-stream_count instead of the use_count, and elaborate on the comment.
-VIN node links can now be enabled even if there are other independent
-in-use entities that are not streaming.
-
-Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
-
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
----
-Changes in v2:
-- bring back the media_device_for_each_entity() loop but check the
-  stream_count not the use_count.
----
- drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f0719ce24b97..6dd6b11c1b2b 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
- 	    !is_media_entity_v4l2_video_device(link->sink->entity))
- 		return 0;
- 
--	/* If any entity is in use don't allow link changes. */
-+	/*
-+	 * Don't allow link changes if any entity in the graph is
-+	 * streaming, because modifying the CHSEL register fields
-+	 * can disrupt running streams.
-+	 */
- 	media_device_for_each_entity(entity, &group->mdev)
--		if (entity->use_count)
-+		if (entity->stream_count)
- 			return -EBUSY;
- 
- 	mutex_lock(&group->lock);
--- 
-2.17.1
-
+Thank you for testing !!
+I will fix this issue and post v2
