@@ -4,168 +4,249 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBA8C43613
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 16:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1285C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 17:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C70DB2147C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 16:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71ED12070B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 17:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbfAGQX0 (ORCPT
+        id S1728508AbfAGRve (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Jan 2019 11:23:26 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:44778 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbfAGQX0 (ORCPT
+        Mon, 7 Jan 2019 12:51:34 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:49410 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728427AbfAGRve (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Jan 2019 11:23:26 -0500
+        Mon, 7 Jan 2019 12:51:34 -0500
 Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id MUPM1z00b3XaVaC01UPMtz; Mon, 07 Jan 2019 17:23:24 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id MVrW1z00Z3XaVaC06VrW90; Mon, 07 Jan 2019 18:51:31 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ggXgP-0008G6-H2; Mon, 07 Jan 2019 17:23:21 +0100
+        id 1ggZ3i-0000rl-OV; Mon, 07 Jan 2019 18:51:30 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ggXgP-00043U-F9; Mon, 07 Jan 2019 17:23:21 +0100
+        id 1ggZ3i-0005XO-MU; Mon, 07 Jan 2019 18:51:30 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org,
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 4/4] serial: sh-sci: Make RX/TX DMA function names consistent
-Date:   Mon,  7 Jan 2019 17:23:20 +0100
-Message-Id: <20190107162320.15530-5-geert+renesas@glider.be>
+Subject: [RFC] device-tree: resets properties, reset topology, and shared resets
+Date:   Mon,  7 Jan 2019 18:51:27 +0100
+Message-Id: <20190107175127.21240-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190107162320.15530-1-geert+renesas@glider.be>
-References: <20190107162320.15530-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Most RX/TX-specific DMA functions are prefixed with "sci_dma_[rt]x_".
-Rename the exceptions to increase consistency.
+	Hi Rob, Mark,
+
+Best Wishes for 2019!
+
+Can you please provide your opinion on parsing the whole device tree for
+"resets" phandle properties to find shared resets, cfr. patch [1] below?
+
+This is a prerequisite for safe generic reset handling for
+virtualization on DT-based platforms, cfr. patch [2].
+
+Many thanks in advance!
+
+References:
+  1. [PATCH v3] reset: Exclusive resets must be dedicated to a single
+     hardware block
+     https://lore.kernel.org/lkml/20181113133520.20889-1-geert+renesas@glider.be/
+  2. [PATCH v5] vfio: platform: Add generic reset controller support
+     https://lore.kernel.org/lkml/20181113131508.18246-1-geert+renesas@glider.be/
+
+From 96418942472531d736dffd64ff5ae90d055d71b0 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 17 Sep 2018 16:34:26 +0200
+Subject: [PATCH v3] reset: Exclusive resets must be dedicated to a single
+ hardware block
+
+In some SoCs multiple hardware blocks may share a reset control.
+The reset control API for shared resets will only assert such a reset
+when the drivers for all hardware blocks agree.
+The exclusive reset control API still allows to assert such a reset, but
+that impacts all other hardware blocks sharing the reset.
+
+While the kernel doc comments clearly state that the API for shared
+resets applies to reset controls which are shared between hardware
+blocks, the exact meaning of exclusive resets is not documented.
+Fix the semantic ambiguity with respect to exclusive access vs.
+exclusive reset lines by:
+  1. Clarifying that exclusive resets really are intended for use with
+     reset controls which are dedicated to a single hardware block,
+  2. Ensuring that obtaining an exclusive reset control will fail if the
+     reset is shared by multiple hardware blocks, for both DT-based and
+     lookup-based reset controls.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v5:
-  - New.
----
- drivers/tty/serial/sh-sci.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Question from Philipp for the DT maintainers:
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 891833315698b953..cb3d5d37674f56f2 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1253,7 +1253,7 @@ static void sci_dma_rx_chan_invalidate(struct sci_port *s)
- 	s->active_rx = 0;
+   "I'd still like to hear the device tree maintainers' opinion on
+    parsing the whole DT for "resets" phandle properties to find shared
+    resets like this."
+
+Thanks!
+
+v3:
+  - Make args parameter of __of_reset_is_exclusive() a pointer,
+  - Print a warning when detecting a shared reset,
+  - Rebase on top of of_node_put() move,
+
+v2:
+  - Fix wrong variable in __reset_is_dedicated() loop,
+  - Add missing of_node_put() in __of_reset_is_dedicated(),
+  - Document that exclusive reset controls imply they are dedicated to a
+    single hardware block,
+  - Drop new dedicated flag and new API reset_control_get_dedicated(),
+    as exclusive already implies dedicated,
+  - Rename {__of_,}reset_is_dedicated() to {__of_,}reset_is_exclusive(),
+  - Reword description.
+
+Note: Exclusive lookup-based reset controls were not tested.
+---
+ drivers/reset/core.c  | 67 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/reset.h |  5 +++-
+ 2 files changed, 71 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index bce2d6aefef98131..022740cfab9f429e 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -459,6 +459,42 @@ static void __reset_control_put_internal(struct reset_control *rstc)
+ 	kref_put(&rstc->refcnt, __reset_control_release);
  }
  
--static void sci_rx_dma_release(struct sci_port *s)
-+static void sci_dma_rx_release(struct sci_port *s)
- {
- 	struct dma_chan *chan = s->chan_rx_saved;
- 
-@@ -1343,7 +1343,7 @@ static void sci_dma_rx_complete(void *arg)
- 	spin_unlock_irqrestore(&port->lock, flags);
- }
- 
--static void sci_tx_dma_release(struct sci_port *s)
-+static void sci_dma_tx_release(struct sci_port *s)
- {
- 	struct dma_chan *chan = s->chan_tx_saved;
- 
-@@ -1356,7 +1356,7 @@ static void sci_tx_dma_release(struct sci_port *s)
- 	dma_release_channel(chan);
- }
- 
--static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
-+static int sci_dma_rx_submit(struct sci_port *s, bool port_lock_held)
- {
- 	struct dma_chan *chan = s->chan_rx;
- 	struct uart_port *port = &s->port;
-@@ -1399,7 +1399,7 @@ static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
- 	return -EAGAIN;
- }
- 
--static void work_fn_tx(struct work_struct *work)
-+static void sci_dma_tx_work_fn(struct work_struct *work)
- {
- 	struct sci_port *s = container_of(work, struct sci_port, work_tx);
- 	struct dma_async_tx_descriptor *desc;
-@@ -1458,7 +1458,7 @@ static void work_fn_tx(struct work_struct *work)
- 	return;
- }
- 
--static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
-+static enum hrtimer_restart sci_dma_rx_timer_fn(struct hrtimer *t)
- {
- 	struct sci_port *s = container_of(t, struct sci_port, rx_timer);
- 	struct dma_chan *chan = s->chan_rx;
-@@ -1515,7 +1515,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
++static bool __of_reset_is_exclusive(const struct device_node *node,
++				    const struct of_phandle_args *args,
++				    const char *id)
++{
++	struct of_phandle_args args2;
++	struct device_node *node2;
++	int index, ret;
++	bool eq;
++
++	for_each_node_with_property(node2, "resets") {
++		if (node == node2)
++			continue;
++
++		for (index = 0; ; index++) {
++			ret = of_parse_phandle_with_args(node2, "resets",
++							 "#reset-cells", index,
++							 &args2);
++			if (ret)
++				break;
++
++			eq = (args2.np == args.np &&
++			      args2.args_count == args.args_count &&
++			      !memcmp(args2.args, args.args,
++				      args.args_count * sizeof(args.args[0])));
++			of_node_put(args2.np);
++			if (eq) {
++				pr_warn("%pOF requests exclusive control over reset %s shared with %pOF on %pOF\n",
++					node, id, node2, args->np);
++				return false;
++			}
++		}
++	}
++
++	return true;
++}
++
+ struct reset_control *__of_reset_control_get(struct device_node *node,
+ 				     const char *id, int index, bool shared,
+ 				     bool optional)
+@@ -513,6 +549,11 @@ struct reset_control *__of_reset_control_get(struct device_node *node,
+ 		goto out;
  	}
  
- 	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--		sci_submit_rx(s, true);
-+		sci_dma_rx_submit(s, true);
++	if (!shared && !__of_reset_is_exclusive(node, &args, id)) {
++		rstc = ERR_PTR(-EINVAL);
++		goto out;
++	}
++
+ 	/* reset_list_mutex also protects the rcdev's reset_control list */
+ 	rstc = __reset_control_get_internal(rcdev, rstc_id, shared);
  
- 	sci_dma_rx_reenable_irq(s);
- 
-@@ -1595,7 +1595,7 @@ static void sci_request_dma(struct uart_port *port)
- 				__func__, UART_XMIT_SIZE,
- 				port->state->xmit.buf, &s->tx_dma_addr);
- 
--			INIT_WORK(&s->work_tx, work_fn_tx);
-+			INIT_WORK(&s->work_tx, sci_dma_tx_work_fn);
- 			s->chan_tx_saved = s->chan_tx = chan;
- 		}
- 	}
-@@ -1630,12 +1630,12 @@ static void sci_request_dma(struct uart_port *port)
- 		}
- 
- 		hrtimer_init(&s->rx_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--		s->rx_timer.function = rx_timer_fn;
-+		s->rx_timer.function = sci_dma_rx_timer_fn;
- 
- 		s->chan_rx_saved = s->chan_rx = chan;
- 
- 		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
--			sci_submit_rx(s, false);
-+			sci_dma_rx_submit(s, false);
- 	}
+@@ -542,6 +583,27 @@ __reset_controller_by_name(const char *name)
+ 	return NULL;
  }
  
-@@ -1644,9 +1644,9 @@ static void sci_free_dma(struct uart_port *port)
- 	struct sci_port *s = to_sci_port(port);
- 
- 	if (s->chan_tx_saved)
--		sci_tx_dma_release(s);
-+		sci_dma_tx_release(s);
- 	if (s->chan_rx_saved)
--		sci_rx_dma_release(s);
-+		sci_dma_rx_release(s);
- }
- 
- static void sci_flush_buffer(struct uart_port *port)
-@@ -1684,7 +1684,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
- 			disable_irq_nosync(irq);
- 			scr |= SCSCR_RDRQE;
- 		} else {
--			if (sci_submit_rx(s, false) < 0)
-+			if (sci_dma_rx_submit(s, false) < 0)
- 				goto handle_pio;
- 
- 			scr &= ~SCSCR_RIE;
++static bool __reset_is_exclusive(const struct reset_control_lookup *lookup)
++{
++	const struct reset_control_lookup *lookup2;
++
++	list_for_each_entry(lookup2, &reset_lookup_list, list) {
++		if (lookup2 == lookup)
++			continue;
++
++		if (lookup2->provider == lookup->provider &&
++		    lookup2->index == lookup->index) {
++			pr_warn("%s/%s requests exclusive control over reset %s:%u shared with %s/%s",
++				lookup->dev_id, lookup->con_id,
++				lookup->provider, lookup->index,
++				lookup2->dev_id, lookup2->con_id);
++			return false;
++		}
++	}
++
++	return true;
++}
++
+ static struct reset_control *
+ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 				bool shared, bool optional)
+@@ -563,6 +625,11 @@ __reset_control_get_from_lookup(struct device *dev, const char *con_id,
+ 		if ((!con_id && !lookup->con_id) ||
+ 		    ((con_id && lookup->con_id) &&
+ 		     !strcmp(con_id, lookup->con_id))) {
++			if (!shared && !__reset_is_exclusive(lookup)) {
++				mutex_unlock(&reset_lookup_mutex);
++				return ERR_PTR(-EINVAL);
++			}
++
+ 			mutex_lock(&reset_list_mutex);
+ 			rcdev = __reset_controller_by_name(lookup->provider);
+ 			if (!rcdev) {
+diff --git a/include/linux/reset.h b/include/linux/reset.h
+index b7f3ad691ee9773e..2698b36bd1eb3e0c 100644
+--- a/include/linux/reset.h
++++ b/include/linux/reset.h
+@@ -123,8 +123,11 @@ static inline int device_reset_optional(struct device *dev)
+  * @id: reset line name
+  *
+  * Returns a struct reset_control or IS_ERR() condition containing errno.
+- * If this function is called more than once for the same reset_control it will
++ * If this function is called more than once for the same reset control it will
+  * return -EBUSY.
++ * This function is intended for use with reset controls which are dedicated
++ * to a single hardware block.  If called for a reset control shared among
++ * multiple hardware blocks, it will return -EINVAL.
+  *
+  * See reset_control_get_shared for details on shared references to
+  * reset-controls.
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
