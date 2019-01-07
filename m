@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3789CC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24002C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E8320854
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F128E20854
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jan 2019 03:40:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfAGDka (ORCPT
+        id S1726278AbfAGDky (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 6 Jan 2019 22:40:30 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:31833 "EHLO
+        Sun, 6 Jan 2019 22:40:54 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:59287 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726273AbfAGDka (ORCPT
+        by vger.kernel.org with ESMTP id S1726273AbfAGDky (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Jan 2019 22:40:30 -0500
-Date:   07 Jan 2019 12:40:28 +0900
+        Sun, 6 Jan 2019 22:40:54 -0500
+Date:   07 Jan 2019 12:40:51 +0900
 X-IronPort-AV: E=Sophos;i="5.56,449,1539615600"; 
-   d="scan'208";a="4506016"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Jan 2019 12:40:28 +0900
+   d="scan'208";a="4506051"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 07 Jan 2019 12:40:51 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2953E41846C1;
-        Mon,  7 Jan 2019 12:40:28 +0900 (JST)
-Message-ID: <87ef9pno0c.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 784C8403F273;
+        Mon,  7 Jan 2019 12:40:51 +0900 (JST)
+Message-ID: <87d0p9nnzp.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v2 2/8] arm64: dts: renesas: ulcb: add HDMI sound support
+Subject: [PATCH v2 3/8] arm64: dts: renesas: ulcb-kf: add pcm3168 sound codec
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>
 Cc:     Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
@@ -46,8 +46,9 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-This patch adds missing ULCB HDMI sound support.
-To use sound card, HDMI video is mandatory.
+KingFisher has pcm3168 sound codec. This patch enables it.
+Because pcm3168 can't handle symmetric channel on playback/
+capture, we need to handle it as different DAI.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
@@ -56,83 +57,204 @@ v1 -> v2
  - add "dts:" on Subject
  - fixup W=1 warning
 
- arch/arm64/boot/dts/renesas/ulcb.dtsi | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 138 +++++++++++++++++++++++++++++++
+ 1 file changed, 138 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index 8c6c458..a3878fb 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -6,6 +6,14 @@
-  * Copyright (C) 2016 Cogent Embedded, Inc.
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 1b316d79..7a09576 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -6,11 +6,38 @@
+  * Copyright (C) 2017 Cogent Embedded, Inc.
   */
  
 +/*
-+ * SSI-AK4613
-+ *	aplay   -D plughw:0,0 xxx.wav
-+ *	arecord -D plughw:0,0 xxx.wav
-+ * SSI-HDMI
-+ *	aplay   -D plughw:0,1 xxx.wav
++ * SSI-PCM3168A
++ *	aplay   -D plughw:0,2 xxx.wav
++ *	arecord -D plughw:0,3 xxx.wav
 + */
 +
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
+ / {
+ 	aliases {
+ 		serial1 = &hscif0;
+ 		serial2 = &scif1;
+ 	};
++
++	clksndsel: clksndsel {
++		#clock-cells = <0>;
++		compatible = "gpio-mux-clock";
++		clocks = <&cs2000>, <&audio_clk_a>; /* clk8snd, clksnd */
++		select-gpios = <&gpio_exp_75 13 GPIO_ACTIVE_HIGH>;
++	};
++
++	snd_3p3v: regulator-snd_3p3v {
++		compatible = "regulator-fixed";
++		regulator-name = "snd-3.3v";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
++	snd_vcc5v: regulator-snd_vcc5v {
++		compatible = "regulator-fixed";
++		regulator-name = "snd-vcc5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
+ };
  
-@@ -87,7 +95,9 @@
- 		compatible = "audio-graph-card";
- 		label = "rcar-sound";
+ &can0 {
+@@ -44,6 +71,7 @@
+ };
  
--		dais = <&rsnd_port0>;
-+		dais = <&rsnd_port0	/* ak4613 */
-+			&rsnd_port1	/* HDMI0  */
-+			>;
+ &i2c2 {
++	/* U11 */
+ 	gpio_exp_74: gpio@74 {
+ 		compatible = "ti,tca9539";
+ 		reg = <0x74>;
+@@ -53,6 +81,13 @@
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
+ 
++		audio_out_off {
++			gpio-hog;
++			gpios = <0 GPIO_ACTIVE_HIGH>; /* P00 */
++			output-high;
++			line-name = "Audio_Out_OFF";
++		};
++
+ 		hub_pwen {
+ 			gpio-hog;
+ 			gpios = <6 GPIO_ACTIVE_HIGH>;
+@@ -80,8 +115,16 @@
+ 			output-high;
+ 			line-name = "OTG EXTLPn";
+ 		};
++
++		snd_rst {
++			gpio-hog;
++			gpios = <15 GPIO_ACTIVE_HIGH>; /* P17 */
++			output-high;
++			line-name = "SND_RST";
++		};
  	};
  
- 	vcc_sdhi0: regulator-vcc-sdhi0 {
-@@ -173,6 +183,12 @@
- 				remote-endpoint = <&hdmi0_con>;
- 			};
- 		};
-+		port@2 {
-+			reg = <2>;
-+			dw_hdmi0_snd_in: endpoint {
-+				remote-endpoint = <&rsnd_for_hdmi>;
++	/* U5 */
+ 	gpio_exp_75: gpio@75 {
+ 		compatible = "ti,tca9539";
+ 		reg = <0x75>;
+@@ -98,6 +141,48 @@
+ 		#size-cells = <0>;
+ 		reg = <0x71>;
+ 		reset-gpios = <&gpio5 3 GPIO_ACTIVE_LOW>;
++
++		/* Audio_SDA, Audio_SCL */
++		i2c@7 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <7>;
++
++			pcm3168a: audio-codec@44 {
++				#sound-dai-cells = <0>;
++				compatible = "ti,pcm3168a";
++				reg = <0x44>;
++				clocks = <&clksndsel>;
++				clock-names = "scki";
++
++				VDD1-supply	= <&snd_3p3v>;
++				VDD2-supply	= <&snd_3p3v>;
++				VCCAD1-supply	= <&snd_vcc5v>;
++				VCCAD2-supply	= <&snd_vcc5v>;
++				VCCDA1-supply	= <&snd_vcc5v>;
++				VCCDA2-supply	= <&snd_vcc5v>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					mclk-fs = <512>;
++					port@0 {
++						reg = <0>;
++						pcm3168a_endpoint_p: endpoint {
++							remote-endpoint = <&rsnd_for_pcm3168a_play>;
++							clocks = <&clksndsel>;
++						};
++					};
++					port@1 {
++						reg = <1>;
++						pcm3168a_endpoint_c: endpoint {
++							remote-endpoint = <&rsnd_for_pcm3168a_capture>;
++							clocks = <&clksndsel>;
++						};
++					};
++				};
 +			};
 +		};
  	};
  };
  
-@@ -382,7 +398,10 @@
- 		 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
+@@ -173,6 +258,11 @@
+ 		groups = "usb0";
+ 		function = "usb0";
+ 	};
++
++	sound_pcm_pins: sound-pcm {
++		groups = "ssi349_ctrl", "ssi3_data", "ssi4_data";
++		function = "ssi";
++	};
+ };
  
- 	ports {
--		rsnd_port0: port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		rsnd_port0: port@0 {
-+			reg = <0>;
- 			rsnd_for_ak4613: endpoint {
- 				remote-endpoint = <&ak4613_endpoint>;
- 
-@@ -394,6 +413,18 @@
- 				capture  = <&ssi1 &src1 &dvc1>;
- 			};
- 		};
-+		rsnd_port1: port@1 {
-+			reg = <1>;
-+			rsnd_for_hdmi: endpoint {
-+				remote-endpoint = <&dw_hdmi0_snd_in>;
+ &scif1 {
+@@ -193,3 +283,51 @@
+ &xhci0 {
+ 	status = "okay";
+ };
++
++&sound_card {
++	dais = <&rsnd_port0	/* ak4613 */
++		&rsnd_port1	/* HDMI0  */
++		&rsnd_port2	/* pcm3168a playback */
++		&rsnd_port3	/* pcm3168a capture  */
++		>;
++};
++
++&rcar_sound {
++	pinctrl-0 = <&sound_pins
++		     &sound_clk_pins
++		     &sound_pcm_pins>;
++
++	ports {
++		/* rsnd_port0/1 are on salvator-common */
++		rsnd_port2: port@2 {
++			reg = <2>;
++			rsnd_for_pcm3168a_play: endpoint {
++				remote-endpoint = <&pcm3168a_endpoint_p>;
 +
 +				dai-format = "i2s";
-+				bitclock-master = <&rsnd_for_hdmi>;
-+				frame-master = <&rsnd_for_hdmi>;
++				bitclock-master = <&rsnd_for_pcm3168a_play>;
++				frame-master = <&rsnd_for_pcm3168a_play>;
++				dai-tdm-slot-num = <8>;
 +
-+				playback = <&ssi2>;
++				playback = <&ssi3>;
 +			};
 +		};
- 	};
- };
- 
++		rsnd_port3: port@3 {
++			reg = <3>;
++			rsnd_for_pcm3168a_capture: endpoint {
++				remote-endpoint = <&pcm3168a_endpoint_c>;
++
++				dai-format = "i2s";
++				bitclock-master = <&rsnd_for_pcm3168a_capture>;
++				frame-master = <&rsnd_for_pcm3168a_capture>;
++				dai-tdm-slot-num = <6>;
++
++				capture  = <&ssi4>;
++			};
++		};
++	};
++};
++
++&ssi4 {
++	shared-pin;
++};
 -- 
 2.7.4
 
