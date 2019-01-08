@@ -2,57 +2,55 @@ Return-Path: <SRS0=bVnl=PQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E156C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 09:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FADC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 10:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0789C206B7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 09:35:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 576AD2087E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 10:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfAHJfn convert rfc822-to-8bit (ORCPT
+        id S1728135AbfAHKE0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:35:43 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:43244 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbfAHJfn (ORCPT
+        Tue, 8 Jan 2019 05:04:26 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41349 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727367AbfAHKEZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:35:43 -0500
-Received: by mail-vk1-f193.google.com with SMTP id o130so718271vke.10;
-        Tue, 08 Jan 2019 01:35:42 -0800 (PST)
+        Tue, 8 Jan 2019 05:04:25 -0500
+Received: by mail-vs1-f68.google.com with SMTP id t17so2095026vsc.8;
+        Tue, 08 Jan 2019 02:04:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ro/Ub7Vw0Ye/84tmdS2mIOeRcfxDU2aK+vg/onYB148=;
-        b=H90s3TvgZwxBjXiCbGNGyKe2kcx1gvYHRsyekfq8cZ7KUJ5HlQOsMMIoQY2ya3Fun1
-         3xCvU9KOfd/oQ136GMApMuEOK6rO3VUsjoCMcVV4cRGDUmkj0jHuI01Ylp0wPejVvAVi
-         yJRIMf+7Rf6gMaWs1XnZw/NxNWzNnx+v0b8jsACajU8BcngcEeWu9yAxkLBKVNsN0QDe
-         45uTziK+9c4W1/Px/ThPLGgu/8F/b7uR6t4oA3SG1CsrdZ1onj4nHmMCO8Y53SG1KEmi
-         VDtaixXRYJAAY9M2vNs2wepsyMKm+xqa9X7mt9x1If4usiH9RfnCMdaGIDyDz280bcbs
-         ZMDQ==
-X-Gm-Message-State: AJcUukd430eq9m1Tk0swrCYXOGPFqocs39T3u++GOcrinvTCQ+ayHiUV
-        cmtq8kDS4WM8NQS/PucTHtKQ9sPhIgxGEeJML8s=
-X-Google-Smtp-Source: ALg8bN5+oMM664lcPjSQVYkdSVmtmQhy0vJkVYuvVd6boKn6KuXt/59OTMdkzRfVEBw7moT7B9D45uFBGl/Q+SAhJXs=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr357793vkd.74.1546940141598;
- Tue, 08 Jan 2019 01:35:41 -0800 (PST)
+        bh=sNqiYlChw24KsWcz/kYr7xgCv0KKzbtApcgrPB8ujhw=;
+        b=W0B4Z4Hy652fpRINO45lrRb1U+BnIcDx5I3klUubqI2v8wZeU7VwbvSmcPTDJC9cHR
+         fbjmhhsVcT/xPyJu9kHQOQzcelTfKMUYQ71LFOjcg3E5Y696LBL5wU3fCns4N9kjnO9h
+         l13M853A5mHT08BrcUBqSioNqUaanU7FHs1qUwTrTkApc2ehpeMOuLUJ4vrQWLZH9Lc8
+         o20ONsK6MAVmgqIeOM+QSV+PRMDp9vlkBUod5YwmiZ6MG/W4gVTwqH5G3g9Y9bPIohv6
+         fBHx8fQP9SsMrX09wfW90b1a6b8cIVb+xI400bDMhclqFLpiR4CAM7Nj/U+CAoMUwHGk
+         fTNQ==
+X-Gm-Message-State: AJcUukdkqnMrauQCmy2zh2MBt6wXRxEmrGA433AjI3HGp45c1hjXwjcJ
+        4AOK8qGPk7jboN/W+cuFo1tjh1aqT1ccTVSwois=
+X-Google-Smtp-Source: ALg8bN7PdaK7rp2QKF0c6T+DesjQL4YJWSjCn4xUsqXr/VPQMMQnqACOt/MDS3vq0p9IEyQm/jQIIIT5jPR70jjAynw=
+X-Received: by 2002:a67:b60d:: with SMTP id d13mr466077vsm.152.1546941864577;
+ Tue, 08 Jan 2019 02:04:24 -0800 (PST)
 MIME-Version: 1.0
-References: <1546918094-13960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1546918094-13960-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20190108074749.d23mpcr3wscr6s5j@pengutronix.de> <CAMuHMdUdrfjUHzOZr25a4JsRNK34KL8kA1s1G+BrpRzZgtB-7w@mail.gmail.com>
- <20190108091925.gcv6tqkvxr2ilj3w@pengutronix.de>
-In-Reply-To: <20190108091925.gcv6tqkvxr2ilj3w@pengutronix.de>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se> <20181101233144.31507-18-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20181101233144.31507-18-niklas.soderlund+renesas@ragnatech.se>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Jan 2019 10:35:29 +0100
-Message-ID: <CAMuHMdVxdG6DsXxa6T+u7F9HniywjwQneQ5GZ6xoEai89nu-9w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] pwm: rcar: Use "atomic" API on rcar_pwm_resume()
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
+Date:   Tue, 8 Jan 2019 11:04:13 +0100
+Message-ID: <CAMuHMdVKzdGrh2dyafQb3ny2i=z9GqeTbn+8p+NN3nofCrc7ZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 17/30] v4l: subdev: compat: Implement handling for VIDIOC_SUBDEV_[GS]_ROUTING
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
@@ -61,43 +59,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Uwe,
+Hi Niklas, Sakari,
 
-On Tue, Jan 8, 2019 at 10:19 AM Uwe Kleine-König
-<u.kleine-koenig@pengutronix.de> wrote:
-> On Tue, Jan 08, 2019 at 09:56:28AM +0100, Geert Uytterhoeven wrote:
-> > On Tue, Jan 8, 2019 at 8:48 AM Uwe Kleine-König
-> > <u.kleine-koenig@pengutronix.de> wrote:
-> > > Orthogonal to this patch I wonder what the intended behaviour for a pwm
-> > > is on suspend. Should it stop oscilating unconditionally? Or should it
-> > > only stop if the consumer stops it as part of its own suspend callback?
-> >
-> > I guess you mean system suspend, not runtime suspend, as the device is
-> > runtime-resumed when a PWM is requested?
+On Fri, Nov 2, 2018 at 12:33 AM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> From: Sakari Ailus <sakari.ailus@linux.intel.com>
 >
-> I admit that suspend (both system and runtime) is a bit of a black box
-> for me. So please take that into account when judging my statements.
+> Implement compat IOCTL handling for VIDIOC_SUBDEV_G_ROUTING and
+> VIDIOC_SUBDEV_S_ROUTING IOCTLs.
 >
-> > Permitted behavior depends on the system: on R-Car Gen3 (arm64), PSCI system
-> > suspend will power down the SoC, so PWM output will stop for sure.
-> >
-> > On R-Car Gen2 (or R-Car Gen3 with s2idle instead of s2ram), the PM Domain
-> > code will turn of the PWM module's clock. Hence it will stop oscillating, unless
-> > you take special countermeasures, like for modules that need to stay powered
-> > for wake-up handling.
->
-> Whatever "suspend" here means, I want to prevent that a stopping pwm is
-> a surprise for the consumer. So I think suspend should be inhibited if
-> the consumer might expect the pwm to continue running but the pwm is
-> about to stop. So if the suspend affects the consumer, too, it's the
-> consumer that should be responsible to stop the pwm in a controlled
-> manner.
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-I think you can inhibit suspend by letting the .suspend() callback return an
-error. However, I think the PWM driver cannot make that decision on its own.
-Shutting down the PWM for a status LED is harmless, and the status LED being
-enabled should not prevent a system suspend.
-Shutting down e.g. a motor may be different.
+> --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+> +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
+> @@ -1045,6 +1045,66 @@ static int put_v4l2_event32(struct v4l2_event __user *p64,
+>         return 0;
+>  }
+>
+> +struct v4l2_subdev_routing32 {
+> +       compat_caddr_t routes;
+> +       __u32 num_routes;
+> +       __u32 reserved[5];
+> +};
+> +
+> +static int get_v4l2_subdev_routing(struct v4l2_subdev_routing __user *p64,
+> +                                  struct v4l2_subdev_routing32 __user *p32)
+> +{
+> +       struct v4l2_subdev_route __user *routes;
+> +       compat_caddr_t p;
+> +       u32 num_routes;
+> +
+> +       if (!access_ok(VERIFY_READ, p32, sizeof(*p32)) ||
+
+Please drop the first parameter of all newly-added access_ok() calls, as
+it has been removed in commit 96d4f267e40f9509 ("Remove 'type' argument
+from access_ok() function").
 
 Gr{oetje,eeting}s,
 
