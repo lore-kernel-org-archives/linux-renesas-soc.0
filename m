@@ -6,94 +6,95 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 111F0C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 03:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB309C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 04:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E9A2087F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 03:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAF3D206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 04:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbfAHDbI (ORCPT
+        id S1727393AbfAHERj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:31:08 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:10798 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727535AbfAHDbI (ORCPT
+        Mon, 7 Jan 2019 23:17:39 -0500
+Received: from twhmllg3.macronix.com ([122.147.135.201]:48732 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbfAHERj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:31:08 -0500
-X-IronPort-AV: E=Sophos;i="5.56,452,1539615600"; 
-   d="scan'208";a="4404667"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 08 Jan 2019 12:31:04 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3C80E403F288;
-        Tue,  8 Jan 2019 12:31:04 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     thierry.reding@gmail.com
-Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 4/4] pwm: rcar: improve calculation of divider
-Date:   Tue,  8 Jan 2019 12:28:14 +0900
-Message-Id: <1546918094-13960-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 7 Jan 2019 23:17:39 -0500
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG3.macronix.com with ESMTP id x084H3Eq091858;
+        Tue, 8 Jan 2019 12:17:07 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH v5 2/2] dt-bindings: spi: Document Renesas R-Car RPC-IF controller bindings
+Date:   Tue,  8 Jan 2019 12:17:00 +0800
+Message-Id: <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1546918094-13960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1546918094-13960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
+References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
+X-MAIL: TWHMLLG3.macronix.com x084H3Eq091858
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The rcar_pwm_get_clock_division() has a loop to calculate the divider,
-but the value of div should be calculatable without a loop. So,
-this patch improves it.
+Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
 
-This algorithm is suggested by Uwe Kleine-König and Laurent Pinchart.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 ---
- drivers/pwm/pwm-rcar.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
 
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 6dbb70c..0498a93 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -8,6 +8,8 @@
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/log2.h>
-+#include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-@@ -68,19 +70,15 @@ static void rcar_pwm_update(struct rcar_pwm_chip *rp, u32 mask, u32 data,
- static int rcar_pwm_get_clock_division(struct rcar_pwm_chip *rp, int period_ns)
- {
- 	unsigned long clk_rate = clk_get_rate(rp->clk);
--	unsigned long long max; /* max cycle / nanoseconds */
--	unsigned int div;
-+	u64 div, tmp;
- 
- 	if (clk_rate == 0)
- 		return -EINVAL;
- 
--	for (div = 0; div <= RCAR_PWM_MAX_DIVISION; div++) {
--		max = (unsigned long long)NSEC_PER_SEC * RCAR_PWM_MAX_CYCLE *
--			(1 << div);
--		do_div(max, clk_rate);
--		if (period_ns <= max)
--			break;
--	}
-+	div = NSEC_PER_SEC * RCAR_PWM_MAX_CYCLE;
-+	tmp = (u64)period_ns * clk_rate + div - 1;
-+	tmp = div64_u64(tmp, div);
-+	div = ilog2(tmp - 1) + 1;
- 
- 	return (div <= RCAR_PWM_MAX_DIVISION) ? div : -ERANGE;
- }
+diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+new file mode 100644
+index 0000000..5f96532
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+@@ -0,0 +1,37 @@
++Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
++----------------------------------------------------------
++
++Required properties:
++- compatible: should be "renesas,r8a77995-rpc"
++- #address-cells: should be 1
++- #size-cells: should be 0
++- reg: should contain 2 entries, one for the registers and one for the direct
++       mapping area
++- reg-names: should contain "regs" and "dirmap"
++- clock-names: should contain "rpc"
++- clocks: should contain 1 entries for the module's clock
++- renesas,rpc-mode: should contain "spi" for rpc spi mode or
++			   	   "hyperflash" for rpc hyperflash mode.
++
++Example:
++
++	rpc: rpc@ee200000 {
++		compatible = "renesas,r8a77995-rpc";
++		reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
++		reg-names = "regs", "dirmap";
++		clocks = <&cpg CPG_MOD 917>;
++		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++		resets = <&cpg 917>;
++		clock-names = "rpc";
++		renesas,rpc-mode = "spi";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		flash@0 {
++			compatible = "jedec,spi-nor";
++			reg = <0>;
++			spi-max-frequency = <40000000>;
++			spi-tx-bus-width = <1>;
++			spi-rx-bus-width = <1>;
++		};
++	};
 -- 
 1.9.1
 
