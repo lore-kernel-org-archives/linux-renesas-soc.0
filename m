@@ -2,96 +2,117 @@ Return-Path: <SRS0=bVnl=PQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB882C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 12:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C99E6C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 13:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3D5D20685
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 12:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546950552;
-	bh=m/AkMhjYm1pL71B5PhrCkhT3lt1P3y7Xa/66V+m16BQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WWMfCD9NHRcCg9wCBZvLUuDgoANQBw47o/gMgoXMqkqFdJxcrqzRP20mS0CGgVEdI
-	 KO1PpS7KBgu3KqJDfgPQGY5RTnIIcR+EhMB+ihV1TsjkXRZHxVY6jraOBS5j4lZXGy
-	 CI73PfA1hjSaRMF9QhdGGPwJFsLoTFwBBxWP1BMs=
+	by mail.kernel.org (Postfix) with ESMTP id 9FC832087E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 13:01:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbfAHM3M (ORCPT
+        id S1727772AbfAHNBy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 07:29:12 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55308 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728655AbfAHM3M (ORCPT
+        Tue, 8 Jan 2019 08:01:54 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:48374 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727558AbfAHNBy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 07:29:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dQntaTrGliWeIftUtipKNinxlOJw9LVZs1D3L+bYKDg=; b=UTc7/s4WlwE9NmbikeNAdRH3a
-        SlhLveYa8cmGRGebJ/fIL364wZWyp3Tjv40fDt9JOS0dQueV0cp7iCopJnJCAeR7WjbkHU1EXJ+ff
-        pr3xAu+iaLh1WmwO43xcyjAmu2gf/5b/fi8vQPeVgnKMdn97xstmrhtucusCtVg6BPPuc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ggqVI-0002jm-Eb; Tue, 08 Jan 2019 12:29:08 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 05249112778A; Tue,  8 Jan 2019 12:29:08 +0000 (GMT)
-Date:   Tue, 8 Jan 2019 12:29:07 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     linux-spi@vger.kernel.org, Mason Yang <masonccyang@mxic.com.tw>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RFT] spi-renesas-rpc: manual read issue workaround
-Message-ID: <20190108122907.GA6590@sirena.org.uk>
-References: <76eb5af5-756e-4d54-0be2-55573649d2d1@cogentembedded.com>
- <20190107181505.GR9570@sirena.org.uk>
- <e56eec35-9628-9c75-4a8d-685ffef5e2b9@cogentembedded.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
-Content-Disposition: inline
-In-Reply-To: <e56eec35-9628-9c75-4a8d-685ffef5e2b9@cogentembedded.com>
-X-Cookie: You look tired.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 8 Jan 2019 08:01:54 -0500
+Received: from ramsan ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id Mp1r1z00V3XaVaC06p1r6R; Tue, 08 Jan 2019 14:01:51 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggr0x-0000oU-7v
+        for linux-renesas-soc@vger.kernel.org; Tue, 08 Jan 2019 14:01:51 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ggr0x-0000sr-6b
+        for linux-renesas-soc@vger.kernel.org; Tue, 08 Jan 2019 14:01:51 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2019-01-08-v5.0-rc1
+Date:   Tue,  8 Jan 2019 14:01:51 +0100
+Message-Id: <20190108130151.3354-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+I have pushed renesas-drivers-2019-01-08-v5.0-rc1 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
---x+6KMIRAuhnl3hBn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-On Tue, Jan 08, 2019 at 10:52:11AM +0300, Sergei Shtylyov wrote:
+Today's version is based on renesas-devel-20190107-v5.0-rc1.
 
-> > >   drivers/spi/spi-renesas-rpc.c |   66 ++++++++++++++++++++++++++----------------
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/scif-pio-fallback-v5
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://linuxtv.org/pinchartl/media.git#drm/du/next
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
 
-> > This does not exist upstream.
+Included fixes:
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
->    As I said, the patch was atop of the RPC-IF driver patch by M. Yang.
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
 
-Please don't submit patches for things that aren't upstream upstream.
+Gr{oetje,eeting}s,
 
---x+6KMIRAuhnl3hBn
-Content-Type: application/pgp-signature; name="signature.asc"
+						Geert
 
------BEGIN PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw0l5MACgkQJNaLcl1U
-h9AcfAf/QxNczcE/wnnH4jy6EmqaW2K0HjkuZX8qkrF8tOg7l/6FIlObViZHrUGS
-Pv3HTiGhM8m9BcabFEo1EL7obPxXw2RotoGCyROLW8hcwLB3e01iBSsALjUSY/fX
-oo98jpTvctuq3mgxF5bUGYOcIne8Kbxej+VqmHkJG5Wq1w188r6XpVCrF9+nUYuO
-uoMPOcBYMk1oTJnX4kWpPLTB4AMExhzMYDIPVmalRC5kKzj+VVMhZe8MWfuOOBiN
-XXGiPQDWAWMKmIfOzCfWiey5t11anJq6pLJs1hbb6godky+8nIO143Qo4eDTFB+E
-bSwGXQEEj0UeYplUZkraufkjGqfgKw==
-=z7gT
------END PGP SIGNATURE-----
-
---x+6KMIRAuhnl3hBn--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
