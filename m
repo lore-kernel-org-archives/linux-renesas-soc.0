@@ -2,91 +2,115 @@ Return-Path: <SRS0=bVnl=PQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB80C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F914C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 08:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF32C2183F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:52:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="j2vw8BQ3"
+	by mail.kernel.org (Postfix) with ESMTP id 7260D218A6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 08:09:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfAHHwe (ORCPT
+        id S1727996AbfAHIJc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 02:52:34 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46904 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbfAHHwe (ORCPT
+        Tue, 8 Jan 2019 03:09:32 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39807 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727980AbfAHIJb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 02:52:34 -0500
-Received: by mail-lf1-f65.google.com with SMTP id y14so2182856lfg.13
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Jan 2019 23:52:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pwvF6kuc4USL+DB3aRUPohmFgbFwH+iwGLnnxPrvfbY=;
-        b=j2vw8BQ3Jt+QfxP16lileseQtVD0BUWSxZmNuTMWJj/BiBXqC9laEndnt8G7alk8wK
-         XZJn8Nb0a8bGHXW1tF8VisjXlna1jAQhzmr42jjdz/jncEaRLcaIMwTiMnPrgz3mP4no
-         5iLeGcVifPY8Bd8t3J7fhrJOifLYGhs3zVepCnS3xhHDRGxdVLXHX8PD9RD/OQlNREpL
-         ZsWWVFT4wKsDmIL5ftR7DZhNL+D8UgWVPxhnpDkuAEH6NR6TPuEm4y/P2vKWNS8HJdrx
-         ZvkyteoOSMSFb8Bh76xXdbDvmhpgO5UxlkuYFCDUrDRAJmfnZP5s8KtjvR/x0/8QFrgw
-         dseA==
+        Tue, 8 Jan 2019 03:09:31 -0500
+Received: by mail-vs1-f68.google.com with SMTP id h78so1928303vsi.6;
+        Tue, 08 Jan 2019 00:09:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pwvF6kuc4USL+DB3aRUPohmFgbFwH+iwGLnnxPrvfbY=;
-        b=PPU2eUJFRNoqST6elFy5mqw7eCNTNRRnIvfyfJFaUgOgf9v/GrTX275ZpQpacbUXJ6
-         jcAvaKjQUwDQO2XrxT7/LHT+Zc18I5jKnbGZv5LbhOqDlp+pv2DHiFN87Cr1Z1wdiGa2
-         B3euqDiuFIudNQ1z9vvHdKdVwFzae3bjeITGZVMUAdHtunnZQ8GZpyrYD02Af02ioILr
-         sai5Xua2gdQheMOINVHKTU1YYl1GJW1Lo9CVFw1xZgkgwVt9+OpWgu8PQuJ9RSZpcGZE
-         FJHzHsi7Kckp3lkdblpljLTCQhApYFQYnOy//r2uutPr2JqB+GJZkwWcusFSDUUtQINL
-         V1Ug==
-X-Gm-Message-State: AJcUukeVluagVanrwbrg10a5OigM8rfW0PSEJDH/8s3/Ot1w950OgypB
-        +fiqv5ywTcLOl6zbr7xrkfmsJUn2+88=
-X-Google-Smtp-Source: ALg8bN5D+5b/5+0ACuyEUBCY5eilygrKTVXPcYbLXSL3gIOqn3FTpYgLsz6liQlzI+taYAiW1/ORgQ==
-X-Received: by 2002:a19:f20:: with SMTP id e32mr435918lfi.51.1546933951863;
-        Mon, 07 Jan 2019 23:52:31 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.84.204])
-        by smtp.gmail.com with ESMTPSA id r26-v6sm14442619lji.25.2019.01.07.23.52.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 23:52:30 -0800 (PST)
-Subject: Re: [PATCH RFT] spi-renesas-rpc: manual read issue workaround
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, Mason Yang <masonccyang@mxic.com.tw>,
-        linux-renesas-soc@vger.kernel.org
-References: <76eb5af5-756e-4d54-0be2-55573649d2d1@cogentembedded.com>
- <20190107181505.GR9570@sirena.org.uk>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e56eec35-9628-9c75-4a8d-685ffef5e2b9@cogentembedded.com>
-Date:   Tue, 8 Jan 2019 10:52:11 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J7ck5DCb+VZNgJcju6gjm7DHemmCktYRlDSseC4D+/E=;
+        b=lHeU9iukkmbem5E01ULt/8yoya3priJyVw8Ti3Iubbhf0oZ3GUEuHMJqAQm+Lvp91U
+         cf7MeOaRWN9ZFms6EH//embyTVSYd2BJnm9REYYQ3g0sErQud4dZeN/5g3iQMmUWH0vI
+         VQCXXyv8RaTAKWnJ/4xEQ0/K7TogHklLikkVX5bJUkToI3ameOnBkYyg2800uIhfN3d1
+         xNAPwFGZoWa3HcU002NfdO3Ws/jQqYCqhauXalesTxmRJSVyzmCNeFquXBXuX/tfuVcg
+         4K2s+suJ68FKl8o1Vne9hEKBQ62USMn+4j0/8Swbo/RA6f9z1WAHUXt8wTt5FwE67MLh
+         0gkA==
+X-Gm-Message-State: AJcUukdsn4YN2GBdKvqWcc1L9p0piT8yMumxaraGXjuL2Je38+2aIsT/
+        MTLdsB6UNqY1Eb99FaDB06P6ETo1HtolIVI5UoE=
+X-Google-Smtp-Source: ALg8bN7fyru5bRUbN5kwcri6k3YPpDXsjxuU+EfH5O4PdTtn/kSfcp3SK+sv0CKspv/5CoY/r2xOTMwtZZ4kq+RxdV4=
+X-Received: by 2002:a67:b60d:: with SMTP id d13mr332513vsm.152.1546934970241;
+ Tue, 08 Jan 2019 00:09:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190107181505.GR9570@sirena.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190107175127.21240-1-geert+renesas@glider.be>
+In-Reply-To: <20190107175127.21240-1-geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Jan 2019 09:09:18 +0100
+Message-ID: <CAMuHMdXQqAaXBBAs6e4wJHWTjDTikXjzt3N0bMmAwSgyMqEcRw@mail.gmail.com>
+Subject: Re: [RFC] device-tree: resets properties, reset topology, and shared resets
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+On Mon, Jan 7, 2019 at 6:51 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -459,6 +459,42 @@ static void __reset_control_put_internal(struct reset_control *rstc)
+>         kref_put(&rstc->refcnt, __reset_control_release);
+>  }
+>
+> +static bool __of_reset_is_exclusive(const struct device_node *node,
+> +                                   const struct of_phandle_args *args,
+> +                                   const char *id)
+> +{
+> +       struct of_phandle_args args2;
+> +       struct device_node *node2;
+> +       int index, ret;
+> +       bool eq;
+> +
+> +       for_each_node_with_property(node2, "resets") {
+> +               if (node == node2)
+> +                       continue;
+> +
+> +               for (index = 0; ; index++) {
+> +                       ret = of_parse_phandle_with_args(node2, "resets",
+> +                                                        "#reset-cells", index,
+> +                                                        &args2);
+> +                       if (ret)
+> +                               break;
+> +
+> +                       eq = (args2.np == args.np &&
+> +                             args2.args_count == args.args_count &&
+> +                             !memcmp(args2.args, args.args,
+> +                                     args.args_count * sizeof(args.args[0])));
 
-On 07.01.2019 21:15, Mark Brown wrote:
+This is embarrasing: as kbuild test robot pointed out, these should be
+"args->" instead of "args.".
 
-> On Thu, Dec 27, 2018 at 11:21:14PM +0300, Sergei Shtylyov wrote:
-> 
->>   drivers/spi/spi-renesas-rpc.c |   66 ++++++++++++++++++++++++++----------------
-> 
-> This does not exist upstream.
+I failed to notice, as I have a local follow-up patch extracting this
+comparison into a common helper.
 
-    As I said, the patch was atop of the RPC-IF driver patch by M. Yang.
+Nevertheless, this doesn't change anything w.r.t. the principle behind
+this patch.
+Thanks again!
 
-MBR, Sergei
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
