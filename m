@@ -7,53 +7,48 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9399CC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 14:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9621FC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 15:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 595BF206BB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 14:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57E6420827
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 15:07:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ruglk+75"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ONILgf38"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfAHOsh (ORCPT
+        id S1727295AbfAHPHX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:48:37 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:34280 "EHLO
+        Tue, 8 Jan 2019 10:07:23 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:34815 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727739AbfAHOsg (ORCPT
+        with ESMTP id S1727840AbfAHPHX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:48:36 -0500
+        Tue, 8 Jan 2019 10:07:23 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 4319925B781;
-        Wed,  9 Jan 2019 01:48:34 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 3D04825AD76;
+        Wed,  9 Jan 2019 02:07:21 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1546958914; bh=yUZfw+awfVYZRz+vcH+kvka/WGgXXraVAsmofnK3ScE=;
+        t=1546960041; bh=Pk3vdtIPeg5AA5ShYBO1VDWpo292+aPwGQytR7o272A=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ruglk+75bXSvSaJYxvf1B/YLQTVm2jp2K+J5GQJ+hMaEHFMtMjyrZ0RruDpPZWUpm
-         +fbvJ3nzGtbzfp1ZQUTry0osIyHYfezX+RWC2MAz8Cz/0fd2jq15a49VkR6ZVSa3Gm
-         Gs+8gc+HM6dyHF5x31vn3CyoONSyWZqqHNPNz2ZY=
+        b=ONILgf38Aw/COTuZz3OnRZbP1+BaNR3RScXLEsD8tUoMDDBHfxJ4qPizUciVl83ys
+         q9ZlQFmak66JeJLGLvgGAnaZMvrmfCDyy27N74vAVA3EbJw/F+2FLUDmU0PHDRPmB1
+         Kh/bYdsvpwPEvWMNKjzRsWJdHeR3exfafiC/a2CE=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 5F92B940420; Tue,  8 Jan 2019 15:48:32 +0100 (CET)
-Date:   Tue, 8 Jan 2019 15:48:32 +0100
+        id 5AF87940420; Tue,  8 Jan 2019 16:07:19 +0100 (CET)
+Date:   Tue, 8 Jan 2019 16:07:19 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] serial: sh-sci: Make RX/TX DMA function names
- consistent
-Message-ID: <20190108144831.gxqexjoalkon33jb@verge.net.au>
-References: <20190107162320.15530-1-geert+renesas@glider.be>
- <20190107162320.15530-5-geert+renesas@glider.be>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7790: initialize TDSEL
+ register for ES1.0
+Message-ID: <20190108150719.ehb4e5m4ahqluz7h@verge.net.au>
+References: <20190107221320.14930-1-wsa+renesas@sang-engineering.com>
+ <20190107221320.14930-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190107162320.15530-5-geert+renesas@glider.be>
+In-Reply-To: <20190107221320.14930-2-wsa+renesas@sang-engineering.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -61,11 +56,18 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 05:23:20PM +0100, Geert Uytterhoeven wrote:
-> Most RX/TX-specific DMA functions are prefixed with "sci_dma_[rt]x_".
-> Rename the exceptions to increase consistency.
+On Mon, Jan 07, 2019 at 11:13:19PM +0100, Wolfram Sang wrote:
+> Documentation for ES1.0 says that some bits in TDSEL must be set (ch
+> 5.3.39 in R-Car H2 v0.91). However, the reset value of the register is
+> 0, so software has to do it. Add this to the kernel driver to ensure
+> this is really done independent of firmware versions and use
+> whitelisting for ES versions known to need this.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> This is needed for some SD cards supporting SDR104 transfer mode. For
+> me, TDSEL was not initialized by the firmware and I had problems with
+> the card when re-inserting it.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
