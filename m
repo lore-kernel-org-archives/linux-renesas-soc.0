@@ -2,151 +2,125 @@ Return-Path: <SRS0=bVnl=PQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B949BC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 11:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2427AC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 12:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AE8C20850
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 11:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF00B20685
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 12:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="kfMOnEq5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TN3m5lJE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727818AbfAHLTA (ORCPT
+        id S1728269AbfAHMGF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 06:19:00 -0500
-Received: from mail-eopbgr1400093.outbound.protection.outlook.com ([40.107.140.93]:10304
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727538AbfAHLS7 (ORCPT
+        Tue, 8 Jan 2019 07:06:05 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33818 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbfAHMGF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 06:18:59 -0500
+        Tue, 8 Jan 2019 07:06:05 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y185so8310868wmd.1;
+        Tue, 08 Jan 2019 04:06:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gYG19p01ePtbzON8FbYtyWAgoiw5b/NlkhFynCog7EE=;
- b=kfMOnEq5XfgkWRNCtyq4sGVPzjDedLBOPRImr/jVRYLmJZYiDem8tp2n4NWmOKKagiWeNusAHhn2DfxFnLSrHJ2oSOyphUgei1gPtnW+azDwi+ZqbHxojRIX4KF1WMKwYuirXplVq7JtaM26OSsN5JFGK+CwiWZebX32so1uIZ8=
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB3792.jpnprd01.prod.outlook.com (20.178.138.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.7; Tue, 8 Jan 2019 11:18:55 +0000
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::9163:fe8d:ceb8:8d88]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::9163:fe8d:ceb8:8d88%5]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 11:18:55 +0000
-From:   Chris Paterson <Chris.Paterson2@renesas.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: RE: [PATCH v2 0/2] pinctrl: sh-pfc: gen2: initialize TDSEL register
- for ES1.0
-Thread-Topic: [PATCH v2 0/2] pinctrl: sh-pfc: gen2: initialize TDSEL register
- for ES1.0
-Thread-Index: AQHUptZADSgep89UkE2I6d7IuNGtgqWlLnOg
-Date:   Tue, 8 Jan 2019 11:18:55 +0000
-Message-ID: <TYAPR01MB2285DCB1EA42F6B4FE33E1C3B78A0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <20190107221320.14930-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190107221320.14930-1-wsa+renesas@sang-engineering.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Paterson2@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TYAPR01MB3792;20:listLaBpuH7bLmli2mPgMv9R6/CgoLXxq/whzibOHDcRsZIesPPqA7BaZL15kwot9+XZKwSHgyWCl/uBOYOfXur6i6ma/hs9c4t7FiTNMXd1EU/fNnyzIer7gOQ/kl2rcU0fNL/9e7ddyAzg0jFdcwSMmLlxtDHEp+LmPCgIrFI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 5815b147-8a16-4334-24a8-08d6755b13df
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB3792;
-x-ms-traffictypediagnostic: TYAPR01MB3792:
-x-microsoft-antispam-prvs: <TYAPR01MB3792AFC44FAAA7B6E8D3DBCFB78A0@TYAPR01MB3792.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(6055026)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:TYAPR01MB3792;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB3792;
-x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(136003)(376002)(39860400002)(199004)(189003)(2501003)(105586002)(106356001)(6116002)(3846002)(14454004)(8936002)(81156014)(345774005)(8676002)(68736007)(81166006)(7736002)(305945005)(478600001)(72206003)(229853002)(486006)(55016002)(256004)(14444005)(74316002)(316002)(7696005)(4326008)(186003)(26005)(102836004)(25786009)(53936002)(6436002)(97736004)(54906003)(110136005)(5660300001)(2906002)(66066001)(33656002)(71190400001)(476003)(11346002)(446003)(6246003)(86362001)(6506007)(76176011)(99286004)(9686003)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3792;H:TYAPR01MB2285.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: N6UQw+9aTyPwqgOTOUyLTTjwq2Dxkla3imp6dyq1thBfTN5DB8nFqdqoEwtIjMsxKc2j608Fv9f0yP5MnrxBRABp1n4+JFBj8p0mo1aKL38461aakhCp96IEKGYjCbzd+pTk77V+qDb39G9LgkU8Xrqq6q/2DT/uJAooTTqdjLgKdZX7OXkvlU+pToyt7utpsos03Ca6kGwm/hFIB68dsnydFRCDZyaquum27cJ0tQdPkdvLSXox4T6td/BG9dqhG2fglPyFh8fPiHhv2hPTK51wR6xvuV6lhcnhWXm/7VAsqeSvidj8zL290ASe44ls
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bvH37TfwqoO2JLQdu07hHzOg/BejWk551fLqEumCMJ8=;
+        b=TN3m5lJEVmkElAtQ4CTzSQenz4XD0V8v/5cBDQONc0Qf9HD1hABdqzRqwjtQZjBlmw
+         LalMjQphWuZCvl/b3HHbSN8TpvWBm5vyopx9x+4dJW1cE7C+GymIfEDWE1r+aqXoykGI
+         yGcgHtPUSWi19I9Z8Sxx4DILZaHZjfUp+XoEa7jW1cAMNa6YxZ0FH8F7lSXEEyM/uh5E
+         SqJobS6e2mV/HxmajqceXuiW4CPkPVgk79LXCVuWcp5pAKs5x1LP4w8s/puWb08VFtEW
+         WirGBt5brRop85LZH8bAK4J19HimGdZOepnT+GtCx3QV5CLV6DY/ybDc1H48VGsi5wQr
+         SBZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bvH37TfwqoO2JLQdu07hHzOg/BejWk551fLqEumCMJ8=;
+        b=SRvSfQl3lJaEPrVUMr8zotU1vd3tQ4eKkfYjc0thK7Yjs4UXe2PpcawTPEQ68cafOy
+         jYwq1kEe5rXWLjsX0S7QOfoWRBRJ2jXcB4THCoRQudYmdPAtCcxfpVi6XMpthTWYEFmC
+         nUtSckep9aIr27+FqiNv8iZUcsRQEqpFvMfMKELG64ltqzfso7Sv7JPjj5Tqutfc9hGu
+         +/TroCoC96Ug7L61A9vyFY82lQsP87cnU1yhs7LNZiXvF9lDAzYY7LZjMVIvq38wvOlD
+         MLn7SwuqKdi274r2ybCyiMCIpAQsh0KYcrjeuEDmiXLXYYHKt91u6XQp4saOqkD2nJF2
+         jlAw==
+X-Gm-Message-State: AJcUukfzA6ytkq3KyxzIPMQSawh07Hh3v7QLLqUTodBgfnkAjar1QG2i
+        CHp0tq2/irYZr40Gbk+0xLk=
+X-Google-Smtp-Source: ALg8bN6ph7r4zyszpZ+e/Jc/xp3GXUsSSPuB4+9AtDZe8Ea/OpuXYNtm/gILzYQzJqMxKGORzlXjAg==
+X-Received: by 2002:a1c:47:: with SMTP id 68mr1485525wma.89.1546949163351;
+        Tue, 08 Jan 2019 04:06:03 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id k135sm11192867wmd.42.2019.01.08.04.06.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 04:06:02 -0800 (PST)
+Subject: Re: [PATCH v5 2/2] dt-bindings: spi: Document Renesas R-Car RPC-IF
+ controller bindings
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
+ <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <05c8e4ac-a9c8-7c24-289f-ce7a089dbc1e@gmail.com>
+Date:   Tue, 8 Jan 2019 12:52:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5815b147-8a16-4334-24a8-08d6755b13df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 11:18:55.3493
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3792
+In-Reply-To: <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Wolfram,
+On 1/8/19 5:17 AM, Mason Yang wrote:
+> Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> new file mode 100644
+> index 0000000..5f96532
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> @@ -0,0 +1,37 @@
+> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
+> +----------------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be "renesas,r8a77995-rpc"
+> +- #address-cells: should be 1
+> +- #size-cells: should be 0
+> +- reg: should contain 2 entries, one for the registers and one for the direct
+> +       mapping area
+> +- reg-names: should contain "regs" and "dirmap"
+> +- clock-names: should contain "rpc"
+> +- clocks: should contain 1 entries for the module's clock
+> +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
+> +			   	   "hyperflash" for rpc hyperflash mode.
 
-Thank you for the heads up.
+Why do we need this property ? I believe it is possible to detect the
+configuration based on the type of child of the RPC node. If the driver
+was properly designed, it could well behave as either CFI NOR driver or
+SPI flash driver and all would be good, but it seems this is written
+with it being SPI flash driver only and once the HF mode would need to
+be added, it'd mean a tremendous undertaking to rework the entire driver.
 
-> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Sent: 07 January 2019 22:13
->=20
-> During our SDHI hackathon, we found that Lager was the only Gen2 board
-> having issues with a stubborn SD card. The issue went away when setting
-> TDSEL to the expected value mentioned in the H2 documentation which is
-> sadly not the default value. M2-W, M2-N, and V2H have an expected value
-> of 0 for TDSEL, so this is why they likely work out of the box (V2H has
-> non-zero drive strength bit, though). I can't verify those SoCs here, no
-> boards. E2 has a non-zero expected value as well, so we fix it in this
-> patch series as well (although on my board the bootloader prepares TDSEL
-> correctly, but let's not rely on that).
->=20
-> Changes since V1:
->=20
-> * we discussed this with the HW team internally and concluded this is onl=
-y
->   needed for ES1.0 versions of these SoCs. So, setting TDSEL is now
->   whitelisted using soc_device_match.
->=20
-> * Chris added to CC
->   For two reasons: first, to give him a chance to test this so we don't
->   break the RZ series.
-
-Neither RZ/G1[HE] devices are based on ES1.0 so these patches shouldn't hav=
-e an effect.
-According to the RZ/G1 H/W manuals, all RZ/G1[HMNE] devices are expecting 0=
- for TDSEL.
-
-> Second, according to Geert, R-Car E2X and RZ/G1C
->   might have the same 'non-zero default value of TDSEL' problem and maybe
->   need fixing, too. But we don't have HW to check/test this.
-
-Geert is correct. We'll have to look into it.
-
-Kind regards, Chris
-
->=20
-> Looking forward to comments!
->=20
-> Thanks,
->=20
->    Wolfram
->=20
->=20
-> Wolfram Sang (2):
->   pinctrl: sh-pfc: r8a7790: initialize TDSEL register for ES1.0
->   pinctrl: sh-pfc: r8a7794: initialize TDSEL register for ES1.0
->=20
->  drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 17 +++++++++++++++++
->  drivers/pinctrl/sh-pfc/pfc-r8a7794.c | 16 ++++++++++++++++
->  2 files changed, 33 insertions(+)
->=20
-> --
-> 2.11.0
-
+-- 
+Best regards,
+Marek Vasut
