@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A90C43614
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 13:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538E1C43172
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 13:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEBE920850
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 13:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2274620850
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 13:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfAHNPA (ORCPT
+        id S1728421AbfAHNPA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 8 Jan 2019 08:15:00 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:37594 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728417AbfAHNPA (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33846 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728426AbfAHNPA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 8 Jan 2019 08:15:00 -0500
 Received: from ramsan ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id MpEx1z0043XaVaC06pExbF; Tue, 08 Jan 2019 14:14:58 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id MpEx1z0013XaVaC01pExYe; Tue, 08 Jan 2019 14:14:58 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ggrDc-0000vb-Ts; Tue, 08 Jan 2019 14:14:56 +0100
+        id 1ggrDc-0000vd-Ul; Tue, 08 Jan 2019 14:14:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ggrDc-00018M-Ry; Tue, 08 Jan 2019 14:14:56 +0100
+        id 1ggrDc-00018O-Te; Tue, 08 Jan 2019 14:14:56 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
@@ -37,9 +37,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] arm64: dts: renesas: r8a774a1: Enable DMA for SCIF2
-Date:   Tue,  8 Jan 2019 14:14:48 +0100
-Message-Id: <20190108131452.4297-2-geert+renesas@glider.be>
+Subject: [PATCH 2/5] arm64: dts: renesas: r8a774c0: Enable DMA for SCIF2
+Date:   Tue,  8 Jan 2019 14:14:49 +0100
+Message-Id: <20190108131452.4297-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190108131452.4297-1-geert+renesas@glider.be>
 References: <20190108131452.4297-1-geert+renesas@glider.be>
@@ -48,25 +48,25 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SCIF2 on RZ/G2M can be used with both DMAC1 and DMAC2.
+SCIF2 on RZ/G2E can be used with both DMAC1 and DMAC2.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 3 +++
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 46a8fd20108fbd3a..5cfc9cd6bb2bea8d 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1011,6 +1011,9 @@
- 				 <&cpg CPG_CORE R8A774A1_CLK_S3D1>,
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+index 3970aafeee1236c0..f2e390f7f1d5b157 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+@@ -941,6 +941,9 @@
+ 				 <&cpg CPG_CORE R8A774C0_CLK_S3D1C>,
  				 <&scif_clk>;
  			clock-names = "fck", "brg_int", "scif_clk";
 +			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
 +			       <&dmac2 0x13>, <&dmac2 0x12>;
 +			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+ 			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
  			resets = <&cpg 310>;
  			status = "disabled";
 -- 
