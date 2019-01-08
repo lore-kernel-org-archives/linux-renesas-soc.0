@@ -2,97 +2,122 @@ Return-Path: <SRS0=bVnl=PQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB40C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 04:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB92C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E81206B7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 04:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F77A20700
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbfAHERk (ORCPT
+        id S1727473AbfAHHnh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:17:40 -0500
-Received: from twhmllg3.macronix.com ([122.147.135.201]:48731 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbfAHERj (ORCPT
+        Tue, 8 Jan 2019 02:43:37 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53179 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbfAHHnh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:17:39 -0500
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG3.macronix.com with ESMTP id x084H3Eo091858;
-        Tue, 8 Jan 2019 12:17:03 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        sergei.shtylyov@cogentembedded.com
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
-Subject: [PATCH v5 0/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI driver
-Date:   Tue,  8 Jan 2019 12:16:58 +0800
-Message-Id: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-X-MAIL: TWHMLLG3.macronix.com x084H3Eo091858
+        Tue, 8 Jan 2019 02:43:37 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ggm2u-0008F8-NJ; Tue, 08 Jan 2019 08:43:32 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ggm2t-0004hn-QE; Tue, 08 Jan 2019 08:43:31 +0100
+Date:   Tue, 8 Jan 2019 08:43:31 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] pwm: rcar: Add support "atomic" API
+Message-ID: <20190108074331.lqwtex2pyumilfyn@pengutronix.de>
+References: <1546918094-13960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1546918094-13960-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1546918094-13960-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Mark,
+Hello,
 
-This Renesas R-Car Gen3 RPC-IF SPI driver is based on Boris's new
-spi-mem direct mapping read/write mode [1][2].
+On Tue, Jan 08, 2019 at 12:28:11PM +0900, Yoshihiro Shimoda wrote:
+> This patch adds support for "atomic" API. Behavior is the same as
+> when using legacy APIs.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/pwm/pwm-rcar.c | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+> index a41812f..ba70e83 100644
+> --- a/drivers/pwm/pwm-rcar.c
+> +++ b/drivers/pwm/pwm-rcar.c
+> @@ -192,12 +192,49 @@ static void rcar_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  	rcar_pwm_update(rp, RCAR_PWMCR_EN0, 0, RCAR_PWMCR);
+>  }
+>  
+> +static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+> +			  struct pwm_state *state)
+> +{
+> +	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
+> +	struct pwm_state cur_state;
+> +	int div, ret;
+> +
+> +	/* This HW doesn't support changing polarity */
+> +	pwm_get_state(pwm, &cur_state);
+> +	if (state->polarity != cur_state.polarity)
+> +		return -ENOTSUPP;
 
-v5 patch is accroding to Sergei's comments:
-1) Read 6 bytes ID from Sergei's patch.
-2) regmap_update_bits()
-3) C++ style comment
+Does the driver only support normal polarity or only inversed polarity?
+If so checking against that would be more clear here.
 
-v4 patch is according to Sergei's comments including:
-1) Drop soc_device_match()
-2) Drop unused RPC registers
-3) Use ilog2() instead of fls()
-4) Patch read 6 bytes ID w/ one command.
-5) Coding style and so on.
+> +
+> +	div = rcar_pwm_get_clock_division(rp, state->period);
+> +	if (div < 0)
+> +		return div;
+> +
+> +	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
+> +
+> +	ret = rcar_pwm_set_counter(rp, div, state->duty_cycle, state->period);
+> +	if (!ret)
+> +		rcar_pwm_set_clock_control(rp, div);
+> +
+> +	/* The SYNC should be set to 0 even if rcar_pwm_set_counter failed */
+> +	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, 0, RCAR_PWMCR);
+> +
+> +	if (!ret && state->enabled)
+> +		ret = rcar_pwm_enable(chip, pwm);
+> +
+> +	if (!state->enabled) {
+> +		rcar_pwm_disable(chip, pwm);
+> +		ret = 0;
+> +	}
 
-v3 patch is according to Marek and Geert's comments including:
-1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
-2) get_unaligned()
-3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
-4) coding style and so on.
+Assume the PWM runs with duty cycle 33% when
+pwm_apply_state({ .enabled=0, .duty_cycle=66, .period=100 }) is called.
 
-v2 patch including:
-1) remove RPC clock enable/dis-able control,
-2) patch run time PM, 
-3) add RPC module software reset, 
-4) add regmap,
-5) other coding style and so on.
+Does this might result in a 66% wave form being emitted? If yes, this
+needs fixing.
 
-thanks for your review.
-
-best regards,
-Mason
-
-[1] https://patchwork.kernel.org/patch/10670753
-[2] https://patchwork.kernel.org/patch/10670747
-
-
-Mason Yang (2):
-  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-  dt-bindings: spi: Document Renesas R-Car RPC-IF controller bindings
-
- .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  37 +
- drivers/spi/Kconfig                                |   6 +
- drivers/spi/Makefile                               |   1 +
- drivers/spi/spi-renesas-rpc.c                      | 787 +++++++++++++++++++++
- 4 files changed, 831 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
- create mode 100644 drivers/spi/spi-renesas-rpc.c
+Best regards
+Uwe
 
 -- 
-1.9.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
