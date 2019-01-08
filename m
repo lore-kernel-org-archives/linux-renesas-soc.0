@@ -2,70 +2,91 @@ Return-Path: <SRS0=bVnl=PQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56646C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB80C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C4AE2183F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF32C2183F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 07:52:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="j2vw8BQ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfAHHto (ORCPT
+        id S1727473AbfAHHwe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 02:49:44 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47317 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfAHHto (ORCPT
+        Tue, 8 Jan 2019 02:52:34 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46904 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727673AbfAHHwe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 02:49:44 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ggm8r-0000UX-Bk; Tue, 08 Jan 2019 08:49:41 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ggm8q-0004qE-P3; Tue, 08 Jan 2019 08:49:40 +0100
-Date:   Tue, 8 Jan 2019 08:49:40 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
+        Tue, 8 Jan 2019 02:52:34 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y14so2182856lfg.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Jan 2019 23:52:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pwvF6kuc4USL+DB3aRUPohmFgbFwH+iwGLnnxPrvfbY=;
+        b=j2vw8BQ3Jt+QfxP16lileseQtVD0BUWSxZmNuTMWJj/BiBXqC9laEndnt8G7alk8wK
+         XZJn8Nb0a8bGHXW1tF8VisjXlna1jAQhzmr42jjdz/jncEaRLcaIMwTiMnPrgz3mP4no
+         5iLeGcVifPY8Bd8t3J7fhrJOifLYGhs3zVepCnS3xhHDRGxdVLXHX8PD9RD/OQlNREpL
+         ZsWWVFT4wKsDmIL5ftR7DZhNL+D8UgWVPxhnpDkuAEH6NR6TPuEm4y/P2vKWNS8HJdrx
+         ZvkyteoOSMSFb8Bh76xXdbDvmhpgO5UxlkuYFCDUrDRAJmfnZP5s8KtjvR/x0/8QFrgw
+         dseA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pwvF6kuc4USL+DB3aRUPohmFgbFwH+iwGLnnxPrvfbY=;
+        b=PPU2eUJFRNoqST6elFy5mqw7eCNTNRRnIvfyfJFaUgOgf9v/GrTX275ZpQpacbUXJ6
+         jcAvaKjQUwDQO2XrxT7/LHT+Zc18I5jKnbGZv5LbhOqDlp+pv2DHiFN87Cr1Z1wdiGa2
+         B3euqDiuFIudNQ1z9vvHdKdVwFzae3bjeITGZVMUAdHtunnZQ8GZpyrYD02Af02ioILr
+         sai5Xua2gdQheMOINVHKTU1YYl1GJW1Lo9CVFw1xZgkgwVt9+OpWgu8PQuJ9RSZpcGZE
+         FJHzHsi7Kckp3lkdblpljLTCQhApYFQYnOy//r2uutPr2JqB+GJZkwWcusFSDUUtQINL
+         V1Ug==
+X-Gm-Message-State: AJcUukeVluagVanrwbrg10a5OigM8rfW0PSEJDH/8s3/Ot1w950OgypB
+        +fiqv5ywTcLOl6zbr7xrkfmsJUn2+88=
+X-Google-Smtp-Source: ALg8bN5D+5b/5+0ACuyEUBCY5eilygrKTVXPcYbLXSL3gIOqn3FTpYgLsz6liQlzI+taYAiW1/ORgQ==
+X-Received: by 2002:a19:f20:: with SMTP id e32mr435918lfi.51.1546933951863;
+        Mon, 07 Jan 2019 23:52:31 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.84.204])
+        by smtp.gmail.com with ESMTPSA id r26-v6sm14442619lji.25.2019.01.07.23.52.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 23:52:30 -0800 (PST)
+Subject: Re: [PATCH RFT] spi-renesas-rpc: manual read issue workaround
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-spi@vger.kernel.org, Mason Yang <masonccyang@mxic.com.tw>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] pwm: rcar: improve calculation of divider
-Message-ID: <20190108074940.c24bwov6uzotlmxg@pengutronix.de>
-References: <1546918094-13960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1546918094-13960-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <76eb5af5-756e-4d54-0be2-55573649d2d1@cogentembedded.com>
+ <20190107181505.GR9570@sirena.org.uk>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <e56eec35-9628-9c75-4a8d-685ffef5e2b9@cogentembedded.com>
+Date:   Tue, 8 Jan 2019 10:52:11 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1546918094-13960-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20190107181505.GR9570@sirena.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 12:28:14PM +0900, Yoshihiro Shimoda wrote:
-> The rcar_pwm_get_clock_division() has a loop to calculate the divider,
-> but the value of div should be calculatable without a loop. So,
-> this patch improves it.
-> 
-> This algorithm is suggested by Uwe Kleine-König and Laurent Pinchart.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Hello!
 
-Best regards
-Uwe
+On 07.01.2019 21:15, Mark Brown wrote:
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+> On Thu, Dec 27, 2018 at 11:21:14PM +0300, Sergei Shtylyov wrote:
+> 
+>>   drivers/spi/spi-renesas-rpc.c |   66 ++++++++++++++++++++++++++----------------
+> 
+> This does not exist upstream.
+
+    As I said, the patch was atop of the RPC-IF driver patch by M. Yang.
+
+MBR, Sergei
