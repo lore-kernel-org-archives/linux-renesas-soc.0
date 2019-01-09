@@ -2,114 +2,155 @@ Return-Path: <SRS0=7Xuf=PR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BE4C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 22:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B143C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 22:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E796020685
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 22:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79D6206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 22:40:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="nabzhB5h"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="B3/mYbeC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbfAIWOj (ORCPT
+        id S1726224AbfAIWkn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:14:39 -0500
-Received: from mail-eopbgr1410090.outbound.protection.outlook.com ([40.107.141.90]:62508
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725730AbfAIWOj (ORCPT
+        Wed, 9 Jan 2019 17:40:43 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46990 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfAIWkn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:14:39 -0500
+        Wed, 9 Jan 2019 17:40:43 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y14so6858991lfg.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Jan 2019 14:40:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+MyvGLHluvwXNDnIwypYgGylyp5CHozduNRS9X0Wf0o=;
- b=nabzhB5hWzuKkpC5YPJ5lm+X34Ev5mVaar/Muzv9Kyz4ExcpMpcXgREmynq7SSfFy4G8rNpOPwuPz+XmRqbWsMkG2Cq+3D/ZVcc1VZ39a3113dIANzkh7xDvDeGJTuoYgCzSGa4waCc3Tm4QP1Xgzo+jJU6+YT+3UmYwc7Jf/1w=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.162.18) by
- TY1PR01MB1833.jpnprd01.prod.outlook.com (52.133.164.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Wed, 9 Jan 2019 22:14:32 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::c8a8:4288:e40f:4b43]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::c8a8:4288:e40f:4b43%4]) with mapi id 15.20.1516.015; Wed, 9 Jan 2019
- 22:14:32 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Mason Yang <masonccyang@mxic.com.tw>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "juliensu@mxic.com.tw" <juliensu@mxic.com.tw>,
-        Simon Horman <horms@verge.net.au>,
-        "zhengxunli@mxic.com.tw" <zhengxunli@mxic.com.tw>
-Subject: RE: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-Thread-Topic: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-Thread-Index: AQHUpwkg7+dUfv33EUeO+vgiy0ZK06WnSY8AgAAAgoCAAAQHAIAAM27w
-Date:   Wed, 9 Jan 2019 22:14:32 +0000
-Message-ID: <TY1PR01MB1562410F21A3523037D9BCB88A8B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
- <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw>
- <74a5fba6-a77e-f71b-ce49-405fee8e0fda@cogentembedded.com>
- <CAMuHMdUPsN-VMhbttVK19gL_nPdaCTHHC7Dn3ajPoVhMqDJf_w@mail.gmail.com>
- <a4373a7f-07c4-baff-30a3-d1f5a294e1bb@cogentembedded.com>
-In-Reply-To: <a4373a7f-07c4-baff-30a3-d1f5a294e1bb@cogentembedded.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1833;20:wVIO/zMgMF6Y4BRhti9cXo322fRaCj9AyFyE8mdsISYZRimTASCThWBIVqs6i3EqC76hODCE4l5hUVWj4F5TDHdMt+nWB63XHgWagpaoabntGAsaDsXztqvIM6MkEnlQcmdR+s6KNrTAaZlRLqE0XkISHVE0Npr4QLyG5/pxsgQ=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 25f0039f-1641-48df-61f9-08d6767fd4f5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1833;
-x-ms-traffictypediagnostic: TY1PR01MB1833:
-x-microsoft-antispam-prvs: <TY1PR01MB18330CFD2CA270AE0D1339CD8A8B0@TY1PR01MB1833.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1833;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1833;
-x-forefront-prvs: 0912297777
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(366004)(346002)(396003)(136003)(189003)(199004)(6246003)(6116002)(7416002)(71200400001)(71190400001)(68736007)(25786009)(229853002)(2906002)(3846002)(256004)(486006)(66066001)(5660300001)(105586002)(106356001)(97736004)(53936002)(81156014)(76176011)(39060400002)(316002)(110136005)(54906003)(99286004)(74316002)(7696005)(81166006)(6506007)(86362001)(93886005)(26005)(476003)(72206003)(11346002)(33656002)(305945005)(446003)(478600001)(186003)(7736002)(8936002)(14454004)(9686003)(4326008)(8676002)(6436002)(102836004)(55016002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1833;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: G8MK9YWzT9uPPf5+djh2TvFzvJbbCqAhEa9z7N4FjBdlX5Ja2M100t/AawL39qEEVZ2rooZYKjEsKvsmxaJ8NH55khNrhnpVQywtmpOJI1AOVnPKdPLrTrkWt6OhOh8OyoWaqZtS1puP03YfmSMVC/5CRjqF4qaOFPS4MSJzq3DAxi1FTawN3JCJmlHCK5wbxWsMVHQkJFAIWDmwZ6h0bSatRGl3wvmXq2GetdCwKG+EIhdSRbZ+V5MRyePakBu66e25gYqH9Jir9LltMRf9n9mQaF+0azdi6sFWbLzlFrtwgo9ZoYTWFpZiUuab8Wnd
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=im22EfXQHQJ4U3xWKaC+1Sotpdbrj20LNzueZ0EQoBQ=;
+        b=B3/mYbeC4Fjc/cEkVJD5slS0K76BgdsGoL67DTsWuvswKPQgkV2tHaCeQ3i+k6Urou
+         TH7pjiDEs4lV8/+omI9CWK/KuPRv1QY0DupJFzGPDwcA7WvWSLGwF/CEvw+j63YI1i2y
+         MJQXx7AzgBtcfArABZ/fwBbd5J5yLgbTSkHaXwRFg9eGeOQjqXTX9swaPLFbLAEohLUi
+         hFxUmrjdLcGtzcsBH87D6Vd9SPpN2zJVA+t2WzPqrzk4L0B68oZa5D/QFRcZMwcyHgaU
+         L1rEm7+NSe5hLV0Tva+funQyc6HYV7d6zwK986/PnftfQTzgDECKwMITyV0c69AurvuA
+         PM2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=im22EfXQHQJ4U3xWKaC+1Sotpdbrj20LNzueZ0EQoBQ=;
+        b=JMvn+Gpsxm9CJpDpRVprKX7cHtzp2cfbCqxVQaA1e1YX6kUjbSu3E/kavKLUq3Tqs3
+         Lfwh3gEmegNk5hLRv3tgviwvM3SjftSMYZL4qoxbZ7npyFfWHYlbih11AmAUzgLLs6pR
+         XXw1gw78yFeC59I6LTwsRCC2r9LBlH50SGm3K2i19Wado0w5paKoVVijjapaVyd1G8NZ
+         Nghi/Yflq5OZ4o9CKqCkcrmkjCD8LYBFQT0m2oax12KHD1lmDzrmsJbZcTZP+zFNC/Pk
+         ZRKUjny11JL5VxLviz7FXaKUsXtgtwDH1qhD0F8nApDvEmsqSKKZQqXrfJvoDgIbT3oR
+         SCEg==
+X-Gm-Message-State: AJcUukco9UtDPZ+CVOJja+mBm7MLu07qselIp/iDVsCsfwr4s934PKT2
+        x3DwzKAuJuTx2kl9va9/aOTOxQ==
+X-Google-Smtp-Source: ALg8bN6fCIdZpA9nuTIBF5dLvhu64xntX+o3jFs8alYz/n5rZS/wDjLlH79odYyMsi4TRX/482HVtg==
+X-Received: by 2002:a19:4bc9:: with SMTP id y192mr4351811lfa.49.1547073640822;
+        Wed, 09 Jan 2019 14:40:40 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id s127sm14126874lfe.8.2019.01.09.14.40.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 14:40:39 -0800 (PST)
+Date:   Wed, 9 Jan 2019 23:40:39 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - VIN" 
+        <linux-renesas-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2] media: rcar-vin: Allow independent VIN link
+ enablement
+Message-ID: <20190109224039.GD24252@bigcity.dyn.berto.se>
+References: <20190106212018.16519-1-slongerbeam@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25f0039f-1641-48df-61f9-08d6767fd4f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2019 22:14:32.4298
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1833
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190106212018.16519-1-slongerbeam@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-T24gV2VkbmVzZGF5LCBKYW51YXJ5IDA5LCAyMDE5LCBTZXJnZWkgU2h0eWx5b3Ygd3JvdGU6DQo+
-ID4gSUlSQywgdGhpcyBoYXJkd2FyZSBibG9jayBpcyBhbHNvIHVzZWQgb24gUlovQSwgd2hpY2gg
-aXMgMzItYml0Lg0KPiANCj4gICBJJ20gbm90IHNlZWluZyBpdCBpbiB0aGUgIlJaL0ExSCBHcm91
-cCwgUlovQTFNIEdyb3VwIFVzZXLigJlzIE1hbnVhbDoNCj4gSGFyZHdhcmUiDQo+IFJldiAzLjAw
-LiBXaGF0IFNvQyBkaWQgeW91IGhhdmUgaW4gbWluZD8NCg0KRm9yIHRoZSBSWi9BIHNlcmllcyAo
-YW5kIFJaL1Qgc2VyaWVzKSwgaXQgaXMgY2FsbGVkIHRoZQ0KIlNQSSBNdWx0aSBJL08gQnVzIENv
-bnRyb2xsZXIiIChDaGFwdGVyIDE3KQ0KDQpJIGhhdmUgbm8gaWRlYSB3aHkgaXQgaGFzIGEgZGlm
-ZmVyZW50IG5hbWUgZm9yIHRoZSBzYW1lIGhhcmR3YXJlIChhbmQNCnRoZSBzYW1lIHBhZ2VzIGlu
-IHRoZSBtYW51YWwpLg0KDQpUaGUgSFcgdmVyc2lvbiBpbiBSWi9BMSBkb2VzIG5vdCBoYXZlIEh5
-cGVyUkFNLg0KDQpCdXQgdGhlIEhXIHZlcnNpb24gaW4gUlovQTIgaXMgdGhlIHNhbWUgYXMgd2hh
-dCBpcyBpbiBSLUNhciBHZW4zLg0KDQpDaHJpcw0KDQo=
+Hi Steve,
+
+Thanks for your patch, I think it looks good.
+
+On 2019-01-06 13:20:18 -0800, Steve Longerbeam wrote:
+> There is a block of code in rvin_group_link_notify() that loops through
+> all entities in the media graph, and prevents enabling a link to a VIN
+> node if any entity is in use. This prevents enabling a VIN link even if
+> there is an in-use entity somewhere in the graph that is independent of
+> the link's pipeline.
+> 
+> For example, the code will prevent enabling a link from the first
+> rcar-csi2 receiver to a VIN node even if there is an enabled link
+> somewhere far upstream on the second independent rcar-csi2 receiver
+> pipeline.
+> 
+> If this code is meant to prevent modifying a link if any entity in the
+> graph is actively involved in streaming (because modifying the CHSEL
+> register fields can disrupt any/all running streams), then the entities
+> stream counts should be checked rather than the use counts.
+> 
+> (There is already such a check in __media_entity_setup_link() that verifies
+> the stream_count of the link's source and sink entities are both zero,
+> but that is insufficient, since there should be no running streams in
+> the entire graph).
+> 
+> Modify the media_device_for_each_entity() loop to check the entity
+> stream_count instead of the use_count, and elaborate on the comment.
+> VIN node links can now be enabled even if there are other independent
+> in-use entities that are not streaming.
+> 
+> Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
+> 
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+> Changes in v2:
+> - bring back the media_device_for_each_entity() loop but check the
+>   stream_count not the use_count.
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index f0719ce24b97..6dd6b11c1b2b 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+>  	    !is_media_entity_v4l2_video_device(link->sink->entity))
+>  		return 0;
+>  
+> -	/* If any entity is in use don't allow link changes. */
+> +	/*
+> +	 * Don't allow link changes if any entity in the graph is
+> +	 * streaming, because modifying the CHSEL register fields
+> +	 * can disrupt running streams.
+> +	 */
+>  	media_device_for_each_entity(entity, &group->mdev)
+> -		if (entity->use_count)
+> +		if (entity->stream_count)
+>  			return -EBUSY;
+>  
+>  	mutex_lock(&group->lock);
+> -- 
+> 2.17.1
+> 
+
+-- 
+Regards,
+Niklas Söderlund
