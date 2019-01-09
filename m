@@ -2,152 +2,199 @@ Return-Path: <SRS0=7Xuf=PR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82060C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 14:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035FAC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 14:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FCC7206BB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 14:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12159206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 14:42:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lND13toB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="Xh0yR+9m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731259AbfAIORP (ORCPT
+        id S1731687AbfAIOmc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:17:15 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56588 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731169AbfAIORO (ORCPT
+        Wed, 9 Jan 2019 09:42:32 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:34025 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731544AbfAIOmc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:17:14 -0500
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D70F56D;
-        Wed,  9 Jan 2019 15:17:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547043432;
-        bh=cobIEMcBujl5imWVimZO0JciZDHVgH5rK4SWKFDwGIE=;
-        h=Reply-To:Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=lND13toBf03WERDRu4ORuUcSUNDlOL5nb0IPX2Cd9EIXiUZ497ZNdNHQFZrZVj/U6
-         i3bRDV48BP3FgzIL6sYRyufqAf1ia1HJEhRY+PH/4RyGa5Ag0dYPAfE/CYx43bVzgN
-         eR7Y3n8yf7TMLIp4oHbcVIUXGzRT7YRNqNQ4ML7w=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v2 6/6] media: adv748x: Implement TX link_setup callback
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20190106155413.30666-1-jacopo+renesas@jmondi.org>
- <20190106155413.30666-7-jacopo+renesas@jmondi.org>
- <9f156850-14b6-3ca2-47c1-e03e1bc2c0f8@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <92e07880-e662-3e83-15cd-9b09cd2ac867@ideasonboard.com>
-Date:   Wed, 9 Jan 2019 14:17:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 9 Jan 2019 09:42:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547044948;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=KjF7NHYVq2H5Rjlgc7Ponf7tX/iRoYC7Hmc16WB3vgU=;
+        b=Xh0yR+9merQG3QD6F5ksCL+aWABBIcXF7uvzoxdDmEEpyCcO40C5GGe79xv08zN24s
+        LQfOiE0u26iOEB1bq6g262OJLhWfyfdRbQo43DforvpuanKMRPciOSxuA8QWj/J4uFFd
+        HdL/cUP6O5wKHPE/8Ps+N9CzFwF0R+DwhwzxaQNnRCqOTrSICQjVu+KBinO/T/986GQA
+        TRLJSMOVPoyfJ4J65DuHnQzwLGVPetszVHSnegt2gljTfh2TxlgcRXEBUv9NkYRkjR7u
+        cJYbkj2QJJLly86xXRhgyvQ6j3Z5Pv9nYbrwrWZT/udSrCcfdNO7P09Di3XSX6cigplq
+        IlqA==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp05-03.back.ox.d0m.de
+        by smtp-ox.front (RZmta 44.9 AUTH)
+        with ESMTPSA id V028b8v09EgQJ7p
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 9 Jan 2019 15:42:26 +0100 (CET)
+Date:   Wed, 9 Jan 2019 15:42:26 +0100 (CET)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org
+Message-ID: <1121423889.1222568.1547044946442@webmail.strato.com>
+In-Reply-To: <20190107162320.15530-5-geert+renesas@glider.be>
+References: <20190107162320.15530-1-geert+renesas@glider.be>
+ <20190107162320.15530-5-geert+renesas@glider.be>
+Subject: Re: [PATCH v5 4/4] serial: sh-sci: Make RX/TX DMA function names
+ consistent
 MIME-Version: 1.0
-In-Reply-To: <9f156850-14b6-3ca2-47c1-e03e1bc2c0f8@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-IP: 85.212.162.185
+X-Originating-Client: open-xchange-appsuite
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
 
-One more comment below:
-
-On 07/01/2019 12:36, Kieran Bingham wrote:
-> Hi Jacopo,
+> On January 7, 2019 at 5:23 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 > 
-> On 06/01/2019 15:54, Jacopo Mondi wrote:
->> When the adv748x driver is informed about a link being created from HDMI or
->> AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
->> sure to implement proper routing management at link setup time, to route
->> the selected video stream to the desired TX output.>
-
-<snip>
-
->>  static int adv748x_parse_csi2_lanes(struct adv748x_state *state,
->> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
->> index 6eb2e4a95eed..eb19c6cbbb4e 100644
->> --- a/drivers/media/i2c/adv748x/adv748x.h
->> +++ b/drivers/media/i2c/adv748x/adv748x.h
->> @@ -93,6 +93,7 @@ struct adv748x_csi2 {
->>  
->>  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
->>  #define __is_tx(_tx, _ab) ((_tx) == &(_tx)->state->tx##_ab)
->> +#define is_tx(_tx) (is_txa(_tx) || is_txb(_tx))
-
-I'd put this /after/ is_txa/is_txb so that the use is after the
-declarations.
---
-KB
-
-
->>  #define is_txa(_tx) __is_tx(_tx, a)
->>  #define is_txb(_tx) __is_tx(_tx, b)
->>  
->> @@ -224,6 +225,7 @@ struct adv748x_state {
->>  #define ADV748X_IO_10_CSI4_EN		BIT(7)
->>  #define ADV748X_IO_10_CSI1_EN		BIT(6)
->>  #define ADV748X_IO_10_PIX_OUT_EN	BIT(5)
->> +#define ADV748X_IO_10_CSI4_IN_SEL_AFE	BIT(3)
->>  
->>  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
->>  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
->>
 > 
+> Most RX/TX-specific DMA functions are prefixed with "sci_dma_[rt]x_".
+> Rename the exceptions to increase consistency.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v5:
+>   - New.
+> ---
+>  drivers/tty/serial/sh-sci.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 891833315698b953..cb3d5d37674f56f2 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1253,7 +1253,7 @@ static void sci_dma_rx_chan_invalidate(struct sci_port *s)
+>  	s->active_rx = 0;
+>  }
+>  
+> -static void sci_rx_dma_release(struct sci_port *s)
+> +static void sci_dma_rx_release(struct sci_port *s)
+>  {
+>  	struct dma_chan *chan = s->chan_rx_saved;
+>  
+> @@ -1343,7 +1343,7 @@ static void sci_dma_rx_complete(void *arg)
+>  	spin_unlock_irqrestore(&port->lock, flags);
+>  }
+>  
+> -static void sci_tx_dma_release(struct sci_port *s)
+> +static void sci_dma_tx_release(struct sci_port *s)
+>  {
+>  	struct dma_chan *chan = s->chan_tx_saved;
+>  
+> @@ -1356,7 +1356,7 @@ static void sci_tx_dma_release(struct sci_port *s)
+>  	dma_release_channel(chan);
+>  }
+>  
+> -static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
+> +static int sci_dma_rx_submit(struct sci_port *s, bool port_lock_held)
+>  {
+>  	struct dma_chan *chan = s->chan_rx;
+>  	struct uart_port *port = &s->port;
+> @@ -1399,7 +1399,7 @@ static int sci_submit_rx(struct sci_port *s, bool port_lock_held)
+>  	return -EAGAIN;
+>  }
+>  
+> -static void work_fn_tx(struct work_struct *work)
+> +static void sci_dma_tx_work_fn(struct work_struct *work)
+>  {
+>  	struct sci_port *s = container_of(work, struct sci_port, work_tx);
+>  	struct dma_async_tx_descriptor *desc;
+> @@ -1458,7 +1458,7 @@ static void work_fn_tx(struct work_struct *work)
+>  	return;
+>  }
+>  
+> -static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
+> +static enum hrtimer_restart sci_dma_rx_timer_fn(struct hrtimer *t)
+>  {
+>  	struct sci_port *s = container_of(t, struct sci_port, rx_timer);
+>  	struct dma_chan *chan = s->chan_rx;
+> @@ -1515,7 +1515,7 @@ static enum hrtimer_restart rx_timer_fn(struct hrtimer *t)
+>  	}
+>  
+>  	if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+> -		sci_submit_rx(s, true);
+> +		sci_dma_rx_submit(s, true);
+>  
+>  	sci_dma_rx_reenable_irq(s);
+>  
+> @@ -1595,7 +1595,7 @@ static void sci_request_dma(struct uart_port *port)
+>  				__func__, UART_XMIT_SIZE,
+>  				port->state->xmit.buf, &s->tx_dma_addr);
+>  
+> -			INIT_WORK(&s->work_tx, work_fn_tx);
+> +			INIT_WORK(&s->work_tx, sci_dma_tx_work_fn);
+>  			s->chan_tx_saved = s->chan_tx = chan;
+>  		}
+>  	}
+> @@ -1630,12 +1630,12 @@ static void sci_request_dma(struct uart_port *port)
+>  		}
+>  
+>  		hrtimer_init(&s->rx_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> -		s->rx_timer.function = rx_timer_fn;
+> +		s->rx_timer.function = sci_dma_rx_timer_fn;
+>  
+>  		s->chan_rx_saved = s->chan_rx = chan;
+>  
+>  		if (port->type == PORT_SCIFA || port->type == PORT_SCIFB)
+> -			sci_submit_rx(s, false);
+> +			sci_dma_rx_submit(s, false);
+>  	}
+>  }
+>  
+> @@ -1644,9 +1644,9 @@ static void sci_free_dma(struct uart_port *port)
+>  	struct sci_port *s = to_sci_port(port);
+>  
+>  	if (s->chan_tx_saved)
+> -		sci_tx_dma_release(s);
+> +		sci_dma_tx_release(s);
+>  	if (s->chan_rx_saved)
+> -		sci_rx_dma_release(s);
+> +		sci_dma_rx_release(s);
+>  }
+>  
+>  static void sci_flush_buffer(struct uart_port *port)
+> @@ -1684,7 +1684,7 @@ static irqreturn_t sci_rx_interrupt(int irq, void *ptr)
+>  			disable_irq_nosync(irq);
+>  			scr |= SCSCR_RDRQE;
+>  		} else {
+> -			if (sci_submit_rx(s, false) < 0)
+> +			if (sci_dma_rx_submit(s, false) < 0)
+>  				goto handle_pio;
+>  
+>  			scr &= ~SCSCR_RIE;
+> -- 
+> 2.17.1
+>
 
--- 
-Regards
---
-Kieran
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+
+CU
+Uli
