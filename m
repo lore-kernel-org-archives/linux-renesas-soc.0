@@ -2,106 +2,80 @@ Return-Path: <SRS0=7Xuf=PR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0901AC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 18:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5631C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 18:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5B7B20661
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 18:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AE6521738
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 18:54:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547060066;
+	bh=JAyHTHDxHbS05ObHgzrV7yd6yPTKQQdN2LOtB2RrBbI=;
+	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
+	b=2mCbIAON7cpLr3Kq1s+AOogISiINUA/3jP9CIvapwDLJoEOnXwPGCfjRt8D/hGSL2
+	 II56kJXvl3MDU7B8yq3hq9pDUBFAXyG6SOFd+ilmPiYAqBgGUvClHHwggeIhqZHtEm
+	 5u1qZS3f/cf4CjFS03GZ3WTlyBOwRXIAV9ZdyxjQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfAIStv (ORCPT
+        id S1727483AbfAISy0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:49:51 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:39969 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbfAIStv (ORCPT
+        Wed, 9 Jan 2019 13:54:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727286AbfAISy0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:49:51 -0500
-Received: by mail-ua1-f68.google.com with SMTP id n7so2757151uao.7;
-        Wed, 09 Jan 2019 10:49:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H+rgcDqI8CEHwQAJP0zPbgTwogwHzwkVgpn2Q+/ndIY=;
-        b=ImgoTRif0XanKU6zLeeT3um7qKZ8lZx/+estHoj3khNCAjOfwfipzMKEFEJbnhokD0
-         UF4HXN4Ogq3SYpZnj5EvBmi/P2pVsyP4I+q3Ec3FG0I4voaDK4ebqlvW19iBoYZv/Qxw
-         +Nc8SMcI9epVXMeTG36XyKUVUvEOlRJkaW2+Ea8BHQhfVZLIGsGCdciXZI2Q1QV0Xt2Y
-         qQOSj6mERpQ/nLOyR5CHvMALoLAfU6KN2kzjjFpbK0EdHEXLHHDI2P+GxkqRVOzzFXTo
-         UMxEwwgKqotdLM9Zxk93qqppMXYTJRkogypS/mAAG+rbRR1TY6ytX6iQupiQ3tapO35K
-         72Mw==
-X-Gm-Message-State: AJcUukfUSgbKr6AdzyadE29d4G8UY63VlYzOr4U1mt3Y2bgoXnTwXgt5
-        p1P9claa6YvtXGtfCKOc789+HCwgQQZbzsazvHkAGeQK
-X-Google-Smtp-Source: ALg8bN4lqdNLaXNOGiAtZ8kEeFcqJsCijrRjVK3BN8kmQm+DfYDwcsLFO5VJ4iiEDmC/IuBR36eGWqdZm1K1xefyHgg=
-X-Received: by 2002:ab0:216:: with SMTP id 22mr2628571uas.28.1547059789275;
- Wed, 09 Jan 2019 10:49:49 -0800 (PST)
+        Wed, 9 Jan 2019 13:54:26 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5954720859;
+        Wed,  9 Jan 2019 18:54:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547060065;
+        bh=JAyHTHDxHbS05ObHgzrV7yd6yPTKQQdN2LOtB2RrBbI=;
+        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
+        b=c6ND2WtSTg7Il/my5hdjeeCmsX0xhHcChK+PAYoNomdvV9Z5/YPfaTP7hkTbvUbh5
+         e5NYYJbQg0QhuXM6uvSJMYovtJ9zfjJhHzO4S21tBlXgGwMAAhrEDIkoG7heIgDfsg
+         XSl59Fz/fV4W7oRKM30rv9VqDMLEypgOigAgRo1Q=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
- <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw> <74a5fba6-a77e-f71b-ce49-405fee8e0fda@cogentembedded.com>
-In-Reply-To: <74a5fba6-a77e-f71b-ce49-405fee8e0fda@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 9 Jan 2019 19:49:37 +0100
-Message-ID: <CAMuHMdUPsN-VMhbttVK19gL_nPdaCTHHC7Dn3ajPoVhMqDJf_w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: vc5: Abort clock configuration without upstream clock
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Marek Vasut <marek.vasut@gmail.com>, linux-clk@vger.kernel.org
+In-Reply-To: <20181215005519.3695-1-marek.vasut+renesas@gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+References: <20181215005519.3695-1-marek.vasut+renesas@gmail.com>
+Message-ID: <154706006447.15366.17768068514421647549@swboyd.mtv.corp.google.com>
+Date:   Wed, 09 Jan 2019 10:54:24 -0800
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+Quoting Marek Vasut (2018-12-14 16:55:19)
+> In case the upstream clock are not set, which can happen in case the
+> VC5 has no valid upstream clock, the $src variable is used uninited
+> by regmap_update_bits(). Check for this condition and return -EINVAL
+> in such case.
+>=20
+> Note that in case the VC5 has no valid upstream clock, the VC5 can
+> not operate correctly. That is a hardware property of the VC5. The
+> internal oscilator present in some VC5 models is also considered
+> upstream clock.
+>=20
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
 
-On Wed, Jan 9, 2019 at 7:47 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 01/08/2019 07:16 AM, Mason Yang wrote:
-> > Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
-> >
-> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->
->    You now need to add:
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Applied to clk-fixes
 
-> > --- a/drivers/spi/Kconfig
-> > +++ b/drivers/spi/Kconfig
-> > @@ -544,6 +544,12 @@ config SPI_RSPI
-> >       help
-> >         SPI driver for Renesas RSPI and QSPI blocks.
-> >
-> > +config SPI_RENESAS_RPC_IF
->
->    Since the driver is called without -IF suffix, I wouldn't use it in the
-> Kconfig name either, the following is enough:
->
-> > +     tristate "Renesas R-Car Gen3 RPC-IF SPI controller"
-> > +     depends on ARCH_RENESAS || COMPILE_TEST
->
->    Judging on the compilation error reported by the 0-day bot about readq(),
-> we now need to depend on 64BIT or something...
-
-IIRC, this hardware block is also used on RZ/A, which is 32-bit.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
