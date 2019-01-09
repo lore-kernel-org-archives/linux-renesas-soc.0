@@ -2,222 +2,113 @@ Return-Path: <SRS0=7Xuf=PR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C27C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 00:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98873C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 07:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4DDF20883
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 00:13:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qeWwZJ4S"
+	by mail.kernel.org (Postfix) with ESMTP id 7084B20821
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 07:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbfAIAN6 (ORCPT
+        id S1729402AbfAIHwH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 19:13:58 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41670 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727917AbfAIAN6 (ORCPT
+        Wed, 9 Jan 2019 02:52:07 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:34149 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbfAIHwG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 19:13:58 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5EDDA586;
-        Wed,  9 Jan 2019 01:13:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1546992835;
-        bh=AkbaQOxZMi9tm3sFg5IQOR9ZFyELl2xqpYQHngZEugM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qeWwZJ4Sbo4rROc5VWCNZZ7KENPvaRbpOEqDuV0a5Zx6ZlkcaLCXUkeLDyq8mQ+Hn
-         XHfoxNy5O2F8MxgsOzoBTBqSzderoi2qKqomr60fGRsaFial41h74HVfdphcvZXpaC
-         HmChPIyF3/YS8gNI8CUzutWqK4PTjqY3l2zU3QIw=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     kieran.bingham@ideasonboard.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] media: adv748x: Implement TX link_setup callback
-Date:   Wed, 09 Jan 2019 02:15:04 +0200
-Message-ID: <1722143.vWDHCLa8RZ@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <9f156850-14b6-3ca2-47c1-e03e1bc2c0f8@ideasonboard.com>
-References: <20190106155413.30666-1-jacopo+renesas@jmondi.org> <20190106155413.30666-7-jacopo+renesas@jmondi.org> <9f156850-14b6-3ca2-47c1-e03e1bc2c0f8@ideasonboard.com>
+        Wed, 9 Jan 2019 02:52:06 -0500
+Received: by mail-vs1-f67.google.com with SMTP id y27so4211148vsi.1;
+        Tue, 08 Jan 2019 23:52:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/00JG/LKDGXbS/7oDQfRERssheEGJxE8WucQTaYTm5w=;
+        b=dJzQerfpMHZPhEVFWFmJnXfpkjQdqhJuqkc0GQzNSWc4I0pxHPeR6oc9JOmehqbt46
+         SmNgfaboHuuCsXeryu6kr31z/xLQjhUi4mFxdIGCt2SShAG0NQzUCTSmvo3b2XxfwXu9
+         rz3YC1HalefVg0PkgIvTSJdwPgJ2lPzbRwvwnWqiytkCSZSRqtEuIwChqAuUB+6L7cBd
+         0rHGUaOE4WLlaBw7fooVxR561UNu3JqDjnuML4V7wJLvjwIFoC5nUIcqhB38Dq6mlDly
+         8BBk4KvBKK2GN3PBTPVecvmR1l7WV6J26+A2GEHYeOxsu0mCkLLhNnqicAo1baPS74bs
+         EWNw==
+X-Gm-Message-State: AJcUukd0YsJQ2jT/E9aiUsRBEVsbyaAFFD7xS3EnzlMZDStpts05S1DY
+        Dos6ikFn27VBTbheZSGao/Empo9hRgEMKmB1eUk=
+X-Google-Smtp-Source: ALg8bN4AJr240Okvh9pFg8QSuW3fNgqKIpk8Pm8sArvLNdvqCRasPIvjyRB0QT1yrGNGafwUjD6j9OFTJGcmDrZxdHg=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr1878528vsj.11.1547020325550;
+ Tue, 08 Jan 2019 23:52:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw> <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
+In-Reply-To: <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 9 Jan 2019 08:51:53 +0100
+Message-ID: <CAMuHMdW0vBrQm1_moRyTSa+1j5Nob83UNPu3phmrhZNECk7t2w@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] dt-bindings: spi: Document Renesas R-Car RPC-IF
+ controller bindings
+To:     Mason Yang <masonccyang@mxic.com.tw>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Hi Mason,
 
-On Monday, 7 January 2019 14:36:28 EET Kieran Bingham wrote:
-> On 06/01/2019 15:54, Jacopo Mondi wrote:
-> > When the adv748x driver is informed about a link being created from HDMI
-> > or AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
-> > sure to implement proper routing management at link setup time, to route
-> > the selected video stream to the desired TX output.
-> 
-> Overall this looks like the right approach - but I feel like the
-> handling of the io10 register might need some consideration, because
-> it's value depends on the condition of both CSI2 transmitters, not just
-> the currently parsed link.
-> 
-> I had a go at some pseudo - uncompiled/untested code inline as a suggestion.
-> 
-> If you think it's better - feel free to rework it in ... or not as you
-> see fit.
-> 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> > 
-> >  drivers/media/i2c/adv748x/adv748x-core.c | 57 +++++++++++++++++++++++-
-> >  drivers/media/i2c/adv748x/adv748x.h      |  2 +
-> >  2 files changed, 58 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/media/i2c/adv748x/adv748x-core.c
-> > b/drivers/media/i2c/adv748x/adv748x-core.c index
-> > 200e00f93546..a586bf393558 100644
-> > --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> > +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> > @@ -335,6 +335,60 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool
-> > on)
-> >  /* ----------------------------------------------------------------------
-> >   * Media Operations
-> >   */
-> > +static int adv748x_link_setup(struct media_entity *entity,
-> > +			      const struct media_pad *local,
-> > +			      const struct media_pad *remote, u32 flags)
-> > +{
-> > +	struct v4l2_subdev *rsd = media_entity_to_v4l2_subdev(remote->entity);
-> > +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
-> > +	struct adv748x_state *state = v4l2_get_subdevdata(sd);
-> > +	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-> > +	bool enable = flags & MEDIA_LNK_FL_ENABLED;
-> > +	u8 io10;
-> > +
-> > +	/* Refuse to enable multiple links to the same TX at the same time. */
-> > +	if (enable && tx->src)
-> > +		return -EINVAL;
-> > +
-> > +	/* Set or clear the source (HDMI or AFE) and the current TX. */
-> > +	if (rsd == &state->afe.sd)
-> > +		state->afe.tx = enable ? tx : NULL;
-> > +	else
-> > +		state->hdmi.tx = enable ? tx : NULL;
-> > +
-> > +	tx->src = enable ? rsd : NULL;
-> > +
-> > +	if (!enable)
-> > +		return 0;
-> 
-> Don't we potentially want to take any action on disable to power down
-> links below ?
-> 
-> > +
-> > +	/* Change video stream routing, according to the newly enabled link. */
-> > +	io10 = io_read(state, ADV748X_IO_10);
-> > +	if (rsd == &state->afe.sd) {
-> > +		/*
-> > +		 * Set AFE->TXA routing and power off TXB if AFE goes to TXA.
-> > +		 * if AFE goes to TXB, we need both TXA and TXB powered on.
-> > +		 */
-> > +		io10 &= ~ADV748X_IO_10_CSI1_EN;
-> > +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> > +		if (is_txa(tx))
-> > +			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> 
-> Shouldn't the CSI4 be enabled here too? or are we assuming it's already
-> (/always) enabled?
-> 		io10 |= ADV748X_IO_10_CSI4_EN;
-> 
-> > +		else
-> > +			io10 |= ADV748X_IO_10_CSI4_EN |
-> > +				ADV748X_IO_10_CSI1_EN;
-> > +	} else {
-> > +		/* Clear AFE->TXA routing and power up TXA. */
-> > +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> > +		io10 |= ADV748X_IO_10_CSI4_EN;
-> 
-> But if we assume it's already enabled ... do we need this?
-> Perhaps it might be better to be explicit on this?
-> 
-> > +	}
-> > +	io_write(state, ADV748X_IO_10, io10);
-> 
-> Would it be any cleaner to use io_clrset() here?
-> 
-> Hrm ... also it feels like this register really should be set depending
-> upon the complete state of ... &state->...
-> 
-> So perhaps it deserves it's own function which should be called after
-> csi_registered() callback and any link change.
-> 
-> /me has a quick go at some psuedo codeishness...:
-> 
-> int adv74x_io_10(struct adv748x_state *state);
-> 	u8 bits = 0;
-> 	u8 mask = ADV748X_IO_10_CSI1_EN
-> 
-> 		| ADV748X_IO_10_CSI4_EN
-> 		| ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> 
-> 	if (state->afe.tx) {
-> 		/* AFE Requires TXA enabled, even when output to TXB */
-> 		bits |= ADV748X_IO_10_CSI4_EN;
-> 
-> 		if (is_txa(state->afe.tx))
-> 			bits |= ADV748X_IO_10_CSI4_IN_SEL_AFE
-> 		else
-> 			bits |= ADV748X_IO_10_CSI1_EN;
-> 	}
-> 
-> 	if (state->hdmi.tx) {
-> 		bits |= ADV748X_IO_10_CSI4_EN;
-> 	}
-> 
-> 	return io_clrset(state, ADV748X_IO_10, mask, bits);
-> }
-> 
-> How does that look ? (is it even correct first?)
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct media_entity_operations adv748x_tx_media_ops = {
-> > +	.link_setup	= adv748x_link_setup,
-> > +	.link_validate	= v4l2_subdev_link_validate,
-> > +};
-> > 
-> >  static const struct media_entity_operations adv748x_media_ops = {
-> >  	.link_validate = v4l2_subdev_link_validate,
-> > @@ -516,7 +570,8 @@ void adv748x_subdev_init(struct v4l2_subdev *sd,
-> > struct adv748x_state *state,
-> >  		state->client->addr, ident);
-> >  	
-> >  	sd->entity.function = function;
-> > -	sd->entity.ops = &adv748x_media_ops;
-> > +	sd->entity.ops = is_tx(adv748x_sd_to_csi2(sd)) ?
-> > +			 &adv748x_tx_media_ops : &adv748x_media_ops;
-> 
-> Aha - yes that's a neat solution to ensure that only the TX links
-> generate link_setup calls :)
+On Tue, Jan 8, 2019 at 5:17 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
+> Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+>
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 
-Another option would be to bail out from adv748x_link_setup() if the entity is 
-not a TX*.
+Thanks for your patch!
 
-> >  }
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> @@ -0,0 +1,37 @@
+> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
+> +----------------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be "renesas,r8a77995-rpc"
 
-[snip]
+Would it make sense to have a family-specific fallback "renesas,rcar-gen3-rpc",
+bseides the SoC-specific compatible value?
+</masonccyang@mxic.com.tw></masonccyang@mxic.com.tw>
 
--- 
-Regards,
+> +- #address-cells: should be 1
+> +- #size-cells: should be 0
+> +- reg: should contain 2 entries, one for the registers and one for the direct
+> +       mapping area
+> +- reg-names: should contain "regs" and "dirmap"
+> +- clock-names: should contain "rpc"
+> +- clocks: should contain 1 entries for the module's clock
 
-Laurent Pinchart
+Doesn't the driver have a need to access the RPCD2 clock?
+At least on R-Car V3M, it needs to program the Divider Clock Register
+(DIVREG).
 
+> +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
+> +                                  "hyperflash" for rpc hyperflash mode.
 
+Can't this be derived from the flash subnode?
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
