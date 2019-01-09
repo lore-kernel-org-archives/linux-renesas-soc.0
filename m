@@ -2,84 +2,119 @@ Return-Path: <SRS0=7Xuf=PR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1CFC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 08:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21804C43444
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 08:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBFC720883
+	by mail.kernel.org (Postfix) with ESMTP id DFAF3214C6
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 08:22:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbfAIIWA (ORCPT
+        id S1729852AbfAIIWA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 9 Jan 2019 03:22:00 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:55996 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729844AbfAIIWA (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:5297 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729334AbfAIIWA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 9 Jan 2019 03:22:00 -0500
 X-IronPort-AV: E=Sophos;i="5.56,456,1539615600"; 
-   d="scan'208";a="4746199"
+   d="scan'208";a="4541219"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2019 17:21:58 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 09 Jan 2019 17:21:58 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0D1CA446E142;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1811E446E142;
         Wed,  9 Jan 2019 17:21:58 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     thierry.reding@gmail.com
 Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 0/4] pwm: rcar: Add support "atomic" API and improve calculation
-Date:   Wed,  9 Jan 2019 17:19:04 +0900
-Message-Id: <1547021948-7664-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 1/4] pwm: rcar: Add support "atomic" API
+Date:   Wed,  9 Jan 2019 17:19:05 +0900
+Message-Id: <1547021948-7664-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547021948-7664-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1547021948-7664-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series adds support for PWM "atomic" API and improve
-the clock calculation.
+This patch adds support for "atomic" API. This behavior differs with
+legacy APIs a little.
 
-Changes from v2 [1]:
- - Add Acked-by of Uwe in patch [234]/4.
- - Modify a condition to support normal polarity only.
- - Fix possible to output wrong a duty cycle when disabling in patch 1/4.
- - Fix overflow value on 32-bit arch in patch 4/4.
+ Legacy APIs:
+  The PWMCNT register will be updated in rcar_pwm_config() even if
+  the PWM state is disabled.
 
-Changes from v1 [2]:
- - Remove workaround code of output pseudo low level for now because it is
-   rejected on the ML.
- - Add a condition for polarity because the HW doesn't support polarity change
-   in patch 1/4.
- - Improve the clock calculation in patch 4/4.
+ Atomic API:
+  The PWMCNT register will be updated in rcar_pwm_apply() only if
+  the PWM state is enabled. Otherwize, if a PWM runs with 30% duty
+  cycles and the pwm_apply_state() is called with state->enabled = 0,
+  ->duty_cycle = 60 and ->period = 100, this is possible to output
+  a 60% duty cycle.
 
-[1]
-https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=63219
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/pwm/pwm-rcar.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-Remarks:
-On the email thread of patch 2/4, we discuss about suspend/resume
-handling and I suposed to improve it. However, I need more time
-how to improve it. So, for now, I don't improve it on this patch series.
-
-[2]
-https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=53193
-
-
-Yoshihiro Shimoda (4):
-  pwm: rcar: Add support "atomic" API
-  pwm: rcar: Use "atomic" API on rcar_pwm_resume()
-  pwm: rcar: remove legacy APIs
-  pwm: rcar: improve calculation of divider
-
- drivers/pwm/pwm-rcar.c | 99 ++++++++++++++++++++++++--------------------------
- 1 file changed, 48 insertions(+), 51 deletions(-)
-
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index a41812f..e3ab663 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -192,12 +192,49 @@ static void rcar_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	rcar_pwm_update(rp, RCAR_PWMCR_EN0, 0, RCAR_PWMCR);
+ }
+ 
++static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			  struct pwm_state *state)
++{
++	struct rcar_pwm_chip *rp = to_rcar_pwm_chip(chip);
++	struct pwm_state cur_state;
++	int div, ret;
++
++	/* This HW/driver only supports normal polarity */
++	pwm_get_state(pwm, &cur_state);
++	if (state->polarity != PWM_POLARITY_NORMAL)
++		return -ENOTSUPP;
++
++	if (!state->enabled) {
++		rcar_pwm_disable(chip, pwm);
++		return 0;
++	}
++
++	div = rcar_pwm_get_clock_division(rp, state->period);
++	if (div < 0)
++		return div;
++
++	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, RCAR_PWMCR_SYNC, RCAR_PWMCR);
++
++	ret = rcar_pwm_set_counter(rp, div, state->duty_cycle, state->period);
++	if (!ret)
++		rcar_pwm_set_clock_control(rp, div);
++
++	/* The SYNC should be set to 0 even if rcar_pwm_set_counter failed */
++	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, 0, RCAR_PWMCR);
++
++	if (!ret && state->enabled)
++		ret = rcar_pwm_enable(chip, pwm);
++
++	return ret;
++}
++
+ static const struct pwm_ops rcar_pwm_ops = {
+ 	.request = rcar_pwm_request,
+ 	.free = rcar_pwm_free,
+ 	.config = rcar_pwm_config,
+ 	.enable = rcar_pwm_enable,
+ 	.disable = rcar_pwm_disable,
++	.apply = rcar_pwm_apply,
+ 	.owner = THIS_MODULE,
+ };
+ 
 -- 
 1.9.1
 
