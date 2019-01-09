@@ -1,140 +1,113 @@
-Return-Path: <SRS0=bVnl=PQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=7Xuf=PR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04669C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C42C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 00:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D357620660
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8693C205F4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 00:02:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ncrZaivL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729837AbfAHUJl (ORCPT
+        id S1728113AbfAIAC5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:09:41 -0500
-Received: from sauhun.de ([88.99.104.3]:44384 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729320AbfAHUJl (ORCPT
+        Tue, 8 Jan 2019 19:02:57 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:41604 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbfAIAC5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:09:41 -0500
-Received: from localhost (p54B337DA.dip0.t-ipconnect.de [84.179.55.218])
-        by pokefinder.org (Postfix) with ESMTPSA id 7E82B3E48B8;
-        Tue,  8 Jan 2019 21:09:38 +0100 (CET)
-Date:   Tue, 8 Jan 2019 21:09:38 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 00/10] i2c: move handling of suspended adapters to the
- core
-Message-ID: <20190108200937.bratvsbz4grk6m4e@ninjato>
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+        Tue, 8 Jan 2019 19:02:57 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 291DA586;
+        Wed,  9 Jan 2019 01:02:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1546992175;
+        bh=YZPLIwpcVxn0UHk7raqNSqHxaEXckWiIDAan/k6pjHA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ncrZaivL4+Rgh0rCuz3/xoE7tDUeLCCQ1RoQYLGP3EDXHo5ug+qDXYAtM2JEJDp6E
+         +fqXpZmLzq6BQ0WKHZKDscPc11ld9wxhpPIleIDdj1cdMkYXGz2FDrJjNiMUYSbG0a
+         5PNlX+yfP8vwLHZvCWG7iomqk0kv+oKpX9nm+F0Q=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     kieran.bingham@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] media: adv748x: Add is_txb()
+Date:   Wed, 09 Jan 2019 02:04:04 +0200
+Message-ID: <1894450.eWBzjVUvsQ@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <475dc354-012a-30ff-7763-c7bad237ccea@ideasonboard.com>
+References: <20190106155413.30666-1-jacopo+renesas@jmondi.org> <20190107100542.5qszrtydqzowhzlp@uno.localdomain> <475dc354-012a-30ff-7763-c7bad237ccea@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mwtdafiryfs7cnw6"
-Content-Disposition: inline
-In-Reply-To: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hello,
 
---mwtdafiryfs7cnw6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Monday, 7 January 2019 12:38:39 EET Kieran Bingham wrote:
+> On 07/01/2019 10:05, Jacopo Mondi wrote:
+> > Hi Kieran,
+> 
+> <snip>
+> 
+> >>> diff --git a/drivers/media/i2c/adv748x/adv748x.h
+> >>> b/drivers/media/i2c/adv748x/adv748x.h index b482c7fe6957..bc2da1b5ce29
+> >>> 100644
+> >>> --- a/drivers/media/i2c/adv748x/adv748x.h
+> >>> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> >>> @@ -89,8 +89,12 @@ struct adv748x_csi2 {
+> >>> 
+> >>>  #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2,
+> >>>  notifier)
+> >>>  #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2,
+> >>>  sd)
+> >>> 
+> >>> +
+> >>> 
+> >>>  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] !=
+> >>>  NULL)
+> >>> 
+> >>> -#define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
+> >>> +#define __is_tx(_tx, _ab) ((_tx) == &(_tx)->state->tx##_ab)
+> >>> +#define is_txa(_tx) __is_tx(_tx, a)
+> >>> +#define is_txb(_tx) __is_tx(_tx, b)
+> >> 
+> >> I would have just duplicated the is_txa() line here... but this is good
+> >> too :)
+> > 
+> > I agree it might seem more complex than necessary. I initially made it
+> > like this as I started from the 'is_tx()' macro this series adds in
+> > 6/6.
+> > 
+> > If it is easier to have an '((_tx) == &(_tx)->state->txb)' I can
+> > change this.
 
-On Wed, Dec 19, 2018 at 05:48:16PM +0100, Wolfram Sang wrote:
-> Finally, here is the implementation Hans and I agreed on. Plus, all poten=
-tial
-> users I could spot already converted. Renesas R-Car driver was added on t=
-op.
-> This series was tested on a Renesas Lager board (R-Car H2). I had to hack=
- some
-> error cases into the code to verify the workings. Thanks for all the test=
-s so
-> far. Of course, more testing never hurts ;)
->=20
-> Please comment, review, test... a branch can be found here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/c=
-ore-pm-helpers
->=20
-> Thanks,
->=20
->    Wolfram
->=20
-> Changes since RFC:
->=20
-> * don't use bitfields anymore but an unsigned long flags variable which i=
-s only
->   meant for flags to be changed when the adapter lock is held
->=20
-> * split the genereic accessor into _mark_suspended() and _mark_resumed()
->=20
-> * added kerneldoc and noted that using these helpers is optional
->=20
-> * documented -ESHUTDOWN as the error code when trying to transfer using an
->   already suspended adapter
->=20
-> * added acks from last series. Changes were minor enough to keep them. Pl=
-ease let
->   me know if you disagree.
->=20
->=20
-> Wolfram Sang (10):
->   i2c: add suspended flag and accessors for i2c adapters
->   i2c: reject new transfers when adapters are suspended
->   i2c: synquacer: remove unused is_suspended flag
->   i2c: brcmstb: use core helper to mark adapter suspended
->   i2c: zx2967: use core helper to mark adapter suspended
->   i2c: sprd: don't use pdev as variable name for struct device *
->   i2c: sprd: use core helper to mark adapter suspended
->   i2c: exynos5: use core helper to mark adapter suspended
->   i2c: s3c2410: use core helper to mark adapter suspended
->   i2c: rcar: add suspend/resume support
+I would find it cleaner to write out is_txa and is_txb explicitly instead of 
+hiding the implementation behind an __is_tx macro, especially given that we 
+won't have to extend this in the future.
 
-After a long road, I applied this series now to for-next. I only
-squashed patches 1+2 to have the functionality in one place. And fixed a
-typo in patch 1. Thanks to the testers and reviewers, and especially
-Hans, for the input and discussions.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-This will now get a full test cycle in -next. Let's see what happens...
+> It's fine for me as you've got it.
+> 
+> It's still clear and readable, and implements the required functionality.
+> 
+> <snip>
 
-And let's move on to how to add 'very late transfers without irqs' on
-top of this series.
+-- 
+Regards,
 
-Happy hacking,
-
-   Wolfram
+Laurent Pinchart
 
 
---mwtdafiryfs7cnw6
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlw1A30ACgkQFA3kzBSg
-KbbxWw/8CGkkrx9NPVQwRLHRnix2QucE3r9aD0Df5ybapZtzhPdInKj5cJ6rtJjO
-Ly0VQzmjKc+6FirBXJKF2Zdu35+/8k4y7owr0oh8fNxRjeWU0Pukp4n9NoX9+CsO
-kXyzFEmbx8goTH1zzJgVz1yytO8ebGDCXX086M7D8MDW5ULx0mgzlIWcHkgy81Aj
-gUEmnOjbw/JbmeBL0l+gseT2gO5GWArBv/mUFNkuz7pH0AjV/BbkImZ7BuhlYpOV
-pvWM2PI2/7xbxpsjFIhIQbOs7hHY1iNkQjONftMT2sjCm8PKFRvf1Il+9K8AA/tp
-N13Jn7IGI/lRrxlxGZZ3zr8o715PohfdI4G1OPFpjSorTBs1UV4f8BatsodHk8bh
-fAKKjAkPw5/qRcMA8HnkyIrszoM7qCToOYFkBiMtv8+Drdtn5W13HCKL52PGiOds
-sE9QS5at1rGWtzQX1fkLpq93GQTyNvFMURJ21YvXnU2U47o1hVLQNQKLQFjNNaLj
-k9SOHjoI9xM7PWRgVghphFuUYqQMlHID9GHR1R0bS9uA++CxHzzP4/OTBwTIVBBl
-YpTlg4+UtKgmSTWmWR/QSjGAIpRGiAOSIt2mz8YcCF2E9QtLFm2wMTWXxe48Wavt
-9n/kVEg/kVdxR2yHZWu5guX3AmiPxUBiZxHhfKCYkrlFUuqL97Y=
-=Vtra
------END PGP SIGNATURE-----
-
---mwtdafiryfs7cnw6--
