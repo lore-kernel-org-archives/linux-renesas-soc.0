@@ -2,409 +2,295 @@ Return-Path: <SRS0=7Xuf=PR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167C8C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 17:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA0AC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 18:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE80F20660
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 17:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 902BA20661
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jan 2019 18:47:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="NkXqZC8U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbfAIRQJ (ORCPT
+        id S1727645AbfAISry (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:16:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53198 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbfAIRQJ (ORCPT
+        Wed, 9 Jan 2019 13:47:54 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33265 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbfAISrx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:16:09 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22476C0005B2;
-        Wed,  9 Jan 2019 17:16:08 +0000 (UTC)
-Received: from [10.36.116.249] (ovpn-116-249.ams2.redhat.com [10.36.116.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7212767177;
-        Wed,  9 Jan 2019 17:16:05 +0000 (UTC)
-Subject: Re: [Qemu-devel] [PATCH QEMU v5] hw/arm/sysbus-fdt: Add support for
- instantiating generic devices
-From:   Auger Eric <eric.auger@redhat.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        qemu-devel@nongnu.org, linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        qemu-arm@nongnu.org
-References: <20190103094211.28473-1-geert+renesas@glider.be>
- <acd10959-a781-d3bf-dc67-bda878740ec9@redhat.com>
-Message-ID: <e1623349-9597-d618-aa02-956d8ae03cd7@redhat.com>
-Date:   Wed, 9 Jan 2019 18:16:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 9 Jan 2019 13:47:53 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so7423463ljd.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Jan 2019 10:47:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZzUeTH3aKEy/Kko/t/IzP8y/JriD9Xgf/NsDi8JA0wM=;
+        b=NkXqZC8US7CpV6pM+SZDXnnHQLrILNUcTnNiedZysakkK5hiOJiyFx+eU9XnseRe3Q
+         8fq5vYLL0MEt7PMjnpmveyBltoz+y2w59OBRtbTC0FW5v/D17k6/PFKP4hSfZ4bqmi8O
+         Gn9cDk2sHwl83Kg5bIYDY0GEW0g9wccl8biMg/R6S6dX8TcDMQGqBs4ChUbR05+w2BfN
+         GlwnoI+d8Gs2RVKljfcIO5TAgeZdfHRnmmXsDcNOjWY2I2mxYpheeNvE4MgX3xa53Iiu
+         S7+QGEF+YkJChQ1nnTMuKIlCoe5i4721eh/QmwcGt5mr0WQshQgQdIdOgXP9V020Emf5
+         ObqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ZzUeTH3aKEy/Kko/t/IzP8y/JriD9Xgf/NsDi8JA0wM=;
+        b=riaWTnyU5E3WEsKfdjyW75m8j+8VqKx2x/g5UVfIlljpefx2RmyqqrTLCAc0p+N6wf
+         ac2jnahUmkcrKQUsZDHjGnYckHs7JIwbMOu+E75XZYhuqLM5i2Mgvd+cH7Pvr00VjJx7
+         lIFFI+SfRIf2yD3Vg3axKsJthFbkZ3fWiH6rXkmmMZuNWiQ0dzezvMwtqU0i7LpQ8IVx
+         eWwoXOG5hsOgoWTOUa0rGwvEs7vyz99GCOG4GeqbD3x2t3DcsDrAIPLlkHxSA0TF9wQb
+         kYHOuIwRYqqS1WS12Zqn5fS9vSYQWfPW5X7rcO0dYDcsgLYWIk5gbYhMbEr9RlFvlBUN
+         4lXA==
+X-Gm-Message-State: AJcUukesyDARm+hvNjOUHjWCykxm5QX7GmxWu8MRCd9EmI8f3TkF4R/g
+        jn5JHqEU6d921XlpYjEiyD3cw8pLRPA=
+X-Google-Smtp-Source: ALg8bN4cGyZNiGDlhEkviPwI1xy16pk9JEqySwi4MTYvWXqcCEQ3yTWwP9ykGzjjH6OzvrhCo0QIQQ==
+X-Received: by 2002:a2e:7615:: with SMTP id r21-v6mr3982308ljc.131.1547059670703;
+        Wed, 09 Jan 2019 10:47:50 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.84.211])
+        by smtp.gmail.com with ESMTPSA id d2sm14072864lfg.16.2019.01.09.10.47.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 10:47:49 -0800 (PST)
+Subject: Re: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
+ <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <74a5fba6-a77e-f71b-ce49-405fee8e0fda@cogentembedded.com>
+Date:   Wed, 9 Jan 2019 21:47:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <acd10959-a781-d3bf-dc67-bda878740ec9@redhat.com>
+In-Reply-To: <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 09 Jan 2019 17:16:08 +0000 (UTC)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hello!
 
-On 1/9/19 4:55 PM, Auger Eric wrote:
-> Hi Geert,
-> 
-> On 1/3/19 10:42 AM, Geert Uytterhoeven wrote:
->> Add a fallback for instantiating generic devices without a type-specific
->> or compatible-specific instantiation method.  This will be used when no
->> other match is found.
->>
->> Generic device instantiation avoids having to write device-specific
->> instantiation methods for each and every "simple" device using only a
->> set of generic properties.  Devices that need more specialized handling
->> can still provide their own instantiation methods.
->>
->> The generic instantiation method creates a device node with remapped
->> "reg" and (optional) "interrupts" properties, and copies properties from
->> the host, if deemed appropriate:
->>   - In general, properties without phandles are safe to be copied.
->>     Unfortunately, the FDT does not carry type information, hence an
->>     explicit whitelist is used, which can be extended when needed.
->>   - Properties related to power management (power and/or clock domain),
->>     isolation, and pin control, are handled by the host, and must not to
->>     be copied.
->>
->> Devices nodes with subnodes are rejected, as subnodes cannot easily be
->> handled in a generic way.
->>
->> This has been tested on a Renesas Salvator-XS board (R-Car H3 ES2.0)
->> with SATA, using:
->>
->>     -device vfio-platform,host=ee300000.sata
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> Note: Also tested with GPIO, which needs "vfio: No-IOMMU mode support":
->>
->>     -device vfio-platform,host=e6055400.gpio
->>
->> v5:
->>   - Replace copying of a fixed list of properties (and ignoring all
->>     others), by scanning all properties on the host, and deciding if
->>     they need to be ignored, copied, or rejected,
->>   - Reject device nodes with subnodes,
->>   - Handle edge interrupts,
->>
->> v3:
->>   - New.
->> ---
->>  hw/arm/sysbus-fdt.c | 238 ++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 238 insertions(+)
->>
->> diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
->> index ad698d4832c694be..52de8c9a040c282a 100644
->> --- a/hw/arm/sysbus-fdt.c
->> +++ b/hw/arm/sysbus-fdt.c
->> @@ -28,6 +28,9 @@
->>  #ifdef CONFIG_LINUX
->>  #include <linux/vfio.h>
->>  #endif
->> +#ifdef CONFIG_FNMATCH
->> +#include <fnmatch.h>
->> +#endif
->>  #include "hw/arm/sysbus-fdt.h"
->>  #include "qemu/error-report.h"
->>  #include "sysemu/device_tree.h"
->> @@ -415,6 +418,232 @@ static int add_amd_xgbe_fdt_node(SysBusDevice *sbdev, void *opaque)
->>      return 0;
->>  }
->>  
->> +enum GenericPropertyAction {
->> +    PROP_IGNORE,
->> +    PROP_WARN,
->> +    PROP_COPY,
->> +    PROP_REJECT,
->> +};
->> +
->> +static struct {
->> +    const char *name;
->> +    enum GenericPropertyAction action;
->> +} generic_properties[] = {
->> +    { "name",            PROP_IGNORE }, /* handled automatically */
->> +    { "phandle",         PROP_IGNORE }, /* not needed for the generic case */
->> +
->> +    /* The following are copied and remapped by dedicated code */
->> +    { "reg",             PROP_IGNORE },
->> +    { "interrupts",      PROP_IGNORE },
-> Shouldn't interrupt-parent be safely ignored as remapped?
->> +
->> +    /* The following are handled by the host */
->> +    { "power-domains",   PROP_IGNORE }, /* power management (+ opt. clocks) */
->> +    { "iommus",          PROP_IGNORE }, /* isolation */
->> +    { "resets",          PROP_IGNORE }, /* isolation */
->> +    { "pinctrl-*",       PROP_IGNORE }, /* pin control */
->> +
->> +    /* Ignoring the following may or may not work, hence the warning */
->> +    { "gpio-ranges",     PROP_WARN },   /* no support for pinctrl yet */
->> +    { "dmas",            PROP_WARN },   /* no support for external DMACs yet */
-> I would be tempted to simply reject things that may not work.
->> +
->> +    /* The following are irrelevant, as corresponding specifiers are ignored */
->> +    { "clock-names",     PROP_IGNORE },
->> +    { "reset-names",     PROP_IGNORE },
->> +    { "dma-names",       PROP_IGNORE },
->> +
->> +    /* Whitelist of properties not taking phandles, and thus safe to copy */
->> +    { "compatible",      PROP_COPY },
->> +    { "status",          PROP_COPY },
->> +    { "reg-names",       PROP_COPY },
->> +    { "interrupt-names", PROP_COPY },
->> +    { "#*-cells",        PROP_COPY },
->> +};
->> +
->> +#ifndef CONFIG_FNMATCH
->> +/* Fall back to exact string matching instead of allowing wildcards */
->> +static inline int fnmatch(const char *pattern, const char *string, int flags)
->> +{
->> +        return strcmp(pattern, string);
->> +}
->> +#endif
->> +
->> +static enum GenericPropertyAction get_generic_property_action(const char *name)
->> +{
->> +    unsigned int i;
->> +
->> +    for (i = 0; i < ARRAY_SIZE(generic_properties); i++) {
->> +        if (!fnmatch(generic_properties[i].name, name, 0)) {
->> +            return generic_properties[i].action;
->> +        }
->> +    }
->> +
->> +    /*
->> +     * Unfortunately DT properties do not carry type information,
->> +     * so we have to assume everything else contains a phandle,
->> +     * and must be rejected
->> +     */
->> +    return PROP_REJECT;
->> +}
->> +
->> +/**
->> + * copy_generic_node
->> + *
->> + * Copy the generic part of a DT node from the host
->> + */
->> +static void copy_generic_node(void *host_fdt, void *guest_fdt, char *host_path,
->> +                              char *guest_path)
->> +{
->> +    int node, prop, len;
->> +    const void *data;
->> +    const char *name;
->> +    enum GenericPropertyAction action;
->> +
->> +    node = fdt_path_offset(host_fdt, host_path);
->> +    if (node < 0) {
->> +        error_report("Cannot find node %s: %s", host_path, fdt_strerror(node));
->> +        exit(1);
->> +    }
->> +
->> +    /* Submodes are not yet supported */
->> +    if (fdt_first_subnode(host_fdt, node) >= 0) {
->> +        error_report("%s has unsupported subnodes", host_path);
->> +        goto unsupported;
->> +    }
->> +
->> +    /* Copy generic properties */
->> +    fdt_for_each_property_offset(prop, host_fdt, node) {
->> +        data = fdt_getprop_by_offset(host_fdt, prop, &name, &len);
->> +        if (!data) {
->> +            error_report("Cannot get property of %s: %s", host_path,
->> +                         fdt_strerror(len));
->> +            exit(1);
->> +        }
->> +
->> +        if (!len) {
->> +            /* Zero-sized properties are safe to copy */
->> +            action = PROP_COPY;
->> +        } else if (!strcmp(name, "clocks")) {
->> +            /* Reject "clocks" if "power-domains" is not present */
-> Could you elaborate on clock management with and without power-domain.
-> If clock handles can be found on host side, don't we need to generate
-> clock nodes on guest side (as what was done with the amd xgmac). And in
-> that case don't you need clock-names prop too?
-> 
-> Please can you explain how the fact power-domain is not present
-> simplifies the problem. It is not obvious to me.
-> 
->> +            action = fdt_getprop(host_fdt, node, "power-domains", NULL)
->> +                     ? PROP_WARN : PROP_REJECT;
->> +        } else {
->> +            action = get_generic_property_action(name);
->> +        }
->> +
->> +        switch (action) {
->> +        case PROP_WARN:
->> +            warn_report("%s: Ignoring %s property", host_path, name);
->> +        case PROP_IGNORE:
->> +            break;
->> +
->> +        case PROP_COPY:
->> +            qemu_fdt_setprop(guest_fdt, guest_path, name, data, len);
->> +            break;
->> +
->> +        case PROP_REJECT:
->> +            error_report("%s has unsupported %s property", host_path, name);
->> +            goto unsupported;
->> +        }
->> +    }
->> +    return;
->> +
->> +unsupported:
->> +    error_report("You can ask a wizard to enhance me");
-> maybe report which property causes the assignment abort
->> +    exit(1);
->> +}
->> +
->> +/**
->> + * add_generic_fdt_node
->> + *
->> + * Generates a generic DT node by copying properties from the host
->> + */
->> +static int add_generic_fdt_node(SysBusDevice *sbdev, void *opaque)
->> +{
->> +    PlatformBusFDTData *data = opaque;
->> +    VFIOPlatformDevice *vdev = VFIO_PLATFORM_DEVICE(sbdev);
->> +    const char *parent_node = data->pbus_node_name;
->> +    void *guest_fdt = data->fdt, *host_fdt;
->> +    VFIODevice *vbasedev = &vdev->vbasedev;
->> +    char **node_path, *node_name, *dt_name;
->> +    PlatformBusDevice *pbus = data->pbus;
->> +    uint32_t *reg_attr, *irq_attr;
->> +    uint64_t mmio_base;
->> +    int i, irq_number;
->> +    VFIOINTp *intp;
->> +
->> +    host_fdt = load_device_tree_from_sysfs();
->> +
->> +    dt_name = sysfs_to_dt_name(vbasedev->name);
->> +    if (!dt_name) {
->> +        error_report("%s incorrect sysfs device name %s", __func__,
->> +                     vbasedev->name);
->> +        exit(1);
->> +    }
->> +    node_path = qemu_fdt_node_path(host_fdt, dt_name, vdev->compat,
->> +                                   &error_fatal);
->> +    if (!node_path || !node_path[0]) {
->> +        error_report("%s unable to retrieve node path for %s/%s", __func__,
->> +                     dt_name, vdev->compat);
->> +        exit(1);
->> +    }
->> +
->> +    if (node_path[1]) {
->> +        error_report("%s more than one node matching %s/%s!", __func__,
->> +                     dt_name, vdev->compat);
->> +        exit(1);
->> +    }
-> The above part now is duplicated with code in add_amd_xgbe_fdt_node().
-> couldn't we factorize this into an helper such like
-> char [*]*get_host_node_path(VFIODevice *vbasedev).
->> +
->> +    mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, 0);
->> +    node_name = g_strdup_printf("%s/%s@%" PRIx64, parent_node,
->> +                               vbasedev->name, mmio_base);
->> +    qemu_fdt_add_subnode(guest_fdt, node_name);
->> +
->> +    /* Copy generic parts from host */
->> +    copy_generic_node(host_fdt, guest_fdt, node_path[0], node_name);
->> +
->> +    /* Copy reg (remapped) */
->> +    reg_attr = g_new(uint32_t, vbasedev->num_regions * 2);
->> +    for (i = 0; i < vbasedev->num_regions; i++) {
->> +        mmio_base = platform_bus_get_mmio_addr(pbus, sbdev, i);
->> +        reg_attr[2 * i] = cpu_to_be32(mmio_base);
->> +        reg_attr[2 * i + 1] = cpu_to_be32(
->> +                                memory_region_size(vdev->regions[i]->mem));
->> +    }
->> +    qemu_fdt_setprop(guest_fdt, node_name, "reg", reg_attr,
->> +                     vbasedev->num_regions * 2 * sizeof(uint32_t));
->> +
->> +    /* Copy interrupts (remapped) */
->> +    if (vbasedev->num_irqs) {
->> +        irq_attr = g_new(uint32_t, vbasedev->num_irqs * 3);
->> +        for (i = 0; i < vbasedev->num_irqs; i++) {
->> +            irq_number = platform_bus_get_irqn(pbus, sbdev, i) +
->> +                         data->irq_start;
->> +            irq_attr[3 * i] = cpu_to_be32(GIC_FDT_IRQ_TYPE_SPI);
->> +            irq_attr[3 * i + 1] = cpu_to_be32(irq_number);
->> +            QLIST_FOREACH(intp, &vdev->intp_list, next) {
->> +                if (intp->pin == i) {
->> +                    break;
->> +                }
->> +            }
->> +            if (intp->flags & VFIO_IRQ_INFO_AUTOMASKED) {
->> +                irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_LEVEL_HI);
->> +            } else {
->> +                irq_attr[3 * i + 2] = cpu_to_be32(GIC_FDT_IRQ_FLAGS_EDGE_LO_HI);
->> +            }
->> +        }
->> +        qemu_fdt_setprop(guest_fdt, node_name, "interrupts",
->> +                         irq_attr, vbasedev->num_irqs * 3 * sizeof(uint32_t));
->> +        g_free(irq_attr);
-while we are at it, I think we should factorize the "reg" and
-"interrupts" property generation code and share it with the amd xgmac
-node creation function. There are duplicate.
+On 01/08/2019 07:16 AM, Mason Yang wrote:
 
-Thanks
+> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 
-Eric
->> +    }
->> +
->> +    g_free(reg_attr);
->> +    g_free(node_name);
->> +    g_strfreev(node_path);
->> +    g_free(dt_name);
->> +    g_free(host_fdt);
->> +    return 0;
->> +}
->> +
->>  /* DT compatible matching */
->>  static bool vfio_platform_match(SysBusDevice *sbdev,
->>                                  const BindingEntry *entry)
->> @@ -423,6 +652,11 @@ static bool vfio_platform_match(SysBusDevice *sbdev,
->>      const char *compat;
->>      unsigned int n;
->>  
->> +    if (!entry->compat) {
->> +        /* Generic DT fallback */
->> +        return true;
->> +    }
->> +
->>      for (n = vdev->num_compat, compat = vdev->compat; n > 0;
->>           n--, compat += strlen(compat) + 1) {
->>          if (!strcmp(entry->compat, compat)) {
->> @@ -459,6 +693,10 @@ static const BindingEntry bindings[] = {
->>      VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
->>  #endif
->>      TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
->> +#ifdef CONFIG_LINUX
->> +    /* Generic DT fallback must be last */
->> +    VFIO_PLATFORM_BINDING(NULL, add_generic_fdt_node),
->> +#endif
->>      TYPE_BINDING("", NULL), /* last element */
->>  };
->>  
->>
-> Could you share the SATA node that was generated with the generic function.
+   You now need to add:
+
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+> ---
+>  drivers/spi/Kconfig           |   6 +
+>  drivers/spi/Makefile          |   1 +
+>  drivers/spi/spi-renesas-rpc.c | 787 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 794 insertions(+)
+>  create mode 100644 drivers/spi/spi-renesas-rpc.c
 > 
-> Thanks
-> 
-> Eric
-> 
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 9f89cb1..81b4e04 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -544,6 +544,12 @@ config SPI_RSPI
+>  	help
+>  	  SPI driver for Renesas RSPI and QSPI blocks.
+>  
+> +config SPI_RENESAS_RPC_IF
+
+   Since the driver is called without -IF suffix, I wouldn't use it in the
+Kconfig name either, the following is enough:
+
+> +	tristate "Renesas R-Car Gen3 RPC-IF SPI controller"
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+
+   Judging on the compilation error reported by the 0-day bot about readq(),
+we now need to depend on 64BIT or something...
+
+[...]
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+> index f296270..3f2b2f9 100644
+> --- a/drivers/spi/Makefile
+> +++ b/drivers/spi/Makefile
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..1e57eb1
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,787 @@
+[...]
+> +#define RPC_CMNCR		0x0000	// R/W
+> +#define RPC_CMNCR_MD		BIT(31)
+> +#define RPC_CMNCR_SFDE		BIT(24) // undocumented bit but must be set
+> +#define RPC_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
+> +#define RPC_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
+> +#define RPC_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
+> +#define RPC_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
+> +#define RPC_CMNCR_MOIIO_HIZ	(RPC_CMNCR_MOIIO0(3) | RPC_CMNCR_MOIIO1(3) | \
+> +				 RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
+> +#define RPC_CMNCR_IO3FV(val)	(((val) & 0x3) << 14) // undocumented bit
+> +#define RPC_CMNCR_IO2FV(val)	(((val) & 0x3) << 12) // undocumented bit
+
+   Those are not exactly bits. I'd be happy with just // undocumented...
+
+[...]
+> +#define RPC_WBUF		0x8000	// Write Buffer
+> +#define RPC_WBUF_SIZE		256	// Write Buffer size
+
+   I wonder if the write buffer should be in a separate "reg" prop tuple...
+Have you considered that?
+
+[...]
+> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+> +{
+> +	//
+> +	// NOTE: The 0x260 are undocumented bits, but they must be set.
+> +	//	RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+> +	//	0x0 : the delay is biggest,
+> +	//	0x1 : the delay is 2nd biggest,
+> +	//	On H3 ES1.x, the value should be 0, while on others,
+> +	//	the value should be 6.
+> +	//
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+> +		     RPC_PHYCNT_STRTIM(6) | 0x260);
+> +
+> +	//
+> +	// NOTE: The 0x1511144 are undocumented bits, but they must be set
+> +	//       for RPC_PHYOFFSET1.
+> +	//	 The 0x31 are undocumented bits, but they must be set
+> +	//	 for RPC_PHYOFFSET2.
+> +	//
+> +	regmap_write(rpc->regmap, RPC_PHYOFFSET1,
+> +		     RPC_PHYOFFSET1_DDRTMG(3) | 0x1511144);
+> +	regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
+> +		     RPC_PHYOFFSET2_OCTTMG(4));
+
+   I still would have preferred using regmap_update_bits() here...
+
+[...]
+> +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+> +			   const void *tx_buf, void *rx_buf)
+> +{
+[...]
+> +	} else if (rx_buf) {
+> +		//
+> +		// RPC-IF spoils the data for the commands without an address
+> +		// phase (like RDID) in the manual mode, so we'll have to work
+> +		// around this issue by using the external address space read
+> +		// mode instead; we seem to be able to read 8 bytes at most in
+> +		// this mode though...
+> +		//
+> +		if (!(smenr & RPC_SMENR_ADE(0xf))) {
+> +			u32 nbytes = rpc->xferlen - pos;
+> +			u64 tmp;
+> +
+> +			if (nbytes > 8)
+> +				nbytes = 8;
+> +
+> +			regmap_update_bits(rpc->regmap, RPC_CMNCR,
+> +					   RPC_CMNCR_MD, 0);
+> +			regmap_write(rpc->regmap, RPC_DRCR, 0);
+> +			regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
+> +			regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
+> +			regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
+> +			regmap_write(rpc->regmap, RPC_DROPR, 0);
+> +			regmap_write(rpc->regmap, RPC_DRENR, rpc->smenr &
+> +				     ~RPC_SMENR_SPIDE(0xf));
+
+   The 'smenr' filed needs a more universal name -- it's written to both SMENR and DRENR?
+
+> +	} else {
+> +		regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +		regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
+> +		ret = wait_msg_xfer_end(rpc);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	return ret;
+
+   We always return 0 here...
+
+> +
+> +out:
+
+   I'd call this label error, since this is our error path...
+
+> +	return reset_control_reset(rpc->rstc);
+> +}
+> +
+> +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
+> +					const struct spi_mem_op *op,
+> +					u64 *offs, size_t *len)
+> +{
+[...]
+> +	if (op->data.nbytes || (offs && len)) {
+> +		if (op->data.dir == SPI_MEM_DATA_IN) {
+> +			rpc->smcr = RPC_SMCR_SPIRE;
+> +			rpc->xfer_dir = SPI_MEM_DATA_IN;
+> +		} else if (op->data.dir == SPI_MEM_DATA_OUT) {
+> +			rpc->smcr = RPC_SMCR_SPIWE;
+> +			rpc->xfer_dir = SPI_MEM_DATA_OUT;
+> +		}
+
+   I asked for *switch* above...
+
+[...]
+> +static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
+> +					u64 offs, size_t len, const void *buf)
+> +{
+[...]
+> +	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, RPC_CMNCR_MD);
+> +
+> +	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL | 0x260 |
+> +				  RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
+
+   regmap_update_bits()?
+
+> +
+> +	memcpy_toio(rpc->base + RPC_WBUF, buf, len);
+> +
+> +	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +	regmap_write(rpc->regmap, RPC_SMADR, offs);
+> +	regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +	regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
+> +	ret = wait_msg_xfer_end(rpc);
+> +	if (ret)
+> +		goto out;
+> +
+> +	regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RCF);
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+> +				  RPC_PHYCNT_STRTIM(6) | 0x260);
+
+  Same here...
+
+> +
+> +	return len;
+> +
+> +out:
+
+error:
+
+> +	return reset_control_reset(rpc->rstc);
+> +}
+[...]
+
+MBR, Sergei
