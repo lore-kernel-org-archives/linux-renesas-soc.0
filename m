@@ -2,159 +2,145 @@ Return-Path: <SRS0=E4fS=PS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7FAC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 01:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4B8C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 08:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B45A214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 01:19:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TT9QFKuA"
+	by mail.kernel.org (Postfix) with ESMTP id 4E008206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 08:02:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfAJBTo (ORCPT
+        id S1727401AbfAJICI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Jan 2019 20:19:44 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40959 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbfAJBTn (ORCPT
+        Thu, 10 Jan 2019 03:02:08 -0500
+Received: from mx.socionext.com ([202.248.49.38]:22696 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726137AbfAJICI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Jan 2019 20:19:43 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f188so10268501wmf.5;
-        Wed, 09 Jan 2019 17:19:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=+9XA8DO5bM1mA8cUszOvO3NZSoVTJ4TYXNbfwi25Zq0=;
-        b=TT9QFKuAygHeTEZ+FjetCFqnrrtIK7FCUdzf8e3yTL9Fw3L3ndhS8CHeejckFbll8M
-         eujPgmD63nWhdoHdcd+u/xKVcY8zIhLHCVryHOE3pWK1meISyNKN+MzJVtJpgnRvnhIq
-         E7af6ausa03PEeV69qpr0EWYgnhMG1uOd5F1hbp62rsbaMeqJhDBjL37Yc3OhDWtrsCi
-         M6nE7tQMQp89jQXXHhLrpWrfbtz3fu65+Mnu6PF2qVluAGDbMaxQ9gIs7FgqQuc4oM9e
-         K0r24CJ/fwC3xw+sugEDI5UERWCyVu/CL8gAnXdk9lUWV+628Ag3tSuT6NR2W+sx3XXv
-         wpzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=+9XA8DO5bM1mA8cUszOvO3NZSoVTJ4TYXNbfwi25Zq0=;
-        b=IqBOh/9XyIDa3N9eynZXv71KV84RlPt9wgDoBBJ7Kqg/y1+UzSrIRr7LL38HgkFwj+
-         Kq2ND25S9O2bvOFpuM+Dj/PP7fgDuV3b/cFdIS5g4cNZ2xOrEm15GrlnokPjwimiA8K/
-         6F+TLCYCjztCHXBOkbnPxD46j93Ok/RJOK82iC1elm4dv7SN9jj8r3/eMD0wD7zopdDP
-         pDR3g0YutxOkMKBrLMRieVtIrf73twogNj639F+fc5hdwVUnKWQlVUtSvNgddEzGOjAW
-         0+Za5aDNzXVLrZxzXHbIXBm+Yzmp2knB51bVy37VPy8stVJDGPEAW7km/qzVqJOU0A4x
-         XEQA==
-X-Gm-Message-State: AJcUukfr71wugbG5LBSIdpv9QstE2KCWxk908YLiz41I/PpSD2Rmp3Zu
-        bD+Ssm545mop05sYcxzlkSg+anq/
-X-Google-Smtp-Source: ALg8bN7jTUyVc4a0vrD8ReJZpYLcaGk+v691pbK33S1brVesn2+mryn0keJxmFmIAEP89THKTYbSKQ==
-X-Received: by 2002:a1c:544f:: with SMTP id p15mr7714407wmi.37.1547083181164;
-        Wed, 09 Jan 2019 17:19:41 -0800 (PST)
-Received: from [172.30.90.141] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id n127sm17050701wmd.20.2019.01.09.17.19.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 17:19:40 -0800 (PST)
-Subject: Re: [RFC PATCH v2] media: rcar-vin: Allow independent VIN link
- enablement
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     linux-media@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - VIN" 
+        Thu, 10 Jan 2019 03:02:08 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 10 Jan 2019 17:02:05 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 61CF660062;
+        Thu, 10 Jan 2019 17:02:05 +0900 (JST)
+Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Thu, 10 Jan 2019 17:02:05 +0900
+Received: from SOC-EX01V.e01.socionext.com (10.213.24.21) by
+ SOC-EX02V.e01.socionext.com (10.213.24.22) with Microsoft SMTP Server (TLS)
+ id 15.0.995.29; Thu, 10 Jan 2019 17:01:53 +0900
+Received: from SOC-EX01V.e01.socionext.com ([10.213.24.21]) by
+ SOC-EX01V.e01.socionext.com ([10.213.24.21]) with mapi id 15.00.0995.028;
+ Thu, 10 Jan 2019 17:01:53 +0900
+From:   <yamada.masahiro@socionext.com>
+To:     <robh@kernel.org>, <arm@kernel.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <afaerber@suse.de>, <manivannan.sadhasivam@linaro.org>,
+        <tsahee@annapurnalabs.com>, <antoine.tenart@bootlin.com>,
+        <maxime.ripard@bootlin.com>, <wens@csie.org>,
+        <dinguyen@kernel.org>, <khilman@baylibre.com>, <dhdang@apm.com>,
+        <liviu.dudau@arm.com>, <sudeep.holla@arm.com>,
+        <lorenzo.pieralisi@arm.com>, <rjui@broadcom.com>,
+        <sbranden@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+        <rrichter@cavium.com>, <jnair@caviumnetworks.com>,
+        <kgene@kernel.org>, <krzk@kernel.org>, <xuwei5@hisilicon.com>,
+        <chanho.min@lge.com>, <jason@lakedaemon.net>, <andrew@lunn.ch>,
+        <gregory.clement@bootlin.com>, <sebastian.hesselbarth@gmail.com>,
+        <matthias.bgg@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <andy.gross@linaro.org>,
+        <david.brown@linaro.org>, <horms@verge.net.au>,
+        <magnus.damm@gmail.com>, <heiko@sntech.de>, <orsonzhai@gmail.com>,
+        <baolin.wang@linaro.org>, <zhang.lyra@gmail.com>,
+        <Jisheng.Zhang@synaptics.com>, <t-kristo@ti.com>, <nm@ti.com>,
+        <jun.nie@linaro.org>, <shawnguo@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190106212018.16519-1-slongerbeam@gmail.com>
- <20190109224039.GD24252@bigcity.dyn.berto.se>
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <da87789d-73e8-663c-a25f-d75e4361ade3@gmail.com>
-Date:   Wed, 9 Jan 2019 17:19:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        <linux-rockchip@lists.infradead.org>, <mark.rutland@arm.com>,
+        <will.deacon@arm.com>, <michal.simek@xilinx.com>
+Subject: RE: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Thread-Topic: [PATCH] arm64: dts: Remove inconsistent use of 'arm,armv8'
+ compatible string
+Thread-Index: AQHUqFoPwZlgCUSeDkSxOmzH7nYu1aWoIxIA
+Date:   Thu, 10 Jan 2019 08:01:52 +0000
+Message-ID: <8e2a312104924025ad4d37afa40d147d@SOC-EX01V.e01.socionext.com>
+References: <20190109202934.29304-1-robh@kernel.org>
+In-Reply-To: <20190109202934.29304-1-robh@kernel.org>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
+x-shieldmailcheckerpolicyversion: POLICY180220
+x-originating-ip: [10.213.24.1]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20190109224039.GD24252@bigcity.dyn.berto.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-
-
-On 1/9/19 2:40 PM, Niklas Söderlund wrote:
-> Hi Steve,
->
-> Thanks for your patch, I think it looks good.
-
-Thanks for the Ack! I'm not real familiar with the RFC patch process. 
-Should this be submitted again with RFC stripped from the subject line?
-
-Steve
-
-> On 2019-01-06 13:20:18 -0800, Steve Longerbeam wrote:
->> There is a block of code in rvin_group_link_notify() that loops through
->> all entities in the media graph, and prevents enabling a link to a VIN
->> node if any entity is in use. This prevents enabling a VIN link even if
->> there is an in-use entity somewhere in the graph that is independent of
->> the link's pipeline.
->>
->> For example, the code will prevent enabling a link from the first
->> rcar-csi2 receiver to a VIN node even if there is an enabled link
->> somewhere far upstream on the second independent rcar-csi2 receiver
->> pipeline.
->>
->> If this code is meant to prevent modifying a link if any entity in the
->> graph is actively involved in streaming (because modifying the CHSEL
->> register fields can disrupt any/all running streams), then the entities
->> stream counts should be checked rather than the use counts.
->>
->> (There is already such a check in __media_entity_setup_link() that verifies
->> the stream_count of the link's source and sink entities are both zero,
->> but that is insufficient, since there should be no running streams in
->> the entire graph).
->>
->> Modify the media_device_for_each_entity() loop to check the entity
->> stream_count instead of the use_count, and elaborate on the comment.
->> VIN node links can now be enabled even if there are other independent
->> in-use entities that are not streaming.
->>
->> Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
->>
->> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->
->> ---
->> Changes in v2:
->> - bring back the media_device_for_each_entity() loop but check the
->>    stream_count not the use_count.
->> ---
->>   drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
->>   1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
->> index f0719ce24b97..6dd6b11c1b2b 100644
->> --- a/drivers/media/platform/rcar-vin/rcar-core.c
->> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
->> @@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
->>   	    !is_media_entity_v4l2_video_device(link->sink->entity))
->>   		return 0;
->>   
->> -	/* If any entity is in use don't allow link changes. */
->> +	/*
->> +	 * Don't allow link changes if any entity in the graph is
->> +	 * streaming, because modifying the CHSEL register fields
->> +	 * can disrupt running streams.
->> +	 */
->>   	media_device_for_each_entity(entity, &group->mdev)
->> -		if (entity->use_count)
->> +		if (entity->stream_count)
->>   			return -EBUSY;
->>   
->>   	mutex_lock(&group->lock);
->> -- 
->> 2.17.1
->>
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgW21h
+aWx0bzpyb2JoQGtlcm5lbC5vcmddDQo+IFNlbnQ6IFRodXJzZGF5LCBKYW51YXJ5IDEwLCAyMDE5
+IDU6MzAgQU0NCj4gVG86IGFybUBrZXJuZWwub3JnDQo+IENjOiBkZXZpY2V0cmVlQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgQW5kcmVhcw0KPiBGw6RyYmVy
+IDxhZmFlcmJlckBzdXNlLmRlPjsgTWFuaXZhbm5hbiBTYWRoYXNpdmFtDQo+IDxtYW5pdmFubmFu
+LnNhZGhhc2l2YW1AbGluYXJvLm9yZz47IFRzYWhlZSBaaWRlbmJlcmcNCj4gPHRzYWhlZUBhbm5h
+cHVybmFsYWJzLmNvbT47IEFudG9pbmUgVGVuYXJ0IDxhbnRvaW5lLnRlbmFydEBib290bGluLmNv
+bT47DQo+IE1heGltZSBSaXBhcmQgPG1heGltZS5yaXBhcmRAYm9vdGxpbi5jb20+OyBDaGVuLVl1
+IFRzYWkgPHdlbnNAY3NpZS5vcmc+Ow0KPiBEaW5oIE5ndXllbiA8ZGluZ3V5ZW5Aa2VybmVsLm9y
+Zz47IEtldmluIEhpbG1hbiA8a2hpbG1hbkBiYXlsaWJyZS5jb20+Ow0KPiBEdWMgRGFuZyA8ZGhk
+YW5nQGFwbS5jb20+OyBMaXZpdSBEdWRhdSA8bGl2aXUuZHVkYXVAYXJtLmNvbT47IFN1ZGVlcCBI
+b2xsYQ0KPiA8c3VkZWVwLmhvbGxhQGFybS5jb20+OyBMb3JlbnpvIFBpZXJhbGlzaSA8bG9yZW56
+by5waWVyYWxpc2lAYXJtLmNvbT47DQo+IFJheSBKdWkgPHJqdWlAYnJvYWRjb20uY29tPjsgU2Nv
+dHQgQnJhbmRlbiA8c2JyYW5kZW5AYnJvYWRjb20uY29tPjsNCj4gYmNtLWtlcm5lbC1mZWVkYmFj
+ay1saXN0QGJyb2FkY29tLmNvbTsgUm9iZXJ0IFJpY2h0ZXINCj4gPHJyaWNodGVyQGNhdml1bS5j
+b20+OyBKYXlhY2hhbmRyYW4gQyA8am5haXJAY2F2aXVtbmV0d29ya3MuY29tPjsgS3VramluDQo+
+IEtpbSA8a2dlbmVAa2VybmVsLm9yZz47IEtyenlzenRvZiBLb3psb3dza2kgPGtyemtAa2VybmVs
+Lm9yZz47IFdlaSBYdQ0KPiA8eHV3ZWk1QGhpc2lsaWNvbi5jb20+OyBDaGFuaG8gTWluIDxjaGFu
+aG8ubWluQGxnZS5jb20+OyBKYXNvbiBDb29wZXINCj4gPGphc29uQGxha2VkYWVtb24ubmV0Pjsg
+QW5kcmV3IEx1bm4gPGFuZHJld0BsdW5uLmNoPjsgR3JlZ29yeSBDbGVtZW50DQo+IDxncmVnb3J5
+LmNsZW1lbnRAYm9vdGxpbi5jb20+OyBTZWJhc3RpYW4gSGVzc2VsYmFydGgNCj4gPHNlYmFzdGlh
+bi5oZXNzZWxiYXJ0aEBnbWFpbC5jb20+OyBNYXR0aGlhcyBCcnVnZ2VyDQo+IDxtYXR0aGlhcy5i
+Z2dAZ21haWwuY29tPjsgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT47
+DQo+IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+OyBBbmR5IEdyb3NzDQo+
+IDxhbmR5Lmdyb3NzQGxpbmFyby5vcmc+OyBEYXZpZCBCcm93biA8ZGF2aWQuYnJvd25AbGluYXJv
+Lm9yZz47IFNpbW9uDQo+IEhvcm1hbiA8aG9ybXNAdmVyZ2UubmV0LmF1PjsgTWFnbnVzIERhbW0g
+PG1hZ251cy5kYW1tQGdtYWlsLmNvbT47IEhlaWtvDQo+IFN0dWVibmVyIDxoZWlrb0BzbnRlY2gu
+ZGU+OyBZYW1hZGEsIE1hc2FoaXJvL+WxseeUsCDnnJ/lvJgNCj4gPHlhbWFkYS5tYXNhaGlyb0Bz
+b2Npb25leHQuY29tPjsgT3Jzb24gWmhhaSA8b3Jzb256aGFpQGdtYWlsLmNvbT47DQo+IEJhb2xp
+biBXYW5nIDxiYW9saW4ud2FuZ0BsaW5hcm8ub3JnPjsgQ2h1bnlhbiBaaGFuZw0KPiA8emhhbmcu
+bHlyYUBnbWFpbC5jb20+OyBKaXNoZW5nIFpoYW5nIDxKaXNoZW5nLlpoYW5nQHN5bmFwdGljcy5j
+b20+Ow0KPiBUZXJvIEtyaXN0byA8dC1rcmlzdG9AdGkuY29tPjsgTmlzaGFudGggTWVub24gPG5t
+QHRpLmNvbT47IEp1biBOaWUNCj4gPGp1bi5uaWVAbGluYXJvLm9yZz47IFNoYXduIEd1byA8c2hh
+d25ndW9Aa2VybmVsLm9yZz47DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+ZzsNCj4gbGludXgtYW1sb2dpY0BsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zYW1zdW5nLXNv
+Y0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LW1lZGlhdGVrQGxpc3RzLmluZnJhZGVhZC5vcmc7
+IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtYXJtLW1zbUB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LXJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtcm9ja2No
+aXBAbGlzdHMuaW5mcmFkZWFkLm9yZzsgTWFyayBSdXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNv
+bT47DQo+IFdpbGwgRGVhY29uIDx3aWxsLmRlYWNvbkBhcm0uY29tPjsgTWljaGFsIFNpbWVrIDxt
+aWNoYWwuc2ltZWtAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogW1BBVENIXSBhcm02NDogZHRzOiBS
+ZW1vdmUgaW5jb25zaXN0ZW50IHVzZSBvZiAnYXJtLGFybXY4Jw0KPiBjb21wYXRpYmxlIHN0cmlu
+Zw0KPiANCj4gVGhlICdhcm0sYXJtdjgnIGNvbXBhdGlibGUgc3RyaW5nIGlzIG9ubHkgZm9yIHNv
+ZnR3YXJlIG1vZGVscy4gSXQgYWRkcw0KPiBsaXR0bGUgdmFsdWUgb3RoZXJ3aXNlIGFuZCBpcyBp
+bmNvbnNpc3RlbnRseSB1c2VkIGFzIGEgZmFsbGJhY2sgb24gc29tZQ0KPiBwbGF0Zm9ybXMuIFJl
+bW92ZSBpdCBmcm9tIHRob3NlIHBsYXRmb3Jtcy4NCj4gDQo+IFRoaXMgZml4ZXMgd2FybmluZ3Mg
+Z2VuZXJhdGVkIGJ5IHRoZSBEVCBzY2hlbWEuDQo+IA0KPiBSZXBvcnRlZC1ieTogTWljaGFsIFNp
+bWVrIDxtaWNoYWwuc2ltZWtAeGlsaW54LmNvbT4NCj4gQ2M6IE1hcmsgUnV0bGFuZCA8bWFyay5y
+dXRsYW5kQGFybS5jb20+DQo+IENjOiBXaWxsIERlYWNvbiA8d2lsbC5kZWFjb25AYXJtLmNvbT4N
+Cj4gU2lnbmVkLW9mZi1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz4NCj4gLS0tDQo+
+IGFybXNvYyBmb2xrcywgUGxlYXNlIGFwcGx5IGRpcmVjdGx5Lg0KPiANCj4gTm90ZSB0aGF0IHRo
+ZXJlJ3Mgc3RpbGwgYSBjYXNlIGxlZnQgaW4gbXNtODk5OCB0aGF0IG5lZWRzIGEgbmV3DQo+IGNv
+bXBhdGlibGUgc3RyaW5nLg0KPiANCj4gUm9iDQoNCls+IF0gDQoNCj4gIC4uLi9ib290L2R0cy9z
+b2Npb25leHQvdW5pcGhpZXItbGQxMS5kdHNpICAgICB8ICAgNCArLQ0KPiAgLi4uL2Jvb3QvZHRz
+L3NvY2lvbmV4dC91bmlwaGllci1sZDIwLmR0c2kgICAgIHwgICA4ICstDQo+ICAuLi4vYm9vdC9k
+dHMvc29jaW9uZXh0L3VuaXBoaWVyLXB4czMuZHRzaSAgICAgfCAgIDggKy0NCg0KDQpGb3IgdW5p
+cGhpZXIsDQoNCkFja2VkLWJ5OiBNYXNhaGlybyBZYW1hZGEgPHlhbWFkYS5tYXNhaGlyb0Bzb2Np
+b25leHQuY29tPg0KDQoNCkJUVywgZG8geW91IGhhdmUgYSBwbGFuIHRvIGZpeCBmaWxlcyB1bmRl
+cg0KRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzLyA/DQoNCg==
