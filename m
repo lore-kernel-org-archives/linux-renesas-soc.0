@@ -2,212 +2,168 @@ Return-Path: <SRS0=E4fS=PS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,URI_HEX autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA42FC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 14:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45465C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 14:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F3CA214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 14:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F8F5214C6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 14:38:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lpRZWg38"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/JdHOTn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbfAJOgj (ORCPT
+        id S1729177AbfAJOiK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:36:39 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50050 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728499AbfAJOgj (ORCPT
+        Thu, 10 Jan 2019 09:38:10 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44723 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729001AbfAJOiK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:36:39 -0500
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DFDE556D;
-        Thu, 10 Jan 2019 15:36:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547130996;
-        bh=EdhzNrS9kqvXBjh4u2WtYmigJIEP+vhbSp8z6LQ+fVo=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lpRZWg38VNEA5ErmC71B1s5ZX25ZSWzw52XjnPmcQ3MXwqi+wQiJ6EuIHgPJPBT3i
-         Flcvvk1z/v61+MXUivxwBcSJNA6rfW9nTtnbQzb2mHWLUy8WE9Jr3jTGl09tMq3nnS
-         njNPuxK2tqH2FEnbjnTpyNpxVfo9TsGS8tBq5EaQ=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v3 6/6] media: adv748x: Implement TX link_setup callback
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20190110140213.5198-1-jacopo+renesas@jmondi.org>
- <20190110140213.5198-7-jacopo+renesas@jmondi.org>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+        Thu, 10 Jan 2019 09:38:10 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z5so11604659wrt.11
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Jan 2019 06:38:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+zBpDDhECaWA4EBkDI+7tfihYPVUH2Fx0JQFyPg7mJE=;
+        b=c/JdHOTnP4ODfK/QPl5jPohOKusObD4Wc7AyY6wD1zWUKl7243tXVjxLOHC/vCqIC6
+         Hvyn8LG6ZyDRdhcJXpbkBnSYgW/2XVaof5YCjfzVmOJrZ+3KLWUVZAXKX6Xxv/mrU5AC
+         nKSjuMoRov0hcVCiaEc/gNm52lYIATfKuzsxQHF/54Qs0se6AbAXNKWM8jPwz4X8w6UF
+         kAyVGY8xuZhLFIbrr0RDlj7idRGpaCC86EeMBHG38gbXXsgXCWULZLg0LaeOSm2X9lB0
+         AdUFr1i/krTwJ378TWsYoSA1CuZYZi/2qkEFHvJ/bg3nCb43EypAbUqs0UrRFXUMJDJL
+         TTcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+zBpDDhECaWA4EBkDI+7tfihYPVUH2Fx0JQFyPg7mJE=;
+        b=hgleUDE+3EASPYizeYu/63qn7kdWFJlkTcvpnbBIhrhXlAjoYCW0jr7adzHIJLeHy2
+         qoevHWGIe4IYeqTOyVWVvVFYZkI9PTfSFse8QnjT/nCrw3RykCYZopBC1ZqoTidlvlmM
+         NnedD1CVJt1ATenJXxx1ka++lLLM77poMOuffr80dTfa64pCdfxH03Zk3bro8hXcCsZ0
+         DIHyH+gRfbUFttMekH2UmhirLG+u/17KNQRY19OkhSaRKssqGbSZ+YGu3Ys/IDoFne6b
+         k8a3/MTIdxH14NiU6LlV9JwRMtPuroqj9IbePYYqtg2G1zzyfuNWKTlVLYZj6vVGF5wv
+         Orrg==
+X-Gm-Message-State: AJcUukdRc/EbVbcwONVtmU+SV0tq5VwZrVjvs9X8iuBrWM8I8EPkoKdS
+        rkDy8G0277zhW9KO6Pdcr3Q=
+X-Google-Smtp-Source: ALg8bN5+Zaj68GHQzbDIi9s5CZm9At9aKhk4zbEwNfPMg1AyurajUk0zFlXufAmHxgB1STYe7exlLA==
+X-Received: by 2002:adf:f101:: with SMTP id r1mr9739441wro.32.1547131088035;
+        Thu, 10 Jan 2019 06:38:08 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id x20sm22068984wme.6.2019.01.10.06.38.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 06:38:07 -0800 (PST)
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Fix backlight
+ regulator numbering
+To:     Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+References: <20190109140045.17449-1-marek.vasut@gmail.com>
+ <CAMuHMdX3bP_WCYNRRMmVRPwV52e72NOZMtW8cf29Fo+E9_CvcQ@mail.gmail.com>
+ <20190109165822.tmj7qbho46f7clvg@verge.net.au>
+ <20190110100202.4eqyge7vadlmodsy@verge.net.au>
+From:   Marek Vasut <marek.vasut@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <ce01bf45-edda-beb2-70df-8c5a237ef515@ideasonboard.com>
-Date:   Thu, 10 Jan 2019 14:36:32 +0000
+Message-ID: <33d99771-695e-97ba-dfcb-25e08c91d300@gmail.com>
+Date:   Thu, 10 Jan 2019 14:40:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190110140213.5198-7-jacopo+renesas@jmondi.org>
+In-Reply-To: <20190110100202.4eqyge7vadlmodsy@verge.net.au>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
-
-Thank you for the update,
-
-On 10/01/2019 14:02, Jacopo Mondi wrote:
-> When the adv748x driver is informed about a link being created from HDMI or
-> AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
-> sure to implement proper routing management at link setup time, to route
-> the selected video stream to the desired TX output.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/media/i2c/adv748x/adv748x-core.c | 48 +++++++++++++++++++++++-
->  drivers/media/i2c/adv748x/adv748x.h      |  2 +
->  2 files changed, 49 insertions(+), 1 deletion(-)
+On 1/10/19 11:02 AM, Simon Horman wrote:
+> On Wed, Jan 09, 2019 at 05:58:23PM +0100, Simon Horman wrote:
+>> On Wed, Jan 09, 2019 at 04:26:25PM +0100, Geert Uytterhoeven wrote:
+>>> On Wed, Jan 9, 2019 at 3:01 PM <marek.vasut@gmail.com> wrote:
+>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>
+>>>> There are two regulator1 nodes in the Ebisu DTS right now, one 3.3V for
+>>>> the eMMC and one 12V for the backlight. This causes one to be overwritten
+>>>> by the other, ultimatelly resulting in inoperable eMMC, which depends on
+>>>> the former. Fix this by renumbering the backlight regulator to regulator2.
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>> Reported-by: Simon Horman <horms+renesas@verge.net.au>
+>>>> Fixes: 9d16c4a10e07 ("arm64: dts: renesas: r8a77990: ebisu: Add backlight")
+>>>
+>>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>
+>>>> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+>>>> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+>>>> @@ -191,7 +191,7 @@
+>>>>                 clock-frequency = <24576000>;
+>>>>         };
+>>>>
+>>>> -       reg_12p0v: regulator1 {
+>>>> +       reg_12p0v: regulator2 {
+>>>>                 compatible = "regulator-fixed";
+>>>>                 regulator-name = "D12.0V";
+>>>>                 regulator-min-microvolt = <12000000>;
+>>>
+>>> Perhaps the node name should get a more descriptive suffix
+>>> (e.g. "regulator-12p0v"), like is already done for some of the other
+>>> regulators?
+>>
+>> I think I would prefer that addressed in a follow-up patch.
 > 
-> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-> index 200e00f93546..ea7e5ca48f1a 100644
-> --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> @@ -335,6 +335,51 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
->  /* -----------------------------------------------------------------------------
->   * Media Operations
->   */
-> +static int adv748x_link_setup(struct media_entity *entity,
-> +			      const struct media_pad *local,
-> +			      const struct media_pad *remote, u32 flags)
-> +{
-> +	struct v4l2_subdev *rsd = media_entity_to_v4l2_subdev(remote->entity);
-> +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
-> +	struct adv748x_state *state = v4l2_get_subdevdata(sd);
-> +	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-> +	bool enable = flags & MEDIA_LNK_FL_ENABLED;
-> +	u8 io10_mask = ADV748X_IO_10_CSI1_EN |
-> +		       ADV748X_IO_10_CSI4_EN |
-> +		       ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> +	u8 io10 = 0;
-> +
-> +	/* Refuse to enable multiple links to the same TX at the same time. */
-> +	if (enable && tx->src)
-> +		return -EINVAL;
-> +
-> +	/* Set or clear the source (HDMI or AFE) and the current TX. */
-> +	if (rsd == &state->afe.sd)
-> +		state->afe.tx = enable ? tx : NULL;
-> +	else
-> +		state->hdmi.tx = enable ? tx : NULL;
-> +
-> +	tx->src = enable ? rsd : NULL;
-> +
-> +	if (state->afe.tx) {
-> +		/* AFE Requires TXA enabled, even when output to TXB */
-> +		io10 |= ADV748X_IO_10_CSI4_EN;
-> +		if (is_txa(tx))
-> +			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
-> +		else
-> +			io10 |= ADV748X_IO_10_CSI1_EN;
-> +	}
-> +
-> +	if (state->hdmi.tx)
-> +		io10 |= ADV748X_IO_10_CSI4_EN;
-> +
-> +	return io_clrset(state, ADV748X_IO_10, io10_mask, io10);
-> +}
-> +
-> +static const struct media_entity_operations adv748x_tx_media_ops = {
-> +	.link_setup	= adv748x_link_setup,
-> +	.link_validate	= v4l2_subdev_link_validate,
-> +};
->  
->  static const struct media_entity_operations adv748x_media_ops = {
->  	.link_validate = v4l2_subdev_link_validate,
-> @@ -516,7 +561,8 @@ void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
->  		state->client->addr, ident);
->  
->  	sd->entity.function = function;
-> -	sd->entity.ops = &adv748x_media_ops;
-> +	sd->entity.ops = is_tx(adv748x_sd_to_csi2(sd)) ?
-> +			 &adv748x_tx_media_ops : &adv748x_media_ops;
->  }
->  
->  static int adv748x_parse_csi2_lanes(struct adv748x_state *state,
-> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-> index 934a9d9a75c8..b00c1995efb0 100644
-> --- a/drivers/media/i2c/adv748x/adv748x.h
-> +++ b/drivers/media/i2c/adv748x/adv748x.h
-> @@ -94,6 +94,7 @@ struct adv748x_csi2 {
->  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
->  #define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
->  #define is_txb(_tx) ((_tx) == &(_tx)->state->txb)
-> +#define is_tx(_tx) (is_txa(_tx) || is_txb(_tx))
->  
->  #define is_afe_enabled(_state)					\
->  	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
-> @@ -223,6 +224,7 @@ struct adv748x_state {
->  #define ADV748X_IO_10_CSI4_EN		BIT(7)
->  #define ADV748X_IO_10_CSI1_EN		BIT(6)
->  #define ADV748X_IO_10_PIX_OUT_EN	BIT(5)
-> +#define ADV748X_IO_10_CSI4_IN_SEL_AFE	BIT(3)
->  
->  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
->  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
+> Thanks for this patch.
 > 
+> I have now tested it and it looks good to me.
+> I can now access eMMC as a block device.
+> 
+> Tested-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> I plan to apply this for v5.1 as the problem appears to
+> be introduced in a patch queued-up for v5.1.
+
+Thanks
+
+> # dmesg | egrep "(ee160000.sd|mmc0|mmcblk0|backlight)"
+> [    0.893760] pwm-backlight backlight: Linked as a consumer to regulator.3
+> [    2.901953] renesas_sdhi_internal_dmac ee160000.sd: Linked as a consumer to regulator.2
+> [    2.910262] renesas_sdhi_internal_dmac ee160000.sd: Linked as a consumer to regulator.1
+> [    2.967591] renesas_sdhi_internal_dmac ee160000.sd: mmc0 base at 0xee160000 max clock rate 200 MHz
+> [    3.049943] mmc0: new HS200 MMC card at address 0001
+> [    3.055843] mmcblk0: mmc0:0001 BGSD3R 29.1 GiB 
+> [    3.064414] mmcblk0boot0: mmc0:0001 BGSD3R partition 1 16.0 MiB
+> [    3.074888] mmcblk0boot1: mmc0:0001 BGSD3R partition 2 16.0 MiB
+> [    3.081522] mmcblk0rpmb: mmc0:0001 BGSD3R partition 3 4.00 MiB, chardev (243:0)
+> 
+> # dd if=/dev/mmcblk0 of=/dev/null bs=1M count=512 iflag=direct
+> 512+0 records in
+> 512+0 records out
+> 536870912 bytes (537 MB) copied, 14.7343 s, 36.4 MB/s
+> # dd if=/dev/mmcblk0 of=/dev/null bs=1M count=512 iflag=direct
+> 512+0 records in
+> 512+0 records out
+> 536870912 bytes (537 MB) copied, 8.46809 s, 63.4 MB/s
+> # dd if=/dev/mmcblk0 of=/dev/null bs=1M count=512 iflag=direct
+> 512+0 records in
+> 512+0 records out
+> 536870912 bytes (537 MB) copied, 14.6945 s, 36.5 MB/s
+
+Seems a bit slow to me for an HS200 card :-)
+Update your ATF, it has QoS updates for SDHI.
 
 -- 
-Regards
---
-Kieran
+Best regards,
+Marek Vasut
