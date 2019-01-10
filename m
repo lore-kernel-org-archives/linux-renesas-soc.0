@@ -2,77 +2,138 @@ Return-Path: <SRS0=E4fS=PS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B053C4363B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD667C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49760214C6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABB6220879
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:43:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFdqqCWl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbfAJNjZ (ORCPT
+        id S1728919AbfAJNnv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:39:25 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:58092 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728883AbfAJNjZ (ORCPT
+        Thu, 10 Jan 2019 08:43:51 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34545 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728848AbfAJNnv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:39:25 -0500
-Received: from ramsan ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id NdfM1z02y3XaVaC06dfMYT; Thu, 10 Jan 2019 14:39:23 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ghaYL-0004sM-Ri; Thu, 10 Jan 2019 14:39:21 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ghaYL-0005ZN-QH; Thu, 10 Jan 2019 14:39:21 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/5] arm64: dts: renesas: r8a774c0: Enable DMA for SCIF2
-Date:   Thu, 10 Jan 2019 14:39:14 +0100
-Message-Id: <20190110133917.21353-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190110133917.21353-1-geert+renesas@glider.be>
-References: <20190110133917.21353-1-geert+renesas@glider.be>
+        Thu, 10 Jan 2019 08:43:51 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so11478321wrw.1;
+        Thu, 10 Jan 2019 05:43:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PUNNiqlsfxrP3NkRtGyXhshMaWx6PTZbvwB96bcU1Lg=;
+        b=JFdqqCWlhNMscDh/C8RTQe9QCxF4ZqHajcjf6OKNOUDyw8dxST2TEeACBbI7YByAM4
+         0ABzSAhTjiV06Dv/K5zQS6tEas4bSymHqDBdhWyd18SiRX4clXyst0XNGTs2sBKMlI4y
+         tZxXrAKDlXluOICs5vs27TmkS3s8sofT+PeXhDA+Q+tesDV5dw8pSfrEtgWvokYbV8De
+         mRYKs5ZRh3tT4IesFpXhT6KiJilgR8pYOIo40U9Vri9h1psHW5LQBJB5MwAGGR4lQ7OD
+         /EoUjXjgq5YbQHAF0+fhJ8DU9VGrtVJCDuWnkkitmuzymlnAan8AyZ7mcN518fyotbRg
+         xiQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PUNNiqlsfxrP3NkRtGyXhshMaWx6PTZbvwB96bcU1Lg=;
+        b=AOH+5EBO3L1S7JQeHdMGnpAktPbaMpTErH9D/xWVS+ia2bbZL+deYIFaPVYrp9s83E
+         n2B4CiCZ1XMC3t2HH8KUEUcF9kn7F2KwiFZ5cGFZOJMUYjEF1YAAINvRdPtmK2U744bx
+         8Q3DBP8lhavlCvcB2cSFDarb1rAx/rmo+vLepFly0tSVeYs054Aj4ewsac/q6aUCCkkz
+         ILIYEDLnGJHQCGgCBnIl6YV6fotj0ssZIrVY4DWayXSblV6LGyXKOB/kXAr1j0aQMuGu
+         2bnee5Dfio95z67Rev038degn7JcCQQLrIXrvWZfFeBJXRgF4BDjuHnHtnaZT5SYqvjR
+         kxZg==
+X-Gm-Message-State: AJcUuke8gHZf3zRTDoAYO70q0hkQpMKcyDw2C19R8qb8FLlkS8XK3hx7
+        fSB9TjU0WS9pQl+/QJungng=
+X-Google-Smtp-Source: ALg8bN7WhOA1gcALjAc7Y/LLZiFB0ZKKO9d+h8gOgTwneQJkk9RotD6HFS/2L8r0GoVdBQigRl1DNg==
+X-Received: by 2002:adf:df01:: with SMTP id y1mr9689733wrl.127.1547127828554;
+        Thu, 10 Jan 2019 05:43:48 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id y13sm8963319wme.2.2019.01.10.05.43.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 05:43:47 -0800 (PST)
+Subject: Re: [PATCH v5 2/2] dt-bindings: spi: Document Renesas R-Car RPC-IF
+ controller bindings
+To:     masonccyang@mxic.com.tw
+Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
+        zhengxunli@mxic.com.tw
+References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
+ <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
+ <05c8e4ac-a9c8-7c24-289f-ce7a089dbc1e@gmail.com>
+ <OFD1D4749F.04B5A6A1-ON4825837E.00331D68-4825837E.00344CA0@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <85882d18-9b05-5cc9-105d-093ae7cf0041@gmail.com>
+Date:   Thu, 10 Jan 2019 14:43:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <OFD1D4749F.04B5A6A1-ON4825837E.00331D68-4825837E.00344CA0@mxic.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SCIF2 on RZ/G2E can be used with both DMAC1 and DMAC2.
+On 1/10/19 10:31 AM, masonccyang@mxic.com.tw wrote:
+> Hi Marek,
 
-Fixes: 1b24f9e8ea3ff95f ("arm64: dts: renesas: r8a774c0: Add SCIF and HSCIF nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Add Fixes tag.
----
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Hi,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 3970aafeee1236c0..f2e390f7f1d5b157 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -941,6 +941,9 @@
- 				 <&cpg CPG_CORE R8A774C0_CLK_S3D1C>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
-+			       <&dmac2 0x13>, <&dmac2 0x12>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
+>> "Marek Vasut" <marek.vasut@gmail.com>
+>> 2019/01/08 下午 08:06
+>> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
+>> rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> > new file mode 100644
+>> > index 0000000..5f96532
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> > @@ -0,0 +1,37 @@
+>> > +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
+>> > +----------------------------------------------------------
+>> > +
+>> > +Required properties:
+>> > +- compatible: should be "renesas,r8a77995-rpc"
+>> > +- #address-cells: should be 1
+>> > +- #size-cells: should be 0
+>> > +- reg: should contain 2 entries, one for the registers and one
+>> for the direct
+>> > +       mapping area
+>> > +- reg-names: should contain "regs" and "dirmap"
+>> > +- clock-names: should contain "rpc"
+>> > +- clocks: should contain 1 entries for the module's clock
+>> > +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
+>> > +                  "hyperflash" for rpc hyperflash mode.
+>>
+>> Why do we need this property ? I believe it is possible to detect the
+>> configuration based on the type of child of the RPC node. If the driver
+>> was properly designed, it could well behave as either CFI NOR driver or
+>> SPI flash driver and all would be good, but it seems this is written
+>> with it being SPI flash driver only and once the HF mode would need to
+>> be added, it'd mean a tremendous undertaking to rework the entire driver.
+>>
+> 
+> Except to check if there are any SPI NOR child nodes by "jedec,spi-nor"
+> compatible, is any other way better ?
+> 
+> any suggestion is welcome.
+
+That's the one. A MFD RPC driver can sanitize it's child nodes, verify
+that the config is valid and configure the RPC accordingly. All of the
+devices that can be connected to the RPC are either valid jedec-nor or
+CFI NOR (HF), so this should work fine.
+
 -- 
-2.17.1
-
+Best regards,
+Marek Vasut
