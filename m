@@ -2,138 +2,278 @@ Return-Path: <SRS0=E4fS=PS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD667C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217AFC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB6220879
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:43:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFdqqCWl"
+	by mail.kernel.org (Postfix) with ESMTP id E18A020879
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 13:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbfAJNnv (ORCPT
+        id S1728919AbfAJNrb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:43:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34545 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728848AbfAJNnv (ORCPT
+        Thu, 10 Jan 2019 08:47:31 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:58834 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728810AbfAJNrb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:43:51 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j2so11478321wrw.1;
-        Thu, 10 Jan 2019 05:43:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PUNNiqlsfxrP3NkRtGyXhshMaWx6PTZbvwB96bcU1Lg=;
-        b=JFdqqCWlhNMscDh/C8RTQe9QCxF4ZqHajcjf6OKNOUDyw8dxST2TEeACBbI7YByAM4
-         0ABzSAhTjiV06Dv/K5zQS6tEas4bSymHqDBdhWyd18SiRX4clXyst0XNGTs2sBKMlI4y
-         tZxXrAKDlXluOICs5vs27TmkS3s8sofT+PeXhDA+Q+tesDV5dw8pSfrEtgWvokYbV8De
-         mRYKs5ZRh3tT4IesFpXhT6KiJilgR8pYOIo40U9Vri9h1psHW5LQBJB5MwAGGR4lQ7OD
-         /EoUjXjgq5YbQHAF0+fhJ8DU9VGrtVJCDuWnkkitmuzymlnAan8AyZ7mcN518fyotbRg
-         xiQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PUNNiqlsfxrP3NkRtGyXhshMaWx6PTZbvwB96bcU1Lg=;
-        b=AOH+5EBO3L1S7JQeHdMGnpAktPbaMpTErH9D/xWVS+ia2bbZL+deYIFaPVYrp9s83E
-         n2B4CiCZ1XMC3t2HH8KUEUcF9kn7F2KwiFZ5cGFZOJMUYjEF1YAAINvRdPtmK2U744bx
-         8Q3DBP8lhavlCvcB2cSFDarb1rAx/rmo+vLepFly0tSVeYs054Aj4ewsac/q6aUCCkkz
-         ILIYEDLnGJHQCGgCBnIl6YV6fotj0ssZIrVY4DWayXSblV6LGyXKOB/kXAr1j0aQMuGu
-         2bnee5Dfio95z67Rev038degn7JcCQQLrIXrvWZfFeBJXRgF4BDjuHnHtnaZT5SYqvjR
-         kxZg==
-X-Gm-Message-State: AJcUuke8gHZf3zRTDoAYO70q0hkQpMKcyDw2C19R8qb8FLlkS8XK3hx7
-        fSB9TjU0WS9pQl+/QJungng=
-X-Google-Smtp-Source: ALg8bN7WhOA1gcALjAc7Y/LLZiFB0ZKKO9d+h8gOgTwneQJkk9RotD6HFS/2L8r0GoVdBQigRl1DNg==
-X-Received: by 2002:adf:df01:: with SMTP id y1mr9689733wrl.127.1547127828554;
-        Thu, 10 Jan 2019 05:43:48 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id y13sm8963319wme.2.2019.01.10.05.43.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 05:43:47 -0800 (PST)
-Subject: Re: [PATCH v5 2/2] dt-bindings: spi: Document Renesas R-Car RPC-IF
- controller bindings
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
-        zhengxunli@mxic.com.tw
-References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
- <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
- <05c8e4ac-a9c8-7c24-289f-ce7a089dbc1e@gmail.com>
- <OFD1D4749F.04B5A6A1-ON4825837E.00331D68-4825837E.00344CA0@mxic.com.tw>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <85882d18-9b05-5cc9-105d-093ae7cf0041@gmail.com>
-Date:   Thu, 10 Jan 2019 14:43:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 10 Jan 2019 08:47:31 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 12C3D3A6F54
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Jan 2019 14:40:12 +0100 (CET)
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id D070E200007;
+        Thu, 10 Jan 2019 13:40:08 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 14:40:15 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] media: adv748x: Implement TX link_setup callback
+Message-ID: <20190110134015.ssd24hnl7fbw4ct7@uno.localdomain>
+References: <20190106155413.30666-1-jacopo+renesas@jmondi.org>
+ <20190106155413.30666-7-jacopo+renesas@jmondi.org>
+ <9f156850-14b6-3ca2-47c1-e03e1bc2c0f8@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <OFD1D4749F.04B5A6A1-ON4825837E.00331D68-4825837E.00344CA0@mxic.com.tw>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="othasjxbznoz37lu"
+Content-Disposition: inline
+In-Reply-To: <9f156850-14b6-3ca2-47c1-e03e1bc2c0f8@ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 1/10/19 10:31 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
 
-Hi,
+--othasjxbznoz37lu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
->> "Marek Vasut" <marek.vasut@gmail.com>
->> 2019/01/08 下午 08:06
->> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
->> rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->> > new file mode 100644
->> > index 0000000..5f96532
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->> > @@ -0,0 +1,37 @@
->> > +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
->> > +----------------------------------------------------------
->> > +
->> > +Required properties:
->> > +- compatible: should be "renesas,r8a77995-rpc"
->> > +- #address-cells: should be 1
->> > +- #size-cells: should be 0
->> > +- reg: should contain 2 entries, one for the registers and one
->> for the direct
->> > +       mapping area
->> > +- reg-names: should contain "regs" and "dirmap"
->> > +- clock-names: should contain "rpc"
->> > +- clocks: should contain 1 entries for the module's clock
->> > +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
->> > +                  "hyperflash" for rpc hyperflash mode.
->>
->> Why do we need this property ? I believe it is possible to detect the
->> configuration based on the type of child of the RPC node. If the driver
->> was properly designed, it could well behave as either CFI NOR driver or
->> SPI flash driver and all would be good, but it seems this is written
->> with it being SPI flash driver only and once the HF mode would need to
->> be added, it'd mean a tremendous undertaking to rework the entire driver.
->>
-> 
-> Except to check if there are any SPI NOR child nodes by "jedec,spi-nor"
-> compatible, is any other way better ?
-> 
-> any suggestion is welcome.
+Hi Kieran,
+On Mon, Jan 07, 2019 at 12:36:28PM +0000, Kieran Bingham wrote:
+> Hi Jacopo,
+>
+> On 06/01/2019 15:54, Jacopo Mondi wrote:
+> > When the adv748x driver is informed about a link being created from HDMI or
+> > AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
+> > sure to implement proper routing management at link setup time, to route
+> > the selected video stream to the desired TX output.
+>
+> Overall this looks like the right approach - but I feel like the
+> handling of the io10 register might need some consideration, because
+> it's value depends on the condition of both CSI2 transmitters, not just
+> the currently parsed link.
+>
+> I had a go at some pseudo - uncompiled/untested code inline as a suggestion.
+>
+> If you think it's better - feel free to rework it in ... or not as you
+> see fit.
+>
+> Regards
+>
+> Kieran
+>
+>
+>
+>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/i2c/adv748x/adv748x-core.c | 57 +++++++++++++++++++++++-
+> >  drivers/media/i2c/adv748x/adv748x.h      |  2 +
+> >  2 files changed, 58 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> > index 200e00f93546..a586bf393558 100644
+> > --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> > +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> > @@ -335,6 +335,60 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
+> >  /* -----------------------------------------------------------------------------
+> >   * Media Operations
+> >   */
+> > +static int adv748x_link_setup(struct media_entity *entity,
+> > +			      const struct media_pad *local,
+> > +			      const struct media_pad *remote, u32 flags)
+> > +{
+> > +	struct v4l2_subdev *rsd = media_entity_to_v4l2_subdev(remote->entity);
+> > +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+> > +	struct adv748x_state *state = v4l2_get_subdevdata(sd);
+> > +	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
+> > +	bool enable = flags & MEDIA_LNK_FL_ENABLED;
+> > +	u8 io10;
+> > +
+> > +	/* Refuse to enable multiple links to the same TX at the same time. */
+> > +	if (enable && tx->src)
+> > +		return -EINVAL;
+> > +
+> > +	/* Set or clear the source (HDMI or AFE) and the current TX. */
+> > +	if (rsd == &state->afe.sd)
+> > +		state->afe.tx = enable ? tx : NULL;
+> > +	else
+> > +		state->hdmi.tx = enable ? tx : NULL;
+> > +
+> > +	tx->src = enable ? rsd : NULL;
+> > +
+> > +	if (!enable)
+> > +		return 0;
+>
+> Don't we potentially want to take any action on disable to power down
+> links below ?
+>
+> > +
+> > +	/* Change video stream routing, according to the newly enabled link. */
+> > +	io10 = io_read(state, ADV748X_IO_10);
+> > +	if (rsd == &state->afe.sd) {
+> > +		/*
+> > +		 * Set AFE->TXA routing and power off TXB if AFE goes to TXA.
+> > +		 * if AFE goes to TXB, we need both TXA and TXB powered on.
+> > +		 */
+> > +		io10 &= ~ADV748X_IO_10_CSI1_EN;
+> > +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
+> > +		if (is_txa(tx))
+> > +			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
+>
+> Shouldn't the CSI4 be enabled here too? or are we assuming it's already
+> (/always) enabled?
+> 		io10 |= ADV748X_IO_10_CSI4_EN;
+>
+> > +		else
+> > +			io10 |= ADV748X_IO_10_CSI4_EN |
+> > +				ADV748X_IO_10_CSI1_EN;
+> > +	} else {
+> > +		/* Clear AFE->TXA routing and power up TXA. */
+> > +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
+> > +		io10 |= ADV748X_IO_10_CSI4_EN;
+>
+> But if we assume it's already enabled ... do we need this?
+> Perhaps it might be better to be explicit on this?
+>
+> > +	}
+> > +	io_write(state, ADV748X_IO_10, io10);
+>
+>
+> Would it be any cleaner to use io_clrset() here?
+>
+> Hrm ... also it feels like this register really should be set depending
+> upon the complete state of ... &state->...
+>
+> So perhaps it deserves it's own function which should be called after
+> csi_registered() callback and any link change.
+>
+> /me has a quick go at some psuedo codeishness...:
+>
+> int adv74x_io_10(struct adv748x_state *state);
+> 	u8 bits = 0;
+> 	u8 mask = ADV748X_IO_10_CSI1_EN
+> 		| ADV748X_IO_10_CSI4_EN
+> 		| ADV748X_IO_10_CSI4_IN_SEL_AFE;
+>
+> 	if (state->afe.tx) {
+> 		/* AFE Requires TXA enabled, even when output to TXB */
+> 		bits |= ADV748X_IO_10_CSI4_EN;
+>
+> 		if (is_txa(state->afe.tx))
+> 			bits |= ADV748X_IO_10_CSI4_IN_SEL_AFE
+> 		else
+> 			bits |= ADV748X_IO_10_CSI1_EN;
+> 	}
+>
+> 	if (state->hdmi.tx) {
+> 		bits |= ADV748X_IO_10_CSI4_EN;
+> 	}
+>
+> 	return io_clrset(state, ADV748X_IO_10, mask, bits);
+> }
+>
+> How does that look ? (is it even correct first?)
+>
 
-That's the one. A MFD RPC driver can sanitize it's child nodes, verify
-that the config is valid and configure the RPC accordingly. All of the
-devices that can be connected to the RPC are either valid jedec-nor or
-CFI NOR (HF), so this should work fine.
+Thanks, I've now updated the implementation to use something very
+similar to what you proposed here!
 
--- 
-Best regards,
-Marek Vasut
+Thanks
+  j
+
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct media_entity_operations adv748x_tx_media_ops = {
+> > +	.link_setup	= adv748x_link_setup,
+> > +	.link_validate	= v4l2_subdev_link_validate,
+> > +};
+> >
+> >  static const struct media_entity_operations adv748x_media_ops = {
+> >  	.link_validate = v4l2_subdev_link_validate,
+> > @@ -516,7 +570,8 @@ void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
+> >  		state->client->addr, ident);
+> >
+> >  	sd->entity.function = function;
+> > -	sd->entity.ops = &adv748x_media_ops;
+> > +	sd->entity.ops = is_tx(adv748x_sd_to_csi2(sd)) ?
+> > +			 &adv748x_tx_media_ops : &adv748x_media_ops;
+>
+> Aha - yes that's a neat solution to ensure that only the TX links
+> generate link_setup calls :)
+>
+>
+>
+> >  }
+> >
+> >  static int adv748x_parse_csi2_lanes(struct adv748x_state *state,
+> > diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> > index 6eb2e4a95eed..eb19c6cbbb4e 100644
+> > --- a/drivers/media/i2c/adv748x/adv748x.h
+> > +++ b/drivers/media/i2c/adv748x/adv748x.h
+> > @@ -93,6 +93,7 @@ struct adv748x_csi2 {
+> >
+> >  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
+> >  #define __is_tx(_tx, _ab) ((_tx) == &(_tx)->state->tx##_ab)
+> > +#define is_tx(_tx) (is_txa(_tx) || is_txb(_tx))
+> >  #define is_txa(_tx) __is_tx(_tx, a)
+> >  #define is_txb(_tx) __is_tx(_tx, b)
+> >
+> > @@ -224,6 +225,7 @@ struct adv748x_state {
+> >  #define ADV748X_IO_10_CSI4_EN		BIT(7)
+> >  #define ADV748X_IO_10_CSI1_EN		BIT(6)
+> >  #define ADV748X_IO_10_PIX_OUT_EN	BIT(5)
+> > +#define ADV748X_IO_10_CSI4_IN_SEL_AFE	BIT(3)
+>
+>
+>
+> >
+> >  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
+> >  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
+> >
+>
+> --
+> Regards
+> --
+> Kieran
+
+--othasjxbznoz37lu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlw3Sz8ACgkQcjQGjxah
+VjyO2RAAtzhaK9LzpyfOcKVPH0wdwOf/Z26a2YlMkaHvxqFb8MuIJ1YlOxbhiauE
+WYw1tbXsmT06W1VrsRr5sVkrgkJA12WALueD/cM3uII2IDr5e2ikwd6IjiB8YV/F
+zZkjJQBxTNuxvHriUblzpxxgEck3RdiNeHI78IDd7FCxh1h88WCjoQLRonCP9B0E
+oud6HndcIjB0vRgSmkup573M+VzgiAYm7nlVxDctlaaZjQYJ0/bwmQYi2TrI4ST4
+pdffA0dsaroz+FjRnrKCtAy6v1MUTUiSwTxZFUetycgw5OnXGrgP2Omx4/7FAQe7
+t9LYTi8tMJ1YvHOVUfbDsVh6RNos89pFveul1mUd1KX7oSbkSDu0VtFDqW7JBC8f
+NrZC0YUJQmcSgM37pw98CJfnoAWAC0uvOpJunOmWfMkTYH34y0UDl3Vx6BDQ5eKn
+8MCgooRRJm6UJmECTV+zI5qQXmF9ad/E2cBqTwo3lBBEhOsSFw4V2Wk5MYiWvDWr
+Qgm1+LdvY0SkAG+hhuSEsKk3tqha6unc7M3Bo/IkkYHzRRi5ROKUuU44Pzj8mlCb
+Ep/IkEQd/ffK5y2X4gicP1znyO8hwMeViaRmRPwLqhSGU8dnzePxHl1nNqsyxbxt
+Utkmk4bYaa7UOzi4aeBaWeORejYcUbfVJxskcWGiRJHUyNVCNqs=
+=mHte
+-----END PGP SIGNATURE-----
+
+--othasjxbznoz37lu--
