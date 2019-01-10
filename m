@@ -2,103 +2,106 @@ Return-Path: <SRS0=E4fS=PS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D800CC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 10:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00669C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 12:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5151214DA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 10:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3F2920879
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 12:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="FzlVFacR"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EFuKjXkt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfAJK0G (ORCPT
+        id S1728063AbfAJM6I (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:26:06 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44533 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfAJK0G (ORCPT
+        Thu, 10 Jan 2019 07:58:08 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:48766 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfAJM6I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:26:06 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k19-v6so9177421lji.11
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Jan 2019 02:26:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SBb86NMsHZ5zps+6tloB3NYJDPBdSU6IL/CZyxV0S9Y=;
-        b=FzlVFacRA/R+4Y4MHxn3FgqVh8KQH2b/3VtkvqJthWFBglUM0hGNSiA0IVcsBKgc3s
-         ZChbfJDlVATnbb+mmwbDsTxkr4WLiPPDJWJm46aZHN3IeJVbDD4VFLlj4ujBAc5TmElM
-         5oxIzjfyXS5S51FSU0LbXS5XK5MYkRahf7xNAhU01LggXf1AJ0FmOvsr7byu0ppKW93M
-         9vP0vjdHXHWHSCPLUdl+mxXeWdlH54e8VkfyEis7N9VqqnSMsEfKgE13vIOODYw6gbNw
-         V26U3py3oCueF23d5VV3rlLsFsaSBbGlRn5f9jF4ZPjF7uOtBoK3v5X6NBm4eC2+DJmU
-         jSjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=SBb86NMsHZ5zps+6tloB3NYJDPBdSU6IL/CZyxV0S9Y=;
-        b=XZB1znTcqwUd+Zau3Doz164SW1O7T5lUDZCZORDe+PrWInBrwEJgX8Y0kvd528XesF
-         n6VbeSDGUiVgAIUibNct7fm0MUlrFvYftBLL9a8TZOg8c1bATM0RGfAc8hUQJSScv4lu
-         +881yS3RLYKJ43Km/3q2QOuTNbIVK+DDKKT9bd2Q9Aaua8O3/N2qSbtzWwr4NmnR+4/O
-         bIRhJaXRtDsSe+khnee6kYhQ2sYah9dwB0VA3tnbnG2aTSluI/LC9hXRBvuiNl4FxPoG
-         VjHoI0gQ3d9LbhuJ1uflKl7Iji7gY/qwaxcqfa05TP3UxXQmQOIHWY9jUxjSSoPjtLa6
-         vD5A==
-X-Gm-Message-State: AJcUukfNn/UUBivB37zNYEU/S5OX6svBARVfCELgQdKamLFWCPCE1U63
-        1PaMI7l7uAlV6wzU3HRqC7f2QA==
-X-Google-Smtp-Source: ALg8bN4H9oq7U8dO7P24L7Xw2SJKHOTDPQXfIihMWdPymAeZxodxStBBiN5uZWZ/lFVyUGIckds7sg==
-X-Received: by 2002:a2e:9a16:: with SMTP id o22-v6mr5479034lji.112.1547115963779;
-        Thu, 10 Jan 2019 02:26:03 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.83.122])
-        by smtp.gmail.com with ESMTPSA id h3sm13915957lfj.25.2019.01.10.02.26.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 02:26:02 -0800 (PST)
-Subject: Re: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     Boris Brezillon <bbrezillon@kernel.org>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
- <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw>
- <74a5fba6-a77e-f71b-ce49-405fee8e0fda@cogentembedded.com>
- <20190110111601.1dad05a0@bbrezillon>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <dd36d2b3-c0e3-f6a3-56f1-c96f4ae59ece@cogentembedded.com>
-Date:   Thu, 10 Jan 2019 13:26:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 10 Jan 2019 07:58:08 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 885B14F8;
+        Thu, 10 Jan 2019 13:58:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1547125085;
+        bh=4puNvOBoknhCNWs2atjqhIpgbrRg/eCecU28pHTvyTQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EFuKjXkthiKKJqoS51u3F6wg4ga0DPhcm169JHzCKuydY7s2W+4rDaciAVkU2DvAj
+         olVlqD+fI2/1RBzJpW7TsZYESCyZpAY+xFWuxE7ku4vKW/1mVn/g1KW38u2w3UorZk
+         D6P5YQ6Jv5s7txVUMhTPdN0pPP1K5nwLvFxRdwZA=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     marek.vasut@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Fix backlight regulator numbering
+Date:   Thu, 10 Jan 2019 14:59:15 +0200
+Message-ID: <1816865.hhpKvpXsC4@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20190109140045.17449-1-marek.vasut@gmail.com>
+References: <20190109140045.17449-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190110111601.1dad05a0@bbrezillon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 01/10/2019 01:16 PM, Boris Brezillon wrote:
+Hi Marek,
 
->>> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
->>>
->>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>  
->>
->>    You now need to add:
->>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thank you for the patch.
+
+On Wednesday, 9 January 2019 16:00:45 EET marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
 > 
-> May I ask why?
+> There are two regulator1 nodes in the Ebisu DTS right now, one 3.3V for
+> the eMMC and one 12V for the backlight. This causes one to be overwritten
+> by the other, ultimatelly resulting in inoperable eMMC, which depends on
+> the former. Fix this by renumbering the backlight regulator to regulator2.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Reported-by: Simon Horman <horms+renesas@verge.net.au>
+> Fixes: 9d16c4a10e07 ("arm64: dts: renesas: r8a77990: ebisu: Add backlight")
 
-   v5 includes my signed read mode workaround patch.
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-MBR, Sergei
+Sorry for breaking this in the first place.
+
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts index
+> e0590c0af4c4..89383aa35d65 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> @@ -191,7 +191,7 @@
+>  		clock-frequency = <24576000>;
+>  	};
+> 
+> -	reg_12p0v: regulator1 {
+> +	reg_12p0v: regulator2 {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "D12.0V";
+>  		regulator-min-microvolt = <12000000>;
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
