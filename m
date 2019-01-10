@@ -2,147 +2,315 @@ Return-Path: <SRS0=E4fS=PS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,URI_HEX,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66217C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 10:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347E8C43444
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 10:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38D1C206B6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 10:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06DD22173B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jan 2019 10:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="EPwZVIgL"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ftalNMDG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfAJKCH (ORCPT
+        id S1727615AbfAJKGE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:02:07 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:36196 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbfAJKCG (ORCPT
+        Thu, 10 Jan 2019 05:06:04 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46712 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbfAJKGD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:02:06 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id BCF5425B78D;
-        Thu, 10 Jan 2019 21:02:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547114525; bh=Evv6/kUZM2BXEO4ID4kHm9U6pi6UaWggfSKsaCs7c7M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EPwZVIgLNQ3mAUE3y4DWNM7bFN+1AUHGqF5+XB7zc8f85SWpA5gMjdAAV/c66Jf2x
-         vItbhyAtUueachhAMG4KI2NnFLCoKkZS4qHdqnPRtW+m4rYvi9S7FU1D614OFOO4bU
-         fI12whi5V/eEX5xrd2KdWy9stsF3fzybJgPjApDU=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id F0FCB940462; Thu, 10 Jan 2019 11:02:02 +0100 (CET)
-Date:   Thu, 10 Jan 2019 11:02:02 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Fix backlight
- regulator numbering
-Message-ID: <20190110100202.4eqyge7vadlmodsy@verge.net.au>
-References: <20190109140045.17449-1-marek.vasut@gmail.com>
- <CAMuHMdX3bP_WCYNRRMmVRPwV52e72NOZMtW8cf29Fo+E9_CvcQ@mail.gmail.com>
- <20190109165822.tmj7qbho46f7clvg@verge.net.au>
+        Thu, 10 Jan 2019 05:06:03 -0500
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BED6256D;
+        Thu, 10 Jan 2019 11:05:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1547114760;
+        bh=Kov/1/J9NJ5U7M1vXtBrylB03qffawcOXXTS3mtDCvw=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ftalNMDGcaljiGzQMhCEB2V7bb1ADcVom6IEk00H67UcTm0WCRpYjqyYXNJv0VcMO
+         aefQe1+Tx9EtX4GytazN0sU6nsxo0dAsSibis5mLtkwA/sro+oipD0Qn7AkRt4JO49
+         DSAqa5hfvG+4ARHCZgP3tVECkhb2bRDDRT5gajHw=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v2 6/6] media: adv748x: Implement TX link_setup callback
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20190106155413.30666-1-jacopo+renesas@jmondi.org>
+ <20190106155413.30666-7-jacopo+renesas@jmondi.org>
+ <9f156850-14b6-3ca2-47c1-e03e1bc2c0f8@ideasonboard.com>
+ <1722143.vWDHCLa8RZ@avalon>
+ <221dd6e0-bf90-5215-eaad-004eac59838d@ideasonboard.com>
+ <20190110085843.cju2gjrr4vm3acby@uno.localdomain>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <186325bd-0afa-0576-2c82-08f8716ba61b@ideasonboard.com>
+Date:   Thu, 10 Jan 2019 10:05:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109165822.tmj7qbho46f7clvg@verge.net.au>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190110085843.cju2gjrr4vm3acby@uno.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 05:58:23PM +0100, Simon Horman wrote:
-> On Wed, Jan 09, 2019 at 04:26:25PM +0100, Geert Uytterhoeven wrote:
-> > On Wed, Jan 9, 2019 at 3:01 PM <marek.vasut@gmail.com> wrote:
-> > > From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > >
-> > > There are two regulator1 nodes in the Ebisu DTS right now, one 3.3V for
-> > > the eMMC and one 12V for the backlight. This causes one to be overwritten
-> > > by the other, ultimatelly resulting in inoperable eMMC, which depends on
-> > > the former. Fix this by renumbering the backlight regulator to regulator2.
-> > >
-> > > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > > Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > Cc: Simon Horman <horms+renesas@verge.net.au>
-> > > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > Cc: linux-renesas-soc@vger.kernel.org
-> > > Reported-by: Simon Horman <horms+renesas@verge.net.au>
-> > > Fixes: 9d16c4a10e07 ("arm64: dts: renesas: r8a77990: ebisu: Add backlight")
-> > 
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > 
-> > > --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> > > @@ -191,7 +191,7 @@
-> > >                 clock-frequency = <24576000>;
-> > >         };
-> > >
-> > > -       reg_12p0v: regulator1 {
-> > > +       reg_12p0v: regulator2 {
-> > >                 compatible = "regulator-fixed";
-> > >                 regulator-name = "D12.0V";
-> > >                 regulator-min-microvolt = <12000000>;
-> > 
-> > Perhaps the node name should get a more descriptive suffix
-> > (e.g. "regulator-12p0v"), like is already done for some of the other
-> > regulators?
+Hi Jacopo,
+
+On 10/01/2019 08:58, Jacopo Mondi wrote:
+> On Wed, Jan 09, 2019 at 02:15:33PM +0000, Kieran Bingham wrote:
+>> On 09/01/2019 00:15, Laurent Pinchart wrote:
+>>> Hello,
+>>>
+>>> On Monday, 7 January 2019 14:36:28 EET Kieran Bingham wrote:
+>>>> On 06/01/2019 15:54, Jacopo Mondi wrote:
+>>>>> When the adv748x driver is informed about a link being created from HDMI
+>>>>> or AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
+>>>>> sure to implement proper routing management at link setup time, to route
+>>>>> the selected video stream to the desired TX output.
+>>>>
+>>>> Overall this looks like the right approach - but I feel like the
+>>>> handling of the io10 register might need some consideration, because
+>>>> it's value depends on the condition of both CSI2 transmitters, not just
+>>>> the currently parsed link.
+>>>>
+>>>> I had a go at some pseudo - uncompiled/untested code inline as a suggestion.
+>>>>
+>>>> If you think it's better - feel free to rework it in ... or not as you
+>>>> see fit.
+>>>>
+>>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>>>>> ---
+>>>>>
+>>>>>  drivers/media/i2c/adv748x/adv748x-core.c | 57 +++++++++++++++++++++++-
+>>>>>  drivers/media/i2c/adv748x/adv748x.h      |  2 +
+>>>>>  2 files changed, 58 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c
+>>>>> b/drivers/media/i2c/adv748x/adv748x-core.c index
+>>>>> 200e00f93546..a586bf393558 100644
+>>>>> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+>>>>> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+>>>>> @@ -335,6 +335,60 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool
+>>>>> on)
+>>>>>  /* ----------------------------------------------------------------------
+>>>>>   * Media Operations
+>>>>>   */
+>>>>> +static int adv748x_link_setup(struct media_entity *entity,
+>>>>> +			      const struct media_pad *local,
+>>>>> +			      const struct media_pad *remote, u32 flags)
+>>>>> +{
+>>>>> +	struct v4l2_subdev *rsd = media_entity_to_v4l2_subdev(remote->entity);
+>>>>> +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+>>>>> +	struct adv748x_state *state = v4l2_get_subdevdata(sd);
+>>>>> +	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
+>>>>> +	bool enable = flags & MEDIA_LNK_FL_ENABLED;
+>>>>> +	u8 io10;
+>>>>> +
+>>>>> +	/* Refuse to enable multiple links to the same TX at the same time. */
+>>>>> +	if (enable && tx->src)
+>>>>> +		return -EINVAL;
+>>>>> +
+>>>>> +	/* Set or clear the source (HDMI or AFE) and the current TX. */
+>>>>> +	if (rsd == &state->afe.sd)
+>>>>> +		state->afe.tx = enable ? tx : NULL;
+>>>>> +	else
+>>>>> +		state->hdmi.tx = enable ? tx : NULL;
+>>>>> +
+>>>>> +	tx->src = enable ? rsd : NULL;
+>>>>> +
+>>>>> +	if (!enable)
+>>>>> +		return 0;
+>>>>
+>>>> Don't we potentially want to take any action on disable to power down
+>>>> links below ?
+>>>>
+>>>>> +
+>>>>> +	/* Change video stream routing, according to the newly enabled link. */
+>>>>> +	io10 = io_read(state, ADV748X_IO_10);
+>>>>> +	if (rsd == &state->afe.sd) {
+>>>>> +		/*
+>>>>> +		 * Set AFE->TXA routing and power off TXB if AFE goes to TXA.
+>>>>> +		 * if AFE goes to TXB, we need both TXA and TXB powered on.
+>>>>> +		 */
+>>>>> +		io10 &= ~ADV748X_IO_10_CSI1_EN;
+>>>>> +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
+>>>>> +		if (is_txa(tx))
+>>>>> +			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
+>>>>
+>>>> Shouldn't the CSI4 be enabled here too? or are we assuming it's already
+>>>> (/always) enabled?
+>>>> 		io10 |= ADV748X_IO_10_CSI4_EN;
+>>>>
+>>>>> +		else
+>>>>> +			io10 |= ADV748X_IO_10_CSI4_EN |
+>>>>> +				ADV748X_IO_10_CSI1_EN;
+>>>>> +	} else {
+>>>>> +		/* Clear AFE->TXA routing and power up TXA. */
+>>>>> +		io10 &= ~ADV748X_IO_10_CSI4_IN_SEL_AFE;
+>>>>> +		io10 |= ADV748X_IO_10_CSI4_EN;
+>>>>
+>>>> But if we assume it's already enabled ... do we need this?
+>>>> Perhaps it might be better to be explicit on this?
+>>>>
+>>>>> +	}
+>>>>> +	io_write(state, ADV748X_IO_10, io10);
+>>>>
+>>>> Would it be any cleaner to use io_clrset() here?
+>>>>
+>>>> Hrm ... also it feels like this register really should be set depending
+>>>> upon the complete state of ... &state->...
+>>>>
+>>>> So perhaps it deserves it's own function which should be called after
+>>>> csi_registered() callback and any link change.
+>>>>
+>>>> /me has a quick go at some psuedo codeishness...:
+>>>>
+>>>> int adv74x_io_10(struct adv748x_state *state);
+>>>> 	u8 bits = 0;
+>>>> 	u8 mask = ADV748X_IO_10_CSI1_EN
+>>>>
+>>>> 		| ADV748X_IO_10_CSI4_EN
+>>>> 		| ADV748X_IO_10_CSI4_IN_SEL_AFE;
+>>>>
+>>>> 	if (state->afe.tx) {
+>>>> 		/* AFE Requires TXA enabled, even when output to TXB */
+>>>> 		bits |= ADV748X_IO_10_CSI4_EN;
+>>>>
+>>>> 		if (is_txa(state->afe.tx))
+>>>> 			bits |= ADV748X_IO_10_CSI4_IN_SEL_AFE
+>>>> 		else
+>>>> 			bits |= ADV748X_IO_10_CSI1_EN;
+>>>> 	}
+>>>>
+>>>> 	if (state->hdmi.tx) {
+>>>> 		bits |= ADV748X_IO_10_CSI4_EN;
+>>>> 	}
+>>>>
+>>>> 	return io_clrset(state, ADV748X_IO_10, mask, bits);
+>>>> }
+>>>>
+>>>> How does that look ? (is it even correct first?)
+>>>>
+>>>>> +
+>>>>> +	return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static const struct media_entity_operations adv748x_tx_media_ops = {
+>>>>> +	.link_setup	= adv748x_link_setup,
+>>>>> +	.link_validate	= v4l2_subdev_link_validate,
+>>>>> +};
+>>>>>
+>>>>>  static const struct media_entity_operations adv748x_media_ops = {
+>>>>>  	.link_validate = v4l2_subdev_link_validate,
+>>>>> @@ -516,7 +570,8 @@ void adv748x_subdev_init(struct v4l2_subdev *sd,
+>>>>> struct adv748x_state *state,
+>>>>>  		state->client->addr, ident);
+>>>>>
+>>>>>  	sd->entity.function = function;
+>>>>> -	sd->entity.ops = &adv748x_media_ops;
+>>>>> +	sd->entity.ops = is_tx(adv748x_sd_to_csi2(sd)) ?
+>>>>> +			 &adv748x_tx_media_ops : &adv748x_media_ops;
+>>>>
+>>>> Aha - yes that's a neat solution to ensure that only the TX links
+>>>> generate link_setup calls :)
+>>>
+>>> Another option would be to bail out from adv748x_link_setup() if the entity is
+>>> not a TX*.
+>>>
+>>
+>> I suggested this in v1 - but Jacopo objected with the following:
+>>
+>>> Checking for is_txa() and is_txb() would require to call
+>>> 'adv_sd_to_csi2(sd)' before having made sure the 'sd' actually
+>>> represent a csi2_tx. I would keep it as it is.
+>>
 > 
-> I think I would prefer that addressed in a follow-up patch.
+> That was at the time where the .link_setup() callback was called for
+> TXs and non-TXs. What you proposed was to call:
+> 
+> #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
+> 
+> on variables that we don't have any guarantee that are of type 'struct
+> adv748x_csi2'. I still think it is dangerous and should be avoided and
+> I worked it around in v1 as:
+> 
+> +	if ((sd != &state->txa.sd && sd != &state->txb.sd) ||
+> 
+>> Now I look at the implementation here, I see this is precisely what it
+>> is doing anyway .... still converting through adv748x_sd_to_csi2(sd) on
+>> an unknown pointer type
+>>  (which I still believe is a valid thing to do in this instance)
+> 
+> It's not unknown, .link_setup() is only registered for TXs. If it gets
+> called, we know we're dealing with a TX.
+> 
+>>
+>> So yes, I think this would be simpler having the check at the top of the
+>> adv748x_link_setup() call, and thus then there is no need to add a
+>> second adv_media_ops structure.
+> 
+> That was what I did in v1, didn't I ?
+> 
+> The current implementation looks better imho, but if the both of you
+> prefer something similar to v1 I will consider that.
 
-Thanks for this patch.
-
-I have now tested it and it looks good to me.
-I can now access eMMC as a block device.
-
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
-
-I plan to apply this for v5.1 as the problem appears to
-be introduced in a patch queued-up for v5.1.
+Given the extra clarification above, I'll not object to keeping it this
+way. I still think it's fine to use container of and then check the
+pointers for failure. The is_tx() would perform the type-validation :) -
+but lets stick with the one that you prefer. Its your patch :)
+--
+Kieran
 
 
-
-# dmesg | egrep "(ee160000.sd|mmc0|mmcblk0|backlight)"
-[    0.893760] pwm-backlight backlight: Linked as a consumer to regulator.3
-[    2.901953] renesas_sdhi_internal_dmac ee160000.sd: Linked as a consumer to regulator.2
-[    2.910262] renesas_sdhi_internal_dmac ee160000.sd: Linked as a consumer to regulator.1
-[    2.967591] renesas_sdhi_internal_dmac ee160000.sd: mmc0 base at 0xee160000 max clock rate 200 MHz
-[    3.049943] mmc0: new HS200 MMC card at address 0001
-[    3.055843] mmcblk0: mmc0:0001 BGSD3R 29.1 GiB 
-[    3.064414] mmcblk0boot0: mmc0:0001 BGSD3R partition 1 16.0 MiB
-[    3.074888] mmcblk0boot1: mmc0:0001 BGSD3R partition 2 16.0 MiB
-[    3.081522] mmcblk0rpmb: mmc0:0001 BGSD3R partition 3 4.00 MiB, chardev (243:0)
-
-# dd if=/dev/mmcblk0 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 14.7343 s, 36.4 MB/s
-# dd if=/dev/mmcblk0 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 8.46809 s, 63.4 MB/s
-# dd if=/dev/mmcblk0 of=/dev/null bs=1M count=512 iflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 14.6945 s, 36.5 MB/s
-
-# dd of=/dev/mmcblk0 if=/dev/zero bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 19.1677 s, 28.0 MB/s
-# dd of=/dev/mmcblk0 if=/dev/zero bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 21.3139 s, 25.2 MB/s
-# dd of=/dev/mmcblk0 if=/dev/zero bs=1M count=512 oflag=direct
-512+0 records in
-512+0 records out
-536870912 bytes (537 MB) copied, 19.9205 s, 27.0 MB/s
