@@ -2,109 +2,84 @@ Return-Path: <SRS0=sjaF=PT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFC7C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 14:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC52C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 14:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DDDA20874
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 14:12:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="fVa0u/gq"
+	by mail.kernel.org (Postfix) with ESMTP id 2CD572063F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 14:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547218333;
+	bh=HajEArRFRmoz5JK2HV3VnqK7jOQYdXBNMTAdy3Vhk98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=baeYlu6+5+0RVyrwvHMMWI4xuBZX7LeWu8cxlDdzJO79/f9UhRqPYNJXo1oaDbbIv
+	 tpwwFgd+BZ/RI9nLlh2ykAMAUsy/nRJ16Cu7NBnzjsVFYHlmDpCDLS5pbAeShGJZot
+	 q/iwmNkLfuGIFYCjW6XjEKyZOw1mrAjR8k2gAhsY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731199AbfAKOMX (ORCPT
+        id S2390617AbfAKOwM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:12:23 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:34170 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfAKOMW (ORCPT
+        Fri, 11 Jan 2019 09:52:12 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37695 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403767AbfAKOjD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:12:22 -0500
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 9640E25B819;
-        Sat, 12 Jan 2019 01:12:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547215940; bh=Tnd5FzovYCvcDGZLjGqRV1ukw4pt6APp994xlBe/kw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fVa0u/gq6J3RVxwrhN41EtwNitqs4tNf6500htDW17DwKOIe5AaRNimaH0fiVx092
-         dB1GPSaHJCu3V4dbPa3ywknjdJq6dVeucNQVVCa8wqkgpTkNpYWrI/ZAmT2ZnvYwDv
-         nK1xfbkX5coreq+IGgc/tqWOEE9Lj3+Apl4pwPp8=
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 83020E21282; Fri, 11 Jan 2019 06:12:18 -0800 (PST)
-Date:   Fri, 11 Jan 2019 15:12:18 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77995: Fix MOD_SEL bit numbering
-Message-ID: <20190111141217.gsxwevwg3rqnexld@verge.net.au>
-References: <20190111115020.29147-1-geert+renesas@glider.be>
+        Fri, 11 Jan 2019 09:39:03 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s13so4772821otq.4;
+        Fri, 11 Jan 2019 06:39:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Mi96pIAEmH8vmWsGXtxKK0yfd+JyovF6E+68ygoVB0A=;
+        b=p0pqORNasqwrdfj988aWY4ZwvZxKYWZe0mxKPmDKMOD/BF4vZzUit9zjthx5q5hGwK
+         WpxOBcLHYfq3XjD2kJJ4KKSf3Ar2Fr27SlvuApHBMVy+LFQrP84Eps53OOFK04jvtrAi
+         DTKGxz6Z9Wygp++YorctYyiP5U/y9nATZuad5ggR87Jpm5NGMovCwVM9fjqRuZtF1Y3u
+         MMXC4nkCqX93qvqJJ7AfMqeW3XFwZtiyAgamal8+G1SH1ssa/rdsn4KBujSumVOfCDbv
+         aT2pC1ZfUmHyjN1QtKZCb9lurYIVA6DOmibakai8m4C+PVGR+NDgKCvRm6f17hMGeOSu
+         IFfA==
+X-Gm-Message-State: AJcUukcroqCCu4Q4CrcenrKiJ/XCGFMnpBUuoejD5EdNdMLX634Edu4W
+        AvqCm1plMsWZUypxELMXPQ==
+X-Google-Smtp-Source: ALg8bN4TY+2guKsr5gCmb9c00ItTlfZbtITS191TbWZfrWfj8RC0vDbXPZsVKu2tk4mxqZzyFIwueg==
+X-Received: by 2002:a9d:2661:: with SMTP id a88mr10056863otb.91.1547217542845;
+        Fri, 11 Jan 2019 06:39:02 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u19sm37795939oia.31.2019.01.11.06.39.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 06:39:02 -0800 (PST)
+Date:   Fri, 11 Jan 2019 08:39:01 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: renesas-rpc: document R8A77980
+ bindings
+Message-ID: <20190111143901.GA28026@bogus>
+References: <72626acd-9d5f-14a1-6464-5fdeba17fece@cogentembedded.com>
+ <08a3ff4d-3ee3-91dd-c048-55a09b6dfc63@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190111115020.29147-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <08a3ff4d-3ee3-91dd-c048-55a09b6dfc63@cogentembedded.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 12:50:20PM +0100, Geert Uytterhoeven wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Fri, 28 Dec 2018 13:47:09 +0300, Sergei Shtylyov wrote:
+> Document the R-Car V3H (R8A77980) SoC in the Renesas RPC-IF bindings.
 > 
-> MOD_SEL register bit numbering was different from R-Car D3 SoC and
-> R-Car H3/M3-[WN] SoCs.
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 > 
-> MOD_SEL 1-bit      H3/M3-[WN]  D3
-> ===============    ==========  =====
-> Set Value = H'0    b'0         b'0
-> Set Value = H'1    b'1         b'1
-> 
-> MOD_SEL 2-bits     H3/M3-[WN]  D3
-> ===============    ==========  =====
-> Set Value = H'0    b'00        b'00
-> Set Value = H'1    b'01        b'10
-> Set Value = H'2    b'10        b'01
-> Set Value = H'3    b'11        b'11
-> 
-> MOD_SEL 3-bits     H3/M3-[WN]  D3
-> ===============    ==========  =====
-> Set Value = H'0    b'000       b'000
-> Set Value = H'1    b'001       b'100
-> Set Value = H'2    b'010       b'010
-> Set Value = H'3    b'011       b'110
-> Set Value = H'4    b'100       b'001
-> Set Value = H'5    b'101       b'101
-> Set Value = H'6    b'110       b'011
-> Set Value = H'7    b'111       b'111
-> 
-> This patch replaces the #define name and value of MOD_SEL.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Fixes: 794a67117646 ("pinctrl: sh-pfc: Initial R8A77995 PFC support")
-> [shimoda: split a patch per SoC and revise the commit log]
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> [geert: Use a macro to do the actual reordering]
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> Untested as we don't know how to test the impact of MOD_SEL bits on
-> output pins.
+>  Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Using a macro makes the code easier to write, read, and maintain.
-> Use "git show --color-words" to see the difference.
-> 
-> I'd love to handle the reversal in the PINMUX_CFG_REG_VAR()
-> descriptions, but I can't use e.g. REV4(MOD_SEL0_24_23) there, as
-> MOD_SEL0_24_23 is a single parameter, not 4 parameters.
-> 
-> Can this be improved?
 
-Likely but nothing springs to mind.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+Reviewed-by: Rob Herring <robh@kernel.org>
