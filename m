@@ -2,171 +2,101 @@ Return-Path: <SRS0=sjaF=PT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A65C43612
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 12:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B653C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 12:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F242133F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 12:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A14820657
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 12:34:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="C3dqxaiQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732312AbfAKM1Q (ORCPT
+        id S1732372AbfAKMeJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jan 2019 07:27:16 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:58452 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732317AbfAKM1Q (ORCPT
+        Fri, 11 Jan 2019 07:34:09 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:32979 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730347AbfAKMeJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Jan 2019 07:27:16 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id P0TC1z00V3XaVaC010TCXR; Fri, 11 Jan 2019 13:27:12 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ghvu4-0006J0-IK; Fri, 11 Jan 2019 13:27:12 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ghvu4-0008Qx-GR; Fri, 11 Jan 2019 13:27:12 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Fri, 11 Jan 2019 07:34:09 -0500
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 7220C25BEE0;
+        Fri, 11 Jan 2019 23:34:06 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1547210046; bh=h/RgBM5LDjSJD2ZP9sfnTNJGJ/Uv6j5EUWDk33GPT78=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=C3dqxaiQmqVh6Ui1fgbzYe6yph8BIYgQ3L8paeDGFzlD03Oe6cmQk5mTehDLup+Z7
+         2tbWPFDoJmwo4gzL2u4ogBGfQQglR9iipfvYLMPWMPnQu5AOZ0poloK+Mv0vs+ogUy
+         OG00xefBsIAhsJTykLdeYfKqYTNxmrplQmRfXLCM=
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id AA5D3E218F1; Fri, 11 Jan 2019 04:34:04 -0800 (PST)
+Date:   Fri, 11 Jan 2019 13:34:04 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] pinctrl: sh-pfc: r8a7796: Deduplicate VIN5 pin definitions
-Date:   Fri, 11 Jan 2019 13:27:03 +0100
-Message-Id: <20190111122705.32365-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190111122705.32365-1-geert+renesas@glider.be>
-References: <20190111122705.32365-1-geert+renesas@glider.be>
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 bit3 when using
+ TX0
+Message-ID: <20190111123403.lemoyedvzmxx5rhv@verge.net.au>
+References: <20190111121340.31321-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111121340.31321-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use union vin_data16 and VIN_DATA_PIN_GROUP() to reduce redundancies in
-pin definitions for the VIN5 channel.
+On Fri, Jan 11, 2019 at 01:13:40PM +0100, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
+> Aug 24, 2018, the MOD_SEL0 bit3 is set to 0 when TX0_A pin function is
+> selected, and the MOD_SEL0 bit3 is set to 1 when TX0_B pin function is
+> selected.
+> 
+> Fixes: 6d4036a1e3b3ac0f ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in sh-pfc-for-v5.1.
 
-This reduces kernel size by 240 bytes.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 90 ++++++++--------------------
- 1 file changed, 26 insertions(+), 64 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index 4b98ad8d93d9e545..72348a4f2ece13b6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -4070,67 +4070,29 @@ static const unsigned int vin4_clk_mux[] = {
- };
- 
- /* - VIN5 ------------------------------------------------------------------- */
--static const unsigned int vin5_data8_pins[] = {
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
--	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
--};
--static const unsigned int vin5_data8_mux[] = {
--	VI5_DATA0_MARK, VI5_DATA1_MARK,
--	VI5_DATA2_MARK, VI5_DATA3_MARK,
--	VI5_DATA4_MARK, VI5_DATA5_MARK,
--	VI5_DATA6_MARK, VI5_DATA7_MARK,
--};
--static const unsigned int vin5_data10_pins[] = {
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
--	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
--	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
--};
--static const unsigned int vin5_data10_mux[] = {
--	VI5_DATA0_MARK, VI5_DATA1_MARK,
--	VI5_DATA2_MARK, VI5_DATA3_MARK,
--	VI5_DATA4_MARK, VI5_DATA5_MARK,
--	VI5_DATA6_MARK, VI5_DATA7_MARK,
--	VI5_DATA8_MARK,  VI5_DATA9_MARK,
--};
--static const unsigned int vin5_data12_pins[] = {
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
--	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
--	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
--	RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
--};
--static const unsigned int vin5_data12_mux[] = {
--	VI5_DATA0_MARK, VI5_DATA1_MARK,
--	VI5_DATA2_MARK, VI5_DATA3_MARK,
--	VI5_DATA4_MARK, VI5_DATA5_MARK,
--	VI5_DATA6_MARK, VI5_DATA7_MARK,
--	VI5_DATA8_MARK,  VI5_DATA9_MARK,
--	VI5_DATA10_MARK, VI5_DATA11_MARK,
--};
--static const unsigned int vin5_data16_pins[] = {
--	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
--	RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
--	RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
--	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
--	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
--	RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
--	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+static const union vin_data16 vin5_data_pins = {
-+	.data16 = {
-+		RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 1),
-+		RCAR_GP_PIN(0, 2), RCAR_GP_PIN(0, 3),
-+		RCAR_GP_PIN(0, 4), RCAR_GP_PIN(0, 5),
-+		RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 7),
-+		RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-+		RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
-+		RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
-+		RCAR_GP_PIN(1, 6), RCAR_GP_PIN(1, 7),
-+	},
- };
--static const unsigned int vin5_data16_mux[] = {
--	VI5_DATA0_MARK, VI5_DATA1_MARK,
--	VI5_DATA2_MARK, VI5_DATA3_MARK,
--	VI5_DATA4_MARK, VI5_DATA5_MARK,
--	VI5_DATA6_MARK, VI5_DATA7_MARK,
--	VI5_DATA8_MARK,  VI5_DATA9_MARK,
--	VI5_DATA10_MARK, VI5_DATA11_MARK,
--	VI5_DATA12_MARK, VI5_DATA13_MARK,
--	VI5_DATA14_MARK, VI5_DATA15_MARK,
-+static const union vin_data16 vin5_data_mux = {
-+	.data16 = {
-+		VI5_DATA0_MARK, VI5_DATA1_MARK,
-+		VI5_DATA2_MARK, VI5_DATA3_MARK,
-+		VI5_DATA4_MARK, VI5_DATA5_MARK,
-+		VI5_DATA6_MARK, VI5_DATA7_MARK,
-+		VI5_DATA8_MARK,  VI5_DATA9_MARK,
-+		VI5_DATA10_MARK, VI5_DATA11_MARK,
-+		VI5_DATA12_MARK, VI5_DATA13_MARK,
-+		VI5_DATA14_MARK, VI5_DATA15_MARK,
-+	},
- };
- static const unsigned int vin5_sync_pins[] = {
- 	/* HSYNC#, VSYNC# */
-@@ -4468,10 +4430,10 @@ static const struct {
- 		SH_PFC_PIN_GROUP(vin4_field),
- 		SH_PFC_PIN_GROUP(vin4_clkenb),
- 		SH_PFC_PIN_GROUP(vin4_clk),
--		SH_PFC_PIN_GROUP(vin5_data8),
--		SH_PFC_PIN_GROUP(vin5_data10),
--		SH_PFC_PIN_GROUP(vin5_data12),
--		SH_PFC_PIN_GROUP(vin5_data16),
-+		VIN_DATA_PIN_GROUP(vin5_data, 8),
-+		VIN_DATA_PIN_GROUP(vin5_data, 10),
-+		VIN_DATA_PIN_GROUP(vin5_data, 12),
-+		VIN_DATA_PIN_GROUP(vin5_data, 16),
- 		SH_PFC_PIN_GROUP(vin5_sync),
- 		SH_PFC_PIN_GROUP(vin5_field),
- 		SH_PFC_PIN_GROUP(vin5_clkenb),
--- 
-2.17.1
-
+> 
+>  drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+> index db8e1f1e91551b93..3ce1b24a9d6e95f2 100644
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+> @@ -1073,7 +1073,7 @@ static const u16 pinmux_data[] = {
+>  	PINMUX_IPSR_GPSR(IP11_11_8,		RIF1_SYNC),
+>  	PINMUX_IPSR_GPSR(IP11_11_8,		TS_SCK1),
+>  
+> -	PINMUX_IPSR_GPSR(IP11_15_12,		TX0_A),
+> +	PINMUX_IPSR_MSEL(IP11_15_12,		TX0_A,		SEL_SCIF0_0),
+>  	PINMUX_IPSR_GPSR(IP11_15_12,		HTX1_A),
+>  	PINMUX_IPSR_MSEL(IP11_15_12,		SSI_WS2_A,	SEL_SSI2_0),
+>  	PINMUX_IPSR_GPSR(IP11_15_12,		RIF1_D0),
+> @@ -1183,7 +1183,7 @@ static const u16 pinmux_data[] = {
+>  	PINMUX_IPSR_MSEL(IP13_19_16,		SIM0_D_A,	SEL_SIMCARD_0),
+>  
+>  	PINMUX_IPSR_GPSR(IP13_23_20,		MLB_DAT),
+> -	PINMUX_IPSR_GPSR(IP13_23_20,		TX0_B),
+> +	PINMUX_IPSR_MSEL(IP13_23_20,		TX0_B,		SEL_SCIF0_1),
+>  	PINMUX_IPSR_MSEL(IP13_23_20,		RIF0_SYNC_A,	SEL_DRIF0_0),
+>  	PINMUX_IPSR_GPSR(IP13_23_20,		SIM0_CLK_A),
+>  
+> -- 
+> 2.17.1
+> 
