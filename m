@@ -2,109 +2,89 @@ Return-Path: <SRS0=sjaF=PT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C47C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 17:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408ABC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 18:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2391D20870
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 17:41:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="urw7i/yV"
+	by mail.kernel.org (Postfix) with ESMTP id 2177121841
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 18:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731658AbfAKRlu (ORCPT
+        id S1732325AbfAKSXL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jan 2019 12:41:50 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33736 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730100AbfAKRlt (ORCPT
+        Fri, 11 Jan 2019 13:23:11 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:38917 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729711AbfAKSXL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Jan 2019 12:41:49 -0500
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F0FCB565;
-        Fri, 11 Jan 2019 18:41:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547228507;
-        bh=nvKuBswDQlnBtUKqkgbPKbQVp5dPgMNwIlh3wHRr9v4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=urw7i/yVMCJT8PgftNDUfhxOnWmgFSceKIT/OGwhD6+soAPcr8/9X5wuSqmvZb2JD
-         ch7jCkRA0myTJU0kvLSbNm9WQ94+lfv3XPP189UHz4in0nA6E7sGVnTRZJtLlw5+hq
-         rJtjvM93cmaRzSM7WgcStZVVkAiaonNQd5DNG3RA=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 2/2] media: i2c: adv748x: Remove PAGE_WAIT
-Date:   Fri, 11 Jan 2019 17:41:41 +0000
-Message-Id: <20190111174141.12594-3-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190111174141.12594-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20190111174141.12594-1-kieran.bingham+renesas@ideasonboard.com>
+        Fri, 11 Jan 2019 13:23:11 -0500
+Received: from svr-orw-mbx-02.mgc.mentorg.com ([147.34.90.202])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gi1SU-0004h5-2i from Steve_Longerbeam@mentor.com ; Fri, 11 Jan 2019 10:23:06 -0800
+Received: from [172.30.90.140] (147.34.91.1) by svr-orw-mbx-02.mgc.mentorg.com
+ (147.34.90.202) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 11 Jan
+ 2019 10:23:03 -0800
+Subject: Re: [PATCH 2/2] media: i2c: adv748x: Use devm to allocate the device
+ struct
+To:     <kieran.bingham+renesas@ideasonboard.com>,
+        <linux-media@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+References: <20190111154345.29145-2-kieran.bingham+renesas@ideasonboard.com>
+ <52412a2d-bf8a-916f-96f9-8f4af93a18c7@ideasonboard.com>
+From:   Steve Longerbeam <steve_longerbeam@mentor.com>
+Message-ID: <66d56bb8-b85a-7447-2191-b9c1766a3f6a@mentor.com>
+Date:   Fri, 11 Jan 2019 10:23:02 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <52412a2d-bf8a-916f-96f9-8f4af93a18c7@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: SVR-ORW-MBX-09.mgc.mentorg.com (147.34.90.209) To
+ svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The ADV748X_PAGE_WAIT is a fake page to insert arbitrary delays in the
-register tables.
 
-Its only usage was removed, so we can remove the handling and simplify
-the code.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/i2c/adv748x/adv748x-core.c | 17 ++++++-----------
- drivers/media/i2c/adv748x/adv748x.h      |  1 -
- 2 files changed, 6 insertions(+), 12 deletions(-)
+On 1/11/19 8:08 AM, Kieran Bingham wrote:
+> Hi Steve,
+>
+> On 11/01/2019 15:43, Kieran Bingham wrote:
+>> From: Steve Longerbeam <steve_longerbeam@mentor.com>
+> Thank you for the patch, (which was forwarded to me from the BSP team)
+>
+>> Switch to devm_kzalloc() when allocating the adv748x device struct.
+>>
+>> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+>> ---
+>>   drivers/media/i2c/adv748x/adv748x-core.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+>> index 097e5c3a8e7e..4af2ae8fcc0a 100644
+>> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+>> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+>> @@ -774,7 +774,8 @@ static int adv748x_probe(struct i2c_client *client,
+>>   	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+>>   		return -EIO;
+>>   
+>> -	state = kzalloc(sizeof(struct adv748x_state), GFP_KERNEL);
+>> +	state = devm_kzalloc(&client->dev, sizeof(struct adv748x_state),
+> I would instead use:
+>
+> 	state = devm_kzalloc(&client->dev, sizeof(*state));
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 252bdb28b18b..8199e0b20790 100644
---- a/drivers/media/i2c/adv748x/adv748x-core.c
-+++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -219,18 +219,13 @@ static int adv748x_write_regs(struct adv748x_state *state,
- 	int ret;
- 
- 	while (regs->page != ADV748X_PAGE_EOR) {
--		if (regs->page == ADV748X_PAGE_WAIT) {
--			msleep(regs->value);
--		} else {
--			ret = adv748x_write(state, regs->page, regs->reg,
--				      regs->value);
--			if (ret < 0) {
--				adv_err(state,
--					"Error regs page: 0x%02x reg: 0x%02x\n",
--					regs->page, regs->reg);
--				return ret;
--			}
-+		ret = adv748x_write(state, regs->page, regs->reg, regs->value);
-+		if (ret < 0) {
-+			adv_err(state, "Error regs page: 0x%02x reg: 0x%02x\n",
-+				regs->page, regs->reg);
-+			return ret;
- 		}
-+
- 		regs++;
- 	}
- 
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 2f8d751cfbb0..5042f9e94aee 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -39,7 +39,6 @@ enum adv748x_page {
- 	ADV748X_PAGE_MAX,
- 
- 	/* Fake pages for register sequences */
--	ADV748X_PAGE_WAIT,		/* Wait x msec */
- 	ADV748X_PAGE_EOR,		/* End Mark */
- };
- 
--- 
-2.17.1
+Agreed!
+
+>
+> I will submit a v2 with this change made.
+
+Thanks Kieran.
+
+Steve
 
