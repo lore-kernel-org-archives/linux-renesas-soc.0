@@ -2,96 +2,108 @@ Return-Path: <SRS0=sjaF=PT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDF4C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 13:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E93A6C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 13:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3122A20675
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 13:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547213180;
-	bh=AbtgoI3kEXByb8d0lJtNgYjrwUSkNxaY3nyI/Y65KVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2U/MinpaGj2C8YwYwvg9rMJHKJHDPJCXWVXDTpRinFyKtCL5gC+1YATSaWTH1gSzI
-	 PYo1R1evRlSq2I2sa847+lPFmmB2U85cWbYq0aSwDem9eo0pjOo5VzJKgaa+2+eiu+
-	 L+wIQTglSh5L0lgvh8rNb/ahZPlz6TIAKkgi+WoA=
+	by mail.kernel.org (Postfix) with ESMTP id BBA1F20874
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 13:35:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="RRsZF/gu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbfAKN0T (ORCPT
+        id S1730460AbfAKNfH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jan 2019 08:26:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34208 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729386AbfAKN0T (ORCPT
+        Fri, 11 Jan 2019 08:35:07 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:33659 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbfAKNfH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Jan 2019 08:26:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AbtgoI3kEXByb8d0lJtNgYjrwUSkNxaY3nyI/Y65KVI=; b=nVkir75D/hT8AgXqMoKbERWfX
-        PzK3QtdkZZH0M2Qecr7NYnOv6ga+/eagmHP0oMbl89o/7u3e5KFpicMLAQ15Ey4VE9pTdttEeBbBW
-        LPabvbDXqeObqFbQVn7O0QS0GQE+5eQQQ7TlQISBhIe8YUaMde1h8u1xBA2graSGk+YcM=;
-Received: from 94.197.121.207.threembb.co.uk ([94.197.121.207] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ghwp7-0008Q9-M3; Fri, 11 Jan 2019 13:26:10 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 75E5A440082; Fri, 11 Jan 2019 13:26:08 +0000 (GMT)
-Date:   Fri, 11 Jan 2019 13:26:08 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
-Cc:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        magnus.damm@gmail.com, linux-spi@vger.kernel.org,
-        kuninori.morimoto.gx@renesas.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: Re: [PATCH 1/2] spi: sh-msiof: fix *info pointer in request_dma()
-Message-ID: <20190111132608.GD2804@sirena.org.uk>
-References: <1547197109-637-1-git-send-email-na-hoan@jinso.co.jp>
+        Fri, 11 Jan 2019 08:35:07 -0500
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 20F6D25B82E;
+        Sat, 12 Jan 2019 00:35:05 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1547213705; bh=+61tSiWvbg1W6Er0qu2X0Rv/Fn0YzWp/mt7JnYsZX2M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RRsZF/guo+rIZqsbDLkObWGuhGGazU2IvYnKLozdJRnnJG78XDq7kr+IOCMir+chX
+         o0hevA5BK/vjAv1IHOuAnu6ob3btTi6o/UkR8viZ61t7iGUEYf7YKgLy87ENFLIIUN
+         6tzRdnLpa2LaEZw27xOmRG9Z8hfbd2YrZbDFY/ns=
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id 15B28E2182A; Fri, 11 Jan 2019 05:35:03 -0800 (PST)
+Date:   Fri, 11 Jan 2019 14:35:03 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net] ravb: expand rx descriptor data to accommodate hw
+ checksum
+Message-ID: <20190111133502.dma5hft5wgowdg6l@verge.net.au>
+References: <20190110140222.32740-1-horms+renesas@verge.net.au>
+ <3a5c3a17-a410-fba7-32eb-a3495c5378de@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/unnNtmY43mpUSKx"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547197109-637-1-git-send-email-na-hoan@jinso.co.jp>
-X-Cookie: If in doubt, mumble.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3a5c3a17-a410-fba7-32eb-a3495c5378de@cogentembedded.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Thu, Jan 10, 2019 at 06:52:51PM +0300, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 01/10/2019 05:02 PM, Simon Horman wrote:
+> 
+> > EtherAVB may provide a checksum of packet data appended to packet data. In
+> > order to allow this checksum to be received by the host descriptor data
+> > needs to be enlarged by 2 bytes to accommodate the checksum.
+> > 
+> > In the case of MTU-sized packets without a VLAN tag the
+> > checksum were already accommodated by virtue of the space reserved for the
+> > VLAN tag. However, a packet of MTU-size with a  VLAN tag consumed all
+> > packet data space provided by a descriptor leaving no space for the
+> > trailing checksum.
+> 
+>    Wait! The gen3 manual is rather clear about the auto-checksumming not working
+> right in the presence of the VLAN tag. Where do you check for that case?
 
---/unnNtmY43mpUSKx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In my testing on E3 this works correctly. Which portion of
+the manual are you referring to?
 
-On Fri, Jan 11, 2019 at 05:58:28PM +0900, Nguyen An Hoan wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->=20
-> msiof_spi_infor struct pointer was initialized in the probe() function,
-> no need to get back and keep consistency.
+> 
+> > This was not detected by the driver which incorrectly used the last two
+> > bytes of packet data as the checksum and truncate the packet by two bytes.
+> > This resulted all such packets being dropped.
+> > 
+> > A work around is to disable rx checksum offload
+> >  # ethtool -K eth0 rx off
+> > 
+> > This patch resolves this problem by increasing the size available for
+> > packet data in rx descriptors by two bytes. It also introduces
+> > RAVB_CSUM_LEN to make things a little clearer than "2" sprinkled lightly
+> > over the driver.
+> 
+>    What about using sizeof(__sum16) instead? That type is declared in
+> <linux/types.h> and used in 'struct iphdr'...
 
-These look good to me with the changes Geert and Sergei pointed out.
+As in the following?
 
---/unnNtmY43mpUSKx
-Content-Type: application/pgp-signature; name="signature.asc"
+#define RAVB_CSUM_LEN sizeof(__sum16)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw4mW8ACgkQJNaLcl1U
-h9CB/Af/YwXQjyCEzjEePrwNQj02Mxi7h6e9hYA5o56Vx/9UEZM6eLAJ0KPhSfl8
-DCld9E7pX1wTTLmB9uJKRKwQbd7TwOk4NITf4XTTq5xuZbgN8wRHXpY7FXLtRtLo
-+V3hKDhaIItb0LW7x2PiPrtI50gj8fZ5u6nI1fkKrWrzHxfdTJ4eRuoMj76K4v5I
-WPoTOovZCG3eiZ+tlRjAzU3ZwbNXW6s3GZETvy/TF2/tIgrswKXJmpxPmQmDpGe/
-LAjRk65yBktBUea+EfAXzt4FBTMLiQPM67pguKIaV6KRzRgAfrkQL/urzni3s9de
-XRPj7sve6h6YX4a82NbinJHjLdw5SQ==
-=Dp1A
------END PGP SIGNATURE-----
-
---/unnNtmY43mpUSKx--
+> 
+> > 
+> > Tested on R-Car E3 (r8a77990) ES1.0 based Ebisu-4D board
+> > 
+> > Fixes: 4d86d3818627 ("ravb: RX checksum offload")
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> [...]
+> 
+> MBR, Sergei
+> 
