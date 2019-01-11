@@ -6,111 +6,103 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D631C43444
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 11:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792C3C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 12:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17F1B2146F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 11:57:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51FFF206B6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 12:12:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730904AbfAKL5u (ORCPT
+        id S1731390AbfAKMM1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:57:50 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:34022 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730940AbfAKL5u (ORCPT
+        Fri, 11 Jan 2019 07:12:27 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:40548 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730542AbfAKMM1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:57:50 -0500
+        Fri, 11 Jan 2019 07:12:27 -0500
 Received: from ramsan ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id Nzxo1z00G3XaVaC06zxogh; Fri, 11 Jan 2019 12:57:48 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id P0CS1z0073XaVaC060CS9Q; Fri, 11 Jan 2019 13:12:26 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ghvRc-0005ln-Cm; Fri, 11 Jan 2019 12:57:48 +0100
+        id 1ghvfm-0005te-69; Fri, 11 Jan 2019 13:12:26 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ghvRc-0007jd-Bs; Fri, 11 Jan 2019 12:57:48 +0100
+        id 1ghvfm-00084w-3r; Fri, 11 Jan 2019 13:12:26 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] Revert "pinctrl: sh-pfc: r8a77990: Add support for pull-up only pins"
-Date:   Fri, 11 Jan 2019 12:57:44 +0100
-Message-Id: <20190111115744.29685-3-geert+renesas@glider.be>
+Subject: [PATCH] pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 bit2 when using RX2, TX2 and SCK2
+Date:   Fri, 11 Jan 2019 13:12:24 +0100
+Message-Id: <20190111121224.31007-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190111115744.29685-1-geert+renesas@glider.be>
-References: <20190111115744.29685-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This reverts commit f4caa6ee736fa8a46c806ba4382c16f7e5a20248.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The same can be expressed better by dropping the
-SH_PFC_PIN_CFG_PULL_DOWN flag from the GPIO description, as it includes
-returning an error to the caller when trying to configure the pin for
-pull-down, causing:
+According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
+Aug 24, 2018, the MOD_SEL0 bit2 is set when RX2_{A,B}, TX2_{A,B} and
+SCK2_A pin functions are selected.
 
-    sh-pfc e6060000.pin-controller: pin_config_set op failed for pin 201
-    sh-pfc e6060000.pin-controller: Error applying setting, reverse things back
-    sh-pfc e6060000.pin-controller: failed to select default state
-
+Fixes: 6d4036a1e3b3ac0f ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 23 +++++------------------
- 1 file changed, 5 insertions(+), 18 deletions(-)
+To be queued in sh-pfc-for-v5.1.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index a1d99980788ac1cb..967b3fec45f516d1 100644
+index 967b3fec45f516d1..db8e1f1e91551b93 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -4927,17 +4927,6 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ /* sentinel */ },
- };
+@@ -1112,7 +1112,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP12_3_0,		SSI_WS9_B,	SEL_SSI9_1),
+ 	PINMUX_IPSR_GPSR(IP12_3_0,		AUDIO_CLKOUT3_B),
  
--static bool pin_has_pud(unsigned int pin)
--{
--	/* Some pins are pull-up only */
--	switch (pin) {
--	case RCAR_GP_PIN(6, 9):	/* USB30_OVC  */
--		return false;
--	}
--
--	return true;
--}
--
- static unsigned int r8a77990_pinmux_get_bias(struct sh_pfc *pfc,
- 					     unsigned int pin)
- {
-@@ -4950,7 +4939,7 @@ static unsigned int r8a77990_pinmux_get_bias(struct sh_pfc *pfc,
+-	PINMUX_IPSR_GPSR(IP12_7_4,		SCK2_A),
++	PINMUX_IPSR_MSEL(IP12_7_4,		SCK2_A,		SEL_SCIF2_0),
+ 	PINMUX_IPSR_MSEL(IP12_7_4,		HSCK0_A,	SEL_HSCIF0_0),
+ 	PINMUX_IPSR_MSEL(IP12_7_4,		AUDIO_CLKB_A,	SEL_ADGB_0),
+ 	PINMUX_IPSR_GPSR(IP12_7_4,		CTS1_N),
+@@ -1120,14 +1120,14 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP12_7_4,		REMOCON_A,	SEL_REMOCON_0),
+ 	PINMUX_IPSR_MSEL(IP12_7_4,		SCIF_CLK_B,	SEL_SCIF_1),
  
- 	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
- 		return PIN_CONFIG_BIAS_DISABLE;
--	else if (!pin_has_pud(pin) || (sh_pfc_read(pfc, reg->pud) & BIT(bit)))
-+	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
- 		return PIN_CONFIG_BIAS_PULL_UP;
- 	else
- 		return PIN_CONFIG_BIAS_PULL_DOWN;
-@@ -4971,13 +4960,11 @@ static void r8a77990_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 	if (bias != PIN_CONFIG_BIAS_DISABLE)
- 		enable |= BIT(bit);
+-	PINMUX_IPSR_GPSR(IP12_11_8,		TX2_A),
++	PINMUX_IPSR_MSEL(IP12_11_8,		TX2_A,		SEL_SCIF2_0),
+ 	PINMUX_IPSR_MSEL(IP12_11_8,		HRX0_A,		SEL_HSCIF0_0),
+ 	PINMUX_IPSR_GPSR(IP12_11_8,		AUDIO_CLKOUT2_A),
+ 	PINMUX_IPSR_MSEL(IP12_11_8,		SCL1_A,		SEL_I2C1_0),
+ 	PINMUX_IPSR_MSEL(IP12_11_8,		FSO_CFE_0_N_A,	SEL_FSO_0),
+ 	PINMUX_IPSR_GPSR(IP12_11_8,		TS_SDEN1),
  
--	if (pin_has_pud(pin)) {
--		updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
--		if (bias == PIN_CONFIG_BIAS_PULL_UP)
--			updown |= BIT(bit);
-+	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
-+	if (bias == PIN_CONFIG_BIAS_PULL_UP)
-+		updown |= BIT(bit);
+-	PINMUX_IPSR_GPSR(IP12_15_12,		RX2_A),
++	PINMUX_IPSR_MSEL(IP12_15_12,		RX2_A,		SEL_SCIF2_0),
+ 	PINMUX_IPSR_GPSR(IP12_15_12,		HTX0_A),
+ 	PINMUX_IPSR_GPSR(IP12_15_12,		AUDIO_CLKOUT3_A),
+ 	PINMUX_IPSR_MSEL(IP12_15_12,		SDA1_A,		SEL_I2C1_0),
+@@ -1139,11 +1139,11 @@ static const u16 pinmux_data[] = {
  
--		sh_pfc_write(pfc, reg->pud, updown);
--	}
-+	sh_pfc_write(pfc, reg->pud, updown);
- 	sh_pfc_write(pfc, reg->puen, enable);
- }
+ 	PINMUX_IPSR_GPSR(IP12_23_20,		MSIOF0_RXD),
+ 	PINMUX_IPSR_GPSR(IP12_23_20,		SSI_WS78),
+-	PINMUX_IPSR_GPSR(IP12_23_20,		TX2_B),
++	PINMUX_IPSR_MSEL(IP12_23_20,		TX2_B,		SEL_SCIF2_1),
  
+ 	PINMUX_IPSR_GPSR(IP12_27_24,		MSIOF0_TXD),
+ 	PINMUX_IPSR_GPSR(IP12_27_24,		SSI_SDATA7),
+-	PINMUX_IPSR_GPSR(IP12_27_24,		RX2_B),
++	PINMUX_IPSR_MSEL(IP12_27_24,		RX2_B,		SEL_SCIF2_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP12_31_28,		MSIOF0_SYNC),
+ 	PINMUX_IPSR_GPSR(IP12_31_28,		AUDIO_CLKOUT_B),
 -- 
 2.17.1
 
