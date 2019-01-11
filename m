@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B40C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 09:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07954C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 09:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B19020657
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 09:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D589220870
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jan 2019 09:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbfAKJCJ (ORCPT
+        id S1729070AbfAKJJX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:02:09 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34084 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbfAKJCJ (ORCPT
+        Fri, 11 Jan 2019 04:09:23 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:46584 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728943AbfAKJJX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:02:09 -0500
-Received: by mail-vs1-f65.google.com with SMTP id y27so8805727vsi.1;
-        Fri, 11 Jan 2019 01:02:08 -0800 (PST)
+        Fri, 11 Jan 2019 04:09:23 -0500
+Received: by mail-vk1-f193.google.com with SMTP id j23so3116807vke.13;
+        Fri, 11 Jan 2019 01:09:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OcWtbJTaOBJj1aFVMfwwSv+QrBhpuY4z+/TiiSr+ghs=;
-        b=MpBuzZPm3TUw8WeS2wdkoq/6lLTKdlE72gxLjKfoP09paNjZ1V7PHMwqUM7hhTOQfO
-         Fbhe9pg6/jS7xiRySideyP/Nyjmrb4fPpkeOQBQlvO3cfrT555xawwHs4kppAb0jftMq
-         ClAydSocQkwbCgsI6WYicFs/MRyY7Rj5ccPzyoUR7KqREzbhBwPU0OeRw97rNCEmrwT1
-         dq+AmKFiYb579j8fMM7p9DUYEF21BWBdLP7kXa6/olJpZlHGUqKzf9NsObDsbeC/d/T7
-         J5WzEzVTdGfdEdX5ilhkY7kpmyLZUko++3dahG4verxjkKbVLscrk+yLXaykgX3otLAi
-         AbWw==
-X-Gm-Message-State: AJcUukduUv2QJXrw+HQDXTkjckAENXpoMBBjo56um/B1iTY65/htWF16
-        xnN8p9DQL7uTcbcQPP8vFEVbFynuX1ozUoDEDfc=
-X-Google-Smtp-Source: ALg8bN6B3jDJuhmMBV5VDd4kWCDS5kAbtXvNkxjt56gzosajrFwkWpS+iXAU4yo8mmjCzR/pUwpyNLGdV1OjgTT9x+g=
-X-Received: by 2002:a67:d119:: with SMTP id u25mr5177243vsi.63.1547197328383;
- Fri, 11 Jan 2019 01:02:08 -0800 (PST)
+        bh=Qt6zskZA+p1wMhnOKt8vxLu8Eo4w3/AfDj5WnKkwDN4=;
+        b=JOBTo53oQmYQBNbm+7DfSbneMBXa3qmS8XVXhaWzp+cvNQGXmn8zqOLL3tay5C3l+S
+         LJGF0Kah+aVayDKR2OSf2jwy+lQGlJSuIOnAUFaeasVQKCs1nALY/hjEaYRO4kkC2auE
+         W8V9Avk6g690A4Chb1SNpI6JhzHjJkmmgLrQLofEEK4aSzOqpyFgeUspA+OrOUQlOg/l
+         nZkwzO7tUcrBZxZ+fpQBfBO2ut0hfU/9cPMkp4koytIc9RhlKPTpJkYzt4Ym9ZP2Gd0y
+         D3hemltoW3wWidoouA/yCY1UEQq8vgg15G4AlUCBpjATXJmZFUHyLQ2NcJBJKZ5CiaR6
+         6ocg==
+X-Gm-Message-State: AJcUukdYszZcb7MpY3ZV38ZNpOqNLbzq/2PfulmDLxgndxTaiXjd2mMm
+        6Vf0YhxCGHfmclxF3pQ+UFQs1pQD5MmhaCQVFgw=
+X-Google-Smtp-Source: ALg8bN6HX7NI18UC2RVz+yYrES37MFMX4XO4PqQZGrT2nphEaJQNGZfhfwqY0wfcZ63ZcAS0JI6DIv0mUedlEoS8k4Y=
+X-Received: by 2002:a1f:2145:: with SMTP id h66mr5412639vkh.65.1547197762058;
+ Fri, 11 Jan 2019 01:09:22 -0800 (PST)
 MIME-Version: 1.0
-References: <1547197109-637-1-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1547197109-637-1-git-send-email-na-hoan@jinso.co.jp>
+References: <1547197109-637-1-git-send-email-na-hoan@jinso.co.jp> <1547197109-637-2-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1547197109-637-2-git-send-email-na-hoan@jinso.co.jp>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 11 Jan 2019 10:01:56 +0100
-Message-ID: <CAMuHMdWeEncj3LjxBX1eDgMJFoZqW9MukNxMe0HG=pDqwggmmw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] spi: sh-msiof: fix *info pointer in request_dma()
+Date:   Fri, 11 Jan 2019 10:09:10 +0100
+Message-ID: <CAMuHMdUAk004J-06o43yHei10tWCkyztsWUXUyCj36cPwT9D0w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] spi: sh-msiof: Use DMA if possible
 To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Mark Brown <broonie@kernel.org>,
@@ -68,34 +68,37 @@ Hi Hoan-san,
 On Fri, Jan 11, 2019 at 9:59 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
 > From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 >
-> msiof_spi_infor struct pointer was initialized in the probe() function,
-> no need to get back and keep consistency.
+> Currently, this driver only supports feature for DMA 32-bits.
+> In this case, only if the data length is divisible by 4 to use
+> DMA, otherwise PIO will be used. This patch will suggest use
+> the DMA 32-bits with 4bytes of words, then the remaining data
+> will be transmitted by PIO mode.
 >
 > Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-Thanks for your patch!
+Thanks for your patch, that's a great idea!
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-One nit below.
+with a small suggestion below.
 
 > --- a/drivers/spi/spi-sh-msiof.c
 > +++ b/drivers/spi/spi-sh-msiof.c
-> @@ -1206,7 +1206,7 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
->  {
->         struct platform_device *pdev = p->pdev;
->         struct device *dev = &pdev->dev;
-> -       const struct sh_msiof_spi_info *info = dev_get_platdata(dev);
-> +       const struct sh_msiof_spi_info *info = p->info;
->         unsigned int dma_tx_id, dma_rx_id;
->         const struct resource *res;
->         struct spi_master *master;
-> @@ -1469,3 +1469,4 @@ MODULE_DESCRIPTION("SuperH MSIOF SPI Master Interface Driver");
->  MODULE_AUTHOR("Magnus Damm");
->  MODULE_LICENSE("GPL v2");
->  MODULE_ALIAS("platform:spi_sh_msiof");
-> +
+> @@ -937,17 +937,13 @@ static int sh_msiof_transfer_one(struct spi_master *master,
+>                 unsigned int l = 0;
+>
+>                 if (tx_buf)
+> -                       l = min(len, p->tx_fifo_size * 4);
+> +                       l = min(len - len % 4, p->tx_fifo_size * 4);
 
-This change is unrelated, please drop it.
+I think this would be easier to read when written as:
+
+    l = min(round_down(len, 4), p->tx_fifo_size * 4);
+
+>                 if (rx_buf)
+> -                       l = min(len, p->rx_fifo_size * 4);
+> +                       l = min(len - len % 4, p->rx_fifo_size * 4);
+
+Likewise,
 
 Gr{oetje,eeting}s,
 
