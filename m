@@ -2,72 +2,76 @@ Return-Path: <SRS0=Lk/a=PU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24554C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Jan 2019 17:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6414C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Jan 2019 17:43:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E433220836
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Jan 2019 17:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D05C2084C
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Jan 2019 17:43:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="CVox5jCK"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Q/LQeiaA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725847AbfALRl2 (ORCPT
+        id S1726530AbfALRnm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 12 Jan 2019 12:41:28 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46844 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbfALRl2 (ORCPT
+        Sat, 12 Jan 2019 12:43:42 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41508 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbfALRnl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Jan 2019 12:41:28 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so15575511ljh.13
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 12 Jan 2019 09:41:26 -0800 (PST)
+        Sat, 12 Jan 2019 12:43:41 -0500
+Received: by mail-lf1-f65.google.com with SMTP id c16so12982644lfj.8
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 12 Jan 2019 09:43:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:organization:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=7wLwK2UyVEJmCQYhVN7LeHork7DWuhMjCzgChdYmvbM=;
-        b=CVox5jCKxrGMzgXFKskTrKZHWFOTCYNJ4k8B+Rp/ni66rdndsirOfmNPBSLFciEd55
-         zift15j14LTtsIssJzyIYXemvJECSy25oG4IZSxK61/I4l/N8thcneTR+HGegBJ7NknY
-         yFWes17FdSLbZjzEBUlYi6k2vKTrWu3nZMp5Hwr+gqn5ikpNrxcXYz+Yoc6y+RKC/Qip
-         qdCDJpy/aUBYVK1Lpv8AM4/lxyRcl5hC+KUWWe0uGgTuUOl2voIajm/0yUyCvK+yfXe4
-         PTKYjZZFP1ckHR9zah/refsBSEcqu6pjrlbj2rv2de75zsDlbDccvz+RB6x9nIHgtYsN
-         T0vg==
+        h=subject:from:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2z/r262fqM1eWLKOzAcjl6EirWYW8EoTiXy6sHT7aJE=;
+        b=Q/LQeiaAoz+2GEVh0UEb2Jqf41YiiuThGgwJX4Hjy3aC4dk52IZMcUBtMTdD/VTNaJ
+         dT/C3jyRLUPqqPRLGeRjImxTbCtBjsDw3Y9BJ89/0cgWATGjDFQqYOlRD2XbyKDDZzJX
+         UNn1YhZoM63MCyl6/o9ymjXE166dmu/RjK/hgjtsYJXg8aZKSDkxchPa0bPojlAXr00z
+         p0LCKNGd6sZz6tdGLM/Ac8Tk+Pj4TEgpbv0uq+JZ+b0ixMP5Xktzy+NIMaoX4P1P5Ah7
+         OHfRH7qNxmwt+8OfH7ly0cp1HXQDDH74s9ETunnx6L7NWVrxzTKmvBJyss5IvewG4xDc
+         tY/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:organization:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=7wLwK2UyVEJmCQYhVN7LeHork7DWuhMjCzgChdYmvbM=;
-        b=ft4cJ8FgAtRHer//Yz2zGb68YXlwZyjGLTYbyiUXKd1H99AxwjzUdZi0FlJTJrI7BU
-         7vYkrZL8TxFmMOd73MGxe12ux+YUm+LVq+CKi5e61M94ty+nK+fj93bznduLl1gJxf7v
-         f8rskt0UEM65qA5c5gXtwWJ9/4PR4K5n21I7yeFkd1W3p/wn+DqWTrF+7BlJYJlf3z5d
-         Y66Syquqf/wGrQIuuhF0JaWdY25+0RvcXQhnq0slJoNdmzrvhg4U6xya6QKNp5OQJM8c
-         xVPolUCt5WiBm8Kyav16pCnS/NcNjJq6rBlrpulB5dgwuhZoLe9LWl4ues6Pez6RQbXY
-         s7BQ==
-X-Gm-Message-State: AJcUukcWGC6TxQ2Y+wQ5EuTmMIK5P71DhdsPHLBSe/exlEqe9VR3v6nt
-        NpYe0kDgj9zrMzwBHUoy0L+PbQ==
-X-Google-Smtp-Source: ALg8bN6pv/bJEWVOnV7qIDasJBe9t43SSw6YTK9e21/KqmDY6A/yP/AaHMI4kIOvnL7hoqP4ZYEJ3w==
-X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr10735594ljt.159.1547314885977;
-        Sat, 12 Jan 2019 09:41:25 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2z/r262fqM1eWLKOzAcjl6EirWYW8EoTiXy6sHT7aJE=;
+        b=bMKr6v3kuizLPHxyIQaa4aJawF8+iAcgi1Pt10v8OLutpLW4Xs794bL7TXS7pNAgAx
+         2vWk98pdGHvvq19sMTWiMqziFBO1jYT7jZXE6VuSU/WsTDxHNGalmMJk5rf18IfEi86p
+         N+l5/8zn3n8OG2Y2woSBdplebTKsqiLv3an/uGeJuRb4HhrRuDvmWWiqA4Im4WLwDvi4
+         9sm6PzUU807Ez178DwezPHo1SBAr91J7IGIc3Y5hPXg1S+4llTRyTTWaMzYeewSfnbSc
+         PGPbIwSyLUjLPYhjdmMXB54DidOIxydmCstM3qkgxc1mAUtNo6R8DFC3jwWN2MxUl4Hy
+         Ij5A==
+X-Gm-Message-State: AJcUukeIkUE970F81uOfBp807IJ3H+ivaAxY9cJ2gTOE0yjzCeH9xRh9
+        2fl9BpRbfBJyt+ZDVkCn9M638g==
+X-Google-Smtp-Source: ALg8bN5PMPgIoa9/wRl35myKK+pGiYNQ0PcXtduBQteoUireS6k9wYGg78BMTWF6OkU59Fc6ethsKg==
+X-Received: by 2002:a19:a58d:: with SMTP id o135mr10802095lfe.97.1547315019403;
+        Sat, 12 Jan 2019 09:43:39 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.81.102])
-        by smtp.gmail.com with ESMTPSA id m4-v6sm16146982ljb.58.2019.01.12.09.41.24
+        by smtp.gmail.com with ESMTPSA id h21sm15567963lfk.41.2019.01.12.09.43.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 09:41:25 -0800 (PST)
+        Sat, 12 Jan 2019 09:43:38 -0800 (PST)
+Subject: [PATCH RFC 1/3] arm64: dts: renesas: r8a779{7|8}0: add RPC-IF support
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH RFC 0/3] Add R8A779{7|8}0 RPC-IF support
 To:     Simon Horman <horms@verge.net.au>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>
 Cc:     Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>
+References: <4b74a2a5-6b3b-9b06-6a8f-fce39124ec59@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <4b74a2a5-6b3b-9b06-6a8f-fce39124ec59@cogentembedded.com>
-Date:   Sat, 12 Jan 2019 20:41:24 +0300
+Message-ID: <c2a18d73-b9c2-f228-0306-e39dc1b54bc5@cogentembedded.com>
+Date:   Sat, 12 Jan 2019 20:43:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <4b74a2a5-6b3b-9b06-6a8f-fce39124ec59@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
@@ -76,16 +80,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+Describe RPC-IF in the R8A779{7|8}0 device trees.
 
-Here's the set of 3 patches against Simon Horman's 'renesas.git' repo's
-'renesas-devel-20190110-v5.0-rc1' tag. I'm adding the RPC-IF device nodes
-for R8A77970/R8A77980 (based on the RPC-IF driver which is still a work in
-progress) and describing the QSPI flashes connected to RPC-IF on the Eagle/
-Condor and V3M/V3H Starter Kit boards...
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[1/3] arm64: dts: renesas: r8a779{7|8}0: add RPC-IF support
-[2/3] arm64: dts: renesas: r8a77970: eagle/v3msk: add QSPI flash support
-[3/3] arm64: dts: renesas: r8a77980: condor/v3hsk: add QSPI flash support
+---
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi |   15 +++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi |   15 +++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-WBR, Sergei
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77970.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77970.dtsi
+@@ -1038,6 +1038,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		rpc: rpc@ee200000 {
++			compatible = "renesas,r8a77970-rpc";
++			reg = <0 0xee200000 0 0x8100>,
++			      <0 0x08000000 0 0x4000000>;
++			reg-names = "regs", "dirmap";
++			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 917>;
++			clock-names = "rpc";
++			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
++			resets = <&cpg 917>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
+Index: renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+===================================================================
+--- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980.dtsi
++++ renesas/arch/arm64/boot/dts/renesas/r8a77980.dtsi
+@@ -1325,6 +1325,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		rpc: rpc@ee200000 {
++			compatible = "renesas,r8a77980-rpc";
++			reg = <0 0xee200000 0 0x8100>,
++			      <0 0x08000000 0 0x4000000>;
++			reg-names = "regs", "dirmap";
++			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 917>;
++			clock-names = "rpc";
++			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
++			resets = <&cpg 917>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1010000 {
+ 			compatible = "arm,gic-400";
+ 			#interrupt-cells = <3>;
