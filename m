@@ -1,268 +1,111 @@
-Return-Path: <SRS0=Lk/a=PU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=U1Jq=PV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B79C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Jan 2019 17:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBD1C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Jan 2019 06:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8475B2086C
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Jan 2019 17:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8202E20879
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Jan 2019 06:10:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="nOjb5DYp"
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="O3RSe09O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbfALRpx (ORCPT
+        id S1725880AbfAMGKo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 12 Jan 2019 12:45:53 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33410 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfALRpx (ORCPT
+        Sun, 13 Jan 2019 01:10:44 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45982 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfAMGKn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Jan 2019 12:45:53 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so15623087ljd.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 12 Jan 2019 09:45:50 -0800 (PST)
+        Sun, 13 Jan 2019 01:10:43 -0500
+Received: by mail-lj1-f196.google.com with SMTP id s5-v6so16233319ljd.12
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 12 Jan 2019 22:10:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mqykqiivvAmS2DNI4B8MR2iGblNpPYlegdF0qxNZ6vM=;
-        b=nOjb5DYphUAPUtVz90Cpy+AjvvPgbo4Bd30a+1V9uy51CNrRuWtlk0YpbQSicKp6VL
-         rM3MLKB1QR0l4NOqOZqymdQ3gaRAZBic04o1phk7ZAKEitucHAiTflqvEkDK64iB6aU0
-         dZw/EnFz9NFGZNDLPT753rfK2G91gUhIsWfMX7aQDFgYccfWVzWWyIAmlPxWKjVQCgHd
-         yspcP4qhnas4Ed4qLJowaIIozHsEdZuAvDtvoLBppN+/uzT++r3iJCcckm9sFttQ70pT
-         9aMO3r6e8gg1TUu+54VS6fGOl7X9jfTut/7mSPwFBuzkXtpoama26ViVH0kgKJWJ76rJ
-         WoAQ==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/kRPs5LqgdzmQ9znT+M1ht3yniBXMbgvLe/e8Y16bA4=;
+        b=O3RSe09OrdiQV+1kGFh3IufObEgZM2WP3Qt+FQzIm2gwRMQxUyXVReaHie+LFlsd0e
+         2sobDyTn61ne4qJE7zIdhTZ3SjS70/yu0NIsILLS+Y8TwIUeToibB8nDMqB4wH1DK0FB
+         cru95hoFdmF4aOPSaJJlcSTHcGfebQhC7kWCQ3DsJdElVX58rPCXndj4NNeQ3T4bp77Z
+         /jcLx9IaoxVC6AtjkRmKsS654Vk9Oz95WTaIpha2m2yny0SZAUNy9KnKTkuP3U2UQKuF
+         MZomik7nWE2hAZGG6VKhheSgdoLUwhhYeU21Uo2kUYk+fso9+YJgmWRAlHzqCsc1yX3R
+         WTcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=mqykqiivvAmS2DNI4B8MR2iGblNpPYlegdF0qxNZ6vM=;
-        b=IGHoTp/lCtiqhSJ8wrVLx1Pd9tIg2sZQnzJhq+UXGa9+X1uNLvtjGydNzjYAtWL+YJ
-         0PUmoECtsiHH5it4z+k0OvPhyJ5aV9BFkf927Q65A0A2SR7dm8rOwkJrHmcAp8+47Yca
-         DeQ7XzMj3HK6X2Fqk0jupf9+a90OG3ffvMi8L46oAaKnPckvzZUjHfRbLOMpvQCclA2k
-         s0cIS4Qm+9LBME70deh9IwbV6egCKUicbEeKZZgYPjvYKuUZcxpX7uqjo6xwTj6kTf47
-         4MiUNRY/QoZf6+HqWt3nhYZ2zI220bkXDercyMKSRAwjTUnb5y/uQxCHontev3V6rvH2
-         VPgQ==
-X-Gm-Message-State: AJcUukcpHeKZpfXBOYpH3kZwnEz4Y7/CG96rfCog5+XtuiUGnVhiUv58
-        58EMPCDwf3FSo17M6p0v5aVW9g==
-X-Google-Smtp-Source: ALg8bN5f8z9GF7ITbO+TdKpT+nFbN3ZRvbr6v5K0AvfkxQ94WJ6Z8TPixN1K36b2pxP1Jd61elTkYw==
-X-Received: by 2002:a2e:5418:: with SMTP id i24-v6mr11967913ljb.51.1547315150011;
-        Sat, 12 Jan 2019 09:45:50 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.81.102])
-        by smtp.gmail.com with ESMTPSA id q21-v6sm16293245ljc.5.2019.01.12.09.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 09:45:49 -0800 (PST)
-Subject: [PATCH RFC 3/3] arm64: dts: renesas: r8a77980: condor/v3hsk: add QSPI
- flash support
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/kRPs5LqgdzmQ9znT+M1ht3yniBXMbgvLe/e8Y16bA4=;
+        b=oejPwNas+EjGAbFkjQUd3Xi4S+Eyhe27KxmutTdNAqJX1Z0NeZSMQbOdbhk/g20mJQ
+         VSMczG4gviwzeqOm3OyBsvxISGOXg0G0qeZiXhOj5vdLLsWbyH+tk1SlFbDbppoGzCQ7
+         0IQEcso9fL+rbByQ71wWRxlGk+VVAcG3R5m0j9DWeKfgMzwiniBeYPq68yRe9VUk8Ko+
+         Mb3cdmrSapPMdWkejtddwS2TWrRryYX7mCDcs602bmbfOg5zTIXdwm5C2qEX+fM3hipQ
+         57QFAzkxDqnCyCQeu1EaduVxHSzaV0v2mXHxQPFU3wI1tJyhKlFvHJVYkJ/kjYpGmszr
+         I7HA==
+X-Gm-Message-State: AJcUukfAjIvf2P+LRhWQX83cyCPNEuzfLiZSMEqCFufWg+fhpfgdwJkg
+        ZnTofxcAzVY5QdEBN7DNVAp4+w==
+X-Google-Smtp-Source: ALg8bN5zjsOgQR3YfWoFPVF+LTbe9UvgaHDkgiqVtz2eSEFCd0W16YQUS22HrXH0skbCVp1S8wr/QQ==
+X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr11747588ljc.97.1547359841777;
+        Sat, 12 Jan 2019 22:10:41 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id h21sm15788860lfk.41.2019.01.12.22.10.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 22:10:40 -0800 (PST)
+Date:   Sat, 12 Jan 2019 22:00:09 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     arm@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>
-References: <4b74a2a5-6b3b-9b06-6a8f-fce39124ec59@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <b84e12ee-eb3a-8fdd-a702-b275b609a8e6@cogentembedded.com>
-Date:   Sat, 12 Jan 2019 20:45:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Fixes for v5.0
+Message-ID: <20190113060009.5fb4zwcjxapltjzq@localhost>
+References: <cover.1547115367.git.horms+renesas@verge.net.au>
 MIME-Version: 1.0
-In-Reply-To: <4b74a2a5-6b3b-9b06-6a8f-fce39124ec59@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1547115367.git.horms+renesas@verge.net.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Define the Condor/V3HSK board dependent parts of the RPC-IF device node.
-Add device nodes for Spansion S25FS512S SPI flash and MTD partitions on it.
+On Thu, Jan 10, 2019 at 11:18:15AM +0100, Simon Horman wrote:
+> Hi Olof, Hi Kevin, Hi Arnd,
+> 
+> Please consider these Renesas ARM based SoC fixes for v5.0.
+> 
+> 
+> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+> 
+>   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+> 
+> are available in the git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v5.0
+> 
+> for you to fetch changes up to a64597227d0de5610407fcc95dc835745a53f5d0:
+> 
+>   soc: renesas: r8a774c0-sysc: Fix initialization order of 3DG-{A,B} (2019-01-07 14:51:51 +0100)
+> 
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Fixes for v5.0
+> 
+> Renesas SoCs:
+> * Fix build regressions caused by move of Kconfig symbols
+> 
+> RZ/G2E (r8a774c0) SoC:
+> * Correct initialization order of 3DG-{A,B} in SYSC driver
 
-Based on the original patches by Dmitry Shifrin.
+Merged to fixes. Thanks!
 
-Signed-off-by: Dmitry Shifrin <dmitry.shifrin@cogentembedded.com>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
----
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts |   68 ++++++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts  |   68 ++++++++++++++++++++++++
- 2 files changed, 136 insertions(+)
+-Olof
 
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-condor.dts
-@@ -264,6 +264,11 @@
- 		power-source = <1800>;
- 	};
- 
-+	qspi0_pins: qspi0 {
-+		groups = "qspi0_ctrl", "qspi0_data4";
-+		function = "qspi0";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
-@@ -275,6 +280,69 @@
- 	};
- };
- 
-+&rpc {
-+	pinctrl-0 = <&qspi0_pins>;
-+	pinctrl-names = "default";
-+
-+	renesas,rpc-mode = "spi";
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "spansion,s25fs512s", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		spi-rx-bus-width = <4>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			bootparam@0 {
-+				reg = <0x00000000 0x040000>;
-+				read-only;
-+			};
-+			cr7@40000 {
-+				reg = <0x00040000 0x080000>;
-+				read-only;
-+			};
-+			cert_header_sa3@c0000 {
-+				reg = <0x000c0000 0x080000>;
-+				read-only;
-+			};
-+			bl2@140000 {
-+				reg = <0x00140000 0x040000>;
-+				read-only;
-+			};
-+			cert_header_sa6@180000 {
-+				reg = <0x00180000 0x040000>;
-+				read-only;
-+			};
-+			bl31@1c0000 {
-+				reg = <0x001c0000 0x460000>;
-+				read-only;
-+			};
-+			uboot@640000 {
-+				reg = <0x00640000 0x0c0000>;
-+				read-only;
-+			};
-+			uboot-env@700000 {
-+				reg = <0x00700000 0x040000>;
-+				read-only;
-+			};
-+			dtb@740000 {
-+				reg = <0x00740000 0x080000>;
-+			};
-+			kernel@7c0000 {
-+				reg = <0x007c0000 0x1400000>;
-+			};
-+			user@1bc0000 {
-+				reg = <0x01bc0000 0x2440000>;
-+			};
-+		};
-+	};
-+};
-+
- &rwdt {
- 	timeout-sec = <60>;
- 	status = "okay";
-Index: renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-===================================================================
---- renesas.orig/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-+++ renesas/arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts
-@@ -189,6 +189,11 @@
- 		function = "i2c0";
- 	};
- 
-+	qspi0_pins: qspi0 {
-+		groups = "qspi0_ctrl", "qspi0_data4";
-+		function = "qspi0";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data";
- 		function = "scif0";
-@@ -200,6 +205,69 @@
- 	};
- };
- 
-+&rpc {
-+	pinctrl-0 = <&qspi0_pins>;
-+	pinctrl-names = "default";
-+
-+	renesas,rpc-mode = "spi";
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "spansion,s25fs512s", "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+		spi-rx-bus-width = <4>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			bootparam@0 {
-+				reg = <0x00000000 0x040000>;
-+				read-only;
-+			};
-+			cr7@00040000 {
-+				reg = <0x00040000 0x080000>;
-+				read-only;
-+			};
-+			cert_header_sa3@000C0000 {
-+				reg = <0x000C0000 0x080000>;
-+				read-only;
-+			};
-+			bl2@00140000 {
-+				reg = <0x00140000 0x040000>;
-+				read-only;
-+			};
-+			cert_header_sa6@00180000 {
-+				reg = <0x00180000 0x040000>;
-+				read-only;
-+			};
-+			bl31@001C0000 {
-+				reg = <0x001C0000 0x460000>;
-+				read-only;
-+			};
-+			uboot@00640000 {
-+				reg = <0x00640000 0x0C0000>;
-+				read-only;
-+			};
-+			uboot-env@00700000 {
-+				reg = <0x00700000 0x040000>;
-+				read-only;
-+			};
-+			dtb@00740000 {
-+				reg = <0x00740000 0x080000>;
-+			};
-+			kernel@007C0000 {
-+				reg = <0x007C0000 0x1400000>;
-+			};
-+			user@01BC0000 {
-+				reg = <0x01BC0000 0x2440000>;
-+			};
-+		};
-+	};
-+};
-+
- &rwdt {
- 	timeout-sec = <60>;
- 	status = "okay";
