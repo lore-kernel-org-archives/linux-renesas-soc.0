@@ -2,196 +2,143 @@ Return-Path: <SRS0=Pe4N=PW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CABDC43612
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE49C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 16:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C6092086D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:55:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Wmu+VQgb"
+	by mail.kernel.org (Postfix) with ESMTP id 24E9820873
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 16:19:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfANOzj (ORCPT
+        id S1726680AbfANQTx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Jan 2019 09:55:39 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:32837 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfANOzi (ORCPT
+        Mon, 14 Jan 2019 11:19:53 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:36303
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726675AbfANQTx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Jan 2019 09:55:38 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v1-v6so19295149ljd.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jan 2019 06:55:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1K3ayw5pDuGJR6lTXauQ/G9YGQFmfgQ36n0bJmNgtmI=;
-        b=Wmu+VQgby7gaUrUjTcbaFQNYvKT/RlpjPChvTvidf43NxLVyeLSySJ3cUenwOWHz5D
-         LYD57813u6xwPqxKvo5LXUwSLUGzLfPbeE7D7DmV3yyfLZT8kQSbSj368W+kfrDn+scr
-         U6bvg1e+TvT1WwovWSGfYpOEGvMhm5QxA86SL6TRRAzZwD5gy0z348g4QPKOgxQpWSAu
-         STLP7vNG+rZo8Z3+TXVoOa+4zClDO63GDlfOwP2wADnvlpeP1vjy/4M0ggnW8zVZZW2D
-         uNDNWSnvgjsAtrodtwypDBT4tym1/LBeQ9KJ/HiePOuxuc/s/DpJyFvdGKDvEaVNfobl
-         NAoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1K3ayw5pDuGJR6lTXauQ/G9YGQFmfgQ36n0bJmNgtmI=;
-        b=paFsoH8C5R7Z3u3Y889waziXq2tZ2NYmOuws92xuxva4LRYHajtSC+XHm/8HrjGf1J
-         JgynDumSlzjxTL9mTJfQs5fK1WDZdqThqHVz2JGb5oknVbBYhR5PIY8BFGxKON1IreN5
-         kZSwcmRHXLQdFGQntW4CGxJADEja1xS4HG/R44dzDPGK4qw0xSTTTG5o3z6HHVunlJWi
-         dGbQaI8hD9Xb2/ke4rZjvPTEKWu50ERZUxa2tSefQ4JuKgeDG8TalvdEizpk+W5G2fgB
-         pUrQw4dSYV2hK0/bR8fRy0oQVjp57cP9k6221OpryUeCLxDTX1FemIJw/T91tASbc3by
-         lWzw==
-X-Gm-Message-State: AJcUukeeH52kv/UmGVHoYDMm16Guu18lrQDA/Lpef+dBWfAWezafsFS9
-        bwidR5AC+JMtKYw2oeOjM+iQrg==
-X-Google-Smtp-Source: ALg8bN64csbCl0c57afpkQOwUnrJ2qf34ZiXvhqaZPmI3NSwRa4xe/ZQbS3AxgUzINBVFuulPAsV2g==
-X-Received: by 2002:a2e:8546:: with SMTP id u6-v6mr14580249ljj.95.1547477735122;
-        Mon, 14 Jan 2019 06:55:35 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id g70-v6sm110063ljg.92.2019.01.14.06.55.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 06:55:34 -0800 (PST)
-From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date:   Mon, 14 Jan 2019 15:55:33 +0100
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 3/6] media: adv748x: csi2: Link AFE with TXA and TXB
-Message-ID: <20190114145533.GK30160@bigcity.dyn.berto.se>
-References: <20190110140213.5198-1-jacopo+renesas@jmondi.org>
- <20190110140213.5198-4-jacopo+renesas@jmondi.org>
+        Mon, 14 Jan 2019 11:19:53 -0500
+X-IronPort-AV: E=Sophos;i="5.56,478,1539640800"; 
+   d="scan'208";a="291882267"
+Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 17:19:49 +0100
+Date:   Mon, 14 Jan 2019 17:19:47 +0100 (CET)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm: rcar-du: add missing of_node_put
+In-Reply-To: <78d7667d-f701-b908-9f24-0ee13be90947@ideasonboard.com>
+Message-ID: <alpine.DEB.2.20.1901141719000.3522@hadrien>
+References: <1547372691-28324-1-git-send-email-Julia.Lawall@lip6.fr> <1547372691-28324-2-git-send-email-Julia.Lawall@lip6.fr> <78d7667d-f701-b908-9f24-0ee13be90947@ideasonboard.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190110140213.5198-4-jacopo+renesas@jmondi.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
 
-Thanks for your patch.
 
-On 2019-01-10 15:02:10 +0100, Jacopo Mondi wrote:
-> The ADV748x chip supports routing AFE output to either TXA or TXB.
-> In order to support run-time configuration of video stream path, create an
-> additional (not enabled) "AFE:8->TXA:0" link, and remove the IMMUTABLE flag
-> from existing ones.
-> 
+On Mon, 14 Jan 2019, Kieran Bingham wrote:
+
+> Hi Julia,
+>
+> Thank you for the patch,
+>
+> On 13/01/2019 09:44, Julia Lawall wrote:
+> > Add an of_node_put when the result of of_graph_get_remote_port_parent is
+> > not available.
+> >
+> > The semantic match that finds this problem is as follows
+> > (http://coccinelle.lip6.fr):
+> >
+> > // <smpl>
+> > @r exists@
+> > local idexpression e;
+> > expression x;
+> > @@
+> > e = of_graph_get_remote_port_parent(...);
+> > ... when != x = e
+> >     when != true e == NULL
+> >     when != of_node_put(e)
+> >     when != of_fwnode_handle(e)
+> > (
+> > return e;
+> > |
+> > *return ...;
+> > )
+> > // </smpl>
+> >
+>
+> For this part at least:
+>
 > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/media/i2c/adv748x/adv748x-csi2.c | 44 +++++++++++++-----------
->  1 file changed, 23 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> index b6b5d8c7ea7c..8c3714495e11 100644
-> --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-> +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> @@ -27,6 +27,7 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
->   * @v4l2_dev: Video registration device
->   * @src: Source subdevice to establish link
->   * @src_pad: Pad number of source to link to this @tx
-> + * @enable: Link enabled flag
->   *
->   * Ensure that the subdevice is registered against the v4l2_device, and link the
->   * source pad to the sink pad of the CSI2 bus entity.
-> @@ -34,17 +35,11 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
->  static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
->  				      struct v4l2_device *v4l2_dev,
->  				      struct v4l2_subdev *src,
-> -				      unsigned int src_pad)
-> +				      unsigned int src_pad,
-> +				      bool enable)
->  {
-> -	int enabled = MEDIA_LNK_FL_ENABLED;
->  	int ret;
->  
-> -	/*
-> -	 * Dynamic linking of the AFE is not supported.
-> -	 * Register the links as immutable.
-> -	 */
-> -	enabled |= MEDIA_LNK_FL_IMMUTABLE;
-> -
->  	if (!src->v4l2_dev) {
->  		ret = v4l2_device_register_subdev(v4l2_dev, src);
->  		if (ret)
-> @@ -53,7 +48,7 @@ static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
->  
->  	return media_create_pad_link(&src->entity, src_pad,
->  				     &tx->sd.entity, ADV748X_CSI2_SINK,
-> -				     enabled);
-> +				     enable ? MEDIA_LNK_FL_ENABLED : 0);
->  }
->  
->  /* -----------------------------------------------------------------------------
-> @@ -68,25 +63,32 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
->  {
->  	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
->  	struct adv748x_state *state = tx->state;
-> +	int ret;
->  
->  	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
->  			sd->name);
->  
->  	/*
-> -	 * The adv748x hardware allows the AFE to route through the TXA, however
-> -	 * this is not currently supported in this driver.
-> +	 * Link TXA to AFE and HDMI, and TXB to AFE only as TXB cannot output
-> +	 * HDMI.
->  	 *
-> -	 * Link HDMI->TXA, and AFE->TXB directly.
-> +	 * The HDMI->TXA link is enabled by default, as is the AFE->TXB one.
->  	 */
-> -	if (is_txa(tx) && is_hdmi_enabled(state))
-> -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> -						  &state->hdmi.sd,
-> -						  ADV748X_HDMI_SOURCE);
-> -	if (is_txb(tx) && is_afe_enabled(state))
-> -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> -						  &state->afe.sd,
-> -						  ADV748X_AFE_SOURCE);
-> -	return 0;
-> +	if (is_afe_enabled(state)) {
-> +		ret = adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> +						 &state->afe.sd,
-> +						 ADV748X_AFE_SOURCE,
-> +						 is_txb(tx));
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	/* Register link to HDMI for TXA only. */
-> +	if (is_txb(tx) || !is_hdmi_enabled(state))
+>
+> But a little discussion below:
+>
+>
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> This does indeed look like a missing of_node_put() but I don't think it
+> will be the only one in that code. It gets a bit tangled - and I think
+> there's possibly another missing put on the error path of
+>
+>         if (!encoder) {
+>                 dev_warn(rcdu->dev,
+>                          "no encoder found for endpoint %pOF, skipping\n",
+>                          ep->local_node);
+>                 return -ENODEV;
+>         }
+>
+> because that implies that no encoder was found, and thus -
+>                 encoder = entity;
+>
+> was not executed, and the tail of that function calls:
+>
+>          of_node_put(encoder);
+>
+> which would have been the final of_node_put(entity)
 
-Small nit, I would s/is_txb(tx)/!is_txa(tx)/ here as to me it becomes 
-easier to read. With or without this change,
+Looking at it again, I agree.  I can just extend this patch.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+julia
 
-> +		return 0;
-> +
-> +	return adv748x_csi2_register_link(tx, sd->v4l2_dev, &state->hdmi.sd,
-> +					  ADV748X_HDMI_SOURCE, true);
->  }
->  
->  static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
-> -- 
-> 2.20.1
-> 
 
--- 
-Regards,
-Niklas Söderlund
+>
+>
+> I think that part could be considered separate to this patch, but it's
+> also quite closely related. Either way - I think it needs a second pair
+> of eyes to see if I'm not crazy :)
+>
+> Regards
+>
+> Kieran
+>
+> >
+> > ---
+> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c |    1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > index 9c7007d..bc3fcb3 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > @@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+> >  		dev_dbg(rcdu->dev,
+> >  			"connected entity %pOF is disabled, skipping\n",
+> >  			entity);
+> > +		of_node_put(entity);
+> >  		return -ENODEV;
+> >  	}
+> >
+> >
+>
+>
