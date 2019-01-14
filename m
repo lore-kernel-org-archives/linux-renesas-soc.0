@@ -2,123 +2,202 @@ Return-Path: <SRS0=Pe4N=PW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A3DC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49512C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467272086D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:39:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE1720657
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:43:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="YT7QvGVQ"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="A6QqoHbX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfANOjb (ORCPT
+        id S1726832AbfANOnt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Jan 2019 09:39:31 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42057 "EHLO
+        Mon, 14 Jan 2019 09:43:49 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45202 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfANOja (ORCPT
+        with ESMTP id S1726705AbfANOnt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Jan 2019 09:39:30 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so19199220lja.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jan 2019 06:39:29 -0800 (PST)
+        Mon, 14 Jan 2019 09:43:49 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s5-v6so19204998ljd.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jan 2019 06:43:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=RggfLUBe4APAkaLDKAqRxE88hCqnQQHf9sI65y9ASls=;
-        b=YT7QvGVQJ/RVxI1RpYLjCkH+oyS04K8wKNO6EOG4HjNnvZo4Epnndtp0iq0gisHhHC
-         H+a/TdfCovOsBX/DFfEbOOWX2YwtpsBo4/bGRSdkxQXPh+iMLq+W3amnFIC4JGi1KOkG
-         icmbZcTrTbDtOQ1F1/9cs7Nu4KqsxcvDL5/EaaMEtLlhPKdtCd99hM09sqhG+oRj5elc
-         PSFbEl8aBObjaX9EcztCHAvUzTiZHItaraFwzhr+D21kxR7sd71GCbGxGnFc3R5f35EN
-         sNcjkAs4kupWb2QDLUMC+UV+jkCm3drOZZlHeHcmNN+DKWuYOyXvNGx4wjC0DQuOku2J
-         NyPA==
+        bh=DSfZhg2rq7MMxTWVSEw2Mx7X2i3kJ7HnZ9GxiE/7ou0=;
+        b=A6QqoHbX0sF/3C5X35USoWP09glE1+YmkAQ6GwjjF2cozdsVbMCEur6LsJq1U/jiH/
+         zgMSQ6pmR3XT7oleD5T6woRpm1H6O5f/micP6WXechz1exIFyHnKsr0O0+TM/NHDoPjI
+         mxUkzIpbMO7N/4X4AAK6Q2NbaBpC12gEPdxoWNnSOHxJYQKVO5TdsJM0Opo8+DL5lMaK
+         Fjww6VUaZ5ZZUidU1sX8YsznVAbpATEbk88mQXRX0hRsdlEhnDv0cRP+hQ+NsghaTOvP
+         tkCIxQzye+RSRgboMCOsrxW9RYVu1sVr7QR96pC2GCmWMNCKVEmS8RLA1ZQWg/LpitcB
+         7gNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=RggfLUBe4APAkaLDKAqRxE88hCqnQQHf9sI65y9ASls=;
-        b=tD34ecpCHPghXq9Uqrqse0EhlgjfTAuT7bVDigxPzFjp460yCC71gsg/204wLI6mL3
-         dNqOUxD7rFONgAnbqGcWm5qWHYTlnUK2VAhuF6ZQKHdEhtI7a758Nf1NgxlALPmkuSQ3
-         lO6h+nKMHZw+IA1ct+GT5LRDf7udycQGRiQwdr7a/oJFFXnNhoLJm0032wFi0HmwAfE9
-         /fC44xPD4JRC9EzMshWEzO57oinlDjFjR+x5lVCY27IB+sRyT07gun1JvPKf02edy1Ph
-         Lc75MMLMJQh0fbPtsXJn8vrXjidQQ4KbT1VtMSpYrOZ9e1z+wW12IWVk8qmcBMf8prHy
-         9kyA==
-X-Gm-Message-State: AJcUukf1spv1yfWKZdYIqdcGRzh0E7er0bUlTgSaFzgDUyWXPIiiQfzA
-        J9e24CmRBIqV/l4GcEM56PN99Q==
-X-Google-Smtp-Source: ALg8bN5RW8mfWpPVZ5b4LKRR5YqMN5C5uTeOIAOsJwbyDlT6ZRaFs354YbaNcb96eS+p2MqjGX7uOw==
-X-Received: by 2002:a2e:a0d3:: with SMTP id f19-v6mr14416195ljm.48.1547476768691;
-        Mon, 14 Jan 2019 06:39:28 -0800 (PST)
+        bh=DSfZhg2rq7MMxTWVSEw2Mx7X2i3kJ7HnZ9GxiE/7ou0=;
+        b=Q/F7/p9wgLuvpWZgLK7PY6b1cvp9TrTAZJxG4W2ha1EGbqERvJd1k/kO+WnPMnPeWQ
+         1JDu75tVPJfjH47fhdNt3QRX3OehEdo+GjdTEUFZlyM+zljYoo7Dd2SAfAR6atVx8gMx
+         jbR5oHCHi5MjODfjdJ3+51JfiTb8IiNpw0FonDR8Qd2Va5KNL3P3fpxosM+LMq9BrRau
+         kZtrvMtuO0G5xNnbGRJD27u/ng5WS3vrh75VKCX795bVXm3/dtj1RovQ3NZuNfvzNI6O
+         jEeJq2QPBF3fcLku2TVeaXDDtrcMqghN6JSVsADO1BDBDlcE16y+6YQSQX4hAPhjwe2F
+         cdDQ==
+X-Gm-Message-State: AJcUukcTwWuwhOG5/swXuk5vAd9G0PcdV5RPamuOvAElTAZYi+3yKtcY
+        6v5roQIFCCszeiX9p9O/VRSTmg==
+X-Google-Smtp-Source: ALg8bN5Wq59Rvb7BWmsuzm7xy2pu19ugLpKUn+DWQq0EaUQMowtjKJbH5M02azslxxdEeZmLVoZ5tQ==
+X-Received: by 2002:a2e:6f11:: with SMTP id k17-v6mr14326100ljc.94.1547477026759;
+        Mon, 14 Jan 2019 06:43:46 -0800 (PST)
 Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id 85-v6sm111163lja.16.2019.01.14.06.39.27
+        by smtp.gmail.com with ESMTPSA id h203sm111897lfe.44.2019.01.14.06.43.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 06:39:28 -0800 (PST)
-Date:   Mon, 14 Jan 2019 15:39:27 +0100
+        Mon, 14 Jan 2019 06:43:45 -0800 (PST)
+Date:   Mon, 14 Jan 2019 15:43:45 +0100
 From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 0/4] pinctrl: sh-pfc: rcar-gen3: Deduplicate remaining
- VIN pin definitions
-Message-ID: <20190114143927.GF30160@bigcity.dyn.berto.se>
-References: <20190111122705.32365-1-geert+renesas@glider.be>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: i2c: adv748x: Convert SW reset routine to
+ function
+Message-ID: <20190114144345.GG30160@bigcity.dyn.berto.se>
+References: <20190111174141.12594-1-kieran.bingham+renesas@ideasonboard.com>
+ <20190111174141.12594-2-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190111122705.32365-1-geert+renesas@glider.be>
+In-Reply-To: <20190111174141.12594-2-kieran.bingham+renesas@ideasonboard.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Kieran,
 
 Thanks for your work.
 
-On 2019-01-11 13:27:01 +0100, Geert Uytterhoeven wrote:
-> 	Hi,
+On 2019-01-11 17:41:40 +0000, Kieran Bingham wrote:
+> The ADV748x is currently reset by writting a small table of registers to
+> the device.
 > 
-> As of commit 50f3f2d73e3426ba ("pinctrl: sh-pfc: Reduce kernel size for
-> narrow VIN channels"), the infrastructure is available to avoid
-> duplication of pin definitions for narrow Video IN (VIN) channels.
-> Make use of his to deduplicate the remaining VIN pin definitions on
-> R-Car Gen3 SoCS.
+> The table lacks documentation and contains magic values to perform the
+> actions, including using a fake register address to introduce a delay
+> loop.
 > 
-> This is similar to what was done before for the wide VIN channels e.g.
-> commit 9942a5b52990b8d5 ("pinctrl: sh-pfc: r8a7795: Deduplicate VIN4 pin
-> definitions").
+> Remove the table, and convert to code, documenting the purpose of the
+> specific writes along the way.
 > 
-> This reduces kernel size for an R-Car Gen3 kernel by almost 1 KiB.
-> 
-> I plan to queue these in sh-pfc-for-v5.1.
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
+> ---
+>  drivers/media/i2c/adv748x/adv748x-core.c | 32 ++++++++++++++++--------
+>  drivers/media/i2c/adv748x/adv748x.h      | 16 ++++++++++++
+>  2 files changed, 38 insertions(+), 10 deletions(-)
 > 
-> Thanks!
-> 
-> Geert Uytterhoeven (4):
->   pinctrl: sh-pfc: r8a7795: Deduplicate VIN5 pin definitions
->   pinctrl: sh-pfc: r8a7796: Deduplicate VIN5 pin definitions
->   pinctrl: sh-pfc: r8a77970: Deduplicate VIN[01] pin definitions
->   pinctrl: sh-pfc: r8a77980: Deduplicate VIN1 pin definitions
-> 
->  drivers/pinctrl/sh-pfc/pfc-r8a7795.c  |  90 ++++++------------
->  drivers/pinctrl/sh-pfc/pfc-r8a7796.c  |  90 ++++++------------
->  drivers/pinctrl/sh-pfc/pfc-r8a77970.c | 128 +++++++++-----------------
->  drivers/pinctrl/sh-pfc/pfc-r8a77980.c |  64 +++++--------
->  4 files changed, 115 insertions(+), 257 deletions(-)
-> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index 02f9c440301c..252bdb28b18b 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -389,15 +389,6 @@ static const struct media_entity_operations adv748x_media_ops = {
+>   * HW setup
+>   */
+>  
+> -static const struct adv748x_reg_value adv748x_sw_reset[] = {
+> -
+> -	{ADV748X_PAGE_IO, 0xff, 0xff},	/* SW reset */
+> -	{ADV748X_PAGE_WAIT, 0x00, 0x05},/* delay 5 */
+> -	{ADV748X_PAGE_IO, 0x01, 0x76},	/* ADI Required Write */
+> -	{ADV748X_PAGE_IO, 0xf2, 0x01},	/* Enable I2C Read Auto-Increment */
+> -	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+> -};
+> -
+>  /* Initialize CP Core with RGB888 format. */
+>  static const struct adv748x_reg_value adv748x_init_hdmi[] = {
+>  	/* Disable chip powerdown & Enable HDMI Rx block */
+> @@ -474,12 +465,33 @@ static const struct adv748x_reg_value adv748x_init_afe[] = {
+>  	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
+>  };
+>  
+> +static int adv748x_sw_reset(struct adv748x_state *state)
+> +{
+> +	int ret;
+> +
+> +	ret = io_write(state, ADV748X_IO_REG_FF, ADV748X_IO_REG_FF_MAIN_RESET);
+> +	if (ret)
+> +		return ret;
+> +
+> +	usleep_range(5000, 6000);
+> +
+> +	/* Disable CEC Wakeup from power-down mode */
+> +	ret = io_clrset(state, ADV748X_IO_REG_01, ADV748X_IO_REG_01_PWRDN_MASK,
+> +			ADV748X_IO_REG_01_PWRDNB);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable I2C Read Auto-Increment for consecutive reads */
+> +	return io_write(state, ADV748X_IO_REG_F2,
+> +			ADV748X_IO_REG_F2_READ_AUTO_INC);
+> +}
+> +
+>  static int adv748x_reset(struct adv748x_state *state)
+>  {
+>  	int ret;
+>  	u8 regval = 0;
+>  
+> -	ret = adv748x_write_regs(state, adv748x_sw_reset);
+> +	ret = adv748x_sw_reset(state);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> index b00c1995efb0..2f8d751cfbb0 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -211,6 +211,11 @@ struct adv748x_state {
+>  #define ADV748X_IO_PD			0x00	/* power down controls */
+>  #define ADV748X_IO_PD_RX_EN		BIT(6)
+>  
+> +#define ADV748X_IO_REG_01		0x01	/* pwrdn{2}b, prog_xtal_freq */
+> +#define ADV748X_IO_REG_01_PWRDN_MASK	(BIT(7) | BIT(6))
+> +#define ADV748X_IO_REG_01_PWRDN2B	BIT(7)	/* CEC Wakeup Support */
+> +#define ADV748X_IO_REG_01_PWRDNB	BIT(6)	/* CEC Wakeup Support */
+> +
+>  #define ADV748X_IO_REG_04		0x04
+>  #define ADV748X_IO_REG_04_FORCE_FR	BIT(0)	/* Force CP free-run */
+>  
+> @@ -229,8 +234,19 @@ struct adv748x_state {
+>  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
+>  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
+>  
+> +#define ADV748X_IO_REG_F2		0xf2
+> +#define ADV748X_IO_REG_F2_READ_AUTO_INC	BIT(0)
+> +
+> +/* For PAGE slave address offsets */
+>  #define ADV748X_IO_SLAVE_ADDR_BASE	0xf2
+>  
+> +/*
+> + * The ADV748x_Recommended_Settings_PrA_2014-08-20.pdf details both 0x80 and
+> + * 0xff as examples for performing a software reset.
+> + */
+> +#define ADV748X_IO_REG_FF		0xff
+> +#define ADV748X_IO_REG_FF_MAIN_RESET	0xff
+> +
+>  /* HDMI RX Map */
+>  #define ADV748X_HDMI_LW1		0x07	/* line width_1 */
+>  #define ADV748X_HDMI_LW1_VERT_FILTER	BIT(7)
 > -- 
 > 2.17.1
 > 
