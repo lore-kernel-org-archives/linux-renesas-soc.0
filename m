@@ -7,146 +7,129 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCC1C43612
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E77C43612
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C4DD2086D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F632086D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jan 2019 14:47:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="fILeBQjR"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="SWJVUoDw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfANOou (ORCPT
+        id S1726624AbfANOri (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Jan 2019 09:44:50 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33888 "EHLO
+        Mon, 14 Jan 2019 09:47:38 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37253 "EHLO
         mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfANOou (ORCPT
+        with ESMTP id S1726591AbfANOrh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Jan 2019 09:44:50 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p6so15805420lfc.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jan 2019 06:44:48 -0800 (PST)
+        Mon, 14 Jan 2019 09:47:37 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y11so15793785lfj.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jan 2019 06:47:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=7u/LtLG4xXiRck2kcwHfI1Xvp/3OjjIYUFQPxEIo9fQ=;
-        b=fILeBQjRrForbqFfFKIhXeICrUBox2JSkfxdupU2aMb2Pxrd18n7WIIh+H1tkq6NCZ
-         9malKJb+L3c/l7/BH1Yfi73uN+ZKr6x+R1fC6OJan92FszvrZd1a6GJlfogmyvu4zexi
-         F7KoJ+x+gFNh+Jc8wIsMhZxWVqqJMAqok9dH5OI9KE/xPOSsBXYwwZdmwyjqetU6hNf8
-         fP+htxz6GmrSyum0q5VDc8T3prVIYUe6BfZzB5GMrx1eNVY037eDpRJT+z1arbRx/EST
-         xGWkIB60Z/8AkeqqYk+zSiQpdWQeMudNud7rnOgBpoxPC4dZxMl7ppg0VsBSPnEpnepw
-         Vekw==
+        bh=p2JTozOyIoMKsYsWjtsQXRvVw8bTMWZm1i6E76LSiy8=;
+        b=SWJVUoDwBFSGNeKQcp1By+hVkbofmaF11K/yLG81ymTnj548PQ6W0+mmCkTwWqoNkN
+         FkjiYcQEFn9lnOMHbzYLHJkNry9odBStH0OecwLsaqNsizXs7K1gmZF5l90nYI4sFlob
+         fqp3q6VC8UCXn99iRLkeEZlwRPt1Z6MYOuVrTyfwvu3yZwcDoF+w+/8gZU9i0p9SDdAN
+         SC86eqC2Q2iVJqqCejcr2WgAy9uEbtDvdW5UMtX+X5Xcms8trUXaiXIwZyU8TWaZB3jd
+         9riZfDK+Kc2oTIm19/wIUwpvaBuTpv/AZM04BTtHNOAzjYkV4+71P/gH4qzmNmsMk/ZL
+         qbag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=7u/LtLG4xXiRck2kcwHfI1Xvp/3OjjIYUFQPxEIo9fQ=;
-        b=fw/hCiRs72PgunvYgjlpiM+ODe9K0Z3pNsBSBOsSN+87xaDknRhPmqD/3qArAUOHJA
-         AqsRxrNMuJyq/Cyl+OL1kmXZ6fxaYYZ9Zi8RTDBGq5VyT/hznM7UNdjGmDe+NRZIiX2N
-         ycTQ/U+24z2Vst+oqxteZqkI3oOPK54zlhCN0JYwsPG0F0afranafk5SQPfOokpfIQyD
-         qEW/S5XkbxrwsZ3fVIzuxPkmdYKkubJQPuXY95zyb+d8qyiUskQix5OhG3PafEInutdk
-         W2V5EZZA+T4XzJOqWrGXq6L2tnbR5KLXt3kI0/zbmptuyJ686LJ2QbcQKtJXZDd11Ozb
-         qiTQ==
-X-Gm-Message-State: AJcUukdr0NKosUaveIDEfXXyFt4n7HCulmwsTb/Hb1MjMvBJrs8YAe52
-        UmZoxEXaGhpVOYMHqUS3u5+78WKBMk0=
-X-Google-Smtp-Source: ALg8bN4NOcWNjt5auyFbt7Gl1sTchzPXnE37SKWTMHpkYEEQ68vzdMqPd0MPVF7t+/p0UrvBmPkMkw==
-X-Received: by 2002:a19:d04d:: with SMTP id h74mr13144988lfg.52.1547477087761;
-        Mon, 14 Jan 2019 06:44:47 -0800 (PST)
+        bh=p2JTozOyIoMKsYsWjtsQXRvVw8bTMWZm1i6E76LSiy8=;
+        b=nz5KiChHmRPLlVCfDVCiH4vCLiAgy8Ag93MKNFvqAWd+Xkyw+vQZoqXV2suKSxwEp5
+         HS+Gu9ME1HqauwqfIy/MPcdZ4ig7nTAoWhOdzcVSo5tFHfoP3QOQRQ7bk1AmYUi+/mao
+         GyNkExbGo3XBzDQwqpKNDNY/zbo2D+NdXpAcb8nh8KtClOksFzchdTpU8jG1BG1WOm8J
+         aBII3xeRNweNVLZEh+egZXfm0FtPGBxAnRcHGGmJVVJceJh2o9hxyEB2qmumenwls4dz
+         bFLo8+LrsGkCbM7JyLf0boqlqPyvsLdBcNjyb2psrCa8FKQHzcjypkw3SfV3q0X/QKSc
+         egOw==
+X-Gm-Message-State: AJcUukfcjEAwZ7BohnovEm4NIeCo0yPrPFJppCHZYoCFY9zOGY4e7asV
+        DajG8YtaG01i7i7hmuwDmoofIg==
+X-Google-Smtp-Source: ALg8bN6sJOVivpd3mD+L41osiCaZK/n01yAzFLCXoxnnvM5obKmJSLJ0d9dXukq04pRkgYcEAaCwlQ==
+X-Received: by 2002:a19:c801:: with SMTP id y1mr13118452lff.53.1547477255650;
+        Mon, 14 Jan 2019 06:47:35 -0800 (PST)
 Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id j197sm114409lfe.24.2019.01.14.06.44.47
+        by smtp.gmail.com with ESMTPSA id f8sm121775lfe.72.2019.01.14.06.47.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 06:44:47 -0800 (PST)
-Date:   Mon, 14 Jan 2019 15:44:46 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: i2c: adv748x: Remove PAGE_WAIT
-Message-ID: <20190114144446.GH30160@bigcity.dyn.berto.se>
-References: <20190111174141.12594-1-kieran.bingham+renesas@ideasonboard.com>
- <20190111174141.12594-3-kieran.bingham+renesas@ideasonboard.com>
+        Mon, 14 Jan 2019 06:47:35 -0800 (PST)
+From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Date:   Mon, 14 Jan 2019 15:47:34 +0100
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH v3 1/6] media: adv748x: Add is_txb()
+Message-ID: <20190114144734.GI30160@bigcity.dyn.berto.se>
+References: <20190110140213.5198-1-jacopo+renesas@jmondi.org>
+ <20190110140213.5198-2-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190111174141.12594-3-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20190110140213.5198-2-jacopo+renesas@jmondi.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Hi Jacopo,
 
 Thanks for your patch.
 
-On 2019-01-11 17:41:41 +0000, Kieran Bingham wrote:
-> The ADV748X_PAGE_WAIT is a fake page to insert arbitrary delays in the
-> register tables.
+On 2019-01-10 15:02:08 +0100, Jacopo Mondi wrote:
+> Add small is_txb() macro to the existing is_txa() and use it where
+> appropriate.
 > 
-> Its only usage was removed, so we can remove the handling and simplify
-> the code.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-With the change Laurent points out,
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
->  drivers/media/i2c/adv748x/adv748x-core.c | 17 ++++++-----------
->  drivers/media/i2c/adv748x/adv748x.h      |  1 -
->  2 files changed, 6 insertions(+), 12 deletions(-)
+>  drivers/media/i2c/adv748x/adv748x-csi2.c | 2 +-
+>  drivers/media/i2c/adv748x/adv748x.h      | 3 +++
+>  2 files changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-> index 252bdb28b18b..8199e0b20790 100644
-> --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> @@ -219,18 +219,13 @@ static int adv748x_write_regs(struct adv748x_state *state,
->  	int ret;
->  
->  	while (regs->page != ADV748X_PAGE_EOR) {
-> -		if (regs->page == ADV748X_PAGE_WAIT) {
-> -			msleep(regs->value);
-> -		} else {
-> -			ret = adv748x_write(state, regs->page, regs->reg,
-> -				      regs->value);
-> -			if (ret < 0) {
-> -				adv_err(state,
-> -					"Error regs page: 0x%02x reg: 0x%02x\n",
-> -					regs->page, regs->reg);
-> -				return ret;
-> -			}
-> +		ret = adv748x_write(state, regs->page, regs->reg, regs->value);
-> +		if (ret < 0) {
-> +			adv_err(state, "Error regs page: 0x%02x reg: 0x%02x\n",
-> +				regs->page, regs->reg);
-> +			return ret;
->  		}
-> +
->  		regs++;
->  	}
->  
+> diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> index 6ce21542ed48..b6b5d8c7ea7c 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> @@ -82,7 +82,7 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
+>  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+>  						  &state->hdmi.sd,
+>  						  ADV748X_HDMI_SOURCE);
+> -	if (!is_txa(tx) && is_afe_enabled(state))
+> +	if (is_txb(tx) && is_afe_enabled(state))
+>  		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+>  						  &state->afe.sd,
+>  						  ADV748X_AFE_SOURCE);
 > diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-> index 2f8d751cfbb0..5042f9e94aee 100644
+> index b482c7fe6957..ab0c84adbea9 100644
 > --- a/drivers/media/i2c/adv748x/adv748x.h
 > +++ b/drivers/media/i2c/adv748x/adv748x.h
-> @@ -39,7 +39,6 @@ enum adv748x_page {
->  	ADV748X_PAGE_MAX,
+> @@ -89,8 +89,11 @@ struct adv748x_csi2 {
 >  
->  	/* Fake pages for register sequences */
-> -	ADV748X_PAGE_WAIT,		/* Wait x msec */
->  	ADV748X_PAGE_EOR,		/* End Mark */
->  };
->  
+>  #define notifier_to_csi2(n) container_of(n, struct adv748x_csi2, notifier)
+>  #define adv748x_sd_to_csi2(sd) container_of(sd, struct adv748x_csi2, sd)
+> +
+>  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
+>  #define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
+> +#define is_txb(_tx) ((_tx) == &(_tx)->state->txb)
+> +
+>  #define is_afe_enabled(_state)					\
+>  	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
+>  	 (_state)->endpoints[ADV748X_PORT_AIN1] != NULL ||	\
 > -- 
-> 2.17.1
+> 2.20.1
 > 
 
 -- 
