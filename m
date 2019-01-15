@@ -8,62 +8,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8978C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Jan 2019 12:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0D7C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Jan 2019 12:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A696620657
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Jan 2019 12:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDDFA20657
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Jan 2019 12:03:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJe/IF89"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKCJjQT0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbfAOMBj (ORCPT
+        id S1727984AbfAOMDO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Jan 2019 07:01:39 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41730 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728151AbfAOMBj (ORCPT
+        Tue, 15 Jan 2019 07:03:14 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38348 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbfAOMDO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Jan 2019 07:01:39 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m1so1165575pgq.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Jan 2019 04:01:38 -0800 (PST)
+        Tue, 15 Jan 2019 07:03:14 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so1203148plb.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Jan 2019 04:03:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=yTOEQminwl16Q7lTtKzw7rtv7bjHkSFStgf/QGCsgYI=;
-        b=fJe/IF89oDvtRayQjRD8QDlIO17oPwwTn5fdoqxqsDMJ9uMKptzyLkPMi6pent9o0C
-         HKOwNzfjWktmsQtBH4R/gJLg80jD05AOD7x8hwnuSrMKkbgku0PrcSUY/8BgqAZilvNv
-         qX5Au94wAkOeuojpVclzZPbo2g/HzFhx9K0KfswzHeImsNJDqTcxJCwjTmej+Yjg6sli
-         ORs5IEbCwxgvpA+tXaL5fhVxTQRmxKvIvOoQDBoE9gNbZShRu8TFbgSq94xe1WqqjmQ3
-         3DqQAnWENbzywaNCXxADYw99qBj5l7BM1IELCiCfUODZ04u6OazIP5vB6LwF+X+6Kmlj
-         WcRg==
+        bh=vOR3MkD+36PX7kfHg0GNPwmhMeDJF2JG8bnig2yC5Os=;
+        b=PKCJjQT0yDr8pQJG4f2NMe0pbd3HgaSkZN00LGzA3hA3H4IHm7lVKXd2IV5kGgY4at
+         j1/bEscM5Rr83Yfi6GDOw3LEfQuKWQmKI23+RI4jL3aBfbOp3dd8wWVtVSAXfiWfJr1r
+         xbS/wknELDnd8mt5eTuUmbpHhC5eFgoH3dhxdd82ZUnXBdolrtaAMERhOdbF0lPobGsr
+         VMk1Suwuf0CLAtmpwSYrwTRDg3W6OeOyRKXnQasdjoZQ8nAIv5+hfoUXYScwfvEEuFp4
+         VEgPJwlk73pIjdDwLx0pGiWDtIXGy6QmuP8QH2ZptZBzFZ85S5h49qK1yG2BGfRiPdDT
+         aRjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yTOEQminwl16Q7lTtKzw7rtv7bjHkSFStgf/QGCsgYI=;
-        b=fK8kAWqIoN8h3k5KdJ1ob261Qj78xgfXVvb1LdoYrE7cnDRcSDNh/bTBItuP9ZB6+Z
-         SbaWeIbeT7oNyGBmwpWD8MAtZwVhj2R1iTh14Kx/aRr6OxyLcV0MiyONW4WdseER/dpI
-         ayn/WvF7A0l/j6EIyCMgqhOO6uQFKVWPTmRCVbUe+DUQYC25xFupk6LWInSzlvbTnIH5
-         mbUJAFHXpx6mvKQzri1kQht2dddMXblFbauFBzeGMmbzDf9kWL8wQ9ehVdbrVt0oD0tl
-         NFg1xgpoQZPvAx3Xjdqe5xNr1teCbPOPGoqiTvzcGLQzH6LV9FD9KzfWJYh4e9iSaWb8
-         gRog==
-X-Gm-Message-State: AJcUukeYbS9IkYfoU/WnHGl7Z1DA67dsgztox9Q3RwvbA4AD0Fh1CaBI
-        lv81psQaC7ssMgsMP1QzQPP1RzqG
-X-Google-Smtp-Source: ALg8bN5FgJXsODDKDrVoYd4qhsxjNolQ/ZXImAxzKoOlCvA9wVlNU8QAATUzsGwTmovFsmP1aKicGA==
-X-Received: by 2002:a63:e711:: with SMTP id b17mr3430511pgi.363.1547553697619;
-        Tue, 15 Jan 2019 04:01:37 -0800 (PST)
+        bh=vOR3MkD+36PX7kfHg0GNPwmhMeDJF2JG8bnig2yC5Os=;
+        b=laR/f/pGW8NABvUI6DbZ32TgMt6ob7gmt0CCruphyh0r5j1NY3ioHLU0XGklQ8kmLT
+         Zon/gC6iZrwakFsYQ8qFwlcoODT72Uo+RufZEtnLIFNJ025MOCPnVPdnJC/KPmHQXi66
+         MdfbpbjOsm5wcqcQfCs2LQnqPzOWCUwZ0yyr896k2q9mPZ87GdkEzknisULZR5kHWxmJ
+         O9IW3xWuELbmBgvldhmy7dsP8YLa+fFIhcxHG80izd2UxqVFvdp643WfZAeqA0Y0bHM+
+         KWMzvu1hLQOq2Ir2nU5lg3+msTGdIt36Zqji1KUWTB9KZdeRFazsuUqOqlrUFsF9FW7K
+         QY8A==
+X-Gm-Message-State: AJcUukcSlxGDjKkvkq/dRRC8P+ROn+sknzG1WYCA3Dqr+KFoGCg2DJOT
+        8R+MEpgKa0vyKXW+fK7Bscd4wWrt
+X-Google-Smtp-Source: ALg8bN6fSV2RULObECD6zdb5DI53pDQnAybzrU/jreictBziXWcJBI581/ziFxOUeKITGeDBNSAR7Q==
+X-Received: by 2002:a17:902:8484:: with SMTP id c4mr3674270plo.59.1547553793254;
+        Tue, 15 Jan 2019 04:03:13 -0800 (PST)
 Received: from localhost.localdomain (p7732116-ipngn36501marunouchi.tokyo.ocn.ne.jp. [114.158.79.116])
-        by smtp.gmail.com with ESMTPSA id l19sm6089872pfi.71.2019.01.15.04.01.35
+        by smtp.gmail.com with ESMTPSA id h185sm4109903pfg.143.2019.01.15.04.03.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 15 Jan 2019 04:01:36 -0800 (PST)
+        Tue, 15 Jan 2019 04:03:12 -0800 (PST)
 From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Cc:     Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH/RFT] pinctrl: sh-pfc: r8a77990: Add TMU pins, groups and functions
-Date:   Tue, 15 Jan 2019 21:01:27 +0900
-Message-Id: <1547553687-4407-1-git-send-email-ykaneko0929@gmail.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add OPPs table for cpu devices
+Date:   Tue, 15 Jan 2019 21:02:42 +0900
+Message-Id: <1547553762-4467-1-git-send-email-ykaneko0929@gmail.com>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -72,118 +72,68 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch adds TMU TCLK{1,2} pins, groups and functions to
-the R8A77990 SoC.
+This patch define OOP tables for all CPUs.
+This allows CPUFreq to function.
 
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 ---
 
-This patch is based on the sh-pfc branch of Geert Uytterhoeven's
-renesas-drivers tree.
+This patch is based on the devel branch of Simon Horman's renesas tree.
 
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 53 +++++++++++++++++++++++++++++++++--
- 1 file changed, 51 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 5fc50f4..e69a7ef 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -3436,6 +3436,43 @@ enum {
- 	SSI_SCK9_B_MARK, SSI_WS9_B_MARK,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 84bbe70..936714e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -55,6 +55,27 @@
+ 		clock-frequency = <0>;
+ 	};
  
-+/* - TMU -------------------------------------------------------------------- */
-+static const unsigned int tmu_tclk1_a_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(3, 12),
-+};
++	cluster1_opp: opp_table10 {
++		compatible = "operating-points-v2";
++		opp-shared;
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++	};
 +
-+static const unsigned int tmu_tclk1_a_mux[] = {
-+	TCLK1_A_MARK,
-+};
-+
-+static const unsigned int tmu_tclk1_b_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(5, 17),
-+};
-+
-+static const unsigned int tmu_tclk1_b_mux[] = {
-+	TCLK1_B_MARK,
-+};
-+
-+static const unsigned int tmu_tclk2_a_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(3, 13),
-+};
-+
-+static const unsigned int tmu_tclk2_a_mux[] = {
-+	TCLK2_A_MARK,
-+};
-+
-+static const unsigned int tmu_tclk2_b_pins[] = {
-+	/* TCLK */
-+	RCAR_GP_PIN(5, 18),
-+};
-+
-+static const unsigned int tmu_tclk2_b_mux[] = {
-+	TCLK2_B_MARK,
-+};
-+
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_a_pins[] = {
- 	/* PWEN, OVC */
-@@ -3716,7 +3753,7 @@ enum {
- };
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -66,6 +87,8 @@
+ 			power-domains = <&sysc R8A77990_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A77990_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
  
- static const struct {
--	struct sh_pfc_pin_group common[262];
-+	struct sh_pfc_pin_group common[266];
- 	struct sh_pfc_pin_group automotive[2];
- } pinmux_groups = {
- 	.common = {
-@@ -3949,6 +3986,10 @@ enum {
- 		SH_PFC_PIN_GROUP(ssi9_data),
- 		SH_PFC_PIN_GROUP(ssi9_ctrl_a),
- 		SH_PFC_PIN_GROUP(ssi9_ctrl_b),
-+		SH_PFC_PIN_GROUP(tmu_tclk1_a),
-+		SH_PFC_PIN_GROUP(tmu_tclk1_b),
-+		SH_PFC_PIN_GROUP(tmu_tclk2_a),
-+		SH_PFC_PIN_GROUP(tmu_tclk2_b),
- 		SH_PFC_PIN_GROUP(usb0_a),
- 		SH_PFC_PIN_GROUP(usb0_b),
- 		SH_PFC_PIN_GROUP(usb0_id),
-@@ -4358,6 +4399,13 @@ enum {
- 	"ssi9_ctrl_b",
- };
+ 		a53_1: cpu@1 {
+@@ -75,6 +98,8 @@
+ 			power-domains = <&sysc R8A77990_PD_CA53_CPU1>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A77990_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
  
-+static const char * const tmu_groups[] = {
-+	"tmu_tclk1_a",
-+	"tmu_tclk1_b",
-+	"tmu_tclk2_a",
-+	"tmu_tclk2_b",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0_a",
- 	"usb0_b",
-@@ -4404,7 +4452,7 @@ enum {
- };
- 
- static const struct {
--	struct sh_pfc_function common[48];
-+	struct sh_pfc_function common[49];
- 	struct sh_pfc_function automotive[2];
- } pinmux_functions = {
- 	.common = {
-@@ -4452,6 +4500,7 @@ enum {
- 		SH_PFC_FUNCTION(sdhi1),
- 		SH_PFC_FUNCTION(sdhi3),
- 		SH_PFC_FUNCTION(ssi),
-+		SH_PFC_FUNCTION(tmu),
- 		SH_PFC_FUNCTION(usb0),
- 		SH_PFC_FUNCTION(usb30),
- 		SH_PFC_FUNCTION(vin4),
+ 		L2_CA53: cache-controller-0 {
 -- 
 1.9.1
 
