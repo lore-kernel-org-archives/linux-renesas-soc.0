@@ -3,171 +3,338 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE3FC43444
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B48AC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0103420868
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3484820840
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:36:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="gkyObXBO"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="0OlS4uY/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730388AbfAPTZE (ORCPT
+        id S1729326AbfAPTg1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:25:04 -0500
-Received: from mail-eopbgr1410133.outbound.protection.outlook.com ([40.107.141.133]:20829
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730165AbfAPTZE (ORCPT
+        Wed, 16 Jan 2019 14:36:27 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33509 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731394AbfAPTg0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:25:04 -0500
+        Wed, 16 Jan 2019 14:36:26 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v1-v6so6505625ljd.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Jan 2019 11:36:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G3/I6WQpgyVdKtBABL51nPtck5hbqobjSLto6GNk4QM=;
- b=gkyObXBO5+hxXtkpqQk5bWvO7JVBLdrahTwbmSZo6kubpYC/fgcEiUyr4V0oK+Jd6EOdjyGpJMj9k9AMekoWWRalI6nFwlKqYdFcQsLaiTDV0RAIr6uOaW9aT+JvDfTje7uURh0jN786/3UKImwKNvoUVwOR/A22aazFOdnVdac=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1PR01MB1440.jpnprd01.prod.outlook.com (10.174.228.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Wed, 16 Jan 2019 19:24:54 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::4a9:6014:ec1d:1122]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::4a9:6014:ec1d:1122%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 19:24:54 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IFTscLBXEKxmuwLVxgfDjZ/toVkzWHUAokOat6F8qRI=;
+        b=0OlS4uY/L5CuM1LfkY0qwYzlQxHqR5E5WuDz/EQCTZsAtYBEE5k0aoYyA2SYjNPSAQ
+         DqAmwnNk6+QNGc7pk6LgJR/4/8g8M8VtpkUml/QvnFbEUJB2nDf6qwAfZc6Ncheougpa
+         phmsuxpM2L/jpifUppClrtPBvHeMfHTfz+6jAJYsizDzIn2XjyIVxmA5zhwLTmlTwjc5
+         axaKmfiEAwd0xPO8j+kYODgzcup1xZaS41mZHobC4Mef04bBG6nP1rvHOvqYZGKJtw+L
+         WecR8p+eubkORrlLJNBdhGBBcVClN66towaEw2L3PutrIofH1YFHHRMYjBWFZ3LAk/0h
+         0+GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=IFTscLBXEKxmuwLVxgfDjZ/toVkzWHUAokOat6F8qRI=;
+        b=KTzi2E1kxmtkjeR3l782VprjnDcrdDnXNUq3lpU7l+pFM+i7C6zdQIoSHwjqdcgKpu
+         IOQtKytJISE7v9iRZqONZI5qAqHwar8KHwVFsEf2jyPAq1CdzsABJmLY6tq+dvgqm9bK
+         4YQhJx1nJ4hKaDQFlTMDMJSw0aybdXSUQPtxDFU6F8VEK8J7ob95JTRgUjgxrNLxRdvk
+         qK9YPvqKc3Bh+MJW2rYwpt1dgEYQ3u+RZyThd5jFiBOmxO0IflWSmA8Yw0uyRA9b8Aqs
+         ZVo3gKU6W7o+5wxh5SmgvWrIROKdzK2m/pi8SuMvjoz+784P1TZLDuv+k4dQn3FSH61p
+         +Cqg==
+X-Gm-Message-State: AJcUukcCgQrMha0sItjDpyzRUQhT5pBRbHOphmmgT7x55S2CelvWlbCu
+        s8TCdmheI9GEsIrm4lgZhNAsCg==
+X-Google-Smtp-Source: ALg8bN4W2G5y3oG7ULkpFwZP5Wg37DbgNckcv7F6NcFJWQ2aCfG+WMPqN/SQCjmorfpJSLHjP70PPw==
+X-Received: by 2002:a2e:6109:: with SMTP id v9-v6mr7642404ljb.126.1547667383356;
+        Wed, 16 Jan 2019 11:36:23 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.80.123])
+        by smtp.gmail.com with ESMTPSA id a127sm1343738lfe.73.2019.01.16.11.36.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 11:36:22 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     masonccyang@mxic.com.tw
+Cc:     Boris Brezillon <bbrezillon@kernel.org>, broonie@kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        =?utf-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
-Subject: RE: [PATCH 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
-Thread-Topic: [PATCH 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
-Thread-Index: AQHUrcrDVzofMNoB5UmjOYS78Hd4iaWyQVGAgAABcfA=
-Date:   Wed, 16 Jan 2019 19:24:54 +0000
-Message-ID: <TY1PR01MB17704CFDBA8A1C2D920B763DC0820@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-9-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdWG6m11eAjvPeFXjsu3jhYnfsxN-EUXw5_SQZ6qMrebYw@mail.gmail.com>
-In-Reply-To: <CAMuHMdWG6m11eAjvPeFXjsu3jhYnfsxN-EUXw5_SQZ6qMrebYw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1440;20:XE6+fWkL3wAMNp50bCHmAwhfU2N3hLygWlVN0zUrfGzPdIcobieTL9sFaTmp5thGSL0kMV0zwVMr7sXJIiZl41YhUsGZfU+Unbdg1pWjwmv9Q2Ap+Fz3UBdPo6ZH3eLkno2PpzKUCREHLKutMGex2xqhxVHwZ+ftmuxcuYeiNWs=
-x-ms-office365-filtering-correlation-id: 61ae394f-a98a-4902-062a-08d67be84b79
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1440;
-x-ms-traffictypediagnostic: TY1PR01MB1440:
-x-microsoft-antispam-prvs: <TY1PR01MB1440179FCEAB3C1E08D054E1C0820@TY1PR01MB1440.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(346002)(376002)(136003)(189003)(199004)(229853002)(106356001)(105586002)(54906003)(7696005)(44832011)(7416002)(76176011)(5660300001)(25786009)(6916009)(26005)(2906002)(68736007)(478600001)(6436002)(11346002)(486006)(99286004)(446003)(476003)(186003)(97736004)(345774005)(71190400001)(71200400001)(305945005)(53546011)(39060400002)(256004)(74316002)(8936002)(14454004)(4326008)(81156014)(9686003)(6506007)(66066001)(7736002)(33656002)(102836004)(316002)(55016002)(6246003)(81166006)(8676002)(6116002)(3846002)(86362001)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1440;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7R6Zgo1x5pAW7q0156x+YQ3+Cka40oTEG7j+gUJZ6qu5EI/GuJMYlAV1rslNcecPQd4wdTf+/jJHSsbjTShwAptxijQP3QGGhIt08cT10yrjF6bKYrWc4Y4K6RqYZYJ148XQ7JrIFbyuMRwYEtddalTIwG7fkaEXHe/ggfGTWHxUibjjMYc0uZ1S2sIKK9dqhNGTJwtSHoOYoxL43pLNJFHEbiXiNkj/PJsTD5a9U+dwEF+hYs+9qC9acblIdPAp43CoqmuXwMPMonrPG/z4QOihuVDljOmfFXJAyf353LfqGUzYq6E5yo8ZzbTnIHSaiqYUwe+SCVmGo1YdG5N+F+AkyuXytOW4kt7cPGscc0jWlujLcfUcJrH+JsS+Z5MtVrXzq/N6UEsqWLMdL3k5WMGzhRB+cBSLVslUcVAHjZg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        zhengxunli@mxic.com.tw
+References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
+ <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw>
+ <74a5fba6-a77e-f71b-ce49-405fee8e0fda@cogentembedded.com>
+ <OFBBA60D64.FFD34553-ON48258384.00315BB0-48258384.0034A5C7@mxic.com.tw>
+Organization: Cogent Embedded
+Message-ID: <30d678b9-2b49-1f82-3027-332d213b488e@cogentembedded.com>
+Date:   Wed, 16 Jan 2019 22:36:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61ae394f-a98a-4902-062a-08d67be84b79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 19:24:54.5603
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1440
+In-Reply-To: <OFBBA60D64.FFD34553-ON48258384.00315BB0-48258384.0034A5C7@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBGcm9tOiBHZWVy
-dCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4LW02OGsub3JnPg0KPiBTZW50OiAxNiBKYW51YXJ5
-IDIwMTkgMTk6MDYNCj4gU3ViamVjdDogUmU6IFtQQVRDSCAwOC8xMV0gY2xrOiByZW5lc2FzOiBy
-OGE3NzRjMDogQWRkIG1pc3NpbmcgQ0FORkQgY2xvY2sNCj4NCj4gSGkgRmFicml6aW8sDQo+DQo+
-IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCj4NCj4gT24gV2VkLCBKYW4gMTYsIDIwMTkgYXQgNzoz
-OSBQTSBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNvbT4g
-d3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIHRoZSBtaXNzaW5nIENBTkZEIGNsb2NrIHRvIHRo
-ZSByOGE3NzRjMCBzcGVjaWZpYw0KPiA+IGNsb2NrIGRyaXZlci4NCj4NCj4gQXJlIHlvdSBzdXJl
-IHRoZSBDQU5GRCBjbG9jayBleGlzdHMgb24gUlovRzJFPw0KDQpJIHlldCBoYXZlIHRvIHJ1biB0
-ZXN0cyBvbiB0aGUgYm9hcmQgc3BlY2lmaWMgdG8gQ0FORkQsIGJ1dCB3ZSBrbm93IGZvciBzdXJl
-IHRoYXQncw0KZ29pbmcgdG8gYXBwZWFyIG9uIHRoZSBSWi9HMkUgKGlmIGl0J3Mgbm90IGluIHRo
-ZSByZXZpc2lvbiBvZiB0aGUgU29DIHdlIGhhdmUgYWxyZWFkeSkuDQpKYXBhbiBoYXZlIGNvbmZp
-cm1lZCB0aGF0IGV2ZXJ5dGhpbmcgQ0FORkQtd2lzZSBzaG91bGQgYmUgdGhlIHNhbWUgYXMgcGVy
-IHRoZQ0KY29ycmVzcG9uZGluZyBHZW4zIHBhcnRzLCBhbmQgdGhhdCdzIHdoeSBhcmUgcHVzaGlu
-ZyB0aGlzIHBhdGNoIChhbmQgc2hvcnRseQ0Kc29tZXRoaW5nIHNpbWlsYXIgZm9yIHRoZSByOGE3
-NzRhMSkgZm9yIGl0IGFzIGl0J3Mgb24gb3VyIGNyaXRpY2FsIHBhdGguIEFueXdheXMsIHRoZQ0K
-SFcgb2YgdGhlIEVLODc0IHNob3VsZCBzdXBwb3J0IENBTkZEIHByb3Blcmx5LCB0aGVyZWZvcmUg
-SSBhbSBnb2luZyB0byB0cnkgYW5kDQpydW4gc29tZSB0ZXN0cyAoYXMgc29vbiBhcyBJIHNvcnQg
-b3V0IHRoZSBjYWJsZXMpLCBzbyB0aGF0IHdlIGNsZWFyIGFueSBkb3VidHMuDQoNCldvdWxkIHlv
-dSByYXRoZXIgd2UgaGVsZCBiYWNrIGFsbCBvZiB0aGUgQ0FOIHJlbGF0ZWQgY2hhbmdlcyBmb3Ig
-bm93Pw0KDQo+DQo+ID4gU2lnbmVkLW9mZi1ieTogRmFicml6aW8gQ2FzdHJvIDxmYWJyaXppby5j
-YXN0cm9AYnAucmVuZXNhcy5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IENocmlzIFBhdGVyc29uIDxD
-aHJpcy5QYXRlcnNvbjJAcmVuZXNhcy5jb20+DQo+DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvcmVu
-ZXNhcy9yOGE3NzRjMC1jcGctbXNzci5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvcmVuZXNhcy9y
-OGE3NzRjMC1jcGctbXNzci5jDQo+DQo+ID4gLS0tIGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9j
-ay9yOGE3NzRjMC1jcGctbXNzci5oDQo+ID4gKysrIGIvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9j
-ay9yOGE3NzRjMC1jcGctbXNzci5oDQo+ID4gQEAgLTQ4LDEzICs0OCwxNCBAQA0KPiA+ICAjZGVm
-aW5lIFI4QTc3NEMwX0NMS19aQTIgICAgICAgICAgICAgICAzNw0KPiA+ICAjZGVmaW5lIFI4QTc3
-NEMwX0NMS19aQTggICAgICAgICAgICAgICAzOA0KPiA+ICAjZGVmaW5lIFI4QTc3NEMwX0NMS19a
-MkQgICAgICAgICAgICAgICAzOQ0KPiA+IC0jZGVmaW5lIFI4QTc3NEMwX0NMS19NU08gICAgICAg
-ICAgICAgICA0MA0KPiA+IC0jZGVmaW5lIFI4QTc3NEMwX0NMS19SICAgICAgICAgICAgICAgICA0
-MQ0KPiA+IC0jZGVmaW5lIFI4QTc3NEMwX0NMS19PU0MgICAgICAgICAgICAgICA0Mg0KPiA+IC0j
-ZGVmaW5lIFI4QTc3NEMwX0NMS19MVjAgICAgICAgICAgICAgICA0Mw0KPiA+IC0jZGVmaW5lIFI4
-QTc3NEMwX0NMS19MVjEgICAgICAgICAgICAgICA0NA0KPiA+IC0jZGVmaW5lIFI4QTc3NEMwX0NM
-S19DU0kwICAgICAgICAgICAgICA0NQ0KPiA+IC0jZGVmaW5lIFI4QTc3NEMwX0NMS19DUCAgICAg
-ICAgICAgICAgICAgICAgICAgIDQ2DQo+ID4gLSNkZWZpbmUgUjhBNzc0QzBfQ0xLX0NQRVggICAg
-ICAgICAgICAgIDQ3DQo+ID4gKyNkZWZpbmUgUjhBNzc0QzBfQ0xLX0NBTkZEICAgICAgICAgICAg
-IDQwDQo+ID4gKyNkZWZpbmUgUjhBNzc0QzBfQ0xLX01TTyAgICAgICAgICAgICAgIDQxDQo+ID4g
-KyNkZWZpbmUgUjhBNzc0QzBfQ0xLX1IgICAgICAgICAgICAgICAgIDQyDQo+ID4gKyNkZWZpbmUg
-UjhBNzc0QzBfQ0xLX09TQyAgICAgICAgICAgICAgIDQzDQo+ID4gKyNkZWZpbmUgUjhBNzc0QzBf
-Q0xLX0xWMCAgICAgICAgICAgICAgIDQ0DQo+ID4gKyNkZWZpbmUgUjhBNzc0QzBfQ0xLX0xWMSAg
-ICAgICAgICAgICAgIDQ1DQo+ID4gKyNkZWZpbmUgUjhBNzc0QzBfQ0xLX0NTSTAgICAgICAgICAg
-ICAgIDQ2DQo+ID4gKyNkZWZpbmUgUjhBNzc0QzBfQ0xLX0NQICAgICAgICAgICAgICAgICAgICAg
-ICAgNDcNCj4gPiArI2RlZmluZSBSOEE3NzRDMF9DTEtfQ1BFWCAgICAgICAgICAgICAgNDgNCj4N
-Cj4gVGhpcyBmaWxlIGlzIHBhcnQgb2YgdGhlIERUIEFCSSwgaGVuY2UgbGlzdCBvZiBkZWZpbml0
-aW9ucyBpcyBhcHBlbmQtb25seS4NCg0KV2lsbCBmaXggdGhpcyB3aXRoIGEgdjINCg0KVGhhbmtz
-LA0KRmFiDQoNCj4NCj4gUGxlYXNlIGFkZCBSOEE3NzRDMF9DTEtfQ0FORkQgYXQgdGhlIGVuZCwg
-aS5lLg0KPg0KPiAgICAgI2RlZmluZSBSOEE3NzRDMF9DTEtfQ0FORkQgICAgICAgICAgICAgIDQ4
-DQo+DQo+IEdye29ldGplLGVldGluZ31zLA0KPg0KPiAgICAgICAgICAgICAgICAgICAgICAgICBH
-ZWVydA0KPg0KPiAtLQ0KPiBHZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExp
-bnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+DQo+IEluIHBlcnNvbmFs
-IGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFj
-a2VyLiBCdXQNCj4gd2hlbiBJJ20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJw
-cm9ncmFtbWVyIiBvciBzb21ldGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZhbGRzDQoNCg0KDQpSZW5lc2FzIEVsZWN0cm9uaWNz
-IEV1cm9wZSBMdGQsIER1a2VzIE1lYWRvdywgTWlsbGJvYXJkIFJvYWQsIEJvdXJuZSBFbmQsIEJ1
-Y2tpbmdoYW1zaGlyZSwgU0w4IDVGSCwgVUsuIFJlZ2lzdGVyZWQgaW4gRW5nbGFuZCAmIFdhbGVz
-IHVuZGVyIFJlZ2lzdGVyZWQgTm8uIDA0NTg2NzA5Lg0K
+On 01/16/2019 12:35 PM, masonccyang@mxic.com.tw wrote:
+
+[...]
+>> > diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+>> > index 9f89cb1..81b4e04 100644
+>> > --- a/drivers/spi/Kconfig
+>> > +++ b/drivers/spi/Kconfig
+[...]
+>>
+>> > +   tristate "Renesas R-Car Gen3 RPC-IF SPI controller"
+>> > +   depends on ARCH_RENESAS || COMPILE_TEST
+>>
+>>    Judging on the compilation error reported by the 0-day bot about readq(),
+>> we now need to depend on 64BIT or something...
+> 
+> I have patched RPC external address space read mode
+> and driver don't need readq() now!
+
+   Good work, thank you!
+
+>> [...]
+>> > diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+>> > index f296270..3f2b2f9 100644
+>> > --- a/drivers/spi/Makefile
+>> > +++ b/drivers/spi/Makefile
+>> [...]
+>> > diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+>> > new file mode 100644
+>> > index 0000000..1e57eb1
+>> > --- /dev/null
+>> > +++ b/drivers/spi/spi-renesas-rpc.c
+>> > @@ -0,0 +1,787 @@
+>> [...]
+>> > +#define RPC_CMNCR      0x0000   // R/W
+>> > +#define RPC_CMNCR_MD      BIT(31)
+>> > +#define RPC_CMNCR_SFDE      BIT(24) // undocumented bit but must be set
+>> > +#define RPC_CMNCR_MOIIO3(val)   (((val) & 0x3) << 22)
+>> > +#define RPC_CMNCR_MOIIO2(val)   (((val) & 0x3) << 20)
+>> > +#define RPC_CMNCR_MOIIO1(val)   (((val) & 0x3) << 18)
+>> > +#define RPC_CMNCR_MOIIO0(val)   (((val) & 0x3) << 16)
+>> > +#define RPC_CMNCR_MOIIO_HIZ   (RPC_CMNCR_MOIIO0(3) |
+>> RPC_CMNCR_MOIIO1(3) | \
+>> > +             RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
+>> > +#define RPC_CMNCR_IO3FV(val)   (((val) & 0x3) << 14) // undocumented bit
+>> > +#define RPC_CMNCR_IO2FV(val)   (((val) & 0x3) << 12) // undocumented bit
+>>
+>>    Those are not exactly bits. I'd be happy with just // undocumented...
+>>
+>> [...]
+>> > +#define RPC_WBUF      0x8000   // Write Buffer
+>> > +#define RPC_WBUF_SIZE      256   // Write Buffer size
+>>
+>>    I wonder if the write buffer should be in a separate "reg" prop tuple...
+>> Have you considered that?
+>>
+> 
+> I don't get your point!
+
+   I mean that the write buffer should be a separate "reg" property address/size tuple,
+so that the RPC device has 3 memory resources. Our SPI driver used this scheme, and I
+like it.
+
+>> [...]
+>> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+>> > +{
+>> > +   //
+>> > +   // NOTE: The 0x260 are undocumented bits, but they must be set.
+>> > +   //   RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+>> > +   //   0x0 : the delay is biggest,
+>> > +   //   0x1 : the delay is 2nd biggest,
+>> > +   //   On H3 ES1.x, the value should be 0, while on others,
+>> > +   //   the value should be 6.
+>> > +   //
+>> > +   regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+>> > +           RPC_PHYCNT_STRTIM(6) | 0x260);
+>> > +
+>> > +   //
+>> > +   // NOTE: The 0x1511144 are undocumented bits, but they must be set
+>> > +   //       for RPC_PHYOFFSET1.
+>> > +   //    The 0x31 are undocumented bits, but they must be set
+>> > +   //    for RPC_PHYOFFSET2.
+>> > +   //
+>> > +   regmap_write(rpc->regmap, RPC_PHYOFFSET1,
+>> > +           RPC_PHYOFFSET1_DDRTMG(3) | 0x1511144);
+>> > +   regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
+>> > +           RPC_PHYOFFSET2_OCTTMG(4));
+>>
+>>    I still would have preferred using regmap_update_bits() here...
+>>
+> 
+> This is a init() function to set up an initial value to registers.
+
+   Note that 0x31 is read only register value.
+
+> [...]
+>> > +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+>> > +            const void *tx_buf, void *rx_buf)
+>> > +{
+>> [...]
+>> > +   } else if (rx_buf) {
+>> > +      //
+>> > +      // RPC-IF spoils the data for the commands without an address
+>> > +      // phase (like RDID) in the manual mode, so we'll have to work
+>> > +      // around this issue by using the external address space read
+>> > +      // mode instead; we seem to be able to read 8 bytes at most in
+>> > +      // this mode though...
+>> > +      //
+>> > +      if (!(smenr & RPC_SMENR_ADE(0xf))) {
+>> > +         u32 nbytes = rpc->xferlen - pos;
+>> > +         u64 tmp;
+>> > +
+>> > +         if (nbytes > 8)
+>> > +            nbytes = 8;
+>> > +
+>> > +         regmap_update_bits(rpc->regmap, RPC_CMNCR,
+>> > +                  RPC_CMNCR_MD, 0);
+>> > +         regmap_write(rpc->regmap, RPC_DRCR, 0);
+>> > +         regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
+>> > +         regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
+>> > +         regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
+>> > +         regmap_write(rpc->regmap, RPC_DROPR, 0);
+>> > +         regmap_write(rpc->regmap, RPC_DRENR, rpc->smenr &
+>> > +                 ~RPC_SMENR_SPIDE(0xf));
+>>
+>>    The 'smenr' filed needs a more universal name -- it's written to
+>> both SMENR and DRENR?
+> 
+> I think it's ok because their bits are compatible.
+
+   Not quite, the LSBs are not compatible, as you can see from the code above.
+I'd suggest smth like 'enr' or 'enable'...
+
+> I patch external address space read mode as follows and don't
+> need u64, readq().
+> ----------------------------------------------------------------
+> //
+> // RPC-IF spoils the data for the commands without an address
+> // phase (like RDID) in the manual mode, so we'll have to work
+> // around this issue by using the external address space read
+> // mode instead.
+> //
+> if (!(smenr & RPC_SMENR_ADE(0xf))) {
+>         regmap_update_bits(rpc->regmap, RPC_CMNCR,
+>                            RPC_CMNCR_MD, 0);
+>         regmap_write(rpc->regmap, RPC_DRCR,
+>                      RPC_DRCR_RBURST(32) | RPC_DRCR_RBE);
+
+   So the burst mode was the key?
+
+>         regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
+>         regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
+>         regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
+>         regmap_write(rpc->regmap, RPC_DROPR, 0);
+>         regmap_write(rpc->regmap, RPC_DRENR, smenr);
+>         memcpy_fromio(rx_buf, rpc->dirmap, rpc->xferlen);
+>         regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RCF);
+> } else {
+> ---------------------------------------------------------------
+> 
+> you may test it on your side.
+
+   It works!
+
+>> > +   } else {
+>> > +      regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+>> > +      regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
+>> > +      ret = wait_msg_xfer_end(rpc);
+>> > +      if (ret)
+>> > +         goto out;
+>> > +   }
+>> > +
+>> > +   return ret;
+>>
+>>    We always return 0 here...
+> 
+> you mean driver just
+> return 0;
+> rather than
+> return ret;
+
+  Yep.
+
+[...]
+>> > +   return reset_control_reset(rpc->rstc);
+>> > +}
+>> > +
+>> > +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
+>> > +               const struct spi_mem_op *op,
+>> > +               u64 *offs, size_t *len)
+>> > +{
+>> [...]
+>> > +   if (op->data.nbytes || (offs && len)) {
+>> > +      if (op->data.dir == SPI_MEM_DATA_IN) {
+>> > +         rpc->smcr = RPC_SMCR_SPIRE;
+>> > +         rpc->xfer_dir = SPI_MEM_DATA_IN;
+>> > +      } else if (op->data.dir == SPI_MEM_DATA_OUT) {
+>> > +         rpc->smcr = RPC_SMCR_SPIWE;
+>> > +         rpc->xfer_dir = SPI_MEM_DATA_OUT;
+>> > +      }
+>>
+>>    I asked for *switch* above...
+>>
+> 
+> okay, patch it to:
+> ------------------------------
+> switch (op->data.dir) {
+> case SPI_MEM_DATA_IN:
+>         rpc->smcr = RPC_SMCR_SPIRE;
+>         rpc->xfer_dir = SPI_MEM_DATA_IN;
+>         break;
+> case SPI_MEM_DATA_OUT:
+>         rpc->smcr = RPC_SMCR_SPIWE;
+>         rpc->xfer_dir = SPI_MEM_DATA_OUT;
+>         break;
+> default:
+>         break;
+> }
+> -------------------------------
+
+   Thanks.
+
+> 
+>> [...]
+>> > +static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
+>> > +               u64 offs, size_t len, const void *buf)
+>> > +{
+>> [...]
+>> > +   regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, RPC_CMNCR_MD);
+>> > +
+>> > +   regmap_write(rpc->regmap, RPC_SMDRENR, 0);
+>> > +   regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL | 0x260 |
+>> > +              RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
+>>
+>>    regmap_update_bits()?
+> 
+> if so, call regmap_update_bots() twice!!
+> 
+> regmap_update_bits(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_STRTIM(7), 0);
+> regmap_update_bits(rpc->regmap, RPC_PHYCNT,
+>                    RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF,
+>                    RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
+
+   Duplicate line here? And you can do both in 1 go, I think.
+
+> 
+> performance and code size!
+> is it better ?
+> 
+> best regards,
+> Mason
+
+MBR, Sergei
