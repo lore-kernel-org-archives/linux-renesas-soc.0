@@ -2,115 +2,95 @@ Return-Path: <SRS0=SHeS=PY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372C3C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C802C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1209A20866
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B02D2086D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbfAPSj2 (ORCPT
+        id S1729545AbfAPSuU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:39:28 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:28788 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729278AbfAPSj2 (ORCPT
+        Wed, 16 Jan 2019 13:50:20 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:33142 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729537AbfAPSuT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:39:28 -0500
-X-IronPort-AV: E=Sophos;i="5.56,487,1539615600"; 
-   d="scan'208";a="5355908"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 03:39:26 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.13])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id AD3E040F1466;
-        Thu, 17 Jan 2019 03:39:19 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wed, 16 Jan 2019 13:50:19 -0500
+Received: by mail-ua1-f68.google.com with SMTP id t8so2560408uap.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Jan 2019 10:50:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y4CDtY+26AD2jRfNQyZE039zi0pOb2mOoG/EjXmze+M=;
+        b=VxYcXLvHwPquZlqjqpHobJ30LZFGsrcU0GVlm6Ry7JQ6OVjKgxZJqoG3riKGf20xUc
+         uAeWqTa+EmOKVyFTkrKVYEfy6jx1avrpvBDVzPbttw/XrA4yroqYS3mnwVtc0JwdUEp+
+         h2agHC9CJLcslIqxNR6LcTJ+YXVquddV1JlK3KNcow6IxxveM7f8sNEZ8IbgemxiU09B
+         vjCzYIcDbxaLrz90ZzN7Ld5Jgc3/YTyZJ/AWP3n/Wx7AlReIVDg3F9+Bg+1/uDrSI2fT
+         H+ljq2dtrtN8fxWfnj9r4a9fDA9A9hD6QqipEFgYZKs4Gi0WLDsM0/63k0G49Kl54Xcx
+         nL/g==
+X-Gm-Message-State: AJcUukfppHy3oeFjyA17kN6kEffT3wmRQlNTu6FV2JhBJdfgnC1Fpey4
+        rCaH+Zd9n9sZQjdSkPUkb6p4NnLTq63qXubJzns=
+X-Google-Smtp-Source: ALg8bN7JHwE7pzAEG2pcmA0p0BkXvQdMXvaniMT8Jr9KUEdNsScYLvwFCQRnzSMYC6DjEaMKou8mU2HY1K5Vee2w6r8=
+X-Received: by 2002:ab0:1393:: with SMTP id m19mr4209629uae.75.1547664618795;
+ Wed, 16 Jan 2019 10:50:18 -0800 (PST)
+MIME-Version: 1.0
+References: <1547553687-4407-1-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1547553687-4407-1-git-send-email-ykaneko0929@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 16 Jan 2019 19:50:06 +0100
+Message-ID: <CAMuHMdVmjNagg0c2MVSQ_vibyDcTt1fKgh-190aJPxkzFGkRHw@mail.gmail.com>
+Subject: Re: [PATCH/RFT] pinctrl: sh-pfc: r8a77990: Add TMU pins, groups and functions
+To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        linux-kernel@vger.kernel.org, ebiharaml@si-linux.co.jp
-Subject: [PATCH 11/11] dt-bindings: can: rcar_canfd: document r8a774c0 support
-Date:   Wed, 16 Jan 2019 18:37:54 +0000
-Message-Id: <1547663874-29411-12-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the support for rcar_canfd on R8A774C0 SoC devices.
+Hi Kaneko-san,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
----
-This patch depends on:
-https://patchwork.kernel.org/patch/10687999/
-https://patchwork.kernel.org/patch/10688001/
+On Tue, Jan 15, 2019 at 1:01 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>
+> This patch adds TMU TCLK{1,2} pins, groups and functions to
+> the R8A77990 SoC.
+>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 
- Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v5.1...
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-index 41049fe..32f051f 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-@@ -3,7 +3,8 @@ Renesas R-Car CAN FD controller Device Tree Bindings
- 
- Required properties:
- - compatible: Must contain one or more of the following:
--  - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
-+  - "renesas,rcar-gen3-canfd" for R-Car Gen3 and RZ/G2 compatible controllers.
-+  - "renesas,r8a774c0-canfd" for R8A774C0 (RZ/G2E) compatible controller.
-   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
-   - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3-W) compatible controller.
-   - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
-@@ -28,12 +29,13 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
- child node supports the "status" property only, which is used to
- enable/disable the respective channel.
- 
--Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd",
--"renesas,r8a77965-canfd" and "renesas,r8a77990-canfd" compatible:
--In R8A7795, R8A7796, R8A77965 and R8A77990 SoCs, canfd clock is a div6 clock
--and can be used by both CAN and CAN FD controller at the same time. It needs
--to be scaled to maximum frequency if any of these controllers use it. This is
--done using the below properties:
-+Required properties for "renesas,r8a774c0-canfd", "renesas,r8a7795-canfd",
-+"renesas,r8a7796-canfd", "renesas,r8a77965-canfd", and "renesas,r8a77990-canfd"
-+compatible:
-+In R8A774C0, R8A7795, R8A7796, R8A77965, and R8A77990 SoCs, canfd clock is a
-+div6 clock and can be used by both CAN and CAN FD controller at the same time.
-+It needs to be scaled to maximum frequency if any of these controllers use it.
-+This is done using the below properties:
- 
- - assigned-clocks: phandle of canfd clock.
- - assigned-clock-rates: maximum frequency of this clock.
+Thanks!
+
+> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+
+> @@ -3716,7 +3753,7 @@ enum {
+>  };
+>
+>  static const struct {
+> -       struct sh_pfc_pin_group common[262];
+> +       struct sh_pfc_pin_group common[266];
+
+... with the array limits updated due to the deferred DRIF patch.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
