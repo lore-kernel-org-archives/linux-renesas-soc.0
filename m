@@ -6,83 +6,125 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C802C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB84FC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B02D2086D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:50:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8456820873
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfAPSuU (ORCPT
+        id S1729932AbfAPTFp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:50:20 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:33142 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729537AbfAPSuT (ORCPT
+        Wed, 16 Jan 2019 14:05:45 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:39625 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729330AbfAPTFp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:50:19 -0500
-Received: by mail-ua1-f68.google.com with SMTP id t8so2560408uap.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Jan 2019 10:50:19 -0800 (PST)
+        Wed, 16 Jan 2019 14:05:45 -0500
+Received: by mail-vs1-f67.google.com with SMTP id h78so4622503vsi.6;
+        Wed, 16 Jan 2019 11:05:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Y4CDtY+26AD2jRfNQyZE039zi0pOb2mOoG/EjXmze+M=;
-        b=VxYcXLvHwPquZlqjqpHobJ30LZFGsrcU0GVlm6Ry7JQ6OVjKgxZJqoG3riKGf20xUc
-         uAeWqTa+EmOKVyFTkrKVYEfy6jx1avrpvBDVzPbttw/XrA4yroqYS3mnwVtc0JwdUEp+
-         h2agHC9CJLcslIqxNR6LcTJ+YXVquddV1JlK3KNcow6IxxveM7f8sNEZ8IbgemxiU09B
-         vjCzYIcDbxaLrz90ZzN7Ld5Jgc3/YTyZJ/AWP3n/Wx7AlReIVDg3F9+Bg+1/uDrSI2fT
-         H+ljq2dtrtN8fxWfnj9r4a9fDA9A9hD6QqipEFgYZKs4Gi0WLDsM0/63k0G49Kl54Xcx
-         nL/g==
-X-Gm-Message-State: AJcUukfppHy3oeFjyA17kN6kEffT3wmRQlNTu6FV2JhBJdfgnC1Fpey4
-        rCaH+Zd9n9sZQjdSkPUkb6p4NnLTq63qXubJzns=
-X-Google-Smtp-Source: ALg8bN7JHwE7pzAEG2pcmA0p0BkXvQdMXvaniMT8Jr9KUEdNsScYLvwFCQRnzSMYC6DjEaMKou8mU2HY1K5Vee2w6r8=
-X-Received: by 2002:ab0:1393:: with SMTP id m19mr4209629uae.75.1547664618795;
- Wed, 16 Jan 2019 10:50:18 -0800 (PST)
+        bh=gn+8EZZ9IbKBp0X4TUExkWaiWtFX771zKrRZWV77xME=;
+        b=oloPAjQgzfsmDzaPtcDO00NkYvXAa71LS1FsekEQHO0diFxEtN/2diNiDOJ5f8BSsq
+         36R4XBn1ipXbGVCMztYwivyXItGplAgWRCc2mOFEoYIK3p5jvSycO6C8+aCjN26bUtPe
+         Hl7S+/ZeU5cgeyPmXjen7xGp+Wt7MENxG0kOCl8e2S5Plb/2O0fIo/MsPZojuQU/7HxR
+         cNmHHVWipdt2Zs/CIuAq0t6kiX0qs1KSwwpIAUjmkzqSb7HrIIOxK7987ujLpkXhU9hZ
+         mnX1Q9fjbCBfP29AluMnS5MqvpD0hhC6Pjr4vLY0Wxcn4kYNoxl4nkDUEJsGT/xUakkx
+         sC5Q==
+X-Gm-Message-State: AJcUukf1cW7dJ3bXe2eojW7zP86HvRiSqsGznKgMfKoDVu7KzzrxJ0z7
+        fr9etzwrSyeZ2CaMIpkrVXqMiSXRbp696vtL5dk=
+X-Google-Smtp-Source: ALg8bN4HedqnYzW++lxzdliMwCGhoA2Wk+v284Iat19JqdoxIFt+ofhbS1UaaBLONabxNoI50lgfsQGgm6cAaI6er2w=
+X-Received: by 2002:a67:b60d:: with SMTP id d13mr4520605vsm.152.1547665543138;
+ Wed, 16 Jan 2019 11:05:43 -0800 (PST)
 MIME-Version: 1.0
-References: <1547553687-4407-1-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1547553687-4407-1-git-send-email-ykaneko0929@gmail.com>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com> <1547663874-29411-9-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1547663874-29411-9-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 16 Jan 2019 19:50:06 +0100
-Message-ID: <CAMuHMdVmjNagg0c2MVSQ_vibyDcTt1fKgh-190aJPxkzFGkRHw@mail.gmail.com>
-Subject: Re: [PATCH/RFT] pinctrl: sh-pfc: r8a77990: Add TMU pins, groups and functions
-To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+Date:   Wed, 16 Jan 2019 20:05:31 +0100
+Message-ID: <CAMuHMdWG6m11eAjvPeFXjsu3jhYnfsxN-EUXw5_SQZ6qMrebYw@mail.gmail.com>
+Subject: Re: [PATCH 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-can@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>, ebiharaml@si-linux.co.jp
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kaneko-san,
+Hi Fabrizio,
 
-On Tue, Jan 15, 2019 at 1:01 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds TMU TCLK{1,2} pins, groups and functions to
-> the R8A77990 SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Thanks for your patch!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v5.1...
+On Wed, Jan 16, 2019 at 7:39 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds the missing CANFD clock to the r8a774c0 specific
+> clock driver.
 
-Thanks!
+Are you sure the CANFD clock exists on RZ/G2E?
 
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-> @@ -3716,7 +3753,7 @@ enum {
->  };
->
->  static const struct {
-> -       struct sh_pfc_pin_group common[262];
-> +       struct sh_pfc_pin_group common[266];
+> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
 
-... with the array limits updated due to the deferred DRIF patch.
+> --- a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
+> +++ b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
+> @@ -48,13 +48,14 @@
+>  #define R8A774C0_CLK_ZA2               37
+>  #define R8A774C0_CLK_ZA8               38
+>  #define R8A774C0_CLK_Z2D               39
+> -#define R8A774C0_CLK_MSO               40
+> -#define R8A774C0_CLK_R                 41
+> -#define R8A774C0_CLK_OSC               42
+> -#define R8A774C0_CLK_LV0               43
+> -#define R8A774C0_CLK_LV1               44
+> -#define R8A774C0_CLK_CSI0              45
+> -#define R8A774C0_CLK_CP                        46
+> -#define R8A774C0_CLK_CPEX              47
+> +#define R8A774C0_CLK_CANFD             40
+> +#define R8A774C0_CLK_MSO               41
+> +#define R8A774C0_CLK_R                 42
+> +#define R8A774C0_CLK_OSC               43
+> +#define R8A774C0_CLK_LV0               44
+> +#define R8A774C0_CLK_LV1               45
+> +#define R8A774C0_CLK_CSI0              46
+> +#define R8A774C0_CLK_CP                        47
+> +#define R8A774C0_CLK_CPEX              48
+
+This file is part of the DT ABI, hence list of definitions is append-only.
+
+Please add R8A774C0_CLK_CANFD at the end, i.e.
+
+    #define R8A774C0_CLK_CANFD              48
 
 Gr{oetje,eeting}s,
 
