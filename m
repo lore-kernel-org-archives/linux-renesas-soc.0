@@ -4,207 +4,189 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A639C43612
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 13:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C25FC43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62067206C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 13:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4833F206C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="w28MHBH/"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="kZjTLeWR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393261AbfAPNof (ORCPT
+        id S1733161AbfAPNqi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:44:35 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35736 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390655AbfAPNoe (ORCPT
+        Wed, 16 Jan 2019 08:46:38 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41039 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390831AbfAPNqh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:44:34 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e26so4933989lfc.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Jan 2019 05:44:32 -0800 (PST)
+        Wed, 16 Jan 2019 08:46:37 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k15-v6so5471116ljc.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Jan 2019 05:46:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=kJSfVfzKhoHaYIr23U4bZuc4Mw2UX1QBGLtJxKg3D8o=;
-        b=w28MHBH/yB4Xd7VHGuOBmTTOlaCttCKuwnvZ09X+gCzpmbq3xSeVNPDpAJ/HjI5QNv
-         p3+4duD885stnUhhrffyN5gKT7QXnupyDeV6OnKlLWvAj7Yvr5vM7T/wVhmIU/jMfZwd
-         MUnkHjtox18MQ2L73cGCkRfXtdZkvGbudRkgmVZuOi5LsDudOKEAtnyPuySnVqrlD0+m
-         DOTgtulP6E4Ji/ZjQZ5cnHiqNImC3SDGkN4lK2FyaGX7pdBRA7zTbzLj2CT4lwFXzHV8
-         v1NlvkBxwVKvBGBC3i57hePy3xDw2yaiJXMtRb9D4FlrjnSwjuJGWjXUQ+2fCIfBjRJx
-         0pHA==
+        bh=SQOC3bLsNi6F9SrazSWdS2PkTfEaTrUZ3xABYY3scu0=;
+        b=kZjTLeWREwoJ+KwkgDzQrn65N1iqmYVlrRW6RCtGcf+AL62CZ8yja5tHbtKNqJQlcD
+         /dGtjdhsCS75anxTSR+T0KzynkQA0p9/Z+uodjv07Ed1ZWxwiCOrF6EKMIKZvyLikz9s
+         BYvnpjvJMAU50SA+qDIgl342Sj3OGjOBbZTBOMqekZEPHlazI4d46Z8b+58B02fDYjye
+         HuMgkj09eR4/yyCxorGODVPgbPi9V3tsSr/KtdhjxUThL0XU7hgd2emt9c5lpqrId47I
+         Z5cYl6nMymBTxVbWsqnleXLj9EloGBsIxfC7ZdSrcpqjYTbJPCKSvq1/cPFN6WC2wSJh
+         /t7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=kJSfVfzKhoHaYIr23U4bZuc4Mw2UX1QBGLtJxKg3D8o=;
-        b=swLhqLU2gjYHWPAtohqgqHVl8ZoiWl+AlfnubHPy0YfbISRGT0X4dmvRXGeOPLSw4j
-         1cce/2B07vBgIEKgNW7AbcGRZorM/C+XmyailL4dUlhcjWgrV4D9MwF2zDRiMdg793uI
-         lwZSjHGKkFmE0I4sw27hWNOHVKiQsunNHIAwXYMnNyt0Tb3b8Ne9fgRIndqyM0XKDXAt
-         ENSH3iH73V0nKQujT2N0B7I08ux1E2TR2/0Vtg8rSa1b7elFdEUFyYV/rQxtvdElecQd
-         YTErUTp3u6q/kF+tcmZy1mJ2A3addCdtIJjbFBK+He7AxBFzFQycce+XMYZvjbp3uxVG
-         +9tg==
-X-Gm-Message-State: AJcUukdLzN8Wu4lZSzky0oudou57da9z+5EE8aTifgGfUg0q10SV/mHf
-        f2yhg4d6+aEes2VrIBW12uFiUA==
-X-Google-Smtp-Source: ALg8bN6Anks9MmnFEbemw5zV+t5q8BfBtdhpbjPOuFYK9g8bqO3TBH8RGI0PDfNH94a+utqPgRg6Lg==
-X-Received: by 2002:a19:26ce:: with SMTP id m197mr6847680lfm.23.1547646271560;
-        Wed, 16 Jan 2019 05:44:31 -0800 (PST)
+        bh=SQOC3bLsNi6F9SrazSWdS2PkTfEaTrUZ3xABYY3scu0=;
+        b=q78pIgduB7BDwB6J3HGJgl/yqrp+zEr7Xchtu7AxT+sDmOwJbif6abJA4tFjT0BIE5
+         w8mA+JQGwak3AefkZc+lYYIbYLXOOEH9zvUOiaycKzjsNReOeLFp92wPmz4t7tVBF0kT
+         bDEd6K6I8WidX+JCTXphkUICerQ+Wkjba4hbNyP89p3ZDae9UsWpz0gFNjoEkSPGJOjR
+         StLU/UbfNEN3Y63ylyrjJ4sWCrjQ1Q2IohKWB6N8WskHyrTl3PpcRfAXUq5Ipm0cku0V
+         taAxIKdqp4IIiGMab18b79YVAV8ugeUYNVFNqLSQu1BAvkeNBhktPXPsew7ziZgIM7P+
+         HtNA==
+X-Gm-Message-State: AJcUukfKPh0ueGbHV/2ynqOumPLEqqvT28/5MLo+2sjGmoB4Usi42dTh
+        XpjlCWSO3G8WV7AxwjIrqOi2Wg==
+X-Google-Smtp-Source: ALg8bN5wxxPci4ACxaYRiHk3HBySmud57ZwvNBROp2cegu06uvtzWur2XLPGN2R6ubvkE8NKTuyXHQ==
+X-Received: by 2002:a2e:8605:: with SMTP id a5-v6mr6514414lji.145.1547646394749;
+        Wed, 16 Jan 2019 05:46:34 -0800 (PST)
 Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id j18-v6sm1027442ljc.52.2019.01.16.05.44.25
+        by smtp.gmail.com with ESMTPSA id q128-v6sm1059395ljq.14.2019.01.16.05.46.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 05:44:25 -0800 (PST)
+        Wed, 16 Jan 2019 05:46:33 -0800 (PST)
 From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
 X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date:   Wed, 16 Jan 2019 14:44:25 +0100
+Date:   Wed, 16 Jan 2019 14:46:33 +0100
 To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
 Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 3/6] media: adv748x: csi2: Link AFE with TXA and TXB
-Message-ID: <20190116134424.GP7393@bigcity.dyn.berto.se>
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] media: adv748x: Implement TX link_setup callback
+Message-ID: <20190116134633.GR7393@bigcity.dyn.berto.se>
 References: <20190110140213.5198-1-jacopo+renesas@jmondi.org>
- <20190110140213.5198-4-jacopo+renesas@jmondi.org>
- <20190114145533.GK30160@bigcity.dyn.berto.se>
+ <20190110140213.5198-7-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190114145533.GK30160@bigcity.dyn.berto.se>
+In-Reply-To: <20190110140213.5198-7-jacopo+renesas@jmondi.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi (again) Jacopo,
+Hi Jacopo,
 
-I found something else in this patch unfortunately :-(
+Thanks for your effort.
 
-On 2019-01-14 15:55:33 +0100, Niklas Söderlund wrote:
-> Hi Jacopo,
+On 2019-01-10 15:02:13 +0100, Jacopo Mondi wrote:
+> When the adv748x driver is informed about a link being created from HDMI or
+> AFE to a CSI-2 TX output, the 'link_setup()' callback is invoked. Make
+> sure to implement proper routing management at link setup time, to route
+> the selected video stream to the desired TX output.
 > 
-> Thanks for your patch.
-> 
-> On 2019-01-10 15:02:10 +0100, Jacopo Mondi wrote:
-> > The ADV748x chip supports routing AFE output to either TXA or TXB.
-> > In order to support run-time configuration of video stream path, create an
-> > additional (not enabled) "AFE:8->TXA:0" link, and remove the IMMUTABLE flag
-> > from existing ones.
-> > 
-> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/i2c/adv748x/adv748x-csi2.c | 44 +++++++++++++-----------
-> >  1 file changed, 23 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > index b6b5d8c7ea7c..8c3714495e11 100644
-> > --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > @@ -27,6 +27,7 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
-> >   * @v4l2_dev: Video registration device
-> >   * @src: Source subdevice to establish link
-> >   * @src_pad: Pad number of source to link to this @tx
-> > + * @enable: Link enabled flag
-> >   *
-> >   * Ensure that the subdevice is registered against the v4l2_device, and link the
-> >   * source pad to the sink pad of the CSI2 bus entity.
-> > @@ -34,17 +35,11 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
-> >  static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
-> >  				      struct v4l2_device *v4l2_dev,
-> >  				      struct v4l2_subdev *src,
-> > -				      unsigned int src_pad)
-> > +				      unsigned int src_pad,
-> > +				      bool enable)
-> >  {
-> > -	int enabled = MEDIA_LNK_FL_ENABLED;
-> >  	int ret;
-> >  
-> > -	/*
-> > -	 * Dynamic linking of the AFE is not supported.
-> > -	 * Register the links as immutable.
-> > -	 */
-> > -	enabled |= MEDIA_LNK_FL_IMMUTABLE;
-> > -
-> >  	if (!src->v4l2_dev) {
-> >  		ret = v4l2_device_register_subdev(v4l2_dev, src);
-> >  		if (ret)
-> > @@ -53,7 +48,7 @@ static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
-> >  
-> >  	return media_create_pad_link(&src->entity, src_pad,
-> >  				     &tx->sd.entity, ADV748X_CSI2_SINK,
-> > -				     enabled);
-> > +				     enable ? MEDIA_LNK_FL_ENABLED : 0);
-> >  }
-> >  
-> >  /* -----------------------------------------------------------------------------
-> > @@ -68,25 +63,32 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
-> >  {
-> >  	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-> >  	struct adv748x_state *state = tx->state;
-> > +	int ret;
-> >  
-> >  	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
-> >  			sd->name);
-> >  
-> >  	/*
-> > -	 * The adv748x hardware allows the AFE to route through the TXA, however
-> > -	 * this is not currently supported in this driver.
-> > +	 * Link TXA to AFE and HDMI, and TXB to AFE only as TXB cannot output
-> > +	 * HDMI.
-> >  	 *
-> > -	 * Link HDMI->TXA, and AFE->TXB directly.
-> > +	 * The HDMI->TXA link is enabled by default, as is the AFE->TXB one.
-> >  	 */
-> > -	if (is_txa(tx) && is_hdmi_enabled(state))
-> > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> > -						  &state->hdmi.sd,
-> > -						  ADV748X_HDMI_SOURCE);
-> > -	if (is_txb(tx) && is_afe_enabled(state))
-> > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> > -						  &state->afe.sd,
-> > -						  ADV748X_AFE_SOURCE);
-> > -	return 0;
-> > +	if (is_afe_enabled(state)) {
-> > +		ret = adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> > +						 &state->afe.sd,
-> > +						 ADV748X_AFE_SOURCE,
-> > +						 is_txb(tx));
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	/* Register link to HDMI for TXA only. */
-> > +	if (is_txb(tx) || !is_hdmi_enabled(state))
-> 
-> Small nit, I would s/is_txb(tx)/!is_txa(tx)/ here as to me it becomes 
-> easier to read. With or without this change,
-> 
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> > +		return 0;
-> > +
-> > +	return adv748x_csi2_register_link(tx, sd->v4l2_dev, &state->hdmi.sd,
-> > +					  ADV748X_HDMI_SOURCE, true);
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-If the call to adv748x_csi2_register_link() fails should not the 
-(possible) link to the AFE be removed?
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> >  }
-> >  
-> >  static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
-> > -- 
-> > 2.20.1
-> > 
+> ---
+>  drivers/media/i2c/adv748x/adv748x-core.c | 48 +++++++++++++++++++++++-
+>  drivers/media/i2c/adv748x/adv748x.h      |  2 +
+>  2 files changed, 49 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index 200e00f93546..ea7e5ca48f1a 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -335,6 +335,51 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool on)
+>  /* -----------------------------------------------------------------------------
+>   * Media Operations
+>   */
+> +static int adv748x_link_setup(struct media_entity *entity,
+> +			      const struct media_pad *local,
+> +			      const struct media_pad *remote, u32 flags)
+> +{
+> +	struct v4l2_subdev *rsd = media_entity_to_v4l2_subdev(remote->entity);
+> +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+> +	struct adv748x_state *state = v4l2_get_subdevdata(sd);
+> +	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
+> +	bool enable = flags & MEDIA_LNK_FL_ENABLED;
+> +	u8 io10_mask = ADV748X_IO_10_CSI1_EN |
+> +		       ADV748X_IO_10_CSI4_EN |
+> +		       ADV748X_IO_10_CSI4_IN_SEL_AFE;
+> +	u8 io10 = 0;
+> +
+> +	/* Refuse to enable multiple links to the same TX at the same time. */
+> +	if (enable && tx->src)
+> +		return -EINVAL;
+> +
+> +	/* Set or clear the source (HDMI or AFE) and the current TX. */
+> +	if (rsd == &state->afe.sd)
+> +		state->afe.tx = enable ? tx : NULL;
+> +	else
+> +		state->hdmi.tx = enable ? tx : NULL;
+> +
+> +	tx->src = enable ? rsd : NULL;
+> +
+> +	if (state->afe.tx) {
+> +		/* AFE Requires TXA enabled, even when output to TXB */
+> +		io10 |= ADV748X_IO_10_CSI4_EN;
+> +		if (is_txa(tx))
+> +			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
+> +		else
+> +			io10 |= ADV748X_IO_10_CSI1_EN;
+> +	}
+> +
+> +	if (state->hdmi.tx)
+> +		io10 |= ADV748X_IO_10_CSI4_EN;
+> +
+> +	return io_clrset(state, ADV748X_IO_10, io10_mask, io10);
+> +}
+> +
+> +static const struct media_entity_operations adv748x_tx_media_ops = {
+> +	.link_setup	= adv748x_link_setup,
+> +	.link_validate	= v4l2_subdev_link_validate,
+> +};
+>  
+>  static const struct media_entity_operations adv748x_media_ops = {
+>  	.link_validate = v4l2_subdev_link_validate,
+> @@ -516,7 +561,8 @@ void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
+>  		state->client->addr, ident);
+>  
+>  	sd->entity.function = function;
+> -	sd->entity.ops = &adv748x_media_ops;
+> +	sd->entity.ops = is_tx(adv748x_sd_to_csi2(sd)) ?
+> +			 &adv748x_tx_media_ops : &adv748x_media_ops;
+>  }
+>  
+>  static int adv748x_parse_csi2_lanes(struct adv748x_state *state,
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> index 934a9d9a75c8..b00c1995efb0 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -94,6 +94,7 @@ struct adv748x_csi2 {
+>  #define is_tx_enabled(_tx) ((_tx)->state->endpoints[(_tx)->port] != NULL)
+>  #define is_txa(_tx) ((_tx) == &(_tx)->state->txa)
+>  #define is_txb(_tx) ((_tx) == &(_tx)->state->txb)
+> +#define is_tx(_tx) (is_txa(_tx) || is_txb(_tx))
+>  
+>  #define is_afe_enabled(_state)					\
+>  	((_state)->endpoints[ADV748X_PORT_AIN0] != NULL ||	\
+> @@ -223,6 +224,7 @@ struct adv748x_state {
+>  #define ADV748X_IO_10_CSI4_EN		BIT(7)
+>  #define ADV748X_IO_10_CSI1_EN		BIT(6)
+>  #define ADV748X_IO_10_PIX_OUT_EN	BIT(5)
+> +#define ADV748X_IO_10_CSI4_IN_SEL_AFE	BIT(3)
+>  
+>  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
+>  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
 > -- 
-> Regards,
-> Niklas Söderlund
+> 2.20.1
+> 
 
 -- 
 Regards,
