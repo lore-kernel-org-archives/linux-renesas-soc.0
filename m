@@ -1,198 +1,156 @@
-Return-Path: <SRS0=nIvG=PX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=SHeS=PY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E89C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Jan 2019 23:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07355C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 03:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 089E420656
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Jan 2019 23:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C33C32086D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 03:30:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="E70gQbub"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uFLLHJdd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbfAOXxE (ORCPT
+        id S1731019AbfAPDa0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Jan 2019 18:53:04 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49406 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728310AbfAOXxE (ORCPT
+        Tue, 15 Jan 2019 22:30:26 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46719 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730639AbfAPDa0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Jan 2019 18:53:04 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 42E0D530;
-        Wed, 16 Jan 2019 00:53:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547596382;
-        bh=dpCm7UcMQfT0/TwJjkKoTrRlSb4xNHCBIvc4YN2+8ZI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E70gQbubKRyxSWIfFmPU3NUYhCax3Xd5dsKGP5LfeTExLbWRitYHLIiwJq/PoFjpD
-         b52FmVO/5pGyrYb559fumIgIyVUmEFsUfhuziBgqpljfuFmqGQjxZKI/bZw8lF3OPl
-         ZGzUqP9G7c8Q8GEi1jBQdb8TrJYzJonCSzybhVAk=
-Date:   Wed, 16 Jan 2019 01:53:03 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 17/30] v4l: subdev: compat: Implement handling for
- VIDIOC_SUBDEV_[GS]_ROUTING
-Message-ID: <20190115235303.GG31088@pendragon.ideasonboard.com>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
- <20181101233144.31507-18-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 15 Jan 2019 22:30:26 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so5210130wrt.13;
+        Tue, 15 Jan 2019 19:30:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DAB7bOvCpjeEgqAU23iWSznTCf2WSBgkvOBydTcb6wI=;
+        b=uFLLHJddp3hHH4nf6OgRarrAc4KoBIr18Rg8TI2mRyVZwatnUMvF8Oz2lx8HRiQ43K
+         60CBvCl/+IJbH40zxdlD1OCusEm/kNHS1bLeKkz9ksUjPUIdF6EF0TvnHH3fRlJh9Mxi
+         JFrGHdknEZWggYUo8qkgdxFvjcsDDsiPZsOq7xHrLN8gDyYX1SX8eN8l4nvSWhhBU+Jx
+         vADM7lSxRTt9/G8iXSbxhnMMJHxGkLYUpi/UHI501Hgr6ZLNijXRqSPqr+wHTjoD02gn
+         5T47olbOz3ahOnG/2xJgXfwJH1rTtVv5zLYfuJ1eZYWfHhOwRhgawQmxExSqitbHTpSK
+         dpkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DAB7bOvCpjeEgqAU23iWSznTCf2WSBgkvOBydTcb6wI=;
+        b=DtRke3F3GFGz2RC2JVkuQRWetJjM9mQGS6Y4qlgud/6uuStmMJLedq5sIQ2D9Zz7Ti
+         jn5cA20ynnOyMU8mvB27+3cEDjnoNwkS/7Zso8DX9pmAmFraegQmpyfcPnhPujUEYKKA
+         lJmC+e+klqbBefV8CrUlKHj+zGcgnZzkXomubEU//G8nOZlKflTkwBI7bNACxbWvERO9
+         ftPUJAUGbBrKg7HWwxv0MOR2sFEvy/WGCd8pE1oR/LbBe5ySfCc6NINufvm38BxN/3hP
+         F5geGyKz59r82L9cfJxNK6dJPjx8BcX2YMq1SszpSh6i6mavUNk+Lo6QniMak0iJgh7k
+         xkBQ==
+X-Gm-Message-State: AJcUukfDnFR/nt3NwBBaN+x1NnxmjnTyqxJdZgD8ujAz3cEA8r95V79/
+        DUA2Jmy9DXGtCcmjIYUaY3TCTE1sXTFEKUNnUSz/2XUfa8Q=
+X-Google-Smtp-Source: ALg8bN7cxSJGppag4xxGzhM4PxdbCoQCVPdZ0OtFy2Ew9NaqrdEByk31K9k1/6DgDg1uk9zX2XiehKYFhzIF7C9uslQ=
+X-Received: by 2002:a5d:488f:: with SMTP id g15mr5564831wrq.15.1547609423651;
+ Tue, 15 Jan 2019 19:30:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181101233144.31507-18-niklas.soderlund+renesas@ragnatech.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190115104137.25695-1-daniel.vetter@ffwll.ch>
+In-Reply-To: <20190115104137.25695-1-daniel.vetter@ffwll.ch>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 15 Jan 2019 22:30:11 -0500
+Message-ID: <CADnq5_Oa0dj1+eOcAF6QxVxy0XRXNggZT+4K=Cm_=G80V-ejGQ@mail.gmail.com>
+Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        "open list:VIRTIO CORE, NET..." 
+        <virtualization@lists.linux-foundation.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-samsung-soc@vger.kernel.org,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        linux-rockchip@lists.infradead.org,
+        nouveau <nouveau@lists.freedesktop.org>,
+        spice-devel@lists.freedesktop.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        etnaviv@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-mediatek@lists.infradead.org,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, xen-devel@lists.xen.org,
+        linux-renesas-soc@vger.kernel.org,
+        freedreno <freedreno@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
-
-Thank you for the patch.
-
-On Fri, Nov 02, 2018 at 12:31:31AM +0100, Niklas Söderlund wrote:
-> From: Sakari Ailus <sakari.ailus@linux.intel.com>
-> 
-> Implement compat IOCTL handling for VIDIOC_SUBDEV_G_ROUTING and
-> VIDIOC_SUBDEV_S_ROUTING IOCTLs.
-
-Let's instead design the ioctl in a way that doesn't require compat
-handling.
-
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Tue, Jan 15, 2019 at 5:41 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>
+> Having the probe helper stuff (which pretty much everyone needs) in
+> the drm_crtc_helper.h file (which atomic drivers should never need) is
+> confusing. Split them out.
+>
+> To make sure I actually achieved the goal here I went through all
+> drivers. And indeed, all atomic drivers are now free of
+> drm_crtc_helper.h includes.
+>
+> v2: Make it compile. There was so much compile fail on arm drivers
+> that I figured I'll better not include any of the acks on v1.
+>
+> v3: Massive rebase because i915 has lost a lot of drmP.h includes, but
+> not all: Through drm_crtc_helper.h > drm_modeset_helper.h -> drmP.h
+> there was still one, which this patch largely removes. Which means
+> rolling out lots more includes all over.
+>
+> This will also conflict with ongoing drmP.h cleanup by others I
+> expect.
+>
+> v3: Rebase on top of atomic bochs.
+>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com> (v2)
+> Acked-by: Benjamin Gaignard <benjamin.gaignard@linaro.org> (v2)
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: virtualization@lists.linux-foundation.org
+> Cc: etnaviv@lists.freedesktop.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: intel-gfx@lists.freedesktop.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-amlogic@lists.infradead.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: nouveau@lists.freedesktop.org
+> Cc: spice-devel@lists.freedesktop.org
+> Cc: amd-gfx@lists.freedesktop.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> Cc: linux-tegra@vger.kernel.org
+> Cc: xen-devel@lists.xen.org
 > ---
->  drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 77 +++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> index 6481212fda772c73..83af332763f41a6b 100644
-> --- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> +++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-> @@ -1045,6 +1045,66 @@ static int put_v4l2_event32(struct v4l2_event __user *p64,
->  	return 0;
->  }
->  
-> +struct v4l2_subdev_routing32 {
-> +	compat_caddr_t routes;
-> +	__u32 num_routes;
-> +	__u32 reserved[5];
-> +};
-> +
-> +static int get_v4l2_subdev_routing(struct v4l2_subdev_routing __user *p64,
-> +				   struct v4l2_subdev_routing32 __user *p32)
-> +{
-> +	struct v4l2_subdev_route __user *routes;
-> +	compat_caddr_t p;
-> +	u32 num_routes;
-> +
-> +	if (!access_ok(VERIFY_READ, p32, sizeof(*p32)) ||
-> +	    get_user(p, &p32->routes) ||
-> +	    get_user(num_routes, &p32->num_routes) ||
-> +	    put_user(num_routes, &p64->num_routes) ||
-> +	    copy_in_user(&p64->reserved, &p32->reserved,
-> +			 sizeof(p64->reserved)) ||
-> +	    num_routes > U32_MAX / sizeof(*p64->routes))
-> +		return -EFAULT;
-> +
-> +	routes = compat_ptr(p);
-> +
-> +	if (!access_ok(VERIFY_READ, routes,
-> +		       num_routes * sizeof(*p64->routes)))
-> +		return -EFAULT;
-> +
-> +	if (put_user((__force struct v4l2_subdev_route *)routes,
-> +		     &p64->routes))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
-> +static int put_v4l2_subdev_routing(struct v4l2_subdev_routing __user *p64,
-> +				   struct v4l2_subdev_routing32 __user *p32)
-> +{
-> +	struct v4l2_subdev_route __user *routes;
-> +	compat_caddr_t p;
-> +	u32 num_routes;
-> +
-> +	if (!access_ok(VERIFY_WRITE, p32, sizeof(*p32)) ||
-> +	    get_user(p, &p32->routes) ||
-> +	    get_user(num_routes, &p64->num_routes) ||
-> +	    put_user(num_routes, &p32->num_routes) ||
-> +	    copy_in_user(&p32->reserved, &p64->reserved,
-> +			 sizeof(p64->reserved)) ||
-> +	    num_routes > U32_MAX / sizeof(*p64->routes))
-> +		return -EFAULT;
-> +
-> +	routes = compat_ptr(p);
-> +
-> +	if (!access_ok(VERIFY_WRITE, routes,
-> +		       num_routes * sizeof(*p64->routes)))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
->  struct v4l2_edid32 {
->  	__u32 pad;
->  	__u32 start_block;
-> @@ -1117,6 +1177,8 @@ static int put_v4l2_edid32(struct v4l2_edid __user *p64,
->  #define VIDIOC_STREAMOFF32	_IOW ('V', 19, s32)
->  #define VIDIOC_G_INPUT32	_IOR ('V', 38, s32)
->  #define VIDIOC_S_INPUT32	_IOWR('V', 39, s32)
-> +#define VIDIOC_SUBDEV_G_ROUTING32 _IOWR('V', 38, struct v4l2_subdev_routing32)
-> +#define VIDIOC_SUBDEV_S_ROUTING32 _IOWR('V', 39, struct v4l2_subdev_routing32)
->  #define VIDIOC_G_OUTPUT32	_IOR ('V', 46, s32)
->  #define VIDIOC_S_OUTPUT32	_IOWR('V', 47, s32)
->  
-> @@ -1195,6 +1257,8 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
->  	case VIDIOC_STREAMOFF32: cmd = VIDIOC_STREAMOFF; break;
->  	case VIDIOC_G_INPUT32: cmd = VIDIOC_G_INPUT; break;
->  	case VIDIOC_S_INPUT32: cmd = VIDIOC_S_INPUT; break;
-> +	case VIDIOC_SUBDEV_G_ROUTING32: cmd = VIDIOC_SUBDEV_G_ROUTING; break;
-> +	case VIDIOC_SUBDEV_S_ROUTING32: cmd = VIDIOC_SUBDEV_S_ROUTING; break;
->  	case VIDIOC_G_OUTPUT32: cmd = VIDIOC_G_OUTPUT; break;
->  	case VIDIOC_S_OUTPUT32: cmd = VIDIOC_S_OUTPUT; break;
->  	case VIDIOC_CREATE_BUFS32: cmd = VIDIOC_CREATE_BUFS; break;
-> @@ -1227,6 +1291,15 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
->  		compatible_arg = 0;
->  		break;
->  
-> +	case VIDIOC_SUBDEV_G_ROUTING:
-> +	case VIDIOC_SUBDEV_S_ROUTING:
-> +		err = alloc_userspace(sizeof(struct v4l2_subdev_routing),
-> +				      0, &new_p64);
-> +		if (!err)
-> +			err = get_v4l2_subdev_routing(new_p64, p32);
-> +		compatible_arg = 0;
-> +		break;
-> +
->  	case VIDIOC_G_EDID:
->  	case VIDIOC_S_EDID:
->  		err = alloc_userspace(sizeof(struct v4l2_edid), 0, &new_p64);
-> @@ -1368,6 +1441,10 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
->  		if (put_v4l2_edid32(new_p64, p32))
->  			err = -EFAULT;
->  		break;
-> +	case VIDIOC_SUBDEV_G_ROUTING:
-> +	case VIDIOC_SUBDEV_S_ROUTING:
-> +		err = put_v4l2_subdev_routing(new_p64, p32);
-> +		break;
->  	}
->  	if (err)
->  		return err;
+> Merging this is going to be a bit a mess due to all the ongoing drmP.h
+> cleanups. I think the following should work:
+> - Apply Sam's prep patches for removing drmP.h from
+>   drm_modeset_helper.h
+> - Get the i915 drmP.h cleanup backmerged into drm-misc-next
+> - Apply this patch.
+> - Apply Sam's patch to remove drmP.h from drm_modeset_helper.h
+> - All through drm-misc-next, which has some potential for trivial
+>   conflicts around #includes with other drivers unfortunately.
+>
+> I hope there's no other driver who'll blow up accidentally because
+> someone else is doing a drmP.h cleanup. Laurent maybe?
+>
+> Jani, ack on this?
+> -Daniel
 
--- 
-Regards,
-
-Laurent Pinchart
+amdgpu and radeon:
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
