@@ -2,131 +2,64 @@ Return-Path: <SRS0=SHeS=PY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3410C43444
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0B0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 21:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF8C2206C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 19:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33F020652
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 21:06:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731615AbfAPTp6 (ORCPT
+        id S1727258AbfAPVGI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:45:58 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:10113 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731174AbfAPTp6 (ORCPT
+        Wed, 16 Jan 2019 16:06:08 -0500
+Received: from sauhun.de ([88.99.104.3]:34456 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726803AbfAPVGI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:45:58 -0500
-X-IronPort-AV: E=Sophos;i="5.56,487,1539615600"; 
-   d="scan'208";a="5357751"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 04:45:55 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.13])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0EA9E401DD31;
-        Thu, 17 Jan 2019 04:45:48 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        ebiharaml@si-linux.co.jp
-Subject: [PATCH v2 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
-Date:   Wed, 16 Jan 2019 19:45:45 +0000
-Message-Id: <1547667945-5588-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 16 Jan 2019 16:06:08 -0500
+Received: from localhost (p54B333D5.dip0.t-ipconnect.de [84.179.51.213])
+        by pokefinder.org (Postfix) with ESMTPSA id 235F62C790E;
+        Wed, 16 Jan 2019 22:06:06 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC/RFT 0/7] i2c: sh_mobile: state machine simplifications
+Date:   Wed, 16 Jan 2019 22:05:48 +0100
+Message-Id: <20190116210555.12209-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds the missing CANFD clock to the r8a774c0 specific
-clock driver.
+While I was working on this driver to debug some issues, re-understanding the
+state machine was harder than I expected due to some confusing code. So, I
+decided to reorganize this a little to make my life easier. There is potential
+for more cleanup, but I propose this as a first step.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+No regressions experienced so far on my Renesas Lager board (R-Car H2). This
+series is RFT because this needs to be tested on a Gen3 SoC as well, but this
+will probably be happening around FOSDEM where I get access to proper HW.
+Still, release early...
 
----
-The relevant documentation should appear in the next version
-of the HW User's manual
+If you have comments, feel free.
 
-v1->v2:
-* appended R8A774C0_CLK_CANFD as per Geert's comment
+Wolfram Sang (7):
+  i2c: sh_mobile: simplify sending address for RX
+  i2c: sh_mobile: remove get_data function
+  i2c: sh_mobile: drop 'data' argument from i2c_op function
+  i2c: sh_mobile: remove is_first_byte function
+  i2c: sh_mobile: replace break; with if-block
+  i2c: sh_mobile: refactor rx isr
+  i2c: sh_mobile: update copyright and comments
 
- drivers/clk/renesas/r8a774c0-cpg-mssr.c       | 4 ++++
- include/dt-bindings/clock/r8a774c0-cpg-mssr.h | 1 +
- 2 files changed, 5 insertions(+)
+ drivers/i2c/busses/i2c-sh_mobile.c | 106 +++++++++++++------------------------
+ 1 file changed, 37 insertions(+), 69 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-index 10b9689..28bcc81 100644
---- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-@@ -33,6 +33,7 @@ enum clk_ids {
- 	CLK_PLL1,
- 	CLK_PLL3,
- 	CLK_PLL0D4,
-+	CLK_PLL0D6,
- 	CLK_PLL0D8,
- 	CLK_PLL0D20,
- 	CLK_PLL0D24,
-@@ -61,6 +62,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
- 
- 	DEF_FIXED(".pll0",     CLK_PLL0,           CLK_MAIN,	   1, 100),
- 	DEF_FIXED(".pll0d4",   CLK_PLL0D4,         CLK_PLL0,       4, 1),
-+	DEF_FIXED(".pll0d6",   CLK_PLL0D6,         CLK_PLL0,       6, 1),
- 	DEF_FIXED(".pll0d8",   CLK_PLL0D8,         CLK_PLL0,       8, 1),
- 	DEF_FIXED(".pll0d20",  CLK_PLL0D20,        CLK_PLL0,      20, 1),
- 	DEF_FIXED(".pll0d24",  CLK_PLL0D24,        CLK_PLL0,      24, 1),
-@@ -112,6 +114,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
- 	DEF_GEN3_PE("s3d2c",   R8A774C0_CLK_S3D2C, CLK_S3, 2, CLK_PE, 2),
- 	DEF_GEN3_PE("s3d4c",   R8A774C0_CLK_S3D4C, CLK_S3, 4, CLK_PE, 4),
- 
-+	DEF_DIV6P1("canfd",    R8A774C0_CLK_CANFD, CLK_PLL0D6, 0x244),
- 	DEF_DIV6P1("csi0",     R8A774C0_CLK_CSI0,  CLK_PLL1D2, 0x00c),
- 	DEF_DIV6P1("mso",      R8A774C0_CLK_MSO,   CLK_PLL1D2, 0x014),
- 
-@@ -187,6 +190,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
- 	DEF_MOD("gpio2",		 910,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("gpio1",		 911,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("gpio0",		 912,	R8A774C0_CLK_S3D4),
-+	DEF_MOD("can-fd",		 914,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
-diff --git a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-index 8fe51b6..8ad9cd6 100644
---- a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-@@ -56,5 +56,6 @@
- #define R8A774C0_CLK_CSI0		45
- #define R8A774C0_CLK_CP			46
- #define R8A774C0_CLK_CPEX		47
-+#define R8A774C0_CLK_CANFD		48
- 
- #endif /* __DT_BINDINGS_CLOCK_R8A774C0_CPG_MSSR_H__ */
 -- 
-2.7.4
+2.11.0
 
