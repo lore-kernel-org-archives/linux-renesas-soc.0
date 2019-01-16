@@ -2,152 +2,108 @@ Return-Path: <SRS0=SHeS=PY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80969C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 16:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A1EC43444
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561F220657
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 16:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42FB520873
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jan 2019 18:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387576AbfAPQiq (ORCPT
+        id S1728217AbfAPSK0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:38:46 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:40172 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfAPQip (ORCPT
+        Wed, 16 Jan 2019 13:10:26 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:47546 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfAPSKZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:38:45 -0500
-Received: by mail-vk1-f194.google.com with SMTP id v70so1560857vkv.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Jan 2019 08:38:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gIWNyo1TV2KT/WwMRruVbcV0L6SPStUCAsYe9uAl2q0=;
-        b=DAGHbsfgDDL3uMp7cXKDXeKqK661KYTu+j2t4o1Ps0c/+RuNab2JfU29QpM5bId363
-         oLKdd/IVotFiai3yk1aQ/+2ONXY1Fh2i284P6rBpenVSaZTImNgiiDB+xO/GjrVsNWwb
-         qOqBQDSBmHaU1iDpro0M23i8u87IAfpai8KMxCSWDXxIMcufWmr0k2sie+DZnXM1xURC
-         /aza/GjzScJ7VvW9ARjqB2ez4WWg2zH3U8P5vZgRDH3Xw21pbq5XDYPh6fStWbQB4M7S
-         uXv5OtYqb3YwMcV8DTkwVT2f2SdL38Jx7iQaKi4Xa6ErMncibhPrbPpvAhsJLD2YBmVM
-         A/KQ==
-X-Gm-Message-State: AJcUukdd1M9sgYq//wpRX6rfFosxd9S1Ua3yXpfYm5n//ZNH0zDfsz39
-        hM12fC3VnVyGFF5tVsxDXBvGEej/0ycmcd3piYk=
-X-Google-Smtp-Source: ALg8bN4Y+exG2v5XZiolYuo5vPbe1X+ICc+GGY+hWfT16yNjFxBz/siZBcMLPvcyDiWbZtcBrihSFuH5gOyXjcfSILg=
-X-Received: by 2002:a1f:a414:: with SMTP id n20mr3948263vke.83.1547656723809;
- Wed, 16 Jan 2019 08:38:43 -0800 (PST)
-MIME-Version: 1.0
-References: <1547553668-4359-1-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1547553668-4359-1-git-send-email-ykaneko0929@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 16 Jan 2019 17:38:31 +0100
-Message-ID: <CAMuHMdVcXjeOGr-Xtvhyi5G2d7Y4Gi-raBPK+Qja02-KxBE0wQ@mail.gmail.com>
-Subject: Re: [PATCH/RFT] pinctrl: sh-pfc: r8a77990: Add DRIF pins, groups and functions
-To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 16 Jan 2019 13:10:25 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id A95CA20049;
+        Wed, 16 Jan 2019 19:10:19 +0100 (CET)
+Date:   Wed, 16 Jan 2019 19:10:18 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        spice-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, xen-devel@lists.xen.org
+Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
+Message-ID: <20190116181018.GA27364@ravnborg.org>
+References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8 a=p2dIKQH6C7GrL7qBjIgA:9
+        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kaneko-san,
+Hi Daniel.
 
-On Tue, Jan 15, 2019 at 1:01 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds DRIF{0,1,2,3} pins, groups and functions to the R8A77990
-> SoC.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> v5: Actually try to sort them, and while at it, sort all the ones I
+> touch.
 
-Thanks for your patch!
+Applied this variant on top of drm-misc and did a build test.
+Looked good for ia64, x86 and alpha.
 
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+Took a closer look at the changes to atmel_hlcd - and they looked OK.
 
-> @@ -3523,7 +3716,7 @@ enum {
->  };
->
->  static const struct {
-> -       struct sh_pfc_pin_group common[241];
-> +       struct sh_pfc_pin_group common[262];
->         struct sh_pfc_pin_group automotive[2];
->  } pinmux_groups = {
->         .common = {
-> @@ -3555,6 +3748,27 @@ enum {
->                 SH_PFC_PIN_GROUP(can0_data),
->                 SH_PFC_PIN_GROUP(can1_data),
->                 SH_PFC_PIN_GROUP(can_clk),
-> +               SH_PFC_PIN_GROUP(drif0_ctrl_a),
-> +               SH_PFC_PIN_GROUP(drif0_data0_a),
-> +               SH_PFC_PIN_GROUP(drif0_data1_a),
-> +               SH_PFC_PIN_GROUP(drif0_ctrl_b),
-> +               SH_PFC_PIN_GROUP(drif0_data0_b),
-> +               SH_PFC_PIN_GROUP(drif0_data1_b),
-> +               SH_PFC_PIN_GROUP(drif1_ctrl),
-> +               SH_PFC_PIN_GROUP(drif1_data0),
-> +               SH_PFC_PIN_GROUP(drif1_data1),
-> +               SH_PFC_PIN_GROUP(drif2_ctrl_a),
-> +               SH_PFC_PIN_GROUP(drif2_data0_a),
-> +               SH_PFC_PIN_GROUP(drif2_data1_a),
-> +               SH_PFC_PIN_GROUP(drif2_ctrl_b),
-> +               SH_PFC_PIN_GROUP(drif2_data0_b),
-> +               SH_PFC_PIN_GROUP(drif2_data1_b),
-> +               SH_PFC_PIN_GROUP(drif3_ctrl_a),
-> +               SH_PFC_PIN_GROUP(drif3_data0_a),
-> +               SH_PFC_PIN_GROUP(drif3_data1_a),
-> +               SH_PFC_PIN_GROUP(drif3_ctrl_b),
-> +               SH_PFC_PIN_GROUP(drif3_data0_b),
-> +               SH_PFC_PIN_GROUP(drif3_data1_b),
+But I noticed that atmel_hlcdc uses only drm_kms_helper_poll_init() and
+drm_kms_helper_poll_fini().
+But there are no hits on DRM_CONNECTOR_POLL - so I think we maybe
+have a driver here where we have plugged the drm_poll infrastructure,
+but it is not in use.
 
-As RZ/G2E (r8a774c0) does not have the DRIF modules, the DRIF pin groups
-should be added to the automotive section, instead of the common section.
+>  include/drm/drm_crtc_helper.h                 | 16 -----------
 
->                 SH_PFC_PIN_GROUP(du_rgb666),
->                 SH_PFC_PIN_GROUP(du_rgb888),
->                 SH_PFC_PIN_GROUP(du_clk_in_0),
+The list of include files in this file could be dropped and replaced by:
+struct drm_connector;
+struct drm_device;
+struct drm_display_mode;
+struct drm_encoder;
+struct drm_framebuffer;
+struct drm_mode_set;
+struct drm_modeset_acquire_ctx;
 
-> @@ -4157,7 +4404,7 @@ enum {
->  };
->
->  static const struct {
-> -       struct sh_pfc_function common[44];
-> +       struct sh_pfc_function common[48];
->         struct sh_pfc_function automotive[2];
->  } pinmux_functions = {
->         .common = {
-> @@ -4166,6 +4413,10 @@ enum {
->                 SH_PFC_FUNCTION(can0),
->                 SH_PFC_FUNCTION(can1),
->                 SH_PFC_FUNCTION(can_clk),
-> +               SH_PFC_FUNCTION(drif0),
-> +               SH_PFC_FUNCTION(drif1),
-> +               SH_PFC_FUNCTION(drif2),
-> +               SH_PFC_FUNCTION(drif3),
+I tried to do so on top of your patch.
+But there were too many build errros and I somehow lost the motivation.
 
-Likewise for the DRIF pin functions.
 
->                 SH_PFC_FUNCTION(du),
->                 SH_PFC_FUNCTION(hscif0),
->                 SH_PFC_FUNCTION(hscif1),
+>  include/drm/drm_probe_helper.h                | 27 +++++++++++++++++++
+This on the other hand is fine - as expected as this is a new file.
 
-The rest looks good to me, so with the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+But the above is just some random comments so:
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
