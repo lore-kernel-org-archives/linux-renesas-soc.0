@@ -6,82 +6,64 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4F9C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981F5C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDE9620855
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F3720851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:24:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbfAQKXh (ORCPT
+        id S1727510AbfAQKYT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:23:37 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:43689 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727960AbfAQKX3 (ORCPT
+        Thu, 17 Jan 2019 05:24:19 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:35479 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726966AbfAQKYT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:23:29 -0500
-Received: by mail-vk1-f196.google.com with SMTP id o130so2137054vke.10;
-        Thu, 17 Jan 2019 02:23:28 -0800 (PST)
+        Thu, 17 Jan 2019 05:24:19 -0500
+Received: by mail-vs1-f67.google.com with SMTP id e7so5908230vsc.2;
+        Thu, 17 Jan 2019 02:24:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2at2HOgxEy2KhEMyiXRe69mJNqe+/cUFO8dhT9g/kCE=;
-        b=c/FRa16mbL2MpsffAjmBS4uZM+CQ084Z6luhbd8l8gb1wi7VtJ4YY8qnxPdq/jWmJt
-         5D8aR9d/q4+/OEjwpKy3v+amRoM1TpKA1Ou1kvflbbWRk5c9KDv8ivgx5RusRndJoPdK
-         wx4K2fsdB2dS1dY91D9uHRhqxLsYsmZaIW1IIpi/tJ4IRpx0tVQMw2+cLEszhzapg2NH
-         n9MrUqTR9pOzVUE9rpw9QZ5shN0+DwO0KJ00jtogiaC2VdnNF6Nrq4AVnY+uloJc5Je3
-         XjJG0cfv5Bv20TJ3d7nXPogli9dzPXq/qAV1sY28owskuyAkP8G/NAKUASFWmT/DZpAl
-         qqyQ==
-X-Gm-Message-State: AJcUukcEmAFzo+dgLW0NZaOP+wAoPr/TASNsY/pKMr5HlIPTCI0sOcxK
-        JNI4ZpG436DBJJNmYiCfGotY34aN/6q5PbW+cQs=
-X-Google-Smtp-Source: ALg8bN7V+V4uMkRynEFicsUMoqJsdQ3CZ8dOCjo90TENV6YrmYpo6Hntgh2fJkIeH2WAXvW8twpc2gsYRLFNaNbHFM4=
-X-Received: by 2002:a1f:2ed7:: with SMTP id u206mr5259687vku.72.1547720608294;
- Thu, 17 Jan 2019 02:23:28 -0800 (PST)
+        bh=kFaszenHP0mg2Zminh7yDg/lWMiPNkpGV9LlgJOnUME=;
+        b=WUoiYro2s2BfsHwpopTYpxKjiWnRazrsq7RB0cqtvjliHb/dDiRIDYfcof3eJ4aPew
+         fHfFuqjTRT3ZbSXvP6i9rjHX8nx/e+zTn4GyXtA9zWHETVOQs8c2nqChYUh4uYE6HSxR
+         bR1hPb3qpW6muKa64YJSb6OqG2Szv+Gpz8AN7UlFWLojIDrNbF1QkSdxr1BxUuy6yQ5H
+         3FpUOG190zRAT7U3DExuhn0Ci8T0RVmbh2pqxWGI3gCcQSgz66Egz8nCOY7CPeSmxfel
+         MPtCV1tkLGk+EVXLQOebZy0+h4aLPWp5by379n41Sk0Xtz2u+8zbPTTgCvd7oeZeWk2V
+         gBLw==
+X-Gm-Message-State: AJcUukeuY6UwG/S8I0ynl1OG1Hd8TEaAZXWlVY4EWDGd1zR1yvWeMOnX
+        a88TdjNTtXmU3yfhkCtIfm+Mh3rdvm7BWiLaRNQ=
+X-Google-Smtp-Source: ALg8bN6UkWZ+lV9e2poKQFRM/gE3waxIF4+nqOVdrWrO69gQ6EIZJne2WYrdq8JfzXTc6bOjT1X5oIDmriwnBZHhKH0=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr5175134vsi.63.1547720657774;
+ Thu, 17 Jan 2019 02:24:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20190116210555.12209-1-wsa+renesas@sang-engineering.com>
- <20190116210555.12209-2-wsa+renesas@sang-engineering.com> <CAMuHMdVMQp9YOTc-WDSLkTdeYppHMO0sTBF3fkkxn-VvBUbZUw@mail.gmail.com>
- <20190117101824.7knzifej66j2lo3o@ninjato>
-In-Reply-To: <20190117101824.7knzifej66j2lo3o@ninjato>
+References: <20190117101321.2164-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190117101321.2164-1-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Jan 2019 11:23:16 +0100
-Message-ID: <CAMuHMdX32xKbKpSDL4uLrCdunspeWAgFFZRooHUSn77O+D=K5Q@mail.gmail.com>
-Subject: Re: [RFC/RFT 1/7] i2c: sh_mobile: simplify sending address for RX
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Thu, 17 Jan 2019 11:24:06 +0100
+Message-ID: <CAMuHMdWtXA9Q66vCuG6U-+04kqu2F=DOA63pTkeMZ06EzfOQkQ@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: gpio: driver: fix wire name for I2C
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
-
-On Thu, Jan 17, 2019 at 11:18 AM Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Thu, Jan 17, 2019 at 11:11:09AM +0100, Geert Uytterhoeven wrote:
-> > On Thu, Jan 17, 2019 at 1:36 AM Wolfram Sang
-> > <wsa+renesas@sang-engineering.com> wrote:
-> > > pd->pos won't be smaller than -1, so we can simplify the logic.
-> > >
-> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/drivers/i2c/busses/i2c-sh_mobile.c
-> > > +++ b/drivers/i2c/busses/i2c-sh_mobile.c
-> > > @@ -392,13 +392,9 @@ static int sh_mobile_i2c_isr_rx(struct sh_mobile_i2c_data *pd)
-> > >         int real_pos;
-> > >
-> > >         do {
-> > > -               if (pd->pos <= -1) {
-> >
-> > If this condition is never true, shouldn't the block just be removed instead?
+On Thu, Jan 17, 2019 at 11:14 AM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Typo: the data line is called "SDA" not "SCA".
 >
-> "pd->pos won't be *smaller* than -1"
-
-I stand corrected.
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
