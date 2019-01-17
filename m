@@ -2,89 +2,142 @@ Return-Path: <SRS0=aD2s=PZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D5FC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53856C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782622054F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22E9F20652
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:19:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="C19+Y6Yp"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ihU+42A0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfAQMM4 (ORCPT
+        id S1727072AbfAQMT2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:12:56 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39541 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726914AbfAQMM4 (ORCPT
+        Thu, 17 Jan 2019 07:19:28 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:32822 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfAQMT2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:12:56 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n8so10886451otl.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Jan 2019 04:12:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2i62l1RZ2Xxho+N5+QceoL6NMK+JFFGPVOl2S8RZleo=;
-        b=C19+Y6YplMQFh5f7nkzET5jxbKi008OCEGVdsEZ95dtpos84JszUI53bIGzxuYAoT5
-         Z/MLeyBK45pSrSvTanHN3jIQTrXRj+pTe07CZdEZTeG15DFJO3dgasMGJrC0qKndUT24
-         3d6ghq5nb86I3tAUOG3SHutWIEx2U08+1JR22nwbOy05joJEhjMKwJEV6EAJpSCK0wYI
-         zg/nzlDEjLPTg2dqYI9YtymAwKr1Qj6LNICsJ3+9Wzn9kniXsnZxCoaVTl1cHNlnbpAl
-         O964qtNjrnu4JNo9KO5dLJJX5piYH1utgfmc1wOKFiMNLn14r+dmW+qxOawZ/hxNP9w0
-         VkeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2i62l1RZ2Xxho+N5+QceoL6NMK+JFFGPVOl2S8RZleo=;
-        b=qbZuw2ABDv5gchpFh0C/8isJRcXsC7p+VRvVX3tQhEuIbttzA52GDYJdZQQmsZ7BkJ
-         71+UvyaAsIml0HKJm0PjsPetQX7/p8Tf1t20h3+7tMAPkEl0pbEz2ni3obM2qelGisan
-         aWqE5rnfwGUdj8bPhKVdHpRGRqpFNEuhqcbe0LHm5y6P7kdxKZi2Lu0DMoemvzcx60e/
-         IRgi4VsJTJZh1WC/fa681dGQHDz39rwPkDD6VnoBRDhxvjb6fVR/z2LHpQj/bv7wlQ9+
-         CWlnNhwcaJwbdIlqs+XvgG8EGpZvHt6Xs5PmA8Iz73BZGSzz6U/DEd5TCjgZgIX1FI7j
-         0jCA==
-X-Gm-Message-State: AJcUukevOahowOdn+STV5dSYk/jNSvYy8jF62rAqEBkzbBkkEiAkPNs/
-        XQv2L7y+TID4vrJcGjdkH0kujN7Muz76yisTlqQxMQ==
-X-Google-Smtp-Source: ALg8bN719629qaqKSIGYp7xBXIRw5W9cIuUN8efeUgyoEDHRRaUdV+VBRcXWwFxxNAb27qAh/Ex59AWKx5+WRrFlPmM=
-X-Received: by 2002:a9d:6191:: with SMTP id g17mr8790446otk.56.1547727175952;
- Thu, 17 Jan 2019 04:12:55 -0800 (PST)
+        Thu, 17 Jan 2019 07:19:28 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6286325B760;
+        Thu, 17 Jan 2019 23:19:21 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1547727562; bh=toeG74A7tPD9//tWwZ9d9JQs5MernHiBINuWSxGVR8Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ihU+42A0wqE4J5WRhcM/STpLyAr/jAajSIY5h15Bizm/i+vc3v8g0oZVnHt+2uMRi
+         UGuULnXCfw1Ff8fUU23qZaTPmFAQorbIqam6xUkPtomA9UpwvC+o9DvWqvvzi+z1EY
+         xHR1v2H9EjRSsi/zbFJv1e8gYhg564z/2ViPlObU=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id CB312940459; Thu, 17 Jan 2019 13:19:19 +0100 (CET)
+Date:   Thu, 17 Jan 2019 13:19:19 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+Message-ID: <20190117121919.c5u66sorut5a5nib@verge.net.au>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <bb5b27ed-a077-f639-b97b-4da22c9bb3ad@suse.de>
 MIME-Version: 1.0
-References: <20190117101321.2164-1-wsa+renesas@sang-engineering.com> <CAMuHMdWtXA9Q66vCuG6U-+04kqu2F=DOA63pTkeMZ06EzfOQkQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWtXA9Q66vCuG6U-+04kqu2F=DOA63pTkeMZ06EzfOQkQ@mail.gmail.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Thu, 17 Jan 2019 13:12:45 +0100
-Message-ID: <CAMpxmJXEs1Lg775GtNq9p-feVW3yGU_yJM30n2OOgsm1i=2LUg@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: gpio: driver: fix wire name for I2C
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb5b27ed-a077-f639-b97b-4da22c9bb3ad@suse.de>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-czw., 17 sty 2019 o 11:24 Geert Uytterhoeven <geert@linux-m68k.org> napisa=
-=C5=82(a):
->
-> On Thu, Jan 17, 2019 at 11:14 AM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > Typo: the data line is called "SDA" not "SCA".
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
+On Thu, Jan 17, 2019 at 12:17:56PM +0100, Andreas Färber wrote:
+> Hi Fabrizio,
+> 
+> Am 16.01.19 um 19:37 schrieb Fabrizio Castro:
+> > From: Biju Das <biju.das@bp.renesas.com>
+> > 
+> > Add Silicon Linux to the list of devicetree vendor prefixes.
+> > 
+> > Website: http://www.si-linux.co.jp
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> > index 4b1a2a8..02a7037 100644
+> > --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> > @@ -344,6 +344,7 @@ sgx	SGX Sensortech
+> >  sharp	Sharp Corporation
+> >  shimafuji	Shimafuji Electric, Inc.
+> >  si-en	Si-En Technology Ltd.
+> > +si-linux	Silicon Linux Corporation
+> 
+> With the website being Japanese only, I haven't been able to confirm the
+> spelling of the company name. Looks sensible though.
 
-Applied to for-next, thanks!
+According to the company web site
+(http://si-linux.co.jp/index.php?%E4%BC%9A%E7%A4%BE%E6%A1%88%E5%86%85)
+the company name is.
 
-Bart
+Japanese: シリコンリナックス株式会社
+English:  Silicon Linux Corporation
+
+And in my opinion these are equivalent (although other translations of
+the corporation bit are possible).
+
+> Due to "en" coming before "five" I've double-checked that elsewhere we
+> do order dashes before letters, so placement in file and tab-indentation
+> is fine, too.
+> 
+> >  sifive	SiFive, Inc.
+> >  sigma	Sigma Designs, Inc.
+> >  sii	Seiko Instruments, Inc.
+> 
+> Personally I would drop the full stop at the end of the subject, but anyway:
+> 
+> Reviewed-by: Andreas Färber <afaerber@suse.de>
+> 
+> Thanks,
+> Andreas
+> 
+> P.S. Please double-check how this excessive CC list came to life!
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
+> 
