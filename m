@@ -6,86 +6,84 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3088FC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4F9C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003A420851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDE9620855
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfAQKVp (ORCPT
+        id S1727776AbfAQKXh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:21:45 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:36265 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbfAQKVp (ORCPT
+        Thu, 17 Jan 2019 05:23:37 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:43689 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727960AbfAQKX3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:21:45 -0500
-Received: by mail-vk1-f195.google.com with SMTP id 185so2139992vkc.3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Jan 2019 02:21:45 -0800 (PST)
+        Thu, 17 Jan 2019 05:23:29 -0500
+Received: by mail-vk1-f196.google.com with SMTP id o130so2137054vke.10;
+        Thu, 17 Jan 2019 02:23:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2WHkQ4icCvT+0PRT2rP4FMXmllmHcuFLTjIyO9Qf7zU=;
-        b=TO8OWQEzUxHM0L01XdtEQ1CWEmxbJZKVhXtlEqtrBSG/qvCI/81vTj/0ZbFJn6N7as
-         evjwbDRNF1QK1GAiqCptDbImkS+hUbS4dQyRRW/2PwrgNL6N4/jD89PKb2r1iYcqmQFt
-         k303APjovblA/bgKjUOH0F2UG/b0jlEJ0BjIDHOqB9kPCXy8wlQkGVzZ/n6oLQci5i0p
-         LJTOkR/p+W4myFtlai15/6yyCiHSxENnxVjmRiR5y01a3etK7qlRkNv/sAOgqsKUh8z7
-         1Zsd+qt5Wbz2QKgxFUxDu27RmOOA0MNc1M0FLkoalMSTUSb5dynjRAjD7HU0zTHmUykM
-         lepA==
-X-Gm-Message-State: AJcUukc3g4RK7yGr9kYFAd/OWOPtFTHLF0JH3VidnA+o7e8V8dXBfFqs
-        2KghXLrH4LwLIyCzn2RjIXbfylt6Y1fzZNS8fVg=
-X-Google-Smtp-Source: ALg8bN4BqCP259WG4oBLbWdwXsT0HkSXPFVeJvZCnfYpvxeViU1BU2kLLv+UFdVVt4LyWlRvGSPt8IyA3lS6AKSM12c=
-X-Received: by 2002:a1f:2145:: with SMTP id h66mr5525861vkh.65.1547720504524;
- Thu, 17 Jan 2019 02:21:44 -0800 (PST)
+        bh=2at2HOgxEy2KhEMyiXRe69mJNqe+/cUFO8dhT9g/kCE=;
+        b=c/FRa16mbL2MpsffAjmBS4uZM+CQ084Z6luhbd8l8gb1wi7VtJ4YY8qnxPdq/jWmJt
+         5D8aR9d/q4+/OEjwpKy3v+amRoM1TpKA1Ou1kvflbbWRk5c9KDv8ivgx5RusRndJoPdK
+         wx4K2fsdB2dS1dY91D9uHRhqxLsYsmZaIW1IIpi/tJ4IRpx0tVQMw2+cLEszhzapg2NH
+         n9MrUqTR9pOzVUE9rpw9QZ5shN0+DwO0KJ00jtogiaC2VdnNF6Nrq4AVnY+uloJc5Je3
+         XjJG0cfv5Bv20TJ3d7nXPogli9dzPXq/qAV1sY28owskuyAkP8G/NAKUASFWmT/DZpAl
+         qqyQ==
+X-Gm-Message-State: AJcUukcEmAFzo+dgLW0NZaOP+wAoPr/TASNsY/pKMr5HlIPTCI0sOcxK
+        JNI4ZpG436DBJJNmYiCfGotY34aN/6q5PbW+cQs=
+X-Google-Smtp-Source: ALg8bN7V+V4uMkRynEFicsUMoqJsdQ3CZ8dOCjo90TENV6YrmYpo6Hntgh2fJkIeH2WAXvW8twpc2gsYRLFNaNbHFM4=
+X-Received: by 2002:a1f:2ed7:: with SMTP id u206mr5259687vku.72.1547720608294;
+ Thu, 17 Jan 2019 02:23:28 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117014946.9669-1-laurent.pinchart+renesas@ideasonboard.com> <20190117014946.9669-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20190117014946.9669-6-laurent.pinchart+renesas@ideasonboard.com>
+References: <20190116210555.12209-1-wsa+renesas@sang-engineering.com>
+ <20190116210555.12209-2-wsa+renesas@sang-engineering.com> <CAMuHMdVMQp9YOTc-WDSLkTdeYppHMO0sTBF3fkkxn-VvBUbZUw@mail.gmail.com>
+ <20190117101824.7knzifej66j2lo3o@ninjato>
+In-Reply-To: <20190117101824.7knzifej66j2lo3o@ninjato>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Jan 2019 11:21:32 +0100
-Message-ID: <CAMuHMdWYgAnxxUud89uGWBePK6UfVt2T=gumMmzs_SF95Ap36Q@mail.gmail.com>
-Subject: Re: [PATCH 5/6] arm64: dts: renesas: r8a77990: ebisu: Enable LVDS1 encoder
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Date:   Thu, 17 Jan 2019 11:23:16 +0100
+Message-ID: <CAMuHMdX32xKbKpSDL4uLrCdunspeWAgFFZRooHUSn77O+D=K5Q@mail.gmail.com>
+Subject: Re: [RFC/RFT 1/7] i2c: sh_mobile: simplify sending address for RX
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Hi Wolfram,
 
-On Thu, Jan 17, 2019 at 3:07 AM Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> The LVDS1 encoder must supply a pixel clock to the DU for the DPAD
-> output when the LVDS0 encoder is used. Enable it despite its output not
-> being connected.
+On Thu, Jan 17, 2019 at 11:18 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Thu, Jan 17, 2019 at 11:11:09AM +0100, Geert Uytterhoeven wrote:
+> > On Thu, Jan 17, 2019 at 1:36 AM Wolfram Sang
+> > <wsa+renesas@sang-engineering.com> wrote:
+> > > pd->pos won't be smaller than -1, so we can simplify the logic.
+> > >
+> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/drivers/i2c/busses/i2c-sh_mobile.c
+> > > +++ b/drivers/i2c/busses/i2c-sh_mobile.c
+> > > @@ -392,13 +392,9 @@ static int sh_mobile_i2c_isr_rx(struct sh_mobile_i2c_data *pd)
+> > >         int real_pos;
+> > >
+> > >         do {
+> > > -               if (pd->pos <= -1) {
+> >
+> > If this condition is never true, shouldn't the block just be removed instead?
 >
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> "pd->pos won't be *smaller* than -1"
 
-Thanks for your patch!
+I stand corrected.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> @@ -443,6 +443,8 @@
->  };
->
->  &lvds1 {
-
-Would it make sense to add a comment
-
-    /* Must be enabled to supply a pixel clock to the DU for the DPAD
-output when lvds0 is used */
-
-also for D3?
-
-> +       status = "okay";
-> +
->         clocks = <&cpg CPG_MOD 727>,
->                  <&x13_clk>,
->                  <&extal_clk>;
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
