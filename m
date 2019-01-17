@@ -2,78 +2,98 @@ Return-Path: <SRS0=aD2s=PZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591FEC43444
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 01:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6E7C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 02:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A2120651
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 01:50:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tlJU5GJP"
+	by mail.kernel.org (Postfix) with ESMTP id D322C205C9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 02:44:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfAQBuA (ORCPT
+        id S1727132AbfAQCoc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jan 2019 20:50:00 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39964 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbfAQBuA (ORCPT
+        Wed, 16 Jan 2019 21:44:32 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:2972 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725385AbfAQCoc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jan 2019 20:50:00 -0500
-Received: from pendragon.bb.dnainternet.fi (dfj612yyyyyyyyyyyyyby-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00::2])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 36397E21;
-        Thu, 17 Jan 2019 02:49:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547689796;
-        bh=jQkzVZKbBewcoYhv3S+u1LCWMpGO097i3ahy7RSaqIU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tlJU5GJPOBp5FwrXA2OtglgbR6r1VZ57lYBekmLftPHDdE9mV6ugal59LfrvK4/t8
-         UmRYVB+SzAFFGHUoI7/npMUx9GCDLtXb2TyeTEZTHPZm6kjXZDgk2kibL9Qr/GsDad
-         ddYfKYCwLCMz8lOkjmvWxjEjQNQ/4zU+C2U5WHww=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 6/6] arm64: dts: renesas: r8a77995: draak: Enable LVDS1 encoder
-Date:   Thu, 17 Jan 2019 03:49:46 +0200
-Message-Id: <20190117014946.9669-7-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190117014946.9669-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20190117014946.9669-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Jan 2019 21:44:32 -0500
+X-IronPort-AV: E=Sophos;i="5.56,488,1539615600"; 
+   d="scan'208";a="5392081"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 11:44:29 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8DD74403931F;
+        Thu, 17 Jan 2019 11:44:29 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     vinod.koul@intel.com
+Cc:     dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        stable@vger.kernel.org,
+        Phuong Nguyen <phuong.nguyen.xw@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] dmaengine: usb-dmac: Make DMAC system sleep callbacks explicit
+Date:   Thu, 17 Jan 2019 11:41:36 +0900
+Message-Id: <1547692896-2362-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The LVDS1 encoder must supply a pixel clock to the DU for the DPAD
-output when the LVDS0 encoder is used. Enable it despite its output not
-being connected.
+From: Phuong Nguyen <phuong.nguyen.xw@renesas.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+This commit fixes the issue that USB-DMAC hangs silently after system
+resumes on R-Car Gen3 hence renesas_usbhs will not work correctly
+when using USB-DMAC for bulk transfer e.g. ethernet or serial
+gadgets.
+
+The issue can be reproduced by these steps:
+ 1. modprobe g_serial
+ 2. Suspend and resume system.
+ 3. connect a usb cable to host side
+ 4. Transfer data from Host to Target
+ 5. cat /dev/ttyGS0 (Target side)
+ 6. echo "test" > /dev/ttyACM0 (Host side)
+
+The 'cat' will not result anything. However, system still can work
+normally.
+
+Currently, USB-DMAC driver does not have system sleep callbacks hence
+this driver relies on the PM core to force runtime suspend/resume to
+suspend and reinitialize USB-DMAC during system resume. After
+the commit 17218e0092f8 ("PM / genpd: Stop/start devices without
+pm_runtime_force_suspend/resume()"), PM core will not force
+runtime suspend/resume anymore so this issue happens.
+
+To solve this, make system suspend resume explicit by using
+pm_runtime_force_{suspend,resume}() as the system sleep callbacks.
+SET_NOIRQ_SYSTEM_SLEEP_PM_OPS()is used to make sure USB-DMAC suspended
+after and initialized before renesas_usbhs."
+
+Signed-off-by: Phuong Nguyen <phuong.nguyen.xw@renesas.com>
+Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Cc: <stable@vger.kernel.org> # v4.16+
+[shimoda: revise the commit log and add Cc tag]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 2 ++
+ drivers/dma/sh/usb-dmac.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 89df9bc844c0..1879f0feaf88 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -356,6 +356,8 @@
- };
+diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
+index 7f7184c..59403f6 100644
+--- a/drivers/dma/sh/usb-dmac.c
++++ b/drivers/dma/sh/usb-dmac.c
+@@ -694,6 +694,8 @@ static int usb_dmac_runtime_resume(struct device *dev)
+ #endif /* CONFIG_PM */
  
- &lvds1 {
-+	status = "okay";
-+
- 	clocks = <&cpg CPG_MOD 727>,
- 		 <&x12_clk>,
- 		 <&extal_clk>;
+ static const struct dev_pm_ops usb_dmac_pm = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				      pm_runtime_force_resume)
+ 	SET_RUNTIME_PM_OPS(usb_dmac_runtime_suspend, usb_dmac_runtime_resume,
+ 			   NULL)
+ };
 -- 
-Regards,
-
-Laurent Pinchart
+1.9.1
 
