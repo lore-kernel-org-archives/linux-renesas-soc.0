@@ -2,63 +2,110 @@ Return-Path: <SRS0=aD2s=PZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0867C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A57E5C43444
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B3120657
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:29:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="AKaxMk5S"
+	by mail.kernel.org (Postfix) with ESMTP id 7A9E620657
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 12:29:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfAQM3J (ORCPT
+        id S1727487AbfAQM30 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:29:09 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:32926 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfAQM3J (ORCPT
+        Thu, 17 Jan 2019 07:29:26 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35224 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfAQM30 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jan 2019 07:29:09 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 3E0DB25B760;
-        Thu, 17 Jan 2019 23:29:06 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547728146; bh=vZSEbyMTXcO0Y0gpbGKvVOHS/kORxy8nbvo2EU40o0w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AKaxMk5Szo+Dk/fgiDhPSZ8+8uyUyB2/RfIksRH8Bq+Q7oDXKaWeQigaNer9KgwLv
-         tm546r0V7HiZPZIlVHnuHv9P1c+jkKzTcC1TK1EKM+zPA7bYp1gDNHEqd9vkzMPtqs
-         U4qjU4gzLHobIJG8QrBKni4iXeYOHrF5Bgm+LpsA=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id B0207940459; Thu, 17 Jan 2019 13:29:04 +0100 (CET)
-Date:   Thu, 17 Jan 2019 13:29:04 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: sh-pfc: Print pin group when debugging
-Message-ID: <20190117122858.2x54eddmroi62apq@verge.net.au>
-References: <20190116132058.6716-1-geert+renesas@glider.be>
+        Thu, 17 Jan 2019 07:29:26 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e7so6111550vsc.2;
+        Thu, 17 Jan 2019 04:29:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ekyQ2UWrARd/eP6G81EosKjpyECLJF9qOyF/vIEaB9U=;
+        b=Vvp3RI1hyOl46fzgE8r2IujLSLkqM68rH7HJ9OuUeQGf2G2Y5I2iG1czwp4tTC7f44
+         aQxf/dLwaWJU2zXQ2fr9+l9FDwrwD+AkFKt5csqsw0yJSMePaMtcnu9tXQ9K+qJ9w79r
+         ZJeVkWqLipQ1M++iIVllYji3yofhVFO8urQYt7gK9mKY0ViQW/m42Ad1J829SU4AiRzT
+         EhZs07fmwgmhikJzhMlXqsa2plZDEF5PA1Uvv/k2rv+/HHw55h1MI9yNhc5LNpjZjr1u
+         VmcWiKf+gTs9bOS2CCiwCGxnIhBpctOt7mUyYD42bsTWzEUW7MlCnWz+FK48MxMLuc26
+         O0IQ==
+X-Gm-Message-State: AJcUukflxwmNYLYQVLAonrVfHhWHp0QY6ZPoEBnIYGDfRuytXc4D6zG5
+        icWCLmK/YjMVFcnfeEgo8M/4rgWznl7EiUj2hVM=
+X-Google-Smtp-Source: ALg8bN4IDC0etZwDa5vwFLabL4XusjYyBqWJd55PQHUuciUd7TrZYkEnwso9YOsgh24dNZa3xxWRsmRkITcb5kyV8cw=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr5065206vsi.96.1547728165223;
+ Thu, 17 Jan 2019 04:29:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116132058.6716-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1547667945-5588-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1547667945-5588-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 17 Jan 2019 13:29:12 +0100
+Message-ID: <CAMuHMdV=47sdu53EXViCBL5OKGxKHQmxg34dNr_cvdeZVNkKVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-can@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>, ebiharaml@si-linux.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 02:20:58PM +0100, Geert Uytterhoeven wrote:
-> Knowing which pin group is being configured is useful information when
-> debugging pin configuration.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Jan 16, 2019 at 8:45 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds the missing CANFD clock to the r8a774c0 specific
+> clock driver.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+>
 > ---
-> To be queued in sh-pfc-for-v5.1.
+> The relevant documentation should appear in the next version
+> of the HW User's manual
+>
+> v1->v2:
+> * appended R8A774C0_CLK_CANFD as per Geert's comment
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Thanks for the update!
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.1.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
