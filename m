@@ -2,103 +2,101 @@ Return-Path: <SRS0=aD2s=PZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BB8C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 11:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C241C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 11:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E5A20657
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 11:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B77420657
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 11:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbfAQLGx (ORCPT
+        id S1725990AbfAQLIH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:06:53 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:42598 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728485AbfAQLGw (ORCPT
+        Thu, 17 Jan 2019 06:08:07 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:56462 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727186AbfAQLIG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jan 2019 06:06:52 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d21so3301950uap.9;
-        Thu, 17 Jan 2019 03:06:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ofo0k4jl6T9JJNmeL8fLqkxcZ4m0vWXmTtIEIgp8ymo=;
-        b=DnjFNwP0ddZHuJU3Oh39iMATgHcLE8P3r6oaVrRJVH7eFcyUiO4r6McfoKiblMPG4x
-         eKoL1mgTAQ10bmyIhaNi49g5aYMSAO6pVsZcNO2PXdlyWVI1VaO5C0jAuMbZS41nnxaB
-         e+pmM7xMJ5zGVrhkr1ETRAXVysEF5QK2XY04l4ZvNx8mbwL+X9S5edjLYmx1TpClP2X/
-         L/otNdMJ9OvNPSl/y0ZAKN3yYlq7XVWfYzJCWTfkW5VXFClS3JQQh5vmqqlTVo8+42NT
-         oMFjonYytC5kxfnKfDUK/6O2cprrVBhOUgotLHx23ag15ltPDsGbgOyNyUi359iKAWvm
-         VF4w==
-X-Gm-Message-State: AJcUukero9/jnZgFgZ0MP8q9oEbApt1EQia5MTJ0y1UNqJTVbU3yGqCF
-        5zRbLXOWmf5249JJNKpBHn75eU4dd6XTznuuyJ4=
-X-Google-Smtp-Source: ALg8bN6cZI2NU+K7xwNRPpz2GubG/Eb870pEuxclrZx2AbTkCTeMmmmuEWtgdOvoZMUYJb1VIdzaPIKhgAAAuIPaYBM=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr5458588ual.20.1547723211086;
- Thu, 17 Jan 2019 03:06:51 -0800 (PST)
-MIME-Version: 1.0
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com> <1547663874-29411-6-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1547663874-29411-6-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Jan 2019 12:06:39 +0100
-Message-ID: <CAMuHMdUiiVJgMHmZ5UKLXNXd7D=U8Dyc0ZYgvVTVEgspFLaPYg@mail.gmail.com>
-Subject: Re: [PATCH 05/11] arm64: dts: renesas: r8a774c0-cat874: Add
- pincontrol support to scif2
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, ebiharaml@si-linux.co.jp
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 17 Jan 2019 06:08:06 -0500
+X-IronPort-AV: E=Sophos;i="5.56,488,1539615600"; 
+   d="scan'208";a="5449993"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 20:08:03 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CD42944A1608;
+        Thu, 17 Jan 2019 20:08:03 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3/RFT 1/2] net: phy: Fix not to call phy_resume() if PHY is not attached
+Date:   Thu, 17 Jan 2019 20:05:08 +0900
+Message-Id: <1547723109-28792-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1547723109-28792-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1547723109-28792-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 7:38 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
->
-> This patch adds pincontrol support to scif2.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+This patch fixes an issue that mdio_bus_phy_resume() doesn't call
+phy_resume() if the PHY is not attached.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 803dd9c77ac3 ("net: phy: avoid suspending twice a PHY")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/net/phy/phy_device.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index bb14108..d86356f 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -225,7 +225,7 @@ static void phy_mdio_device_remove(struct mdio_device *mdiodev)
+ static DEFINE_MUTEX(phy_fixup_lock);
+ 
+ #ifdef CONFIG_PM
+-static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
++static bool mdio_bus_phy_may_suspend(struct phy_device *phydev, bool suspend)
+ {
+ 	struct device_driver *drv = phydev->mdio.dev.driver;
+ 	struct phy_driver *phydrv = to_phy_driver(drv);
+@@ -237,10 +237,11 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+ 	/* PHY not attached? May suspend if the PHY has not already been
+ 	 * suspended as part of a prior call to phy_disconnect() ->
+ 	 * phy_detach() -> phy_suspend() because the parent netdev might be the
+-	 * MDIO bus driver and clock gated at this point.
++	 * MDIO bus driver and clock gated at this point. Also may resume if
++	 * PHY is not attached.
+ 	 */
+ 	if (!netdev)
+-		return !phydev->suspended;
++		return suspend ? !phydev->suspended : phydev->suspended;
+ 
+ 	if (netdev->wol_enabled)
+ 		return false;
+@@ -275,7 +276,7 @@ static int mdio_bus_phy_suspend(struct device *dev)
+ 	if (phydev->attached_dev && phydev->adjust_link)
+ 		phy_stop_machine(phydev);
+ 
+-	if (!mdio_bus_phy_may_suspend(phydev))
++	if (!mdio_bus_phy_may_suspend(phydev, true))
+ 		return 0;
+ 
+ 	return phy_suspend(phydev);
+@@ -286,7 +287,7 @@ static int mdio_bus_phy_resume(struct device *dev)
+ 	struct phy_device *phydev = to_phy_device(dev);
+ 	int ret;
+ 
+-	if (!mdio_bus_phy_may_suspend(phydev))
++	if (!mdio_bus_phy_may_suspend(phydev, false))
+ 		goto no_resume;
+ 
+ 	ret = phy_resume(phydev);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+1.9.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
