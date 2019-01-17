@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 799D6C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94550C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 403812054F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ABA520657
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 10:41:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfAQKgT (ORCPT
+        id S1726917AbfAQKlR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jan 2019 05:36:19 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:44962 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbfAQKgS (ORCPT
+        Thu, 17 Jan 2019 05:41:17 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39633 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfAQKlR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jan 2019 05:36:18 -0500
-Received: by mail-vk1-f193.google.com with SMTP id h128so2133505vkg.11;
-        Thu, 17 Jan 2019 02:36:18 -0800 (PST)
+        Thu, 17 Jan 2019 05:41:17 -0500
+Received: by mail-vs1-f68.google.com with SMTP id h78so5920298vsi.6;
+        Thu, 17 Jan 2019 02:41:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DkWnFxapDvbI48oaZ7pS57joEt+NqSvaReNO/zC6fnE=;
-        b=a3u0Jc6J4bH6jkXuR6zszPZwmY7B4qQpUSxgc1w3e1fdNhGX2ksyFo3QCNIOdEqbvq
-         L2EI7iwts7MVIj1KgrTaVFvM44D3Nj9qBX9Qa7i9DS9kYLrCk6ckYhylEmA3GkOiI5I0
-         WdH9JM0CqNyEz+wJJlEbW4TjpaIqpw8J/1oUy9qNM/N/w/6QcSmJN+13SV+HziCKf60P
-         Lo12jzjGMlg9KqKxXdeCo4J+ag5QsQ17tWU2Swy/WCJlhBaxLIvTcp0kyCgA4oQNE3aY
-         clbUFg3M5Zu0l1kNpdiiNl/VyaDyGncZD7qt8Mu81qhZLUGNoMdWYBxTAvGu9rODU9NS
-         kkuQ==
-X-Gm-Message-State: AJcUukce2o02eW+jgGtprg3CWxsxjFeu7J17w+GprzYyEgL7jv2xcAJy
-        lCsFWyqwyUiHsiaG3+z9iNidWZs11Uy4UA3dafCODTTW
-X-Google-Smtp-Source: ALg8bN6km06fSc/BLhN4Qmoy01ngCW+H7CFvqys904deXrquHs+G7Q+KspG2HL1P+/LjTsXalZ3x0C9WymHrefDAef4=
-X-Received: by 2002:a1f:298e:: with SMTP id p136mr5434914vkp.40.1547721377735;
- Thu, 17 Jan 2019 02:36:17 -0800 (PST)
+        bh=hkvavIs6fkhX4EKOcLyBxe/8d3IYd0jlhB5P/kanATk=;
+        b=j/u1dfXZvTGdKtMmo2D8cFcYgWZE5BqR+3lHSzfULxMcihoeJ60GDN9p6OlOj0LrbN
+         cnfVrdLpFbG9Zfonw8aURSdoKwD1CTFYZqdweOc6zszsfaM6Kl4GxkOUD7pTtMN34BL1
+         wQKApODh2pYBWv3PHTVF0605b1hifzh6xsE4MhP1t50JgKML3Jb43sLhWjuahBmubFN0
+         BWvnEUITEcnJ2z0AZfJlevbRar1Y/i84zcDiRt30Vx+xczXFzFr2OcJKQlhwRCf4FXuB
+         Dl+z4xYd98CBE9u7U5X9tiVSQpWXufDdaza1/IgkLPKJcbxcdBSjVVqDaddLq69P8HHk
+         j51Q==
+X-Gm-Message-State: AJcUukdaMs/WQ5zyZDC8GhnQAjfuyaSPRvTlcn+4z00lx29A9u61XpDB
+        R2sVA4IZd3SzckesQGtFEMlXATC1Z0fz2wGCqbciEA==
+X-Google-Smtp-Source: ALg8bN6jgyKq916+TCYgyt/vbxbdFawOQMBGNDdrO/jyjrJJDlNGKr26ABXCKTBlAebOoKqtVREFmewPk1DtDjaXt7I=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr5193402vsi.63.1547721676624;
+ Thu, 17 Jan 2019 02:41:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20190116210555.12209-1-wsa+renesas@sang-engineering.com> <20190116210555.12209-7-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190116210555.12209-7-wsa+renesas@sang-engineering.com>
+References: <20190116210555.12209-1-wsa+renesas@sang-engineering.com> <20190116210555.12209-8-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190116210555.12209-8-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Jan 2019 11:36:06 +0100
-Message-ID: <CAMuHMdXOzaYeHg4a4eW_OATyh848B-U5y0w+L7CBHFvBRLgAxQ@mail.gmail.com>
-Subject: Re: [RFC/RFT 6/7] i2c: sh_mobile: refactor rx isr
+Date:   Thu, 17 Jan 2019 11:41:05 +0100
+Message-ID: <CAMuHMdVj49y3b+WqyTfNV2sc0WTneFaO4zZSA6WfkZDrqgD=eA@mail.gmail.com>
+Subject: Re: [RFC/RFT 7/7] i2c: sh_mobile: update copyright and comments
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
@@ -54,15 +54,44 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 1:36 AM Wolfram Sang
+Hi Wolfram,
+
+On Thu, Jan 17, 2019 at 1:35 AM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> Remove the do_while loop which was just there to have an easy exit with
-> "break;" and replace it with if-else-blocks which should make the state
-> machine clearer.
+> Update copyright years and add Renesas to it. Add/update comments to
+> make driver easier to understand.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for your patch!
+
+> --- a/drivers/i2c/busses/i2c-sh_mobile.c
+> +++ b/drivers/i2c/busses/i2c-sh_mobile.c
+> @@ -2,8 +2,8 @@
+>  /*
+>   * SuperH Mobile I2C Controller
+>   *
+> - * Copyright (C) 2014 Wolfram Sang <wsa@sang-engineering.com>
+> - *
+> + * Copyright (C) 2014-19 Renesas Electronics Corporation
+
+Why this addition?
+
+> + * Copyright (C) 2014-19 Wolfram Sang <wsa@sang-engineering.com>
+>   * Copyright (C) 2008 Magnus Damm
+>   *
+>   * Portions of the code based on out-of-tree driver i2c-sh7343.c
+> @@ -373,6 +373,7 @@ static int sh_mobile_i2c_isr_rx(struct sh_mobile_i2c_data *pd)
+>         unsigned char data;
+>         int real_pos;
+>
+> +       /* switch from TX (address) to RX (data) adds two interrupts */
+
+Perhaps this change can be moved into patch 6/7?
+
+>         real_pos = pd->pos - 2;
+>
+>         if (pd->pos == -1) {
 
 Gr{oetje,eeting}s,
 
