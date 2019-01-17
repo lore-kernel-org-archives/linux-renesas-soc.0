@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 086FBC43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A58C43612
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 01:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF6BE20651
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 01:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0771C206C2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 01:50:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b5rlmJtL"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eu+fCx4r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbfAQBt7 (ORCPT
+        id S1727885AbfAQBt7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 16 Jan 2019 20:49:59 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39964 "EHLO
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39966 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727885AbfAQBt7 (ORCPT
+        with ESMTP id S1727890AbfAQBt7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 16 Jan 2019 20:49:59 -0500
 Received: from pendragon.bb.dnainternet.fi (dfj612yyyyyyyyyyyyyby-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00::2])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 60C65D50;
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C6DE4E1D;
         Thu, 17 Jan 2019 02:49:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547689795;
-        bh=3eoIvDpyBLbww5t8OhJ5cw5GlYAmYVtWfKErUaHrhOU=;
+        s=mail; t=1547689796;
+        bh=YevjtIxNSZMdVh2mTm2ufGiLUfssGr39KJy+zF6NbiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b5rlmJtLihS/W4OF+6aGgpn4+uxYE8OelYXfqwG/vDNlOC1mAHKi30djVDLsdw2cT
-         vAonxYHY+NlKciMzBPvoVGm1cIHClU0k5XZR4zyT7Pnkvqb78LlmoZ0FDxqj2Guq9Y
-         hr5lcS6e6Yat077n2Cv/XV4d8J2FdnHOaKvtUYQs=
+        b=eu+fCx4rFfJfDENorBq5knR+lovyy6p2c4YuGhHEwO5XZpyMJZOfGiAlv9LreHZvj
+         MobMv9mkgTuH1veV3+vu6WKCJZ5U13GxL5LZhS1bFBciRAa3tSzLp/XaIwmjvrcdjh
+         jPVCjQT9nbMUEBmJhDkQuRxeJORHmZWoDLkc32cY=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 4/6] drm: rcar-du: Turn LVDS clock output on/off for DPAD0 output on D3/E3
-Date:   Thu, 17 Jan 2019 03:49:44 +0200
-Message-Id: <20190117014946.9669-5-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 5/6] arm64: dts: renesas: r8a77990: ebisu: Enable LVDS1 encoder
+Date:   Thu, 17 Jan 2019 03:49:45 +0200
+Message-Id: <20190117014946.9669-6-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190117014946.9669-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190117014946.9669-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -50,116 +50,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On the D3 and E3 SoCs the LVDS PLL clock output provides the dot clock
-to the DU channels, even when the LVDS outputs are not in use. Enable
-and disable the LVDS clock output when enabling or disabling a CRTC
-connected to the DPAD0 output.
+The LVDS1 encoder must supply a pixel clock to the DU for the DPAD
+output when the LVDS0 encoder is used. Enable it despite its output not
+being connected.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 34 +++++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.h     |  3 ++
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  1 +
- 3 files changed, 38 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 771b460c7216..3018e4500aa1 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -26,6 +26,7 @@
- #include "rcar_du_plane.h"
- #include "rcar_du_regs.h"
- #include "rcar_du_vsp.h"
-+#include "rcar_lvds.h"
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 62bdddcbbae7..df5dc23fd252 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -443,6 +443,8 @@
+ };
  
- static u32 rcar_du_crtc_read(struct rcar_du_crtc *rcrtc, u32 reg)
- {
-@@ -657,8 +658,27 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
- 				       struct drm_crtc_state *old_state)
- {
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(crtc->state);
-+	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 
- 	rcar_du_crtc_get(rcrtc);
+ &lvds1 {
++	status = "okay";
 +
-+	/*
-+	 * On D3/E3 the dot clock is provided by the LVDS encoder attached to
-+	 * the DU channel. We need to enable its clock output explicitly if
-+	 * the LVDS output is disabled.
-+	 */
-+	if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index) &&
-+	    rstate->outputs == BIT(RCAR_DU_OUTPUT_DPAD0)) {
-+		struct rcar_du_encoder *encoder =
-+			rcdu->encoders[RCAR_DU_OUTPUT_LVDS0 + rcrtc->index];
-+		const struct drm_display_mode *mode =
-+			&crtc->state->adjusted_mode;
-+
-+		rcar_lvds_clk_enable(encoder->base.bridge,
-+				     mode->clock * 1000);
-+	}
-+
- 	rcar_du_crtc_start(rcrtc);
- }
- 
-@@ -666,10 +686,24 @@ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
- 					struct drm_crtc_state *old_state)
- {
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-+	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(old_state);
-+	struct rcar_du_device *rcdu = rcrtc->group->dev;
- 
- 	rcar_du_crtc_stop(rcrtc);
- 	rcar_du_crtc_put(rcrtc);
- 
-+	if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index) &&
-+	    rstate->outputs == BIT(RCAR_DU_OUTPUT_DPAD0)) {
-+		struct rcar_du_encoder *encoder =
-+			rcdu->encoders[RCAR_DU_OUTPUT_LVDS0 + rcrtc->index];
-+
-+		/*
-+		 * Disable the LVDS clock output, see
-+		 * rcar_du_crtc_atomic_enable().
-+		 */
-+		rcar_lvds_clk_disable(encoder->base.bridge);
-+	}
-+
- 	spin_lock_irq(&crtc->dev->event_lock);
- 	if (crtc->state->event) {
- 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 6c187d0bf7c2..1327cd0df90a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -22,6 +22,7 @@ struct device;
- struct drm_device;
- struct drm_property;
- struct rcar_du_device;
-+struct rcar_du_encoder;
- 
- #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
- #define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(1)	/* Has inputs from VSP1 */
-@@ -81,6 +82,8 @@ struct rcar_du_device {
- 	struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
- 	unsigned int num_crtcs;
- 
-+	struct rcar_du_encoder *encoders[RCAR_DU_OUTPUT_MAX];
-+
- 	struct rcar_du_group groups[RCAR_DU_MAX_GROUPS];
- 	struct rcar_du_vsp vsps[RCAR_DU_MAX_VSPS];
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index ba2b38f76b54..13c3c7382514 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -41,6 +41,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	if (renc == NULL)
- 		return -ENOMEM;
- 
-+	rcdu->encoders[output] = renc;
- 	renc->output = output;
- 	encoder = rcar_encoder_to_drm_encoder(renc);
- 
+ 	clocks = <&cpg CPG_MOD 727>,
+ 		 <&x13_clk>,
+ 		 <&extal_clk>;
 -- 
 Regards,
 
