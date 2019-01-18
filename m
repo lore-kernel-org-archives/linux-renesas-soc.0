@@ -1,134 +1,99 @@
-Return-Path: <SRS0=aD2s=PZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AA1C43444
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 17:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C38C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 05:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA46720868
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jan 2019 17:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9269220855
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 05:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbfAQRzg (ORCPT
+        id S1727060AbfARFyr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jan 2019 12:55:36 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:45840 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726517AbfAQRzf (ORCPT
+        Fri, 18 Jan 2019 00:54:47 -0500
+Received: from twhmllg3.macronix.com ([122.147.135.201]:18039 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbfARFyr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jan 2019 12:55:35 -0500
-X-Greylist: delayed 597 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Jan 2019 12:55:33 EST
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id C974F8036E;
-        Thu, 17 Jan 2019 18:45:32 +0100 (CET)
-Date:   Thu, 17 Jan 2019 18:45:31 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        virtualization@lists.linux-foundation.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-samsung-soc@vger.kernel.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
-        nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@intel.com>,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, xen-devel@lists.xen.org,
-        linux-renesas-soc@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-Message-ID: <20190117174531.GA14041@ravnborg.org>
-References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
- <20190116181018.GA27364@ravnborg.org>
- <20190117164541.GE3271@phenom.ffwll.local>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117164541.GE3271@phenom.ffwll.local>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=xwHcfvD0iotqNkNuR-sA:9 a=CjuIK1q_8ugA:10
+        Fri, 18 Jan 2019 00:54:47 -0500
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG3.macronix.com with ESMTP id x0I5sG8m033201;
+        Fri, 18 Jan 2019 13:54:16 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH v6 0/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI driver
+Date:   Fri, 18 Jan 2019 13:54:13 +0800
+Message-Id: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG3.macronix.com x0I5sG8m033201
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 05:45:41PM +0100, Daniel Vetter wrote:
-> On Wed, Jan 16, 2019 at 07:10:18PM +0100, Sam Ravnborg wrote:
-> > Hi Daniel.
-> > 
-> > > v5: Actually try to sort them, and while at it, sort all the ones I
-> > > touch.
-> > 
-> > Applied this variant on top of drm-misc and did a build test.
-> > Looked good for ia64, x86 and alpha.
-> > 
-> > Took a closer look at the changes to atmel_hlcd - and they looked OK.
-> > 
-> > But I noticed that atmel_hlcdc uses only drm_kms_helper_poll_init() and
-> > drm_kms_helper_poll_fini().
-> > But there are no hits on DRM_CONNECTOR_POLL - so I think we maybe
-> > have a driver here where we have plugged the drm_poll infrastructure,
-> > but it is not in use.
-> > 
-> > >  include/drm/drm_crtc_helper.h                 | 16 -----------
-> > 
-> > The list of include files in this file could be dropped and replaced by:
-> > struct drm_connector;
-> > struct drm_device;
-> > struct drm_display_mode;
-> > struct drm_encoder;
-> > struct drm_framebuffer;
-> > struct drm_mode_set;
-> > struct drm_modeset_acquire_ctx;
-> > 
-> > I tried to do so on top of your patch.
-> > But there were too many build errros and I somehow lost the motivation.
-> 
-> Yeah the drm_crtc_helper.h header is a bit the miniature drmP.h for legacy
-> kms drivers. Just removing it from all the atomic drivers caused lots of
-> fallout, I expect even more if you entirely remove the includes it has.
-> Maybe a todo, care to pls create that patch since it's your idea?
+Hi Mark,
 
-The main reason I bailed out initially was that this would create
-small changes to several otherwise seldomly touched files.
-And then we would later come and remove drmP.h - so lots of
-small but incremental changes to the same otherwise seldomly
-edited files.
-And the job was only partially done.
+v6 patch is accroding to Geert, Marek and Sergei's comments:
+1) spi_controller for new code. 
+2) "renesas,rcar-gen3-rpc" instead of "renesas,r8a77995-rpc".
+3) patch external address read mode w/o u64 readq().
+4) patch dts for write buffer & drop "renesas,rpc-mode".
+5) coding style and so on.
 
-I will try to experiment with an approach where I clean up the
-include/drm/*.h files a little (like suggested above, +delete drmP.h
-and maybe a bit more).
+v5 patch is accroding to Sergei's comments:
+1) Read 6 bytes ID from Sergei's patch.
+2) regmap_update_bits()
+3) C++ style comment
 
-Then to try on a driver by driver basis to make it build with a
-cleaned set of include files.
-I hope that the cleaned up driver can still build without the
-cleaned header files so the changes can be submitted piecemal.
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match()
+2) Drop unused RPC registers
+3) Use ilog2() instead of fls()
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
 
-Will do so with an eye on the lesser maintained drivers to try it
-out to avoid creating too much chrunch for others.
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned()
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
 
-And if it works out I expect the active drivers to follow the
-example.
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM,
+3) add RPC module software reset,
+4) add regmap,
+5) other coding style and so on.
 
-todo.rst item will wait until I run out of energy.
+thanks for your review.
 
-	Sam
+best regards,
+Mason
+
+Mason Yang (2):
+  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+  dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF controller
+    bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  37 +
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 800 +++++++++++++++++++++
+ 4 files changed, 844 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+
+-- 
+1.9.1
 
