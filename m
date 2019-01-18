@@ -2,91 +2,65 @@ Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FB0C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 11:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F24C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 12:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B612086D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 11:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 154FB2086D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 12:03:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Cyw9Fp+s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfARL7J (ORCPT
+        id S1727020AbfARMD4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 06:59:09 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:42717 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfARL7I (ORCPT
+        Fri, 18 Jan 2019 07:03:56 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:57598 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfARMD4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 06:59:08 -0500
-Received: by mail-vk1-f193.google.com with SMTP id y14so2996334vky.9;
-        Fri, 18 Jan 2019 03:59:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qdHa8O1fe88bEipNxbVt8LZe+YWxrjntCEAsIK/IToo=;
-        b=VAvx4lXV8rUwaycmct2+Op84LpbgLDxpJfUhosLSSgtoCzzEGb9ZtPz0tqj3lw51RM
-         McJpjRvFZRIxPLg444NWJEEgYBXxf+a1POKpbve2v0493rvPtATUTUG95atdknoBUuXx
-         Nxv0qt7a6pSwWKWiNnm/MBgF6SDLUcKSPk29mWDoLO8TkNF20fVljWeQbR5JCh/PPGwX
-         LjmExST9t39tzAd8/bF3LTG4/e1VuJAdsU+oWpvhwHCUgWke5bkdJHsMt8IR4SlWnBBC
-         n/UqZazjCN9jpie5orT/FelRomN2QTr5DhLDrBHLXxzwjDEVADbDuJMAqc9Q0ppFdlpm
-         dsyQ==
-X-Gm-Message-State: AJcUuke2JVYv0M2BLmQ3lEdAuoGdCk1xH/tE9QfT6f8BJlkF7EKm3zxv
-        CWbfS8+/2vq2oHl1m6ZohML6pzr8ig9F+2CimfM=
-X-Google-Smtp-Source: ALg8bN7ex0wG29NBv+MQW5UrzG/rdzkD/pCNPjY9TBRjdtc7GPR3CK+e9HotX10TfbfXweT9ejwEmwwgmXU/3LCRcXA=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr7089303vkd.74.1547812747403;
- Fri, 18 Jan 2019 03:59:07 -0800 (PST)
-MIME-Version: 1.0
-References: <1547808495-19509-1-git-send-email-uli+renesas@fpond.eu> <1547808495-19509-3-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1547808495-19509-3-git-send-email-uli+renesas@fpond.eu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 12:58:55 +0100
-Message-ID: <CAMuHMdUw0HHFhqYikL_YBHWhbC-FUOfA-EGFvY29b5SPOLLWwg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: r8a7779: Add HSCIF0/1 device nodes
+        Fri, 18 Jan 2019 07:03:56 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 9C95625B799;
+        Fri, 18 Jan 2019 23:03:53 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1547813033; bh=uMOVdYIzJCLy7w5Blve8sbgY0daaMqfPhtHXJwsDkuk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Cyw9Fp+sjxxXfS8ldzqjP5QyI1dBLaHFLdiPMGwbSY9hXxqU3wW0xSiKHsEpxMfTm
+         WWfFdLQ9as04paSHPi8mmi+KowpUGP0J0rJNm9MzOL3MZdBEd+MjGEwABndvoIy0tS
+         PLzxh7nERMeBMBAwUMXu1DyReIFmqjlIXBZ90h7s=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id AD8F4940356; Fri, 18 Jan 2019 13:03:51 +0100 (CET)
+Date:   Fri, 18 Jan 2019 13:03:51 +0100
+From:   Simon Horman <horms@verge.net.au>
 To:     Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, magnus.damm@gmail.com
+Subject: Re: [PATCH 1/2] pinctrl: sh-pfc: r8a7779: add HSCIF0/1 pins
+Message-ID: <20190118120351.dg5rcbdjhkv5bqdl@verge.net.au>
+References: <1547808495-19509-1-git-send-email-uli+renesas@fpond.eu>
+ <1547808495-19509-2-git-send-email-uli+renesas@fpond.eu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547808495-19509-2-git-send-email-uli+renesas@fpond.eu>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Uli,
-
-On Fri, Jan 18, 2019 at 11:48 AM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> Based on Rev. 1.00 of the R-Car H1 datasheet.
->
+On Fri, Jan 18, 2019 at 11:48:14AM +0100, Ulrich Hecht wrote:
+> Adds HSCIF0 and HSCIF1 pins, groups and functions for R8A7779.
+> 
 > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> ---
+>  drivers/pinctrl/sh-pfc/pfc-r8a7779.c | 106 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 106 insertions(+)
 
-Thanks for the update!
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-> --- a/arch/arm/boot/dts/r8a7779.dtsi
-> +++ b/arch/arm/boot/dts/r8a7779.dtsi
-
-> +       hscif1: serial@ffe49000 {
-> +               compatible = "renesas,hscif-r8a7779",
-> +                            "renesas,rcar-gen1-hscif", "renesas,hscif";
-> +               reg = <0xffe49000 96>;
-> +               interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
-> +               clocks = <&mstp0_clks R8A7779_CLK_HSCIF1,
-
-Missing closing ">".
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
