@@ -2,88 +2,80 @@ Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AE0C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8698C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB1E2086D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7FA320896
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:18:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPcdA1Ro"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="TGrFiAaS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfARIMe (ORCPT
+        id S1727415AbfARISd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:12:34 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34875 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbfARIMd (ORCPT
+        Fri, 18 Jan 2019 03:18:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39106 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbfARISd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:12:33 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so6033542plo.2;
-        Fri, 18 Jan 2019 00:12:33 -0800 (PST)
+        Fri, 18 Jan 2019 03:18:33 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so10884002ljh.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Jan 2019 00:18:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ppq7NT2cXfi405H1vGpRF/BnaUgG7iU0cC1QzEFgu1g=;
-        b=gPcdA1RoIevKvvyjsb2c5Nw4DdwZk6KafnNJwqEK/XhGvGahWO2Sn2lEuKAJNrOC8M
-         HKF5Po4kTF1p2skYBa8a+4O+TEPfGR8xX0NkyGKx0qqpxw7xPzfBgxmec8y29Ok1xSgO
-         tuXmUcC+xX0dUVe3M9GFNtIE+3uh0zB9zPeRUoW32FHCgUsitfO0luxYmo+Ps9zlEHPu
-         EK0IjBHa2G+wwswq67TcNS/ZjUC2x2LpmufBMZeVR/ge384hhi4z09X4lhq9DXHqG6ru
-         LQDo5J4Zy37JRD7GwM9/mNU2PdqSaH+vdnUGa+50FWl7Ca1nVTBYoPKIbEiglCJFwhW9
-         hgmw==
+        bh=IvVPDY9Dhhic8xmJkgBkDUufVkXKkhvA16uSmsDo93c=;
+        b=TGrFiAaSxI1kctS5W8CXd+FCo0tbhGm96Fjw0fZb2u+WF8lj1/tXMuaPOvzLtScrJL
+         qu8PhwC9CmbTqNeGGRIUFpTOOm17QfTx2dyqNXjosYyLiHN18pd36V96qrXn7iNL+IBM
+         7Nqxj3dFp/CpLFFi/yvn0VnSSigneQJbvkv879uFmgTDqq94Fgqdm1dJmd+JC6laK4F2
+         bbhJH4mSTiKQj5+cBWJl7DdP6Z4YDPBr8+UUtImwc3GC19fCrSQHQWKq0Ty9H16N52+H
+         C7yLwRMtb9B3D7AO6JNwHtmtAyv4ZQekccRDqQ1bJKyr9frT0EIgMSC6xe6o64qr80bE
+         jlww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=ppq7NT2cXfi405H1vGpRF/BnaUgG7iU0cC1QzEFgu1g=;
-        b=JEHd97MNElmRQcinoDO7rHoH5cjhiy98wxcP//1NgbbU+7YWfOSSqH35qACm6UjgtZ
-         ++8Ky/9BkwfpHhPYniRY7LIouhSlGQLgTjP46Zv/359GYTPWHytq/yzJyXjGzAPpc0IR
-         u1Be8oOXDcTAzzO8KdCXL0dD8BxbpD/jx1IzAJOgPOLokaJh+aV445T5G6Tz3n32vF0s
-         WosdDHiQjafd0Tr1jVVmnkbED9BtFYj+sejDP7hsUjnKBff/sQtx0ANp04oXgorWt0BV
-         000iyPfaoZY/eflWGjgUGkXbcOzXqh4/VpiOxN7h3BfarQDRN4V8LghxH3619owKeS8O
-         NbfQ==
-X-Gm-Message-State: AJcUukexOi3UJfhgobVI5nDVb/z1+hh/Bma141mAhFEjwHD/ax0ba8kC
-        XJpKAm0piCxiqK4FClpHpt0=
-X-Google-Smtp-Source: ALg8bN5UnyeWuUHBVl4ihG8PATtfdHjFx8V2cYvgqTV5w2gAXTUZhfCK0HX0RLS/w25992DnNZs7Gw==
-X-Received: by 2002:a17:902:5601:: with SMTP id h1mr18704090pli.160.1547799152786;
-        Fri, 18 Jan 2019 00:12:32 -0800 (PST)
-Received: from [192.168.42.184] ([103.44.164.150])
-        by smtp.gmail.com with ESMTPSA id i5sm7014667pfg.34.2019.01.18.00.12.27
+        bh=IvVPDY9Dhhic8xmJkgBkDUufVkXKkhvA16uSmsDo93c=;
+        b=G1x1ruX6H7C18S6rUnJvTq5hkUfBVdy1CW/8UACT4c3QqGgLoXO5a3ixcwMsJLs3O3
+         /azxlz8mpLF8kZBsuieyZfobWox2mfCX/P4E7mjFWE1wLwEo+a59GOoeZjOb2L1YRUNz
+         ufZb2f02r5+jV0DnP/s8AB/sqL4lT4JfuPyAxszKoSmjJ5jGD5s5+adNk9jxj9IHG0wX
+         4vM7pqcNTz5GYB3deHYQCQO0/MwpVtg798SdkCEJUob2FCwGC7OAz2qiWgoDo85h630L
+         Lp8YjO2ZEGG5IfgSsrCo2z2MHjbfHZpw8a9sSv2gb2RrZG3l7uZ2Rsla69W5Kcmd6/pA
+         8klA==
+X-Gm-Message-State: AJcUukfCGAJq1g9/+M3LOlwATbS4xdQzgLv8AXk2cLrwZFMRVANKHLaI
+        Ilhco2H5uQt9i3GFKRsWoX7DBA==
+X-Google-Smtp-Source: ALg8bN5yxl9FF8e8CDyGyTVdgIkQqyeiYI/+5tEkHkZ3MWxc32GfuKUXTUdeawd5lGmmcBq7YE/z0g==
+X-Received: by 2002:a2e:9dcb:: with SMTP id x11-v6mr12324551ljj.158.1547799511419;
+        Fri, 18 Jan 2019 00:18:31 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.87.239])
+        by smtp.gmail.com with ESMTPSA id q3sm663867lff.42.2019.01.18.00.18.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 00:12:32 -0800 (PST)
+        Fri, 18 Jan 2019 00:18:30 -0800 (PST)
 Subject: Re: [PATCH v6 2/2] dt-bindings: spi: Document Renesas R-Car Gen3
  RPC-IF controller bindings
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
         zhengxunli@mxic.com.tw
 References: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw>
  <1547790855-22120-3-git-send-email-masonccyang@mxic.com.tw>
- <CAMuHMdXiW=4qgZGFqvwGHL7V3ZHfQ2EJ2B96dG14B-jh5+XqOw@mail.gmail.com>
- <dc043bfe-7a56-9810-1e5e-802f8b6beee2@gmail.com>
- <CAMuHMdWwvY=4NgoJmjfpOnetNwxPWqCsH-k-y5FqrbRif_PB7g@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <33f0ea16-1b87-1aae-e5b7-531182008d6d@gmail.com>
-Date:   Fri, 18 Jan 2019 09:12:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <784eb633-138a-b30f-6899-5e0d3cbe6f44@cogentembedded.com>
+Date:   Fri, 18 Jan 2019 11:18:17 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWwvY=4NgoJmjfpOnetNwxPWqCsH-k-y5FqrbRif_PB7g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1547790855-22120-3-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -91,28 +83,51 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 1/18/19 9:10 AM, Geert Uytterhoeven wrote:
-> Hi Marek,
-> 
-> On Fri, Jan 18, 2019 at 9:08 AM Marek Vasut <marek.vasut@gmail.com> wrote:
->> On 1/18/19 9:03 AM, Geert Uytterhoeven wrote:
->>> On Fri, Jan 18, 2019 at 6:55 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> 
->>>> +Example:
->>>> +
->>>> +       rpc: rpc@ee200000 {
->>>> +               compatible = "renesas,rcar-gen3-rpc";
->>>
->>> compatible = "renesas,r8a7795-rpc," renesas,rcar-gen3-rpc";
->>
->> Without the extra comma after r8a7795-rpc, of course ;-)
-> 
-> Let's move it after the closing double quotes. Would that be OK for you? ^-)
+Hello!
 
-Ack
+On 18.01.2019 8:54, Mason Yang wrote:
 
--- 
-Best regards,
-Marek Vasut
+> Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>   .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 37 ++++++++++++++++++++++
+>   1 file changed, 37 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> new file mode 100644
+> index 0000000..9b5001e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> @@ -0,0 +1,37 @@
+> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
+> +----------------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be "renesas,rcar-gen3-rpc"
+> +- #address-cells: should be 1
+> +- #size-cells: should be 0
+> +- reg: should contain three register areas:
+> +	first for the base address of rpc-if registers,
+> +	second for the direct mapping read mode and
+> +	third for the write buffer area.
+> +- reg-names: should contain "regs", "dirmap" and "wbuf"
+> +- clock-names: should contain "rpc"
+> +- clocks: should contain 1 entries for the module's clock
+> +
+> +Example:
+> +
+> +	rpc: rpc@ee200000 {
+> +		compatible = "renesas,rcar-gen3-rpc";
+> +		reg = <0 0xee200000 0 0x7fff>, <0 0x08000000 0 0x4000000>,
+
+    s/0x7fff/0x8000/. -- that's size, not limit. But in reality, 0x200 would 
+be enough.
+
+> +		      <0 0xee208000 0 0x100>;
+> +		reg-names = "regs", "dirmap", "<wbuf>;
+
+    Why <>?
+
+MBR, Sergei
