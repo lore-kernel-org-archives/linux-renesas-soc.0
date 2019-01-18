@@ -2,198 +2,80 @@ Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED05C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 13:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6332C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 14:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3A42087E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 13:34:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MByDRdW+"
+	by mail.kernel.org (Postfix) with ESMTP id 89A7B2087E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 14:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfARNeG (ORCPT
+        id S1727357AbfAROiu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:34:06 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51808 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727080AbfARNeF (ORCPT
+        Fri, 18 Jan 2019 09:38:50 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:54082 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727478AbfAROiu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:34:05 -0500
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A4A2653E;
-        Fri, 18 Jan 2019 14:34:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547818444;
-        bh=UO2eqxSRVpdDlcgerXyVi6c7BVe/342jsk020ti3yQQ=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=MByDRdW+jOpaVsAcvIGysI1q0wyvV+1mzVPq1CTB1WhbQWWPr1l+zNdn48UhntOX+
-         Andu4AFi6KbZY5Jm2Yf5Ixq+yLjD5M49osn4inA+Aka44J1ingDGk8lNT1UHUcVyEc
-         g5iEOeF4Ai9gV+EBnupw5jKngL1aO+kMftZ9JKtE=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 1/2] media: i2c: adv748x: Convert SW reset routine to
- function
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-References: <20190111174141.12594-1-kieran.bingham+renesas@ideasonboard.com>
- <20190111174141.12594-2-kieran.bingham+renesas@ideasonboard.com>
- <9d32186f-1024-d014-0123-d8e6a944ee12@xs4all.nl>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <12e24971-e5e7-dc80-ebfc-8e789d114ddb@ideasonboard.com>
-Date:   Fri, 18 Jan 2019 13:34:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <9d32186f-1024-d014-0123-d8e6a944ee12@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Fri, 18 Jan 2019 09:38:50 -0500
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id Rqen1z0073XaVaC01qentY; Fri, 18 Jan 2019 15:38:47 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gkVIF-0007kw-1s; Fri, 18 Jan 2019 15:38:47 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gkUrS-0007n9-BQ; Fri, 18 Jan 2019 15:11:06 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] spi: sh-hspi: Remove error messages on out-of-memory conditions
+Date:   Fri, 18 Jan 2019 15:11:05 +0100
+Message-Id: <20190118141105.29910-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hans,
+There is no need to print an error message when memory allocations or
+related operations fail, as the core will take care of that.
 
-On 18/01/2019 12:09, Hans Verkuil wrote:
-> On 1/11/19 6:41 PM, Kieran Bingham wrote:
->> The ADV748x is currently reset by writting a small table of registers to
->> the device.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/spi/spi-sh-hspi.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-s/writting/writing/
-
->>
->> The table lacks documentation and contains magic values to perform the
->> actions, including using a fake register address to introduce a delay
->> loop.
->>
->> Remove the table, and convert to code, documenting the purpose of the
->> specific writes along the way.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> Hmm, this patch doesn't apply to the master branch.
-> 
-> Does it depend on other patches being merged first, or it is just out-of-date?
-
-
-Hi Hans,
-
-Sorry - I should have specified - They are dependant upon Jacopo's series.
-
---
-Kieran
-
-> 
-> Regards,
-> 
-> 	Hans
-> 
->> ---
->>  drivers/media/i2c/adv748x/adv748x-core.c | 32 ++++++++++++++++--------
->>  drivers/media/i2c/adv748x/adv748x.h      | 16 ++++++++++++
->>  2 files changed, 38 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
->> index 02f9c440301c..252bdb28b18b 100644
->> --- a/drivers/media/i2c/adv748x/adv748x-core.c
->> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
->> @@ -389,15 +389,6 @@ static const struct media_entity_operations adv748x_media_ops = {
->>   * HW setup
->>   */
->>  
->> -static const struct adv748x_reg_value adv748x_sw_reset[] = {
->> -
->> -	{ADV748X_PAGE_IO, 0xff, 0xff},	/* SW reset */
->> -	{ADV748X_PAGE_WAIT, 0x00, 0x05},/* delay 5 */
->> -	{ADV748X_PAGE_IO, 0x01, 0x76},	/* ADI Required Write */
->> -	{ADV748X_PAGE_IO, 0xf2, 0x01},	/* Enable I2C Read Auto-Increment */
->> -	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
->> -};
->> -
->>  /* Initialize CP Core with RGB888 format. */
->>  static const struct adv748x_reg_value adv748x_init_hdmi[] = {
->>  	/* Disable chip powerdown & Enable HDMI Rx block */
->> @@ -474,12 +465,33 @@ static const struct adv748x_reg_value adv748x_init_afe[] = {
->>  	{ADV748X_PAGE_EOR, 0xff, 0xff}	/* End of register table */
->>  };
->>  
->> +static int adv748x_sw_reset(struct adv748x_state *state)
->> +{
->> +	int ret;
->> +
->> +	ret = io_write(state, ADV748X_IO_REG_FF, ADV748X_IO_REG_FF_MAIN_RESET);
->> +	if (ret)
->> +		return ret;
->> +
->> +	usleep_range(5000, 6000);
->> +
->> +	/* Disable CEC Wakeup from power-down mode */
->> +	ret = io_clrset(state, ADV748X_IO_REG_01, ADV748X_IO_REG_01_PWRDN_MASK,
->> +			ADV748X_IO_REG_01_PWRDNB);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Enable I2C Read Auto-Increment for consecutive reads */
->> +	return io_write(state, ADV748X_IO_REG_F2,
->> +			ADV748X_IO_REG_F2_READ_AUTO_INC);
->> +}
->> +
->>  static int adv748x_reset(struct adv748x_state *state)
->>  {
->>  	int ret;
->>  	u8 regval = 0;
->>  
->> -	ret = adv748x_write_regs(state, adv748x_sw_reset);
->> +	ret = adv748x_sw_reset(state);
->>  	if (ret < 0)
->>  		return ret;
->>  
->> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
->> index b00c1995efb0..2f8d751cfbb0 100644
->> --- a/drivers/media/i2c/adv748x/adv748x.h
->> +++ b/drivers/media/i2c/adv748x/adv748x.h
->> @@ -211,6 +211,11 @@ struct adv748x_state {
->>  #define ADV748X_IO_PD			0x00	/* power down controls */
->>  #define ADV748X_IO_PD_RX_EN		BIT(6)
->>  
->> +#define ADV748X_IO_REG_01		0x01	/* pwrdn{2}b, prog_xtal_freq */
->> +#define ADV748X_IO_REG_01_PWRDN_MASK	(BIT(7) | BIT(6))
->> +#define ADV748X_IO_REG_01_PWRDN2B	BIT(7)	/* CEC Wakeup Support */
->> +#define ADV748X_IO_REG_01_PWRDNB	BIT(6)	/* CEC Wakeup Support */
->> +
->>  #define ADV748X_IO_REG_04		0x04
->>  #define ADV748X_IO_REG_04_FORCE_FR	BIT(0)	/* Force CP free-run */
->>  
->> @@ -229,8 +234,19 @@ struct adv748x_state {
->>  #define ADV748X_IO_CHIP_REV_ID_1	0xdf
->>  #define ADV748X_IO_CHIP_REV_ID_2	0xe0
->>  
->> +#define ADV748X_IO_REG_F2		0xf2
->> +#define ADV748X_IO_REG_F2_READ_AUTO_INC	BIT(0)
->> +
->> +/* For PAGE slave address offsets */
->>  #define ADV748X_IO_SLAVE_ADDR_BASE	0xf2
->>  
->> +/*
->> + * The ADV748x_Recommended_Settings_PrA_2014-08-20.pdf details both 0x80 and
->> + * 0xff as examples for performing a software reset.
->> + */
->> +#define ADV748X_IO_REG_FF		0xff
->> +#define ADV748X_IO_REG_FF_MAIN_RESET	0xff
->> +
->>  /* HDMI RX Map */
->>  #define ADV748X_HDMI_LW1		0x07	/* line width_1 */
->>  #define ADV748X_HDMI_LW1_VERT_FILTER	BIT(7)
->>
-> 
+diff --git a/drivers/spi/spi-sh-hspi.c b/drivers/spi/spi-sh-hspi.c
+index dc0926e4366548a5..7159cb99dbe977ee 100644
+--- a/drivers/spi/spi-sh-hspi.c
++++ b/drivers/spi/spi-sh-hspi.c
+@@ -226,10 +226,8 @@ static int hspi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	master = spi_alloc_master(&pdev->dev, sizeof(*hspi));
+-	if (!master) {
+-		dev_err(&pdev->dev, "spi_alloc_master error.\n");
++	if (!master)
+ 		return -ENOMEM;
+-	}
+ 
+ 	clk = clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(clk)) {
+@@ -248,7 +246,6 @@ static int hspi_probe(struct platform_device *pdev)
+ 	hspi->addr	= devm_ioremap(hspi->dev,
+ 				       res->start, resource_size(res));
+ 	if (!hspi->addr) {
+-		dev_err(&pdev->dev, "ioremap error.\n");
+ 		ret = -ENOMEM;
+ 		goto error1;
+ 	}
+-- 
+2.17.1
 
