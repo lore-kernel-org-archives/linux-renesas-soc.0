@@ -2,120 +2,91 @@ Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6C7C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 10:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FB0C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 11:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50369204EC
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 10:48:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="KkYCQdQ3"
+	by mail.kernel.org (Postfix) with ESMTP id 30B612086D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 11:59:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfARKse (ORCPT
+        id S1727388AbfARL7J (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:48:34 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:25640 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfARKsd (ORCPT
+        Fri, 18 Jan 2019 06:59:09 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:42717 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfARL7I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:48:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547808512;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Cmc9Alv1HrDQBn2VDq5e/VAI79by0Paip2fgBN5DS1I=;
-        b=KkYCQdQ3vLNAhTzOckWrwQLAREmwCfiuX8uyjDtfnhhTBStf4oFcgJLbZ34bQEYnVc
-        +tkZrKlWM5bXDEv3jPKYIwZqERwweOuKu2MnJ0p6qZMwGhZqLegBQfTf6wguTSFOiFF0
-        SDD8uKn0jBOpT768lQNTtyxR+M+yUrlBZLirDBD65KPaDIorI20qA82YJT+rwbjYCWMY
-        /pAgYjcJfdUy/WVoqcyAE6q2hXeXztU86q4Mi8FMX988mnc00f+GEj0QDIU+Zcsk5T6g
-        v+wWeo7vSlDDfaGHQptuVLyzZYuPqOuP+lcmj0fW8LRhn/B7GpSkH3AYeFaqFprGaK3K
-        LORw==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8GZZd0rmoQ=="
-X-RZG-CLASS-ID: mo00
-Received: from groucho.site
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id V028b8v0IAm9nyE
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 18 Jan 2019 11:48:09 +0100 (CET)
-From:   Ulrich Hecht <uli+renesas@fpond.eu>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     horms@verge.net.au, geert@linux-m68k.org,
-        khiem.nguyen.xt@renesas.com, dien.pham.ry@renesas.com,
-        takeshi.kihara.df@renesas.com,
-        Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v2 3/5] arm64: dts: r8a7796: Add cpuidle support for CA57 cores
-Date:   Fri, 18 Jan 2019 11:47:52 +0100
-Message-Id: <1547808474-19427-4-git-send-email-uli+renesas@fpond.eu>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547808474-19427-1-git-send-email-uli+renesas@fpond.eu>
-References: <1547808474-19427-1-git-send-email-uli+renesas@fpond.eu>
+        Fri, 18 Jan 2019 06:59:08 -0500
+Received: by mail-vk1-f193.google.com with SMTP id y14so2996334vky.9;
+        Fri, 18 Jan 2019 03:59:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qdHa8O1fe88bEipNxbVt8LZe+YWxrjntCEAsIK/IToo=;
+        b=VAvx4lXV8rUwaycmct2+Op84LpbgLDxpJfUhosLSSgtoCzzEGb9ZtPz0tqj3lw51RM
+         McJpjRvFZRIxPLg444NWJEEgYBXxf+a1POKpbve2v0493rvPtATUTUG95atdknoBUuXx
+         Nxv0qt7a6pSwWKWiNnm/MBgF6SDLUcKSPk29mWDoLO8TkNF20fVljWeQbR5JCh/PPGwX
+         LjmExST9t39tzAd8/bF3LTG4/e1VuJAdsU+oWpvhwHCUgWke5bkdJHsMt8IR4SlWnBBC
+         n/UqZazjCN9jpie5orT/FelRomN2QTr5DhLDrBHLXxzwjDEVADbDuJMAqc9Q0ppFdlpm
+         dsyQ==
+X-Gm-Message-State: AJcUuke2JVYv0M2BLmQ3lEdAuoGdCk1xH/tE9QfT6f8BJlkF7EKm3zxv
+        CWbfS8+/2vq2oHl1m6ZohML6pzr8ig9F+2CimfM=
+X-Google-Smtp-Source: ALg8bN7ex0wG29NBv+MQW5UrzG/rdzkD/pCNPjY9TBRjdtc7GPR3CK+e9HotX10TfbfXweT9ejwEmwwgmXU/3LCRcXA=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr7089303vkd.74.1547812747403;
+ Fri, 18 Jan 2019 03:59:07 -0800 (PST)
+MIME-Version: 1.0
+References: <1547808495-19509-1-git-send-email-uli+renesas@fpond.eu> <1547808495-19509-3-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1547808495-19509-3-git-send-email-uli+renesas@fpond.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 18 Jan 2019 12:58:55 +0100
+Message-ID: <CAMuHMdUw0HHFhqYikL_YBHWhbC-FUOfA-EGFvY29b5SPOLLWwg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7779: Add HSCIF0/1 device nodes
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
+Hi Uli,
 
-Enable cpuidle (core shutdown) support for R-Car M3-W CA57 cores.
+On Fri, Jan 18, 2019 at 11:48 AM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> Based on Rev. 1.00 of the R-Car H1 datasheet.
+>
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-Parameters were found after evaluation by gaku.inami.xw@bp.renesas.com; they
-help to keep the performance and reduce the power consumption.
+Thanks for the update!
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[dien.pham.ry: Apply new cpuidle parameters]
-Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
----
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> --- a/arch/arm/boot/dts/r8a7779.dtsi
+> +++ b/arch/arm/boot/dts/r8a7779.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 3a9f8c7..212ffd6 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -160,6 +160,7 @@
- 			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
-@@ -173,6 +174,7 @@
- 			power-domains = <&sysc R8A7796_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
-@@ -240,6 +242,19 @@
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-+
-+		idle-states {
-+			entry-method = "psci";
-+
-+			CPU_SLEEP_0: cpu-sleep-0 {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x0010000>;
-+				local-timer-stop;
-+				entry-latency-us = <400>;
-+				exit-latency-us = <500>;
-+				min-residency-us = <4000>;
-+			};
-+		};
- 	};
- 
- 	extal_clk: extal {
+> +       hscif1: serial@ffe49000 {
+> +               compatible = "renesas,hscif-r8a7779",
+> +                            "renesas,rcar-gen1-hscif", "renesas,hscif";
+> +               reg = <0xffe49000 96>;
+> +               interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+> +               clocks = <&mstp0_clks R8A7779_CLK_HSCIF1,
+
+Missing closing ">".
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
