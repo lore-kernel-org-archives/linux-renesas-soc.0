@@ -2,138 +2,167 @@ Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5C7C5AC81
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 18:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5169DC5AC81
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 19:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B40392173C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 18:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547836742;
-	bh=cHffd/aMDuqEH3ijoxTDDjxMmbL0tJB/tDiZkJQ9+0w=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=n0OPW+ne5vakOgpD8Zsua1VcDz2uMSBhPh6dOL2q7mdGPErgKNdN2Z40eiOXQedlZ
-	 FiPrUJWPDE4+lw8gDn5K2+3ViNdMaggad0PxS5coRh2kw9BeatnZIqqAqLhlAVAkOl
-	 1jbakAHhlgefhanSP+HezkwRLvgTUXOaDQITk9uE=
+	by mail.kernel.org (Postfix) with ESMTP id 204F02087E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 19:43:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="kLwy1V2e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbfARSjC (ORCPT
+        id S1729340AbfARTn3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:39:02 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58116 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728543AbfARSjB (ORCPT
+        Fri, 18 Jan 2019 14:43:29 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34878 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729206AbfARTn3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:39:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=SHb/EGnuvqjEEYErTkej1IwiOtC2VgYogAsqe6Xk/6k=; b=HR3m3WKzflH3
-        DiF9pi063BCTHDHGO3yHGsnGMhIJa0UDiD2CZXb6/zc1FblVYTL1261BUNlu2/WJ3P+zeDc5CcLiq
-        GI73ysMGEhbeJ8wmkoaHKVrrMGEe+bPsWWF1dVOXqPH+XjEzSW+7+gmCqE/1DpfGNz6cTiY/6d+8c
-        SOTyc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gkZ2c-0005NH-0s; Fri, 18 Jan 2019 18:38:54 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 9CC9111276E7; Fri, 18 Jan 2019 18:38:53 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Hoan Nguyen An <na-hoan@jinso.co.jp>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
-        geert+renesas@glider.be, linux-spi@vger.kernel.org,
-        kuninori.morimoto.gx@renesas.com, magnus.damm@gmail.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp, cv-dong@jinso.co.jp,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-msiof: Use DMA if possible" to the spi tree
-In-Reply-To:  <1547803771-9564-2-git-send-email-na-hoan@jinso.co.jp>
-X-Patchwork-Hint: ignore
-Message-Id: <20190118183853.9CC9111276E7@debutante.sirena.org.uk>
-Date:   Fri, 18 Jan 2019 18:38:53 +0000 (GMT)
+        Fri, 18 Jan 2019 14:43:29 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x85-v6so12629059ljb.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Jan 2019 11:43:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Fn/ZaOA4TCft1SNkMg6+ljUMYqlYSPj3PIG9fg7fiSU=;
+        b=kLwy1V2ehwDdsIG4T92DCTb2UHcz6vgw11zko6/U5r65PH12y1/9pgleiqeUFd+Rav
+         ZA0cPdMYou5VTnB37xvBfUhQZ3X9JtueMqu6q/LODpUYmPOAS5/5+8VHIvxfXhALuexa
+         /4YiVDHzu6QSOkLzfyr09HjiEvS/dSc4Q2Om3y3OJZNku/klYUDlbUAm45E1xv2qkJ4L
+         ipQjqSyikmfAzqpjfVpG6mErcRnUHQXHGaVr6eRikBM0FXXnjdsgue01vCCElV0yhGly
+         7vXiNIM3qQqnb2OmZDjLElbcjD3g/gROqlMiOyNL5OeM2/4CpQNMt+cH+0otNR3nNjYt
+         dgyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Fn/ZaOA4TCft1SNkMg6+ljUMYqlYSPj3PIG9fg7fiSU=;
+        b=oXJYCqSPplvm16vQx140KAjqKy9PQo9qrLt5OJQ6h+usXaDI3w3JSeuAA8vDETAhjZ
+         Jq0Jc7F2k8uYdzZCI6u15Y/0K9G0PoFj0hS1wmjFa0nICm5zGUjxTRe8oJ6vpD6cFlOZ
+         PEqaTK5VZXuBYVc1hu46Hcil13QqK8qTzgdHBLUkZgLf0n4i53VHXsLzh8eIPnSyqcgL
+         9ebzy74mFWaCCRafEvLUnImx5FteRzWaxEZbtWhOeHzIWaNUB5embvDAtyfVyK/LesUY
+         X6stPZeOf6ILJBiuz6Ek3xC+DkpwBf5koxw2NTJ/GpdyfIk8mncobl15+16Mj+0lnyDe
+         zm5Q==
+X-Gm-Message-State: AJcUukcDj7wbsToKO2876Pv/I8C7q4RifPv+0528lAU3G09vzXTTkcK9
+        i+JILZG0eQqx682cbHCDcyWdVQ==
+X-Google-Smtp-Source: ALg8bN44APENG7t2RTnXHL+2fSRohyX8lkI9kciqFymMEFbwtce7F26PMgEkSQpCje/rwS/Qvelihg==
+X-Received: by 2002:a2e:8951:: with SMTP id b17-v6mr2049717ljk.142.1547840606907;
+        Fri, 18 Jan 2019 11:43:26 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.87.207])
+        by smtp.gmail.com with ESMTPSA id p89-v6sm893729ljp.60.2019.01.18.11.43.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 11:43:25 -0800 (PST)
+Subject: Re: [PATCH v6 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw>
+ <1547790855-22120-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <f4665653-503c-e1a1-a211-b8b322225bd6@cogentembedded.com>
+Date:   Fri, 18 Jan 2019 22:43:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <1547790855-22120-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The patch
+Hello!
 
-   spi: sh-msiof: Use DMA if possible
+On 01/18/2019 08:54 AM, Mason Yang wrote:
 
-has been applied to the spi tree at
+> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..692c760
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,800 @@
+[...]
+> +#define RPC_DRENR		0x001C	// R/W
+> +#define RPC_DRENR_CDB(o)	(u32)((((o) & 0x3) << 30))
+> +#define RPC_DRENR_OCDB(o)	(((o) & 0x3) << 28)
+> +#define RPC_DRENR_ADB(o)	(((o) & 0x3) << 24)
+> +#define RPC_DRENR_OPDB(o)	(((o) & 0x3) << 20)
+> +#define RPC_DRENR_SPIDB(o)	(((o) & 0x3) << 16)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   Manual v1.00 calls it DRDB, not SPIDB.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+[...]
+> +#define RPC_SMENR		0x0030	// R/W
+> +#define RPC_SMENR_CDB(o)	(((o) & 0x2) << 30)
+> +#define RPC_SMENR_OCDB(o)	(((o) & 0x2) << 28)
+> +#define RPC_SMENR_ADB(o)	(((o) & 0x2) << 24)
+> +#define RPC_SMENR_OPDB(o)	(((o) & 0x2) << 20)
+> +#define RPC_SMENR_SPIDB(o)	(((o) & 0x2) << 16)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+   Ugh, s/0x2/0x3/! :-/
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+[...]
+> +#define RPC_SMDRENR		0x0064	// R/W
+> +#define RPC_SMDRENR_HYPE	(0x5 << 12)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+   s/0x5/0x7/, and this is a field, not value.
 
-Thanks,
-Mark
+[...]
+> +static int rpc_spi_probe(struct platform_device *pdev)
+> +{
+> +	struct spi_controller *ctlr;
+> +	struct resource *res;
+> +	struct rpc_spi *rpc;
+> +	const struct regmap_config *regmap_config;
+> +	struct device_node *rpc_if;
+> +	int ret;
+> +
+> +	rpc_if = of_find_compatible_node(pdev->dev.of_node, NULL,
+> +					 "jedec,spi-nor");
 
-From d05e3eadb1bccbf276742e13b2c898959c310ce6 Mon Sep 17 00:00:00 2001
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-Date: Fri, 18 Jan 2019 18:29:31 +0900
-Subject: [PATCH] spi: sh-msiof: Use DMA if possible
+   I doubt that this is a correct function to check for the child node's
+"compatible" prop...
 
-Currently, this driver only supports feature for DMA 32-bits.
-In this case, only if the data length is divisible by 4 to use
-DMA, otherwise PIO will be used. This patch will suggest use
-the DMA 32-bits with 4bytes of words, then the remaining data
-will be transmitted by PIO mode.
+[...]
+> +	regmap_config = &rpc_spi_regmap_config;
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-sh-msiof.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+   Doesn't look like this variable is needed...
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 351470bc020d..617cdf3be050 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -937,17 +937,13 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- 		unsigned int l = 0;
- 
- 		if (tx_buf)
--			l = min(len, p->tx_fifo_size * 4);
-+			l = min(round_down(len, 4), p->tx_fifo_size * 4);
- 		if (rx_buf)
--			l = min(len, p->rx_fifo_size * 4);
-+			l = min(round_down(len, 4), p->rx_fifo_size * 4);
- 
- 		if (bits <= 8) {
--			if (l & 3)
--				break;
- 			copy32 = copy_bswap32;
- 		} else if (bits <= 16) {
--			if (l & 3)
--				break;
- 			copy32 = copy_wswap32;
- 		} else {
- 			copy32 = copy_plain32;
--- 
-2.20.1
+> +	rpc->regmap = devm_regmap_init_mmio(&pdev->dev, rpc->base,
+> +					    regmap_config);
+> +	if (IS_ERR(rpc->regmap)) {
+> +		dev_err(&pdev->dev, "failed to init regmap %ld for rpc-spi\n",
 
+   How about:
+
+		dev_err(&pdev->dev, "failed to init regmap for rpc-spi, error %ld\n",
+
+[...]
+> +	ret = spi_register_controller(ctlr);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "spi_register_master failed\n");
+
+   You forgot to update the message. :-)
+
+[...]
+
+MBR, Sergei
