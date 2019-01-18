@@ -6,80 +6,95 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E3D6C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 13:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E404C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 13:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C3E20652
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 13:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 296D92087E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 13:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfARNSh (ORCPT
+        id S1727020AbfARNcM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:18:37 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:33039 "EHLO
+        Fri, 18 Jan 2019 08:32:12 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:32806 "EHLO
         mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfARNSh (ORCPT
+        with ESMTP id S1727178AbfARNcI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:18:37 -0500
-Received: by mail-vs1-f68.google.com with SMTP id p74so8394646vsc.0;
-        Fri, 18 Jan 2019 05:18:36 -0800 (PST)
+        Fri, 18 Jan 2019 08:32:08 -0500
+Received: by mail-vs1-f68.google.com with SMTP id p74so8418120vsc.0
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Jan 2019 05:32:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RdS38rJQZjwRkUl4kj29m8UAC96x9WdCcFyfcp7MCig=;
-        b=t7CrKOf63HJJcfIO94RhIOrK6ASUqtPLggfCEL3DlzGqDN6EeiAt/bZR9cZ1tZN/G1
-         QlhDF7qIv+pWjXHGC/F/RO2S7liAMHPSBsHlnPY5pfDnFS5mF0MvUDPFvAUAImhCOMPD
-         oeZtyMa6aJM0Iqpn3001XKh+AV8dxEltkQ3IeADYNOc5BOcM8RY6RmwGBcl9xi5iMVB7
-         WHihSH+9wHsMuwimIhrrki3pTuKPXN03Drf2BGtQH1Z0xwnclg9Je8Wy77LhbNORRJ9p
-         FvZd77r8EfbXab0N7aJBgXC/SnyO/HBrrWL3Dz+KVPthQw0N1eJP8MYSbqX1KwY/Y6xK
-         DIgg==
-X-Gm-Message-State: AJcUukd6CzYBfMZwfhCUyDwtCX31S+RS77oGQjmN+CqX27db8mhn1lv6
-        imv1JL+xdNUQcB5P/DhGHuPz2UnbofTXq49I1dI=
-X-Google-Smtp-Source: ALg8bN7VH3wDzQe2ZEjxih6hRKX4KEnUe7Uu0a6qf2vUoq6wIa32A9JbobwQbgC68czSex8dKhio9Gh9PZ8AvdaiJh0=
-X-Received: by 2002:a67:b60d:: with SMTP id d13mr7874243vsm.152.1547817516154;
- Fri, 18 Jan 2019 05:18:36 -0800 (PST)
+        bh=4tT787jebN7BjtZV+4IEE5o9wdiK4Z3vEVKaglFhafo=;
+        b=XRB29DSE46XmSgAMgZhgydsRgBOMyfbbvqJTqJVpmMfZAXp8umKxShXmnykXASMham
+         5skWTqSA6sa4uQZvQBRCZto3m0HFDQoIU7XGR5pxt9OF7ej3clYAxqfE6QGX61jEXJps
+         HSWX9pSGGtfELJMDyw7lY482ZbVI2zrm9GIVigZT3jbPyDDQn5QaoQnD5sGPKGzP1ibj
+         sllLFY5pgKCaMQVYK/t3uyx/qAQg4XnuNTUu0qL0pzPxb2JAoYbVCAajAJlybGeQcTVb
+         a673DcpkE6v9G63ERVjqGVEZSUwt9kI4BsSaYL1CY/0oLyf6KwgULb4DVDNFHofn1sbL
+         DIYQ==
+X-Gm-Message-State: AJcUukdFprVrrGXqguRKAIwzA14gKdD6tlWS7pWij2KEkqcwpUZVoxWA
+        c8UXeF2c4oZ6Hb0FabccsTJzmK3rj7ORlzIwOsQ=
+X-Google-Smtp-Source: ALg8bN6Zsf212RwGWZzHCYSd3pQVmBcm2PSkjJNNZQwbFzsFMH/SLx/xpt5eGqpQ/kQzYgN5op3u29ikIgO0u8DCSQc=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr6739362vsi.96.1547818326731;
+ Fri, 18 Jan 2019 05:32:06 -0800 (PST)
 MIME-Version: 1.0
-References: <1547803771-9564-1-git-send-email-na-hoan@jinso.co.jp> <1547803771-9564-2-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1547803771-9564-2-git-send-email-na-hoan@jinso.co.jp>
+References: <20190118122536.20000-1-horms+renesas@verge.net.au>
+In-Reply-To: <20190118122536.20000-1-horms+renesas@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 14:18:24 +0100
-Message-ID: <CAMuHMdVWyVLeRWSf4rBnk54sj+oAQAuWVwB6eKc9Hi8DBQ9c=A@mail.gmail.com>
-Subject: Re: [v2 PATCH 2/2] spi: sh-msiof: Use DMA if possible
-To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
+Date:   Fri, 18 Jan 2019 14:31:54 +0100
+Message-ID: <CAMuHMdWt66viDaMGnFXJD9kH0Rz_GkEjPcPnemy65j0vz69UvA@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77990: ebisu: Enable HS400 of SDHI3
+To:     Simon Horman <horms+renesas@verge.net.au>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
-        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= 
-        <cv-dong@jinso.co.jp>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hoan-san,
+Hi Simon,
 
-On Fri, Jan 18, 2019 at 10:30 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
-> Currently, this driver only supports feature for DMA 32-bits.
-> In this case, only if the data length is divisible by 4 to use
-> DMA, otherwise PIO will be used. This patch will suggest use
-> the DMA 32-bits with 4bytes of words, then the remaining data
-> will be transmitted by PIO mode.
+On Fri, Jan 18, 2019 at 1:25 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> Enable HS400 of SDHI3 using the corresponding DT property.
+> No further changes are required.
 >
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Thanks for the update!
-
-DMA is now used for the first part, and PIO for the remainder.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Using "hdparm -tT /dev/mmcblk0"
+
+HS200:
+
+ Timing cached reads:   694 MB in  2.00 seconds = 346.60 MB/sec
+ Timing buffered disk reads: 434 MB in  3.00 seconds = 144.56 MB/sec
+
+HS400:
+
+ Timing cached reads:   696 MB in  2.00 seconds = 348.20 MB/sec
+ Timing buffered disk reads: 446 MB in  3.00 seconds = 148.65 MB/sec
+
+No real difference.
+
+Note that "dd" gives me very fluctuating results (all for HS400):
+
+root@ebisu:~# dd if=/dev/mmcblk0 of=/dev/null bs=1M count=128 iflag=direct
+128+0 records in
+128+0 records out
+134217728 bytes (134 MB, 128 MiB) copied, 3.20103 s, 41.9 MB/s
+root@ebisu:~# dd if=/dev/mmcblk0 of=/dev/null bs=1M count=128 iflag=direct
+128+0 records in
+128+0 records out
+134217728 bytes (134 MB, 128 MiB) copied, 1.15324 s, 116 MB/s
+128+0 records in
+128+0 records out
+134217728 bytes (134 MB, 128 MiB) copied, 1.82701 s, 73.5 MB/s
 
 Gr{oetje,eeting}s,
 
