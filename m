@@ -7,54 +7,56 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFD9C07EBF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FA2C5ACD3
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 18:39:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20A621473
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 18:39:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87A7721473
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 18:39:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1547836742;
-	bh=LB14gRaT4I2nbY7A6p2PhE7z7LkdS9qWda81F1Sr/ng=;
+	bh=Dsd5VlQbgj3hjolcaN2rTg1ICmUmCkDATC3MbE0zlvs=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=R5lBGiH2wn5JIze5mlnj0Xs9HsT65/3B5oVyAH5dZuabwfDKJxZ9cCuvsUEGdW4hD
-	 2Gu3nzHsOYZjwZLM6g9pgkI1ZeGXZYpFUUxku1B+fnFTJKRkx/r9YyygwqT+QCHKTv
-	 h1BeBu2FC83oO0yl/EYcyunKPpI4K3A8eBYHqL2U=
+	b=VazZntTk5fW6ZcdUKjVN2aSAOt5fsi1GZema5R/vK5vpEqKWjxkV3tX2OUdeE/J18
+	 Ej0+R/n+qeKKuPge1AFeM5dZf6Ui0Uqnm1RmLSg1qKHqJwOY+Qi+jVa/rEfaqBrHEd
+	 sgi2VPpsPYCwxZlS2eiPpg45uYHHI0a/enmmi/+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfARSjB (ORCPT
+        id S1728543AbfARSjC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 13:39:01 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58114 "EHLO
+        Fri, 18 Jan 2019 13:39:02 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58146 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728457AbfARSjB (ORCPT
+        with ESMTP id S1728892AbfARSjC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 13:39:01 -0500
+        Fri, 18 Jan 2019 13:39:02 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=fw/Z3DQXcZ74SMhiPR4aOsbQ/qI2gw0zl6OL+cDH/m4=; b=Mw5JIQY3nhid
-        Ka7TJ424sndAwvNCgQ4IRL5rYb6tVHEBCNAdQGqARMzvoXErMr0f/MiXx4TivAe/1yNXwooBKNFYI
-        RpdzI+KFt8nw/mxsrIS33OCgJHQdynW/lKZPh+eep4WY9zinML/3zPXmJl8OvtL3qQsfIc9bR5VB2
-        hAFPA=;
+        List-Archive; bh=Z3hJZ+IOkR1cxxt3gpAqecLw8jPFyXFqU94MWwVYO9c=; b=oK5VDafM+Zfe
+        wfMfglF6rf8H1G7uyMxLoh5unhCzF95nYtK2i2CDjt4cCiez9pvD+9kBvg3s93AHER4L4BD/1W/+e
+        wtGXk8VUj33TxIoRn8jMoc4idV1vFotjGugSQadYrqUA7rMEiVTONLjGk8veWj+CmT8yROdog2Bmr
+        5jGn0=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gkZ2f-0005NW-OC; Fri, 18 Jan 2019 18:38:57 +0000
+        id 1gkZ2d-0005NL-Sy; Fri, 18 Jan 2019 18:38:55 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4C57411276E7; Fri, 18 Jan 2019 18:38:57 +0000 (GMT)
+        id 73BB211276E7; Fri, 18 Jan 2019 18:38:55 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: sh-hspi: Remove error messages on out-of-memory conditions" to the spi tree
-In-Reply-To:  <20190118141105.29910-1-geert+renesas@glider.be>
+To:     Hoan Nguyen An <na-hoan@jinso.co.jp>
+Cc:     Mark Brown <broonie@kernel.org>, linux-renesas-soc@vger.kernel.org,
+        broonie@kernel.org, geert+renesas@glider.be,
+        linux-spi@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
+        magnus.damm@gmail.com, yoshihiro.shimoda.uh@renesas.com,
+        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
+        cv-dong@jinso.co.jp, linux-spi@vger.kernel.org
+Subject: Applied "spi: sh-msiof: fix *info pointer in request_dma()" to the spi tree
+In-Reply-To:  <1547803771-9564-1-git-send-email-na-hoan@jinso.co.jp>
 X-Patchwork-Hint: ignore
-Message-Id: <20190118183857.4C57411276E7@debutante.sirena.org.uk>
-Date:   Fri, 18 Jan 2019 18:38:57 +0000 (GMT)
+Message-Id: <20190118183855.73BB211276E7@debutante.sirena.org.uk>
+Date:   Fri, 18 Jan 2019 18:38:55 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -62,7 +64,7 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 The patch
 
-   spi: sh-hspi: Remove error messages on out-of-memory conditions
+   spi: sh-msiof: fix *info pointer in request_dma()
 
 has been applied to the spi tree at
 
@@ -87,45 +89,34 @@ to this mail.
 Thanks,
 Mark
 
-From 88e7e0a8df1ff1ceac0a4b487e25860446bdbfb2 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Fri, 18 Jan 2019 15:11:05 +0100
-Subject: [PATCH] spi: sh-hspi: Remove error messages on out-of-memory
- conditions
+From f70351ae06af0ccb1f7f91b86395ae5eba9c3c8c Mon Sep 17 00:00:00 2001
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Date: Fri, 18 Jan 2019 18:29:30 +0900
+Subject: [PATCH] spi: sh-msiof: fix *info pointer in request_dma()
 
-There is no need to print an error message when memory allocations or
-related operations fail, as the core will take care of that.
+sh_msiof_spi_info *info struct pointer was initialized in the probe() function
+no need to get back and keep consistency.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-sh-hspi.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/spi/spi-sh-msiof.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-sh-hspi.c b/drivers/spi/spi-sh-hspi.c
-index dc0926e43665..7159cb99dbe9 100644
---- a/drivers/spi/spi-sh-hspi.c
-+++ b/drivers/spi/spi-sh-hspi.c
-@@ -226,10 +226,8 @@ static int hspi_probe(struct platform_device *pdev)
- 	}
- 
- 	master = spi_alloc_master(&pdev->dev, sizeof(*hspi));
--	if (!master) {
--		dev_err(&pdev->dev, "spi_alloc_master error.\n");
-+	if (!master)
- 		return -ENOMEM;
--	}
- 
- 	clk = clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(clk)) {
-@@ -248,7 +246,6 @@ static int hspi_probe(struct platform_device *pdev)
- 	hspi->addr	= devm_ioremap(hspi->dev,
- 				       res->start, resource_size(res));
- 	if (!hspi->addr) {
--		dev_err(&pdev->dev, "ioremap error.\n");
- 		ret = -ENOMEM;
- 		goto error1;
- 	}
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index d14b407cc800..351470bc020d 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -1206,7 +1206,7 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
+ {
+ 	struct platform_device *pdev = p->pdev;
+ 	struct device *dev = &pdev->dev;
+-	const struct sh_msiof_spi_info *info = dev_get_platdata(dev);
++	const struct sh_msiof_spi_info *info = p->info;
+ 	unsigned int dma_tx_id, dma_rx_id;
+ 	const struct resource *res;
+ 	struct spi_master *master;
 -- 
 2.20.1
 
