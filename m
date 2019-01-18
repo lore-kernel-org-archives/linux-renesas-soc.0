@@ -2,82 +2,148 @@ Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7A4C43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D62C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FD120883
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E8DC20855
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 08:54:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727371AbfARIfK (ORCPT
+        id S1726423AbfARIyD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:35:10 -0500
-Received: from mail-vs1-f54.google.com ([209.85.217.54]:46003 "EHLO
-        mail-vs1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfARIfJ (ORCPT
+        Fri, 18 Jan 2019 03:54:03 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:39985 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726302AbfARIyC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:35:09 -0500
-Received: by mail-vs1-f54.google.com with SMTP id x28so7907256vsh.12;
-        Fri, 18 Jan 2019 00:35:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XqpRB74ajx/csnpDcuG9Nhf0T0Wy58ERqxDBtWJqRIY=;
-        b=kQyj+WTaHdyR/EBHvnZJrfHqhKAleJYh0RNujnLEVHxH0115WZaZa5dzsRBkowkRWg
-         /gvzo0g+FDTrACd2JqAlp8pT+uyOf337yL5oFlZrOEiFEOl9Ur3lQLhErUrr3deBk6cc
-         Uk4FUp4aicZCRC+s1ye1WpUkbYMjmJ2nk4sYu6PWvonutqRIVK41z9xzt9PJIKKXwtZg
-         1rDv8FY2SkEIUpUFddrt3JqfpKYQaz/AjgTULSj22EDtPOmmrPPDPa0fTAYtHV+PZ4ZX
-         aZ+YO0xbjXnkxVR3bCG658OFUF3fkyvUgO6eWSAYkbGYWUHldl3Y8h66PftBGKipvGNv
-         +LFg==
-X-Gm-Message-State: AJcUukda6qCcrab6VElRRtFX+r6pYJg4lCMnoq2FLYvmsj11pyBahc2N
-        QghuJFW1gCH8GO0CE1HQpHECnkOZCUl6H4U2R4e+Lw==
-X-Google-Smtp-Source: ALg8bN5TOc98PxASnqiZY89wAtLUiX8jHsbBffkY3L9NUKJpWIsP1HVvePXmwkBbq0ZblDqlkGeXpQi0B+VCHvaBbQ0=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr7179863vsj.11.1547800508059;
- Fri, 18 Jan 2019 00:35:08 -0800 (PST)
+        Fri, 18 Jan 2019 03:54:02 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-04.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gkPuX-0004Y2-HW from Vladimir_Zapolskiy@mentor.com ; Fri, 18 Jan 2019 00:53:57 -0800
+Received: from eyas.local (137.202.0.90) by SVR-IES-MBX-04.mgc.mentorg.com
+ (139.181.222.4) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 18 Jan
+ 2019 08:53:53 +0000
+From:   Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     <linux-gpio@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v2] gpio: rcar: select General Output Register to set output states
+Date:   Fri, 18 Jan 2019 10:53:43 +0200
+Message-ID: <20190118085343.32553-1-vladimir_zapolskiy@mentor.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-References: <20190116210555.12209-1-wsa+renesas@sang-engineering.com>
- <20190116210555.12209-8-wsa+renesas@sang-engineering.com> <CAMuHMdVj49y3b+WqyTfNV2sc0WTneFaO4zZSA6WfkZDrqgD=eA@mail.gmail.com>
- <20190117170553.GA2516@kunai>
-In-Reply-To: <20190117170553.GA2516@kunai>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 09:34:56 +0100
-Message-ID: <CAMuHMdXn3u44CM9=E79v4BHdDbgg=wz1i4mV0Ws8eC+RxjWgVQ@mail.gmail.com>
-Subject: Re: [RFC/RFT 7/7] i2c: sh_mobile: update copyright and comments
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+R-Car GPIO controller provides two interfaces to set GPIO line output
+signal state, and for a particular GPIO line the selected interface is
+determined by OUTDTSEL bit value.
 
-On Thu, Jan 17, 2019 at 6:05 PM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > > + * Copyright (C) 2014-19 Renesas Electronics Corporation
-> >
-> > Why this addition?
->
-> Because of the funding. Is it wrong?
+At the moment the driver supports only one of two interfaces, namely
+OUTDT General Output Register is used to control the output signal.
 
-That depends on your contract ;-)
+While this selection is the default one on reset, it is not explicitly
+configured on probe, thus it might be possible that kernel and userspace
+consumers of a GPIO won't be able to set the wanted GPIO output signal.
 
-IANAL, but I believe that by default:
-  - work done by an employee, is copyrighted by the employer,
-  - work done by an independent contractor, is copyrighted by the contractor.
+Below is a simple test case to reproduce the described problem and
+verify this fix in the kernel on H3 ULCB by setting non-default OUTDTSEL
+configuration from a bootloader:
 
-Gr{oetje,eeting}s,
+  u-boot    > mw.l 0xe6055440 0x3000 1
+  ...
+  userspace > echo default-on > /sys/devices/platform/leds/leds/led5/trigger
+  userspace > echo default-on > /sys/devices/platform/leds/leds/led6/trigger
 
-                        Geert
+Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+---
+Link to v1: https://www.spinics.net/lists/linux-gpio/msg35018.html
 
+Changes from v1 to v2:
+* OUTDTSEL and companion OUTDTH/OUTDTL registers are found on R-Car Gen2
+  and R-Car Gen3 SoCs, to avoid a possible regression don't modify
+  OUTDTSEL register value at R-Car Gen1 GPIO controller,
+* removed Fixes tag as too weak one.
+
+As a note .has_outdtsel field has been selected to precede the existing
+.has_both_edge_trigger struct field, because OUTDTSEL register precedes
+BOTHEDGE register on the controller.
+
+ drivers/gpio/gpio-rcar.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 068ce25ffd28..500a3596aaf4 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -40,6 +40,7 @@ struct gpio_rcar_priv {
+ 	struct irq_chip irq_chip;
+ 	unsigned int irq_parent;
+ 	atomic_t wakeup_path;
++	bool has_outdtsel;
+ 	bool has_both_edge_trigger;
+ 	struct gpio_rcar_bank_info bank_info;
+ };
+@@ -55,6 +56,7 @@ struct gpio_rcar_priv {
+ #define POSNEG 0x20	/* Positive/Negative Logic Select Register */
+ #define EDGLEVEL 0x24	/* Edge/level Select Register */
+ #define FILONOFF 0x28	/* Chattering Prevention On/Off Register */
++#define OUTDTSEL 0x40	/* Output Data Select Register */
+ #define BOTHEDGE 0x4c	/* One Edge/Both Edge Select Register */
+ 
+ #define RCAR_MAX_GPIO_PER_BANK		32
+@@ -235,6 +237,10 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
+ 	/* Select Input Mode or Output Mode in INOUTSEL */
+ 	gpio_rcar_modify_bit(p, INOUTSEL, gpio, output);
+ 
++	/* Select General Output Register to output data in OUTDTSEL */
++	if (p->has_outdtsel && output)
++		gpio_rcar_modify_bit(p, OUTDTSEL, gpio, false);
++
+ 	spin_unlock_irqrestore(&p->lock, flags);
+ }
+ 
+@@ -336,14 +342,17 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+ }
+ 
+ struct gpio_rcar_info {
++	bool has_outdtsel;
+ 	bool has_both_edge_trigger;
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
++	.has_outdtsel = false,
+ 	.has_both_edge_trigger = false,
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
++	.has_outdtsel = true,
+ 	.has_both_edge_trigger = true,
+ };
+ 
+@@ -403,10 +412,11 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+ 	int ret;
+ 
+ 	info = of_device_get_match_data(p->dev);
++	p->has_outdtsel = info->has_outdtsel;
++	p->has_both_edge_trigger = info->has_both_edge_trigger;
+ 
+ 	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
+ 	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
+-	p->has_both_edge_trigger = info->has_both_edge_trigger;
+ 
+ 	if (*npins == 0 || *npins > RCAR_MAX_GPIO_PER_BANK) {
+ 		dev_warn(p->dev, "Invalid number of gpio lines %u, using %u\n",
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.19.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
