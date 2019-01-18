@@ -2,84 +2,125 @@ Return-Path: <SRS0=9p1a=P2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E9CC43387
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 10:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2333C43387
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 10:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0601820855
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 10:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1847204EC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jan 2019 10:48:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="ZSsw8l2u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfARKqN (ORCPT
+        id S1726810AbfARKsa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jan 2019 05:46:13 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:45284 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfARKqN (ORCPT
+        Fri, 18 Jan 2019 05:48:30 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:27775 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbfARKsa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jan 2019 05:46:13 -0500
-Received: by mail-ua1-f68.google.com with SMTP id e16so4506880uam.12;
-        Fri, 18 Jan 2019 02:46:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zs6rugYsYP5cxsQeluCly3PcVOWANFwmGqOOvS/2LKQ=;
-        b=nMK9dvttjYew3tHxsV3CsEm3IuiDER0HawXKKY3dQQ/TQAMDpkLtukL4BrKsjdlz6r
-         UfrT9+B/0s94/sXwYMeDTcRtJ0OXta5odgLAyzJ4ZCHyhQzSjDhSU8AXlJxrRgn9mIlV
-         ImHgEOd526ruwPA3LiGPB05nHA4/oM87uGxeCEZwz1msZz473M4KsCLq1vhARCjMARse
-         wjvOlJuPbVNQBLThtORbf9MKxvKenm0aqvjd5HvYNr0JHw0Q2w9H84U+ocxb7D9XKBx0
-         W0mjM1lYy+AHfTJts/oKWVI2H3yb7vaPsVYCYBmNdzbJtJ5E3VO+aSYfLCo+CP2IvwyS
-         ac2Q==
-X-Gm-Message-State: AJcUukfPsPisOPFITEyb77U+ftZgocWEps1IwxS7tTT8PmV+6rAOWd2b
-        2vMAlex+V+ha0E/ZJhqA/E3xYzEC1RkiEA4tbIM=
-X-Google-Smtp-Source: ALg8bN50Q2BO6TTgUo/16jY5pC1mZrACejJcgqP8zZh0TvlYUUqyexTNhUa+N/x4k+cPZRGgMN8jUA10LQ8ztpE+3Ug=
-X-Received: by 2002:ab0:1393:: with SMTP id m19mr7186823uae.75.1547808372458;
- Fri, 18 Jan 2019 02:46:12 -0800 (PST)
-MIME-Version: 1.0
-References: <1547803771-9564-1-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1547803771-9564-1-git-send-email-na-hoan@jinso.co.jp>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jan 2019 11:46:00 +0100
-Message-ID: <CAMuHMdUGpK4Fkq2VuQWZFbCmxonX3rUWZias=-5Yug5gSb5bcg@mail.gmail.com>
-Subject: Re: [v2 PATCH 1/2] spi: sh-msiof: fix *info pointer in request_dma()
-To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
-        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= 
-        <cv-dong@jinso.co.jp>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 Jan 2019 05:48:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547808508;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=SRya3jP5IaWIDd3jJ0GT9MhpmfyeLLWePFeR310Q2No=;
+        b=ZSsw8l2uQm7PKLGpGlRM06+9OmgfoYycwy6fDGR2hHAJKQ9x462t13UQe2kHtjoeF+
+        npfPiziaeyEmOQs3FQJ2GcIDX6slndO6dQB0S0pvonzh7bNsCn16UE0DG+IgaacEQiWX
+        Dlrr88pYc+3jem1sdnPMWsdTdNEb6tnGvVQFJfhRX/SXfmVIP36tey79whNrkdal06a8
+        zs0/IkeJwf1NMcKtsSlWUaLU2bx3lHaZrWYPenjA3xXYDifkZqwsKKEQtgEuXfrgMVJG
+        DlXHrxnPhjbx43gs/flX9Cwx1G5z0kjM2T9qbTxdg35SrGB3J4hyokm71+GaR9f+svHx
+        efLQ==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8GZZd0rmoQ=="
+X-RZG-CLASS-ID: mo00
+Received: from groucho.site
+        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
+        with ESMTPSA id V028b8v0IAm7nyB
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 18 Jan 2019 11:48:07 +0100 (CET)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     horms@verge.net.au, geert@linux-m68k.org,
+        khiem.nguyen.xt@renesas.com, dien.pham.ry@renesas.com,
+        takeshi.kihara.df@renesas.com, Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH v2 2/5] arm64: dts: r8a7795: Add cpuidle support for CA53 cores
+Date:   Fri, 18 Jan 2019 11:47:51 +0100
+Message-Id: <1547808474-19427-3-git-send-email-uli+renesas@fpond.eu>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547808474-19427-1-git-send-email-uli+renesas@fpond.eu>
+References: <1547808474-19427-1-git-send-email-uli+renesas@fpond.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 10:30 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->
-> sh_msiof_spi_info *info struct pointer was initialized in the probe() function
-> no need to get back and keep consistency.
->
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+From: Dien Pham <dien.pham.ry@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Enables cpuidle (core shutdown) support for R-Car H3 CA53 cores.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 7ae974d..483ba3b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -211,6 +211,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_1>;
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			capacity-dmips-mhz = <535>;
+@@ -223,6 +224,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU1>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_1>;
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			capacity-dmips-mhz = <535>;
+@@ -235,6 +237,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU2>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_1>;
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			capacity-dmips-mhz = <535>;
+@@ -247,6 +250,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA53_CPU3>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP_1>;
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			capacity-dmips-mhz = <535>;
+@@ -277,6 +281,15 @@
+ 				exit-latency-us = <500>;
+ 				min-residency-us = <4000>;
+ 			};
++
++			CPU_SLEEP_1: cpu-sleep-1 {
++				compatible = "arm,idle-state";
++				arm,psci-suspend-param = <0x0010000>;
++				local-timer-stop;
++				entry-latency-us = <700>;
++				exit-latency-us = <700>;
++				min-residency-us = <5000>;
++			};
+ 		};
+ 	};
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
