@@ -2,82 +2,54 @@ Return-Path: <SRS0=PMmv=P3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD07C61CE8
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Jan 2019 12:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA01C61CE4
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Jan 2019 12:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20DA42086A
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Jan 2019 12:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 552CF20821
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Jan 2019 12:17:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfASMDc (ORCPT
+        id S1728053AbfASMRD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 19 Jan 2019 07:03:32 -0500
-Received: from sauhun.de ([88.99.104.3]:56306 "EHLO pokefinder.org"
+        Sat, 19 Jan 2019 07:17:03 -0500
+Received: from sauhun.de ([88.99.104.3]:56400 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727924AbfASMDc (ORCPT
+        id S1727938AbfASMRD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 19 Jan 2019 07:03:32 -0500
+        Sat, 19 Jan 2019 07:17:03 -0500
 Received: from localhost (p54B33180.dip0.t-ipconnect.de [84.179.49.128])
-        by pokefinder.org (Postfix) with ESMTPSA id 3CC122D1FE5;
-        Sat, 19 Jan 2019 13:03:29 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 71A922D1FE5;
+        Sat, 19 Jan 2019 13:17:01 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: gpio: merge two very similar comments
-Date:   Sat, 19 Jan 2019 12:36:42 +0100
-Message-Id: <20190119113642.5348-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/3] i2c: gpio/algo-bit: clean up headers
+Date:   Sat, 19 Jan 2019 13:16:52 +0100
+Message-Id: <20190119121655.5576-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I think it is clear enough if we have the explanation once and make it
-clear it is applicable for both SCL and SDA.
+I wanted to sort headers in the i2c-gpio driver which produced a compile error.
+So, I had to fix i2c-algo-bit a little, too. Since there is a dependency
+between these patches, here is a small series.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-gpio.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+Wolfram Sang (3):
+  i2c: algo-bit: include main i2c header
+  i2c: algo-bit: convert to SPDX header
+  i2c: gpio: sort includes
 
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index c008d209f0b8..b9d43bc2853f 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -286,10 +286,10 @@ static int i2c_gpio_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * First get the GPIO pins; if it fails, we'll defer the probe.
--	 * If the SDA line is marked from platform data or device tree as
--	 * "open drain" it means something outside of our control is making
--	 * this line being handled as open drain, and we should just handle
--	 * it as any other output. Else we enforce open drain as this is
-+	 * If the SCL/SDA lines are marked from platform data or device tree
-+	 * as "open drain" it means something outside of our control is making
-+	 * these lines being handled as open drain, and we should just handle
-+	 * them as any other output. Else we enforce open drain as this is
- 	 * required for an I2C bus.
- 	 */
- 	if (pdata->sda_is_open_drain)
-@@ -300,13 +300,6 @@ static int i2c_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->sda))
- 		return PTR_ERR(priv->sda);
- 
--	/*
--	 * If the SCL line is marked from platform data or device tree as
--	 * "open drain" it means something outside of our control is making
--	 * this line being handled as open drain, and we should just handle
--	 * it as any other output. Else we enforce open drain as this is
--	 * required for an I2C bus.
--	 */
- 	if (pdata->scl_is_open_drain)
- 		gflags = GPIOD_OUT_HIGH;
- 	else
+ drivers/i2c/algos/i2c-algo-bit.c | 25 ++++++++-----------------
+ drivers/i2c/busses/i2c-gpio.c    | 10 +++++-----
+ include/linux/i2c-algo-bit.h     | 33 ++++++++++-----------------------
+ 3 files changed, 23 insertions(+), 45 deletions(-)
+
 -- 
 2.11.0
 
