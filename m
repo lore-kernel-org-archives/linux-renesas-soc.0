@@ -2,79 +2,55 @@ Return-Path: <SRS0=JlVY=P4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E47C636A0
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jan 2019 08:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AEDC61CE4
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jan 2019 08:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E1C2085B
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jan 2019 08:28:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CEAB2084C
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jan 2019 08:30:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="rZzZxQ39"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="TnNUVr6m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729638AbfATI2y (ORCPT
+        id S1729513AbfATIa5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Jan 2019 03:28:54 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:53640 "EHLO
+        Sun, 20 Jan 2019 03:30:57 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:53675 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727294AbfATI2x (ORCPT
+        with ESMTP id S1727294AbfATIa5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Jan 2019 03:28:53 -0500
+        Sun, 20 Jan 2019 03:30:57 -0500
 Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 7F5FA25B7C3;
-        Sun, 20 Jan 2019 19:28:47 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 842FD25B7C3;
+        Sun, 20 Jan 2019 19:30:55 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547972928; bh=5RexUjBAwg0AMz6MJICuwvD/q9yN9IG8PuNoE1lhSAY=;
+        t=1547973055; bh=GRxwK98/cBK/yjS5msvBXwC/+7la10SHvuNvicy1lZM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rZzZxQ39Tvoxvujb8hB0gKLRCoUQj7QhpOzqb1+d64SGGt/jr64dvMBTxG+RJvtyd
-         Ox0DE3pOLHGlQUcqr7wNMKfiFMN9v19kRvyU4zVKe6l6/w60L52RzM6F4Fb46TJPFG
-         yLuHIhTHNrp6dYCo+N/Babg8/+8yTeWmrukecjTk=
+        b=TnNUVr6mvboMU9flzFwOPv9ZHkvdb9VLWJmy3R/7tE4NH/V5LsTDwQT52woJhTn93
+         YrUhbMo/5O5KM+o6zys0WzQMSntJF0n/Alu3VLJ5kO0ymCsA2PB74DY/Cmj0VoGwUQ
+         8jX6rMRjGKizZyCtKQNJ2ZX04V54fQx13rLJEoS8=
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 826FFE21E4A; Sun, 20 Jan 2019 09:28:45 +0100 (CET)
-Date:   Sun, 20 Jan 2019 09:28:45 +0100
+        id 8C588E21E4A; Sun, 20 Jan 2019 09:30:53 +0100 (CET)
+Date:   Sun, 20 Jan 2019 09:30:53 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
-Subject: Re: [PATCH 07/11] arm64: dts: renesas: cat875: Add ethernet support
-Message-ID: <20190120082845.4apq3ylk4i6zbhlx@verge.net.au>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-8-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190117115945.bmlaoeoqvsmdqqot@verge.net.au>
- <TY1PR01MB1770241D7A553184ABB589DAC0830@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7779: Add HSCIF0/1 device nodes
+Message-ID: <20190120083053.vgsvhmpa52zsmdv3@verge.net.au>
+References: <1547808495-19509-1-git-send-email-uli+renesas@fpond.eu>
+ <1547808495-19509-3-git-send-email-uli+renesas@fpond.eu>
+ <CAMuHMdUw0HHFhqYikL_YBHWhbC-FUOfA-EGFvY29b5SPOLLWwg@mail.gmail.com>
+ <20190118121853.fv6ozq52rfahuxfm@verge.net.au>
+ <CAMuHMdX016xkHqseCk9rNJCONLSufKKMvMnfFmmjkiheo0VzRA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1770241D7A553184ABB589DAC0830@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+In-Reply-To: <CAMuHMdX016xkHqseCk9rNJCONLSufKKMvMnfFmmjkiheo0VzRA@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -82,51 +58,36 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 01:27:51PM +0000, Fabrizio Castro wrote:
-> Hello Simon,
+On Fri, Jan 18, 2019 at 01:48:41PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> Thank you for your feedback!
-> 
-> > From: Simon Horman <horms@verge.net.au>
-> > Sent: 17 January 2019 12:00
-> > Subject: Re: [PATCH 07/11] arm64: dts: renesas: cat875: Add ethernet support
+> On Fri, Jan 18, 2019 at 1:18 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Fri, Jan 18, 2019 at 12:58:55PM +0100, Geert Uytterhoeven wrote:
+> > > On Fri, Jan 18, 2019 at 11:48 AM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> > > > --- a/arch/arm/boot/dts/r8a7779.dtsi
+> > > > +++ b/arch/arm/boot/dts/r8a7779.dtsi
+> > >
+> > > > +       hscif1: serial@ffe49000 {
+> > > > +               compatible = "renesas,hscif-r8a7779",
+> > > > +                            "renesas,rcar-gen1-hscif", "renesas,hscif";
+> > > > +               reg = <0xffe49000 96>;
+> > > > +               interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
+> > > > +               clocks = <&mstp0_clks R8A7779_CLK_HSCIF1,
+> > >
+> > > Missing closing ">".
+> > >
+> > > With the above fixed:
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > >
-> > On Wed, Jan 16, 2019 at 06:37:50PM +0000, Fabrizio Castro wrote:
-> > > From: Biju Das <biju.das@bp.renesas.com>
-> > >
-> > > This patch adds ethernet support to the sub board.
-> > >
-> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> > > ---
-> > >  arch/arm64/boot/dts/renesas/cat875.dtsi | 30 ++++++++++++++++++++++++++++++
-> > >  1 file changed, 30 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/renesas/cat875.dtsi b/arch/arm64/boot/dts/renesas/cat875.dtsi
-> > > index a41d0d8..805ffa7 100644
-> > > --- a/arch/arm64/boot/dts/renesas/cat875.dtsi
-> > > +++ b/arch/arm64/boot/dts/renesas/cat875.dtsi
-> > > @@ -7,4 +7,34 @@
-> > >
-> > >  / {
-> > >  model = "Silicon Linux sub board for CAT874 (CAT875)";
-> > > +
-> > > +aliases {
-> > > +ethernet0 = &avb;
-> > > +};
-> > > +};
-> > > +
-> > > +&avb {
-> > > +pinctrl-0 = <&avb_pins>;
-> > > +pinctrl-names = "default";
-> > > +renesas,no-ether-link;
-> >
-> > Is the renesas,no-ether-link required?
+> > Thanks, applied with that fixed.
 > 
-> The AVB_LINK pin from the SoC is connected to the PMEB (Power Management Event, B stands for
-> active low) pin on the  PHY, which means it is not a link signal. The PMEB signal is active when a magic
-> packet or a wake up frame are detected. As a result, we need renesas,no-ether-link and we can't
-> specify avb_link with avb_pin either.
+> Thanks!
+> 
+> > Ulrich, do we need a patch to add the renesas,hscif-r8a7779 binding?
+> 
+> I believe you were CCed by Greg's bot for
+> 
+>     patch "dt-bindings: serial: sh-sci: Document r8a7778/9 HSCIF
+> bindings" added to tty-testing
 
-Thanks for following-up. In that case I am fine with this patch.
+Thanks, indeed I was.
