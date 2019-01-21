@@ -6,95 +6,89 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD098FC619D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 12:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2FDC2F3A2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 12:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A62142084C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 12:31:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 318C62085A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 12:31:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbfAUMa7 (ORCPT
+        id S1728497AbfAUMbS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:30:59 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:38319 "EHLO
+        Mon, 21 Jan 2019 07:31:18 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:33200 "EHLO
         mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728721AbfAUMa7 (ORCPT
+        with ESMTP id S1728383AbfAUMbS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:30:59 -0500
-Received: by mail-vs1-f65.google.com with SMTP id x64so12481956vsa.5;
-        Mon, 21 Jan 2019 04:30:58 -0800 (PST)
+        Mon, 21 Jan 2019 07:31:18 -0500
+Received: by mail-vs1-f65.google.com with SMTP id p74so12516659vsc.0;
+        Mon, 21 Jan 2019 04:31:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1jyTN7NxdXr3VESH49ZldzZWSC9jXL1FM/yG6zL5p0k=;
-        b=a1WI57bThmPrkBq9CAHZuPwAmbNQjpuBEb+qvhO0e10M7Kq0SUBQUNggfLkSdoEFAM
-         9NUmtPBW9x/nIM4Og3tsj7aRy//xRAT9+bTNNojcZdAUdHOmKoE3Bf7R7/1hIO2fh4ea
-         TgT4tdO5i1bEOO5m6hiNV6RJhzAfStrO/GTHpc0ERnZrmzrTEWOTMsCbQSpCf9JSh8vE
-         xgN/zxIGKbDxi2lWcm+/TvgZZxnwPmQNwfdXDtizJ+4bRQMFRyUTstdinobEsC5pQF4p
-         5wChvwwzWco8csQuunCY1xLM9xZzgQPPnR+RQQhy8uusZ1K6upcOQE/nPIz4WU+MPEWM
-         0q3Q==
-X-Gm-Message-State: AJcUukfZ/fBAnyQTgtfnL7Tzq/duISDVegaA+pmtdChB00MVhlpYgs92
-        uZhl1gCD4eh9of3xjsa4/ULfbW6Qvx+wvR7mc4k=
-X-Google-Smtp-Source: ALg8bN7M8JrB96zxpnmvs/N0JDpP1FyaH5zTL7nbizVwWuJETd7WrMP1ozr2Ais3wU3KA8O7zUqCd3po2DuMKyydGbQ=
-X-Received: by 2002:a67:d119:: with SMTP id u25mr11171894vsi.63.1548073857696;
- Mon, 21 Jan 2019 04:30:57 -0800 (PST)
+        bh=cAMdSQ+Njfr8LMpQaUQeMdwtHJpmB0iIw3dGEdV8CMg=;
+        b=MM1pmQqQt3CObvdXAg7E85o8YwpiIXmZULyz9Uc/kmZduh95IwkXU46GtFPaeYRD4D
+         BtqxnKnupgqM0azA27zYSSPuo4WAFkhg9bvNpD5//+2VyikNGu1/j2JJfcrscRSmYxFz
+         VTSpVZQhrpPbg+jDaupFQuOxYjqgrtg+jlrvXRM/aiz7YKxlMoJMbTbeUY7TazpGLPD3
+         qgzAFcJ5HtoplKeG567je25pzmcvNcNldUdRKJszCqkD00XXl/urrPd3IqsT3BHW1QPM
+         5M3gED1nNae28C6p1iBe8T8tMn24tDTvkWV+zkyDPJLVgRSlldnYEi7NqzdeT4tqdoia
+         BlnQ==
+X-Gm-Message-State: AJcUukcWojFyP4iJJ6PbwWK9vZAlVlObYnEPJWxE9llPUOjx55sAI33P
+        PA18y9hey4bfjQnYMlrmJH3HQ999vnfB0ZfVqAY=
+X-Google-Smtp-Source: ALg8bN76eyLPO6+4t+0qhsUuHHNTWVyhlBOQ8KfgMuPyEvsauoc1jgyzKCHrPksZnmBRtz38sU4vVYikOoA2QZ6qqdQ=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr11767018vsj.11.1548073876863;
+ Mon, 21 Jan 2019 04:31:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20190111115020.29147-1-geert+renesas@glider.be>
-In-Reply-To: <20190111115020.29147-1-geert+renesas@glider.be>
+References: <20190111124517.2730-1-geert+renesas@glider.be> <20190111141124.nrwed7znrapo45wq@verge.net.au>
+In-Reply-To: <20190111141124.nrwed7znrapo45wq@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 13:30:45 +0100
-Message-ID: <CAMuHMdUBMxP1LbAtML55L37hq=WL_Gm02T+wBk1vm4B73cTvMA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77995: Fix MOD_SEL bit numbering
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+Date:   Mon, 21 Jan 2019 13:31:04 +0100
+Message-ID: <CAMuHMdUjfRpOPgbzuWq7qjCuzmOCnpvJuiEKnc_Cg8Wi9ySmug@mail.gmail.com>
+Subject: Re: [PATCH/RFC] pinctrl: sh-pfc: r8a7791: Fix VIN1 versioned groups
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Valentine Barshak <valentine.barshak@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 12:50 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Fri, Jan 11, 2019 at 3:11 PM Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Jan 11, 2019 at 01:45:17PM +0100, Geert Uytterhoeven wrote:
+> > The naming of the "b" versions of the VIN1 pin groups is a bit odd, in
+> > that the "_b" appears in the middle of the names, instead of as a
+> > suffix.
+> >
+> > Increase consistency with other SoCs by making R-Car M2-W and M2-N, and
+> > RZ/G1M and RZ/G1N, use the recently added optional "version" argument of
+> > the VIN_DATA_PIN_GROUP() macro.
+> >
+> > Note that this breaks backwards compatibility with existing DTBs, but
+> > there are no upstream users of the "vin1_b_*" names.
+> >
+> > Fixes: 8e32c9671f84acd8 ("pinctrl: sh-pfc: r8a7791: Add VIN pins")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Is it worth making this change?
+> > If yes, should we retain backwards-compatibility using e.g. the patch
+> > below, increasing kernel size by 380 bytes?
+> >
+> > Note that unlike the deprecated "avb_mdc" pin groups on R-Car Gen3, the
+> > "vin1_b_*" groups never had upstream users, so I'm inclined not to care
+> > about backwards compatibility.
 >
-> MOD_SEL register bit numbering was different from R-Car D3 SoC and
-> R-Car H3/M3-[WN] SoCs.
+> That sounds fine to me.
 >
-> MOD_SEL 1-bit      H3/M3-[WN]  D3
-> ===============    ==========  =====
-> Set Value = H'0    b'0         b'0
-> Set Value = H'1    b'1         b'1
->
-> MOD_SEL 2-bits     H3/M3-[WN]  D3
-> ===============    ==========  =====
-> Set Value = H'0    b'00        b'00
-> Set Value = H'1    b'01        b'10
-> Set Value = H'2    b'10        b'01
-> Set Value = H'3    b'11        b'11
->
-> MOD_SEL 3-bits     H3/M3-[WN]  D3
-> ===============    ==========  =====
-> Set Value = H'0    b'000       b'000
-> Set Value = H'1    b'001       b'100
-> Set Value = H'2    b'010       b'010
-> Set Value = H'3    b'011       b'110
-> Set Value = H'4    b'100       b'001
-> Set Value = H'5    b'101       b'101
-> Set Value = H'6    b'110       b'011
-> Set Value = H'7    b'111       b'111
->
-> This patch replaces the #define name and value of MOD_SEL.
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Fixes: 794a67117646 ("pinctrl: sh-pfc: Initial R8A77995 PFC support")
-> [shimoda: split a patch per SoC and revise the commit log]
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> [geert: Use a macro to do the actual reordering]
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
 Thanks, queuing in sh-pfc-for-v5.1.
 
