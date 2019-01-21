@@ -3,94 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2FDC2F3A2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 12:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BD5C2F3A6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 13:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 318C62085A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 12:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18EB220855
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 13:01:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfAUMbS (ORCPT
+        id S1728562AbfAUNBC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 07:31:18 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33200 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728383AbfAUMbS (ORCPT
+        Mon, 21 Jan 2019 08:01:02 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:35206 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbfAUNBC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 07:31:18 -0500
-Received: by mail-vs1-f65.google.com with SMTP id p74so12516659vsc.0;
-        Mon, 21 Jan 2019 04:31:17 -0800 (PST)
+        Mon, 21 Jan 2019 08:01:02 -0500
+Received: by mail-vk1-f194.google.com with SMTP id b18so4571886vke.2;
+        Mon, 21 Jan 2019 05:01:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cAMdSQ+Njfr8LMpQaUQeMdwtHJpmB0iIw3dGEdV8CMg=;
-        b=MM1pmQqQt3CObvdXAg7E85o8YwpiIXmZULyz9Uc/kmZduh95IwkXU46GtFPaeYRD4D
-         BtqxnKnupgqM0azA27zYSSPuo4WAFkhg9bvNpD5//+2VyikNGu1/j2JJfcrscRSmYxFz
-         VTSpVZQhrpPbg+jDaupFQuOxYjqgrtg+jlrvXRM/aiz7YKxlMoJMbTbeUY7TazpGLPD3
-         qgzAFcJ5HtoplKeG567je25pzmcvNcNldUdRKJszCqkD00XXl/urrPd3IqsT3BHW1QPM
-         5M3gED1nNae28C6p1iBe8T8tMn24tDTvkWV+zkyDPJLVgRSlldnYEi7NqzdeT4tqdoia
-         BlnQ==
-X-Gm-Message-State: AJcUukcWojFyP4iJJ6PbwWK9vZAlVlObYnEPJWxE9llPUOjx55sAI33P
-        PA18y9hey4bfjQnYMlrmJH3HQ999vnfB0ZfVqAY=
-X-Google-Smtp-Source: ALg8bN76eyLPO6+4t+0qhsUuHHNTWVyhlBOQ8KfgMuPyEvsauoc1jgyzKCHrPksZnmBRtz38sU4vVYikOoA2QZ6qqdQ=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr11767018vsj.11.1548073876863;
- Mon, 21 Jan 2019 04:31:16 -0800 (PST)
+        bh=sUbShfmDKmMA5atKxszRotJWgTwajcG6Mj31KVUuZTA=;
+        b=dJVf1VNDWqdVN2C4vv2mTPi4nfvJPGtWyX31dYtukCYfgX2IQvwMpnR7yRElNPAWux
+         IGkSFG48dHSIDjAIPlgf3oHQfK/XP+05dzrBop2I4ORjfEX75IJNTcXMIZqJVlM8Tnu0
+         etGPyL0Iz+b5YCxi0WNMz8pDSXgKk/Fza6567/jOKQYUKuIN11mjV6K73teP3IdznCe7
+         G9mkfclmVhC7hhQDGIDTVrRghWfKdUDoUxbrnZIaa9uiXRL4QwRuXEqpq+nBIKFJ4wwM
+         CxE45QJ3e2Z4np5OCSLNpNNMPPGw7CB/SmTcXwhQYfL+hrMZV2P6JsdaXZl6QYdTS0+E
+         OdCA==
+X-Gm-Message-State: AJcUukfgZuPqmEEg8TQEQbu3ZsyCtnvZCCGj5w76+DhKoGf0qKwD1LY+
+        g+u6kAhjHTlc1y4j3TTpDC3Trd5xvlUQtLqoEvA=
+X-Google-Smtp-Source: ALg8bN55EUSLaNF6tj+EMWQ3CT2WE67wNzY9BaGQ77wZ7ldhFdyTb/zGWAT4lCcHI2mkzcf3z8H4htNeRVwvFMQJfk8=
+X-Received: by 2002:a1f:298e:: with SMTP id p136mr11713619vkp.40.1548075660909;
+ Mon, 21 Jan 2019 05:01:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20190111124517.2730-1-geert+renesas@glider.be> <20190111141124.nrwed7znrapo45wq@verge.net.au>
-In-Reply-To: <20190111141124.nrwed7znrapo45wq@verge.net.au>
+References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com> <1547736856-16539-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1547736856-16539-2-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 13:31:04 +0100
-Message-ID: <CAMuHMdUjfRpOPgbzuWq7qjCuzmOCnpvJuiEKnc_Cg8Wi9ySmug@mail.gmail.com>
-Subject: Re: [PATCH/RFC] pinctrl: sh-pfc: r8a7791: Fix VIN1 versioned groups
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Valentine Barshak <valentine.barshak@cogentembedded.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+Date:   Mon, 21 Jan 2019 14:00:49 +0100
+Message-ID: <CAMuHMdW0aSmcGRHi3n__dZ9SEAh40EuUrbqLNt9kq8QoLmr1mg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a774a1: Add missing CANFD clock
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, linux-can@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 3:11 PM Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Jan 11, 2019 at 01:45:17PM +0100, Geert Uytterhoeven wrote:
-> > The naming of the "b" versions of the VIN1 pin groups is a bit odd, in
-> > that the "_b" appears in the middle of the names, instead of as a
-> > suffix.
-> >
-> > Increase consistency with other SoCs by making R-Car M2-W and M2-N, and
-> > RZ/G1M and RZ/G1N, use the recently added optional "version" argument of
-> > the VIN_DATA_PIN_GROUP() macro.
-> >
-> > Note that this breaks backwards compatibility with existing DTBs, but
-> > there are no upstream users of the "vin1_b_*" names.
-> >
-> > Fixes: 8e32c9671f84acd8 ("pinctrl: sh-pfc: r8a7791: Add VIN pins")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Is it worth making this change?
-> > If yes, should we retain backwards-compatibility using e.g. the patch
-> > below, increasing kernel size by 380 bytes?
-> >
-> > Note that unlike the deprecated "avb_mdc" pin groups on R-Car Gen3, the
-> > "vin1_b_*" groups never had upstream users, so I'm inclined not to care
-> > about backwards compatibility.
+On Thu, Jan 17, 2019 at 3:54 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch adds the missing CANFD clock to the r8a774a1 specific
+> clock driver.
 >
-> That sounds fine to me.
->
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-Thanks, queuing in sh-pfc-for-v5.1.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.1.
 
 Gr{oetje,eeting}s,
 
