@@ -2,202 +2,140 @@ Return-Path: <SRS0=sDbg=P5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD07C2F3A0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 14:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF39EC2F441
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 16:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9376E20823
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 14:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB1EA20870
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 16:33:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="L7nHpkZg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbfAUO2s (ORCPT
+        id S1730023AbfAUQd1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 09:28:48 -0500
-Received: from sauhun.de ([88.99.104.3]:44496 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728801AbfAUO2s (ORCPT
+        Mon, 21 Jan 2019 11:33:27 -0500
+Received: from mail-eopbgr1410121.outbound.protection.outlook.com ([40.107.141.121]:62910
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729870AbfAUQd1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 09:28:48 -0500
-Received: from localhost (p54B3319E.dip0.t-ipconnect.de [84.179.49.158])
-        by pokefinder.org (Postfix) with ESMTPSA id DF1342CF60A;
-        Mon, 21 Jan 2019 15:28:45 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH] i2c: gpio: fault-injector: add 'lose_arbitration' injector
-Date:   Mon, 21 Jan 2019 15:28:39 +0100
-Message-Id: <20190121142839.19011-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 21 Jan 2019 11:33:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ifetrclXgiPqW0cEmRQU63CP46Sa/UzWBTPj9iAkqo=;
+ b=L7nHpkZg3+/4WkvYwG8Ygm4gEL+MKSJkHqxOieaqG8xSqcrHS4dIfuI6TSXvelNilbPXMHPfh6OH8sLqIqySYQtK1iHcERoeU+a3/8bf9xcGlHZBTTPjqFdjQADJsBecH7yy4Q98maCCc5qCkOoDvOu4+enjO8iY2I5+LGZQtOQ=
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.241.22) by
+ OSBPR01MB3829.jpnprd01.prod.outlook.com (20.178.97.212) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.25; Mon, 21 Jan 2019 16:33:21 +0000
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::35e7:300c:a781:3ef6]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::35e7:300c:a781:3ef6%2]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
+ 16:33:20 +0000
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Simon Horman <horms@verge.net.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+CC:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a77470
+ support
+Thread-Topic: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a77470
+ support
+Thread-Index: AQHUbQrI5cMK0uIz20qcC8lgxacfN6U315cAgIKaczA=
+Date:   Mon, 21 Jan 2019 16:33:20 +0000
+Message-ID: <OSBPR01MB2103273E3B91A5AAD68A08D4B89F0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1540544153-48098-1-git-send-email-biju.das@bp.renesas.com>
+ <20181030135956.sofloch72mgsqi2o@verge.net.au>
+In-Reply-To: <20181030135956.sofloch72mgsqi2o@verge.net.au>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biju.das@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSBPR01MB3829;20:kSGL9RSnesu5DiGpK32h5juMPhuru4QJgTel/mvX4XQcVYQWLaFc/xuGj7fA5ga8VhLRf+FkVLP02BP9JUZbnXjFWkQ16mV1pGmnBpo+LRKz5GsVQ2dxQdi/y4E0UdEluht+j3OFW409dKbzST5vjOEziZArXRgRU1YAMXRTL0I=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: 73d81377-d287-4224-2f6e-08d67fbe27ec
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB3829;
+x-ms-traffictypediagnostic: OSBPR01MB3829:
+x-microsoft-antispam-prvs: <OSBPR01MB38297AFD2BCC637842CE687FB89F0@OSBPR01MB3829.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 0924C6A0D5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(136003)(366004)(346002)(376002)(396003)(13464003)(53754006)(199004)(189003)(6306002)(9686003)(6246003)(66066001)(97736004)(71200400001)(106356001)(2906002)(7696005)(76176011)(71190400001)(6436002)(81166006)(55016002)(25786009)(74316002)(305945005)(53936002)(8676002)(68736007)(81156014)(4326008)(8936002)(7736002)(110136005)(54906003)(44832011)(14454004)(86362001)(486006)(229853002)(478600001)(316002)(3846002)(6506007)(26005)(186003)(102836004)(53546011)(33656002)(99286004)(966005)(6116002)(11346002)(446003)(476003)(256004)(105586002)(14444005)(4744005);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB3829;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: MUzGUpRZrWrWrHNVOw6lJc4wXG31elPqfRhtD7t4bGN4wVKO1W8X2MVA0yr1C4UbPLHd38sHy7QcfvpdICBFj2QWylwM9iKXc0NEsKJfh/NukagVLdEl5Q8017JDp4LXf1P0K+IZ7WPMDXPa+PL89iiWvA++HtEN4M6hWuco9igoL4v9k8g2s91HQSPQJTSIm/xthgmVCf/KwnEkcK+FFhB54JmcdNbB6orQkyYR9nFsQQPzHV+aWJEL+sX+G0i/We28CftGq77WUSptSWcBiWhl+TMtKk83H7cFOWf6H0k8JQ8xUwq+o9CNfFJGFT9ZnAw5LYl8n0BugzQnGN9dMGPebU9OZJwq5XmLyueNULnKTmD3qWSNVgzydKbKwwmF0GzF6gyywesM/rHbGSSpUg3+Xs+aSCQNT2fcBJN48Qs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73d81377-d287-4224-2f6e-08d67fbe27ec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 16:33:20.8256
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3829
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Here is a fault injector simulating 'arbitration lost' from multi-master
-setups. Read the docs for its usage.
+Hi All,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Gentle reminder.
 
-This is the most reliable result I came up with so far for simulating lost
-arbitration (after playing a lot with falling SDA as trigger first, but SCL
-seems the way to go). Works fine with the i2c-sh_mobile driver on a Renesas
-Lager board. I am not super-happy with the interrupt latency causing some bits
-to be non-disturbed, but for now, I don't see a way around it except for
-busy-polling which I think is too excessive. RFC for now because someone still
-might have a better idea :)
+Are you happy with the below patch? Or do you want me to resend  patch with=
+ the tags?
 
-Needs my previous fault-injector cleanup patches, a branch for consuming is here:
+https://patchwork.kernel.org/patch/10657119/
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/iic-arbitration-lost
+regards,
+Biju
 
-Now let's see how to fix the sh_mobile driver...
+> -----Original Message-----
+> From: Simon Horman <horms@verge.net.au>
+> Sent: 30 October 2018 14:00
+> To: Biju Das <biju.das@bp.renesas.com>
+> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>; Guenter Roeck
+> <linux@roeck-us.net>; Rob Herring <robh+dt@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>; linux-watchdog@vger.kernel.org;
+> devicetree@vger.kernel.org; Geert Uytterhoeven
+> <geert+renesas@glider.be>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com>; linux-renesas-soc@vger.kernel.org
+> Subject: Re: [PATCH] dt-bindings: watchdog: renesas-wdt: Document
+> r8a77470 support
+>
+> On Fri, Oct 26, 2018 at 09:55:53AM +0100, Biju Das wrote:
+> > RZ/G1C (R8A77470) watchdog implementation is compatible with R-Car
+> > Gen2, therefore add relevant documentation.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
- Documentation/i2c/gpio-fault-injection | 26 +++++++++++++++
- drivers/i2c/busses/i2c-gpio.c          | 61 ++++++++++++++++++++++++++++++++++
- 2 files changed, 87 insertions(+)
 
-diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
-index 1a44e3edc0c4..b6f36ffe55e1 100644
---- a/Documentation/i2c/gpio-fault-injection
-+++ b/Documentation/i2c/gpio-fault-injection
-@@ -83,3 +83,29 @@ This is why bus recovery (up to 9 clock pulses) must either check SDA or send
- additional STOP conditions to ensure the bus has been released. Otherwise
- random data will be written to a device!
- 
-+Lost arbitration
-+================
-+
-+Here, we want to simulate the condition where the master under tests loses the
-+bus arbitration against another master in a multi-master setup.
-+
-+"lose_arbitration"
-+------------------
-+
-+This file is write only and you need to write the number of desired lost
-+arbitrations in a row. The calling process will then sleep and interfere with
-+transfers from the master under test when they appear until that number is
-+reached. The process is interruptible, though.
-+
-+Arbitration lost is achieved by waiting for SCL going down by the master under
-+test and then pulling SDA low for some time. So, the I2C address sent out
-+should be corrupted and that should be detected properly. That means that the
-+address sent out should have a lot of '1' bits to be able to detect corruption.
-+There doesn't need to be a device at this address because arbitration lost
-+should be detected beforehand. Also note, that SCL going down is monitored
-+using interrupts, so the interrupt latency might cause the first bits to be not
-+corrupted. A good starting script for using this fault injector:
-+
-+# echo 1 > lose_arbitration &
-+# i2cget -y <bus_to_test> 0x3f
-+
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index ca04fa25a141..c630172b4787 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -7,12 +7,14 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
-+#include <linux/completion.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c-algo-bit.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
-+#include <linux/interrupt.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_data/i2c-gpio.h>
-@@ -27,6 +29,7 @@ struct i2c_gpio_private_data {
- 	struct i2c_gpio_platform_data pdata;
- #ifdef CONFIG_I2C_GPIO_FAULT_INJECTOR
- 	struct dentry *debug_dir;
-+	struct completion irq_happened;
- #endif
- };
- 
-@@ -162,6 +165,59 @@ static int fops_incomplete_write_byte_set(void *data, u64 addr)
- }
- DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_write_byte, NULL, fops_incomplete_write_byte_set, "%llu\n");
- 
-+static irqreturn_t lose_arbitration_irq(int irq, void *dev_id)
-+{
-+	struct i2c_gpio_private_data *priv = dev_id;
-+
-+	setsda(&priv->bit_data, 0);
-+	udelay(200);
-+	setsda(&priv->bit_data, 1);
-+
-+	complete(&priv->irq_happened);
-+	return IRQ_HANDLED;
-+}
-+
-+static int fops_lose_arbitration_set(void *data, u64 num_faults)
-+{
-+	struct i2c_gpio_private_data *priv = data;
-+	int irq = gpiod_to_irq(priv->scl);
-+	int ret, i;
-+
-+	i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
-+
-+	/*
-+	 * Interrupt on falling SCL. This ensures that the master under test has
-+	 * really started the transfer. Interrupt on falling SDA did only
-+	 * exercise 'bus busy' detection on some HW but not 'arbitration lost'.
-+	 * Note that the interrupt latency may cause the first bits to be
-+	 * transmitted correctly.
-+	 */
-+	ret = gpiod_direction_input(priv->scl);
-+	if (ret)
-+		goto unlock;
-+
-+	ret = request_irq(irq, lose_arbitration_irq, IRQF_TRIGGER_FALLING,
-+			  "i2c-gpio-fi", priv);
-+	if (ret)
-+		goto output;
-+
-+	for (i = 0; i < num_faults; i++) {
-+		ret = wait_for_completion_interruptible(&priv->irq_happened);
-+		if (ret)
-+			break;
-+		reinit_completion(&priv->irq_happened);
-+	}
-+
-+	free_irq(irq, priv);
-+ output:
-+	ret = gpiod_direction_output(priv->scl, 1);
-+ unlock:
-+	i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
-+
-+	return ret;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_lose_arbitration, NULL, fops_lose_arbitration_set, "%llu\n");
-+
- static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- {
- 	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
-@@ -181,10 +237,15 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- 	if (!priv->debug_dir)
- 		return;
- 
-+	init_completion(&priv->irq_happened);
-+
- 	debugfs_create_file_unsafe("incomplete_address_phase", 0200, priv->debug_dir,
- 				   priv, &fops_incomplete_addr_phase);
- 	debugfs_create_file_unsafe("incomplete_write_byte", 0200, priv->debug_dir,
- 				   priv, &fops_incomplete_write_byte);
-+	if (priv->bit_data.getscl)
-+		debugfs_create_file_unsafe("lose_arbitration", 0200, priv->debug_dir,
-+					   priv, &fops_lose_arbitration);
- 	debugfs_create_file_unsafe("scl", 0600, priv->debug_dir, priv, &fops_scl);
- 	debugfs_create_file_unsafe("sda", 0600, priv->debug_dir, priv, &fops_sda);
- }
--- 
-2.11.0
 
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
