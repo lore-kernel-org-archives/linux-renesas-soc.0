@@ -2,175 +2,2326 @@ Return-Path: <SRS0=sDbg=P5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98475C31D64
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228C0C282DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 09:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 539CD217F4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 07:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC6A520989
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 09:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="klARCU8Y"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="P95rPO6j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbfAUHLq (ORCPT
+        id S1727190AbfAUJfP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:11:46 -0500
-Received: from mail-eopbgr1310127.outbound.protection.outlook.com ([40.107.131.127]:42144
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725871AbfAUHLp (ORCPT
+        Mon, 21 Jan 2019 04:35:15 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40668 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfAUJfO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:11:45 -0500
+        Mon, 21 Jan 2019 04:35:14 -0500
+Received: by mail-ed1-f68.google.com with SMTP id g22so16015110edr.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Jan 2019 01:35:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4xR2AvCwI4gC4SMjljk44nmcBvldT14AQtwNCPu76dY=;
- b=klARCU8YRoMbqlj16SeGQX5algRpt5G78M2ehAhXmjpAlAMc2XZcZCmEehB3WW5FUlPUWhQabreSHECoLcGv73tc+YvoDjHELCFjsIbdJ+oRbsIIzmPnocveJIqZujfHVMOAnuJN2Ul3a6EtOKutGCDx247BqqQcnInTt+bXGGY=
-Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com (20.179.170.147) by
- TY2PR01MB3977.jpnprd01.prod.outlook.com (20.178.142.211) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Mon, 21 Jan 2019 03:16:40 +0000
-Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com
- ([fe80::147c:3145:e9bf:f22e]) by TY2PR01MB4812.jpnprd01.prod.outlook.com
- ([fe80::147c:3145:e9bf:f22e%3]) with mapi id 15.20.1537.031; Mon, 21 Jan 2019
- 03:16:39 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     "REE dirk.behme@de.bosch.com" <dirk.behme@de.bosch.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>
-CC:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "mfarooq@visteon.com" <mfarooq@visteon.com>,
-        Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>,
-        =?utf-8?B?TmlrbGFzIFPDtmRlcmx1bmQ=?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        "laurent.pinchart+renesas@ideasonboard.com" 
-        <laurent.pinchart+renesas@ideasonboard.com>
-Subject: RE: [PATCHv2 1/4] dmaengine: rcar-dmac: use result of updated
- get_residue in tx_status
-Thread-Topic: [PATCHv2 1/4] dmaengine: rcar-dmac: use result of updated
- get_residue in tx_status
-Thread-Index: AQHUrNEYm+FPQ7LuUkOFNwPJij6LwqW5DcxQ
-Date:   Mon, 21 Jan 2019 03:16:39 +0000
-Message-ID: <TY2PR01MB481241E96C7D1D088C83355CD89F0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
-References: <20160630151518.32329-1-niklas.soderlund+renesas@ragnatech.se>
- <20160630151518.32329-2-niklas.soderlund+renesas@ragnatech.se>
- <22f3bf50-6241-5beb-0d6d-c556b6cfebb9@de.bosch.com>
-In-Reply-To: <22f3bf50-6241-5beb-0d6d-c556b6cfebb9@de.bosch.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [118.238.235.108]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY2PR01MB3977;20:Jb/Y9P1fdKu11axaSpR7OKaK784BzaGZvNov+QMcxkDHWu/h8yDvflSgWd8f6sa4jhQ0V2AQMeFm3h53Q+v8J1/ipsOu1sbOA4zITT+77LWGgYbnV+Zgg5neRl0/3+KBNiR7Q4DlsHQqwHJ+J82FyBiUYpwpBd8Ap+QolkTHFH4=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a04bd20e-b1ad-4203-4d41-08d67f4edc4d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB3977;
-x-ms-traffictypediagnostic: TY2PR01MB3977:
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-microsoft-antispam-prvs: <TY2PR01MB397719E8C923E43F063DFE67D89F0@TY2PR01MB3977.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 0924C6A0D5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(376002)(396003)(366004)(346002)(199004)(189003)(8936002)(66574012)(6116002)(478600001)(486006)(97736004)(86362001)(966005)(256004)(14444005)(14454004)(476003)(105586002)(106356001)(446003)(11346002)(26005)(186003)(2906002)(4326008)(6506007)(25786009)(53546011)(55016002)(71190400001)(102836004)(76176011)(7696005)(71200400001)(99286004)(9686003)(6306002)(66066001)(54906003)(110136005)(53936002)(6436002)(3846002)(316002)(81166006)(74316002)(305945005)(15650500001)(33656002)(8676002)(229853002)(81156014)(68736007)(7736002)(6246003)(2501003);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB3977;H:TY2PR01MB4812.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UImMY9aKkYun+lBbUWZ2Ar+PACXXmnJkrCkAe++dOqR9mvLbW0+wuAEOET1IbUx47kyXhsWGC+2xClxNZxLNdzeNnfKXhy96PrjTmAIeozyZErV+DTKwYgn3R5X02K9AnvS1bJdP9lpj9kZIuvY6GpthDECDiBWOWf3eDIUsaCHGqwDhzEIgBwbnXHLC4+6RUVdlqjOnBqf5+imzk6Og4/EsSlcNSs9FM64/uAVK9RkoSJmSkAc10eLqSNCxj56Gz5s2EEFEkMoYK1+LicJkRPGxIS106FtDrz3TCqUDws0aUDyIRU5DkxITqxr6U6trvGkCYNMrrxfaDX+KWrEG6PluDLb9/qS0bqsvqHggxvAemz9npf3fQiMFDYF4X/3n7gjKz54o/CipEYlS36zVYba/zcZLMN0QJVcGJ4rsUxQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jjAN3vUoKzlqPHcjTr+wsvVkG36y2FaoPh2fMvhETeo=;
+        b=P95rPO6jwR1GXncCFL35AdDliobbufH4Ml7rcfKDM7DhLDXrU9eR1JtGnKh4JahMgd
+         IBCeg6QTSy48a3xkv4RKxFMiOtazT2MAI7Ae/KchjoIr+ov9H/pdhCd8i87uY+YdujJ9
+         tFuhKSX2opbIxDc30U8jelkne37xrzUVGLnLg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jjAN3vUoKzlqPHcjTr+wsvVkG36y2FaoPh2fMvhETeo=;
+        b=TU2Q3W6T5pNpDI7cLdqrwOiNyJnTPkqErbRnZAYm2Er+ufv5cu2LXRrq1mSoSPEr4M
+         znVG9mf1anPVVYApP6DQ6qRUflitGl/oyWVoUEKi9Tya2AcCT8YNrB9+KMFr8fffhGW6
+         aMseSWq5JD+Dt139y1PNtICwvFBH1hNEEQuDCk+nCvaC4YbtDLBTQQVnl3n82Z57ccRB
+         nKF92anCdloWUXMblZybvNoAMPYjHO0/YLnrseGzfwCH2zaHbm7Lfst3HFna/JGc4td7
+         uCr0JmUL3SvJb/XHBztejO9ibA8dcTrbFzsryAzptwdS+yY6FxySdLF0OkJATc1O3OHO
+         w0qg==
+X-Gm-Message-State: AJcUukcx1Z+56xAM+pu05OchpUmMSxuolWDQ2WNPbi6HVKKp9zh+sady
+        //pUrNTSwCFBRDejQbtKXuj8sQ==
+X-Google-Smtp-Source: ALg8bN5RAT8AMmJgGGnNoDmQl1RXVlNFsq82sVV6HxhR/6pU6+Ji8/cRC632r6rUy8tyDY6bLxDyfg==
+X-Received: by 2002:a05:6402:295:: with SMTP id l21mr26482564edv.149.1548063309635;
+        Mon, 21 Jan 2019 01:35:09 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id c12sm8637170edi.52.2019.01.21.01.35.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 01:35:08 -0800 (PST)
+Date:   Mon, 21 Jan 2019 10:35:06 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFC] drm: Remove unused Renesas SH Mobile DRM driver
+Message-ID: <20190121093506.GQ3271@phenom.ffwll.local>
+References: <20190118162258.14592-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a04bd20e-b1ad-4203-4d41-08d67f4edc4d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jan 2019 03:16:39.7352
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3977
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118162258.14592-1-geert+renesas@glider.be>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SGkgRGlyaywNCihyZXZpc2VkIFZpbm9kJ3MgZW1haWwgYWRkcmVzcykNCg0KPiBGcm9tOiBEaXJr
-IEJlaG1lLCBTZW50OiBUdWVzZGF5LCBKYW51YXJ5IDE1LCAyMDE5IDk6NDQgUE0NCj4gDQo+IE9u
-IDMwLjA2LjIwMTYgMTc6MTUsIE5pa2xhcyBTw7ZkZXJsdW5kIHdyb3RlOg0KPiA+IEZyb206IE11
-aGFtbWFkIEhhbXphIEZhcm9vcSA8bWZhcm9vcUB2aXN0ZW9uLmNvbT4NCj4gPg0KPiA+IFRoZSBo
-YXJkd2FyZSBtaWdodCBoYXZlIGNvbXBsZXRlIHRoZSB0cmFuc2ZlciBidXQgdGhlIGludGVycnVw
-dCBoYW5kbGVyDQo+ID4gbWlnaHQgbm90IGhhdmUgaGFkIGEgY2hhbmNlIHRvIHJ1bi4gSWYgcmNh
-cl9kbWFjX2NoYW5fZ2V0X3Jlc2lkdWUoKQ0KPiA+IHdoaWNoIHJlYWRzIEhXIHJlZ2lzdGVycyBm
-aW5kcyB0aGF0IHRoZXJlIGlzIG5vIHJlc2lkdWUgcmV0dXJuDQo+ID4gRE1BX0NPTVBMRVRFLg0K
-PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTXVoYW1tYWQgSGFtemEgRmFyb29xIDxtZmFyb29xQHZp
-c3Rlb24uY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQr
-cmVuZXNhc0BnbGlkZXIuYmU+DQo+ID4gW05pa2xhczogYWRkIGV4cGxhbmF0aW9uIGluIGNvbW1p
-dCBtZXNzYWdlXQ0KPiA+IFNpZ25lZC1vZmYtYnk6IE5pa2xhcyBTw7ZkZXJsdW5kIDxuaWtsYXMu
-c29kZXJsdW5kK3JlbmVzYXNAcmFnbmF0ZWNoLnNlPg0KPiA+IEFja2VkLWJ5OiBMYXVyZW50IFBp
-bmNoYXJ0IDxsYXVyZW50LnBpbmNoYXJ0QGlkZWFzb25ib2FyZC5jb20+DQo+ID4gLS0tDQo+ID4g
-ICBkcml2ZXJzL2RtYS9zaC9yY2FyLWRtYWMuYyB8IDQgKysrKw0KPiA+ICAgMSBmaWxlIGNoYW5n
-ZWQsIDQgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZG1hL3No
-L3JjYXItZG1hYy5jIGIvZHJpdmVycy9kbWEvc2gvcmNhci1kbWFjLmMNCj4gPiBpbmRleCBkZmIx
-NzkyLi43OTFhMDY0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvZG1hL3NoL3JjYXItZG1hYy5j
-DQo+ID4gKysrIGIvZHJpdmVycy9kbWEvc2gvcmNhci1kbWFjLmMNCj4gPiBAQCAtMTIwMiw2ICsx
-MjAyLDEwIEBAIHN0YXRpYyBlbnVtIGRtYV9zdGF0dXMgcmNhcl9kbWFjX3R4X3N0YXR1cyhzdHJ1
-Y3QgZG1hX2NoYW4gKmNoYW4sDQo+ID4gICAJcmVzaWR1ZSA9IHJjYXJfZG1hY19jaGFuX2dldF9y
-ZXNpZHVlKHJjaGFuLCBjb29raWUpOw0KPiA+ICAgCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnJj
-aGFuLT5sb2NrLCBmbGFncyk7DQo+ID4NCj4gPiArCS8qIGlmIHRoZXJlJ3Mgbm8gcmVzaWR1ZSwg
-dGhlIGNvb2tpZSBpcyBjb21wbGV0ZSAqLw0KPiA+ICsJaWYgKCFyZXNpZHVlKQ0KPiA+ICsJCXJl
-dHVybiBETUFfQ09NUExFVEU7DQo+ID4gKw0KPiA+ICAgCWRtYV9zZXRfcmVzaWR1ZSh0eHN0YXRl
-LCByZXNpZHVlKTsNCj4gPg0KPiA+ICAgCXJldHVybiBzdGF0dXM7DQo+IA0KPiANCj4gV2UgaGF2
-ZSBzb21lIGRvdWJ0cyBhYm91dCB0aGlzIGNoYW5nZSAobWFpbmxpbmUgY29tbWl0IFsxXSkuIE5v
-dCBiZWluZyBhDQo+IERNQSBleHBlcnQsIGxldCBtZSB0cnkgdG8gZXhwbGFpbjoNCj4gDQo+IFdl
-IGFyZSBjb25maWd1cmluZyBhIGN5Y2xpYywgbmV2ZXIgZW5kaW5nIERNQQ0KPiAoZG1hZW5naW5l
-X3ByZXBfZG1hX2N5Y2xpYygpKS4gRm9yIHRoaXMgY3ljbGljIERNQSB3ZSBjb250aW51b3VzbHkg
-cG9sbA0KPiB0aGUgcmVzaWR1ZSAodHhzdGF0ZS0+cmVzaWR1ZSkgdmlhIHJjYXJfZG1hY190eF9z
-dGF0dXMoKS4gSGF2aW5nIGENCj4gY3ljbGljLCBuZXZlciBlbmRpbmcgRE1BIHdlIHRoaW5rIHRo
-YXQgcmVzaWR1ZSA9PSAwIGlzIGEgdmFsaWQgdmFsdWUuDQo+IEhvd2V2ZXIsIHdpdGggYWJvdmUg
-Y2hhbmdlLCBhIHJlc2lkdWUgdmFsdWUgb2YgMCBpcyAnZHJvcHBlZCcgYW5kIG5ldmVyDQo+IHdy
-aXR0ZW4gdmlhIGRtYV9zZXRfcmVzaWR1ZSgpIHRvIHR4c3RhdGUuIFNvIGluIGNhc2Ugd2UgY29u
-dGludW91c2x5DQo+IHBvbGwsIHRoaXMgdmFsdWUgaXMgbG9zdCwgcmVzdWx0aW5nIGluIHdyb25n
-IGJlaGF2aW9yIG9mIHRoZSBjYWxsZXIuDQoNCkFjY29yZGluZyB0byB0aGUgRG9jdW1lbnRhdGlv
-bi9kcml2ZXItYXBpL2RtYWVuZ2luZS9wcm92aWRlci5yc3QgWzFdLA0KZGV2aWNlX3R4X3N0YXR1
-cyBzaG91bGQgcmVwb3J0IHRoZSBieXRlcyBsZWZ0LiBTbywgd2Ugc2hvdWxkIGZpeA0KdGhlIGN1
-cnJlbnQgaW1wbGVtZW50YXRpb24gYXMgeW91IHNhaWQuDQotLS0NClsxXQ0KYGBkZXZpY2VfdHhf
-c3RhdHVzYGANCg0KICAtIFNob3VsZCByZXBvcnQgdGhlIGJ5dGVzIGxlZnQgdG8gZ28gb3ZlciBv
-biB0aGUgZ2l2ZW4gY2hhbm5lbA0KICA8c25pcD4NCiAgLSBJbiB0aGUgY2FzZSBvZiBhIGN5Y2xp
-YyB0cmFuc2ZlciwgaXQgc2hvdWxkIG9ubHkgdGFrZSBpbnRvDQogICAgYWNjb3VudCB0aGUgY3Vy
-cmVudCBwZXJpb2QuDQotLS0NCg0KPiBJbiBvdXIgY2FzZSB3aXRoIGN5Y2xpYywgbmV2ZXIgZW5k
-aW5nIERNQSwgY2hhbmdpbmcgdGhpcyB0bw0KPiANCj4gLS0tIGEvZHJpdmVycy9kbWEvc2gvcmNh
-ci1kbWFjLmMNCj4gKysrIGIvZHJpdmVycy9kbWEvc2gvcmNhci1kbWFjLmMNCj4gQEAgLTEzODgs
-NyArMTM4OCw3IEBAIHN0YXRpYyBlbnVtIGRtYV9zdGF0dXMgcmNhcl9kbWFjX3R4X3N0YXR1cyhz
-dHJ1Y3QNCj4gZG1hX2NoYW4gKmNoYW4sDQo+IA0KPiAgICAgICAgICAvKiBpZiB0aGVyZSdzIG5v
-IHJlc2lkdWUsIHRoZSBjb29raWUgaXMgY29tcGxldGUgKi8NCj4gICAgICAgICAgaWYgKCFyZXNp
-ZHVlKQ0KPiAtICAgICAgICAgICAgICAgcmV0dXJuIERNQV9DT01QTEVURTsNCj4gKyAgICAgICAg
-ICAgICAgIHN0YXR1cyA9IERNQV9DT01QTEVURTsNCj4gDQo+ICAgICAgICAgIGRtYV9zZXRfcmVz
-aWR1ZSh0eHN0YXRlLCByZXNpZHVlKTsNCj4gDQo+IHNlZW1zIHRvIGhlbHAuDQoNClNvLCBhdCBs
-ZWFzdCwgd2Ugc2hvdWxkIGFwcGx5IHRoaXMgY29kZSBhYm92ZS4NCg0KPiAgICAgICAgICAgSWYg
-d2UgaWdub3JlIHRoZSBzdGlsbCB3cm9uZyBETUFfQ09NUExFVEUgc3RhdHVzICh3aGljaA0KPiBp
-biBjYXNlIG9mIGN5Y2xpYyBETUEgZG9lc24ndCBtYWtlIGFueSBzZW5zZT8pIHRoZSBjYWxsZXIg
-Z2V0IHRoZQ0KPiBjb3JyZWN0IHR4c3RhdGUtPnJlc2lkdWUgdmFsdWVzIChub3QgZHJvcHBpbmcg
-dGhlIDApLg0KPiANCj4gU28gbWF5YmUgd2UgbmVlZCBhbnl0aGluZyBsaWtlDQo+IA0KPiAtLS0g
-YS9kcml2ZXJzL2RtYS9zaC9yY2FyLWRtYWMuYw0KPiArKysgYi9kcml2ZXJzL2RtYS9zaC9yY2Fy
-LWRtYWMuYw0KPiBAQCAtMTM4Nyw3ICsxMzg3LDcgQEAgc3RhdGljIGVudW0gZG1hX3N0YXR1cyBy
-Y2FyX2RtYWNfdHhfc3RhdHVzKHN0cnVjdA0KPiBkbWFfY2hhbiAqY2hhbiwNCj4gICAgICAgICAg
-c3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmcmNoYW4tPmxvY2ssIGZsYWdzKTsNCj4gDQo+ICAgICAg
-ICAgIC8qIGlmIHRoZXJlJ3Mgbm8gcmVzaWR1ZSwgdGhlIGNvb2tpZSBpcyBjb21wbGV0ZSAqLw0K
-PiAtICAgICAgIGlmICghcmVzaWR1ZSkNCj4gKyAgICAgICBpZiAoIXJlc2lkdWUgJiYgIWNoYW4t
-PmRlc2MucnVubmluZy0+Y3ljbGljKQ0KPiAgICAgICAgICAgICAgICAgIHJldHVybiBETUFfQ09N
-UExFVEU7DQo+IA0KPiAgICAgICAgICBkbWFfc2V0X3Jlc2lkdWUodHhzdGF0ZSwgcmVzaWR1ZSk7
-DQo+IA0KPiA/DQoNCkkgY291bGQgbm90IGZpbmQgd2hldGhlciBhIGN5Y2xpYyB0cmFuc2ZlciBz
-aG91bGQgbm90IHJldHVybiBETUFfQ09NUExFVEUgb24NCkRvY3VtZW50YXRpb25zLy4gSSBvbmx5
-IGZvdW5kIHRoZSBmb2xsb3dpbmcgaW4gdGhlIGluY2x1ZGUvbGludXgvZG1hZW5naW5lLmg6DQoN
-Ci8qKg0KICogZW51bSBkbWFfc3RhdHVzIC0gRE1BIHRyYW5zYWN0aW9uIHN0YXR1cw0KICogQERN
-QV9DT01QTEVURTogdHJhbnNhY3Rpb24gY29tcGxldGVkDQoNCkJlc3QgcmVnYXJkcywNCllvc2hp
-aGlybyBTaGltb2RhDQoNCj4gT3BpbmlvbnM/DQo+IA0KPiBCZXN0IHJlZ2FyZHMNCj4gDQo+IERp
-cmsNCj4gDQo+IFsxXQ0KPiBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2Vy
-bmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQvY29tbWl0L2RyaXZlcnMvZG1hL3NoL3JjYXItZG1h
-Yy5jP2g9djUuMC1yYzImaWQ9Mw0KPiA1NDRkMjg3ODgxN2JkMTM5ZGRhMjM4Y2RkODZhMTVlMWMw
-M2QwMzcNCg==
+On Fri, Jan 18, 2019 at 05:22:58PM +0100, Geert Uytterhoeven wrote:
+> Since its incarnation in v3.7 almost 7 years ago, no users of the SH
+> Mobile DRM driver have appeared.
+> 
+> Hence remove the driver.  It can be resurrected from git history,
+> if/when needed.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+I'd prefer removing the fbdev variant tbh ... Not sure why exactly the
+switch never happened.
+-Daniel
+
+> ---
+> Against drm/drm-next
+> 
+>  MAINTAINERS                                   |   2 -
+>  drivers/gpu/drm/Kconfig                       |   2 -
+>  drivers/gpu/drm/Makefile                      |   1 -
+>  drivers/gpu/drm/shmobile/Kconfig              |  14 -
+>  drivers/gpu/drm/shmobile/Makefile             |   8 -
+>  .../gpu/drm/shmobile/shmob_drm_backlight.c    |  86 ---
+>  .../gpu/drm/shmobile/shmob_drm_backlight.h    |  19 -
+>  drivers/gpu/drm/shmobile/shmob_drm_crtc.c     | 689 ------------------
+>  drivers/gpu/drm/shmobile/shmob_drm_crtc.h     |  53 --
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c      | 311 --------
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.h      |  41 --
+>  drivers/gpu/drm/shmobile/shmob_drm_kms.c      | 146 ----
+>  drivers/gpu/drm/shmobile/shmob_drm_kms.h      |  29 -
+>  drivers/gpu/drm/shmobile/shmob_drm_plane.c    | 259 -------
+>  drivers/gpu/drm/shmobile/shmob_drm_plane.h    |  18 -
+>  drivers/gpu/drm/shmobile/shmob_drm_regs.h     | 307 --------
+>  include/linux/platform_data/shmob_drm.h       |  91 ---
+>  17 files changed, 2076 deletions(-)
+>  delete mode 100644 drivers/gpu/drm/shmobile/Kconfig
+>  delete mode 100644 drivers/gpu/drm/shmobile/Makefile
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_backlight.c
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_backlight.h
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_crtc.c
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_drv.c
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_drv.h
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_kms.c
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_kms.h
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_plane.c
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_plane.h
+>  delete mode 100644 drivers/gpu/drm/shmobile/shmob_drm_regs.h
+>  delete mode 100644 include/linux/platform_data/shmob_drm.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4c0879650caf3c10..61009a7be8862d68 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5098,8 +5098,6 @@ L:	linux-renesas-soc@vger.kernel.org
+>  T:	git git://linuxtv.org/pinchartl/media drm/du/next
+>  S:	Supported
+>  F:	drivers/gpu/drm/rcar-du/
+> -F:	drivers/gpu/drm/shmobile/
+> -F:	include/linux/platform_data/shmob_drm.h
+>  F:	Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+>  F:	Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+>  F:	Documentation/devicetree/bindings/display/renesas,du.txt
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index bd943a71756ca81b..3df7b8905ca8b736 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -273,8 +273,6 @@ source "drivers/gpu/drm/atmel-hlcdc/Kconfig"
+>  
+>  source "drivers/gpu/drm/rcar-du/Kconfig"
+>  
+> -source "drivers/gpu/drm/shmobile/Kconfig"
+> -
+>  source "drivers/gpu/drm/sun4i/Kconfig"
+>  
+>  source "drivers/gpu/drm/omapdrm/Kconfig"
+> diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+> index f0c1f8731a2761ed..9b5bee490a899468 100644
+> --- a/drivers/gpu/drm/Makefile
+> +++ b/drivers/gpu/drm/Makefile
+> @@ -82,7 +82,6 @@ obj-$(CONFIG_DRM_AST) += ast/
+>  obj-$(CONFIG_DRM_ARMADA) += armada/
+>  obj-$(CONFIG_DRM_ATMEL_HLCDC)	+= atmel-hlcdc/
+>  obj-$(CONFIG_DRM_RCAR_DU) += rcar-du/
+> -obj-$(CONFIG_DRM_SHMOBILE) +=shmobile/
+>  obj-y			+= omapdrm/
+>  obj-$(CONFIG_DRM_SUN4I) += sun4i/
+>  obj-y			+= tilcdc/
+> diff --git a/drivers/gpu/drm/shmobile/Kconfig b/drivers/gpu/drm/shmobile/Kconfig
+> deleted file mode 100644
+> index 61bbe8e8bcc51db9..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/Kconfig
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> -# SPDX-License-Identifier: GPL-2.0
+> -config DRM_SHMOBILE
+> -	tristate "DRM Support for SH Mobile"
+> -	depends on DRM && ARM
+> -	depends on ARCH_SHMOBILE || COMPILE_TEST
+> -	select BACKLIGHT_CLASS_DEVICE
+> -	select BACKLIGHT_LCD_SUPPORT
+> -	select DRM_KMS_HELPER
+> -	select DRM_KMS_CMA_HELPER
+> -	select DRM_GEM_CMA_HELPER
+> -	help
+> -	  Choose this option if you have an SH Mobile chipset.
+> -	  If M is selected the module will be called shmob-drm.
+> -
+> diff --git a/drivers/gpu/drm/shmobile/Makefile b/drivers/gpu/drm/shmobile/Makefile
+> deleted file mode 100644
+> index 861edafed8562c87..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/Makefile
+> +++ /dev/null
+> @@ -1,8 +0,0 @@
+> -# SPDX-License-Identifier: GPL-2.0
+> -shmob-drm-y := shmob_drm_backlight.o \
+> -	       shmob_drm_crtc.o \
+> -	       shmob_drm_drv.o \
+> -	       shmob_drm_kms.o \
+> -	       shmob_drm_plane.o
+> -
+> -obj-$(CONFIG_DRM_SHMOBILE)	+= shmob-drm.o
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_backlight.c b/drivers/gpu/drm/shmobile/shmob_drm_backlight.c
+> deleted file mode 100644
+> index f6628a5ee95f3e9a..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_backlight.c
+> +++ /dev/null
+> @@ -1,86 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> -/*
+> - * shmob_drm_backlight.c  --  SH Mobile DRM Backlight
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#include <linux/backlight.h>
+> -
+> -#include "shmob_drm_backlight.h"
+> -#include "shmob_drm_crtc.h"
+> -#include "shmob_drm_drv.h"
+> -
+> -static int shmob_drm_backlight_update(struct backlight_device *bdev)
+> -{
+> -	struct shmob_drm_connector *scon = bl_get_data(bdev);
+> -	struct shmob_drm_device *sdev = scon->connector.dev->dev_private;
+> -	const struct shmob_drm_backlight_data *bdata = &sdev->pdata->backlight;
+> -	int brightness = bdev->props.brightness;
+> -
+> -	if (bdev->props.power != FB_BLANK_UNBLANK ||
+> -	    bdev->props.state & BL_CORE_SUSPENDED)
+> -		brightness = 0;
+> -
+> -	return bdata->set_brightness(brightness);
+> -}
+> -
+> -static int shmob_drm_backlight_get_brightness(struct backlight_device *bdev)
+> -{
+> -	struct shmob_drm_connector *scon = bl_get_data(bdev);
+> -	struct shmob_drm_device *sdev = scon->connector.dev->dev_private;
+> -	const struct shmob_drm_backlight_data *bdata = &sdev->pdata->backlight;
+> -
+> -	return bdata->get_brightness();
+> -}
+> -
+> -static const struct backlight_ops shmob_drm_backlight_ops = {
+> -	.options	= BL_CORE_SUSPENDRESUME,
+> -	.update_status	= shmob_drm_backlight_update,
+> -	.get_brightness	= shmob_drm_backlight_get_brightness,
+> -};
+> -
+> -void shmob_drm_backlight_dpms(struct shmob_drm_connector *scon, int mode)
+> -{
+> -	if (scon->backlight == NULL)
+> -		return;
+> -
+> -	scon->backlight->props.power = mode == DRM_MODE_DPMS_ON
+> -				     ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN;
+> -	backlight_update_status(scon->backlight);
+> -}
+> -
+> -int shmob_drm_backlight_init(struct shmob_drm_connector *scon)
+> -{
+> -	struct shmob_drm_device *sdev = scon->connector.dev->dev_private;
+> -	const struct shmob_drm_backlight_data *bdata = &sdev->pdata->backlight;
+> -	struct drm_connector *connector = &scon->connector;
+> -	struct drm_device *dev = connector->dev;
+> -	struct backlight_device *backlight;
+> -
+> -	if (!bdata->max_brightness)
+> -		return 0;
+> -
+> -	backlight = backlight_device_register(bdata->name, dev->dev, scon,
+> -					      &shmob_drm_backlight_ops, NULL);
+> -	if (IS_ERR(backlight)) {
+> -		dev_err(dev->dev, "unable to register backlight device: %ld\n",
+> -			PTR_ERR(backlight));
+> -		return PTR_ERR(backlight);
+> -	}
+> -
+> -	backlight->props.max_brightness = bdata->max_brightness;
+> -	backlight->props.brightness = bdata->max_brightness;
+> -	backlight->props.power = FB_BLANK_POWERDOWN;
+> -	backlight_update_status(backlight);
+> -
+> -	scon->backlight = backlight;
+> -	return 0;
+> -}
+> -
+> -void shmob_drm_backlight_exit(struct shmob_drm_connector *scon)
+> -{
+> -	backlight_device_unregister(scon->backlight);
+> -}
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_backlight.h b/drivers/gpu/drm/shmobile/shmob_drm_backlight.h
+> deleted file mode 100644
+> index d9abb7a60be5c414..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_backlight.h
+> +++ /dev/null
+> @@ -1,19 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> -/*
+> - * shmob_drm_backlight.h  --  SH Mobile DRM Backlight
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#ifndef __SHMOB_DRM_BACKLIGHT_H__
+> -#define __SHMOB_DRM_BACKLIGHT_H__
+> -
+> -struct shmob_drm_connector;
+> -
+> -void shmob_drm_backlight_dpms(struct shmob_drm_connector *scon, int mode);
+> -int shmob_drm_backlight_init(struct shmob_drm_connector *scon);
+> -void shmob_drm_backlight_exit(struct shmob_drm_connector *scon);
+> -
+> -#endif /* __SHMOB_DRM_BACKLIGHT_H__ */
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
+> deleted file mode 100644
+> index 499b5fdb869f2064..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
+> +++ /dev/null
+> @@ -1,689 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> -/*
+> - * shmob_drm_crtc.c  --  SH Mobile DRM CRTCs
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#include <linux/backlight.h>
+> -#include <linux/clk.h>
+> -
+> -#include <drm/drmP.h>
+> -#include <drm/drm_crtc.h>
+> -#include <drm/drm_crtc_helper.h>
+> -#include <drm/drm_fb_cma_helper.h>
+> -#include <drm/drm_gem_cma_helper.h>
+> -#include <drm/drm_plane_helper.h>
+> -
+> -#include "shmob_drm_backlight.h"
+> -#include "shmob_drm_crtc.h"
+> -#include "shmob_drm_drv.h"
+> -#include "shmob_drm_kms.h"
+> -#include "shmob_drm_plane.h"
+> -#include "shmob_drm_regs.h"
+> -
+> -/*
+> - * TODO: panel support
+> - */
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Clock management
+> - */
+> -
+> -static int shmob_drm_clk_on(struct shmob_drm_device *sdev)
+> -{
+> -	int ret;
+> -
+> -	if (sdev->clock) {
+> -		ret = clk_prepare_enable(sdev->clock);
+> -		if (ret < 0)
+> -			return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static void shmob_drm_clk_off(struct shmob_drm_device *sdev)
+> -{
+> -	if (sdev->clock)
+> -		clk_disable_unprepare(sdev->clock);
+> -}
+> -
+> -/* -----------------------------------------------------------------------------
+> - * CRTC
+> - */
+> -
+> -static void shmob_drm_crtc_setup_geometry(struct shmob_drm_crtc *scrtc)
+> -{
+> -	struct drm_crtc *crtc = &scrtc->crtc;
+> -	struct shmob_drm_device *sdev = crtc->dev->dev_private;
+> -	const struct shmob_drm_interface_data *idata = &sdev->pdata->iface;
+> -	const struct drm_display_mode *mode = &crtc->mode;
+> -	u32 value;
+> -
+> -	value = sdev->ldmt1r
+> -	      | ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? 0 : LDMT1R_VPOL)
+> -	      | ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? 0 : LDMT1R_HPOL)
+> -	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DWPOL) ? LDMT1R_DWPOL : 0)
+> -	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DIPOL) ? LDMT1R_DIPOL : 0)
+> -	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DAPOL) ? LDMT1R_DAPOL : 0)
+> -	      | ((idata->flags & SHMOB_DRM_IFACE_FL_HSCNT) ? LDMT1R_HSCNT : 0)
+> -	      | ((idata->flags & SHMOB_DRM_IFACE_FL_DWCNT) ? LDMT1R_DWCNT : 0);
+> -	lcdc_write(sdev, LDMT1R, value);
+> -
+> -	if (idata->interface >= SHMOB_DRM_IFACE_SYS8A &&
+> -	    idata->interface <= SHMOB_DRM_IFACE_SYS24) {
+> -		/* Setup SYS bus. */
+> -		value = (idata->sys.cs_setup << LDMT2R_CSUP_SHIFT)
+> -		      | (idata->sys.vsync_active_high ? LDMT2R_RSV : 0)
+> -		      | (idata->sys.vsync_dir_input ? LDMT2R_VSEL : 0)
+> -		      | (idata->sys.write_setup << LDMT2R_WCSC_SHIFT)
+> -		      | (idata->sys.write_cycle << LDMT2R_WCEC_SHIFT)
+> -		      | (idata->sys.write_strobe << LDMT2R_WCLW_SHIFT);
+> -		lcdc_write(sdev, LDMT2R, value);
+> -
+> -		value = (idata->sys.read_latch << LDMT3R_RDLC_SHIFT)
+> -		      | (idata->sys.read_setup << LDMT3R_RCSC_SHIFT)
+> -		      | (idata->sys.read_cycle << LDMT3R_RCEC_SHIFT)
+> -		      | (idata->sys.read_strobe << LDMT3R_RCLW_SHIFT);
+> -		lcdc_write(sdev, LDMT3R, value);
+> -	}
+> -
+> -	value = ((mode->hdisplay / 8) << 16)			/* HDCN */
+> -	      | (mode->htotal / 8);				/* HTCN */
+> -	lcdc_write(sdev, LDHCNR, value);
+> -
+> -	value = (((mode->hsync_end - mode->hsync_start) / 8) << 16) /* HSYNW */
+> -	      | (mode->hsync_start / 8);			/* HSYNP */
+> -	lcdc_write(sdev, LDHSYNR, value);
+> -
+> -	value = ((mode->hdisplay & 7) << 24) | ((mode->htotal & 7) << 16)
+> -	      | (((mode->hsync_end - mode->hsync_start) & 7) << 8)
+> -	      | (mode->hsync_start & 7);
+> -	lcdc_write(sdev, LDHAJR, value);
+> -
+> -	value = ((mode->vdisplay) << 16)			/* VDLN */
+> -	      | mode->vtotal;					/* VTLN */
+> -	lcdc_write(sdev, LDVLNR, value);
+> -
+> -	value = ((mode->vsync_end - mode->vsync_start) << 16)	/* VSYNW */
+> -	      | mode->vsync_start;				/* VSYNP */
+> -	lcdc_write(sdev, LDVSYNR, value);
+> -}
+> -
+> -static void shmob_drm_crtc_start_stop(struct shmob_drm_crtc *scrtc, bool start)
+> -{
+> -	struct shmob_drm_device *sdev = scrtc->crtc.dev->dev_private;
+> -	u32 value;
+> -
+> -	value = lcdc_read(sdev, LDCNT2R);
+> -	if (start)
+> -		lcdc_write(sdev, LDCNT2R, value | LDCNT2R_DO);
+> -	else
+> -		lcdc_write(sdev, LDCNT2R, value & ~LDCNT2R_DO);
+> -
+> -	/* Wait until power is applied/stopped. */
+> -	while (1) {
+> -		value = lcdc_read(sdev, LDPMR) & LDPMR_LPS;
+> -		if ((start && value) || (!start && !value))
+> -			break;
+> -
+> -		cpu_relax();
+> -	}
+> -
+> -	if (!start) {
+> -		/* Stop the dot clock. */
+> -		lcdc_write(sdev, LDDCKSTPR, LDDCKSTPR_DCKSTP);
+> -	}
+> -}
+> -
+> -/*
+> - * shmob_drm_crtc_start - Configure and start the LCDC
+> - * @scrtc: the SH Mobile CRTC
+> - *
+> - * Configure and start the LCDC device. External devices (clocks, MERAM, panels,
+> - * ...) are not touched by this function.
+> - */
+> -static void shmob_drm_crtc_start(struct shmob_drm_crtc *scrtc)
+> -{
+> -	struct drm_crtc *crtc = &scrtc->crtc;
+> -	struct shmob_drm_device *sdev = crtc->dev->dev_private;
+> -	const struct shmob_drm_interface_data *idata = &sdev->pdata->iface;
+> -	const struct shmob_drm_format_info *format;
+> -	struct drm_device *dev = sdev->ddev;
+> -	struct drm_plane *plane;
+> -	u32 value;
+> -	int ret;
+> -
+> -	if (scrtc->started)
+> -		return;
+> -
+> -	format = shmob_drm_format_info(crtc->primary->fb->format->format);
+> -	if (WARN_ON(format == NULL))
+> -		return;
+> -
+> -	/* Enable clocks before accessing the hardware. */
+> -	ret = shmob_drm_clk_on(sdev);
+> -	if (ret < 0)
+> -		return;
+> -
+> -	/* Reset and enable the LCDC. */
+> -	lcdc_write(sdev, LDCNT2R, lcdc_read(sdev, LDCNT2R) | LDCNT2R_BR);
+> -	lcdc_wait_bit(sdev, LDCNT2R, LDCNT2R_BR, 0);
+> -	lcdc_write(sdev, LDCNT2R, LDCNT2R_ME);
+> -
+> -	/* Stop the LCDC first and disable all interrupts. */
+> -	shmob_drm_crtc_start_stop(scrtc, false);
+> -	lcdc_write(sdev, LDINTR, 0);
+> -
+> -	/* Configure power supply, dot clocks and start them. */
+> -	lcdc_write(sdev, LDPMR, 0);
+> -
+> -	value = sdev->lddckr;
+> -	if (idata->clk_div) {
+> -		/* FIXME: sh7724 can only use 42, 48, 54 and 60 for the divider
+> -		 * denominator.
+> -		 */
+> -		lcdc_write(sdev, LDDCKPAT1R, 0);
+> -		lcdc_write(sdev, LDDCKPAT2R, (1 << (idata->clk_div / 2)) - 1);
+> -
+> -		if (idata->clk_div == 1)
+> -			value |= LDDCKR_MOSEL;
+> -		else
+> -			value |= idata->clk_div;
+> -	}
+> -
+> -	lcdc_write(sdev, LDDCKR, value);
+> -	lcdc_write(sdev, LDDCKSTPR, 0);
+> -	lcdc_wait_bit(sdev, LDDCKSTPR, ~0, 0);
+> -
+> -	/* TODO: Setup SYS panel */
+> -
+> -	/* Setup geometry, format, frame buffer memory and operation mode. */
+> -	shmob_drm_crtc_setup_geometry(scrtc);
+> -
+> -	/* TODO: Handle YUV colorspaces. Hardcode REC709 for now. */
+> -	lcdc_write(sdev, LDDFR, format->lddfr | LDDFR_CF1);
+> -	lcdc_write(sdev, LDMLSR, scrtc->line_size);
+> -	lcdc_write(sdev, LDSA1R, scrtc->dma[0]);
+> -	if (format->yuv)
+> -		lcdc_write(sdev, LDSA2R, scrtc->dma[1]);
+> -	lcdc_write(sdev, LDSM1R, 0);
+> -
+> -	/* Word and long word swap. */
+> -	switch (format->fourcc) {
+> -	case DRM_FORMAT_RGB565:
+> -	case DRM_FORMAT_NV21:
+> -	case DRM_FORMAT_NV61:
+> -	case DRM_FORMAT_NV42:
+> -		value = LDDDSR_LS | LDDDSR_WS;
+> -		break;
+> -	case DRM_FORMAT_RGB888:
+> -	case DRM_FORMAT_NV12:
+> -	case DRM_FORMAT_NV16:
+> -	case DRM_FORMAT_NV24:
+> -		value = LDDDSR_LS | LDDDSR_WS | LDDDSR_BS;
+> -		break;
+> -	case DRM_FORMAT_ARGB8888:
+> -	default:
+> -		value = LDDDSR_LS;
+> -		break;
+> -	}
+> -	lcdc_write(sdev, LDDDSR, value);
+> -
+> -	/* Setup planes. */
+> -	drm_for_each_legacy_plane(plane, dev) {
+> -		if (plane->crtc == crtc)
+> -			shmob_drm_plane_setup(plane);
+> -	}
+> -
+> -	/* Enable the display output. */
+> -	lcdc_write(sdev, LDCNT1R, LDCNT1R_DE);
+> -
+> -	shmob_drm_crtc_start_stop(scrtc, true);
+> -
+> -	scrtc->started = true;
+> -}
+> -
+> -static void shmob_drm_crtc_stop(struct shmob_drm_crtc *scrtc)
+> -{
+> -	struct drm_crtc *crtc = &scrtc->crtc;
+> -	struct shmob_drm_device *sdev = crtc->dev->dev_private;
+> -
+> -	if (!scrtc->started)
+> -		return;
+> -
+> -	/* Stop the LCDC. */
+> -	shmob_drm_crtc_start_stop(scrtc, false);
+> -
+> -	/* Disable the display output. */
+> -	lcdc_write(sdev, LDCNT1R, 0);
+> -
+> -	/* Stop clocks. */
+> -	shmob_drm_clk_off(sdev);
+> -
+> -	scrtc->started = false;
+> -}
+> -
+> -void shmob_drm_crtc_suspend(struct shmob_drm_crtc *scrtc)
+> -{
+> -	shmob_drm_crtc_stop(scrtc);
+> -}
+> -
+> -void shmob_drm_crtc_resume(struct shmob_drm_crtc *scrtc)
+> -{
+> -	if (scrtc->dpms != DRM_MODE_DPMS_ON)
+> -		return;
+> -
+> -	shmob_drm_crtc_start(scrtc);
+> -}
+> -
+> -static void shmob_drm_crtc_compute_base(struct shmob_drm_crtc *scrtc,
+> -					int x, int y)
+> -{
+> -	struct drm_crtc *crtc = &scrtc->crtc;
+> -	struct drm_framebuffer *fb = crtc->primary->fb;
+> -	struct drm_gem_cma_object *gem;
+> -	unsigned int bpp;
+> -
+> -	bpp = scrtc->format->yuv ? 8 : scrtc->format->bpp;
+> -	gem = drm_fb_cma_get_gem_obj(fb, 0);
+> -	scrtc->dma[0] = gem->paddr + fb->offsets[0]
+> -		      + y * fb->pitches[0] + x * bpp / 8;
+> -
+> -	if (scrtc->format->yuv) {
+> -		bpp = scrtc->format->bpp - 8;
+> -		gem = drm_fb_cma_get_gem_obj(fb, 1);
+> -		scrtc->dma[1] = gem->paddr + fb->offsets[1]
+> -			      + y / (bpp == 4 ? 2 : 1) * fb->pitches[1]
+> -			      + x * (bpp == 16 ? 2 : 1);
+> -	}
+> -}
+> -
+> -static void shmob_drm_crtc_update_base(struct shmob_drm_crtc *scrtc)
+> -{
+> -	struct drm_crtc *crtc = &scrtc->crtc;
+> -	struct shmob_drm_device *sdev = crtc->dev->dev_private;
+> -
+> -	shmob_drm_crtc_compute_base(scrtc, crtc->x, crtc->y);
+> -
+> -	lcdc_write_mirror(sdev, LDSA1R, scrtc->dma[0]);
+> -	if (scrtc->format->yuv)
+> -		lcdc_write_mirror(sdev, LDSA2R, scrtc->dma[1]);
+> -
+> -	lcdc_write(sdev, LDRCNTR, lcdc_read(sdev, LDRCNTR) ^ LDRCNTR_MRS);
+> -}
+> -
+> -#define to_shmob_crtc(c)	container_of(c, struct shmob_drm_crtc, crtc)
+> -
+> -static void shmob_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+> -{
+> -	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
+> -
+> -	if (scrtc->dpms == mode)
+> -		return;
+> -
+> -	if (mode == DRM_MODE_DPMS_ON)
+> -		shmob_drm_crtc_start(scrtc);
+> -	else
+> -		shmob_drm_crtc_stop(scrtc);
+> -
+> -	scrtc->dpms = mode;
+> -}
+> -
+> -static void shmob_drm_crtc_mode_prepare(struct drm_crtc *crtc)
+> -{
+> -	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
+> -}
+> -
+> -static int shmob_drm_crtc_mode_set(struct drm_crtc *crtc,
+> -				   struct drm_display_mode *mode,
+> -				   struct drm_display_mode *adjusted_mode,
+> -				   int x, int y,
+> -				   struct drm_framebuffer *old_fb)
+> -{
+> -	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
+> -	struct shmob_drm_device *sdev = crtc->dev->dev_private;
+> -	const struct shmob_drm_format_info *format;
+> -
+> -	format = shmob_drm_format_info(crtc->primary->fb->format->format);
+> -	if (format == NULL) {
+> -		dev_dbg(sdev->dev, "mode_set: unsupported format %08x\n",
+> -			crtc->primary->fb->format->format);
+> -		return -EINVAL;
+> -	}
+> -
+> -	scrtc->format = format;
+> -	scrtc->line_size = crtc->primary->fb->pitches[0];
+> -
+> -	shmob_drm_crtc_compute_base(scrtc, x, y);
+> -
+> -	return 0;
+> -}
+> -
+> -static void shmob_drm_crtc_mode_commit(struct drm_crtc *crtc)
+> -{
+> -	shmob_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
+> -}
+> -
+> -static int shmob_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+> -					struct drm_framebuffer *old_fb)
+> -{
+> -	shmob_drm_crtc_update_base(to_shmob_crtc(crtc));
+> -
+> -	return 0;
+> -}
+> -
+> -static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+> -	.dpms = shmob_drm_crtc_dpms,
+> -	.prepare = shmob_drm_crtc_mode_prepare,
+> -	.commit = shmob_drm_crtc_mode_commit,
+> -	.mode_set = shmob_drm_crtc_mode_set,
+> -	.mode_set_base = shmob_drm_crtc_mode_set_base,
+> -};
+> -
+> -void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc)
+> -{
+> -	struct drm_pending_vblank_event *event;
+> -	struct drm_device *dev = scrtc->crtc.dev;
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&dev->event_lock, flags);
+> -	event = scrtc->event;
+> -	scrtc->event = NULL;
+> -	if (event) {
+> -		drm_crtc_send_vblank_event(&scrtc->crtc, event);
+> -		drm_crtc_vblank_put(&scrtc->crtc);
+> -	}
+> -	spin_unlock_irqrestore(&dev->event_lock, flags);
+> -}
+> -
+> -static int shmob_drm_crtc_page_flip(struct drm_crtc *crtc,
+> -				    struct drm_framebuffer *fb,
+> -				    struct drm_pending_vblank_event *event,
+> -				    uint32_t page_flip_flags,
+> -				    struct drm_modeset_acquire_ctx *ctx)
+> -{
+> -	struct shmob_drm_crtc *scrtc = to_shmob_crtc(crtc);
+> -	struct drm_device *dev = scrtc->crtc.dev;
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&dev->event_lock, flags);
+> -	if (scrtc->event != NULL) {
+> -		spin_unlock_irqrestore(&dev->event_lock, flags);
+> -		return -EBUSY;
+> -	}
+> -	spin_unlock_irqrestore(&dev->event_lock, flags);
+> -
+> -	crtc->primary->fb = fb;
+> -	shmob_drm_crtc_update_base(scrtc);
+> -
+> -	if (event) {
+> -		event->pipe = 0;
+> -		drm_crtc_vblank_get(&scrtc->crtc);
+> -		spin_lock_irqsave(&dev->event_lock, flags);
+> -		scrtc->event = event;
+> -		spin_unlock_irqrestore(&dev->event_lock, flags);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static void shmob_drm_crtc_enable_vblank(struct shmob_drm_device *sdev,
+> -					 bool enable)
+> -{
+> -	unsigned long flags;
+> -	u32 ldintr;
+> -
+> -	/* Be careful not to acknowledge any pending interrupt. */
+> -	spin_lock_irqsave(&sdev->irq_lock, flags);
+> -	ldintr = lcdc_read(sdev, LDINTR) | LDINTR_STATUS_MASK;
+> -	if (enable)
+> -		ldintr |= LDINTR_VEE;
+> -	else
+> -		ldintr &= ~LDINTR_VEE;
+> -	lcdc_write(sdev, LDINTR, ldintr);
+> -	spin_unlock_irqrestore(&sdev->irq_lock, flags);
+> -}
+> -
+> -static int shmob_drm_enable_vblank(struct drm_crtc *crtc)
+> -{
+> -	struct shmob_drm_device *sdev = crtc->dev->dev_private;
+> -
+> -	shmob_drm_crtc_enable_vblank(sdev, true);
+> -
+> -	return 0;
+> -}
+> -
+> -static void shmob_drm_disable_vblank(struct drm_crtc *crtc)
+> -{
+> -	struct shmob_drm_device *sdev = crtc->dev->dev_private;
+> -
+> -	shmob_drm_crtc_enable_vblank(sdev, false);
+> -}
+> -
+> -static const struct drm_crtc_funcs crtc_funcs = {
+> -	.destroy = drm_crtc_cleanup,
+> -	.set_config = drm_crtc_helper_set_config,
+> -	.page_flip = shmob_drm_crtc_page_flip,
+> -	.enable_vblank = shmob_drm_enable_vblank,
+> -	.disable_vblank = shmob_drm_disable_vblank,
+> -};
+> -
+> -int shmob_drm_crtc_create(struct shmob_drm_device *sdev)
+> -{
+> -	struct drm_crtc *crtc = &sdev->crtc.crtc;
+> -	int ret;
+> -
+> -	sdev->crtc.dpms = DRM_MODE_DPMS_OFF;
+> -
+> -	ret = drm_crtc_init(sdev->ddev, crtc, &crtc_funcs);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
+> -
+> -	return 0;
+> -}
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Encoder
+> - */
+> -
+> -#define to_shmob_encoder(e) \
+> -	container_of(e, struct shmob_drm_encoder, encoder)
+> -
+> -static void shmob_drm_encoder_dpms(struct drm_encoder *encoder, int mode)
+> -{
+> -	struct shmob_drm_encoder *senc = to_shmob_encoder(encoder);
+> -	struct shmob_drm_device *sdev = encoder->dev->dev_private;
+> -	struct shmob_drm_connector *scon = &sdev->connector;
+> -
+> -	if (senc->dpms == mode)
+> -		return;
+> -
+> -	shmob_drm_backlight_dpms(scon, mode);
+> -
+> -	senc->dpms = mode;
+> -}
+> -
+> -static bool shmob_drm_encoder_mode_fixup(struct drm_encoder *encoder,
+> -					 const struct drm_display_mode *mode,
+> -					 struct drm_display_mode *adjusted_mode)
+> -{
+> -	struct drm_device *dev = encoder->dev;
+> -	struct shmob_drm_device *sdev = dev->dev_private;
+> -	struct drm_connector *connector = &sdev->connector.connector;
+> -	const struct drm_display_mode *panel_mode;
+> -
+> -	if (list_empty(&connector->modes)) {
+> -		dev_dbg(dev->dev, "mode_fixup: empty modes list\n");
+> -		return false;
+> -	}
+> -
+> -	/* The flat panel mode is fixed, just copy it to the adjusted mode. */
+> -	panel_mode = list_first_entry(&connector->modes,
+> -				      struct drm_display_mode, head);
+> -	drm_mode_copy(adjusted_mode, panel_mode);
+> -
+> -	return true;
+> -}
+> -
+> -static void shmob_drm_encoder_mode_prepare(struct drm_encoder *encoder)
+> -{
+> -	/* No-op, everything is handled in the CRTC code. */
+> -}
+> -
+> -static void shmob_drm_encoder_mode_set(struct drm_encoder *encoder,
+> -				       struct drm_display_mode *mode,
+> -				       struct drm_display_mode *adjusted_mode)
+> -{
+> -	/* No-op, everything is handled in the CRTC code. */
+> -}
+> -
+> -static void shmob_drm_encoder_mode_commit(struct drm_encoder *encoder)
+> -{
+> -	/* No-op, everything is handled in the CRTC code. */
+> -}
+> -
+> -static const struct drm_encoder_helper_funcs encoder_helper_funcs = {
+> -	.dpms = shmob_drm_encoder_dpms,
+> -	.mode_fixup = shmob_drm_encoder_mode_fixup,
+> -	.prepare = shmob_drm_encoder_mode_prepare,
+> -	.commit = shmob_drm_encoder_mode_commit,
+> -	.mode_set = shmob_drm_encoder_mode_set,
+> -};
+> -
+> -static void shmob_drm_encoder_destroy(struct drm_encoder *encoder)
+> -{
+> -	drm_encoder_cleanup(encoder);
+> -}
+> -
+> -static const struct drm_encoder_funcs encoder_funcs = {
+> -	.destroy = shmob_drm_encoder_destroy,
+> -};
+> -
+> -int shmob_drm_encoder_create(struct shmob_drm_device *sdev)
+> -{
+> -	struct drm_encoder *encoder = &sdev->encoder.encoder;
+> -	int ret;
+> -
+> -	sdev->encoder.dpms = DRM_MODE_DPMS_OFF;
+> -
+> -	encoder->possible_crtcs = 1;
+> -
+> -	ret = drm_encoder_init(sdev->ddev, encoder, &encoder_funcs,
+> -			       DRM_MODE_ENCODER_LVDS, NULL);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
+> -
+> -	return 0;
+> -}
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Connector
+> - */
+> -
+> -#define to_shmob_connector(c) \
+> -	container_of(c, struct shmob_drm_connector, connector)
+> -
+> -static int shmob_drm_connector_get_modes(struct drm_connector *connector)
+> -{
+> -	struct shmob_drm_device *sdev = connector->dev->dev_private;
+> -	struct drm_display_mode *mode;
+> -
+> -	mode = drm_mode_create(connector->dev);
+> -	if (mode == NULL)
+> -		return 0;
+> -
+> -	mode->type = DRM_MODE_TYPE_PREFERRED | DRM_MODE_TYPE_DRIVER;
+> -	mode->clock = sdev->pdata->panel.mode.clock;
+> -	mode->hdisplay = sdev->pdata->panel.mode.hdisplay;
+> -	mode->hsync_start = sdev->pdata->panel.mode.hsync_start;
+> -	mode->hsync_end = sdev->pdata->panel.mode.hsync_end;
+> -	mode->htotal = sdev->pdata->panel.mode.htotal;
+> -	mode->vdisplay = sdev->pdata->panel.mode.vdisplay;
+> -	mode->vsync_start = sdev->pdata->panel.mode.vsync_start;
+> -	mode->vsync_end = sdev->pdata->panel.mode.vsync_end;
+> -	mode->vtotal = sdev->pdata->panel.mode.vtotal;
+> -	mode->flags = sdev->pdata->panel.mode.flags;
+> -
+> -	drm_mode_set_name(mode);
+> -	drm_mode_probed_add(connector, mode);
+> -
+> -	connector->display_info.width_mm = sdev->pdata->panel.width_mm;
+> -	connector->display_info.height_mm = sdev->pdata->panel.height_mm;
+> -
+> -	return 1;
+> -}
+> -
+> -static struct drm_encoder *
+> -shmob_drm_connector_best_encoder(struct drm_connector *connector)
+> -{
+> -	struct shmob_drm_connector *scon = to_shmob_connector(connector);
+> -
+> -	return scon->encoder;
+> -}
+> -
+> -static const struct drm_connector_helper_funcs connector_helper_funcs = {
+> -	.get_modes = shmob_drm_connector_get_modes,
+> -	.best_encoder = shmob_drm_connector_best_encoder,
+> -};
+> -
+> -static void shmob_drm_connector_destroy(struct drm_connector *connector)
+> -{
+> -	struct shmob_drm_connector *scon = to_shmob_connector(connector);
+> -
+> -	shmob_drm_backlight_exit(scon);
+> -	drm_connector_unregister(connector);
+> -	drm_connector_cleanup(connector);
+> -}
+> -
+> -static const struct drm_connector_funcs connector_funcs = {
+> -	.dpms = drm_helper_connector_dpms,
+> -	.fill_modes = drm_helper_probe_single_connector_modes,
+> -	.destroy = shmob_drm_connector_destroy,
+> -};
+> -
+> -int shmob_drm_connector_create(struct shmob_drm_device *sdev,
+> -			       struct drm_encoder *encoder)
+> -{
+> -	struct drm_connector *connector = &sdev->connector.connector;
+> -	int ret;
+> -
+> -	sdev->connector.encoder = encoder;
+> -
+> -	connector->display_info.width_mm = sdev->pdata->panel.width_mm;
+> -	connector->display_info.height_mm = sdev->pdata->panel.height_mm;
+> -
+> -	ret = drm_connector_init(sdev->ddev, connector, &connector_funcs,
+> -				 DRM_MODE_CONNECTOR_LVDS);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	drm_connector_helper_add(connector, &connector_helper_funcs);
+> -
+> -	ret = shmob_drm_backlight_init(&sdev->connector);
+> -	if (ret < 0)
+> -		goto err_cleanup;
+> -
+> -	ret = drm_connector_attach_encoder(connector, encoder);
+> -	if (ret < 0)
+> -		goto err_backlight;
+> -
+> -	drm_helper_connector_dpms(connector, DRM_MODE_DPMS_OFF);
+> -	drm_object_property_set_value(&connector->base,
+> -		sdev->ddev->mode_config.dpms_property, DRM_MODE_DPMS_OFF);
+> -
+> -	return 0;
+> -
+> -err_backlight:
+> -	shmob_drm_backlight_exit(&sdev->connector);
+> -err_cleanup:
+> -	drm_connector_cleanup(connector);
+> -	return ret;
+> -}
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+> deleted file mode 100644
+> index 9ca6920641d89da3..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+> +++ /dev/null
+> @@ -1,53 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> -/*
+> - * shmob_drm_crtc.h  --  SH Mobile DRM CRTCs
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#ifndef __SHMOB_DRM_CRTC_H__
+> -#define __SHMOB_DRM_CRTC_H__
+> -
+> -#include <drm/drmP.h>
+> -#include <drm/drm_crtc.h>
+> -#include <drm/drm_encoder.h>
+> -
+> -struct backlight_device;
+> -struct shmob_drm_device;
+> -
+> -struct shmob_drm_crtc {
+> -	struct drm_crtc crtc;
+> -
+> -	struct drm_pending_vblank_event *event;
+> -	int dpms;
+> -
+> -	const struct shmob_drm_format_info *format;
+> -	unsigned long dma[2];
+> -	unsigned int line_size;
+> -	bool started;
+> -};
+> -
+> -struct shmob_drm_encoder {
+> -	struct drm_encoder encoder;
+> -	int dpms;
+> -};
+> -
+> -struct shmob_drm_connector {
+> -	struct drm_connector connector;
+> -	struct drm_encoder *encoder;
+> -
+> -	struct backlight_device *backlight;
+> -};
+> -
+> -int shmob_drm_crtc_create(struct shmob_drm_device *sdev);
+> -void shmob_drm_crtc_finish_page_flip(struct shmob_drm_crtc *scrtc);
+> -void shmob_drm_crtc_suspend(struct shmob_drm_crtc *scrtc);
+> -void shmob_drm_crtc_resume(struct shmob_drm_crtc *scrtc);
+> -
+> -int shmob_drm_encoder_create(struct shmob_drm_device *sdev);
+> -int shmob_drm_connector_create(struct shmob_drm_device *sdev,
+> -			       struct drm_encoder *encoder);
+> -
+> -#endif /* __SHMOB_DRM_CRTC_H__ */
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> deleted file mode 100644
+> index f2cfd1698b7809f2..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> +++ /dev/null
+> @@ -1,311 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> -/*
+> - * shmob_drm_drv.c  --  SH Mobile DRM driver
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#include <linux/clk.h>
+> -#include <linux/io.h>
+> -#include <linux/mm.h>
+> -#include <linux/module.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/pm.h>
+> -#include <linux/slab.h>
+> -
+> -#include <drm/drmP.h>
+> -#include <drm/drm_crtc_helper.h>
+> -#include <drm/drm_gem_cma_helper.h>
+> -
+> -#include "shmob_drm_drv.h"
+> -#include "shmob_drm_kms.h"
+> -#include "shmob_drm_plane.h"
+> -#include "shmob_drm_regs.h"
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Hardware initialization
+> - */
+> -
+> -static int shmob_drm_init_interface(struct shmob_drm_device *sdev)
+> -{
+> -	static const u32 ldmt1r[] = {
+> -		[SHMOB_DRM_IFACE_RGB8] = LDMT1R_MIFTYP_RGB8,
+> -		[SHMOB_DRM_IFACE_RGB9] = LDMT1R_MIFTYP_RGB9,
+> -		[SHMOB_DRM_IFACE_RGB12A] = LDMT1R_MIFTYP_RGB12A,
+> -		[SHMOB_DRM_IFACE_RGB12B] = LDMT1R_MIFTYP_RGB12B,
+> -		[SHMOB_DRM_IFACE_RGB16] = LDMT1R_MIFTYP_RGB16,
+> -		[SHMOB_DRM_IFACE_RGB18] = LDMT1R_MIFTYP_RGB18,
+> -		[SHMOB_DRM_IFACE_RGB24] = LDMT1R_MIFTYP_RGB24,
+> -		[SHMOB_DRM_IFACE_YUV422] = LDMT1R_MIFTYP_YCBCR,
+> -		[SHMOB_DRM_IFACE_SYS8A] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS8A,
+> -		[SHMOB_DRM_IFACE_SYS8B] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS8B,
+> -		[SHMOB_DRM_IFACE_SYS8C] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS8C,
+> -		[SHMOB_DRM_IFACE_SYS8D] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS8D,
+> -		[SHMOB_DRM_IFACE_SYS9] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS9,
+> -		[SHMOB_DRM_IFACE_SYS12] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS12,
+> -		[SHMOB_DRM_IFACE_SYS16A] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS16A,
+> -		[SHMOB_DRM_IFACE_SYS16B] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS16B,
+> -		[SHMOB_DRM_IFACE_SYS16C] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS16C,
+> -		[SHMOB_DRM_IFACE_SYS18] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS18,
+> -		[SHMOB_DRM_IFACE_SYS24] = LDMT1R_IFM | LDMT1R_MIFTYP_SYS24,
+> -	};
+> -
+> -	if (sdev->pdata->iface.interface >= ARRAY_SIZE(ldmt1r)) {
+> -		dev_err(sdev->dev, "invalid interface type %u\n",
+> -			sdev->pdata->iface.interface);
+> -		return -EINVAL;
+> -	}
+> -
+> -	sdev->ldmt1r = ldmt1r[sdev->pdata->iface.interface];
+> -	return 0;
+> -}
+> -
+> -static int shmob_drm_setup_clocks(struct shmob_drm_device *sdev,
+> -					    enum shmob_drm_clk_source clksrc)
+> -{
+> -	struct clk *clk;
+> -	char *clkname;
+> -
+> -	switch (clksrc) {
+> -	case SHMOB_DRM_CLK_BUS:
+> -		clkname = "bus_clk";
+> -		sdev->lddckr = LDDCKR_ICKSEL_BUS;
+> -		break;
+> -	case SHMOB_DRM_CLK_PERIPHERAL:
+> -		clkname = "peripheral_clk";
+> -		sdev->lddckr = LDDCKR_ICKSEL_MIPI;
+> -		break;
+> -	case SHMOB_DRM_CLK_EXTERNAL:
+> -		clkname = NULL;
+> -		sdev->lddckr = LDDCKR_ICKSEL_HDMI;
+> -		break;
+> -	default:
+> -		return -EINVAL;
+> -	}
+> -
+> -	clk = devm_clk_get(sdev->dev, clkname);
+> -	if (IS_ERR(clk)) {
+> -		dev_err(sdev->dev, "cannot get dot clock %s\n", clkname);
+> -		return PTR_ERR(clk);
+> -	}
+> -
+> -	sdev->clock = clk;
+> -	return 0;
+> -}
+> -
+> -/* -----------------------------------------------------------------------------
+> - * DRM operations
+> - */
+> -
+> -static irqreturn_t shmob_drm_irq(int irq, void *arg)
+> -{
+> -	struct drm_device *dev = arg;
+> -	struct shmob_drm_device *sdev = dev->dev_private;
+> -	unsigned long flags;
+> -	u32 status;
+> -
+> -	/* Acknowledge interrupts. Putting interrupt enable and interrupt flag
+> -	 * bits in the same register is really brain-dead design and requires
+> -	 * taking a spinlock.
+> -	 */
+> -	spin_lock_irqsave(&sdev->irq_lock, flags);
+> -	status = lcdc_read(sdev, LDINTR);
+> -	lcdc_write(sdev, LDINTR, status ^ LDINTR_STATUS_MASK);
+> -	spin_unlock_irqrestore(&sdev->irq_lock, flags);
+> -
+> -	if (status & LDINTR_VES) {
+> -		drm_handle_vblank(dev, 0);
+> -		shmob_drm_crtc_finish_page_flip(&sdev->crtc);
+> -	}
+> -
+> -	return IRQ_HANDLED;
+> -}
+> -
+> -DEFINE_DRM_GEM_CMA_FOPS(shmob_drm_fops);
+> -
+> -static struct drm_driver shmob_drm_driver = {
+> -	.driver_features	= DRIVER_HAVE_IRQ | DRIVER_GEM | DRIVER_MODESET
+> -				| DRIVER_PRIME,
+> -	.irq_handler		= shmob_drm_irq,
+> -	.gem_free_object_unlocked = drm_gem_cma_free_object,
+> -	.gem_vm_ops		= &drm_gem_cma_vm_ops,
+> -	.prime_handle_to_fd	= drm_gem_prime_handle_to_fd,
+> -	.prime_fd_to_handle	= drm_gem_prime_fd_to_handle,
+> -	.gem_prime_import	= drm_gem_prime_import,
+> -	.gem_prime_export	= drm_gem_prime_export,
+> -	.gem_prime_get_sg_table	= drm_gem_cma_prime_get_sg_table,
+> -	.gem_prime_import_sg_table = drm_gem_cma_prime_import_sg_table,
+> -	.gem_prime_vmap		= drm_gem_cma_prime_vmap,
+> -	.gem_prime_vunmap	= drm_gem_cma_prime_vunmap,
+> -	.gem_prime_mmap		= drm_gem_cma_prime_mmap,
+> -	.dumb_create		= drm_gem_cma_dumb_create,
+> -	.fops			= &shmob_drm_fops,
+> -	.name			= "shmob-drm",
+> -	.desc			= "Renesas SH Mobile DRM",
+> -	.date			= "20120424",
+> -	.major			= 1,
+> -	.minor			= 0,
+> -};
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Power management
+> - */
+> -
+> -#ifdef CONFIG_PM_SLEEP
+> -static int shmob_drm_pm_suspend(struct device *dev)
+> -{
+> -	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
+> -
+> -	drm_kms_helper_poll_disable(sdev->ddev);
+> -	shmob_drm_crtc_suspend(&sdev->crtc);
+> -
+> -	return 0;
+> -}
+> -
+> -static int shmob_drm_pm_resume(struct device *dev)
+> -{
+> -	struct shmob_drm_device *sdev = dev_get_drvdata(dev);
+> -
+> -	drm_modeset_lock_all(sdev->ddev);
+> -	shmob_drm_crtc_resume(&sdev->crtc);
+> -	drm_modeset_unlock_all(sdev->ddev);
+> -
+> -	drm_kms_helper_poll_enable(sdev->ddev);
+> -	return 0;
+> -}
+> -#endif
+> -
+> -static const struct dev_pm_ops shmob_drm_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(shmob_drm_pm_suspend, shmob_drm_pm_resume)
+> -};
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Platform driver
+> - */
+> -
+> -static int shmob_drm_remove(struct platform_device *pdev)
+> -{
+> -	struct shmob_drm_device *sdev = platform_get_drvdata(pdev);
+> -	struct drm_device *ddev = sdev->ddev;
+> -
+> -	drm_dev_unregister(ddev);
+> -	drm_kms_helper_poll_fini(ddev);
+> -	drm_mode_config_cleanup(ddev);
+> -	drm_irq_uninstall(ddev);
+> -	drm_dev_put(ddev);
+> -
+> -	return 0;
+> -}
+> -
+> -static int shmob_drm_probe(struct platform_device *pdev)
+> -{
+> -	struct shmob_drm_platform_data *pdata = pdev->dev.platform_data;
+> -	struct shmob_drm_device *sdev;
+> -	struct drm_device *ddev;
+> -	struct resource *res;
+> -	unsigned int i;
+> -	int ret;
+> -
+> -	if (pdata == NULL) {
+> -		dev_err(&pdev->dev, "no platform data\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	/*
+> -	 * Allocate and initialize the driver private data, I/O resources and
+> -	 * clocks.
+> -	 */
+> -	sdev = devm_kzalloc(&pdev->dev, sizeof(*sdev), GFP_KERNEL);
+> -	if (sdev == NULL)
+> -		return -ENOMEM;
+> -
+> -	sdev->dev = &pdev->dev;
+> -	sdev->pdata = pdata;
+> -	spin_lock_init(&sdev->irq_lock);
+> -
+> -	platform_set_drvdata(pdev, sdev);
+> -
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	sdev->mmio = devm_ioremap_resource(&pdev->dev, res);
+> -	if (IS_ERR(sdev->mmio))
+> -		return PTR_ERR(sdev->mmio);
+> -
+> -	ret = shmob_drm_setup_clocks(sdev, pdata->clk_source);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	ret = shmob_drm_init_interface(sdev);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	/* Allocate and initialize the DRM device. */
+> -	ddev = drm_dev_alloc(&shmob_drm_driver, &pdev->dev);
+> -	if (IS_ERR(ddev))
+> -		return PTR_ERR(ddev);
+> -
+> -	sdev->ddev = ddev;
+> -	ddev->dev_private = sdev;
+> -
+> -	ret = shmob_drm_modeset_init(sdev);
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to initialize mode setting\n");
+> -		goto err_free_drm_dev;
+> -	}
+> -
+> -	for (i = 0; i < 4; ++i) {
+> -		ret = shmob_drm_plane_create(sdev, i);
+> -		if (ret < 0) {
+> -			dev_err(&pdev->dev, "failed to create plane %u\n", i);
+> -			goto err_modeset_cleanup;
+> -		}
+> -	}
+> -
+> -	ret = drm_vblank_init(ddev, 1);
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to initialize vblank\n");
+> -		goto err_modeset_cleanup;
+> -	}
+> -
+> -	ret = drm_irq_install(ddev, platform_get_irq(pdev, 0));
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to install IRQ handler\n");
+> -		goto err_modeset_cleanup;
+> -	}
+> -
+> -	/*
+> -	 * Register the DRM device with the core and the connectors with
+> -	 * sysfs.
+> -	 */
+> -	ret = drm_dev_register(ddev, 0);
+> -	if (ret < 0)
+> -		goto err_irq_uninstall;
+> -
+> -	return 0;
+> -
+> -err_irq_uninstall:
+> -	drm_irq_uninstall(ddev);
+> -err_modeset_cleanup:
+> -	drm_kms_helper_poll_fini(ddev);
+> -	drm_mode_config_cleanup(ddev);
+> -err_free_drm_dev:
+> -	drm_dev_put(ddev);
+> -
+> -	return ret;
+> -}
+> -
+> -static struct platform_driver shmob_drm_platform_driver = {
+> -	.probe		= shmob_drm_probe,
+> -	.remove		= shmob_drm_remove,
+> -	.driver		= {
+> -		.name	= "shmob-drm",
+> -		.pm	= &shmob_drm_pm_ops,
+> -	},
+> -};
+> -
+> -module_platform_driver(shmob_drm_platform_driver);
+> -
+> -MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
+> -MODULE_DESCRIPTION("Renesas SH Mobile DRM Driver");
+> -MODULE_LICENSE("GPL");
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.h b/drivers/gpu/drm/shmobile/shmob_drm_drv.h
+> deleted file mode 100644
+> index 80dc4b1020aad383..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_drv.h
+> +++ /dev/null
+> @@ -1,41 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> -/*
+> - * shmob_drm.h  --  SH Mobile DRM driver
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#ifndef __SHMOB_DRM_DRV_H__
+> -#define __SHMOB_DRM_DRV_H__
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/platform_data/shmob_drm.h>
+> -#include <linux/spinlock.h>
+> -
+> -#include "shmob_drm_crtc.h"
+> -
+> -struct clk;
+> -struct device;
+> -struct drm_device;
+> -
+> -struct shmob_drm_device {
+> -	struct device *dev;
+> -	const struct shmob_drm_platform_data *pdata;
+> -
+> -	void __iomem *mmio;
+> -	struct clk *clock;
+> -	u32 lddckr;
+> -	u32 ldmt1r;
+> -
+> -	spinlock_t irq_lock;		/* Protects hardware LDINTR register */
+> -
+> -	struct drm_device *ddev;
+> -
+> -	struct shmob_drm_crtc crtc;
+> -	struct shmob_drm_encoder encoder;
+> -	struct shmob_drm_connector connector;
+> -};
+> -
+> -#endif /* __SHMOB_DRM_DRV_H__ */
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
+> deleted file mode 100644
+> index a17268444c6d3206..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
+> +++ /dev/null
+> @@ -1,146 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> -/*
+> - * shmob_drm_kms.c  --  SH Mobile DRM Mode Setting
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#include <drm/drmP.h>
+> -#include <drm/drm_crtc.h>
+> -#include <drm/drm_crtc_helper.h>
+> -#include <drm/drm_fb_cma_helper.h>
+> -#include <drm/drm_gem_cma_helper.h>
+> -#include <drm/drm_gem_framebuffer_helper.h>
+> -
+> -#include "shmob_drm_crtc.h"
+> -#include "shmob_drm_drv.h"
+> -#include "shmob_drm_kms.h"
+> -#include "shmob_drm_regs.h"
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Format helpers
+> - */
+> -
+> -static const struct shmob_drm_format_info shmob_drm_format_infos[] = {
+> -	{
+> -		.fourcc = DRM_FORMAT_RGB565,
+> -		.bpp = 16,
+> -		.yuv = false,
+> -		.lddfr = LDDFR_PKF_RGB16,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_RGB888,
+> -		.bpp = 24,
+> -		.yuv = false,
+> -		.lddfr = LDDFR_PKF_RGB24,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_ARGB8888,
+> -		.bpp = 32,
+> -		.yuv = false,
+> -		.lddfr = LDDFR_PKF_ARGB32,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_NV12,
+> -		.bpp = 12,
+> -		.yuv = true,
+> -		.lddfr = LDDFR_CC | LDDFR_YF_420,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_NV21,
+> -		.bpp = 12,
+> -		.yuv = true,
+> -		.lddfr = LDDFR_CC | LDDFR_YF_420,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_NV16,
+> -		.bpp = 16,
+> -		.yuv = true,
+> -		.lddfr = LDDFR_CC | LDDFR_YF_422,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_NV61,
+> -		.bpp = 16,
+> -		.yuv = true,
+> -		.lddfr = LDDFR_CC | LDDFR_YF_422,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_NV24,
+> -		.bpp = 24,
+> -		.yuv = true,
+> -		.lddfr = LDDFR_CC | LDDFR_YF_444,
+> -	}, {
+> -		.fourcc = DRM_FORMAT_NV42,
+> -		.bpp = 24,
+> -		.yuv = true,
+> -		.lddfr = LDDFR_CC | LDDFR_YF_444,
+> -	},
+> -};
+> -
+> -const struct shmob_drm_format_info *shmob_drm_format_info(u32 fourcc)
+> -{
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < ARRAY_SIZE(shmob_drm_format_infos); ++i) {
+> -		if (shmob_drm_format_infos[i].fourcc == fourcc)
+> -			return &shmob_drm_format_infos[i];
+> -	}
+> -
+> -	return NULL;
+> -}
+> -
+> -/* -----------------------------------------------------------------------------
+> - * Frame buffer
+> - */
+> -
+> -static struct drm_framebuffer *
+> -shmob_drm_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+> -		    const struct drm_mode_fb_cmd2 *mode_cmd)
+> -{
+> -	const struct shmob_drm_format_info *format;
+> -
+> -	format = shmob_drm_format_info(mode_cmd->pixel_format);
+> -	if (format == NULL) {
+> -		dev_dbg(dev->dev, "unsupported pixel format %08x\n",
+> -			mode_cmd->pixel_format);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (mode_cmd->pitches[0] & 7 || mode_cmd->pitches[0] >= 65536) {
+> -		dev_dbg(dev->dev, "invalid pitch value %u\n",
+> -			mode_cmd->pitches[0]);
+> -		return ERR_PTR(-EINVAL);
+> -	}
+> -
+> -	if (format->yuv) {
+> -		unsigned int chroma_cpp = format->bpp == 24 ? 2 : 1;
+> -
+> -		if (mode_cmd->pitches[1] != mode_cmd->pitches[0] * chroma_cpp) {
+> -			dev_dbg(dev->dev,
+> -				"luma and chroma pitches do not match\n");
+> -			return ERR_PTR(-EINVAL);
+> -		}
+> -	}
+> -
+> -	return drm_gem_fb_create(dev, file_priv, mode_cmd);
+> -}
+> -
+> -static const struct drm_mode_config_funcs shmob_drm_mode_config_funcs = {
+> -	.fb_create = shmob_drm_fb_create,
+> -};
+> -
+> -int shmob_drm_modeset_init(struct shmob_drm_device *sdev)
+> -{
+> -	drm_mode_config_init(sdev->ddev);
+> -
+> -	shmob_drm_crtc_create(sdev);
+> -	shmob_drm_encoder_create(sdev);
+> -	shmob_drm_connector_create(sdev, &sdev->encoder.encoder);
+> -
+> -	drm_kms_helper_poll_init(sdev->ddev);
+> -
+> -	sdev->ddev->mode_config.min_width = 0;
+> -	sdev->ddev->mode_config.min_height = 0;
+> -	sdev->ddev->mode_config.max_width = 4095;
+> -	sdev->ddev->mode_config.max_height = 4095;
+> -	sdev->ddev->mode_config.funcs = &shmob_drm_mode_config_funcs;
+> -
+> -	drm_helper_disable_unused_functions(sdev->ddev);
+> -
+> -	return 0;
+> -}
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.h b/drivers/gpu/drm/shmobile/shmob_drm_kms.h
+> deleted file mode 100644
+> index 6ec2b732bb949882..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_kms.h
+> +++ /dev/null
+> @@ -1,29 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> -/*
+> - * shmob_drm_kms.h  --  SH Mobile DRM Mode Setting
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#ifndef __SHMOB_DRM_KMS_H__
+> -#define __SHMOB_DRM_KMS_H__
+> -
+> -#include <linux/types.h>
+> -
+> -struct drm_gem_cma_object;
+> -struct shmob_drm_device;
+> -
+> -struct shmob_drm_format_info {
+> -	u32 fourcc;
+> -	unsigned int bpp;
+> -	bool yuv;
+> -	u32 lddfr;
+> -};
+> -
+> -const struct shmob_drm_format_info *shmob_drm_format_info(u32 fourcc);
+> -
+> -int shmob_drm_modeset_init(struct shmob_drm_device *sdev);
+> -
+> -#endif /* __SHMOB_DRM_KMS_H__ */
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
+> deleted file mode 100644
+> index 1d1ee5e513519703..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_plane.c
+> +++ /dev/null
+> @@ -1,259 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> -/*
+> - * shmob_drm_plane.c  --  SH Mobile DRM Planes
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#include <drm/drmP.h>
+> -#include <drm/drm_crtc.h>
+> -#include <drm/drm_crtc_helper.h>
+> -#include <drm/drm_fb_cma_helper.h>
+> -#include <drm/drm_gem_cma_helper.h>
+> -
+> -#include "shmob_drm_drv.h"
+> -#include "shmob_drm_kms.h"
+> -#include "shmob_drm_plane.h"
+> -#include "shmob_drm_regs.h"
+> -
+> -struct shmob_drm_plane {
+> -	struct drm_plane plane;
+> -	unsigned int index;
+> -	unsigned int alpha;
+> -
+> -	const struct shmob_drm_format_info *format;
+> -	unsigned long dma[2];
+> -
+> -	unsigned int src_x;
+> -	unsigned int src_y;
+> -	unsigned int crtc_x;
+> -	unsigned int crtc_y;
+> -	unsigned int crtc_w;
+> -	unsigned int crtc_h;
+> -};
+> -
+> -#define to_shmob_plane(p)	container_of(p, struct shmob_drm_plane, plane)
+> -
+> -static void shmob_drm_plane_compute_base(struct shmob_drm_plane *splane,
+> -					 struct drm_framebuffer *fb,
+> -					 int x, int y)
+> -{
+> -	struct drm_gem_cma_object *gem;
+> -	unsigned int bpp;
+> -
+> -	bpp = splane->format->yuv ? 8 : splane->format->bpp;
+> -	gem = drm_fb_cma_get_gem_obj(fb, 0);
+> -	splane->dma[0] = gem->paddr + fb->offsets[0]
+> -		       + y * fb->pitches[0] + x * bpp / 8;
+> -
+> -	if (splane->format->yuv) {
+> -		bpp = splane->format->bpp - 8;
+> -		gem = drm_fb_cma_get_gem_obj(fb, 1);
+> -		splane->dma[1] = gem->paddr + fb->offsets[1]
+> -			       + y / (bpp == 4 ? 2 : 1) * fb->pitches[1]
+> -			       + x * (bpp == 16 ? 2 : 1);
+> -	}
+> -}
+> -
+> -static void __shmob_drm_plane_setup(struct shmob_drm_plane *splane,
+> -				    struct drm_framebuffer *fb)
+> -{
+> -	struct shmob_drm_device *sdev = splane->plane.dev->dev_private;
+> -	u32 format;
+> -
+> -	/* TODO: Support ROP3 mode */
+> -	format = LDBBSIFR_EN | (splane->alpha << LDBBSIFR_LAY_SHIFT);
+> -
+> -	switch (splane->format->fourcc) {
+> -	case DRM_FORMAT_RGB565:
+> -	case DRM_FORMAT_NV21:
+> -	case DRM_FORMAT_NV61:
+> -	case DRM_FORMAT_NV42:
+> -		format |= LDBBSIFR_SWPL | LDBBSIFR_SWPW;
+> -		break;
+> -	case DRM_FORMAT_RGB888:
+> -	case DRM_FORMAT_NV12:
+> -	case DRM_FORMAT_NV16:
+> -	case DRM_FORMAT_NV24:
+> -		format |= LDBBSIFR_SWPL | LDBBSIFR_SWPW | LDBBSIFR_SWPB;
+> -		break;
+> -	case DRM_FORMAT_ARGB8888:
+> -	default:
+> -		format |= LDBBSIFR_SWPL;
+> -		break;
+> -	}
+> -
+> -	switch (splane->format->fourcc) {
+> -	case DRM_FORMAT_RGB565:
+> -		format |= LDBBSIFR_AL_1 | LDBBSIFR_RY | LDBBSIFR_RPKF_RGB16;
+> -		break;
+> -	case DRM_FORMAT_RGB888:
+> -		format |= LDBBSIFR_AL_1 | LDBBSIFR_RY | LDBBSIFR_RPKF_RGB24;
+> -		break;
+> -	case DRM_FORMAT_ARGB8888:
+> -		format |= LDBBSIFR_AL_PK | LDBBSIFR_RY | LDDFR_PKF_ARGB32;
+> -		break;
+> -	case DRM_FORMAT_NV12:
+> -	case DRM_FORMAT_NV21:
+> -		format |= LDBBSIFR_AL_1 | LDBBSIFR_CHRR_420;
+> -		break;
+> -	case DRM_FORMAT_NV16:
+> -	case DRM_FORMAT_NV61:
+> -		format |= LDBBSIFR_AL_1 | LDBBSIFR_CHRR_422;
+> -		break;
+> -	case DRM_FORMAT_NV24:
+> -	case DRM_FORMAT_NV42:
+> -		format |= LDBBSIFR_AL_1 | LDBBSIFR_CHRR_444;
+> -		break;
+> -	}
+> -
+> -#define plane_reg_dump(sdev, splane, reg) \
+> -	dev_dbg(sdev->ddev->dev, "%s(%u): %s 0x%08x 0x%08x\n", __func__, \
+> -		splane->index, #reg, \
+> -		lcdc_read(sdev, reg(splane->index)), \
+> -		lcdc_read(sdev, reg(splane->index) + LCDC_SIDE_B_OFFSET))
+> -
+> -	plane_reg_dump(sdev, splane, LDBnBSIFR);
+> -	plane_reg_dump(sdev, splane, LDBnBSSZR);
+> -	plane_reg_dump(sdev, splane, LDBnBLOCR);
+> -	plane_reg_dump(sdev, splane, LDBnBSMWR);
+> -	plane_reg_dump(sdev, splane, LDBnBSAYR);
+> -	plane_reg_dump(sdev, splane, LDBnBSACR);
+> -
+> -	lcdc_write(sdev, LDBCR, LDBCR_UPC(splane->index));
+> -	dev_dbg(sdev->ddev->dev, "%s(%u): %s 0x%08x\n", __func__, splane->index,
+> -		"LDBCR", lcdc_read(sdev, LDBCR));
+> -
+> -	lcdc_write(sdev, LDBnBSIFR(splane->index), format);
+> -
+> -	lcdc_write(sdev, LDBnBSSZR(splane->index),
+> -		   (splane->crtc_h << LDBBSSZR_BVSS_SHIFT) |
+> -		   (splane->crtc_w << LDBBSSZR_BHSS_SHIFT));
+> -	lcdc_write(sdev, LDBnBLOCR(splane->index),
+> -		   (splane->crtc_y << LDBBLOCR_CVLC_SHIFT) |
+> -		   (splane->crtc_x << LDBBLOCR_CHLC_SHIFT));
+> -	lcdc_write(sdev, LDBnBSMWR(splane->index),
+> -		   fb->pitches[0] << LDBBSMWR_BSMW_SHIFT);
+> -
+> -	shmob_drm_plane_compute_base(splane, fb, splane->src_x, splane->src_y);
+> -
+> -	lcdc_write(sdev, LDBnBSAYR(splane->index), splane->dma[0]);
+> -	if (splane->format->yuv)
+> -		lcdc_write(sdev, LDBnBSACR(splane->index), splane->dma[1]);
+> -
+> -	lcdc_write(sdev, LDBCR,
+> -		   LDBCR_UPF(splane->index) | LDBCR_UPD(splane->index));
+> -	dev_dbg(sdev->ddev->dev, "%s(%u): %s 0x%08x\n", __func__, splane->index,
+> -		"LDBCR", lcdc_read(sdev, LDBCR));
+> -
+> -	plane_reg_dump(sdev, splane, LDBnBSIFR);
+> -	plane_reg_dump(sdev, splane, LDBnBSSZR);
+> -	plane_reg_dump(sdev, splane, LDBnBLOCR);
+> -	plane_reg_dump(sdev, splane, LDBnBSMWR);
+> -	plane_reg_dump(sdev, splane, LDBnBSAYR);
+> -	plane_reg_dump(sdev, splane, LDBnBSACR);
+> -}
+> -
+> -void shmob_drm_plane_setup(struct drm_plane *plane)
+> -{
+> -	struct shmob_drm_plane *splane = to_shmob_plane(plane);
+> -
+> -	if (plane->fb == NULL)
+> -		return;
+> -
+> -	__shmob_drm_plane_setup(splane, plane->fb);
+> -}
+> -
+> -static int
+> -shmob_drm_plane_update(struct drm_plane *plane, struct drm_crtc *crtc,
+> -		       struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+> -		       unsigned int crtc_w, unsigned int crtc_h,
+> -		       uint32_t src_x, uint32_t src_y,
+> -		       uint32_t src_w, uint32_t src_h,
+> -		       struct drm_modeset_acquire_ctx *ctx)
+> -{
+> -	struct shmob_drm_plane *splane = to_shmob_plane(plane);
+> -	struct shmob_drm_device *sdev = plane->dev->dev_private;
+> -	const struct shmob_drm_format_info *format;
+> -
+> -	format = shmob_drm_format_info(fb->format->format);
+> -	if (format == NULL) {
+> -		dev_dbg(sdev->dev, "update_plane: unsupported format %08x\n",
+> -			fb->format->format);
+> -		return -EINVAL;
+> -	}
+> -
+> -	if (src_w >> 16 != crtc_w || src_h >> 16 != crtc_h) {
+> -		dev_dbg(sdev->dev, "%s: scaling not supported\n", __func__);
+> -		return -EINVAL;
+> -	}
+> -
+> -	splane->format = format;
+> -
+> -	splane->src_x = src_x >> 16;
+> -	splane->src_y = src_y >> 16;
+> -	splane->crtc_x = crtc_x;
+> -	splane->crtc_y = crtc_y;
+> -	splane->crtc_w = crtc_w;
+> -	splane->crtc_h = crtc_h;
+> -
+> -	__shmob_drm_plane_setup(splane, fb);
+> -	return 0;
+> -}
+> -
+> -static int shmob_drm_plane_disable(struct drm_plane *plane,
+> -				   struct drm_modeset_acquire_ctx *ctx)
+> -{
+> -	struct shmob_drm_plane *splane = to_shmob_plane(plane);
+> -	struct shmob_drm_device *sdev = plane->dev->dev_private;
+> -
+> -	splane->format = NULL;
+> -
+> -	lcdc_write(sdev, LDBnBSIFR(splane->index), 0);
+> -	return 0;
+> -}
+> -
+> -static void shmob_drm_plane_destroy(struct drm_plane *plane)
+> -{
+> -	drm_plane_force_disable(plane);
+> -	drm_plane_cleanup(plane);
+> -}
+> -
+> -static const struct drm_plane_funcs shmob_drm_plane_funcs = {
+> -	.update_plane = shmob_drm_plane_update,
+> -	.disable_plane = shmob_drm_plane_disable,
+> -	.destroy = shmob_drm_plane_destroy,
+> -};
+> -
+> -static const uint32_t formats[] = {
+> -	DRM_FORMAT_RGB565,
+> -	DRM_FORMAT_RGB888,
+> -	DRM_FORMAT_ARGB8888,
+> -	DRM_FORMAT_NV12,
+> -	DRM_FORMAT_NV21,
+> -	DRM_FORMAT_NV16,
+> -	DRM_FORMAT_NV61,
+> -	DRM_FORMAT_NV24,
+> -	DRM_FORMAT_NV42,
+> -};
+> -
+> -int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index)
+> -{
+> -	struct shmob_drm_plane *splane;
+> -	int ret;
+> -
+> -	splane = devm_kzalloc(sdev->dev, sizeof(*splane), GFP_KERNEL);
+> -	if (splane == NULL)
+> -		return -ENOMEM;
+> -
+> -	splane->index = index;
+> -	splane->alpha = 255;
+> -
+> -	ret = drm_plane_init(sdev->ddev, &splane->plane, 1,
+> -			     &shmob_drm_plane_funcs, formats,
+> -			     ARRAY_SIZE(formats), false);
+> -
+> -	return ret;
+> -}
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.h b/drivers/gpu/drm/shmobile/shmob_drm_plane.h
+> deleted file mode 100644
+> index bae67cc8c62850ec..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_plane.h
+> +++ /dev/null
+> @@ -1,18 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> -/*
+> - * shmob_drm_plane.h  --  SH Mobile DRM Planes
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#ifndef __SHMOB_DRM_PLANE_H__
+> -#define __SHMOB_DRM_PLANE_H__
+> -
+> -struct shmob_drm_device;
+> -
+> -int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index);
+> -void shmob_drm_plane_setup(struct drm_plane *plane);
+> -
+> -#endif /* __SHMOB_DRM_PLANE_H__ */
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_regs.h b/drivers/gpu/drm/shmobile/shmob_drm_regs.h
+> deleted file mode 100644
+> index 9eb0b3d01df8079b..0000000000000000
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_regs.h
+> +++ /dev/null
+> @@ -1,307 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> -/*
+> - * shmob_drm_regs.h  --  SH Mobile DRM registers
+> - *
+> - * Copyright (C) 2012 Renesas Electronics Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#ifndef __SHMOB_DRM_REGS_H__
+> -#define __SHMOB_DRM_REGS_H__
+> -
+> -#include <linux/io.h>
+> -
+> -/* Register definitions */
+> -#define LDDCKPAT1R		0x400
+> -#define LDDCKPAT2R		0x404
+> -#define LDDCKR			0x410
+> -#define LDDCKR_ICKSEL_BUS	(0 << 16)
+> -#define LDDCKR_ICKSEL_MIPI	(1 << 16)
+> -#define LDDCKR_ICKSEL_HDMI	(2 << 16)
+> -#define LDDCKR_ICKSEL_EXT	(3 << 16)
+> -#define LDDCKR_ICKSEL_MASK	(7 << 16)
+> -#define LDDCKR_MOSEL		(1 << 6)
+> -#define LDDCKSTPR		0x414
+> -#define LDDCKSTPR_DCKSTS	(1 << 16)
+> -#define LDDCKSTPR_DCKSTP	(1 << 0)
+> -#define LDMT1R			0x418
+> -#define LDMT1R_VPOL		(1 << 28)
+> -#define LDMT1R_HPOL		(1 << 27)
+> -#define LDMT1R_DWPOL		(1 << 26)
+> -#define LDMT1R_DIPOL		(1 << 25)
+> -#define LDMT1R_DAPOL		(1 << 24)
+> -#define LDMT1R_HSCNT		(1 << 17)
+> -#define LDMT1R_DWCNT		(1 << 16)
+> -#define LDMT1R_IFM		(1 << 12)
+> -#define LDMT1R_MIFTYP_RGB8	(0x0 << 0)
+> -#define LDMT1R_MIFTYP_RGB9	(0x4 << 0)
+> -#define LDMT1R_MIFTYP_RGB12A	(0x5 << 0)
+> -#define LDMT1R_MIFTYP_RGB12B	(0x6 << 0)
+> -#define LDMT1R_MIFTYP_RGB16	(0x7 << 0)
+> -#define LDMT1R_MIFTYP_RGB18	(0xa << 0)
+> -#define LDMT1R_MIFTYP_RGB24	(0xb << 0)
+> -#define LDMT1R_MIFTYP_YCBCR	(0xf << 0)
+> -#define LDMT1R_MIFTYP_SYS8A	(0x0 << 0)
+> -#define LDMT1R_MIFTYP_SYS8B	(0x1 << 0)
+> -#define LDMT1R_MIFTYP_SYS8C	(0x2 << 0)
+> -#define LDMT1R_MIFTYP_SYS8D	(0x3 << 0)
+> -#define LDMT1R_MIFTYP_SYS9	(0x4 << 0)
+> -#define LDMT1R_MIFTYP_SYS12	(0x5 << 0)
+> -#define LDMT1R_MIFTYP_SYS16A	(0x7 << 0)
+> -#define LDMT1R_MIFTYP_SYS16B	(0x8 << 0)
+> -#define LDMT1R_MIFTYP_SYS16C	(0x9 << 0)
+> -#define LDMT1R_MIFTYP_SYS18	(0xa << 0)
+> -#define LDMT1R_MIFTYP_SYS24	(0xb << 0)
+> -#define LDMT1R_MIFTYP_MASK	(0xf << 0)
+> -#define LDMT2R			0x41c
+> -#define LDMT2R_CSUP_MASK	(7 << 26)
+> -#define LDMT2R_CSUP_SHIFT	26
+> -#define LDMT2R_RSV		(1 << 25)
+> -#define LDMT2R_VSEL		(1 << 24)
+> -#define LDMT2R_WCSC_MASK	(0xff << 16)
+> -#define LDMT2R_WCSC_SHIFT	16
+> -#define LDMT2R_WCEC_MASK	(0xff << 8)
+> -#define LDMT2R_WCEC_SHIFT	8
+> -#define LDMT2R_WCLW_MASK	(0xff << 0)
+> -#define LDMT2R_WCLW_SHIFT	0
+> -#define LDMT3R			0x420
+> -#define LDMT3R_RDLC_MASK	(0x3f << 24)
+> -#define LDMT3R_RDLC_SHIFT	24
+> -#define LDMT3R_RCSC_MASK	(0xff << 16)
+> -#define LDMT3R_RCSC_SHIFT	16
+> -#define LDMT3R_RCEC_MASK	(0xff << 8)
+> -#define LDMT3R_RCEC_SHIFT	8
+> -#define LDMT3R_RCLW_MASK	(0xff << 0)
+> -#define LDMT3R_RCLW_SHIFT	0
+> -#define LDDFR			0x424
+> -#define LDDFR_CF1		(1 << 18)
+> -#define LDDFR_CF0		(1 << 17)
+> -#define LDDFR_CC		(1 << 16)
+> -#define LDDFR_YF_420		(0 << 8)
+> -#define LDDFR_YF_422		(1 << 8)
+> -#define LDDFR_YF_444		(2 << 8)
+> -#define LDDFR_YF_MASK		(3 << 8)
+> -#define LDDFR_PKF_ARGB32	(0x00 << 0)
+> -#define LDDFR_PKF_RGB16		(0x03 << 0)
+> -#define LDDFR_PKF_RGB24		(0x0b << 0)
+> -#define LDDFR_PKF_MASK		(0x1f << 0)
+> -#define LDSM1R			0x428
+> -#define LDSM1R_OS		(1 << 0)
+> -#define LDSM2R			0x42c
+> -#define LDSM2R_OSTRG		(1 << 0)
+> -#define LDSA1R			0x430
+> -#define LDSA2R			0x434
+> -#define LDMLSR			0x438
+> -#define LDWBFR			0x43c
+> -#define LDWBCNTR		0x440
+> -#define LDWBAR			0x444
+> -#define LDHCNR			0x448
+> -#define LDHSYNR			0x44c
+> -#define LDVLNR			0x450
+> -#define LDVSYNR			0x454
+> -#define LDHPDR			0x458
+> -#define LDVPDR			0x45c
+> -#define LDPMR			0x460
+> -#define LDPMR_LPS		(3 << 0)
+> -#define LDINTR			0x468
+> -#define LDINTR_FE		(1 << 10)
+> -#define LDINTR_VSE		(1 << 9)
+> -#define LDINTR_VEE		(1 << 8)
+> -#define LDINTR_FS		(1 << 2)
+> -#define LDINTR_VSS		(1 << 1)
+> -#define LDINTR_VES		(1 << 0)
+> -#define LDINTR_STATUS_MASK	(0xff << 0)
+> -#define LDSR			0x46c
+> -#define LDSR_MSS		(1 << 10)
+> -#define LDSR_MRS		(1 << 8)
+> -#define LDSR_AS			(1 << 1)
+> -#define LDCNT1R			0x470
+> -#define LDCNT1R_DE		(1 << 0)
+> -#define LDCNT2R			0x474
+> -#define LDCNT2R_BR		(1 << 8)
+> -#define LDCNT2R_MD		(1 << 3)
+> -#define LDCNT2R_SE		(1 << 2)
+> -#define LDCNT2R_ME		(1 << 1)
+> -#define LDCNT2R_DO		(1 << 0)
+> -#define LDRCNTR			0x478
+> -#define LDRCNTR_SRS		(1 << 17)
+> -#define LDRCNTR_SRC		(1 << 16)
+> -#define LDRCNTR_MRS		(1 << 1)
+> -#define LDRCNTR_MRC		(1 << 0)
+> -#define LDDDSR			0x47c
+> -#define LDDDSR_LS		(1 << 2)
+> -#define LDDDSR_WS		(1 << 1)
+> -#define LDDDSR_BS		(1 << 0)
+> -#define LDHAJR			0x4a0
+> -
+> -#define LDDWD0R			0x800
+> -#define LDDWDxR_WDACT		(1 << 28)
+> -#define LDDWDxR_RSW		(1 << 24)
+> -#define LDDRDR			0x840
+> -#define LDDRDR_RSR		(1 << 24)
+> -#define LDDRDR_DRD_MASK		(0x3ffff << 0)
+> -#define LDDWAR			0x900
+> -#define LDDWAR_WA		(1 << 0)
+> -#define LDDRAR			0x904
+> -#define LDDRAR_RA		(1 << 0)
+> -
+> -#define LDBCR			0xb00
+> -#define LDBCR_UPC(n)		(1 << ((n) + 16))
+> -#define LDBCR_UPF(n)		(1 << ((n) + 8))
+> -#define LDBCR_UPD(n)		(1 << ((n) + 0))
+> -#define LDBnBSIFR(n)		(0xb20 + (n) * 0x20 + 0x00)
+> -#define LDBBSIFR_EN		(1 << 31)
+> -#define LDBBSIFR_VS		(1 << 29)
+> -#define LDBBSIFR_BRSEL		(1 << 28)
+> -#define LDBBSIFR_MX		(1 << 27)
+> -#define LDBBSIFR_MY		(1 << 26)
+> -#define LDBBSIFR_CV3		(3 << 24)
+> -#define LDBBSIFR_CV2		(2 << 24)
+> -#define LDBBSIFR_CV1		(1 << 24)
+> -#define LDBBSIFR_CV0		(0 << 24)
+> -#define LDBBSIFR_CV_MASK	(3 << 24)
+> -#define LDBBSIFR_LAY_MASK	(0xff << 16)
+> -#define LDBBSIFR_LAY_SHIFT	16
+> -#define LDBBSIFR_ROP3_MASK	(0xff << 16)
+> -#define LDBBSIFR_ROP3_SHIFT	16
+> -#define LDBBSIFR_AL_PL8		(3 << 14)
+> -#define LDBBSIFR_AL_PL1		(2 << 14)
+> -#define LDBBSIFR_AL_PK		(1 << 14)
+> -#define LDBBSIFR_AL_1		(0 << 14)
+> -#define LDBBSIFR_AL_MASK	(3 << 14)
+> -#define LDBBSIFR_SWPL		(1 << 10)
+> -#define LDBBSIFR_SWPW		(1 << 9)
+> -#define LDBBSIFR_SWPB		(1 << 8)
+> -#define LDBBSIFR_RY		(1 << 7)
+> -#define LDBBSIFR_CHRR_420	(2 << 0)
+> -#define LDBBSIFR_CHRR_422	(1 << 0)
+> -#define LDBBSIFR_CHRR_444	(0 << 0)
+> -#define LDBBSIFR_RPKF_ARGB32	(0x00 << 0)
+> -#define LDBBSIFR_RPKF_RGB16	(0x03 << 0)
+> -#define LDBBSIFR_RPKF_RGB24	(0x0b << 0)
+> -#define LDBBSIFR_RPKF_MASK	(0x1f << 0)
+> -#define LDBnBSSZR(n)		(0xb20 + (n) * 0x20 + 0x04)
+> -#define LDBBSSZR_BVSS_MASK	(0xfff << 16)
+> -#define LDBBSSZR_BVSS_SHIFT	16
+> -#define LDBBSSZR_BHSS_MASK	(0xfff << 0)
+> -#define LDBBSSZR_BHSS_SHIFT	0
+> -#define LDBnBLOCR(n)		(0xb20 + (n) * 0x20 + 0x08)
+> -#define LDBBLOCR_CVLC_MASK	(0xfff << 16)
+> -#define LDBBLOCR_CVLC_SHIFT	16
+> -#define LDBBLOCR_CHLC_MASK	(0xfff << 0)
+> -#define LDBBLOCR_CHLC_SHIFT	0
+> -#define LDBnBSMWR(n)		(0xb20 + (n) * 0x20 + 0x0c)
+> -#define LDBBSMWR_BSMWA_MASK	(0xffff << 16)
+> -#define LDBBSMWR_BSMWA_SHIFT	16
+> -#define LDBBSMWR_BSMW_MASK	(0xffff << 0)
+> -#define LDBBSMWR_BSMW_SHIFT	0
+> -#define LDBnBSAYR(n)		(0xb20 + (n) * 0x20 + 0x10)
+> -#define LDBBSAYR_FG1A_MASK	(0xff << 24)
+> -#define LDBBSAYR_FG1A_SHIFT	24
+> -#define LDBBSAYR_FG1R_MASK	(0xff << 16)
+> -#define LDBBSAYR_FG1R_SHIFT	16
+> -#define LDBBSAYR_FG1G_MASK	(0xff << 8)
+> -#define LDBBSAYR_FG1G_SHIFT	8
+> -#define LDBBSAYR_FG1B_MASK	(0xff << 0)
+> -#define LDBBSAYR_FG1B_SHIFT	0
+> -#define LDBnBSACR(n)		(0xb20 + (n) * 0x20 + 0x14)
+> -#define LDBBSACR_FG2A_MASK	(0xff << 24)
+> -#define LDBBSACR_FG2A_SHIFT	24
+> -#define LDBBSACR_FG2R_MASK	(0xff << 16)
+> -#define LDBBSACR_FG2R_SHIFT	16
+> -#define LDBBSACR_FG2G_MASK	(0xff << 8)
+> -#define LDBBSACR_FG2G_SHIFT	8
+> -#define LDBBSACR_FG2B_MASK	(0xff << 0)
+> -#define LDBBSACR_FG2B_SHIFT	0
+> -#define LDBnBSAAR(n)		(0xb20 + (n) * 0x20 + 0x18)
+> -#define LDBBSAAR_AP_MASK	(0xff << 24)
+> -#define LDBBSAAR_AP_SHIFT	24
+> -#define LDBBSAAR_R_MASK		(0xff << 16)
+> -#define LDBBSAAR_R_SHIFT	16
+> -#define LDBBSAAR_GY_MASK	(0xff << 8)
+> -#define LDBBSAAR_GY_SHIFT	8
+> -#define LDBBSAAR_B_MASK		(0xff << 0)
+> -#define LDBBSAAR_B_SHIFT	0
+> -#define LDBnBPPCR(n)		(0xb20 + (n) * 0x20 + 0x1c)
+> -#define LDBBPPCR_AP_MASK	(0xff << 24)
+> -#define LDBBPPCR_AP_SHIFT	24
+> -#define LDBBPPCR_R_MASK		(0xff << 16)
+> -#define LDBBPPCR_R_SHIFT	16
+> -#define LDBBPPCR_GY_MASK	(0xff << 8)
+> -#define LDBBPPCR_GY_SHIFT	8
+> -#define LDBBPPCR_B_MASK		(0xff << 0)
+> -#define LDBBPPCR_B_SHIFT	0
+> -#define LDBnBBGCL(n)		(0xb10 + (n) * 0x04)
+> -#define LDBBBGCL_BGA_MASK	(0xff << 24)
+> -#define LDBBBGCL_BGA_SHIFT	24
+> -#define LDBBBGCL_BGR_MASK	(0xff << 16)
+> -#define LDBBBGCL_BGR_SHIFT	16
+> -#define LDBBBGCL_BGG_MASK	(0xff << 8)
+> -#define LDBBBGCL_BGG_SHIFT	8
+> -#define LDBBBGCL_BGB_MASK	(0xff << 0)
+> -#define LDBBBGCL_BGB_SHIFT	0
+> -
+> -#define LCDC_SIDE_B_OFFSET	0x1000
+> -#define LCDC_MIRROR_OFFSET	0x2000
+> -
+> -static inline bool lcdc_is_banked(u32 reg)
+> -{
+> -	switch (reg) {
+> -	case LDMT1R:
+> -	case LDMT2R:
+> -	case LDMT3R:
+> -	case LDDFR:
+> -	case LDSM1R:
+> -	case LDSA1R:
+> -	case LDSA2R:
+> -	case LDMLSR:
+> -	case LDWBFR:
+> -	case LDWBCNTR:
+> -	case LDWBAR:
+> -	case LDHCNR:
+> -	case LDHSYNR:
+> -	case LDVLNR:
+> -	case LDVSYNR:
+> -	case LDHPDR:
+> -	case LDVPDR:
+> -	case LDHAJR:
+> -		return true;
+> -	default:
+> -		return reg >= LDBnBBGCL(0) && reg <= LDBnBPPCR(3);
+> -	}
+> -}
+> -
+> -static inline void lcdc_write_mirror(struct shmob_drm_device *sdev, u32 reg,
+> -				     u32 data)
+> -{
+> -	iowrite32(data, sdev->mmio + reg + LCDC_MIRROR_OFFSET);
+> -}
+> -
+> -static inline void lcdc_write(struct shmob_drm_device *sdev, u32 reg, u32 data)
+> -{
+> -	iowrite32(data, sdev->mmio + reg);
+> -	if (lcdc_is_banked(reg))
+> -		iowrite32(data, sdev->mmio + reg + LCDC_SIDE_B_OFFSET);
+> -}
+> -
+> -static inline u32 lcdc_read(struct shmob_drm_device *sdev, u32 reg)
+> -{
+> -	return ioread32(sdev->mmio + reg);
+> -}
+> -
+> -static inline int lcdc_wait_bit(struct shmob_drm_device *sdev, u32 reg,
+> -				u32 mask, u32 until)
+> -{
+> -	unsigned long timeout = jiffies + msecs_to_jiffies(5);
+> -
+> -	while ((lcdc_read(sdev, reg) & mask) != until) {
+> -		if (time_after(jiffies, timeout))
+> -			return -ETIMEDOUT;
+> -		cpu_relax();
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -#endif /* __SHMOB_DRM_REGS_H__ */
+> diff --git a/include/linux/platform_data/shmob_drm.h b/include/linux/platform_data/shmob_drm.h
+> deleted file mode 100644
+> index fe815d7d9f58c11b..0000000000000000
+> --- a/include/linux/platform_data/shmob_drm.h
+> +++ /dev/null
+> @@ -1,91 +0,0 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> -/*
+> - * shmob_drm.h  --  SH Mobile DRM driver
+> - *
+> - * Copyright (C) 2012 Renesas Corporation
+> - *
+> - * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+> - */
+> -
+> -#ifndef __SHMOB_DRM_H__
+> -#define __SHMOB_DRM_H__
+> -
+> -#include <linux/kernel.h>
+> -
+> -#include <drm/drm_mode.h>
+> -
+> -enum shmob_drm_clk_source {
+> -	SHMOB_DRM_CLK_BUS,
+> -	SHMOB_DRM_CLK_PERIPHERAL,
+> -	SHMOB_DRM_CLK_EXTERNAL,
+> -};
+> -
+> -enum shmob_drm_interface {
+> -	SHMOB_DRM_IFACE_RGB8,		/* 24bpp, 8:8:8 */
+> -	SHMOB_DRM_IFACE_RGB9,		/* 18bpp, 9:9 */
+> -	SHMOB_DRM_IFACE_RGB12A,		/* 24bpp, 12:12 */
+> -	SHMOB_DRM_IFACE_RGB12B,		/* 12bpp */
+> -	SHMOB_DRM_IFACE_RGB16,		/* 16bpp */
+> -	SHMOB_DRM_IFACE_RGB18,		/* 18bpp */
+> -	SHMOB_DRM_IFACE_RGB24,		/* 24bpp */
+> -	SHMOB_DRM_IFACE_YUV422,		/* 16bpp */
+> -	SHMOB_DRM_IFACE_SYS8A,		/* 24bpp, 8:8:8 */
+> -	SHMOB_DRM_IFACE_SYS8B,		/* 18bpp, 8:8:2 */
+> -	SHMOB_DRM_IFACE_SYS8C,		/* 18bpp, 2:8:8 */
+> -	SHMOB_DRM_IFACE_SYS8D,		/* 16bpp, 8:8 */
+> -	SHMOB_DRM_IFACE_SYS9,		/* 18bpp, 9:9 */
+> -	SHMOB_DRM_IFACE_SYS12,		/* 24bpp, 12:12 */
+> -	SHMOB_DRM_IFACE_SYS16A,		/* 16bpp */
+> -	SHMOB_DRM_IFACE_SYS16B,		/* 18bpp, 16:2 */
+> -	SHMOB_DRM_IFACE_SYS16C,		/* 18bpp, 2:16 */
+> -	SHMOB_DRM_IFACE_SYS18,		/* 18bpp */
+> -	SHMOB_DRM_IFACE_SYS24,		/* 24bpp */
+> -};
+> -
+> -struct shmob_drm_backlight_data {
+> -	const char *name;
+> -	int max_brightness;
+> -	int (*get_brightness)(void);
+> -	int (*set_brightness)(int brightness);
+> -};
+> -
+> -struct shmob_drm_panel_data {
+> -	unsigned int width_mm;		/* Panel width in mm */
+> -	unsigned int height_mm;		/* Panel height in mm */
+> -	struct drm_mode_modeinfo mode;
+> -};
+> -
+> -struct shmob_drm_sys_interface_data {
+> -	unsigned int read_latch:6;
+> -	unsigned int read_setup:8;
+> -	unsigned int read_cycle:8;
+> -	unsigned int read_strobe:8;
+> -	unsigned int write_setup:8;
+> -	unsigned int write_cycle:8;
+> -	unsigned int write_strobe:8;
+> -	unsigned int cs_setup:3;
+> -	unsigned int vsync_active_high:1;
+> -	unsigned int vsync_dir_input:1;
+> -};
+> -
+> -#define SHMOB_DRM_IFACE_FL_DWPOL (1 << 0) /* Rising edge dot clock data latch */
+> -#define SHMOB_DRM_IFACE_FL_DIPOL (1 << 1) /* Active low display enable */
+> -#define SHMOB_DRM_IFACE_FL_DAPOL (1 << 2) /* Active low display data */
+> -#define SHMOB_DRM_IFACE_FL_HSCNT (1 << 3) /* Disable HSYNC during VBLANK */
+> -#define SHMOB_DRM_IFACE_FL_DWCNT (1 << 4) /* Disable dotclock during blanking */
+> -
+> -struct shmob_drm_interface_data {
+> -	enum shmob_drm_interface interface;
+> -	struct shmob_drm_sys_interface_data sys;
+> -	unsigned int clk_div;
+> -	unsigned int flags;
+> -};
+> -
+> -struct shmob_drm_platform_data {
+> -	enum shmob_drm_clk_source clk_source;
+> -	struct shmob_drm_interface_data iface;
+> -	struct shmob_drm_panel_data panel;
+> -	struct shmob_drm_backlight_data backlight;
+> -};
+> -
+> -#endif /* __SHMOB_DRM_H__ */
+> -- 
+> 2.17.1
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
