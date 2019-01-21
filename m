@@ -2,51 +2,52 @@ Return-Path: <SRS0=sDbg=P5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F2FC2F3BA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 13:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F1AC2F3A0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 13:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945FA20870
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 13:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11A6120861
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 13:40:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfAUNZ5 (ORCPT
+        id S1728993AbfAUNkq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:25:57 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:33687 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728570AbfAUNZ4 (ORCPT
+        Mon, 21 Jan 2019 08:40:46 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44496 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728817AbfAUNkq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 08:25:56 -0500
-Received: by mail-ua1-f68.google.com with SMTP id t8so6915320uap.0;
-        Mon, 21 Jan 2019 05:25:55 -0800 (PST)
+        Mon, 21 Jan 2019 08:40:46 -0500
+Received: by mail-vs1-f68.google.com with SMTP id u11so12590295vsp.11;
+        Mon, 21 Jan 2019 05:40:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rP5xCzbbSaR6Hox2/H6phC2fM/sL7Svt1wCbNfOMRC8=;
-        b=dQWvV9GaxRy105ZfJMSIXyhUzDrmyWcdqyLbXC9LWWHk4XZFm4G3b3OzhcMRlNv8hX
-         YEmgfUy4UZ/8zOioiIKmVxK5PtrEvDdcMP9kVzd1SSAzwY0lzHlw+1L9R8yRGFRls7V0
-         X/JQHgXQFwkbqM1ADkcu9njt+DpeFsJxvixTCTlco678dkKM0zhCDmo/jDhrzojisxAa
-         sPbbDyKsmJZCRzlDfX+WlNoc+QyQBW0vrVTJvyx302MjamZlH2+XpUZfEod5b0UhL4ba
-         1MuctxZjV4+aQ+30XuWHktMZ/vJLxTGlxnj2vf0NZAOv/EfL+a9e3IkLHdpxZGQa1Yvv
-         1YbA==
-X-Gm-Message-State: AJcUukcqN60IGXl4JX5TLq9e/oljiIU1ZsDtvMleptzst9iHpOljXlyy
-        2IlBlH2OVsuBlONgJYSlBnVgOGlOMnzyRGRRmuc=
-X-Google-Smtp-Source: ALg8bN5xYX+6xp0H3N90J8Wna2rpSXf1xncOf3cQuU5h3ogyv07DKa1N8edHibgFzS91JrYgNvOVsRwiLAw63s9Ff8I=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr11273771uad.78.1548077155329;
- Mon, 21 Jan 2019 05:25:55 -0800 (PST)
+        bh=DwusGuaOMVedpCqH4E0PvkfFeqVZecU+rsxHCfv9Ba4=;
+        b=FQJMpuikcHLJxI38vPrJ3LjSSlYADj63pdmV6mnXSlCn+r0TqEQ+75VgySMj3rXE41
+         GhK2Sxfp1qiXlZMDOV+wbzaHoIbIOrqczLe4xsLSDGsIqxfQY5o56kGSFI0ij+/a5UZP
+         i2Qv+cUwOXGGA+9lQ+eYzGCo7QJe3HKbHLIXdnXGYt0Gng2eGnQFFKuEtMw0yckySPaf
+         b46ydSLe87OEKa/LVlwHKlSmmZJuLOIIMRGS3y3+CdBkcPXrPodCuyMmOBlIcKlkCr5k
+         1ZzxoqdPhjwFFmRW7/UQSLZinxVxOn2WH4wRmitLFMjbBEMCtxALWzGcvjyy+l/IIf/o
+         JiGw==
+X-Gm-Message-State: AJcUukcR6OiAg/TJ4l58V4QYSSmgWzPOErFbLs4gP07vyNYGJ42+uEyH
+        g701PfQ9WMKR7CPwlxGj0olLZ20is9+6yZorJn8=
+X-Google-Smtp-Source: ALg8bN4OxrZL4SEWGvZSqxKS5uIi+LdMSC8z9TCVODSN738vClPQa2SPE7WnAdYrKb4pNdJUmfKy8H8VltssnHXRE2s=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr11265699vsi.63.1548078045541;
+ Mon, 21 Jan 2019 05:40:45 -0800 (PST)
 MIME-Version: 1.0
-References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com> <8d3bd6b4-61eb-ceef-dc99-eb26c83f9e03@cogentembedded.com>
-In-Reply-To: <8d3bd6b4-61eb-ceef-dc99-eb26c83f9e03@cogentembedded.com>
+References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
+ <eef5ee23-311a-4367-43b5-b793357f06ef@cogentembedded.com> <20181214153332.47ukfkkgdrnsysmb@verge.net.au>
+In-Reply-To: <20181214153332.47ukfkkgdrnsysmb@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 14:25:42 +0100
-Message-ID: <CAMuHMdWUGYdPth+07PuLapHMuk7=WCgoO9uNMs1-7NyHU23ppw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+Date:   Mon, 21 Jan 2019 14:40:33 +0100
+Message-ID: <CAMuHMdXdFw2s0-kVZYJkiJ8TSYZJ3G774oNFXob9U=MkaU3=qA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] clk: renesas: rcar-gen3-cpg: add spinlock
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -57,20 +58,18 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+Hi Simon,
 
-On Tue, Dec 4, 2018 at 8:48 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> There's quite often repeated sequence of a CPG register read-modify-write,
-> so it seems worth factoring it out into a function -- this saves 68 bytes
-> of the object code (AArch64 gcc 4.8.5) and simplifies protecting all such
-> sequences with a spinlock in the next patch...
+On Fri, Dec 14, 2018 at 4:33 PM Simon Horman <horms@verge.net.au> wrote:
+> On Tue, Dec 04, 2018 at 10:49:44PM +0300, Sergei Shtylyov wrote:
+> > Protect the CPG register read-modify-write sequence with a spinlock.
 >
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Spinlocks are expensive, I think an explanation of why this is
+> necessary would be worthwhile.
 
-I believe my
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-for v1 is still valid.
+Some clock registers contain bits for multiple clocks.
+Hence read-modify-write cycles on these registers should be protected
+against concurrent accesses for multiple clocks.
 
 Gr{oetje,eeting}s,
 
