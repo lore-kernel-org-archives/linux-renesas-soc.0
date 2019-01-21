@@ -2,82 +2,79 @@ Return-Path: <SRS0=sDbg=P5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DE2C31681
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 18:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B54EC31681
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 18:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EC42085A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 18:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EF020989
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 18:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="NgRQ18NT"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="dT6WD5jV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfAUSOh (ORCPT
+        id S1728201AbfAUStJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:14:37 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40216 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfAUSOh (ORCPT
+        Mon, 21 Jan 2019 13:49:09 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38601 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727837AbfAUStJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 13:14:37 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v5so16163558lfe.7
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Jan 2019 10:14:35 -0800 (PST)
+        Mon, 21 Jan 2019 13:49:09 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so18411558lja.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Jan 2019 10:49:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:organization:message-id:date
+        h=subject:to:cc:references:from:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=8XNrborbmkLyj7MOhD2bckHByezP7aYEcGysoydwhEo=;
-        b=NgRQ18NTRUyhLp3qzGxSMdowUrCdv51jK3ncUZ82RANd93NGMosdDlxxe0oBOxPGUm
-         CgIqhboKV864ypRZCvt1xgtjbVNJhjBxgr6sEp+PjUSyI7MhFmzD3HY8TMLUeU0ZlVV8
-         +uA1g9TKoJ/G7BICzpzWweJL1T9oJ9mfEcpphwo3CCdrEP7mfR0N4XKxxJYWOmaLI5T5
-         JR97ecKaQVVvTJb1pLS4va2yr9cVZM6hAyNrFJldngCQr5F5s6rTj+6k/Zqa/GEpFNCt
-         n6FaYGo0wLZyPT7BW4rOq+CXijlxHkxZctrG7wE/Jcfj5ooVCeOaJOy4zM9zBxhuJhzn
-         2HJw==
+        bh=c/mbe/kYXtGbxH5uz/MVTsH8N9qQqJTlIz+IrKDBo9s=;
+        b=dT6WD5jVgOd2WjhQx4l5trq9tgbyhtqpVOiFvzo0mAYoCiiYJ5d7HNU0x3HthETXW4
+         ys1aaCeL2vJ6fPbZR2X0mQVAwUwIyDdbkrt7qXt+GnXRd5y6yH+y2SbBdo7E43WAen2L
+         RyMAZE/mlDB1y4kVXGUbxz7IBIcoKDMFHpzDPTRTo1vIfY7gY6s4tj0hmwdV6IazVl/K
+         fl3CNj5fgB4L1w2M2YvqPWXeHE0QwiOYZHYILTvK4ggumt+eq+U6xZLDqSBAz/o/GVq3
+         cT2RtT3j5D+cL64yXPKKO9jThBPvFItVQzJ2LNpMH+gjatmNf5wL9pqmUWQJAHodeH12
+         gq5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:organization
+        h=x-gm-message-state:subject:to:cc:references:from:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=8XNrborbmkLyj7MOhD2bckHByezP7aYEcGysoydwhEo=;
-        b=tavpM5YTx838asMsspodl5hr8BgUKinkh7AAdJs0cWaxmlMlZBbomJ00fCeOozxA08
-         mYKzOgHaahfsoVdpAbDcvIwj9KOnfmbAlu21oqx2mRdh/6XruH6u3oO+hW6atIWncJ9Q
-         2lxkNlYD9q1xDh61pkIoALx7OIsDZSY6bgGscVdkT0u60zmhV+wSCcIuIrOrE8RwPes2
-         Nd6kuBfFMvVd+wRq+m1RdtfbP2n8maIs5hVhEgDCJBeSaBK1/g8ZHIaBM1RjizPWGGXF
-         E6WKUeeaeuB8jBBLg1/WgINMrxSF0BIrnYLa6ufAL03F3sZSOIKTj6HbVfuYVXj3vTeP
-         GhhA==
-X-Gm-Message-State: AJcUukd3eInVdo1ZZsr9FZiG0qLAX11xji657OKg2KnP10xAwlQfjlvE
-        neLBtBb2+H2K0ZI5DPVh7AWS/g==
-X-Google-Smtp-Source: ALg8bN6PPqPkACxJcoENfP9z2sJI1gD7slSarXUhSNl1mxBSaA5Dm/v+UAsap3xsCRL2ndOtKnGZkw==
-X-Received: by 2002:a19:5601:: with SMTP id k1mr17101442lfb.99.1548094475001;
-        Mon, 21 Jan 2019 10:14:35 -0800 (PST)
+        bh=c/mbe/kYXtGbxH5uz/MVTsH8N9qQqJTlIz+IrKDBo9s=;
+        b=r279DVDJITlvmosMWYU0vKvrku3OFTfoEKQ+Nsj9UrkqSy+DYmxEEozg/l/ybDxt9F
+         RvSGsMfTL+Cqte7bGdeBzgkHCUNxW3+z7SkNXeT4EviM9v35woNzY7j14l8HMMTwzZA4
+         k1UBco7QK2E4BjHX7UlIa6itlZ3isj31GkbRgElJwZDCWvQk+j+XrXnGF2kN49CyRKvi
+         VTeLL6L2iWi2CJueMnnFc0j7LQ7x6S54lYJGTQqlAxM8b+OCE2MZkyDLb6XgZTGpUt7W
+         knkBb2JsqrE7P2sXGfOLfpFaDe0sS0EpZU3JGLj0KC0YGjP1vCtQeTx1Xr9xhnCFjyE6
+         n9Bw==
+X-Gm-Message-State: AJcUukcLR+eIFZRhxWK4WRLLgX9VzojhpU+zPJqvyTDUlvhBchIodEGB
+        Cj2v2af9Eq+JiWYplPv8mul8T9SaAlI=
+X-Google-Smtp-Source: ALg8bN7Eq4zSy1nyNMshvcqLlyG2/4+FtmKolf8FT8JmCKnezT+8TrlN2Fzmsoa9Dv0Rooq/LQ3F5w==
+X-Received: by 2002:a2e:9dcb:: with SMTP id x11-v6mr20012085ljj.158.1548096547463;
+        Mon, 21 Jan 2019 10:49:07 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.84.215])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm2430201lje.73.2019.01.21.10.14.33
+        by smtp.gmail.com with ESMTPSA id g24sm2389259lfh.33.2019.01.21.10.49.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 21 Jan 2019 10:14:34 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v6 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        Mon, 21 Jan 2019 10:49:06 -0800 (PST)
+Subject: Re: [PATCH v2 2/4] clk: renesas: rcar-gen3-cpg: add spinlock
+To:     Simon Horman <horms@verge.net.au>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1547790855-22120-1-git-send-email-masonccyang@mxic.com.tw>
- <1547790855-22120-2-git-send-email-masonccyang@mxic.com.tw>
- <f4665653-503c-e1a1-a211-b8b322225bd6@cogentembedded.com>
- <OFE50FED81.5C117A38-ON48258389.0012FCE2-48258389.00139BD2@mxic.com.tw>
+        linux-clk@vger.kernel.org
+References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
+ <eef5ee23-311a-4367-43b5-b793357f06ef@cogentembedded.com>
+ <20181214153332.47ukfkkgdrnsysmb@verge.net.au>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <5440645d-6b52-ad72-1c98-2d140f1cd15d@cogentembedded.com>
-Date:   Mon, 21 Jan 2019 21:14:33 +0300
+Message-ID: <54c236a3-aaa3-c8b5-786c-941a36deff6b@cogentembedded.com>
+Date:   Mon, 21 Jan 2019 21:49:05 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <OFE50FED81.5C117A38-ON48258389.0012FCE2-48258389.00139BD2@mxic.com.tw>
+In-Reply-To: <20181214153332.47ukfkkgdrnsysmb@verge.net.au>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
@@ -86,64 +83,17 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
-
-On 01/21/2019 06:34 AM, masonccyang@mxic.com.tw wrote:
-
->> > +#define RPC_SMENR      0x0030   // R/W
->> > +#define RPC_SMENR_CDB(o)   (((o) & 0x2) << 30)
->> > +#define RPC_SMENR_OCDB(o)   (((o) & 0x2) << 28)
->> > +#define RPC_SMENR_ADB(o)   (((o) & 0x2) << 24)
->> > +#define RPC_SMENR_OPDB(o)   (((o) & 0x2) << 20)
->> > +#define RPC_SMENR_SPIDB(o)   (((o) & 0x2) << 16)
->>
->>    Ugh, s/0x2/0x3/! :-/
->>
->> [...]
->> > +#define RPC_SMDRENR      0x0064   // R/W
->> > +#define RPC_SMDRENR_HYPE   (0x5 << 12)
->>
->>    s/0x5/0x7/, and this is a field, not value.
->>
+On 12/14/2018 06:33 PM, Simon Horman wrote:
+> On Tue, Dec 04, 2018 at 10:49:44PM +0300, Sergei Shtylyov wrote:
+>> Protect the CPG register read-modify-write sequence with a spinlock.
 > 
-> okay, both 0x2 and 0x5 are just make sure these registers was
-> writing a correct value rather than a prohibited value.
-> anyway, I will patch them.
+> Spinlocks are expensive, I think an explanation of why this is
+> necessary would be worthwhile.
 
-   TIA.
+   The driver using a spinlock to protect the hardware registers is such a 
+common scenario, I didn't think it was worth a special explanation. :-)
 
->> [...]
->> > +static int rpc_spi_probe(struct platform_device *pdev)
->> > +{
->> > +   struct spi_controller *ctlr;
->> > +   struct resource *res;
->> > +   struct rpc_spi *rpc;
->> > +   const struct regmap_config *regmap_config;
->> > +   struct device_node *rpc_if;
->> > +   int ret;
->> > +
->> > +   rpc_if = of_find_compatible_node(pdev->dev.of_node, NULL,
->> > +                "jedec,spi-nor");
->>
->>    I doubt that this is a correct function to check for the child node's
->> "compatible" prop...
-
-   You need of_get_next_child() or of_get_next_available_child().
-
->>
->> [...]
->> > +   regmap_config = &rpc_spi_regmap_config;
->>
->>    Doesn't look like this variable is needed...
-> 
-> why ?
-
-   Why not just use &rpc_spi_regmap_config below?
-
->> > +   rpc->regmap = devm_regmap_init_mmio(&pdev->dev, rpc->base,
->> > +                   regmap_config);
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 [...]
-
-> Mason
 
 MBR, Sergei
