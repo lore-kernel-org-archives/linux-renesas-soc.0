@@ -2,88 +2,112 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4410CC282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 22:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B956C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 23:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121B820870
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 22:54:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="smQyrZKl"
+	by mail.kernel.org (Postfix) with ESMTP id CC5D621726
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 23:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfAVWyQ (ORCPT
+        id S1726735AbfAVXCt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:54:16 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60676 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfAVWyQ (ORCPT
+        Tue, 22 Jan 2019 18:02:49 -0500
+Received: from sauhun.de ([88.99.104.3]:56710 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726175AbfAVXCt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:54:16 -0500
-Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E02021245;
-        Tue, 22 Jan 2019 23:54:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548197653;
-        bh=4SWTxvnW6KKKK/9enF9kKe1XmorS/EGIPa+vYm5rALo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=smQyrZKleWl7sFHdbCPgeU9Ep4jcVUqolto00wahC4T+KjwLO6FPRDL1T1QX8jhvI
-         wso6pRA9/Q9w6YPNkBA4V40XVTGO5hlzwOJ/smxb2qvBTYJbDZ1jw2VAjeowOf/uWu
-         dQh76wD/VeB9VW99HGWUzi15pHt7sQwBGzJTeRKM=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 6/6] arm64: dts: renesas: r8a77995: draak: Enable LVDS1 encoder
-Date:   Wed, 23 Jan 2019 00:54:05 +0200
-Message-Id: <20190122225405.7815-7-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
+        Tue, 22 Jan 2019 18:02:49 -0500
+Received: from localhost (p54B333AA.dip0.t-ipconnect.de [84.179.51.170])
+        by pokefinder.org (Postfix) with ESMTPSA id 51A592C78FF;
+        Wed, 23 Jan 2019 00:02:47 +0100 (CET)
+Date:   Wed, 23 Jan 2019 00:02:46 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: rcar: Fix clients using i2c from suspend callback
+Message-ID: <20190122230246.sg7i7wugcgpuijhw@ninjato>
+References: <20190122100357.11712-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="prfv4qz7vozphtim"
+Content-Disposition: inline
+In-Reply-To: <20190122100357.11712-1-geert+renesas@glider.be>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The LVDS1 encoder must supply a pixel clock to the DU for the DPAD
-output when the LVDS0 encoder is used. Enable it despite its output not
-being connected.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
-Changes since v1:
+--prfv4qz7vozphtim
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Add a comment in the DT to explain why the LVDS1 encoder needs to be
-  enabled.
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Tue, Jan 22, 2019 at 11:03:57AM +0100, Geert Uytterhoeven wrote:
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 89df9bc844c0..3c9ec67e342b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -356,6 +356,13 @@
- };
- 
- &lvds1 {
-+	/*
-+	 * Even though the LVDS1 output is not connected, the encoder must be
-+	 * enabled to supply a pixel clock to the DU for the DPAD output when
-+	 * LVDS0 is in use.
-+	 */
-+	status = "okay";
-+
- 	clocks = <&cpg CPG_MOD 727>,
- 		 <&x12_clk>,
- 		 <&extal_clk>;
--- 
-Regards,
+[...]
 
-Laurent Pinchart
+> On second resume, the sound driver fails with:
+>=20
+>     cs2000-cp 2-004f: pll lock failed
+>     rcar_sound ec500000.sound: can't use clk 1
+>=20
+> As the CS2000 clock driver needs to send I2C messages during suspend,
+> the I2C controller driver should be suspended later, and resumed
+> earlier.  Fix this by using the noirq sleep ops instead of the normal
+> sleep ops, which are called after the late sleep ops, as used by the
+> CS2000 clock driver.
+>=20
+> Fixes: 18569fa89a4db9ed ("i2c: rcar: add suspend/resume support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> The various I2C drivers seem to use a mix of normal, late, and noirq
+> sleep ops.
+>=20
+> For this particular use case, both the late and noirq sleep ops work,
+> but that may depend on link order.
+>=20
+> Given the comment about wake-up sources in commit 57186fe3db3ec462
+> ("i2c: exynos5: Properly use the "noirq" variants of suspend/resume"),
+> perhaps all of them should use SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() instead?
 
+Likely.
+
+My plan is to first deal with the issues how to do I2C when irqs are
+already disabled. Once this is in place as an exception for justified
+cases, I think we can deal with the other devices; so every special user
+gets the proper treatment and we are still able to WARN about devices
+doing I2C transfers when they shouldn't do it.
+
+All that being said:
+
+Applied to for-next, thanks!
+
+
+--prfv4qz7vozphtim
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxHoRYACgkQFA3kzBSg
+Kbahrg//a8xZgjlI8kcC1zGUxLomvxur7udLaXbH6eAE0Af4hQ9+1jWsOVr4lhOK
+VKv0DIPi4qmiPsN6hn/TTE2Mjp8CN8xgOcnuIugOSY2m8ERDvwUHgt3fIJi4A/sV
+HdBDxz7xwvukrUBs47V/JOJ3uK+kng1YU9+BApdHMxu8vtrDK8rIKZZnId4ahxDf
+W8WQivCJKcyghw3AwGWOZVMqE1fFtOwDT24wwB3fV7G11O0rD3hCzOFUhERg8AEV
+nxG+xofwmjHTTKtaimZV6z56se33H2SKI26ct43nTabKuLs2ydck1g1Qz3EeTVuS
+743yCDw+NhwNLYXVdBKHJcOW3ocbSRK+7j/6VTjTzG2AzVP8WTB2GZrL+Hrd1Ws/
+aFA2FLHbJbSkwTfE2/7bnD1P0AdQVARcI6V2Do4zppKMbKAlh73JjSXHRhfQzI+u
+hYg8pNkABWgfE5zBNJ8DVSMj2NQg07xaK9TytEyp1CZpig/6R08Lht/HV2QE0+ig
+BekkAvtFxUApq3uUyHcO11yLOgwORfQP6VqiFB/m+GJ5UmoCVdNVKCZCreVIMwMz
+y6QjkaalFkCdIwaETIsQOoHEWaXyr51H9OCY/nGObk40hliI5mxqPuZfT7ctBBjm
+6NAo55OCiiRbRDGQftqREm1be+zX6aeoCi5daU16UUGLdFIE/Fw=
+=iiEl
+-----END PGP SIGNATURE-----
+
+--prfv4qz7vozphtim--
