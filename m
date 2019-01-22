@@ -2,119 +2,75 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D6AC282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 15:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E48C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 15:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBB820879
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 15:20:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ixZvEG2h"
+	by mail.kernel.org (Postfix) with ESMTP id C0B44217D6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 15:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfAVPUd (ORCPT
+        id S1728928AbfAVPa4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 10:20:33 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48906 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728934AbfAVPUd (ORCPT
+        Tue, 22 Jan 2019 10:30:56 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:37400 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728829AbfAVPa4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 10:20:33 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5BC6E53E;
-        Tue, 22 Jan 2019 16:20:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548170430;
-        bh=tT5Fp9ZleC4janoIuq9gCqk0cLC5WzJgFcDLYhPHukQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ixZvEG2hXB/4RUfzKWMTGSgrOwgYHPhx25V7U6YWMUzfFat3WZ0MqlAMYDU3gMo3t
-         GjQhrKeYTKHvgk5KmyW+SPX9vb8ObozvINa/iPA81ZIO6I0/cZfJaVfoKjKDImFwcG
-         RG5ry4GsLMZroaz/hL1z/3SPboOQ3IFbDbBnxz8w=
-Date:   Tue, 22 Jan 2019 17:20:30 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 09/30] media: entity: Swap pads if route is checked
- from source to sink
-Message-ID: <20190122152030.GB11461@pendragon.ideasonboard.com>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
- <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
- <20190115225743.GH28397@pendragon.ideasonboard.com>
- <20190122151506.fnlfvwtoq7qunz45@paasikivi.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190122151506.fnlfvwtoq7qunz45@paasikivi.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 22 Jan 2019 10:30:56 -0500
+X-IronPort-AV: E=Sophos;i="5.56,506,1539615600"; 
+   d="scan'208";a="5883683"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 23 Jan 2019 00:30:53 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6B24F4007C55;
+        Wed, 23 Jan 2019 00:30:50 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v3 0/5] Add Display support
+Date:   Tue, 22 Jan 2019 15:25:44 +0000
+Message-Id: <1548170749-12773-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sakari,
+This patch series aims to add display support for iWave G20D-Q7 board based on RZ/G1N.
 
-On Tue, Jan 22, 2019 at 05:15:06PM +0200, Sakari Ailus wrote:
-> On Wed, Jan 16, 2019 at 12:57:43AM +0200, Laurent Pinchart wrote:
-> >> 
-> >> This way the pads are always passed to the has_route() op sink pad first.
-> >> Makes sense.
-> > 
-> > Is there anything in the API that mandates one pad to be a sink and the
-> > other pad to the a source ? I had designed the operation to allow
-> > sink-sink and source-source connections to be checked too.
-> 
-> Do you have a use case in mind for sink--sink or source--source routes? The
-> routes are about flows of data, so I'd presume only source--sink or
-> sink--source routes are meaningful.
-> 
-> If you did, then the driver would have to handle that by itself. This still
-> simplifies the implementation for drivers that do not.
+This patch series is tested against linux-next
 
-I don't have use cases for such routes, but we use the has_route
-operation when traversing pipelines, and at that point we need to get
-all the internally connected pads. In another patch in this series you
-implement a helper function that handles this, but its implementation
-isn't complete. I explained in my review of that patch that I fear a
-correct generic implementation would become quite complex, while the
-complexity should be easy to handle on the driver side as the code can
-then be specialized for the case at hand.
+V1--> V2
+	* Add DU support : Removed LVDS definition from r8a7743 DU node.
+V2--> V3
+	* Added LVDS support for both r8a7743 and r8a7744 SoC.
 
-> > If your goal is to simplify the implementation of the .has_route()
-> > operation in drivers, I would instead sort pad0 and pad1 by value.
-> 
-> That'd be another option to make the order deterministic for the driver.
-> I'm fine with that as well.
-> 
-> >> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> >> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> >> ---
-> >>  drivers/media/media-entity.c | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >> 
-> >> diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-> >> index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
-> >> --- a/drivers/media/media-entity.c
-> >> +++ b/drivers/media/media-entity.c
-> >> @@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-> >>  	if (!entity->ops || !entity->ops->has_route)
-> >>  		return true;
-> >>  
-> >> +	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
-> >> +	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
-> >> +		swap(pad0, pad1);
-> >> +
-> >>  	return entity->ops->has_route(entity, pad0, pad1);
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(media_entity_has_route);
+Biju Das (5):
+  ARM: dts: r8a7743: Convert to new LVDS DT bindings
+  dt-bindings: display: renesas: lvds: Document r8a7744 bindings
+  drm: rcar-du: lvds: Add r8a7744 support
+  ARM: dts: r8a7744: Add DU support
+  ARM: dts: r8a7744: Add LVDS support
+
+ .../bindings/display/bridge/renesas,lvds.txt       |  1 +
+ arch/arm/boot/dts/r8a7743.dtsi                     | 36 ++++++++++++++++----
+ arch/arm/boot/dts/r8a7744.dtsi                     | 38 ++++++++++++++++++++--
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                |  1 +
+ 4 files changed, 67 insertions(+), 9 deletions(-)
 
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
