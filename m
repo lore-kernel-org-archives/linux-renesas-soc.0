@@ -2,96 +2,173 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D58FAC282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 20:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310E1C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 22:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9436621726
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 20:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6D120870
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 22:54:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gaAU7fu+"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OJelB8M7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbfAVUmb (ORCPT
+        id S1726913AbfAVWyL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 15:42:31 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54810 "EHLO
+        Tue, 22 Jan 2019 17:54:11 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60668 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbfAVUmb (ORCPT
+        with ESMTP id S1726823AbfAVWyL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 15:42:31 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4EEF7575;
-        Tue, 22 Jan 2019 21:42:29 +0100 (CET)
+        Tue, 22 Jan 2019 17:54:11 -0500
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9B54C1162;
+        Tue, 22 Jan 2019 23:54:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548189749;
-        bh=av0qSu37DQCEFH3fZ5I1PZrRT1wz/+ii/hG5PUoCTlM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gaAU7fu+w/g6gY2TjOETYn9lSZo1pz6Pp5TvqEKUSLRv3qAcTZR4rUQIkj4J8NC5p
-         UF1HpkhLC3tX/y9865osV8Mpn5vPGsOMIlVr88PM5kI3Y30KnU5enRL4TS1KRtevrO
-         /dVL2D+OctE9TL1SAGzzZZydc+YPxe49YD4KhIno=
-Date:   Tue, 22 Jan 2019 22:42:28 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        s=mail; t=1548197649;
+        bh=sygyVsRYhZCv2TP+fq8/NU5F2AmX+Cj9gvnD9bqV/Aw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OJelB8M7VxESDz/a5+mvwReT7JIt8bnBo3cOUwkIunaxkkBY8lRfdb7XyUvn5iVfU
+         USYAnz63DgSjBiy+FeAb9vfQ0EWvhigZhdw7lL41HW17XvucivgvP8E+YBTwQe/oPG
+         XuUKQQpoki36HUzuIw/oDVOMr/nDs4D6SpKtK7+U=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH 5/6] arm64: dts: renesas: r8a77990: ebisu: Enable LVDS1
- encoder
-Message-ID: <20190122204228.GD3264@pendragon.ideasonboard.com>
-References: <20190117014946.9669-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190117014946.9669-6-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdWYgAnxxUud89uGWBePK6UfVt2T=gumMmzs_SF95Ap36Q@mail.gmail.com>
+Subject: [PATCH v2 1/6] drm: rcar-du: Simplify encoder registration
+Date:   Wed, 23 Jan 2019 00:54:00 +0200
+Message-Id: <20190122225405.7815-2-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWYgAnxxUud89uGWBePK6UfVt2T=gumMmzs_SF95Ap36Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Before the driver fully moved to drm_bridge and drm_panel, it was
+necessary to parse DT and locate encoder and connector nodes. The
+connector node is now unused and can be removed as a parameter to
+rcar_du_encoder_init(). As a consequence rcar_du_encoders_init_one() can
+be greatly simplified, removing most of the DT parsing.
 
-On Thu, Jan 17, 2019 at 11:21:32AM +0100, Geert Uytterhoeven wrote:
-> On Thu, Jan 17, 2019 at 3:07 AM Laurent Pinchart
-> <laurent.pinchart+renesas@ideasonboard.com> wrote:
-> > The LVDS1 encoder must supply a pixel clock to the DU for the DPAD
-> > output when the LVDS0 encoder is used. Enable it despite its output not
-> > being connected.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> Thanks for your patch!
-> 
-> > --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> > @@ -443,6 +443,8 @@
-> >  };
-> >
-> >  &lvds1 {
-> 
-> Would it make sense to add a comment
-> 
->     /* Must be enabled to supply a pixel clock to the DU for the DPAD
-> output when lvds0 is used */
-> 
-> also for D3?
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  3 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  3 +-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 52 ++---------------------
+ 3 files changed, 6 insertions(+), 52 deletions(-)
 
-Good point, I'll add it for both.
-
-> > +       status = "okay";
-> > +
-> >         clocks = <&cpg CPG_MOD 727>,
-> >                  <&x13_clk>,
-> >                  <&extal_clk>;
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index f16209499117..ba2b38f76b54 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -30,8 +30,7 @@ static const struct drm_encoder_funcs encoder_funcs = {
+ 
+ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 			 enum rcar_du_output output,
+-			 struct device_node *enc_node,
+-			 struct device_node *con_node)
++			 struct device_node *enc_node)
+ {
+ 	struct rcar_du_encoder *renc;
+ 	struct drm_encoder *encoder;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+index 552f2a02e5b5..df9be4524301 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+@@ -26,7 +26,6 @@ struct rcar_du_encoder {
+ 
+ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 			 enum rcar_du_output output,
+-			 struct device_node *enc_node,
+-			 struct device_node *con_node);
++			 struct device_node *enc_node);
+ 
+ #endif /* __RCAR_DU_ENCODER_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 015c421451dc..1bd75187d039 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -330,17 +330,10 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 				     enum rcar_du_output output,
+ 				     struct of_endpoint *ep)
+ {
+-	struct device_node *connector = NULL;
+-	struct device_node *encoder = NULL;
+-	struct device_node *ep_node = NULL;
+-	struct device_node *entity_ep_node;
+ 	struct device_node *entity;
+ 	int ret;
+ 
+-	/*
+-	 * Locate the connected entity and infer its type from the number of
+-	 * endpoints.
+-	 */
++	/* Locate the connected entity and initialize the encoder. */
+ 	entity = of_graph_get_remote_port_parent(ep->local_node);
+ 	if (!entity) {
+ 		dev_dbg(rcdu->dev, "unconnected endpoint %pOF, skipping\n",
+@@ -356,50 +349,13 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		return -ENODEV;
+ 	}
+ 
+-	entity_ep_node = of_graph_get_remote_endpoint(ep->local_node);
+-
+-	for_each_endpoint_of_node(entity, ep_node) {
+-		if (ep_node == entity_ep_node)
+-			continue;
+-
+-		/*
+-		 * We've found one endpoint other than the input, this must
+-		 * be an encoder. Locate the connector.
+-		 */
+-		encoder = entity;
+-		connector = of_graph_get_remote_port_parent(ep_node);
+-		of_node_put(ep_node);
+-
+-		if (!connector) {
+-			dev_warn(rcdu->dev,
+-				 "no connector for encoder %pOF, skipping\n",
+-				 encoder);
+-			of_node_put(entity_ep_node);
+-			of_node_put(encoder);
+-			return -ENODEV;
+-		}
+-
+-		break;
+-	}
+-
+-	of_node_put(entity_ep_node);
+-
+-	if (!encoder) {
+-		dev_warn(rcdu->dev,
+-			 "no encoder found for endpoint %pOF, skipping\n",
+-			 ep->local_node);
+-		of_node_put(entity);
+-		return -ENODEV;
+-	}
+-
+-	ret = rcar_du_encoder_init(rcdu, output, encoder, connector);
++	ret = rcar_du_encoder_init(rcdu, output, entity);
+ 	if (ret && ret != -EPROBE_DEFER)
+ 		dev_warn(rcdu->dev,
+ 			 "failed to initialize encoder %pOF on output %u (%d), skipping\n",
+-			 encoder, output, ret);
++			 entity, output, ret);
+ 
+-	of_node_put(encoder);
+-	of_node_put(connector);
++	of_node_put(entity);
+ 
+ 	return ret;
+ }
 -- 
 Regards,
 
 Laurent Pinchart
+
