@@ -2,87 +2,113 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC957C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 08:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BCBC282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C579F20861
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 08:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CFEE218D0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727409AbfAVIZq (ORCPT
+        id S1727860AbfAVJhE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:25:46 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:36926 "EHLO
+        Tue, 22 Jan 2019 04:37:04 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:36805 "EHLO
         mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbfAVIZq (ORCPT
+        with ESMTP id S1726784AbfAVJhE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:25:46 -0500
-Received: by mail-vs1-f66.google.com with SMTP id n13so14226907vsk.4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Jan 2019 00:25:45 -0800 (PST)
+        Tue, 22 Jan 2019 04:37:04 -0500
+Received: by mail-vs1-f66.google.com with SMTP id v205so14313302vsc.3;
+        Tue, 22 Jan 2019 01:37:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hGyal59jfKp30RrP9BL3MHd18FnsPFo4l6O1GeXCIq8=;
-        b=RXUwHE0XouAgl78AEl54yiS4Fs3GTpP99znIt+IxvvwcFtJ9sf33oVuwg1QyO/kGy2
-         AXlQrDXOW1vz7jKqw2y2HjVS7TyObHzljIZPf2c8ouhZz6AuypyRxzNeOBYnktR2q4UV
-         /JHMICYTsYXyHyTlAT8u+qFsMAobNLUC6Wz4T6PZcrig73voE/STSrtwo4j8E5J49qYk
-         qLCk9QlZuYqenGvcguJjIFQ5fx74LhA4FRRruGRHcpMNzcBG7ZXKCLZxnMjEz1vB/gS9
-         7SUdT3ACgv4ku7N2Tq525sk0d/WB7xp8iFdGOy7kb34sWC6hI55uxTdGudu3oWJwbuEE
-         Ct5g==
-X-Gm-Message-State: AJcUukcbLvOIYJNbbI0ykX8T65r6QcQPlVlgglVeCgcoc/GSScn68UKn
-        enoFrK9FFB0zqXK8Q6jCtgMHkOnxRufO3uqxKqc=
-X-Google-Smtp-Source: ALg8bN6YhawHudCm6F/ZdRFYEzIKR8e7cGFCRztjkd2dXkzrFm97O4ErANctsVhqDghE+HFX9cQW1xM1vnddndLprPw=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr13167796vsj.11.1548145545282;
- Tue, 22 Jan 2019 00:25:45 -0800 (PST)
+        bh=MFZAKS9g2bkldfbHPWcJeB9c/pHa9RksLWPOsbWn8zI=;
+        b=Aq44rrYWgGsGUm+EUezJvfCz+ypm2ATPQj3p9+rRRibdttn5q8JcvyrpIApJOKBCCq
+         MPTEhKLa8boqkltHnSGKyJVpksEO2QlSSZS99PK0R2RHzxruEk6fahDqSOTFuxOVI2h2
+         /42WddYUNiMly5y5yJ8QXIMSTIIpEW06fg06UEFDsjiBPu7CiGa0MeFq+1+5M9yqfyp/
+         D3LHzZo+RTqHg9Ll8xL2zlVJN7+POtR3ItNan8ayxQSEZRf3YQmcql6VAzmA289EPQUG
+         8/1QbSFLGSr/k9PSHtroysZpISFywYelP7Y32y6Sr3XDUXPsA69hu3X4tHPrwABXdVfA
+         wQ8g==
+X-Gm-Message-State: AJcUukf2AK3jHQ2AKLTlQFSUNp4BDSP43t+M24cukeiKNd8XbLcKpupK
+        Vp5Q75SkHxbAsI0iRGAxrUCGdzdLLn926gD69Z8uKMs+
+X-Google-Smtp-Source: ALg8bN6S+aH37LsCepXrzpQ3KPhqUVyOW2ytY/GYW9gFqIQjZJ4AAyLAMVcmmZN2pM89nP7DCf3+kCrDteXa4p1d8CE=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr13785461vsp.166.1548149822720;
+ Tue, 22 Jan 2019 01:37:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20190118155938.12124-1-geert+renesas@glider.be> <20190121165600.2lavtrk2djj4adgb@verge.net.au>
-In-Reply-To: <20190121165600.2lavtrk2djj4adgb@verge.net.au>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
+In-Reply-To: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Jan 2019 09:25:33 +0100
-Message-ID: <CAMuHMdV-AM9GNnDo7W55Mv-uLtWn-nTBtmh3jn30tRSEDLNfTQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: defconfig: Refresh for v5.0-rc2
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 22 Jan 2019 10:36:50 +0100
+Message-ID: <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
+ instead run teardown delayed
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Martin Sperl <kernel@martin.sperl.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
-
-On Mon, Jan 21, 2019 at 5:56 PM Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Jan 18, 2019 at 04:59:38PM +0100, Geert Uytterhoeven wrote:
-> >   - Move SoC config options (moved in commit 062887bf5ef73313 ("ARM:
-> >     shmobile: Move SoC Kconfig symbols to drivers/soc/renesas/")),
-> >   - Move PCI config options (moved in commit eb01d42a77785ff9 ("PCI:
-> >     consolidate PCI config entry in drivers/pci")),
-> >   - Drop CONFIG_I2C_MUX=y (auto-enabled since commit ea6b13e9fed0fda9
-> >     ("drm/bridge/sii902x: Add missing dependency on I2C_MUX")),
-> >   - Drop CONFIG_SH_DMAE=y (no longer selectable since commit
-> >     a19788612f51b787 ("dmaengine: sh: Remove R-Mobile APE6 support")),
-> >   - Drop CONFIG_ARM_UNWIND (auto-enabled since commit f9b58e8c7d031b0d
-> >     ("ARM: 8800/1: use choice for kernel unwinders")).
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Jan 14, 2019 at 4:36 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+> I have noticed that system suspend has started failing consistently on a
+> couple Tegra boards over the last few days with the linux-next branch.
+> The following error is seen on on entering suspend ...
 >
-> Would this change be any different if it was a refresh for v5.0-rc1?
+> [   58.222033] spi_master spi1: could not stop message queue
+> [   58.222038] spi_master spi1: queue stop failed
+> [   58.222048] dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
+> [   58.222052] PM: Device 7000da00.spi failed to suspend: error -16
+> [   58.222057] PM: Some devices failed to suspend, or early wake event detected
+>
+> Bisecting today's -next points to commit 412e60373245 ("spi: core: avoid
+> waking pump thread from spi_sync instead run teardown delayed") and
+> reverting this on top of -next fixes the problem. I have not had chance
+> to dig any further but wanted to report this issue to see if you have
+> any thoughts.
 
-No it wouldn't. Same for rc3.
+I can confirm this on r8a7791/koelsch:
 
-> I ask because the ARM-SoC maintainers prefer the oldest possible of
-> the current rc series to be used as a base.
+    PM: suspend entry (deep)
+    PM: Syncing filesystems ... done.
+    Freezing user space processes ... (elapsed 0.010 seconds) done.
+    OOM killer disabled.
+    Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
+    spi_master spi0: could not stop message queue
+    spi_master spi0: queue stop failed
+    dpm_run_callback(): rspi_suspend+0x0/0xc returns -16
+    PM: Device e6b10000.spi failed to suspend: error -16
+    PM: Some devices failed to suspend, or early wake event detected
 
-Hence feel free to s/rc2/rc1/g or s/rc2/rc3/g.
+In addition, after boot, when the QSPI device is idle (the only activity
+was the initial probe), the device is no longer runtime-suspended, as
+witnessed by the following change to
+/sys/kernel/debug/pm_genpd/pm_genpd_summary:
 
-Thanks!
+    -    /devices/platform/soc/e6b10000.spi                  suspended
+    +    /devices/platform/soc/e6b10000.spi                  active
+
+and by the following change to /sys/kernel/debug/clk/clk_summary:
+
+    -             qspi                     0        1        0
+97500000          0     0  50000
+    -                qspi_mod              0        1        0
+97500000          0     0  50000
+    +             qspi                     1        1        0
+97500000          0     0  50000
+    +                qspi_mod              1        1        0
+97500000          0     0  50000
+
+Reverting 412e60373245 also fixes that.
 
 Gr{oetje,eeting}s,
 
