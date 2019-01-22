@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60606C282C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 17:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5363BC282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 17:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 335972085A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 17:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19B7F2085A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 17:14:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sbybjU4L"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OCjRTNAl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbfAVRNa (ORCPT
+        id S1729428AbfAVRON (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 12:13:30 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51868 "EHLO
+        Tue, 22 Jan 2019 12:14:13 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51890 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729428AbfAVRN2 (ORCPT
+        with ESMTP id S1729282AbfAVRON (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 12:13:28 -0500
+        Tue, 22 Jan 2019 12:14:13 -0500
 Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A52D4575;
-        Tue, 22 Jan 2019 18:13:25 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3497D575;
+        Tue, 22 Jan 2019 18:14:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548177205;
-        bh=/+ADa5pDbzfW4iYcbbF9jgy912z+n2+X8vtivwCsuiw=;
+        s=mail; t=1548177252;
+        bh=4+j169Fnorn/7SylAdjifqhshXcMmk+HW7ZgZVICdQI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sbybjU4Lg1kjkpImI+M0O+oteBvOErjsJ+UlBsRvRceLbJfcRm1jJihZ55AO+J9zP
-         20ImxzGxDLBc5Exs2t7IS+BZmd4fw1iqH4voN4x1LMBOcGs5g4Z/MVy31u/dAtIMUB
-         n74Uq2joxdeMZehR7QvtsBXmmpWoN1pQPZQoy/iM=
-Date:   Tue, 22 Jan 2019 19:13:25 +0200
+        b=OCjRTNAlYGGqSI5wCaniDA4oml7oX7GA3hEM83HHw4pKewhuBo+Q6kwHhKhQZN9Cq
+         EY3q1nDnaw0k3WBNJsmDE4ggs6gD2IfXu/Tg/CCVJGXW+QWb+sWQWkBCgJ5YYyDVDA
+         G4iiu4IBk8a+PcUezh3owP5VQqw6a7I61NTg7phM=
+Date:   Tue, 22 Jan 2019 19:14:11 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Biju Das <biju.das@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -44,14 +44,14 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH v3 1/5] ARM: dts: r8a7743: Convert to new LVDS DT bindings
-Message-ID: <20190122171325.GC26166@pendragon.ideasonboard.com>
+Subject: Re: [PATCH v3 5/5] ARM: dts: r8a7744: Add LVDS support
+Message-ID: <20190122171411.GD26166@pendragon.ideasonboard.com>
 References: <1548170749-12773-1-git-send-email-biju.das@bp.renesas.com>
- <1548170749-12773-2-git-send-email-biju.das@bp.renesas.com>
+ <1548170749-12773-6-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1548170749-12773-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1548170749-12773-6-git-send-email-biju.das@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -62,15 +62,9 @@ Hi Biju,
 
 Thank you for the patch.
 
-On Tue, Jan 22, 2019 at 03:25:45PM +0000, Biju Das wrote:
-> The internal LVDS encoder now has DT bindings separate from the DU. Port
-> the device tree over to the new model.
+On Tue, Jan 22, 2019 at 03:25:49PM +0000, Biju Das wrote:
+> Add LVDS encoder node to r8a7744 SoC DT.
 > 
-> Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
-
-Sorry for the breakage. The DT and DU series raced each other, but I
-should have still caught it.
-
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -78,33 +72,14 @@ Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 I expect Simon to pick this up.
 
 > ---
->  arch/arm/boot/dts/r8a7743.dtsi | 36 ++++++++++++++++++++++++++++++------
->  1 file changed, 30 insertions(+), 6 deletions(-)
+>  arch/arm/boot/dts/r8a7744.dtsi | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-> index 24e6c2b..de981d6 100644
-> --- a/arch/arm/boot/dts/r8a7743.dtsi
-> +++ b/arch/arm/boot/dts/r8a7743.dtsi
-> @@ -1660,15 +1660,12 @@
->  
->  		du: display@feb00000 {
->  			compatible = "renesas,du-r8a7743";
-> -			reg = <0 0xfeb00000 0 0x40000>,
-> -			      <0 0xfeb90000 0 0x1c>;
-> -			reg-names = "du", "lvds.0";
-> +			reg = <0 0xfeb00000 0 0x40000>;
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>,
-> -				 <&cpg CPG_MOD 726>;
-> -			clock-names = "du.0", "du.1", "lvds.0";
-> +				 <&cpg CPG_MOD 723>;
-> +			clock-names = "du.0", "du.1";
->  			status = "disabled";
->  
->  			ports {
-> @@ -1683,6 +1680,33 @@
+> diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
+> index 83804aa..fa74a26 100644
+> --- a/arch/arm/boot/dts/r8a7744.dtsi
+> +++ b/arch/arm/boot/dts/r8a7744.dtsi
+> @@ -1666,6 +1666,33 @@
 >  				port@1 {
 >  					reg = <1>;
 >  					du_out_lvds0: endpoint {
@@ -115,10 +90,10 @@ I expect Simon to pick this up.
 > +		};
 > +
 > +		lvds0: lvds@feb90000 {
-> +			compatible = "renesas,r8a7743-lvds";
+> +			compatible = "renesas,r8a7744-lvds";
 > +			reg = <0 0xfeb90000 0 0x1c>;
 > +			clocks = <&cpg CPG_MOD 726>;
-> +			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
+> +			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
 > +			resets = <&cpg 726>;
 > +			status = "disabled";
 > +
