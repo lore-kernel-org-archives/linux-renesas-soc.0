@@ -2,195 +2,127 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D922C282C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 08:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 733A7C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 08:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D359320879
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 08:03:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="JAqpKWef"
+	by mail.kernel.org (Postfix) with ESMTP id 4CFC52084C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 08:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfAVIDv (ORCPT
+        id S1727522AbfAVIE3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 03:03:51 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37485 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbfAVIDu (ORCPT
+        Tue, 22 Jan 2019 03:04:29 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:37381 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727274AbfAVIE2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 03:03:50 -0500
-Received: by mail-it1-f194.google.com with SMTP id b5so18909091iti.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Jan 2019 00:03:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2Syz3w5shfKU03CRg/FlS++679Lm7R5GpEIXI8UEMKo=;
-        b=JAqpKWefehuaNt0Qvb3M0k2K3z1oFQ8Nox2oy5czaf4vTWIA32EmFoKNfRfjlsoT/i
-         i3E+lG32p1/4LqWufFYz+bMeVzxItpRy9d1J+8A55lcpAZWEtlQgle2vbLq+OlVrOH7x
-         KpYbEiVDYzzAk2hNws+TpocOMtpnvK6CeVE34=
+        Tue, 22 Jan 2019 03:04:28 -0500
+Received: by mail-ua1-f65.google.com with SMTP id u19so7765356uae.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Jan 2019 00:04:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2Syz3w5shfKU03CRg/FlS++679Lm7R5GpEIXI8UEMKo=;
-        b=Hx9p2/WxUnkdQztRH5Kfj0BtG+dssvYqv1XpQvshRaLnYnlcQ1I2bESzMxYuElzcjV
-         4fBNM+KJHddGOgbDVU5DXKy0iBFf/t8fQtTXYclPwOA+YE8g2GJG3XmSbbkvVdo73vT2
-         ge4TbcnUJ4Yfm8xM6Sx0/vj97BlQcTqH/PnsbOADFgMJS0m7j8UYR09y2YRgEEIH67ey
-         T6bzNd/VmOWpqapkGQDjIywm8Sd/2JROV4gSbNizugqooVmJ2fAAqQqrbjM1VdVxpfMB
-         CkgnttgiyXt8gGHdpcpakovGl5SZWpBkmanAM63YciNbKhO9rDL2yDo3GFdmFq6DNhRr
-         2v/A==
-X-Gm-Message-State: AJcUukcTLaGThrWbX6y/L7lQ/YEEN5u/3W7uHD0oqrKfnvFq0zRifDvf
-        BH47ck+zwcsG+eJGSpajyz0XIEUrBCNvKwn3xpQDPA==
-X-Google-Smtp-Source: AHgI3IaSUhfZRCtrbe2ENHC18/zT0bn+kGk8z+bxXZ+/UY7ss+m81axiyhxuMy5rCoQi27V6DiuFUB9EPuP06OatQRo=
-X-Received: by 2002:a24:94cb:: with SMTP id j194mr1502533ite.117.1548144227888;
- Tue, 22 Jan 2019 00:03:47 -0800 (PST)
+        bh=T+qLohvGgMHPST9qVWjVZ09BNtkE+xeVD9jOZ9GRyZI=;
+        b=CBmKQe1UBhPLDBAFGF4UuGIvWd2hvkdAWUIHjmaDZBUwYBHOmgv3ZR9Ank0RqjvzU7
+         4atvJXpVZRl5fiAnGAF+mOy/IfhpB/ibs/tSPaQUpwGOpuz2zRdMX5PQSZKU3gmTErbA
+         WjoRkc2UftgzOCKUyGLiR5fM0S/IRV79xI5XzfovLl+UNT94e+GJVANg2MBNTo3Nbd0X
+         3lv9aMph0e5O2l0vDSe3Ab3OLadh41o/togOjRaTcyIfKiV3HvmTJHfLhYKdZYrVmVUp
+         ACnv7B2t0fiM0zXz4MEQyWkpJA46nK/B9SPjRvBFQUi3dV3E8i9uU5iRrEk6fDZe96L2
+         lshA==
+X-Gm-Message-State: AJcUukdH10XajfP/OJtE72HiHglRblCb41GKMG9+Inp/hs0Q66IRFmFz
+        6a1xqYVKVSNiVIUACziaXRSLgONY2j/SCdtHyYYXot4A
+X-Google-Smtp-Source: ALg8bN4/FPPcvc2CkQi9v3ek4lK9LmE81LYYguJX3eJoZSFXa5LNxGt0KMWKdCDT9Z4phB8NVAFOQotoqgHYDR0dBdk=
+X-Received: by 2002:ab0:1393:: with SMTP id m19mr12811000uae.75.1548144267693;
+ Tue, 22 Jan 2019 00:04:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
- <20190116181018.GA27364@ravnborg.org> <20190117164541.GE3271@phenom.ffwll.local>
- <20190117174531.GA14041@ravnborg.org> <20190121221329.GA6512@ravnborg.org>
-In-Reply-To: <20190121221329.GA6512@ravnborg.org>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 22 Jan 2019 09:03:36 +0100
-Message-ID: <CAKMK7uF_8yRycA4ZUyudH7dM23DOiFEkKStAbbAvD=79y_UE_Q@mail.gmail.com>
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
+References: <20190118162258.14592-1-geert+renesas@glider.be>
+ <20190121093506.GQ3271@phenom.ffwll.local> <CAMuHMdUzhPg_sR93J2jADS-x-NFofPJR=d6a6qpt50mhyhU-xQ@mail.gmail.com>
+ <20190121101826.GT3271@phenom.ffwll.local> <20190122030710.GA11769@pendragon.ideasonboard.com>
+In-Reply-To: <20190122030710.GA11769@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 22 Jan 2019 09:04:15 +0100
+Message-ID: <CAMuHMdWq_EOLSmgnmNxsnCA4F=BgsQggx0ww66DjqG6uchQ9xQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC] drm: Remove unused Renesas SH Mobile DRM driver
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
         DRI Development <dri-devel@lists.freedesktop.org>,
-        "open list:VIRTIO CORE, NET..." 
-        <virtualization@lists.linux-foundation.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Nouveau Dev <nouveau@lists.freedesktop.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        The etnaviv authors <etnaviv@lists.freedesktop.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        xen-devel@lists.xen.org,
-        "open list:DRM DRIVERS FOR RENESAS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        freedreno <freedreno@lists.freedesktop.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:13 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Daniel et al.
->
-> > >
-> > > Yeah the drm_crtc_helper.h header is a bit the miniature drmP.h for legacy
-> > > kms drivers. Just removing it from all the atomic drivers caused lots of
-> > > fallout, I expect even more if you entirely remove the includes it has.
-> > > Maybe a todo, care to pls create that patch since it's your idea?
-> >
-> > The main reason I bailed out initially was that this would create
-> > small changes to several otherwise seldomly touched files.
-> > And then we would later come and remove drmP.h - so lots of
-> > small but incremental changes to the same otherwise seldomly
-> > edited files.
-> > And the job was only partially done.
-> >
-> > I will try to experiment with an approach where I clean up the
-> > include/drm/*.h files a little (like suggested above, +delete drmP.h
-> > and maybe a bit more).
-> >
-> > Then to try on a driver by driver basis to make it build with a
-> > cleaned set of include files.
-> > I hope that the cleaned up driver can still build without the
-> > cleaned header files so the changes can be submitted piecemal.
-> >
-> > Will do so with an eye on the lesser maintained drivers to try it
-> > out to avoid creating too much chrunch for others.
->
-> I have now a few patches queued, but the result is not too pretty.
-> I did the following:
->
-> - For all files in include/drm/*.h the set of include files
->   were adjusted to the minimum number of files required to make
->   them build without any other files included first.
->
->   Created one .c file for each .h file. Then included the .h
->   file and adjusted to the minimal set of include files.
->   In the process a lot of forwards were added.
->
-> - Deleted drmP.h
->
-> - Fixed build of a few drivers: sti, tilcdc, gma500, tve200, via
->
-> Some observations:
->
-> - Killing all the includes not needed in the headers files
->   results in a a lot of extra changes.
->   Examples:
->     drm_modseset_helper_vtables.h is no longer
->     included by anyone, so needs to be added in many files
->
->     drm_atomic_state_helper.h is no longer included
->     by anyone so likewise needs to be added in many files
->
-> - It is very tedious to do this properly.
->   The process I followed was:
->   - delete / comment out all include files
->   - add back the obvious from a quick scan of the code
->   - build - fix - build - fix - build - fix ...
->   -   next file...
->
-> - The result is errorprone as only the allyesconfig + allmodconfig
->   variants are tested. But reallife configurations are more diverse.
->
-> Current diffstat:
->    111 files changed, 771 insertions(+), 401 deletions(-)
->
-> This is for the 5 drivers alone and not the header cleanup.
-> So long story short - this is not good and not the way forward.
->
-> I will try to come up with a few improvements to make the
-> headers files selfcontained, but restricted to the changes that
-> add forwards/include to avoid the chrunch in all the drivers.
->
-> And then post for review a few patches to clean up some headers.
-> If the cleanup gets a go I will try to persuade the introduction
-> of these.
-> This will include, but will not be limited to, the above mentioned
-> drm_crtc_helper.h header file.
->
-> For now too much time was already spent on this, so it is at the
-> moment pushed back on my TODO list.
-> This mail serve also as a kind of "where had I left", when/if I
-> pick this up again.
->
-> If there are anyone that knows some tooling that can help in the
-> process of adjusting the header files I am all ears.
+Hi Laurent,
 
-Yeah in the process of splitting up drmP.h we've created a few smaller
-such piles of headers. I think in some cases it's just not going to be
-worth it to fully split them up, e.g. drm_crtc_helper.h is going to be
-a pure legacy helper, only needed by pre-atomic drivers. Splitting
-that up doesn't seem to useful to me. Similarly we might want
-drm_atomic_helper.h to keep pulling in the other helper headers. So
-probably going to be a judgement call on a case-by-case basis.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+On Tue, Jan 22, 2019 at 4:07 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Jan 21, 2019 at 11:18:26AM +0100, Daniel Vetter wrote:
+> >  On Mon, Jan 21, 2019 at 11:03:44AM +0100, Geert Uytterhoeven wrote:
+> > > On Mon, Jan 21, 2019 at 10:35 AM Daniel Vetter <daniel@ffwll.ch> wrote:
+> > >> On Fri, Jan 18, 2019 at 05:22:58PM +0100, Geert Uytterhoeven wrote:
+> > >>> Since its incarnation in v3.7 almost 7 years ago, no users of the SH
+> > >>> Mobile DRM driver have appeared.
+> > >>>
+> > >>> Hence remove the driver.  It can be resurrected from git history,
+> > >>> if/when needed.
+> > >>>
+> > >>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >>
+> > >> I'd prefer removing the fbdev variant tbh ...
+> > >
+> > > I understand ;-)
+> > >
+> > > But sh_mobile_lcdc_fb is used on 5 legacy SuperH platforms, and 1 ARM
+> > > platform. At least the latter is working fine.
+> > >
+> > >> Not sure why exactly the switch never happened.
+> > >
+> > > Me neither.  I^HGoogle can't even find posted patches of board integration.
+> > >
+> > > Note that both drivers lack DT support, which would be very desirable on
+> > > ARM, as graphics is the single remaining working driver on the Atmark
+> > > Techno Armadillo 800 EVA board not using DT.
+> >
+> >  Ah I wondered why the drm driver isn't just automatically picked up in
+> >  today's neat world of DT (if you enable it in .config instead of the fbdev
+> >  one). It's not even using DT yet :-/
+>
+> I'd prefer dropping the fbdev driver too, but that would require porting
+> the SH boards to the DRM driver, and implement DT support for the ARM
+> board. I don't think anyone is willing to invest time in this, so I'm
+> fine dropping this driver as the boards are pretty much dead. I would,
+> however, also drop the fbdev driver in that case.
+
+I agree the SH boards are pretty much dead.
+
+However, derivatives of the Armadillo-800 EVA board are still available[1],
+and even received a product update last month[2].
+A relative made it to the International Space Station in 2017[3].
+
+[1] https://armadillo.atmark-techno.com/products
+[2] https://armadillo.atmark-techno.com/armadillo-840
+[3] https://lists.freedesktop.org/archives/gstreamer-devel/2017-July/064696.html
+
+BTW, do you still have the prototype integration patches for the DRM driver,
+presumably for SH-Mobile AP4?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
