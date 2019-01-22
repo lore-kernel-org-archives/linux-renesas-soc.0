@@ -2,47 +2,45 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 310E1C282C3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85505C282C5
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 22:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE6D120870
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 22:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 504FF20870
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 22:54:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OJelB8M7"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MjT+ixW+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfAVWyL (ORCPT
+        id S1726823AbfAVWyM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:54:11 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60668 "EHLO
+        Tue, 22 Jan 2019 17:54:12 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60662 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbfAVWyL (ORCPT
+        with ESMTP id S1726175AbfAVWyM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:54:11 -0500
+        Tue, 22 Jan 2019 17:54:12 -0500
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9B54C1162;
-        Tue, 22 Jan 2019 23:54:09 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F8F0575;
+        Tue, 22 Jan 2019 23:54:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1548197649;
-        bh=sygyVsRYhZCv2TP+fq8/NU5F2AmX+Cj9gvnD9bqV/Aw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OJelB8M7VxESDz/a5+mvwReT7JIt8bnBo3cOUwkIunaxkkBY8lRfdb7XyUvn5iVfU
-         USYAnz63DgSjBiy+FeAb9vfQ0EWvhigZhdw7lL41HW17XvucivgvP8E+YBTwQe/oPG
-         XuUKQQpoki36HUzuIw/oDVOMr/nDs4D6SpKtK7+U=
+        bh=O8jdjJgkFwpvhL3nvu1QBTolH4/+zzwRRf6EhLcYEg0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MjT+ixW+qSGRQl1eOYX6FBb427LjInOUS22lf0GgJ7D1U9fP4CbZhXPjkbXz7cyOj
+         zeCST1IiXYW1DqSF6evghfoXdVTXOrwqfA9kA64nhg5xMw1q/wF08Hh1KEhbinn+fp
+         pfh2vhjms5VOzeEFENAiRQI0Arc7h9T7Rntg9xmg=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 1/6] drm: rcar-du: Simplify encoder registration
-Date:   Wed, 23 Jan 2019 00:54:00 +0200
-Message-Id: <20190122225405.7815-2-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 0/6] R-Car DU DPAD support for D3 and E3
+Date:   Wed, 23 Jan 2019 00:53:59 +0200
+Message-Id: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -50,123 +48,57 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Before the driver fully moved to drm_bridge and drm_panel, it was
-necessary to parse DT and locate encoder and connector nodes. The
-connector node is now unused and can be removed as a parameter to
-rcar_du_encoder_init(). As a consequence rcar_du_encoders_init_one() can
-be greatly simplified, removing most of the DT parsing.
+Hello,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  3 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  3 +-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     | 52 ++---------------------
- 3 files changed, 6 insertions(+), 52 deletions(-)
+This series adds support for the DPAD0 output for the D3 and E3 SoCs. On
+the Draak and Ebisu boards, DPAD0 is used for the VGA output.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index f16209499117..ba2b38f76b54 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -30,8 +30,7 @@ static const struct drm_encoder_funcs encoder_funcs = {
- 
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_output output,
--			 struct device_node *enc_node,
--			 struct device_node *con_node)
-+			 struct device_node *enc_node)
- {
- 	struct rcar_du_encoder *renc;
- 	struct drm_encoder *encoder;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-index 552f2a02e5b5..df9be4524301 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-@@ -26,7 +26,6 @@ struct rcar_du_encoder {
- 
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_output output,
--			 struct device_node *enc_node,
--			 struct device_node *con_node);
-+			 struct device_node *enc_node);
- 
- #endif /* __RCAR_DU_ENCODER_H__ */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 015c421451dc..1bd75187d039 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -330,17 +330,10 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 				     enum rcar_du_output output,
- 				     struct of_endpoint *ep)
- {
--	struct device_node *connector = NULL;
--	struct device_node *encoder = NULL;
--	struct device_node *ep_node = NULL;
--	struct device_node *entity_ep_node;
- 	struct device_node *entity;
- 	int ret;
- 
--	/*
--	 * Locate the connected entity and infer its type from the number of
--	 * endpoints.
--	 */
-+	/* Locate the connected entity and initialize the encoder. */
- 	entity = of_graph_get_remote_port_parent(ep->local_node);
- 	if (!entity) {
- 		dev_dbg(rcdu->dev, "unconnected endpoint %pOF, skipping\n",
-@@ -356,50 +349,13 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		return -ENODEV;
- 	}
- 
--	entity_ep_node = of_graph_get_remote_endpoint(ep->local_node);
--
--	for_each_endpoint_of_node(entity, ep_node) {
--		if (ep_node == entity_ep_node)
--			continue;
--
--		/*
--		 * We've found one endpoint other than the input, this must
--		 * be an encoder. Locate the connector.
--		 */
--		encoder = entity;
--		connector = of_graph_get_remote_port_parent(ep_node);
--		of_node_put(ep_node);
--
--		if (!connector) {
--			dev_warn(rcdu->dev,
--				 "no connector for encoder %pOF, skipping\n",
--				 encoder);
--			of_node_put(entity_ep_node);
--			of_node_put(encoder);
--			return -ENODEV;
--		}
--
--		break;
--	}
--
--	of_node_put(entity_ep_node);
--
--	if (!encoder) {
--		dev_warn(rcdu->dev,
--			 "no encoder found for endpoint %pOF, skipping\n",
--			 ep->local_node);
--		of_node_put(entity);
--		return -ENODEV;
--	}
--
--	ret = rcar_du_encoder_init(rcdu, output, encoder, connector);
-+	ret = rcar_du_encoder_init(rcdu, output, entity);
- 	if (ret && ret != -EPROBE_DEFER)
- 		dev_warn(rcdu->dev,
- 			 "failed to initialize encoder %pOF on output %u (%d), skipping\n",
--			 encoder, output, ret);
-+			 entity, output, ret);
- 
--	of_node_put(encoder);
--	of_node_put(connector);
-+	of_node_put(entity);
- 
- 	return ret;
- }
+Patches 1/6 and 2/6 prepare the grounds by successfully probing LVDS
+encoders that have no connected output. This is required in order to
+provide a dot clock to the DPAD output, as on the D3 and E3 SoCs the dot
+clock is provided by the LVDS encoders.
+
+Patch 3/6 then adds an API to the LVDS encoder driver to control the
+LVDS output clock independently of the LVDS encoder itself, and patch
+4/6 makes use of that API to control the clock from the DU driver.
+
+Patches 5/6 and 6/6 finally enable the LVDS1 encoders in the Ebisu and
+Draak boards DTs, required to operate the HDMI (out of LVDS0) and VGA
+(using the LVDS1 dot clock) together.
+
+Changes compared to v1 are minor and include compilation fixes (in patch
+3/6), typo fixes and additional comments in the DT files.
+
+The patches have been tested on Draak only as I don't have access to an
+Ebisu board, but they should work equally well on both boards.
+
+For your convenience the patches are available from
+
+        git://linuxtv.org/pinchartl/media.git drm/du/d3e3
+
+Laurent Pinchart (6):
+  drm: rcar-du: Simplify encoder registration
+  drm: rcar-du: lvds: Don't fail probe if output is not connected on
+    D3/E3
+  drm: rcar-du: lvds: Add API to enable/disable clock output
+  drm: rcar-du: Turn LVDS clock output on/off for DPAD0 output on D3/E3
+  arm64: dts: renesas: r8a77990: ebisu: Enable LVDS1 encoder
+  arm64: dts: renesas: r8a77995: draak: Enable LVDS1 encoder
+
+ .../arm64/boot/dts/renesas/r8a77990-ebisu.dts |  2 +
+ .../arm64/boot/dts/renesas/r8a77995-draak.dts |  7 ++
+ drivers/gpu/drm/Makefile                      |  2 +-
+ drivers/gpu/drm/rcar-du/Kconfig               |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c        | 34 +++++++
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h         |  3 +
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c     |  4 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.h     |  3 +-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c         | 52 +---------
+ drivers/gpu/drm/rcar-du/rcar_lvds.c           | 94 ++++++++++++++++---
+ drivers/gpu/drm/rcar-du/rcar_lvds.h           | 27 ++++++
+ 11 files changed, 164 insertions(+), 65 deletions(-)
+ create mode 100644 drivers/gpu/drm/rcar-du/rcar_lvds.h
+
 -- 
 Regards,
 
