@@ -2,135 +2,119 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1D6C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52026C282C4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 15:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69CE421019
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:55:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ls+A81qG"
+	by mail.kernel.org (Postfix) with ESMTP id 2B72E20879
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 15:15:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfAVOzh (ORCPT
+        id S1729070AbfAVPPK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:55:37 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:35258 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbfAVOzh (ORCPT
+        Tue, 22 Jan 2019 10:15:10 -0500
+Received: from mga04.intel.com ([192.55.52.120]:63507 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728744AbfAVPPK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:55:37 -0500
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id BD51125B827;
-        Wed, 23 Jan 2019 01:55:31 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548168932; bh=bPv4nPAB5McuSgwnHiY3pqxAgJTN4iNZlKghgGqhdXU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ls+A81qGDhX7Lab9PC4bPoN8q4VIaplA919mOw+Av3fQKQ3M0vLM3owhXAAgeKoRL
-         1rWgCz32yEdmt9udzGTmaLsTt9zzrmyTTxrSnEPDZ8kz2IHAoUGgJB/EB9N8taez+l
-         UHpNNSG77ZP223XfBq9ps7uwohWh8DF+txHIg79I=
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 85677E2146E; Tue, 22 Jan 2019 15:55:29 +0100 (CET)
-Date:   Tue, 22 Jan 2019 15:55:29 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
-Subject: Re: [PATCH 07/11] arm64: dts: renesas: cat875: Add ethernet support
-Message-ID: <20190122145529.zuxpni2klc4lxdxn@verge.net.au>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-8-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190117115945.bmlaoeoqvsmdqqot@verge.net.au>
- <TY1PR01MB1770241D7A553184ABB589DAC0830@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20190120082845.4apq3ylk4i6zbhlx@verge.net.au>
+        Tue, 22 Jan 2019 10:15:10 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 07:15:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
+   d="scan'208";a="116505759"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Jan 2019 07:15:07 -0800
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id BECD9205C8; Tue, 22 Jan 2019 17:15:06 +0200 (EET)
+Date:   Tue, 22 Jan 2019 17:15:06 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 09/30] media: entity: Swap pads if route is checked
+ from source to sink
+Message-ID: <20190122151506.fnlfvwtoq7qunz45@paasikivi.fi.intel.com>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
+ <20190115225743.GH28397@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190120082845.4apq3ylk4i6zbhlx@verge.net.au>
-Organisation: Horms Solutions BV
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115225743.GH28397@pendragon.ideasonboard.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 09:28:45AM +0100, Simon Horman wrote:
-> On Thu, Jan 17, 2019 at 01:27:51PM +0000, Fabrizio Castro wrote:
-> > Hello Simon,
-> > 
-> > Thank you for your feedback!
-> > 
-> > > From: Simon Horman <horms@verge.net.au>
-> > > Sent: 17 January 2019 12:00
-> > > Subject: Re: [PATCH 07/11] arm64: dts: renesas: cat875: Add ethernet support
-> > >
-> > > On Wed, Jan 16, 2019 at 06:37:50PM +0000, Fabrizio Castro wrote:
-> > > > From: Biju Das <biju.das@bp.renesas.com>
-> > > >
-> > > > This patch adds ethernet support to the sub board.
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> > > > ---
-> > > >  arch/arm64/boot/dts/renesas/cat875.dtsi | 30 ++++++++++++++++++++++++++++++
-> > > >  1 file changed, 30 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/renesas/cat875.dtsi b/arch/arm64/boot/dts/renesas/cat875.dtsi
-> > > > index a41d0d8..805ffa7 100644
-> > > > --- a/arch/arm64/boot/dts/renesas/cat875.dtsi
-> > > > +++ b/arch/arm64/boot/dts/renesas/cat875.dtsi
-> > > > @@ -7,4 +7,34 @@
-> > > >
-> > > >  / {
-> > > >  model = "Silicon Linux sub board for CAT874 (CAT875)";
-> > > > +
-> > > > +aliases {
-> > > > +ethernet0 = &avb;
-> > > > +};
-> > > > +};
-> > > > +
-> > > > +&avb {
-> > > > +pinctrl-0 = <&avb_pins>;
-> > > > +pinctrl-names = "default";
-> > > > +renesas,no-ether-link;
-> > >
-> > > Is the renesas,no-ether-link required?
-> > 
-> > The AVB_LINK pin from the SoC is connected to the PMEB (Power Management Event, B stands for
-> > active low) pin on the  PHY, which means it is not a link signal. The PMEB signal is active when a magic
-> > packet or a wake up frame are detected. As a result, we need renesas,no-ether-link and we can't
-> > specify avb_link with avb_pin either.
-> 
-> Thanks for following-up. In that case I am fine with this patch.
-> 
+Hi Laurent,
 
-Thanks again, applied for v5.1.
+On Wed, Jan 16, 2019 at 12:57:43AM +0200, Laurent Pinchart wrote:
+> Hi Sakari,
+> 
+> Thank you for the patch.
+> 
+> On Fri, Nov 02, 2018 at 12:31:23AM +0100, Niklas Söderlund wrote:
+> > From: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > 
+> > This way the pads are always passed to the has_route() op sink pad first.
+> > Makes sense.
+> 
+> Is there anything in the API that mandates one pad to be a sink and the
+> other pad to the a source ? I had designed the operation to allow
+> sink-sink and source-source connections to be checked too.
+
+Do you have a use case in mind for sink--sink or source--source routes? The
+routes are about flows of data, so I'd presume only source--sink or
+sink--source routes are meaningful.
+
+If you did, then the driver would have to handle that by itself. This still
+simplifies the implementation for drivers that do not.
+
+> 
+> If your goal is to simplify the implementation of the .has_route()
+> operation in drivers, I would instead sort pad0 and pad1 by value.
+
+That'd be another option to make the order deterministic for the driver.
+I'm fine with that as well.
+
+> 
+> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/media-entity.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+> > index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
+> > --- a/drivers/media/media-entity.c
+> > +++ b/drivers/media/media-entity.c
+> > @@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+> >  	if (!entity->ops || !entity->ops->has_route)
+> >  		return true;
+> >  
+> > +	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
+> > +	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
+> > +		swap(pad0, pad1);
+> > +
+> >  	return entity->ops->has_route(entity, pad0, pad1);
+> >  }
+> >  EXPORT_SYMBOL_GPL(media_entity_has_route);
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
