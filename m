@@ -1,159 +1,105 @@
-Return-Path: <SRS0=sDbg=P5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F4AC3713C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 22:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF92C37124
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 01:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD57217D6
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jan 2019 22:13:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BB162089F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 01:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548119672;
+	bh=p0JQnfeEP4mkw1em73uUqAiW6/YjHu7GJrbU3dr2msA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iJ1IUwEOiyL88b/Ear/HKD5OlNpDD6g5djB2LJV/hB28s3i9y/W3NmcLREtD8JAAE
+	 +4XiQGhTwH+jKsVVmyxTNRW5MXB8FAl1v6/l+crNLrOlZhoRTCyFBKR8aeVb7Jhyd6
+	 GepJaRWtpCU0KpKMDPOZP7SqvLQF/0eylERmnJQ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfAUWNk (ORCPT
+        id S1726165AbfAVBOb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 17:13:40 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:52573 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfAUWNj (ORCPT
+        Mon, 21 Jan 2019 20:14:31 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42001 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbfAVBOb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 17:13:39 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 41C438032F;
-        Mon, 21 Jan 2019 23:13:32 +0100 (CET)
-Date:   Mon, 21 Jan 2019 23:13:29 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        virtualization@lists.linux-foundation.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-samsung-soc@vger.kernel.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
-        amd-gfx@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
-        nouveau@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@intel.com>,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        etnaviv@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, xen-devel@lists.xen.org,
-        linux-renesas-soc@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        freedreno@lists.freedesktop.org
-Subject: Re: [PATCH] drm: Split out drm_probe_helper.h
-Message-ID: <20190121221329.GA6512@ravnborg.org>
-References: <20190116163442.12622-1-daniel.vetter@ffwll.ch>
- <20190116181018.GA27364@ravnborg.org>
- <20190117164541.GE3271@phenom.ffwll.local>
- <20190117174531.GA14041@ravnborg.org>
+        Mon, 21 Jan 2019 20:14:31 -0500
+Received: by mail-oi1-f194.google.com with SMTP id w13so16065361oiw.9;
+        Mon, 21 Jan 2019 17:14:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wgJ1G6St49wbVw0VgIAlB9lWWvpxL3qtTHgYiuXYdZA=;
+        b=sG00dWvFbTE6HrsHvk1IsaSFsR2J5B/pDWIFMo+1EPO4q1sgU5my05E9Y0W0cY7OEY
+         MB3Mh4n7BNgiXMxcyU8jMsJ6QjPTiUBcheDqdGgCHfn16TQbM+76ncSwvwCTsmXhQKVy
+         N70BbydEReXF3wmsyN6jr1utd/kiW/qnoE15LfK+FF1N6rl3WldAaT7M+bGERUUMtVyv
+         CbpK3Q/mKPbUbxFFElbo+8JqS1ktSM+k77BpG09qZw8KfOAbvfiKbPApfyPER9ZeVpN+
+         wMkVGU/SwH44/iDr1fqSA4nkMtXWKSvYC40SToIyHmRjsrJ2Gks8Af4IO307WW01B3Sc
+         Lf/Q==
+X-Gm-Message-State: AJcUukcySbY4iIBwMwKT7Yw2fDbwTORZK9yx/Xqphh3MlIfjgJ/KdkPj
+        PbvyQy+UXMpng64bLKJsuA==
+X-Google-Smtp-Source: ALg8bN4utbZqAhmfqs4+0qX8BONSTaIcX2rXacBWk9gOxC6S+ByTMVo1nzSwvVox8k0m1XZRvo8fkA==
+X-Received: by 2002:aca:720a:: with SMTP id p10mr6723543oic.169.1548119670567;
+        Mon, 21 Jan 2019 17:14:30 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 30sm6170166ots.52.2019.01.21.17.14.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 21 Jan 2019 17:14:29 -0800 (PST)
+Date:   Mon, 21 Jan 2019 19:14:29 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+Message-ID: <20190122011429.GA3176@bogus>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117174531.GA14041@ravnborg.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=HoD5qxnl0p1esR3YI2YA:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Daniel et al.
-
-> > 
-> > Yeah the drm_crtc_helper.h header is a bit the miniature drmP.h for legacy
-> > kms drivers. Just removing it from all the atomic drivers caused lots of
-> > fallout, I expect even more if you entirely remove the includes it has.
-> > Maybe a todo, care to pls create that patch since it's your idea?
+On Wed, 16 Jan 2019 18:37:44 +0000, Fabrizio Castro wrote:
+> From: Biju Das <biju.das@bp.renesas.com>
 > 
-> The main reason I bailed out initially was that this would create
-> small changes to several otherwise seldomly touched files.
-> And then we would later come and remove drmP.h - so lots of
-> small but incremental changes to the same otherwise seldomly
-> edited files.
-> And the job was only partially done.
+> Add Silicon Linux to the list of devicetree vendor prefixes.
 > 
-> I will try to experiment with an approach where I clean up the
-> include/drm/*.h files a little (like suggested above, +delete drmP.h
-> and maybe a bit more).
+> Website: http://www.si-linux.co.jp
 > 
-> Then to try on a driver by driver basis to make it build with a
-> cleaned set of include files.
-> I hope that the cleaned up driver can still build without the
-> cleaned header files so the changes can be submitted piecemal.
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Will do so with an eye on the lesser maintained drivers to try it
-> out to avoid creating too much chrunch for others.
 
-I have now a few patches queued, but the result is not too pretty.
-I did the following:
-
-- For all files in include/drm/*.h the set of include files
-  were adjusted to the minimum number of files required to make
-  them build without any other files included first.
-
-  Created one .c file for each .h file. Then included the .h
-  file and adjusted to the minimal set of include files.
-  In the process a lot of forwards were added.
-
-- Deleted drmP.h
-
-- Fixed build of a few drivers: sti, tilcdc, gma500, tve200, via
-
-Some observations:
-
-- Killing all the includes not needed in the headers files
-  results in a a lot of extra changes.
-  Examples:
-    drm_modseset_helper_vtables.h is no longer
-    included by anyone, so needs to be added in many files
-
-    drm_atomic_state_helper.h is no longer included
-    by anyone so likewise needs to be added in many files
-
-- It is very tedious to do this properly.
-  The process I followed was:
-  - delete / comment out all include files
-  - add back the obvious from a quick scan of the code
-  - build - fix - build - fix - build - fix ...
-  -   next file...
-
-- The result is errorprone as only the allyesconfig + allmodconfig
-  variants are tested. But reallife configurations are more diverse.
-
-Current diffstat:
-   111 files changed, 771 insertions(+), 401 deletions(-)
-
-This is for the 5 drivers alone and not the header cleanup.
-So long story short - this is not good and not the way forward.
-
-I will try to come up with a few improvements to make the
-headers files selfcontained, but restricted to the changes that
-add forwards/include to avoid the chrunch in all the drivers.
-
-And then post for review a few patches to clean up some headers.
-If the cleanup gets a go I will try to persuade the introduction
-of these.
-This will include, but will not be limited to, the above mentioned
-drm_crtc_helper.h header file.
-
-For now too much time was already spent on this, so it is at the
-moment pushed back on my TODO list.
-This mail serve also as a kind of "where had I left", when/if I
-pick this up again.
-
-If there are anyone that knows some tooling that can help in the
-process of adjusting the header files I am all ears.
-
-	Sam
+Reviewed-by: Rob Herring <robh@kernel.org>
