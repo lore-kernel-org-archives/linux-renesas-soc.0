@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E08C37122
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 01:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399A4C37122
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 01:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9337E2089F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 01:15:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02D2C21721
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 01:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548119725;
-	bh=9lt1vCoC4yQAu0DWBBkHAsioGnxrBvjgawKWU/tV0dE=;
+	s=default; t=1548119762;
+	bh=Ls8KZGII30/UITtHlJWd95A80iqkvI2BCwD2JhqTBuY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=byFj7FJt3CxAcvGrnzrBnYpE7vB5YrcvuNmp6TlbbPtj7aFye7jlMZyJSlkjqri6n
-	 PZCTVGbeDeGinAJ/6G8Idrdk2So/6Rriw225pAV0Lip9IPs4Q/36RfoIbXCwSMMDJi
-	 /rMbCNnO/cdiX0V2PUxmhDu6sIDMlhZL7VdDKTn4=
+	b=IaefaX1T/jb+1UZEl+j4VCIJkjXp0Bg0PC2Q++sGvQOxYYlZvQ0lKTxuB8PJI4KIl
+	 5Ha4BQR+QU/h9D5zyUo7gFiPvN2VmBXMhhlSDlJFA7ZkLBu3yuJrb20zfyTRKztB+B
+	 HlS/M/uPxlU8cmbAVQ4PbAC6VYBNehX0EfiCamAM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfAVBPS (ORCPT
+        id S1726724AbfAVBPz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jan 2019 20:15:18 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44140 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfAVBPS (ORCPT
+        Mon, 21 Jan 2019 20:15:55 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39703 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbfAVBPz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jan 2019 20:15:18 -0500
-Received: by mail-ot1-f65.google.com with SMTP id f18so22176931otl.11;
-        Mon, 21 Jan 2019 17:15:17 -0800 (PST)
+        Mon, 21 Jan 2019 20:15:55 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n8so22210440otl.6;
+        Mon, 21 Jan 2019 17:15:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x/gjR/NWp6EgQXjxlk/R3J7/ZJMZ099PMFRbddeLNIc=;
-        b=Zah3e/wtSl0fLlwMZMexm1l75w7E7WnWsjOP4MmrVfBrtxNXRqPCT/btPtl9C0Ou3t
-         rDz2a2jlCrNEG4ma8XtXdzLwSAsyqmWZZQ0iyzsLM6OnyoBmfsv+jxlR9WJ0VqBI9Jto
-         xGGcxY17Y6lFeDqH7RMfPwUfqx7D46RRzAmcxi6AEvjkqKTqS4TC2KD0Tryii41ZEAKw
-         aAYGvUvGhG6Ht33thH8IzHNJixIWdBXuude5DvGIt94B2YpcHvkI80/pb4J7JDjq4jfn
-         91mnCcK5rDStOWJ6buJAiNJ/8wrVmIoLTeFgvtlAwYvgIW0XH0FIBzEXqmFTD85dXI9j
-         TKJQ==
-X-Gm-Message-State: AJcUukei9M84/XZ/T2dp3eTwir23/x2jog3DZVAIjSrS9bpnwRTaimEs
-        6XuACRoBEhkkzYsoAiLlCA==
-X-Google-Smtp-Source: ALg8bN7/deIR3/+N2v+/2Xd2Hzj/vJv312ZCBxFrmpC6ODC6wYF5DLFikaC7CKMO0SqHo2DzVyCiWA==
-X-Received: by 2002:a9d:6a41:: with SMTP id h1mr21189113otn.332.1548119717134;
-        Mon, 21 Jan 2019 17:15:17 -0800 (PST)
+        bh=BEu3pUUs7cIEbpfX9paEs9a2pDUwLpKNQ18jjse0Z6g=;
+        b=kR5Qr5ayLf1q37ibS9dRTnjjSuQvi0CefBJBK/IIHEJTHiM4i32M9uB/SNMOdKv20G
+         gU6cOE8Y0oOjRIOd2ryBMXM1rjZdJRPs8Dd09X7he0eTnweDtGjXr3/ATpzA3bqevunS
+         4bmfi5pS6Hj0MvC43nmMk0+GNCBrxEFm41Qm0NbjVDj8SGT66OjTm4XvBTuLjIOcrP7Y
+         6ncnyX5MOxlCMqrAizZ51KtCaK/eCm9BOFmSH8agTidZKRf07bGYPh9VHkqKrP3rD1Pf
+         dqNMLLRM/bZJ6o74mnkPdVdaFPC6HjIO9KZ74EQ4cL7QHHvydxTCPT15ko52tnDugAlu
+         j9+w==
+X-Gm-Message-State: AJcUukeQigDFTgv/PJIvXZb7U10FL/yHfujRysVNBOk3xWMzj8SpkrLb
+        4Yt6vq/QcWxsUrz4YHtE1A==
+X-Google-Smtp-Source: ALg8bN7rMWRz4srLSck8KLsBop2z22N3M1X3Rp/DXe4hGBm6ubHY0vBWvhFqUwDPae/5UM8M29rc1A==
+X-Received: by 2002:a9d:6b82:: with SMTP id b2mr19585549otq.210.1548119753968;
+        Mon, 21 Jan 2019 17:15:53 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g25sm6071233otk.31.2019.01.21.17.15.16
+        by smtp.gmail.com with ESMTPSA id s17sm6507367otp.36.2019.01.21.17.15.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 17:15:16 -0800 (PST)
-Date:   Mon, 21 Jan 2019 19:15:15 -0600
+        Mon, 21 Jan 2019 17:15:53 -0800 (PST)
+Date:   Mon, 21 Jan 2019 19:15:52 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
@@ -73,30 +73,33 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-can@vger.kernel.org, netdev@vger.kernel.org,
         linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
         linux-kernel@vger.kernel.org, ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH 09/11] dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
-Message-ID: <20190122011515.GA4487@bogus>
+Subject: Re: [PATCH 11/11] dt-bindings: can: rcar_canfd: document r8a774c0
+ support
+Message-ID: <20190122011552.GA5593@bogus>
 References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-12-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1547663874-29411-12-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 16 Jan 2019 18:37:52 +0000, Fabrizio Castro wrote:
-> According to the latest information, the clock options for CAN on RZ/G2
-> are the same as the ones available on R-Car Gen3
+On Wed, 16 Jan 2019 18:37:54 +0000, Fabrizio Castro wrote:
+> Document the support for rcar_canfd on R8A774C0 SoC devices.
 > 
-> Fixes: 868b7c0f43e6 ("dt-bindings: can: rcar_can: Add r8a774a1 support")
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > ---
->  Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
+> This patch depends on:
+> https://patchwork.kernel.org/patch/10687999/
+> https://patchwork.kernel.org/patch/10688001/
+> 
+>  Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
