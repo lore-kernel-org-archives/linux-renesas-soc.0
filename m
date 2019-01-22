@@ -2,95 +2,88 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8F4C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 18:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32898C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 19:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B404F21726
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 18:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E78D020870
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 19:55:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="aQv4da3E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726095AbfAVSbW (ORCPT
+        id S1726021AbfAVTzr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 13:31:22 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:45005 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfAVSbW (ORCPT
+        Tue, 22 Jan 2019 14:55:47 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36730 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfAVTzr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 13:31:22 -0500
-Received: by mail-vs1-f66.google.com with SMTP id u11so15307132vsp.11;
-        Tue, 22 Jan 2019 10:31:21 -0800 (PST)
+        Tue, 22 Jan 2019 14:55:47 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g11-v6so21779459ljk.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Jan 2019 11:55:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:organization:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=XgwnDIPBvJmLbDnG6zy3YEuKi9ydmhO3m5l3zDCQRO8=;
+        b=aQv4da3Ee/Psuu+1+FwpeVkC38kr4n59FQEuP/3gWYcKBtGfOKfKpP5i1Q/1Dvqfgc
+         Ky/WdsFcmIjzEb7p+dfnUymtZvkHDYZY099UhgRiCFUsr85LkG+VIwUQB48A8cl7X7V8
+         VEAbbJpEzgj1ni6ZnPMIHNmT2yRra2LSv3JZ84xxSMuN2S0Dtaph2EioHnvZj52DkqAN
+         S3H5WdihEYN5iNmFwqs2/t+GiH18SX/zgh11wYRxvt/ha6TYH19WlpFFd8awTKVAcfbI
+         sazluHfwj8XN3HvBOlQyDI11lNlgrB7QHKMVe9i81poIhyNo9YkbYt7zf636jJnfjHU3
+         T5Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ISQURE+o76BG5vT6C2YBWn8B3gLYvuNU2PUsO+faQyI=;
-        b=g/e5G8v+4LRdBFai/ubRCEKZWjD70ynLT1PceZwUTD+v6UbdswGdcGmUnSSKPIyKkK
-         RNUCq/pVylRaRrAxUStqfZvMWaMa1ixZKVemihHH9wEWcFvXWqSgUS8owCpe7RM4QRLe
-         nUbkiSAIdrMbQ1VyHNeqR9qNU12hHjOb76JI+4rsIM4YVPZw7sarBN+vYJQppMjhjw+w
-         yppPdaYPR/ZWjIyc2Lrps+ATcABD1YMU4SdlYPjuM8CJpq1PZCK7ejatcS5QgNGhoNCN
-         i714RGzHjaOpS5g+K5rYB+pxC2+J5NiprziSv/Urz0WMXANYQeYJhnXk6HO+MC0GffHV
-         u++A==
-X-Gm-Message-State: AJcUukcNZ7uOOjpTZ71TMC3LhlqeXipEpv1Tgjt5NPAA7fj88E+8C2at
-        qIc4GDeSMqiPAShirEGWsA8FFBhfXfbHYlWeyhU=
-X-Google-Smtp-Source: ALg8bN6qWyIS1OgGdw50E30D+lWCmO0VKYd3WI5T2pTPt9eg0qfWXTkShc9+TfN0LieIElF2G2+X6KBpvNqyHrMjnlY=
-X-Received: by 2002:a67:3885:: with SMTP id n5mr12623413vsi.96.1548181880857;
- Tue, 22 Jan 2019 10:31:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20190118085343.32553-1-vladimir_zapolskiy@mentor.com>
-In-Reply-To: <20190118085343.32553-1-vladimir_zapolskiy@mentor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Jan 2019 19:31:08 +0100
-Message-ID: <CAMuHMdUGOeAVvXGAObYiNbFbqYn7a0fiav6Dr-58A976RKAH_Q@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: rcar: select General Output Register to set
- output states
-To:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        h=x-gm-message-state:from:subject:to:organization:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=XgwnDIPBvJmLbDnG6zy3YEuKi9ydmhO3m5l3zDCQRO8=;
+        b=EZYmVWDrMfTMLHYpX6a0WPqV1aA8NTfr5XpWM0B2qS2LZEL4SP+7qBh8JqlyxV3gQ4
+         kIdotsx50uO4f3U/XRaZJ9Ug7Y3G0SFLyTrTlRRUWbElnU5Evjw3qNoLPV03OSVBtWcM
+         HAayrlPitnOUUhNT8+y6DXpgJE90pSvfis94lMryaPaGI73uk1Y9dREpAxJLBUUh4KLO
+         NqU1YMfSB8QG9wkmt8yydcbTVrPs3o/LdAVm05AB0jH4hlOetvZSWelI3R1EGL4UD7SP
+         2MBmHB4oDmyw6WEoXTEM9GImFtYSr05KY/OQFwlb6DGSylPmgWkdeD9nHP/hQewYpZ1r
+         0s0Q==
+X-Gm-Message-State: AJcUukfOoa+ddB6KDksxdJKKQOW4y+uaZhPu5xJGHj0HtLCEZ89xndcZ
+        4v8KRAc2A0Ns/O4QJF/F96czVQ==
+X-Google-Smtp-Source: ALg8bN4MD1U1f9Q/DqBtjEdj4HB7jBvg8FRjc1HyjxxR88okpbyDd2i8x/+VCjTfTWOeRhoUHvX6zg==
+X-Received: by 2002:a2e:89d7:: with SMTP id c23-v6mr23418847ljk.0.1548186945611;
+        Tue, 22 Jan 2019 11:55:45 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.82.69])
+        by smtp.gmail.com with ESMTPSA id y81-v6sm152624lje.30.2019.01.22.11.55.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 22 Jan 2019 11:55:44 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH v3 0/4] Renesas R8A77980 CPG/MSSR RPC clock support
+To:     linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-clk@vger.kernel.org
+Organization: Cogent Embedded
+Message-ID: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com>
+Date:   Tue, 22 Jan 2019 22:55:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 9:54 AM Vladimir Zapolskiy
-<vladimir_zapolskiy@mentor.com> wrote:
-> R-Car GPIO controller provides two interfaces to set GPIO line output
-> signal state, and for a particular GPIO line the selected interface is
-> determined by OUTDTSEL bit value.
->
-> At the moment the driver supports only one of two interfaces, namely
-> OUTDT General Output Register is used to control the output signal.
->
-> While this selection is the default one on reset, it is not explicitly
-> configured on probe, thus it might be possible that kernel and userspace
-> consumers of a GPIO won't be able to set the wanted GPIO output signal.
->
-> Below is a simple test case to reproduce the described problem and
-> verify this fix in the kernel on H3 ULCB by setting non-default OUTDTSEL
-> configuration from a bootloader:
->
->   u-boot    > mw.l 0xe6055440 0x3000 1
->   ...
->   userspace > echo default-on > /sys/devices/platform/leds/leds/led5/trigger
->   userspace > echo default-on > /sys/devices/platform/leds/leds/led6/trigger
->
-> Signed-off-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Hello!
 
-FTR (already applied on gpio/for-next)
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Here's the set of 4 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
+'renesas-drivers.git' repo. We're adding support for the R8A77980 CPG/MSSR RPC clocks...
 
-Gr{oetje,eeting}s,
+[1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
+[2/4] clk: renesas: rcar-gen3-cpg: add spinlock
+[3/4] clk: renesas: rcar-gen3-cpg: add RPC clocks
+[4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
