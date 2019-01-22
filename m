@@ -3,162 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77116C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 13:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2DD7C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C8A21726
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 13:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89FDC21019
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:06:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfAVNwM (ORCPT
+        id S1728506AbfAVOGr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 08:52:12 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:43329 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728305AbfAVNwM (ORCPT
+        Tue, 22 Jan 2019 09:06:47 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:41724 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728359AbfAVOGr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 08:52:12 -0500
-Received: by mail-vs1-f66.google.com with SMTP id x1so14706219vsc.10;
-        Tue, 22 Jan 2019 05:52:11 -0800 (PST)
+        Tue, 22 Jan 2019 09:06:47 -0500
+Received: by mail-vs1-f65.google.com with SMTP id t17so14733041vsc.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Jan 2019 06:06:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KcDFAfFc7EsqJTg783tpvFYSuv3o+l1WYw+Ppm1hEvI=;
-        b=OCy+p1gpDFqK8awmpjIaGPEeLa7JcTht8XdIWaZj9L+j4pkacPIQI89Mt1K5YHkdsV
-         pWJP8DF119m01MVQdrSjw9IrZahol+IWOQ2/jxRBwz7NLX9BmDHd5sbcusIhaCh8zyWD
-         5iPS6NI0E52tI7kEjU3o8a8vVvy14C6jqBGqq9sXv36xai4sxrjmppfkoDF+X4KC38va
-         Q2Sr++mSzEZb9MHOxT6GRmwSNBGDi4t/2qb+u10RX5NpMAT+01GqE2dtMkdoLeQ1lbOQ
-         ohbhaS1gIMlYwQn1EF4IedBpIr1WNJTb95fiqlhSjfi3cVdLSNZJ1xkQ7aXqmR7K2MnY
-         P5xQ==
-X-Gm-Message-State: AJcUukcopoW2v4q+opE6VQQ/XEMJUlnv+L78Jn6lVlTBuCv4lYhDnrqY
-        RRnWomjaEonkrsaL3K65vmS5pbyFUxF/LSuufMI=
-X-Google-Smtp-Source: ALg8bN6c22dYFsVRGpMa59s/KE5nkBHTAEWeY7ZXm0O6YfV0fhNcm/uNPbKipDrSQyf15xnpm7+wc8n56TswjgTcVvQ=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr13578963vsj.11.1548165130536;
- Tue, 22 Jan 2019 05:52:10 -0800 (PST)
+        bh=OBJkMNNwFfDDZ36HXiKb+th2SBbUMlLT95PMzrLq+00=;
+        b=NxtoZnYqo+GomYwfUmMf7kDoT+I3D71R5jbvMk2CHLWPowTknkDa8AzXD1l5mv8YUj
+         f/BERSW9jOlkm2saKkbzGL3O4VSmrypNggsxqoT8UZRH1kCVMvILm2YGSWA3LO8YgoRI
+         mfsHj+EKSRmDE9R6YprE3QnWkN5vP8JRyJs2vf7IphmP5eH+CHzK1yBN28a2Q2kfciZJ
+         i1zn8MyT/I7TTASGRx/TLgiFsxTRTyhEKuwfLa7AqhXa/mn8TbUUwCiIj4BpJlZHZYJx
+         Zmfqdw4WxSuqu1LDhc8cxcRIKuZcJpgMhY9xNZiHg357tVjhastbQisNHZnlk6qqPtIo
+         5g6Q==
+X-Gm-Message-State: AJcUukcxfB4rKTDi+Iach8F3OTGhkxvzb5s3KTG1i4lgYZ1eXpsX3We2
+        PSrX4wFf/9hkXoiXOGo8NAxHwVS4ESobEDL9AaI=
+X-Google-Smtp-Source: ALg8bN4AxCeYM2vJ3PdbRHcYbTkx2E/Cr4Dl5a34SE7yqlRtdwH8bfPf5SAgQ2Hrd/gnbJZ8M/8yuRbYd5uejZ+Qqbw=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr13602569vsj.11.1548166005324;
+ Tue, 22 Jan 2019 06:06:45 -0800 (PST)
 MIME-Version: 1.0
-References: <CAJKOXPdHhUGoQmrX8_23MfbibozipkAzXA_5woVSFJSK9BvbXw@mail.gmail.com>
- <CAJKOXPe7ot9TLajErKJjSAkbs2vObMJfATzEFwxpT16aFdXHqg@mail.gmail.com> <67560e58-93b3-2bfa-9d5d-5956dae47806@gmail.com>
-In-Reply-To: <67560e58-93b3-2bfa-9d5d-5956dae47806@gmail.com>
+References: <TY2PR01MB4812D22909738F4D981B359ED8980@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+ <CAMuHMdUXKCzr33WNAznQN9v699vxg3sic2s78RxhVXfJePL1wg@mail.gmail.com>
+ <TY2PR01MB4812614B9FFE4EA11A010DF9D8980@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+ <CAMuHMdVZ4+X+3=SHsizF=eUg1Dwcks1HxNEUfBRMOuDfEmV2pQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVZ4+X+3=SHsizF=eUg1Dwcks1HxNEUfBRMOuDfEmV2pQ@mail.gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Jan 2019 14:51:58 +0100
-Message-ID: <CAMuHMdUz6J2cG-NCYPTRyS=1QZHGBWUFZPqj4ShEdioQLqu9qw@mail.gmail.com>
-Subject: Re: [BUG bisect] Missing Micrel driver on VF50 (net: phy: check
- return code when requesting PHY driver module)
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Tue, 22 Jan 2019 15:06:33 +0100
+Message-ID: <CAMuHMdV0j7dEz+iq+SZn4XDWkL=MO8uTvGU65h_pJ7_DzzoW1w@mail.gmail.com>
+Subject: Re: BUG report on next-20190122: could not probe the ravb driver
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Heiner,
+Hi Shimoda-san,
 
-On Fri, Jan 18, 2019 at 9:58 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> On 18.01.2019 09:48, Krzysztof Kozlowski wrote:
-> > On Fri, 18 Jan 2019 at 09:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >> On today's next (next-20190118) my Colibri VF50 board fails to boot up
-> >> from network (DHCP, NFSv4 root). Looks like missing network adapter.
-> >> Expected:
-> >> [ 3.041773] Micrel KSZ8041 400d1000.ethernet-1:00: attached PHY driver
-> >> [Micrel KSZ8041] (mii_bus:phy_addr=400d1000.ethernet-1:00, irq=POLL)
-> >>
-> >> Result:
-> >> [ 15.614964] Root-NFS: no NFS server address
-> >> [ 15.619353] VFS: Unable to mount root fs via NFS, trying floppy.
-> >> [ 15.626762] VFS: Cannot open root device "nfs" or unknown-block(2,0): error -6
-> >> [ 15.634252] Please append a correct "root=" boot option; here are the
-> >> available partitions:
-> >> [ 15.642791] 0100 16384 ram0
-> >> [ 15.642804] (driver?)
-> >> [ 15.649076] Kernel panic - not syncing: VFS: Unable to mount root fs
-> >> on unknown-block(2,0)
-> >> [ 15.657423] ---[ end Kernel panic - not syncing: VFS: Unable to mount
-> >> root fs on unknown-block(2,0) ]---
-> >>
-> >> Bisect pointed to:
-> >>     net: phy: check return code when requesting PHY driver module
+On Tue, Jan 22, 2019 at 2:16 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, Jan 22, 2019 at 12:06 PM Yoshihiro Shimoda
+> <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > From: Geert Uytterhoeven, Sent: Tuesday, January 22, 2019 7:59 PM
+> > > On Tue, Jan 22, 2019 at 11:23 AM Yoshihiro Shimoda
+> > > <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > > I got a report from test team that next-20190122 could not probe the ravb driver as the following.
+> > > > The test team is using H3 ES3.0 Salvator-XS and I could also reproduce this issue on M3-N Salvator-XS.
+> > > >
+> > > > [ 3.005557] ravb e6800000.ethernet: ignoring dependency for device, assuming no driver
+> > > > [ 3.013863] libphy: ravb_mii: probed
+> > > > [ 3.017743] mdio_bus e6800000.ethernet-ffffffff:00: error -2 loading PHY driver module for ID 0x00221622
+> > > > [ 3.027283] ravb e6800000.ethernet: failed to initialize MDIO
+> > > > [ 3.033157] ravb: probe of e6800000.ethernet failed with error -2
+> > > >
+> > > > # I didn't investigate this issue yet though...
+> > >
+> > > Looks like other people see this on other SoCs, too.
+> > > But I didn't see a solution mentioned in those threads.
 > >
-> > I see now in the logs:
-> > [ 2.436822] mdio_bus 400d1000.ethernet-1:00: error -2 loading PHY
-> > driver module for ID 0x00221513
-> > which is kind of misleading. There is no initramfs so there is no
-> > usermod library at this point. It is not needed. This seems to break
-> > all DHCP/NFS root boots without initrd/initramfs.
+> > Oh, I got it.
 > >
-> Thanks for the report. Could you please provide your kernel config
-> and the syslog of a boot before or w/o the patch in question?
+> > > FWIW, I'm not seeing it with the soon-to-be-released renesas-drivers of
+> > > today, so the breakage is not in net-next.
+> >
+> > It's good news! I had worried about this renesas-drivers :)
 >
-> If you boot via nfs then I'd expect that the PHY driver is built-in and
-> not a module. Therefore it's not fully clear to me yet why
-> request_module() returns -ENOENT.
+> Unfortunately I have to amend my comment above: while the issue does not
+> happen with renesas_defconfig or shmobile_defconfig, it do see such failures
 
-I'm seeing the same booting nfsroot on several Renesas boards.
-E.g. on r8a7791/koelsch:
+Both have CONFIG_MODULES=n.
 
-    mdio_bus ee700000.ethernet-ffffffff:01: error -2 loading PHY
-driver module for ID 0x00221537
-    sh-eth ee700000.ethernet: MDIO init failed: -2
+> with other board-specific configs. Will investigate...
 
-This failure happens only when CONFIG_MODULES=y.
-Reverting commit 13d0ab6750b20957 ("net: phy: check return code when
-requesting PHY driver module") fixes the issue.
-
-phy_request_driver_module() tries to load module
-"mdio:00000000001000100001010100110111", which fails.
-When CONFIG_MODULES=n, the error is ignored, and everything works fine.
-
-0b00000000001000100001010100110111 == 0x00221537 == PHY_ID_KSZ8041RNLI,
-which is served by drivers/net/phy/micrel.c.
-Interestingly, CONFIG_MICREL_PHY=y, so I'm wondering why the PHY subsystem
-tries to load a module for a driver which is already present in the first
-place?
-
-Oh, the following comment tries to explain:
-
-        /* Request the appropriate module unconditionally; don't
-         * bother trying to do so only if it isn't already loaded,
-         * because that gets complicated. A hotplug event would have
-         * done an unconditional modprobe anyway.
-
-Hence request_module() failures are normal.
-
-       ret = request_module(MDIO_MODULE_PREFIX MDIO_ID_FMT,
-                            MDIO_ID_ARGS(phy_id));
-       /* we only check for failures in executing the usermode binary,
-        * not whether a PHY driver module exists for the PHY ID
-        */
-       if (IS_ENABLED(CONFIG_MODULES) && ret < 0) {
-               phydev_err(dev, "error %d loading PHY driver module for
-ID 0x%08x\n",
-                          ret, phy_id);
-               return ret;
-       }
-
-However:
-
-    /**
-     * __request_module - try to load a kernel module
-     * @wait: wait (or not) for the operation to complete
-     * @fmt: printf style format string for the name of the module
-     * @...: arguments as specified in the format string
-     *
-     * Load a module using the user mode module loader. The function returns
-     * zero on success or a negative errno code or positive exit code from
-     * "modprobe" on failure.
-
-So perhaps the check should be for "ret > 0"?
+With CONFIG_MODULES=y, the issue happens.
+Please revert commit 13d0ab6750b20957 ("net: phy: check return code when
+requesting PHY driver module") to fix it (for now).
 
 Gr{oetje,eeting}s,
 
