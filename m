@@ -2,132 +2,136 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E66C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF366C282C5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE54121721
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:22:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548166964;
-	bh=SJbq+MbTDSRaJtMVQGVTLNT+jJsrO6+dvaVyDG2/iE4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=sIpyRfgf7cVLs8EsQGM/ZJk7dc6KwVz6+DtQB1p0TVuJUo0pMyO+vZv+PvB497ljg
-	 TsqiHO/M0rla0dCQTvvXMF0FpoHOwsxLnCTX35acSFXv06s1/rwnDrS57vQb8AfCj4
-	 8WVSpUgq/l6gp/XxNwNvDuZVW29Fm/27rVOhjJVo=
+	by mail.kernel.org (Postfix) with ESMTP id 8BCE621019
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:50:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Wqp8bxnc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbfAVOWn (ORCPT
+        id S1728820AbfAVOuB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:22:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728281AbfAVOWn (ORCPT
+        Tue, 22 Jan 2019 09:50:01 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:35008 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728353AbfAVOuA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:22:43 -0500
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D98921721;
-        Tue, 22 Jan 2019 14:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548166962;
-        bh=SJbq+MbTDSRaJtMVQGVTLNT+jJsrO6+dvaVyDG2/iE4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wLR+XGachqOJN3SwBCCJoHPatf8PhRk0hNuzg+AR0kanKjbexGhgeAAy4om1n+uc2
-         uJVvlWiQAPa498Ho2Zm8gvaDkE3lAQ5m+djVEz9tCdDUgmuUUQNLijBES9e/9nxRAK
-         uqm5T1yGuQHKlBpIlv6skhlOJ0ZRXKMG3yyT17s0=
-Received: by mail-lf1-f54.google.com with SMTP id u18so18178768lff.10;
-        Tue, 22 Jan 2019 06:22:42 -0800 (PST)
-X-Gm-Message-State: AJcUuke67puEBrm9uBlO8sorL/FNPqD2CWhmZl3ebDvoFb1qUt1xhdKz
-        Rioy75+Fpvwoms2uQYq1fdmw7ICTebmzzCZaiUU=
-X-Google-Smtp-Source: ALg8bN5mEAZn2B3qgLIr97TphkudtFk+U7dDWJwXXbKMpL87TIvtf3BMhT7Sss+LDCb4n715glh72yraItlgtgZCRB4=
-X-Received: by 2002:a19:4948:: with SMTP id l8mr997043lfj.156.1548166960348;
- Tue, 22 Jan 2019 06:22:40 -0800 (PST)
-MIME-Version: 1.0
-References: <CAJKOXPdHhUGoQmrX8_23MfbibozipkAzXA_5woVSFJSK9BvbXw@mail.gmail.com>
- <CAJKOXPe7ot9TLajErKJjSAkbs2vObMJfATzEFwxpT16aFdXHqg@mail.gmail.com>
- <67560e58-93b3-2bfa-9d5d-5956dae47806@gmail.com> <CAMuHMdUz6J2cG-NCYPTRyS=1QZHGBWUFZPqj4ShEdioQLqu9qw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUz6J2cG-NCYPTRyS=1QZHGBWUFZPqj4ShEdioQLqu9qw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 22 Jan 2019 15:22:29 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPcm3sMrAS8Yag-6YVUF7f=wGjst991WSVWeRMg2zk3FvA@mail.gmail.com>
-Message-ID: <CAJKOXPcm3sMrAS8Yag-6YVUF7f=wGjst991WSVWeRMg2zk3FvA@mail.gmail.com>
-Subject: Re: [BUG bisect] Missing Micrel driver on VF50 (net: phy: check
- return code when requesting PHY driver module)
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        Tue, 22 Jan 2019 09:50:00 -0500
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id AEFEE25BEB5;
+        Wed, 23 Jan 2019 01:49:55 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1548168596; bh=3gDzWs2d9KB8z32tWySHwF7o35EOlUcDuRA5II5u8rA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wqp8bxncIbe0/gd5t9Lsj3nbDIL3L/VsgD8eKDG9l69wErkCCcJIwCXY7yWGEKGfi
+         BngXZW0F9BH94oe1FwlLVrHDRsEqfbms/JHvMtAKTsbNn2khCGs6AIk3Ac+fcA9Mq/
+         fs2YI6nX4s21YiU4PmmnjsMcdfrHW5P0S5wIJwOs=
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id 97C62E2146E; Tue, 22 Jan 2019 15:49:53 +0100 (CET)
+Date:   Tue, 22 Jan 2019 15:49:53 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Chris Paterson <Chris.Paterson2@renesas.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
+Subject: Re: [PATCH 02/11] dt-bindings: arm: renesas: Add si-linux cat87[45]
+ boards
+Message-ID: <20190122144953.sevb3flzky6ja23r@verge.net.au>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190117105107.dtuttem7x7ovaey2@verge.net.au>
+ <TYAPR01MB2285EAE232CCADD7FB95E712B7830@TYAPR01MB2285.jpnprd01.prod.outlook.com>
+ <20190117125912.y77powezi74rjtf7@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190117125912.y77powezi74rjtf7@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 22 Jan 2019 at 14:52, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Heiner,
->
-> On Fri, Jan 18, 2019 at 9:58 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
-> > On 18.01.2019 09:48, Krzysztof Kozlowski wrote:
-> > > On Fri, 18 Jan 2019 at 09:39, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >> On today's next (next-20190118) my Colibri VF50 board fails to boot up
-> > >> from network (DHCP, NFSv4 root). Looks like missing network adapter.
-> > >> Expected:
-> > >> [ 3.041773] Micrel KSZ8041 400d1000.ethernet-1:00: attached PHY driver
-> > >> [Micrel KSZ8041] (mii_bus:phy_addr=400d1000.ethernet-1:00, irq=POLL)
-> > >>
-> > >> Result:
-> > >> [ 15.614964] Root-NFS: no NFS server address
-> > >> [ 15.619353] VFS: Unable to mount root fs via NFS, trying floppy.
-> > >> [ 15.626762] VFS: Cannot open root device "nfs" or unknown-block(2,0): error -6
-> > >> [ 15.634252] Please append a correct "root=" boot option; here are the
-> > >> available partitions:
-> > >> [ 15.642791] 0100 16384 ram0
-> > >> [ 15.642804] (driver?)
-> > >> [ 15.649076] Kernel panic - not syncing: VFS: Unable to mount root fs
-> > >> on unknown-block(2,0)
-> > >> [ 15.657423] ---[ end Kernel panic - not syncing: VFS: Unable to mount
-> > >> root fs on unknown-block(2,0) ]---
-> > >>
-> > >> Bisect pointed to:
-> > >>     net: phy: check return code when requesting PHY driver module
-> > >
-> > > I see now in the logs:
-> > > [ 2.436822] mdio_bus 400d1000.ethernet-1:00: error -2 loading PHY
-> > > driver module for ID 0x00221513
-> > > which is kind of misleading. There is no initramfs so there is no
-> > > usermod library at this point. It is not needed. This seems to break
-> > > all DHCP/NFS root boots without initrd/initramfs.
-> > >
-> > Thanks for the report. Could you please provide your kernel config
-> > and the syslog of a boot before or w/o the patch in question?
-> >
-> > If you boot via nfs then I'd expect that the PHY driver is built-in and
-> > not a module. Therefore it's not fully clear to me yet why
-> > request_module() returns -ENOENT.
->
-> I'm seeing the same booting nfsroot on several Renesas boards.
-> E.g. on r8a7791/koelsch:
->
->     mdio_bus ee700000.ethernet-ffffffff:01: error -2 loading PHY
-> driver module for ID 0x00221537
->     sh-eth ee700000.ethernet: MDIO init failed: -2
->
+On Thu, Jan 17, 2019 at 01:59:12PM +0100, Simon Horman wrote:
+> On Thu, Jan 17, 2019 at 12:32:37PM +0000, Chris Paterson wrote:
+> > Hello Simon,
+> > 
+> > > From: Simon Horman <horms@verge.net.au>
+> > > Sent: 17 January 2019 10:51
+> > > 
+> > > On Wed, Jan 16, 2019 at 06:37:45PM +0000, Fabrizio Castro wrote:
+> > > > This patch adds board cat874 (powered by the RZ/G2E) and board
+> > > > cat875 (that sits on top of cat874). Both boards are made by
+> > > > Silicon Linux.
+> > > >
+> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/arm/renesas.yaml | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml
+> > > b/Documentation/devicetree/bindings/arm/renesas.yaml
+> > > > index 5e9d486..9e1e07b 100644
+> > > > --- a/Documentation/devicetree/bindings/arm/renesas.yaml
+> > > > +++ b/Documentation/devicetree/bindings/arm/renesas.yaml
+> > > > @@ -108,6 +108,14 @@ properties:
+> > > >
+> > > >        - description: RZ/G2E (R8A774C0)
+> > > >          items:
+> > > > +          - enum:
+> > > > +              - si-linux,cat874 # Silicon Linux RZ/G2E 96board platform (CAT874)
+> > > 
+> > > Can I confirm that "96board platform" is correct for this board - I don't
+> > > see it in the documentation I have, but that may not mean much.
+> > 
+> > The board follows the extended version of the Linaro 96board consumer edition (CE) specification [1].
+> > 
+> > You can see a pretty picture of the board on the CIP Blog [2].
+> > 
+> > [1] https://www.96boards.org/specifications/
+> > [2] https://www.cip-project.org/blog/2018/10/23/renesas-rz-g2m-96ce-board-adopted-as-arm64-reference-board-for-the-next-cip-slts-kernel
+> 
+> Thanks Chris, in that case I am fine with this patch.
+> 
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> > > That aside, I'd like to wait for Rob to indicate if he will accept
+> > > patch 1, which adds si-linux as a vendor, before I apply this patch.
 
-Hi Geert,
+It appears that the use of si-linux as a vendor name.
+Accordingly I have applied this patch for v5.1.
 
-There is a follow up patch:
-https://www.spinics.net/lists/netdev/msg545573.html
-
-Best regards,
-Krzysztof
+...
