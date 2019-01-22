@@ -2,121 +2,148 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BCBC282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA9CC282C4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 10:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CFEE218D0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 09:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BFAC20844
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 10:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbfAVJhE (ORCPT
+        id S1727783AbfAVKEE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:37:04 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:36805 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfAVJhE (ORCPT
+        Tue, 22 Jan 2019 05:04:04 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:50142 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728081AbfAVKED (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 04:37:04 -0500
-Received: by mail-vs1-f66.google.com with SMTP id v205so14313302vsc.3;
-        Tue, 22 Jan 2019 01:37:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MFZAKS9g2bkldfbHPWcJeB9c/pHa9RksLWPOsbWn8zI=;
-        b=Aq44rrYWgGsGUm+EUezJvfCz+ypm2ATPQj3p9+rRRibdttn5q8JcvyrpIApJOKBCCq
-         MPTEhKLa8boqkltHnSGKyJVpksEO2QlSSZS99PK0R2RHzxruEk6fahDqSOTFuxOVI2h2
-         /42WddYUNiMly5y5yJ8QXIMSTIIpEW06fg06UEFDsjiBPu7CiGa0MeFq+1+5M9yqfyp/
-         D3LHzZo+RTqHg9Ll8xL2zlVJN7+POtR3ItNan8ayxQSEZRf3YQmcql6VAzmA289EPQUG
-         8/1QbSFLGSr/k9PSHtroysZpISFywYelP7Y32y6Sr3XDUXPsA69hu3X4tHPrwABXdVfA
-         wQ8g==
-X-Gm-Message-State: AJcUukf2AK3jHQ2AKLTlQFSUNp4BDSP43t+M24cukeiKNd8XbLcKpupK
-        Vp5Q75SkHxbAsI0iRGAxrUCGdzdLLn926gD69Z8uKMs+
-X-Google-Smtp-Source: ALg8bN6S+aH37LsCepXrzpQ3KPhqUVyOW2ytY/GYW9gFqIQjZJ4AAyLAMVcmmZN2pM89nP7DCf3+kCrDteXa4p1d8CE=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr13785461vsp.166.1548149822720;
- Tue, 22 Jan 2019 01:37:02 -0800 (PST)
-MIME-Version: 1.0
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
-In-Reply-To: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Jan 2019 10:36:50 +0100
-Message-ID: <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
- instead run teardown delayed
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Martin Sperl <kernel@martin.sperl.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 22 Jan 2019 05:04:03 -0500
+Received: from ramsan ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id TN401z00K3XaVaC06N40hU; Tue, 22 Jan 2019 11:04:00 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1glsuW-0000Tm-H9; Tue, 22 Jan 2019 11:04:00 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1glsuW-00033g-EQ; Tue, 22 Jan 2019 11:04:00 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] i2c: rcar: Fix clients using i2c from suspend callback
+Date:   Tue, 22 Jan 2019 11:03:57 +0100
+Message-Id: <20190122100357.11712-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 4:36 PM Jon Hunter <jonathanh@nvidia.com> wrote:
-> I have noticed that system suspend has started failing consistently on a
-> couple Tegra boards over the last few days with the linux-next branch.
-> The following error is seen on on entering suspend ...
->
-> [   58.222033] spi_master spi1: could not stop message queue
-> [   58.222038] spi_master spi1: queue stop failed
-> [   58.222048] dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
-> [   58.222052] PM: Device 7000da00.spi failed to suspend: error -16
-> [   58.222057] PM: Some devices failed to suspend, or early wake event detected
->
-> Bisecting today's -next points to commit 412e60373245 ("spi: core: avoid
-> waking pump thread from spi_sync instead run teardown delayed") and
-> reverting this on top of -next fixes the problem. I have not had chance
-> to dig any further but wanted to report this issue to see if you have
-> any thoughts.
+When doing s2idle/s2ram on Salvator-X(S):
 
-I can confirm this on r8a7791/koelsch:
+    WARNING: CPU: 2 PID: 971 at drivers/i2c/i2c-core-base.c:1869 __i2c_transfer+0x608/0x910
+    CPU: 2 PID: 971 Comm: s2idle Not tainted 5.0.0-rc3-arm64-renesas-01306-g29a4a00795034c7f #155
+    Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
+    pstate: 20000005 (nzCv daif -PAN -UAO)
+    pc : __i2c_transfer+0x608/0x910
+    lr : i2c_smbus_xfer_emulated+0x158/0x5b0
+    sp : ffff000011f8b760
+    x29: ffff000011f8b760 x28: 0000000000000000
+    x27: 0000000000000000 x26: ffff8006fa93f088
+    x25: 0000000000000001 x24: 0000000000000001
+    x23: ffff000011f8b830 x22: 0000000000000002
+    x21: ffff000010e23000 x20: 0000000000000000
+    x19: ffff8006fa93f088 x18: 0000000000000400
+    x17: 0000000000000001 x16: 0000000000000019
+    x15: 0000000000000400 x14: 0000000000000400
+    x13: 0000000000000000 x12: 0000000000000000
+    x11: 0000000000000000 x10: ffff000010e23708
+    x9 : 0000000000000000 x8 : 0000000000000001
+    x7 : 000000000000004f x6 : ffff000011f8b996
+    x5 : 0000000000000002 x4 : 0000000000000001
+    x3 : 0000000000000001 x2 : 0000000000000002
+    x1 : ffff000011f8b830 x0 : ffff8006fa93f088
+    Call trace:
+     __i2c_transfer+0x608/0x910
+     i2c_smbus_xfer_emulated+0x158/0x5b0
+     __i2c_smbus_xfer+0x17c/0x818
+     i2c_smbus_xfer+0x64/0x98
+     i2c_smbus_read_byte_data+0x40/0x70
+     cs2000_bset.isra.1+0x2c/0x68
+     __cs2000_set_rate.constprop.7+0x80/0x148
+     cs2000_resume+0x18/0x20
+     dpm_run_callback+0x74/0x330
+     device_resume_early+0xd4/0x120
+     dpm_resume_early+0x158/0x4f8
+     suspend_devices_and_enter+0x36c/0xd98
+     pm_suspend+0x628/0xaa0
+     state_store+0x88/0x110
+     kobj_attr_store+0x14/0x28
+     sysfs_kf_write+0x4c/0x70
+     kernfs_fop_write+0x134/0x208
+     __vfs_write+0x30/0x180
+     vfs_write+0xa4/0x1b0
+     ksys_write+0x60/0xd8
+     __arm64_sys_write+0x18/0x20
+     el0_svc_common+0x74/0x128
+     el0_svc_handler+0x24/0x80
+     el0_svc+0x8/0xc
+    irq event stamp: 0
+    hardirqs last  enabled at (0): [<0000000000000000>]           (null)
+    hardirqs last disabled at (0): [<ffff0000100dfe44>] copy_process.isra.6.part.7+0x424/0x1c78
+    softirqs last  enabled at (0): [<ffff0000100dfe44>] copy_process.isra.6.part.7+0x424/0x1c78
+    softirqs last disabled at (0): [<0000000000000000>]           (null)
+    ---[ end trace 6be6f172c203362d ]---
+    dpm_run_callback(): cs2000_resume+0x0/0x20 returns -108
+    PM: Device 2-004f failed to resume early: error -108
 
-    PM: suspend entry (deep)
-    PM: Syncing filesystems ... done.
-    Freezing user space processes ... (elapsed 0.010 seconds) done.
-    OOM killer disabled.
-    Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
-    spi_master spi0: could not stop message queue
-    spi_master spi0: queue stop failed
-    dpm_run_callback(): rspi_suspend+0x0/0xc returns -16
-    PM: Device e6b10000.spi failed to suspend: error -16
-    PM: Some devices failed to suspend, or early wake event detected
+On second resume, the sound driver fails with:
 
-In addition, after boot, when the QSPI device is idle (the only activity
-was the initial probe), the device is no longer runtime-suspended, as
-witnessed by the following change to
-/sys/kernel/debug/pm_genpd/pm_genpd_summary:
+    cs2000-cp 2-004f: pll lock failed
+    rcar_sound ec500000.sound: can't use clk 1
 
-    -    /devices/platform/soc/e6b10000.spi                  suspended
-    +    /devices/platform/soc/e6b10000.spi                  active
+As the CS2000 clock driver needs to send I2C messages during suspend,
+the I2C controller driver should be suspended later, and resumed
+earlier.  Fix this by using the noirq sleep ops instead of the normal
+sleep ops, which are called after the late sleep ops, as used by the
+CS2000 clock driver.
 
-and by the following change to /sys/kernel/debug/clk/clk_summary:
+Fixes: 18569fa89a4db9ed ("i2c: rcar: add suspend/resume support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+The various I2C drivers seem to use a mix of normal, late, and noirq
+sleep ops.
 
-    -             qspi                     0        1        0
-97500000          0     0  50000
-    -                qspi_mod              0        1        0
-97500000          0     0  50000
-    +             qspi                     1        1        0
-97500000          0     0  50000
-    +                qspi_mod              1        1        0
-97500000          0     0  50000
+For this particular use case, both the late and noirq sleep ops work,
+but that may depend on link order.
 
-Reverting 412e60373245 also fixes that.
+Given the comment about wake-up sources in commit 57186fe3db3ec462
+("i2c: exynos5: Properly use the "noirq" variants of suspend/resume"),
+perhaps all of them should use SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() instead?
+---
+ drivers/i2c/busses/i2c-rcar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 1d6390eed861aea3..d6c0f50a6dabce99 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -1034,7 +1034,9 @@ static int rcar_i2c_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(rcar_i2c_pm_ops, rcar_i2c_suspend, rcar_i2c_resume);
++static const struct dev_pm_ops rcar_i2c_pm_ops = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(rcar_i2c_suspend, rcar_i2c_resume)
++};
+ 
+ #define DEV_PM_OPS (&rcar_i2c_pm_ops)
+ #else
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
