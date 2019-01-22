@@ -2,136 +2,277 @@ Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF366C282C5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E710C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BCE621019
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:50:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Wqp8bxnc"
+	by mail.kernel.org (Postfix) with ESMTP id 6F28421721
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 14:50:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728820AbfAVOuB (ORCPT
+        id S1728747AbfAVOue (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:50:01 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:35008 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbfAVOuA (ORCPT
+        Tue, 22 Jan 2019 09:50:34 -0500
+Received: from mga09.intel.com ([134.134.136.24]:35340 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728353AbfAVOue (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 09:50:00 -0500
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id AEFEE25BEB5;
-        Wed, 23 Jan 2019 01:49:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548168596; bh=3gDzWs2d9KB8z32tWySHwF7o35EOlUcDuRA5II5u8rA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wqp8bxncIbe0/gd5t9Lsj3nbDIL3L/VsgD8eKDG9l69wErkCCcJIwCXY7yWGEKGfi
-         BngXZW0F9BH94oe1FwlLVrHDRsEqfbms/JHvMtAKTsbNn2khCGs6AIk3Ac+fcA9Mq/
-         fs2YI6nX4s21YiU4PmmnjsMcdfrHW5P0S5wIJwOs=
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 97C62E2146E; Tue, 22 Jan 2019 15:49:53 +0100 (CET)
-Date:   Tue, 22 Jan 2019 15:49:53 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Chris Paterson <Chris.Paterson2@renesas.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
-Subject: Re: [PATCH 02/11] dt-bindings: arm: renesas: Add si-linux cat87[45]
- boards
-Message-ID: <20190122144953.sevb3flzky6ja23r@verge.net.au>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190117105107.dtuttem7x7ovaey2@verge.net.au>
- <TYAPR01MB2285EAE232CCADD7FB95E712B7830@TYAPR01MB2285.jpnprd01.prod.outlook.com>
- <20190117125912.y77powezi74rjtf7@verge.net.au>
+        Tue, 22 Jan 2019 09:50:34 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 06:50:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
+   d="scan'208";a="136728828"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga002.fm.intel.com with ESMTP; 22 Jan 2019 06:50:31 -0800
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id A4025205C8; Tue, 22 Jan 2019 16:50:30 +0200 (EET)
+Date:   Tue, 22 Jan 2019 16:50:30 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 03/30] media: entity: Walk the graph based on pads
+Message-ID: <20190122145030.m2vows5yxldlphrr@paasikivi.fi.intel.com>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-4-niklas.soderlund+renesas@ragnatech.se>
+ <20190115222136.GD28397@pendragon.ideasonboard.com>
+ <20190115223406.mxgzl36cp54gb7nv@kekkonen.localdomain>
+ <20190115232822.GB31088@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190117125912.y77powezi74rjtf7@verge.net.au>
-Organisation: Horms Solutions BV
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115232822.GB31088@pendragon.ideasonboard.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 01:59:12PM +0100, Simon Horman wrote:
-> On Thu, Jan 17, 2019 at 12:32:37PM +0000, Chris Paterson wrote:
-> > Hello Simon,
-> > 
-> > > From: Simon Horman <horms@verge.net.au>
-> > > Sent: 17 January 2019 10:51
-> > > 
-> > > On Wed, Jan 16, 2019 at 06:37:45PM +0000, Fabrizio Castro wrote:
-> > > > This patch adds board cat874 (powered by the RZ/G2E) and board
-> > > > cat875 (that sits on top of cat874). Both boards are made by
-> > > > Silicon Linux.
-> > > >
-> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/arm/renesas.yaml | 8 ++++++++
-> > > >  1 file changed, 8 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml
-> > > b/Documentation/devicetree/bindings/arm/renesas.yaml
-> > > > index 5e9d486..9e1e07b 100644
-> > > > --- a/Documentation/devicetree/bindings/arm/renesas.yaml
-> > > > +++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-> > > > @@ -108,6 +108,14 @@ properties:
-> > > >
-> > > >        - description: RZ/G2E (R8A774C0)
-> > > >          items:
-> > > > +          - enum:
-> > > > +              - si-linux,cat874 # Silicon Linux RZ/G2E 96board platform (CAT874)
-> > > 
-> > > Can I confirm that "96board platform" is correct for this board - I don't
-> > > see it in the documentation I have, but that may not mean much.
-> > 
-> > The board follows the extended version of the Linaro 96board consumer edition (CE) specification [1].
-> > 
-> > You can see a pretty picture of the board on the CIP Blog [2].
-> > 
-> > [1] https://www.96boards.org/specifications/
-> > [2] https://www.cip-project.org/blog/2018/10/23/renesas-rz-g2m-96ce-board-adopted-as-arm64-reference-board-for-the-next-cip-slts-kernel
-> 
-> Thanks Chris, in that case I am fine with this patch.
-> 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> > > That aside, I'd like to wait for Rob to indicate if he will accept
-> > > patch 1, which adds si-linux as a vendor, before I apply this patch.
+Hi Laurent,
 
-It appears that the use of si-linux as a vendor name.
-Accordingly I have applied this patch for v5.1.
+On Wed, Jan 16, 2019 at 01:28:22AM +0200, Laurent Pinchart wrote:
+> Hi Sakari,
+> 
+> On Wed, Jan 16, 2019 at 12:34:07AM +0200, Sakari Ailus wrote:
+> > On Wed, Jan 16, 2019 at 12:21:36AM +0200, Laurent Pinchart wrote:
+> > > On Fri, Nov 02, 2018 at 12:31:17AM +0100, Niklas Söderlund wrote:
+> > >> From: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > >> 
+> > >> Instead of iterating over graph entities during the walk, iterate the pads
+> > >> through which the entity was first reached. This is required in order to
+> > >> make the entity pipeline pad-based rather than entity based.
+> > >> 
+> > >> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > >> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > >> ---
+> > >>  Documentation/media/kapi/mc-core.rst          |  7 ++-
+> > >>  drivers/media/media-entity.c                  | 46 ++++++++++--------
+> > >>  drivers/media/platform/exynos4-is/media-dev.c | 20 ++++----
+> > >>  drivers/media/platform/omap3isp/ispvideo.c    | 17 +++----
+> > >>  drivers/media/platform/vsp1/vsp1_video.c      | 12 ++---
+> > >>  drivers/media/platform/xilinx/xilinx-dma.c    | 12 ++---
+> > >>  drivers/media/v4l2-core/v4l2-mc.c             | 25 +++++-----
+> > >>  .../staging/media/davinci_vpfe/vpfe_video.c   | 47 ++++++++++---------
+> > >>  drivers/staging/media/omap4iss/iss_video.c    | 34 +++++++-------
+> > >>  include/media/media-entity.h                  |  7 +--
+> > >>  10 files changed, 122 insertions(+), 105 deletions(-)
+> > > 
+> > > [snip]
+> > > 
+> > >> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+> > >> index 51d2a571c06db6a3..5813639c63b56a2c 100644
+> > >> --- a/drivers/media/platform/exynos4-is/media-dev.c
+> > >> +++ b/drivers/media/platform/exynos4-is/media-dev.c
+> > >> @@ -1135,7 +1135,7 @@ static int __fimc_md_modify_pipeline(struct media_entity *entity, bool enable)
+> > >>  static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable,
+> > >>  				      struct media_graph *graph)
+> > >>  {
+> > >> -	struct media_entity *entity_err = entity;
+> > >> +	struct media_pad *pad, *pad_err = entity->pads;
+> > >>  	int ret;
+> > >>  
+> > >>  	/*
+> > >> @@ -1144,13 +1144,13 @@ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable,
+> > >>  	 * through active links. This is needed as we cannot power on/off the
+> > >>  	 * subdevs in random order.
+> > >>  	 */
+> > >> -	media_graph_walk_start(graph, entity->pads);
+> > >> +	media_graph_walk_start(graph, pad_err);
+> > > 
+> > > I would keep entity->pads here as we're not dealing with an error path.
+> > > 
+> > >>  
+> > >> -	while ((entity = media_graph_walk_next(graph))) {
+> > >> -		if (!is_media_entity_v4l2_video_device(entity))
+> > >> +	while ((pad = media_graph_walk_next(graph))) {
+> > >> +		if (!is_media_entity_v4l2_video_device(pad->entity))
+> > >>  			continue;
+> > >>  
+> > >> -		ret  = __fimc_md_modify_pipeline(entity, enable);
+> > >> +		ret  = __fimc_md_modify_pipeline(pad->entity, enable);
+> > >>  
+> > >>  		if (ret < 0)
+> > >>  			goto err;
+> > >> @@ -1159,15 +1159,15 @@ static int __fimc_md_modify_pipelines(struct media_entity *entity, bool enable,
+> > >>  	return 0;
+> > >>  
+> > >>  err:
+> > >> -	media_graph_walk_start(graph, entity_err->pads);
+> > >> +	media_graph_walk_start(graph, pad_err);
+> > >>  
+> > >> -	while ((entity_err = media_graph_walk_next(graph))) {
+> > >> -		if (!is_media_entity_v4l2_video_device(entity_err))
+> > >> +	while ((pad_err = media_graph_walk_next(graph))) {
+> > >> +		if (!is_media_entity_v4l2_video_device(pad_err->entity))
+> > >>  			continue;
+> > >>  
+> > >> -		__fimc_md_modify_pipeline(entity_err, !enable);
+> > >> +		__fimc_md_modify_pipeline(pad_err->entity, !enable);
+> > >>  
+> > >> -		if (entity_err == entity)
+> > >> +		if (pad_err == pad)
+> > >>  			break;
+> > >>  	}
+> > >>  
+> > > 
+> > > [snip]
+> > > 
+> > >> diff --git a/drivers/media/v4l2-core/v4l2-mc.c b/drivers/media/v4l2-core/v4l2-mc.c
+> > >> index 9ed480fe5b6e4762..98edd47b2f0ae747 100644
+> > >> --- a/drivers/media/v4l2-core/v4l2-mc.c
+> > >> +++ b/drivers/media/v4l2-core/v4l2-mc.c
+> > >> @@ -339,13 +339,14 @@ EXPORT_SYMBOL_GPL(v4l_vb2q_enable_media_source);
+> > >>  static int pipeline_pm_use_count(struct media_entity *entity,
+> > >>  	struct media_graph *graph)
+> > >>  {
+> > >> +	struct media_pad *pad;
+> > >>  	int use = 0;
+> > >>  
+> > >>  	media_graph_walk_start(graph, entity->pads);
+> > >>  
+> > >> -	while ((entity = media_graph_walk_next(graph))) {
+> > >> -		if (is_media_entity_v4l2_video_device(entity))
+> > >> -			use += entity->use_count;
+> > >> +	while ((pad = media_graph_walk_next(graph))) {
+> > >> +		if (is_media_entity_v4l2_video_device(pad->entity))
+> > >> +			use += pad->entity->use_count;
+> > >>  	}
+> > >>  
+> > >>  	return use;
+> > >> @@ -398,7 +399,7 @@ static int pipeline_pm_power_one(struct media_entity *entity, int change)
+> > >>  static int pipeline_pm_power(struct media_entity *entity, int change,
+> > >>  	struct media_graph *graph)
+> > >>  {
+> > >> -	struct media_entity *first = entity;
+> > >> +	struct media_pad *tmp_pad, *pad;
+> > > 
+> > > How about pad_err instead of tmp_pad, like in the exynos driver ? Or
+> > > possible first_pad to retain the "first" name ?
+> > 
+> > Why? This is just a pad. It's an iterator. first_pad or pad_err are
+> > misleading as such. If you don't like tmp_pad, how about "pad2"? The "pad"
+> > variable is still used for a similar purpose.
+> 
+> The variable is a pad iterator used in the error path, which can't use
+> the pad pointer as we need to stop iterating when we reach it. first_pad
+> is a bad idea, but pad_err would convey the meaning.
 
-...
+I'm sure it'd convey a meaning but it's not the right meaning: this is an
+iterator, not where the error happened. It'd require a code change as well
+to change the meaning.
+
+I'm not opposed to that necessarily, but I think it's more simple to grasp
+as-is (with rename to e.g. pad2).
+
+> 
+> > > 
+> > >>  	int ret = 0;
+> > >>  
+> > >>  	if (!change)
+> > >> @@ -406,19 +407,19 @@ static int pipeline_pm_power(struct media_entity *entity, int change,
+> > >>  
+> > >>  	media_graph_walk_start(graph, entity->pads);
+> > >>  
+> > >> -	while (!ret && (entity = media_graph_walk_next(graph)))
+> > >> -		if (is_media_entity_v4l2_subdev(entity))
+> > >> -			ret = pipeline_pm_power_one(entity, change);
+> > >> +	while (!ret && (pad = media_graph_walk_next(graph)))
+> > >> +		if (is_media_entity_v4l2_subdev(pad->entity))
+> > >> +			ret = pipeline_pm_power_one(pad->entity, change);
+> > >>  
+> > >>  	if (!ret)
+> > >>  		return ret;
+> > >>  
+> > >> -	media_graph_walk_start(graph, first->pads);
+> > >> +	media_graph_walk_start(graph, entity->pads);
+> > >>  
+> > >> -	while ((first = media_graph_walk_next(graph))
+> > >> -	       && first != entity)
+> > >> -		if (is_media_entity_v4l2_subdev(first))
+> > >> -			pipeline_pm_power_one(first, -change);
+> > >> +	while ((tmp_pad = media_graph_walk_next(graph))
+> > >> +	       && tmp_pad != pad)
+> > >> +		if (is_media_entity_v4l2_subdev(tmp_pad->entity))
+> > >> +			pipeline_pm_power_one(tmp_pad->entity, -change);
+> > >>  
+> > >>  	return ret;
+> > >>  }
+> > > 
+> > > [snip]
+> > > 
+> > >> diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> > >> index 99c7606f01317741..cde6350d752bb0ae 100644
+> > >> --- a/include/media/media-entity.h
+> > >> +++ b/include/media/media-entity.h
+> > >> @@ -952,10 +952,11 @@ void media_graph_walk_start(struct media_graph *graph, struct media_pad *pad);
+> > >>   * The graph structure must have been previously initialized with a call to
+> > >>   * media_graph_walk_start().
+> > >>   *
+> > >> - * Return: returns the next entity in the graph or %NULL if the whole graph
+> > >> - * have been traversed.
+> > >> + * Return: returns the next pad in the graph or %NULL if the whole
+> > >> + * graph have been traversed. The pad which is returned is the pad
+> > > 
+> > > s/have been/has/been/
+> > > s/The pad which is returned/The returned pad/
+> > > 
+> > >> + * through which a new entity is reached when parsing the graph.
+> > > 
+> > > through which the entity was reached when walking the graph.
+> > 
+> > I'd keep "new", as the intent is to underline that it's a new entity not
+> > yet reached while walking the graph.
+> 
+> "through which the new entity was reached when walking the graph" then ?
+
+Yes, please!
+
+> 
+> > > 
+> > > With these addressed,
+> > > 
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > 
+> > >>   */
+> > >> -struct media_entity *media_graph_walk_next(struct media_graph *graph);
+> > >> +struct media_pad *media_graph_walk_next(struct media_graph *graph);
+> > >>  
+> > >>  /**
+> > >>   * media_pipeline_start - Mark a pipeline as streaming
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
