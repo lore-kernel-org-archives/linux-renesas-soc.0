@@ -2,899 +2,172 @@ Return-Path: <SRS0=9OK0=P7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC29DC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 06:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59497C282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 08:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF87B217F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 06:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DECC21726
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 08:26:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rV1du/3E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfAWGvJ (ORCPT
+        id S1727058AbfAWI0x (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jan 2019 01:51:09 -0500
-Received: from twhmllg4.macronix.com ([211.75.127.132]:32359 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726309AbfAWGvJ (ORCPT
+        Wed, 23 Jan 2019 03:26:53 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51931 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727044AbfAWI0x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jan 2019 01:51:09 -0500
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x0N6o6g7031286;
-        Wed, 23 Jan 2019 14:50:07 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        sergei.shtylyov@cogentembedded.com
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
-Subject: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-Date:   Wed, 23 Jan 2019 15:09:11 +0800
-Message-Id: <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com x0N6o6g7031286
+        Wed, 23 Jan 2019 03:26:53 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190123082652euoutp0147ba6143a7b3af163091c247ea56e907~8bM-i1DNz0752907529euoutp01Y
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Jan 2019 08:26:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190123082652euoutp0147ba6143a7b3af163091c247ea56e907~8bM-i1DNz0752907529euoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548232012;
+        bh=meVMRgsTYcqgFAT9IVIUB3oG3QcDW4crpl9UWZTS9Q8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=rV1du/3ETiH8NsgKlqSoKDwekMoi2Kk7Jx1SIJueqo0JU4l6wnXjLPvV7emthNIND
+         p6S4TuW8lTK//wkCI2cbp0WCp+0/Q5YxqSTxfcvDmelpheKOxf1JWPmiGeGM0o/bYO
+         lMu5UYW7FpKWVud5ODVX58o3T/HX2mCdVE7QSHKA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190123082651eucas1p246d5b28a7e2c92145588f8254105f555~8bM_9FbGM1835718357eucas1p2P;
+        Wed, 23 Jan 2019 08:26:51 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id D4.78.04806.B45284C5; Wed, 23
+        Jan 2019 08:26:51 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280~8bM9zCFET1834918349eucas1p2N;
+        Wed, 23 Jan 2019 08:26:50 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190123082649eusmtrp2420e7092af5722c0e26899adb162acb3~8bM9keoC62287322873eusmtrp2J;
+        Wed, 23 Jan 2019 08:26:49 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-eb-5c48254b4a56
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.C2.04128.945284C5; Wed, 23
+        Jan 2019 08:26:49 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190123082649eusmtip1244f2cda0f9e9080aedfd3f46821b3e4~8bM8zvwQT2571425714eusmtip1C;
+        Wed, 23 Jan 2019 08:26:49 +0000 (GMT)
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
+ instead run teardown delayed
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Cc:     Martin Sperl <kernel@martin.sperl.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <47b23e55-11b7-3d44-d611-8d6120139d5c@samsung.com>
+Date:   Wed, 23 Jan 2019 09:26:48 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDKsWRmVeSWpSXmKPExsWy7djPc7reqh4xBu+ucVhMffiEzeLZrb1M
+        Fi2zFrFYfH/UwGRxedccNoutL98xWTR+vMlu0fllFpsDh8emVZ1sHocOdzB6PNrq79Hb/I7N
+        4/MmuQDWKC6blNSczLLUIn27BK6M5u15BV+FKu68PM/YwLiAv4uRg0NCwETiy8/ALkZODiGB
+        FYwSM1uLuhi5gOwvjBInbjxlg3A+M0qcm7OMBaQKpOH/6kuMEInljBLXl75hh3DeM0pMWvaG
+        CaRKWCBT4tD/iWC2iECQxIYFW8A6mAUmMEm86m9hA0mwCRhKdL3tArN5Bewkuv/fYQS5iUVA
+        VaK/JQzEFBWIkWi9zAVRIShxcuYTsCM4BQIlLnzZxQ5iMwvIS2x/O4cZwhaXuPVkPhPIKgmB
+        bewSRzseMENc7SJx+/xyRghbWOLV8S3sELaMxP+dMA3NjBLtM2axQzg9jBJb5+xgg6iyljh8
+        /CIryEXMApoS63fpQ4QdJT5fXsEECUc+iRtvBSGO4JOYtG06M0SYV6KjTQiiWk1i1vF1cGsP
+        XrjEPIFRaRaS12YheWcWkndmIexdwMiyilE8tbQ4Nz212DgvtVyvODG3uDQvXS85P3cTIzAN
+        nf53/OsOxn1/kg4xCnAwKvHw/jBzjxFiTSwrrsw9xCjBwawkwut60S1GiDclsbIqtSg/vqg0
+        J7X4EKM0B4uSOG81w4NoIYH0xJLU7NTUgtQimCwTB6dUA+NJJ639NfZCD2SNPh+7knWaj+Ej
+        p5uFlFbBlOO/k582XM1rOylnorTq7dkCRemcggu+da5pphd0NuVKm9UFbi+eY/JeYNM1deMT
+        P90Nrq9w2shgE5Bmn9PrnWLuFv08anHl0VD2c9aulmt2cKoxhnJsMzLa2n5mFXvCJX9xoZV/
+        HrzUTGFcosRSnJFoqMVcVJwIAIioyOc/AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7qeqh4xBl9+mlpMffiEzeLZrb1M
+        Fi2zFrFYfH/UwGRxedccNoutL98xWTR+vMlu0fllFpsDh8emVZ1sHocOdzB6PNrq79Hb/I7N
+        4/MmuQDWKD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27
+        BL2M5u15BV+FKu68PM/YwLiAv4uRk0NCwETi/+pLjF2MXBxCAksZJRr+7mSCSMhInJzWwAph
+        C0v8udbFBlH0llHi2O1XbCAJYYFMiUP/J4I1iAgESTz4e5IVpIhZYBKTxOG906E6WhglbjZu
+        ZwSpYhMwlOh62wXWzStgJ9H9/w5QnIODRUBVor8lDCQsKhAjMetJHztEiaDEyZlPWEBsToFA
+        iQtfdoHFmQXUJf7Mu8QMYctLbH87B8oWl7j1ZD7TBEahWUjaZyFpmYWkZRaSlgWMLKsYRVJL
+        i3PTc4uN9IoTc4tL89L1kvNzNzECo2/bsZ9bdjB2vQs+xCjAwajEw/vDzD1GiDWxrLgy9xCj
+        BAezkgiv60W3GCHelMTKqtSi/Pii0pzU4kOMpkC/TWSWEk3OByaGvJJ4Q1NDcwtLQ3Njc2Mz
+        CyVx3vMGlVFCAumJJanZqakFqUUwfUwcnFINjKdPlryYs191cVfmy6ffblTFrbyxlvnyvOzJ
+        2zYc+f3aOL//iSfXcqN9i7sbLkSYfjd3+BLFev5MmlTrinsBu4963dgt/+uLsgq/q/fJCiHW
+        pndWunOmcmr/sHnCm7ZX5MK0CgbpWSmLZvPqzrWQzCyN9TB7z6jAHRxQ6X/i9WcfH/Gq7veH
+        bJVYijMSDbWYi4oTAeNO1G/UAgAA
+X-CMS-MailID: 20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
+        <CAMuHMdUiaNrQo3zWiR45VBANhUdkHMNhXLb9pPBLQ7tCtx1JDg@mail.gmail.com>
+        <CGME20190123082650eucas1p243ce21346a00e9b3e9eed2863cd3d280@eucas1p2.samsung.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+Hi All
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
----
- drivers/spi/Kconfig           |   6 +
- drivers/spi/Makefile          |   1 +
- drivers/spi/spi-renesas-rpc.c | 805 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 812 insertions(+)
- create mode 100644 drivers/spi/spi-renesas-rpc.c
+On 2019-01-22 10:36, Geert Uytterhoeven wrote:
+> On Mon, Jan 14, 2019 at 4:36 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>> I have noticed that system suspend has started failing consistently on a
+>> couple Tegra boards over the last few days with the linux-next branch.
+>> The following error is seen on on entering suspend ...
+>>
+>> [   58.222033] spi_master spi1: could not stop message queue
+>> [   58.222038] spi_master spi1: queue stop failed
+>> [   58.222048] dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
+>> [   58.222052] PM: Device 7000da00.spi failed to suspend: error -16
+>> [   58.222057] PM: Some devices failed to suspend, or early wake event detected
+>>
+>> Bisecting today's -next points to commit 412e60373245 ("spi: core: avoid
+>> waking pump thread from spi_sync instead run teardown delayed") and
+>> reverting this on top of -next fixes the problem. I have not had chance
+>> to dig any further but wanted to report this issue to see if you have
+>> any thoughts.
+> I can confirm this on r8a7791/koelsch:
+>
+>     PM: suspend entry (deep)
+>     PM: Syncing filesystems ... done.
+>     Freezing user space processes ... (elapsed 0.010 seconds) done.
+>     OOM killer disabled.
+>     Freezing remaining freezable tasks ... (elapsed 0.009 seconds) done.
+>     spi_master spi0: could not stop message queue
+>     spi_master spi0: queue stop failed
+>     dpm_run_callback(): rspi_suspend+0x0/0xc returns -16
+>     PM: Device e6b10000.spi failed to suspend: error -16
+>     PM: Some devices failed to suspend, or early wake event detected
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 9f89cb1..6ad1782 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -544,6 +544,12 @@ config SPI_RSPI
- 	help
- 	  SPI driver for Renesas RSPI and QSPI blocks.
- 
-+config SPI_RENESAS_RPC
-+	tristate "Renesas R-Car Gen3 RPC-IF controller"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	help
-+	  SPI driver for Renesas R-Car Gen3 RPC-IF.
-+
- config SPI_QCOM_QSPI
- 	tristate "QTI QSPI controller"
- 	depends on ARCH_QCOM
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index f296270..9150732 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -84,6 +84,7 @@ obj-$(CONFIG_SPI_QUP)			+= spi-qup.o
- obj-$(CONFIG_SPI_ROCKCHIP)		+= spi-rockchip.o
- obj-$(CONFIG_SPI_RB4XX)			+= spi-rb4xx.o
- obj-$(CONFIG_SPI_RSPI)			+= spi-rspi.o
-+obj-$(CONFIG_SPI_RENESAS_RPC)		+= spi-renesas-rpc.o
- obj-$(CONFIG_SPI_S3C24XX)		+= spi-s3c24xx-hw.o
- spi-s3c24xx-hw-y			:= spi-s3c24xx.o
- spi-s3c24xx-hw-$(CONFIG_SPI_S3C24XX_FIQ) += spi-s3c24xx-fiq.o
-diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
-new file mode 100644
-index 0000000..0127f25
---- /dev/null
-+++ b/drivers/spi/spi-renesas-rpc.c
-@@ -0,0 +1,805 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
-+// Copyright (C) 2018 Macronix International Co., Ltd.
-+//
-+// R-Car Gen3 RPC-IF SPI/QSPI/Octa driver
-+//
-+// Authors:
-+//	Mason Yang <masonccyang@mxic.com.tw>
-+//
-+
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/log2.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+
-+#include <asm/unaligned.h>
-+
-+#define RPC_CMNCR		0x0000	// R/W
-+#define RPC_CMNCR_MD		BIT(31)
-+#define RPC_CMNCR_SFDE		BIT(24) // undocumented bit but must be set
-+#define RPC_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
-+#define RPC_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
-+#define RPC_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
-+#define RPC_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
-+#define RPC_CMNCR_MOIIO_HIZ	(RPC_CMNCR_MOIIO0(3) | RPC_CMNCR_MOIIO1(3) | \
-+				 RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
-+#define RPC_CMNCR_IO3FV(val)	(((val) & 0x3) << 14) // undocumented
-+#define RPC_CMNCR_IO2FV(val)	(((val) & 0x3) << 12) // undocumented
-+#define RPC_CMNCR_IO0FV(val)	(((val) & 0x3) << 8)
-+#define RPC_CMNCR_IOFV_HIZ	(RPC_CMNCR_IO0FV(3) | RPC_CMNCR_IO2FV(3) | \
-+				 RPC_CMNCR_IO3FV(3))
-+#define RPC_CMNCR_BSZ(val)	(((val) & 0x3) << 0)
-+
-+#define RPC_SSLDR		0x0004	// R/W
-+#define RPC_SSLDR_SPNDL(d)	(((d) & 0x7) << 16)
-+#define RPC_SSLDR_SLNDL(d)	(((d) & 0x7) << 8)
-+#define RPC_SSLDR_SCKDL(d)	(((d) & 0x7) << 0)
-+
-+#define RPC_DRCR		0x000C	// R/W
-+#define RPC_DRCR_SSLN		BIT(24)
-+#define RPC_DRCR_RBURST(v)	((((v) - 1) & 0x1F) << 16)
-+#define RPC_DRCR_RCF		BIT(9)
-+#define RPC_DRCR_RBE		BIT(8)
-+#define RPC_DRCR_SSLE		BIT(0)
-+
-+#define RPC_DRCMR		0x0010	// R/W
-+#define RPC_DRCMR_CMD(c)	(((c) & 0xFF) << 16)
-+#define RPC_DRCMR_OCMD(c)	(((c) & 0xFF) << 0)
-+
-+#define RPC_DREAR		0x0014	// R/W
-+#define RPC_DREAR_EAC(c)	(((c) & 0x7) << 0)
-+
-+#define RPC_DROPR		0x0018	// R/W
-+
-+#define RPC_DRENR		0x001C	// R/W
-+#define RPC_DRENR_CDB(o)	(u32)((((o) & 0x3) << 30))
-+#define RPC_DRENR_OCDB(o)	(((o) & 0x3) << 28)
-+#define RPC_DRENR_ADB(o)	(((o) & 0x3) << 24)
-+#define RPC_DRENR_OPDB(o)	(((o) & 0x3) << 20)
-+#define RPC_DRENR_DRDB(o)	(((o) & 0x3) << 16)
-+#define RPC_DRENR_DME		BIT(15)
-+#define RPC_DRENR_CDE		BIT(14)
-+#define RPC_DRENR_OCDE		BIT(12)
-+#define RPC_DRENR_ADE(v)	(((v) & 0xF) << 8)
-+#define RPC_DRENR_OPDE(v)	(((v) & 0xF) << 4)
-+
-+#define RPC_SMCR		0x0020	// R/W
-+#define RPC_SMCR_SSLKP		BIT(8)
-+#define RPC_SMCR_SPIRE		BIT(2)
-+#define RPC_SMCR_SPIWE		BIT(1)
-+#define RPC_SMCR_SPIE		BIT(0)
-+
-+#define RPC_SMCMR		0x0024	// R/W
-+#define RPC_SMCMR_CMD(c)	(((c) & 0xFF) << 16)
-+#define RPC_SMCMR_OCMD(c)	(((c) & 0xFF) << 0)
-+
-+#define RPC_SMADR		0x0028	// R/W
-+#define RPC_SMOPR		0x002C	// R/W
-+#define RPC_SMOPR_OPD3(o)	(((o) & 0xFF) << 24)
-+#define RPC_SMOPR_OPD2(o)	(((o) & 0xFF) << 16)
-+#define RPC_SMOPR_OPD1(o)	(((o) & 0xFF) << 8)
-+#define RPC_SMOPR_OPD0(o)	(((o) & 0xFF) << 0)
-+
-+#define RPC_SMENR		0x0030	// R/W
-+#define RPC_SMENR_CDB(o)	(((o) & 0x3) << 30)
-+#define RPC_SMENR_OCDB(o)	(((o) & 0x3) << 28)
-+#define RPC_SMENR_ADB(o)	(((o) & 0x3) << 24)
-+#define RPC_SMENR_OPDB(o)	(((o) & 0x3) << 20)
-+#define RPC_SMENR_SPIDB(o)	(((o) & 0x3) << 16)
-+#define RPC_SMENR_DME		BIT(15)
-+#define RPC_SMENR_CDE		BIT(14)
-+#define RPC_SMENR_OCDE		BIT(12)
-+#define RPC_SMENR_ADE(v)	(((v) & 0xF) << 8)
-+#define RPC_SMENR_OPDE(v)	(((v) & 0xF) << 4)
-+#define RPC_SMENR_SPIDE(v)	(((v) & 0xF) << 0)
-+
-+#define RPC_SMRDR0		0x0038	// R
-+#define RPC_SMRDR1		0x003C	// R
-+#define RPC_SMWDR0		0x0040	// W
-+#define RPC_SMWDR1		0x0044	// W
-+
-+#define RPC_CMNSR		0x0048	// R
-+#define RPC_CMNSR_SSLF		BIT(1)
-+#define RPC_CMNSR_TEND		BIT(0)
-+
-+#define RPC_DRDMCR		0x0058	// R/W
-+#define RPC_DRDRENR		0x005C	// R/W
-+
-+#define RPC_SMDMCR		0x0060	// R/W
-+#define RPC_SMDMCR_DMCYC(v)	((((v) - 1) & 0x1F) << 0)
-+
-+#define RPC_SMDRENR		0x0064	// R/W
-+#define RPC_SMDRENR_HYPE	(0x7 << 12)
-+#define RPC_SMDRENR_ADDRE	BIT(8)
-+#define RPC_SMDRENR_OPDRE	BIT(4)
-+#define RPC_SMDRENR_SPIDRE	BIT(0)
-+
-+#define RPC_PHYCNT		0x007C	// R/W
-+#define RPC_PHYCNT_CAL		BIT(31)
-+#define PRC_PHYCNT_OCTA_AA	BIT(22)
-+#define PRC_PHYCNT_OCTA_SA	BIT(23)
-+#define PRC_PHYCNT_EXDS		BIT(21)
-+#define RPC_PHYCNT_OCT		BIT(20)
-+#define RPC_PHYCNT_STRTIM(v)	(((v) & 0x7) << 15)
-+#define RPC_PHYCNT_WBUF2	BIT(4)
-+#define RPC_PHYCNT_WBUF		BIT(2)
-+#define RPC_PHYCNT_PHYMEM(v)	(((v) & 0x3) << 0)
-+
-+#define RPC_PHYOFFSET1		0x0080	// R/W
-+#define RPC_PHYOFFSET1_DDRTMG(v) (((v) & 0x3) << 28)
-+#define RPC_PHYOFFSET2		0x0084	// R/W
-+#define RPC_PHYOFFSET2_OCTTMG(v) (((v) & 0x7) << 8)
-+
-+#define RPC_WBUF_SIZE		256	// Write Buffer size
-+
-+struct rpc_spi {
-+	struct clk *clk_rpc;
-+	void __iomem *base;
-+	void __iomem *dirmap;
-+	void __iomem *wbuf;
-+	struct regmap *regmap;
-+	u32 cur_speed_hz;
-+	u32 cmd;
-+	u32 addr;
-+	u32 dummy;
-+	u32 smcr;
-+	u32 smenr;
-+	u32 xferlen;
-+	u32 totalxferlen;
-+	enum spi_mem_data_dir xfer_dir;
-+	struct reset_control *rstc;
-+};
-+
-+static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
-+{
-+	int ret;
-+
-+	if (rpc->cur_speed_hz == freq)
-+		return 0;
-+
-+	ret = clk_set_rate(rpc->clk_rpc, freq);
-+	if (ret)
-+		return ret;
-+
-+	rpc->cur_speed_hz = freq;
-+	return ret;
-+}
-+
-+static void rpc_spi_hw_init(struct rpc_spi *rpc)
-+{
-+	//
-+	// NOTE: The 0x260 are undocumented bits, but they must be set.
-+	//	RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
-+	//	0x0 : the delay is biggest,
-+	//	0x1 : the delay is 2nd biggest,
-+	//	On H3 ES1.x, the value should be 0, while on others,
-+	//	the value should be 6.
-+	//
-+	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
-+				  RPC_PHYCNT_STRTIM(6) | 0x260);
-+
-+	//
-+	// NOTE: The 0x1511144 are undocumented bits, but they must be set
-+	//       for RPC_PHYOFFSET1.
-+	//	 The 0x31 are undocumented bits, but they must be set
-+	//	 for RPC_PHYOFFSET2.
-+	//
-+	regmap_write(rpc->regmap, RPC_PHYOFFSET1, RPC_PHYOFFSET1_DDRTMG(3) |
-+		     0x1511144);
-+	regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
-+		     RPC_PHYOFFSET2_OCTTMG(4));
-+	regmap_write(rpc->regmap, RPC_SSLDR, RPC_SSLDR_SPNDL(7) |
-+		     RPC_SSLDR_SLNDL(7) | RPC_SSLDR_SCKDL(7));
-+	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
-+		     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-+		     RPC_CMNCR_BSZ(0));
-+}
-+
-+static int wait_msg_xfer_end(struct rpc_spi *rpc)
-+{
-+	u32 sts;
-+
-+	return regmap_read_poll_timeout(rpc->regmap, RPC_CMNSR, sts,
-+					sts & RPC_CMNSR_TEND, 0, USEC_PER_SEC);
-+}
-+
-+static u8 rpc_bits_set(u32 nbytes)
-+{
-+	nbytes = clamp(nbytes, 1U, 4U);
-+
-+	return GENMASK(3, 4 - nbytes);
-+}
-+
-+static int rpc_spi_io_xfer(struct rpc_spi *rpc,
-+			   const void *tx_buf, void *rx_buf)
-+{
-+	u32 smenr, smcr, data, pos = 0;
-+	int ret;
-+
-+	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, RPC_CMNCR_MD);
-+	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
-+	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-+	regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
-+	regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
-+	smenr = rpc->smenr;
-+
-+	if (tx_buf) {
-+		while (pos < rpc->xferlen) {
-+			u32 nbytes = rpc->xferlen - pos;
-+
-+			regmap_write(rpc->regmap, RPC_SMWDR0,
-+				     get_unaligned((u32 *)(tx_buf + pos)));
-+
-+			smcr = rpc->smcr | RPC_SMCR_SPIE;
-+
-+			if (nbytes > 4) {
-+				nbytes = 4;
-+				smcr |= RPC_SMCR_SSLKP;
-+			}
-+
-+			regmap_write(rpc->regmap, RPC_SMENR, smenr);
-+			regmap_write(rpc->regmap, RPC_SMCR, smcr);
-+			ret = wait_msg_xfer_end(rpc);
-+			if (ret)
-+				goto err_out;
-+
-+			pos += nbytes;
-+			smenr = rpc->smenr & ~RPC_SMENR_CDE &
-+					     ~RPC_SMENR_ADE(0xf);
-+		}
-+	} else if (rx_buf) {
-+		//
-+		// RPC-IF spoils the data for the commands without an address
-+		// phase (like RDID) in the manual mode, so we'll have to work
-+		// around this issue by using the external address space read
-+		// mode instead.
-+		//
-+		if (!(smenr & RPC_SMENR_ADE(0xf))) {
-+			regmap_update_bits(rpc->regmap, RPC_CMNCR,
-+					   RPC_CMNCR_MD, 0);
-+			regmap_write(rpc->regmap, RPC_DRCR,
-+				     RPC_DRCR_RBURST(32) | RPC_DRCR_RBE);
-+			regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
-+			regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
-+			regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
-+			regmap_write(rpc->regmap, RPC_DROPR, 0);
-+			regmap_write(rpc->regmap, RPC_DRENR, smenr);
-+			memcpy_fromio(rx_buf, rpc->dirmap, rpc->xferlen);
-+			regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RCF);
-+		} else {
-+			while (pos < rpc->xferlen) {
-+				u32 nbytes = rpc->xferlen - pos;
-+
-+				if (nbytes > 4)
-+					nbytes = 4;
-+
-+				regmap_write(rpc->regmap, RPC_SMENR, smenr);
-+				regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr |
-+					     RPC_SMCR_SPIE);
-+				ret = wait_msg_xfer_end(rpc);
-+				if (ret)
-+					goto err_out;
-+
-+				regmap_read(rpc->regmap, RPC_SMRDR0, &data);
-+				memcpy(rx_buf + pos, &data, nbytes);
-+				pos += nbytes;
-+
-+				regmap_write(rpc->regmap, RPC_SMADR,
-+					     rpc->addr + pos);
-+			}
-+		}
-+	} else {
-+		regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
-+		regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
-+		ret = wait_msg_xfer_end(rpc);
-+		if (ret)
-+			goto err_out;
-+	}
-+
-+	return 0;
-+
-+err_out:
-+	return reset_control_reset(rpc->rstc);
-+}
-+
-+static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
-+					const struct spi_mem_op *op,
-+					u64 *offs, size_t *len)
-+{
-+	struct rpc_spi *rpc = spi_controller_get_devdata(spi->controller);
-+
-+	rpc->cmd = RPC_SMCMR_CMD(op->cmd.opcode);
-+	rpc->smenr = RPC_SMENR_CDE |
-+		     RPC_SMENR_CDB(ilog2(op->cmd.buswidth));
-+	rpc->totalxferlen = 1;
-+	rpc->xfer_dir = SPI_MEM_NO_DATA;
-+	rpc->xferlen = 0;
-+	rpc->addr = 0;
-+
-+	if (op->addr.nbytes) {
-+		rpc->smenr |= RPC_SMENR_ADB(ilog2(op->addr.buswidth));
-+		if (op->addr.nbytes == 4)
-+			rpc->smenr |= RPC_SMENR_ADE(0xf);
-+		else
-+			rpc->smenr |= RPC_SMENR_ADE(0x7);
-+
-+		if (offs && len)
-+			rpc->addr = *offs;
-+		else
-+			rpc->addr = op->addr.val;
-+		rpc->totalxferlen += op->addr.nbytes;
-+	}
-+
-+	if (op->dummy.nbytes) {
-+		rpc->smenr |= RPC_SMENR_DME;
-+		rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
-+		rpc->totalxferlen += op->dummy.nbytes;
-+	}
-+
-+	if (op->data.nbytes || (offs && len)) {
-+		switch (op->data.dir) {
-+		case SPI_MEM_DATA_IN:
-+			rpc->smcr = RPC_SMCR_SPIRE;
-+			rpc->xfer_dir = SPI_MEM_DATA_IN;
-+			break;
-+		case SPI_MEM_DATA_OUT:
-+			rpc->smcr = RPC_SMCR_SPIWE;
-+			rpc->xfer_dir = SPI_MEM_DATA_OUT;
-+			break;
-+		default:
-+			break;
-+		}
-+
-+		if (offs && len) {
-+			rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_set(*len)) |
-+				      RPC_SMENR_SPIDB(ilog2(op->data.buswidth));
-+			rpc->xferlen = *len;
-+			rpc->totalxferlen += *len;
-+		} else {
-+			rpc->smenr |=
-+				RPC_SMENR_SPIDE(rpc_bits_set(op->data.nbytes)) |
-+				RPC_SMENR_SPIDB(ilog2(op->data.buswidth));
-+			rpc->xferlen = op->data.nbytes;
-+			rpc->totalxferlen += op->data.nbytes;
-+		}
-+	}
-+}
-+
-+static bool rpc_spi_mem_supports_op(struct spi_mem *mem,
-+				    const struct spi_mem_op *op)
-+{
-+	if (op->data.buswidth > 4 || op->addr.buswidth > 4 ||
-+	    op->dummy.buswidth > 4 || op->cmd.buswidth > 4 ||
-+	    op->addr.nbytes > 4)
-+		return false;
-+
-+	return true;
-+}
-+
-+static ssize_t rpc_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
-+				       u64 offs, size_t len, void *buf)
-+{
-+	struct rpc_spi *rpc =
-+			spi_controller_get_devdata(desc->mem->spi->controller);
-+	int ret;
-+
-+	if (offs + desc->info.offset + len > U32_MAX)
-+		return -EINVAL;
-+
-+	if (len > 0x4000000)
-+		len = 0x4000000;
-+
-+	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
-+				    &desc->info.op_tmpl, &offs, &len);
-+
-+	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, 0);
-+	regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RBURST(32) |
-+		     RPC_DRCR_RBE);
-+
-+	regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
-+	regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
-+	regmap_write(rpc->regmap, RPC_DROPR, 0);
-+	regmap_write(rpc->regmap, RPC_DRENR, rpc->smenr);
-+	regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
-+	regmap_write(rpc->regmap, RPC_DRDRENR, 0);
-+
-+	memcpy_fromio(buf, rpc->dirmap + desc->info.offset + offs, len);
-+
-+	return len;
-+}
-+
-+static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
-+					u64 offs, size_t len, const void *buf)
-+{
-+	struct rpc_spi *rpc =
-+			spi_controller_get_devdata(desc->mem->spi->controller);
-+	int ret;
-+
-+	if (offs + desc->info.offset + len > U32_MAX)
-+		return -EINVAL;
-+
-+	if (len > RPC_WBUF_SIZE)
-+		len = RPC_WBUF_SIZE;
-+
-+	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
-+				    &desc->info.op_tmpl, &offs, &len);
-+
-+	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, RPC_CMNCR_MD);
-+
-+	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
-+
-+	regmap_update_bits(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_STRTIM(7) |
-+			   RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF,
-+			   RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
-+
-+	memcpy_toio(rpc->wbuf, buf, len);
-+
-+	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-+	regmap_write(rpc->regmap, RPC_SMADR, offs);
-+	regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
-+	regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
-+	ret = wait_msg_xfer_end(rpc);
-+	if (ret)
-+		goto err_out;
-+
-+	regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RCF);
-+
-+	regmap_update_bits(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_STRTIM(7) |
-+			   RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF,
-+			   RPC_PHYCNT_STRTIM(6));
-+
-+	return len;
-+
-+err_out:
-+	return reset_control_reset(rpc->rstc);
-+}
-+
-+static int rpc_spi_mem_dirmap_create(struct spi_mem_dirmap_desc *desc)
-+{
-+	struct rpc_spi *rpc =
-+			spi_controller_get_devdata(desc->mem->spi->controller);
-+
-+	if (desc->info.offset + desc->info.length > U32_MAX)
-+		return -ENOTSUPP;
-+
-+	if (!rpc_spi_mem_supports_op(desc->mem, &desc->info.op_tmpl))
-+		return -ENOTSUPP;
-+
-+	if (!rpc->dirmap &&
-+	    desc->info.op_tmpl.data.dir == SPI_MEM_DATA_IN)
-+		return -ENOTSUPP;
-+
-+	if (!rpc->wbuf &&
-+	    desc->info.op_tmpl.data.dir == SPI_MEM_DATA_OUT)
-+		return -ENOTSUPP;
-+
-+	return 0;
-+}
-+
-+static int rpc_spi_mem_exec_op(struct spi_mem *mem,
-+			       const struct spi_mem_op *op)
-+{
-+	struct rpc_spi *rpc = spi_controller_get_devdata(mem->spi->controller);
-+	int ret;
-+
-+	ret = rpc_spi_set_freq(rpc, mem->spi->max_speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	rpc_spi_mem_set_prep_op_cfg(mem->spi, op, NULL, NULL);
-+
-+	ret = rpc_spi_io_xfer(rpc,
-+			      op->data.dir == SPI_MEM_DATA_OUT ?
-+			      op->data.buf.out : NULL,
-+			      op->data.dir == SPI_MEM_DATA_IN ?
-+			      op->data.buf.in : NULL);
-+
-+	return ret;
-+}
-+
-+static const struct spi_controller_mem_ops rpc_spi_mem_ops = {
-+	.supports_op = rpc_spi_mem_supports_op,
-+	.exec_op = rpc_spi_mem_exec_op,
-+	.dirmap_create = rpc_spi_mem_dirmap_create,
-+	.dirmap_read = rpc_spi_mem_dirmap_read,
-+	.dirmap_write = rpc_spi_mem_dirmap_write,
-+};
-+
-+static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
-+				   struct spi_message *msg)
-+{
-+	struct spi_transfer *t, xfer[4] = { };
-+	u32 i, xfercnt, xferpos = 0;
-+
-+	rpc->totalxferlen = 0;
-+	rpc->xfer_dir = SPI_MEM_NO_DATA;
-+
-+	list_for_each_entry(t, &msg->transfers, transfer_list) {
-+		if (t->tx_buf) {
-+			xfer[xferpos].tx_buf = t->tx_buf;
-+			xfer[xferpos].tx_nbits = t->tx_nbits;
-+		}
-+
-+		if (t->rx_buf) {
-+			xfer[xferpos].rx_buf = t->rx_buf;
-+			xfer[xferpos].rx_nbits = t->rx_nbits;
-+		}
-+
-+		if (t->len) {
-+			xfer[xferpos++].len = t->len;
-+			rpc->totalxferlen += t->len;
-+		}
-+
-+		if (list_is_last(&t->transfer_list, &msg->transfers)) {
-+			if (xferpos > 1) {
-+				if (t->rx_buf) {
-+					rpc->xfer_dir = SPI_MEM_DATA_IN;
-+					rpc->smcr = RPC_SMCR_SPIRE;
-+				} else if (t->tx_buf) {
-+					rpc->xfer_dir = SPI_MEM_DATA_OUT;
-+					rpc->smcr = RPC_SMCR_SPIWE;
-+				}
-+			}
-+		}
-+	}
-+
-+	xfercnt = xferpos;
-+	rpc->xferlen = xfer[--xferpos].len;
-+	rpc->cmd = RPC_SMCMR_CMD(((u8 *)xfer[0].tx_buf)[0]);
-+	rpc->smenr = RPC_SMENR_CDE |
-+		     RPC_SMENR_CDB(ilog2((unsigned int)xfer[0].tx_nbits));
-+	rpc->addr = 0;
-+
-+	if (xfercnt > 2 && xfer[1].len && xfer[1].tx_buf) {
-+		rpc->smenr |=
-+			RPC_SMENR_ADB(ilog2((unsigned int)xfer[1].tx_nbits));
-+
-+		for (i = 0; i < xfer[1].len; i++)
-+			rpc->addr |= ((u8 *)xfer[1].tx_buf)[i] <<
-+				     (8 * (xfer[1].len - i - 1));
-+
-+		if (xfer[1].len == 4)
-+			rpc->smenr |= RPC_SMENR_ADE(0xf);
-+		else
-+			rpc->smenr |= RPC_SMENR_ADE(0x7);
-+	}
-+
-+	if (xfercnt > 3 && xfer[2].len && xfer[2].tx_buf) {
-+		rpc->smenr |= RPC_SMENR_DME;
-+		rpc->dummy = RPC_SMDMCR_DMCYC(xfer[2].len);
-+	}
-+
-+	for (i = xfercnt - 1; i < xfercnt && xfercnt > 1; i++) {
-+		if (xfer[i].rx_buf) {
-+			rpc->smenr |=
-+				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
-+				RPC_SMENR_SPIDB(ilog2
-+					((unsigned int)xfer[i].rx_nbits));
-+		} else if (xfer[i].tx_buf) {
-+			rpc->smenr |=
-+				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
-+				RPC_SMENR_SPIDB(ilog2
-+					((unsigned int)xfer[i].tx_nbits));
-+		}
-+	}
-+}
-+
-+static inline int rpc_spi_xfer_message(struct rpc_spi *rpc,
-+				       struct spi_transfer *data_xfer)
-+{
-+	int ret;
-+
-+	ret = rpc_spi_set_freq(rpc, data_xfer->speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	ret = rpc_spi_io_xfer(rpc,
-+			      rpc->xfer_dir == SPI_MEM_DATA_OUT ?
-+			      data_xfer->tx_buf : NULL,
-+			      rpc->xfer_dir == SPI_MEM_DATA_IN ?
-+			      data_xfer->rx_buf : NULL);
-+
-+	return ret;
-+}
-+
-+static int rpc_spi_transfer_one_message(struct spi_controller *ctlr,
-+					struct spi_message *msg)
-+{
-+	struct rpc_spi *rpc = spi_controller_get_devdata(ctlr);
-+	struct spi_transfer *data_xfer;
-+	int ret;
-+
-+	rpc_spi_transfer_setup(rpc, msg);
-+
-+	data_xfer = list_last_entry(&msg->transfers, struct spi_transfer,
-+				    transfer_list);
-+
-+	ret = rpc_spi_xfer_message(rpc, data_xfer);
-+	if (ret)
-+		goto out;
-+
-+	msg->status = 0;
-+	msg->actual_length = rpc->totalxferlen;
-+out:
-+	spi_finalize_current_message(ctlr);
-+	return 0;
-+}
-+
-+static const struct regmap_range rpc_spi_volatile_ranges[] = {
-+	regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),
-+	regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),
-+	regmap_reg_range(RPC_CMNSR, RPC_CMNSR),
-+};
-+
-+static const struct regmap_access_table rpc_spi_volatile_table = {
-+	.yes_ranges	= rpc_spi_volatile_ranges,
-+	.n_yes_ranges	= ARRAY_SIZE(rpc_spi_volatile_ranges),
-+};
-+
-+static const struct regmap_config rpc_spi_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.fast_io = true,
-+	.max_register = RPC_PHYOFFSET2,
-+	.volatile_table = &rpc_spi_volatile_table,
-+};
-+
-+static int rpc_spi_probe(struct platform_device *pdev)
-+{
-+	struct spi_controller *ctlr;
-+	struct resource *res;
-+	struct rpc_spi *rpc;
-+	struct device_node *rpc_if;
-+	int ret;
-+
-+	rpc_if = of_get_next_child(pdev->dev.of_node, NULL);
-+	if (!rpc_if) {
-+		dev_warn(&pdev->dev, "no spi-nor device node found\n");
-+		return -ENODEV;
-+	}
-+
-+	ret = of_device_is_compatible(rpc_if, "jedec,spi-nor");
-+	if (!ret) {
-+		dev_warn(&pdev->dev, "no compatible spi-nor device found\n");
-+		return -ENODEV;
-+	}
-+
-+	ctlr = spi_alloc_master(&pdev->dev, sizeof(*rpc));
-+	if (!ctlr)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, ctlr);
-+
-+	rpc = spi_controller_get_devdata(ctlr);
-+
-+	ctlr->dev.of_node = pdev->dev.of_node;
-+
-+	rpc->clk_rpc = devm_clk_get(&pdev->dev, "rpc");
-+	if (IS_ERR(rpc->clk_rpc))
-+		return PTR_ERR(rpc->clk_rpc);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-+	rpc->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rpc->base))
-+		return PTR_ERR(rpc->base);
-+
-+	rpc->regmap = devm_regmap_init_mmio(&pdev->dev, rpc->base,
-+					    &rpc_spi_regmap_config);
-+	if (IS_ERR(rpc->regmap)) {
-+		dev_err(&pdev->dev,
-+			"failed to init regmap for rpc-spi, error %ld\n",
-+			PTR_ERR(rpc->regmap));
-+		return PTR_ERR(rpc->regmap);
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dirmap");
-+	rpc->dirmap = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rpc->dirmap))
-+		rpc->dirmap = NULL;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "wbuf");
-+	rpc->wbuf = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rpc->wbuf))
-+		rpc->wbuf = NULL;
-+
-+	rpc->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(rpc->rstc))
-+		return PTR_ERR(rpc->rstc);
-+
-+	pm_runtime_enable(&pdev->dev);
-+	ctlr->auto_runtime_pm = true;
-+
-+	ctlr->num_chipselect = 1;
-+	ctlr->mem_ops = &rpc_spi_mem_ops;
-+	ctlr->transfer_one_message = rpc_spi_transfer_one_message;
-+
-+	ctlr->bits_per_word_mask = SPI_BPW_MASK(8);
-+	ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_TX_QUAD | SPI_RX_QUAD;
-+
-+	rpc_spi_hw_init(rpc);
-+
-+	ret = spi_register_controller(ctlr);
-+	if (ret) {
-+		dev_err(&pdev->dev, "spi_register_controller failed\n");
-+		goto err_put_ctlr;
-+	}
-+	return 0;
-+
-+err_put_ctlr:
-+	spi_controller_put(ctlr);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int rpc_spi_remove(struct platform_device *pdev)
-+{
-+	struct spi_controller *ctlr = platform_get_drvdata(pdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+	spi_unregister_controller(ctlr);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rpc_spi_of_ids[] = {
-+	{ .compatible = "renesas,r8a77995-rpc", },
-+	{ .compatible = "renesas,rcar-gen3-rpc", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rpc_spi_of_ids);
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int rpc_spi_suspend(struct device *dev)
-+{
-+	struct spi_controller *ctlr = dev_get_drvdata(dev);
-+
-+	return spi_controller_suspend(ctlr);
-+}
-+
-+static int rpc_spi_resume(struct device *dev)
-+{
-+	struct spi_controller *ctlr = dev_get_drvdata(dev);
-+
-+	return spi_controller_resume(ctlr);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rpc_spi_pm_ops, rpc_spi_suspend, rpc_spi_resume);
-+#define DEV_PM_OPS	(&rpc_spi_pm_ops)
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif
-+
-+static struct platform_driver rpc_spi_driver = {
-+	.probe = rpc_spi_probe,
-+	.remove = rpc_spi_remove,
-+	.driver = {
-+		.name = "rpc-spi",
-+		.of_match_table = rpc_spi_of_ids,
-+		.pm = DEV_PM_OPS,
-+	},
-+};
-+module_platform_driver(rpc_spi_driver);
-+
-+MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
-+MODULE_DESCRIPTION("Renesas R-Car Gen3 RPC-IF SPI controller driver");
-+MODULE_LICENSE("GPL v2");
+With recent linux-next I've got a similar issue on Samsung Exynos based
+Chromebooks: Peach-Pit and Peach-Pi, both using SPI for communicating
+with regulators via chrome EC bridge:
+
+PM: suspend entry (deep)
+PM: Syncing filesystems ... done.
+Freezing user space processes ... (elapsed 0.001 seconds) done.
+OOM killer disabled.
+Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+printk: Suspending console(s) (use no_console_suspend to debug)
+...
+spi_master spi2: could not stop message queue
+spi_master spi2: queue stop failed
+dpm_run_callback(): platform_pm_suspend+0x0/0x54 returns -16
+PM: Device 12d40000.spi failed to suspend: error -16
+PM: Some devices failed to suspend, or early wake event detected
+
+Best regards
 -- 
-1.9.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
