@@ -2,117 +2,117 @@ Return-Path: <SRS0=9OK0=P7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C055DC282C5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 15:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C568AC282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 15:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F91520870
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 15:02:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ZZaZzs3l"
+	by mail.kernel.org (Postfix) with ESMTP id 9B74F20870
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 15:02:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725896AbfAWPCD (ORCPT
+        id S1725971AbfAWPCn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jan 2019 10:02:03 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47004 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfAWPCC (ORCPT
+        Wed, 23 Jan 2019 10:02:43 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44401 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfAWPCn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jan 2019 10:02:02 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f5so1776033lfc.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Jan 2019 07:02:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/yLmq2n5DKJMWdj6suREw8eiKjUzl/P3EPHowaxkJls=;
-        b=ZZaZzs3l+DA3ZtsMkJzcxYiz7RuHAcs9r6hBTG7A3QXP56xGksykh4ZTY1BsgMd0h5
-         mbMy/Ae/9zBV/DNGNxDZmUmYxVUgwSoDavYVUxcDISalCadIRgNIF3NFDAYOcKi2aSZg
-         e9f14o5Y8RyGSqQJu26iCuF6ItRmkXRQSMbvhSevToiR62FsB4gzCZBh081+q6kIjlIF
-         7TMv+pSirkxX0Sw3YRo8AJpJ7YF7+0/xTsosJCKmo1/Ik+bbNCiFjsu6jkkceReaTAWA
-         LxBCopIOZKlBEXBkd4/Yb9hjoD7zgcQbV/6ZoC/FWomua69jsDBnXr0aoXckKdUS+inC
-         bh7A==
+        Wed, 23 Jan 2019 10:02:43 -0500
+Received: by mail-vs1-f65.google.com with SMTP id u11so1441597vsp.11;
+        Wed, 23 Jan 2019 07:02:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/yLmq2n5DKJMWdj6suREw8eiKjUzl/P3EPHowaxkJls=;
-        b=MHMQ4MsHJvN5mgbzltqfskdUBx4D2qYgRQ4bWF/X3fgpv/6gah9geuUh//NYWn4Pg+
-         dZrb7unub6U2X0qcQNdspseUO0pRzoqdeI8FTdLqXAHq+e3bmwda0t2q9IoaNOs0Wow1
-         j77SiS0PX5YKT2CMa80KvkeQyC+SsNcuX0QE0a6ZF4Udjoptwbff+uHJPmKIzN6Zsu1i
-         9wcua7yuNWBWoofhbjH8y/VbdFm7e6RoJ39MLNOufqIVMcqAVNhYvNxTYB217FZDj/g6
-         vqZCjsatMk/oPHZfuZ+MCn0NRc48BWiqTNFP3ir29wDke92VmIdAIlwHY0IOrLNaPBFt
-         U22Q==
-X-Gm-Message-State: AJcUukcss9VRppwJXb5hf+Dy9tdSis7OYugzhb6yxyzXa2esHs1dQrsH
-        DPaLihLs88CtstiHAJfd/zZZvQAeRBk=
-X-Google-Smtp-Source: ALg8bN7xKZ4bs0jTH/9RDgtWWeV5tRKBeEYXDHNDHASmaIBZyuwwI7m1ihWiBB7wNEYvMwDaFQq6rw==
-X-Received: by 2002:a19:5a05:: with SMTP id o5mr2290180lfb.140.1548255719516;
-        Wed, 23 Jan 2019 07:01:59 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.84.180])
-        by smtp.gmail.com with ESMTPSA id y23-v6sm543577ljk.95.2019.01.23.07.01.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 07:01:58 -0800 (PST)
-Subject: Re: [PATCH v2 net] ravb: expand rx descriptor data to accommodate hw
- checksum
-To:     Simon Horman <horms+renesas@verge.net.au>,
-        David Miller <davem@davemloft.net>
-Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <20190123111452.27845-1-horms+renesas@verge.net.au>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <a206de4d-60bb-e2d8-9bf6-65b081effb62@cogentembedded.com>
-Date:   Wed, 23 Jan 2019 18:01:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ss+UimM9JBuWnzMyu41lPiY6/smQ4PSx9Tgu35P0loY=;
+        b=TWYYnNzIla4lkxyteI+wZQMHBYtvJhsUimtVQTFjzf88E0Np7SN2/1fUlWoTjbk96Z
+         ahY+Czp5h0xqGIfaa0iNUnib5YEDEZbNlm5Vi4g0xdLSDp8D7Jz9Nlr5yYnhsUJTkt5M
+         UusT2yPZ6wOF+dgDFVLcVl7yXKBHH091qJFrp6koHbfLoHP6obx7LWgFdHKhxOeej3Au
+         bbko1FCAwdvoHbLnUm1eJ4C3KI7VhoFlXVsXCGvxgC9RztZ0dSMm6JXKRhV8VB9aPPYL
+         S7F37Z/vdLsh7EtePKYD9NpLatV6/Deb842GintMD3AAIRRaTkutoj0e0Orx8cx2J7fO
+         3WkA==
+X-Gm-Message-State: AJcUukegHX+jZpWDx34CDgYAGQE+eLmEngez3zqSaSQwcaM3ColQUJek
+        wUyeb/yYrG5uJsFPQOIbdqYoK8O3TQ45CnyBPlY=
+X-Google-Smtp-Source: ALg8bN59PcimyttPNYJmCOFbqaXaw3t3Mhin2IQreWrAdke0ycSteXgP/nRXHpq+8M3JBawTLwYHkzhOxRsjV/qVauI=
+X-Received: by 2002:a67:b60d:: with SMTP id d13mr1011358vsm.152.1548255761618;
+ Wed, 23 Jan 2019 07:02:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190123111452.27845-1-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <20190111124517.2730-1-geert+renesas@glider.be>
+In-Reply-To: <20190111124517.2730-1-geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 23 Jan 2019 16:02:30 +0100
+Message-ID: <CAMuHMdUBghaJ3HZvMuo7p-p+8fPowzgiYwV7DViP2DQRsgK5tw@mail.gmail.com>
+Subject: Re: [PATCH/RFC] pinctrl: sh-pfc: r8a7791: Fix VIN1 versioned groups
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Valentine Barshak <valentine.barshak@cogentembedded.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 01/23/2019 02:14 PM, Simon Horman wrote:
+On Fri, Jan 11, 2019 at 1:45 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> The naming of the "b" versions of the VIN1 pin groups is a bit odd, in
+> that the "_b" appears in the middle of the names, instead of as a
+> suffix.
+>
+> Increase consistency with other SoCs by making R-Car M2-W and M2-N, and
+> RZ/G1M and RZ/G1N, use the recently added optional "version" argument of
+> the VIN_DATA_PIN_GROUP() macro.
+>
+> Note that this breaks backwards compatibility with existing DTBs, but
+> there are no upstream users of the "vin1_b_*" names.
+>
+> Fixes: 8e32c9671f84acd8 ("pinctrl: sh-pfc: r8a7791: Add VIN pins")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Is it worth making this change?
+> If yes, should we retain backwards-compatibility using e.g. the patch
+> below, increasing kernel size by 380 bytes?
+>
+> Note that unlike the deprecated "avb_mdc" pin groups on R-Car Gen3, the
+> "vin1_b_*" groups never had upstream users, so I'm inclined not to care
+> about backwards compatibility.
 
-> EtherAVB may provide a checksum of packet data appended to packet data. In
-> order to allow this checksum to be received by the host descriptor data
-> needs to be enlarged by 2 bytes to accommodate the checksum.
-> 
-> In the case of MTU-sized packets without a VLAN tag the
-> checksum were already accommodated by virtue of the space reserved for the
-> VLAN tag. However, a packet of MTU-size with a  VLAN tag consumed all
-> packet data space provided by a descriptor leaving no space for the
-> trailing checksum.
-> 
-> This was not detected by the driver which incorrectly used the last two
-> bytes of packet data as the checksum and truncate the packet by two bytes.
-> This resulted all such packets being dropped.
-> 
-> A work around is to disable RX checksum offload
->  # ethtool -K eth0 rx off
-> 
-> This patch resolves this problem by increasing the size available for
-> packet data in RX descriptors by two bytes.
-> 
-> Tested on R-Car E3 (r8a77990) ES1.0 based Ebisu-4D board
-> 
-> v2
-> * Use sizeof(__sum16) directly rather than adding a driver-local
->   #define for the size of the checksum provided by the hw (2 bytes).
-> 
-> Fixes: 4d86d3818627 ("ravb: RX checksum offload")
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+>         --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
+>         +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+>         @@ -67,6 +67,14 @@ struct sh_pfc_pin_group {
+>                         .nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),   \
+>                 }
+>
+>         +#define VIN_DATA_PIN_GROUP_ALIAS(alias, n, s, ...)                     \
+>         +       {                                                               \
+>         +               .name = #alias,                                         \
 
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+JFTR (everything below "---" is not meant to be included anyway):
 
-[...]
+        .name = #alias#s,                                       \
 
-MBR, Sergei
+>         +               .pins = n##__VA_ARGS__##_pins.data##s,                  \
+>         +               .mux = n##__VA_ARGS__##_mux.data##s,                    \
+>         +               .nr_pins = ARRAY_SIZE(n##__VA_ARGS__##_pins.data##s),   \
+>         +       }
+>         +
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
