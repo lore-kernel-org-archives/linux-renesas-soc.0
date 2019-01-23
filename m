@@ -2,117 +2,103 @@ Return-Path: <SRS0=9OK0=P7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0FFC282C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 11:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D94C282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 11:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BB120870
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 11:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C457B20861
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 11:38:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="KnPUyssY"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="rXsMO+lp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbfAWLRA (ORCPT
+        id S1727416AbfAWLiR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:17:00 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:52046 "EHLO
+        Wed, 23 Jan 2019 06:38:17 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:52268 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbfAWLRA (ORCPT
+        with ESMTP id S1726359AbfAWLiR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:17:00 -0500
+        Wed, 23 Jan 2019 06:38:17 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id E91DA25BE34;
-        Wed, 23 Jan 2019 22:16:57 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id BF1ED25BEAC;
+        Wed, 23 Jan 2019 22:38:14 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548242218; bh=882809KqWSSl89h+qn2DAix2I1qDUSfnXF7IEXVbXg4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KnPUyssYu8GQyu1Ij5A7Hjecm0ahLeCenwGjD8IQEiN1lwOjxm2ulvE03H4rhjQMz
-         nuA1Pp3oQPvSiKxtTKxRWx1x3z8yvRV4oXihMO/JpUb9xZyIFyYX83N7a6N6etwJmm
-         cDpSV2Dg3ZXIhW1Mhyk038P2w65BfoJLpFrHwOtE=
+        t=1548243495; bh=9N5TCO70gccBYBO3vzM6N72L4b0qbM07DzdXc8nwamk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rXsMO+lpI6DSamLOSKoEGuopb50ZnRo9ddBrcqQCu2uNJFn2OtOrWMsZAVprI8Uow
+         wKsSnAjFmWstvJfHOxarBiWkH5RuLfaWA+m3WCZhTiUp5ImQ3JhiYz8cweGXCDNpAk
+         4vB+P8NjemLgNPvmhOrhr4U7JzCvYuaVMrHZB4UY=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 4107B940462; Wed, 23 Jan 2019 12:16:56 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 net] ravb: expand rx descriptor data to accommodate hw checksum
-Date:   Wed, 23 Jan 2019 12:14:52 +0100
-Message-Id: <20190123111452.27845-1-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
+        id 03C8E940483; Wed, 23 Jan 2019 12:38:12 +0100 (CET)
+Date:   Wed, 23 Jan 2019 12:38:12 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock to
+ CAN nodes
+Message-ID: <20190123113812.e3nojtxjxywmg4gn@verge.net.au>
+References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547736856-16539-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190118121353.3mb44a7rmmp2ru5d@verge.net.au>
+ <20190123095122.l3engeuwx6qr5lzc@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123095122.l3engeuwx6qr5lzc@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-EtherAVB may provide a checksum of packet data appended to packet data. In
-order to allow this checksum to be received by the host descriptor data
-needs to be enlarged by 2 bytes to accommodate the checksum.
+On Wed, Jan 23, 2019 at 10:51:23AM +0100, Simon Horman wrote:
+> On Fri, Jan 18, 2019 at 01:13:53PM +0100, Simon Horman wrote:
+> > On Thu, Jan 17, 2019 at 02:54:15PM +0000, Fabrizio Castro wrote:
+> > > According to the latest information, clkp2 is available on RZ/G2.
+> > > Modify CAN0 and CAN1 nodes accordingly.
+> > > 
+> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> > 
+> > Thanks,
+> > 
+> > This looks fine to me but I will wait to see if there are other reviews
+> > before applying.
+> > 
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks again, applied for v5.1.
 
-In the case of MTU-sized packets without a VLAN tag the
-checksum were already accommodated by virtue of the space reserved for the
-VLAN tag. However, a packet of MTU-size with a  VLAN tag consumed all
-packet data space provided by a descriptor leaving no space for the
-trailing checksum.
+Sorry, I was a little hasty there.
 
-This was not detected by the driver which incorrectly used the last two
-bytes of packet data as the checksum and truncate the packet by two bytes.
-This resulted all such packets being dropped.
+This patch depends on the presence of R8A774A1_CLK_CANFD which
+(rightly) is added in a different patch in this series which is to
+go upstream via a different tree.
 
-A work around is to disable RX checksum offload
- # ethtool -K eth0 rx off
+I have dropped this patch for now. I think there are two solution to this
+problem.
 
-This patch resolves this problem by increasing the size available for
-packet data in RX descriptors by two bytes.
+1. Provide a version of this patch which uses a numeric index instead of
+   R8A774A1_CLK_CANFD. And then, once R8A774A1_CLK_CANFD is present in an
+   RC release provide a patch to switch to using R8A774A1_CLK_CANFD.
 
-Tested on R-Car E3 (r8a77990) ES1.0 based Ebisu-4D board
+2. Defer this patch until R8A774A1_CLK_CANFD is present in an RC release.
 
-v2
-* Use sizeof(__sum16) directly rather than adding a driver-local
-  #define for the size of the checksum provided by the hw (2 bytes).
-
-Fixes: 4d86d3818627 ("ravb: RX checksum offload")
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/net/ethernet/renesas/ravb_main.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index ffc1ada4e6da..d28c8f9ca55b 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -343,7 +343,7 @@ static int ravb_ring_init(struct net_device *ndev, int q)
- 	int i;
- 
- 	priv->rx_buf_sz = (ndev->mtu <= 1492 ? PKT_BUF_SZ : ndev->mtu) +
--		ETH_HLEN + VLAN_HLEN;
-+		ETH_HLEN + VLAN_HLEN + sizeof(__sum16);
- 
- 	/* Allocate RX and TX skb rings */
- 	priv->rx_skb[q] = kcalloc(priv->num_rx_ring[q],
-@@ -524,13 +524,15 @@ static void ravb_rx_csum(struct sk_buff *skb)
- {
- 	u8 *hw_csum;
- 
--	/* The hardware checksum is 2 bytes appended to packet data */
--	if (unlikely(skb->len < 2))
-+	/* The hardware checksum is contained in sizeof(__sum16) (2) bytes
-+	 * appended to packet data
-+	 */
-+	if (unlikely(skb->len < sizeof(__sum16)))
- 		return;
--	hw_csum = skb_tail_pointer(skb) - 2;
-+	hw_csum = skb_tail_pointer(skb) - sizeof(__sum16);
- 	skb->csum = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
- 	skb->ip_summed = CHECKSUM_COMPLETE;
--	skb_trim(skb, skb->len - 2);
-+	skb_trim(skb, skb->len - sizeof(__sum16));
- }
- 
- /* Packet receive function for Ethernet AVB */
--- 
-2.11.0
 
