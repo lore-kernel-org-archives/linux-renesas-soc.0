@@ -2,80 +2,86 @@ Return-Path: <SRS0=9OK0=P7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCE7C282C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 17:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B921C282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 17:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D339217D4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 17:25:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E45B21019
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 17:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726040AbfAWRZ7 (ORCPT
+        id S1725996AbfAWRj3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jan 2019 12:25:59 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:47360 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbfAWRZ7 (ORCPT
+        Wed, 23 Jan 2019 12:39:29 -0500
+Received: from sauhun.de ([88.99.104.3]:35136 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726335AbfAWRj3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jan 2019 12:25:59 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5116714EDD318;
-        Wed, 23 Jan 2019 09:25:58 -0800 (PST)
-Date:   Wed, 23 Jan 2019 09:25:57 -0800 (PST)
-Message-Id: <20190123.092557.657889811053553529.davem@davemloft.net>
-To:     horms+renesas@verge.net.au
-Cc:     sergei.shtylyov@cogentembedded.com, magnus.damm@gmail.com,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 net] ravb: expand rx descriptor data to accommodate
- hw checksum
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190123111452.27845-1-horms+renesas@verge.net.au>
-References: <20190123111452.27845-1-horms+renesas@verge.net.au>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 23 Jan 2019 09:25:58 -0800 (PST)
+        Wed, 23 Jan 2019 12:39:29 -0500
+Received: from localhost (p54B3320B.dip0.t-ipconnect.de [84.179.50.11])
+        by pokefinder.org (Postfix) with ESMTPSA id 2D8BB2C54BC;
+        Wed, 23 Jan 2019 18:39:27 +0100 (CET)
+Date:   Wed, 23 Jan 2019 18:39:26 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: rcar: refactor TCYC handling
+Message-ID: <20190123173926.GA956@kunai>
+References: <20190121170800.21144-1-wsa+renesas@sang-engineering.com>
+ <20190121170800.21144-3-wsa+renesas@sang-engineering.com>
+ <20190123102506.hi6tvyby5f4wbaho@verge.net.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Disposition: inline
+In-Reply-To: <20190123102506.hi6tvyby5f4wbaho@verge.net.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
-Date: Wed, 23 Jan 2019 12:14:52 +0100
 
-> EtherAVB may provide a checksum of packet data appended to packet data. In
-> order to allow this checksum to be received by the host descriptor data
-> needs to be enlarged by 2 bytes to accommodate the checksum.
-> 
-> In the case of MTU-sized packets without a VLAN tag the
-> checksum were already accommodated by virtue of the space reserved for the
-> VLAN tag. However, a packet of MTU-size with a  VLAN tag consumed all
-> packet data space provided by a descriptor leaving no space for the
-> trailing checksum.
-> 
-> This was not detected by the driver which incorrectly used the last two
-> bytes of packet data as the checksum and truncate the packet by two bytes.
-> This resulted all such packets being dropped.
-> 
-> A work around is to disable RX checksum offload
->  # ethtool -K eth0 rx off
-> 
-> This patch resolves this problem by increasing the size available for
-> packet data in RX descriptors by two bytes.
-> 
-> Tested on R-Car E3 (r8a77990) ES1.0 based Ebisu-4D board
-> 
-> v2
-> * Use sizeof(__sum16) directly rather than adding a driver-local
->   #define for the size of the checksum provided by the hw (2 bytes).
-> 
-> Fixes: 4d86d3818627 ("ravb: RX checksum offload")
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied and queued up for -stable.
+On Wed, Jan 23, 2019 at 11:25:06AM +0100, Simon Horman wrote:
+> On Mon, Jan 21, 2019 at 06:08:00PM +0100, Wolfram Sang wrote:
+> > The latest documentation made it clear that we need to initialize the
+> > TCYC value independently of DMA. Simplify the code to do that.
+>=20
+> Hi Wolfram,
+>=20
+> I see TCYC bit 6 is no longer used after this patch.
+> Does that warrant a mention in the changelog?
+
+Do you think so? The old code used TCYC06 (wrongly) for non-DMA transfers.
+The new code sets TCYC up "independently from DMA" <- commit message.
+
+
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxIpsoACgkQFA3kzBSg
+KbaE2Q/+NG/ggy2l1IJGDofZLNJ89Ezck0XAuhk5CcNOqWqOL/OvzFOoilQxoAao
+G9/Sp/8pPWUw2OnW2Th8n5wVXU4EhNuMJhMpBWuiqIW4d2L4ejHTtWfAteb+j7SK
+3kkr915rIVBjEMwL9goV1d4dGQQomego66vEsvOtfJJhq3/eC6uI5kp/auxIoYiO
+4PDLVj/PAd77iAsdNBK5M/o7yxeHhAGLomFn26YkPDP9dlTDLI80R3o0iQl7oKwl
+0/VrwZTfE/DEaEAbE9c7pFYHPA6jAnNkVyqi7dSCwEwMUS+ABv+89WvVtV0BvAUK
+GH2q0K8sT14QrcS8wwKL7+C8VXpkciX/zrpoVn4A6mL3ifwyO3bYg4FD1MxH2Pa6
+8Zg1UIVPi8mlcfYZFSRsmvVKbVD8l/YrA+K0zhN1NMHfg8ElSAIjPd7XKiT1n4K9
+gc+R6wrM54Gy1nov4YXvcKDJF3xR6Voq1a4FR9ctrIPWJTEQ9fPpJ8udI0f3Ij8l
+7HdaBl7HE1y4K52LTNYgyFekiW2NyadEFiF8i90c034dQrYhmrGe4fOvwR+OmvmK
+CAeLLd7Q/gmv4u+QAXhOC9orozQwX9Qt1tnjra/BIeIUkCLNF8H5dMy3DdTbiI/z
+FuBG/wesG+rkETciG85RlNMBO6M3lEnW4qZI5IRs+Ofp2Y50wC8=
+=xCXC
+-----END PGP SIGNATURE-----
+
+--jRHKVT23PllUwdXP--
