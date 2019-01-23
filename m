@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22F4C282C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 08:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FA4C282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 08:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97196217F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 08:57:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAFB121726
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 08:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ZvaNa7dK"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="SPhUCom3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfAWI5C (ORCPT
+        id S1726938AbfAWI5M (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jan 2019 03:57:02 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:49662 "EHLO
+        Wed, 23 Jan 2019 03:57:12 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:49673 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726938AbfAWI5C (ORCPT
+        with ESMTP id S1726913AbfAWI5M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jan 2019 03:57:02 -0500
+        Wed, 23 Jan 2019 03:57:12 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id EC7E725BDDE;
-        Wed, 23 Jan 2019 19:56:59 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 4B9D025BDDE;
+        Wed, 23 Jan 2019 19:57:10 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548233820; bh=FNvznbIdsD79FOXFocGZmfP33lEWvncObE4ncBocLfI=;
+        t=1548233830; bh=QUWRL8Jk9D8NMaAhNEYmqM1gPMBHfYiO8j3Ox4sNTrE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZvaNa7dKFr59lKMmbFbiuTaHaSfyJWEGofyk9o/1ozxOMsP2jCpouFlGmtVDdt6Wu
-         7B95n8JpTzbnncIrShgGv2HhlKVma+vUZKklUkZUR9zGa8G/Ir1hrvJPYLCJiQXfvY
-         r9DSeWnNrz9kmkZFdxD+QSOTjDA2prTiSv3edrvk=
+        b=SPhUCom3jinLY76mf5rA0Hys4jYMf6NpXpUOm9ntHvHyaZZjQlPJdbDl0APb6tG1P
+         4TpE/KWRw5u1KMghklg54BCw7UN0n4Os8be5titf2mTjyKWm0HWmnwWu1EhIMeOx8A
+         dpxT59bMOzaUAUyqKBsKM7eVHUzwFFv82tm5I+As=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 1475F940471; Wed, 23 Jan 2019 09:56:58 +0100 (CET)
-Date:   Wed, 23 Jan 2019 09:56:57 +0100
+        id 6A8EB940471; Wed, 23 Jan 2019 09:57:08 +0100 (CET)
+Date:   Wed, 23 Jan 2019 09:57:08 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v2 5/6] arm64: dts: renesas: r8a77990: ebisu: Enable
+Subject: Re: [PATCH v2 6/6] arm64: dts: renesas: r8a77995: draak: Enable
  LVDS1 encoder
-Message-ID: <20190123085656.5mgfcuv55efegrps@verge.net.au>
+Message-ID: <20190123085707.dmzzo7gbws7636kn@verge.net.au>
 References: <20190122225405.7815-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190122225405.7815-6-laurent.pinchart+renesas@ideasonboard.com>
+ <20190122225405.7815-7-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122225405.7815-6-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20190122225405.7815-7-laurent.pinchart+renesas@ideasonboard.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -55,7 +55,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 12:54:04AM +0200, Laurent Pinchart wrote:
+On Wed, Jan 23, 2019 at 12:54:05AM +0200, Laurent Pinchart wrote:
 > The LVDS1 encoder must supply a pixel clock to the DU for the DPAD
 > output when the LVDS0 encoder is used. Enable it despite its output not
 > being connected.
