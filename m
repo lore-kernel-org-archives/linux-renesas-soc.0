@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16197C282C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 10:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 924F4C282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 10:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D996321019
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 10:18:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62E4C21019
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 10:21:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="lXtTNN0B"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="F6gOrTJO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfAWKS6 (ORCPT
+        id S1726984AbfAWKVA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jan 2019 05:18:58 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:51180 "EHLO
+        Wed, 23 Jan 2019 05:21:00 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:51196 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbfAWKS6 (ORCPT
+        with ESMTP id S1726772AbfAWKVA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jan 2019 05:18:58 -0500
+        Wed, 23 Jan 2019 05:21:00 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 35EED25BE34;
-        Wed, 23 Jan 2019 21:18:56 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E398325BE34;
+        Wed, 23 Jan 2019 21:20:57 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548238736; bh=1nWOfxIq8URU8JBIDA3TFO3aDhD4dynf+8GUWNwUTdA=;
+        t=1548238858; bh=BLJG+hpxGmtJ9l6gdJBdlsIXz8KuTcTpQcWR2pYr5fI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lXtTNN0BFkd2jtCbN8CBqt1Ac+UVCuWFKs3UN0ts3H3X2ohXPZRY9tqARAU+ccSvW
-         xqN69cmc7lY5ahcw53Vsd9aGVGYsYR3evc8L/3rW00Vfw8R24Fk+4MztTrxJpjx9AO
-         c6D6ElvQQIkETA4JCgOue5XgI58FqliL0SjA1GYQ=
+        b=F6gOrTJOUgjg09Aw+q3rE47qsDMAhouhnOpWf/xIS+E7IwXlXvY8au/MgD2a1k8SW
+         RNAQZm7Tz59498l6Vu0RbkayOcIVXnPNhGgXVlBnsrytwputUr6gEmzIoriTRBxnnH
+         stwjbxNmx2kc8tny6E0Bk0Z1KEE08IgiYZPPhTmA=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 6B08E940471; Wed, 23 Jan 2019 11:18:54 +0100 (CET)
-Date:   Wed, 23 Jan 2019 11:18:54 +0100
+        id 217EF940471; Wed, 23 Jan 2019 11:20:56 +0100 (CET)
+Date:   Wed, 23 Jan 2019 11:20:56 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>
-Subject: Re: [PATCH] i2c: gpio: merge two very similar comments
-Message-ID: <20190123101854.ps42vsgehusaimi5@verge.net.au>
-References: <20190119113642.5348-1-wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/3] i2c: algo-bit: convert to SPDX header
+Message-ID: <20190123102055.ric3gpjq6nabydth@verge.net.au>
+References: <20190119121655.5576-1-wsa+renesas@sang-engineering.com>
+ <20190119121655.5576-3-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190119113642.5348-1-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190119121655.5576-3-wsa+renesas@sang-engineering.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -53,57 +54,91 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 12:36:42PM +0100, Wolfram Sang wrote:
-> I think it is clear enough if we have the explanation once and make it
-> clear it is applicable for both SCL and SDA.
+On Sat, Jan 19, 2019 at 01:16:54PM +0100, Wolfram Sang wrote:
+> And use kernel style for the remaining comments in the header.
 > 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
 > ---
->  drivers/i2c/busses/i2c-gpio.c | 15 ++++-----------
->  1 file changed, 4 insertions(+), 11 deletions(-)
+>  drivers/i2c/algos/i2c-algo-bit.c | 25 ++++++++-----------------
+>  include/linux/i2c-algo-bit.h     | 31 ++++++++-----------------------
+>  2 files changed, 16 insertions(+), 40 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-> index c008d209f0b8..b9d43bc2853f 100644
-> --- a/drivers/i2c/busses/i2c-gpio.c
-> +++ b/drivers/i2c/busses/i2c-gpio.c
-> @@ -286,10 +286,10 @@ static int i2c_gpio_probe(struct platform_device *pdev)
+> diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
+> index c33dcfb87993..5e5990a83da5 100644
+> --- a/drivers/i2c/algos/i2c-algo-bit.c
+> +++ b/drivers/i2c/algos/i2c-algo-bit.c
+> @@ -1,21 +1,12 @@
+> -/* -------------------------------------------------------------------------
+> - * i2c-algo-bit.c i2c driver algorithms for bit-shift adapters
+> - * -------------------------------------------------------------------------
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * i2c-algo-bit.c: i2c driver algorithms for bit-shift adapters
+> + *
+>   *   Copyright (C) 1995-2000 Simon G. Vogl
+> -
+> -    This program is free software; you can redistribute it and/or modify
+> -    it under the terms of the GNU General Public License as published by
+> -    the Free Software Foundation; either version 2 of the License, or
+> -    (at your option) any later version.
+> -
+> -    This program is distributed in the hope that it will be useful,
+> -    but WITHOUT ANY WARRANTY; without even the implied warranty of
+> -    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> -    GNU General Public License for more details.
+> - * ------------------------------------------------------------------------- */
+> -
+> -/* With some changes from Frodo Looijaard <frodol@dds.nl>, Kyösti Mälkki
+> -   <kmalkki@cc.hut.fi> and Jean Delvare <jdelvare@suse.de> */
+> + *
+> + * With some changes from Frodo Looijaard <frodol@dds.nl>, Kyösti Mälkki
+> + * <kmalkki@cc.hut.fi> and Jean Delvare <jdelvare@suse.de>
+> + */
 >  
->  	/*
->  	 * First get the GPIO pins; if it fails, we'll defer the probe.
-> -	 * If the SDA line is marked from platform data or device tree as
-> -	 * "open drain" it means something outside of our control is making
-> -	 * this line being handled as open drain, and we should just handle
-> -	 * it as any other output. Else we enforce open drain as this is
-> +	 * If the SCL/SDA lines are marked from platform data or device tree
-> +	 * as "open drain" it means something outside of our control is making
-> +	 * these lines being handled as open drain, and we should just handle
-> +	 * them as any other output. Else we enforce open drain as this is
->  	 * required for an I2C bus.
-
-<2c>
-	If the SCL/SDA lines are marked "open drain" by platform data or
-	device tree then this means that something outside of our control is
-	marking these lines to be handled as open drain, and we should just
-	handle them as we handle any other output. Else we enforce open
-	drain as this is required for an I2C bus.
-</2c>
-
->  	 */
->  	if (pdata->sda_is_open_drain)
-> @@ -300,13 +300,6 @@ static int i2c_gpio_probe(struct platform_device *pdev)
->  	if (IS_ERR(priv->sda))
->  		return PTR_ERR(priv->sda);
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> diff --git a/include/linux/i2c-algo-bit.h b/include/linux/i2c-algo-bit.h
+> index d64cebc6e65a..69045df78e2d 100644
+> --- a/include/linux/i2c-algo-bit.h
+> +++ b/include/linux/i2c-algo-bit.h
+> @@ -1,26 +1,11 @@
+> -/* ------------------------------------------------------------------------- */
+> -/* i2c-algo-bit.h i2c driver algorithms for bit-shift adapters               */
+> -/* ------------------------------------------------------------------------- */
+> -/*   Copyright (C) 1995-99 Simon G. Vogl
+> -
+> -    This program is free software; you can redistribute it and/or modify
+> -    it under the terms of the GNU General Public License as published by
+> -    the Free Software Foundation; either version 2 of the License, or
+> -    (at your option) any later version.
+> -
+> -    This program is distributed in the hope that it will be useful,
+> -    but WITHOUT ANY WARRANTY; without even the implied warranty of
+> -    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> -    GNU General Public License for more details.
+> -
+> -    You should have received a copy of the GNU General Public License
+> -    along with this program; if not, write to the Free Software
+> -    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+> -    MA 02110-1301 USA.							     */
+> -/* ------------------------------------------------------------------------- */
+> -
+> -/* With some changes from Kyösti Mälkki <kmalkki@cc.hut.fi> and even
+> -   Frodo Looijaard <frodol@dds.nl> */
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * i2c-algo-bit.h: i2c driver algorithms for bit-shift adapters
+> + *
+> + *   Copyright (C) 1995-99 Simon G. Vogl
+> + * With some changes from Kyösti Mälkki <kmalkki@cc.hut.fi> and even
+> + * Frodo Looijaard <frodol@dds.nl>
+> + */
 >  
-> -	/*
-> -	 * If the SCL line is marked from platform data or device tree as
-> -	 * "open drain" it means something outside of our control is making
-> -	 * this line being handled as open drain, and we should just handle
-> -	 * it as any other output. Else we enforce open drain as this is
-> -	 * required for an I2C bus.
-> -	 */
->  	if (pdata->scl_is_open_drain)
->  		gflags = GPIOD_OUT_HIGH;
->  	else
+>  #ifndef _LINUX_I2C_ALGO_BIT_H
+>  #define _LINUX_I2C_ALGO_BIT_H
 > -- 
 > 2.11.0
 > 
