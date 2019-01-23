@@ -1,100 +1,104 @@
-Return-Path: <SRS0=QNR1=P6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=9OK0=P7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA6DC282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 23:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E86C9C282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 06:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8802920866
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jan 2019 23:12:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D8F21726
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jan 2019 06:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfAVXMo (ORCPT
+        id S1726322AbfAWGvE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jan 2019 18:12:44 -0500
-Received: from sauhun.de ([88.99.104.3]:56800 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbfAVXMo (ORCPT
+        Wed, 23 Jan 2019 01:51:04 -0500
+Received: from twhmllg4.macronix.com ([211.75.127.132]:32358 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfAWGvE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jan 2019 18:12:44 -0500
-Received: from localhost (p54B333AA.dip0.t-ipconnect.de [84.179.51.170])
-        by pokefinder.org (Postfix) with ESMTPSA id B50A72C78FF;
-        Wed, 23 Jan 2019 00:12:42 +0100 (CET)
-Date:   Wed, 23 Jan 2019 00:12:42 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC/RFT 0/7] i2c: sh_mobile: state machine simplifications
-Message-ID: <20190122231242.lxuvubnondgzx7of@ninjato>
-References: <20190116210555.12209-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zwiuqdb4r637qi6o"
-Content-Disposition: inline
-In-Reply-To: <20190116210555.12209-1-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 23 Jan 2019 01:51:04 -0500
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG4.macronix.com with ESMTP id x0N6o6g6031286;
+        Wed, 23 Jan 2019 14:50:06 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
+Subject: [PATCH v7 0/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI driver
+Date:   Wed, 23 Jan 2019 15:09:10 +0800
+Message-Id: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG4.macronix.com x0N6o6g6031286
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Mark,
 
---zwiuqdb4r637qi6o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+v7 patch is according to Geert and Sergei's comments:
+1) Add all R-Car Gen3 model in dts.
+2) patch rpc-if child node search.
+3) minror coding style.
 
-On Wed, Jan 16, 2019 at 10:05:48PM +0100, Wolfram Sang wrote:
-> While I was working on this driver to debug some issues, re-understanding=
- the
-> state machine was harder than I expected due to some confusing code. So, I
-> decided to reorganize this a little to make my life easier. There is pote=
-ntial
-> for more cleanup, but I propose this as a first step.
->=20
-> No regressions experienced so far on my Renesas Lager board (R-Car H2). T=
-his
-> series is RFT because this needs to be tested on a Gen3 SoC as well, but =
-this
-> will probably be happening around FOSDEM where I get access to proper HW.
-> Still, release early...
->=20
-> If you have comments, feel free.
->=20
-> Wolfram Sang (7):
->   i2c: sh_mobile: simplify sending address for RX
->   i2c: sh_mobile: remove get_data function
->   i2c: sh_mobile: drop 'data' argument from i2c_op function
->   i2c: sh_mobile: remove is_first_byte function
->   i2c: sh_mobile: replace break; with if-block
->   i2c: sh_mobile: refactor rx isr
->   i2c: sh_mobile: update copyright and comments
+v6 patch is accroding to Geert, Marek and Sergei's comments:
+1) spi_controller for new code.
+2) "renesas,rcar-gen3-rpc" instead of "renesas,r8a77995-rpc."
+3) patch external address read mode w/o u64 readq().
+4) patch dts for write buffer & drop "renesas,rpc-mode".
+5) coding style and so on.
 
-I removed the one copyright line we discussed about and applied all to
-for-next!
+v5 patch is accroding to Sergei's comments:
+1) Read 6 bytes ID from Sergei's patch.
+2) regmap_update_bits().
+3) C++ style comment.
 
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match().
+2) Drop unused RPC registers.
+3) Use ilog2() instead of fls().
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
 
---zwiuqdb4r637qi6o
-Content-Type: application/pgp-signature; name="signature.asc"
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned().
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
 
------BEGIN PGP SIGNATURE-----
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM.
+3) add RPC module software reset,
+4) add regmap.
+5) other coding style and so on.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxHo2oACgkQFA3kzBSg
-Kbbfvw//S5myK/njXSqBUH6Y3rUaL57AB5boqRbHTaYLWOi4YRMA0L58vpgJbWEi
-IGe0NFJtsWs7W1OIi4/V1Tkpp4+eFEuOfr9G2FIYMXmssdFTx9K4PLQyLijq11n6
-C4bbmMOsrUbXPfjFM6a0uDWFhIE+1UZFlcnh/e3dpmUs1hYNoDOdqTuWl7F+qFG8
-XgI0VUQ+FYC1ErfjTHqlIPO4kHuEoc+92B6X1wVOt1O6JOZJIeopOEVD80NrUGKN
-qC244MfSFRsOQyO7D/LisHH8ycUywPjye7WDvodVoNtzwc+Z1PNgraXolVKgEcfl
-KihowcavxctKPUQeB08rSKjDeseTZDqGr8DvJtL3205O1mdOSArpchtc1BUXvHaz
-rN47qEG76SystDFdffIm/U77FCnNOUT2haplRiIr5/fcKf14MjG6CJJJbKMtU6Ab
-Rfktr2aQMg3IQQw77HmggbDpJwWoh7qB5P5DH1wqj+Uh0bJ7BWrVBJeTCR0hf5n8
-KS0Z0o2/Nwnp+1+uvupBHSplYC/yiovRhLQrgh38j98gzUjexjoPEKVxcoAv7tKk
-OTtu8f5TQlRrT/pMxa/aqpQrdE2fcEGt7hLiSfpQ3nm2LWlBZ/bmKnryAdVfuWSO
-9+n5Yo4CSXczvP7xtBXLpR/nYwDE5jBKjZW9dnztiTPhFJEBp0Q=
-=Eabw
------END PGP SIGNATURE-----
+thanks for your review.
 
---zwiuqdb4r637qi6o--
+best regards,
+Mason
+
+Mason Yang (2):
+  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+  dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF controller
+    bindings
+
+ .../devicetree/bindings/spi/spi-renesas-rpc.txt    |  46 ++
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 805 +++++++++++++++++++++
+ 4 files changed, 858 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+
+-- 
+1.9.1
+
