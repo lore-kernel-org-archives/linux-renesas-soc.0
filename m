@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3886C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC58C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5D032184C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90CA82184C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="iQjDVHcN"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="c8tyMx/x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfAXPNb (ORCPT
+        id S1728366AbfAXPNd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:13:31 -0500
+        Thu, 24 Jan 2019 10:13:33 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:39115 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbfAXPNb (ORCPT
+        with ESMTP id S1727996AbfAXPNd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:13:31 -0500
+        Thu, 24 Jan 2019 10:13:33 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id A965825BF03;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id BB13025BF04;
         Fri, 25 Jan 2019 02:12:44 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548342764; bh=8sbaQCJhR0VzRyurxl5IxN/WDY6Fz+ss4EGtxtEmBY0=;
+        t=1548342765; bh=GXWlKxJfS6NEXBhINDZjuoJcIlfeoeIvwc7afD25Xm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iQjDVHcNEq+ELOSzLyg0+wyVt9as+u0b1cIfKiiEeBm0dDBCGLH7z7n/OOqkIWpO8
-         JLyR1F84XK9iG0JnVFR9UJuy0K+89/FwbES51A182uG2hy7HodQvD4jloi26qg/VdY
-         5ElwmUaLFjssK2BTtOiTbcN7uUOVNecTMp02ja2M=
+        b=c8tyMx/xjrYA9PuDZMzO2EbP08jvxLoIQg+Htflcq/7ZQRALQYwPdCwLHtvFcF2rC
+         CDCtxmaAWaeddNonCjpHMIFGrYOPgtZ9SAULFC5tAyWNZ6s12EhnZqkJqhYCYgYzNY
+         gw+A9PEUfhzlHK5QCmDpdxhG9DZasLBpwZlE+KXk=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 43D64940DF8; Thu, 24 Jan 2019 16:12:41 +0100 (CET)
+        id 56B16940E28; Thu, 24 Jan 2019 16:12:41 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 37/44] arm64: dts: renesas: r8a7795: remove BUSIF0 settings from rcar_sound,ssi
-Date:   Thu, 24 Jan 2019 16:12:31 +0100
-Message-Id: <0ec8e0a879b8d7eacbfbed9a7face8f97f9493a8.1548233325.git.horms+renesas@verge.net.au>
+Subject: [PATCH 38/44] arm64: dts: renesas: r8a7796: remove BUSIF0 settings from rcar_sound,ssi
+Date:   Thu, 24 Jan 2019 16:12:32 +0100
+Message-Id: <10bd03fa896ee5e25fa3548a3d1112b9beb76943.1548233325.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1548233325.git.horms+renesas@verge.net.au>
 References: <cover.1548233325.git.horms+renesas@verge.net.au>
@@ -64,14 +64,14 @@ This patch removes it.
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 40 ++++++++++++++++----------------
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 40 ++++++++++++++++----------------
  1 file changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index af9605d5db27..a81ed2ba63e7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2174,53 +2174,53 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index afedbf5728ec..3a9f8c7081ca 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2110,53 +2110,53 @@
  			rcar_sound,ssi {
  				ssi0: ssi-0 {
  					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
@@ -81,7 +81,7 @@ index af9605d5db27..a81ed2ba63e7 100644
 +					dma-names = "rx", "tx";
  				};
  				ssi1: ssi-1 {
- 					 interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
+ 					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
 -					dmas = <&audma0 0x03>, <&audma1 0x04>, <&audma0 0x49>, <&audma1 0x4a>;
 -					dma-names = "rx", "tx", "rxu", "txu";
 +					dmas = <&audma0 0x03>, <&audma1 0x04>;
@@ -144,7 +144,7 @@ index af9605d5db27..a81ed2ba63e7 100644
 +					dma-names = "rx", "tx";
  				};
  			};
- 		};
+ 
 -- 
 2.11.0
 
