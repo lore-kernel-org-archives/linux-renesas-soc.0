@@ -2,80 +2,96 @@ Return-Path: <SRS0=drmD=QA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0958C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 13:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC9DC282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98CC9218AF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 13:42:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548337323;
-	bh=YddJh2Iof/6II369Iui9LX2FVK6ZkQpGl2j25Wp0Dtc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=RgpEmoxOW8l9wMi5qQr2KfkqqnlFIuafJsSx6Kqn5jaBk/fX2k79fc9n29m16Kk6x
-	 MsW1U8SdB/E7C6uWSQhvYGRnbeGR2lr/95vE2e9EaLUZa/qCBpU97lcpwH3VdjaDDw
-	 4eGxinDvAfm8B71vV7y6g1ihIpkcGhsnWSqlHekY=
+	by mail.kernel.org (Postfix) with ESMTP id 6393821872
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:11:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="j5ZbslkH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbfAXNmD (ORCPT
+        id S1727848AbfAXPL6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:42:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55726 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728031AbfAXNmD (ORCPT
+        Thu, 24 Jan 2019 10:11:58 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:39003 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727566AbfAXPL6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:42:03 -0500
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85B61218AF;
-        Thu, 24 Jan 2019 13:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548337322;
-        bh=YddJh2Iof/6II369Iui9LX2FVK6ZkQpGl2j25Wp0Dtc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ESDHdjR30IOzk1mYys28RNswfRKCRzFA8NyU3ClQGwm4HuNiodMY2/cK8KMCM0PUR
-         M3onA95QJ7I8ATFt7jndrpxQJRfzUeH3lVlgfRkI4JaXZXApvsSXdW+YyV0c+uhSmh
-         Zy2554tSZjedtObum8AWyK51O8g6n7Cd791R/hM0=
-Received: by mail-qk1-f179.google.com with SMTP id o125so3211282qkf.3;
-        Thu, 24 Jan 2019 05:42:02 -0800 (PST)
-X-Gm-Message-State: AJcUukf801fqkbLlWwFSX36ucQCOFO+zfiHttY4ZjNYpvlZ20jn3n6Fu
-        StgL/eWLmx7emmG3O8pcBZlixO54xQb93JDmQg==
-X-Google-Smtp-Source: ALg8bN4rU+KcU4HNNTVzmaLOpr0PhgVbcFVx+Huw0ZwsJ96R2KhxoxR/Wq2RnUmQ0v+/69McT4wov6H2aggCSJCTJeU=
-X-Received: by 2002:a37:5686:: with SMTP id k128mr5382394qkb.29.1548337321714;
- Thu, 24 Jan 2019 05:42:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20190123143012.119912-1-chris.brandt@renesas.com>
-In-Reply-To: <20190123143012.119912-1-chris.brandt@renesas.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 24 Jan 2019 07:41:50 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLQGptKCan7GoNGFfJORyECuF2BxXzJWOe2VSdgUzjYWw@mail.gmail.com>
-Message-ID: <CAL_JsqLQGptKCan7GoNGFfJORyECuF2BxXzJWOe2VSdgUzjYWw@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: arm: renesas: Document RZ/A2M EVB
-To:     Chris Brandt <chris.brandt@renesas.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 24 Jan 2019 10:11:58 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 1E5A925B769;
+        Fri, 25 Jan 2019 02:11:56 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1548342716; bh=4mcnUUvAhGKR3MnntaA01oAco2nxFEtKi5r6Z5fVDeU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j5ZbslkHxf5kJks8zVpLCaXB4i/MyAIH6RdsR+JtwMQZvAL3L1xjtPmUb56zDBgsm
+         8+3QD0lVJqKcrqh+YwkelJqyxiAvyEUCHVC8ih0QEsU7DPLIR98TA+WT5iQcuD/zJY
+         pV0y/J5f6RzQ340TDFCDprfW8zq3C4F/wEID/AiI=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 499EA940471; Thu, 24 Jan 2019 16:11:54 +0100 (CET)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     arm@kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM Based SoC Fixes for v5.0
+Date:   Thu, 24 Jan 2019 16:11:52 +0100
+Message-Id: <cover.1548165440.git.horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 8:30 AM Chris Brandt <chris.brandt@renesas.com> wrote:
->
-> Add the RZ/A2M Evaluation board.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
-> v2:
->  * 'enum' is supposed to go under 'items'
-> ---
->  Documentation/devicetree/bindings/arm/renesas.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Please consider these second round of Renesas ARM based SoC fixes for v5.0.
+
+This pull request is based on the previous round of
+such requests, tagged as renesas-fixes-for-v5.0,
+which you have already accepted.
+
+
+The following changes since commit a64597227d0de5610407fcc95dc835745a53f5d0:
+
+  soc: renesas: r8a774c0-sysc: Fix initialization order of 3DG-{A,B} (2019-01-07 14:51:51 +0100)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes2-for-v5.0
+
+for you to fetch changes up to 05c8478abd485507c25aa565afab604af8d8fe46:
+
+  arm64: dts: renesas: r8a77965: Enable DMA for SCIF2 (2019-01-17 14:22:23 +0100)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM Based SoC Fixes for v5.0
+
+Enable DMA for SCIF2 on R-Car M3-W (r8a7796) and M3-n (r8a77965), and
+(RZ/G2M) r8a774a1 SoCs.
+
+This is was omitted from patches enabling DMA for other SCIF devices on the
+same SoCs due to missing documentation.  However, it is regarded as a fix
+as arguably those patches claim to add this feature.
+
+Per-SoC patches are provided to ease backporting of this fix as the kernel
+version to be fixed is different for each SoC.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (3):
+      arm64: dts: renesas: r8a774a1: Enable DMA for SCIF2
+      arm64: dts: renesas: r8a7796: Enable DMA for SCIF2
+      arm64: dts: renesas: r8a77965: Enable DMA for SCIF2
+
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 3 +++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 3 +++
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 3 +++
+ 3 files changed, 9 insertions(+)
