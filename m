@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB50C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A1DC282C5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D3C2184C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 791642184C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:12:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Ghf7iNPe"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="CUBqEiO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfAXPMz (ORCPT
+        id S1728456AbfAXPM5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:12:55 -0500
+        Thu, 24 Jan 2019 10:12:57 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:39115 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbfAXPMz (ORCPT
+        with ESMTP id S1727566AbfAXPM5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:12:55 -0500
+        Thu, 24 Jan 2019 10:12:57 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id DE42525BEE4;
-        Fri, 25 Jan 2019 02:12:42 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 65F7625BEE7;
+        Fri, 25 Jan 2019 02:12:43 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548342763; bh=V/VYZfXMlzwifpfno6K1W+fHMAezSQXBQvACGg8dVyw=;
+        t=1548342763; bh=B0Lm+yZcTEX2kX7RAPznxoXzx/M0ixC5L6fK3+8TXlU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ghf7iNPe12yar5XT75vQkwD6QJo8m/+5LAmrj9+gR5m/imxClXeQXPuCZmZUOva2X
-         cG/lhERD4m9Fv4VLA3dYT1ZYwVMD8sPyTZ6qVp3Ck5+YhKkgmymTBHp276kLIkOvdE
-         UT2q4pEjk4zhY692WqiIG0oJ4YmanFLDOwDcc50U=
+        b=CUBqEiO240IzJWI44CK6c08vgDayvZbPOusQlKqN435PNJU8/xKNko8+0zdTXIlN/
+         nm9Qgsu9LhEDddWf5rp0zb/tCl1LZR0XOPTySGE3QSPqEPFcfFJbrUhk2XfXgiJ5KM
+         EOla+8/jkI2JCzZmLqVDcevy1IPxZhMCi+1hLdkA=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 2C3E3940471; Thu, 24 Jan 2019 16:12:40 +0100 (CET)
+        id 9989F940A91; Thu, 24 Jan 2019 16:12:39 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/44] arm64: dts: renesas: r8a774c0: Add thermal support
-Date:   Thu, 24 Jan 2019 16:12:11 +0100
-Message-Id: <6e9dd34eb6b0ffb9e5ff7f18c58193737d24cb37.1548233325.git.horms+renesas@verge.net.au>
+Subject: [PATCH 08/44] arm64: dts: renesas: r8a774c0: Add PFC support
+Date:   Thu, 24 Jan 2019 16:12:02 +0100
+Message-Id: <788e55b66c13e8e77003e9226677e49eaaa9f751.1548233325.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1548233325.git.horms+renesas@verge.net.au>
 References: <cover.1548233325.git.horms+renesas@verge.net.au>
@@ -53,65 +53,32 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch adds the thermal device node and the thermal-zones
-node to the SoC specific dtsi for the RZ/G2E.
+Add PFC support to the RZ/G2E (a.k.a. r8a774c0) SoC specific
+device tree.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 446cab189c10..9532d2960f9c 100644
+index 895f407f7043..afb4751219fa 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -255,6 +255,18 @@
- 			#power-domain-cells = <1>;
- 		};
+@@ -105,6 +105,11 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
-+		thermal: thermal@e6190000 {
-+			compatible = "renesas,thermal-r8a774c0";
-+			reg = <0 0xe6190000 0 0x10>, <0 0xe6190100 0 0x38>;
-+			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 522>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 522>;
-+			#thermal-sensor-cells = <0>;
++		pfc: pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a774c0";
++			reg = <0 0xe6060000 0 0x508>;
 +		};
 +
- 		intc_ex: interrupt-controller@e61c0000 {
- 			compatible = "renesas,intc-ex-r8a774c0", "renesas,irqc";
- 			#interrupt-cells = <2>;
-@@ -902,6 +914,25 @@
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&thermal>;
-+
-+			trips {
-+				cpu-crit {
-+					temperature = <120000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+			};
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a774c0-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x1000>;
 -- 
 2.11.0
 
