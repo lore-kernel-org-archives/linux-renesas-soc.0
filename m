@@ -2,56 +2,74 @@ Return-Path: <SRS0=drmD=QA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF50C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A27C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 10:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B40218AF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E62FF2084C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 10:01:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="cT69vi2/"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="WFSOqQi/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfAXJ7N (ORCPT
+        id S1726881AbfAXKB3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:59:13 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:36011 "EHLO
+        Thu, 24 Jan 2019 05:01:29 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:36048 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727808AbfAXJ7M (ORCPT
+        with ESMTP id S1725287AbfAXKB3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:59:12 -0500
+        Thu, 24 Jan 2019 05:01:29 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 72D3125B769;
-        Thu, 24 Jan 2019 20:59:10 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id AC40825B769;
+        Thu, 24 Jan 2019 21:01:25 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548323950; bh=3z62uOVLdjU5KzOZjPi4vS2g0+lh+imVKtl7ybTC5nQ=;
+        t=1548324086; bh=/inprbJan5P/B4Ing91Xh96DmWBuiIP8qhJiDJgH7KU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cT69vi2/dY0F31fpmdAyZ12B6TrLhtq/l4n+Ca9KQ84zIIeZ+NYPyMWOnwp4LC6M+
-         Xze0XZHMcyuRi9hFAxyW39+iTO3qihutuvlB3xPT5ggPt8zn7VFMCUfVcPBjUtXZ77
-         G81mf7u2Ibf9ourCqfy2Iw7CrzsKxdqWWq0prnLI=
+        b=WFSOqQi/0ffRArVxwTr3T3syfStJ4e3cArHqySNpDpRmsWh2ajYnznZsTkcIB+rp4
+         Pr025Ag6kaVrj1Kn9gpvWEtel8QrmI7pNWIyDsKxFT0waC1YihPFvZnrx63bElquZp
+         bvxdCsOVOaGPWkMD0QdqTW9BZEDi5VZxUxGDPaPY=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 80D12940708; Thu, 24 Jan 2019 10:59:08 +0100 (CET)
-Date:   Thu, 24 Jan 2019 10:59:08 +0100
+        id E2D6A940708; Thu, 24 Jan 2019 11:01:23 +0100 (CET)
+Date:   Thu, 24 Jan 2019 11:01:23 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH LOCAL 0/2] arm64: dts: renesas: Add dummy board files
-Message-ID: <20190124095904.uaenin6xavudnczq@verge.net.au>
-References: <20190104091316.12716-1-geert+renesas@glider.be>
- <20190104094712.jfqgvmm5qmysryex@verge.net.au>
- <20190123114118.hgwd7uwi7blpgmwl@verge.net.au>
- <CAMuHMdXc+wYJUWy763QOmR4G1-foHZ3v=ua5vYe6hkAi5EEB3A@mail.gmail.com>
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock to
+ CAN nodes
+Message-ID: <20190124100123.a2gvucnnwrxibulf@verge.net.au>
+References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547736856-16539-3-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190118121353.3mb44a7rmmp2ru5d@verge.net.au>
+ <20190123095122.l3engeuwx6qr5lzc@verge.net.au>
+ <20190123113812.e3nojtxjxywmg4gn@verge.net.au>
+ <TYXPR01MB1775ABDCFD939F91F1053534C0990@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+ <CAMuHMdVkFJ7Cy-+tNHsOcYaxDj82WjMynuFuPRXa4k=DH2fGCQ@mail.gmail.com>
+ <TYXPR01MB1775B75CED683E38B9171EA8C0990@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXc+wYJUWy763QOmR4G1-foHZ3v=ua5vYe6hkAi5EEB3A@mail.gmail.com>
+In-Reply-To: <TYXPR01MB1775B75CED683E38B9171EA8C0990@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -59,43 +77,63 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 01:08:42PM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
+On Wed, Jan 23, 2019 at 12:18:45PM +0000, Fabrizio Castro wrote:
+> Hello Geert,
 > 
-> On Wed, Jan 23, 2019 at 12:41 PM Simon Horman <horms@verge.net.au> wrote:
-> > On Fri, Jan 04, 2019 at 10:47:13AM +0100, Simon Horman wrote:
-> > > On Fri, Jan 04, 2019 at 10:13:14AM +0100, Geert Uytterhoeven wrote:
-> > > > This patch series adds dummy board files for SoCs that do not have
-> > > > upstream board support yet (RZ/G2M and RZ/G2E).
+> Thank you for your feedback!
+> 
+> > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > Sent: 23 January 2019 12:08
+> > Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock to CAN nodes
+> >
+> > Hi Fabrizio,
+> >
+> > On Wed, Jan 23, 2019 at 1:01 PM Fabrizio Castro
+> > <fabrizio.castro@bp.renesas.com> wrote:
+> > > > From: Simon Horman <horms@verge.net.au>
+> > > > Sent: 23 January 2019 11:38
+> > > > Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock to CAN nodes
 > > > >
-> > > > Not intended for upstream merge, but perhaps useful to add to your
-> > > > topic/renesas-defconfig branch (or a new branch), and merge into devel,
-> > > > to improve build coverage?
+> > > > On Wed, Jan 23, 2019 at 10:51:23AM +0100, Simon Horman wrote:
+> > > > > On Fri, Jan 18, 2019 at 01:13:53PM +0100, Simon Horman wrote:
+> > > > > > On Thu, Jan 17, 2019 at 02:54:15PM +0000, Fabrizio Castro wrote:
+> > > > > > > According to the latest information, clkp2 is available on RZ/G2.
+> > > > > > > Modify CAN0 and CAN1 nodes accordingly.
+> > > > > > >
+> > > > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > > > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> >
+> > > > > Thanks again, applied for v5.1.
 > > > >
-> > > > Thanks!
+> > > > Sorry, I was a little hasty there.
 > > > >
-> > > > Geert Uytterhoeven (2):
-> > > >   [LOCAL] arm64: dts: renesas: r8a774a1: Add dummy board DTS
-> > > >   [LOCAL] arm64: dts: renesas: r8a774c0: Add dummy board DTS
+> > > > This patch depends on the presence of R8A774A1_CLK_CANFD which
+> > > > (rightly) is added in a different patch in this series which is to
+> > > > go upstream via a different tree.
 > > > >
-> > > >  arch/arm64/boot/dts/renesas/Makefile           | 4 ++++
-> > > >  arch/arm64/boot/dts/renesas/r8a774a1-dummy.dts | 2 ++
-> > > >  arch/arm64/boot/dts/renesas/r8a774c0-dummy.dts | 2 ++
-> > > >  3 files changed, 8 insertions(+)
-> > > >  create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-dummy.dts
-> > > >  create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-dummy.dts
+> > > > I have dropped this patch for now. I think there are two solution to this
+> > > > problem.
+> > > >
+> > > > 1. Provide a version of this patch which uses a numeric index instead of
+> > > >    R8A774A1_CLK_CANFD. And then, once R8A774A1_CLK_CANFD is present in an
+> > > >    RC release provide a patch to switch to using R8A774A1_CLK_CANFD.
+> > > >
+> > > > 2. Defer this patch until R8A774A1_CLK_CANFD is present in an RC release.
 > > >
-> > > Thanks, I will create topic/arm64-dummy-boards for these patches
-> > > and included in the devel branch.
+> > > Yeah, my personal preference is solution 2.
 > >
-> > The following files are now present in my tree,
-> > queued up for v5.0.
-> >
-> >         arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-> >         arch/arm64/boot/dts/renesas/r8a774c0-ek874.dts
-> >
-> > Shall I go ahead and drop arch/arm64/boot/dts/renesas/r8a774c0-dummy.dts ?
+> > Note that solution 2 will probably defer the DT patch to v5.2.
 > 
-> Yes please, thanks!
+> Yeah, my understanding is that even if we chose solution 1 we would still
+> need to be waiting for v5.2 for the patch to switch to using
+> R8A774A1_CLK_CANFD to appear in a rc, therefore I think solution 2 is
+> fine.
 
-Thanks, done.
+Your understanding is the same as mine.
+
+I do seem some slight value in option 1 in terms of getting the change,
+less the minor issue of using an index rather than a symbol, upstream
+earlier. But I do not feel strongly about this.
+
+I am marking this patch as deferred. Please repost or otherwise ping me
+when you would like to revisit this topic.
