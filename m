@@ -2,118 +2,126 @@ Return-Path: <SRS0=drmD=QA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3451C282C5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 08:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5A4C282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EEA821855
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 08:16:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Fbh5HX/X"
+	by mail.kernel.org (Postfix) with ESMTP id D7E0120854
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbfAXIQy (ORCPT
+        id S1727420AbfAXJHJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:16:54 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38918 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbfAXIQy (ORCPT
+        Thu, 24 Jan 2019 04:07:09 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:46276 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfAXJHJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:16:54 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so4407211ljh.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Jan 2019 00:16:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lpcnCbqEbpv7hJsyDIWXbBuGcdOqeJLSZ3yg/+x8bqA=;
-        b=Fbh5HX/XTd6IhaXoWUpDXWrqQsZiLppqP02Kqq7a1946IhtwH05lISjnz2tbcU3ghR
-         WSU8wCvRZiG4K992CJm6LnM1f2u05TrEZqgFOTTu+dGOndK3ZesQDdwMLE6KZmvgGNgp
-         I96q+j6E0IY21rG69ySXXD0NNmI4jX2Ha1CX1RvwULs/SMtTqB5eG5DaMg79PXXZspN9
-         eOm6XrvH2bL0vHezgmFYplbcy8kKiH1Fc9UkTdDm8ksZTf4uAvMfLBqJ8C2hhtCVXRi7
-         3nAdQ2CYMwBSXolcrZylJGzxw99LTTt8SjOB9HUolOWEpwutnILxskY1R/nA+7PzOmZl
-         zj7g==
+        Thu, 24 Jan 2019 04:07:09 -0500
+Received: by mail-ua1-f67.google.com with SMTP id v24so1713456uap.13;
+        Thu, 24 Jan 2019 01:07:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lpcnCbqEbpv7hJsyDIWXbBuGcdOqeJLSZ3yg/+x8bqA=;
-        b=kNM5sx7P0//zBKS723IQNSsjitnx7cOUJocRksngs4gT0L3I7LC5ISUFjOLuV7MI7C
-         gWFZ6LXzBg1cz/SG4VTAkFlGIgzp4fGup7IkAGEiP9aw8ekHE/wYEyWE6pU7k9vobzJE
-         JaSO5qXiuT0CS4LDx8d1uR5NthPYW1ula6e6LHTb3F6nvXSjaEzl+yKktyPhBrdpmvTe
-         qkcc2xLimK07iPtNlbvqumnAO3p8qKcEToRT3rhKE7AvcG8P0weVeGK5F31o0M5nmick
-         PEvPKGGjTRYeskYjKT1YDfTrLY/hlgEwuaU2DRsdQDtDSFOjp61/UwbvxzHUqD/vs1+M
-         P2kw==
-X-Gm-Message-State: AJcUukcsaXG3fQHy3B+K3I9pkZSs59YzUSRqdax+pxdKrBWJrzezNuhV
-        B7FTGyX70eDlrSFLKyd8/wnplA==
-X-Google-Smtp-Source: ALg8bN7/6G6GpXu4hvzruUS+Go3w2sB7Lz9Oc8OVTiQkCkeQUNTbxNZ21LB4qDKmBrUIbD0zkeZ9Mg==
-X-Received: by 2002:a2e:4942:: with SMTP id b2-v6mr4354149ljd.168.1548317812024;
-        Thu, 24 Jan 2019 00:16:52 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.84.179])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm897893ljb.7.2019.01.24.00.16.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 00:16:51 -0800 (PST)
-Subject: Re: [PATCH v7 2/2] dt-bindings: spi: Document Renesas R-Car Gen3
- RPC-IF controller bindings
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SiOBLixYntQVxi4BmtnVqXhqkmatSilfo/c722lN5Jg=;
+        b=jbXsg4j6ddF92MgUH8hK9Ij3T/x992fbfiiAd0fU33P2T+CMTQdRO1zQZVx8bnbiKy
+         J9Pi6QolQ2YRE9Xc9WA5QsuxBHAEK8oIYZPyisZvwgQ/f3n002xBrvD4l+cm3eJTHZjC
+         +iHOkOIpkG9uS+BhH6SYB4kJNnnTpr6Cbiv9iWyKmI0V6GVshqggtFiEv0k9PnIJs9XV
+         M/3/+PBtFPJkuZ2KEEHpHwXsxm1doSVoCBkJZIDrCEjJlFxXtq5KgvRvWRWnnibUX+/Y
+         DcmCd0yjIcIt+i/mhf1GGYYWEhz+Soc/aBT/4WvUqwHUYIDEJxvv20XLmOg0eeTPKO8N
+         V7vg==
+X-Gm-Message-State: AJcUukcWjO//fV6cx4TROHq7S1grBsII5W0dmsMQXAXHS/x1aQaMZWvO
+        30T9h6BlLtOsJqG/EKKNBGGDqy8husNx4cNnDTs=
+X-Google-Smtp-Source: ALg8bN6zTt8NdDaMU/zkhxCaT3x/anX6iMtmzaBq3+qRrNdJ3qsXt5EXEtGXIvDbBa6pAwlkPAG6UanEQ4ISHlXz+oU=
+X-Received: by 2002:a9f:364a:: with SMTP id s10mr2259728uad.78.1548320828032;
+ Thu, 24 Jan 2019 01:07:08 -0800 (PST)
+MIME-Version: 1.0
 References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
  <1548227352-14910-3-git-send-email-masonccyang@mxic.com.tw>
- <7a2bf711-f51e-82b0-b0c0-5d67f2c1d043@cogentembedded.com>
- <OF87800430.BAF731CA-ON4825838C.0006CCEE-4825838C.00092BDE@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <7cdecc93-fc7a-3602-25c2-23107dca2a5e@cogentembedded.com>
-Date:   Thu, 24 Jan 2019 11:16:43 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <OF87800430.BAF731CA-ON4825838C.0006CCEE-4825838C.00092BDE@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+ <ba02ea43-83ce-7e3c-6910-73f2e78f51cf@gmail.com> <OFB904EE00.27B08F2C-ON4825838C.000D6846-4825838C.000E90F7@mxic.com.tw>
+In-Reply-To: <OFB904EE00.27B08F2C-ON4825838C.000D6846-4825838C.000E90F7@mxic.com.tw>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 24 Jan 2019 10:06:56 +0100
+Message-ID: <CAMuHMdUqprbwvO=VaoyY__nOoNhowEZ8A-i+Tb+2iBe8-p=_Hg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] dt-bindings: spi: Document Renesas R-Car Gen3
+ RPC-IF controller bindings
+To:     Mason Yang <masonccyang@mxic.com.tw>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        zhengxunli@mxic.com.tw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 24.01.2019 4:40, masonccyang@mxic.com.tw wrote:
+Hi Mason,
 
->  > > @@ -0,0 +1,46 @@
->  > > +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
->  > > +--------------------------------------------------------------------
->  > > +
->  > > +Required properties:
->  > > +- compatible: should be an SoC-specific compatible value, followed by
->  > > +      "renesas,rcar-gen3-rpc" as a fallback, i.e.,
->  > > +      "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc".
->  > > +      "renesas,r8a7795-rpc" (R-Car H3)
->  > > +      "renesas,r8a7796-rpc" (R-Car M3-W)
->  > > +      "renesas,r8a77965-rpc" (R-Car M3-N)
->  > > +      "renesas,r8a77970-rpc" (R-Car V3M)
->  > > +      "renesas,r8a77980-rpc" (R-Car V3H)
->  > > +      "renesas,r8a77990-rpc" (R-Car E3)
->  > > +      "renesas,r8a77995-rpc" (R-Car D3)
->  > > +- reg: should contain three register areas:
->  >
->  >    The driver now handles "dirmap" and "wbuf" resources as optional --
->  > you need to document that.
->  >
-> 
-> Why ?
+On Thu, Jan 24, 2019 at 3:39 AM <masonccyang@mxic.com.tw> wrote:
+> > "Marek Vasut" <marek.vasut@gmail.com>
+> > 2019/01/24 上午 09:54
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
+> > rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> > > new file mode 100644
+> > > index 0000000..305bd10
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> > > @@ -0,0 +1,46 @@
+> > > +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
+> > > +--------------------------------------------------------------------
+> > > +
+> > > +Required properties:
+> > > +- compatible: should be an SoC-specific compatible value, followed by
+> > > +      "renesas,rcar-gen3-rpc" as a fallback, i.e.,
+> > > +      "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc".
+> > > +      "renesas,r8a7795-rpc"   (R-Car H3)
+> > > +      "renesas,r8a7796-rpc"   (R-Car M3-W)
+> > > +      "renesas,r8a77965-rpc"   (R-Car M3-N)
+> > > +      "renesas,r8a77970-rpc"   (R-Car V3M)
+> > > +      "renesas,r8a77980-rpc"   (R-Car V3H)
+> > > +      "renesas,r8a77990-rpc"   (R-Car E3)
+> > > +      "renesas,r8a77995-rpc"   (R-Car D3)
+> >
+> > Was it tested on all of those SoCs and do we already handle all the
+> > quirks of those ?
+>
+> These are R-Car Gen3 series and I list these by Geert's comments,
+> or I misunderstand Geert's comments ?
 
-    Because the driver treats "dirmap" and "wbuf" as optional resources.
+I think you misunderstood. Typically we only list the SoC-specific
+compatible values for SoCs that have been tested with the driver.
+So for now I'd go with:
 
-[...]
+    - compatible: should be an SoC-specific compatible value, followed by
+                  "renesas,rcar-gen3-rpc" as a fallback.
+                  Supported SoC-specific values are:
+                    - "renesas,r8a77995-rpc"   (R-Car D3)
 
-> best regards,
-> Mason
+The list can be extended when the driver has been tested/enhanced to
+support more SoC types.
 
-MBR, Sergei
+Does that sound OK?
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
