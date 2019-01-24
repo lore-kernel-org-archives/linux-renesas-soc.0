@@ -2,151 +2,164 @@ Return-Path: <SRS0=drmD=QA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B4FC282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 10:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103FCC282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D937218AD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 10:24:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D193621855
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Tx8WMpCE"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="x+Utd+c4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726041AbfAXKY0 (ORCPT
+        id S1727838AbfAXL1p (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:24:26 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38833 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbfAXKY0 (ORCPT
+        Thu, 24 Jan 2019 06:27:45 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38321 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbfAXL1p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:24:26 -0500
-Received: by mail-lj1-f194.google.com with SMTP id c19-v6so4737683lja.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Jan 2019 02:24:24 -0800 (PST)
+        Thu, 24 Jan 2019 06:27:45 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a8so4029668lfk.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Jan 2019 03:27:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=F/R3ze9ZdwqokKpW1o5JVl6L915c9y8awDXkEmtSF8M=;
-        b=Tx8WMpCEAzTD1e4ilODN0eDGTH6+jUY8Vmkjn7ifN1Np1llg4/8BATgQ3PfYu5ZaPu
-         HjXmnuNl3eDRYGGeDEN/YiruiPn7tP3+ISsLVjVuEHekVCehNDtfH8pFRFdH4nCmMLYI
-         jcESpny/aSNQ9meKAVOP6QU1gkqUGlHskD5Zze0CuFPrtU5dhq8GT6DRX7lTVtXT9uSt
-         jSemLU5uB89l2mPfvLgkF1BqNZIJKAEsrOjXSLMLsoIXS0b0/G0rBYnsFOB/8wwZ+07k
-         jbZDoQpz1fhbnHewdgVl+UyS7KF4R2MkUxDzUgyd4gv72VceyzblHRc5Of7ZH7Tig46v
-         aRTw==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VrZZaCNJA5LxCq/2HDw9sOlVtJiJiEbnl+FPXNsPEw8=;
+        b=x+Utd+c4Vcgp+tlgdQ5vG1UZ7Mixr6id7Ysyj0LD5JIhz4B2x5lithWgqdRKu7fA3S
+         EPRSf87H7q21xTC02SMkosLB2jQ0R56ooILHlgNswzppUMn6r4AToKrbdtsqHpBOpe6b
+         kzIz3RlPvpGK5E80PVQfp9mjbYvPyk76xG9edAaTaZjrXRs3YXtsoCLvG6RRHQEVg/IU
+         8ryZsubsp/cjkdgQKvreYYPhZlbM5J2fqW0kJzPvooet5DCjGOGbDvhy7qtA9f/SBz5X
+         sopOoEsjUfMGMytAlwmzTJQDsJlLAhTYYsA53Lya9wcmVvjtPGbNTK+QccxzrSs6zluC
+         wu8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=F/R3ze9ZdwqokKpW1o5JVl6L915c9y8awDXkEmtSF8M=;
-        b=WfdUnejXwbp1Mz0hygeUjYTEg+PK2JPm/8AA5GYg7mg30UnlURnckbIoVs41ZuWKIS
-         OCvEUJPXR+4XDHUvr6FjEmOwlh/78f7scAaOAVBmfTC6eY2gyY1V1J5VaFfRt5+hoEPX
-         UlhV7fGPMfeDrbAdJNKoxOyWYrZsNSaim3Lkoc/f6x4SYvGsSsDSAfrJfa4PZuieW3tG
-         058o+BZWgm8Li5kb/2X9sFFG2ckHBxO+R1bVdNEr6lUJzHCRnxIIvuLCoQoM7a6CqBQt
-         EtwwKmk/x1QLjDUOYdv9YLZnVl6YkIU4QtLAVMwnPdyh37OpMDUmDQh9bkSxXzyo6Tpu
-         AucQ==
-X-Gm-Message-State: AJcUukffHgH2iFaw9GjE4k6zxLwKhQ1bFOkcA1A3wMu0zCdV7dQt2xOl
-        Yh6MGukuN1EBDbQulQP3CBxz/Q==
-X-Google-Smtp-Source: ALg8bN5y7hAzqmGcV6cWU8iA20fwQAZVRK7fcG/Uf1IN11NoB2cfUNrSBZXqvjrcqBY3MUHJJsKhMg==
-X-Received: by 2002:a2e:8446:: with SMTP id u6-v6mr4971196ljh.74.1548325463789;
-        Thu, 24 Jan 2019 02:24:23 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id n8-v6sm1005233lji.90.2019.01.24.02.24.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 02:24:23 -0800 (PST)
-Date:   Thu, 24 Jan 2019 11:24:22 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: renesas: enable HS400 on R-Car Gen3
-Message-ID: <20190124102422.GT4127@bigcity.dyn.berto.se>
-References: <20181031233125.2800-1-niklas.soderlund@ragnatech.se>
- <20181101194528.GS2433@kunai>
- <20181102115718.7alk6psbkg4sdqtj@verge.net.au>
- <20181205204628.wvc2d4zfynbrztgq@ninjato>
- <20181205213613.GA20406@bigcity.dyn.berto.se>
- <20181207205204.GF17972@bigcity.dyn.berto.se>
- <CAMuHMdWH3G-80Ay=xi+HhRFMTQ=f6idDLFXt94sj5GmppC55Uw@mail.gmail.com>
- <20181218102412.4h3iyevlrmhhnjds@verge.net.au>
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=VrZZaCNJA5LxCq/2HDw9sOlVtJiJiEbnl+FPXNsPEw8=;
+        b=sV5HN5p//MBE+WVO4frpLQkt6n028hpNT45b6e2nLwZ44c8lnMJwG1DDSI+k4ChSaC
+         okMVghMNID4jP7Dw68VzyZQ7wKX6CjcwDGfbVQk5BCJ7NKMIF5Fp7e0tRQG2Q9qPXk1h
+         jds1v270+fZ7CfNZYyj/KFDzcEUU3MW59HeLsq87EJr5wZfk+d1Gh+34jyhjE9FiNAM5
+         VPBOpF1KP04d4HqZXNGt7zsJ8GYg+VGWptlOgFDNTAafDH5JuYz2sgpTLBVyN90ZBoTU
+         FTga3bxUTJyxZgjlOD9DqCrikb5RzEP2mn3Qy1/W76xk5r/v4ltmUsXp5NvYoolyolF3
+         7P2g==
+X-Gm-Message-State: AJcUukcGAR0fyVdVmmv3/cuaDdKOJ+MEV570Ap5ApyWGNN1KAQNMpZMl
+        R2SfyCv2CP4ej4pap1zjW6dHIw==
+X-Google-Smtp-Source: ALg8bN40dyzhz2BmPaNw9DhHDY/jtYrDqoLHqB4qs3h2So+nVC3xn2/wxhAfSYTbjfT8+gp3+p6BMA==
+X-Received: by 2002:a19:7d42:: with SMTP id y63mr5012602lfc.47.1548329262921;
+        Thu, 24 Jan 2019 03:27:42 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.84.179])
+        by smtp.gmail.com with ESMTPSA id s3-v6sm963489lje.73.2019.01.24.03.27.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 03:27:41 -0800 (PST)
+Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     masonccyang@mxic.com.tw
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        zhengxunli@mxic.com.tw
+References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
+ <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
+ <12af2632-491d-0e01-66c9-0ead4f9d985a@cogentembedded.com>
+ <OFC86383C3.5347178A-ON4825838C.00093E95-4825838C.000B9D6F@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <1c47e6ba-66ac-49c5-1dc5-a441f5a8b42c@cogentembedded.com>
+Date:   Thu, 24 Jan 2019 14:27:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181218102412.4h3iyevlrmhhnjds@verge.net.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <OFC86383C3.5347178A-ON4825838C.00093E95-4825838C.000B9D6F@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+On 01/24/2019 05:06 AM, masonccyang@mxic.com.tw wrote:
 
-On 2018-12-18 11:24:13 +0100, Simon Horman wrote:
-> On Tue, Dec 18, 2018 at 10:07:13AM +0100, Geert Uytterhoeven wrote:
-> > Hi Niklas, Simon,
-> > 
-> > On Fri, Dec 7, 2018 at 9:52 PM Niklas Söderlund
-> > <niklas.soderlund@ragnatech.se> wrote:
-> > > On 2018-12-05 22:36:13 +0100, Niklas Söderlund wrote:
-> > > > On 2018-12-05 21:46:28 +0100, Wolfram Sang wrote:
-> > > > > On Fri, Nov 02, 2018 at 12:57:19PM +0100, Simon Horman wrote:
-> > > > > > On Thu, Nov 01, 2018 at 08:45:29PM +0100, Wolfram Sang wrote:
-> > > > > > >
-> > > > > > > > This patch have quiet a few dependencies I'm afraid, let me know if you
-> > > > > > > > wish to be notified once they all upstream. I don't think it's a good
-> > > > > > > > idea to pick this up before all dependencies are resolved.
-> > > > > > >
-> > > > > > > Yes, we should do that. Ping Simon once all dependencies are in next. It
-> > > > > > > is still fine to have this patch here in case people want to test. BTW
-> > > > > > > did you mention your branch somewhere where you collected all these
-> > > > > > > patches to make HS400 working/enabled?
-> > > > > > >
-> > > > > > > For this patch already:
-> > > > > > >
-> > > > > > > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > > > > > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > > > >
-> > > > > > Thanks, I am marking this as deferred.
-> > > > > >
-> > > > > > Please repost or ping me once the dependencies are present in
-> > > > > > an rc release.
-> > > > >
-> > > > > Niklas, are we done now, so we can ask Simon to pick up the DTS change?
-> > > > >
-> > > >
-> > > > Almost :-)
-> > > >
-> > > > I'm  waiting for Geert to take the SD quirk patches before pinging Simon
-> > > > to take this one. Spoke to him today about that so I hope it will not be
-> > > > to long.
-> > > >
-> > >
-> > > I just confirmation that the clock patches have been pulled into
-> > > clk-next so this patch is ready to be consumed by you Simon.
-> > >
-> > > Would it be possible to get this in this cycle or is it to late? I know
-> > > you wished to close your tree for v4.21 at the end of this week which it
-> > > technically is now ;-)
-> > 
-> > This patch seems to depend on both the clock patches, and mmc/next.
-> > Else the kernel hangs with an rcu check :-(
-> > 
-> > Hence please drop, and requeue in renesas-devel after the release of v4.21-rc1.
+>> > +// SPDX-License-Identifier: GPL-2.0
+>> > +//
+>> > +// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
+>> > +// Copyright (C) 2018 Macronix International Co., Ltd.
+>> > +//
+>> > +// R-Car Gen3 RPC-IF SPI/QSPI/Octa driver
+>>
+>>    Do we really support Octa?
 > 
-> Thanks, dropped and marked as deferred.
+> yes and it needs to patch spi-nor layer and RPC driver for sure.
+
+   It?
+
+>> > +//
+>> > +// Authors:
+>> > +//   Mason Yang <masonccyang@mxic.com.tw>
+>> > +//
+>> [...]
+>> > +#include <asm/unaligned.h>
+>> [...]
+>> > +   } else if (rx_buf) {
+>> > +      //
+>> > +      // RPC-IF spoils the data for the commands without an address
+>> > +      // phase (like RDID) in the manual mode, so we'll have to work
+>> > +      // around this issue by using the external address space read
+>> > +      // mode instead.
+>> > +      //
+>> > +      if (!(smenr & RPC_SMENR_ADE(0xf))) {
+>> > +         regmap_update_bits(rpc->regmap, RPC_CMNCR,
+>> > +                  RPC_CMNCR_MD, 0);
+>> > +         regmap_write(rpc->regmap, RPC_DRCR,
+>> > +                 RPC_DRCR_RBURST(32) | RPC_DRCR_RBE);
+>> > +         regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
+>> > +         regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
+>> > +         regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
+>> > +         regmap_write(rpc->regmap, RPC_DROPR, 0);
+>> > +         regmap_write(rpc->regmap, RPC_DRENR, smenr);
+>> > +         memcpy_fromio(rx_buf, rpc->dirmap, rpc->xferlen);
+>>
+>>    Just noticed: if rpc->dirmap is NULL (which is now allowed), we
+>> have a kernel oops
+>> here. :-(
 > 
-> Niklas, please repost or ping me once the dependencies are present in an RC
-> release.
+> Do you patch your spi-mem.c ?
 
-Ping.
+   What do yuo mean? The only extra patch I have to apply now to renesas.git repo's devel
+branch is "mtd: devices: m25p80: Use the spi-mem dirmap API"...
 
--- 
-Regards,
-Niklas Söderlund
+> both dirmap_create() in your rpc driver and spi-mem layer should handle it well.
+
+   I just saw that you don't fail the driver's probe() method if devm_ioremap_resource()
+fails for the "dirmap" and "wbuf" resources...
+
+>> [...]
+>> > +static const struct of_device_id rpc_spi_of_ids[] = {
+>> > +   { .compatible = "renesas,r8a77995-rpc", },
+>>
+>>    Why (if it has no differences with the generic gen3 value below)?
+>> Please remove.
+> 
+> By Geert's comments in dts,
+> 
+>          rpc: rpc@ee200000 {
+>                 compatible = "renesas,r8a7795-rpc", "renesas,rcar-gen3-rpc";
+>                 reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
+>                       <0 0xee208000 0 0x100>;
+> 
+> I modified it to "renesas,r8a77995-rpc" because this is Soc I developed and validated.
+
+  Hopefully this matter is cleared up by Geert... :-)
+
+> thanks,
+> Mason
+
+MBR, Sergei
