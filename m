@@ -7,42 +7,41 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70445C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC49C282C5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4199A2184C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A0D2184C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 15:13:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="kH4Tt23r"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="kHcObFXk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfAXPNn (ORCPT
+        id S1728421AbfAXPNo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:13:43 -0500
+        Thu, 24 Jan 2019 10:13:44 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:39115 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbfAXPNm (ORCPT
+        with ESMTP id S1727996AbfAXPNo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:13:42 -0500
+        Thu, 24 Jan 2019 10:13:44 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 4EB5425BF0F;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 5287525BF10;
         Fri, 25 Jan 2019 02:12:45 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548342765; bh=OaIyUEhZsQRxBF1EXMbctlHHqluhDcSjbQh+ocIpD4I=;
+        t=1548342765; bh=uUf+SCZINUCWcypl+uPU6k47SwFXZFf+G9sywp6Szak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kH4Tt23r//gHNdAuNchjGjldEE3uVHROd6th9ZTmXDubLdCOu8Xa4vDU3r3j8ZNmm
-         tcGnp8/ODjPzz1PlfJZScOYz7TamvjewuQOEzkSB8ZfenGun6Ji/9zmKlLO5S4RKpw
-         ndjia24LV+pGcx8pw60es8kybR4TZRUGDpQVGFBw=
+        b=kHcObFXkJ1XqiEFFXLl80EhIT5GNBvY0eIPpZfN09gR/PCFE+tNIXi4Mbek8BzLdj
+         GGAB2dAhJ2aXmOF9az0T/4nwLgcvHVDzARiVmqpGK906W+s5qPrg3LaJQvY82Eczex
+         e6RyNRFitIwlP6z1lS+YaFudNMFU2kNJ7r9sRfZo=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 91DE7940E6B; Thu, 24 Jan 2019 16:12:41 +0100 (CET)
+        id B5C76940E6D; Thu, 24 Jan 2019 16:12:41 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 42/44] arm64: dts: renesas: r8a774c0: Enable DMA for SCIF2
-Date:   Thu, 24 Jan 2019 16:12:36 +0100
-Message-Id: <d9fd4e5814079ba4a2111d7d792a24bf8f747500.1548233325.git.horms+renesas@verge.net.au>
+Subject: [PATCH 44/44] arm64: dts: renesas: r8a77990: ebisu: Enable HS400 of SDHI3
+Date:   Thu, 24 Jan 2019 16:12:38 +0100
+Message-Id: <3e279a1d44d73aea9ce428ae68e76bf85117031a.1548233325.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1548233325.git.horms+renesas@verge.net.au>
 References: <cover.1548233325.git.horms+renesas@verge.net.au>
@@ -51,31 +50,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+Enable HS400 of SDHI3 using the corresponding DT property.
+No further changes are required.
 
-SCIF2 on RZ/G2E can be used with both DMAC1 and DMAC2.
-
-Fixes: 1b24f9e8ea3ff95f ("arm64: dts: renesas: r8a774c0: Add SCIF and HSCIF nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 3970aafeee12..f2e390f7f1d5 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -941,6 +941,9 @@
- 				 <&cpg CPG_CORE R8A774C0_CLK_S3D1C>,
- 				 <&scif_clk>;
- 			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x13>, <&dmac1 0x12>,
-+			       <&dmac2 0x13>, <&dmac2 0x12>;
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
- 			resets = <&cpg 310>;
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index 89383aa35d65..144c0820cf60 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -695,6 +695,7 @@
+ 	vmmc-supply = <&reg_3p3v>;
+ 	vqmmc-supply = <&reg_1p8v>;
+ 	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
+ 	bus-width = <8>;
+ 	non-removable;
+ 	status = "okay";
 -- 
 2.11.0
 
