@@ -2,188 +2,86 @@ Return-Path: <SRS0=drmD=QA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33455C282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1382DC282C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F272C2184C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGwnshR8"
+	by mail.kernel.org (Postfix) with ESMTP id CD3B920663
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548359173;
+	bh=PKvV/N4Biwko2Tz2hIYrjFcs0LHlvSmPVYS9bvtY9fI=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=xifwjqVTe2+/Z/0PY0X7rDpLWiti2UyBMG/bOIzq1YwSbKC8EiJ4BC82TnBG5N97Z
+	 gApR06qk8T/jSN2VGm+iAxyfX05dPdmGNo3jPrLD1kNZQu/cbYmGcY/ahGT62Ate5E
+	 4wS5kGoSVYwi2gBMKRFM3DzG14efdS9xOjOHVK9A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbfAXR0P (ORCPT
+        id S1731906AbfAXTqN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:26:15 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38239 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728610AbfAXR0P (ORCPT
+        Thu, 24 Jan 2019 14:46:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733294AbfAXToN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:26:15 -0500
-Received: by mail-oi1-f196.google.com with SMTP id a77so5487497oii.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 24 Jan 2019 09:26:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0unjHn1gxYMx6t77T8Kb8YoPBspCVOmZM2J/r/G0Vgk=;
-        b=rGwnshR84SayAzgZplI4HFzIkaZERW/nt0lbD09FhDz6NMF8zUa8BRWBlxgu9DR8b0
-         S0RBxYG8goaSGn6WBRAHQ8JttB4MaCv0cyelt2Q3YJrB2dLFrwnIQlbRGIwcjizogZZq
-         0BVZv65McTyRbghLfwZxykRjmhe+J7n9DDMcjvMQtisNW5s3o+tMNTI802uOiPNOxYr3
-         yqrN5j03HWri1mgL8xkUvtFq88GzcbuHTgVBwB0Rxkckw7IfHrxAbsfHdea9fZ/uaAAk
-         /C2L8Qbr2E5tQW3aAYW6VDgkzw5+3DOENz9ORamLr9+xITzBQ+0NS+g0/o/GQXbNs2Gp
-         ExBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0unjHn1gxYMx6t77T8Kb8YoPBspCVOmZM2J/r/G0Vgk=;
-        b=E8qq99dsarM8yIwNTcM0aa1Am4PRlY9paNrpp3dE9KVPFGEC0mRmbk++bIFckUE82b
-         Oj5Mz8g5iyyqZjw7dsqfO+4z/OOIx5PjF5XU8FCsg91Ju+JBfbLT5DWjvu96182O/LMP
-         LZQz+ML/dyVPnBzqJ4jEGcSxLBZ3E1/UxJ034o09kWYTMczklZKeI0FP6EwJBPYsyvPJ
-         CQFmBM9bNO+z+8BVyEiKOkVsA8K896L+6qAaPVmHwa5sZ6Q4d6BMjITDCiyZtwJYYO80
-         6tM4rhGMO0JIUULCFFIsHe6qHeMG5WdRqgmXHbOqQ5gRxO6Lj9LAmWFf6WI5z62joklp
-         bYJw==
-X-Gm-Message-State: AJcUukfgQe4CZNU4amwMrkbvSO+f37hB/+1IZU8/Mfs57ihAxrg3fb7L
-        fXNO8wP3Lk35wu83RCndwmFTJZtloOkBfit6yxg=
-X-Google-Smtp-Source: ALg8bN4GIaIgmY1Gf1jelRaATQZZXQ6HE+SjI/tonO8ZiPCDnvRWn+GzV0lm323BPurmOf4IYfTm6z3VVJsQneovhmk=
-X-Received: by 2002:aca:b4c5:: with SMTP id d188mr1740600oif.309.1548350774289;
- Thu, 24 Jan 2019 09:26:14 -0800 (PST)
+        Thu, 24 Jan 2019 14:44:13 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1375D218E2;
+        Thu, 24 Jan 2019 19:44:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548359053;
+        bh=PKvV/N4Biwko2Tz2hIYrjFcs0LHlvSmPVYS9bvtY9fI=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=A3u4wN6DOijip7rhRYuwVtTiQH2igFLuZ6OD+UC13Jwp2yBqq6ESDfKMPBwO+cTdx
+         ckQAqcuiaTzqOKsjDj5mw7aCNBmWD9kAV6dQqv11QRpXnpZiuzVmGXJShxeiNDsw3a
+         feLQfYqyJZzCMUa5jzGvaCuKxbklidcYQfuqJtfk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1547553668-4359-1-git-send-email-ykaneko0929@gmail.com> <CAMuHMdVcXjeOGr-Xtvhyi5G2d7Y4Gi-raBPK+Qja02-KxBE0wQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVcXjeOGr-Xtvhyi5G2d7Y4Gi-raBPK+Qja02-KxBE0wQ@mail.gmail.com>
-From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Date:   Fri, 25 Jan 2019 02:26:03 +0900
-Message-ID: <CAH1o70JnSx_X+e4fridbAd31bDjLbOhvF7diK39qckFcSLTO4Q@mail.gmail.com>
-Subject: Re: [PATCH/RFT] pinctrl: sh-pfc: r8a77990: Add DRIF pins, groups and functions
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [git pull] clk: renesas: Updates for v5.1
+References: <20190124152607.30916-1-geert+renesas@glider.be>
+User-Agent: alot/0.8
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190124152607.30916-1-geert+renesas@glider.be>
+Message-ID: <154835905238.136743.13357821231243537859@swboyd.mtv.corp.google.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Date:   Thu, 24 Jan 2019 11:44:12 -0800
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert-san,
+Quoting Geert Uytterhoeven (2019-01-24 07:26:07)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee50=
+0c:
+>=20
+>   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v5.1-tag1
+>=20
+> for you to fetch changes up to d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
+>=20
+>   clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08=
+ +0100)
+>=20
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v5.1
+>=20
+>   - Add missing CANFD clocks on RZ/G2M and RZ/G2E,
+>   - Correct the DU (display unit) parent clock on RZ/G2E.
+>=20
 
-Thanks for your review!
-
-2019=E5=B9=B41=E6=9C=8817=E6=97=A5(=E6=9C=A8) 1:38 Geert Uytterhoeven <geer=
-t@linux-m68k.org>:
->
-> Hi Kaneko-san,
->
-> On Tue, Jan 15, 2019 at 1:01 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> =
-wrote:
-> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >
-> > This patch adds DRIF{0,1,2,3} pins, groups and functions to the R8A7799=
-0
-> > SoC.
-> >
-> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-> > +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
->
-> > @@ -3523,7 +3716,7 @@ enum {
-> >  };
-> >
-> >  static const struct {
-> > -       struct sh_pfc_pin_group common[241];
-> > +       struct sh_pfc_pin_group common[262];
-> >         struct sh_pfc_pin_group automotive[2];
-> >  } pinmux_groups =3D {
-> >         .common =3D {
-> > @@ -3555,6 +3748,27 @@ enum {
-> >                 SH_PFC_PIN_GROUP(can0_data),
-> >                 SH_PFC_PIN_GROUP(can1_data),
-> >                 SH_PFC_PIN_GROUP(can_clk),
-> > +               SH_PFC_PIN_GROUP(drif0_ctrl_a),
-> > +               SH_PFC_PIN_GROUP(drif0_data0_a),
-> > +               SH_PFC_PIN_GROUP(drif0_data1_a),
-> > +               SH_PFC_PIN_GROUP(drif0_ctrl_b),
-> > +               SH_PFC_PIN_GROUP(drif0_data0_b),
-> > +               SH_PFC_PIN_GROUP(drif0_data1_b),
-> > +               SH_PFC_PIN_GROUP(drif1_ctrl),
-> > +               SH_PFC_PIN_GROUP(drif1_data0),
-> > +               SH_PFC_PIN_GROUP(drif1_data1),
-> > +               SH_PFC_PIN_GROUP(drif2_ctrl_a),
-> > +               SH_PFC_PIN_GROUP(drif2_data0_a),
-> > +               SH_PFC_PIN_GROUP(drif2_data1_a),
-> > +               SH_PFC_PIN_GROUP(drif2_ctrl_b),
-> > +               SH_PFC_PIN_GROUP(drif2_data0_b),
-> > +               SH_PFC_PIN_GROUP(drif2_data1_b),
-> > +               SH_PFC_PIN_GROUP(drif3_ctrl_a),
-> > +               SH_PFC_PIN_GROUP(drif3_data0_a),
-> > +               SH_PFC_PIN_GROUP(drif3_data1_a),
-> > +               SH_PFC_PIN_GROUP(drif3_ctrl_b),
-> > +               SH_PFC_PIN_GROUP(drif3_data0_b),
-> > +               SH_PFC_PIN_GROUP(drif3_data1_b),
->
-> As RZ/G2E (r8a774c0) does not have the DRIF modules, the DRIF pin groups
-> should be added to the automotive section, instead of the common section.
-
-I will do that.
-
->
-> >                 SH_PFC_PIN_GROUP(du_rgb666),
-> >                 SH_PFC_PIN_GROUP(du_rgb888),
-> >                 SH_PFC_PIN_GROUP(du_clk_in_0),
->
-> > @@ -4157,7 +4404,7 @@ enum {
-> >  };
-> >
-> >  static const struct {
-> > -       struct sh_pfc_function common[44];
-> > +       struct sh_pfc_function common[48];
-> >         struct sh_pfc_function automotive[2];
-> >  } pinmux_functions =3D {
-> >         .common =3D {
-> > @@ -4166,6 +4413,10 @@ enum {
-> >                 SH_PFC_FUNCTION(can0),
-> >                 SH_PFC_FUNCTION(can1),
-> >                 SH_PFC_FUNCTION(can_clk),
-> > +               SH_PFC_FUNCTION(drif0),
-> > +               SH_PFC_FUNCTION(drif1),
-> > +               SH_PFC_FUNCTION(drif2),
-> > +               SH_PFC_FUNCTION(drif3),
->
-> Likewise for the DRIF pin functions.
-
-Likewise.
-
->
-> >                 SH_PFC_FUNCTION(du),
-> >                 SH_PFC_FUNCTION(hscif0),
-> >                 SH_PFC_FUNCTION(hscif1),
->
-> The rest looks good to me, so with the above fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
-
-Best regards,
-Kaneko
+Thanks. Pulled into clk-next.
