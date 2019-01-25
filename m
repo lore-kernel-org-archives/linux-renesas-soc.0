@@ -2,234 +2,396 @@ Return-Path: <SRS0=AddW=QB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 079C5C282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5ECC282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 18:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2AB0218CD
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 812B2218B0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 18:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtxEn0T1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbfAYQxO (ORCPT
+        id S1726347AbfAYSCu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:53:14 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:49558 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728503AbfAYQxJ (ORCPT
+        Fri, 25 Jan 2019 13:02:50 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37676 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfAYSCu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:53:09 -0500
-Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id Ugt61z00T3XaVaC01gt6QS; Fri, 25 Jan 2019 17:53:06 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gn4j4-0007Z8-D4; Fri, 25 Jan 2019 17:53:06 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gn4j4-0002FC-CF; Fri, 25 Jan 2019 17:53:06 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 02/10] pinctrl: sh-pfc: Validate pinmux tables at runtime when debugging
-Date:   Fri, 25 Jan 2019 17:52:57 +0100
-Message-Id: <20190125165305.8567-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190125165305.8567-1-geert+renesas@glider.be>
-References: <20190125165305.8567-1-geert+renesas@glider.be>
+        Fri, 25 Jan 2019 13:02:50 -0500
+Received: by mail-pg1-f196.google.com with SMTP id c25so4511265pgb.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Jan 2019 10:02:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Ga+38ODAbRHYv5zJ4K1vSX2g/LaflDELqe2lYf7zPCs=;
+        b=VtxEn0T1wfzkSVNwxr75hUj55qQ9NY1GqU67WBjgvvvOaWSFBdETPKXaEYLNak3oVZ
+         D5P7M+XaCF5XQp4rFDE48QH4sZVSNhJImxdZ4wTsSngRs7lj8FKTAHoe6r+AN5tlUsb5
+         sU8Eg1zYFbPCier99hhGPlEL7mrzMHOm/6El7tjV+L4w0NbPhZoeuf2Pk/599zpo7buZ
+         cw08hAF5SNK/D8ukdYqP8PkYZIjsxIMFV32nLqoGN+vPl72PL33BHAWxKX7P0pdBJ8FH
+         FiEAvOsVUtgyTlcB7MWugP2cFqxNxTeFuMURWJQXOE89+TqSlhvGRgy5hK7/hGIcQ6SY
+         VPGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Ga+38ODAbRHYv5zJ4K1vSX2g/LaflDELqe2lYf7zPCs=;
+        b=Zdx4AQwMgwWGa+tGn1CGvEPOcqMcmW/C3u8okqU9A+asgjkwCpFWSjPc+0CG30EE8P
+         BEIXpILMcs+znJiTIdHC/4S3/ADa61uYq5fFKy8C6KkFBqOYIs9FTXX4pMie0AmdJKad
+         01DOkaDUTSP8LuFTKzUSivmuZBYrCokAgidra8z6PKyDcZkQQ9JoVrCajAeafIUTKPpn
+         /vMaXFysoijZC9EzRo9mSTz95aC2Z1BgIXHEb03uhDR0/g7e9jgwNaAG8HEzOeXr6tYv
+         +tE2x4/2AFOCa6ftoDAyWW9FgxD06ZvOzjVviw4BuHYLISB4qfLc9j7mRZlbUZhmSi/p
+         eq9Q==
+X-Gm-Message-State: AJcUukf18R2aGnWjDPct4LF39yWZ+DAvbV30fBqHYBpEaB1N8k5n2lZs
+        sOBrtnITjEmpNOZQq9/qYspKZC9d
+X-Google-Smtp-Source: ALg8bN5Uimfd3biUkMvWyYMMot7x3Ube8QznRUj8xGOliztmWfq0+1sE71BScpMqUUbidE0T7ZMrWw==
+X-Received: by 2002:a63:61d5:: with SMTP id v204mr10809906pgb.439.1548439368698;
+        Fri, 25 Jan 2019 10:02:48 -0800 (PST)
+Received: from localhost.localdomain (KD118155013174.ppp-bb.dion.ne.jp. [118.155.13.174])
+        by smtp.gmail.com with ESMTPSA id b9sm32009675pfi.118.2019.01.25.10.02.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 25 Jan 2019 10:02:47 -0800 (PST)
+From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Subject: [PATCH/RFT v2] pinctrl: sh-pfc: r8a77990: Add DRIF pins, groups and functions
+Date:   Sat, 26 Jan 2019 03:01:44 +0900
+Message-Id: <1548439304-18908-1-git-send-email-ykaneko0929@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Perform some basic sanity checks on all built-in pinmux tables when
-DEBUG is defined, to help catching bugs early.
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-For now the following checks are included:
-  - Check register and field widths in descriptors for config registers
-    with variable-width fields,
-  - Check relations between pin groups and functions:
-      - All pin functions must refer to existing pin groups,
-      - All pin groups must be referred to by a pin function,
-      - Warn if a pin group is referred to by multiple pin functions
-	(which is OK for backwards-compatibility aliases),
-  - Provide suggestions for reducing table sizes: reserved fields of
-    more than 3 bits can better be split in smaller subfields, as the
-    storage need is proportional to the square of the width of the
-    (sub)field,
+This patch adds DRIF{0,1,2,3} pins, groups and functions to the R8A77990
+SoC.
 
-Note that a dummy non-matching entry is added to the DT match table for
-checking r8a7795es1_pinmux_info, as R-Car H3 ES1.0 is matched using
-soc_device_match() in r8a7795_pinmux_init(), instead of by the DT match
-table.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - Drop RFC state,
-  - Drop validation of fixed-with config register fields, as this is now
-    done at build time,
-  - Check relations between pin groups and functions,
-  - Move compile-test support out,
-  - Move checks depending on enum ID absorption out,
-  - Move call to sh_pfc_check_driver() from sh_pfc_probe() to
-    sh_pfc_init(), so the checks are even performed on non-native
-    platforms when compile-testing.
----
- drivers/pinctrl/sh-pfc/core.c | 123 ++++++++++++++++++++++++++++++++++
- 1 file changed, 123 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index f1cfcc8c65446662..f9371e160872f2b4 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -571,6 +571,13 @@ static const struct of_device_id sh_pfc_of_table[] = {
- 		.compatible = "renesas,pfc-r8a7795",
- 		.data = &r8a7795_pinmux_info,
- 	},
-+#ifdef DEBUG
-+	{
-+		/* For sanity checks only (nothing matches against this) */
-+		.compatible = "renesas,pfc-r8a77950",	/* R-Car H3 ES1.0 */
-+		.data = &r8a7795es1_pinmux_info,
-+	},
-+#endif /* DEBUG */
- #endif
- #ifdef CONFIG_PINCTRL_PFC_R8A7796
- 	{
-@@ -709,6 +716,121 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
- #define DEV_PM_OPS	NULL
- #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+This patch is based on the sh-pfc branch of Geert Uytterhoeven's
+renesas-drivers tree.
+
+v2 [Yoshihiro Kaneko]
+* As suggested by Geert Uytterhoeven
+  - added DRIF pin groups and pin functions to the automotive section
+    instead of the common section.
+
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 255 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 253 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+index 0a9aa62..151640c 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
+@@ -1599,6 +1599,199 @@ enum {
+ 	CANFD1_TX_MARK, CANFD1_RX_MARK,
+ };
  
-+#ifdef DEBUG
-+static bool is0s(const u16 *enum_ids, unsigned int n)
-+{
-+	unsigned int i;
++/* - DRIF0 --------------------------------------------------------------- */
++static const unsigned int drif0_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 7), RCAR_GP_PIN(5, 19),
++};
 +
-+	for (i = 0; i < n; i++)
-+		if (enum_ids[i])
-+			return false;
++static const unsigned int drif0_ctrl_a_mux[] = {
++	RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK,
++};
 +
-+	return true;
-+}
++static const unsigned int drif0_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 17),
++};
 +
-+static unsigned int sh_pfc_errors;
-+static unsigned int sh_pfc_warnings;
++static const unsigned int drif0_data0_a_mux[] = {
++	RIF0_D0_A_MARK,
++};
 +
-+static void sh_pfc_check_cfg_reg(const char *drvname,
-+				 const struct pinmux_cfg_reg *cfg_reg)
-+{
-+	unsigned int i, n, rw, fw;
++static const unsigned int drif0_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 18),
++};
 +
-+	if (cfg_reg->field_width) {
-+		/* Checked at build time */
-+		return;
-+	}
++static const unsigned int drif0_data1_a_mux[] = {
++	RIF0_D1_A_MARK,
++};
 +
-+	for (i = 0, n = 0, rw = 0; (fw = cfg_reg->var_field_width[i]); i++) {
-+		if (fw > 3 && is0s(&cfg_reg->enum_ids[n], 1 << fw)) {
-+			pr_warn("%s: reg 0x%x: reserved field [%u:%u] can be split to reduce table size\n",
-+				drvname, cfg_reg->reg, rw, rw + fw - 1);
-+			sh_pfc_warnings++;
-+		}
-+		n += 1 << fw;
-+		rw += fw;
-+	}
++static const unsigned int drif0_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(3, 12), RCAR_GP_PIN(3, 15),
++};
 +
-+	if (rw != cfg_reg->reg_width) {
-+		pr_err("%s: reg 0x%x: var_field_width declares %u instead of %u bits\n",
-+		       drvname, cfg_reg->reg, rw, cfg_reg->reg_width);
-+		sh_pfc_errors++;
-+	}
-+}
++static const unsigned int drif0_ctrl_b_mux[] = {
++	RIF0_CLK_B_MARK, RIF0_SYNC_B_MARK,
++};
 +
-+static void sh_pfc_check_info(const struct sh_pfc_soc_info *info)
-+{
-+	const struct sh_pfc_function *func;
-+	const char *drvname = info->name;
-+	unsigned int *refcnts;
-+	unsigned int i, j, k;
++static const unsigned int drif0_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(3, 13),
++};
 +
-+	pr_info("Checking %s\n", drvname);
++static const unsigned int drif0_data0_b_mux[] = {
++	RIF0_D0_B_MARK,
++};
 +
-+	/* Check groups and functions */
-+	refcnts = kcalloc(info->nr_groups, sizeof(*refcnts), GFP_KERNEL);
-+	if (!refcnts)
-+		return;
++static const unsigned int drif0_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(3, 14),
++};
 +
-+	for (i = 0; func = &info->functions[i], i < info->nr_functions; i++) {
-+		for (j = 0; j < func->nr_groups; j++) {
-+			for (k = 0; k < info->nr_groups; k++) {
-+				if (!strcmp(func->groups[j],
-+					    info->groups[k].name)) {
-+					refcnts[k]++;
-+					goto next;
-+				}
-+			}
++static const unsigned int drif0_data1_b_mux[] = {
++	RIF0_D1_B_MARK,
++};
 +
-+			pr_err("%s: function %s: group %s not found\n",
-+			       drvname, func->name, func->groups[j]);
-+			sh_pfc_errors++;
++/* - DRIF1 --------------------------------------------------------------- */
++static const unsigned int drif1_ctrl_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 1),
++};
 +
-+next:			;
-+		}
-+	}
++static const unsigned int drif1_ctrl_mux[] = {
++	RIF1_CLK_MARK, RIF1_SYNC_MARK,
++};
 +
-+	for (i = 0; i < info->nr_groups; i++) {
-+		if (!refcnts[i]) {
-+			pr_err("%s: orphan group %s\n", drvname,
-+			       info->groups[i].name);
-+			sh_pfc_errors++;
-+		} else if (refcnts[i] > 1) {
-+			pr_err("%s: group %s referred by %u functions\n",
-+			       drvname, info->groups[i].name, refcnts[i]);
-+			sh_pfc_warnings++;
-+		}
-+	}
++static const unsigned int drif1_data0_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(5, 2),
++};
 +
-+	kfree(refcnts);
++static const unsigned int drif1_data0_mux[] = {
++	RIF1_D0_MARK,
++};
 +
-+	/* Check config register descriptions */
-+	for (i = 0; info->cfg_regs && info->cfg_regs[i].reg; i++)
-+		sh_pfc_check_cfg_reg(drvname, &info->cfg_regs[i]);
-+}
++static const unsigned int drif1_data1_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(5, 3),
++};
 +
-+static void sh_pfc_check_driver(const struct platform_driver *pdrv)
-+{
-+	unsigned int i;
++static const unsigned int drif1_data1_mux[] = {
++	RIF1_D1_MARK,
++};
 +
-+	pr_warn("Checking builtin pinmux tables\n");
++/* - DRIF2 --------------------------------------------------------------- */
++static const unsigned int drif2_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 7),
++};
 +
-+	for (i = 0; pdrv->id_table[i].name[0]; i++)
-+		sh_pfc_check_info((void *)pdrv->id_table[i].driver_data);
++static const unsigned int drif2_ctrl_a_mux[] = {
++	RIF2_CLK_A_MARK, RIF2_SYNC_A_MARK,
++};
 +
-+#ifdef CONFIG_OF
-+	for (i = 0; pdrv->driver.of_match_table[i].compatible[0]; i++)
-+		sh_pfc_check_info(pdrv->driver.of_match_table[i].data);
-+#endif
++static const unsigned int drif2_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(2, 8),
++};
 +
-+	pr_warn("Detected %u errors and %u warnings\n", sh_pfc_errors,
-+		sh_pfc_warnings);
-+}
++static const unsigned int drif2_data0_a_mux[] = {
++	RIF2_D0_A_MARK,
++};
 +
-+#else /* !DEBUG */
-+static inline void sh_pfc_check_driver(struct platform_driver *pdrv) {}
-+#endif /* !DEBUG */
++static const unsigned int drif2_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(2, 9),
++};
 +
- static int sh_pfc_probe(struct platform_device *pdev)
- {
- #ifdef CONFIG_OF
-@@ -840,6 +962,7 @@ static struct platform_driver sh_pfc_driver = {
++static const unsigned int drif2_data1_a_mux[] = {
++	RIF2_D1_A_MARK,
++};
++
++static const unsigned int drif2_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(1, 4), RCAR_GP_PIN(1, 5),
++};
++
++static const unsigned int drif2_ctrl_b_mux[] = {
++	RIF2_CLK_B_MARK, RIF2_SYNC_B_MARK,
++};
++
++static const unsigned int drif2_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(1, 6),
++};
++
++static const unsigned int drif2_data0_b_mux[] = {
++	RIF2_D0_B_MARK,
++};
++
++static const unsigned int drif2_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(1, 7),
++};
++
++static const unsigned int drif2_data1_b_mux[] = {
++	RIF2_D1_B_MARK,
++};
++
++/* - DRIF3 --------------------------------------------------------------- */
++static const unsigned int drif3_ctrl_a_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 11),
++};
++
++static const unsigned int drif3_ctrl_a_mux[] = {
++	RIF3_CLK_A_MARK, RIF3_SYNC_A_MARK,
++};
++
++static const unsigned int drif3_data0_a_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(2, 12),
++};
++
++static const unsigned int drif3_data0_a_mux[] = {
++	RIF3_D0_A_MARK,
++};
++
++static const unsigned int drif3_data1_a_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(2, 13),
++};
++
++static const unsigned int drif3_data1_a_mux[] = {
++	RIF3_D1_A_MARK,
++};
++
++static const unsigned int drif3_ctrl_b_pins[] = {
++	/* CLK, SYNC */
++	RCAR_GP_PIN(0, 8), RCAR_GP_PIN(0, 9),
++};
++
++static const unsigned int drif3_ctrl_b_mux[] = {
++	RIF3_CLK_B_MARK, RIF3_SYNC_B_MARK,
++};
++
++static const unsigned int drif3_data0_b_pins[] = {
++	/* D0 */
++	RCAR_GP_PIN(0, 10),
++};
++
++static const unsigned int drif3_data0_b_mux[] = {
++	RIF3_D0_B_MARK,
++};
++
++static const unsigned int drif3_data1_b_pins[] = {
++	/* D1 */
++	RCAR_GP_PIN(0, 11),
++};
++
++static const unsigned int drif3_data1_b_mux[] = {
++	RIF3_D1_B_MARK,
++};
++
+ /* - DU --------------------------------------------------------------------- */
+ static const unsigned int du_rgb666_pins[] = {
+ 	/* R[7:2], G[7:2], B[7:2] */
+@@ -3574,7 +3767,7 @@ enum {
  
- static int __init sh_pfc_init(void)
- {
-+	sh_pfc_check_driver(&sh_pfc_driver);
- 	return platform_driver_register(&sh_pfc_driver);
- }
- postcore_initcall(sh_pfc_init);
+ static const struct {
+ 	struct sh_pfc_pin_group common[245];
+-	struct sh_pfc_pin_group automotive[2];
++	struct sh_pfc_pin_group automotive[23];
+ } pinmux_groups = {
+ 	.common = {
+ 		SH_PFC_PIN_GROUP(audio_clk_a),
+@@ -3826,6 +4019,27 @@ enum {
+ 	.automotive = {
+ 		SH_PFC_PIN_GROUP(canfd0_data),
+ 		SH_PFC_PIN_GROUP(canfd1_data),
++		SH_PFC_PIN_GROUP(drif0_ctrl_a),
++		SH_PFC_PIN_GROUP(drif0_data0_a),
++		SH_PFC_PIN_GROUP(drif0_data1_a),
++		SH_PFC_PIN_GROUP(drif0_ctrl_b),
++		SH_PFC_PIN_GROUP(drif0_data0_b),
++		SH_PFC_PIN_GROUP(drif0_data1_b),
++		SH_PFC_PIN_GROUP(drif1_ctrl),
++		SH_PFC_PIN_GROUP(drif1_data0),
++		SH_PFC_PIN_GROUP(drif1_data1),
++		SH_PFC_PIN_GROUP(drif2_ctrl_a),
++		SH_PFC_PIN_GROUP(drif2_data0_a),
++		SH_PFC_PIN_GROUP(drif2_data1_a),
++		SH_PFC_PIN_GROUP(drif2_ctrl_b),
++		SH_PFC_PIN_GROUP(drif2_data0_b),
++		SH_PFC_PIN_GROUP(drif2_data1_b),
++		SH_PFC_PIN_GROUP(drif3_ctrl_a),
++		SH_PFC_PIN_GROUP(drif3_data0_a),
++		SH_PFC_PIN_GROUP(drif3_data1_a),
++		SH_PFC_PIN_GROUP(drif3_ctrl_b),
++		SH_PFC_PIN_GROUP(drif3_data0_b),
++		SH_PFC_PIN_GROUP(drif3_data1_b),
+ 	}
+ };
+ 
+@@ -3880,6 +4094,39 @@ enum {
+ 	"canfd1_data",
+ };
+ 
++static const char * const drif0_groups[] = {
++	"drif0_ctrl_a",
++	"drif0_data0_a",
++	"drif0_data1_a",
++	"drif0_ctrl_b",
++	"drif0_data0_b",
++	"drif0_data1_b",
++};
++
++static const char * const drif1_groups[] = {
++	"drif1_ctrl",
++	"drif1_data0",
++	"drif1_data1",
++};
++
++static const char * const drif2_groups[] = {
++	"drif2_ctrl_a",
++	"drif2_data0_a",
++	"drif2_data1_a",
++	"drif2_ctrl_b",
++	"drif2_data0_b",
++	"drif2_data1_b",
++};
++
++static const char * const drif3_groups[] = {
++	"drif3_ctrl_a",
++	"drif3_data0_a",
++	"drif3_data1_a",
++	"drif3_ctrl_b",
++	"drif3_data0_b",
++	"drif3_data1_b",
++};
++
+ static const char * const du_groups[] = {
+ 	"du_rgb666",
+ 	"du_rgb888",
+@@ -4219,7 +4466,7 @@ enum {
+ 
+ static const struct {
+ 	struct sh_pfc_function common[45];
+-	struct sh_pfc_function automotive[2];
++	struct sh_pfc_function automotive[6];
+ } pinmux_functions = {
+ 	.common = {
+ 		SH_PFC_FUNCTION(audio_clk),
+@@ -4271,6 +4518,10 @@ enum {
+ 	.automotive = {
+ 		SH_PFC_FUNCTION(canfd0),
+ 		SH_PFC_FUNCTION(canfd1),
++		SH_PFC_FUNCTION(drif0),
++		SH_PFC_FUNCTION(drif1),
++		SH_PFC_FUNCTION(drif2),
++		SH_PFC_FUNCTION(drif3),
+ 	}
+ };
+ 
 -- 
-2.17.1
+1.9.1
 
