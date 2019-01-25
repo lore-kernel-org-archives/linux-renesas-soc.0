@@ -1,87 +1,65 @@
-Return-Path: <SRS0=drmD=QA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=AddW=QB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1382DC282C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 085C0C282C0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 10:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD3B920663
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359173;
-	bh=PKvV/N4Biwko2Tz2hIYrjFcs0LHlvSmPVYS9bvtY9fI=;
-	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=xifwjqVTe2+/Z/0PY0X7rDpLWiti2UyBMG/bOIzq1YwSbKC8EiJ4BC82TnBG5N97Z
-	 gApR06qk8T/jSN2VGm+iAxyfX05dPdmGNo3jPrLD1kNZQu/cbYmGcY/ahGT62Ate5E
-	 4wS5kGoSVYwi2gBMKRFM3DzG14efdS9xOjOHVK9A=
+	by mail.kernel.org (Postfix) with ESMTP id 92304218A2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 10:03:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="cPb5oB4M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731906AbfAXTqN (ORCPT
+        id S1727845AbfAYKDd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:46:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44992 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733294AbfAXToN (ORCPT
+        Fri, 25 Jan 2019 05:03:33 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:53659 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfAYKDd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:13 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1375D218E2;
-        Thu, 24 Jan 2019 19:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359053;
-        bh=PKvV/N4Biwko2Tz2hIYrjFcs0LHlvSmPVYS9bvtY9fI=;
-        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=A3u4wN6DOijip7rhRYuwVtTiQH2igFLuZ6OD+UC13Jwp2yBqq6ESDfKMPBwO+cTdx
-         ckQAqcuiaTzqOKsjDj5mw7aCNBmWD9kAV6dQqv11QRpXnpZiuzVmGXJShxeiNDsw3a
-         feLQfYqyJZzCMUa5jzGvaCuKxbklidcYQfuqJtfk=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 25 Jan 2019 05:03:33 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id B356425BE52;
+        Fri, 25 Jan 2019 21:03:30 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1548410611; bh=lnvJGWz38jIg4upa0glnv4+Pgqon1ApASKT2L3fOX9M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cPb5oB4M0y486Gz/RGfJwmwrFyGnmlhOud3vvP03Da/dOcBI8/bM5hE3byQK0md4/
+         T7NPQ+ZhK7NPoHhnVIzWo/0dztw/ZYAy4vyhBnLQtVAnsnkJhD1rJrieNlxByvO6Xr
+         /D7eIHZInxYqSPvgHqMpm2rpJ6pYzFHXLm3/8tcQ=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id EF48D94048D; Fri, 25 Jan 2019 11:03:28 +0100 (CET)
+Date:   Fri, 25 Jan 2019 11:03:28 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/2] ARM: defconfig: Enable support for RZ/A2
+Message-ID: <20190125100328.tupij36uclthrlgb@verge.net.au>
+References: <20190124164022.9810-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [git pull] clk: renesas: Updates for v5.1
-References: <20190124152607.30916-1-geert+renesas@glider.be>
-User-Agent: alot/0.8
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190124152607.30916-1-geert+renesas@glider.be>
-Message-ID: <154835905238.136743.13357821231243537859@swboyd.mtv.corp.google.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Date:   Thu, 24 Jan 2019 11:44:12 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124164022.9810-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-01-24 07:26:07)
->         Hi Mike, Stephen,
->=20
-> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee50=
-0c:
->=20
->   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/clk-renesas-for-v5.1-tag1
->=20
-> for you to fetch changes up to d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
->=20
->   clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08=
- +0100)
->=20
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v5.1
->=20
->   - Add missing CANFD clocks on RZ/G2M and RZ/G2E,
->   - Correct the DU (display unit) parent clock on RZ/G2E.
->=20
+On Thu, Jan 24, 2019 at 05:40:20PM +0100, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
+> 
+> This patch series enables support for the RZ/A2 SoC in the Renesas and
+> ARM V7 multiplatform defconfigs, now the DTS for the Renesas RZ/A2M
+> evaluation board is included.
 
-Thanks. Pulled into clk-next.
+Thanks, applied for v5.1.
