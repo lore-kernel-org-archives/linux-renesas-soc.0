@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC7DC282C6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB6AC282C2
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F15D6218CD
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A7A6218F0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbfAYQxL (ORCPT
+        id S1729100AbfAYQxJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:53:11 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36062 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729134AbfAYQxK (ORCPT
+        Fri, 25 Jan 2019 11:53:09 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:34816 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729103AbfAYQxJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:53:10 -0500
+        Fri, 25 Jan 2019 11:53:09 -0500
 Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Ugt61z00Q3XaVaC01gt6ug; Fri, 25 Jan 2019 17:53:06 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id Ugt61z00e3XaVaC06gt6Mx; Fri, 25 Jan 2019 17:53:06 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gn4j4-0007ZC-EP; Fri, 25 Jan 2019 17:53:06 +0100
+        id 1gn4j4-0007ZT-KZ; Fri, 25 Jan 2019 17:53:06 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gn4j4-0002FG-Cp; Fri, 25 Jan 2019 17:53:06 +0100
+        id 1gn4j4-0002FV-JQ; Fri, 25 Jan 2019 17:53:06 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 03/10 PARTIAL] pinctrl: sh-pfc: Absorb enum IDs in PINMUX_CFG_REG() macro
-Date:   Fri, 25 Jan 2019 17:52:58 +0100
-Message-Id: <20190125165305.8567-4-geert+renesas@glider.be>
+Subject: [PATCH v2 08/10] pinctrl: sh-pfc: Introduce PINCTRL_SH_FUNC_GPIO helper symbol
+Date:   Fri, 25 Jan 2019 17:53:03 +0100
+Message-Id: <20190125165305.8567-9-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190125165305.8567-1-geert+renesas@glider.be>
 References: <20190125165305.8567-1-geert+renesas@glider.be>
@@ -45,200 +45,171 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently the PINMUX_CFG_REG() macro must be followed by initialization
-data, specifying all enum IDs.  Hence the macro itself does not know
-anything about the enum IDs, preventing the macro from performing any
-validation on it.
+Pinctrl drivers for SuperH platforms use legacy function GPIOs.
+Currently this support is compiled in based on the SUPERH platform
+dependency, which hinders the introduction of compile-testing support
+for the affected pinctrl drivers.
 
-Make the macro accept the enum IDs as a parameter, and update all users.
-Note that array data enclosed by curly braces cannot be passed to a
-macro as a parameter, hence the enum IDs are wrapped using a new macro
-GROUPS().
-
-No functional changes.
+Introduce a new Kconfig symbol PINCTRL_SH_FUNC_GPIO, which is
+auto-selected when needed.  This symbol in turn selects
+PINCTRL_SH_PFC_GPIO, to reduce the number of per-driver selects.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This patch is incomplete!
-It contains only the generic and r8a7791 parts.
-
 v2:
-  - Improve comment.
+  - New.
 ---
- drivers/pinctrl/sh-pfc/pfc-emev2.c       |  20 +--
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c     |  20 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c     |  16 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c    |  24 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c     |  20 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c     |  28 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c     |  24 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c     |  32 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c     |  48 +++---
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c     |  28 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 104 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 108 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 108 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 108 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c    |  60 +++----
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c    |  68 ++++----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c    |  92 +++++-----
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c    |  84 +++++-----
- drivers/pinctrl/sh-pfc/pfc-sh7203.c      | 124 +++++++-------
- drivers/pinctrl/sh-pfc/pfc-sh7264.c      | 184 ++++++++++----------
- drivers/pinctrl/sh-pfc/pfc-sh7269.c      | 204 +++++++++++------------
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c      |  12 +-
- drivers/pinctrl/sh-pfc/pfc-sh7720.c      |  72 ++++----
- drivers/pinctrl/sh-pfc/pfc-sh7722.c      | 128 +++++++-------
- drivers/pinctrl/sh-pfc/pfc-sh7723.c      | 108 ++++++------
- drivers/pinctrl/sh-pfc/pfc-sh7724.c      | 112 ++++++-------
- drivers/pinctrl/sh-pfc/pfc-sh7734.c      |  45 ++---
- drivers/pinctrl/sh-pfc/pfc-sh7757.c      | 140 ++++++++--------
- drivers/pinctrl/sh-pfc/pfc-sh7785.c      |  72 ++++----
- drivers/pinctrl/sh-pfc/pfc-sh7786.c      |  44 ++---
- drivers/pinctrl/sh-pfc/pfc-shx3.c        |  16 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h          |  14 +-
- 32 files changed, 1138 insertions(+), 1129 deletions(-)
+ drivers/pinctrl/sh-pfc/Kconfig  | 30 ++++++++++++++++++------------
+ drivers/pinctrl/sh-pfc/gpio.c   |  8 ++++----
+ drivers/pinctrl/sh-pfc/sh_pfc.h |  2 +-
+ 3 files changed, 23 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index d8b13d4e9bbff7cb..31f51a5d21b68d37 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -5427,7 +5427,7 @@ static const struct {
- };
+diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
+index e941ba60d4b7c775..6a9e4334dbfa7ec0 100644
+--- a/drivers/pinctrl/sh-pfc/Kconfig
++++ b/drivers/pinctrl/sh-pfc/Kconfig
+@@ -20,6 +20,12 @@ config PINCTRL_SH_PFC_GPIO
+ 	help
+ 	  This enables pin control and GPIO drivers for SH/SH Mobile platforms
  
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
--	{ PINMUX_CFG_REG("GPSR0", 0xE6060004, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR0", 0xE6060004, 32, 1, GROUP(
- 		GP_0_31_FN, FN_IP1_22_20,
- 		GP_0_30_FN, FN_IP1_19_17,
- 		GP_0_29_FN, FN_IP1_16_14,
-@@ -5459,9 +5459,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_0_3_FN, FN_IP0_3,
- 		GP_0_2_FN, FN_IP0_2,
- 		GP_0_1_FN, FN_IP0_1,
--		GP_0_0_FN, FN_IP0_0, }
-+		GP_0_0_FN, FN_IP0_0, ))
- 	},
--	{ PINMUX_CFG_REG("GPSR1", 0xE6060008, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR1", 0xE6060008, 32, 1, GROUP(
- 		0, 0,
- 		0, 0,
- 		0, 0,
-@@ -5493,9 +5493,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_1_3_FN, FN_IP2_2_0,
- 		GP_1_2_FN, FN_IP1_31_29,
- 		GP_1_1_FN, FN_IP1_28_26,
--		GP_1_0_FN, FN_IP1_25_23, }
-+		GP_1_0_FN, FN_IP1_25_23, ))
- 	},
--	{ PINMUX_CFG_REG("GPSR2", 0xE606000C, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR2", 0xE606000C, 32, 1, GROUP(
- 		GP_2_31_FN, FN_IP6_7_6,
- 		GP_2_30_FN, FN_IP6_5_3,
- 		GP_2_29_FN, FN_IP6_2_0,
-@@ -5527,9 +5527,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_2_3_FN, FN_IP4_4_2,
- 		GP_2_2_FN, FN_IP4_1_0,
- 		GP_2_1_FN, FN_IP3_30_28,
--		GP_2_0_FN, FN_IP3_27_25 }
-+		GP_2_0_FN, FN_IP3_27_25 ))
- 	},
--	{ PINMUX_CFG_REG("GPSR3", 0xE6060010, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR3", 0xE6060010, 32, 1, GROUP(
- 		GP_3_31_FN, FN_IP9_18_17,
- 		GP_3_30_FN, FN_IP9_16,
- 		GP_3_29_FN, FN_IP9_15_13,
-@@ -5561,9 +5561,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_3_3_FN, FN_IP7_12_11,
- 		GP_3_2_FN, FN_IP7_10_9,
- 		GP_3_1_FN, FN_IP7_8_6,
--		GP_3_0_FN, FN_IP7_5_3 }
-+		GP_3_0_FN, FN_IP7_5_3 ))
- 	},
--	{ PINMUX_CFG_REG("GPSR4", 0xE6060014, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR4", 0xE6060014, 32, 1, GROUP(
- 		GP_4_31_FN, FN_IP15_5_4,
- 		GP_4_30_FN, FN_IP15_3_2,
- 		GP_4_29_FN, FN_IP15_1_0,
-@@ -5595,9 +5595,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_4_3_FN, FN_IP9_24_23,
- 		GP_4_2_FN, FN_IP9_22_21,
- 		GP_4_1_FN, FN_IP9_20_19,
--		GP_4_0_FN, FN_VI0_CLK }
-+		GP_4_0_FN, FN_VI0_CLK ))
- 	},
--	{ PINMUX_CFG_REG("GPSR5", 0xE6060018, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR5", 0xE6060018, 32, 1, GROUP(
- 		GP_5_31_FN, FN_IP3_24_22,
- 		GP_5_30_FN, FN_IP13_9_7,
- 		GP_5_29_FN, FN_IP13_6_5,
-@@ -5629,9 +5629,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_5_3_FN, FN_IP11_18_17,
- 		GP_5_2_FN, FN_IP11_16_15,
- 		GP_5_1_FN, FN_IP11_14_12,
--		GP_5_0_FN, FN_IP11_11_9 }
-+		GP_5_0_FN, FN_IP11_11_9 ))
- 	},
--	{ PINMUX_CFG_REG("GPSR6", 0xE606001C, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR6", 0xE606001C, 32, 1, GROUP(
- 		GP_6_31_FN, FN_DU0_DOTCLKIN,
- 		GP_6_30_FN, FN_USB1_OVC,
- 		GP_6_29_FN, FN_IP14_31_29,
-@@ -5663,9 +5663,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_6_3_FN, FN_IP13_13,
- 		GP_6_2_FN, FN_IP13_12,
- 		GP_6_1_FN, FN_IP13_11,
--		GP_6_0_FN, FN_IP13_10 }
-+		GP_6_0_FN, FN_IP13_10 ))
- 	},
--	{ PINMUX_CFG_REG("GPSR7", 0xE6060074, 32, 1) {
-+	{ PINMUX_CFG_REG("GPSR7", 0xE6060074, 32, 1, GROUP(
- 		0, 0,
- 		0, 0,
- 		0, 0,
-@@ -5697,7 +5697,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_7_3_FN, FN_IP15_26_24,
- 		GP_7_2_FN, FN_IP15_23_21,
- 		GP_7_1_FN, FN_IP15_20_18,
--		GP_7_0_FN, FN_IP15_17_15 }
-+		GP_7_0_FN, FN_IP15_17_15 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR0", 0xE6060020, 32,
- 			     1, 2, 2, 2, 2, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1,
++config PINCTRL_SH_FUNC_GPIO
++	select PINCTRL_SH_PFC_GPIO
++	bool
++	help
++	  This enables legacy function GPIOs for SH platforms
++
+ config PINCTRL_PFC_EMEV2
+ 	def_bool y
+ 	depends on ARCH_EMEV2
+@@ -138,17 +144,17 @@ config PINCTRL_PFC_R8A77995
+ config PINCTRL_PFC_SH7203
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7203
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7264
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7264
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7269
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7269
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH73A0
+ 	def_bool y
+@@ -159,45 +165,45 @@ config PINCTRL_PFC_SH73A0
+ config PINCTRL_PFC_SH7720
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7720
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7722
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7722
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7723
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7723
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7724
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7724
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7734
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7734
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7757
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7757
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7785
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7785
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7786
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SH7786
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SHX3
+ 	def_bool y
+ 	depends on CPU_SUBTYPE_SHX3
+-	select PINCTRL_SH_PFC_GPIO
++	select PINCTRL_SH_FUNC_GPIO
+ endif
+diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
+index 4f3a34ee1cd454b8..97c1332c1045739a 100644
+--- a/drivers/pinctrl/sh-pfc/gpio.c
++++ b/drivers/pinctrl/sh-pfc/gpio.c
+@@ -252,7 +252,7 @@ static int gpio_pin_setup(struct sh_pfc_chip *chip)
+  * Function GPIOs
+  */
+ 
+-#ifdef CONFIG_SUPERH
++#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
+ static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
+ {
+ 	static bool __print_once;
+@@ -292,7 +292,7 @@ static int gpio_function_setup(struct sh_pfc_chip *chip)
+ 
+ 	return 0;
+ }
+-#endif
++#endif /* CONFIG_PINCTRL_SH_FUNC_GPIO */
+ 
+ /* -----------------------------------------------------------------------------
+  * Register/unregister
+@@ -369,7 +369,7 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+ 	if (IS_ENABLED(CONFIG_OF) && pfc->dev->of_node)
+ 		return 0;
+ 
+-#ifdef CONFIG_SUPERH
++#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
+ 	/*
+ 	 * Register the GPIO to pin mappings. As pins with GPIO ports
+ 	 * must come first in the ranges, skip the pins without GPIO
+@@ -397,7 +397,7 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
+ 	chip = sh_pfc_add_gpiochip(pfc, gpio_function_setup, NULL);
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+-#endif /* CONFIG_SUPERH */
++#endif /* CONFIG_PINCTRL_SH_FUNC_GPIO */
+ 
+ 	return 0;
+ }
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 56016cb76769c97b..5d7e4ad63b542086 100644
+index 9f5d54b851b14ac9..9ca43e7b2eff155f 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -115,20 +115,24 @@ struct pinmux_cfg_reg {
- 	const u8 *var_field_width;
- };
+@@ -285,7 +285,7 @@ struct sh_pfc_soc_info {
+ 	const struct sh_pfc_function *functions;
+ 	unsigned int nr_functions;
  
-+#define GROUP(...)	__VA_ARGS__
-+
- /*
-  * Describe a config register consisting of several fields of the same width
-  *   - name: Register name (unused, for documentation purposes only)
-  *   - r: Physical register address
-  *   - r_width: Width of the register (in bits)
-  *   - f_width: Width of the fixed-width register fields (in bits)
-- * This macro must be followed by initialization data: For each register field
-- * (from left to right, i.e. MSB to LSB), 2^f_width enum IDs must be specified,
-- * one for each possible combination of the register field bit values.
-+ *   - ids: For each register field (from left to right, i.e. MSB to LSB),
-+ *          2^f_width enum IDs must be specified, one for each possible
-+ *          combination of the register field bit values, all wrapped using
-+ *          the GROUP() macro.
-  */
--#define PINMUX_CFG_REG(name, r, r_width, f_width) \
-+#define PINMUX_CFG_REG(name, r, r_width, f_width, ids)			\
- 	.reg = r, .reg_width = r_width,					\
- 	.field_width = f_width + BUILD_BUG_ON_ZERO(r_width % f_width),	\
--	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])
-+	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])	\
-+		{ ids }
- 
- /*
-  * Describe a config register consisting of several fields of different widths
+-#ifdef CONFIG_SUPERH
++#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
+ 	const struct pinmux_func *func_gpios;
+ 	unsigned int nr_func_gpios;
+ #endif
 -- 
 2.17.1
 
