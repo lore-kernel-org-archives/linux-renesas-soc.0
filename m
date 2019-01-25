@@ -2,42 +2,41 @@ Return-Path: <SRS0=AddW=QB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EA9C282C0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC7DC282C6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA6EB218CD
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F15D6218CD
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Jan 2019 16:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbfAYQxL (ORCPT
+        id S1726108AbfAYQxL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 25 Jan 2019 11:53:11 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36070 "EHLO
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:36062 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729145AbfAYQxK (ORCPT
+        with ESMTP id S1729134AbfAYQxK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 25 Jan 2019 11:53:10 -0500
 Received: from ramsan ([84.194.111.163])
         by baptiste.telenet-ops.be with bizsmtp
-        id Ugt61z00U3XaVaC01gt6uh; Fri, 25 Jan 2019 17:53:06 +0100
+        id Ugt61z00Q3XaVaC01gt6ug; Fri, 25 Jan 2019 17:53:06 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gn4j4-0007ZK-H4; Fri, 25 Jan 2019 17:53:06 +0100
+        id 1gn4j4-0007ZC-EP; Fri, 25 Jan 2019 17:53:06 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gn4j4-0002FM-FT; Fri, 25 Jan 2019 17:53:06 +0100
+        id 1gn4j4-0002FG-Cp; Fri, 25 Jan 2019 17:53:06 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 05/10 PARTIAL] pinctrl: sh-pfc: Absorb enum IDs in PINMUX_DATA_REG() macro
-Date:   Fri, 25 Jan 2019 17:53:00 +0100
-Message-Id: <20190125165305.8567-6-geert+renesas@glider.be>
+Subject: [PATCH v2 03/10 PARTIAL] pinctrl: sh-pfc: Absorb enum IDs in PINMUX_CFG_REG() macro
+Date:   Fri, 25 Jan 2019 17:52:58 +0100
+Message-Id: <20190125165305.8567-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190125165305.8567-1-geert+renesas@glider.be>
 References: <20190125165305.8567-1-geert+renesas@glider.be>
@@ -46,208 +45,200 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently the PINMUX_DATA_REG() macro must be followed by initialization
+Currently the PINMUX_CFG_REG() macro must be followed by initialization
 data, specifying all enum IDs.  Hence the macro itself does not know
 anything about the enum IDs, preventing the macro from performing any
 validation on it.
 
 Make the macro accept the enum IDs as a parameter, and update all users.
 Note that array data enclosed by curly braces cannot be passed to a
-macro as a parameter, hence the enum IDs are wrapped using the GROUP()
-macro.
+macro as a parameter, hence the enum IDs are wrapped using a new macro
+GROUPS().
 
 No functional changes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 This patch is incomplete!
-It contains only the generic and r8a73a4 parts.
+It contains only the generic and r8a7791 parts.
 
 v2:
-  - New.
+  - Improve comment.
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a73a4.c |  44 ++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c |  40 +++++------
- drivers/pinctrl/sh-pfc/pfc-sh7203.c  |  28 ++++----
- drivers/pinctrl/sh-pfc/pfc-sh7264.c  |  48 ++++++-------
- drivers/pinctrl/sh-pfc/pfc-sh7269.c  |  48 ++++++-------
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c  |  40 +++++------
- drivers/pinctrl/sh-pfc/pfc-sh7720.c  |  72 +++++++++----------
- drivers/pinctrl/sh-pfc/pfc-sh7722.c  |  92 ++++++++++++------------
- drivers/pinctrl/sh-pfc/pfc-sh7723.c  |  92 ++++++++++++------------
- drivers/pinctrl/sh-pfc/pfc-sh7724.c  |  92 ++++++++++++------------
- drivers/pinctrl/sh-pfc/pfc-sh7734.c  |  14 ++--
- drivers/pinctrl/sh-pfc/pfc-sh7757.c  | 104 +++++++++++++--------------
- drivers/pinctrl/sh-pfc/pfc-sh7785.c  |  64 ++++++++---------
- drivers/pinctrl/sh-pfc/pfc-sh7786.c  |  36 +++++-----
- drivers/pinctrl/sh-pfc/pfc-shx3.c    |  16 ++---
- drivers/pinctrl/sh-pfc/sh_pfc.h      |  10 +--
- 16 files changed, 420 insertions(+), 420 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-emev2.c       |  20 +--
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c     |  20 +--
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c     |  16 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c    |  24 +--
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c     |  20 +--
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c     |  28 ++--
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c     |  24 +--
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c     |  32 ++--
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c     |  48 +++---
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c     |  28 ++--
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 104 ++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 108 ++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 108 ++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 108 ++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c    |  60 +++----
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c    |  68 ++++----
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c    |  92 +++++-----
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c    |  84 +++++-----
+ drivers/pinctrl/sh-pfc/pfc-sh7203.c      | 124 +++++++-------
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c      | 184 ++++++++++----------
+ drivers/pinctrl/sh-pfc/pfc-sh7269.c      | 204 +++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c      |  12 +-
+ drivers/pinctrl/sh-pfc/pfc-sh7720.c      |  72 ++++----
+ drivers/pinctrl/sh-pfc/pfc-sh7722.c      | 128 +++++++-------
+ drivers/pinctrl/sh-pfc/pfc-sh7723.c      | 108 ++++++------
+ drivers/pinctrl/sh-pfc/pfc-sh7724.c      | 112 ++++++-------
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c      |  45 ++---
+ drivers/pinctrl/sh-pfc/pfc-sh7757.c      | 140 ++++++++--------
+ drivers/pinctrl/sh-pfc/pfc-sh7785.c      |  72 ++++----
+ drivers/pinctrl/sh-pfc/pfc-sh7786.c      |  44 ++---
+ drivers/pinctrl/sh-pfc/pfc-shx3.c        |  16 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h          |  14 +-
+ 32 files changed, 1138 insertions(+), 1129 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-index f07b33c614db2a9e..bf12849defdb74a5 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a73a4.c
-@@ -2464,7 +2464,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 
- static const struct pinmux_data_reg pinmux_data_regs[] = {
- 
--	{ PINMUX_DATA_REG("PORTL031_000DR", 0xe6054000, 32) {
-+	{ PINMUX_DATA_REG("PORTL031_000DR", 0xe6054000, 32, GROUP(
- 			0, PORT30_DATA, PORT29_DATA, PORT28_DATA,
- 			PORT27_DATA, PORT26_DATA, PORT25_DATA, PORT24_DATA,
- 			PORT23_DATA, PORT22_DATA, PORT21_DATA, PORT20_DATA,
-@@ -2473,9 +2473,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT11_DATA, PORT10_DATA, PORT9_DATA, PORT8_DATA,
- 			PORT7_DATA, PORT6_DATA, PORT5_DATA, PORT4_DATA,
- 			PORT3_DATA, PORT2_DATA, PORT1_DATA, PORT0_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTD063_032DR", 0xe6055000, 32) {
-+	{ PINMUX_DATA_REG("PORTD063_032DR", 0xe6055000, 32, GROUP(
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
-@@ -2484,9 +2484,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			0, 0, 0, PORT40_DATA,
- 			PORT39_DATA, PORT38_DATA, PORT37_DATA, PORT36_DATA,
- 			PORT35_DATA, PORT34_DATA, PORT33_DATA, PORT32_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTL095_064DR", 0xe6054004, 32) {
-+	{ PINMUX_DATA_REG("PORTL095_064DR", 0xe6054004, 32, GROUP(
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
- 			0, 0, PORT85_DATA, PORT84_DATA,
-@@ -2495,9 +2495,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT75_DATA, PORT74_DATA, PORT73_DATA, PORT72_DATA,
- 			PORT71_DATA, PORT70_DATA, PORT69_DATA, PORT68_DATA,
- 			PORT67_DATA, PORT66_DATA, PORT65_DATA, PORT64_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTD127_096DR", 0xe6055004, 32) {
-+	{ PINMUX_DATA_REG("PORTD127_096DR", 0xe6055004, 32, GROUP(
- 			0, PORT126_DATA, PORT125_DATA, PORT124_DATA,
- 			PORT123_DATA, PORT122_DATA, PORT121_DATA, PORT120_DATA,
- 			PORT119_DATA, PORT118_DATA, PORT117_DATA, PORT116_DATA,
-@@ -2506,9 +2506,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT107_DATA, PORT106_DATA, PORT105_DATA, PORT104_DATA,
- 			PORT103_DATA, PORT102_DATA, PORT101_DATA, PORT100_DATA,
- 			PORT99_DATA, PORT98_DATA, PORT97_DATA, PORT96_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTD159_128DR", 0xe6055008, 32) {
-+	{ PINMUX_DATA_REG("PORTD159_128DR", 0xe6055008, 32, GROUP(
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
-@@ -2517,9 +2517,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			0, 0, 0, 0,
- 			0, PORT134_DATA, PORT133_DATA, PORT132_DATA,
- 			PORT131_DATA, PORT130_DATA, PORT129_DATA, PORT128_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTR191_160DR", 0xe6056000, 32) {
-+	{ PINMUX_DATA_REG("PORTR191_160DR", 0xe6056000, 32, GROUP(
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
-@@ -2528,9 +2528,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT171_DATA, PORT170_DATA, PORT169_DATA, PORT168_DATA,
- 			PORT167_DATA, PORT166_DATA, PORT165_DATA, PORT164_DATA,
- 			PORT163_DATA, PORT162_DATA, PORT161_DATA, PORT160_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTR223_192DR", 0xe6056004, 32) {
-+	{ PINMUX_DATA_REG("PORTR223_192DR", 0xe6056004, 32, GROUP(
- 			0, PORT222_DATA, PORT221_DATA, PORT220_DATA,
- 			PORT219_DATA, PORT218_DATA, PORT217_DATA, PORT216_DATA,
- 			PORT215_DATA, PORT214_DATA, PORT213_DATA, PORT212_DATA,
-@@ -2539,9 +2539,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT203_DATA, PORT202_DATA, PORT201_DATA, PORT200_DATA,
- 			PORT199_DATA, PORT198_DATA, PORT197_DATA, PORT196_DATA,
- 			PORT195_DATA, PORT194_DATA, PORT193_DATA, PORT192_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTR255_224DR", 0xe6056008, 32) {
-+	{ PINMUX_DATA_REG("PORTR255_224DR", 0xe6056008, 32, GROUP(
- 			0, 0, 0, 0,
- 			0, PORT250_DATA, PORT249_DATA, PORT248_DATA,
- 			PORT247_DATA, PORT246_DATA, PORT245_DATA, PORT244_DATA,
-@@ -2550,9 +2550,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT235_DATA, PORT234_DATA, PORT233_DATA, PORT232_DATA,
- 			PORT231_DATA, PORT230_DATA, PORT229_DATA, PORT228_DATA,
- 			PORT227_DATA, PORT226_DATA, PORT225_DATA, PORT224_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTR287_256DR", 0xe605600C, 32) {
-+	{ PINMUX_DATA_REG("PORTR287_256DR", 0xe605600C, 32, GROUP(
- 			0, 0, 0, 0,
- 			PORT283_DATA, PORT282_DATA, PORT281_DATA, PORT280_DATA,
- 			PORT279_DATA, PORT278_DATA, PORT277_DATA, PORT276_DATA,
-@@ -2561,9 +2561,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT267_DATA, PORT266_DATA, PORT265_DATA, PORT264_DATA,
- 			PORT263_DATA, PORT262_DATA, PORT261_DATA, PORT260_DATA,
- 			PORT259_DATA, PORT258_DATA, PORT257_DATA, PORT256_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTU319_288DR", 0xe6057000, 32) {
-+	{ PINMUX_DATA_REG("PORTU319_288DR", 0xe6057000, 32, GROUP(
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
- 			0, 0, 0, PORT308_DATA,
-@@ -2572,9 +2572,9 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			PORT299_DATA, PORT298_DATA, PORT297_DATA, PORT296_DATA,
- 			PORT295_DATA, PORT294_DATA, PORT293_DATA, PORT292_DATA,
- 			PORT291_DATA, PORT290_DATA, PORT289_DATA, PORT288_DATA,
--		}
-+		))
- 	},
--	{ PINMUX_DATA_REG("PORTU351_320DR", 0xe6057004, 32) {
-+	{ PINMUX_DATA_REG("PORTU351_320DR", 0xe6057004, 32, GROUP(
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
- 			0, 0, 0, 0,
-@@ -2583,7 +2583,7 @@ static const struct pinmux_data_reg pinmux_data_regs[] = {
- 			0, 0, PORT329_DATA, PORT328_DATA,
- 			PORT327_DATA, PORT326_DATA, PORT325_DATA, PORT324_DATA,
- 			PORT323_DATA, PORT322_DATA, PORT321_DATA, PORT320_DATA,
--		}
-+		))
- 	},
- 	{ },
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index d8b13d4e9bbff7cb..31f51a5d21b68d37 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -5427,7 +5427,7 @@ static const struct {
  };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+-	{ PINMUX_CFG_REG("GPSR0", 0xE6060004, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR0", 0xE6060004, 32, 1, GROUP(
+ 		GP_0_31_FN, FN_IP1_22_20,
+ 		GP_0_30_FN, FN_IP1_19_17,
+ 		GP_0_29_FN, FN_IP1_16_14,
+@@ -5459,9 +5459,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_0_3_FN, FN_IP0_3,
+ 		GP_0_2_FN, FN_IP0_2,
+ 		GP_0_1_FN, FN_IP0_1,
+-		GP_0_0_FN, FN_IP0_0, }
++		GP_0_0_FN, FN_IP0_0, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR1", 0xE6060008, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR1", 0xE6060008, 32, 1, GROUP(
+ 		0, 0,
+ 		0, 0,
+ 		0, 0,
+@@ -5493,9 +5493,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_1_3_FN, FN_IP2_2_0,
+ 		GP_1_2_FN, FN_IP1_31_29,
+ 		GP_1_1_FN, FN_IP1_28_26,
+-		GP_1_0_FN, FN_IP1_25_23, }
++		GP_1_0_FN, FN_IP1_25_23, ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR2", 0xE606000C, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR2", 0xE606000C, 32, 1, GROUP(
+ 		GP_2_31_FN, FN_IP6_7_6,
+ 		GP_2_30_FN, FN_IP6_5_3,
+ 		GP_2_29_FN, FN_IP6_2_0,
+@@ -5527,9 +5527,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_2_3_FN, FN_IP4_4_2,
+ 		GP_2_2_FN, FN_IP4_1_0,
+ 		GP_2_1_FN, FN_IP3_30_28,
+-		GP_2_0_FN, FN_IP3_27_25 }
++		GP_2_0_FN, FN_IP3_27_25 ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR3", 0xE6060010, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR3", 0xE6060010, 32, 1, GROUP(
+ 		GP_3_31_FN, FN_IP9_18_17,
+ 		GP_3_30_FN, FN_IP9_16,
+ 		GP_3_29_FN, FN_IP9_15_13,
+@@ -5561,9 +5561,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_3_3_FN, FN_IP7_12_11,
+ 		GP_3_2_FN, FN_IP7_10_9,
+ 		GP_3_1_FN, FN_IP7_8_6,
+-		GP_3_0_FN, FN_IP7_5_3 }
++		GP_3_0_FN, FN_IP7_5_3 ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR4", 0xE6060014, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR4", 0xE6060014, 32, 1, GROUP(
+ 		GP_4_31_FN, FN_IP15_5_4,
+ 		GP_4_30_FN, FN_IP15_3_2,
+ 		GP_4_29_FN, FN_IP15_1_0,
+@@ -5595,9 +5595,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_4_3_FN, FN_IP9_24_23,
+ 		GP_4_2_FN, FN_IP9_22_21,
+ 		GP_4_1_FN, FN_IP9_20_19,
+-		GP_4_0_FN, FN_VI0_CLK }
++		GP_4_0_FN, FN_VI0_CLK ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR5", 0xE6060018, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR5", 0xE6060018, 32, 1, GROUP(
+ 		GP_5_31_FN, FN_IP3_24_22,
+ 		GP_5_30_FN, FN_IP13_9_7,
+ 		GP_5_29_FN, FN_IP13_6_5,
+@@ -5629,9 +5629,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_5_3_FN, FN_IP11_18_17,
+ 		GP_5_2_FN, FN_IP11_16_15,
+ 		GP_5_1_FN, FN_IP11_14_12,
+-		GP_5_0_FN, FN_IP11_11_9 }
++		GP_5_0_FN, FN_IP11_11_9 ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR6", 0xE606001C, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR6", 0xE606001C, 32, 1, GROUP(
+ 		GP_6_31_FN, FN_DU0_DOTCLKIN,
+ 		GP_6_30_FN, FN_USB1_OVC,
+ 		GP_6_29_FN, FN_IP14_31_29,
+@@ -5663,9 +5663,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_6_3_FN, FN_IP13_13,
+ 		GP_6_2_FN, FN_IP13_12,
+ 		GP_6_1_FN, FN_IP13_11,
+-		GP_6_0_FN, FN_IP13_10 }
++		GP_6_0_FN, FN_IP13_10 ))
+ 	},
+-	{ PINMUX_CFG_REG("GPSR7", 0xE6060074, 32, 1) {
++	{ PINMUX_CFG_REG("GPSR7", 0xE6060074, 32, 1, GROUP(
+ 		0, 0,
+ 		0, 0,
+ 		0, 0,
+@@ -5697,7 +5697,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		GP_7_3_FN, FN_IP15_26_24,
+ 		GP_7_2_FN, FN_IP15_23_21,
+ 		GP_7_1_FN, FN_IP15_20_18,
+-		GP_7_0_FN, FN_IP15_17_15 }
++		GP_7_0_FN, FN_IP15_17_15 ))
+ 	},
+ 	{ PINMUX_CFG_REG_VAR("IPSR0", 0xE6060020, 32,
+ 			     1, 2, 2, 2, 2, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1,
 diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 4cbde9c7a105e5bc..77a47d01f82844c7 100644
+index 56016cb76769c97b..5d7e4ad63b542086 100644
 --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
 +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -192,12 +192,12 @@ struct pinmux_data_reg {
+@@ -115,20 +115,24 @@ struct pinmux_cfg_reg {
+ 	const u8 *var_field_width;
+ };
+ 
++#define GROUP(...)	__VA_ARGS__
++
+ /*
+  * Describe a config register consisting of several fields of the same width
   *   - name: Register name (unused, for documentation purposes only)
   *   - r: Physical register address
   *   - r_width: Width of the register (in bits)
-- * This macro must be followed by initialization data: For each register bit
-- * (from left to right, i.e. MSB to LSB), one enum ID must be specified.
-+ *   - ids: For each register bit (from left to right, i.e. MSB to LSB), one
-+ *          enum ID must be specified, all wrapped using the GROUP() macro.
+  *   - f_width: Width of the fixed-width register fields (in bits)
+- * This macro must be followed by initialization data: For each register field
+- * (from left to right, i.e. MSB to LSB), 2^f_width enum IDs must be specified,
+- * one for each possible combination of the register field bit values.
++ *   - ids: For each register field (from left to right, i.e. MSB to LSB),
++ *          2^f_width enum IDs must be specified, one for each possible
++ *          combination of the register field bit values, all wrapped using
++ *          the GROUP() macro.
   */
--#define PINMUX_DATA_REG(name, r, r_width) \
--	.reg = r, .reg_width = r_width,	\
--	.enum_ids = (const u16 [r_width]) \
-+#define PINMUX_DATA_REG(name, r, r_width, ids)				\
-+	.reg = r, .reg_width = r_width,					\
-+	.enum_ids = (const u16 [r_width]) { ids }
+-#define PINMUX_CFG_REG(name, r, r_width, f_width) \
++#define PINMUX_CFG_REG(name, r, r_width, f_width, ids)			\
+ 	.reg = r, .reg_width = r_width,					\
+ 	.field_width = f_width + BUILD_BUG_ON_ZERO(r_width % f_width),	\
+-	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])
++	.enum_ids = (const u16 [(r_width / f_width) * (1 << f_width)])	\
++		{ ids }
  
- struct pinmux_irq {
- 	const short *gpios;
+ /*
+  * Describe a config register consisting of several fields of different widths
 -- 
 2.17.1
 
