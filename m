@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A474C282C9
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Jan 2019 12:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA421C282C7
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Jan 2019 12:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5EC218A2
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Jan 2019 12:25:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7908F218A2
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Jan 2019 12:25:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jnUgTU7o"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvNhZmIK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbfAZMZx (ORCPT
+        id S1729695AbfAZMZ6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 26 Jan 2019 07:25:53 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46050 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbfAZMZw (ORCPT
+        Sat, 26 Jan 2019 07:25:58 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36632 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729694AbfAZMZ5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 26 Jan 2019 07:25:52 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so8758567lfa.12;
-        Sat, 26 Jan 2019 04:25:51 -0800 (PST)
+        Sat, 26 Jan 2019 07:25:57 -0500
+Received: by mail-lj1-f194.google.com with SMTP id g11-v6so10551156ljk.3;
+        Sat, 26 Jan 2019 04:25:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RQJNFNIjmYLP71EGQCtMn4dHFGn+z8AinizUQEi5mZo=;
-        b=jnUgTU7onaMY3nIv6qEAfinaja3izr12rGlTKuCWTZ/ke4zB4UiIoaoTKlxsuOxgeA
-         Qklp/z1ILoJN8BUBeAx4O2kP2+DYFSgJBGBgBQAnq8u5nE9elpBy452tic5qsAWwBMpZ
-         uvNLFXmKcBi0ktDjj38yJ6Wy+5dEJK2xpG1q1g+yABQr5Nr5JJ2c+wcTg/eEMRO2sIEl
-         A4Ep7AtSRBLFv5Tbu7Bi+IDaPEYsVHwr9tue0QvALDclzGNwEMKb0dIR2wxQ6at9pCZf
-         aNZY7MdlojhevTb1mYEpXKaUlMxvkAUeFb2tSmop/ITK5aISEMnBXSmBUBuBzqJJyCZP
-         ToQQ==
+        bh=iHGpzzDxSY24Z16cE/9INPchFaLmbUq/b31/6GBzQF8=;
+        b=kvNhZmIKxhn5DhEkhi4IJ0EClP4jKtuxAxkD8Q6QOC9tENceM+3tF/Yq59gT/MwQSm
+         RVp+i4KBh2AOxyJ/KTpFhU7sljZvIaOrS+12hMV3f/DEErWfvnZfPOgn5rgx58NW/52Q
+         4GLxcXl46i9UHRKS+/6HSSJ7RSILmRtBQ2eVELAY/mwQnEuM1u58fO7y2NXlALcqIBlH
+         6FiiZRQ2peT59FkboLJEQpug70SFAWExHM9r8IlcPPxwZ9j+2+jcJO9vJ6f/ELHWbwGO
+         0JU9OoAiGrAjAWCSzWigoF9909L/3sJHkHkW9hF+PE8Mhp1yMoksJK77XdaSU8W7gWpM
+         SZIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=RQJNFNIjmYLP71EGQCtMn4dHFGn+z8AinizUQEi5mZo=;
-        b=UM2XeJsRw4s+ca/ldSVhZiVtvNaMJl9Ho3J+t+oVUB7Jh2491dgHHbyMFX3gxNBI6T
-         3AjpTOEioaZ/zIpKB2vNgZ9MSlsfPo9AtHM03+yvQiUO77gfbtwptem3v9kQjRjOqOP4
-         LymXLMH8OJImpvaasmTucPRF3p4qXYU+DWqoyBR1fgeNRsutyorr72Kg9bNaWpwEP26S
-         bD5EsBhQpr4SehPN2W1trOJdPHbZfS5VsCUQj96C+pnaWvnLbSX7Ql3cYauz8Dbxce+c
-         phyW0HLWgcX6/D1JGA4SegtE40Vj8FxXb7mGVPhtWpTuJeN13HbPsiCzpXKlAQBJTQr2
-         8+/Q==
-X-Gm-Message-State: AJcUukc5zXmZpGlY5ywdbv4/v+bR+TjsCPENQ1SsujDmgiIBkis0QZoG
-        TDyI+jScCJ4B7jRtIBLLWag=
-X-Google-Smtp-Source: ALg8bN5a3JLSFqmOFbqLGbjjaaVQLSQpeiLYq3xKVORqEICV3ttg5F5SeKk7vwmPjC34l6Huw4N7uw==
-X-Received: by 2002:a19:5a05:: with SMTP id o5mr12080603lfb.140.1548505550404;
-        Sat, 26 Jan 2019 04:25:50 -0800 (PST)
+        bh=iHGpzzDxSY24Z16cE/9INPchFaLmbUq/b31/6GBzQF8=;
+        b=Y49f1jzZ83hj5xpZrQTI2s8iCc7BncLuOSF/gkgytDorO1BHSFFo/0EUTgPp1/xg5b
+         C23vqjbCOrIaYmHa58I14fDUq1XE6xlPMGmmmtKKqUAHCCkMaYlZQgqrXFhfq+9UOA1V
+         0/xGkEOhdmNuirkAUaXJsc5sMjdAPfWzxoGhOgM3+gRBNj+COibXMXefcN1v/nYvBJPo
+         sYAfVC07AWasS5HqjLx+KNUM8yu/i56T10cFbxDKF0ad4Y78j2E+j6fxssxYqUjSFnPW
+         zG5CifY6pLGWYcmTaz6eTzgdttZjAbCgJmVOaKcuyO5iVZi5P4zh4VBhL0V3Z42oH44m
+         ZLnA==
+X-Gm-Message-State: AJcUukf7K6iYJ46FspdUqv/ZGNVGUiQV0L6/iCzKoFFKoVFBp2ZufXbu
+        UwSESaU/i3QMAPVZiPT8+2Q=
+X-Google-Smtp-Source: ALg8bN53vK7VZK4Lti14nTln8OCjVFipOAdFvOWpzQ8jDJkr15Ole5zHsVxVdl5hSxYxUZLY+sDV9g==
+X-Received: by 2002:a2e:5d12:: with SMTP id r18-v6mr11601191ljb.89.1548505555189;
+        Sat, 26 Jan 2019 04:25:55 -0800 (PST)
 Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id j138sm2070288lfg.64.2019.01.26.04.25.49
+        by smtp.gmail.com with ESMTPSA id j138sm2070288lfg.64.2019.01.26.04.25.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Jan 2019 04:25:49 -0800 (PST)
+        Sat, 26 Jan 2019 04:25:54 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -70,11 +70,10 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Sean Paul <sean@poorly.run>, intel-gfx@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH v6 1/5] staging/vboxvideo: prepare for drmP.h removal from drm_modeset_helper.h
-Date:   Sat, 26 Jan 2019 13:25:23 +0100
-Message-Id: <20190126122527.11647-2-sam@ravnborg.org>
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: [PATCH v6 5/5] drm: remove drmP.h from drm_modeset_helper.h
+Date:   Sat, 26 Jan 2019 13:25:27 +0100
+Message-Id: <20190126122527.11647-6-sam@ravnborg.org>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20190126122527.11647-1-sam@ravnborg.org>
 References: <20190126122527.11647-1-sam@ravnborg.org>
@@ -83,105 +82,49 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The use of drmP.h is discouraged and removal of it from
-drm_modeset_helper.h caused vboxvideo to fail to build.
+With the removal of drmP.h from drm_modeset_helper.h
+the drmP.h are no longer included by any include files
+in include/drm.
+The drmP.h file is thus only included explicit
+either in .c files or in local .h files.
+This makes the process of deleting the drmP.h includes easier
+as we have a more local dependency chain.
 
-This patch introduce the necessary fixes to prepare for the
-drmP.h removal from drm_modeset_helper.h.
-
-In the files touched sort the include files
-
-Build tested on x86 and arm allmodconfig / allyesconfig.
+v2:
+- moved updates of .c files in drm/ to a dedicated
+  patch. This allows the updates to the *.c files
+  to be committed without the removal part.
+  So this patch can wait if it causes build failures
+  due to pending changes
 
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
 ---
- drivers/staging/vboxvideo/vbox_drv.c  |  6 +++++-
- drivers/staging/vboxvideo/vbox_fb.c   | 18 ++++++++++--------
- drivers/staging/vboxvideo/vbox_mode.c |  5 ++++-
- 3 files changed, 19 insertions(+), 10 deletions(-)
+ include/drm/drm_modeset_helper.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/vboxvideo/vbox_drv.c b/drivers/staging/vboxvideo/vbox_drv.c
-index cc6532d8c2fa..d1b0d7b4886a 100644
---- a/drivers/staging/vboxvideo/vbox_drv.c
-+++ b/drivers/staging/vboxvideo/vbox_drv.c
-@@ -7,11 +7,15 @@
-  *          Michael Thayer <michael.thayer@oracle.com,
-  *          Hans de Goede <hdegoede@redhat.com>
-  */
--#include <linux/module.h>
- #include <linux/console.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
- #include <linux/vt_kern.h>
+diff --git a/include/drm/drm_modeset_helper.h b/include/drm/drm_modeset_helper.h
+index efa337f03129..995fd981cab0 100644
+--- a/include/drm/drm_modeset_helper.h
++++ b/include/drm/drm_modeset_helper.h
+@@ -23,7 +23,11 @@
+ #ifndef __DRM_KMS_HELPER_H__
+ #define __DRM_KMS_HELPER_H__
  
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_file.h>
-+#include <drm/drm_ioctl.h>
+-#include <drm/drmP.h>
++struct drm_crtc;
++struct drm_crtc_funcs;
++struct drm_device;
++struct drm_framebuffer;
++struct drm_mode_fb_cmd2;
  
- #include "vbox_drv.h"
+ void drm_helper_move_panel_connectors_to_head(struct drm_device *);
  
-diff --git a/drivers/staging/vboxvideo/vbox_fb.c b/drivers/staging/vboxvideo/vbox_fb.c
-index 397496cf0bdf..83a04afd1766 100644
---- a/drivers/staging/vboxvideo/vbox_fb.c
-+++ b/drivers/staging/vboxvideo/vbox_fb.c
-@@ -6,20 +6,22 @@
-  * Authors: Dave Airlie <airlied@redhat.com>
-  *          Michael Thayer <michael.thayer@oracle.com,
-  */
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/errno.h>
--#include <linux/string.h>
--#include <linux/mm.h>
--#include <linux/tty.h>
--#include <linux/sysrq.h>
- #include <linux/delay.h>
-+#include <linux/errno.h>
- #include <linux/fb.h>
- #include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/string.h>
-+#include <linux/sysrq.h>
-+#include <linux/tty.h>
- 
- #include <drm/drm_crtc.h>
--#include <drm/drm_fb_helper.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_fb_helper.h>
-+#include <drm/drm_fourcc.h>
- 
- #include "vbox_drv.h"
- #include "vboxvideo.h"
-diff --git a/drivers/staging/vboxvideo/vbox_mode.c b/drivers/staging/vboxvideo/vbox_mode.c
-index 1aaff02c07ff..213551394495 100644
---- a/drivers/staging/vboxvideo/vbox_mode.c
-+++ b/drivers/staging/vboxvideo/vbox_mode.c
-@@ -10,14 +10,17 @@
-  *          Hans de Goede <hdegoede@redhat.com>
-  */
- #include <linux/export.h>
-+
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_fourcc.h>
- #include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_vblank.h>
- 
-+#include "hgsmi_channels.h"
- #include "vbox_drv.h"
- #include "vboxvideo.h"
--#include "hgsmi_channels.h"
- 
- /*
-  * Set a graphics mode.  Poke any required values into registers, do an HGSMI
 -- 
 2.12.0
 
