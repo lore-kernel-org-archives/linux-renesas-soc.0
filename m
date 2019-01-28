@@ -2,99 +2,97 @@ Return-Path: <SRS0=lhsG=QE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A202C282C8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 18:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D798C282CD
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 18:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F69E2148E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 18:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CBAE20882
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 18:16:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="gKAjbRNO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfA1SE2 (ORCPT
+        id S1726998AbfA1SQA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:04:28 -0500
-Received: from pbmsgap02.intersil.com ([192.157.179.202]:53584 "EHLO
-        pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbfA1SE2 (ORCPT
+        Mon, 28 Jan 2019 13:16:00 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45971 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbfA1SP7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:04:28 -0500
-X-Greylist: delayed 346 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Jan 2019 13:04:27 EST
-Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
-        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x0SHrNfh028453;
-        Mon, 28 Jan 2019 12:58:40 -0500
-Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
-        by pbmsgap02.intersil.com with ESMTP id 2q8jkg9h99-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 28 Jan 2019 12:58:39 -0500
-Received: from pbmxdp03.intersil.corp (132.158.200.224) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Mon, 28 Jan 2019 12:58:38 -0500
-Received: from ubuntu.localdomain (132.158.202.108) by pbmxdp03.intersil.corp
- (132.158.200.224) with Microsoft SMTP Server id 15.1.1531.3 via Frontend
- Transport; Mon, 28 Jan 2019 12:58:38 -0500
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-serial@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        "Chris Brandt" <chris.brandt@renesas.com>
-Subject: [PATCH] serial: sh-sci: Do not free irqs that have already been freed
-Date:   Mon, 28 Jan 2019 12:58:32 -0500
-Message-ID: <20190128175832.33670-1-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.16.1
+        Mon, 28 Jan 2019 13:15:59 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so12574513lfa.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Jan 2019 10:15:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=b8vA43k+GpkwpU0HUS/z4yHprkYiWxHwQeJiC+z+lpQ=;
+        b=gKAjbRNO+rXtlOIqdXsYN4wM/VHXf6q4UM9+KddzieNKTe/Q7zb5ncSBvgjGqJfAhE
+         O8YXvd7J7c5Sai7+q0CbmskIDJ+xF/QNy5+L9eFz1ov0QQVoCWa0MRaZZrRos05JZZYF
+         4sVRhbUcu9M8kc06H5wjMiMaw9FY0JIbmZTcuySJIXBW0uhEuxGzpmASvjEhpYJvP+an
+         b+ZMguHTZxD4FY/1rfR+Swyr41s4m/NYDN9jnk72MygDE0y+X6f/wbXKKdoXzhBx/yf5
+         XzK1aZf5bo6ifbXOkorKr2q4AaBW/yE0JvKIMDiqn7NssnpVhmKnWMT8l/URONeFF0pW
+         NjGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=b8vA43k+GpkwpU0HUS/z4yHprkYiWxHwQeJiC+z+lpQ=;
+        b=MmBXGzGp7RuMUYnHBYtGmlS8wFCHKbK2G+ekWNYnoRTtosAwI/+QtZq6/lqpMZovIA
+         4ODKbl9fYSiVKsAB9SnvC2MLZrjX3VFWQGS2YnbACHmm6EneA5BB8RvxeE+NkTvAWqxT
+         3kvRRlATOhN0PFnWsI4v9cUBlhfR86Ch+c6/8DbSZdwc09fT+gAs1FaAp0YevxBd2yMU
+         XtoGSV58Hfe56KnMPTAarlOrYUCMVOXHNnUVD5fQdnTMmTmHLPVJB2pj2ObVTXR15eqy
+         0mXbE6tJlLW39sZyU7jbxuL7ZwMfD1JqZtVOg/6HO1Zf+b3q5/jrkSDeiv0aycRo5e/K
+         cfEw==
+X-Gm-Message-State: AJcUukfiVhX0T5QbQ7qAjp8Ag0F9JylE1pCKYuVFWYXlCvzYzC2dwklt
+        CCx66Gr2eNzlny0CkDlQ978qEcbdzm4=
+X-Google-Smtp-Source: ALg8bN7IukBtHlttT2pg3sdsB89tbb3HH7YzlW/r4ghZkIk4Q8Li9rZgOC8wtaYLdORwwlkATei4bQ==
+X-Received: by 2002:a19:1cb:: with SMTP id 194mr17620413lfb.61.1548699357700;
+        Mon, 28 Jan 2019 10:15:57 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.84.148])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm3105306ljj.87.2019.01.28.10.15.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 10:15:56 -0800 (PST)
+Subject: Re: [PATCH] serial: sh-sci: Do not free irqs that have already been
+ freed
+To:     Chris Brandt <chris.brandt@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20190128175832.33670-1-chris.brandt@renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <00dc1b7b-04de-7d6b-8525-a92dbe529916@cogentembedded.com>
+Date:   Mon, 28 Jan 2019 21:15:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=8 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901280134
-X-Proofpoint-Spam-Reason: mlx
+In-Reply-To: <20190128175832.33670-1-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since IRQs might are muxed on some parts, we need to pay attention when we
-are freeing them.
-Otherwise we get the ugly WARNING "Trying to free already-free IRQ 20".
+Hello!
 
-Fixes: 628c534ae735 ("serial: sh-sci: Improve support for separate TEI and DRI interrupts")
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/tty/serial/sh-sci.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+On 01/28/2019 08:58 PM, Chris Brandt wrote:
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index cb3d5d37674f..060fcd42b6d5 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -1936,7 +1936,7 @@ static int sci_request_irq(struct sci_port *port)
- 
- static void sci_free_irq(struct sci_port *port)
- {
--	int i;
-+	int i, j;
- 
- 	/*
- 	 * Intentionally in reverse order so we iterate over the muxed
-@@ -1952,6 +1952,13 @@ static void sci_free_irq(struct sci_port *port)
- 		if (unlikely(irq < 0))
- 			continue;
- 
-+		/* Check if already freed (irq was muxed) */
-+		for (j = 0; j < i; j++)
-+			if (port->irqs[j] == irq)
-+				j = i + 1;
-+		if (j > i)
-+			continue;
-+
- 		free_irq(port->irqs[i], port);
- 		kfree(port->irqstr[i]);
- 
--- 
-2.16.1
+> Since IRQs might are muxed on some parts, we need to pay attention when we
+
+   s/are/be/?
+
+> are freeing them.
+> Otherwise we get the ugly WARNING "Trying to free already-free IRQ 20".
+> 
+> Fixes: 628c534ae735 ("serial: sh-sci: Improve support for separate TEI and DRI interrupts")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+[...]
+
+MBR, Sergei
 
