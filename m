@@ -4,139 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FBCC282C8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 13:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC86DC282C8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 14:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717C22171F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 13:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A55D20989
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 14:01:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="PAQJC7hm"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="XGKbEVnq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfA1NCp (ORCPT
+        id S1726683AbfA1OBg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:02:45 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:60344 "EHLO
+        Mon, 28 Jan 2019 09:01:36 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:60765 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbfA1NCo (ORCPT
+        with ESMTP id S1726668AbfA1OBg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:02:44 -0500
+        Mon, 28 Jan 2019 09:01:36 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 27DBA25BE08;
-        Tue, 29 Jan 2019 00:02:40 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id EE77025BE02;
+        Tue, 29 Jan 2019 01:01:33 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548680560; bh=OSXBUxHDDujmxNdywn/iD2mrnKKEuOvKH9iRoJqwJLs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PAQJC7hm2yLVkWsZiwa678nt0F6nF2W+TFpDGGafEgJTgNdta6MJwKhqAt2wsnwHB
-         cqsuDAt14PP0Q2xjdAvEmp7DU/YBbwg/NQgwKbYScqcnJgaZ3Y+QuVjGnqplBCxOVs
-         ZDXRJa8zn5F3ZayvjpI9/D1meCzbBvqqBSI6pCpw=
+        t=1548684094; bh=4/VrSwFsbSxZTXcqJqHgjm6k/0gutHwhX5oDwYoN3VU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XGKbEVnqRy/ruQQTuvWYH1y4uDDgeLbaX7YP++j18ngR5LYEuugfZyVSwMkFrj4N2
+         nJz1M/zxQMKkBe0m9VwAfKaere5DeV3zaDONlvUTannyK4qE1Uhim+LNu3zULQbnLk
+         HDd/w5UEY6WMvky/+FU7niHDLG4s5Ex3GKzJzfj4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 864279403E0; Mon, 28 Jan 2019 14:02:38 +0100 (CET)
-Date:   Mon, 28 Jan 2019 14:02:38 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id EC04E9403E0; Mon, 28 Jan 2019 15:01:31 +0100 (CET)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH 10/11] arm64: dts: renesas: r8a774c0: Add clkp2 clock to
- CAN nodes
-Message-ID: <20190128130238.gork4cep3qonghwz@verge.net.au>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-11-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190117120541.slymsz47fjkzz3kg@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117120541.slymsz47fjkzz3kg@verge.net.au>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH] clk: renesas: r8a77990: Add Z2 clock
+Date:   Mon, 28 Jan 2019 15:01:27 +0100
+Message-Id: <20190128140127.17540-1-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 01:05:42PM +0100, Simon Horman wrote:
-> On Wed, Jan 16, 2019 at 06:37:53PM +0000, Fabrizio Castro wrote:
-> > According to the latest information, clkp2 is available on RZ/G2.
-> > Modify CAN0 and CAN1 nodes accordingly.
-> > 
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> 
-> Taking your word for the motivation for this change,
-> this patch seems fine to me but I would like to wait for review
-> from others.
-> 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Adds Z2 clock to CPG driver for the R-Car E3 (r8a77990) SoC.
 
-I am marking this as deferred until R8A774C0_CLK_CANFD
-shows up in an rc release.
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/clk/renesas/r8a77990-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Alternatively I'd be happy to take a version that uses
-numeric values, followed up by a patch to switching to R8A774C0_CLK_CANFD
-once it is available in an rc release.
+ Tested on top of renesas-devel-20190128-v5.0-rc4
+ in conjunction with 
+ "[PATCH/RFT] arm64: dts: renesas: r8a77990: Add OPPs table for cpu devices"
 
-Please repost or otherwise ping me as appropriate.
+ https://patchwork.kernel.org/patch/10764359/
 
-> 
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 12 ++++++++----
-> >  1 file changed, 8 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-> > index 3970aaf..326ab3a 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-> > @@ -809,8 +809,10 @@
-> >  				     "renesas,rcar-gen3-can";
-> >  			reg = <0 0xe6c30000 0 0x1000>;
-> >  			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-> > -			clocks = <&cpg CPG_MOD 916>, <&can_clk>;
-> > -			clock-names = "clkp1", "can_clk";
-> > +			clocks = <&cpg CPG_MOD 916>,
-> > +				 <&cpg CPG_CORE R8A774C0_CLK_CANFD>,
-> > +				 <&can_clk>;
-> > +			clock-names = "clkp1", "clkp2", "can_clk";
-> >  			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-> >  			resets = <&cpg 916>;
-> >  			status = "disabled";
-> > @@ -821,8 +823,10 @@
-> >  				     "renesas,rcar-gen3-can";
-> >  			reg = <0 0xe6c38000 0 0x1000>;
-> >  			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-> > -			clocks = <&cpg CPG_MOD 915>, <&can_clk>;
-> > -			clock-names = "clkp1", "can_clk";
-> > +			clocks = <&cpg CPG_MOD 915>,
-> > +				 <&cpg CPG_CORE R8A774C0_CLK_CANFD>,
-> > +				 <&can_clk>;
-> > +			clock-names = "clkp1", "clkp2", "can_clk";
-> >  			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-> >  			resets = <&cpg 915>;
-> >  			status = "disabled";
-> > -- 
-> > 2.7.4
-> > 
-> 
+ Test results to be posted to that thread shortly.
+
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+index 9a278c75c918..a41a92fb8d48 100644
+--- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -79,6 +79,7 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+ 	DEF_RATE(".oco",       CLK_OCO,            8 * 1000 * 1000),
+ 
+ 	/* Core Clock Outputs */
++	DEF_FIXED("z2",        R8A77990_CLK_Z2,    CLK_PLL0D4,     1, 1),
+ 	DEF_FIXED("za2",       R8A77990_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+ 	DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
+ 	DEF_FIXED("ztr",       R8A77990_CLK_ZTR,   CLK_PLL1,       6, 1),
+-- 
+2.11.0
+
