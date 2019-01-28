@@ -4,74 +4,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D18B0C282CF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 15:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5875BC282C8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20CF20881
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 15:21:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 289C221741
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Am3Wiode"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="p4HHMlyR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfA1PVQ (ORCPT
+        id S1726888AbfA1Ppa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:21:16 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36099 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbfA1PVQ (ORCPT
+        Mon, 28 Jan 2019 10:45:30 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40784 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbfA1Ppa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:21:16 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g11-v6so14576902ljk.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Jan 2019 07:21:14 -0800 (PST)
+        Mon, 28 Jan 2019 10:45:30 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v5so12181050lfe.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Jan 2019 07:45:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=FEKBm4Afgc+0uf+ZrUUQobOFGdoiL39ByCGptGjRMEw=;
-        b=Am3WiodeXzvf2r9GiZtjPS5A7mA0Hv7Y1SO7COjASBQ/ROguSRtnv0QJMTZhkZJkKN
-         aWKN8Uytmrd9YKu2l49vYqd3xX7fCfGTR3hCvzRTTib2YmzBt9wKRIWS2l0owN97cC5J
-         xyQO94r0pMfArJqhqpIZPgLed1zJhlvV84lGbKooDRa684KY35T6onVaSCagAUhqSj+z
-         r3ouDTw2mPkswzysG/HMDtxxSetXTmejvZlgdIUaRxI96RFGvTj/MHOV4RQMPkVhdTb9
-         DKOIdYeh+hZ9KE/JL0zOyg7pQIfioaH3y0UVFr+Hi/0YilRYBCSE5zvBNMERUWem/vHU
-         YyMw==
+        bh=cgZtdqWkc6mV6i/XlpC0B0hwRlqTi7jLUMGgLPsftfA=;
+        b=p4HHMlyRlixb1qZWoJwFyTYel983uyYkcuRZ9VMtY7vlRxbhBZAPcwCcNm0e99qA1h
+         RY45Tj9FXw5BPqHRJWbkPvnKFS4K0uOYZUk42d3D+LxMr49Y6//WIcrcxzwj8dapl15P
+         57m2MM3LN6vn+p5MTVx8KzeHKsiqY9M464L1oW84iozVahnHJCTnGHhsqS/B1AtlS6U8
+         UqrR5REky/O21ewJacMUBB8Xm+z7Ulsh5J5nRmADwBmLf2FEdfFmfDN+dH/ijv04QtdX
+         yPevrzbbc3ckdn+jj/YALjR2CnCXTHMncfQbx2xOkaGV+8jdDfTZK2B+L5rIkRO0orLK
+         3fwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=FEKBm4Afgc+0uf+ZrUUQobOFGdoiL39ByCGptGjRMEw=;
-        b=TAXa/enquwuJqZ/qHT7hBRI8CMfYSaOHn2uc35stNe6vFApKZ16+PcKjl1MPSQlKOL
-         1i3orlK4qetkZA9a8273ktgoGlLV28h/o9eIxEBgygjlNfbGCSpDm2aIoIASX3Z5x/9W
-         eTzm4Cr8yGjFVx7iziT+iiKbemSHUiUgB7SyVSShNRMa7H2MCGANatII4O18eM/7Aky/
-         Ki90f8S3dgxoKHBRmLCxko+RJgfpGyq/g3kOAG6HagedLz12axZqOiZTeuJ9PtBorAK+
-         fUoS0eWwiGNUE9zoxjeUWEpeNb4VHavsW79YypAy1eFQrmFRRER/vboDxKhQrolRmhvt
-         KhbA==
-X-Gm-Message-State: AJcUukeGUqL8rxWyF1D+LzPO+pzALRGXZvjCGaQQTkr8N8FTEzpPMtgD
-        nhUJ38IToD6ffs7M/0/Vhayk7w==
-X-Google-Smtp-Source: ALg8bN4cuEHq2p3fnZ18EYMPBHhArMWj5yItfM4bJ470W5PXeYh40J09ezM49mMr3yhopeE+rBDcdA==
-X-Received: by 2002:a2e:b04f:: with SMTP id d15-v6mr17802047ljl.3.1548688873912;
-        Mon, 28 Jan 2019 07:21:13 -0800 (PST)
+        bh=cgZtdqWkc6mV6i/XlpC0B0hwRlqTi7jLUMGgLPsftfA=;
+        b=eC+JatKFXPSOp/5WH8R4Sm9uLCQGEzFvY1jt03vdA/2KRltLaqohJJFm/ohDXdSDJD
+         7tWhSm7FYru3fCGcBkmINdJMK6lON0ayYb9vOc9rR1idjGcMQNUMzIc+wMBEgZrRf/E/
+         LmovDsTTvcsgcWVtU2XzJyHbqDFctWczOo1CGFI26TaHSpf/Ut9dnG9B10PZzgLOsJbV
+         rGgsn/P65bLxmFyXeGfpmywVHa1A11hy95khg32ncIVgKSWot1li8h/XeztEX1qDCC0h
+         Ej7qGb8d0Q4w+4q+CruCidoT+0Lqne26asz9I1JEQF8goiomc1Adm5C8MmQ6Sfuk4fnF
+         AOjA==
+X-Gm-Message-State: AJcUukfz/QstJpSJLVwR+Z6p3bZz1ehoV791YXT7y6Xhvv7QmIcnKQkS
+        ZBA57b6NVHRu+rXc68suq6R68w==
+X-Google-Smtp-Source: ALg8bN4ELZuJm2CvWv9JlwqeE0aAC+8M6IVaDnZ2GrD5bxfwn4HmWEi0ozBVqSLRRD8xtrNrQ7uuSA==
+X-Received: by 2002:a19:980f:: with SMTP id a15mr16835357lfe.103.1548690328172;
+        Mon, 28 Jan 2019 07:45:28 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.84.148])
-        by smtp.gmail.com with ESMTPSA id s20sm2891495lfb.51.2019.01.28.07.21.12
+        by smtp.gmail.com with ESMTPSA id e97-v6sm3117906lji.51.2019.01.28.07.45.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 07:21:12 -0800 (PST)
-Subject: Re: [PATCH 3/7] sh_eth: offload RX checksum on R7S72100
+        Mon, 28 Jan 2019 07:45:27 -0800 (PST)
+Subject: Re: [PATCH 2/7] sh_eth: RX checksum offload support
 To:     Simon Horman <horms@verge.net.au>
 Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
 References: <fc43bfa2-4312-b52b-a749-e3e43e242a95@cogentembedded.com>
- <0476beba-ea1f-7675-aa08-573b74e84f4e@cogentembedded.com>
- <20190128122053.vb5ifhf34zbnuclp@verge.net.au>
+ <29cb4d33-37c3-43c0-3bce-fa01737c0fa4@cogentembedded.com>
+ <20190128121855.t5w3us6kd7o6niph@verge.net.au>
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <916ed105-d499-4ca1-8418-4743b5a7a60d@cogentembedded.com>
-Date:   Mon, 28 Jan 2019 18:21:11 +0300
+Message-ID: <d95fff4f-7750-87c4-3664-eb5efb593b75@cogentembedded.com>
+Date:   Mon, 28 Jan 2019 18:45:26 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190128122053.vb5ifhf34zbnuclp@verge.net.au>
+In-Reply-To: <20190128121855.t5w3us6kd7o6niph@verge.net.au>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
@@ -80,17 +80,59 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 01/28/2019 03:20 PM, Simon Horman wrote:
+Hello!
 
->> The RZ/A1H (R7S721000) SoC manual describes the Ether MAC's RX checksum
->> offload the same way as it's implemented in the EtherAVB MACs...
+On 01/28/2019 03:18 PM, Simon Horman wrote:
+
+>> Add support for the RX checksum offload. This is enabled by default and
+>> may be disabled and re-enabled using 'ethtool':
+>>
+>> # ethtool -K eth0 rx {on|off}
+>>
+>> Some Ether MACs provide a simple checksumming scheme which appears to be
+>> completely compatible with CHECKSUM_COMPLETE: sum of all packet data after
+>> the L2 header is appended to packet data; this may be trivially read by
+>> the driver and used to update the skb accordingly. The same checksumming
+>> scheme is implemented in the EtherAVB MACs and now supported by tha 'ravb'
+>> driver.
+>>
+>> In terms of performance, throughput is close to gigabit line rate with the
+>> RX checksum offload both enabled and disabled.  The 'perf' output, however,
+>> appears to indicate that significantly less time is spent in do_csum() --
+>> this is as expected.
+> 
+> Nice.
+> 
+> FYI, this seems similar to what I observed for RAVB, perhaps on H3 I don't
+> exactly recall. On E3, which has less CPU power, I recently observed that
+> with rx-csum enabled I can achieve gigabit line rate, but with rx-csum
+> disabled throughput is significantly lower. I.e. on that system throughput
+> is CPU bound with 1500 byte packets unless rx-csum enabled.
+
+   Unfortunately, we can't teset these patches on the other gen3 boards. ISTR
+you have RZ/A1H board... if it's still with you, I'd appreciate testing.
+
+> Next point:
+> 
+> 2da64300fbc ("ravb: expand rx descriptor data to accommodate hw checksum")
+> is fresh in my mind and I wonder if mdp->rx_buf_sz needs to grow to ensure
+> that there is always enough space for the csum.
+
+   Well, if you look at sh_eth_ring_init(), you'll see that the driver reserves
+plenty of space at the end the RX buffers.
+
+> In particular, have you
+> tested this with MTU-size frames with VLANs. (My test is to run iperf3 over
+> a VLAN netdev, netperf over a VLAN netdev would likely work just as well.)
+
+   Could you refresh me on how to bring up a VLAN on a given interface?
+
+[...]
+>> The above results collected on the R-Car V3H Starter Kit board.
+>>
+>> Based on the commit 4d86d3818627 ("ravb: RX checksum offload")...
 >>
 >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> Regarding this and the remaining patches in this series,
-> which add rx-csum offload support in the sh_eth driver for
-> various SoCs: has this been tested?
-
-   As I said, I've only tested it on R8A77980.
+[...]
 
 MBR, Sergei
