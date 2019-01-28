@@ -2,172 +2,237 @@ Return-Path: <SRS0=lhsG=QE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 764D5C282C8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 14:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F98AC282C8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 14:47:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4636E20989
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 14:05:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LsDtzyTd"
+	by mail.kernel.org (Postfix) with ESMTP id E69EB2147A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 14:47:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfA1OFo (ORCPT
+        id S1726754AbfA1OrZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:05:44 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:60911 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbfA1OFn (ORCPT
+        Mon, 28 Jan 2019 09:47:25 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:37593 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfA1OrZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:05:43 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id F09E925BE02;
-        Tue, 29 Jan 2019 01:05:39 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548684340; bh=SJjg5ZFd1qjjVj5/GhmF6er0LTaRTfWOIpJW5OhRkaQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LsDtzyTdU+1CVr9jbQSRk5HBfsaiAWidym6hBSBqn5kycXFqtU0oW1Wg9Jw+gOpci
-         oqqBiuBm/2iF9+y6ZHO1Isa7AnI1fNQ1Ync4kty/MCE79STHfYkP83t595XoFs1oEr
-         V/qUwzDoPgHFeHS78yQTSYFpk+YkrWDOCfrh5XZ8=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 0E9D69403E0; Mon, 28 Jan 2019 15:05:37 +0100 (CET)
-Date:   Mon, 28 Jan 2019 15:05:37 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add OPPs table for
- cpu devices
-Message-ID: <20190128140519.wfbnpgznbkx3msft@verge.net.au>
-References: <1547553762-4467-1-git-send-email-ykaneko0929@gmail.com>
+        Mon, 28 Jan 2019 09:47:25 -0500
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 8A8514000B;
+        Mon, 28 Jan 2019 14:47:21 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 15:47:37 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH v3 3/6] media: adv748x: csi2: Link AFE with TXA and TXB
+Message-ID: <20190128144736.7hulivpepab2mp7z@uno.localdomain>
+References: <20190110140213.5198-1-jacopo+renesas@jmondi.org>
+ <20190110140213.5198-4-jacopo+renesas@jmondi.org>
+ <20190114145533.GK30160@bigcity.dyn.berto.se>
+ <20190116134424.GP7393@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6lqm5xioql4su6x6"
 Content-Disposition: inline
-In-Reply-To: <1547553762-4467-1-git-send-email-ykaneko0929@gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190116134424.GP7393@bigcity.dyn.berto.se>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:02:42PM +0900, Yoshihiro Kaneko wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> This patch define OOP tables for all CPUs.
-> This allows CPUFreq to function.
-> 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> ---
 
-Thanks, I have tested CPUFreq with this tested that with this patch and
-"[PATCH] clk: renesas: r8a77990: Add Z2 clock"
-(https://patchwork.kernel.org/patch/10783723/) applied on top of
-renesas-devel-20190128-v5.0-rc4.
+--6lqm5xioql4su6x6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Geert, or others, is it expected that z2 does not scale
-in this test?
+Hi Niklas,
+   sorry for replying late
 
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 
-performance
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
-800000 1000000 1200000 
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-# echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:800000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-# echo 1200000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
+On Wed, Jan 16, 2019 at 02:44:25PM +0100, Niklas S=C3=B6derlund wrote:
+> Hi (again) Jacopo,
+>
+> I found something else in this patch unfortunately :-(
+>
+> On 2019-01-14 15:55:33 +0100, Niklas S=C3=B6derlund wrote:
+> > Hi Jacopo,
+> >
+> > Thanks for your patch.
+> >
+> > On 2019-01-10 15:02:10 +0100, Jacopo Mondi wrote:
+> > > The ADV748x chip supports routing AFE output to either TXA or TXB.
+> > > In order to support run-time configuration of video stream path, crea=
+te an
+> > > additional (not enabled) "AFE:8->TXA:0" link, and remove the IMMUTABL=
+E flag
+> > > from existing ones.
+> > >
+> > > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > ---
+> > >  drivers/media/i2c/adv748x/adv748x-csi2.c | 44 +++++++++++++---------=
+--
+> > >  1 file changed, 23 insertions(+), 21 deletions(-)
+> > >
+> > > diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media=
+/i2c/adv748x/adv748x-csi2.c
+> > > index b6b5d8c7ea7c..8c3714495e11 100644
+> > > --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > > +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > > @@ -27,6 +27,7 @@ static int adv748x_csi2_set_virtual_channel(struct =
+adv748x_csi2 *tx,
+> > >   * @v4l2_dev: Video registration device
+> > >   * @src: Source subdevice to establish link
+> > >   * @src_pad: Pad number of source to link to this @tx
+> > > + * @enable: Link enabled flag
+> > >   *
+> > >   * Ensure that the subdevice is registered against the v4l2_device, =
+and link the
+> > >   * source pad to the sink pad of the CSI2 bus entity.
+> > > @@ -34,17 +35,11 @@ static int adv748x_csi2_set_virtual_channel(struc=
+t adv748x_csi2 *tx,
+> > >  static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
+> > >  				      struct v4l2_device *v4l2_dev,
+> > >  				      struct v4l2_subdev *src,
+> > > -				      unsigned int src_pad)
+> > > +				      unsigned int src_pad,
+> > > +				      bool enable)
+> > >  {
+> > > -	int enabled =3D MEDIA_LNK_FL_ENABLED;
+> > >  	int ret;
+> > >
+> > > -	/*
+> > > -	 * Dynamic linking of the AFE is not supported.
+> > > -	 * Register the links as immutable.
+> > > -	 */
+> > > -	enabled |=3D MEDIA_LNK_FL_IMMUTABLE;
+> > > -
+> > >  	if (!src->v4l2_dev) {
+> > >  		ret =3D v4l2_device_register_subdev(v4l2_dev, src);
+> > >  		if (ret)
+> > > @@ -53,7 +48,7 @@ static int adv748x_csi2_register_link(struct adv748=
+x_csi2 *tx,
+> > >
+> > >  	return media_create_pad_link(&src->entity, src_pad,
+> > >  				     &tx->sd.entity, ADV748X_CSI2_SINK,
+> > > -				     enabled);
+> > > +				     enable ? MEDIA_LNK_FL_ENABLED : 0);
+> > >  }
+> > >
+> > >  /* -----------------------------------------------------------------=
+------------
+> > > @@ -68,25 +63,32 @@ static int adv748x_csi2_registered(struct v4l2_su=
+bdev *sd)
+> > >  {
+> > >  	struct adv748x_csi2 *tx =3D adv748x_sd_to_csi2(sd);
+> > >  	struct adv748x_state *state =3D tx->state;
+> > > +	int ret;
+> > >
+> > >  	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
+> > >  			sd->name);
+> > >
+> > >  	/*
+> > > -	 * The adv748x hardware allows the AFE to route through the TXA, ho=
+wever
+> > > -	 * this is not currently supported in this driver.
+> > > +	 * Link TXA to AFE and HDMI, and TXB to AFE only as TXB cannot outp=
+ut
+> > > +	 * HDMI.
+> > >  	 *
+> > > -	 * Link HDMI->TXA, and AFE->TXB directly.
+> > > +	 * The HDMI->TXA link is enabled by default, as is the AFE->TXB one.
+> > >  	 */
+> > > -	if (is_txa(tx) && is_hdmi_enabled(state))
+> > > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> > > -						  &state->hdmi.sd,
+> > > -						  ADV748X_HDMI_SOURCE);
+> > > -	if (is_txb(tx) && is_afe_enabled(state))
+> > > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> > > -						  &state->afe.sd,
+> > > -						  ADV748X_AFE_SOURCE);
+> > > -	return 0;
+> > > +	if (is_afe_enabled(state)) {
+> > > +		ret =3D adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> > > +						 &state->afe.sd,
+> > > +						 ADV748X_AFE_SOURCE,
+> > > +						 is_txb(tx));
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	/* Register link to HDMI for TXA only. */
+> > > +	if (is_txb(tx) || !is_hdmi_enabled(state))
+> >
+> > Small nit, I would s/is_txb(tx)/!is_txa(tx)/ here as to me it becomes
+> > easier to read. With or without this change,
+> >
+> > Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
+> >
+> > > +		return 0;
+> > > +
+> > > +	return adv748x_csi2_register_link(tx, sd->v4l2_dev, &state->hdmi.sd,
+> > > +					  ADV748X_HDMI_SOURCE, true);
+>
+> If the call to adv748x_csi2_register_link() fails should not the
+> (possible) link to the AFE be removed?
+>
 
-> 
-> This patch is based on the devel branch of Simon Horman's renesas tree.
-> 
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> index 84bbe70..936714e 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> @@ -55,6 +55,27 @@
->  		clock-frequency = <0>;
->  	};
->  
-> +	cluster1_opp: opp_table10 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +		opp-800000000 {
-> +			opp-hz = /bits/ 64 <800000000>;
-> +			opp-microvolt = <820000>;
-> +			clock-latency-ns = <300000>;
-> +		};
-> +		opp-1000000000 {
-> +			opp-hz = /bits/ 64 <1000000000>;
-> +			opp-microvolt = <820000>;
-> +			clock-latency-ns = <300000>;
-> +		};
-> +		opp-1200000000 {
-> +			opp-hz = /bits/ 64 <1200000000>;
-> +			opp-microvolt = <820000>;
-> +			clock-latency-ns = <300000>;
-> +			opp-suspend;
-> +		};
-> +	};
-> +
->  	cpus {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> @@ -66,6 +87,8 @@
->  			power-domains = <&sysc R8A77990_PD_CA53_CPU0>;
->  			next-level-cache = <&L2_CA53>;
->  			enable-method = "psci";
-> +			clocks =<&cpg CPG_CORE R8A77990_CLK_Z2>;
-> +			operating-points-v2 = <&cluster1_opp>;
->  		};
->  
->  		a53_1: cpu@1 {
-> @@ -75,6 +98,8 @@
->  			power-domains = <&sysc R8A77990_PD_CA53_CPU1>;
->  			next-level-cache = <&L2_CA53>;
->  			enable-method = "psci";
-> +			clocks =<&cpg CPG_CORE R8A77990_CLK_Z2>;
-> +			operating-points-v2 = <&cluster1_opp>;
->  		};
->  
->  		L2_CA53: cache-controller-0 {
-> -- 
-> 1.9.1
-> 
+The .register() callback is called from v4l2-device.c in
+v4l2_device_register_subdev(). If the callback returns an error, the
+subdev gets not registered at all and the media entity cleaned up, so it
+won't appear in the media graph.
+
+I think we're safe and the patch series is good to go. What's your
+opinion?
+
+Thanks
+  j
+
+
+> > >  }
+> > >
+> > >  static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_o=
+ps =3D {
+> > > --
+> > > 2.20.1
+> > >
+> >
+> > --
+> > Regards,
+> > Niklas S=C3=B6derlund
+>
+> --
+> Regards,
+> Niklas S=C3=B6derlund
+
+--6lqm5xioql4su6x6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlxPFggACgkQcjQGjxah
+Vjw0hhAAuA225cOHJG+bQfMduR9zUdwA7eUpv/ForkJdC+ZiTsS/PFU7+fMKjGb4
+aCURAcR/98qX3a16Pun92fwg3HqaRNkrX711FDuoARAkge/sO/pus8vU534zNJRT
+W+MZCpRp2CgAusYkSUEOi8eOQM9ogbN8CGmlA5hcDLnjRWoRqYjoYHDy4GWMWN/2
+2QAHkpDFymv8Zbe7G6q3axzld7XyOvafsz98s9DirbNO1vn6saHQke8kG16GUXkb
+85OHO3bQap3HEZfCG12w4M/BZS7grPj/phZFSsDyAozs5cQ+4BImN+qEu3sGOcjB
+b2h5LRIOioPLj4JVqZ8DdejZpK3jASWB6iRCYGNZZYs0xLVzg5Xbx07oQ+UeooGC
+/ARqfyJKs4kPXaQ/Lm6id31+a9A7uqWYtXU84uKwYOwGTiCjQ2/sMOTNFBRIpnuX
+YdzNizG3oDFOIf2PzuJl9khh0MACh/fdMtz/iPQOjAVvP/L6ZZ4MBZXzyMgnxI69
+jc+XtM7xmJok/Kudu0bg6JlMVAGrQWBYjUqygWbjGXsc5rS6ppmAZpTZ4DK+8guw
+FuhmjKVlFkH2GApLlKeurUp0JSQAebNJlRfLuRc9u+QFNYguzeoupElhxp6nUKQC
+e8JiBMixfhbx85jrJAspSbLJI3qZ50z4fbeW/jcUTsGZb3MW99E=
+=lARp
+-----END PGP SIGNATURE-----
+
+--6lqm5xioql4su6x6--
