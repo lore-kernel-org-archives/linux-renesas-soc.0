@@ -2,151 +2,298 @@ Return-Path: <SRS0=lhsG=QE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA96C282C8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 12:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A18C282C8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 12:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB86214DA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 12:10:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 134F22087E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Jan 2019 12:19:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJYDDCyJ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="WggstRDm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfA1MKP (ORCPT
+        id S1726695AbfA1MTB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:10:15 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38115 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfA1MKP (ORCPT
+        Mon, 28 Jan 2019 07:19:01 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:59709 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726682AbfA1MTB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:10:15 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so17738844wrw.5;
-        Mon, 28 Jan 2019 04:10:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gANamHQGD3U2UwZ54+50YgDOCJQSu76mtIA6Q8LOl7E=;
-        b=BJYDDCyJOXTGwB27f9bl3fkgKtIQ1UXWaOavi8bHMQCxK9dpzA0bgS9r6Dppv3MvB0
-         W7/yTtYjFWoPa6qDF/F5iJxwVrTkDb5JLLYzoUPvk7sJwANVRe4HkWrRhNOW5Hox7qKC
-         NQkq4ia714SsefYkC5pU3gV9JWCQO+/3YADBRMbaE9zC0Xgb0ez7TLttswVjG9eV8KpC
-         v46sCO4mgrHWE36IdhyJJZZpf1NX1mt/PlNGmhB7SreaP+gpDuKmFRCZeTXAOUBzcVbU
-         8F39PQIarH1QXOxTFlbcNmnTeOSLZLtkzh0g1pvObQ4WeTajl6swIMZFL5drUVvmte5J
-         F4bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gANamHQGD3U2UwZ54+50YgDOCJQSu76mtIA6Q8LOl7E=;
-        b=Qs5mtCDEeHEm2oDnUp54pXWwzh/3Jhe0i/0+DrVj7/qJNYruZssDX4SG53EJX61suw
-         GnimQphed5A9Sav19dTU+AX5zNwbxOYuDzD57uuLXNnvnsPwxGaxx1UqR1RQFNCVgiSR
-         8TZQrBVFmeIkic7Fv50pK9LW3O9PIKwktXdrT1J/q3dyKjatGB1nIaXXgnTUNjHCxD9Q
-         YmL5MuR4Y6lHqHojrQi3O1aaqkx3wu+GFay7rvRjrS5t9KTNFqAFGr9/OC+liUPfBX8u
-         gf73S5qmUSXRgzrVetxSNu6dnJEH8DhDalikS1FQ7HVO85uii0l8tv1GtCv/W5HUyCsf
-         lY6g==
-X-Gm-Message-State: AJcUukd5CT9MhtjKMHnGGUET8ToywgLKzXE53k8o9Sgkp1WG415F/7aa
-        fgYL4y2T1I/JL5jURhb0LFA=
-X-Google-Smtp-Source: ALg8bN7lrw1ipaGolu9yIMqsjNM4QCIsbdsxY8AL7PN5dTQsdB1M0lbNN8SXIN1xoBGdeQqG5XhACw==
-X-Received: by 2002:a5d:694d:: with SMTP id r13mr20702326wrw.323.1548677413523;
-        Mon, 28 Jan 2019 04:10:13 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id x15sm152462392wrs.27.2019.01.28.04.10.12
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 04:10:12 -0800 (PST)
-Subject: Re: [PATCH V3 3/6] thermal: Register hwmon in
- thermal_zone_of_sensor_register_param()
-To:     Eduardo Valentin <edubezval@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-References: <20181217155644.29278-1-marek.vasut@gmail.com>
- <20181217155644.29278-4-marek.vasut@gmail.com>
- <20181218214439.GB8850@localhost.localdomain>
- <867ffa18-9c16-685a-7c83-7534bc14e41d@gmail.com>
- <a4aa607d-f83a-2ed4-09c2-fdcba308664d@gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <2b24720c-c649-44e0-0337-c8a52c78d33d@gmail.com>
-Date:   Mon, 28 Jan 2019 13:10:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 28 Jan 2019 07:19:01 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 25EB825BE02;
+        Mon, 28 Jan 2019 23:18:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1548677937; bh=tbZv5k4uGGG5jxOFJeRZtjTp8LGJYo6Hf9vTvKAKcqA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WggstRDm62aIa7xUWih3HkDhAGwKFe5PPwDp4m+A6tmDZ29msQkUTVTc5MU0SK8Kp
+         lRkNbAqmpR1qx/6NmgHAn58SBz/342E0PE3kuXsLfXYIX89G5KvV7lLhqjhDRFVEGa
+         DfzQ+dKPyxdy1rRgpFreEB/sphP3Uv3xl5bi8YbI=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 8FD159403E0; Mon, 28 Jan 2019 13:18:55 +0100 (CET)
+Date:   Mon, 28 Jan 2019 13:18:55 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
+Subject: Re: [PATCH 2/7] sh_eth: RX checksum offload support
+Message-ID: <20190128121855.t5w3us6kd7o6niph@verge.net.au>
+References: <fc43bfa2-4312-b52b-a749-e3e43e242a95@cogentembedded.com>
+ <29cb4d33-37c3-43c0-3bce-fa01737c0fa4@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <a4aa607d-f83a-2ed4-09c2-fdcba308664d@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <29cb4d33-37c3-43c0-3bce-fa01737c0fa4@cogentembedded.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 1/15/19 1:35 AM, Marek Vasut wrote:
-> On 12/22/18 3:19 AM, Marek Vasut wrote:
->> On 12/18/2018 10:44 PM, Eduardo Valentin wrote:
->>> On Mon, Dec 17, 2018 at 04:56:41PM +0100, marek.vasut@gmail.com wrote:
->>>> From: Marek Vasut <marek.vasut@gmail.com>
->>>>
->>>> Register hwmon sysfs interface in thermal_zone_of_sensor_register_param()
->>>> in case thermal_zone_params->no_hwmon is set to false. This behavior is
->>>> the same as thermal_zone_device_register().
->>>>
->>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>> Cc: Eduardo Valentin <edubezval@gmail.com>
->>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>> Cc: Zhang Rui <rui.zhang@intel.com>
->>>> Cc: linux-renesas-soc@vger.kernel.org
->>>> To: linux-pm@vger.kernel.org
->>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>> ---
->>>> V2: No change
->>>> V3: - Work around the From line and SoB line checkpatch warning
->>>>     - Reorder the SoB line at the end
->>>> ---
->>>>  drivers/thermal/of-thermal.c | 12 +++++++++++-
->>>>  1 file changed, 11 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
->>>> index e1a303a5698c..5ccff7b678de 100644
->>>> --- a/drivers/thermal/of-thermal.c
->>>> +++ b/drivers/thermal/of-thermal.c
->>>> @@ -15,6 +15,7 @@
->>>>  #include <linux/string.h>
->>>>  
->>>>  #include "thermal_core.h"
->>>> +#include "thermal_hwmon.h"
->>>>  
->>>>  /***   Private data structures to represent thermal device tree data ***/
->>>>  
->>>> @@ -521,8 +522,15 @@ thermal_zone_of_sensor_register_params(struct device *dev, int sensor_id,
->>>>  		if (sensor_specs.np == sensor_np && id == sensor_id) {
->>>>  			tzd = thermal_zone_of_add_sensor(child, sensor_np,
->>>>  							 data, ops);
->>>> -			if (!IS_ERR(tzd))
->>>> +			if (!IS_ERR(tzd)) {
->>>> +				tzd->tzp = tzp;
->>>
->>> So, here you will overwrite what was done in of_parse_thermal_zones().
->>> That means, after this point, property like sustainable power, slope and
->>> offset are gone.
->>
->> Hmmmmm, that was rather inobvious, indeed.
->>
->> Do you have some suggestion how to pass in the no_hwmon = false then ?
->> Since tzp->no_hwmon is set to true in of_parse_thermal_zones(), the
->> three drivers (stm32, rcar, rcar_gen3) seem to hack around it. I'd like
->> to clean that up.
+Hi Sergei,
+
+On Sun, Jan 27, 2019 at 08:37:33PM +0300, Sergei Shtylyov wrote:
+> Add support for the RX checksum offload. This is enabled by default and
+> may be disabled and re-enabled using 'ethtool':
 > 
-> Bump ?
+> # ethtool -K eth0 rx {on|off}
+> 
+> Some Ether MACs provide a simple checksumming scheme which appears to be
+> completely compatible with CHECKSUM_COMPLETE: sum of all packet data after
+> the L2 header is appended to packet data; this may be trivially read by
+> the driver and used to update the skb accordingly. The same checksumming
+> scheme is implemented in the EtherAVB MACs and now supported by tha 'ravb'
+> driver.
+> 
+> In terms of performance, throughput is close to gigabit line rate with the
+> RX checksum offload both enabled and disabled.  The 'perf' output, however,
+> appears to indicate that significantly less time is spent in do_csum() --
+> this is as expected.
 
-Bump again, any suggestions ?
+Nice.
 
--- 
-Best regards,
-Marek Vasut
+FYI, this seems similar to what I observed for RAVB, perhaps on H3 I don't
+exactly recall. On E3, which has less CPU power, I recently observed that
+with rx-csum enabled I can achieve gigabit line rate, but with rx-csum
+disabled throughput is significantly lower. I.e. on that system throughput
+is CPU bound with 1500 byte packets unless rx-csum enabled.
+
+
+Next point:
+
+2da64300fbc ("ravb: expand rx descriptor data to accommodate hw checksum")
+is fresh in my mind and I wonder if mdp->rx_buf_sz needs to grow to ensure
+that there is always enough space for the csum. In particular, have you
+tested this with MTU-size frames with VLANs. (My test is to run iperf3 over
+a VLAN netdev, netperf over a VLAN netdev would likely work just as well.)
+
+> 
+> Test results with RX checksum offload enabled:
+> 
+> ~/netperf-2.2pl4# perf record -a ./netperf -t TCP_MAERTS -H 192.168.2.4
+> TCP MAERTS TEST to 192.168.2.4
+> Recv   Send    Send
+> Socket Socket  Message  Elapsed
+> Size   Size    Size     Time     Throughput
+> bytes  bytes   bytes    secs.    10^6bits/sec
+> 
+> 131072  16384  16384    10.01     933.93
+> [ perf record: Woken up 8 times to write data ]
+> [ perf record: Captured and wrote 1.955 MB perf.data (41940 samples) ]
+> ~/netperf-2.2pl4# perf report
+> Samples: 41K of event 'cycles:ppp', Event count (approx.): 9915302763
+> Overhead  Command          Shared Object             Symbol
+>    9.44%  netperf          [kernel.kallsyms]         [k] __arch_copy_to_user
+>    7.75%  swapper          [kernel.kallsyms]         [k] _raw_spin_unlock_irq
+>    6.31%  swapper          [kernel.kallsyms]         [k] default_idle_call
+>    5.89%  swapper          [kernel.kallsyms]         [k] arch_cpu_idle
+>    4.37%  swapper          [kernel.kallsyms]         [k] tick_nohz_idle_exit
+>    4.02%  netperf          [kernel.kallsyms]         [k] _raw_spin_unlock_irq
+>    2.52%  netperf          [kernel.kallsyms]         [k] preempt_count_sub
+>    1.81%  netperf          [kernel.kallsyms]         [k] tcp_recvmsg
+>    1.80%  netperf          [kernel.kallsyms]         [k] _raw_spin_unlock_irqres
+>    1.78%  netperf          [kernel.kallsyms]         [k] preempt_count_add
+>    1.36%  netperf          [kernel.kallsyms]         [k] __tcp_transmit_skb
+>    1.20%  netperf          [kernel.kallsyms]         [k] __local_bh_enable_ip
+>    1.10%  netperf          [kernel.kallsyms]         [k] sh_eth_start_xmit
+> 
+> Test results with RX checksum offload disabled:
+> 
+> ~/netperf-2.2pl4# perf record -a ./netperf -t TCP_MAERTS -H 192.168.2.4
+> TCP MAERTS TEST to 192.168.2.4
+> Recv   Send    Send
+> Socket Socket  Message  Elapsed
+> Size   Size    Size     Time     Throughput
+> bytes  bytes   bytes    secs.    10^6bits/sec
+> 131072  16384  16384    10.01     932.04
+> [ perf record: Woken up 14 times to write data ]
+> [ perf record: Captured and wrote 3.642 MB perf.data (78817 samples) ]
+> ~/netperf-2.2pl4# perf report
+> Samples: 78K of event 'cycles:ppp', Event count (approx.): 18091442796          
+> Overhead  Command          Shared Object       Symbol                           
+>    7.00%  swapper          [kernel.kallsyms]   [k] do_csum                      
+>    3.94%  swapper          [kernel.kallsyms]   [k] sh_eth_poll                  
+>    3.83%  ksoftirqd/0      [kernel.kallsyms]   [k] do_csum                      
+>    3.23%  swapper          [kernel.kallsyms]   [k] _raw_spin_unlock_irq         
+>    2.87%  netperf          [kernel.kallsyms]   [k] __arch_copy_to_user          
+>    2.86%  swapper          [kernel.kallsyms]   [k] arch_cpu_idle                
+>    2.13%  swapper          [kernel.kallsyms]   [k] default_idle_call            
+>    2.12%  ksoftirqd/0      [kernel.kallsyms]   [k] sh_eth_poll                  
+>    2.02%  swapper          [kernel.kallsyms]   [k] _raw_spin_unlock_irqrestore  
+>    1.84%  swapper          [kernel.kallsyms]   [k] __softirqentry_text_start    
+>    1.64%  swapper          [kernel.kallsyms]   [k] tick_nohz_idle_exit          
+>    1.53%  netperf          [kernel.kallsyms]   [k] _raw_spin_unlock_irq         
+>    1.32%  netperf          [kernel.kallsyms]   [k] preempt_count_sub            
+>    1.27%  swapper          [kernel.kallsyms]   [k] __pi___inval_dcache_area     
+>    1.22%  swapper          [kernel.kallsyms]   [k] check_preemption_disabled    
+>    1.01%  ksoftirqd/0      [kernel.kallsyms]   [k] _raw_spin_unlock_irqrestore  
+> 
+> The above results collected on the R-Car V3H Starter Kit board.
+> 
+> Based on the commit 4d86d3818627 ("ravb: RX checksum offload")...
+> 
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> ---
+>  drivers/net/ethernet/renesas/sh_eth.c |   60 ++++++++++++++++++++++++++++++++--
+>  drivers/net/ethernet/renesas/sh_eth.h |    1 
+>  2 files changed, 59 insertions(+), 2 deletions(-)
+> 
+> Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
+> ===================================================================
+> --- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
+> +++ net-next/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -1532,8 +1532,9 @@ static int sh_eth_dev_init(struct net_de
+>  	mdp->irq_enabled = true;
+>  	sh_eth_write(ndev, mdp->cd->eesipr_value, EESIPR);
+>  
+> -	/* PAUSE Prohibition */
+> +	/* EMAC Mode: PAUSE prohibition; Duplex; RX Checksum; TX; RX */
+>  	sh_eth_write(ndev, ECMR_ZPF | (mdp->duplex ? ECMR_DM : 0) |
+> +		     (ndev->features & NETIF_F_RXCSUM ? ECMR_RCSC : 0) |
+>  		     ECMR_TE | ECMR_RE, ECMR);
+>  
+>  	if (mdp->cd->set_rate)
+> @@ -1592,6 +1593,19 @@ static void sh_eth_dev_exit(struct net_d
+>  	update_mac_address(ndev);
+>  }
+>  
+> +static void sh_eth_rx_csum(struct sk_buff *skb)
+> +{
+> +	u8 *hw_csum;
+> +
+> +	/* The hardware checksum is 2 bytes appended to packet data */
+> +	if (unlikely(skb->len < sizeof(__sum16)))
+> +		return;
+> +	hw_csum = skb_tail_pointer(skb) - sizeof(__sum16);
+> +	skb->csum = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
+> +	skb->ip_summed = CHECKSUM_COMPLETE;
+> +	skb_trim(skb, skb->len - sizeof(__sum16));
+> +}
+> +
+>  /* Packet receive function */
+>  static int sh_eth_rx(struct net_device *ndev, u32 intr_status, int *quota)
+>  {
+> @@ -1666,6 +1680,8 @@ static int sh_eth_rx(struct net_device *
+>  					 DMA_FROM_DEVICE);
+>  			skb_put(skb, pkt_len);
+>  			skb->protocol = eth_type_trans(skb, ndev);
+> +			if (ndev->features & NETIF_F_RXCSUM)
+> +				sh_eth_rx_csum(skb);
+>  			netif_receive_skb(skb);
+>  			ndev->stats.rx_packets++;
+>  			ndev->stats.rx_bytes += pkt_len;
+> @@ -2921,6 +2937,39 @@ static void sh_eth_set_rx_mode(struct ne
+>  	spin_unlock_irqrestore(&mdp->lock, flags);
+>  }
+>  
+> +static void sh_eth_set_rx_csum(struct net_device *ndev, bool enable)
+> +{
+> +	struct sh_eth_private *mdp = netdev_priv(ndev);
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&mdp->lock, flags);
+> +
+> +	/* Disable TX and RX */
+> +	sh_eth_rcv_snd_disable(ndev);
+> +
+> +	/* Modify RX Checksum setting */
+> +	sh_eth_modify(ndev, ECMR, ECMR_RCSC, enable ? ECMR_RCSC : 0);
+> +
+> +	/* Enable TX and RX */
+> +	sh_eth_rcv_snd_enable(ndev);
+> +
+> +	spin_unlock_irqrestore(&mdp->lock, flags);
+> +}
+> +
+> +static int sh_eth_set_features(struct net_device *ndev,
+> +			       netdev_features_t features)
+> +{
+> +	netdev_features_t changed = ndev->features ^ features;
+> +	struct sh_eth_private *mdp = netdev_priv(ndev);
+> +
+> +	if (changed & NETIF_F_RXCSUM && mdp->cd->rx_csum)
+> +		sh_eth_set_rx_csum(ndev, features & NETIF_F_RXCSUM);
+> +
+> +	ndev->features = features;
+> +
+> +	return 0;
+> +}
+> +
+>  static int sh_eth_get_vtag_index(struct sh_eth_private *mdp)
+>  {
+>  	if (!mdp->port)
+> @@ -3102,6 +3151,7 @@ static const struct net_device_ops sh_et
+>  	.ndo_change_mtu		= sh_eth_change_mtu,
+>  	.ndo_validate_addr	= eth_validate_addr,
+>  	.ndo_set_mac_address	= eth_mac_addr,
+> +	.ndo_set_features	= sh_eth_set_features,
+>  };
+>  
+>  static const struct net_device_ops sh_eth_netdev_ops_tsu = {
+> @@ -3117,6 +3167,7 @@ static const struct net_device_ops sh_et
+>  	.ndo_change_mtu		= sh_eth_change_mtu,
+>  	.ndo_validate_addr	= eth_validate_addr,
+>  	.ndo_set_mac_address	= eth_mac_addr,
+> +	.ndo_set_features	= sh_eth_set_features,
+>  };
+>  
+>  #ifdef CONFIG_OF
+> @@ -3245,6 +3296,11 @@ static int sh_eth_drv_probe(struct platf
+>  	ndev->max_mtu = 2000 - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
+>  	ndev->min_mtu = ETH_MIN_MTU;
+>  
+> +	if (mdp->cd->rx_csum) {
+> +		ndev->features = NETIF_F_RXCSUM;
+> +		ndev->hw_features = NETIF_F_RXCSUM;
+> +	}
+> +
+>  	/* set function */
+>  	if (mdp->cd->tsu)
+>  		ndev->netdev_ops = &sh_eth_netdev_ops_tsu;
+> @@ -3294,7 +3350,7 @@ static int sh_eth_drv_probe(struct platf
+>  			goto out_release;
+>  		}
+>  		mdp->port = port;
+> -		ndev->features = NETIF_F_HW_VLAN_CTAG_FILTER;
+> +		ndev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
+>  
+>  		/* Need to init only the first port of the two sharing a TSU */
+>  		if (port == 0) {
+> Index: net-next/drivers/net/ethernet/renesas/sh_eth.h
+> ===================================================================
+> --- net-next.orig/drivers/net/ethernet/renesas/sh_eth.h
+> +++ net-next/drivers/net/ethernet/renesas/sh_eth.h
+> @@ -500,6 +500,7 @@ struct sh_eth_cpu_data {
+>  	unsigned no_xdfar:1;	/* E-DMAC DOES NOT have RDFAR/TDFAR */
+>  	unsigned xdfar_rw:1;	/* E-DMAC has writeable RDFAR/TDFAR */
+>  	unsigned csmr:1;	/* E-DMAC has CSMR */
+> +	unsigned rx_csum:1;	/* EtherC has ECMR.RCSC */
+>  	unsigned select_mii:1;	/* EtherC has RMII_MII (MII select register) */
+>  	unsigned rmiimode:1;	/* EtherC has RMIIMODE register */
+>  	unsigned rtrate:1;	/* EtherC has RTRATE register */
+> 
