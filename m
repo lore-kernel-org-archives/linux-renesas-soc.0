@@ -2,132 +2,101 @@ Return-Path: <SRS0=a0xC=QF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B68C169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 11:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEB9C282D0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0649620844
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 11:29:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1EB2175B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 15:02:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AD2BJppu"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="pf9wJbbx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725804AbfA2L3F (ORCPT
+        id S1728710AbfA2PCV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Jan 2019 06:29:05 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41395 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfA2L3F (ORCPT
+        Tue, 29 Jan 2019 10:02:21 -0500
+Received: from mail-eopbgr1400135.outbound.protection.outlook.com ([40.107.140.135]:28956
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728550AbfA2PCU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Jan 2019 06:29:05 -0500
-Received: by mail-wr1-f66.google.com with SMTP id x10so21597088wrs.8;
-        Tue, 29 Jan 2019 03:29:04 -0800 (PST)
+        Tue, 29 Jan 2019 10:02:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1ccWen+rAg0i60SZjbR6qvWY9i54kSfLIcmNg0eo7fA=;
-        b=AD2BJppuNm+t7odPzIxNaXZQCStGJFjQOj/bQ7uMtZVjWKtNrjwcjD7mYi+FvwcNDg
-         3/zg0njY8K2PYNStcSyiw2cn6UmqNyiJ0ZZ4SxDORHrhw1t2O4OrQ/VyghtXUnndp7MI
-         KzpiD0WmjbFM4y49f0aJFpXFyeXU0rD/VZgT09X/KPc/ZFdlKS7AU1Zi0dc6K/OvtVYk
-         OVTS8nMNOU47nF5AGNbK4ON5sWFjcfFKWtDRnyb1BLjMUQ47ji+zBEqxvdJBzIH8GR+5
-         ykRO0wHeBgVx9B9ECOnPMYGp7goEU65aq5/Xejv+0LwSXdkPmkdPuVulXV4rOvuDQs/T
-         mVHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1ccWen+rAg0i60SZjbR6qvWY9i54kSfLIcmNg0eo7fA=;
-        b=da4b80NLKP30WTf7F7RHAcz6SQG1ALdoTR4S9zMhyED62Z0q4PV3zC37hoNnhK77TX
-         x7U9qrwYEBbCJ8F9nwMJivkqj4KJSPqso4xbb46uB3IXHShiulhOax6tPleKKAlWsID4
-         F1Gkm7rofW4iaZ6tJ3WNWo4hZoRJsbdipHFpBI1GYdkb7bFDuIEXK6wjZlgN/jH2xMem
-         wGUZ9EVSgitn7+4I5i1peos9LXqc2nImkJaeM1mgWP7ePIJgJ9c+30bco4kHr72OnzS8
-         O1HdpY9RWgoWkvlkbWMDel8XxX8sJw5edkSWoidyapqKcpxiZpN8/9mCYA1VC9jjHJKo
-         tKdg==
-X-Gm-Message-State: AJcUukfMv3SlgzAn2vLqWUPX3k0IbYykAROkGaWVux1XhEhtQlq+Ywoq
-        vs5htgkpbDLZCbIpK5gc/ejyCR7A
-X-Google-Smtp-Source: ALg8bN4bDG50JGQxa9wkxv4SaatuqJ69pOm3ImSHDQJrvxC6pkzjKylihviXnf3ImRvXn0/616OM0w==
-X-Received: by 2002:a5d:4e0b:: with SMTP id p11mr27901222wrt.227.1548761343101;
-        Tue, 29 Jan 2019 03:29:03 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id 124sm2967029wmh.22.2019.01.29.03.29.01
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Jan 2019 03:29:02 -0800 (PST)
-Subject: Re: [PATCH] mmc: renesas_sdhi: Fix card initialization failure in
- high speed mode
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20190129054039.15278-1-marek.vasut@gmail.com>
- <CAPDyKFpa=q+oSES115SBUnpFVq+nUGwH7sY5F=go4-rZp6EasQ@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <c0ae0fd2-3dbb-0e65-529e-99b78e0624f5@gmail.com>
-Date:   Tue, 29 Jan 2019 10:56:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpa=q+oSES115SBUnpFVq+nUGwH7sY5F=go4-rZp6EasQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mchFLxdD1hxSV3yJXlAPtO17mD3AS6fazg/lOoSs72s=;
+ b=pf9wJbbxkduj5/1PND2apF/u6p1+hbMqQwawcmIRaSDGRkQwEHd7ooQvDyjI5laZn8blp04iMK1+Uhgds1I/XwfWqGLoLRH8Q/RMiAmTn+UAnCDuNkWgAgngBKmsX/XQrRoui7IJXJ8+plTmnX5uiluRYOCHqoqRtIg1023vhp8=
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.162.18) by
+ TY1PR01MB1625.jpnprd01.prod.outlook.com (52.133.162.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Tue, 29 Jan 2019 15:02:15 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74fc:a361:eeec:1678]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74fc:a361:eeec:1678%5]) with mapi id 15.20.1558.025; Tue, 29 Jan 2019
+ 15:02:15 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms@verge.net.au>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>
+Subject: RE: [PATCH 3/7] sh_eth: offload RX checksum on R7S72100
+Thread-Topic: [PATCH 3/7] sh_eth: offload RX checksum on R7S72100
+Thread-Index: AQHUtmclqIklh3XXpkyvAVv/Nu3mUqXEmwSAgAAyYICAARcWAIAALAYAgABJDSA=
+Date:   Tue, 29 Jan 2019 15:02:15 +0000
+Message-ID: <TY1PR01MB15628BF7F66DCCE3CD1827D58A970@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <fc43bfa2-4312-b52b-a749-e3e43e242a95@cogentembedded.com>
+ <0476beba-ea1f-7675-aa08-573b74e84f4e@cogentembedded.com>
+ <20190128122053.vb5ifhf34zbnuclp@verge.net.au>
+ <916ed105-d499-4ca1-8418-4743b5a7a60d@cogentembedded.com>
+ <20190129080004.blc3jrt5y2j7dauo@verge.net.au>
+ <e5b05616-d9b3-3c0a-189b-4fc02190c8a5@cogentembedded.com>
+In-Reply-To: <e5b05616-d9b3-3c0a-189b-4fc02190c8a5@cogentembedded.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1625;20:ORzNWl5w7/CyZ+Gipz6StaGRqkD4o7FOmpfi3B90hHT2O22GiCbtUgWhEXCuPgN2il1QiCyCpJej/bPPzTb7iboe1oj2rOTOT09t9L4U46sBZX9FyWRSE0OeB2sqpzVyejZph3yDhiyl7kzNVuHaUj6000WCTGqDg0Tq40zzZY8=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: b7f6e3ac-1101-4310-e8ee-08d685fac1b7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1625;
+x-ms-traffictypediagnostic: TY1PR01MB1625:
+x-microsoft-antispam-prvs: <TY1PR01MB1625AC84FC3321046033AFE18A970@TY1PR01MB1625.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 093290AD39
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39850400004)(136003)(366004)(189003)(199004)(2906002)(9686003)(486006)(66066001)(55016002)(229853002)(72206003)(53936002)(6246003)(26005)(6436002)(256004)(186003)(8936002)(102836004)(81166006)(53546011)(6506007)(33656002)(8676002)(81156014)(476003)(11346002)(93886005)(446003)(4744005)(76176011)(25786009)(7696005)(4326008)(99286004)(54906003)(110136005)(86362001)(14454004)(68736007)(71190400001)(71200400001)(3846002)(478600001)(6116002)(106356001)(7736002)(97736004)(305945005)(316002)(74316002)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1625;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nvfdv06tR/E9SX5ZBfOJTRzGb9mF6oXEmkUknIil76sTScdo7meVH683DUqhSZT85ISC+UNrTQrZOxVqEnMfgHWq3N2Wgn/Hc1MF9uXbrRKHG1qJKeNPNpMT3SWdCJXGCYJWPdsRL/qvvrq6D6FczCAoigfRP4Z6F9uGaqYez+u1LRB4rcYfbeWrW0RhEhxoDVr+Md1W3PijjazRiXTSuiRJkPgyrV9MRhkDXJ5TX8LoPYgHGwqe7fguhKMgXHbzTnGtzokgRdnyYyaeiRLTlvgApMDoFlGQM6X6ZMKzMbDKazKGTkFmKw63AWVfcTvR+NZyyq+BHyhDGw1R6V6UdV0qC0vYB7YNzL92CTT63yr/evrakO1rIcYgY+Hv5nb65Sm9HGb1op6MUprkt9+X0XhTxDo25f88DNBlc2d7NcM=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7f6e3ac-1101-4310-e8ee-08d685fac1b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jan 2019 15:02:15.5835
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1625
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 1/29/19 9:05 AM, Ulf Hansson wrote:
-> On Tue, 29 Jan 2019 at 06:40, <marek.vasut@gmail.com> wrote:
->>
->> From: Takeshi Saito <takeshi.saito.xv@renesas.com>
->>
->> This fixes card initialization failure in high speed mode.
->>
->> If U-Boot uses SDR or HS200/400 mode before starting Linux and Linux
->> DT does not enable SDR/HS200/HS400 mode, card initialization fails in
->> high speed mode.
->>
->> It is necessary to initialize SCC registers during card initialization
->> phase. HW reset function is registered only for a port with either of
->> SDR/HS200/HS400 properties in device tree. If SDR/HS200/HS400 properties
->> are not present in device tree, SCC registers will not be reset. In SoC
->> that support SCC registers, HW reset function should be registered
->> regardless of the configuration of device tree.
->>
->> Reproduction procedure:
->> - Use U-Boot that support MMC HS200/400 mode.
->> - Delete HS200/HS400 properties in device tree.
->>   (Delete mmc-hs200-1_8v and mmc-hs400-1_8v)
->> - MMC port works high speed mode and all commands fail.
->>
->> Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
->> Cc: Simon Horman <horms+renesas@verge.net.au>
->> Cc: Ulf Hansson <ulf.hansson@linaro.org>
->> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Cc: linux-renesas-soc@vger.kernel.org
->> To: linux-mmc@vger.kernel.org
-> 
-> Is this a regression?
-
-No, because this was broken since the beginning. But U-Boot HS200/HS400
-support is now, so this bug was hidden.
-
-> Should it be tagged for stable?
-
-I am tempted to say yes.
-
--- 
-Best regards,
-Marek Vasut
+T24gVHVlc2RheSwgSmFudWFyeSAyOSwgMjAxOSwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiBP
+biAwMS8yOS8yMDE5IDExOjAwIEFNLCBTaW1vbiBIb3JtYW4gd3JvdGU6DQo+ID4gQXMgeW91IG1h
+eSBoYXZlIGd1ZXNzZWQgdGhlIGltcGxpY2F0aW9uIG9mIG15IHF1ZXN0aW9uIGlzIHRoYXQNCj4g
+PiBJTUhPIGl0IHdvdWxkIGJlIGJlc3Qgb25seSB0byBhZGQgdGhpcyBmZWF0dXJlIHRvIFNvQ3Mg
+d2hlcmUNCj4gPiBpdCBoYXMgYmVlbiB0ZXN0ZWQuDQo+IA0KPiAgICBZb3UgZG9uJ3QgdHJ1c3Qg
+dGhlIG1hbnVhbHM/IDotKQ0KPiANCj4gTUJSLCBTZXJnZWkNCg0KSG93IHdlcmUgeW91IHRlc3Rp
+bmcgdGhpcyBmZWF0dXJlIHdpdGggdGhlIFI4QTc3OTgwPw0KDQpDaHJpcw0KDQo=
