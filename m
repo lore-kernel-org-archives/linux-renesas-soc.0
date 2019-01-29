@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A598C282C7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 07:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7E4C4151A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 08:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C679214DA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 07:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7283B214DA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Jan 2019 08:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="V2FbWEed"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="kMGCPTXg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfA2H6P (ORCPT
+        id S1726877AbfA2IAJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:58:15 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:49815 "EHLO
+        Tue, 29 Jan 2019 03:00:09 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:49923 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725294AbfA2H6P (ORCPT
+        with ESMTP id S1725294AbfA2IAJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:58:15 -0500
+        Tue, 29 Jan 2019 03:00:09 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 6B3BA25BE91;
-        Tue, 29 Jan 2019 18:58:12 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E040B25B74E;
+        Tue, 29 Jan 2019 19:00:06 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548748692; bh=wXk1afozze15apqMx7clsmE/TxdxG4bL/lq6yQ0XL5Q=;
+        t=1548748807; bh=V4ezZm7TpNQNky4PeFAQcHr1ftZsDLV1FljS6Luc2HA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V2FbWEed/2Kzm+PDTwF6OTzXcHgiflErOgxiKVRnmRJm8uiaVdHxc5p2ayucmjnuy
-         3rDNzstO+2IUFQwoXUoYzHgZzQxWyoHzxnBujgA2wEltfCD6XvUQQKJHjj6We2u2y+
-         /RRuiE4Ns2J2fFP/seZX2LQsY8PjucZC9DHN2/ws=
+        b=kMGCPTXgjf4Px5AD7673EXe6t07aLuv7egbuhQkweMeABexeBTq9+rkZt8BTugpuh
+         bgPOI2cqJVVaxdyHsagosFzWTWjlVkLgCoIecaqPuyeH7XY7/tIx66dCwa5kKBbs+m
+         8Yxd+rQ1Fre7eu7+yhI/oOuRGgxPaUPzYwobelW4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 80B22940472; Tue, 29 Jan 2019 08:58:10 +0100 (CET)
-Date:   Tue, 29 Jan 2019 08:58:10 +0100
+        id EC19A940472; Tue, 29 Jan 2019 09:00:04 +0100 (CET)
+Date:   Tue, 29 Jan 2019 09:00:04 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
         linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org
-Subject: Re: [PATCH 2/7] sh_eth: RX checksum offload support
-Message-ID: <20190129075810.rqeekk5j4npjh6wf@verge.net.au>
+Subject: Re: [PATCH 3/7] sh_eth: offload RX checksum on R7S72100
+Message-ID: <20190129080004.blc3jrt5y2j7dauo@verge.net.au>
 References: <fc43bfa2-4312-b52b-a749-e3e43e242a95@cogentembedded.com>
- <29cb4d33-37c3-43c0-3bce-fa01737c0fa4@cogentembedded.com>
- <20190128121855.t5w3us6kd7o6niph@verge.net.au>
- <d95fff4f-7750-87c4-3664-eb5efb593b75@cogentembedded.com>
+ <0476beba-ea1f-7675-aa08-573b74e84f4e@cogentembedded.com>
+ <20190128122053.vb5ifhf34zbnuclp@verge.net.au>
+ <916ed105-d499-4ca1-8418-4743b5a7a60d@cogentembedded.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d95fff4f-7750-87c4-3664-eb5efb593b75@cogentembedded.com>
+In-Reply-To: <916ed105-d499-4ca1-8418-4743b5a7a60d@cogentembedded.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -56,79 +56,22 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
-
-On Mon, Jan 28, 2019 at 06:45:26PM +0300, Sergei Shtylyov wrote:
-> Hello!
+On Mon, Jan 28, 2019 at 06:21:11PM +0300, Sergei Shtylyov wrote:
+> On 01/28/2019 03:20 PM, Simon Horman wrote:
 > 
-> On 01/28/2019 03:18 PM, Simon Horman wrote:
-> 
-> >> Add support for the RX checksum offload. This is enabled by default and
-> >> may be disabled and re-enabled using 'ethtool':
-> >>
-> >> # ethtool -K eth0 rx {on|off}
-> >>
-> >> Some Ether MACs provide a simple checksumming scheme which appears to be
-> >> completely compatible with CHECKSUM_COMPLETE: sum of all packet data after
-> >> the L2 header is appended to packet data; this may be trivially read by
-> >> the driver and used to update the skb accordingly. The same checksumming
-> >> scheme is implemented in the EtherAVB MACs and now supported by tha 'ravb'
-> >> driver.
-> >>
-> >> In terms of performance, throughput is close to gigabit line rate with the
-> >> RX checksum offload both enabled and disabled.  The 'perf' output, however,
-> >> appears to indicate that significantly less time is spent in do_csum() --
-> >> this is as expected.
-> > 
-> > Nice.
-> > 
-> > FYI, this seems similar to what I observed for RAVB, perhaps on H3 I don't
-> > exactly recall. On E3, which has less CPU power, I recently observed that
-> > with rx-csum enabled I can achieve gigabit line rate, but with rx-csum
-> > disabled throughput is significantly lower. I.e. on that system throughput
-> > is CPU bound with 1500 byte packets unless rx-csum enabled.
-> 
->    Unfortunately, we can't teset these patches on the other gen3 boards. ISTR
-> you have RZ/A1H board... if it's still with you, I'd appreciate testing.
-
-Unfortunately, as of a few weeks ago, I no longer have that board.
-
-> > Next point:
-> > 
-> > 2da64300fbc ("ravb: expand rx descriptor data to accommodate hw checksum")
-> > is fresh in my mind and I wonder if mdp->rx_buf_sz needs to grow to ensure
-> > that there is always enough space for the csum.
-> 
->    Well, if you look at sh_eth_ring_init(), you'll see that the driver reserves
-> plenty of space at the end the RX buffers.
-
-Yes, I see that. And I assume that was enough space before this patch.
-But is it still enough space now that 2 bytes are needed for the hardware csum?
-2 bytes that might have previously been used as packet data in some
-circumstances.
-
-> > In particular, have you
-> > tested this with MTU-size frames with VLANs. (My test is to run iperf3 over
-> > a VLAN netdev, netperf over a VLAN netdev would likely work just as well.)
-> 
->    Could you refresh me on how to bring up a VLAN on a given interface?
-
-You will need a kernel with CONFIG_VLAN_8021Q enabled.
-
-Then you can do something like this:
-
-	ip link add link eth0 name eth0.1 type vlan id 1
-	ip addr add 10.1.1.100/24 dev eth0.1
-	ip link set dev eth0.1 up
-
-
-> [...]
-> >> The above results collected on the R-Car V3H Starter Kit board.
-> >>
-> >> Based on the commit 4d86d3818627 ("ravb: RX checksum offload")...
+> >> The RZ/A1H (R7S721000) SoC manual describes the Ether MAC's RX checksum
+> >> offload the same way as it's implemented in the EtherAVB MACs...
 > >>
 > >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> [...]
+> > 
+> > Regarding this and the remaining patches in this series,
+> > which add rx-csum offload support in the sh_eth driver for
+> > various SoCs: has this been tested?
 > 
-> MBR, Sergei
-> 
+>    As I said, I've only tested it on R8A77980.
+
+Thanks, I missed that.
+
+As you may have guessed the implication of my question is that
+IMHO it would be best only to add this feature to SoCs where
+it has been tested.
