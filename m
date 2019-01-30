@@ -2,73 +2,168 @@ Return-Path: <SRS0=dpDL=QG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 647F4C282D7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 10:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F02BC4151A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 11:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3691B2184D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 10:42:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30CB12184D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 11:16:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fdbWLO+0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbfA3Kmv (ORCPT
+        id S1730060AbfA3LQe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Jan 2019 05:42:51 -0500
-Received: from mail-qt1-f171.google.com ([209.85.160.171]:39686 "EHLO
-        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfA3Kmu (ORCPT
+        Wed, 30 Jan 2019 06:16:34 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53875 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727897AbfA3LQe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Jan 2019 05:42:50 -0500
-Received: by mail-qt1-f171.google.com with SMTP id u47so25638953qtj.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Jan 2019 02:42:50 -0800 (PST)
+        Wed, 30 Jan 2019 06:16:34 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d15so21208751wmb.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Jan 2019 03:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ynD/SKO0NKYF/TZnALi5yaZz+mi8VJz9rkAXrSOgxSg=;
+        b=fdbWLO+0W3s4gxf54oKHr34BvQZE1DTRv1+2imPUtVYqpY5T1J/RczVnUNU8ZucjA/
+         dkxKQTvDiQ0gKZh7ri4Py9/BqT5Wtceyq9u9lrC6mQl39TVPqaybKqbovIHmD3bhVE17
+         WwiHuRbEuXfbY4iZ+uLxwqNJfwCOd4UsQKCbA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YeyAxQ5hjwkykAdT4/swCCucfA6tExp+OHYx6FIZ1Mk=;
-        b=LtUEK/UydBSUg9aHsrk8TAonZzWek3A8wfn4Kbp17mKilhedSYfLRTiLbp4nN+G+fB
-         Pio1TIZurxWiJDFn/Y/ZtTJsyFI4S6plcuSzz4kQMlXcIf0IR4bpT2abvj/DuBHO9Tar
-         xzxZ6ruewtFkcbZto15SO+yzYna7uF4tGBW5Sx6q4h+qxVrpJ5pB44OuigRskeYUcOcX
-         Wg4NnDaFCDQGxn039wJ0wozKwhe/aUcBep6JNjahQkrJ+om8bCUJkptyNDCPrQuIusTf
-         R72AkCp8cyU3GnUbw8AssfHAioJXDrHq2Vy0ghANVm6koPM4JzEgOzK1J9NLkMsRpTUH
-         aC7Q==
-X-Gm-Message-State: AJcUukem3Y+F7avSx4QaYTH4YdxQfJIX5kL80/CIVYudsaOSDA49Atrh
-        +ICqWoIt1MOt/LdXC7sLjzdimFkMvnvQ7HQ6rg0=
-X-Google-Smtp-Source: ALg8bN5PvRjXft0nqQFmlm766TgnGbuZXtYq2YazM7gsZ9GyljnmMYq4/HuBFSAniVT1MhhnzGkA7Mcbjm+4hOSj6Bk=
-X-Received: by 2002:a0c:f50c:: with SMTP id j12mr27393683qvm.149.1548844969752;
- Wed, 30 Jan 2019 02:42:49 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1548843393.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1548843393.git.horms+renesas@verge.net.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 30 Jan 2019 11:42:33 +0100
-Message-ID: <CAK8P3a3rZ9tvzXjWRGEiiNeynZHkypPvCa7vPvFxui6H4ttFFw@mail.gmail.com>
-Subject: Re: [GIT PULL] Third Round of Renesas ARM Based SoC Fixes for v5.0
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ynD/SKO0NKYF/TZnALi5yaZz+mi8VJz9rkAXrSOgxSg=;
+        b=lIP/ALYdtdhWxo9hLHsH1U3zBooQRjErp185QtIxrDaXVhyF1JIblII8Bjp4EBjpcA
+         7D+3zPV6mbGF21gtzxtLIFVDjPCW9JT4d8XTSbPuRboH5bwft3hV4X8qMBkh5IlVTOIJ
+         wln5ac1hk2LfSbu9IDWb2OReeaowY/f/4vkvbIMxEld3DNAQqNSzu73daDDpgOKWSXY2
+         SDmMtdvFlUlSIQb/QMvUKCJsnYUAV4LxEj6wCv9EkX2/Ndu8IlWNcoZAp/dLmT2hpZWO
+         nHzGjiLjajP8mtMb6mcMfPMQByDc1Ddm3uClMx6iKRdutWnrdMlUe/LoI/FVlqCg7oId
+         nuZA==
+X-Gm-Message-State: AJcUukcI++p+WTESbJixVJaGe4jNR75F0ejWTn78jdGVP8Gf9cZrfbSh
+        3dHKKoJqa+O7/lyEkwCjLd4bEs+uJxWp1A==
+X-Google-Smtp-Source: ALg8bN5lST2LvgHuXidA21jm/or7QqwCfXtbdWussrt5ZKWA7LVBGL9QY2XV1K9Ny1rXX6gT1lV+4w==
+X-Received: by 2002:a1c:3282:: with SMTP id y124mr25933459wmy.134.1548846991495;
+        Wed, 30 Jan 2019 03:16:31 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:79e5:6689:e4d2:d212])
+        by smtp.gmail.com with ESMTPSA id p10sm4502173wmd.14.2019.01.30.03.16.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 30 Jan 2019 03:16:30 -0800 (PST)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        rjw@rjwysocki.net, ulf.hansson@linaro.org, biju.das@bp.renesas.com
+Cc:     geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH v2 ] PM-runtime: fix deadlock with ktime
+Date:   Wed, 30 Jan 2019 12:16:24 +0100
+Message-Id: <1548846984-2044-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 11:18 AM Simon Horman
-<horms+renesas@verge.net.au> wrote:
->
-> Hi Olof, Hi Kevin, Hi Arnd,
->
-> Please consider these third round of Renesas ARM based SoC fixes for v5.0.
->
-> This pull request is based on the previous round of
-> such requests, tagged as renesas-fixes2-for-v5.0,
-> which I have already sent a pull-request for.
+A deadlock has been seen when swicthing clocksources which use PM runtime.
+The call path is:
+change_clocksource
+    ...
+    write_seqcount_begin
+    ...
+    timekeeping_update
+        ...
+        sh_cmt_clocksource_enable
+            ...
+            rpm_resume
+                pm_runtime_mark_last_busy
+                    ktime_get
+                        do
+                            read_seqcount_begin
+                        while read_seqcount_retry
+    ....
+    write_seqcount_end
 
-Pulled into arm/fixes, thanks!
+Although we should be safe because we haven't yet changed the clocksource
+at that time, we can't because of seqcount protection.
 
-    Arnd
+Use ktime_get_mono_fast_ns() instead which is lock safe for such case
+
+With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
+monotonic across an update and as a result can goes backward. According to
+update_fast_timekeeper() description: "In the worst case, this can
+result is a slightly wrong timestamp (a few nanoseconds)". For
+PM runtime autosuspend, this means only that the suspend decision can
+be slightly sub optimal.
+
+Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+Reported-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+---
+
+- v2: Updated commit message to explain the impact of using 
+  ktime_get_mono_fast_ns()
+
+ drivers/base/power/runtime.c | 10 +++++-----
+ include/linux/pm_runtime.h   |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 457be03..708a13f 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -130,7 +130,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
+ {
+ 	int autosuspend_delay;
+ 	u64 last_busy, expires = 0;
+-	u64 now = ktime_to_ns(ktime_get());
++	u64 now = ktime_get_mono_fast_ns();
+ 
+ 	if (!dev->power.use_autosuspend)
+ 		goto out;
+@@ -909,7 +909,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
+ 	 * If 'expires' is after the current time, we've been called
+ 	 * too early.
+ 	 */
+-	if (expires > 0 && expires < ktime_to_ns(ktime_get())) {
++	if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
+ 		dev->power.timer_expires = 0;
+ 		rpm_suspend(dev, dev->power.timer_autosuspends ?
+ 		    (RPM_ASYNC | RPM_AUTO) : RPM_ASYNC);
+@@ -928,7 +928,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
+ int pm_schedule_suspend(struct device *dev, unsigned int delay)
+ {
+ 	unsigned long flags;
+-	ktime_t expires;
++	u64 expires;
+ 	int retval;
+ 
+ 	spin_lock_irqsave(&dev->power.lock, flags);
+@@ -945,8 +945,8 @@ int pm_schedule_suspend(struct device *dev, unsigned int delay)
+ 	/* Other scheduled or pending requests need to be canceled. */
+ 	pm_runtime_cancel_pending(dev);
+ 
+-	expires = ktime_add(ktime_get(), ms_to_ktime(delay));
+-	dev->power.timer_expires = ktime_to_ns(expires);
++	expires = ktime_get_mono_fast_ns() + (u64)delay * NSEC_PER_MSEC);
++	dev->power.timer_expires = expires;
+ 	dev->power.timer_autosuspends = 0;
+ 	hrtimer_start(&dev->power.suspend_timer, expires, HRTIMER_MODE_ABS);
+ 
+diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
+index 54af4ee..fed5be7 100644
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -105,7 +105,7 @@ static inline bool pm_runtime_callbacks_present(struct device *dev)
+ 
+ static inline void pm_runtime_mark_last_busy(struct device *dev)
+ {
+-	WRITE_ONCE(dev->power.last_busy, ktime_to_ns(ktime_get()));
++	WRITE_ONCE(dev->power.last_busy, ktime_get_mono_fast_ns());
+ }
+ 
+ static inline bool pm_runtime_is_irq_safe(struct device *dev)
+-- 
+2.7.4
+
