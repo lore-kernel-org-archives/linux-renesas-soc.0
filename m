@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2749C282D7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C9DC282D7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 10:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13352080F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2902184D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 10:04:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="TcZzHuP2"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LbSig1/A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfA3J67 (ORCPT
+        id S1726972AbfA3KEj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:58:59 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38984 "EHLO
+        Wed, 30 Jan 2019 05:04:39 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:39049 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbfA3J67 (ORCPT
+        with ESMTP id S1726713AbfA3KEj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:58:59 -0500
+        Wed, 30 Jan 2019 05:04:39 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id CAA4A25B813;
-        Wed, 30 Jan 2019 20:58:56 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 67BA125B74E;
+        Wed, 30 Jan 2019 21:04:37 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548842337; bh=vm37auMxN6vwtitYb0SCCpb6AqeydE0gYLNll8n6JWQ=;
+        t=1548842677; bh=RXtWlUA5u1VF1lTuQR7oU1DyQmUBXl8w09W8LIhqnXM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TcZzHuP2f0iXXTQWbjA04T+iDKExSdNcojCZtOVOE5LxTV2UGsJkZ/jo1LUWxO3vE
-         zX/fB7qgnKsI2SN5UbQxHJvmp2aMTmGdDxG0cpfL/xDqVmwr1ib1gv8tqHviHyzfT8
-         TGVybrvycHyMYg0cjuj/tfh5CHb3fcsw1ebpgjfM=
+        b=LbSig1/AUeUhdwtuIY6MZCcL4LMoC6J5iXTNFvCpjrrBJjDIV/FZS5DRS5atrshdz
+         V2rIzqhkoCXj9sfF6e2ywesDKhjEyOMziBiWQ/WScWwY0IvTPwFtu1T7jP6oONlo6I
+         3CH+jH+tErW3APt8vdCAsOazG435DMG0r1AXiqPE=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id DEB4594043D; Wed, 30 Jan 2019 10:58:54 +0100 (CET)
-Date:   Wed, 30 Jan 2019 10:58:54 +0100
+        id 9FAEC94043D; Wed, 30 Jan 2019 11:04:35 +0100 (CET)
+Date:   Wed, 30 Jan 2019 11:04:35 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: renesas: Fix SoC mismatch for Stout
-Message-ID: <20190130095854.ue6o2sovkl2y5woi@verge.net.au>
-References: <20190128085529.20538-1-geert+renesas@glider.be>
+To:     Chris Brandt <chris.brandt@renesas.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] serial: sh-sci: Do not free irqs that have already
+ been freed
+Message-ID: <20190130100434.kxpmxt7hrp35gulq@verge.net.au>
+References: <20190128182556.34359-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190128085529.20538-1-geert+renesas@glider.be>
+In-Reply-To: <20190128182556.34359-1-chris.brandt@renesas.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -55,42 +54,53 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 09:55:29AM +0100, Geert Uytterhoeven wrote:
-> make dtbs_check:
+On Mon, Jan 28, 2019 at 01:25:56PM -0500, Chris Brandt wrote:
+> Since IRQs might be muxed on some parts, we need to pay attention when we
+> are freeing them.
+> Otherwise we get the ugly WARNING "Trying to free already-free IRQ 20".
 > 
->     arch/arm/boot/dts/r8a7790-stout.dt.yaml: compatible: ['renesas,stout', 'renesas,r8a7790'] is not valid under any of the given schemas
-> 
-> The Stout development board has an R-Car H2 (r8a7790) SoC, not an R-Car
-> H1 (r8a7779).
-> 
-> Fixes: 12749350567c819d ("dt-bindings: arm: Convert Renesas board/soc bindings to json-schema")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Fixes: 628c534ae735 ("serial: sh-sci: Improve support for separate TEI and DRI interrupts")
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Thanks, applied for v5.1.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
 > ---
->  Documentation/devicetree/bindings/arm/renesas.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> v2:
+>  * fix bad commit grammer
+
+s/grammer/grammar/ :)
+
+> ---
+>  drivers/tty/serial/sh-sci.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-> index cb9b4417e8a1cd75..19f379863d50bd41 100644
-> --- a/Documentation/devicetree/bindings/arm/renesas.yaml
-> +++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-> @@ -130,13 +130,13 @@ properties:
->          items:
->            - enum:
->                - renesas,marzen # Marzen (R0P7779A00010S)
-> -              - renesas,stout # Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
->            - const: renesas,r8a7779
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index cb3d5d37674f..060fcd42b6d5 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -1936,7 +1936,7 @@ static int sci_request_irq(struct sci_port *port)
 >  
->        - description: R-Car H2 (R8A77900)
->          items:
->            - enum:
->                - renesas,lager # Lager (RTP0RC7790SEB00010S)
-> +              - renesas,stout # Stout (ADAS Starterkit, Y-R-CAR-ADAS-SKH2-BOARD)
->            - const: renesas,r8a7790
+>  static void sci_free_irq(struct sci_port *port)
+>  {
+> -	int i;
+> +	int i, j;
 >  
->        - description: R-Car M2-W (R8A77910)
+>  	/*
+>  	 * Intentionally in reverse order so we iterate over the muxed
+> @@ -1952,6 +1952,13 @@ static void sci_free_irq(struct sci_port *port)
+>  		if (unlikely(irq < 0))
+>  			continue;
+>  
+> +		/* Check if already freed (irq was muxed) */
+> +		for (j = 0; j < i; j++)
+> +			if (port->irqs[j] == irq)
+> +				j = i + 1;
+> +		if (j > i)
+> +			continue;
+> +
+>  		free_irq(port->irqs[i], port);
+>  		kfree(port->irqstr[i]);
+>  
 > -- 
-> 2.17.1
+> 2.16.1
 > 
