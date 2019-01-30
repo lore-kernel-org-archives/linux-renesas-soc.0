@@ -2,157 +2,145 @@ Return-Path: <SRS0=dpDL=QG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C09CC282D5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 08:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4ABC282D5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 08:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3D52087F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 08:16:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OftG1KsK"
+	by mail.kernel.org (Postfix) with ESMTP id 947A12087F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 08:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730155AbfA3IQ4 (ORCPT
+        id S1726583AbfA3IVy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Jan 2019 03:16:56 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:32986 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728290AbfA3IQ4 (ORCPT
+        Wed, 30 Jan 2019 03:21:54 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42932 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbfA3IVy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Jan 2019 03:16:56 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so14836487wmh.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Jan 2019 00:16:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=6lyGIVRnQ1BZvQ2ddIjLm1Fs9ngmnkEvH1AhMLp+N2Y=;
-        b=OftG1KsKOarpHCwPtS6SGEeDQz//JSHkDh6FbZgPEbNADXVGHgC7QcGsFawMwIj557
-         tdY1JNElo/xPW/bzdizrfqcxKwEEKbLw88AIqyNPKXDEO7OuF4GIt73+VD+IfaSNcib+
-         hWe/H80y1eYeD7Z2WmAN6MnWTRGlZgg5hEP4g=
+        Wed, 30 Jan 2019 03:21:54 -0500
+Received: by mail-vs1-f66.google.com with SMTP id b74so13711779vsd.9;
+        Wed, 30 Jan 2019 00:21:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6lyGIVRnQ1BZvQ2ddIjLm1Fs9ngmnkEvH1AhMLp+N2Y=;
-        b=hTtkICOB1WtLD+sUt944JFNPVujzkbv/O9VFNrqekwSY0q+GAXWxX5q7nJ30B4ddH2
-         VLZfvmV7teaf2CUChrynw3sVBgVokMMEGgtutRuNAWJViGJSs5Qp5h1tJU/O5LhEGMkU
-         l3H5PbfOn8sK63slAjmeXdmxSPr1vBHHAj1uXCq89O6O40fyTKpzo0Z7khXVP/anjGLs
-         P27dCxBNcO0oBc+cuCjv9gerX8UjgKa8RFSZHlggTwOgnIjNy6R8TdqTz1IbbgdCBluo
-         r9UNsZR9/giURlbiLbm1aig+zi+TuNUscgNH0L0YuJ/qCHzEkxWZX2PnfSaVdik4WP2V
-         oCNg==
-X-Gm-Message-State: AJcUukcOB7izgq4X+uG5hF24ovgzwVCWfCAINimS/p/YSEoBzKJplnY2
-        9PHPHQhrDDQHMbfP0IpUMyVUcw==
-X-Google-Smtp-Source: ALg8bN4X9PAHIE82svv2XmbTltSN2N7UeURKnK285EY/7L5ZaBqwYT92eBN53UCyQgudHlAmYKAjiA==
-X-Received: by 2002:a1c:67c2:: with SMTP id b185mr22603694wmc.96.1548836214254;
-        Wed, 30 Jan 2019 00:16:54 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:79e5:6689:e4d2:d212])
-        by smtp.gmail.com with ESMTPSA id t5sm1952500wmd.15.2019.01.30.00.16.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 30 Jan 2019 00:16:53 -0800 (PST)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        rjw@rjwysocki.net, ulf.hansson@linaro.org, biju.das@bp.renesas.com
-Cc:     geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] PM-runtime: fix deadlock with ktime
-Date:   Wed, 30 Jan 2019 09:16:34 +0100
-Message-Id: <1548836194-15264-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UXRoeRbZly/zcIscio6rfCE5e28iEH5JSota4EpbSNQ=;
+        b=drxDBs4t4mjF9Kp6kQMr+mbR/SPGRGKr5YyrhVuxP5Hn5Vb653hSOgCUcdSS8QRPW8
+         aDhmHXlZ7WfAT8TNA/66XWn83BEpdGlM6kuHZ7WiMqFdr++hftkboMlckzi5muW9XOGG
+         2ihzYS2TBtWQoizzqt8eeRs/bVpbho7EClsIY4q+cgPSf17/3s6/pgC2gQjkuB3UedQ0
+         RCVKVaX3xItQi61ten0sM/UA1qABXgFofjctlT4wtsmfteyCATO2gR+UfPZnmxyheRQN
+         lzZO0kJek7FMcecA9wSUP7RqrFuokorkutyEs6XjGrDWOCs7t68EvTOQpa8NEALItgwy
+         QcXQ==
+X-Gm-Message-State: AJcUukeej7obpU94ptyVS7PWoNAYQXchUUm+aPqYDYZ/ukd88CiN+i1H
+        urgNbltpKaZlXUuhzS3Tk80zpBB9rPKpg8kWrwk=
+X-Google-Smtp-Source: ALg8bN4Tcw9HDIoapB7MuAWG2VV78bc4r7NqYlnepWvt9ph8hOZQ5WJoqrEpETHahfxCo6RFRg4xwGkLyr/USHRgwaw=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr12335445vsp.166.1548836512519;
+ Wed, 30 Jan 2019 00:21:52 -0800 (PST)
+MIME-Version: 1.0
+References: <1548836194-15264-1-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1548836194-15264-1-git-send-email-vincent.guittot@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 30 Jan 2019 09:21:41 +0100
+Message-ID: <CAMuHMdWYV-tDD2osdvs4yhD-mu2n8-JSC7rV8Zt5vW4kr8hdWQ@mail.gmail.com>
+Subject: Re: [PATCH] PM-runtime: fix deadlock with ktime
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-A deadlock has been seen when swicthing clocksources which use PM runtime.
-The call path is:
-change_clocksource
-    ...
-    write_seqcount_begin
-    ...
-    timekeeping_update
-        ...
-        sh_cmt_clocksource_enable
-            ...
-            rpm_resume
-                pm_runtime_mark_last_busy
-                    ktime_get
-                        do
-                            read_seqcount_begin
-                        while read_seqcount_retry
-    ....
-    write_seqcount_end
+Hi Vincent,
 
-Although we should be safe because we haven't yet changed the clocksource
-at that time, we can't because of seqcount protection.
+On Wed, Jan 30, 2019 at 9:16 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+> A deadlock has been seen when swicthing clocksources which use PM runtime.
+> The call path is:
+> change_clocksource
+>     ...
+>     write_seqcount_begin
+>     ...
+>     timekeeping_update
+>         ...
+>         sh_cmt_clocksource_enable
+>             ...
+>             rpm_resume
+>                 pm_runtime_mark_last_busy
+>                     ktime_get
+>                         do
+>                             read_seqcount_begin
+>                         while read_seqcount_retry
+>     ....
+>     write_seqcount_end
+>
+> Although we should be safe because we haven't yet changed the clocksource
+> at that time, we can't because of seqcount protection.
+>
+> Use ktime_get_mono_fast_ns instead which is lock safe for such case
+>
+> Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+> Reported-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Use ktime_get_mono_fast_ns instead which is lock safe for such case
+Thanks for your patch!
 
-Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
-Reported-by: Biju Das <biju.das@bp.renesas.com>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- drivers/base/power/runtime.c | 10 +++++-----
- include/linux/pm_runtime.h   |  2 +-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+/**
+ * ktime_get_mono_fast_ns - Fast NMI safe access to clock monotonic
+ *
+ * This timestamp is not guaranteed to be monotonic across an update.
+ * The timestamp is calculated by:
+ *
+ *      now = base_mono + clock_delta * slope
+ *
+ * So if the update lowers the slope, readers who are forced to the
+ * not yet updated second array are still using the old steeper slope.
+ *
+ * tmono
+ * ^
+ * |    o  n
+ * |   o n
+ * |  u
+ * | o
+ * |o
+ * |12345678---> reader order
+ *
+ * o = old slope
+ * u = update
+ * n = new slope
+ *
+ * So reader 6 will observe time going backwards versus reader 5.
+ *
+ * While other CPUs are likely to be able observe that, the only way
+ * for a CPU local observation is when an NMI hits in the middle of
+ * the update. Timestamps taken from that NMI context might be ahead
+ * of the following timestamps. Callers need to be aware of that and
+ * deal with it.
+ */
 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 457be03..708a13f 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -130,7 +130,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
- {
- 	int autosuspend_delay;
- 	u64 last_busy, expires = 0;
--	u64 now = ktime_to_ns(ktime_get());
-+	u64 now = ktime_get_mono_fast_ns();
- 
- 	if (!dev->power.use_autosuspend)
- 		goto out;
-@@ -909,7 +909,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
- 	 * If 'expires' is after the current time, we've been called
- 	 * too early.
- 	 */
--	if (expires > 0 && expires < ktime_to_ns(ktime_get())) {
-+	if (expires > 0 && expires < ktime_get_mono_fast_ns()) {
- 		dev->power.timer_expires = 0;
- 		rpm_suspend(dev, dev->power.timer_autosuspends ?
- 		    (RPM_ASYNC | RPM_AUTO) : RPM_ASYNC);
-@@ -928,7 +928,7 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
- int pm_schedule_suspend(struct device *dev, unsigned int delay)
- {
- 	unsigned long flags;
--	ktime_t expires;
-+	u64 expires;
- 	int retval;
- 
- 	spin_lock_irqsave(&dev->power.lock, flags);
-@@ -945,8 +945,8 @@ int pm_schedule_suspend(struct device *dev, unsigned int delay)
- 	/* Other scheduled or pending requests need to be canceled. */
- 	pm_runtime_cancel_pending(dev);
- 
--	expires = ktime_add(ktime_get(), ms_to_ktime(delay));
--	dev->power.timer_expires = ktime_to_ns(expires);
-+	expires = ktime_get_mono_fast_ns() + (u64)delay * NSEC_PER_MSEC);
-+	dev->power.timer_expires = expires;
- 	dev->power.timer_autosuspends = 0;
- 	hrtimer_start(&dev->power.suspend_timer, expires, HRTIMER_MODE_ABS);
- 
-diff --git a/include/linux/pm_runtime.h b/include/linux/pm_runtime.h
-index 54af4ee..fed5be7 100644
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -105,7 +105,7 @@ static inline bool pm_runtime_callbacks_present(struct device *dev)
- 
- static inline void pm_runtime_mark_last_busy(struct device *dev)
- {
--	WRITE_ONCE(dev->power.last_busy, ktime_to_ns(ktime_get()));
-+	WRITE_ONCE(dev->power.last_busy, ktime_get_mono_fast_ns());
- }
- 
- static inline bool pm_runtime_is_irq_safe(struct device *dev)
+As this function is not guaranteed to be monotonic, have you checked how
+the Runtime PM code behaves if time goes backwards? Does it just make
+a suboptimal decision or does it crash?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
