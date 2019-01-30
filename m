@@ -2,107 +2,117 @@ Return-Path: <SRS0=dpDL=QG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637ACC282D8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 21:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE0EC282D7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 22:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C79920881
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 21:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCF7D218D2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 22:55:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548888939;
+	bh=oMrJKF17pErY8vdizP0pGkB+pQKVNwzV5MKv/m9vv2U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=l1oyuB7mxffp3xwTJaRkM1SUKchVP7UVVkpsJXOkEwzkRw/ptPeXV9Pq/BHsVpJYx
+	 ZwyhN3VqfRZc4XqZJ5dvheUnRTrxQs7Su3Jing2ZhLYHp+oOgz0V/ptbOsdPOp3Ub3
+	 ZPqWaO2fQxD7J984L8PTOOLzctW9KqmSbQDmpQYA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388181AbfA3VkW (ORCPT
+        id S1731941AbfA3Wze (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Jan 2019 16:40:22 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:49372 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfA3VkV (ORCPT
+        Wed, 30 Jan 2019 17:55:34 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46589 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728573AbfA3Wze (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Jan 2019 16:40:21 -0500
-Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
-        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
-        id S23992792AbfA3VkSjTYCh (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org> + 3 others);
-        Wed, 30 Jan 2019 22:40:18 +0100
-Date:   Wed, 30 Jan 2019 22:40:17 +0100
-From:   Ladislav Michl <ladis@linux-mips.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
+        Wed, 30 Jan 2019 17:55:34 -0500
+Received: by mail-ot1-f66.google.com with SMTP id w25so1108701otm.13;
+        Wed, 30 Jan 2019 14:55:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YuA330KElE94ag75CUZF0JfLlQgGpCicSadKqqJDO2M=;
+        b=TF3ZPtgmjYDUfIWCEAvj6lkOSKq9FTzRdP6LVjXzV4UbfN7MsJWW3x2YVVY1r5hEmH
+         c5Q6TnymvxyYumGuZ907+vAMTOAFB0XscJtpopGaW+/PXSmizj4GiWQzPK1p99ECVnvN
+         pE+yAzhBEJ2nM9m4zyn6izTRbMtU75JpEPEBVNgkX+/622DgoxUi8uuwxaJhyNoNe74t
+         y2IjopX8/YRk/zwe9IyYqMsbmJsaQQmRuM6Wwq/Qn0Qmo1M7+ZMm0OpWY8kt3tBo43dc
+         sPTqdvBeVAOAwjZbUr8fjJIuJlpFy1niB6ImNUu24Cq7BKfMSupcluy9pKVzxZ49KgGc
+         MbgA==
+X-Gm-Message-State: AJcUuke7mDe7qxt3X4gWWMCbcE/eVVooiwr6PTd9+qmwN2EiXvHZ8B1b
+        QOGN8R+kPLIT3RMoXF5qQYrcWBUqI3TlrUaUv1ufxA==
+X-Google-Smtp-Source: ALg8bN5WmlZghK92UzFWWO/bpgaQE+0vzBzrN5Lq8REMLjdrp+ANVFp49w+PVDNz/myAVI16mzVYyEsNcw/EoGNppFM=
+X-Received: by 2002:a9d:588c:: with SMTP id x12mr24659825otg.139.1548885192162;
+ Wed, 30 Jan 2019 13:53:12 -0800 (PST)
+MIME-Version: 1.0
+References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
+ <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 30 Jan 2019 22:53:00 +0100
+Message-ID: <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com>
+Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
+To:     Vincent Guittot <vincent.guittot@linaro.org>
 Cc:     Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Biju Das <biju.das@bp.renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] PM/runtime: Optimize pm_runtime_autosuspend_expiration()
-Message-ID: <20190130214017.GA5038@lenoch>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-pm_runtime_autosuspend_expiration calls ktime_get_mono_fast_ns
-even when its returned value may be unused. Therefore get
-current time later and remove gotos while there.
+On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> A deadlock has been seen when swicthing clocksources which use PM runtime.
+> The call path is:
+> change_clocksource
+>     ...
+>     write_seqcount_begin
+>     ...
+>     timekeeping_update
+>         ...
+>         sh_cmt_clocksource_enable
+>             ...
+>             rpm_resume
+>                 pm_runtime_mark_last_busy
+>                     ktime_get
+>                         do
+>                             read_seqcount_begin
+>                         while read_seqcount_retry
+>     ....
+>     write_seqcount_end
+>
+> Although we should be safe because we haven't yet changed the clocksource
+> at that time, we can't because of seqcount protection.
+>
+> Use ktime_get_mono_fast_ns() instead which is lock safe for such case
+>
+> With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
+> monotonic across an update and as a result can goes backward. According to
+> update_fast_timekeeper() description: "In the worst case, this can
+> result is a slightly wrong timestamp (a few nanoseconds)". For
+> PM runtime autosuspend, this means only that the suspend decision can
+> be slightly sub optimal.
+>
+> Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+> Reported-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>
+> Hi Rafael,
+>
+> Sorry, I sent the version with the typo mistake that generated the compilation error
+> reported by kbuild-test-robot
+>
+> This version doesn't have the typo.
 
-Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-Acked-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- This patch is based on top of bleeding-edge branch, where
- "[PATCH v2 ] PM-runtime: fix deadlock with ktime" is sitting.
- I expect v3 of that patch, which should not harm this one.
- It is meant to replace "PM/runtime: Do not needlessly call ktime_get"
- sent earlier.
-
- drivers/base/power/runtime.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 65e2b5f48e0c..7bbe28faca8d 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -145,24 +145,21 @@ static void pm_runtime_cancel_pending(struct device *dev)
- u64 pm_runtime_autosuspend_expiration(struct device *dev)
- {
- 	int autosuspend_delay;
--	u64 last_busy, expires = 0;
--	u64 now = ktime_get_mono_fast_ns();
-+	u64 expires;
- 
- 	if (!dev->power.use_autosuspend)
--		goto out;
-+		return 0;
- 
- 	autosuspend_delay = READ_ONCE(dev->power.autosuspend_delay);
- 	if (autosuspend_delay < 0)
--		goto out;
--
--	last_busy = READ_ONCE(dev->power.last_busy);
-+		return 0;
- 
--	expires = last_busy + (u64)autosuspend_delay * NSEC_PER_MSEC;
--	if (expires <= now)
--		expires = 0;	/* Already expired. */
-+	expires  = READ_ONCE(dev->power.last_busy);
-+	expires += (u64)autosuspend_delay * NSEC_PER_MSEC;
-+	if (expires > ktime_get_mono_fast_ns())
-+		return expires;	/* Expires in the future */
- 
-- out:
--	return expires;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(pm_runtime_autosuspend_expiration);
- 
--- 
-2.20.1
-
+OK, I've applied this one, thanks!
