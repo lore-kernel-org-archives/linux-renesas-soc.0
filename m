@@ -2,86 +2,161 @@ Return-Path: <SRS0=dpDL=QG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CF3C282D7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B4FC282D7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC8C20989
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2019C20989
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="KlAHQcbW"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZdFh7+Lh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730400AbfA3Jk7 (ORCPT
+        id S1728298AbfA3Jlc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:40:59 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38534 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfA3Jk7 (ORCPT
+        Wed, 30 Jan 2019 04:41:32 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:55126 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728272AbfA3Jl3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:40:59 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5DA6A25BEE5;
-        Wed, 30 Jan 2019 20:40:47 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548841247; bh=eH5xe79FEpbYVrh06cEnNXrarYdO0U71TqiYXYNJeqw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KlAHQcbWtoxqrQHWRZcpcuC5F1UnBUGysRREO4HbSw0ebV1kBhFQNkXOrAJFFujaz
-         yJp1COMcfJt681uhpPLk9oSNKTy+V7DCf05op8mPRZU7z2x/GP1iX5ZtjTA4AADOu7
-         gPOJz7oLmbiwvfqXR6Mg2rNsHucxJoU0XTDo57mA=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 7D785940796; Wed, 30 Jan 2019 10:40:43 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT v2 5/6] clk: renesas: rcar-gen3: Support r8a7745 Z2 clock divider
-Date:   Wed, 30 Jan 2019 10:40:28 +0100
-Message-Id: <20190130094029.9604-6-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190130094029.9604-1-horms+renesas@verge.net.au>
-References: <20190130094029.9604-1-horms+renesas@verge.net.au>
+        Wed, 30 Jan 2019 04:41:29 -0500
+Received: by mail-it1-f194.google.com with SMTP id i145so9228974ita.4
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Jan 2019 01:41:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8p9guxdW2dSYDedRw8V3sEOTdwxjxH/BsBrvfgqOjy8=;
+        b=ZdFh7+Lhxhub53RHgUUM9RREUxH4vj+Bk6LWu3q71VlW0oV46Fr0Tf22AWvvePQ0fc
+         jTZr3dpWZcPFH+74QeiIL9IHAwIsVqyU8O76Oxe3KTsDayGHhUbj4ZIhZWeHD3djGZMZ
+         CD6SgSyevqgMvsMsyRDw+Iu8D+IKMHS42eb3E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8p9guxdW2dSYDedRw8V3sEOTdwxjxH/BsBrvfgqOjy8=;
+        b=Opd64agwv0047BI78UywP0SZ3C/6ABeaYJR6RtDGfOlEn8icr2nJyzFXKBLI2w4I2b
+         eV3KOmC1vTEwDr8lkeMMfIRYX/X4L8Axyg/ySYKFg7uttgBWF88bCYLGreb3Ps+IlI8k
+         bnlFWeuxFVUc+mbDkUrhaubliLcs0ZF6t7UdWVNMNiWpocQPhuvpO7/6mXg2IQBPtNoG
+         RdsQ45AgoLe6168pFpGKTI43bTuHpm/4hcCXRRa1uy+zMFGXArqVZRpBzkcmNkkxZazo
+         IyO87PpLHRN5ebDByQ0qVrVbITJWCHY+VqUG4d84f98eUKHKr+BkRZ6pxR2P3gXdbs5p
+         mSvA==
+X-Gm-Message-State: AJcUukdly5z0/oGImH0SCEWwTUSITCy09rNKJuaryFAjJaNhYsYC5Dc0
+        CzynYTowx+/CoFoXHVCRN2UTt2oBhP8qiTHzOA56TA==
+X-Google-Smtp-Source: ALg8bN5wn920FaduALkeh2LPYs0Nvrhp5D8Zd6duGp1ooTD7vwwPGF+V+15A3oTd8AWgW0wQ80vD2es1aExkzfw/aiI=
+X-Received: by 2002:a02:7f08:: with SMTP id r8mr15823080jac.20.1548841287480;
+ Wed, 30 Jan 2019 01:41:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1548836194-15264-1-git-send-email-vincent.guittot@linaro.org>
+ <CAMuHMdWYV-tDD2osdvs4yhD-mu2n8-JSC7rV8Zt5vW4kr8hdWQ@mail.gmail.com>
+ <CAKfTPtBiWunvVHv=tpq7CPqAX+54d_dyPt6BME_m1_Wz+qPaTA@mail.gmail.com> <CAJZ5v0jLJ8Tu7Gpt-4bhW59Q3=PX4wyb2rFBWuPKMFHcFXBxAA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jLJ8Tu7Gpt-4bhW59Q3=PX4wyb2rFBWuPKMFHcFXBxAA@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 30 Jan 2019 10:41:16 +0100
+Message-ID: <CAKfTPtD+Yd7fBw=PhnedYmkGGW-JhNiZ739B-8YD7pFJEe9wig@mail.gmail.com>
+Subject: Re: [PATCH] PM-runtime: fix deadlock with ktime
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On the RZ/G2E (r8a7745) SoC the Z2FC bits of the RFQCRC register,
-which control the frequency division ratio for the Z2φ clock are
-located at bit[12:8] rather than the more common location bit[4:0].
+On Wed, 30 Jan 2019 at 10:39, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Wed, Jan 30, 2019 at 10:14 AM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > Hi Geert,
+> >
+> > On Wed, 30 Jan 2019 at 09:21, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > >
+> > > Hi Vincent,
+> > >
+> > > On Wed, Jan 30, 2019 at 9:16 AM Vincent Guittot
+> > > <vincent.guittot@linaro.org> wrote:
+> > > > A deadlock has been seen when swicthing clocksources which use PM runtime.
+> > > > The call path is:
+> > > > change_clocksource
+> > > >     ...
+> > > >     write_seqcount_begin
+> > > >     ...
+> > > >     timekeeping_update
+> > > >         ...
+> > > >         sh_cmt_clocksource_enable
+> > > >             ...
+> > > >             rpm_resume
+> > > >                 pm_runtime_mark_last_busy
+> > > >                     ktime_get
+> > > >                         do
+> > > >                             read_seqcount_begin
+> > > >                         while read_seqcount_retry
+> > > >     ....
+> > > >     write_seqcount_end
+> > > >
+> > > > Although we should be safe because we haven't yet changed the clocksource
+> > > > at that time, we can't because of seqcount protection.
+> > > >
+> > > > Use ktime_get_mono_fast_ns instead which is lock safe for such case
+> > > >
+> > > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
+> > > > Reported-by: Biju Das <biju.das@bp.renesas.com>
+> > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > >
+> > > Thanks for your patch!
+> > >
+> > > /**
+> > >  * ktime_get_mono_fast_ns - Fast NMI safe access to clock monotonic
+> > >  *
+> > >  * This timestamp is not guaranteed to be monotonic across an update.
+> > >  * The timestamp is calculated by:
+> > >  *
+> > >  *      now = base_mono + clock_delta * slope
+> > >  *
+> > >  * So if the update lowers the slope, readers who are forced to the
+> > >  * not yet updated second array are still using the old steeper slope.
+> > >  *
+> > >  * tmono
+> > >  * ^
+> > >  * |    o  n
+> > >  * |   o n
+> > >  * |  u
+> > >  * | o
+> > >  * |o
+> > >  * |12345678---> reader order
+> > >  *
+> > >  * o = old slope
+> > >  * u = update
+> > >  * n = new slope
+> > >  *
+> > >  * So reader 6 will observe time going backwards versus reader 5.
+> > >  *
+> > >  * While other CPUs are likely to be able observe that, the only way
+> > >  * for a CPU local observation is when an NMI hits in the middle of
+> > >  * the update. Timestamps taken from that NMI context might be ahead
+> > >  * of the following timestamps. Callers need to be aware of that and
+> > >  * deal with it.
+> > >  */
+> > >
+> > > As this function is not guaranteed to be monotonic, have you checked how
+> > > the Runtime PM code behaves if time goes backwards? Does it just make
+> > > a suboptimal decision or does it crash?
+> >
+> > As a worst case this will generate a suboptimal decision around the update
+>
+> So that should be explained in the changelog of the patch.  In detail,
+> if poss, please.
 
-This change is made with reference to the User's Manual v0.61.
-
-Fixes: 9127d54bb894 ("clk: renesas: cpg-mssr: Add R8A7745 support")
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/clk/renesas/rcar-gen3-cpg.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index d21fdeb520e1..dfd2b9caeaf5 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -450,6 +450,10 @@ static const struct soc_device_attribute cpg_quirks_match[] __initconst = {
- 		.soc_id = "r8a77990",
- 		.data = (void *)Z2FC_BIT_MASK_SFT_8,
- 	},
-+	{
-+		.soc_id = "r8a7745",
-+		.data = (void *)Z2FC_BIT_MASK_SFT_8,
-+	},
- 	{ /* sentinel */ }
- };
- 
--- 
-2.11.0
-
+Ok, I'm going to update the commit message
