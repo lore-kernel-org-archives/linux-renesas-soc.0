@@ -2,133 +2,150 @@ Return-Path: <SRS0=dpDL=QG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3DBC282D9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C95C282D7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E1820882
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EC1C20882
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jan 2019 09:46:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="rZncRNhq"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="NLvzhma8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730479AbfA3JqQ (ORCPT
+        id S1729665AbfA3Jqj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 30 Jan 2019 04:46:16 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38680 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbfA3JqQ (ORCPT
+        Wed, 30 Jan 2019 04:46:39 -0500
+Received: from mail-eopbgr1400107.outbound.protection.outlook.com ([40.107.140.107]:59568
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726406AbfA3Jqj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 30 Jan 2019 04:46:16 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 201F525B74E;
-        Wed, 30 Jan 2019 20:46:14 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548841574; bh=7u6u7g2BAPPB6kswZKrms6yTNi9E5Mdi68hF6kB+rKY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rZncRNhq0D8cm0rqJGU7mpC3ZQ+vJdcDhji+FweDgo+gekbC0uRRpkG7GWg2eaei0
-         U1oIZRPUokUKsDn/RQ58jJ+z/+07VH7aqk8NnuAtuZeH1vI3Xj8kPCBoIRW/ddMb5H
-         QtKk/r8TPhDAGh0rDwvvO+FqLyjop0bSi7Be1MrE=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 4FB5494043D; Wed, 30 Jan 2019 10:46:12 +0100 (CET)
-Date:   Wed, 30 Jan 2019 10:46:12 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Add OPPs table for
- cpu devices
-Message-ID: <20190130094607.z7sqc2vqt4c7kzd4@verge.net.au>
-References: <1547553762-4467-1-git-send-email-ykaneko0929@gmail.com>
- <20190128140519.wfbnpgznbkx3msft@verge.net.au>
- <CAMuHMdW2j4e4yc2ZkeJ71uqGz7FS2Kb2141tyZp9y3zTrJ21_g@mail.gmail.com>
- <20190128163639.kv77wczde7d7lntv@verge.net.au>
+        Wed, 30 Jan 2019 04:46:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4bTsf6Q0CIizB3p/KDWSgSMJuxcHI912ooQP2vIyJR8=;
+ b=NLvzhma8arMdXC8nU1jW39WRVMXUvGHIU+9BYW6BGTtKWSvinx95Udt4n7eFIHpifeEMn4B3bfFRa6Uw6v9mblO2pngRZMRa4qTLPS6F7tuFtRkiPrHYI8ZZxC705MWhePXUQotd+HIzgEm+SvxoHVmkgafMyO2cvlDnDhqO5bc=
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.241.22) by
+ OSBPR01MB2502.jpnprd01.prod.outlook.com (52.134.252.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.19; Wed, 30 Jan 2019 09:46:36 +0000
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::9cb9:6c95:2d20:7852]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::9cb9:6c95:2d20:7852%2]) with mapi id 15.20.1558.025; Wed, 30 Jan 2019
+ 09:46:35 +0000
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH/RFT v2 6/6] clk: renesas: r8a7745: Implement Z2 as a
+ variable clock
+Thread-Topic: [PATCH/RFT v2 6/6] clk: renesas: r8a7745: Implement Z2 as a
+ variable clock
+Thread-Index: AQHUuH/mhfvOl4MpNUeJeCWQkpdmXqXHjtig
+Date:   Wed, 30 Jan 2019 09:46:35 +0000
+Message-ID: <OSBPR01MB2103B656FF9DCBCC2F48E9A3B8900@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <20190130094029.9604-1-horms+renesas@verge.net.au>
+ <20190130094029.9604-7-horms+renesas@verge.net.au>
+In-Reply-To: <20190130094029.9604-7-horms+renesas@verge.net.au>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biju.das@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSBPR01MB2502;20:na5XpJe3FV26Uitw2je2ECVS2Z4XQNjfJeJwLt1Tu2i2JurAl11yVn34SfdBRKVbMdKmFGDLKp4Seq5PLO5PH70urhvF7ejrjP+FaoNxJECmvIDV9UBymUfIQMj3hpDWirxRhOB5zctwSWPbg/um5zbUKSxxomz9Z4mHyTPINM4=
+x-ms-office365-filtering-correlation-id: 3beb35d3-dd9f-4cb2-8cea-08d68697d31f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2502;
+x-ms-traffictypediagnostic: OSBPR01MB2502:
+x-microsoft-antispam-prvs: <OSBPR01MB25029C56CED254EDD7DD7B47B8900@OSBPR01MB2502.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 0933E9FD8D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(376002)(136003)(39860400002)(51914003)(199004)(189003)(81156014)(9686003)(76176011)(66066001)(26005)(25786009)(102836004)(446003)(86362001)(71200400001)(11346002)(6506007)(71190400001)(478600001)(4326008)(107886003)(6246003)(53936002)(99286004)(7696005)(39060400002)(33656002)(14454004)(476003)(74316002)(106356001)(105586002)(305945005)(7736002)(54906003)(316002)(44832011)(2906002)(110136005)(486006)(97736004)(8936002)(229853002)(256004)(14444005)(55016002)(6116002)(3846002)(68736007)(81166006)(8676002)(6436002)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2502;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: x14tEul6yDtTGG3STQyfuVZvyTLymNRRKVGlXoSCbHl8Y6XUT0C5HI/jKb//VV4cy2LGgnG4BB3NBC14T3hF08JUNgVKBerDBmCyHorptebshA5gZ/7ot20nrOKm/nWGZlg1aAGTeE5V2sZV032NiwNTug3e6Lw9GszyLWpAOaWf7QYYiO3aSW0NpvY05+kpTqAEK1g1HC2AbEpnN8L468AxDEONoOmBsDJVMMjHYtUXXiMC/7NRUvcXipJqUo8aqe7INlP8IipOt1Ra1vFtc6CrQLzbymdw/RLifuJbl5EIxCNJiusQ8hrmCJLOqyztasDtMHLr5LiUCspygMVxKvFifd3nR8PQjI9qZ6ORmXJMQ20w0pF4BYfObrlSsQrYqBlkh7UX+PJ+E6a2M9x9Vjrz/bQ7CeAFj0ymvGTATcM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128163639.kv77wczde7d7lntv@verge.net.au>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3beb35d3-dd9f-4cb2-8cea-08d68697d31f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 09:46:35.7716
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2502
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 05:36:39PM +0100, Simon Horman wrote:
-> On Mon, Jan 28, 2019 at 04:15:30PM +0100, Geert Uytterhoeven wrote:
-> > Hi Simon,
-> > 
-> > On Mon, Jan 28, 2019 at 3:05 PM Simon Horman <horms@verge.net.au> wrote:
-> > > On Tue, Jan 15, 2019 at 09:02:42PM +0900, Yoshihiro Kaneko wrote:
-> > > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > > >
-> > > > This patch define OOP tables for all CPUs.
-> > > > This allows CPUFreq to function.
-> > > >
-> > > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > > > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> > > > ---
-> > >
-> > > Thanks, I have tested CPUFreq with this tested that with this patch and
-> > > "[PATCH] clk: renesas: r8a77990: Add Z2 clock"
-> > > (https://patchwork.kernel.org/patch/10783723/) applied on top of
-> > > renesas-devel-20190128-v5.0-rc4.
-> > >
-> > > Geert, or others, is it expected that z2 does not scale
-> > > in this test?
-> > 
-> > Given your patch adds the Z2 clock as a fixed clock, this is expected ;-)
-> > 
-> > Note that the BSP adds this clock as a programmable clock of type
-> > CLK_TYPE_GEN3_Z2.
-> 
-> Thanks, understood.
+Hi Simon,
 
-I have now tested this patch in conjunction with
-"[PATCH v2 0/6] clk: renesas: r8a77990: Add Z2 clock" [1],
-which implements Z2 as a variable clock, and the results
-seem substantially better.
+Thanks for the patch
 
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-performance
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
-800000 1000000 1200000 
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
+> Subject: [PATCH/RFT v2 6/6] clk: renesas: r8a7745: Implement Z2 as a vari=
+able
+> clock
+>
+> On the RZ/G2E (r8a7745) SoC the Z2 clock is not a fixed clock.
+> Rather it is a clock with:
 
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z2/clk_rate:975000000
+RZ/G2E SoC id is r8a774c0.
 
-# echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:800000
-/sys/kernel/debug/clk/z2/clk_rate:787500000
 
-# echo 1200000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq
-# /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
+> * A parent of CLK_PLL0 running at 4.8GHz
+> * A fixed divider of 4
+> * A variable divider controlled by the Z2FC bits of the RFQCRC register
+>
+> This can be described using the DEF_GEN3_Z with a clock type of
+> CLK_TYPE_GEN3_Z2.
+>
+> This change is made with reference to the User's Manual v0.61.
+>
+> Fixes: 9127d54bb894 ("clk: renesas: cpg-mssr: Add R8A7745 support")
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  drivers/clk/renesas/r8a7745-cpg-mssr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> index 493874e5ebee..f2ea72d9d663 100644
+> --- a/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a7745-cpg-mssr.c
+> @@ -53,7 +53,7 @@ static const struct cpg_core_clk r8a7745_core_clks[]
+> __initconst =3D {
+>  DEF_BASE("qspi", R8A7745_CLK_QSPI, CLK_TYPE_GEN2_QSPI,
+> CLK_PLL1_DIV2),
+>  DEF_BASE("rcan", R8A7745_CLK_RCAN, CLK_TYPE_GEN2_RCAN,
+> CLK_USB_EXTAL),
+>
+> -DEF_FIXED("z2",    R8A7745_CLK_Z2,CLK_PLL0,    1, 1),
+> +DEF_GEN3_Z("z2",   R8A77990_CLK_Z2,     CLK_TYPE_GEN3_Z2,
+> CLK_PLL0, 4),
 
-Tested-by: Simon Horman <horms+renesas@verge.net.au>
+Looks like wrong file name.  it is supposed to be r8a774c0-cpg-mssr.c
 
-[1] https://lore.kernel.org/linux-renesas-soc/20190130094029.9604-1-horms+renesas@verge.net.au/T/#mec59a349508e0be00d3a1d6ef89f838c0e193591
+>  DEF_FIXED("zg",    R8A7745_CLK_ZG,CLK_PLL1,    6, 1),
+>  DEF_FIXED("zx",    R8A7745_CLK_ZX,CLK_PLL1,    3, 1),
+>  DEF_FIXED("zs",    R8A7745_CLK_ZS,CLK_PLL1,    6, 1),
+> --
+> 2.11.0
+
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
