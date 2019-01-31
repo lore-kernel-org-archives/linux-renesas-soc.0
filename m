@@ -2,88 +2,116 @@ Return-Path: <SRS0=mg4H=QH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 529CCC169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Jan 2019 11:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92649C169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Jan 2019 11:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8142087F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Jan 2019 11:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F83D218AF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 31 Jan 2019 11:34:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfAaLLv (ORCPT
+        id S1726944AbfAaLen (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:11:51 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36666 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfAaLLv (ORCPT
+        Thu, 31 Jan 2019 06:34:43 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:26972 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726221AbfAaLem (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:11:51 -0500
-Received: by mail-ua1-f66.google.com with SMTP id j3so888016uap.3;
-        Thu, 31 Jan 2019 03:11:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y3/B/tYt2P0XRy8PGJMmeO6g2XSiK/MlR4W+q7ekSJ4=;
-        b=ordHM2TJv9uVcsfTVt0GLO9D3UaQdSCz/MdzwNOSQc1OEkWyrHsLkkcbXOlpThwP20
-         bX8YlEddkS3vzRXn2qmKkL5+ETBIwhCbiV0zjx9il1W+NX8onGYqfW43oq86wvkwG4cD
-         WQt+DVhq9BYF80BVAboVeDw6/2I+H5XzW8ieR8VJ3TODqGvcCyf6GPWOIpgc6BZdhRNx
-         RSv8stLQDCpMQaKVs6TECo2roFpsRUqcdiCCb4u/+wtrc+S6VoXroWXaeeN/vRgB7CPK
-         geJdMCKN8yHW4bmcfc6oSt4ZNwB21xbBnNnw3SG4NWEzGaiGxensda3rTX/sMmS5f3F6
-         qO7g==
-X-Gm-Message-State: AJcUukdSUAmOKBmhPC2k0CVZOinBtChMnTtlwzNEbu4tbi4ir6FhZ/G/
-        bWQcU8b9esIsIvTG8k9yXL3vq35qrk7KmNmDM8g=
-X-Google-Smtp-Source: ALg8bN6qB6SxjB9syvivyJizejeFNcQeQjiJzjkl2txoebxb/PAAdeuKvxEt/zM1cZd6JSnttFDUU25mvimp/PQL8hU=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr14627363uap.0.1548933110394;
- Thu, 31 Jan 2019 03:11:50 -0800 (PST)
-MIME-Version: 1.0
-References: <fc43bfa2-4312-b52b-a749-e3e43e242a95@cogentembedded.com>
- <e43f07fd-1407-a87a-7fe5-67a522da9e19@cogentembedded.com> <CAMuHMdUixqEcD36ReZj4noF5VOCNHS-qH_9herABkiLSVD3R8A@mail.gmail.com>
- <918892bc-4b2d-0235-cb51-749ca49bd4e8@cogentembedded.com>
-In-Reply-To: <918892bc-4b2d-0235-cb51-749ca49bd4e8@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 31 Jan 2019 12:11:38 +0100
-Message-ID: <CAMuHMdWcgpW50m5p2dG74xV0L-toieU9_N7-JDkpatc=3ssJ_Q@mail.gmail.com>
-Subject: Re: [PATCH 4/7] sh_eth: offload RX checksum on R8A7740
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 31 Jan 2019 06:34:42 -0500
+X-IronPort-AV: E=Sophos;i="5.56,544,1539615600"; 
+   d="scan'208";a="6500064"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jan 2019 20:34:39 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.13])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 600BE4487C01;
+        Thu, 31 Jan 2019 20:34:37 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH] arm64: dts: renesas: r8a774c0: Add OPPs table for cpu devices
+Date:   Thu, 31 Jan 2019 11:34:10 +0000
+Message-Id: <1548934450-10256-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+This patch defines OOP tables for all CPUs, similarly to
+what done by Takeshi Kihara and Yoshihiro Kaneko for the
+R8A77990.
 
-On Thu, Jan 31, 2019 at 11:52 AM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 01/29/2019 09:20 PM, Geert Uytterhoeven wrote:
-> >> The R-Mobile A1 (R8A7740) SoC manual describes the Ether MAC's RX checksum
-> >> offload the same way as it's implemented in the EtherAVB MAC...
-> >>
-> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> >
-> > Thanks for your patch!
-> >
-> > Running netperf as described in patch 2/7, perf tells me there's a reduction
-> > for csum_partial from ca. 1.9% to 0.01%, so this feature seems to work.
->
->    Hm, what about do_csum()?
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
 
-I had looked for that, but didn't see it. Probably inlined, as it's static.
+This patch depends on series:
+https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg38109.html
 
-Gr{oetje,eeting}s,
+Thanks,
+Fab
 
-                        Geert
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+index f2e390f7..71ff43e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+@@ -44,6 +44,27 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	cluster1_opp: opp_table10 {
++		compatible = "operating-points-v2";
++		opp-shared;
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++			opp-suspend;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -55,6 +76,8 @@
+ 			power-domains = <&sysc R8A774C0_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A774C0_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_1: cpu@1 {
+@@ -64,6 +87,8 @@
+ 			power-domains = <&sysc R8A774C0_PD_CA53_CPU1>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			clocks =<&cpg CPG_CORE R8A774C0_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		L2_CA53: cache-controller-0 {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
