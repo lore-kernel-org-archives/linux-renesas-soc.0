@@ -2,63 +2,44 @@ Return-Path: <SRS0=i8oE=QI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB01FC282D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFC9C282D8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE7A218F0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04DA020855
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 15:46:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QyT0WPZP"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="jrYkiArg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfBAPqR (ORCPT
+        id S1730250AbfBAPo0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:46:17 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54363 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729558AbfBAPps (ORCPT
+        Fri, 1 Feb 2019 10:44:26 -0500
+Received: from mail-eopbgr1400110.outbound.protection.outlook.com ([40.107.140.110]:32051
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728668AbfBAPoZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:45:48 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a62so6575291wmh.4
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Feb 2019 07:45:46 -0800 (PST)
+        Fri, 1 Feb 2019 10:44:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=nmKI7S7geKqD0oD5uE7F9WOUkGs9hutqw9feJA1Xf/8=;
-        b=QyT0WPZP2kpW6A+LnwV1/7aGFdQXYZcE3w2jUHcT6S4TZCf39dEn+iap/9OAyeBsyY
-         V2s3nXK7XZV4qWO3hA83fqnwKSSvqFzfHgYwuGp9oMtQRJ0rVEZCfDdet5QZK/KAW0EN
-         oNPKiMbYLBl8J2I/tjYyBtZ0RL54zXVkkWXtI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=nmKI7S7geKqD0oD5uE7F9WOUkGs9hutqw9feJA1Xf/8=;
-        b=Ir4Sc7VXHHFW7MB2ry1ApyflwlErVaxVaX4i/JAabhCueHzybyYnRN6sbImGqP5yLD
-         g5cchK3ZQ76ccWaGQFhp4K2PV2bBxX/nzCmzKCslKIRlTR7S+YaOgcOndQ3kAVb31qd0
-         B+plX5keQCAsRbsHJx8mlaQo1fceuBfXMH8h5aW+6FlXcnNo/BZw2vxYr6pX7zJNXRv1
-         wSRFNrMgCYl74yAkr/EUkSQUiTj8hUseQ680SvJE0KayBrcUinOpp51GFpAhboswRMWe
-         WKvBeEg1iyZvMxg20IUNgjrH58TLinLSuDPzsjNwHzcSNuJRs7CL6W/kFHtiGoK61hd1
-         fR2w==
-X-Gm-Message-State: AHQUAuY4CRV3cOQJC/3lAdhVZsk4X9UaaGO6BJnhOt6Pv/XGUC8AuYoB
-        69HEQM/n0bFDDgNBFu4i3ZA+8Q==
-X-Google-Smtp-Source: AHgI3IZarAaq62J0n0ZfIoDtAlPOP1lNA2i0d8VSH06kLsEmWDzqTgY/+kwG581xnv2H+ao9l3i0rQ==
-X-Received: by 2002:a1c:2408:: with SMTP id k8mr2905350wmk.110.1549035945097;
-        Fri, 01 Feb 2019 07:45:45 -0800 (PST)
-Received: from linaro.org ([2a01:e0a:f:6020:4055:ba1:78bb:b422])
-        by smtp.gmail.com with ESMTPSA id y138sm3911384wmc.16.2019.02.01.07.45.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:45:44 -0800 (PST)
-Date:   Fri, 1 Feb 2019 16:45:42 +0100
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lOqMPoMLH6+8z387T+zQlwHhE3l6koQaCcqOpwOwrA8=;
+ b=jrYkiArgQELABaTARknecGkcOqUdLJbKai1JU83mNEn8jsD5Bejvj3qjV11Y+JNbfPGTYwEf40uHcszdRfVBe7OzU/h/AUOUdO4LWriD8QP28IbNEVWWqDjcNkyqIlRrSKagua2+EE9QVVatxu+6QL38MGZID6y6yarJ04upxxw=
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.241.22) by
+ OSBSPR01MB3.jpnprd01.prod.outlook.com (52.134.225.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Fri, 1 Feb 2019 15:44:17 +0000
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::9cb9:6c95:2d20:7852]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::9cb9:6c95:2d20:7852%2]) with mapi id 15.20.1558.026; Fri, 1 Feb 2019
+ 15:44:16 +0000
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
@@ -67,196 +48,184 @@ Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-Message-ID: <20190201154542.GA6174@linaro.org>
+Subject: RE: [PATCH v3] PM-runtime: fix deadlock with ktime
+Thread-Topic: [PATCH v3] PM-runtime: fix deadlock with ktime
+Thread-Index: AQHUuMDySMSMVQqbW0iMWyMv4OqrSKXIWtMAgAKwb6CAAAjqAIAAAdbw
+Date:   Fri, 1 Feb 2019 15:44:16 +0000
+Message-ID: <OSBPR01MB21031D92553AD16A1F206273B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
  <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
  <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com>
  <OSBPR01MB210387DEC42870D8E5688CE9B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
  <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biju.das@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSBSPR01MB3;20:uOFvUm1zv/nyw0V3904Jwkx1UFD+1e7Ejyj+0jIK0tVOQ/u56flNHZsNWnhD9KkR57O6/OKUoOf1tL5WhACe4uwglEh3PxO0aMEVcuJJKyovOdkGxJ2Fj+IfzVJ9rWjDxojNveuD4AiA4r7GoxFoDD301xSOUTFJMWRpLE5kp3w=
+x-ms-office365-filtering-correlation-id: 936a735b-7312-41ea-40b4-08d6885c1fb7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBSPR01MB3;
+x-ms-traffictypediagnostic: OSBSPR01MB3:
+x-microsoft-antispam-prvs: <OSBSPR01MB3A53FFF72F67412D7379FB8920@OSBSPR01MB3.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 09352FD734
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39860400002)(346002)(376002)(366004)(13464003)(199004)(189003)(51444003)(51914003)(53546011)(76176011)(2906002)(6506007)(97736004)(7736002)(7696005)(6116002)(3846002)(25786009)(74316002)(81156014)(6246003)(81166006)(4326008)(54906003)(102836004)(26005)(8676002)(53936002)(93886005)(316002)(86362001)(186003)(99286004)(305945005)(446003)(11346002)(6436002)(105586002)(14454004)(486006)(33656002)(476003)(8936002)(44832011)(478600001)(68736007)(55016002)(229853002)(71190400001)(71200400001)(6916009)(106356001)(9686003)(7416002)(14444005)(256004)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBSPR01MB3;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: XNjI2jWHs0vuQh/kPh7pwG1xjShdx3DfZuHmRmBgZrP8cqj2DGczOVf8/efPILcwxrTASj7UAYt4Ur+emNssm/0MhqOL8FP78LfQuSI7oOYwkyN6aHXYLL4UdtIh2OEMD4RLYDTspP5zR/TjXdmpVyk5W+lwzpGlroc2dwNUsNKwHlYpKOEDHs7QqBzeSKSowQ3w5MaPDBtczn40e9ARjcPa2PYwHQ4XgpViZZ6VbxQj2Pw7tIGSkJarzuVklxY6rbFDOgyjmTjJvRYR1FXIuBd4xsMfbR40qejFnShAirXvgrbbHosZe391gJIm6YI7PKw4KCgqkliOsxVnOVTE+9rKimbnoLhZV+1k530/hAW8Q2+nO10XvJe/Asn4DcXPsdS9rgUAaoPOhYKUmiRtyy0IDD8unqhXlx3zPXgc2ZM=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 936a735b-7312-41ea-40b4-08d6885c1fb7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2019 15:44:16.8257
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBSPR01MB3
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Le Friday 01 Feb 2019 à 16:28:54 (+0100), Vincent Guittot a écrit :
-> On Fri, 1 Feb 2019 at 16:02, Biju Das <biju.das@bp.renesas.com> wrote:
-> >
-> > Hi Vincent,
-> >
-> > I have rebased my kernel to "next-20190201".  Still I am seeing dead lock.
-> >
-> > Am I missing any patch?
-> 
-> No you don't miss anything.
-> I think that it's the opposite.
-> 
-> Modification in time accounting in PM runtime has been queued but it
-> has not moved (yet) to ktime_get_mono_fast_ns()
-> 
-> Can you try to revert c669560be6c8 ("PM-runtime: Replace jiffies-based
-> accounting with ktime-based accounting") ?
-
-Or instead you can apply :
-
----
- drivers/base/power/runtime.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 4eaf166..1c40e2a 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -66,7 +66,7 @@ static int rpm_suspend(struct device *dev, int rpmflags);
-  */
- void update_pm_runtime_accounting(struct device *dev)
- {
--	u64 now = ktime_to_ns(ktime_get());
-+	u64 now = ktime_get_mono_fast_ns();
- 	u64 delta;
- 
- 	delta = now - dev->power.accounting_timestamp;
-@@ -1315,7 +1315,7 @@ void pm_runtime_enable(struct device *dev)
- 
- 		/* About to enable runtime pm, set accounting_timestamp to now */
- 		if (!dev->power.disable_depth)
--			dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
-+			dev->power.accounting_timestamp = ktime_get_mono_fast_ns();
- 	} else {
- 		dev_warn(dev, "Unbalanced %s!\n", __func__);
- 	}
--- 
-2.7.4
-
-
->
-> 
-> >
-> > root@ek874:/# echo e61e0000.timer > /sys/devices/system/clocksource/clocksource0/current_clocksource
-> > [  193.869423]
-> > [  193.870963] ============================================
-> > [  193.876292] WARNING: possible recursive locking detected
-> > [  193.881625] 5.0.0-rc4-next-20190201-00007-g731346f #3 Not tainted
-> > [  193.887737] --------------------------------------------
-> > [  193.893066] migration/0/11 is trying to acquire lock:
-> > [  193.898136] (____ptrval____) (tk_core.seq){----}, at: update_pm_runtime_accounting+0x14/0x68
-> > [  193.906632]
-> > [  193.906632] but task is already holding lock:
-> > [  193.912483] (____ptrval____) (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140
-> > [  193.919828]
-> > [  193.919828] other info that might help us debug this:
-> > [  193.926377]  Possible unsafe locking scenario:
-> > [  193.926377]
-> > [  193.932314]        CPU0
-> > [  193.934765]        ----
-> > [  193.937216]   lock(tk_core.seq);
-> > [  193.940453]   lock(tk_core.seq);
-> > [  193.943691]
-> > [  193.943691]  *** DEADLOCK ***
-> > [  193.943691]
-> > [  193.949634]  May be due to missing lock nesting notation
-> > [  193.949634]
-> > [  193.956446] 3 locks held by migration/0/11:
-> > [  193.960642]  #0: (____ptrval____) (timekeeper_lock){-.-.}, at: change_clocksource+0x2c/0x118
-> > [  193.969125]  #1: (____ptrval____) (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140
-> > [  193.976903]  #2: (____ptrval____) (&(&dev->power.lock)->rlock){....}, at: __pm_runtime_resume+0x40/0x98
-> > [  193.986339]
-> > [  193.986339] stack backtrace:
-> > [  193.990715] CPU: 0 PID: 11 Comm: migration/0 Not tainted 5.0.0-rc4-next-20190201-00007-g731346f #3
-> > [  193.999707] Hardware name: Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) (DT)
-> > [  194.008089] Call trace:
-> > [  194.010553]  dump_backtrace+0x0/0x178
-> > [  194.014227]  show_stack+0x14/0x20
-> > [  194.017562]  dump_stack+0xb0/0xec
-> > [  194.020895]  __lock_acquire+0xfb4/0x1c08
-> > [  194.024832]  lock_acquire+0xd0/0x268
-> > [  194.028420]  ktime_get+0x5c/0x108
-> > [  194.031747]  update_pm_runtime_accounting+0x14/0x68
-> > [  194.036643]  rpm_resume+0x4ec/0x698
-> > [  194.040144]  __pm_runtime_resume+0x50/0x98
-> > [  194.044264]  sh_tmu_enable.part.1+0x24/0x50
-> > [  194.048462]  sh_tmu_clocksource_enable+0x48/0x70
-> > [  194.053097]  change_clocksource+0x84/0x118
-> > [  194.057208]  multi_cpu_stop+0x8c/0x140
-> > [  194.060970]  cpu_stopper_thread+0xac/0x120
-> > [  194.065087]  smpboot_thread_fn+0x1ac/0x2c8
-> > [  194.069198]  kthread+0x128/0x130
-> > [  194.072439]  ret_from_fork+0x10/0x18
-> >
-> >
-> > Regards,
-> > Biju
-> >
-> > > -----Original Message-----
-> > > From: Rafael J. Wysocki <rafael@kernel.org>
-> > > Sent: 30 January 2019 21:53
-> > > To: Vincent Guittot <vincent.guittot@linaro.org>
-> > > Cc: Linux PM <linux-pm@vger.kernel.org>; Linux Kernel Mailing List <linux-
-> > > kernel@vger.kernel.org>; Linux ARM <linux-arm-
-> > > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
-> > > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
-> > > Hansson <ulf.hansson@linaro.org>; Biju Das <biju.das@bp.renesas.com>;
-> > > Geert Uytterhoeven <geert@linux-m68k.org>; Linux-Renesas <linux-
-> > > renesas-soc@vger.kernel.org>
-> > > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-> > >
-> > > On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
-> > > <vincent.guittot@linaro.org> wrote:
-> > > >
-> > > > A deadlock has been seen when swicthing clocksources which use PM
-> > > runtime.
-> > > > The call path is:
-> > > > change_clocksource
-> > > >     ...
-> > > >     write_seqcount_begin
-> > > >     ...
-> > > >     timekeeping_update
-> > > >         ...
-> > > >         sh_cmt_clocksource_enable
-> > > >             ...
-> > > >             rpm_resume
-> > > >                 pm_runtime_mark_last_busy
-> > > >                     ktime_get
-> > > >                         do
-> > > >                             read_seqcount_begin
-> > > >                         while read_seqcount_retry
-> > > >     ....
-> > > >     write_seqcount_end
-> > > >
-> > > > Although we should be safe because we haven't yet changed the
-> > > > clocksource at that time, we can't because of seqcount protection.
-> > > >
-> > > > Use ktime_get_mono_fast_ns() instead which is lock safe for such case
-> > > >
-> > > > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> > > > monotonic across an update and as a result can goes backward.
-> > > > According to
-> > > > update_fast_timekeeper() description: "In the worst case, this can
-> > > > result is a slightly wrong timestamp (a few nanoseconds)". For PM
-> > > > runtime autosuspend, this means only that the suspend decision can be
-> > > > slightly sub optimal.
-> > > >
-> > > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using
-> > > > hrtimers")
-> > > > Reported-by: Biju Das <biju.das@bp.renesas.com>
-> > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > ---
-> > > >
-> > > > Hi Rafael,
-> > > >
-> > > > Sorry, I sent the version with the typo mistake that generated the
-> > > > compilation error reported by kbuild-test-robot
-> > > >
-> > > > This version doesn't have the typo.
-> > >
-> > > OK, I've applied this one, thanks!
-> >
-> >
-> >
-> > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+SGkgVmluY2VudCwNCg0KVGhhbmtzIGZvciB0aGUgZmVlZGJhY2suIEluc3RlYWQgb2YgcmV2ZXJ0
+aW5nLiAgSSBqdXN0IG1vZGlmaWVkIHRoZSBwYXRjaCBsaWtlIHRoaXMgYW5kIGl0IGZpeGVkIHRo
+ZSBpc3N1ZS4NCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvYmFzZS9wb3dlci9ydW50aW1lLmMgYi9k
+cml2ZXJzL2Jhc2UvcG93ZXIvcnVudGltZS5jDQppbmRleCA0ZWFmMTY2Li4xNDVhMTgyIDEwMDY0
+NA0KLS0tIGEvZHJpdmVycy9iYXNlL3Bvd2VyL3J1bnRpbWUuYw0KKysrIGIvZHJpdmVycy9iYXNl
+L3Bvd2VyL3J1bnRpbWUuYw0KQEAgLTY2LDcgKzY2LDcgQEAgc3RhdGljIGludCBycG1fc3VzcGVu
+ZChzdHJ1Y3QgZGV2aWNlICpkZXYsIGludCBycG1mbGFncyk7DQogICovDQogdm9pZCB1cGRhdGVf
+cG1fcnVudGltZV9hY2NvdW50aW5nKHN0cnVjdCBkZXZpY2UgKmRldikNCiB7DQotICAgICAgIHU2
+NCBub3cgPSBrdGltZV90b19ucyhrdGltZV9nZXQoKSk7DQorICAgICAgIHU2NCBub3cgPSBrdGlt
+ZV9nZXRfbW9ub19mYXN0X25zKCk7DQogICAgICAgIHU2NCBkZWx0YTsNCg0KcmVnYXJkcywNCkJp
+anUNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1yZW5lc2Fz
+LXNvYy1vd25lckB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LXJlbmVzYXMtc29jLQ0KPiBvd25lckB2
+Z2VyLmtlcm5lbC5vcmc+IE9uIEJlaGFsZiBPZiBWaW5jZW50IEd1aXR0b3QNCj4gU2VudDogMDEg
+RmVicnVhcnkgMjAxOSAxNToyOQ0KPiBUbzogQmlqdSBEYXMgPGJpanUuZGFzQGJwLnJlbmVzYXMu
+Y29tPg0KPiBDYzogUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbEBrZXJuZWwub3JnPjsgTGludXgg
+UE0gPGxpbnV4LQ0KPiBwbUB2Z2VyLmtlcm5lbC5vcmc+OyBMaW51eCBLZXJuZWwgTWFpbGluZyBM
+aXN0IDxsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZz47IExpbnV4IEFSTSA8bGludXgt
+YXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZz47IExpbnV4IE9NQVAgTWFpbGluZyBM
+aXN0IDxsaW51eC0NCj4gb21hcEB2Z2VyLmtlcm5lbC5vcmc+OyBSYWZhZWwgSi4gV3lzb2NraSA8
+cmp3QHJqd3lzb2NraS5uZXQ+OyBVbGYNCj4gSGFuc3NvbiA8dWxmLmhhbnNzb25AbGluYXJvLm9y
+Zz47IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnRAbGludXgtDQo+IG02OGsub3JnPjsgTGludXgt
+UmVuZXNhcyA8bGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3JnPg0KPiBTdWJqZWN0OiBS
+ZTogW1BBVENIIHYzXSBQTS1ydW50aW1lOiBmaXggZGVhZGxvY2sgd2l0aCBrdGltZQ0KPg0KPiBP
+biBGcmksIDEgRmViIDIwMTkgYXQgMTY6MDIsIEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5lc2Fz
+LmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBIaSBWaW5jZW50LA0KPiA+DQo+ID4gSSBoYXZlIHJlYmFz
+ZWQgbXkga2VybmVsIHRvICJuZXh0LTIwMTkwMjAxIi4gIFN0aWxsIEkgYW0gc2VlaW5nIGRlYWQg
+bG9jay4NCj4gPg0KPiA+IEFtIEkgbWlzc2luZyBhbnkgcGF0Y2g/DQo+DQo+IE5vIHlvdSBkb24n
+dCBtaXNzIGFueXRoaW5nLg0KPiBJIHRoaW5rIHRoYXQgaXQncyB0aGUgb3Bwb3NpdGUuDQo+DQo+
+IE1vZGlmaWNhdGlvbiBpbiB0aW1lIGFjY291bnRpbmcgaW4gUE0gcnVudGltZSBoYXMgYmVlbiBx
+dWV1ZWQgYnV0IGl0IGhhcw0KPiBub3QgbW92ZWQgKHlldCkgdG8ga3RpbWVfZ2V0X21vbm9fZmFz
+dF9ucygpDQo+DQo+IENhbiB5b3UgdHJ5IHRvIHJldmVydCBjNjY5NTYwYmU2YzggKCJQTS1ydW50
+aW1lOiBSZXBsYWNlIGppZmZpZXMtYmFzZWQNCj4gYWNjb3VudGluZyB3aXRoIGt0aW1lLWJhc2Vk
+IGFjY291bnRpbmciKSA/DQo+DQo+ID4NCj4gPiByb290QGVrODc0Oi8jIGVjaG8gZTYxZTAwMDAu
+dGltZXIgPg0KPiA+IC9zeXMvZGV2aWNlcy9zeXN0ZW0vY2xvY2tzb3VyY2UvY2xvY2tzb3VyY2Uw
+L2N1cnJlbnRfY2xvY2tzb3VyY2UNCj4gPiBbICAxOTMuODY5NDIzXQ0KPiA+IFsgIDE5My44NzA5
+NjNdID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+ID4gWyAg
+MTkzLjg3NjI5Ml0gV0FSTklORzogcG9zc2libGUgcmVjdXJzaXZlIGxvY2tpbmcgZGV0ZWN0ZWQg
+Ww0KPiA+IDE5My44ODE2MjVdIDUuMC4wLXJjNC1uZXh0LTIwMTkwMjAxLTAwMDA3LWc3MzEzNDZm
+ICMzIE5vdCB0YWludGVkIFsNCj4gPiAxOTMuODg3NzM3XSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+IFsgIDE5My44OTMwNjZdIG1pZ3JhdGlvbi8wLzEx
+IGlzIHRyeWluZyB0byBhY3F1aXJlIGxvY2s6DQo+ID4gWyAgMTkzLjg5ODEzNl0gKF9fX19wdHJ2
+YWxfX19fKSAodGtfY29yZS5zZXEpey0tLS19LCBhdDoNCj4gPiB1cGRhdGVfcG1fcnVudGltZV9h
+Y2NvdW50aW5nKzB4MTQvMHg2OA0KPiA+IFsgIDE5My45MDY2MzJdDQo+ID4gWyAgMTkzLjkwNjYz
+Ml0gYnV0IHRhc2sgaXMgYWxyZWFkeSBob2xkaW5nIGxvY2s6DQo+ID4gWyAgMTkzLjkxMjQ4M10g
+KF9fX19wdHJ2YWxfX19fKSAodGtfY29yZS5zZXEpey0tLS19LCBhdDoNCj4gPiBtdWx0aV9jcHVf
+c3RvcCsweDhjLzB4MTQwIFsgIDE5My45MTk4MjhdIFsgIDE5My45MTk4MjhdIG90aGVyIGluZm8N
+Cj4gPiB0aGF0IG1pZ2h0IGhlbHAgdXMgZGVidWcgdGhpczoNCj4gPiBbICAxOTMuOTI2Mzc3XSAg
+UG9zc2libGUgdW5zYWZlIGxvY2tpbmcgc2NlbmFyaW86DQo+ID4gWyAgMTkzLjkyNjM3N10NCj4g
+PiBbICAxOTMuOTMyMzE0XSAgICAgICAgQ1BVMA0KPiA+IFsgIDE5My45MzQ3NjVdICAgICAgICAt
+LS0tDQo+ID4gWyAgMTkzLjkzNzIxNl0gICBsb2NrKHRrX2NvcmUuc2VxKTsNCj4gPiBbICAxOTMu
+OTQwNDUzXSAgIGxvY2sodGtfY29yZS5zZXEpOw0KPiA+IFsgIDE5My45NDM2OTFdDQo+ID4gWyAg
+MTkzLjk0MzY5MV0gICoqKiBERUFETE9DSyAqKioNCj4gPiBbICAxOTMuOTQzNjkxXQ0KPiA+IFsg
+IDE5My45NDk2MzRdICBNYXkgYmUgZHVlIHRvIG1pc3NpbmcgbG9jayBuZXN0aW5nIG5vdGF0aW9u
+IFsNCj4gPiAxOTMuOTQ5NjM0XSBbICAxOTMuOTU2NDQ2XSAzIGxvY2tzIGhlbGQgYnkgbWlncmF0
+aW9uLzAvMTE6DQo+ID4gWyAgMTkzLjk2MDY0Ml0gICMwOiAoX19fX3B0cnZhbF9fX18pICh0aW1l
+a2VlcGVyX2xvY2spey0uLS59LCBhdDoNCj4gPiBjaGFuZ2VfY2xvY2tzb3VyY2UrMHgyYy8weDEx
+OCBbICAxOTMuOTY5MTI1XSAgIzE6IChfX19fcHRydmFsX19fXykNCj4gPiAodGtfY29yZS5zZXEp
+ey0tLS19LCBhdDogbXVsdGlfY3B1X3N0b3ArMHg4Yy8weDE0MCBbICAxOTMuOTc2OTAzXSAgIzI6
+DQo+ID4gKF9fX19wdHJ2YWxfX19fKSAoJigmZGV2LT5wb3dlci5sb2NrKS0+cmxvY2spey4uLi59
+LCBhdDoNCj4gPiBfX3BtX3J1bnRpbWVfcmVzdW1lKzB4NDAvMHg5OCBbICAxOTMuOTg2MzM5XSBb
+ICAxOTMuOTg2MzM5XSBzdGFjaw0KPiBiYWNrdHJhY2U6DQo+ID4gWyAgMTkzLjk5MDcxNV0gQ1BV
+OiAwIFBJRDogMTEgQ29tbTogbWlncmF0aW9uLzAgTm90IHRhaW50ZWQNCj4gPiA1LjAuMC1yYzQt
+bmV4dC0yMDE5MDIwMS0wMDAwNy1nNzMxMzQ2ZiAjMyBbICAxOTMuOTk5NzA3XSBIYXJkd2FyZQ0K
+PiA+IG5hbWU6IFNpbGljb24gTGludXggUlovRzJFIGV2YWx1YXRpb24ga2l0IEVLODc0IChDQVQ4
+NzQgKyBDQVQ4NzUpIChEVCkgWw0KPiAxOTQuMDA4MDg5XSBDYWxsIHRyYWNlOg0KPiA+IFsgIDE5
+NC4wMTA1NTNdICBkdW1wX2JhY2t0cmFjZSsweDAvMHgxNzggWyAgMTk0LjAxNDIyN10NCj4gPiBz
+aG93X3N0YWNrKzB4MTQvMHgyMCBbICAxOTQuMDE3NTYyXSAgZHVtcF9zdGFjaysweGIwLzB4ZWMg
+Ww0KPiA+IDE5NC4wMjA4OTVdICBfX2xvY2tfYWNxdWlyZSsweGZiNC8weDFjMDggWyAgMTk0LjAy
+NDgzMl0NCj4gPiBsb2NrX2FjcXVpcmUrMHhkMC8weDI2OCBbICAxOTQuMDI4NDIwXSAga3RpbWVf
+Z2V0KzB4NWMvMHgxMDggWw0KPiA+IDE5NC4wMzE3NDddICB1cGRhdGVfcG1fcnVudGltZV9hY2Nv
+dW50aW5nKzB4MTQvMHg2OA0KPiA+IFsgIDE5NC4wMzY2NDNdICBycG1fcmVzdW1lKzB4NGVjLzB4
+Njk4IFsgIDE5NC4wNDAxNDRdDQo+ID4gX19wbV9ydW50aW1lX3Jlc3VtZSsweDUwLzB4OTggWyAg
+MTk0LjA0NDI2NF0NCj4gPiBzaF90bXVfZW5hYmxlLnBhcnQuMSsweDI0LzB4NTAgWyAgMTk0LjA0
+ODQ2Ml0NCj4gPiBzaF90bXVfY2xvY2tzb3VyY2VfZW5hYmxlKzB4NDgvMHg3MA0KPiA+IFsgIDE5
+NC4wNTMwOTddICBjaGFuZ2VfY2xvY2tzb3VyY2UrMHg4NC8weDExOCBbICAxOTQuMDU3MjA4XQ0K
+PiA+IG11bHRpX2NwdV9zdG9wKzB4OGMvMHgxNDAgWyAgMTk0LjA2MDk3MF0NCj4gPiBjcHVfc3Rv
+cHBlcl90aHJlYWQrMHhhYy8weDEyMCBbICAxOTQuMDY1MDg3XQ0KPiA+IHNtcGJvb3RfdGhyZWFk
+X2ZuKzB4MWFjLzB4MmM4IFsgIDE5NC4wNjkxOThdICBrdGhyZWFkKzB4MTI4LzB4MTMwIFsNCj4g
+PiAxOTQuMDcyNDM5XSAgcmV0X2Zyb21fZm9yaysweDEwLzB4MTgNCj4gPg0KPiA+DQo+ID4gUmVn
+YXJkcywNCj4gPiBCaWp1DQo+ID4NCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
+ID4gPiBGcm9tOiBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+DQo+ID4gPiBT
+ZW50OiAzMCBKYW51YXJ5IDIwMTkgMjE6NTMNCj4gPiA+IFRvOiBWaW5jZW50IEd1aXR0b3QgPHZp
+bmNlbnQuZ3VpdHRvdEBsaW5hcm8ub3JnPg0KPiA+ID4gQ2M6IExpbnV4IFBNIDxsaW51eC1wbUB2
+Z2VyLmtlcm5lbC5vcmc+OyBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0DQo+ID4gPiA8bGludXgt
+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBMaW51eCBBUk0gPGxpbnV4LWFybS0NCj4gPiA+IGtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnPjsgTGludXggT01BUCBNYWlsaW5nIExpc3QgPGxpbnV4
+LQ0KPiA+ID4gb21hcEB2Z2VyLmtlcm5lbC5vcmc+OyBSYWZhZWwgSi4gV3lzb2NraSA8cmp3QHJq
+d3lzb2NraS5uZXQ+OyBVbGYNCj4gPiA+IEhhbnNzb24gPHVsZi5oYW5zc29uQGxpbmFyby5vcmc+
+OyBCaWp1IERhcw0KPiA+ID4gPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPjsgR2VlcnQgVXl0dGVy
+aG9ldmVuDQo+ID4gPiA8Z2VlcnRAbGludXgtbTY4ay5vcmc+OyBMaW51eC1SZW5lc2FzIDxsaW51
+eC0NCj4gPiA+IHJlbmVzYXMtc29jQHZnZXIua2VybmVsLm9yZz4NCj4gPiA+IFN1YmplY3Q6IFJl
+OiBbUEFUQ0ggdjNdIFBNLXJ1bnRpbWU6IGZpeCBkZWFkbG9jayB3aXRoIGt0aW1lDQo+ID4gPg0K
+PiA+ID4gT24gV2VkLCBKYW4gMzAsIDIwMTkgYXQgNjoyNiBQTSBWaW5jZW50IEd1aXR0b3QNCj4g
+PiA+IDx2aW5jZW50Lmd1aXR0b3RAbGluYXJvLm9yZz4gd3JvdGU6DQo+ID4gPiA+DQo+ID4gPiA+
+IEEgZGVhZGxvY2sgaGFzIGJlZW4gc2VlbiB3aGVuIHN3aWN0aGluZyBjbG9ja3NvdXJjZXMgd2hp
+Y2ggdXNlIFBNDQo+ID4gPiBydW50aW1lLg0KPiA+ID4gPiBUaGUgY2FsbCBwYXRoIGlzOg0KPiA+
+ID4gPiBjaGFuZ2VfY2xvY2tzb3VyY2UNCj4gPiA+ID4gICAgIC4uLg0KPiA+ID4gPiAgICAgd3Jp
+dGVfc2VxY291bnRfYmVnaW4NCj4gPiA+ID4gICAgIC4uLg0KPiA+ID4gPiAgICAgdGltZWtlZXBp
+bmdfdXBkYXRlDQo+ID4gPiA+ICAgICAgICAgLi4uDQo+ID4gPiA+ICAgICAgICAgc2hfY210X2Ns
+b2Nrc291cmNlX2VuYWJsZQ0KPiA+ID4gPiAgICAgICAgICAgICAuLi4NCj4gPiA+ID4gICAgICAg
+ICAgICAgcnBtX3Jlc3VtZQ0KPiA+ID4gPiAgICAgICAgICAgICAgICAgcG1fcnVudGltZV9tYXJr
+X2xhc3RfYnVzeQ0KPiA+ID4gPiAgICAgICAgICAgICAgICAgICAgIGt0aW1lX2dldA0KPiA+ID4g
+PiAgICAgICAgICAgICAgICAgICAgICAgICBkbw0KPiA+ID4gPiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgcmVhZF9zZXFjb3VudF9iZWdpbg0KPiA+ID4gPiAgICAgICAgICAgICAgICAgICAg
+ICAgICB3aGlsZSByZWFkX3NlcWNvdW50X3JldHJ5DQo+ID4gPiA+ICAgICAuLi4uDQo+ID4gPiA+
+ICAgICB3cml0ZV9zZXFjb3VudF9lbmQNCj4gPiA+ID4NCj4gPiA+ID4gQWx0aG91Z2ggd2Ugc2hv
+dWxkIGJlIHNhZmUgYmVjYXVzZSB3ZSBoYXZlbid0IHlldCBjaGFuZ2VkIHRoZQ0KPiA+ID4gPiBj
+bG9ja3NvdXJjZSBhdCB0aGF0IHRpbWUsIHdlIGNhbid0IGJlY2F1c2Ugb2Ygc2VxY291bnQgcHJv
+dGVjdGlvbi4NCj4gPiA+ID4NCj4gPiA+ID4gVXNlIGt0aW1lX2dldF9tb25vX2Zhc3RfbnMoKSBp
+bnN0ZWFkIHdoaWNoIGlzIGxvY2sgc2FmZSBmb3Igc3VjaA0KPiA+ID4gPiBjYXNlDQo+ID4gPiA+
+DQo+ID4gPiA+IFdpdGgga3RpbWVfZ2V0X21vbm9fZmFzdF9ucywgdGhlIHRpbWVzdGFtcCBpcyBu
+b3QgZ3VhcmFudGVlZCB0byBiZQ0KPiA+ID4gPiBtb25vdG9uaWMgYWNyb3NzIGFuIHVwZGF0ZSBh
+bmQgYXMgYSByZXN1bHQgY2FuIGdvZXMgYmFja3dhcmQuDQo+ID4gPiA+IEFjY29yZGluZyB0bw0K
+PiA+ID4gPiB1cGRhdGVfZmFzdF90aW1la2VlcGVyKCkgZGVzY3JpcHRpb246ICJJbiB0aGUgd29y
+c3QgY2FzZSwgdGhpcyBjYW4NCj4gPiA+ID4gcmVzdWx0IGlzIGEgc2xpZ2h0bHkgd3JvbmcgdGlt
+ZXN0YW1wIChhIGZldyBuYW5vc2Vjb25kcykiLiBGb3IgUE0NCj4gPiA+ID4gcnVudGltZSBhdXRv
+c3VzcGVuZCwgdGhpcyBtZWFucyBvbmx5IHRoYXQgdGhlIHN1c3BlbmQgZGVjaXNpb24gY2FuDQo+
+ID4gPiA+IGJlIHNsaWdodGx5IHN1YiBvcHRpbWFsLg0KPiA+ID4gPg0KPiA+ID4gPiBGaXhlczog
+ODIzNGY2NzM0YzVkICgiUE0tcnVudGltZTogU3dpdGNoIGF1dG9zdXNwZW5kIG92ZXIgdG8gdXNp
+bmcNCj4gPiA+ID4gaHJ0aW1lcnMiKQ0KPiA+ID4gPiBSZXBvcnRlZC1ieTogQmlqdSBEYXMgPGJp
+anUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBWaW5jZW50IEd1
+aXR0b3QgPHZpbmNlbnQuZ3VpdHRvdEBsaW5hcm8ub3JnPg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4N
+Cj4gPiA+ID4gSGkgUmFmYWVsLA0KPiA+ID4gPg0KPiA+ID4gPiBTb3JyeSwgSSBzZW50IHRoZSB2
+ZXJzaW9uIHdpdGggdGhlIHR5cG8gbWlzdGFrZSB0aGF0IGdlbmVyYXRlZCB0aGUNCj4gPiA+ID4g
+Y29tcGlsYXRpb24gZXJyb3IgcmVwb3J0ZWQgYnkga2J1aWxkLXRlc3Qtcm9ib3QNCj4gPiA+ID4N
+Cj4gPiA+ID4gVGhpcyB2ZXJzaW9uIGRvZXNuJ3QgaGF2ZSB0aGUgdHlwby4NCj4gPiA+DQo+ID4g
+PiBPSywgSSd2ZSBhcHBsaWVkIHRoaXMgb25lLCB0aGFua3MhDQo+ID4NCj4gPg0KPiA+DQo+ID4g
+UmVuZXNhcyBFbGVjdHJvbmljcyBFdXJvcGUgTHRkLCBEdWtlcyBNZWFkb3csIE1pbGxib2FyZCBS
+b2FkLCBCb3VybmUNCj4gRW5kLCBCdWNraW5naGFtc2hpcmUsIFNMOCA1RkgsIFVLLiBSZWdpc3Rl
+cmVkIGluIEVuZ2xhbmQgJiBXYWxlcyB1bmRlcg0KPiBSZWdpc3RlcmVkIE5vLiAwNDU4NjcwOS4N
+Cg0KDQoNClJlbmVzYXMgRWxlY3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxs
+Ym9hcmQgUm9hZCwgQm91cm5lIEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVn
+aXN0ZXJlZCBpbiBFbmdsYW5kICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDku
+DQo=
