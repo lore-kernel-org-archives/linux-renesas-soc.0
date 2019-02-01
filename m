@@ -3,49 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42553C282D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D24DC282D8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10DAD21872
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52FFE218AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:31:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbfBANaA (ORCPT
+        id S1728313AbfBANbT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Feb 2019 08:30:00 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:45458 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727761AbfBANaA (ORCPT
+        Fri, 1 Feb 2019 08:31:19 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37581 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfBANbT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Feb 2019 08:30:00 -0500
-Received: by mail-ua1-f67.google.com with SMTP id e16so2164557uam.12;
-        Fri, 01 Feb 2019 05:29:59 -0800 (PST)
+        Fri, 1 Feb 2019 08:31:19 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n13so4184087vsk.4;
+        Fri, 01 Feb 2019 05:31:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qLSj2LNJ82BZhZC0zTsSGyfBVIypDsd+R8488Rqc0xI=;
-        b=pKjdEAw98bNniOVpQvEVJ/PDsrsIe+XYk585QltJSM8G5rvI/yuPpUixCH6B5Ub2HN
-         Tgdyg/mLEv35DLasAttncl1dmF+01cQXH/arpDE8VQrL/6mSfwT+w7xGThZO+p9KqZTI
-         +FWVF65kFe7w86W4xaQ57nRpqWnaci5fmsyZTtnFUb7T4gjz0SSPHRGpO8IcAiWzZyWl
-         TcRjMM2od0fWzuQ7T6hFjP+eg7X8aK3t4eBYSDWkVUHgxlhv1MqHco2+WZwqs8bMTp+S
-         Vl9cQzO0BdjVWUUCD95I7u6DtTsGjBrLqitVFkpTIYs3PxC/rTQC0pTzkIAqFqlO6PvF
-         zYbQ==
-X-Gm-Message-State: AJcUukedyteoW5Uyv1RbdbvVNoaO0KXrWgM9QyrhB9W9qTou7xYLwvlo
-        SCd7lD6ulrJVt/HCc9ojv9i3q73Vb2hDI7pl2uU=
-X-Google-Smtp-Source: ALg8bN4+6TcpMz88gFp9vmH0EmCMyrJiWi6zXqvxoqB/D3akA4t/o6gvDFa2C8Gt4umfI4tMsRdTRyA9MR41fx6uDNw=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr16763828uap.0.1549027798934;
- Fri, 01 Feb 2019 05:29:58 -0800 (PST)
+        bh=js2wI8q5td10a38/dZsw5X2ejaBL6SMLUYFiz0g2yXA=;
+        b=IFIrR+OWk1juENBJB90MS/DAPqqgaM7JuDqDNVIP8A9S0KDX0S1CmWL3Add8N9gfJu
+         SNWYks6BWgtPmMlinuzvUGCpBBDs6GgzxbP2BoxkEt5f6LCMKrthXaseFwXJ9E18sS51
+         eWytfXgdXNvhPxNHP4+s61yB7qPf1wlSYMUMx/YbbET68K41u7MXigdFoAXuGde5WAT2
+         SS4dZj+WNcMeiZdYE2fHj7HcnIaRy9YqPp/D8TnLCZHvGK2GOJNi/1TnP0ALiJ9mBBD9
+         nkfxtBtk3OU2/ND64zm8H3MYW8d03UNjAkmFPvT+jurMstzB+wni1GpG1Bfzsl3mOx7H
+         WFzg==
+X-Gm-Message-State: AJcUukdTxUqsCHwqj9VJTcnaoyruPbZxwQUHu1Z74nf1/Rf0A7jF1CLU
+        LxrvOq5hsBrqgREf3CCITFMJzYOfJ2IE5k3gC3k=
+X-Google-Smtp-Source: ALg8bN6ievi/Kx1o+YMqs+y8Bc4/H7KtYbKYvv8MkMwjWrq/mPlYCDdBw8Q0jSwWLdNa7YixszHk0Ak9iMS6Npzq/AY=
+X-Received: by 2002:a67:3885:: with SMTP id n5mr14363436vsi.96.1549027878400;
+ Fri, 01 Feb 2019 05:31:18 -0800 (PST)
 MIME-Version: 1.0
-References: <1549015841-33536-1-git-send-email-biju.das@bp.renesas.com> <1549015841-33536-2-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1549015841-33536-2-git-send-email-biju.das@bp.renesas.com>
+References: <1549015841-33536-1-git-send-email-biju.das@bp.renesas.com> <1549015841-33536-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1549015841-33536-5-git-send-email-biju.das@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Feb 2019 14:29:47 +0100
-Message-ID: <CAMuHMdWw40xX1BtAZvCMQxZkF6K828sOjKsRKrJ6YOUB2_xYmg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] dt-bindings: timer: renesas, cmt: Document r8a774c0
- CMT support
+Date:   Fri, 1 Feb 2019 14:31:06 +0100
+Message-ID: <CAMuHMdUGtjL5Br9w8S4K=pYo9L6xnMHt_-iJ10utD1QeasS_zQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] dt-bindings: timer: renesas: tmu: Document r8a774c0 bindings
 To:     Biju Das <biju.das@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -63,8 +62,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 11:15 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> Document SoC specific bindings for RZ/G2E (r8a774c0) SoC.
+On Fri, Feb 1, 2019 at 11:16 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Document RZ/G2E (R8A774C0) SoC in the Renesas TMU bindings.
 >
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
