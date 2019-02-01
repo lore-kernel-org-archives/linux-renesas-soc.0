@@ -2,279 +2,218 @@ Return-Path: <SRS0=i8oE=QI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC5C5C282DA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192C2C282D8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D262086C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D327A218AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:37:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="btqkFKuP"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lxrQ2upr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfBAPwq (ORCPT
+        id S1731333AbfBARhz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:52:46 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:53338 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727971AbfBAPwq (ORCPT
+        Fri, 1 Feb 2019 12:37:55 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37450 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbfBARhz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:52:46 -0500
-Received: by mail-it1-f195.google.com with SMTP id g85so9766489ita.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Feb 2019 07:52:45 -0800 (PST)
+        Fri, 1 Feb 2019 12:37:55 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h15so6100004edb.4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Feb 2019 09:37:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wdqHgkaD2n2HoY8SHW31dYYHfwAxon77dALfLwqq4/w=;
-        b=btqkFKuPqnwlx/n8VfyPYvpBGs27bzST1oBfyb5q5+werSQBSMwDWYwC5UUy5Tk5OP
-         RIta0liBO3eHINDpL4mD94lnJJ0UmtkGeP4zL+BhF19AeC86n6OF4O4MsuChIBNbwJ0c
-         BEfoc4aoMkTVHGga/pMeiuh+B+x/TF1RfMJk4=
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XN7ztOwBfaWUcyejLCIihaQ4ZgEvWVS3wCWfbNiuJiU=;
+        b=lxrQ2upr40t3J3HqQ+JUTfjucGIUC+ttX2+XPkeSk2onlnSkhQwPUW7IMOG5AhgHmb
+         TwYkekMlK2HpT7tXXZd93YPIJ2o0AV517RUPMeUOLnMP+TPNkwSEgOVUVflJugzE1ND0
+         4Hod5LNnkFWipYNQeKWjqY2+5QM89SSTJ4kHk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wdqHgkaD2n2HoY8SHW31dYYHfwAxon77dALfLwqq4/w=;
-        b=Zm3+MQYzotD8EuMBgsppjf7QkPwV3OSRVq+gbQ5QV8pEKJ0nez4aK/nGA2j0fd+W3Q
-         HzfqXPRtEph8foVgV/ZaiAOVsG9LBBNZeLiep/XjTwyiYg/APWL5lLwsUBB3LpG4oofd
-         hVzoGt+V39uKQuBl9GnWrMdwHXKrevrpMg1BFyQNWPjYQ9b+zQXuEqjotEb10+xcx+oP
-         djgafOCf3LMjnKvUnScZ8I2k59doRKGgi8AhxpVg7T0SXRDQ8WMhVyiHM46PAQ2cFHhA
-         WbxtS148Ufp1XLNbAGjvcV/hxshnQF8c7TvbFUt40X6++2EBrm20keQyW1ANo+B6DaIR
-         /O+g==
-X-Gm-Message-State: AHQUAuYrefcbdXEEAn92bRE/Y4JLBA42qn5g//x14TIj25uxKHQ/nVde
-        esOXsSuRoqROR67V11QZ6Nl3pfyiztbcjMElcTRtEQ==
-X-Google-Smtp-Source: AHgI3IZdxBWUNlXEf9y3YVJyNKekE9/DBSL7Q3JSDSRFsGCp1LB0d9vrHLcB42PmY2MmMkYrRO0iS3IetmOoVNZQAPE=
-X-Received: by 2002:a24:a20e:: with SMTP id j14mr1900748itf.14.1549036364976;
- Fri, 01 Feb 2019 07:52:44 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=XN7ztOwBfaWUcyejLCIihaQ4ZgEvWVS3wCWfbNiuJiU=;
+        b=Ei3vlQW4myGa8rRXW/cA+HjuwMVL0xjYlEyZXN18NKqdkMmXhstR23u/o2Jq08N00E
+         LWIa6yqgL8Zf9t4lJ32iJ3OJeNkVkdAVJaYBpcEBvxno1sWk5ACFQIPJs4YVBMmfeslk
+         q4id71ysu6E5f1oNrkhX0Q1JEglaSXzF3vtb651vKYJ2HecXWQoiF1f8MZ7sVF4o0dal
+         wIRFwGcNlwE0IJuMjJ9TR/nMICrp8vRTOK4DGfDQcYnDAXpCfImXthw3fxuMAGvQbnVv
+         fmzcrcz4ikYs0ybvQ6ENwRNqNO5Zw1HtHkTktotsuiwWmwXHf8H9ACRpkEotP0RXJr/F
+         Ctfg==
+X-Gm-Message-State: AJcUukftIdCH1Rpulzb4+e5r49wemppz1pYp7m58vH4N3yrfHFrCRz+Q
+        pbYClDkSgmzDbr94eCb3mBOrsw==
+X-Google-Smtp-Source: ALg8bN63OOGj8KXdturZ5A+mF707f5v06CwnHciypXvgnqWV1t8Bn9Mc9I7pC1E38RH8uVaqO3lt9A==
+X-Received: by 2002:a05:6402:694:: with SMTP id f20mr31430374edy.99.1549042672836;
+        Fri, 01 Feb 2019 09:37:52 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id o4sm1318522ejr.19.2019.02.01.09.37.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 09:37:51 -0800 (PST)
+Date:   Fri, 1 Feb 2019 18:37:49 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     dri-devel@lists.freedesktop.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sean Paul <sean@poorly.run>, intel-gfx@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: [PATCH v6 1/5] staging/vboxvideo: prepare for drmP.h removal
+ from drm_modeset_helper.h
+Message-ID: <20190201173749.GF3271@phenom.ffwll.local>
+Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
+        dri-devel@lists.freedesktop.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Airlie <airlied@linux.ie>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, Sean Paul <sean@poorly.run>,
+        intel-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190126122527.11647-1-sam@ravnborg.org>
+ <20190126122527.11647-2-sam@ravnborg.org>
 MIME-Version: 1.0
-References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
- <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
- <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com>
- <OSBPR01MB210387DEC42870D8E5688CE9B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com>
- <OSBPR01MB21031D92553AD16A1F206273B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAKfTPtB9Ke167hQCKB7wgRpDarn_uFmL3B4QnzHhHUGmuhnejA@mail.gmail.com>
-In-Reply-To: <CAKfTPtB9Ke167hQCKB7wgRpDarn_uFmL3B4QnzHhHUGmuhnejA@mail.gmail.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 1 Feb 2019 16:52:33 +0100
-Message-ID: <CAKfTPtBXt3-jn9h4Pur2Xvg3+k0UvPaNAecXdLB7VWMzccjEgA@mail.gmail.com>
-Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190126122527.11647-2-sam@ravnborg.org>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, 1 Feb 2019 at 16:48, Vincent Guittot <vincent.guittot@linaro.org> wrote:
->
-> On Fri, 1 Feb 2019 at 16:44, Biju Das <biju.das@bp.renesas.com> wrote:
-> >
-> > Hi Vincent,
-> >
-> > Thanks for the feedback. Instead of reverting.  I just modified the patch like this and it fixed the issue.
-> >
-> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > index 4eaf166..145a182 100644
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -66,7 +66,7 @@ static int rpm_suspend(struct device *dev, int rpmflags);
-> >   */
-> >  void update_pm_runtime_accounting(struct device *dev)
-> >  {
-> > -       u64 now = ktime_to_ns(ktime_get());
-> > +       u64 now = ktime_get_mono_fast_ns();
-> >         u64 delta;
->
-> yes.
-> This probably also need to be changed in another place
-> (pm_runtime_enable) to be safe
-> Our email have crossed. I just sent something similar
+On Sat, Jan 26, 2019 at 01:25:23PM +0100, Sam Ravnborg wrote:
+> The use of drmP.h is discouraged and removal of it from
+> drm_modeset_helper.h caused vboxvideo to fail to build.
+> 
+> This patch introduce the necessary fixes to prepare for the
+> drmP.h removal from drm_modeset_helper.h.
+> 
+> In the files touched sort the include files
+> 
+> Build tested on x86 and arm allmodconfig / allyesconfig.
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-In fact after more thinking, it's probably better to revert because we
-are not sure to be monotonic with ktime_get_mono_fast_ns() which means
-that the time account can be negative but this not yet taken into
-account. It's part of a clean up patch that was on hold while working
-on previous problem
+Hi Greg,
 
->
->
->
-> >
-> > regards,
-> > Biju
-> >
-> > > -----Original Message-----
-> > > From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-
-> > > owner@vger.kernel.org> On Behalf Of Vincent Guittot
-> > > Sent: 01 February 2019 15:29
-> > > To: Biju Das <biju.das@bp.renesas.com>
-> > > Cc: Rafael J. Wysocki <rafael@kernel.org>; Linux PM <linux-
-> > > pm@vger.kernel.org>; Linux Kernel Mailing List <linux-
-> > > kernel@vger.kernel.org>; Linux ARM <linux-arm-
-> > > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
-> > > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
-> > > Hansson <ulf.hansson@linaro.org>; Geert Uytterhoeven <geert@linux-
-> > > m68k.org>; Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-> > > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-> > >
-> > > On Fri, 1 Feb 2019 at 16:02, Biju Das <biju.das@bp.renesas.com> wrote:
-> > > >
-> > > > Hi Vincent,
-> > > >
-> > > > I have rebased my kernel to "next-20190201".  Still I am seeing dead lock.
-> > > >
-> > > > Am I missing any patch?
-> > >
-> > > No you don't miss anything.
-> > > I think that it's the opposite.
-> > >
-> > > Modification in time accounting in PM runtime has been queued but it has
-> > > not moved (yet) to ktime_get_mono_fast_ns()
-> > >
-> > > Can you try to revert c669560be6c8 ("PM-runtime: Replace jiffies-based
-> > > accounting with ktime-based accounting") ?
-> > >
-> > > >
-> > > > root@ek874:/# echo e61e0000.timer >
-> > > > /sys/devices/system/clocksource/clocksource0/current_clocksource
-> > > > [  193.869423]
-> > > > [  193.870963] ============================================
-> > > > [  193.876292] WARNING: possible recursive locking detected [
-> > > > 193.881625] 5.0.0-rc4-next-20190201-00007-g731346f #3 Not tainted [
-> > > > 193.887737] --------------------------------------------
-> > > > [  193.893066] migration/0/11 is trying to acquire lock:
-> > > > [  193.898136] (____ptrval____) (tk_core.seq){----}, at:
-> > > > update_pm_runtime_accounting+0x14/0x68
-> > > > [  193.906632]
-> > > > [  193.906632] but task is already holding lock:
-> > > > [  193.912483] (____ptrval____) (tk_core.seq){----}, at:
-> > > > multi_cpu_stop+0x8c/0x140 [  193.919828] [  193.919828] other info
-> > > > that might help us debug this:
-> > > > [  193.926377]  Possible unsafe locking scenario:
-> > > > [  193.926377]
-> > > > [  193.932314]        CPU0
-> > > > [  193.934765]        ----
-> > > > [  193.937216]   lock(tk_core.seq);
-> > > > [  193.940453]   lock(tk_core.seq);
-> > > > [  193.943691]
-> > > > [  193.943691]  *** DEADLOCK ***
-> > > > [  193.943691]
-> > > > [  193.949634]  May be due to missing lock nesting notation [
-> > > > 193.949634] [  193.956446] 3 locks held by migration/0/11:
-> > > > [  193.960642]  #0: (____ptrval____) (timekeeper_lock){-.-.}, at:
-> > > > change_clocksource+0x2c/0x118 [  193.969125]  #1: (____ptrval____)
-> > > > (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140 [  193.976903]  #2:
-> > > > (____ptrval____) (&(&dev->power.lock)->rlock){....}, at:
-> > > > __pm_runtime_resume+0x40/0x98 [  193.986339] [  193.986339] stack
-> > > backtrace:
-> > > > [  193.990715] CPU: 0 PID: 11 Comm: migration/0 Not tainted
-> > > > 5.0.0-rc4-next-20190201-00007-g731346f #3 [  193.999707] Hardware
-> > > > name: Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) (DT) [
-> > > 194.008089] Call trace:
-> > > > [  194.010553]  dump_backtrace+0x0/0x178 [  194.014227]
-> > > > show_stack+0x14/0x20 [  194.017562]  dump_stack+0xb0/0xec [
-> > > > 194.020895]  __lock_acquire+0xfb4/0x1c08 [  194.024832]
-> > > > lock_acquire+0xd0/0x268 [  194.028420]  ktime_get+0x5c/0x108 [
-> > > > 194.031747]  update_pm_runtime_accounting+0x14/0x68
-> > > > [  194.036643]  rpm_resume+0x4ec/0x698 [  194.040144]
-> > > > __pm_runtime_resume+0x50/0x98 [  194.044264]
-> > > > sh_tmu_enable.part.1+0x24/0x50 [  194.048462]
-> > > > sh_tmu_clocksource_enable+0x48/0x70
-> > > > [  194.053097]  change_clocksource+0x84/0x118 [  194.057208]
-> > > > multi_cpu_stop+0x8c/0x140 [  194.060970]
-> > > > cpu_stopper_thread+0xac/0x120 [  194.065087]
-> > > > smpboot_thread_fn+0x1ac/0x2c8 [  194.069198]  kthread+0x128/0x130 [
-> > > > 194.072439]  ret_from_fork+0x10/0x18
-> > > >
-> > > >
-> > > > Regards,
-> > > > Biju
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Rafael J. Wysocki <rafael@kernel.org>
-> > > > > Sent: 30 January 2019 21:53
-> > > > > To: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > > Cc: Linux PM <linux-pm@vger.kernel.org>; Linux Kernel Mailing List
-> > > > > <linux- kernel@vger.kernel.org>; Linux ARM <linux-arm-
-> > > > > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
-> > > > > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
-> > > > > Hansson <ulf.hansson@linaro.org>; Biju Das
-> > > > > <biju.das@bp.renesas.com>; Geert Uytterhoeven
-> > > > > <geert@linux-m68k.org>; Linux-Renesas <linux-
-> > > > > renesas-soc@vger.kernel.org>
-> > > > > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-> > > > >
-> > > > > On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
-> > > > > <vincent.guittot@linaro.org> wrote:
-> > > > > >
-> > > > > > A deadlock has been seen when swicthing clocksources which use PM
-> > > > > runtime.
-> > > > > > The call path is:
-> > > > > > change_clocksource
-> > > > > >     ...
-> > > > > >     write_seqcount_begin
-> > > > > >     ...
-> > > > > >     timekeeping_update
-> > > > > >         ...
-> > > > > >         sh_cmt_clocksource_enable
-> > > > > >             ...
-> > > > > >             rpm_resume
-> > > > > >                 pm_runtime_mark_last_busy
-> > > > > >                     ktime_get
-> > > > > >                         do
-> > > > > >                             read_seqcount_begin
-> > > > > >                         while read_seqcount_retry
-> > > > > >     ....
-> > > > > >     write_seqcount_end
-> > > > > >
-> > > > > > Although we should be safe because we haven't yet changed the
-> > > > > > clocksource at that time, we can't because of seqcount protection.
-> > > > > >
-> > > > > > Use ktime_get_mono_fast_ns() instead which is lock safe for such
-> > > > > > case
-> > > > > >
-> > > > > > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> > > > > > monotonic across an update and as a result can goes backward.
-> > > > > > According to
-> > > > > > update_fast_timekeeper() description: "In the worst case, this can
-> > > > > > result is a slightly wrong timestamp (a few nanoseconds)". For PM
-> > > > > > runtime autosuspend, this means only that the suspend decision can
-> > > > > > be slightly sub optimal.
-> > > > > >
-> > > > > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using
-> > > > > > hrtimers")
-> > > > > > Reported-by: Biju Das <biju.das@bp.renesas.com>
-> > > > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > > > ---
-> > > > > >
-> > > > > > Hi Rafael,
-> > > > > >
-> > > > > > Sorry, I sent the version with the typo mistake that generated the
-> > > > > > compilation error reported by kbuild-test-robot
-> > > > > >
-> > > > > > This version doesn't have the typo.
-> > > > >
-> > > > > OK, I've applied this one, thanks!
-> > > >
-> > > >
-> > > >
-> > > > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne
-> > > End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under
-> > > Registered No. 04586709.
-> >
-> >
-> >
-> > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+Ack for merging this through drm-misc? I think we've defacto-maintained
+vboxvideo in drm anyway this release ...
+-Daniel
+
+> ---
+>  drivers/staging/vboxvideo/vbox_drv.c  |  6 +++++-
+>  drivers/staging/vboxvideo/vbox_fb.c   | 18 ++++++++++--------
+>  drivers/staging/vboxvideo/vbox_mode.c |  5 ++++-
+>  3 files changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/staging/vboxvideo/vbox_drv.c b/drivers/staging/vboxvideo/vbox_drv.c
+> index cc6532d8c2fa..d1b0d7b4886a 100644
+> --- a/drivers/staging/vboxvideo/vbox_drv.c
+> +++ b/drivers/staging/vboxvideo/vbox_drv.c
+> @@ -7,11 +7,15 @@
+>   *          Michael Thayer <michael.thayer@oracle.com,
+>   *          Hans de Goede <hdegoede@redhat.com>
+>   */
+> -#include <linux/module.h>
+>  #include <linux/console.h>
+> +#include <linux/module.h>
+> +#include <linux/pci.h>
+>  #include <linux/vt_kern.h>
+>  
+>  #include <drm/drm_crtc_helper.h>
+> +#include <drm/drm_drv.h>
+> +#include <drm/drm_file.h>
+> +#include <drm/drm_ioctl.h>
+>  
+>  #include "vbox_drv.h"
+>  
+> diff --git a/drivers/staging/vboxvideo/vbox_fb.c b/drivers/staging/vboxvideo/vbox_fb.c
+> index 397496cf0bdf..83a04afd1766 100644
+> --- a/drivers/staging/vboxvideo/vbox_fb.c
+> +++ b/drivers/staging/vboxvideo/vbox_fb.c
+> @@ -6,20 +6,22 @@
+>   * Authors: Dave Airlie <airlied@redhat.com>
+>   *          Michael Thayer <michael.thayer@oracle.com,
+>   */
+> -#include <linux/module.h>
+> -#include <linux/kernel.h>
+> -#include <linux/errno.h>
+> -#include <linux/string.h>
+> -#include <linux/mm.h>
+> -#include <linux/tty.h>
+> -#include <linux/sysrq.h>
+>  #include <linux/delay.h>
+> +#include <linux/errno.h>
+>  #include <linux/fb.h>
+>  #include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mm.h>
+> +#include <linux/module.h>
+> +#include <linux/pci.h>
+> +#include <linux/string.h>
+> +#include <linux/sysrq.h>
+> +#include <linux/tty.h>
+>  
+>  #include <drm/drm_crtc.h>
+> -#include <drm/drm_fb_helper.h>
+>  #include <drm/drm_crtc_helper.h>
+> +#include <drm/drm_fb_helper.h>
+> +#include <drm/drm_fourcc.h>
+>  
+>  #include "vbox_drv.h"
+>  #include "vboxvideo.h"
+> diff --git a/drivers/staging/vboxvideo/vbox_mode.c b/drivers/staging/vboxvideo/vbox_mode.c
+> index 1aaff02c07ff..213551394495 100644
+> --- a/drivers/staging/vboxvideo/vbox_mode.c
+> +++ b/drivers/staging/vboxvideo/vbox_mode.c
+> @@ -10,14 +10,17 @@
+>   *          Hans de Goede <hdegoede@redhat.com>
+>   */
+>  #include <linux/export.h>
+> +
+>  #include <drm/drm_atomic.h>
+>  #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_fourcc.h>
+>  #include <drm/drm_plane_helper.h>
+>  #include <drm/drm_probe_helper.h>
+> +#include <drm/drm_vblank.h>
+>  
+> +#include "hgsmi_channels.h"
+>  #include "vbox_drv.h"
+>  #include "vboxvideo.h"
+> -#include "hgsmi_channels.h"
+>  
+>  /*
+>   * Set a graphics mode.  Poke any required values into registers, do an HGSMI
+> -- 
+> 2.12.0
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
