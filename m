@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AEEC282D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D54C4151A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A76E21872
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7BCF20833
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbfBANh0 (ORCPT
+        id S1730271AbfBANsv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Feb 2019 08:37:26 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:36869 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfBANh0 (ORCPT
+        Fri, 1 Feb 2019 08:48:51 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41458 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbfBANsu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Feb 2019 08:37:26 -0500
-Received: by mail-vs1-f67.google.com with SMTP id n13so4195614vsk.4;
-        Fri, 01 Feb 2019 05:37:25 -0800 (PST)
+        Fri, 1 Feb 2019 08:48:50 -0500
+Received: by mail-vs1-f66.google.com with SMTP id t17so4190413vsc.8;
+        Fri, 01 Feb 2019 05:48:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wPaSQz4TqsTGHNYXVWq/wjTAySYseaKoSuU71/YJRt0=;
-        b=iFO+TSiVlf1xdQAzWmwCaDiQk4uDr0sHPjSBx6dYTvf+Dcv3l9bQ7AgFkrJq1X5DLG
-         GQBC1/l74OyR3IZfNKIZfV8lkFJY+ZW7x4YNqZOLxAqmVjj+ssiCinw5Jh8KmCjwb7cp
-         dvkL/xQ8GWjw1CruGOS0F4Z/Gbzd01Xpdy+3ELxI20h1Fv0bxF2+rlxDxBbrXKj926H9
-         JoORCDhJ5QblffICGKo434areZJHpGKdj2TggNihCTzxv/hiNoIV/gl3/9yEWUmSxHOw
-         /a2u763p2dck3iLCLtyZVnxWCOuXfGLcuWzP46XT80IY3UZu9DmlfwMxAdZ2hsBbaDj5
-         gC3Q==
-X-Gm-Message-State: AJcUukfS3EFQMVCfTMUY5gei6S+Biwna1Hp+oh4GjdDSb/sci5RRwnSY
-        y4AdxByDgPPCxy213t0aXsEuOk7wkJrOi6vzd4c=
-X-Google-Smtp-Source: ALg8bN7gBPXgEjK2HTCLgVQTThnWj4Bjl2ExvWH2VB9+qWK+oAKwIjcqD3VxrxY+q3vUBnP7LZRYxAbwSAs4N38fIz0=
-X-Received: by 2002:a67:d119:: with SMTP id u25mr15342561vsi.63.1549028245509;
- Fri, 01 Feb 2019 05:37:25 -0800 (PST)
+        bh=iJE28mm2UwaYCnA+qcfly9TamPAmKUrbWEp/68ghBNY=;
+        b=E41JJUupDfPcUbkqxnJGcm1cQkLmOWjxyZtnQemsIXlbc8vFqtoyb/0S8RdUIJQQca
+         90lXWDDL6/PgOdcolSVczWhBdVw63Z+0DjTRe7v0tpbd+zetf988kEsNkMCdl1XQ5pUP
+         ly9o79EkW+yLc3Uv7xRtwb+NSAlbTNzQE5B649OvMxUMWxMvMDNBTXQgcJB6xHP9pcxx
+         Pj38tlyel1M7ZQOT3sIpniTvhVqJTZ0QgtXvEdMOcLPnC3VN8u563v1UcvNp9CUvYBfG
+         WUXan6R7llmIcU0nXhwIUc5SHQ7E8xjAfF9100IbwStQLtTRasLXVTybHtGGOP5aGECT
+         Q3dA==
+X-Gm-Message-State: AJcUukcFML6n/0OwQ1fDjPD83JfGOTPl+zhC/FjxyuZTHnZtD5lh9sxD
+        mU74/dWoPbIm/50VJPim8n+CxM6WVP2woP4z24k=
+X-Google-Smtp-Source: ALg8bN7kaDXCSUs+f5EBfTTYvEBDZfhXWZYEq8o08Pnx3nC4t3jsCHPzXhBQKxiaHkm8J59I8anLi5NS2h5+LA/qFz0=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr16753007vsp.166.1549028929705;
+ Fri, 01 Feb 2019 05:48:49 -0800 (PST)
 MIME-Version: 1.0
-References: <1549015841-33536-1-git-send-email-biju.das@bp.renesas.com> <1549015841-33536-3-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1549015841-33536-3-git-send-email-biju.das@bp.renesas.com>
+References: <1549015841-33536-1-git-send-email-biju.das@bp.renesas.com> <1549015841-33536-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1549015841-33536-6-git-send-email-biju.das@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Feb 2019 14:37:13 +0100
-Message-ID: <CAMuHMdVdFxaa=G7rhdmxa+b7DM_yu-vTyf4GrRidWsXJjn4Hqg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] arm64: dts: renesas: r8a774c0: Add CMT device nodes
+Date:   Fri, 1 Feb 2019 14:48:38 +0100
+Message-ID: <CAMuHMdX8FiXL8LRfS6++X=GHo-BXTafRrwv6g5RjHLGxxCtwyA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] arm64: dts: renesas: r8a774c0: Add TMU device nodes
 To:     Biju Das <biju.das@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -62,8 +62,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 11:15 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> This patch adds CMT{0|1|2|3} device nodes for r8a774c0 SoC.
+On Fri, Feb 1, 2019 at 11:16 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> This patch adds TMU{0|1|2|3|4} device nodes for r8a774c0 SoC.
 >
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
