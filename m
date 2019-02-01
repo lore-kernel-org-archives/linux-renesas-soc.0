@@ -2,135 +2,81 @@ Return-Path: <SRS0=i8oE=QI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE85EC282D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 10:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42553C282D8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8945C2086C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 10:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10DAD21872
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 13:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfBAKQF (ORCPT
+        id S1728311AbfBANaA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:16:05 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:9387 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726116AbfBAKQF (ORCPT
+        Fri, 1 Feb 2019 08:30:00 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:45458 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbfBANaA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:16:05 -0500
-X-IronPort-AV: E=Sophos;i="5.56,548,1539615600"; 
-   d="scan'208";a="6600168"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Feb 2019 19:16:03 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6CEEF43DD872;
-        Fri,  1 Feb 2019 19:16:01 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Fri, 1 Feb 2019 08:30:00 -0500
+Received: by mail-ua1-f67.google.com with SMTP id e16so2164557uam.12;
+        Fri, 01 Feb 2019 05:29:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qLSj2LNJ82BZhZC0zTsSGyfBVIypDsd+R8488Rqc0xI=;
+        b=pKjdEAw98bNniOVpQvEVJ/PDsrsIe+XYk585QltJSM8G5rvI/yuPpUixCH6B5Ub2HN
+         Tgdyg/mLEv35DLasAttncl1dmF+01cQXH/arpDE8VQrL/6mSfwT+w7xGThZO+p9KqZTI
+         +FWVF65kFe7w86W4xaQ57nRpqWnaci5fmsyZTtnFUb7T4gjz0SSPHRGpO8IcAiWzZyWl
+         TcRjMM2od0fWzuQ7T6hFjP+eg7X8aK3t4eBYSDWkVUHgxlhv1MqHco2+WZwqs8bMTp+S
+         Vl9cQzO0BdjVWUUCD95I7u6DtTsGjBrLqitVFkpTIYs3PxC/rTQC0pTzkIAqFqlO6PvF
+         zYbQ==
+X-Gm-Message-State: AJcUukedyteoW5Uyv1RbdbvVNoaO0KXrWgM9QyrhB9W9qTou7xYLwvlo
+        SCd7lD6ulrJVt/HCc9ojv9i3q73Vb2hDI7pl2uU=
+X-Google-Smtp-Source: ALg8bN4+6TcpMz88gFp9vmH0EmCMyrJiWi6zXqvxoqB/D3akA4t/o6gvDFa2C8Gt4umfI4tMsRdTRyA9MR41fx6uDNw=
+X-Received: by 2002:ab0:7251:: with SMTP id d17mr16763828uap.0.1549027798934;
+ Fri, 01 Feb 2019 05:29:58 -0800 (PST)
+MIME-Version: 1.0
+References: <1549015841-33536-1-git-send-email-biju.das@bp.renesas.com> <1549015841-33536-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1549015841-33536-2-git-send-email-biju.das@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 1 Feb 2019 14:29:47 +0100
+Message-ID: <CAMuHMdWw40xX1BtAZvCMQxZkF6K828sOjKsRKrJ6YOUB2_xYmg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: timer: renesas, cmt: Document r8a774c0
+ CMT support
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: r8a774c0: Add TMU device nodes
-Date:   Fri,  1 Feb 2019 10:10:41 +0000
-Message-Id: <1549015841-33536-6-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549015841-33536-1-git-send-email-biju.das@bp.renesas.com>
-References: <1549015841-33536-1-git-send-email-biju.das@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds TMU{0|1|2|3|4} device nodes for r8a774c0 SoC.
+On Fri, Feb 1, 2019 at 11:15 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Document SoC specific bindings for RZ/G2E (r8a774c0) SoC.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 65 +++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index bb31585..1f72f76 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -353,6 +353,71 @@
- 			resets = <&cpg 407>;
- 		};
- 
-+		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 125>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 125>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 123>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 123>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 122>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 122>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 121>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 121>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
