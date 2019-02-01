@@ -2,101 +2,97 @@ Return-Path: <SRS0=i8oE=QI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3528C282D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAC7C282D8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8525821726
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26C98218AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549043256;
+	bh=hsPvYFCPMdiKvw17X5Dr3THbnD1SM5Sq3zpQmLiVkI0=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=yQ6PCToT5/6SDmexQIWng7K3MHxP9XeG0bzNehUx+RwdnL288KN4VtAZsOa5HI+vp
+	 gsVxu1a0Z4f/faRpHulH9iI6nsmLI35bSwxIMjdgC1uutB3WO8KBuQN5N1DkHVUjsi
+	 2lrTHXyYTnr8oO1tsZ7It8XPoWS3xzCNsn0wND0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbfBARkL (ORCPT
+        id S1728862AbfBARrg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:40:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35900 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbfBARkL (ORCPT
+        Fri, 1 Feb 2019 12:47:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728114AbfBARrf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:40:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8432215BE;
-        Fri,  1 Feb 2019 09:40:10 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 707703F589;
-        Fri,  1 Feb 2019 09:40:08 -0800 (PST)
-Date:   Fri, 1 Feb 2019 17:40:05 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
- r8a774c0
-Message-ID: <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
-References: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fri, 1 Feb 2019 12:47:35 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C3FD218AC;
+        Fri,  1 Feb 2019 17:47:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549043255;
+        bh=hsPvYFCPMdiKvw17X5Dr3THbnD1SM5Sq3zpQmLiVkI0=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=X/hCiZwZ7wSK9i0V8/JaUxfSDf0fwosw6cfRUOX9bV/l7Me1re5ZWH/mu+065kcaD
+         XELhhi+FWgl65YCry69/8OjijQX/KIVjm2mYgNVq8kgznSYP65mPZsaxTqjdxuOYbB
+         kKWb+TaTqw1xc0qd/GvaV5y1YvZjbl+piR/vmOLM=
+Date:   Fri, 1 Feb 2019 18:47:32 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sean Paul <sean@poorly.run>, intel-gfx@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/5] staging/vboxvideo: prepare for drmP.h removal
+ from drm_modeset_helper.h
+Message-ID: <20190201174732.GA17542@kroah.com>
+References: <20190126122527.11647-1-sam@ravnborg.org>
+ <20190126122527.11647-2-sam@ravnborg.org>
+ <20190201173749.GF3271@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190201173749.GF3271@phenom.ffwll.local>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 12:02:42PM +0000, Fabrizio Castro wrote:
-> Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
+On Fri, Feb 01, 2019 at 06:37:49PM +0100, Daniel Vetter wrote:
+> On Sat, Jan 26, 2019 at 01:25:23PM +0100, Sam Ravnborg wrote:
+> > The use of drmP.h is discouraged and removal of it from
+> > drm_modeset_helper.h caused vboxvideo to fail to build.
+> > 
+> > This patch introduce the necessary fixes to prepare for the
+> > drmP.h removal from drm_modeset_helper.h.
+> > 
+> > In the files touched sort the include files
+> > 
+> > Build tested on x86 and arm allmodconfig / allyesconfig.
+> > 
+> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Hans de Goede <hdegoede@redhat.com>
+> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v1->v2:
-> * Dropped change to the description of "phys" optional property according
->   to Geert's comment
+> Hi Greg,
 > 
->  Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Ack for merging this through drm-misc? I think we've defacto-maintained
+> vboxvideo in drm anyway this release ...
 
-Hi Fabrizio,
+Sorry, feel free to just always take this type of stuff without my ack,
+I can merge around you if I ever have any problems.
 
-Apologies for the delay in responding.
-
-Should I take this patch via the PCI tree ?
-
-Thanks,
-Lorenzo
-
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> index 976ef7b..6904882 100644
-> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> @@ -3,6 +3,7 @@
->  Required properties:
->  compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
->  	    "renesas,pcie-r8a7744" for the R8A7744 SoC;
-> +	    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
->  	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
->  	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
->  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
-> @@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
->  	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
->  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
->  				     RZ/G1 compatible device.
-> -	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
-> +	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
-> +				     RZ/G2 compatible device.
->  
->  	    When compatible with the generic version, nodes must list the
->  	    SoC-specific version corresponding to the platform first
-> -- 
-> 2.7.4
-> 
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
