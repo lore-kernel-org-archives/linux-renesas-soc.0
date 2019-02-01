@@ -2,218 +2,101 @@ Return-Path: <SRS0=i8oE=QI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192C2C282D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3528C282D8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D327A218AF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:37:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lxrQ2upr"
+	by mail.kernel.org (Postfix) with ESMTP id 8525821726
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Feb 2019 17:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731333AbfBARhz (ORCPT
+        id S1730312AbfBARkL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:37:55 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37450 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbfBARhz (ORCPT
+        Fri, 1 Feb 2019 12:40:11 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35900 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfBARkL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:37:55 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h15so6100004edb.4
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 01 Feb 2019 09:37:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XN7ztOwBfaWUcyejLCIihaQ4ZgEvWVS3wCWfbNiuJiU=;
-        b=lxrQ2upr40t3J3HqQ+JUTfjucGIUC+ttX2+XPkeSk2onlnSkhQwPUW7IMOG5AhgHmb
-         TwYkekMlK2HpT7tXXZd93YPIJ2o0AV517RUPMeUOLnMP+TPNkwSEgOVUVflJugzE1ND0
-         4Hod5LNnkFWipYNQeKWjqY2+5QM89SSTJ4kHk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=XN7ztOwBfaWUcyejLCIihaQ4ZgEvWVS3wCWfbNiuJiU=;
-        b=Ei3vlQW4myGa8rRXW/cA+HjuwMVL0xjYlEyZXN18NKqdkMmXhstR23u/o2Jq08N00E
-         LWIa6yqgL8Zf9t4lJ32iJ3OJeNkVkdAVJaYBpcEBvxno1sWk5ACFQIPJs4YVBMmfeslk
-         q4id71ysu6E5f1oNrkhX0Q1JEglaSXzF3vtb651vKYJ2HecXWQoiF1f8MZ7sVF4o0dal
-         wIRFwGcNlwE0IJuMjJ9TR/nMICrp8vRTOK4DGfDQcYnDAXpCfImXthw3fxuMAGvQbnVv
-         fmzcrcz4ikYs0ybvQ6ENwRNqNO5Zw1HtHkTktotsuiwWmwXHf8H9ACRpkEotP0RXJr/F
-         Ctfg==
-X-Gm-Message-State: AJcUukftIdCH1Rpulzb4+e5r49wemppz1pYp7m58vH4N3yrfHFrCRz+Q
-        pbYClDkSgmzDbr94eCb3mBOrsw==
-X-Google-Smtp-Source: ALg8bN63OOGj8KXdturZ5A+mF707f5v06CwnHciypXvgnqWV1t8Bn9Mc9I7pC1E38RH8uVaqO3lt9A==
-X-Received: by 2002:a05:6402:694:: with SMTP id f20mr31430374edy.99.1549042672836;
-        Fri, 01 Feb 2019 09:37:52 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id o4sm1318522ejr.19.2019.02.01.09.37.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 09:37:51 -0800 (PST)
-Date:   Fri, 1 Feb 2019 18:37:49 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sean Paul <sean@poorly.run>, intel-gfx@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH v6 1/5] staging/vboxvideo: prepare for drmP.h removal
- from drm_modeset_helper.h
-Message-ID: <20190201173749.GF3271@phenom.ffwll.local>
-Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
-        dri-devel@lists.freedesktop.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Airlie <airlied@linux.ie>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>, Sean Paul <sean@poorly.run>,
-        intel-gfx@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190126122527.11647-1-sam@ravnborg.org>
- <20190126122527.11647-2-sam@ravnborg.org>
+        Fri, 1 Feb 2019 12:40:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8432215BE;
+        Fri,  1 Feb 2019 09:40:10 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 707703F589;
+        Fri,  1 Feb 2019 09:40:08 -0800 (PST)
+Date:   Fri, 1 Feb 2019 17:40:05 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
+ r8a774c0
+Message-ID: <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
+References: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190126122527.11647-2-sam@ravnborg.org>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 01:25:23PM +0100, Sam Ravnborg wrote:
-> The use of drmP.h is discouraged and removal of it from
-> drm_modeset_helper.h caused vboxvideo to fail to build.
+On Tue, Dec 18, 2018 at 12:02:42PM +0000, Fabrizio Castro wrote:
+> Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
 > 
-> This patch introduce the necessary fixes to prepare for the
-> drmP.h removal from drm_modeset_helper.h.
-> 
-> In the files touched sort the include files
-> 
-> Build tested on x86 and arm allmodconfig / allyesconfig.
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Hi Greg,
-
-Ack for merging this through drm-misc? I think we've defacto-maintained
-vboxvideo in drm anyway this release ...
--Daniel
-
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/staging/vboxvideo/vbox_drv.c  |  6 +++++-
->  drivers/staging/vboxvideo/vbox_fb.c   | 18 ++++++++++--------
->  drivers/staging/vboxvideo/vbox_mode.c |  5 ++++-
->  3 files changed, 19 insertions(+), 10 deletions(-)
+> v1->v2:
+> * Dropped change to the description of "phys" optional property according
+>   to Geert's comment
 > 
-> diff --git a/drivers/staging/vboxvideo/vbox_drv.c b/drivers/staging/vboxvideo/vbox_drv.c
-> index cc6532d8c2fa..d1b0d7b4886a 100644
-> --- a/drivers/staging/vboxvideo/vbox_drv.c
-> +++ b/drivers/staging/vboxvideo/vbox_drv.c
-> @@ -7,11 +7,15 @@
->   *          Michael Thayer <michael.thayer@oracle.com,
->   *          Hans de Goede <hdegoede@redhat.com>
->   */
-> -#include <linux/module.h>
->  #include <linux/console.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
->  #include <linux/vt_kern.h>
->  
->  #include <drm/drm_crtc_helper.h>
-> +#include <drm/drm_drv.h>
-> +#include <drm/drm_file.h>
-> +#include <drm/drm_ioctl.h>
->  
->  #include "vbox_drv.h"
->  
-> diff --git a/drivers/staging/vboxvideo/vbox_fb.c b/drivers/staging/vboxvideo/vbox_fb.c
-> index 397496cf0bdf..83a04afd1766 100644
-> --- a/drivers/staging/vboxvideo/vbox_fb.c
-> +++ b/drivers/staging/vboxvideo/vbox_fb.c
-> @@ -6,20 +6,22 @@
->   * Authors: Dave Airlie <airlied@redhat.com>
->   *          Michael Thayer <michael.thayer@oracle.com,
->   */
-> -#include <linux/module.h>
-> -#include <linux/kernel.h>
-> -#include <linux/errno.h>
-> -#include <linux/string.h>
-> -#include <linux/mm.h>
-> -#include <linux/tty.h>
-> -#include <linux/sysrq.h>
->  #include <linux/delay.h>
-> +#include <linux/errno.h>
->  #include <linux/fb.h>
->  #include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mm.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/string.h>
-> +#include <linux/sysrq.h>
-> +#include <linux/tty.h>
->  
->  #include <drm/drm_crtc.h>
-> -#include <drm/drm_fb_helper.h>
->  #include <drm/drm_crtc_helper.h>
-> +#include <drm/drm_fb_helper.h>
-> +#include <drm/drm_fourcc.h>
->  
->  #include "vbox_drv.h"
->  #include "vboxvideo.h"
-> diff --git a/drivers/staging/vboxvideo/vbox_mode.c b/drivers/staging/vboxvideo/vbox_mode.c
-> index 1aaff02c07ff..213551394495 100644
-> --- a/drivers/staging/vboxvideo/vbox_mode.c
-> +++ b/drivers/staging/vboxvideo/vbox_mode.c
-> @@ -10,14 +10,17 @@
->   *          Hans de Goede <hdegoede@redhat.com>
->   */
->  #include <linux/export.h>
-> +
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_fourcc.h>
->  #include <drm/drm_plane_helper.h>
->  #include <drm/drm_probe_helper.h>
-> +#include <drm/drm_vblank.h>
->  
-> +#include "hgsmi_channels.h"
->  #include "vbox_drv.h"
->  #include "vboxvideo.h"
-> -#include "hgsmi_channels.h"
->  
->  /*
->   * Set a graphics mode.  Poke any required values into registers, do an HGSMI
-> -- 
-> 2.12.0
-> 
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Hi Fabrizio,
+
+Apologies for the delay in responding.
+
+Should I take this patch via the PCI tree ?
+
+Thanks,
+Lorenzo
+
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> index 976ef7b..6904882 100644
+> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> @@ -3,6 +3,7 @@
+>  Required properties:
+>  compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+>  	    "renesas,pcie-r8a7744" for the R8A7744 SoC;
+> +	    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
+>  	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
+>  	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
+>  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
+> @@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+>  	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
+>  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+>  				     RZ/G1 compatible device.
+> -	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+> +	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
+> +				     RZ/G2 compatible device.
+>  
+>  	    When compatible with the generic version, nodes must list the
+>  	    SoC-specific version corresponding to the platform first
+> -- 
+> 2.7.4
+> 
