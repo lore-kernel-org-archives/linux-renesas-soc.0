@@ -3,44 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F820C282D7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Feb 2019 09:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B91A0C282C4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Feb 2019 09:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F23920820
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Feb 2019 09:25:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9082220820
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Feb 2019 09:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbfBDJZ3 (ORCPT
+        id S1728661AbfBDJZc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:25:29 -0500
+        Mon, 4 Feb 2019 04:25:32 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:5889 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726928AbfBDJZ2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726928AbfBDJZb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:25:28 -0500
+        Mon, 4 Feb 2019 04:25:31 -0500
 X-IronPort-AV: E=Sophos;i="5.56,559,1539615600"; 
-   d="scan'208";a="6988690"
+   d="scan'208";a="6988694"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 04 Feb 2019 18:25:27 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 04 Feb 2019 18:25:30 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 59FCA400C4E6;
-        Mon,  4 Feb 2019 18:25:25 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 44F7A400C4DB;
+        Mon,  4 Feb 2019 18:25:28 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 4/5] dt-bindings: timer: renesas: tmu: Document r8a774c0 bindings
-Date:   Mon,  4 Feb 2019 09:20:06 +0000
-Message-Id: <1549272007-33471-5-git-send-email-biju.das@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 5/5] arm64: dts: renesas: r8a774c0: Add TMU device nodes
+Date:   Mon,  4 Feb 2019 09:20:07 +0000
+Message-Id: <1549272007-33471-6-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549272007-33471-1-git-send-email-biju.das@bp.renesas.com>
 References: <1549272007-33471-1-git-send-email-biju.das@bp.renesas.com>
@@ -49,28 +48,92 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document RZ/G2E (R8A774C0) SoC in the Renesas TMU bindings.
+This patch adds TMU{0|1|2|3|4} device nodes for r8a774c0 SoC.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 V1-->V2 No change
 ---
- Documentation/devicetree/bindings/timer/renesas,tmu.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 65 +++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.txt b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
-index 4ddff85..13ad074 100644
---- a/Documentation/devicetree/bindings/timer/renesas,tmu.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
-@@ -10,6 +10,7 @@ Required Properties:
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+index bb31585..1f72f76 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+@@ -353,6 +353,71 @@
+ 			resets = <&cpg 407>;
+ 		};
  
-   - compatible: must contain one or more of the following:
-     - "renesas,tmu-r8a7740" for the r8a7740 TMU
-+    - "renesas,tmu-r8a774c0" for the r8a774C0 TMU
-     - "renesas,tmu-r8a7778" for the r8a7778 TMU
-     - "renesas,tmu-r8a7779" for the r8a7779 TMU
-     - "renesas,tmu-r8a77970" for the r8a77970 TMU
++		tmu0: timer@e61e0000 {
++			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
++			reg = <0 0xe61e0000 0 0x30>;
++			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 125>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 125>;
++			status = "disabled";
++		};
++
++		tmu1: timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
++			reg = <0 0xe6fc0000 0 0x30>;
++			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 124>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 124>;
++			status = "disabled";
++		};
++
++		tmu2: timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
++			reg = <0 0xe6fd0000 0 0x30>;
++			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 123>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 123>;
++			status = "disabled";
++		};
++
++		tmu3: timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
++			reg = <0 0xe6fe0000 0 0x30>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 122>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 122>;
++			status = "disabled";
++		};
++
++		tmu4: timer@ffc00000 {
++			compatible = "renesas,tmu-r8a774c0", "renesas,tmu";
++			reg = <0 0xffc00000 0 0x30>;
++			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 121>;
++			clock-names = "fck";
++			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++			resets = <&cpg 121>;
++			status = "disabled";
++		};
++
+ 		i2c0: i2c@e6500000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.7.4
 
