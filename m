@@ -6,82 +6,84 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D41C282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A036C282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30C582080F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 431F720821
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbfBEIyA (ORCPT
+        id S1727975AbfBEJSk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:54:00 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:44879 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEIyA (ORCPT
+        Tue, 5 Feb 2019 04:18:40 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:35026 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbfBEJSj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:54:00 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d19so865298uaq.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Feb 2019 00:54:00 -0800 (PST)
+        Tue, 5 Feb 2019 04:18:39 -0500
+Received: by mail-vk1-f196.google.com with SMTP id b18so631482vke.2;
+        Tue, 05 Feb 2019 01:18:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=L4MBknKcBfpZ9hvaRGRYjv3fnH46qhpqKdl4nhgaSvg=;
-        b=RZ6m74enUm+RXHE1XvV2Az1pel/6Qi2gRRwIz9+DiXasYdhfdkYmm3gI4Kw5BYl26i
-         Tu9AtzgLu1roGbwAk+jCv1Zin0KEQRU14+9k+rLRVYv/0FZsZHrlASwN+XIiUOcKszQV
-         2VADL5zH/QZeTYVF9JJDSFndwR7Hibein5I7fDYWctHp2PEEnQWzvLsFkKCiRVgD46GK
-         0hTnAGuYrdGJeRCfpVjB0ITSvMnDDidYScm+BFIKJ9BugHxxP9COsjbnnzVHpV4VFRRF
-         NSl3NyYK8Ko2Zr0WcteN+sfPqIP5fixcsN1YB9AgtyiPoGN+NNp3hqBHCA1f4g70j99b
-         hN9Q==
-X-Gm-Message-State: AHQUAuYF62hEKxaT4L21OY436cm2lL/PwcFaA123TleLxv75hpbqBxYu
-        vZCzEw6wSvjBbkwvUGiXNmHsbrkV0Cwo7MoTs3g=
-X-Google-Smtp-Source: AHgI3IZdti615DEdOo4QmlpwJXz5BC8vP4EeTX6PHBl5LUdZtB6mpAI/RB+h3sv58IViRXL0DAQl6JhUWItmhizFqcI=
-X-Received: by 2002:a9f:2726:: with SMTP id a35mr1416078uaa.75.1549356839541;
- Tue, 05 Feb 2019 00:53:59 -0800 (PST)
+        bh=pZaQ24PW9Dp6MLsoAPEgDHAKsI2NZzh46Wyq8QHKFq0=;
+        b=PiJrZqyMNOdnfbSVcX6+KHISi5VS9TdBH+qAwCPNL6Gi9ivtoL4GOYQQrmGSB3VS4f
+         fO5Jmi7qwuUDlvIsxDb8gRsKqJOhq4nTFqSIOpyhWI+QpLVdvzf6NPAF0/qz6UOaaeEV
+         ijY9IIeiTvgzgXIPOoBLxS5cFsWdex7fHd0sfdTbYbSrROXV5tKzAGChkUg3Uj2sXDXL
+         rBeCg4vpAY3OOyMGK/g7g2BzzQ9H1YTC4uDKN+jl8m01P3coVVVxE2zC/eHkAnKCin2B
+         In189oNyv89sCKXaKE6dDHx5VAR+T7I6VaPtvfa4tWF2qs/bD992vrWgq5WRBTwHTB7m
+         ccPA==
+X-Gm-Message-State: AHQUAua91tDnLoVjxGcDOdVuNoR0mdyA2sPzbE35bX7qLBf6aGgtnurP
+        +1PlakjZZfb2dcqoudSYasl3n/X/vBVD9Y8DgPQ=
+X-Google-Smtp-Source: AHgI3IY5v0NK5WXAabTf901u79B6QhS69x2goY3UlE7I2rosY+pyIg3Cnk/0vRJR5cj1aH2QzYd7jIMByzVFN9MqkKk=
+X-Received: by 2002:a1f:8e49:: with SMTP id q70mr35555vkd.40.1549358318009;
+ Tue, 05 Feb 2019 01:18:38 -0800 (PST)
 MIME-Version: 1.0
-References: <1548439304-18908-1-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1548439304-18908-1-git-send-email-ykaneko0929@gmail.com>
+References: <20190131094021.3092-1-horms+renesas@verge.net.au> <20190131094021.3092-4-horms+renesas@verge.net.au>
+In-Reply-To: <20190131094021.3092-4-horms+renesas@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 5 Feb 2019 09:53:48 +0100
-Message-ID: <CAMuHMdX5+aeY+Xi5pWrx8uEGm18iP8d2n_48vu3j1S_oWSWOtw@mail.gmail.com>
-Subject: Re: [PATCH/RFT v2] pinctrl: sh-pfc: r8a77990: Add DRIF pins, groups
- and functions
-To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
+Date:   Tue, 5 Feb 2019 10:18:26 +0100
+Message-ID: <CAMuHMdWX8j9W3wc5Xias+tK0ztQb89ngOw9uV2we2HMd__u_Xg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] clk: renesas: rcar-gen3: Support Z and Z2 clocks
+ with high frequency parents
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kaneko-san,
-
-On Fri, Jan 25, 2019 at 7:02 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On Thu, Jan 31, 2019 at 10:40 AM Simon Horman
+<horms+renesas@verge.net.au> wrote:
+> Support Z and Z2 clocks with parent frequencies greater than
+> UINT32_MAX Hz (~4.29GHz).
 >
-> This patch adds DRIF{0,1,2,3} pins, groups and functions to the R8A77990
-> SoC.
+> The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit numerator and 32bit
+> denominator. This leads to truncation of the numerator, which is the Z or
+> Z2 parent clock frequency in HZ, on platforms where frequency of that clock
+> is greater than UINT32_MAX Hz.
 >
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
+> To resolve this problem the DIV_ROUND_CLOSEST() macro, which accepts the
+> prevailing types of the numerator and denominator, is used. In this case
+> the type of the numerator is unsigned long long (64 bit) and the type of
+> the denominator is unsigned long (64bit on 64bit platforms and 32bit on
+> 32bit platforms). This allows parents whose frequency is greater than
+> UINT32_MAX Hz on 64bit platforms.
 >
-> This patch is based on the sh-pfc branch of Geert Uytterhoeven's
-> renesas-drivers tree.
+> This appears to be sufficient as this driver is only intended for use
+> on 64bit systems. And in particular, the motivation for this change is
+> to allow a 4.8GHz clock on the R-Car Gen3 E3 (r8a77990) SoC which is
+> a 64bit platform.
 >
-> v2 [Yoshihiro Kaneko]
-> * As suggested by Geert Uytterhoeven
->   - added DRIF pin groups and pin functions to the automotive section
->     instead of the common section.
-
-Thanks for the update!
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v5.1.
 
 Gr{oetje,eeting}s,
 
