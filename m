@@ -2,82 +2,113 @@ Return-Path: <SRS0=SaFT=QM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A7AC282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D024C282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46863206DD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36FA62175B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728630AbfBENVr (ORCPT
+        id S1729466AbfBENYr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:21:47 -0500
-Received: from sauhun.de ([88.99.104.3]:57556 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726276AbfBENVr (ORCPT
+        Tue, 5 Feb 2019 08:24:47 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41135 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfBENYr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:21:47 -0500
-Received: from localhost (unknown [46.183.103.8])
-        by pokefinder.org (Postfix) with ESMTPSA id C0E422C0509;
-        Tue,  5 Feb 2019 14:21:45 +0100 (CET)
-Date:   Tue, 5 Feb 2019 14:21:33 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] i2c: gpio: fault-injector: minor updates
-Message-ID: <20190205132130.GG12401@kunai>
-References: <20190121141657.18924-1-wsa+renesas@sang-engineering.com>
+        Tue, 5 Feb 2019 08:24:47 -0500
+Received: by mail-vs1-f66.google.com with SMTP id t17so2108581vsc.8;
+        Tue, 05 Feb 2019 05:24:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mH2jC//BX4csPlxzLWPxIbl/VLPdX2MNzc/nlQzQz8Q=;
+        b=g3YaCJcISPixq7aUuf35LNeOkryoASZsaYYP4JnvgSu6j8PtbZJj79oe743QGuXlM8
+         pSyh6fsgRGsh2/A6gIPEIWbTjIcZiKYnZdFGIwndaGo6vZA2JkwpU3rXX0mQjuKbJENA
+         w9JEfYl/F8wPwKBVTCfeaCIleLQiUliSRuVV9Zu9+8dd8i9nshnEA8hKJbdFwN0PMy+A
+         EUd6k0mcnsolXK80Dkgw2ISGJ0CgphTpWGvQkzHgui+43WmHPhOgp+L0ca5En/vgvr8N
+         YF1CC1OgCBfwK19kOLJYXZ7eNuOpGHMpoDv2AQR0oUMLT/phHOTDsS4bfiWBuzkZgziY
+         brAA==
+X-Gm-Message-State: AHQUAua3qL84bJA7OJQh2VJzz3L/kqfB8ikbELQqlPgIM7gp5h6nYNMR
+        XWlcsWDxoFNY9PKyeP1tBvgr+D0MmqyRuEiK5cA=
+X-Google-Smtp-Source: AHgI3IZGiOTTw8sZiDzZNxEUVJfcek13r1NV7ffeSdfvgl9Jp03HBQFnX+NKK7wxVbto9ZhTYk3nwT3JsD0+hzp5ILU=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr1891966vsi.63.1549373086077;
+ Tue, 05 Feb 2019 05:24:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qoTlaiD+Y2fIM3Ll"
-Content-Disposition: inline
-In-Reply-To: <20190121141657.18924-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1548846984-2044-1-git-send-email-vincent.guittot@linaro.org> <CAPDyKFpyg7oGoDZA+=SG7R3yL874Geeqs5LWrsAf50csxsE05A@mail.gmail.com>
+In-Reply-To: <CAPDyKFpyg7oGoDZA+=SG7R3yL874Geeqs5LWrsAf50csxsE05A@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 5 Feb 2019 14:24:33 +0100
+Message-ID: <CAMuHMdWdbRpA_M4V1kigab6U8rSDgGYXtidiSU4MVdj5xarK8g@mail.gmail.com>
+Subject: Re: [PATCH v2 ] PM-runtime: fix deadlock with ktime
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Ulf,
 
---qoTlaiD+Y2fIM3Ll
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 30, 2019 at 1:15 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On Wed, 30 Jan 2019 at 12:16, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > A deadlock has been seen when swicthing clocksources which use PM runtime.
+> > The call path is:
+> > change_clocksource
+> >     ...
+> >     write_seqcount_begin
+> >     ...
+> >     timekeeping_update
+> >         ...
+> >         sh_cmt_clocksource_enable
+> >             ...
+> >             rpm_resume
+>
+> Hmm, isn't this already a problem in genpd then?
+>
+> In genpd's ->runtime_resume() callback (genpd_runtime_resume()) we
+> call ktime_get() to measure the latency of running the callback.
+>
+> Or, perhaps irq_safe_dev_in_no_sleep_domain() returns true for the
+> genpd + device in question, which means the ktime thingy is skipped.
+>
+> Geert?
 
-On Mon, Jan 21, 2019 at 03:16:55PM +0100, Wolfram Sang wrote:
-> While working on a new fault injector, I came up with these two small
-> improvements. They hopefully make reading docs/source easier when we add =
-more
-> and more stuff.
->=20
-> Wolfram Sang (2):
->   i2c: gpio: fault-injector: sort debugfs files alphabetically
->   i2c: gpio: fault-injector: better SPHINX style in docs
+Correct. After adding
 
-Applied to for-next, thanks!
+    dev_info(dev, "%s: pm_runtime_is_irq_safe = %d,
+genpd_is_irq_safe(%s) = %d => %s\n", __func__,
+pm_runtime_is_irq_safe(dev), genpd->name, genpd_is_irq_safe(genpd),
+ret ? "true" : "false");
 
+I see on R-Car M2-W:
 
---qoTlaiD+Y2fIM3Ll
-Content-Type: application/pgp-signature; name="signature.asc"
+    sh_cmt ffca0000.timer: irq_safe_dev_in_no_sleep_domain:
+pm_runtime_is_irq_safe = 1, genpd_is_irq_safe(always-on) = 0 => true
 
------BEGIN PGP SIGNATURE-----
+For all other devices, the result is false.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZjdoACgkQFA3kzBSg
-KbYbFg//WyvfBm8vrHMXUM/HprO6FzyZ7XUrAtd65OFMYh3Mj9L1yXMwQHUymPMR
-9dJPa2kSvJ7V99Wfvx6Q7HKuXmAT6yZIEtw+OyrVCRphILtAjog4Be/BpOVryDpV
-wS8NgnbT7jKO3wx2MHiQWwdD4bgQn7Gl2SciQ0jPwN1K+1umpbjkZMGbBxnnrr2R
-XvGEt5pUpnu7A4z+VnMhgqoOOqIIgIOxlL0gY0i92MVSn4KUkLlEPwfW7GkaPlMN
-qsH/kKzqrkYi2u7mhVbj4D5c9oB5zjm4VqZ0tp4eBFP3TWRLVKjPIYEOv4YnFnAQ
-Po2xafx4sCzBQpXJ5ruIAoIhzbJOqOFsljLGxUB83XEXTeo+bC2KSTw4EaHIZ1qc
-AUJTNKPqFby2oRBwtrnTIHGLr0pBoWO8+oj5rR2pMolzyAPqoJR9Dl0FSR2ixQUQ
-MS+kZRJFDGB3IWGI1Yuz+LAgBG5K5T7U+isKuW7gbAfQM/PMJrNQzfYLH1NieZ/9
-3j3oQZ9BUyv+p9I11BMtQliIRJmqOF05lZh222uEqL2NV+J4GBhG027gKYkv2isa
-Oqop0GKI4DsbUlZTIfr79s6NqttkBEewkOBe71Zxcu0AwLPC6xpagjASfhdjezD7
-n0Va16xYHSyCoZJb7XFpP7lQNPiPskqKwp44hTAAAxoGltpoBkY=
-=JW4K
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---qoTlaiD+Y2fIM3Ll--
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
