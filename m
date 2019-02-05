@@ -2,111 +2,120 @@ Return-Path: <SRS0=SaFT=QM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38684C282CC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 10:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B92C282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 12:49:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 102E820844
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 10:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6123B20844
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 12:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfBEKsT (ORCPT
+        id S1728833AbfBEMtc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 05:48:19 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34745 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfBEKsT (ORCPT
+        Tue, 5 Feb 2019 07:49:32 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:49970 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbfBEMtb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 05:48:19 -0500
-Received: by mail-vs1-f68.google.com with SMTP id y27so1870136vsi.1;
-        Tue, 05 Feb 2019 02:48:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JGaFgVO7R3UTfl8joDIeXgDdfkFqHZwe182TfUHL74U=;
-        b=Kai6z7++Gvf6hhJJPbTNYQgcBo1jEmRTbglvBF+Mv0vXLiIUZ3mv8b0TJysDrBShi0
-         l2KgIt/PfDZKI0+hW9p/ITtW+VFWLMuq6uZmXEBn+6Ll7oUvCmssMKrX9wbGHxv6iyxV
-         xkxWVx3IOvJ6y8tzkw9+qAVBwXlcRNouJXOXGOsZ30nK7jAzEBovTBlpnzw9CJBhbmRm
-         6/fxfcPx88s6JRzVEhwFZDILV120z1kgvgS7C0zVsMIk2bNO3nWc4mtELrYiaqVoDGaw
-         fWfzvKmyfFub45zRf/e4MwtxzipPWEAu6D9S1/3Lr7qZkGxM2v50pi3PS0g+JyiJRVf9
-         LQRw==
-X-Gm-Message-State: AHQUAuYGWWaOJSx3vn8fA68/4sHnUnhfBM/2RiEQJrPqBrMgO8cWKpmb
-        rssdwM/Id9cwEHUkVYTQ1R/9XpabR0DllayabTM=
-X-Google-Smtp-Source: AHgI3IaX07hsQtSKfIy8Ipvz+UnhhfdmBtsTo0NLYiwDLl3uIUG/+wGUVHO6kYpGJkULdY5sDImxuEjTSR2cBMW/TFU=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr1770183vsj.11.1549363698393;
- Tue, 05 Feb 2019 02:48:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20190131094021.3092-1-horms+renesas@verge.net.au> <20190131094021.3092-3-horms+renesas@verge.net.au>
-In-Reply-To: <20190131094021.3092-3-horms+renesas@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 5 Feb 2019 11:48:06 +0100
-Message-ID: <CAMuHMdXsQ_e3=9q8EJVcK3L5BSNGQDux4tGe+sxLJPgFFVEtZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] clk: renesas: rcar-gen3: Parameterise Z and Z2
- clock offset
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 5 Feb 2019 07:49:31 -0500
+Received: from ramsan ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id Z0pV1z00a3XaVaC060pVcw; Tue, 05 Feb 2019 13:49:29 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gr0AL-0005JB-OC
+        for linux-renesas-soc@vger.kernel.org; Tue, 05 Feb 2019 13:49:29 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gr0AL-0003YE-Mv
+        for linux-renesas-soc@vger.kernel.org; Tue, 05 Feb 2019 13:49:29 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2019-02-05-v5.0-rc5
+Date:   Tue,  5 Feb 2019 13:49:29 +0100
+Message-Id: <20190205124929.13608-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+I have pushed renesas-drivers-2019-02-05-v5.0-rc5 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-On Thu, Jan 31, 2019 at 10:40 AM Simon Horman
-<horms+renesas@verge.net.au> wrote:
-> Parameterise the offset of control bits within the FRQCRC register
-> for Z and Z2 clocks.
->
-> This is in preparation for supporting the Z2 clock on the R-Car E3
-> (r8a77990) SoC which uses a different offset for control bits to
-> other, already, supported SoCs.
->
-> This mechanism should be extendable to other clocks, such as ZG,
-> f.e. by adding the number of control bits as a parameter to
-> cpg_z_clk_register().
->
-> As suggested by Geert Uytterhoeven.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+Today's version is based on renesas-devel-20190204-v5.0-rc5.
 
-> @@ -568,14 +566,9 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->                 break;
->
->         case CLK_TYPE_GEN3_Z:
-> -               return cpg_z_clk_register(core->name, __clk_get_name(parent),
-> -                                         base, CPG_FRQCRC_ZFC_MASK,
-> -                                         core->div);
-> -
->         case CLK_TYPE_GEN3_Z2:
->                 return cpg_z_clk_register(core->name, __clk_get_name(parent),
-> -                                         base, CPG_FRQCRC_Z2FC_MASK,
-> -                                         core->div);
-> +                                         base, core->div, core->offset);
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/clk-r8a77990-z2-v3
+  - topic/sh-pfc-validation-v2
+  - git://linuxtv.org/pinchartl/media.git#drm-du-iommu-v1-20171115
+  - git://linuxtv.org/pinchartl/media.git#drm/du/next
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
 
-CLK_TYPE_GEN3_Z and CLK_TYPE_GEN3_Z2 are now the same type.
-Perhaps they can be merged completely, and be absorbed into the
-DEF_GEN3_Z() macro?
-Or not, depending on how ZG support will be added...
+Included fixes:
+  - [LOCAL] arm64: defconfig: Reduce NR_CPUS to 8
+  - ARM: shmobile: defconfig: Update shmobile_defconfig
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
