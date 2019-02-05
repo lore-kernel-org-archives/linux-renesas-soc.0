@@ -2,146 +2,127 @@ Return-Path: <SRS0=SaFT=QM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109C3C282D7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C380C282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC53920844
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBC9E20844
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:40:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z0W/wiQn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729579AbfBENit (ORCPT
+        id S1729608AbfBENkl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:38:49 -0500
-Received: from sauhun.de ([88.99.104.3]:57694 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729363AbfBENis (ORCPT
+        Tue, 5 Feb 2019 08:40:41 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35910 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728758AbfBENkl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:38:48 -0500
-Received: from localhost (unknown [46.183.103.8])
-        by pokefinder.org (Postfix) with ESMTPSA id 961DC4A16DD;
-        Tue,  5 Feb 2019 14:38:46 +0100 (CET)
-Date:   Tue, 5 Feb 2019 14:38:46 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2] i2c: rcar: refactor TCYC handling
-Message-ID: <20190205133845.GJ12401@kunai>
-References: <20190205133725.27688-1-wsa+renesas@sang-engineering.com>
+        Tue, 5 Feb 2019 08:40:41 -0500
+Received: by mail-vs1-f68.google.com with SMTP id v205so2153785vsc.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Feb 2019 05:40:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hGz+KaIHU6kdZjr70CxUzqvL/Y3JaHXrvpE3EZ2OZfE=;
+        b=z0W/wiQn7JYbpAZ1ol9zt74MyT0lCGqciOPnKnapYHSRPgPTaEviiqgcQ9K1b2wh8i
+         yPZ6PBrJDufXLkOGem2jmlKPtpWVxIzf1uDzjPvacUf1hdtQttxrmYJbCd3PsU+jgzsP
+         /v9+mWIvCCW0dXF8zXGP8fBTWUpy9lhOLqvMYHJTByxbSYRFYyiVoWBXFhgJQJwWHozm
+         56qIIc3lJvN0RS56QJuXMFYFYKv7MK7k940KjaYavrVhrCM2YZdtnm8hB+YXfcFQ+8FI
+         pKoDyJ61mVVH5zD06oYLTuwtyADsD5UHJ2Z4GHNeoL1Os741Fq1WTl1wJOeBqx7P7ZvU
+         PHsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hGz+KaIHU6kdZjr70CxUzqvL/Y3JaHXrvpE3EZ2OZfE=;
+        b=FP0YSeApwBHzDmquS9SZoSOfR7gjEzt/Z6r3Gh4Y9ScNDejLUEbBAgR49GXF4fXAcC
+         UdjnNHC2vEOeMwoCwXqgoLClMRzjXthej4H2pag34BEmTR+35/JBacHP4gL8E5fzBaVV
+         EEMNSnm2BO469KP/w7cHjOJ1rDN4jlLPgLHdXDlaaPJx1os2Sn9IAfrkX71A5UxIDsnL
+         WSX299Ayr/sMO4bqjbLquDwY/HJObHqa5T6OjO0Tgz67LBxBKG3ZuuinjnOBuiYNXV3L
+         CiK1BwLRql45zU0n3qQ4B15ktL8Emr+noRb4BOPVAMh187xKicDz6aU6G6eKnIX9QwHD
+         Ym0A==
+X-Gm-Message-State: AHQUAuasAwTq0Di98OHvDw56w7t0rncRHN6sW4PETjBo54A7aFfsjB+V
+        mWIWxKEA4G4LgRplFXUnZQohH8K6twPpqLI/76bRWA==
+X-Google-Smtp-Source: AHgI3IYVw/nkWXn4pDQ6QdiimktaGEI7Lc7rL5L+LWqatJUnmPRDh65+YENGhUU2l+fUF4WoXLWXU9Tun+zS5f6jloY=
+X-Received: by 2002:a67:b245:: with SMTP id s5mr2002390vsh.200.1549374040188;
+ Tue, 05 Feb 2019 05:40:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="x0KprKst+ZOYEj2z"
-Content-Disposition: inline
-In-Reply-To: <20190205133725.27688-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1548846984-2044-1-git-send-email-vincent.guittot@linaro.org>
+ <CAPDyKFpyg7oGoDZA+=SG7R3yL874Geeqs5LWrsAf50csxsE05A@mail.gmail.com> <CAMuHMdWdbRpA_M4V1kigab6U8rSDgGYXtidiSU4MVdj5xarK8g@mail.gmail.com>
+In-Reply-To: <CAMuHMdWdbRpA_M4V1kigab6U8rSDgGYXtidiSU4MVdj5xarK8g@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 5 Feb 2019 14:40:04 +0100
+Message-ID: <CAPDyKFqSofB2TfQXqhngQhaSKRZr-k-z2CXpQ2oWvnCn3JeFHQ@mail.gmail.com>
+Subject: Re: [PATCH v2 ] PM-runtime: fix deadlock with ktime
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Tue, 5 Feb 2019 at 14:24, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Ulf,
+>
+> On Wed, Jan 30, 2019 at 1:15 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > On Wed, 30 Jan 2019 at 12:16, Vincent Guittot
+> > <vincent.guittot@linaro.org> wrote:
+> > >
+> > > A deadlock has been seen when swicthing clocksources which use PM runtime.
+> > > The call path is:
+> > > change_clocksource
+> > >     ...
+> > >     write_seqcount_begin
+> > >     ...
+> > >     timekeeping_update
+> > >         ...
+> > >         sh_cmt_clocksource_enable
+> > >             ...
+> > >             rpm_resume
+> >
+> > Hmm, isn't this already a problem in genpd then?
+> >
+> > In genpd's ->runtime_resume() callback (genpd_runtime_resume()) we
+> > call ktime_get() to measure the latency of running the callback.
+> >
+> > Or, perhaps irq_safe_dev_in_no_sleep_domain() returns true for the
+> > genpd + device in question, which means the ktime thingy is skipped.
+> >
+> > Geert?
+>
+> Correct. After adding
+>
+>     dev_info(dev, "%s: pm_runtime_is_irq_safe = %d,
+> genpd_is_irq_safe(%s) = %d => %s\n", __func__,
+> pm_runtime_is_irq_safe(dev), genpd->name, genpd_is_irq_safe(genpd),
+> ret ? "true" : "false");
+>
+> I see on R-Car M2-W:
+>
+>     sh_cmt ffca0000.timer: irq_safe_dev_in_no_sleep_domain:
+> pm_runtime_is_irq_safe = 1, genpd_is_irq_safe(always-on) = 0 => true
+>
+> For all other devices, the result is false.
 
---x0KprKst+ZOYEj2z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for confirming! I guess we have been lucky so far.
 
-On Tue, Feb 05, 2019 at 02:37:25PM +0100, Wolfram Sang wrote:
-> The latest documentation made it clear that we need to initialize the
-> TCYC value independently of DMA. The old code used TCYC06 (wrongly) for
-> non-DMA transfers. The new code sets TCYC up independently from DMA.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Anyway, if runtime PM core converts to use ktime_get_mono_fast_ns(),
+we should probably consider to convert genpd to this as well. Don't
+you think?
 
-The latter SoB shouldn't be there yet.
-
-> ---
->=20
-> Change since v1: improve commit message per Simon's comment.
->=20
->  drivers/i2c/busses/i2c-rcar.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-> index 498ba4b87833..dd52a068b140 100644
-> --- a/drivers/i2c/busses/i2c-rcar.c
-> +++ b/drivers/i2c/busses/i2c-rcar.c
-> @@ -39,8 +39,8 @@
->  #define ICSAR	0x1C	/* slave address */
->  #define ICMAR	0x20	/* master address */
->  #define ICRXTX	0x24	/* data port */
-> -#define ICDMAER	0x3c	/* DMA enable */
-> -#define ICFBSCR	0x38	/* first bit setup cycle */
-> +#define ICFBSCR	0x38	/* first bit setup cycle (Gen3) */
-> +#define ICDMAER	0x3c	/* DMA enable (Gen3) */
-> =20
->  /* ICSCR */
->  #define SDBS	(1 << 3)	/* slave data buffer select */
-> @@ -83,7 +83,6 @@
->  #define TMDMAE	(1 << 0)	/* DMA Master Transmitted Enable */
-> =20
->  /* ICFBSCR */
-> -#define TCYC06	0x04		/*  6*Tcyc delay 1st bit between SDA and SCL */
->  #define TCYC17	0x0f		/* 17*Tcyc delay 1st bit between SDA and SCL */
-> =20
-> =20
-> @@ -212,6 +211,10 @@ static void rcar_i2c_init(struct rcar_i2c_priv *priv)
->  	rcar_i2c_write(priv, ICMSR, 0);
->  	/* start clock */
->  	rcar_i2c_write(priv, ICCCR, priv->icccr);
-> +
-> +	if (priv->devtype =3D=3D I2C_RCAR_GEN3)
-> +		rcar_i2c_write(priv, ICFBSCR, TCYC17);
-> +
->  }
-> =20
->  static int rcar_i2c_bus_barrier(struct rcar_i2c_priv *priv)
-> @@ -363,9 +366,6 @@ static void rcar_i2c_dma_unmap(struct rcar_i2c_priv *=
-priv)
->  	/* Disable DMA Master Received/Transmitted */
->  	rcar_i2c_write(priv, ICDMAER, 0);
-> =20
-> -	/* Reset default delay */
-> -	rcar_i2c_write(priv, ICFBSCR, TCYC06);
-> -
->  	dma_unmap_single(chan->device->dev, sg_dma_address(&priv->sg),
->  			 sg_dma_len(&priv->sg), priv->dma_direction);
-> =20
-> @@ -461,9 +461,6 @@ static void rcar_i2c_dma(struct rcar_i2c_priv *priv)
->  		return;
->  	}
-> =20
-> -	/* Set delay for DMA operations */
-> -	rcar_i2c_write(priv, ICFBSCR, TCYC17);
-> -
->  	/* Enable DMA Master Received/Transmitted */
->  	if (read)
->  		rcar_i2c_write(priv, ICDMAER, RMDMAE);
-> --=20
-> 2.19.1
->=20
-
---x0KprKst+ZOYEj2z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZkeUACgkQFA3kzBSg
-KbZEpQ/+JFg2XgGQy1lOaY+HBhBDmLVSY9CJj+wbXYoYutqJLqAiM0/vFTztnRBh
-E8YLiXaN+veitw6duGJdPX/emBG9Xjfl0fVzAncV/r9pjKl+2ejRF/W4y95cwG/W
-r0+TAQQHXJOMPSfdJBhtbSDVvTcapfKVV0jEX/f3OIk8BzKLlqozCuK6isobU3b4
-KwxUBCCtKP40fR+XweAQ3yLtejsxOgAn52CKtTK4PAQt9qQ10wak/NY9/Sa+1wIl
-6VkhJMk+XA5TftLcemtGbpN6932ScczN7k87QI7LQF8R0c1y6z5sYn7DEirn5KUh
-3mAszpELXwRcDIQKP/FjrF4X1t8nTK6Q65rBDjQ3mspBvZ52FWVFms+P4ok4fdcs
-fYVFAzvHnOckea5q5qDGcoirhHwD7Zr2R+XKNw46a5eRETS/GgjOqJFcXuoax0ND
-oNxQ3tga65q1d7BU176OIKrjPlbySllVbCiyoYAJHPUfaTcr4xccyTpGjPzbnfJd
-uCu7pgpSvFqGEcBDtQmgsp8oHF1lwjinjihat60xShNwR3+C1S/pAGrht5kn5+gY
-lPkWbCETBLyTaMM6L+5R0TD5NynDNWK53mhMv4RnObXxjc2wV5sDZKVQQfRTOlUW
-ZGqFjlIV4E349yfjutjhPJX9/0bYHkttXT+gnzEJRQJgECUIArQ=
-=d3oP
------END PGP SIGNATURE-----
-
---x0KprKst+ZOYEj2z--
+Kind regards
+Uffe
