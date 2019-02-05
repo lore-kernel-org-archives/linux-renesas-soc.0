@@ -2,85 +2,162 @@ Return-Path: <SRS0=SaFT=QM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A46C282D7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CA8C282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53CCF2145D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3335C20821
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:40:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ERl4PjnQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725949AbfBEIW7 (ORCPT
+        id S1725952AbfBEIkM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:22:59 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:39324 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEIW7 (ORCPT
+        Tue, 5 Feb 2019 03:40:12 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38407 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726854AbfBEIkM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:22:59 -0500
-Received: by mail-vk1-f195.google.com with SMTP id s184so594572vkd.6;
-        Tue, 05 Feb 2019 00:22:58 -0800 (PST)
+        Tue, 5 Feb 2019 03:40:12 -0500
+Received: by mail-it1-f196.google.com with SMTP id z20so6254303itc.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Feb 2019 00:40:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B2bmbisHuVIYawJyBYYO7RFGK5f9BbXCucFYT52KAD4=;
+        b=ERl4PjnQ47C0fFglkXDzEEbSo1xup4bX5rtbQgHooqis0KvfeNsLs+5xIkQ+2Dds3G
+         2NF8WogtZwqwXhmh1KNqtR5Txsdrb6un8RzdVhaGB1CBWNtg1nwurPJFqQXUEpcYeebd
+         ur3CMUYrg18NWjm3DOGemSzdQjh4mk+GcHimk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gKTwy7jAxEnqGdvt/x8mKm6529oUNBNOPnOOvT3w+bs=;
-        b=buHyf5MCn/Axz4AnVcbjw+i6ciZxXYW/0HyDTDXCAII9r4FaCWZBC0GfICbekfaO52
-         1og7ieYaTFgPWaNEPLUGCyGI7B2mxrz939A0q2y5Jj+fjKuB/IYpfGmn2FlOjT5EG/1u
-         wdGO/xwg1nupxy7NBUcxQby23pjXJa77C3aJqM/tgElGnvZgUo2YmHrnE+EA8Pgn2wX3
-         46zHdAV7j9koJJiPVin5xqziy+J/VouzhzsDv3ZzZdAV7AwXgBGIYJQFHIURqcS6+aPb
-         4YvM1GtHuzN+imGKtqdVKUVSyROHzEbOYM1AaITOoNgf3y4t7tHP6/Fno6kT3TxEqa3N
-         zFvQ==
-X-Gm-Message-State: AHQUAub0N2US6mRnrppLSgiZmjwTX0INT2e+kPBSEMn9qI+pQSp04cFA
-        AmvOyUAtwSZlJfO50UvKsk46PoGLXKSx6gAtz/U=
-X-Google-Smtp-Source: AHgI3IYm79OF6hLGSJygo7Fc2FGc0De0VbHil9qh5ykv485unGlvqB1LGQKF5Kwrz476zFOkG06qeIMBFN+oaOuFnTo=
-X-Received: by 2002:a1f:298e:: with SMTP id p136mr1480152vkp.40.1549354978486;
- Tue, 05 Feb 2019 00:22:58 -0800 (PST)
+        bh=B2bmbisHuVIYawJyBYYO7RFGK5f9BbXCucFYT52KAD4=;
+        b=Q4s2zCc43bS3WaSWK1A65ZjEJvkrgcJpNHawNfB1igIqGXzN1mVggfiv6n2Nz7N+/4
+         E5fiBkoCMJEKQg8Ol98WTlSRxlYD/CPzaFBMbdxhOVNBP32ERDtBAmEocSLx1oK51eab
+         xCnRnD9jtxYPl4cpERKVsv5KtGyAPLuyAGanAXZBgF8qzYmLbrS9YsBgtqwjRiK8IZXN
+         DGBBe2LoY/gsgCNhrYCRs0y7+V6mjfwGmQx2E3aQ+iwuTDgfoX1QL2Rv8HUbn7SBBrEY
+         26luqEZCLvKHazxeyfW2elug0O/xnCrHgycn9CaHA9MxT8YYTvF/opMkdW0mGl2GmyEz
+         7JRA==
+X-Gm-Message-State: AHQUAubA/PQQsi3KVOJwQR2yC+NzGIavLt+L5ayXCNasIvBAVSh4cO2q
+        A7vRAd1wDQggMKqY7+qaNuxQTN2vTsVteVD60OCMhQ==
+X-Google-Smtp-Source: AHgI3IbDR4EuPco6YNzypa0ZNqIf6S6yQEpVBszClWdskiIgbOWxkN6nloIFRJVCT+xCxeKp403dW6850iM/qOxm958=
+X-Received: by 2002:a6b:fe13:: with SMTP id x19mr1897387ioh.294.1549356010339;
+ Tue, 05 Feb 2019 00:40:10 -0800 (PST)
 MIME-Version: 1.0
-References: <1549272007-33471-1-git-send-email-biju.das@bp.renesas.com> <1549272007-33471-4-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1549272007-33471-4-git-send-email-biju.das@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 5 Feb 2019 09:22:46 +0100
-Message-ID: <CAMuHMdX8X9taBNVigxhDZbSiJ4j=y-96iMBS_ove43VQkfeeSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: renesas: r8a774c0: Add TMU clock
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+References: <1549297553-17647-1-git-send-email-vincent.guittot@linaro.org>
+ <1549297553-17647-2-git-send-email-vincent.guittot@linaro.org> <CAPDyKFrzs5PvrK_23HARKYkytPr3LF4S7j5rJ6LJANKmm7BMrA@mail.gmail.com>
+In-Reply-To: <CAPDyKFrzs5PvrK_23HARKYkytPr3LF4S7j5rJ6LJANKmm7BMrA@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 5 Feb 2019 09:39:59 +0100
+Message-ID: <CAKfTPtCqj62fYHYDth0evMqBYxY9JgqVBngDe57D4XqBKw35UA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM-runtime: move runtime accounting on ktime_get_mono_fast_ns()
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
-
-On Mon, Feb 4, 2019 at 10:25 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> This patch adds TMU clock to the R8A774C0 SoC.
+On Tue, 5 Feb 2019 at 09:10, Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> V1-->V2 Incorporated Geert's review comment.
+> On Mon, 4 Feb 2019 at 17:25, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+> >
+> > Similarly to what happened whith autosuspend, a deadlock has been raised
+> > with runtime accounting in the sequence:
+> >
+> > change_clocksource
+> >     ...
+> >     write_seqcount_begin
+> >     ...
+> >     timekeeping_update
+> >         ...
+> >         sh_cmt_clocksource_enable
+> >             ...
+> >             rpm_resume
+> >                 update_pm_runtime_accounting
+> >                     ktime_get
+> >                         do
+> >                             read_seqcount_begin
+> >                         while read_seqcount_retry
+> >     ....
+> >     write_seqcount_end
+> >
+> > Move runtime accounting on ktime_get_mono_fast_ns()
+> > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
+> > monotonic across an update of timekeeping and as a result time can goes
+> > backward. Add a test to skip accounting for such situation which should
+> > stay exceptional.
+> >
+> > Fixes: a08c2a5a3194 ("PM-runtime: Replace jiffies-based accounting with ktime-based accounting")
+> > Reported-by: Biju Das <biju.das@bp.renesas.com>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thanks for the update!
+Thanks
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v5.1.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Kind regards
+> Uffe
+>
+>
+> > ---
+> >  drivers/base/power/runtime.c | 17 +++++++++++++----
+> >  1 file changed, 13 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > index 1caa394..50740da 100644
+> > --- a/drivers/base/power/runtime.c
+> > +++ b/drivers/base/power/runtime.c
+> > @@ -66,13 +66,22 @@ static int rpm_suspend(struct device *dev, int rpmflags);
+> >   */
+> >  void update_pm_runtime_accounting(struct device *dev)
+> >  {
+> > -       u64 now = ktime_to_ns(ktime_get());
+> > +       u64 now = ktime_get_mono_fast_ns();
+> > +       u64 last = dev->power.accounting_timestamp;
+> >         u64 delta;
+> >
+> > -       delta = now - dev->power.accounting_timestamp;
+> > -
+> >         dev->power.accounting_timestamp = now;
+> >
+> > +       /*
+> > +        * Because ktime_get_mono_fast_ns() is not monotonic during
+> > +        * timekeeping update, we must ensure that now is after the last saved
+> > +        * timesptamp
+> > +        */
+> > +       if (now < last)
+> > +               return;
+> > +
+> > +       delta = now - last;
+> > +
+> >         if (dev->power.disable_depth > 0)
+> >                 return;
+> >
+> > @@ -1312,7 +1321,7 @@ void pm_runtime_enable(struct device *dev)
+> >
+> >                 /* About to enable runtime pm, set accounting_timestamp to now */
+> >                 if (!dev->power.disable_depth)
+> > -                       dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
+> > +                       dev->power.accounting_timestamp = ktime_get_mono_fast_ns();
+> >         } else {
+> >                 dev_warn(dev, "Unbalanced %s!\n", __func__);
+> >         }
+> > --
+> > 2.7.4
+> >
