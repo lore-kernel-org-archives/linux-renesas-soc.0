@@ -2,92 +2,83 @@ Return-Path: <SRS0=SaFT=QM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 548D2C282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 12:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFEAC282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 215B020818
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 12:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A97220844
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 13:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbfBEM7n (ORCPT
+        id S1728818AbfBENE0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:59:43 -0500
-Received: from sauhun.de ([88.99.104.3]:57334 "EHLO pokefinder.org"
+        Tue, 5 Feb 2019 08:04:26 -0500
+Received: from sauhun.de ([88.99.104.3]:57404 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbfBEM7n (ORCPT
+        id S1727635AbfBENE0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:59:43 -0500
+        Tue, 5 Feb 2019 08:04:26 -0500
 Received: from localhost (unknown [46.183.103.8])
-        by pokefinder.org (Postfix) with ESMTPSA id 993A72C0509;
-        Tue,  5 Feb 2019 13:59:32 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2] i2c: gpio: merge two very similar comments
-Date:   Tue,  5 Feb 2019 13:58:41 +0100
-Message-Id: <20190205125841.12445-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.19.1
+        by pokefinder.org (Postfix) with ESMTPSA id 5718C4A16DD;
+        Tue,  5 Feb 2019 14:04:24 +0100 (CET)
+Date:   Tue, 5 Feb 2019 14:04:23 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/3] i2c: gpio/algo-bit: clean up headers
+Message-ID: <20190205130423.GB12401@kunai>
+References: <20190119121655.5576-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gatW/ieO32f1wygP"
+Content-Disposition: inline
+In-Reply-To: <20190119121655.5576-1-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I think it is clear enough if we have the explanation once and make it
-clear it is applicable for both SCL and SDA. Reword it a little with
-the help of Simon's native language skills :)
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--gatW/ieO32f1wygP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Change since v1: add Simon's rewording
+On Sat, Jan 19, 2019 at 01:16:52PM +0100, Wolfram Sang wrote:
+> I wanted to sort headers in the i2c-gpio driver which produced a compile =
+error.
+> So, I had to fix i2c-algo-bit a little, too. Since there is a dependency
+> between these patches, here is a small series.
+>=20
+> Wolfram Sang (3):
+>   i2c: algo-bit: include main i2c header
+>   i2c: algo-bit: convert to SPDX header
+>   i2c: gpio: sort includes
 
- drivers/i2c/busses/i2c-gpio.c | 17 +++++------------
- 1 file changed, 5 insertions(+), 12 deletions(-)
+Applied to for-next, thanks!
 
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index c008d209f0b8..e8cde2c40d3f 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -286,11 +286,11 @@ static int i2c_gpio_probe(struct platform_device *pdev)
- 
- 	/*
- 	 * First get the GPIO pins; if it fails, we'll defer the probe.
--	 * If the SDA line is marked from platform data or device tree as
--	 * "open drain" it means something outside of our control is making
--	 * this line being handled as open drain, and we should just handle
--	 * it as any other output. Else we enforce open drain as this is
--	 * required for an I2C bus.
-+	 * If the SCL/SDA lines are marked "open drain" by platform data or
-+	 * device tree then this means that something outside of our control is
-+	 * marking these lines to be handled as open drain, and we should just
-+	 * handle them as we handle any other output. Else we enforce open
-+	 * drain as this is required for an I2C bus.
- 	 */
- 	if (pdata->sda_is_open_drain)
- 		gflags = GPIOD_OUT_HIGH;
-@@ -300,13 +300,6 @@ static int i2c_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->sda))
- 		return PTR_ERR(priv->sda);
- 
--	/*
--	 * If the SCL line is marked from platform data or device tree as
--	 * "open drain" it means something outside of our control is making
--	 * this line being handled as open drain, and we should just handle
--	 * it as any other output. Else we enforce open drain as this is
--	 * required for an I2C bus.
--	 */
- 	if (pdata->scl_is_open_drain)
- 		gflags = GPIOD_OUT_HIGH;
- 	else
--- 
-2.19.1
 
+--gatW/ieO32f1wygP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZidcACgkQFA3kzBSg
+KbbqEA/+IDV9EZpoICAkFTdTbKi/Qtt3K4yxDE7W9XKfMT7LESiR7g9ucLpdFox7
+SZn+DRu9wPzb9NxVD4KehRBzOTIdhJ8Km9EJ7uIZX4vd+QVY3869wZ4WKJDlq9J4
+bm8qZRa14/0KZgAeef+788/HR4wAjl6mWZOvEgeP5xgw6CezFpU31hZgj8aKv340
+AcTBekOYkIh8RqBdJjOd4VHzMiT5W0jBYPc4TBmTVBM3vN6px8wwJrsBztbinU3T
+MV6j/GZ7kVUdMBRBA37MthfIHOLaw/n8wuhX0G5vH5kX8M5GsPjfmFdMZR/A6MOm
+YasGs0hBnCD6RSmBYrmuHpde9IsfW6ebG9S04fDJqxb6F+z54lk59a/BbxzLHeaX
+BBaSXx+wKXXH0BjZRO8uDQopbjbXh2XkyGiidqER9Y7pl0Fe3oS49fh+WftJ1O65
+bWilT3+XfpR/HvNVrg7rEQdDSUs3rQQhXJPoBWPt7ma6qyO66qs8VqzLdynH74Fl
+lqbXSGlhk69uWdmh91qSAFCH8/2Lp8+u9mOEYKXpnqfPftzMkf30MT0D3MfsZCrJ
+xUasrdGJTisT8wzatBw3VlO4m3OJiwdgGGpdFfYb6TE793I/1gjiXM8OjN+Sn7fq
+fDyOJ/as8+w3HhzF72yBwx05K9gbdXeyShL4/IIUBI2n+xvrTkg=
+=ZQrM
+-----END PGP SIGNATURE-----
+
+--gatW/ieO32f1wygP--
