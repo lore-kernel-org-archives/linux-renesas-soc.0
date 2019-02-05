@@ -2,59 +2,56 @@ Return-Path: <SRS0=SaFT=QM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456ACC282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 15:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD66C282D7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 15:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1792083B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 15:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8330120663
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 15:44:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Oh/oXzmC"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="fZUXWSe0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbfBEPhB (ORCPT
+        id S1729917AbfBEPoh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:37:01 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:52004 "EHLO
+        Tue, 5 Feb 2019 10:44:37 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:52125 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbfBEPhB (ORCPT
+        with ESMTP id S1729835AbfBEPoh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:37:01 -0500
+        Tue, 5 Feb 2019 10:44:37 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id B34B325B7E9;
-        Wed,  6 Feb 2019 02:36:58 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 1BB7E25B7E9;
+        Wed,  6 Feb 2019 02:44:35 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549381019; bh=UdD3alDPP336NVnlgeCp1OcvMzOTg2oU+UOIqd2nMZs=;
+        t=1549381475; bh=87kfSsafaIAQOpco0riDmzNac+iwvZWsHGmhoJ42krQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Oh/oXzmC1lBVhYuzMZnNSeaBTtNj/ZLO585eoxcXnpqIeempQYjwCoz0Zia2QZGCd
-         mAD68+9IVvji8r2Yrkh3mIy5x997QSFmKK70ztQuzbc5zwkt4Sg8555yTUNVmhtK1e
-         F4jOjtVB9P3/xpYqzk3K1BjNpZprrb1V7p12cDTM=
+        b=fZUXWSe0SFP6hjEfpwwQqtUZA7H9/7nzmygZ8Cs5YGGZOLgV6CjNxCQ4jHHGiLbBt
+         5n30AVzUzjfiS8v+mwtx4QErBCqAZnOOyQI8Oc21J0ipTFZfC8ZMVPk5k3nwdnMtpM
+         tdjSdWmXrIyk1ty3O9HSr5/rahxDzFMLhVeXz+4E=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id E5F49940486; Tue,  5 Feb 2019 16:36:56 +0100 (CET)
-Date:   Tue, 5 Feb 2019 16:36:56 +0100
+        id 50D56940486; Tue,  5 Feb 2019 16:44:33 +0100 (CET)
+Date:   Tue, 5 Feb 2019 16:44:33 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
- r8a774c0
-Message-ID: <20190205153656.aywg4ewpyp34i633@verge.net.au>
-References: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a774c0: Add OPPs table for cpu
+ devices
+Message-ID: <20190205154433.55ee3bfdbdsjwzek@verge.net.au>
+References: <1548934450-10256-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
+In-Reply-To: <1548934450-10256-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -62,58 +59,15 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 05:40:05PM +0000, Lorenzo Pieralisi wrote:
-> On Tue, Dec 18, 2018 at 12:02:42PM +0000, Fabrizio Castro wrote:
-> > Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
-> > 
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v1->v2:
-> > * Dropped change to the description of "phys" optional property according
-> >   to Geert's comment
-> > 
-> >  Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
+On Thu, Jan 31, 2019 at 11:34:10AM +0000, Fabrizio Castro wrote:
+> This patch defines OOP tables for all CPUs, similarly to
+> what done by Takeshi Kihara and Yoshihiro Kaneko for the
+> R8A77990.
 > 
-> Hi Fabrizio,
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
 > 
-> Apologies for the delay in responding.
-> 
-> Should I take this patch via the PCI tree ?
+> This patch depends on series:
+> https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg38109.html
 
-Thanks, that would the preferred option from my point of view.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-> 
-> Thanks,
-> Lorenzo
-> 
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > index 976ef7b..6904882 100644
-> > --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > @@ -3,6 +3,7 @@
-> >  Required properties:
-> >  compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
-> >  	    "renesas,pcie-r8a7744" for the R8A7744 SoC;
-> > +	    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
-> >  	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
-> >  	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
-> >  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
-> > @@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
-> >  	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
-> >  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
-> >  				     RZ/G1 compatible device.
-> > -	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
-> > +	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
-> > +				     RZ/G2 compatible device.
-> >  
-> >  	    When compatible with the generic version, nodes must list the
-> >  	    SoC-specific version corresponding to the platform first
-> > -- 
-> > 2.7.4
-> > 
-> 
+Thanks, applied for v5.1.
