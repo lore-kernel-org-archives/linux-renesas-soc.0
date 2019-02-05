@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14898C282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA010C282D7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8D52175B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 798912145D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 08:10:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CwiIy9+8"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXC0ehae"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfBEIK3 (ORCPT
+        id S1728192AbfBEIKd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:10:29 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44755 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfBEIK3 (ORCPT
+        Tue, 5 Feb 2019 03:10:33 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:40347 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728181AbfBEIKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:10:29 -0500
-Received: by mail-ua1-f67.google.com with SMTP id d19so837497uaq.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Feb 2019 00:10:28 -0800 (PST)
+        Tue, 5 Feb 2019 03:10:31 -0500
+Received: by mail-ua1-f66.google.com with SMTP id n7so844064uao.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Feb 2019 00:10:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gxoEnVe+Vjte4GPkatgNUZFr6HlYZiQ/Ql2mHZyW+BE=;
-        b=CwiIy9+8bQhetX3jE/IloHLl00yjggv0xrVSzfSfNonBSIkyGmMy0siLmglUFGH1CU
-         1xZT8ehXbPTXlUminWUjuW/XJ/zsClZXDVbci8oSax9EhVyBmVqUF9UmR6n0XgLFcPz+
-         QOGm/q7UgiaZ9vzfQE9OUz7QLsJ0rIdKJwfzI=
+        bh=i0j1f/7ELLhI89wgaZXD9QSuujo2YuCpG10Bl7Mn71Y=;
+        b=eXC0ehaeA5Xz0wOqIgKHsZV4s3GVAREioJmEUCemm9BTlCyF2DzpzrR8201tipR1+q
+         7jMYoR+O4W8Bpymd/ypX3S8dO8Lv/nDQeb40omhPIMaqf1xLw32q1y9IbwIuWbl2gfGV
+         JEcBbjd7AqnT+AKHdWT5WvupQUVcSWFnfX0Ak=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gxoEnVe+Vjte4GPkatgNUZFr6HlYZiQ/Ql2mHZyW+BE=;
-        b=ZaF9U1F9/uwSRUjTHG6tALRneAQLMuJmlLISKG++XF4fpBbaEzbLRqIxaAWiFQAHLz
-         kGCmsZrfLppj5bCm+X0MhsBEdmTcqqkCr6U0Iev7EhWS0CwroyJIp7bZ+gIb7SXjijGh
-         PyiHYJ1ygwTsq5UcwYXWD0u/ayTIXjWpfsHQ67ngJ6ZSEhWbnyvWwAPIr6/QEBfeqW7J
-         mFDbkj4Zg/L7zIjNcyD1whEBhB1RlqADTToSUP1m0HCsr1HcrmVaQUJ3sBhhfv1DRQtA
-         YYARyYx8X4viIopm4tXTwG8DlawcsOY00KB2LDkZRwZXDbt8f8//+3iCj6DiyQg/rUwK
-         RtQA==
-X-Gm-Message-State: AHQUAuaK7FBBQgevWubfvJK9B8IPtN/t9LtHu5oCgXHk43UA7YrC3cyI
-        GzID0Ay5l1OgehiH8GdO2HuuD3zQbsiX/x7zXN78sg==
-X-Google-Smtp-Source: AHgI3IYdcq4Qsyb1csuGEXT3J5FqsCuk81iMJIjnMeZ3ljIufq8VriCbdiW+TQeYNOMH0TKiv0PmLU3SlDnHXCnWRrs=
-X-Received: by 2002:ab0:31d5:: with SMTP id e21mr1387608uan.107.1549354227865;
- Tue, 05 Feb 2019 00:10:27 -0800 (PST)
+        bh=i0j1f/7ELLhI89wgaZXD9QSuujo2YuCpG10Bl7Mn71Y=;
+        b=GwHJ8kwIVmK+kGRsnqUKwVNMLMKvqniygmX2x536Da93iVkOfS/oxm1NFRcuFoO+Ps
+         5rgcXQ6adn3hrdCNTK06MVD+fItZtztjQmdrhRwKPun0BhUHmnfrERPK0yhuR7CyK5jh
+         ttLYA0hBpE/QHNkdEjnq/MacWjDTZcwlHhf+EGH74MPITCy+/nqx0HtBSNQqPYS2L+nZ
+         T5tiK3SNAz6kXA7d/4r9LrhesymV6u0SHyerHqPeHBDCflCWsWeAQWmrPSJwfaNbac0y
+         LNXYsC69BT+yq9nzjUk7cPCI+J0NPqHqqXjYLmIk+gbnxRV2Y+XDwnhb3XKxdbT/+ZBL
+         BCGA==
+X-Gm-Message-State: AHQUAuaSnjGDWh+9iEbgjUYekeyTb1OlXnkpRvl3Klsr0IP/tTn5dnCW
+        c9PsYue7/WtVz7lv1LSGG9GNrYM3y4SDErJ22oy5mg==
+X-Google-Smtp-Source: AHgI3IbVvZx/jLvXMDvjzGiW8jzC0rA+HNa8/r+YA/SdzydQDZftHCs6Qx0Ak5BKmzHgFg2Pyg2VcQ6C5WIqCJJmYgo=
+X-Received: by 2002:a9f:2244:: with SMTP id 62mr1331326uad.119.1549354230688;
+ Tue, 05 Feb 2019 00:10:30 -0800 (PST)
 MIME-Version: 1.0
-References: <1549297553-17647-1-git-send-email-vincent.guittot@linaro.org> <1549297553-17647-2-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1549297553-17647-2-git-send-email-vincent.guittot@linaro.org>
+References: <1549297553-17647-1-git-send-email-vincent.guittot@linaro.org> <1549297553-17647-3-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1549297553-17647-3-git-send-email-vincent.guittot@linaro.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 5 Feb 2019 09:09:50 +0100
-Message-ID: <CAPDyKFrzs5PvrK_23HARKYkytPr3LF4S7j5rJ6LJANKmm7BMrA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM-runtime: move runtime accounting on ktime_get_mono_fast_ns()
+Date:   Tue, 5 Feb 2019 09:09:54 +0100
+Message-ID: <CAPDyKFqNgnvHM0hpgzy-oY+oj0_q72LDybgZJ5r8BugDM97Oqg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PM-runtime: update time accounting only when enabled
 To:     Vincent Guittot <vincent.guittot@linaro.org>
 Cc:     Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -71,36 +71,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 4 Feb 2019 at 17:25, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+On Mon, 4 Feb 2019 at 17:26, Vincent Guittot <vincent.guittot@linaro.org> wrote:
 >
-> Similarly to what happened whith autosuspend, a deadlock has been raised
-> with runtime accounting in the sequence:
+> Update accounting_timestamp field only when PM runtime is enable
+> and don't forget to account the last state before disabling it.
 >
-> change_clocksource
->     ...
->     write_seqcount_begin
->     ...
->     timekeeping_update
->         ...
->         sh_cmt_clocksource_enable
->             ...
->             rpm_resume
->                 update_pm_runtime_accounting
->                     ktime_get
->                         do
->                             read_seqcount_begin
->                         while read_seqcount_retry
->     ....
->     write_seqcount_end
->
-> Move runtime accounting on ktime_get_mono_fast_ns()
-> With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> monotonic across an update of timekeeping and as a result time can goes
-> backward. Add a test to skip accounting for such situation which should
-> stay exceptional.
->
-> Fixes: a08c2a5a3194 ("PM-runtime: Replace jiffies-based accounting with ktime-based accounting")
-> Reported-by: Biju Das <biju.das@bp.renesas.com>
+> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
 > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
@@ -110,48 +86,60 @@ Uffe
 
 
 > ---
->  drivers/base/power/runtime.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
+>  drivers/base/power/runtime.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 >
 > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 1caa394..50740da 100644
+> index 50740da..ed62cca 100644
 > --- a/drivers/base/power/runtime.c
 > +++ b/drivers/base/power/runtime.c
-> @@ -66,13 +66,22 @@ static int rpm_suspend(struct device *dev, int rpmflags);
+> @@ -66,11 +66,14 @@ static int rpm_suspend(struct device *dev, int rpmflags);
 >   */
 >  void update_pm_runtime_accounting(struct device *dev)
 >  {
-> -       u64 now = ktime_to_ns(ktime_get());
-> +       u64 now = ktime_get_mono_fast_ns();
-> +       u64 last = dev->power.accounting_timestamp;
->         u64 delta;
+> -       u64 now = ktime_get_mono_fast_ns();
+> -       u64 last = dev->power.accounting_timestamp;
+> -       u64 delta;
+> +       u64 now, last, delta;
 >
-> -       delta = now - dev->power.accounting_timestamp;
-> -
->         dev->power.accounting_timestamp = now;
->
-> +       /*
-> +        * Because ktime_get_mono_fast_ns() is not monotonic during
-> +        * timekeeping update, we must ensure that now is after the last saved
-> +        * timesptamp
-> +        */
-> +       if (now < last)
+> -       dev->power.accounting_timestamp = now;
+> +       if (dev->power.disable_depth > 0)
 > +               return;
 > +
-> +       delta = now - last;
+> +       last = dev->power.accounting_timestamp;
 > +
->         if (dev->power.disable_depth > 0)
->                 return;
+> +       dev->power.accounting_timestamp = now = ktime_get_mono_fast_ns();
 >
-> @@ -1312,7 +1321,7 @@ void pm_runtime_enable(struct device *dev)
+>         /*
+>          * Because ktime_get_mono_fast_ns() is not monotonic during
+> @@ -82,9 +85,6 @@ void update_pm_runtime_accounting(struct device *dev)
 >
->                 /* About to enable runtime pm, set accounting_timestamp to now */
->                 if (!dev->power.disable_depth)
-> -                       dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
-> +                       dev->power.accounting_timestamp = ktime_get_mono_fast_ns();
->         } else {
->                 dev_warn(dev, "Unbalanced %s!\n", __func__);
+>         delta = now - last;
+>
+> -       if (dev->power.disable_depth > 0)
+> -               return;
+> -
+>         if (dev->power.runtime_status == RPM_SUSPENDED)
+>                 dev->power.suspended_time += delta;
+>         else
+> @@ -1298,6 +1298,9 @@ void __pm_runtime_disable(struct device *dev, bool check_resume)
+>                 pm_runtime_put_noidle(dev);
 >         }
+>
+> +       /* Update time accounting before disabling pm runtime */
+> +       update_pm_runtime_accounting(dev);
+> +
+>         if (!dev->power.disable_depth++)
+>                 __pm_runtime_barrier(dev);
+>
+> @@ -1521,7 +1524,6 @@ void pm_runtime_init(struct device *dev)
+>         dev->power.request_pending = false;
+>         dev->power.request = RPM_REQ_NONE;
+>         dev->power.deferred_resume = false;
+> -       dev->power.accounting_timestamp = 0;
+>         INIT_WORK(&dev->power.work, pm_runtime_work);
+>
+>         dev->power.timer_expires = 0;
 > --
 > 2.7.4
 >
