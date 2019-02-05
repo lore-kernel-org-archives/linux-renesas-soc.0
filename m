@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18884C282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 14:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C977C282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 14:36:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D793920663
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 14:33:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF039206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 14:36:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="bKyzR6Pc"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="XJwc746Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729130AbfBEOdP (ORCPT
+        id S1729211AbfBEOgD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 09:33:15 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:51492 "EHLO
+        Tue, 5 Feb 2019 09:36:03 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:51526 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbfBEOdP (ORCPT
+        with ESMTP id S1728644AbfBEOgD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 09:33:15 -0500
+        Tue, 5 Feb 2019 09:36:03 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 310C025B7E9;
-        Wed,  6 Feb 2019 01:33:13 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2876E25B7E9;
+        Wed,  6 Feb 2019 01:36:01 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549377193; bh=VmK2Oy3u2GiuXNJpMm/iRub/ywqkOiXzst1SH971W1Y=;
+        t=1549377361; bh=3GXU09+dcu9fNLwKAefaSAYPnPUaCOS29V9g7tj6YE4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bKyzR6PchZVyK+QlXBHY0wEoMq6yAAhwGQNiyTCwA0WJG0jGIZLp+69wAT/SQEcjT
-         8ncz7LU3lYuUTQbqltMNcFIPS0IK0cdm5d7ylI6FPaGHVabwWhQp2IDfmFc7XauNjv
-         P6OD4Nn0aooHHYVV64o5uxd2LgEJCneh5yu8FIzU=
+        b=XJwc746Y8/Bi7tbKIBgHODdy5hOJi5q4LGodBchOuym5D8XBEGtCKsfv3Euv4VKmz
+         Uhe+nhE3H3UozvDSM9gkA/j1/onTKxIhEILvxiBX95MRKF0TanhcqTbkV9VisoHk92
+         Uf60qXNSv0urzCQDLYCPPm9XPU4O2gcuoBML9vKI=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 57847940486; Tue,  5 Feb 2019 15:33:11 +0100 (CET)
-Date:   Tue, 5 Feb 2019 15:33:11 +0100
+        id 46F53940486; Tue,  5 Feb 2019 15:35:59 +0100 (CET)
+Date:   Tue, 5 Feb 2019 15:35:59 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 2/2] i2c: sh_mobile: use new clock calculation formulas
- for Gen3
-Message-ID: <20190205143311.p67aju4pou6xvriw@verge.net.au>
-References: <20190204220010.5671-1-wsa+renesas@sang-engineering.com>
- <20190204220010.5671-3-wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH v3 2/5] clk: renesas: rcar-gen3: Parameterise Z and Z2
+ clock offset
+Message-ID: <20190205143558.jhfy2atkcml7t5fd@verge.net.au>
+References: <20190131094021.3092-1-horms+renesas@verge.net.au>
+ <20190131094021.3092-3-horms+renesas@verge.net.au>
+ <CAMuHMdXsQ_e3=9q8EJVcK3L5BSNGQDux4tGe+sxLJPgFFVEtZQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204220010.5671-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <CAMuHMdXsQ_e3=9q8EJVcK3L5BSNGQDux4tGe+sxLJPgFFVEtZQ@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -55,12 +59,51 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 11:00:10PM +0100, Wolfram Sang wrote:
-> We could finally measure the clock on an Ebisu board. The new formula
-> gives way better results, i.e. 100kHz instead of 106kHz and 400kHz
-> instead of 387kHz. Switch to these formulas for all Gen3 SoCs.
+On Tue, Feb 05, 2019 at 11:48:06AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> On Thu, Jan 31, 2019 at 10:40 AM Simon Horman
+> <horms+renesas@verge.net.au> wrote:
+> > Parameterise the offset of control bits within the FRQCRC register
+> > for Z and Z2 clocks.
+> >
+> > This is in preparation for supporting the Z2 clock on the R-Car E3
+> > (r8a77990) SoC which uses a different offset for control bits to
+> > other, already, supported SoCs.
+> >
+> > This mechanism should be extendable to other clocks, such as ZG,
+> > f.e. by adding the number of control bits as a parameter to
+> > cpg_z_clk_register().
+> >
+> > As suggested by Geert Uytterhoeven.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> 
+> > @@ -568,14 +566,9 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+> >                 break;
+> >
+> >         case CLK_TYPE_GEN3_Z:
+> > -               return cpg_z_clk_register(core->name, __clk_get_name(parent),
+> > -                                         base, CPG_FRQCRC_ZFC_MASK,
+> > -                                         core->div);
+> > -
+> >         case CLK_TYPE_GEN3_Z2:
+> >                 return cpg_z_clk_register(core->name, __clk_get_name(parent),
+> > -                                         base, CPG_FRQCRC_Z2FC_MASK,
+> > -                                         core->div);
+> > +                                         base, core->div, core->offset);
+> 
+> CLK_TYPE_GEN3_Z and CLK_TYPE_GEN3_Z2 are now the same type.
+> Perhaps they can be merged completely, and be absorbed into the
+> DEF_GEN3_Z() macro?
+> Or not, depending on how ZG support will be added...
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Strange, I did have them merged locally and I think that is the right thing
+to do, but some how this version got posted. I think that if they
+subsequently need to be re-split then so be it. But lets not jump
+to conclusions.
 
+I'll plan on posting v4 unless you object.
