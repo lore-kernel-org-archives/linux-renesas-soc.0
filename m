@@ -2,49 +2,50 @@ Return-Path: <SRS0=SaFT=QM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862FFC282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 09:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38684C282CC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 10:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 595D020844
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 09:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 102E820844
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Feb 2019 10:48:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfBEJaZ (ORCPT
+        id S1727949AbfBEKsT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:30:25 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46387 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbfBEJaZ (ORCPT
+        Tue, 5 Feb 2019 05:48:19 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:34745 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfBEKsT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:30:25 -0500
-Received: by mail-ua1-f65.google.com with SMTP id v24so884337uap.13;
-        Tue, 05 Feb 2019 01:30:25 -0800 (PST)
+        Tue, 5 Feb 2019 05:48:19 -0500
+Received: by mail-vs1-f68.google.com with SMTP id y27so1870136vsi.1;
+        Tue, 05 Feb 2019 02:48:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8oORcRbFauZKF4z73t6MSzllV6Ekq2Xjm3pH+EVV3C0=;
-        b=TnzX/E3/ZedMdIjv7ns1TqJTpqC2a27frSN6vcOGn4d5oJ0Maubc2auxrQMYn+CqIi
-         olHPryJzl0WlD5gVGnqri6KZNnu7eAKl6HnuA1DtZSD5/Gm5Yp7I5WxG3uu3voDIxCdc
-         sK76jn2bpyfOYkzAeXHsa4gYmeSe9mzJma6r5CI95HYoxHbZIvtT3SLeGCJVBhMFsqie
-         kHpcAWcqhkkEcHh1GGtFflN//DRXuqpK004dQR0p91CVKeyXImfhRayc+hb8I9VzPUk5
-         GDb8U9kPi6DHEgiZEwlgE2wMDCSi+FyPprT4m6r2kPQiC9GXhnPRmE29/sQmdGqHZ6ma
-         /FLw==
-X-Gm-Message-State: AHQUAub5xXQM8H2WfSZd1EUH6ocmMaO7f971g7smOGYwGLOKNxksCZ1Q
-        adSahnXLTPBbhJtvKPwiRql2Vp9NWJBH10yRNs8=
-X-Google-Smtp-Source: AHgI3IbiOtAAEc4YuP0ZMtxrpbdfXXQxd4zSfFHYgzBZYzfPYGHCdkr9ov+TJnDjpXWH6ElOybJrgQkGmwHC3cj71oI=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr1467578ual.20.1549359024530;
- Tue, 05 Feb 2019 01:30:24 -0800 (PST)
+        bh=JGaFgVO7R3UTfl8joDIeXgDdfkFqHZwe182TfUHL74U=;
+        b=Kai6z7++Gvf6hhJJPbTNYQgcBo1jEmRTbglvBF+Mv0vXLiIUZ3mv8b0TJysDrBShi0
+         l2KgIt/PfDZKI0+hW9p/ITtW+VFWLMuq6uZmXEBn+6Ll7oUvCmssMKrX9wbGHxv6iyxV
+         xkxWVx3IOvJ6y8tzkw9+qAVBwXlcRNouJXOXGOsZ30nK7jAzEBovTBlpnzw9CJBhbmRm
+         6/fxfcPx88s6JRzVEhwFZDILV120z1kgvgS7C0zVsMIk2bNO3nWc4mtELrYiaqVoDGaw
+         fWfzvKmyfFub45zRf/e4MwtxzipPWEAu6D9S1/3Lr7qZkGxM2v50pi3PS0g+JyiJRVf9
+         LQRw==
+X-Gm-Message-State: AHQUAuYGWWaOJSx3vn8fA68/4sHnUnhfBM/2RiEQJrPqBrMgO8cWKpmb
+        rssdwM/Id9cwEHUkVYTQ1R/9XpabR0DllayabTM=
+X-Google-Smtp-Source: AHgI3IaX07hsQtSKfIy8Ipvz+UnhhfdmBtsTo0NLYiwDLl3uIUG/+wGUVHO6kYpGJkULdY5sDImxuEjTSR2cBMW/TFU=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr1770183vsj.11.1549363698393;
+ Tue, 05 Feb 2019 02:48:18 -0800 (PST)
 MIME-Version: 1.0
-References: <20190131094021.3092-1-horms+renesas@verge.net.au>
-In-Reply-To: <20190131094021.3092-1-horms+renesas@verge.net.au>
+References: <20190131094021.3092-1-horms+renesas@verge.net.au> <20190131094021.3092-3-horms+renesas@verge.net.au>
+In-Reply-To: <20190131094021.3092-3-horms+renesas@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 5 Feb 2019 10:30:13 +0100
-Message-ID: <CAMuHMdW+hTQKQvnLfsoNQRM5g=NbZaSGzvr3xczQjd58TVBuDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] clk: renesas: r8a77990: Add Z2 clock
+Date:   Tue, 5 Feb 2019 11:48:06 +0100
+Message-ID: <CAMuHMdXsQ_e3=9q8EJVcK3L5BSNGQDux4tGe+sxLJPgFFVEtZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] clk: renesas: rcar-gen3: Parameterise Z and Z2
+ clock offset
 To:     Simon Horman <horms+renesas@verge.net.au>
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -62,30 +63,42 @@ Hi Simon,
 
 On Thu, Jan 31, 2019 at 10:40 AM Simon Horman
 <horms+renesas@verge.net.au> wrote:
-> this series adds the R-Car E3 (r8a77990) Z2 clock as a clock
-> with both a fixed and variable divisor with a parent of PLL0.
+> Parameterise the offset of control bits within the FRQCRC register
+> for Z and Z2 clocks.
 >
-> In order to do so this series:
+> This is in preparation for supporting the Z2 clock on the R-Car E3
+> (r8a77990) SoC which uses a different offset for control bits to
+> other, already, supported SoCs.
 >
-> 1. Parameterise Z and Z2 clock fixed divisor in shared Gen-3 CPG
->    driver code to allow fixed divisors other than 2 - the E3 Z2
->    clock has a fixed divisor of 4
+> This mechanism should be extendable to other clocks, such as ZG,
+> f.e. by adding the number of control bits as a parameter to
+> cpg_z_clk_register().
 >
-> 2. Parameterise offset of Z and Z2 clock controll bits -
->    the offsets on E3 differ to other R-Car Gen 3 SoCs
+> As suggested by Geert Uytterhoeven.
 >
-> 3. Support Z and Z2 clocks with high frequency parents.
->    The parent of the E3 Z2 clock, PLL0, is 4.8GHz and thus
->    when expressed in HZ must be treated as a 64bit value.
->
-> 4. Actually add the E3 Z2 clock
->
-> As a follow-up, as per reading the documentation, the RZ/G2E (r8a774c0)
-> Z2 clock is added.
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-Thanks, this looks good to me.
-Before queuing in clk-renesas-v5.1, to allow more testing, I'm importing
-this into a topic branch, to be included in today's renesas-drivers release.
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+
+> @@ -568,14 +566,9 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>                 break;
+>
+>         case CLK_TYPE_GEN3_Z:
+> -               return cpg_z_clk_register(core->name, __clk_get_name(parent),
+> -                                         base, CPG_FRQCRC_ZFC_MASK,
+> -                                         core->div);
+> -
+>         case CLK_TYPE_GEN3_Z2:
+>                 return cpg_z_clk_register(core->name, __clk_get_name(parent),
+> -                                         base, CPG_FRQCRC_Z2FC_MASK,
+> -                                         core->div);
+> +                                         base, core->div, core->offset);
+
+CLK_TYPE_GEN3_Z and CLK_TYPE_GEN3_Z2 are now the same type.
+Perhaps they can be merged completely, and be absorbed into the
+DEF_GEN3_Z() macro?
+Or not, depending on how ZG support will be added...
 
 Gr{oetje,eeting}s,
 
