@@ -2,124 +2,256 @@ Return-Path: <SRS0=J+Ha=QO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C3DC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 12:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1E3C282CC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5141C21902
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 12:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D40BF2146E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sZ+J5qSO"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="cPlTDEwC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfBGMLW (ORCPT
+        id S1727070AbfBGNgQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:11:22 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51417 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfBGMLW (ORCPT
+        Thu, 7 Feb 2019 08:36:16 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:55601 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726750AbfBGNgP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:11:22 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190207121120euoutp02b93f7ea2665b2f5e9591310a59184ffd~BE8RFqpdv2243322433euoutp02i
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  7 Feb 2019 12:11:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190207121120euoutp02b93f7ea2665b2f5e9591310a59184ffd~BE8RFqpdv2243322433euoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549541480;
-        bh=2eyJDlTKR8VXSIEydfLghRocx1prP49pwrBjMb74ig0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=sZ+J5qSOMTT6GaMJCInL+Ntjh/Ktj0C846kX/wnlz7xpxr3uJLsZ9aDbvZ65VdGDJ
-         GOwiCcxc9KPZ6x0dIwnKFLlI1PfEOQd0NCdtLi5PJ3do9pT9tLSUTM5RyExWhUfLO8
-         aHijGMCbsDFZ+iqXMTcIi9MHMmdfWAdFff4++GM8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190207121120eucas1p1b9433cf685a97a2698dee1ecf9f4163c~BE8Qp7C811574015740eucas1p17;
-        Thu,  7 Feb 2019 12:11:20 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id E2.9A.04806.7602C5C5; Thu,  7
-        Feb 2019 12:11:19 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190207121119eucas1p27c173ad3592b433a4273da31caec6e2b~BE8P9sJMH2370623706eucas1p21;
-        Thu,  7 Feb 2019 12:11:19 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190207121119eusmtrp1185613dc15759d681eee530df052b589~BE8PveoIv1816518165eusmtrp1k;
-        Thu,  7 Feb 2019 12:11:19 +0000 (GMT)
-X-AuditID: cbfec7f5-367ff700000012c6-46-5c5c2067c1bf
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 54.0D.04284.6602C5C5; Thu,  7
-        Feb 2019 12:11:18 +0000 (GMT)
-Received: from [106.120.53.102] (unknown [106.120.53.102]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190207121118eusmtip2ddd34380f62f366c3550ab213f85dc26~BE8Pad1De1853518535eusmtip2i;
-        Thu,  7 Feb 2019 12:11:18 +0000 (GMT)
-Subject: Re: [PATCH 1/1] ata: pata_samsung_cf: simplify getting .driver_data
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <db237310-2a6f-e390-7032-d33262916216@samsung.com>
-Date:   Thu, 7 Feb 2019 13:11:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
-        Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181021195949.1351-2-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleLIzCtJLcpLzFFi42LZduznOd10hZgYgztL9CxW3+1nszi24xGT
-        xeVdc9gstr58x2TRd87dgdXj8tlSj2cL17N4fN4kF8AcxWWTkpqTWZZapG+XwJWxeO4T9oLp
-        zBVvnsxha2C8ztTFyMEhIWAisWGrZhcjF4eQwApGiRXHrzN2MXICOV8YJWb8ZoNIfGaU+P3y
-        OxtMQ88seYj4ckaJ6d09UEXvGSVmLbnHDtItLOAj0X1mDhOILSJgLLGmeTZYnFmgTuJ431uw
-        OJuAlcTE9lVg23gF7CRmPH8OFmcRUJGYsHkVK8gyUYEIif4z6hAlghInZz5hAbE5BVwlmubs
-        YYQYaSBxZNEcVghbXmL72znMIPdICDSzS2y9OJENJCEh4CJx/N9EdghbWOLV8S1QtozE6ck9
-        LBAN0xkl3vxaCuWsZ5RYc+YYE0SVtcTh4xdZIWxHiRuPJzNDgoJP4sZbQYjNfBKTtk2HCvNK
-        dLQJQVSrSWxYtoENZlfXzpXMELaHxKSf3YwTGBVnIfltFpJ/ZiH5ZwEj8ypG8dTS4tz01GLj
-        vNRyveLE3OLSvHS95PzcTYzA9HH63/GvOxj3/Uk6xCjAwajEwxtwKypGiDWxrLgy9xCjBAez
-        kgivmFxMjBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeaoYH0UIC6YklqdmpqQWpRTBZJg5OqQZG
-        1se7ci+8fHRr47z2hfOZypg/868KNruTsfRbcbFi1extzXqbtjWqMZvKf1ofUhY2l1vCmLtc
-        fu+8gvuLNeyNeCJZnLacOnHnecGa2/mRzcnnlxeYd327LXkqvi4q0dLoO99PwQqm1jlZCWeb
-        i8MYNGq/ydpu9lk35fC8tK6UGzVfT+/c/vqGEktxRqKhFnNRcSIAdd5VKxsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42I5/e/4Pd00hZgYg+sPrSxW3+1nszi24xGT
-        xeVdc9gstr58x2TRd87dgdXj8tlSj2cL17N4fN4kF8AcpWdTlF9akqqQkV9cYqsUbWhhpGdo
-        aaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJexeO4T9oLpzBVvnsxha2C8ztTFyMEhIWAi
-        0TNLvouRi0NIYCmjxM5HC1kg4jISx9eXdTFyApnCEn+udbGB2EICbxklli6KBbGFBXwkus/M
-        YQKxRQSMJdY0z2aHmHOZUWLlugdgDcwCdRIzvk4FK2ITsJKY2L6KEcTmFbCTmPH8OVicRUBF
-        YsLmVawgtqhAhMSthx0sEDWCEidnPgGzOQVcJZrm7GGEmKknseP6L1YIW15i+9s5zBMYBWch
-        aZmFpGwWkrIFjMyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAqNi27Gfm3cwXtoYfIhRgINR
-        iYc34FZUjBBrYllxZe4hRgkOZiURXjG5mBgh3pTEyqrUovz4otKc1OJDjKZAT0xklhJNzgdG
-        bF5JvKGpobmFpaG5sbmxmYWSOO95g8ooIYH0xJLU7NTUgtQimD4mDk6pBsboaKUvNz7xHZs2
-        x2/X2e2RXmFcd3RSQ041Ga/cczQ88HBX0/elpoI9uxazscf5P3WrOd6m/+tB9JuaI3Idl+9Z
-        V/z7U/aTL9Atb+KbkGzd6kdKQec2POXcnt+6vy9qoU7cfq0U5hjB02xZ36YdyM1J+Jjsfb36
-        Wr7M4ijPWRH8sto/uC7lxCixFGckGmoxFxUnAgDwjdIvoAIAAA==
-X-CMS-MailID: 20190207121119eucas1p27c173ad3592b433a4273da31caec6e2b
-X-Msg-Generator: CA
-X-RootMTR: 20181021200001epcas1p29d6bcf070cdacfe093b17e2c2c3b6f50
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181021200001epcas1p29d6bcf070cdacfe093b17e2c2c3b6f50
-References: <20181021195949.1351-1-wsa+renesas@sang-engineering.com>
-        <CGME20181021200001epcas1p29d6bcf070cdacfe093b17e2c2c3b6f50@epcas1p2.samsung.com>
-        <20181021195949.1351-2-wsa+renesas@sang-engineering.com>
+        Thu, 7 Feb 2019 08:36:15 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2541725B7E2;
+        Fri,  8 Feb 2019 00:36:10 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1549546570; bh=UmnSDGx9AZJkqmAobrpuFFnf/+wQbmMB7rXMTWi0QUM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cPlTDEwC6UzdWMh/lFgGZPNmNaeasUHODkAIdm4W2LfnBglZDtVTobYpZS/27gG2P
+         xMtzIxeZC1i0iVpAOXtfK5EQbwfz8x4TLxu8/I03M0LNFUORak7YshNjtTKYUK4Sn9
+         4MU+nHTN7kBZFQ3Ue7h4lxq2zq99J5KjcWmsQ7Yw=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 512999401DB; Thu,  7 Feb 2019 14:36:07 +0100 (CET)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH v4 0/5] clk: renesas: r8a77990, r8a774c0: Add Z2 clock
+Date:   Thu,  7 Feb 2019 14:35:45 +0100
+Message-Id: <20190207133550.13967-1-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi,
 
-On 10/21/2018 09:59 PM, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+this series adds the Z2 clock as a clock with both a fixed and variable
+divisor with a parent of PLL0 to the CPG-MSSR drivers for the R-Car E3
+(r8a77990) and RZ/G2E (r8a774c0) SoCs.
 
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In order to do so this series:
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+1. Parameterise Z and Z2 clock fixed divisor in shared Gen-3 CPG
+   driver code to allow fixed divisors other than 2 - the E3 Z2
+   clock has a fixed divisor of 4
+
+2. Parameterise offset of Z and Z2 clock control bits -
+   the offsets on E3 differ to other R-Car Gen 3 SoCs
+
+3. Support Z and Z2 clocks with high frequency parents.
+   The parent of the E3 Z2 clock, PLL0, is 4.8GHz and thus
+   when expressed in HZ must be treated as a 64bit value.
+
+4. Actually add the Z2 clocks
+
+Changes since v3
+----------------
+* Add and use DIV64_U64_ROUND_CLOSEST in the patch to allow
+  high frequency parents. This corrects the patch for 32bit platforms.
+* Accumulate review and testing tags.
+
+Changes since v2
+----------------
+* Parameterise control bit offset rather than using a quirk
+* Revised RZ/G2E patch - I was confused and updating the file for
+  the wrong part number
+
+
+Testing Overview
+----------------
+
+This patchset has been tested on Ebisu-4D/E3 with
+top of renesas-devel-20190207-v5.0-rc5. This allowed CPUFreq
+to be successfully exercised, showing scaling of the Z2 clock as per the
+results below.
+
+This patchset was also tested for regressions Salvator-X/M3-W ES1.0.
+As per the results below CPUFreq was used to show that with these
+patches applied Z and Z2 clocks still scale as expected.
+
+This v3 of this patchset has been independently tested RZ/G2E.
+It is not expected that v4 will have any behavioural differences
+on that (or any other 64bit) platform.
+
+
+Patches List by Author
+----------------------
+
+Simon Horman (3):
+  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock offset
+  clk: renesas: rcar-gen3: Support Z and Z2 clocks with high frequency
+    parents
+  clk: renesas: r8a774c0: Add Z2 clock
+
+Takeshi Kihara (2):
+  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock fixed divisor
+  clk: renesas: r8a77990: Add Z2 clock
+
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c |  4 ++--
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c |  1 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  |  5 +++--
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  |  5 +++--
+ drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 +-
+ drivers/clk/renesas/r8a77990-cpg-mssr.c |  1 +
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 27 +++++++++++++--------------
+ drivers/clk/renesas/rcar-gen3-cpg.h     |  4 ++++
+ include/linux/math64.h                  | 13 +++++++++++++
+ 9 files changed, 41 insertions(+), 21 deletions(-)
+
+Ebisu-4D/E3 Test Results
+------------------------
+
+# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+performance
+# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
+800000 1000000 1200000 
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
+/sys/kernel/debug/clk/z2/clk_rate:1200000000
+# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:975000
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:975000
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
+/sys/kernel/debug/clk/z2/clk_rate:975000000
+# echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:787500
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:800000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:787500
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:800000
+/sys/kernel/debug/clk/z2/clk_rate:787500000
+# echo 1200000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
+/sys/kernel/debug/clk/z2/clk_rate:1200000000
+
+
+Salvator-X/M3-W ES1 Test Results
+--------------------------------
+
+# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+performance
+# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
+500000 1000000 1500000 
+# cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_available_frequencies
+800000 1000000 1200000 
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1499999
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1500000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1499999
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1500000
+/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
+/sys/kernel/debug/clk/z/clk_rate:1499999940
+/sys/kernel/debug/clk/z2/clk_rate:1199999952
+# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:984374
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:984374
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
+/sys/kernel/debug/clk/z/clk_rate:984374961
+/sys/kernel/debug/clk/z2/clk_rate:1199999952
+# echo 1000000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:984374
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:984374
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:974999
+/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:974999
+/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:974999
+/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1000000
+/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:974999
+/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1000000
+/sys/kernel/debug/clk/z/clk_rate:984374961
+/sys/kernel/debug/clk/z2/clk_rate:974999961
+# echo 500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+# echo 800000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:468749
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:500000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:468749
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:500000
+/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:787499
+/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:800000
+/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:787499
+/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:800000
+/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:787499
+/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:800000
+/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:787499
+/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:800000
+/sys/kernel/debug/clk/z/clk_rate:468749981
+/sys/kernel/debug/clk/z2/clk_rate:787499969
+# echo 1500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+# echo 1200000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
+# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
+/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1499999
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1500000
+/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1499999
+/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1500000
+/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
+/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
+/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
+/sys/kernel/debug/clk/z/clk_rate:1499999940
+/sys/kernel/debug/clk/z2/clk_rate:1199999952
+
+-- 
+2.11.0
