@@ -1,110 +1,82 @@
-Return-Path: <SRS0=87O0=QN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=J+Ha=QO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A2DC169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Feb 2019 10:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2D5C282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 08:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80196218A3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Feb 2019 10:35:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2F312147C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 08:37:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbfBFKfS (ORCPT
+        id S1726897AbfBGIhG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Feb 2019 05:35:18 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:58418 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728416AbfBFKfR (ORCPT
+        Thu, 7 Feb 2019 03:37:06 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:12799 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726889AbfBGIhG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Feb 2019 05:35:17 -0500
-Received: from 79.184.254.36.ipv4.supernova.orange.pl (79.184.254.36) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id d97ed51e97c75656; Wed, 6 Feb 2019 11:35:15 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Ladislav Michl <ladis@linux-mips.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH] PM/runtime: Optimize pm_runtime_autosuspend_expiration()
-Date:   Wed, 06 Feb 2019 11:34:03 +0100
-Message-ID: <4091828.IqCJ3qcF9B@aspire.rjw.lan>
-In-Reply-To: <20190130214017.GA5038@lenoch>
-References: <20190130214017.GA5038@lenoch>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 7 Feb 2019 03:37:06 -0500
+X-IronPort-AV: E=Sophos;i="5.58,342,1544454000"; 
+   d="scan'208";a="7066670"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 07 Feb 2019 17:37:03 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7A6204020121;
+        Thu,  7 Feb 2019 17:37:01 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 1/2] arm64: dts: renesas: r8a774c0-cat874: Add pciec0 support
+Date:   Thu,  7 Feb 2019 08:31:49 +0000
+Message-Id: <1549528310-54436-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wednesday, January 30, 2019 10:40:17 PM CET Ladislav Michl wrote:
-> pm_runtime_autosuspend_expiration calls ktime_get_mono_fast_ns
-> even when its returned value may be unused. Therefore get
-> current time later and remove gotos while there.
-> 
-> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  This patch is based on top of bleeding-edge branch, where
->  "[PATCH v2 ] PM-runtime: fix deadlock with ktime" is sitting.
->  I expect v3 of that patch, which should not harm this one.
->  It is meant to replace "PM/runtime: Do not needlessly call ktime_get"
->  sent earlier.
-> 
->  drivers/base/power/runtime.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 65e2b5f48e0c..7bbe28faca8d 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -145,24 +145,21 @@ static void pm_runtime_cancel_pending(struct device *dev)
->  u64 pm_runtime_autosuspend_expiration(struct device *dev)
->  {
->  	int autosuspend_delay;
-> -	u64 last_busy, expires = 0;
-> -	u64 now = ktime_get_mono_fast_ns();
-> +	u64 expires;
->  
->  	if (!dev->power.use_autosuspend)
-> -		goto out;
-> +		return 0;
->  
->  	autosuspend_delay = READ_ONCE(dev->power.autosuspend_delay);
->  	if (autosuspend_delay < 0)
-> -		goto out;
-> -
-> -	last_busy = READ_ONCE(dev->power.last_busy);
-> +		return 0;
->  
-> -	expires = last_busy + (u64)autosuspend_delay * NSEC_PER_MSEC;
-> -	if (expires <= now)
-> -		expires = 0;	/* Already expired. */
-> +	expires  = READ_ONCE(dev->power.last_busy);
-> +	expires += (u64)autosuspend_delay * NSEC_PER_MSEC;
-> +	if (expires > ktime_get_mono_fast_ns())
-> +		return expires;	/* Expires in the future */
->  
-> - out:
-> -	return expires;
-> +	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pm_runtime_autosuspend_expiration);
->  
-> 
+Silicon Linux CAT 874 board has 2GB DDR memory. Update the dma-ranges
+mapping for pciec0 node. Also declare pcie bus clock, since it is
+generated on the CAT874 main board.
 
-Applied, thanks!
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+This patch is tested against renesas-dev
+---
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index 477a56b..96ee0d2c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -56,6 +56,15 @@
+ 	clock-frequency = <48000000>;
+ };
+ 
++&pcie_bus_clk {
++	clock-frequency = <100000000>;
++};
++
++&pciec0 {
++	/* Map all possible DDR as inbound ranges */
++	dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>;
++};
++
+ &pfc {
+ 	scif2_pins: scif2 {
+ 		groups = "scif2_data_a";
+-- 
+2.7.4
 
