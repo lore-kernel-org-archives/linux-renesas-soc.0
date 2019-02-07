@@ -2,37 +2,37 @@ Return-Path: <SRS0=J+Ha=QO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1E3C282CC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1E1C282CC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D40BF2146E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51A8A206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 13:36:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="cPlTDEwC"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="lKeofFsV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfBGNgQ (ORCPT
+        id S1727328AbfBGNgZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Feb 2019 08:36:16 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:55601 "EHLO
+        Thu, 7 Feb 2019 08:36:25 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:55626 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfBGNgP (ORCPT
+        with ESMTP id S1727300AbfBGNgZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Feb 2019 08:36:15 -0500
+        Thu, 7 Feb 2019 08:36:25 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2541725B7E2;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6FD5825BECB;
         Fri,  8 Feb 2019 00:36:10 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549546570; bh=UmnSDGx9AZJkqmAobrpuFFnf/+wQbmMB7rXMTWi0QUM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cPlTDEwC6UzdWMh/lFgGZPNmNaeasUHODkAIdm4W2LfnBglZDtVTobYpZS/27gG2P
-         xMtzIxeZC1i0iVpAOXtfK5EQbwfz8x4TLxu8/I03M0LNFUORak7YshNjtTKYUK4Sn9
-         4MU+nHTN7kBZFQ3Ue7h4lxq2zq99J5KjcWmsQ7Yw=
+        t=1549546570; bh=xy/DsGoVL+xUPYMGQWM/UsHXr4QQhhvf7uWcroCqeIo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lKeofFsV8S6J5FDbVbo30CCoiIo6l/ZfD9+I8uRODwGsqQ0TAid0B4dbDkZUWAT+G
+         MJrGwNSINZ4IE6z4jyaBQvkoB5XAyEFWOpBf/dZjF8H+RVWzRupx693GMpPUPqogIw
+         QASD10rk09yfJOiyJ24YRDx3WXEwtIWH3FT529B4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 512999401DB; Thu,  7 Feb 2019 14:36:07 +0100 (CET)
+        id 8DCEF940461; Thu,  7 Feb 2019 14:36:07 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
@@ -41,217 +41,55 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v4 0/5] clk: renesas: r8a77990, r8a774c0: Add Z2 clock
-Date:   Thu,  7 Feb 2019 14:35:45 +0100
-Message-Id: <20190207133550.13967-1-horms+renesas@verge.net.au>
+Subject: [PATCH v4 4/5] clk: renesas: r8a77990: Add Z2 clock
+Date:   Thu,  7 Feb 2019 14:35:49 +0100
+Message-Id: <20190207133550.13967-5-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190207133550.13967-1-horms+renesas@verge.net.au>
+References: <20190207133550.13967-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-this series adds the Z2 clock as a clock with both a fixed and variable
-divisor with a parent of PLL0 to the CPG-MSSR drivers for the R-Car E3
-(r8a77990) and RZ/G2E (r8a774c0) SoCs.
+Adds support for R-Car E3 (r8a77990) Z2 clock.
 
-In order to do so this series:
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[simon: reworked changelog; rebased]
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3: [Simon Horman]
+- Pass new offset parameter
 
-1. Parameterise Z and Z2 clock fixed divisor in shared Gen-3 CPG
-   driver code to allow fixed divisors other than 2 - the E3 Z2
-   clock has a fixed divisor of 4
+v2: [Simon Horman]
+- Initialise as programmable clock
 
-2. Parameterise offset of Z and Z2 clock control bits -
-   the offsets on E3 differ to other R-Car Gen 3 SoCs
+v1: [Simon Horman]
+- Initialise as fixed clock
 
-3. Support Z and Z2 clocks with high frequency parents.
-   The parent of the E3 Z2 clock, PLL0, is 4.8GHz and thus
-   when expressed in HZ must be treated as a 64bit value.
+v0: [Takeshi Kihara]
+- Initialise as programmable clock
+---
+ drivers/clk/renesas/r8a77990-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-4. Actually add the Z2 clocks
-
-Changes since v3
-----------------
-* Add and use DIV64_U64_ROUND_CLOSEST in the patch to allow
-  high frequency parents. This corrects the patch for 32bit platforms.
-* Accumulate review and testing tags.
-
-Changes since v2
-----------------
-* Parameterise control bit offset rather than using a quirk
-* Revised RZ/G2E patch - I was confused and updating the file for
-  the wrong part number
-
-
-Testing Overview
-----------------
-
-This patchset has been tested on Ebisu-4D/E3 with
-top of renesas-devel-20190207-v5.0-rc5. This allowed CPUFreq
-to be successfully exercised, showing scaling of the Z2 clock as per the
-results below.
-
-This patchset was also tested for regressions Salvator-X/M3-W ES1.0.
-As per the results below CPUFreq was used to show that with these
-patches applied Z and Z2 clocks still scale as expected.
-
-This v3 of this patchset has been independently tested RZ/G2E.
-It is not expected that v4 will have any behavioural differences
-on that (or any other 64bit) platform.
-
-
-Patches List by Author
-----------------------
-
-Simon Horman (3):
-  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock offset
-  clk: renesas: rcar-gen3: Support Z and Z2 clocks with high frequency
-    parents
-  clk: renesas: r8a774c0: Add Z2 clock
-
-Takeshi Kihara (2):
-  clk: renesas: rcar-gen3: Parameterise Z and Z2 clock fixed divisor
-  clk: renesas: r8a77990: Add Z2 clock
-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c |  4 ++--
- drivers/clk/renesas/r8a774c0-cpg-mssr.c |  1 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c  |  5 +++--
- drivers/clk/renesas/r8a7796-cpg-mssr.c  |  5 +++--
- drivers/clk/renesas/r8a77965-cpg-mssr.c |  2 +-
- drivers/clk/renesas/r8a77990-cpg-mssr.c |  1 +
- drivers/clk/renesas/rcar-gen3-cpg.c     | 27 +++++++++++++--------------
- drivers/clk/renesas/rcar-gen3-cpg.h     |  4 ++++
- include/linux/math64.h                  | 13 +++++++++++++
- 9 files changed, 41 insertions(+), 21 deletions(-)
-
-Ebisu-4D/E3 Test Results
-------------------------
-
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-performance
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
-800000 1000000 1200000 
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:975000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z2/clk_rate:975000000
-# echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:787500
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:800000
-/sys/kernel/debug/clk/z2/clk_rate:787500000
-# echo 1200000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1200000
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z2/clk_rate:1200000000
-
-
-Salvator-X/M3-W ES1 Test Results
---------------------------------
-
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-performance
-# cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies
-500000 1000000 1500000 
-# cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_available_frequencies
-800000 1000000 1200000 
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z/clk_rate:1499999940
-/sys/kernel/debug/clk/z2/clk_rate:1199999952
-# echo 1000000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z/clk_rate:984374961
-/sys/kernel/debug/clk/z2/clk_rate:1199999952
-# echo 1000000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:984374
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1000000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:974999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1000000
-/sys/kernel/debug/clk/z/clk_rate:984374961
-/sys/kernel/debug/clk/z2/clk_rate:974999961
-# echo 500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# echo 800000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:468749
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:500000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:468749
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:500000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:800000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:787499
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:800000
-/sys/kernel/debug/clk/z/clk_rate:468749981
-/sys/kernel/debug/clk/z2/clk_rate:787499969
-# echo 1500000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
-# echo 1200000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
-# grep . /sys/devices/system/cpu/cpu*/cpufreq/*_cur_freq /sys/kernel/debug/clk/z/clk_rate /sys/kernel/debug/clk/z2/clk_rate
-/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu1/cpufreq/cpuinfo_cur_freq:1499999
-/sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq:1500000
-/sys/devices/system/cpu/cpu2/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu3/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq:1200000
-/sys/devices/system/cpu/cpu5/cpufreq/cpuinfo_cur_freq:1199999
-/sys/devices/system/cpu/cpu5/cpufreq/scaling_cur_freq:1200000
-/sys/kernel/debug/clk/z/clk_rate:1499999940
-/sys/kernel/debug/clk/z2/clk_rate:1199999952
-
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+index 9a278c75c918..072e4bde6fff 100644
+--- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -81,6 +81,7 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("za2",       R8A77990_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+ 	DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
++	DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
+ 	DEF_FIXED("ztr",       R8A77990_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A77990_CLK_ZT,    CLK_PLL1,       4, 1),
+ 	DEF_FIXED("zx",        R8A77990_CLK_ZX,    CLK_PLL1,       3, 1),
 -- 
 2.11.0
+
