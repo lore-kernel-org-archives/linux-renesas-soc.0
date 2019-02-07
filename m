@@ -3,48 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DCFC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 10:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE24C282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 10:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C094821901
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 10:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F2932084D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 10:13:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbfBGKNS (ORCPT
+        id S1726748AbfBGKNe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:13:18 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:43033 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbfBGKNR (ORCPT
+        Thu, 7 Feb 2019 05:13:34 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:36012 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726742AbfBGKNe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:13:17 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x1so6315317vsc.10;
-        Thu, 07 Feb 2019 02:13:16 -0800 (PST)
+        Thu, 7 Feb 2019 05:13:34 -0500
+Received: by mail-vk1-f195.google.com with SMTP id m13so181330vkk.3;
+        Thu, 07 Feb 2019 02:13:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vuM6EgZRbtoyjQ3bbY/QQiiQ44SHvwUVPG2pPi5lpFw=;
-        b=KG2NXDqaBTQBxcYKiJvsF+NTtcDSHDT2oj1aXYgOelkN6iPHlU+yvueLQh23SchnmI
-         7pA3odNmm87ejDFYV28fPYl0voxT4gTo9bFrYBP9z7igNeEtH0NTTWHF4QQtZ+QeX9Fw
-         7/YEaTqy+vDD3uYlLDG7DBVhbdWPylmTS/DQQGmp9U52u1XBLx24uqrMMG2dBzDLUdR7
-         5irYac/aT37b45lg7yxbQ3sqQ+YNjgEZZC1Z2t1S9Cmt2H4qqweJ1lNrh0Su/+MWC8Ti
-         8LpZPBEGhdT4qNhvzT9IMKLph1OnMPly/AyTr9ntcqpAN/jxLgPP7rpNew2NnYJ2Q8Xi
-         guyw==
-X-Gm-Message-State: AHQUAuZQVZ5aonP5rWUU04xGDNyCegssfK312mRicBCcqs267CF+Lsb2
-        WAhkOFj/YN2Hc8AppEk9dbBy4izJft4zBjEZWKs=
-X-Google-Smtp-Source: AHgI3Ib7xAAkqXxfPsj75Gu/BuMnWydhVvYg7YuqELiKhXtJ4PX586bnkXD3MqM7zNnC0c2WejEOcfchaYRuDjOTbTY=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr6399048vsp.166.1549534396266;
- Thu, 07 Feb 2019 02:13:16 -0800 (PST)
+        bh=iWSvMVOE6soCYc+iJXgZHPMJH3C5o7q622mRNi6GuXM=;
+        b=TbfVVjAA4Ao5UjxbWsVskOzQLb13IfBYyGMr8CJQiDcaTrMtzdmCskrH5mCfxY2Zz9
+         TpGPY3LXeGOg9b3FgiRItAsNAdwQ7K0aA1xUe/1MJFJgX6j0vFT9+ot4Agvr+qtdxLp2
+         qZCTYDlbJRMnbRpA1I0K5hIm+eJ8Oo8u7GJ0vwR1mLIwebYFiXb3wtTvHe8gu+P/TO5m
+         2uGJaQFJwWhxsAetSatSUTAi3ABQDHsS+ZkOBAnMtCT8L60MEC80Havn1cK6rUn2P4vA
+         dBMjf+bvbBs4DvqiutKYqR+F0rJINx94Pcu+bKEddXCuXBkvCu9xzzWpmlv9T6NIHc1t
+         1mUg==
+X-Gm-Message-State: AHQUAuZZwjTdLJGEN1E+fLFrb61KaFRkUpXm0Pj8n7R7OWxCxmJJPG5P
+        vs3cp4+yrIq4DrGjl358GCr9zsr+9zZZTKuCuXc=
+X-Google-Smtp-Source: AHgI3IblriqQeS8Fz+eyS7yqp5binIUD8+pACgPI3sznSkR6d34jzTuZ6ahWebEdYeQO0P/NbfrxMxz7BkeCkXS+9A8=
+X-Received: by 2002:a1f:8614:: with SMTP id i20mr2874511vkd.74.1549534413049;
+ Thu, 07 Feb 2019 02:13:33 -0800 (PST)
 MIME-Version: 1.0
-References: <1549528310-54436-1-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1549528310-54436-1-git-send-email-biju.das@bp.renesas.com>
+References: <1549528310-54436-1-git-send-email-biju.das@bp.renesas.com> <1549528310-54436-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1549528310-54436-2-git-send-email-biju.das@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 7 Feb 2019 11:13:03 +0100
-Message-ID: <CAMuHMdVeVV9d4Sf=iPQ2UCrGqrnsh2Y9QCWaupwKc7QmRhCebw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a774c0-cat874: Add pciec0 support
+Date:   Thu, 7 Feb 2019 11:13:21 +0100
+Message-ID: <CAMuHMdVzg3TqqPzknvpd9ONDdqgsM_fVe8LzbO_MjNdLvmCLXg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: cat875: Enable PCIe support
 To:     Biju Das <biju.das@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -63,9 +63,7 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Thu, Feb 7, 2019 at 9:37 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> Silicon Linux CAT 874 board has 2GB DDR memory. Update the dma-ranges
-> mapping for pciec0 node. Also declare pcie bus clock, since it is
-> generated on the CAT874 main board.
+> This patch enables PCIEC0 PCI express controller on the sub board.
 >
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
