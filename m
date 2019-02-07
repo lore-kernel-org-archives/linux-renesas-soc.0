@@ -2,240 +2,237 @@ Return-Path: <SRS0=J+Ha=QO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A2AC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 15:57:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69270C282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 19:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DEC42175B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 15:57:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="PMpC9esG"
+	by mail.kernel.org (Postfix) with ESMTP id 387292175B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 19:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfBGP5c (ORCPT
+        id S1726824AbfBGThR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:57:32 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41793 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfBGP5b (ORCPT
+        Thu, 7 Feb 2019 14:37:17 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:35874 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbfBGThR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:57:31 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j1-v6so284123lja.8
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Feb 2019 07:57:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=u5jKTaUzhIul4RD7gT5c2lAWF8HuxyRGZOAze/aQgXU=;
-        b=PMpC9esGPefEiT8k4fJmgz8r587uP11en2tiQQ6t/lxZxk2HTruNML4QkUnLOQte9U
-         cBJPUYtHeIoY1EbCA38STGBBXSiwqTmFao6CpodtQzbmxSynd4e0IirCv66FBg3kuiFs
-         4JswXfzbvqLCSTlE8LcpkTe5eN5MYjbu8UiY+KCFFX+xi77SUtQB661M/jR+tsk4Fhy6
-         hxpArjo5GdgrwROb6mxjPN9+YY91KQjQFi4M+zlcME55dtXJdEkjI8oR3ZmoHutGgwQf
-         nMBcv2de/1+S6YwiwYnlUwR69OkrGUiK1Ain0nUt/xPovtG+vK8f/nKDhrPQ+pJvldAR
-         gY+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=u5jKTaUzhIul4RD7gT5c2lAWF8HuxyRGZOAze/aQgXU=;
-        b=a76dgaQhki3ZrOz9azeN0D0emfXo9xDZMEN/YH3YXmAxnzfgQ7qMCWpBQCBB74GL2S
-         96dWEe+22W+zqRA3cPnt9kNHIQ1qj1Wu/vHlEzk5SZNAimjKSaWyJzSOsBxgB9nK0jUa
-         FbYFfEX34aq+fCUGWbfn5EYpglEUVui1UUUhVDmpi63XrUiP/bmq/EskXtVzcpsmLT3i
-         UeJ89MTTYSHPjDc/TgrxhuCckapYZhcXjbITeNygYMnGVzCcx/3MJ3/GokLF5/Kzf1kF
-         tWAZTnenggNkRstBYfEnDyTdYi/okr3FPONivc8Bv4ScBfaVjKAOp2XXUHAUwpRPL7Oy
-         m+cA==
-X-Gm-Message-State: AHQUAuYY5wCA4fX5hoUsZwLhVo3VcWLaujX7GyLhZmdZix81MAP/kTTD
-        F3OaUynf1sCyY3dcmiyQbUc4kA==
-X-Google-Smtp-Source: AHgI3IYBXgGCsB4ZJ7UbyXjQkNaMjBzU9yy5wJwroG8SWgQoAT1EO87ofBkxUUKybnSu2EFa0o9K+A==
-X-Received: by 2002:a2e:9189:: with SMTP id f9-v6mr7417468ljg.70.1549555048986;
-        Thu, 07 Feb 2019 07:57:28 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id s27-v6sm408369ljd.64.2019.02.07.07.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 07:57:28 -0800 (PST)
-Date:   Thu, 7 Feb 2019 16:57:27 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 3/6] media: adv748x: csi2: Link AFE with TXA and TXB
-Message-ID: <20190207155727.GG32622@bigcity.dyn.berto.se>
-References: <20190110140213.5198-1-jacopo+renesas@jmondi.org>
- <20190110140213.5198-4-jacopo+renesas@jmondi.org>
- <20190114145533.GK30160@bigcity.dyn.berto.se>
- <20190116134424.GP7393@bigcity.dyn.berto.se>
- <20190128144736.7hulivpepab2mp7z@uno.localdomain>
+        Thu, 7 Feb 2019 14:37:17 -0500
+Received: from ramsan ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id ZvdB1z0043XaVaC01vdBiQ; Thu, 07 Feb 2019 20:37:13 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1grpTz-0001g3-4Q; Thu, 07 Feb 2019 20:37:11 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1grpTz-0004lC-1h; Thu, 07 Feb 2019 20:37:11 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>
+Cc:     iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC] driver core: Postpone DMA tear-down until after devres release
+Date:   Thu,  7 Feb 2019 20:36:53 +0100
+Message-Id: <20190207193653.18221-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190128144736.7hulivpepab2mp7z@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2019-01-28 15:47:37 +0100, Jacopo Mondi wrote:
-> Hi Niklas,
->    sorry for replying late
-> 
-> On Wed, Jan 16, 2019 at 02:44:25PM +0100, Niklas S�derlund wrote:
-> > Hi (again) Jacopo,
-> >
-> > I found something else in this patch unfortunately :-(
-> >
-> > On 2019-01-14 15:55:33 +0100, Niklas S�derlund wrote:
-> > > Hi Jacopo,
-> > >
-> > > Thanks for your patch.
-> > >
-> > > On 2019-01-10 15:02:10 +0100, Jacopo Mondi wrote:
-> > > > The ADV748x chip supports routing AFE output to either TXA or TXB.
-> > > > In order to support run-time configuration of video stream path, create an
-> > > > additional (not enabled) "AFE:8->TXA:0" link, and remove the IMMUTABLE flag
-> > > > from existing ones.
-> > > >
-> > > > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > > ---
-> > > >  drivers/media/i2c/adv748x/adv748x-csi2.c | 44 +++++++++++++-----------
-> > > >  1 file changed, 23 insertions(+), 21 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > > > index b6b5d8c7ea7c..8c3714495e11 100644
-> > > > --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > > > +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > > > @@ -27,6 +27,7 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
-> > > >   * @v4l2_dev: Video registration device
-> > > >   * @src: Source subdevice to establish link
-> > > >   * @src_pad: Pad number of source to link to this @tx
-> > > > + * @enable: Link enabled flag
-> > > >   *
-> > > >   * Ensure that the subdevice is registered against the v4l2_device, and link the
-> > > >   * source pad to the sink pad of the CSI2 bus entity.
-> > > > @@ -34,17 +35,11 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
-> > > >  static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
-> > > >  				      struct v4l2_device *v4l2_dev,
-> > > >  				      struct v4l2_subdev *src,
-> > > > -				      unsigned int src_pad)
-> > > > +				      unsigned int src_pad,
-> > > > +				      bool enable)
-> > > >  {
-> > > > -	int enabled = MEDIA_LNK_FL_ENABLED;
-> > > >  	int ret;
-> > > >
-> > > > -	/*
-> > > > -	 * Dynamic linking of the AFE is not supported.
-> > > > -	 * Register the links as immutable.
-> > > > -	 */
-> > > > -	enabled |= MEDIA_LNK_FL_IMMUTABLE;
-> > > > -
-> > > >  	if (!src->v4l2_dev) {
-> > > >  		ret = v4l2_device_register_subdev(v4l2_dev, src);
-> > > >  		if (ret)
-> > > > @@ -53,7 +48,7 @@ static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
-> > > >
-> > > >  	return media_create_pad_link(&src->entity, src_pad,
-> > > >  				     &tx->sd.entity, ADV748X_CSI2_SINK,
-> > > > -				     enabled);
-> > > > +				     enable ? MEDIA_LNK_FL_ENABLED : 0);
-> > > >  }
-> > > >
-> > > >  /* -----------------------------------------------------------------------------
-> > > > @@ -68,25 +63,32 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
-> > > >  {
-> > > >  	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-> > > >  	struct adv748x_state *state = tx->state;
-> > > > +	int ret;
-> > > >
-> > > >  	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
-> > > >  			sd->name);
-> > > >
-> > > >  	/*
-> > > > -	 * The adv748x hardware allows the AFE to route through the TXA, however
-> > > > -	 * this is not currently supported in this driver.
-> > > > +	 * Link TXA to AFE and HDMI, and TXB to AFE only as TXB cannot output
-> > > > +	 * HDMI.
-> > > >  	 *
-> > > > -	 * Link HDMI->TXA, and AFE->TXB directly.
-> > > > +	 * The HDMI->TXA link is enabled by default, as is the AFE->TXB one.
-> > > >  	 */
-> > > > -	if (is_txa(tx) && is_hdmi_enabled(state))
-> > > > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> > > > -						  &state->hdmi.sd,
-> > > > -						  ADV748X_HDMI_SOURCE);
-> > > > -	if (is_txb(tx) && is_afe_enabled(state))
-> > > > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> > > > -						  &state->afe.sd,
-> > > > -						  ADV748X_AFE_SOURCE);
-> > > > -	return 0;
-> > > > +	if (is_afe_enabled(state)) {
-> > > > +		ret = adv748x_csi2_register_link(tx, sd->v4l2_dev,
-> > > > +						 &state->afe.sd,
-> > > > +						 ADV748X_AFE_SOURCE,
-> > > > +						 is_txb(tx));
-> > > > +		if (ret)
-> > > > +			return ret;
-> > > > +	}
-> > > > +
-> > > > +	/* Register link to HDMI for TXA only. */
-> > > > +	if (is_txb(tx) || !is_hdmi_enabled(state))
-> > >
-> > > Small nit, I would s/is_txb(tx)/!is_txa(tx)/ here as to me it becomes
-> > > easier to read. With or without this change,
-> > >
-> > > Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
-> > >
-> > > > +		return 0;
-> > > > +
-> > > > +	return adv748x_csi2_register_link(tx, sd->v4l2_dev, &state->hdmi.sd,
-> > > > +					  ADV748X_HDMI_SOURCE, true);
-> >
-> > If the call to adv748x_csi2_register_link() fails should not the
-> > (possible) link to the AFE be removed?
-> >
-> 
-> The .register() callback is called from v4l2-device.c in
-> v4l2_device_register_subdev(). If the callback returns an error, the
-> subdev gets not registered at all and the media entity cleaned up, so it
-> won't appear in the media graph.
-> 
-> I think we're safe and the patch series is good to go. What's your
-> opinion?
+When unbinding the (IOMMU-enabled) R-Car SATA device on Salvator-XS
+(R-Car H3 ES2.0), in preparation of rebinding against vfio-platform for
+device pass-through for virtualization:
 
-As long as no stray links are left in the graph I'm happy :-)
+    echo ee300000.sata > /sys/bus/platform/drivers/sata_rcar/unbind
 
-> 
-> Thanks
->   j
-> 
-> 
-> > > >  }
-> > > >
-> > > >  static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
-> > > > --
-> > > > 2.20.1
-> > > >
-> > >
-> > > --
-> > > Regards,
-> > > Niklas S�derlund
-> >
-> > --
-> > Regards,
-> > Niklas S�derlund
+the kernel crashes with:
 
+    Unable to handle kernel paging request at virtual address ffffffbf029ffffc
+    Mem abort info:
+      ESR = 0x96000006
+      Exception class = DABT (current EL), IL = 32 bits
+      SET = 0, FnV = 0
+      EA = 0, S1PTW = 0
+    Data abort info:
+      ISV = 0, ISS = 0x00000006
+      CM = 0, WnR = 0
+    swapper pgtable: 4k pages, 39-bit VAs, pgdp = 000000007e8c586c
+    [ffffffbf029ffffc] pgd=000000073bfc6003, pud=000000073bfc6003, pmd=0000000000000000
+    Internal error: Oops: 96000006 [#1] SMP
+    Modules linked in:
+    CPU: 0 PID: 1098 Comm: bash Not tainted 5.0.0-rc5-salvator-x-00452-g37596f884f4318ef #287
+    Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
+    pstate: 60400005 (nZCv daif +PAN -UAO)
+    pc : __free_pages+0x8/0x58
+    lr : __dma_direct_free_pages+0x50/0x5c
+    sp : ffffff801268baa0
+    x29: ffffff801268baa0 x28: 0000000000000000
+    x27: ffffffc6f9c60bf0 x26: ffffffc6f9c60bf0
+    x25: ffffffc6f9c60810 x24: 0000000000000000
+    x23: 00000000fffff000 x22: ffffff8012145000
+    x21: 0000000000000800 x20: ffffffbf029fffc8
+    x19: 0000000000000000 x18: ffffffc6f86c42c8
+    x17: 0000000000000000 x16: 0000000000000070
+    x15: 0000000000000003 x14: 0000000000000000
+    x13: ffffff801103d7f8 x12: 0000000000000028
+    x11: ffffff8011117604 x10: 0000000000009ad8
+    x9 : ffffff80110126d0 x8 : ffffffc6f7563000
+    x7 : 6b6b6b6b6b6b6b6b x6 : 0000000000000018
+    x5 : ffffff8011cf3cc8 x4 : 0000000000004000
+    x3 : 0000000000080000 x2 : 0000000000000001
+    x1 : 0000000000000000 x0 : ffffffbf029fffc8
+    Process bash (pid: 1098, stack limit = 0x00000000c38e3e32)
+    Call trace:
+     __free_pages+0x8/0x58
+     __dma_direct_free_pages+0x50/0x5c
+     arch_dma_free+0x1c/0x98
+     dma_direct_free+0x14/0x24
+     dma_free_attrs+0x9c/0xdc
+     dmam_release+0x18/0x20
+     release_nodes+0x25c/0x28c
+     devres_release_all+0x48/0x4c
+     device_release_driver_internal+0x184/0x1f0
+     device_release_driver+0x14/0x1c
+     unbind_store+0x70/0xb8
+     drv_attr_store+0x24/0x34
+     sysfs_kf_write+0x4c/0x64
+     kernfs_fop_write+0x154/0x1c4
+     __vfs_write+0x34/0x164
+     vfs_write+0xb4/0x16c
+     ksys_write+0x5c/0xbc
+     __arm64_sys_write+0x14/0x1c
+     el0_svc_common+0x98/0x114
+     el0_svc_handler+0x1c/0x24
+     el0_svc+0x8/0xc
+    Code: d51b4234 17fffffa a9bf7bfd 910003fd (b9403404)
+    ---[ end trace 8c564cdd3a1a840f ]---
 
+While I've bisected this to commit e8e683ae9a736407 ("iommu/of: Fix
+probe-deferral"), and reverting that commit on post-v5.0-rc4 kernels
+does fix the problem, this turned out to be a red herring.
 
+On arm64, arch_teardown_dma_ops() resets dev->dma_ops to NULL.
+Hence if a driver has used a managed DMA allocation API, the allocated
+DMA memory will be freed using the direct DMA ops, while it may have
+been allocated using a custom DMA ops (iommu_dma_ops in this case).
+
+Fix this by reversing the order of the calls to devres_release_all() and
+arch_teardown_dma_ops().
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Question:
+Is this safe on arm32, which calls arm_teardown_iommu_dma_ops() instead
+of resetting dev->dma_ops?
+
+---
+Adding some debug code, and comparing before/after commit
+e8e683ae9a736407:
+
+     sata_rcar ee300000.sata: of_iommu_configure:227: err = -517
+    -sata_rcar ee300000.sata: of_iommu_configure:230: calling iommu_probe_device()
+    -sata_rcar ee300000.sata: iommu_probe_device:122: Calling ipmmu_add_device
+    -sata_rcar ee300000.sata: ipmmu_add_device:893
+    -sata_rcar ee300000.sata: of_iommu_configure:232: iommu_probe_device() returned -19
+    -sata_rcar ee300000.sata: dma_alloc_attrs:257: size 2048, ops =           (null)
+    -sata_rcar ee300000.sata: __dma_direct_alloc_pages:104: size 4096
+    -sata_rcar ee300000.sata: __dma_direct_alloc_pages:115: trying dma_alloc_from_contiguous()
+    -sata_rcar ee300000.sata: dma_alloc_from_contiguous:202: cma_alloc(1) returned page ffffffbf00d20e00
+    -sata_rcar ee300000.sata: dma_alloc_attrs:271: allocated using dma_direct_alloc()
+    -sata_rcar ee300000.sata: dmam_alloc_attrs:98: size 2048 vaddr ffffff8011e95000 dma_handle 0x0x000000007c040000 attrs 0x0
+    -scsi host0: sata_rcar
+    -ata1: SATA max UDMA/133 irq 172
+    -ata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+
+DMA memory used to be allocated from CMA, dma_map_ops = NULL.
+The SATA driver was probed and initialized.
+
+    +sata_rcar ee300000.sata: of_iommu_configure:234: skipping iommu_probe_device()
+
+SATA driver initialization is now deferred.
+Later, it is retried:
+
+    +sata_rcar ee300000.sata: of_iommu_configure:227: err = 0
+    +sata_rcar ee300000.sata: of_iommu_configure:230: calling iommu_probe_device()
+    +sata_rcar ee300000.sata: iommu_probe_device:122: Calling ipmmu_add_device
+    +sata_rcar ee300000.sata: ipmmu_add_device:893
+    +sata_rcar ee300000.sata: Using IPMMU context 1
+    +iommu: Adding device ee300000.sata to group 0
+    +sata_rcar ee300000.sata: ipmmu_add_device:908: Success
+    +sata_rcar ee300000.sata: of_iommu_configure:232: iommu_probe_device() returned 0
+    +sata_rcar ee300000.sata: dma_alloc_attrs:257: size 2048, ops = iommu_dma_ops
+    +sata_rcar ee300000.sata: dma_alloc_attrs:274: allocated using __iommu_alloc_attrs()
+    +sata_rcar ee300000.sata: dmam_alloc_attrs:98: size 2048 vaddr ffffff8012135000 dma_handle 0x0x00000000fffff000 attrs 0x0
+    +scsi host0: sata_rcar
+    +ata1: SATA max UDMA/133 irq 172
+    +ata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+
+DMA memory is now allocated using __iommu_alloc_attrs(), as dma_map_ops
+= iommu_dma_ops.
+
+Unbind:
+
+    -sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8011e95000 dma_handle 0x0x000000007c040000 attrs 0x0
+    +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012135000 dma_handle 0x0x00000000fffff000 attrs 0x0
+     sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops =           (null)
+
+dma_map_ops = NULL, both before/after!
+
+     sata_rcar ee300000.sata: dma_free_attrs:308: calling dma_direct_free()
+    -sata_rcar ee300000.sata: __dma_direct_free_pages:189: size 2048 page ffffffbf00d20e00
+    -sata_rcar ee300000.sata: dma_release_from_contiguous:223: cma_release(1) freed
+    -sata_rcar ee300000.sata: __dma_direct_free_pages:194: skipping __free_pages()
+
+DMA memory was correctly freed using CMA.
+
+    +sata_rcar ee300000.sata: __dma_direct_free_pages:189: size 2048 page ffffffbf029fffc8
+    +sata_rcar ee300000.sata: dma_release_from_contiguous:225: cma_release(1) failed, cma area ffffff8011cf5530
+    +sata_rcar ee300000.sata: __dma_direct_free_pages:191: calling __free_pages()
+    +Unable to handle kernel paging request at virtual address ffffffbf029ffffc
+
+Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
+Oops...
+
+After reversing the order of the calls to arch_teardown_dma_ops() and
+devres_release_all(), dma_map_ops is still valid, and the DMA memory is
+now released using __iommu_free_attrs():
+
+    +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
+    +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
+    +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
+---
+ drivers/base/dd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 8ac10af17c0043a3..d62487d024559620 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+ 			drv->remove(dev);
+ 
+ 		device_links_driver_cleanup(dev);
+-		arch_teardown_dma_ops(dev);
+ 
+ 		devres_release_all(dev);
++		arch_teardown_dma_ops(dev);
+ 		dev->driver = NULL;
+ 		dev_set_drvdata(dev, NULL);
+ 		if (dev->pm_domain && dev->pm_domain->dismiss)
 -- 
-Regards,
-Niklas S�derlund
+2.17.1
+
