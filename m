@@ -2,124 +2,240 @@ Return-Path: <SRS0=J+Ha=QO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBFBC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 15:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A2AC282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 15:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7012190A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 15:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DEC42175B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Feb 2019 15:57:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="MX6TWWQw"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="PMpC9esG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfBGPWw (ORCPT
+        id S1726401AbfBGP5c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Feb 2019 10:22:52 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:57085 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfBGPWw (ORCPT
+        Thu, 7 Feb 2019 10:57:32 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41793 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfBGP5b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Feb 2019 10:22:52 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 772D525B7E2;
-        Fri,  8 Feb 2019 02:22:48 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549552968; bh=0Gg+/3ZS/T5JMLaXR2tKuPZLfBl6dZRemVfHwM4Rw/Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MX6TWWQwhgjTNzcV8CcbAvZC1UH+MEyg+7At1XdP7APfv8YYeO67mw7ZG7bK1XR7J
-         E/QyizHlAYm055380he/Vkvc6DkIKqQutLRWhr4xYIIsBldvLrGFKdOQU2CbGQrgBq
-         jMgzLsg6/w8qNffmSmb7p+iacPL70OMacsfOEQso=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 816829444AA; Thu,  7 Feb 2019 16:22:46 +0100 (CET)
-Date:   Thu, 7 Feb 2019 16:22:46 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/5] clk: renesas: rcar-gen3: Support Z and Z2 clocks
- with high frequency parents
-Message-ID: <20190207152242.xzxfvojyyvsqhmtt@verge.net.au>
-References: <20190207133550.13967-1-horms+renesas@verge.net.au>
- <20190207133550.13967-4-horms+renesas@verge.net.au>
- <CAMuHMdUMeGEnkVDvVk=NZMrnNXDUxDOgcqfORf+My8jkCza3SA@mail.gmail.com>
+        Thu, 7 Feb 2019 10:57:31 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j1-v6so284123lja.8
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Feb 2019 07:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=u5jKTaUzhIul4RD7gT5c2lAWF8HuxyRGZOAze/aQgXU=;
+        b=PMpC9esGPefEiT8k4fJmgz8r587uP11en2tiQQ6t/lxZxk2HTruNML4QkUnLOQte9U
+         cBJPUYtHeIoY1EbCA38STGBBXSiwqTmFao6CpodtQzbmxSynd4e0IirCv66FBg3kuiFs
+         4JswXfzbvqLCSTlE8LcpkTe5eN5MYjbu8UiY+KCFFX+xi77SUtQB661M/jR+tsk4Fhy6
+         hxpArjo5GdgrwROb6mxjPN9+YY91KQjQFi4M+zlcME55dtXJdEkjI8oR3ZmoHutGgwQf
+         nMBcv2de/1+S6YwiwYnlUwR69OkrGUiK1Ain0nUt/xPovtG+vK8f/nKDhrPQ+pJvldAR
+         gY+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=u5jKTaUzhIul4RD7gT5c2lAWF8HuxyRGZOAze/aQgXU=;
+        b=a76dgaQhki3ZrOz9azeN0D0emfXo9xDZMEN/YH3YXmAxnzfgQ7qMCWpBQCBB74GL2S
+         96dWEe+22W+zqRA3cPnt9kNHIQ1qj1Wu/vHlEzk5SZNAimjKSaWyJzSOsBxgB9nK0jUa
+         FbYFfEX34aq+fCUGWbfn5EYpglEUVui1UUUhVDmpi63XrUiP/bmq/EskXtVzcpsmLT3i
+         UeJ89MTTYSHPjDc/TgrxhuCckapYZhcXjbITeNygYMnGVzCcx/3MJ3/GokLF5/Kzf1kF
+         tWAZTnenggNkRstBYfEnDyTdYi/okr3FPONivc8Bv4ScBfaVjKAOp2XXUHAUwpRPL7Oy
+         m+cA==
+X-Gm-Message-State: AHQUAuYY5wCA4fX5hoUsZwLhVo3VcWLaujX7GyLhZmdZix81MAP/kTTD
+        F3OaUynf1sCyY3dcmiyQbUc4kA==
+X-Google-Smtp-Source: AHgI3IYBXgGCsB4ZJ7UbyXjQkNaMjBzU9yy5wJwroG8SWgQoAT1EO87ofBkxUUKybnSu2EFa0o9K+A==
+X-Received: by 2002:a2e:9189:: with SMTP id f9-v6mr7417468ljg.70.1549555048986;
+        Thu, 07 Feb 2019 07:57:28 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id s27-v6sm408369ljd.64.2019.02.07.07.57.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 07 Feb 2019 07:57:28 -0800 (PST)
+Date:   Thu, 7 Feb 2019 16:57:27 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: Re: [PATCH v3 3/6] media: adv748x: csi2: Link AFE with TXA and TXB
+Message-ID: <20190207155727.GG32622@bigcity.dyn.berto.se>
+References: <20190110140213.5198-1-jacopo+renesas@jmondi.org>
+ <20190110140213.5198-4-jacopo+renesas@jmondi.org>
+ <20190114145533.GK30160@bigcity.dyn.berto.se>
+ <20190116134424.GP7393@bigcity.dyn.berto.se>
+ <20190128144736.7hulivpepab2mp7z@uno.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUMeGEnkVDvVk=NZMrnNXDUxDOgcqfORf+My8jkCza3SA@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190128144736.7hulivpepab2mp7z@uno.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:05:58PM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
+On 2019-01-28 15:47:37 +0100, Jacopo Mondi wrote:
+> Hi Niklas,
+>    sorry for replying late
 > 
-> On Thu, Feb 7, 2019 at 2:36 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> > Support Z and Z2 clocks with parent frequencies greater than UINT32_MAX Hz
-> > (~4.29GHz).
+> On Wed, Jan 16, 2019 at 02:44:25PM +0100, Niklas Söderlund wrote:
+> > Hi (again) Jacopo,
 > >
-> > The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
-> > divisor. This leads to truncation of the dividend, which is the Z or Z2
-> 
-> truncation of the divisor.
-> 
-> > parent clock frequency in HZ, on platforms where frequency of that clock is
-> > greater than UINT32_MAX Hz.
+> > I found something else in this patch unfortunately :-(
 > >
-> > To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which an
-> 
-> which takes an
-> 
-> > unsigned 32bit dividend and divisor, is introduced.
-> 
-> 64-bit
-> 
-> > An earlier version of this patch made use of the existing
-> > DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
-> > dividend and divisor. However, this does not compile on 32bit systems, such
-> > as i386 and mips, when called with the types used at this callsite, an
-> > unsigned long long dividend and unsigned long divisor.
-> 
-> Thanks for fixing this!
-> 
-> > This work is in preparation for supporting the Z2 cloco on the R-Car Gen3
-> > E3 (r8a77990) SoC which has a 4.8GHz parent clock.
+> > On 2019-01-14 15:55:33 +0100, Niklas Söderlund wrote:
+> > > Hi Jacopo,
+> > >
+> > > Thanks for your patch.
+> > >
+> > > On 2019-01-10 15:02:10 +0100, Jacopo Mondi wrote:
+> > > > The ADV748x chip supports routing AFE output to either TXA or TXB.
+> > > > In order to support run-time configuration of video stream path, create an
+> > > > additional (not enabled) "AFE:8->TXA:0" link, and remove the IMMUTABLE flag
+> > > > from existing ones.
+> > > >
+> > > > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > > ---
+> > > >  drivers/media/i2c/adv748x/adv748x-csi2.c | 44 +++++++++++++-----------
+> > > >  1 file changed, 23 insertions(+), 21 deletions(-)
+> > > >
+> > > > diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > > > index b6b5d8c7ea7c..8c3714495e11 100644
+> > > > --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > > > +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+> > > > @@ -27,6 +27,7 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
+> > > >   * @v4l2_dev: Video registration device
+> > > >   * @src: Source subdevice to establish link
+> > > >   * @src_pad: Pad number of source to link to this @tx
+> > > > + * @enable: Link enabled flag
+> > > >   *
+> > > >   * Ensure that the subdevice is registered against the v4l2_device, and link the
+> > > >   * source pad to the sink pad of the CSI2 bus entity.
+> > > > @@ -34,17 +35,11 @@ static int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx,
+> > > >  static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
+> > > >  				      struct v4l2_device *v4l2_dev,
+> > > >  				      struct v4l2_subdev *src,
+> > > > -				      unsigned int src_pad)
+> > > > +				      unsigned int src_pad,
+> > > > +				      bool enable)
+> > > >  {
+> > > > -	int enabled = MEDIA_LNK_FL_ENABLED;
+> > > >  	int ret;
+> > > >
+> > > > -	/*
+> > > > -	 * Dynamic linking of the AFE is not supported.
+> > > > -	 * Register the links as immutable.
+> > > > -	 */
+> > > > -	enabled |= MEDIA_LNK_FL_IMMUTABLE;
+> > > > -
+> > > >  	if (!src->v4l2_dev) {
+> > > >  		ret = v4l2_device_register_subdev(v4l2_dev, src);
+> > > >  		if (ret)
+> > > > @@ -53,7 +48,7 @@ static int adv748x_csi2_register_link(struct adv748x_csi2 *tx,
+> > > >
+> > > >  	return media_create_pad_link(&src->entity, src_pad,
+> > > >  				     &tx->sd.entity, ADV748X_CSI2_SINK,
+> > > > -				     enabled);
+> > > > +				     enable ? MEDIA_LNK_FL_ENABLED : 0);
+> > > >  }
+> > > >
+> > > >  /* -----------------------------------------------------------------------------
+> > > > @@ -68,25 +63,32 @@ static int adv748x_csi2_registered(struct v4l2_subdev *sd)
+> > > >  {
+> > > >  	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
+> > > >  	struct adv748x_state *state = tx->state;
+> > > > +	int ret;
+> > > >
+> > > >  	adv_dbg(state, "Registered %s (%s)", is_txa(tx) ? "TXA":"TXB",
+> > > >  			sd->name);
+> > > >
+> > > >  	/*
+> > > > -	 * The adv748x hardware allows the AFE to route through the TXA, however
+> > > > -	 * this is not currently supported in this driver.
+> > > > +	 * Link TXA to AFE and HDMI, and TXB to AFE only as TXB cannot output
+> > > > +	 * HDMI.
+> > > >  	 *
+> > > > -	 * Link HDMI->TXA, and AFE->TXB directly.
+> > > > +	 * The HDMI->TXA link is enabled by default, as is the AFE->TXB one.
+> > > >  	 */
+> > > > -	if (is_txa(tx) && is_hdmi_enabled(state))
+> > > > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> > > > -						  &state->hdmi.sd,
+> > > > -						  ADV748X_HDMI_SOURCE);
+> > > > -	if (is_txb(tx) && is_afe_enabled(state))
+> > > > -		return adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> > > > -						  &state->afe.sd,
+> > > > -						  ADV748X_AFE_SOURCE);
+> > > > -	return 0;
+> > > > +	if (is_afe_enabled(state)) {
+> > > > +		ret = adv748x_csi2_register_link(tx, sd->v4l2_dev,
+> > > > +						 &state->afe.sd,
+> > > > +						 ADV748X_AFE_SOURCE,
+> > > > +						 is_txb(tx));
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +	}
+> > > > +
+> > > > +	/* Register link to HDMI for TXA only. */
+> > > > +	if (is_txb(tx) || !is_hdmi_enabled(state))
+> > >
+> > > Small nit, I would s/is_txb(tx)/!is_txa(tx)/ here as to me it becomes
+> > > easier to read. With or without this change,
+> > >
+> > > Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > >
+> > > > +		return 0;
+> > > > +
+> > > > +	return adv748x_csi2_register_link(tx, sd->v4l2_dev, &state->hdmi.sd,
+> > > > +					  ADV748X_HDMI_SOURCE, true);
 > >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> With the above fixed:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> > ---
-> > v4: Add and use DIV64_U64_ROUND_CLOSEST
+> > If the call to adv748x_csi2_register_link() fails should not the
+> > (possible) link to the AFE be removed?
 > >
-> > v2: New patch
-> > ---
-> >  drivers/clk/renesas/rcar-gen3-cpg.c |  4 ++--
-> >  include/linux/math64.h              | 13 +++++++++++++
 > 
-> While I have no issue taking this change through the clk-renesas tree if
-> Andrew provides his Acked-by, I think the introduction of
-> DIV64_U64_ROUND_CLOSEST() should be a separate patch.
+> The .register() callback is called from v4l2-device.c in
+> v4l2_device_register_subdev(). If the callback returns an error, the
+> subdev gets not registered at all and the media entity cleaned up, so it
+> won't appear in the media graph.
 > 
-> However, given commit 68600f623d69da42 ("mm: don't miss the last page
-> because of round-off error") added both DIV64_U64_ROUND_UP() and its
-> user under mm/, there's precedence for not splitting it off...
+> I think we're safe and the patch series is good to go. What's your
+> opinion?
 
-I also assumed a separate patch would be better,
-but I found little evidence of that practice being
-recently used in math64.h.
+As long as no stray links are left in the graph I'm happy :-)
 
-In any case, as I need to respin I'll break it out into
-a separate patch.
+> 
+> Thanks
+>   j
+> 
+> 
+> > > >  }
+> > > >
+> > > >  static const struct v4l2_subdev_internal_ops adv748x_csi2_internal_ops = {
+> > > > --
+> > > > 2.20.1
+> > > >
+> > >
+> > > --
+> > > Regards,
+> > > Niklas Söderlund
+> >
+> > --
+> > Regards,
+> > Niklas Söderlund
+
+
+
+-- 
+Regards,
+Niklas Söderlund
