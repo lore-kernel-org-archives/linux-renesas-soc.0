@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193C2C169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03693C282CB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CF320863
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCB8D20863
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:13:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="mhrD/jMP"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="CQ8xOi5f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfBHLN6 (ORCPT
+        id S1726567AbfBHLN7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:13:58 -0500
+        Fri, 8 Feb 2019 06:13:59 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:46305 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfBHLN6 (ORCPT
+        with ESMTP id S1726068AbfBHLN7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:13:58 -0500
+        Fri, 8 Feb 2019 06:13:59 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1595625BF04;
-        Fri,  8 Feb 2019 22:13:50 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 4263325BF06;
+        Fri,  8 Feb 2019 22:13:51 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549624430; bh=FquIW1ZgJ7UDbufS+JQt9b0SGc9C9zmv+cRDak084s4=;
+        t=1549624431; bh=nBe6d6/3N+UvRoQo4afNzeHMQrKo8mg3Pvkzl/F1WtQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mhrD/jMP5xhhxMet79kberwI8Zf2t1WD1u+GW29apyv7JGbm0iOCdJ0D2x09o5TXZ
-         vQwwMQVJ5NIqgjixQL2ccJLSdlLz1oxiGOwX6muuVhVVKO+upukJVg7XrXMn2JCXhc
-         vr51PPVn86jvj5KmcATHMCOoWXspXF2JnYun2bV0=
+        b=CQ8xOi5fWDzVISIhem8pduvsfCr/Z4vtjbTjafNmQeB2PNq2ewn+BTT21x6Aq3+jn
+         BwWv0UggwiOthPGATT9Ik28C3OU/66klF6H9NKLTzBnva6hsuGD7Qsi+ZPhSy9hSXc
+         WPfIa3g118tGZhx8QGfVPdgceBVNBfawDw5122kg=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 68A78940663; Fri,  8 Feb 2019 12:13:48 +0100 (CET)
+        id 7D4EB9406FE; Fri,  8 Feb 2019 12:13:48 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] ARM: shmobile: defconfig: Enable support for RZ/A2
-Date:   Fri,  8 Feb 2019 12:13:46 +0100
-Message-Id: <58319b7c37279ed1493217c1c9c5ee825c84eea2.1549621233.git.horms+renesas@verge.net.au>
+Subject: [PATCH 5/5] ARM: multi_v7_defconfig: Enable support for RZ/A2
+Date:   Fri,  8 Feb 2019 12:13:47 +0100
+Message-Id: <03ff9677930064a495fcce269a0f6f1db5dd9dd9.1549621233.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1549621233.git.horms+renesas@verge.net.au>
 References: <cover.1549621233.git.horms+renesas@verge.net.au>
@@ -59,29 +59,29 @@ the Renesas RZ/A2M evaluation board is included.
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/shmobile_defconfig | 2 ++
+ arch/arm/configs/multi_v7_defconfig | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 14e9255e48c3..9b0efac101ab 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -86,6 +86,7 @@ CONFIG_SPI_RSPI=y
- CONFIG_SPI_SH_MSIOF=y
- CONFIG_SPI_SH_HSPI=y
- CONFIG_PINCTRL_RZA1=y
-+CONFIG_PINCTRL_RZA2=y
- CONFIG_GPIO_EM=y
- CONFIG_GPIO_RCAR=y
- CONFIG_GPIO_PCF857X=y
-@@ -172,6 +173,7 @@ CONFIG_STAGING_BOARD=y
- # CONFIG_IOMMU_SUPPORT is not set
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index ffaf5c00f367..dba15b1b3083 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -76,6 +76,7 @@ CONFIG_ARCH_ROCKCHIP=y
+ CONFIG_ARCH_RENESAS=y
  CONFIG_ARCH_EMEV2=y
  CONFIG_ARCH_R7S72100=y
 +CONFIG_ARCH_R7S9210=y
  CONFIG_ARCH_R8A73A4=y
  CONFIG_ARCH_R8A7740=y
  CONFIG_ARCH_R8A7743=y
+@@ -404,6 +405,7 @@ CONFIG_SPI_XILINX=y
+ CONFIG_SPI_SPIDEV=y
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_AS3722=y
++CONFIG_PINCTRL_RZA2=y
+ CONFIG_PINCTRL_PALMAS=y
+ CONFIG_PINCTRL_APQ8064=y
+ CONFIG_PINCTRL_APQ8084=y
 -- 
 2.11.0
 
