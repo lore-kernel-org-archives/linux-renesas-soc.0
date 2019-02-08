@@ -2,555 +2,260 @@ Return-Path: <SRS0=rsGL=QP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D863FC169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 09:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9B5C169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 09:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A997721916
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 09:09:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11E13206C2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 09:42:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549618923;
+	bh=QxygWgxkCrfkYa89r52Xnqiz6mda/hCAfIPYcoemb6I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=W9Nhr2joLOhH4Pg9SKogV16+5fPwz6YU3r0NA4N0sLI80+wWNrpz2RB/IdpqzwucF
+	 z3a7/rSxthIIKgQoylIGk5PJnpbyaeTvMdL7dDsWNuoxKnTGbNxP+/QGLw/cC45vF9
+	 ld2uQppGbjLYeoP01wOWz2umIPYPioJ7UezJq6LE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbfBHJJT (ORCPT
+        id S1726915AbfBHJmC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Feb 2019 04:09:19 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:50442 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbfBHJJR (ORCPT
+        Fri, 8 Feb 2019 04:42:02 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33093 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfBHJmC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Feb 2019 04:09:17 -0500
-Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id a99A1z00Y3XaVaC0199AMM; Fri, 08 Feb 2019 10:09:11 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gs29m-0004Iu-Qn; Fri, 08 Feb 2019 10:09:10 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gs29m-0000Cv-Nd; Fri, 08 Feb 2019 10:09:10 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] spi: rspi: Replace spi_master by spi_controller
-Date:   Fri,  8 Feb 2019 10:09:07 +0100
-Message-Id: <20190208090909.739-2-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190208090909.739-1-geert+renesas@glider.be>
-References: <20190208090909.739-1-geert+renesas@glider.be>
+        Fri, 8 Feb 2019 04:42:02 -0500
+Received: by mail-ot1-f67.google.com with SMTP id i20so4907702otl.0;
+        Fri, 08 Feb 2019 01:42:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q6v1zqjs3usJnIUnnlrF8HWkcrCZ5SE9m8vlha7WccE=;
+        b=H0vW3aZOsRocqGTm7O7Mlrq4FVPAjKmVxlX7IKVRKchkTDwK0f+jvEM6k0Z8lgy8p4
+         czzs5q5ZKEKk7JZws8ezoh37Sh7hjrJGnVmU0sgb/FflPBAKNFKvhMwFmBExmKnsPksf
+         kvIvhcarhNRAIgwCMqicu7oaJlj0TztjC/kI4HXbveYeCWf0gUUtHEyiSlThEtv7gdjk
+         N98+aMkYeEfZlMTSI4enBUE44kzQsgx58cIfkQV8C8ceCW9RWR2w4tXS6ErrFwkk2awO
+         E3v3nmOHYyQQE5boMm2Od1aWfbeuN1O/3B6WkvQMRUk9Xp+npkfArJ/Dya3yftzjskWs
+         zYDA==
+X-Gm-Message-State: AHQUAubzQafY9K0md3/3mMOF3mtVfFJ5SIXMFW0zsXYskCuWZEHj1s74
+        WZI697x/OvtpXbqIzzvuoWt3peMxFB8SKMRXX4A=
+X-Google-Smtp-Source: AHgI3Ia6tZu1qKF7aq6adb17Nm7faYapxiD+6udDktceoProhmOMJvfaSuOvXVZK5kvFxtoEwh85aDdFD/8TO9rJYAU=
+X-Received: by 2002:a9d:5f06:: with SMTP id f6mr12410132oti.258.1549618921076;
+ Fri, 08 Feb 2019 01:42:01 -0800 (PST)
+MIME-Version: 1.0
+References: <20190207193653.18221-1-geert+renesas@glider.be>
+In-Reply-To: <20190207193653.18221-1-geert+renesas@glider.be>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 8 Feb 2019 10:41:48 +0100
+Message-ID: <CAJZ5v0iXLCrSP1xRWf-wok6x_Qx+ORLEC6up6gVYvMALWBZW0w@mail.gmail.com>
+Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
+ devres release
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "open list:AMD IOMMU (AMD-VI)" <iommu@lists.linux-foundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As of commit 8caab75fd2c2a926 ('spi: Generalize SPI "master" to
-"controller"'), the old master-centric names are compatibility wrappers
-for the new controller-centric names.
+On Thu, Feb 7, 2019 at 8:42 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> When unbinding the (IOMMU-enabled) R-Car SATA device on Salvator-XS
+> (R-Car H3 ES2.0), in preparation of rebinding against vfio-platform for
+> device pass-through for virtualization:
+>
+>     echo ee300000.sata > /sys/bus/platform/drivers/sata_rcar/unbind
+>
+> the kernel crashes with:
+>
+>     Unable to handle kernel paging request at virtual address ffffffbf029ffffc
+>     Mem abort info:
+>       ESR = 0x96000006
+>       Exception class = DABT (current EL), IL = 32 bits
+>       SET = 0, FnV = 0
+>       EA = 0, S1PTW = 0
+>     Data abort info:
+>       ISV = 0, ISS = 0x00000006
+>       CM = 0, WnR = 0
+>     swapper pgtable: 4k pages, 39-bit VAs, pgdp = 000000007e8c586c
+>     [ffffffbf029ffffc] pgd=000000073bfc6003, pud=000000073bfc6003, pmd=0000000000000000
+>     Internal error: Oops: 96000006 [#1] SMP
+>     Modules linked in:
+>     CPU: 0 PID: 1098 Comm: bash Not tainted 5.0.0-rc5-salvator-x-00452-g37596f884f4318ef #287
+>     Hardware name: Renesas Salvator-X 2nd version board based on r8a7795 ES2.0+ (DT)
+>     pstate: 60400005 (nZCv daif +PAN -UAO)
+>     pc : __free_pages+0x8/0x58
+>     lr : __dma_direct_free_pages+0x50/0x5c
+>     sp : ffffff801268baa0
+>     x29: ffffff801268baa0 x28: 0000000000000000
+>     x27: ffffffc6f9c60bf0 x26: ffffffc6f9c60bf0
+>     x25: ffffffc6f9c60810 x24: 0000000000000000
+>     x23: 00000000fffff000 x22: ffffff8012145000
+>     x21: 0000000000000800 x20: ffffffbf029fffc8
+>     x19: 0000000000000000 x18: ffffffc6f86c42c8
+>     x17: 0000000000000000 x16: 0000000000000070
+>     x15: 0000000000000003 x14: 0000000000000000
+>     x13: ffffff801103d7f8 x12: 0000000000000028
+>     x11: ffffff8011117604 x10: 0000000000009ad8
+>     x9 : ffffff80110126d0 x8 : ffffffc6f7563000
+>     x7 : 6b6b6b6b6b6b6b6b x6 : 0000000000000018
+>     x5 : ffffff8011cf3cc8 x4 : 0000000000004000
+>     x3 : 0000000000080000 x2 : 0000000000000001
+>     x1 : 0000000000000000 x0 : ffffffbf029fffc8
+>     Process bash (pid: 1098, stack limit = 0x00000000c38e3e32)
+>     Call trace:
+>      __free_pages+0x8/0x58
+>      __dma_direct_free_pages+0x50/0x5c
+>      arch_dma_free+0x1c/0x98
+>      dma_direct_free+0x14/0x24
+>      dma_free_attrs+0x9c/0xdc
+>      dmam_release+0x18/0x20
+>      release_nodes+0x25c/0x28c
+>      devres_release_all+0x48/0x4c
+>      device_release_driver_internal+0x184/0x1f0
+>      device_release_driver+0x14/0x1c
+>      unbind_store+0x70/0xb8
+>      drv_attr_store+0x24/0x34
+>      sysfs_kf_write+0x4c/0x64
+>      kernfs_fop_write+0x154/0x1c4
+>      __vfs_write+0x34/0x164
+>      vfs_write+0xb4/0x16c
+>      ksys_write+0x5c/0xbc
+>      __arm64_sys_write+0x14/0x1c
+>      el0_svc_common+0x98/0x114
+>      el0_svc_handler+0x1c/0x24
+>      el0_svc+0x8/0xc
+>     Code: d51b4234 17fffffa a9bf7bfd 910003fd (b9403404)
+>     ---[ end trace 8c564cdd3a1a840f ]---
+>
+> While I've bisected this to commit e8e683ae9a736407 ("iommu/of: Fix
+> probe-deferral"), and reverting that commit on post-v5.0-rc4 kernels
+> does fix the problem, this turned out to be a red herring.
+>
+> On arm64, arch_teardown_dma_ops() resets dev->dma_ops to NULL.
+> Hence if a driver has used a managed DMA allocation API, the allocated
+> DMA memory will be freed using the direct DMA ops, while it may have
+> been allocated using a custom DMA ops (iommu_dma_ops in this case).
+>
+> Fix this by reversing the order of the calls to devres_release_all() and
+> arch_teardown_dma_ops().
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/spi/spi-rspi.c | 170 ++++++++++++++++++++---------------------
- 1 file changed, 85 insertions(+), 85 deletions(-)
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index a4ef641b522727e0..556870dcdf7995f8 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -180,7 +180,7 @@
- struct rspi_data {
- 	void __iomem *addr;
- 	u32 max_speed_hz;
--	struct spi_master *master;
-+	struct spi_controller *ctlr;
- 	wait_queue_head_t wait;
- 	struct clk *clk;
- 	u16 spcmd;
-@@ -237,8 +237,8 @@ static u16 rspi_read_data(const struct rspi_data *rspi)
- /* optional functions */
- struct spi_ops {
- 	int (*set_config_register)(struct rspi_data *rspi, int access_size);
--	int (*transfer_one)(struct spi_master *master, struct spi_device *spi,
--			    struct spi_transfer *xfer);
-+	int (*transfer_one)(struct spi_controller *ctlr,
-+			    struct spi_device *spi, struct spi_transfer *xfer);
- 	u16 mode_bits;
- 	u16 flags;
- 	u16 fifo_size;
-@@ -466,7 +466,7 @@ static int rspi_data_out(struct rspi_data *rspi, u8 data)
- {
- 	int error = rspi_wait_for_tx_empty(rspi);
- 	if (error < 0) {
--		dev_err(&rspi->master->dev, "transmit timeout\n");
-+		dev_err(&rspi->ctlr->dev, "transmit timeout\n");
- 		return error;
- 	}
- 	rspi_write_data(rspi, data);
-@@ -480,7 +480,7 @@ static int rspi_data_in(struct rspi_data *rspi)
- 
- 	error = rspi_wait_for_rx_full(rspi);
- 	if (error < 0) {
--		dev_err(&rspi->master->dev, "receive timeout\n");
-+		dev_err(&rspi->ctlr->dev, "receive timeout\n");
- 		return error;
- 	}
- 	data = rspi_read_data(rspi);
-@@ -526,8 +526,8 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
- 
- 	/* First prepare and submit the DMA request(s), as this may fail */
- 	if (rx) {
--		desc_rx = dmaengine_prep_slave_sg(rspi->master->dma_rx,
--					rx->sgl, rx->nents, DMA_DEV_TO_MEM,
-+		desc_rx = dmaengine_prep_slave_sg(rspi->ctlr->dma_rx, rx->sgl,
-+					rx->nents, DMA_DEV_TO_MEM,
- 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 		if (!desc_rx) {
- 			ret = -EAGAIN;
-@@ -546,8 +546,8 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
- 	}
- 
- 	if (tx) {
--		desc_tx = dmaengine_prep_slave_sg(rspi->master->dma_tx,
--					tx->sgl, tx->nents, DMA_MEM_TO_DEV,
-+		desc_tx = dmaengine_prep_slave_sg(rspi->ctlr->dma_tx, tx->sgl,
-+					tx->nents, DMA_MEM_TO_DEV,
- 					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 		if (!desc_tx) {
- 			ret = -EAGAIN;
-@@ -584,9 +584,9 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
- 
- 	/* Now start DMA */
- 	if (rx)
--		dma_async_issue_pending(rspi->master->dma_rx);
-+		dma_async_issue_pending(rspi->ctlr->dma_rx);
- 	if (tx)
--		dma_async_issue_pending(rspi->master->dma_tx);
-+		dma_async_issue_pending(rspi->ctlr->dma_tx);
- 
- 	ret = wait_event_interruptible_timeout(rspi->wait,
- 					       rspi->dma_callbacked, HZ);
-@@ -594,13 +594,13 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
- 		ret = 0;
- 	} else {
- 		if (!ret) {
--			dev_err(&rspi->master->dev, "DMA timeout\n");
-+			dev_err(&rspi->ctlr->dev, "DMA timeout\n");
- 			ret = -ETIMEDOUT;
- 		}
- 		if (tx)
--			dmaengine_terminate_all(rspi->master->dma_tx);
-+			dmaengine_terminate_all(rspi->ctlr->dma_tx);
- 		if (rx)
--			dmaengine_terminate_all(rspi->master->dma_rx);
-+			dmaengine_terminate_all(rspi->ctlr->dma_rx);
- 	}
- 
- 	rspi_disable_irq(rspi, irq_mask);
-@@ -614,12 +614,12 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
- 
- no_dma_tx:
- 	if (rx)
--		dmaengine_terminate_all(rspi->master->dma_rx);
-+		dmaengine_terminate_all(rspi->ctlr->dma_rx);
- no_dma_rx:
- 	if (ret == -EAGAIN) {
- 		pr_warn_once("%s %s: DMA not available, falling back to PIO\n",
--			     dev_driver_string(&rspi->master->dev),
--			     dev_name(&rspi->master->dev));
-+			     dev_driver_string(&rspi->ctlr->dev),
-+			     dev_name(&rspi->ctlr->dev));
- 	}
- 	return ret;
- }
-@@ -660,10 +660,10 @@ static bool __rspi_can_dma(const struct rspi_data *rspi,
- 	return xfer->len > rspi->ops->fifo_size;
- }
- 
--static bool rspi_can_dma(struct spi_master *master, struct spi_device *spi,
-+static bool rspi_can_dma(struct spi_controller *ctlr, struct spi_device *spi,
- 			 struct spi_transfer *xfer)
- {
--	struct rspi_data *rspi = spi_master_get_devdata(master);
-+	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
- 
- 	return __rspi_can_dma(rspi, xfer);
- }
-@@ -671,7 +671,7 @@ static bool rspi_can_dma(struct spi_master *master, struct spi_device *spi,
- static int rspi_dma_check_then_transfer(struct rspi_data *rspi,
- 					 struct spi_transfer *xfer)
- {
--	if (!rspi->master->can_dma || !__rspi_can_dma(rspi, xfer))
-+	if (!rspi->ctlr->can_dma || !__rspi_can_dma(rspi, xfer))
- 		return -EAGAIN;
- 
- 	/* rx_buf can be NULL on RSPI on SH in TX-only Mode */
-@@ -698,10 +698,10 @@ static int rspi_common_transfer(struct rspi_data *rspi,
- 	return 0;
- }
- 
--static int rspi_transfer_one(struct spi_master *master, struct spi_device *spi,
--			     struct spi_transfer *xfer)
-+static int rspi_transfer_one(struct spi_controller *ctlr,
-+			     struct spi_device *spi, struct spi_transfer *xfer)
- {
--	struct rspi_data *rspi = spi_master_get_devdata(master);
-+	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
- 	u8 spcr;
- 
- 	spcr = rspi_read8(rspi, RSPI_SPCR);
-@@ -716,11 +716,11 @@ static int rspi_transfer_one(struct spi_master *master, struct spi_device *spi,
- 	return rspi_common_transfer(rspi, xfer);
- }
- 
--static int rspi_rz_transfer_one(struct spi_master *master,
-+static int rspi_rz_transfer_one(struct spi_controller *ctlr,
- 				struct spi_device *spi,
- 				struct spi_transfer *xfer)
- {
--	struct rspi_data *rspi = spi_master_get_devdata(master);
-+	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
- 
- 	rspi_rz_receive_init(rspi);
- 
-@@ -739,7 +739,7 @@ static int qspi_trigger_transfer_out_in(struct rspi_data *rspi, const u8 *tx,
- 		if (n == QSPI_BUFFER_SIZE) {
- 			ret = rspi_wait_for_tx_empty(rspi);
- 			if (ret < 0) {
--				dev_err(&rspi->master->dev, "transmit timeout\n");
-+				dev_err(&rspi->ctlr->dev, "transmit timeout\n");
- 				return ret;
- 			}
- 			for (i = 0; i < n; i++)
-@@ -747,7 +747,7 @@ static int qspi_trigger_transfer_out_in(struct rspi_data *rspi, const u8 *tx,
- 
- 			ret = rspi_wait_for_rx_full(rspi);
- 			if (ret < 0) {
--				dev_err(&rspi->master->dev, "receive timeout\n");
-+				dev_err(&rspi->ctlr->dev, "receive timeout\n");
- 				return ret;
- 			}
- 			for (i = 0; i < n; i++)
-@@ -785,7 +785,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
- 	unsigned int i, len;
- 	int ret;
- 
--	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer)) {
-+	if (rspi->ctlr->can_dma && __rspi_can_dma(rspi, xfer)) {
- 		ret = rspi_dma_transfer(rspi, &xfer->tx_sg, NULL);
- 		if (ret != -EAGAIN)
- 			return ret;
-@@ -796,7 +796,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
- 		if (len == QSPI_BUFFER_SIZE) {
- 			ret = rspi_wait_for_tx_empty(rspi);
- 			if (ret < 0) {
--				dev_err(&rspi->master->dev, "transmit timeout\n");
-+				dev_err(&rspi->ctlr->dev, "transmit timeout\n");
- 				return ret;
- 			}
- 			for (i = 0; i < len; i++)
-@@ -822,7 +822,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
- 	unsigned int i, len;
- 	int ret;
- 
--	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer)) {
-+	if (rspi->ctlr->can_dma && __rspi_can_dma(rspi, xfer)) {
- 		int ret = rspi_dma_transfer(rspi, NULL, &xfer->rx_sg);
- 		if (ret != -EAGAIN)
- 			return ret;
-@@ -833,7 +833,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
- 		if (len == QSPI_BUFFER_SIZE) {
- 			ret = rspi_wait_for_rx_full(rspi);
- 			if (ret < 0) {
--				dev_err(&rspi->master->dev, "receive timeout\n");
-+				dev_err(&rspi->ctlr->dev, "receive timeout\n");
- 				return ret;
- 			}
- 			for (i = 0; i < len; i++)
-@@ -849,10 +849,10 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
- 	return 0;
- }
- 
--static int qspi_transfer_one(struct spi_master *master, struct spi_device *spi,
--			     struct spi_transfer *xfer)
-+static int qspi_transfer_one(struct spi_controller *ctlr,
-+			     struct spi_device *spi, struct spi_transfer *xfer)
- {
--	struct rspi_data *rspi = spi_master_get_devdata(master);
-+	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
- 
- 	if (spi->mode & SPI_LOOP) {
- 		return qspi_transfer_out_in(rspi, xfer);
-@@ -870,7 +870,7 @@ static int qspi_transfer_one(struct spi_master *master, struct spi_device *spi,
- 
- static int rspi_setup(struct spi_device *spi)
- {
--	struct rspi_data *rspi = spi_master_get_devdata(spi->master);
-+	struct rspi_data *rspi = spi_controller_get_devdata(spi->controller);
- 
- 	rspi->max_speed_hz = spi->max_speed_hz;
- 
-@@ -955,10 +955,10 @@ static int qspi_setup_sequencer(struct rspi_data *rspi,
- 	return 0;
- }
- 
--static int rspi_prepare_message(struct spi_master *master,
-+static int rspi_prepare_message(struct spi_controller *ctlr,
- 				struct spi_message *msg)
- {
--	struct rspi_data *rspi = spi_master_get_devdata(master);
-+	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
- 	int ret;
- 
- 	if (msg->spi->mode &
-@@ -974,10 +974,10 @@ static int rspi_prepare_message(struct spi_master *master,
- 	return 0;
- }
- 
--static int rspi_unprepare_message(struct spi_master *master,
-+static int rspi_unprepare_message(struct spi_controller *ctlr,
- 				  struct spi_message *msg)
- {
--	struct rspi_data *rspi = spi_master_get_devdata(master);
-+	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
- 
- 	/* Disable SPI function */
- 	rspi_write8(rspi, rspi_read8(rspi, RSPI_SPCR) & ~SPCR_SPE, RSPI_SPCR);
-@@ -1081,7 +1081,7 @@ static struct dma_chan *rspi_request_dma_chan(struct device *dev,
- 	return chan;
- }
- 
--static int rspi_request_dma(struct device *dev, struct spi_master *master,
-+static int rspi_request_dma(struct device *dev, struct spi_controller *ctlr,
- 			    const struct resource *res)
- {
- 	const struct rspi_plat_data *rspi_pd = dev_get_platdata(dev);
-@@ -1099,37 +1099,37 @@ static int rspi_request_dma(struct device *dev, struct spi_master *master,
- 		return 0;
- 	}
- 
--	master->dma_tx = rspi_request_dma_chan(dev, DMA_MEM_TO_DEV, dma_tx_id,
--					       res->start + RSPI_SPDR);
--	if (!master->dma_tx)
-+	ctlr->dma_tx = rspi_request_dma_chan(dev, DMA_MEM_TO_DEV, dma_tx_id,
-+					     res->start + RSPI_SPDR);
-+	if (!ctlr->dma_tx)
- 		return -ENODEV;
- 
--	master->dma_rx = rspi_request_dma_chan(dev, DMA_DEV_TO_MEM, dma_rx_id,
--					       res->start + RSPI_SPDR);
--	if (!master->dma_rx) {
--		dma_release_channel(master->dma_tx);
--		master->dma_tx = NULL;
-+	ctlr->dma_rx = rspi_request_dma_chan(dev, DMA_DEV_TO_MEM, dma_rx_id,
-+					     res->start + RSPI_SPDR);
-+	if (!ctlr->dma_rx) {
-+		dma_release_channel(ctlr->dma_tx);
-+		ctlr->dma_tx = NULL;
- 		return -ENODEV;
- 	}
- 
--	master->can_dma = rspi_can_dma;
-+	ctlr->can_dma = rspi_can_dma;
- 	dev_info(dev, "DMA available");
- 	return 0;
- }
- 
--static void rspi_release_dma(struct spi_master *master)
-+static void rspi_release_dma(struct spi_controller *ctlr)
- {
--	if (master->dma_tx)
--		dma_release_channel(master->dma_tx);
--	if (master->dma_rx)
--		dma_release_channel(master->dma_rx);
-+	if (ctlr->dma_tx)
-+		dma_release_channel(ctlr->dma_tx);
-+	if (ctlr->dma_rx)
-+		dma_release_channel(ctlr->dma_rx);
- }
- 
- static int rspi_remove(struct platform_device *pdev)
- {
- 	struct rspi_data *rspi = platform_get_drvdata(pdev);
- 
--	rspi_release_dma(rspi->master);
-+	rspi_release_dma(rspi->ctlr);
- 	pm_runtime_disable(&pdev->dev);
- 
- 	return 0;
-@@ -1139,7 +1139,7 @@ static const struct spi_ops rspi_ops = {
- 	.set_config_register =	rspi_set_config_register,
- 	.transfer_one =		rspi_transfer_one,
- 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
--	.flags =		SPI_MASTER_MUST_TX,
-+	.flags =		SPI_CONTROLLER_MUST_TX,
- 	.fifo_size =		8,
- };
- 
-@@ -1147,7 +1147,7 @@ static const struct spi_ops rspi_rz_ops = {
- 	.set_config_register =	rspi_rz_set_config_register,
- 	.transfer_one =		rspi_rz_transfer_one,
- 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
--	.flags =		SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX,
-+	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
- 	.fifo_size =		8,	/* 8 for TX, 32 for RX */
- };
- 
-@@ -1157,7 +1157,7 @@ static const struct spi_ops qspi_ops = {
- 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP |
- 				SPI_TX_DUAL | SPI_TX_QUAD |
- 				SPI_RX_DUAL | SPI_RX_QUAD,
--	.flags =		SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX,
-+	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
- 	.fifo_size =		32,
- };
- 
-@@ -1174,7 +1174,7 @@ static const struct of_device_id rspi_of_match[] = {
- 
- MODULE_DEVICE_TABLE(of, rspi_of_match);
- 
--static int rspi_parse_dt(struct device *dev, struct spi_master *master)
-+static int rspi_parse_dt(struct device *dev, struct spi_controller *ctlr)
- {
- 	u32 num_cs;
- 	int error;
-@@ -1186,12 +1186,12 @@ static int rspi_parse_dt(struct device *dev, struct spi_master *master)
- 		return error;
- 	}
- 
--	master->num_chipselect = num_cs;
-+	ctlr->num_chipselect = num_cs;
- 	return 0;
- }
- #else
- #define rspi_of_match	NULL
--static inline int rspi_parse_dt(struct device *dev, struct spi_master *master)
-+static inline int rspi_parse_dt(struct device *dev, struct spi_controller *ctlr)
- {
- 	return -EINVAL;
- }
-@@ -1212,28 +1212,28 @@ static int rspi_request_irq(struct device *dev, unsigned int irq,
- static int rspi_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
--	struct spi_master *master;
-+	struct spi_controller *ctlr;
- 	struct rspi_data *rspi;
- 	int ret;
- 	const struct rspi_plat_data *rspi_pd;
- 	const struct spi_ops *ops;
- 
--	master = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
--	if (master == NULL)
-+	ctlr = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
-+	if (ctlr == NULL)
- 		return -ENOMEM;
- 
- 	ops = of_device_get_match_data(&pdev->dev);
- 	if (ops) {
--		ret = rspi_parse_dt(&pdev->dev, master);
-+		ret = rspi_parse_dt(&pdev->dev, ctlr);
- 		if (ret)
- 			goto error1;
- 	} else {
- 		ops = (struct spi_ops *)pdev->id_entry->driver_data;
- 		rspi_pd = dev_get_platdata(&pdev->dev);
- 		if (rspi_pd && rspi_pd->num_chipselect)
--			master->num_chipselect = rspi_pd->num_chipselect;
-+			ctlr->num_chipselect = rspi_pd->num_chipselect;
- 		else
--			master->num_chipselect = 2; /* default */
-+			ctlr->num_chipselect = 2; /* default */
- 	}
- 
- 	/* ops parameter check */
-@@ -1243,10 +1243,10 @@ static int rspi_probe(struct platform_device *pdev)
- 		goto error1;
- 	}
- 
--	rspi = spi_master_get_devdata(master);
-+	rspi = spi_controller_get_devdata(ctlr);
- 	platform_set_drvdata(pdev, rspi);
- 	rspi->ops = ops;
--	rspi->master = master;
-+	rspi->ctlr = ctlr;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	rspi->addr = devm_ioremap_resource(&pdev->dev, res);
-@@ -1266,15 +1266,15 @@ static int rspi_probe(struct platform_device *pdev)
- 
- 	init_waitqueue_head(&rspi->wait);
- 
--	master->bus_num = pdev->id;
--	master->setup = rspi_setup;
--	master->auto_runtime_pm = true;
--	master->transfer_one = ops->transfer_one;
--	master->prepare_message = rspi_prepare_message;
--	master->unprepare_message = rspi_unprepare_message;
--	master->mode_bits = ops->mode_bits;
--	master->flags = ops->flags;
--	master->dev.of_node = pdev->dev.of_node;
-+	ctlr->bus_num = pdev->id;
-+	ctlr->setup = rspi_setup;
-+	ctlr->auto_runtime_pm = true;
-+	ctlr->transfer_one = ops->transfer_one;
-+	ctlr->prepare_message = rspi_prepare_message;
-+	ctlr->unprepare_message = rspi_unprepare_message;
-+	ctlr->mode_bits = ops->mode_bits;
-+	ctlr->flags = ops->flags;
-+	ctlr->dev.of_node = pdev->dev.of_node;
- 
- 	ret = platform_get_irq_byname(pdev, "rx");
- 	if (ret < 0) {
-@@ -1311,13 +1311,13 @@ static int rspi_probe(struct platform_device *pdev)
- 		goto error2;
- 	}
- 
--	ret = rspi_request_dma(&pdev->dev, master, res);
-+	ret = rspi_request_dma(&pdev->dev, ctlr, res);
- 	if (ret < 0)
- 		dev_warn(&pdev->dev, "DMA not available, using PIO\n");
- 
--	ret = devm_spi_register_master(&pdev->dev, master);
-+	ret = devm_spi_register_controller(&pdev->dev, ctlr);
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "spi_register_master error.\n");
-+		dev_err(&pdev->dev, "devm_spi_register_controller error.\n");
- 		goto error3;
- 	}
- 
-@@ -1326,11 +1326,11 @@ static int rspi_probe(struct platform_device *pdev)
- 	return 0;
- 
- error3:
--	rspi_release_dma(master);
-+	rspi_release_dma(ctlr);
- error2:
- 	pm_runtime_disable(&pdev->dev);
- error1:
--	spi_master_put(master);
-+	spi_controller_put(ctlr);
- 
- 	return ret;
- }
-@@ -1349,14 +1349,14 @@ static int rspi_suspend(struct device *dev)
- {
- 	struct rspi_data *rspi = dev_get_drvdata(dev);
- 
--	return spi_master_suspend(rspi->master);
-+	return spi_controller_suspend(rspi->ctlr);
- }
- 
- static int rspi_resume(struct device *dev)
- {
- 	struct rspi_data *rspi = dev_get_drvdata(dev);
- 
--	return spi_master_resume(rspi->master);
-+	return spi_controller_resume(rspi->ctlr);
- }
- 
- static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
--- 
-2.17.1
-
+> ---
+> Question:
+> Is this safe on arm32, which calls arm_teardown_iommu_dma_ops() instead
+> of resetting dev->dma_ops?
+>
+> ---
+> Adding some debug code, and comparing before/after commit
+> e8e683ae9a736407:
+>
+>      sata_rcar ee300000.sata: of_iommu_configure:227: err = -517
+>     -sata_rcar ee300000.sata: of_iommu_configure:230: calling iommu_probe_device()
+>     -sata_rcar ee300000.sata: iommu_probe_device:122: Calling ipmmu_add_device
+>     -sata_rcar ee300000.sata: ipmmu_add_device:893
+>     -sata_rcar ee300000.sata: of_iommu_configure:232: iommu_probe_device() returned -19
+>     -sata_rcar ee300000.sata: dma_alloc_attrs:257: size 2048, ops =           (null)
+>     -sata_rcar ee300000.sata: __dma_direct_alloc_pages:104: size 4096
+>     -sata_rcar ee300000.sata: __dma_direct_alloc_pages:115: trying dma_alloc_from_contiguous()
+>     -sata_rcar ee300000.sata: dma_alloc_from_contiguous:202: cma_alloc(1) returned page ffffffbf00d20e00
+>     -sata_rcar ee300000.sata: dma_alloc_attrs:271: allocated using dma_direct_alloc()
+>     -sata_rcar ee300000.sata: dmam_alloc_attrs:98: size 2048 vaddr ffffff8011e95000 dma_handle 0x0x000000007c040000 attrs 0x0
+>     -scsi host0: sata_rcar
+>     -ata1: SATA max UDMA/133 irq 172
+>     -ata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>
+> DMA memory used to be allocated from CMA, dma_map_ops = NULL.
+> The SATA driver was probed and initialized.
+>
+>     +sata_rcar ee300000.sata: of_iommu_configure:234: skipping iommu_probe_device()
+>
+> SATA driver initialization is now deferred.
+> Later, it is retried:
+>
+>     +sata_rcar ee300000.sata: of_iommu_configure:227: err = 0
+>     +sata_rcar ee300000.sata: of_iommu_configure:230: calling iommu_probe_device()
+>     +sata_rcar ee300000.sata: iommu_probe_device:122: Calling ipmmu_add_device
+>     +sata_rcar ee300000.sata: ipmmu_add_device:893
+>     +sata_rcar ee300000.sata: Using IPMMU context 1
+>     +iommu: Adding device ee300000.sata to group 0
+>     +sata_rcar ee300000.sata: ipmmu_add_device:908: Success
+>     +sata_rcar ee300000.sata: of_iommu_configure:232: iommu_probe_device() returned 0
+>     +sata_rcar ee300000.sata: dma_alloc_attrs:257: size 2048, ops = iommu_dma_ops
+>     +sata_rcar ee300000.sata: dma_alloc_attrs:274: allocated using __iommu_alloc_attrs()
+>     +sata_rcar ee300000.sata: dmam_alloc_attrs:98: size 2048 vaddr ffffff8012135000 dma_handle 0x0x00000000fffff000 attrs 0x0
+>     +scsi host0: sata_rcar
+>     +ata1: SATA max UDMA/133 irq 172
+>     +ata1: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>
+> DMA memory is now allocated using __iommu_alloc_attrs(), as dma_map_ops
+> = iommu_dma_ops.
+>
+> Unbind:
+>
+>     -sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8011e95000 dma_handle 0x0x000000007c040000 attrs 0x0
+>     +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012135000 dma_handle 0x0x00000000fffff000 attrs 0x0
+>      sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops =           (null)
+>
+> dma_map_ops = NULL, both before/after!
+>
+>      sata_rcar ee300000.sata: dma_free_attrs:308: calling dma_direct_free()
+>     -sata_rcar ee300000.sata: __dma_direct_free_pages:189: size 2048 page ffffffbf00d20e00
+>     -sata_rcar ee300000.sata: dma_release_from_contiguous:223: cma_release(1) freed
+>     -sata_rcar ee300000.sata: __dma_direct_free_pages:194: skipping __free_pages()
+>
+> DMA memory was correctly freed using CMA.
+>
+>     +sata_rcar ee300000.sata: __dma_direct_free_pages:189: size 2048 page ffffffbf029fffc8
+>     +sata_rcar ee300000.sata: dma_release_from_contiguous:225: cma_release(1) failed, cma area ffffff8011cf5530
+>     +sata_rcar ee300000.sata: __dma_direct_free_pages:191: calling __free_pages()
+>     +Unable to handle kernel paging request at virtual address ffffffbf029ffffc
+>
+> Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
+> Oops...
+>
+> After reversing the order of the calls to arch_teardown_dma_ops() and
+> devres_release_all(), dma_map_ops is still valid, and the DMA memory is
+> now released using __iommu_free_attrs():
+>
+>     +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
+>     +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
+>     +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
+> ---
+>  drivers/base/dd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 8ac10af17c0043a3..d62487d024559620 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+>                         drv->remove(dev);
+>
+>                 device_links_driver_cleanup(dev);
+> -               arch_teardown_dma_ops(dev);
+>
+>                 devres_release_all(dev);
+> +               arch_teardown_dma_ops(dev);
+>                 dev->driver = NULL;
+>                 dev_set_drvdata(dev, NULL);
+>                 if (dev->pm_domain && dev->pm_domain->dismiss)
+> --
+> 2.17.1
+>
