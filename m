@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1158C282CB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D863FC169C4
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 09:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677612147C
+	by mail.kernel.org (Postfix) with ESMTP id A997721916
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 09:09:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfBHJJT (ORCPT
+        id S1727461AbfBHJJT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 8 Feb 2019 04:09:19 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:33162 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727470AbfBHJJR (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:50442 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727472AbfBHJJR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 8 Feb 2019 04:09:17 -0500
 Received: from ramsan ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id a99A1z0173XaVaC0699AXQ; Fri, 08 Feb 2019 10:09:11 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id a99A1z00Y3XaVaC0199AMM; Fri, 08 Feb 2019 10:09:11 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gs29m-0004Iz-Sn; Fri, 08 Feb 2019 10:09:10 +0100
+        id 1gs29m-0004Iu-Qn; Fri, 08 Feb 2019 10:09:10 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gs29m-0000D1-Pp; Fri, 08 Feb 2019 10:09:10 +0100
+        id 1gs29m-0000Cv-Nd; Fri, 08 Feb 2019 10:09:10 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] spi: sh-msiof: Replace spi_master by spi_controller
-Date:   Fri,  8 Feb 2019 10:09:09 +0100
-Message-Id: <20190208090909.739-4-geert+renesas@glider.be>
+Subject: [PATCH 1/3] spi: rspi: Replace spi_master by spi_controller
+Date:   Fri,  8 Feb 2019 10:09:07 +0100
+Message-Id: <20190208090909.739-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190208090909.739-1-geert+renesas@glider.be>
 References: <20190208090909.739-1-geert+renesas@glider.be>
@@ -52,422 +52,463 @@ for the new controller-centric names.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-sh-msiof.c | 168 ++++++++++++++++++-------------------
- 1 file changed, 83 insertions(+), 85 deletions(-)
+ drivers/spi/spi-rspi.c | 170 ++++++++++++++++++++---------------------
+ 1 file changed, 85 insertions(+), 85 deletions(-)
 
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 617cdf3be0509938..b20e70a2bdd115d7 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * SuperH MSIOF SPI Master Interface
-+ * SuperH MSIOF SPI Controller Interface
-  *
-  * Copyright (c) 2009 Magnus Damm
-  * Copyright (C) 2014 Renesas Electronics Corporation
-@@ -34,12 +34,12 @@
- struct sh_msiof_chipdata {
- 	u16 tx_fifo_size;
- 	u16 rx_fifo_size;
--	u16 master_flags;
-+	u16 ctlr_flags;
- 	u16 min_div_pow;
- };
- 
- struct sh_msiof_spi_priv {
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index a4ef641b522727e0..556870dcdf7995f8 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -180,7 +180,7 @@
+ struct rspi_data {
+ 	void __iomem *addr;
+ 	u32 max_speed_hz;
 -	struct spi_master *master;
 +	struct spi_controller *ctlr;
- 	void __iomem *mapbase;
+ 	wait_queue_head_t wait;
  	struct clk *clk;
- 	struct platform_device *pdev;
-@@ -287,7 +287,7 @@ static void sh_msiof_spi_set_clk_regs(struct sh_msiof_spi_priv *p,
- 
- 	scr = sh_msiof_spi_div_array[div_pow] | SCR_BRPS(brps);
- 	sh_msiof_write(p, TSCR, scr);
--	if (!(p->master->flags & SPI_MASTER_MUST_TX))
-+	if (!(p->ctlr->flags & SPI_CONTROLLER_MUST_TX))
- 		sh_msiof_write(p, RSCR, scr);
- }
- 
-@@ -351,14 +351,14 @@ static void sh_msiof_spi_set_pin_regs(struct sh_msiof_spi_priv *p, u32 ss,
- 	tmp |= !cs_high << MDR1_SYNCAC_SHIFT;
- 	tmp |= lsb_first << MDR1_BITLSB_SHIFT;
- 	tmp |= sh_msiof_spi_get_dtdl_and_syncdl(p);
--	if (spi_controller_is_slave(p->master)) {
-+	if (spi_controller_is_slave(p->ctlr)) {
- 		sh_msiof_write(p, TMDR1, tmp | TMDR1_PCON);
- 	} else {
- 		sh_msiof_write(p, TMDR1,
- 			       tmp | MDR1_TRMD | TMDR1_PCON |
- 			       (ss < MAX_SS ? ss : 0) << TMDR1_SYNCCH_SHIFT);
+ 	u16 spcmd;
+@@ -237,8 +237,8 @@ static u16 rspi_read_data(const struct rspi_data *rspi)
+ /* optional functions */
+ struct spi_ops {
+ 	int (*set_config_register)(struct rspi_data *rspi, int access_size);
+-	int (*transfer_one)(struct spi_master *master, struct spi_device *spi,
+-			    struct spi_transfer *xfer);
++	int (*transfer_one)(struct spi_controller *ctlr,
++			    struct spi_device *spi, struct spi_transfer *xfer);
+ 	u16 mode_bits;
+ 	u16 flags;
+ 	u16 fifo_size;
+@@ -466,7 +466,7 @@ static int rspi_data_out(struct rspi_data *rspi, u8 data)
+ {
+ 	int error = rspi_wait_for_tx_empty(rspi);
+ 	if (error < 0) {
+-		dev_err(&rspi->master->dev, "transmit timeout\n");
++		dev_err(&rspi->ctlr->dev, "transmit timeout\n");
+ 		return error;
  	}
--	if (p->master->flags & SPI_MASTER_MUST_TX) {
-+	if (p->ctlr->flags & SPI_CONTROLLER_MUST_TX) {
- 		/* These bits are reserved if RX needs TX */
- 		tmp &= ~0x0000ffff;
+ 	rspi_write_data(rspi, data);
+@@ -480,7 +480,7 @@ static int rspi_data_in(struct rspi_data *rspi)
+ 
+ 	error = rspi_wait_for_rx_full(rspi);
+ 	if (error < 0) {
+-		dev_err(&rspi->master->dev, "receive timeout\n");
++		dev_err(&rspi->ctlr->dev, "receive timeout\n");
+ 		return error;
  	}
-@@ -382,7 +382,7 @@ static void sh_msiof_spi_set_mode_regs(struct sh_msiof_spi_priv *p,
- {
- 	u32 dr2 = MDR2_BITLEN1(bits) | MDR2_WDLEN1(words);
+ 	data = rspi_read_data(rspi);
+@@ -526,8 +526,8 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
  
--	if (tx_buf || (p->master->flags & SPI_MASTER_MUST_TX))
-+	if (tx_buf || (p->ctlr->flags & SPI_CONTROLLER_MUST_TX))
- 		sh_msiof_write(p, TMDR2, dr2);
- 	else
- 		sh_msiof_write(p, TMDR2, dr2 | MDR2_GRPMASK1);
-@@ -539,8 +539,9 @@ static void sh_msiof_spi_read_fifo_s32u(struct sh_msiof_spi_priv *p,
- 
- static int sh_msiof_spi_setup(struct spi_device *spi)
- {
--	struct device_node	*np = spi->master->dev.of_node;
--	struct sh_msiof_spi_priv *p = spi_master_get_devdata(spi->master);
-+	struct device_node *np = spi->controller->dev.of_node;
-+	struct sh_msiof_spi_priv *p =
-+		spi_controller_get_devdata(spi->controller);
- 	u32 clr, set, tmp;
- 
- 	if (!np) {
-@@ -556,7 +557,7 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- 		return 0;
- 	}
- 
--	if (spi_controller_is_slave(p->master))
-+	if (spi_controller_is_slave(p->ctlr))
- 		return 0;
- 
- 	if (p->native_cs_inited &&
-@@ -581,10 +582,10 @@ static int sh_msiof_spi_setup(struct spi_device *spi)
- 	return 0;
- }
- 
--static int sh_msiof_prepare_message(struct spi_master *master,
-+static int sh_msiof_prepare_message(struct spi_controller *ctlr,
- 				    struct spi_message *msg)
- {
--	struct sh_msiof_spi_priv *p = spi_master_get_devdata(master);
-+	struct sh_msiof_spi_priv *p = spi_controller_get_devdata(ctlr);
- 	const struct spi_device *spi = msg->spi;
- 	u32 ss, cs_high;
- 
-@@ -605,7 +606,7 @@ static int sh_msiof_prepare_message(struct spi_master *master,
- 
- static int sh_msiof_spi_start(struct sh_msiof_spi_priv *p, void *rx_buf)
- {
--	bool slave = spi_controller_is_slave(p->master);
-+	bool slave = spi_controller_is_slave(p->ctlr);
- 	int ret = 0;
- 
- 	/* setup clock and rx/tx signals */
-@@ -625,7 +626,7 @@ static int sh_msiof_spi_start(struct sh_msiof_spi_priv *p, void *rx_buf)
- 
- static int sh_msiof_spi_stop(struct sh_msiof_spi_priv *p, void *rx_buf)
- {
--	bool slave = spi_controller_is_slave(p->master);
-+	bool slave = spi_controller_is_slave(p->ctlr);
- 	int ret = 0;
- 
- 	/* shut down frame, rx/tx and clock signals */
-@@ -641,9 +642,9 @@ static int sh_msiof_spi_stop(struct sh_msiof_spi_priv *p, void *rx_buf)
- 	return ret;
- }
- 
--static int sh_msiof_slave_abort(struct spi_master *master)
-+static int sh_msiof_slave_abort(struct spi_controller *ctlr)
- {
--	struct sh_msiof_spi_priv *p = spi_master_get_devdata(master);
-+	struct sh_msiof_spi_priv *p = spi_controller_get_devdata(ctlr);
- 
- 	p->slave_aborted = true;
- 	complete(&p->done);
-@@ -654,7 +655,7 @@ static int sh_msiof_slave_abort(struct spi_master *master)
- static int sh_msiof_wait_for_completion(struct sh_msiof_spi_priv *p,
- 					struct completion *x)
- {
--	if (spi_controller_is_slave(p->master)) {
-+	if (spi_controller_is_slave(p->ctlr)) {
- 		if (wait_for_completion_interruptible(x) ||
- 		    p->slave_aborted) {
- 			dev_dbg(&p->pdev->dev, "interrupted\n");
-@@ -754,7 +755,7 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
  	/* First prepare and submit the DMA request(s), as this may fail */
  	if (rx) {
- 		ier_bits |= IER_RDREQE | IER_RDMAE;
--		desc_rx = dmaengine_prep_slave_single(p->master->dma_rx,
-+		desc_rx = dmaengine_prep_slave_single(p->ctlr->dma_rx,
- 					p->rx_dma_addr, len, DMA_DEV_TO_MEM,
+-		desc_rx = dmaengine_prep_slave_sg(rspi->master->dma_rx,
+-					rx->sgl, rx->nents, DMA_DEV_TO_MEM,
++		desc_rx = dmaengine_prep_slave_sg(rspi->ctlr->dma_rx, rx->sgl,
++					rx->nents, DMA_DEV_TO_MEM,
  					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
- 		if (!desc_rx)
-@@ -769,9 +770,9 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
+ 		if (!desc_rx) {
+ 			ret = -EAGAIN;
+@@ -546,8 +546,8 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
+ 	}
  
  	if (tx) {
- 		ier_bits |= IER_TDREQE | IER_TDMAE;
--		dma_sync_single_for_device(p->master->dma_tx->device->dev,
-+		dma_sync_single_for_device(p->ctlr->dma_tx->device->dev,
- 					   p->tx_dma_addr, len, DMA_TO_DEVICE);
--		desc_tx = dmaengine_prep_slave_single(p->master->dma_tx,
-+		desc_tx = dmaengine_prep_slave_single(p->ctlr->dma_tx,
- 					p->tx_dma_addr, len, DMA_MEM_TO_DEV,
+-		desc_tx = dmaengine_prep_slave_sg(rspi->master->dma_tx,
+-					tx->sgl, tx->nents, DMA_MEM_TO_DEV,
++		desc_tx = dmaengine_prep_slave_sg(rspi->ctlr->dma_tx, tx->sgl,
++					tx->nents, DMA_MEM_TO_DEV,
  					DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
  		if (!desc_tx) {
-@@ -803,9 +804,9 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
+ 			ret = -EAGAIN;
+@@ -584,9 +584,9 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
  
  	/* Now start DMA */
  	if (rx)
--		dma_async_issue_pending(p->master->dma_rx);
-+		dma_async_issue_pending(p->ctlr->dma_rx);
+-		dma_async_issue_pending(rspi->master->dma_rx);
++		dma_async_issue_pending(rspi->ctlr->dma_rx);
  	if (tx)
--		dma_async_issue_pending(p->master->dma_tx);
-+		dma_async_issue_pending(p->ctlr->dma_tx);
+-		dma_async_issue_pending(rspi->master->dma_tx);
++		dma_async_issue_pending(rspi->ctlr->dma_tx);
  
- 	ret = sh_msiof_spi_start(p, rx);
- 	if (ret) {
-@@ -845,9 +846,8 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
+ 	ret = wait_event_interruptible_timeout(rspi->wait,
+ 					       rspi->dma_callbacked, HZ);
+@@ -594,13 +594,13 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
+ 		ret = 0;
+ 	} else {
+ 		if (!ret) {
+-			dev_err(&rspi->master->dev, "DMA timeout\n");
++			dev_err(&rspi->ctlr->dev, "DMA timeout\n");
+ 			ret = -ETIMEDOUT;
+ 		}
+ 		if (tx)
+-			dmaengine_terminate_all(rspi->master->dma_tx);
++			dmaengine_terminate_all(rspi->ctlr->dma_tx);
+ 		if (rx)
+-			dmaengine_terminate_all(rspi->master->dma_rx);
++			dmaengine_terminate_all(rspi->ctlr->dma_rx);
  	}
  
- 	if (rx)
--		dma_sync_single_for_cpu(p->master->dma_rx->device->dev,
--					p->rx_dma_addr, len,
--					DMA_FROM_DEVICE);
-+		dma_sync_single_for_cpu(p->ctlr->dma_rx->device->dev,
-+					p->rx_dma_addr, len, DMA_FROM_DEVICE);
+ 	rspi_disable_irq(rspi, irq_mask);
+@@ -614,12 +614,12 @@ static int rspi_dma_transfer(struct rspi_data *rspi, struct sg_table *tx,
  
- 	return 0;
- 
-@@ -856,10 +856,10 @@ static int sh_msiof_dma_once(struct sh_msiof_spi_priv *p, const void *tx,
- 	sh_msiof_spi_stop(p, rx);
- stop_dma:
- 	if (tx)
--		dmaengine_terminate_all(p->master->dma_tx);
-+		dmaengine_terminate_all(p->ctlr->dma_tx);
  no_dma_tx:
  	if (rx)
--		dmaengine_terminate_all(p->master->dma_rx);
-+		dmaengine_terminate_all(p->ctlr->dma_rx);
- 	sh_msiof_write(p, IER, 0);
+-		dmaengine_terminate_all(rspi->master->dma_rx);
++		dmaengine_terminate_all(rspi->ctlr->dma_rx);
+ no_dma_rx:
+ 	if (ret == -EAGAIN) {
+ 		pr_warn_once("%s %s: DMA not available, falling back to PIO\n",
+-			     dev_driver_string(&rspi->master->dev),
+-			     dev_name(&rspi->master->dev));
++			     dev_driver_string(&rspi->ctlr->dev),
++			     dev_name(&rspi->ctlr->dev));
+ 	}
  	return ret;
  }
-@@ -907,11 +907,11 @@ static void copy_plain32(u32 *dst, const u32 *src, unsigned int words)
- 	memcpy(dst, src, words * 4);
+@@ -660,10 +660,10 @@ static bool __rspi_can_dma(const struct rspi_data *rspi,
+ 	return xfer->len > rspi->ops->fifo_size;
  }
  
--static int sh_msiof_transfer_one(struct spi_master *master,
-+static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 				 struct spi_device *spi,
- 				 struct spi_transfer *t)
+-static bool rspi_can_dma(struct spi_master *master, struct spi_device *spi,
++static bool rspi_can_dma(struct spi_controller *ctlr, struct spi_device *spi,
+ 			 struct spi_transfer *xfer)
  {
--	struct sh_msiof_spi_priv *p = spi_master_get_devdata(master);
-+	struct sh_msiof_spi_priv *p = spi_controller_get_devdata(ctlr);
- 	void (*copy32)(u32 *, const u32 *, unsigned int);
- 	void (*tx_fifo)(struct sh_msiof_spi_priv *, const void *, int, int);
- 	void (*rx_fifo)(struct sh_msiof_spi_priv *, void *, int, int);
-@@ -926,10 +926,10 @@ static int sh_msiof_transfer_one(struct spi_master *master,
+-	struct rspi_data *rspi = spi_master_get_devdata(master);
++	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
+ 
+ 	return __rspi_can_dma(rspi, xfer);
+ }
+@@ -671,7 +671,7 @@ static bool rspi_can_dma(struct spi_master *master, struct spi_device *spi,
+ static int rspi_dma_check_then_transfer(struct rspi_data *rspi,
+ 					 struct spi_transfer *xfer)
+ {
+-	if (!rspi->master->can_dma || !__rspi_can_dma(rspi, xfer))
++	if (!rspi->ctlr->can_dma || !__rspi_can_dma(rspi, xfer))
+ 		return -EAGAIN;
+ 
+ 	/* rx_buf can be NULL on RSPI on SH in TX-only Mode */
+@@ -698,10 +698,10 @@ static int rspi_common_transfer(struct rspi_data *rspi,
+ 	return 0;
+ }
+ 
+-static int rspi_transfer_one(struct spi_master *master, struct spi_device *spi,
+-			     struct spi_transfer *xfer)
++static int rspi_transfer_one(struct spi_controller *ctlr,
++			     struct spi_device *spi, struct spi_transfer *xfer)
+ {
+-	struct rspi_data *rspi = spi_master_get_devdata(master);
++	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
+ 	u8 spcr;
+ 
+ 	spcr = rspi_read8(rspi, RSPI_SPCR);
+@@ -716,11 +716,11 @@ static int rspi_transfer_one(struct spi_master *master, struct spi_device *spi,
+ 	return rspi_common_transfer(rspi, xfer);
+ }
+ 
+-static int rspi_rz_transfer_one(struct spi_master *master,
++static int rspi_rz_transfer_one(struct spi_controller *ctlr,
+ 				struct spi_device *spi,
+ 				struct spi_transfer *xfer)
+ {
+-	struct rspi_data *rspi = spi_master_get_devdata(master);
++	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
+ 
+ 	rspi_rz_receive_init(rspi);
+ 
+@@ -739,7 +739,7 @@ static int qspi_trigger_transfer_out_in(struct rspi_data *rspi, const u8 *tx,
+ 		if (n == QSPI_BUFFER_SIZE) {
+ 			ret = rspi_wait_for_tx_empty(rspi);
+ 			if (ret < 0) {
+-				dev_err(&rspi->master->dev, "transmit timeout\n");
++				dev_err(&rspi->ctlr->dev, "transmit timeout\n");
+ 				return ret;
+ 			}
+ 			for (i = 0; i < n; i++)
+@@ -747,7 +747,7 @@ static int qspi_trigger_transfer_out_in(struct rspi_data *rspi, const u8 *tx,
+ 
+ 			ret = rspi_wait_for_rx_full(rspi);
+ 			if (ret < 0) {
+-				dev_err(&rspi->master->dev, "receive timeout\n");
++				dev_err(&rspi->ctlr->dev, "receive timeout\n");
+ 				return ret;
+ 			}
+ 			for (i = 0; i < n; i++)
+@@ -785,7 +785,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 	unsigned int i, len;
  	int ret;
  
- 	/* setup clocks (clock already enabled in chipselect()) */
--	if (!spi_controller_is_slave(p->master))
-+	if (!spi_controller_is_slave(p->ctlr))
- 		sh_msiof_spi_set_clk_regs(p, clk_get_rate(p->clk), t->speed_hz);
+-	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer)) {
++	if (rspi->ctlr->can_dma && __rspi_can_dma(rspi, xfer)) {
+ 		ret = rspi_dma_transfer(rspi, &xfer->tx_sg, NULL);
+ 		if (ret != -EAGAIN)
+ 			return ret;
+@@ -796,7 +796,7 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 		if (len == QSPI_BUFFER_SIZE) {
+ 			ret = rspi_wait_for_tx_empty(rspi);
+ 			if (ret < 0) {
+-				dev_err(&rspi->master->dev, "transmit timeout\n");
++				dev_err(&rspi->ctlr->dev, "transmit timeout\n");
+ 				return ret;
+ 			}
+ 			for (i = 0; i < len; i++)
+@@ -822,7 +822,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 	unsigned int i, len;
+ 	int ret;
  
--	while (master->dma_tx && len > 15) {
-+	while (ctlr->dma_tx && len > 15) {
- 		/*
- 		 *  DMA supports 32-bit words only, hence pack 8-bit and 16-bit
- 		 *  words, with byte resp. word swapping.
-@@ -1050,21 +1050,21 @@ static int sh_msiof_transfer_one(struct spi_master *master,
- static const struct sh_msiof_chipdata sh_data = {
- 	.tx_fifo_size = 64,
- 	.rx_fifo_size = 64,
--	.master_flags = 0,
-+	.ctlr_flags = 0,
- 	.min_div_pow = 0,
- };
+-	if (rspi->master->can_dma && __rspi_can_dma(rspi, xfer)) {
++	if (rspi->ctlr->can_dma && __rspi_can_dma(rspi, xfer)) {
+ 		int ret = rspi_dma_transfer(rspi, NULL, &xfer->rx_sg);
+ 		if (ret != -EAGAIN)
+ 			return ret;
+@@ -833,7 +833,7 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 		if (len == QSPI_BUFFER_SIZE) {
+ 			ret = rspi_wait_for_rx_full(rspi);
+ 			if (ret < 0) {
+-				dev_err(&rspi->master->dev, "receive timeout\n");
++				dev_err(&rspi->ctlr->dev, "receive timeout\n");
+ 				return ret;
+ 			}
+ 			for (i = 0; i < len; i++)
+@@ -849,10 +849,10 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 	return 0;
+ }
  
- static const struct sh_msiof_chipdata rcar_gen2_data = {
- 	.tx_fifo_size = 64,
- 	.rx_fifo_size = 64,
--	.master_flags = SPI_MASTER_MUST_TX,
-+	.ctlr_flags = SPI_CONTROLLER_MUST_TX,
- 	.min_div_pow = 0,
- };
+-static int qspi_transfer_one(struct spi_master *master, struct spi_device *spi,
+-			     struct spi_transfer *xfer)
++static int qspi_transfer_one(struct spi_controller *ctlr,
++			     struct spi_device *spi, struct spi_transfer *xfer)
+ {
+-	struct rspi_data *rspi = spi_master_get_devdata(master);
++	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
  
- static const struct sh_msiof_chipdata rcar_gen3_data = {
- 	.tx_fifo_size = 64,
- 	.rx_fifo_size = 64,
--	.master_flags = SPI_MASTER_MUST_TX,
-+	.ctlr_flags = SPI_CONTROLLER_MUST_TX,
- 	.min_div_pow = 1,
- };
+ 	if (spi->mode & SPI_LOOP) {
+ 		return qspi_transfer_out_in(rspi, xfer);
+@@ -870,7 +870,7 @@ static int qspi_transfer_one(struct spi_master *master, struct spi_device *spi,
  
-@@ -1132,7 +1132,7 @@ static int sh_msiof_get_cs_gpios(struct sh_msiof_spi_priv *p)
- 	if (ret <= 0)
+ static int rspi_setup(struct spi_device *spi)
+ {
+-	struct rspi_data *rspi = spi_master_get_devdata(spi->master);
++	struct rspi_data *rspi = spi_controller_get_devdata(spi->controller);
+ 
+ 	rspi->max_speed_hz = spi->max_speed_hz;
+ 
+@@ -955,10 +955,10 @@ static int qspi_setup_sequencer(struct rspi_data *rspi,
+ 	return 0;
+ }
+ 
+-static int rspi_prepare_message(struct spi_master *master,
++static int rspi_prepare_message(struct spi_controller *ctlr,
+ 				struct spi_message *msg)
+ {
+-	struct rspi_data *rspi = spi_master_get_devdata(master);
++	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
+ 	int ret;
+ 
+ 	if (msg->spi->mode &
+@@ -974,10 +974,10 @@ static int rspi_prepare_message(struct spi_master *master,
+ 	return 0;
+ }
+ 
+-static int rspi_unprepare_message(struct spi_master *master,
++static int rspi_unprepare_message(struct spi_controller *ctlr,
+ 				  struct spi_message *msg)
+ {
+-	struct rspi_data *rspi = spi_master_get_devdata(master);
++	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
+ 
+ 	/* Disable SPI function */
+ 	rspi_write8(rspi, rspi_read8(rspi, RSPI_SPCR) & ~SPCR_SPE, RSPI_SPCR);
+@@ -1081,7 +1081,7 @@ static struct dma_chan *rspi_request_dma_chan(struct device *dev,
+ 	return chan;
+ }
+ 
+-static int rspi_request_dma(struct device *dev, struct spi_master *master,
++static int rspi_request_dma(struct device *dev, struct spi_controller *ctlr,
+ 			    const struct resource *res)
+ {
+ 	const struct rspi_plat_data *rspi_pd = dev_get_platdata(dev);
+@@ -1099,37 +1099,37 @@ static int rspi_request_dma(struct device *dev, struct spi_master *master,
  		return 0;
+ 	}
  
--	num_cs = max_t(unsigned int, ret, p->master->num_chipselect);
-+	num_cs = max_t(unsigned int, ret, p->ctlr->num_chipselect);
- 	for (i = 0; i < num_cs; i++) {
- 		struct gpio_desc *gpiod;
- 
-@@ -1205,7 +1205,7 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
- 	const struct sh_msiof_spi_info *info = p->info;
- 	unsigned int dma_tx_id, dma_rx_id;
- 	const struct resource *res;
--	struct spi_master *master;
-+	struct spi_controller *ctlr;
- 	struct device *tx_dev, *rx_dev;
- 
- 	if (dev->of_node) {
-@@ -1225,17 +1225,15 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
- 	if (!res)
- 		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 
--	master = p->master;
--	master->dma_tx = sh_msiof_request_dma_chan(dev, DMA_MEM_TO_DEV,
--						   dma_tx_id,
--						   res->start + TFDR);
+-	master->dma_tx = rspi_request_dma_chan(dev, DMA_MEM_TO_DEV, dma_tx_id,
+-					       res->start + RSPI_SPDR);
 -	if (!master->dma_tx)
-+	ctlr = p->ctlr;
-+	ctlr->dma_tx = sh_msiof_request_dma_chan(dev, DMA_MEM_TO_DEV,
-+						 dma_tx_id, res->start + TFDR);
++	ctlr->dma_tx = rspi_request_dma_chan(dev, DMA_MEM_TO_DEV, dma_tx_id,
++					     res->start + RSPI_SPDR);
 +	if (!ctlr->dma_tx)
  		return -ENODEV;
  
--	master->dma_rx = sh_msiof_request_dma_chan(dev, DMA_DEV_TO_MEM,
--						   dma_rx_id,
--						   res->start + RFDR);
--	if (!master->dma_rx)
-+	ctlr->dma_rx = sh_msiof_request_dma_chan(dev, DMA_DEV_TO_MEM,
-+						 dma_rx_id, res->start + RFDR);
-+	if (!ctlr->dma_rx)
- 		goto free_tx_chan;
- 
- 	p->tx_dma_page = (void *)__get_free_page(GFP_KERNEL | GFP_DMA);
-@@ -1246,13 +1244,13 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
- 	if (!p->rx_dma_page)
- 		goto free_tx_page;
- 
--	tx_dev = master->dma_tx->device->dev;
-+	tx_dev = ctlr->dma_tx->device->dev;
- 	p->tx_dma_addr = dma_map_single(tx_dev, p->tx_dma_page, PAGE_SIZE,
- 					DMA_TO_DEVICE);
- 	if (dma_mapping_error(tx_dev, p->tx_dma_addr))
- 		goto free_rx_page;
- 
--	rx_dev = master->dma_rx->device->dev;
-+	rx_dev = ctlr->dma_rx->device->dev;
- 	p->rx_dma_addr = dma_map_single(rx_dev, p->rx_dma_page, PAGE_SIZE,
- 					DMA_FROM_DEVICE);
- 	if (dma_mapping_error(rx_dev, p->rx_dma_addr))
-@@ -1268,34 +1266,34 @@ static int sh_msiof_request_dma(struct sh_msiof_spi_priv *p)
- free_tx_page:
- 	free_page((unsigned long)p->tx_dma_page);
- free_rx_chan:
--	dma_release_channel(master->dma_rx);
-+	dma_release_channel(ctlr->dma_rx);
- free_tx_chan:
--	dma_release_channel(master->dma_tx);
--	master->dma_tx = NULL;
-+	dma_release_channel(ctlr->dma_tx);
-+	ctlr->dma_tx = NULL;
- 	return -ENODEV;
- }
- 
- static void sh_msiof_release_dma(struct sh_msiof_spi_priv *p)
- {
--	struct spi_master *master = p->master;
-+	struct spi_controller *ctlr = p->ctlr;
- 
--	if (!master->dma_tx)
-+	if (!ctlr->dma_tx)
- 		return;
- 
--	dma_unmap_single(master->dma_rx->device->dev, p->rx_dma_addr,
--			 PAGE_SIZE, DMA_FROM_DEVICE);
--	dma_unmap_single(master->dma_tx->device->dev, p->tx_dma_addr,
--			 PAGE_SIZE, DMA_TO_DEVICE);
-+	dma_unmap_single(ctlr->dma_rx->device->dev, p->rx_dma_addr, PAGE_SIZE,
-+			 DMA_FROM_DEVICE);
-+	dma_unmap_single(ctlr->dma_tx->device->dev, p->tx_dma_addr, PAGE_SIZE,
-+			 DMA_TO_DEVICE);
- 	free_page((unsigned long)p->rx_dma_page);
- 	free_page((unsigned long)p->tx_dma_page);
--	dma_release_channel(master->dma_rx);
--	dma_release_channel(master->dma_tx);
-+	dma_release_channel(ctlr->dma_rx);
-+	dma_release_channel(ctlr->dma_tx);
- }
- 
- static int sh_msiof_spi_probe(struct platform_device *pdev)
- {
- 	struct resource	*r;
--	struct spi_master *master;
-+	struct spi_controller *ctlr;
- 	const struct sh_msiof_chipdata *chipdata;
- 	struct sh_msiof_spi_info *info;
- 	struct sh_msiof_spi_priv *p;
-@@ -1316,18 +1314,18 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+-	master->dma_rx = rspi_request_dma_chan(dev, DMA_DEV_TO_MEM, dma_rx_id,
+-					       res->start + RSPI_SPDR);
+-	if (!master->dma_rx) {
+-		dma_release_channel(master->dma_tx);
+-		master->dma_tx = NULL;
++	ctlr->dma_rx = rspi_request_dma_chan(dev, DMA_DEV_TO_MEM, dma_rx_id,
++					     res->start + RSPI_SPDR);
++	if (!ctlr->dma_rx) {
++		dma_release_channel(ctlr->dma_tx);
++		ctlr->dma_tx = NULL;
+ 		return -ENODEV;
  	}
  
- 	if (info->mode == MSIOF_SPI_SLAVE)
--		master = spi_alloc_slave(&pdev->dev,
--					 sizeof(struct sh_msiof_spi_priv));
-+		ctlr = spi_alloc_slave(&pdev->dev,
-+				       sizeof(struct sh_msiof_spi_priv));
- 	else
--		master = spi_alloc_master(&pdev->dev,
--					  sizeof(struct sh_msiof_spi_priv));
+-	master->can_dma = rspi_can_dma;
++	ctlr->can_dma = rspi_can_dma;
+ 	dev_info(dev, "DMA available");
+ 	return 0;
+ }
+ 
+-static void rspi_release_dma(struct spi_master *master)
++static void rspi_release_dma(struct spi_controller *ctlr)
+ {
+-	if (master->dma_tx)
+-		dma_release_channel(master->dma_tx);
+-	if (master->dma_rx)
+-		dma_release_channel(master->dma_rx);
++	if (ctlr->dma_tx)
++		dma_release_channel(ctlr->dma_tx);
++	if (ctlr->dma_rx)
++		dma_release_channel(ctlr->dma_rx);
+ }
+ 
+ static int rspi_remove(struct platform_device *pdev)
+ {
+ 	struct rspi_data *rspi = platform_get_drvdata(pdev);
+ 
+-	rspi_release_dma(rspi->master);
++	rspi_release_dma(rspi->ctlr);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	return 0;
+@@ -1139,7 +1139,7 @@ static const struct spi_ops rspi_ops = {
+ 	.set_config_register =	rspi_set_config_register,
+ 	.transfer_one =		rspi_transfer_one,
+ 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
+-	.flags =		SPI_MASTER_MUST_TX,
++	.flags =		SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		8,
+ };
+ 
+@@ -1147,7 +1147,7 @@ static const struct spi_ops rspi_rz_ops = {
+ 	.set_config_register =	rspi_rz_set_config_register,
+ 	.transfer_one =		rspi_rz_transfer_one,
+ 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
+-	.flags =		SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX,
++	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		8,	/* 8 for TX, 32 for RX */
+ };
+ 
+@@ -1157,7 +1157,7 @@ static const struct spi_ops qspi_ops = {
+ 	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP |
+ 				SPI_TX_DUAL | SPI_TX_QUAD |
+ 				SPI_RX_DUAL | SPI_RX_QUAD,
+-	.flags =		SPI_MASTER_MUST_RX | SPI_MASTER_MUST_TX,
++	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		32,
+ };
+ 
+@@ -1174,7 +1174,7 @@ static const struct of_device_id rspi_of_match[] = {
+ 
+ MODULE_DEVICE_TABLE(of, rspi_of_match);
+ 
+-static int rspi_parse_dt(struct device *dev, struct spi_master *master)
++static int rspi_parse_dt(struct device *dev, struct spi_controller *ctlr)
+ {
+ 	u32 num_cs;
+ 	int error;
+@@ -1186,12 +1186,12 @@ static int rspi_parse_dt(struct device *dev, struct spi_master *master)
+ 		return error;
+ 	}
+ 
+-	master->num_chipselect = num_cs;
++	ctlr->num_chipselect = num_cs;
+ 	return 0;
+ }
+ #else
+ #define rspi_of_match	NULL
+-static inline int rspi_parse_dt(struct device *dev, struct spi_master *master)
++static inline int rspi_parse_dt(struct device *dev, struct spi_controller *ctlr)
+ {
+ 	return -EINVAL;
+ }
+@@ -1212,28 +1212,28 @@ static int rspi_request_irq(struct device *dev, unsigned int irq,
+ static int rspi_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+-	struct spi_master *master;
++	struct spi_controller *ctlr;
+ 	struct rspi_data *rspi;
+ 	int ret;
+ 	const struct rspi_plat_data *rspi_pd;
+ 	const struct spi_ops *ops;
+ 
+-	master = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
 -	if (master == NULL)
-+		ctlr = spi_alloc_master(&pdev->dev,
-+					sizeof(struct sh_msiof_spi_priv));
++	ctlr = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
 +	if (ctlr == NULL)
  		return -ENOMEM;
  
--	p = spi_master_get_devdata(master);
-+	p = spi_controller_get_devdata(ctlr);
+ 	ops = of_device_get_match_data(&pdev->dev);
+ 	if (ops) {
+-		ret = rspi_parse_dt(&pdev->dev, master);
++		ret = rspi_parse_dt(&pdev->dev, ctlr);
+ 		if (ret)
+ 			goto error1;
+ 	} else {
+ 		ops = (struct spi_ops *)pdev->id_entry->driver_data;
+ 		rspi_pd = dev_get_platdata(&pdev->dev);
+ 		if (rspi_pd && rspi_pd->num_chipselect)
+-			master->num_chipselect = rspi_pd->num_chipselect;
++			ctlr->num_chipselect = rspi_pd->num_chipselect;
+ 		else
+-			master->num_chipselect = 2; /* default */
++			ctlr->num_chipselect = 2; /* default */
+ 	}
  
- 	platform_set_drvdata(pdev, p);
--	p->master = master;
-+	p->ctlr = ctlr;
- 	p->info = info;
- 	p->min_div_pow = chipdata->min_div_pow;
+ 	/* ops parameter check */
+@@ -1243,10 +1243,10 @@ static int rspi_probe(struct platform_device *pdev)
+ 		goto error1;
+ 	}
  
-@@ -1374,31 +1372,31 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 		p->rx_fifo_size = p->info->rx_fifo_override;
+-	rspi = spi_master_get_devdata(master);
++	rspi = spi_controller_get_devdata(ctlr);
+ 	platform_set_drvdata(pdev, rspi);
+ 	rspi->ops = ops;
+-	rspi->master = master;
++	rspi->ctlr = ctlr;
  
- 	/* Setup GPIO chip selects */
--	master->num_chipselect = p->info->num_chipselect;
-+	ctlr->num_chipselect = p->info->num_chipselect;
- 	ret = sh_msiof_get_cs_gpios(p);
- 	if (ret)
- 		goto err1;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	rspi->addr = devm_ioremap_resource(&pdev->dev, res);
+@@ -1266,15 +1266,15 @@ static int rspi_probe(struct platform_device *pdev)
  
--	/* init master code */
--	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
--	master->mode_bits |= SPI_LSB_FIRST | SPI_3WIRE;
--	master->flags = chipdata->master_flags;
+ 	init_waitqueue_head(&rspi->wait);
+ 
 -	master->bus_num = pdev->id;
--	master->dev.of_node = pdev->dev.of_node;
--	master->setup = sh_msiof_spi_setup;
--	master->prepare_message = sh_msiof_prepare_message;
--	master->slave_abort = sh_msiof_slave_abort;
--	master->bits_per_word_mask = SPI_BPW_RANGE_MASK(8, 32);
+-	master->setup = rspi_setup;
 -	master->auto_runtime_pm = true;
--	master->transfer_one = sh_msiof_transfer_one;
-+	/* init controller code */
-+	ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
-+	ctlr->mode_bits |= SPI_LSB_FIRST | SPI_3WIRE;
-+	ctlr->flags = chipdata->ctlr_flags;
+-	master->transfer_one = ops->transfer_one;
+-	master->prepare_message = rspi_prepare_message;
+-	master->unprepare_message = rspi_unprepare_message;
+-	master->mode_bits = ops->mode_bits;
+-	master->flags = ops->flags;
+-	master->dev.of_node = pdev->dev.of_node;
 +	ctlr->bus_num = pdev->id;
-+	ctlr->dev.of_node = pdev->dev.of_node;
-+	ctlr->setup = sh_msiof_spi_setup;
-+	ctlr->prepare_message = sh_msiof_prepare_message;
-+	ctlr->slave_abort = sh_msiof_slave_abort;
-+	ctlr->bits_per_word_mask = SPI_BPW_RANGE_MASK(8, 32);
++	ctlr->setup = rspi_setup;
 +	ctlr->auto_runtime_pm = true;
-+	ctlr->transfer_one = sh_msiof_transfer_one;
++	ctlr->transfer_one = ops->transfer_one;
++	ctlr->prepare_message = rspi_prepare_message;
++	ctlr->unprepare_message = rspi_unprepare_message;
++	ctlr->mode_bits = ops->mode_bits;
++	ctlr->flags = ops->flags;
++	ctlr->dev.of_node = pdev->dev.of_node;
  
- 	ret = sh_msiof_request_dma(p);
+ 	ret = platform_get_irq_byname(pdev, "rx");
+ 	if (ret < 0) {
+@@ -1311,13 +1311,13 @@ static int rspi_probe(struct platform_device *pdev)
+ 		goto error2;
+ 	}
+ 
+-	ret = rspi_request_dma(&pdev->dev, master, res);
++	ret = rspi_request_dma(&pdev->dev, ctlr, res);
  	if (ret < 0)
  		dev_warn(&pdev->dev, "DMA not available, using PIO\n");
  
@@ -476,44 +517,40 @@ index 617cdf3be0509938..b20e70a2bdd115d7 100644
  	if (ret < 0) {
 -		dev_err(&pdev->dev, "spi_register_master error.\n");
 +		dev_err(&pdev->dev, "devm_spi_register_controller error.\n");
- 		goto err2;
+ 		goto error3;
  	}
  
-@@ -1408,7 +1406,7 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 	sh_msiof_release_dma(p);
+@@ -1326,11 +1326,11 @@ static int rspi_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ error3:
+-	rspi_release_dma(master);
++	rspi_release_dma(ctlr);
+ error2:
  	pm_runtime_disable(&pdev->dev);
-  err1:
+ error1:
 -	spi_master_put(master);
 +	spi_controller_put(ctlr);
+ 
  	return ret;
  }
- 
-@@ -1432,14 +1430,14 @@ static int sh_msiof_spi_suspend(struct device *dev)
+@@ -1349,14 +1349,14 @@ static int rspi_suspend(struct device *dev)
  {
- 	struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
+ 	struct rspi_data *rspi = dev_get_drvdata(dev);
  
--	return spi_master_suspend(p->master);
-+	return spi_controller_suspend(p->ctlr);
+-	return spi_master_suspend(rspi->master);
++	return spi_controller_suspend(rspi->ctlr);
  }
  
- static int sh_msiof_spi_resume(struct device *dev)
+ static int rspi_resume(struct device *dev)
  {
- 	struct sh_msiof_spi_priv *p = dev_get_drvdata(dev);
+ 	struct rspi_data *rspi = dev_get_drvdata(dev);
  
--	return spi_master_resume(p->master);
-+	return spi_controller_resume(p->ctlr);
+-	return spi_master_resume(rspi->master);
++	return spi_controller_resume(rspi->ctlr);
  }
  
- static SIMPLE_DEV_PM_OPS(sh_msiof_spi_pm_ops, sh_msiof_spi_suspend,
-@@ -1461,7 +1459,7 @@ static struct platform_driver sh_msiof_spi_drv = {
- };
- module_platform_driver(sh_msiof_spi_drv);
- 
--MODULE_DESCRIPTION("SuperH MSIOF SPI Master Interface Driver");
-+MODULE_DESCRIPTION("SuperH MSIOF SPI Controller Interface Driver");
- MODULE_AUTHOR("Magnus Damm");
- MODULE_LICENSE("GPL v2");
- MODULE_ALIAS("platform:spi_sh_msiof");
+ static SIMPLE_DEV_PM_OPS(rspi_pm_ops, rspi_suspend, rspi_resume);
 -- 
 2.17.1
 
