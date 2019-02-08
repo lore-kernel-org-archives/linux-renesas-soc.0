@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69FDC282CB
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DCCC169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7791620863
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3350C20863
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:14:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="V+K8b+WA"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="q4IZBtrW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbfBHLO3 (ORCPT
+        id S1726456AbfBHLOb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:14:29 -0500
+        Fri, 8 Feb 2019 06:14:31 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:46395 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfBHLO3 (ORCPT
+        with ESMTP id S1726068AbfBHLOa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:14:29 -0500
+        Fri, 8 Feb 2019 06:14:30 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 0DD7625BF11;
-        Fri,  8 Feb 2019 22:14:18 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6733925BF14;
+        Fri,  8 Feb 2019 22:14:19 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549624458; bh=Jg2Kzt2lNoRSz+gz7BD4a/ornm9MxoUCm/pbcZ+aBQ0=;
+        t=1549624459; bh=0g+OJIt8gUzIFM0dILuAxksDWjMS5r/cowQKUUcstQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V+K8b+WAF0eDnIt3TiWrNoEbW8TFiM6XFDevRLk02+Q5kkAnLFcpcdSSrbKwvq6Fp
-         qjjSFHIKz/wGXH5LpPn9C4m15Mr/WJr9KrCA7Degr0hA9kaRI5wH7hDYlv+YU537IN
-         lqlKfuttnjwhQJPJD4tO2W+dzF/VIicstiy+ceh8=
+        b=q4IZBtrWDJilPaSqSbnRJFnJR39PKuHkTtLzYasge8MgwlTgjs6ukZlK2tpRDD3ka
+         krk/ciY4iKOmWE7jkRhCTVgMJEMq6zw82Ed/Tsm2eBTLRJKeJaggaX/EMJ7kVeuGU6
+         O9/GFNeOKWisiyF0YiOKm6OUTeT0FwlT/hKIeKs4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 23A08940ABA; Fri,  8 Feb 2019 12:14:16 +0100 (CET)
+        id CA41C940954; Fri,  8 Feb 2019 12:14:15 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 12/12] ARM: dts: r8a7744: Add LVDS support
-Date:   Fri,  8 Feb 2019 12:14:13 +0100
-Message-Id: <1feef0ac19a8376d36909af677b531b21bc92bb7.1549623128.git.horms+renesas@verge.net.au>
+Subject: [PATCH 08/12] ARM: dts: r8a7779: Add HSCIF0/1 device nodes
+Date:   Fri,  8 Feb 2019 12:14:09 +0100
+Message-Id: <055d15a88f66b096ca4df7cde83a80b80cd22dff.1549623128.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1549623128.git.horms+renesas@verge.net.au>
 References: <cover.1549623128.git.horms+renesas@verge.net.au>
@@ -51,55 +51,54 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Ulrich Hecht <uli+renesas@fpond.eu>
 
-Add LVDS encoder node to r8a7744 SoC DT.
+Based on Rev. 1.00 of the R-Car H1 datasheet.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7744.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm/boot/dts/r8a7779.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 83804aa042c6..fa74a262107b 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1666,6 +1666,33 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 3bc133d9489c..3ff259207527 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -287,6 +287,32 @@
+ 		status = "disabled";
+ 	};
+ 
++	hscif0: serial@ffe48000 {
++		compatible = "renesas,hscif-r8a7779",
++			     "renesas,rcar-gen1-hscif", "renesas,hscif";
++		reg = <0xffe48000 96>;
++		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp0_clks R8A7779_CLK_HSCIF0>,
++			 <&cpg_clocks R8A7779_CLK_S>,
++			 <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
 +
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a7744-lvds";
-+			reg = <0 0xfeb90000 0 0x1c>;
-+			clocks = <&cpg CPG_MOD 726>;
-+			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
-+			resets = <&cpg 726>;
-+			status = "disabled";
++	hscif1: serial@ffe49000 {
++		compatible = "renesas,hscif-r8a7779",
++			     "renesas,rcar-gen1-hscif", "renesas,hscif";
++		reg = <0xffe49000 96>;
++		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&mstp0_clks R8A7779_CLK_HSCIF1>,
++			 <&cpg_clocks R8A7779_CLK_S>,
++			 <&scif_clk>;
++		clock-names = "fck", "brg_int", "scif_clk";
++		power-domains = <&cpg_clocks>;
++		status = "disabled";
++	};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
+ 	pfc: pin-controller@fffc0000 {
+ 		compatible = "renesas,pfc-r8a7779";
+ 		reg = <0xfffc0000 0x23c>;
 -- 
 2.11.0
 
