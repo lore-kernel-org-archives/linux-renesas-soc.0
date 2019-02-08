@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6806AC169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 21:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA046C169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 21:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 358E4218DA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 21:30:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7063218DA
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 21:30:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfBHVaE (ORCPT
+        id S1727129AbfBHVae (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:30:04 -0500
-Received: from sauhun.de ([88.99.104.3]:59840 "EHLO pokefinder.org"
+        Fri, 8 Feb 2019 16:30:34 -0500
+Received: from sauhun.de ([88.99.104.3]:59852 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726949AbfBHVaD (ORCPT
+        id S1726949AbfBHVae (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:30:03 -0500
+        Fri, 8 Feb 2019 16:30:34 -0500
 Received: from localhost (p54B331AB.dip0.t-ipconnect.de [84.179.49.171])
-        by pokefinder.org (Postfix) with ESMTPSA id 31B752C282F;
-        Fri,  8 Feb 2019 22:30:02 +0100 (CET)
-Date:   Fri, 8 Feb 2019 22:30:01 +0100
+        by pokefinder.org (Postfix) with ESMTPSA id AB23B2C282F;
+        Fri,  8 Feb 2019 22:30:32 +0100 (CET)
+Date:   Fri, 8 Feb 2019 22:30:32 +0100
 From:   Wolfram Sang <wsa@the-dreams.de>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] i2c: sh_mobile: use new clock calculation formulas for
- Gen2
-Message-ID: <20190208213001.GE12451@kunai>
-References: <20190205170046.5046-1-wsa+renesas@sang-engineering.com>
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [PATCH v2] i2c: gpio: merge two very similar comments
+Message-ID: <20190208213032.GF12451@kunai>
+References: <20190205125841.12445-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="N1GIdlSm9i+YlY4t"
+        protocol="application/pgp-signature"; boundary="QNDPHrPUIc00TOLW"
 Content-Disposition: inline
-In-Reply-To: <20190205170046.5046-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190205125841.12445-1-wsa+renesas@sang-engineering.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -44,39 +44,40 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---N1GIdlSm9i+YlY4t
+--QNDPHrPUIc00TOLW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 05, 2019 at 06:00:46PM +0100, Wolfram Sang wrote:
-> We measured the clock on a Lager and an Ebisu board. The new formula
-> gives better results for both. So after Gen3, switch to this formula for
-> all Gen2 SoCs.
+On Tue, Feb 05, 2019 at 01:58:41PM +0100, Wolfram Sang wrote:
+> I think it is clear enough if we have the explanation once and make it
+> clear it is applicable for both SCL and SDA. Reword it a little with
+> the help of Simon's native language skills :)
 >=20
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Applied to for-next, thanks!
 
 
---N1GIdlSm9i+YlY4t
+--QNDPHrPUIc00TOLW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxd9NkACgkQFA3kzBSg
-Kbb5nhAAkLCBYQF4TUu0Qz5bXkJnX7bh+N+mZUxDQx+aGtTNGfzxa/k4ualFvkli
-DtcCJNmmYHtkBe0q0VnQl9QR3qBAbaHwgnVGECaq7dAsvdtjdGA3eyMdNdOe6EUv
-GbCDB52KsMD/C8ytWgbmRRzFiy80QgmBEuL6uh29zVaFacS1rMs0pKOTR/THXlBz
-E2N1pBA/8+3fcApO4dcDOnU1DLHAWgPwsTMpTnpJ9J0Uz+Rs4rFt8Fj4aWt8R/Tk
-VmmCjhvMeqtAtPZ+k1arwNJQDRT0MK3qjzG9+NDOa/tdsmYbb5FqaW09OP9Ow9z8
-SOUfXrdQjnslkGwGZc7YA6JO5bm7c6e78hDC2n/4/+1cTW6uLQm+NZhM4nqAJIb6
-H66c+vrvPiGg3jZGoWZsk2Qf9383fwILlaVdaGYrJtHd4wNZ6MfZhLHb5hRDx7wv
-exiCuj3ngVApYgMHygCOAO5OnFGy9lpzzLFkTR03qYu9E0y4poOJ/EQoDDkGemPd
-/75Y3bON/B/LyMmkIHZXvJ44WS5Iis96hgSEadE9pePf7trHEjYMtLHa6/I4XU4J
-TBkytx0WgRm7iBG7Ut8ik8gG40BVAQvZ/t9cyAa93+xQ486Rg3ZSB7256Knpy7ll
-YTS+S8XhWsbmO08YwYR0IVL6sm5nkQaP4u/Ek8UyMYk1p1971p8=
-=b6Wq
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxd9PgACgkQFA3kzBSg
+KbZrtQ//UxZhMtjAu3n64fGJIfgPb1x8QYuHmtiNym5qLMz3ilxOgIYzmadbTJay
+QT13I0MyYn8uNk2tA8Sfx2GgCUAFcknWOiw4/l28Efd9WTxagxPXDBViIP86jKHr
+XM3RI80DpmNm6bb3rCmr/sYZPAWs9n44+C4Uwd7Kx1RlCbcHzvBu926zOqN8U0O9
+mfWLXI9QT280lgfdKIOldBQ6ARkL+10DSDL9c662w23huv4ckkakYhOPCyJ7HUzW
+UhPZIPCRbvg1a7IMhZ7mkAHeLmOuuIMeeULi9wELWSy3BTVrLTJikX2NPubDqiBf
+KEEFk2uy+/9DCzK7bSu9FDz5ll7OsdEXY+2Pct6OqW7SedtTvpcdnstPIBpAvu6C
+/0EgMnxAQ4wm2gERkDvbDd1YoVbHQaM53MsNQthDPl2aC7SD8DhMtfCTUyNJpufZ
+WAOIAsFYkRd9EBfgMNidKXTvd2K6LhJt33CFoi3968+ADf5pvOs9v6TgCzG/0MD4
+bUAwE9e7MbXOaku18UHkBShpYUE6ObIrV886scyPdsVoJW9whUrcLw1lbVDZ7MeR
+I32mMRw7JNClmkFGRpm5CBu9TcXxVFYoV4vLZCv/tADfHLWYwXHXZfLo0RpwMDkv
+Sz/fJ9oLbEXEJSwoXS6NfS0hKRFIKnGbpROjcZUB68If4dZb5iU=
+=rltL
 -----END PGP SIGNATURE-----
 
---N1GIdlSm9i+YlY4t--
+--QNDPHrPUIc00TOLW--
