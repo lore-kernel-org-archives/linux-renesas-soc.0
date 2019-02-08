@@ -2,89 +2,79 @@ Return-Path: <SRS0=rsGL=QP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A9CC169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3F1C282CC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA9C20863
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:13:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 723F720863
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 11:13:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="aWHOhdEq"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ADnlzP8y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726205AbfBHLNB (ORCPT
+        id S1726465AbfBHLND (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Feb 2019 06:13:01 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:46104 "EHLO
+        Fri, 8 Feb 2019 06:13:03 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:46119 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfBHLNB (ORCPT
+        with ESMTP id S1726162AbfBHLND (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Feb 2019 06:13:01 -0500
+        Fri, 8 Feb 2019 06:13:03 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id C9C9A25BE72;
-        Fri,  8 Feb 2019 22:12:58 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 579D825BECB;
+        Fri,  8 Feb 2019 22:13:00 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549624379; bh=Z5tMtDWgfXmx+v6S7ruUU3Oxwb8SFCFZzp23jj7rHh4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=aWHOhdEqtOr9nlXfjprmRxH5hi8tPtSWc7vQfAxJNk/U3bnPdEK/UE1HWVcHgYfY6
-         kkxJj6Mct/4MCXVdQRT6Xa5+dgV/5FMqUDx03b9a1J6BlEGg9R8kbrM+LPE1uD7myb
-         vAc/T3/Q6GzqZW2U53cLK2hAYl2bOovR7UKwWJdM=
+        t=1549624380; bh=QkAyxjcF72kuyAKNTJvy+Jja/aRCZWtKTQFjw220PHM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ADnlzP8yGzvjM8RxSMZTvzDpzniffyLoinAEIo9zLWSzT2YGTMZGOoB7Hux36tIr/
+         vjqFcNukdtLDKVrCDH5qb8+m0ogCu9i4Yy3g22hN18Iawnjpt5l6F8q4+BU1d+6yuM
+         gwtz8vOpm8JhwPIu7Z/DaWhORn67jcxNhKd7GrsU=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 1EAA99401DB; Fri,  8 Feb 2019 12:12:57 +0100 (CET)
+        id A82D6940171; Fri,  8 Feb 2019 12:12:58 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
-To:     arm@kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [GIT PULL] Renesas ARM64 Based SoC Defconfig Updates for v5.1
-Date:   Fri,  8 Feb 2019 12:12:47 +0100
-Message-Id: <cover.1549622798.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/3] arm64: defconfig: Enable R-Car thermal driver
+Date:   Fri,  8 Feb 2019 12:12:56 +0100
+Message-Id: <4aac2bf0760d359af44e423dc01e10880d9d18b0.1549622798.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1549622798.git.horms+renesas@verge.net.au>
+References: <cover.1549622798.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Olof, Hi Kevin, Hi Arnd,
+Enable the R-Car thermal driver as a built-in.
+This seems safer than enabling as a module from the point of view of
+protecting equipment from overheating.
 
-Please consider these Renesas ARM64 based SoC defconfig updates for v5.1.
+This driver is used in conjunction with the R-Car V3M (r8a77970),
+E3 (r8a77990) and D3 (r8a77995) SoCs.
 
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 22b5f6fcf723..741b5f305e03 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -401,6 +401,7 @@ CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+ CONFIG_CPU_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
+ CONFIG_ROCKCHIP_THERMAL=m
++CONFIG_RCAR_THERMAL=y
+ CONFIG_RCAR_GEN3_THERMAL=y
+ CONFIG_ARMADA_THERMAL=y
+ CONFIG_BCM2835_THERMAL=m
+-- 
+2.11.0
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-defconfig-for-v5.1
-
-for you to fetch changes up to b8c3667a892a2ef2a2a5f91dfc2e3e3f0225185e:
-
-  arm64: defconfig: select Kingfisher Sound related configs (2019-01-07 14:54:31 +0100)
-
-----------------------------------------------------------------
-Renesas ARM64 Based SoC Defconfig Updates for v5.1
-
-Enable:
-* PCM3168A support which is required for audio on Kingfisher daughterboards
-* R-Car thermal support
-* Gen3 PCIe PHY support
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      arm64: defconfig: Enable CONFIG_PHY_RCAR_GEN3_PCIE
-
-Kuninori Morimoto (1):
-      arm64: defconfig: select Kingfisher Sound related configs
-
-Simon Horman (1):
-      arm64: defconfig: Enable R-Car thermal driver
-
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
