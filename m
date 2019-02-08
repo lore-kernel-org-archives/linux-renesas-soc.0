@@ -3,142 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4A9C169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 17:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BBEC169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 18:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 275F120863
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 17:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B606720821
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 18:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfBHRzf (ORCPT
+        id S1726869AbfBHSzt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Feb 2019 12:55:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:55652 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727373AbfBHRzf (ORCPT
+        Fri, 8 Feb 2019 13:55:49 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37800 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726844AbfBHSzt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Feb 2019 12:55:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 352B680D;
-        Fri,  8 Feb 2019 09:55:35 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 896003F719;
-        Fri,  8 Feb 2019 09:55:33 -0800 (PST)
+        Fri, 8 Feb 2019 13:55:49 -0500
+Received: by mail-vs1-f68.google.com with SMTP id s16so2738778vsk.4;
+        Fri, 08 Feb 2019 10:55:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f61cwLrdFDvWDcPfkag69gux4j1k/vsAch0XX1ifjVE=;
+        b=fKD4Bz8sZPFbi2evLgYGzKU1nLf6FI7LcNbhxz2iO7J2FAf3H0y0H9p4pmHOcpnU4S
+         NrbLyJuxdKu9p+LXDJz2Yvtd5f1YcdcugTg5LwE274MKdP1qMzJhTHq3zTiqk1o8Iz2L
+         lZKMo1RhcJozt/Zm+EBdU+sXLwe/urExbisTOOI9W00m/37YHLcN4nYfzI9m4U1LVVp1
+         7FZzKBIuRbWiYXMUJgapUOEZKBYh6MgZy8H10m+917rqJfPHOLdOmeqUjTCxJLxtH7XU
+         yhcamyT4yWQWXamarOLUkj1UXtbPv7e3NlPXy5nNfu7GOeybMVGy0TRUEA/C+F+TIJ7T
+         BQvg==
+X-Gm-Message-State: AHQUAubLtldD/3jgVic9icBeEASszDwL0jkxazeBS7vGnHSh1AcGXsRb
+        t/z3o5TNSHp6svYI0lZti4LvgZir8re9jSpkMao=
+X-Google-Smtp-Source: AHgI3IaRK3MtMkGTGISomWxB18I0In+4ZKMz+zuiS6KmxlUba/ZclgIgxCKKCfF9lJbpsQnUMR6sQXX7sbWPVRJ8YT4=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr9783331vsp.166.1549652147985;
+ Fri, 08 Feb 2019 10:55:47 -0800 (PST)
+MIME-Version: 1.0
+References: <20190207193653.18221-1-geert+renesas@glider.be>
+ <20190208164019.GY32526@8bytes.org> <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
+In-Reply-To: <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 8 Feb 2019 19:55:36 +0100
+Message-ID: <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
 Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
  devres release
-To:     Joerg Roedel <joro@8bytes.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Christoph Hellwig <hch@lst.de>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190207193653.18221-1-geert+renesas@glider.be>
- <20190208164019.GY32526@8bytes.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
-Date:   Fri, 8 Feb 2019 17:55:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190208164019.GY32526@8bytes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 08/02/2019 16:40, Joerg Roedel wrote:
-> Hi Geert,
-> 
-> On Thu, Feb 07, 2019 at 08:36:53PM +0100, Geert Uytterhoeven wrote:
->> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->> index 8ac10af17c0043a3..d62487d024559620 100644
->> --- a/drivers/base/dd.c
->> +++ b/drivers/base/dd.c
->> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
->>   			drv->remove(dev);
->>   
->>   		device_links_driver_cleanup(dev);
->> -		arch_teardown_dma_ops(dev);
->>   
->>   		devres_release_all(dev);
->> +		arch_teardown_dma_ops(dev);
->>   		dev->driver = NULL;
->>   		dev_set_drvdata(dev, NULL);
->>   		if (dev->pm_domain && dev->pm_domain->dismiss)
-> 
-> Thanks for the fix! Should it also be tagged for stable and get a Fixes
-> tag? I know it only triggers with a fix in v5.0-rc, but still...
+Hi Robin,
 
-I think so:
+On Fri, Feb 8, 2019 at 6:55 PM Robin Murphy <robin.murphy@arm.com> wrote:
+> On 08/02/2019 16:40, Joerg Roedel wrote:
+> > On Thu, Feb 07, 2019 at 08:36:53PM +0100, Geert Uytterhoeven wrote:
+> >> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> >> index 8ac10af17c0043a3..d62487d024559620 100644
+> >> --- a/drivers/base/dd.c
+> >> +++ b/drivers/base/dd.c
+> >> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+> >>                      drv->remove(dev);
+> >>
+> >>              device_links_driver_cleanup(dev);
+> >> -            arch_teardown_dma_ops(dev);
+> >>
+> >>              devres_release_all(dev);
+> >> +            arch_teardown_dma_ops(dev);
+> >>              dev->driver = NULL;
+> >>              dev_set_drvdata(dev, NULL);
+> >>              if (dev->pm_domain && dev->pm_domain->dismiss)
+> >
+> > Thanks for the fix! Should it also be tagged for stable and get a Fixes
 
-Fixes: 09515ef5ddad ("of/acpi: Configure dma operations at probe time 
-for platform/amba/pci bus devices")
+FTR, Greg has added it to driver-core-testing, with a CC to stable.
 
-There aren't many drivers using dmam_alloc_*(), let alone which would 
-also find themselves behind an IOMMU on an Arm system, but it turns out 
-I actually have another one which can reproduce the BUG() with 5.0-rc.
+> > tag? I know it only triggers with a fix in v5.0-rc, but still...
+>
+> I think so:
+>
+> Fixes: 09515ef5ddad ("of/acpi: Configure dma operations at probe time
+> for platform/amba/pci bus devices")
 
-I've tried a 4.12 kernel with a bit of instrumentation[1] and sure 
-enough the devres-managed buffer is freed with the wrong ops[2] even 
-then. How it manages not to blow up more catastrophically I have no 
-idea... I guess at best it just leaks the buffers and IOMMU mappings, 
-and at worst quietly frees random other pages instead.
+Thanks! It won't backport cleanly due to commit dc3c05504d38849f
+("dma-mapping: remove dma_deconfigure") in v4.20, though.
 
-Robin.
+> There aren't many drivers using dmam_alloc_*(), let alone which would
+> also find themselves behind an IOMMU on an Arm system, but it turns out
+> I actually have another one which can reproduce the BUG() with 5.0-rc.
 
---------------
-[1]
+SATA core uses dmam_alloc_*().
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 4f3eecedca2d..f4dbaa5598e3 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -491,6 +491,7 @@ static inline void *dma_alloc_attrs(struct device 
-*dev, size_t size,
-  		return NULL;
+> I've tried a 4.12 kernel with a bit of instrumentation[1] and sure
+> enough the devres-managed buffer is freed with the wrong ops[2] even
+> then. How it manages not to blow up more catastrophically I have no
+> idea... I guess at best it just leaks the buffers and IOMMU mappings,
+> and at worst quietly frees random other pages instead.
 
-  	cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
-+	dev_info(dev, "alloc %lx %lx\n", (unsigned long)cpu_addr, (unsigned 
-long)ops);
-  	debug_dma_alloc_coherent(dev, size, *dma_handle, cpu_addr);
-  	return cpu_addr;
-  }
-@@ -512,6 +513,7 @@ static inline void dma_free_attrs(struct device 
-*dev, size_t size,
+May depend on the actual ops, and whether CMA is used or not.
 
-  	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
-  	ops->free(dev, size, cpu_addr, dma_handle, attrs);
-+	dev_info(dev, "free %lx %lx\n", (unsigned long)cpu_addr, (unsigned 
-long)ops);
-  }
+Gr{oetje,eeting}s,
 
-  static inline void *dma_alloc_coherent(struct device *dev, size_t size,
+                        Geert
 
--------------
-[2]
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-/ # echo '0000:03:00.0' > /sys/bus/pci/drivers/sata_sil24/bind
-[  107.417252] sata_sil24 0000:03:00.0: alloc ffff00000a6f9000 
-ffff0000089b8090
-[  107.424397] sata_sil24 0000:03:00.0: alloc ffff00000a719000 
-ffff0000089b8090
-[  107.432216] scsi host0: sata_sil24
-[  107.436134] scsi host1: sata_sil24
-[  107.439853] ata7: SATA max UDMA/100 host m128@0x50084000 port 
-0x50080000 irq 51
-[  107.447228] ata8: SATA max UDMA/100 host m128@0x50084000 port 
-0x50082000 irq 51
-/ # echo '0000:03:00.0' > /sys/bus/pci/drivers/sata_sil24/unbind
-...
-[  112.048654] sata_sil24 0000:03:00.0: free ffff00000a719000 
-ffff0000089b8120
-[  112.055579] sata_sil24 0000:03:00.0: free ffff00000a6f9000 
-ffff0000089b8120
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
