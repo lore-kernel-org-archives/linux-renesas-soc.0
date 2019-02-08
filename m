@@ -2,124 +2,132 @@ Return-Path: <SRS0=rsGL=QP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BBEC169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 18:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C12C169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 19:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B606720821
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 18:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B278B20855
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Feb 2019 19:30:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfBHSzt (ORCPT
+        id S1727365AbfBHTaW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:55:49 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37800 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726844AbfBHSzt (ORCPT
+        Fri, 8 Feb 2019 14:30:22 -0500
+Received: from sauhun.de ([88.99.104.3]:58960 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727209AbfBHTaW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:55:49 -0500
-Received: by mail-vs1-f68.google.com with SMTP id s16so2738778vsk.4;
-        Fri, 08 Feb 2019 10:55:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f61cwLrdFDvWDcPfkag69gux4j1k/vsAch0XX1ifjVE=;
-        b=fKD4Bz8sZPFbi2evLgYGzKU1nLf6FI7LcNbhxz2iO7J2FAf3H0y0H9p4pmHOcpnU4S
-         NrbLyJuxdKu9p+LXDJz2Yvtd5f1YcdcugTg5LwE274MKdP1qMzJhTHq3zTiqk1o8Iz2L
-         lZKMo1RhcJozt/Zm+EBdU+sXLwe/urExbisTOOI9W00m/37YHLcN4nYfzI9m4U1LVVp1
-         7FZzKBIuRbWiYXMUJgapUOEZKBYh6MgZy8H10m+917rqJfPHOLdOmeqUjTCxJLxtH7XU
-         yhcamyT4yWQWXamarOLUkj1UXtbPv7e3NlPXy5nNfu7GOeybMVGy0TRUEA/C+F+TIJ7T
-         BQvg==
-X-Gm-Message-State: AHQUAubLtldD/3jgVic9icBeEASszDwL0jkxazeBS7vGnHSh1AcGXsRb
-        t/z3o5TNSHp6svYI0lZti4LvgZir8re9jSpkMao=
-X-Google-Smtp-Source: AHgI3IaRK3MtMkGTGISomWxB18I0In+4ZKMz+zuiS6KmxlUba/ZclgIgxCKKCfF9lJbpsQnUMR6sQXX7sbWPVRJ8YT4=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr9783331vsp.166.1549652147985;
- Fri, 08 Feb 2019 10:55:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20190207193653.18221-1-geert+renesas@glider.be>
- <20190208164019.GY32526@8bytes.org> <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
-In-Reply-To: <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Feb 2019 19:55:36 +0100
-Message-ID: <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
-Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
- devres release
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 8 Feb 2019 14:30:22 -0500
+Received: from localhost (p54B331AB.dip0.t-ipconnect.de [84.179.49.171])
+        by pokefinder.org (Postfix) with ESMTPSA id BD7642C282F;
+        Fri,  8 Feb 2019 20:30:18 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Takeshi Saito <takeshi.saito.xv@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] mmc: renesas_sdhi: Change HW adjustment register according to speed mode
+Date:   Fri,  8 Feb 2019 20:30:02 +0100
+Message-Id: <20190208193002.16915-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Robin,
+From: Takeshi Saito <takeshi.saito.xv@renesas.com>
 
-On Fri, Feb 8, 2019 at 6:55 PM Robin Murphy <robin.murphy@arm.com> wrote:
-> On 08/02/2019 16:40, Joerg Roedel wrote:
-> > On Thu, Feb 07, 2019 at 08:36:53PM +0100, Geert Uytterhoeven wrote:
-> >> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> >> index 8ac10af17c0043a3..d62487d024559620 100644
-> >> --- a/drivers/base/dd.c
-> >> +++ b/drivers/base/dd.c
-> >> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
-> >>                      drv->remove(dev);
-> >>
-> >>              device_links_driver_cleanup(dev);
-> >> -            arch_teardown_dma_ops(dev);
-> >>
-> >>              devres_release_all(dev);
-> >> +            arch_teardown_dma_ops(dev);
-> >>              dev->driver = NULL;
-> >>              dev_set_drvdata(dev, NULL);
-> >>              if (dev->pm_domain && dev->pm_domain->dismiss)
-> >
-> > Thanks for the fix! Should it also be tagged for stable and get a Fixes
+SCC is used for SDR104/HS200/HS400. We need to change SCC_DT2FF
+according to the mode. If it is inappropriate, CRC error tends to occur.
 
-FTR, Greg has added it to driver-core-testing, with a CC to stable.
+This adds variable "tap_hs400" for HS400 mode and configures SCC_DT2FF
+as needed.
 
-> > tag? I know it only triggers with a fix in v5.0-rc, but still...
->
-> I think so:
->
-> Fixes: 09515ef5ddad ("of/acpi: Configure dma operations at probe time
-> for platform/amba/pci bus devices")
+Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
+[wsa: rebased to upstream and updated commit message]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Thanks! It won't backport cleanly due to commit dc3c05504d38849f
-("dma-mapping: remove dma_deconfigure") in v4.20, though.
+I don't have a testcase currently, so I don't think this is stable material. If
+this ever changes, we can have it added to stable later. But I am open for
+other opinions here. Tested on Salvator-XS with Renesas R-Car M3N, no
+regressions in both detecting HS400 and transferring large files.
 
-> There aren't many drivers using dmam_alloc_*(), let alone which would
-> also find themselves behind an IOMMU on an Arm system, but it turns out
-> I actually have another one which can reproduce the BUG() with 5.0-rc.
+ drivers/mmc/host/renesas_sdhi.h               | 2 ++
+ drivers/mmc/host/renesas_sdhi_core.c          | 8 ++++++++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
+ 3 files changed, 11 insertions(+)
 
-SATA core uses dmam_alloc_*().
-
-> I've tried a 4.12 kernel with a bit of instrumentation[1] and sure
-> enough the devres-managed buffer is freed with the wrong ops[2] even
-> then. How it manages not to blow up more catastrophically I have no
-> idea... I guess at best it just leaks the buffers and IOMMU mappings,
-> and at worst quietly frees random other pages instead.
-
-May depend on the actual ops, and whether CMA is used or not.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index da1e49c45bec..8394a7bb1fc1 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -15,6 +15,7 @@
+ struct renesas_sdhi_scc {
+ 	unsigned long clk_rate;	/* clock rate for SDR104 */
+ 	u32 tap;		/* sampling clock position for SDR104 */
++	u32 tap_hs400;		/* sampling clock position for HS400 */
+ };
+ 
+ struct renesas_sdhi_of_data {
+@@ -49,6 +50,7 @@ struct renesas_sdhi {
+ 	struct pinctrl_state *pins_default, *pins_uhs;
+ 	void __iomem *scc_ctl;
+ 	u32 scc_tappos;
++	u32 scc_tappos_hs400;
+ };
+ 
+ #define host_to_priv(host) \
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 7e2a75c4f36f..71e13844df6c 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -337,6 +337,10 @@ static void renesas_sdhi_hs400_complete(struct tmio_mmc_host *host)
+ 	/* Set HS400 mode */
+ 	sd_ctrl_write16(host, CTL_SDIF_MODE, 0x0001 |
+ 			sd_ctrl_read16(host, CTL_SDIF_MODE));
++
++	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF,
++		       priv->scc_tappos_hs400);
++
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2,
+ 		       (SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
+ 			SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL) |
+@@ -396,6 +400,9 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
+ 	/* Reset HS400 mode */
+ 	sd_ctrl_write16(host, CTL_SDIF_MODE, ~0x0001 &
+ 			sd_ctrl_read16(host, CTL_SDIF_MODE));
++
++	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, priv->scc_tappos);
++
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TMPPORT2,
+ 		       ~(SH_MOBILE_SDHI_SCC_TMPPORT2_HS400EN |
+ 			 SH_MOBILE_SDHI_SCC_TMPPORT2_HS400OSEL) &
+@@ -786,6 +793,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 			if (taps[i].clk_rate == 0 ||
+ 			    taps[i].clk_rate == host->mmc->f_max) {
+ 				priv->scc_tappos = taps->tap;
++				priv->scc_tappos_hs400 = taps->tap_hs400;
+ 				hit = true;
+ 				break;
+ 			}
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 92c9b15252da..9dfafa2a90a3 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -81,6 +81,7 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+ 	{
+ 		.clk_rate = 0,
+ 		.tap = 0x00000300,
++		.tap_hs400 = 0x00000704,
+ 	},
+ };
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.11.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
