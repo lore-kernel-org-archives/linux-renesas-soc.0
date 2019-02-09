@@ -2,473 +2,230 @@ Return-Path: <SRS0=bfNf=QQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12833C282C4
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Feb 2019 11:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD33C282C4
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Feb 2019 18:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA0221773
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Feb 2019 11:02:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUeWoNHm"
+	by mail.kernel.org (Postfix) with ESMTP id 2C81520811
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Feb 2019 18:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfBILCq (ORCPT
+        id S1727021AbfBISDm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 9 Feb 2019 06:02:46 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38415 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725933AbfBILCq (ORCPT
+        Sat, 9 Feb 2019 13:03:42 -0500
+Received: from sauhun.de ([88.99.104.3]:38724 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726977AbfBISDm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 9 Feb 2019 06:02:46 -0500
-Received: by mail-pl1-f196.google.com with SMTP id e5so2940627plb.5
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 09 Feb 2019 03:02:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5Gu+QNL242dIA956iXotVB/jgl+JFwS2IaXraY73bfI=;
-        b=YUeWoNHme9l7FdJkuOJm+sMfwafefwZsQe0zDbJrXGgBAgO1jbu9Q003+bOZLSNZT+
-         9KlhF3iJFWcIOY0lumdGCGPNEfMCukRqOWPy/nWXXxbFD9ewOceksCoxEV7Pc5pvGgwm
-         5eGm2GpPxJh69np1qgP5bU4LimrNaILnW738jW3L3ikSIbNpSWcBHv2CUFrYU/YC+mNd
-         XO3sGCS+vfqVy4nuSEq7dC9s2xJn8RstZ1UyLpIe5ZQp3XFtIYE1ImCSmCIT9EYa0vrc
-         9p/ycXMqSG16QunjPe/3cpmeIS5Z1TrgW3nNTM+H1co35R2AQuIp5FWDmIqa6BbVWd0P
-         W9qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5Gu+QNL242dIA956iXotVB/jgl+JFwS2IaXraY73bfI=;
-        b=li5VgnZfeG7BonNDNtFweBQL51T/0yi8VAWnMLFtvv4Zfm4c9ajNGWm/ZrmhrImjkT
-         fkbvxUar/3PkrZUu4rOYAXQiEdIK/J9Miz605bHDhgKjMz4xJatBq7Datx0Gta7ePvLP
-         4OpHR23s1qy9L9NwOCKc9rtaJbKER5g3wbWVr9u4UDBiiE3lDHJduwenXg2+b9zQYGSw
-         1/aoxeUtTCmAyH7ablCaerC1oLfQXvmc+OiJjN2DMW+1uEh5eVekd9r8oJ+tu2uopouB
-         IRlYZOijhe48PqV7RRjcKNBeQrJsMOuhLAecuBjfT+nmB4HkNQ45ZcMHX1sAF9CJwEnc
-         9pMw==
-X-Gm-Message-State: AHQUAuZ+F6rW5uQHk/5bQ4KHFwA4iK06flVpOUKL49jHfu0Rdup/lnPk
-        2vHsMcJnBeKGMUh/jXbGiphc6riQ
-X-Google-Smtp-Source: AHgI3IaKZWbj/L5UWztLVGzEt/wvJF4JDipNLkzHZFJ8iZ8x95WKVFV6zolvja5+43J1l/1Ir00hRA==
-X-Received: by 2002:a17:902:8d94:: with SMTP id v20mr27599811plo.194.1549710165009;
-        Sat, 09 Feb 2019 03:02:45 -0800 (PST)
-Received: from localhost.localdomain (p6779223-ipngn28001marunouchi.tokyo.ocn.ne.jp. [114.162.71.223])
-        by smtp.gmail.com with ESMTPSA id f62sm5992426pgc.67.2019.02.09.03.02.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 09 Feb 2019 03:02:44 -0800 (PST)
-From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Subject: [PATCH/RFT] pinctrl: sh-pfc: r8a77965: Add DRIF pins, groups and functions
-Date:   Sat,  9 Feb 2019 20:02:32 +0900
-Message-Id: <1549710152-19762-1-git-send-email-ykaneko0929@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Sat, 9 Feb 2019 13:03:42 -0500
+Received: from localhost (p5486C39D.dip0.t-ipconnect.de [84.134.195.157])
+        by pokefinder.org (Postfix) with ESMTPSA id CB6832C7BF4;
+        Sat,  9 Feb 2019 19:03:38 +0100 (CET)
+Date:   Sat, 9 Feb 2019 19:03:35 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
+        preid@electromag.com.au, Keerthy <j-keerthy@ti.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH 4/4] i2c: core: introduce master_xfer_irqless callback
+Message-ID: <20190209180335.hmdlqf45kw64mbvn@ninjato>
+References: <20180920161423.13990-1-wsa+renesas@sang-engineering.com>
+ <20180920161423.13990-5-wsa+renesas@sang-engineering.com>
+ <20181018104446.GM6920@n2100.armlinux.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="l6zl2xstp3grxwt4"
+Content-Disposition: inline
+In-Reply-To: <20181018104446.GM6920@n2100.armlinux.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-This patch adds DRIF{0,1,2,3} pins, groups and functions to the R8A77965
-SoC.
+--l6zl2xstp3grxwt4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Based on a similar patch of the R8A7796 PFC driver
-by Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>.
+Hi Russell,
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
----
+I know this has been quite a while. I didn't have further time for this
+topic back then. But now I am going to revive and rework it. Still,
+thank you for your input.
 
-This patch is based on the sh-pfc branch of Geert Uytterhoeven's
-renesas-drivers tree.
+On Thu, Oct 18, 2018 at 11:44:46AM +0100, Russell King - ARM Linux wrote:
+> On Thu, Sep 20, 2018 at 06:14:23PM +0200, Wolfram Sang wrote:
+> > We had the request to access devices very late when interrupts are not
+> > available anymore multiple times now. Mostly to prepare shutdown or
+> > reboot. Allow adapters to specify a specific callback for this case.
+> > Note that we fall back to the generic master_xfer callback if this new
+> > irqless one is not present. This is intentional to preserve the previous
+> > behaviour and avoid regressions. Because there are drivers not using
+> > interrupts or because it might have worked "accidently" before.
+>=20
+> It's not really about "irqless", it's about being in atomic context.
+> irqless makes it sound like you may sleep, but the reality is sleeping
+> is also out (the scheduler needs IRQs to do it's job.)
+>=20
+> So, it may be tempting to use things like msleep() in "irqless" but
+> that's not permissable.  So surely "atomic" would be a better name for
+> this?
 
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 350 ++++++++++++++++++++++++++++++++++
- 1 file changed, 350 insertions(+)
+Full ack. It should be 'master_xfer_atomic'.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 7899ffd..14c4b67 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -1850,6 +1850,280 @@ enum {
- 	CANFD1_TX_MARK,         CANFD1_RX_MARK,
- };
- 
-+/* - DRIF0 --------------------------------------------------------------- */
-+static const unsigned int drif0_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+
-+static const unsigned int drif0_ctrl_a_mux[] = {
-+	RIF0_CLK_A_MARK, RIF0_SYNC_A_MARK,
-+};
-+
-+static const unsigned int drif0_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 10),
-+};
-+
-+static const unsigned int drif0_data0_a_mux[] = {
-+	RIF0_D0_A_MARK,
-+};
-+
-+static const unsigned int drif0_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 7),
-+};
-+
-+static const unsigned int drif0_data1_a_mux[] = {
-+	RIF0_D1_A_MARK,
-+};
-+
-+static const unsigned int drif0_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
-+};
-+
-+static const unsigned int drif0_ctrl_b_mux[] = {
-+	RIF0_CLK_B_MARK, RIF0_SYNC_B_MARK,
-+};
-+
-+static const unsigned int drif0_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 1),
-+};
-+
-+static const unsigned int drif0_data0_b_mux[] = {
-+	RIF0_D0_B_MARK,
-+};
-+
-+static const unsigned int drif0_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 2),
-+};
-+
-+static const unsigned int drif0_data1_b_mux[] = {
-+	RIF0_D1_B_MARK,
-+};
-+
-+static const unsigned int drif0_ctrl_c_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 12), RCAR_GP_PIN(5, 15),
-+};
-+
-+static const unsigned int drif0_ctrl_c_mux[] = {
-+	RIF0_CLK_C_MARK, RIF0_SYNC_C_MARK,
-+};
-+
-+static const unsigned int drif0_data0_c_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 13),
-+};
-+
-+static const unsigned int drif0_data0_c_mux[] = {
-+	RIF0_D0_C_MARK,
-+};
-+
-+static const unsigned int drif0_data1_c_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 14),
-+};
-+
-+static const unsigned int drif0_data1_c_mux[] = {
-+	RIF0_D1_C_MARK,
-+};
-+
-+/* - DRIF1 --------------------------------------------------------------- */
-+static const unsigned int drif1_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+
-+static const unsigned int drif1_ctrl_a_mux[] = {
-+	RIF1_CLK_A_MARK, RIF1_SYNC_A_MARK,
-+};
-+
-+static const unsigned int drif1_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 19),
-+};
-+
-+static const unsigned int drif1_data0_a_mux[] = {
-+	RIF1_D0_A_MARK,
-+};
-+
-+static const unsigned int drif1_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 20),
-+};
-+
-+static const unsigned int drif1_data1_a_mux[] = {
-+	RIF1_D1_A_MARK,
-+};
-+
-+static const unsigned int drif1_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 9), RCAR_GP_PIN(5, 3),
-+};
-+
-+static const unsigned int drif1_ctrl_b_mux[] = {
-+	RIF1_CLK_B_MARK, RIF1_SYNC_B_MARK,
-+};
-+
-+static const unsigned int drif1_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 7),
-+};
-+
-+static const unsigned int drif1_data0_b_mux[] = {
-+	RIF1_D0_B_MARK,
-+};
-+
-+static const unsigned int drif1_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 8),
-+};
-+
-+static const unsigned int drif1_data1_b_mux[] = {
-+	RIF1_D1_B_MARK,
-+};
-+
-+static const unsigned int drif1_ctrl_c_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(5, 5), RCAR_GP_PIN(5, 11),
-+};
-+
-+static const unsigned int drif1_ctrl_c_mux[] = {
-+	RIF1_CLK_C_MARK, RIF1_SYNC_C_MARK,
-+};
-+
-+static const unsigned int drif1_data0_c_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(5, 6),
-+};
-+
-+static const unsigned int drif1_data0_c_mux[] = {
-+	RIF1_D0_C_MARK,
-+};
-+
-+static const unsigned int drif1_data1_c_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(5, 10),
-+};
-+
-+static const unsigned int drif1_data1_c_mux[] = {
-+	RIF1_D1_C_MARK,
-+};
-+
-+/* - DRIF2 --------------------------------------------------------------- */
-+static const unsigned int drif2_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+};
-+
-+static const unsigned int drif2_ctrl_a_mux[] = {
-+	RIF2_CLK_A_MARK, RIF2_SYNC_A_MARK,
-+};
-+
-+static const unsigned int drif2_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 7),
-+};
-+
-+static const unsigned int drif2_data0_a_mux[] = {
-+	RIF2_D0_A_MARK,
-+};
-+
-+static const unsigned int drif2_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 10),
-+};
-+
-+static const unsigned int drif2_data1_a_mux[] = {
-+	RIF2_D1_A_MARK,
-+};
-+
-+static const unsigned int drif2_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 26), RCAR_GP_PIN(6, 27),
-+};
-+
-+static const unsigned int drif2_ctrl_b_mux[] = {
-+	RIF2_CLK_B_MARK, RIF2_SYNC_B_MARK,
-+};
-+
-+static const unsigned int drif2_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 30),
-+};
-+
-+static const unsigned int drif2_data0_b_mux[] = {
-+	RIF2_D0_B_MARK,
-+};
-+
-+static const unsigned int drif2_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 31),
-+};
-+
-+static const unsigned int drif2_data1_b_mux[] = {
-+	RIF2_D1_B_MARK,
-+};
-+
-+/* - DRIF3 --------------------------------------------------------------- */
-+static const unsigned int drif3_ctrl_a_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 17), RCAR_GP_PIN(6, 18),
-+};
-+
-+static const unsigned int drif3_ctrl_a_mux[] = {
-+	RIF3_CLK_A_MARK, RIF3_SYNC_A_MARK,
-+};
-+
-+static const unsigned int drif3_data0_a_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 19),
-+};
-+
-+static const unsigned int drif3_data0_a_mux[] = {
-+	RIF3_D0_A_MARK,
-+};
-+
-+static const unsigned int drif3_data1_a_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 20),
-+};
-+
-+static const unsigned int drif3_data1_a_mux[] = {
-+	RIF3_D1_A_MARK,
-+};
-+
-+static const unsigned int drif3_ctrl_b_pins[] = {
-+	/* CLK, SYNC */
-+	RCAR_GP_PIN(6, 24), RCAR_GP_PIN(6, 25),
-+};
-+
-+static const unsigned int drif3_ctrl_b_mux[] = {
-+	RIF3_CLK_B_MARK, RIF3_SYNC_B_MARK,
-+};
-+
-+static const unsigned int drif3_data0_b_pins[] = {
-+	/* D0 */
-+	RCAR_GP_PIN(6, 28),
-+};
-+
-+static const unsigned int drif3_data0_b_mux[] = {
-+	RIF3_D0_B_MARK,
-+};
-+
-+static const unsigned int drif3_data1_b_pins[] = {
-+	/* D1 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+
-+static const unsigned int drif3_data1_b_mux[] = {
-+	RIF3_D1_B_MARK,
-+};
-+
- /* - DU --------------------------------------------------------------------- */
- static const unsigned int du_rgb666_pins[] = {
- 	/* R[7:2], G[7:2], B[7:2] */
-@@ -4073,6 +4347,36 @@ enum {
- 	SH_PFC_PIN_GROUP(canfd0_data_a),
- 	SH_PFC_PIN_GROUP(canfd0_data_b),
- 	SH_PFC_PIN_GROUP(canfd1_data),
-+	SH_PFC_PIN_GROUP(drif0_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif0_data0_a),
-+	SH_PFC_PIN_GROUP(drif0_data1_a),
-+	SH_PFC_PIN_GROUP(drif0_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif0_data0_b),
-+	SH_PFC_PIN_GROUP(drif0_data1_b),
-+	SH_PFC_PIN_GROUP(drif0_ctrl_c),
-+	SH_PFC_PIN_GROUP(drif0_data0_c),
-+	SH_PFC_PIN_GROUP(drif0_data1_c),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif1_data0_a),
-+	SH_PFC_PIN_GROUP(drif1_data1_a),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif1_data0_b),
-+	SH_PFC_PIN_GROUP(drif1_data1_b),
-+	SH_PFC_PIN_GROUP(drif1_ctrl_c),
-+	SH_PFC_PIN_GROUP(drif1_data0_c),
-+	SH_PFC_PIN_GROUP(drif1_data1_c),
-+	SH_PFC_PIN_GROUP(drif2_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif2_data0_a),
-+	SH_PFC_PIN_GROUP(drif2_data1_a),
-+	SH_PFC_PIN_GROUP(drif2_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif2_data0_b),
-+	SH_PFC_PIN_GROUP(drif2_data1_b),
-+	SH_PFC_PIN_GROUP(drif3_ctrl_a),
-+	SH_PFC_PIN_GROUP(drif3_data0_a),
-+	SH_PFC_PIN_GROUP(drif3_data1_a),
-+	SH_PFC_PIN_GROUP(drif3_ctrl_b),
-+	SH_PFC_PIN_GROUP(drif3_data0_b),
-+	SH_PFC_PIN_GROUP(drif3_data1_b),
- 	SH_PFC_PIN_GROUP(du_rgb666),
- 	SH_PFC_PIN_GROUP(du_rgb888),
- 	SH_PFC_PIN_GROUP(du_clk_out_0),
-@@ -4407,6 +4711,48 @@ enum {
- 	"canfd1_data",
- };
- 
-+static const char * const drif0_groups[] = {
-+	"drif0_ctrl_a",
-+	"drif0_data0_a",
-+	"drif0_data1_a",
-+	"drif0_ctrl_b",
-+	"drif0_data0_b",
-+	"drif0_data1_b",
-+	"drif0_ctrl_c",
-+	"drif0_data0_c",
-+	"drif0_data1_c",
-+};
-+
-+static const char * const drif1_groups[] = {
-+	"drif1_ctrl_a",
-+	"drif1_data0_a",
-+	"drif1_data1_a",
-+	"drif1_ctrl_b",
-+	"drif1_data0_b",
-+	"drif1_data1_b",
-+	"drif1_ctrl_c",
-+	"drif1_data0_c",
-+	"drif1_data1_c",
-+};
-+
-+static const char * const drif2_groups[] = {
-+	"drif2_ctrl_a",
-+	"drif2_data0_a",
-+	"drif2_data1_a",
-+	"drif2_ctrl_b",
-+	"drif2_data0_b",
-+	"drif2_data1_b",
-+};
-+
-+static const char * const drif3_groups[] = {
-+	"drif3_ctrl_a",
-+	"drif3_data0_a",
-+	"drif3_data1_a",
-+	"drif3_ctrl_b",
-+	"drif3_data0_b",
-+	"drif3_data1_b",
-+};
-+
- static const char * const du_groups[] = {
- 	"du_rgb666",
- 	"du_rgb888",
-@@ -4810,6 +5156,10 @@ enum {
- 	SH_PFC_FUNCTION(can_clk),
- 	SH_PFC_FUNCTION(canfd0),
- 	SH_PFC_FUNCTION(canfd1),
-+	SH_PFC_FUNCTION(drif0),
-+	SH_PFC_FUNCTION(drif1),
-+	SH_PFC_FUNCTION(drif2),
-+	SH_PFC_FUNCTION(drif3),
- 	SH_PFC_FUNCTION(du),
- 	SH_PFC_FUNCTION(hscif0),
- 	SH_PFC_FUNCTION(hscif1),
--- 
-1.9.1
+> Also, how does this get around the issue which I pointed out with (eg)
+> an oops occuring, which leads to a panic followed by an attempt to
+> reboot if the I2C bus in question is already mid-transaction?  Won't
+> we deadlock?
 
+Interesting question with multiple aspects:
+
+- The above setting will cause problems but this is orthogonal to this
+  patch. It works by modifying __i2c_transfer() but all the locking logic
+  is one layer above in i2c_transfer(). So, there shouldn't be a
+  difference.
+
+- We won't deadlock, because I2C core will use trylock in this case.
+  However, even reporting -EAGAIN won't be helpful because the
+  interrupted transfer is likely to never finish without irqs. So,
+  retrying won't help and we are still stuck.
+
+- Brainstorming: we could decide that if in_atomic() and
+  master_xfer_atomic() present and the I2C client is allowed to do
+  ATOMIC_IO (and maybe more checks), to ignore the locking and force
+  this command on the bus. Also requiring master_xfer_atomic() to reset
+  the IP core properly, etc. Probably also enforcing i2c_recover_bus()
+  to ensure a free bus. This is probably the best we could do, but
+  still no guarantees here. Some I2C devices just lock up when
+  interrupted at the wrong time.
+
+Relying on I2C for poweroff/reboot is a somewhat fragile design to begin
+with. I will re-start this series with something simple, but keep the
+above scenario in mind. Then, we can see how much we can do, hopefully.
+
+And I got the idea for a panic-fault-injector which sounds interesting.
+I will try that!
+
+Kind regards,
+
+   Wolfram
+
+>=20
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > ---
+> >  drivers/i2c/i2c-core-base.c |  6 +++++-
+> >  include/linux/i2c.h         | 10 +++++++---
+> >  2 files changed, 12 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> > index 904b4d2ebefa..f827446c3089 100644
+> > --- a/drivers/i2c/i2c-core-base.c
+> > +++ b/drivers/i2c/i2c-core-base.c
+> > @@ -1887,7 +1887,11 @@ int __i2c_transfer(struct i2c_adapter *adap, str=
+uct i2c_msg *msgs, int num)
+> >  	/* Retry automatically on arbitration loss */
+> >  	orig_jiffies =3D jiffies;
+> >  	for (ret =3D 0, try =3D 0; try <=3D adap->retries; try++) {
+> > -		ret =3D adap->algo->master_xfer(adap, msgs, num);
+> > +		if ((in_atomic() || irqs_disabled()) && adap->algo->master_xfer_irql=
+ess)
+> > +			ret =3D adap->algo->master_xfer_irqless(adap, msgs, num);
+> > +		else
+> > +			ret =3D adap->algo->master_xfer(adap, msgs, num);
+> > +
+> >  		if (ret !=3D -EAGAIN)
+> >  			break;
+> >  		if (time_after(jiffies, orig_jiffies + adap->timeout))
+> > diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+> > index 65b4eaed1d96..11e615123bd0 100644
+> > --- a/include/linux/i2c.h
+> > +++ b/include/linux/i2c.h
+> > @@ -498,6 +498,8 @@ i2c_register_board_info(int busnum, struct i2c_boar=
+d_info const *info,
+> >   * @master_xfer: Issue a set of i2c transactions to the given I2C adap=
+ter
+> >   *   defined by the msgs array, with num messages available to transfe=
+r via
+> >   *   the adapter specified by adap.
+> > + * @master_xfer_irqless: same as master_xfer. Yet, not using any inter=
+rupts
+> > + *   so e.g. PMICs can be accessed very late before shutdown
+> >   * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If =
+this
+> >   *   is not present, then the bus layer will try and convert the SMBus=
+ calls
+> >   *   into I2C transfers instead.
+> > @@ -511,9 +513,9 @@ i2c_register_board_info(int busnum, struct i2c_boar=
+d_info const *info,
+> >   * be addressed using the same bus algorithms - i.e. bit-banging or th=
+e PCF8584
+> >   * to name two of the most common.
+> >   *
+> > - * The return codes from the @master_xfer field should indicate the ty=
+pe of
+> > - * error code that occurred during the transfer, as documented in the =
+kernel
+> > - * Documentation file Documentation/i2c/fault-codes.
+> > + * The return codes from the @master_xfer{_irqless} field should indic=
+ate the
+> > + * type of error code that occurred during the transfer, as documented=
+ in the
+> > + * Kernel Documentation file Documentation/i2c/fault-codes.
+> >   */
+> >  struct i2c_algorithm {
+> >  	/* If an adapter algorithm can't do I2C-level access, set master_xfer
+> > @@ -524,6 +526,8 @@ struct i2c_algorithm {
+> >  	   processed, or a negative value on error */
+> >  	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+> >  			   int num);
+> > +	int (*master_xfer_irqless)(struct i2c_adapter *adap,
+> > +				   struct i2c_msg *msgs, int num);
+> >  	int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
+> >  			   unsigned short flags, char read_write,
+> >  			   u8 command, int size, union i2c_smbus_data *data);
+> > --=20
+> > 2.18.0
+> >=20
+> >=20
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+> --=20
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbp=
+s up
+> According to speedtest.net: 11.9Mbps down 500kbps up
+
+--l6zl2xstp3grxwt4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxfFfIACgkQFA3kzBSg
+KbYtYQ/6AkePVz4PczsGrZ9xlTQE4SWBGUnbLsK54HPXSsYxW8TsfHaorH5p8iNb
+MpjF3SdT5oXmmLgEmp96RP1alCR61O+TLDhxzxGkZTtdTpnGxacZ7lhop0u2Rtq/
++q1R3jrDbeOCsMzdS2m3sl2M6uba5B1ovKJzei8IX87LtkSxvSvu0tujB+L4jkwS
+UoZMbYYKwpDbDmO9R8QmF9wGI/eR5sxl5CnVFcqepJZbazIXIbqs9Exskp/NCH9o
+9LydDonsYO39mz3kW2EoCGXS/1JvFta/X6Wdom0mdxs3ZUOvZO+DH6GmmtS/LaOp
+L5f2ASfc9ZSWwaZN9kkDp6aSrZW35KIr67q62TwldCyMEYfGHPy7ezrEi/Di3S2m
+EFGzfdVwtZJiX6ZuZafan59nMcRu4EfB63w+cJETmWRC/1IOZER6BK9e9E5JQ8G9
+WLNM0Cq8ar0YoBZLi6dEvlidN6zv8Ppn8duKXW2FWb7UVbm5KnBpqv14D4fSwbjY
+X8xwBX16yaNthwjopHKg6hIHrcq2QVnq9Pl/z7YYG5ZyqUxBTb8D5VKl8Ou4heni
+1J8FiWB8vwkJ1EeFtEIJE2XjoBjHYMd33F9J3Y7OTzSxaZ5g6SsALZxn5Bd+41O4
+OotNnd5svC4ZWmzrJDoGVg4Z60XsxmK8Nik0VmL7B4sjR5xlGEM=
+=lfwN
+-----END PGP SIGNATURE-----
+
+--l6zl2xstp3grxwt4--
