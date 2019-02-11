@@ -2,179 +2,179 @@ Return-Path: <SRS0=nlYi=QS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC53C169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 19:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77855C169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 21:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEEC218AD
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 19:56:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ukr+3pwi"
+	by mail.kernel.org (Postfix) with ESMTP id 46CF2217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 21:00:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387903AbfBKT4t (ORCPT
+        id S1727099AbfBKVAA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:56:49 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54695 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbfBKT4s (ORCPT
+        Mon, 11 Feb 2019 16:00:00 -0500
+Received: from sauhun.de ([88.99.104.3]:58252 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726080AbfBKVAA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:56:48 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so507835wmh.4;
-        Mon, 11 Feb 2019 11:56:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=StkxIW8Xgc38q2Ytd6aH8WUm5zZDfQ3YjF2+nlZJri0=;
-        b=ukr+3pwib/ehr88xbujHPNDITTDRr3W3TJDmxGQUZUABquPSGOhQX2zJS8Xaw9nS7M
-         APj0Gty8B6IcE7r4qgJT7HzMTF90sGb/yPaYXp+LaesXgsp5ZCjfy+mIbBLFgKtK294Q
-         oXrfqRyzFBK7BNGw9KQqoV3H7b4OgG0i5b7QNvbDt1jkzKke2JsV2VQspE1UUi6bpKrH
-         JlbrdRDw8Xr8Uy8bSwprKjEC3Pv9EVBKouU/iMJpVPjXmot3k5wws0pp4e+bdds9yItO
-         BolhIb8jY46dZeT4CAnazIPvUIq+Bixd+8l+AEVYn2/mgW71gTXGWHHD1JG0LYVSz0R6
-         LPQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=StkxIW8Xgc38q2Ytd6aH8WUm5zZDfQ3YjF2+nlZJri0=;
-        b=ZSdldEe6y6ZOgVTZgL4qot7EqvUHZmtCkFZOrJx9r2ydMzog30BZwJLMiD+27ATUQl
-         nyy2HrPlg0I38IljdTCwZ3G1Fp2q3y2AJjpCalql6oekk85GKJUlexWTzyWDj26tpMJU
-         j6i51Km8zFplu1BdDMax9LO36q8+o+cI5aL7++qzdEWHc6QKeEhots6ucBjMvrGSV4Pf
-         c7/7euX4i6EmdjoVBcg2cER98q6CJviSrOgEqn0matxMwbQ/vKdzFhxZ5nz3OhoR5pu3
-         CMSXOMlNuQ5gZASPIlTm9SPmp2bCx6V3CLkzNiapzBnufpuzeGxA2IFS2dfo30GCRzt6
-         e5PQ==
-X-Gm-Message-State: AHQUAua8CCHFUpMIH5aMDQDiJQ97j5whQrGh6fHoLN6ukCQOCZ3aNHW+
-        bTTwxuY+gN6gFjjeiEilbhY=
-X-Google-Smtp-Source: AHgI3IZ46CfW4BPam3RgntXkxA4ob8k6sGhUgY/CqXK8KVmS3GQwAQyj2htpjs32M8TZOSsMWv0nvw==
-X-Received: by 2002:a1c:7a18:: with SMTP id v24mr835435wmc.107.1549915004718;
-        Mon, 11 Feb 2019 11:56:44 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c1sm13148576wrf.20.2019.02.11.11.56.43
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 11:56:43 -0800 (PST)
-Subject: Re: [PATCH V3 3/6] thermal: Register hwmon in
- thermal_zone_of_sensor_register_param()
-To:     Eduardo Valentin <edubezval@gmail.com>
-Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>
-References: <20181217155644.29278-1-marek.vasut@gmail.com>
- <20181217155644.29278-4-marek.vasut@gmail.com>
- <20181218214439.GB8850@localhost.localdomain>
- <867ffa18-9c16-685a-7c83-7534bc14e41d@gmail.com>
- <a4aa607d-f83a-2ed4-09c2-fdcba308664d@gmail.com>
- <2b24720c-c649-44e0-0337-c8a52c78d33d@gmail.com>
- <20190205232442.GA4423@localhost.localdomain>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <1b331713-d1d1-1fe0-277e-2fea4866c244@gmail.com>
-Date:   Mon, 11 Feb 2019 20:29:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 16:00:00 -0500
+Received: from localhost (p54B333B4.dip0.t-ipconnect.de [84.179.51.180])
+        by pokefinder.org (Postfix) with ESMTPSA id 360102E3542;
+        Mon, 11 Feb 2019 21:59:58 +0100 (CET)
+Date:   Mon, 11 Feb 2019 21:59:57 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [RFC PATCH] i2c: gpio: fault-injector: add 'lose_arbitration'
+ injector
+Message-ID: <20190211205957.vtu57sslnc2pn6cd@ninjato>
+References: <20190121142839.19011-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdX=HVBYwRT8otZVs0WaOnjLLWrH8RQZyXCH8_Ro11Muaw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190205232442.GA4423@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3jpta2zy2xlt3gpr"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdX=HVBYwRT8otZVs0WaOnjLLWrH8RQZyXCH8_Ro11Muaw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2/6/19 12:24 AM, Eduardo Valentin wrote:
-> On Mon, Jan 28, 2019 at 01:10:11PM +0100, Marek Vasut wrote:
->> On 1/15/19 1:35 AM, Marek Vasut wrote:
->>> On 12/22/18 3:19 AM, Marek Vasut wrote:
->>>> On 12/18/2018 10:44 PM, Eduardo Valentin wrote:
->>>>> On Mon, Dec 17, 2018 at 04:56:41PM +0100, marek.vasut@gmail.com wrote:
->>>>>> From: Marek Vasut <marek.vasut@gmail.com>
->>>>>>
->>>>>> Register hwmon sysfs interface in thermal_zone_of_sensor_register_param()
->>>>>> in case thermal_zone_params->no_hwmon is set to false. This behavior is
->>>>>> the same as thermal_zone_device_register().
->>>>>>
->>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>>>> Cc: Eduardo Valentin <edubezval@gmail.com>
->>>>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>>>> Cc: Zhang Rui <rui.zhang@intel.com>
->>>>>> Cc: linux-renesas-soc@vger.kernel.org
->>>>>> To: linux-pm@vger.kernel.org
->>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>> ---
->>>>>> V2: No change
->>>>>> V3: - Work around the From line and SoB line checkpatch warning
->>>>>>     - Reorder the SoB line at the end
->>>>>> ---
->>>>>>  drivers/thermal/of-thermal.c | 12 +++++++++++-
->>>>>>  1 file changed, 11 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
->>>>>> index e1a303a5698c..5ccff7b678de 100644
->>>>>> --- a/drivers/thermal/of-thermal.c
->>>>>> +++ b/drivers/thermal/of-thermal.c
->>>>>> @@ -15,6 +15,7 @@
->>>>>>  #include <linux/string.h>
->>>>>>  
->>>>>>  #include "thermal_core.h"
->>>>>> +#include "thermal_hwmon.h"
->>>>>>  
->>>>>>  /***   Private data structures to represent thermal device tree data ***/
->>>>>>  
->>>>>> @@ -521,8 +522,15 @@ thermal_zone_of_sensor_register_params(struct device *dev, int sensor_id,
->>>>>>  		if (sensor_specs.np == sensor_np && id == sensor_id) {
->>>>>>  			tzd = thermal_zone_of_add_sensor(child, sensor_np,
->>>>>>  							 data, ops);
->>>>>> -			if (!IS_ERR(tzd))
->>>>>> +			if (!IS_ERR(tzd)) {
->>>>>> +				tzd->tzp = tzp;
->>>>>
->>>>> So, here you will overwrite what was done in of_parse_thermal_zones().
->>>>> That means, after this point, property like sustainable power, slope and
->>>>> offset are gone.
->>>>
->>>> Hmmmmm, that was rather inobvious, indeed.
->>>>
->>>> Do you have some suggestion how to pass in the no_hwmon = false then ?
->>>> Since tzp->no_hwmon is set to true in of_parse_thermal_zones(), the
->>>> three drivers (stm32, rcar, rcar_gen3) seem to hack around it. I'd like
->>>> to clean that up.
->>>
-> 
-> Yeah, that is an issue.
-> 
->>> Bump ?
->>
->> Bump again, any suggestions ?
-> 
-> Yeah, a couple of ideas have been proposed for this issue.
-> 
-> First most tempting one is to have a DT property per thermal zone.
-> Making it linux specific, something prefixed by linux,<property>. I
-> recall Amit Kutcheria trying something similar to this, but dont
-> remember where that went. Frankly, this is a Linux thing, I am not
-> convinced DT is really the right place to fix this.
 
-DT is not the right place for this, DT describes hardware and this is
-policy, so it shouldn't be in DT.
+--3jpta2zy2xlt3gpr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Another hack that could be written is a module parameter for of-thermal
-> that would reflect the no_hwmon value, globally. The down side here is
-> you have to make sure all drivers match that no_hwmon value, right?
+Hi Geert,
 
-Indeed, it should be the driver which decides whether or not to register
-a HWMON interface for the thermal zone.
+On Mon, Feb 11, 2019 at 11:30:56AM +0100, Geert Uytterhoeven wrote:
+> Hi Wolfram,
+>=20
+> On Mon, Jan 21, 2019 at 3:29 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> > Here is a fault injector simulating 'arbitration lost' from multi-master
+> > setups. Read the docs for its usage.
+> >
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> Thanks, looks like a valuable injector case!
+>=20
+> > This is the most reliable result I came up with so far for simulating l=
+ost
+> > arbitration (after playing a lot with falling SDA as trigger first, but=
+ SCL
+> > seems the way to go). Works fine with the i2c-sh_mobile driver on a Ren=
+esas
+>=20
+> Using SCL as the trigger makes most sense to me, too.
 
-I guess for now, I'll just discard this entire series and hack the data
-structure like other drivers do, since I don't see any reasonable solution.
+Thanks for the review and glad you like the use case and implementation
+approach.
 
--- 
-Best regards,
-Marek Vasut
+> > +       struct i2c_gpio_private_data *priv =3D dev_id;
+> > +
+> > +       setsda(&priv->bit_data, 0);
+> > +       udelay(200);
+>=20
+> Please add a #define for this value.
+
+Sure thing, this was a typical RFC marker :) It is now calculated based
+on bit_data.udelay and has a comment.
+
+
+> > +       struct i2c_gpio_private_data *priv =3D data;
+> > +       int irq =3D gpiod_to_irq(priv->scl);
+>=20
+> As request_irq() takes an unsigned int irq, please check for a negative e=
+rror
+> code here.
+
+
+Will do.
+
+> > +       int ret, i;
+>=20
+> u64 i;
+>=20
+> Yes, 64-bit values may be a bit excessive, but that's what the caller is
+> passing, and truncating to int may cause unexpected behavior.
+
+OK, but won't be needed after my refactoring to count this in the
+interrupt.
+
+> > +       ret =3D request_irq(irq, lose_arbitration_irq, IRQF_TRIGGER_FAL=
+LING,
+> > +                         "i2c-gpio-fi", priv);
+>=20
+> "i2c-gpio-fault-injection"?
+
+OK. That was RFC style, too.
+
+> > +       if (ret)
+> > +               goto output;
+> > +
+> > +       for (i =3D 0; i < num_faults; i++) {
+> > +               ret =3D wait_for_completion_interruptible(&priv->irq_ha=
+ppened);
+> > +               if (ret)
+> > +                       break;
+> > +               reinit_completion(&priv->irq_happened);
+>=20
+> The reinitialization may race with the interrupt handler. Probably you do=
+n't
+> care, though, as all of this is "best effort" anyway.
+>=20
+> Perhaps you can do the counting in the interrupt handler instead, and only
+> trigger completion after the wanted number of lost arbitrations has been
+> performed?
+
+Yes, I like this approach! Will do.
+
+>=20
+>=20
+> > +DEFINE_DEBUGFS_ATTRIBUTE(fops_lose_arbitration, NULL, fops_lose_arbitr=
+ation_set, "%llu\n");
+>=20
+> I think you can drop the format if you don't provide a "get" method.
+> Or just implement the "get" method, too ;-)
+
+Any pointer for that information? I seem to recall that the format
+string is also used to parse the user string to the set function. I
+sadly can't find that documented, but all the helper macros in
+fs/debugfs/file.c have a format string, too, even if WO.
+
+I have the code ready but testing and pushing out needs to wait until
+tomorrow.
+
+Thanks again,
+
+   Wolfram
+
+
+--3jpta2zy2xlt3gpr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxh4kkACgkQFA3kzBSg
+KbZiVw/+PhsFLVoZ4utSsDlJtQ1EhXHMJq9d6nVTl5loJWWudH3bVNwd04wZDT0h
+PGefWXTZ2j4r72t3KDKzzV42PahLzW2EksWDLtVX7n5y8gFOQYQDJLdCqSVVusan
+91Nh/graFqZp93ZzHGSEq7Wq8BvuiSl+I3J3m9GgOMEs+fLv9Xm7L9D+i9Dfu2Fl
+8LDTeWyqUXasIJxE/ukoE91CCIfwGq1pEnAnY4oYPE88P0MpZNgel5H5ZenpMC6V
+0c5KAQwV/4ggnAmLYD+XW70MNVridf2Lvte7OGi7ycJ5KJWLmpR9xU1xWYGK5Ypz
+MT7E2KhpJHBgFACfrFD68144d+2AjJ+C3r2BULqDuHEPSRGP4l4hElv70Wd9hFTI
+0rXEcnLlHLc+09cBONQ52y3Ln+tQ2hmNz/qKDixMjd5SJZx96fVZWwGk5UkHbdYu
+xGNFPPY0We1j5/OSid/LXrNpPeSLnseFypx/s201Wm9ocy5UHPisAOFbkGA3NxN8
+UgPzJ1b1Jti3RGeocadT1k4Gi9RGB6nuovyeEZYtn+e1Svhe8hyp8H76ocX2/5Og
+HYhBKKUhfM/lCHHcboW7bzuvrqIEgU+hRh3g/Z1bgdITC7YQpMxjqawvACog0yTs
+NDq5O6iQL1tE9AbXk+CBY4Ss3Ly63zL1wm5YYFD6ll59ZcoI+UI=
+=VCzw
+-----END PGP SIGNATURE-----
+
+--3jpta2zy2xlt3gpr--
