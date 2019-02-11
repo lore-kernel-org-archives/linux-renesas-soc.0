@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754A5C169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 13:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8044BC169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 13:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C49222B0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 13:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47FD8222B4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 13:59:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="hhMUV7IH"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="YdyfOzQR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbfBKN72 (ORCPT
+        id S1728322AbfBKN7c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:59:28 -0500
+        Mon, 11 Feb 2019 08:59:32 -0500
 Received: from kirsty.vergenet.net ([202.4.237.240]:34766 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728251AbfBKN70 (ORCPT
+        with ESMTP id S1728312AbfBKN7b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:59:26 -0500
+        Mon, 11 Feb 2019 08:59:31 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id C46E125BEE3;
-        Tue, 12 Feb 2019 00:59:13 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E85BC25BEE5;
+        Tue, 12 Feb 2019 00:59:15 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549893554; bh=0j2z6+KXRydd/jReknatuwD3IzdLYhSm+8uzKhTgJms=;
+        t=1549893556; bh=yFX6KmdU35CAIDBP1IV9ZVOnGkQjhxvM824RijvRTws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hhMUV7IHfixNixyb7KERthnWjFdVrLnLpkh8cgZEkfq3x2CkjnLOUfmc7ESLMBb8H
-         JVqRpJtZz68YqKM+qG6bgBFnEbuh/srTjdiXzTwQHXlqxPRiO3wSNjqPC0FO7N6cAB
-         HUbDOqI1noG5PumIaaWMrNJkyOxtGvmKRuFVZTsA=
+        b=YdyfOzQRnInbpdCoW3STF2C4usFXNL5bsPHSp0STvUAnClFRcOQti/uBdBwLqwnxU
+         n6VxTTNpnRU/JpuSVRoRviuQK30VD54VvHUgvGFz8oY0f/nPi3t8vGJUr4NRXxiogd
+         Iv8k3cSpIhnFlcFIQ5RMWjsfG96lvrou8e4FIxAw=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id C6E1794057D; Mon, 11 Feb 2019 14:59:11 +0100 (CET)
+        id ECF6F940BBC; Mon, 11 Feb 2019 14:59:11 +0100 (CET)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v5 4/6] clk: renesas: rcar-gen3: Support Z and Z2 clocks with high frequency parents
-Date:   Mon, 11 Feb 2019 14:58:56 +0100
-Message-Id: <20190211135858.23635-5-horms+renesas@verge.net.au>
+Subject: [PATCH v5 6/6] clk: renesas: r8a774c0: Add Z2 clock
+Date:   Mon, 11 Feb 2019 14:58:58 +0100
+Message-Id: <20190211135858.23635-7-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190211135858.23635-1-horms+renesas@verge.net.au>
 References: <20190211135858.23635-1-horms+renesas@verge.net.au>
@@ -54,54 +54,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Support Z and Z2 clocks with parent frequencies greater than UINT32_MAX Hz
-(~4.29GHz).
-
-The DIV_ROUND_CLOSEST_ULL() macro accepts a 64bit dividend and 32bit
-divisor. This leads to truncation of the divisor, which is the Z or Z2
-parent clock frequency in HZ, on platforms where frequency of that clock is
-greater than UINT32_MAX Hz.
-
-To resolve this problem the DIV64_U64_ROUND_CLOSEST() macro, which takes
-on an unsigned 64bit dividend and divisor, is used.
-
-An earlier version of this patch made use of the existing
-DIV_ROUND_CLOSEST() macro, which accepts the prevailing type of the
-dividend and divisor. However, this does not compile on 32bit systems, such
-as i386 and mips, when called with the types used at this call site, an
-unsigned long long dividend and unsigned long divisor.
-
-This work is in preparation for supporting the Z2 cloco on the R-Car Gen3
-E3 (r8a77990) SoC which has a 4.8GHz parent clock.
+Adds support for R-Car RZ/G2E (r8a774c0) Z2 clock.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v5: Move adding DIV64_U64_ROUND_CLOSEST to a separate patch
-    Revise changelog
-
-v4: Add and use DIV64_U64_ROUND_CLOSEST
-
-v2: New patch
+v3: New patch
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index 6b146c2cf6a3..4513bb705b03 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -120,8 +120,8 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned int i;
- 	u32 val, kick;
- 
--	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * zclk->fixed_div,
--				     parent_rate);
-+	mult = DIV64_U64_ROUND_CLOSEST(rate * 32ULL * zclk->fixed_div,
-+				       parent_rate);
- 	mult = clamp(mult, 1U, 32U);
- 
- 	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index 10b96895d452..24634ca94f69 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -79,6 +79,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+ 	/* Core Clock Outputs */
+ 	DEF_FIXED("za2",       R8A774C0_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+ 	DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
++	DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
+ 	DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
+ 	DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
+ 	DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
 -- 
 2.11.0
 
