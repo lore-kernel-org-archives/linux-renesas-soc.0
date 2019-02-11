@@ -3,120 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCF7C169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 10:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F44CC169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 10:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23F020821
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 10:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA9D920821
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 10:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726053AbfBKKWp (ORCPT
+        id S1726147AbfBKKbL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Feb 2019 05:22:45 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44960 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfBKKWp (ORCPT
+        Mon, 11 Feb 2019 05:31:11 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42461 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfBKKbL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Feb 2019 05:22:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9204BA78;
-        Mon, 11 Feb 2019 02:22:44 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6B0B3F557;
-        Mon, 11 Feb 2019 02:22:42 -0800 (PST)
-Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
- devres release
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190207193653.18221-1-geert+renesas@glider.be>
- <20190208164019.GY32526@8bytes.org>
- <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
- <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6e64e564-aa6c-4193-1f57-ebf88d6932d5@arm.com>
-Date:   Mon, 11 Feb 2019 10:22:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 11 Feb 2019 05:31:11 -0500
+Received: by mail-vs1-f66.google.com with SMTP id b20so4608350vsl.9;
+        Mon, 11 Feb 2019 02:31:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8hzkUuUYm4bpoUBWAE84O4MRCSCFmY5QbPjsIftaPvo=;
+        b=qTKBzxQdZAWfhRqcu7vkBmO1urUsKA5VXxAJLdlIogm9u6PUsqJmfoAwDzNTW7/xPY
+         6mdptSMF6Cqj4RsN9fpA5r1OsyfwpZ2DKGkDh9E+HjAk+m2zC5+uSHTppPWNVHWsul8v
+         dw8+WvAvjwCnnx5DwYEY7WFXZ0fifmlLns3jMFLATZEhYms9m47qStahVsg2JF/gCaHu
+         wbRVkFYRBwemH9JZDRrGbkowrHsB7IXRD2uPOcSMOWKx3xJRq6yyWkNTWT2C3nGUEdLv
+         LHP8W7R7SjFeRdd+9dPFZEo0jQvBcn0E4QcPivd4qD3fXwB33NCR4OMw+CwKxeg6dmEc
+         YPwg==
+X-Gm-Message-State: AHQUAua0df/2Rtx4bMqO9/UqF96Y42/QH0QFVFv2YnkgAYpzW3EV0PxU
+        FgoCRe9fYRVhb/RI6VTD3AK4yV7zj3+oFJzBvpK49gt4
+X-Google-Smtp-Source: AHgI3Ia7LeB2ljB1/6EWe2B9GRHcL45bk5IBSj5PdFmWhj549cZveB/57o5oBT+FuO531sUstL4PgvwwdYRyfe1XEmA=
+X-Received: by 2002:a67:541:: with SMTP id 62mr525060vsf.11.1549881069622;
+ Mon, 11 Feb 2019 02:31:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190121142839.19011-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190121142839.19011-1-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Feb 2019 11:30:56 +0100
+Message-ID: <CAMuHMdX=HVBYwRT8otZVs0WaOnjLLWrH8RQZyXCH8_Ro11Muaw@mail.gmail.com>
+Subject: Re: [RFC PATCH] i2c: gpio: fault-injector: add 'lose_arbitration' injector
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 08/02/2019 18:55, Geert Uytterhoeven wrote:
-> Hi Robin,
-> 
-> On Fri, Feb 8, 2019 at 6:55 PM Robin Murphy <robin.murphy@arm.com> wrote:
->> On 08/02/2019 16:40, Joerg Roedel wrote:
->>> On Thu, Feb 07, 2019 at 08:36:53PM +0100, Geert Uytterhoeven wrote:
->>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->>>> index 8ac10af17c0043a3..d62487d024559620 100644
->>>> --- a/drivers/base/dd.c
->>>> +++ b/drivers/base/dd.c
->>>> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
->>>>                       drv->remove(dev);
->>>>
->>>>               device_links_driver_cleanup(dev);
->>>> -            arch_teardown_dma_ops(dev);
->>>>
->>>>               devres_release_all(dev);
->>>> +            arch_teardown_dma_ops(dev);
->>>>               dev->driver = NULL;
->>>>               dev_set_drvdata(dev, NULL);
->>>>               if (dev->pm_domain && dev->pm_domain->dismiss)
->>>
->>> Thanks for the fix! Should it also be tagged for stable and get a Fixes
-> 
-> FTR, Greg has added it to driver-core-testing, with a CC to stable.
+Hi Wolfram,
 
-So I see, great!
+On Mon, Jan 21, 2019 at 3:29 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Here is a fault injector simulating 'arbitration lost' from multi-master
+> setups. Read the docs for its usage.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
->>> tag? I know it only triggers with a fix in v5.0-rc, but still...
->>
->> I think so:
->>
->> Fixes: 09515ef5ddad ("of/acpi: Configure dma operations at probe time
->> for platform/amba/pci bus devices")
-> 
-> Thanks! It won't backport cleanly due to commit dc3c05504d38849f
-> ("dma-mapping: remove dma_deconfigure") in v4.20, though.
+Thanks, looks like a valuable injector case!
 
-Ah yes - backports beyond that should simply be a case of moving the 
-dma_deconfigure() wrapper in the same manner.
+> This is the most reliable result I came up with so far for simulating lost
+> arbitration (after playing a lot with falling SDA as trigger first, but SCL
+> seems the way to go). Works fine with the i2c-sh_mobile driver on a Renesas
 
-Thanks,
-Robin.
+Using SCL as the trigger makes most sense to me, too.
 
->> There aren't many drivers using dmam_alloc_*(), let alone which would
->> also find themselves behind an IOMMU on an Arm system, but it turns out
->> I actually have another one which can reproduce the BUG() with 5.0-rc.
-> 
-> SATA core uses dmam_alloc_*().
-> 
->> I've tried a 4.12 kernel with a bit of instrumentation[1] and sure
->> enough the devres-managed buffer is freed with the wrong ops[2] even
->> then. How it manages not to blow up more catastrophically I have no
->> idea... I guess at best it just leaks the buffers and IOMMU mappings,
->> and at worst quietly frees random other pages instead.
-> 
-> May depend on the actual ops, and whether CMA is used or not.
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+> --- a/drivers/i2c/busses/i2c-gpio.c
+> +++ b/drivers/i2c/busses/i2c-gpio.c
+
+> @@ -162,6 +165,59 @@ static int fops_incomplete_write_byte_set(void *data, u64 addr)
+>  }
+>  DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_write_byte, NULL, fops_incomplete_write_byte_set, "%llu\n");
+>
+> +static irqreturn_t lose_arbitration_irq(int irq, void *dev_id)
+> +{
+> +       struct i2c_gpio_private_data *priv = dev_id;
+> +
+> +       setsda(&priv->bit_data, 0);
+> +       udelay(200);
+
+Please add a #define for this value.
+
+> +       setsda(&priv->bit_data, 1);
+> +
+> +       complete(&priv->irq_happened);
+> +       return IRQ_HANDLED;
+> +}
+> +
+> +static int fops_lose_arbitration_set(void *data, u64 num_faults)
+> +{
+> +       struct i2c_gpio_private_data *priv = data;
+> +       int irq = gpiod_to_irq(priv->scl);
+
+As request_irq() takes an unsigned int irq, please check for a negative error
+code here.
+
+> +       int ret, i;
+
+u64 i;
+
+Yes, 64-bit values may be a bit excessive, but that's what the caller is
+passing, and truncating to int may cause unexpected behavior.
+
+> +       ret = request_irq(irq, lose_arbitration_irq, IRQF_TRIGGER_FALLING,
+> +                         "i2c-gpio-fi", priv);
+
+"i2c-gpio-fault-injection"?
+
+> +       if (ret)
+> +               goto output;
+> +
+> +       for (i = 0; i < num_faults; i++) {
+> +               ret = wait_for_completion_interruptible(&priv->irq_happened);
+> +               if (ret)
+> +                       break;
+> +               reinit_completion(&priv->irq_happened);
+
+The reinitialization may race with the interrupt handler. Probably you don't
+care, though, as all of this is "best effort" anyway.
+
+Perhaps you can do the counting in the interrupt handler instead, and only
+trigger completion after the wanted number of lost arbitrations has been
+performed?
+
+
+> +DEFINE_DEBUGFS_ATTRIBUTE(fops_lose_arbitration, NULL, fops_lose_arbitration_set, "%llu\n");
+
+I think you can drop the format if you don't provide a "get" method.
+Or just implement the "get" method, too ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
