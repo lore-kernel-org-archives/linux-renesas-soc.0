@@ -2,102 +2,121 @@ Return-Path: <SRS0=nlYi=QS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB29C169C4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 09:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCF7C169C4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 10:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E37206B7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 09:49:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="kgpo5xLa"
+	by mail.kernel.org (Postfix) with ESMTP id C23F020821
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Feb 2019 10:22:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbfBKJtf (ORCPT
+        id S1726053AbfBKKWp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Feb 2019 04:49:35 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:59574 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfBKJte (ORCPT
+        Mon, 11 Feb 2019 05:22:45 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44960 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726045AbfBKKWp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Feb 2019 04:49:34 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id E3E5D25BE79;
-        Mon, 11 Feb 2019 20:49:32 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549878573; bh=FdvD1a3plAOg0Gnv3jDZMJGnODnBVLLPb0XxfxGVMjA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kgpo5xLaOh4av7g+hFyTQLpGMUGZpgPjt0v3Aexp7juAwCBzm90sTyDLqd2jO0PcC
-         gPzsjdB0tOWr+cFodTo/oSZwDUKgG5AroR2OZ0Ritpn2tLHxPFEtW4yIereeUBL55Z
-         sOC9um50QvIoveiHzUURSSpNKDTbG7J5VDnD1ytM=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 05341940362; Mon, 11 Feb 2019 10:49:30 +0100 (CET)
-Date:   Mon, 11 Feb 2019 10:49:30 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 08/12] arm64: dts: renesas: r8a774c0: Add OPPs table for
- cpu devices
-Message-ID: <20190211094927.5bs32a6q7ecvqq5t@verge.net.au>
-References: <cover.1549623801.git.horms+renesas@verge.net.au>
- <231d8908a66fa98f09553d31ad8cd5f382b29959.1549623801.git.horms+renesas@verge.net.au>
- <7d60ebf5-c245-f48d-47db-ce63f4f3690b@cogentembedded.com>
- <TY1PR01MB1770FAE6E7C26615134B8E0AC0690@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+        Mon, 11 Feb 2019 05:22:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9204BA78;
+        Mon, 11 Feb 2019 02:22:44 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6B0B3F557;
+        Mon, 11 Feb 2019 02:22:42 -0800 (PST)
+Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
+ devres release
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190207193653.18221-1-geert+renesas@glider.be>
+ <20190208164019.GY32526@8bytes.org>
+ <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
+ <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <6e64e564-aa6c-4193-1f57-ebf88d6932d5@arm.com>
+Date:   Mon, 11 Feb 2019 10:22:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1770FAE6E7C26615134B8E0AC0690@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Feb 08, 2019 at 03:26:49PM +0000, Fabrizio Castro wrote:
-> Hello Sergei,
+On 08/02/2019 18:55, Geert Uytterhoeven wrote:
+> Hi Robin,
 > 
-> Thank you for your feedback!
+> On Fri, Feb 8, 2019 at 6:55 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>> On 08/02/2019 16:40, Joerg Roedel wrote:
+>>> On Thu, Feb 07, 2019 at 08:36:53PM +0100, Geert Uytterhoeven wrote:
+>>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>>>> index 8ac10af17c0043a3..d62487d024559620 100644
+>>>> --- a/drivers/base/dd.c
+>>>> +++ b/drivers/base/dd.c
+>>>> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+>>>>                       drv->remove(dev);
+>>>>
+>>>>               device_links_driver_cleanup(dev);
+>>>> -            arch_teardown_dma_ops(dev);
+>>>>
+>>>>               devres_release_all(dev);
+>>>> +            arch_teardown_dma_ops(dev);
+>>>>               dev->driver = NULL;
+>>>>               dev_set_drvdata(dev, NULL);
+>>>>               if (dev->pm_domain && dev->pm_domain->dismiss)
+>>>
+>>> Thanks for the fix! Should it also be tagged for stable and get a Fixes
 > 
-> > -----Original Message-----
-> > From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> > Sent: 08 February 2019 12:53
-> > To: Simon Horman <horms+renesas@verge.net.au>; linux-renesas-soc@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org; Magnus Damm <magnus.damm@gmail.com>; Fabrizio Castro
-> > <fabrizio.castro@bp.renesas.com>
-> > Subject: Re: [PATCH 08/12] arm64: dts: renesas: r8a774c0: Add OPPs table for cpu devices
-> >
-> > Hello!
-> >
-> > On 02/08/2019 02:13 PM, Simon Horman wrote:
-> >
-> > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >
-> > > This patch defines OOP tables for all CPUs, similarly to
-> > > what done by Takeshi Kihara and Yoshihiro Kaneko for the
-> > > R8A77990.
-> > >
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > [...]
-> > > @@ -55,6 +76,8 @@
-> > >  power-domains = <&sysc R8A774C0_PD_CA53_CPU0>;
-> > >  next-level-cache = <&L2_CA53>;
-> > >  enable-method = "psci";
-> > > +clocks =<&cpg CPG_CORE R8A774C0_CLK_Z2>;
-> >
-> >    Need space after =...
-> 
-> Doh! Simon, do you want me to send another version to fix both spacing issues?
+> FTR, Greg has added it to driver-core-testing, with a CC to stable.
 
-Likewise, sorry I didn't notice that earlier.
+So I see, great!
 
-I'd rather not re-send this pull request just to resolve whitespace issues.
-So please send an incremental patch for now.
+>>> tag? I know it only triggers with a fix in v5.0-rc, but still...
+>>
+>> I think so:
+>>
+>> Fixes: 09515ef5ddad ("of/acpi: Configure dma operations at probe time
+>> for platform/amba/pci bus devices")
+> 
+> Thanks! It won't backport cleanly due to commit dc3c05504d38849f
+> ("dma-mapping: remove dma_deconfigure") in v4.20, though.
+
+Ah yes - backports beyond that should simply be a case of moving the 
+dma_deconfigure() wrapper in the same manner.
+
+Thanks,
+Robin.
+
+>> There aren't many drivers using dmam_alloc_*(), let alone which would
+>> also find themselves behind an IOMMU on an Arm system, but it turns out
+>> I actually have another one which can reproduce the BUG() with 5.0-rc.
+> 
+> SATA core uses dmam_alloc_*().
+> 
+>> I've tried a 4.12 kernel with a bit of instrumentation[1] and sure
+>> enough the devres-managed buffer is freed with the wrong ops[2] even
+>> then. How it manages not to blow up more catastrophically I have no
+>> idea... I guess at best it just leaks the buffers and IOMMU mappings,
+>> and at worst quietly frees random other pages instead.
+> 
+> May depend on the actual ops, and whether CMA is used or not.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
