@@ -7,88 +7,82 @@ X-Spam-Status: No, score=-13.0 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9F0C282C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44168C282CE
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 10:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5339214DA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 10:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 135FB21773
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 10:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfBLKsr (ORCPT
+        id S1727521AbfBLKsr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 12 Feb 2019 05:48:47 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:42884 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727521AbfBLKsr (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:35522 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbfBLKsr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 12 Feb 2019 05:48:47 -0500
 Received: from ramsan ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id bmol1z00c3XaVaC06molsn; Tue, 12 Feb 2019 11:48:45 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id bmol1z00H3XaVaC01molsm; Tue, 12 Feb 2019 11:48:45 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gtVcL-0004PJ-AM; Tue, 12 Feb 2019 11:48:45 +0100
+        id 1gtVcL-0004PJ-Bt; Tue, 12 Feb 2019 11:48:45 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gtVBj-0008Pg-Nr; Tue, 12 Feb 2019 11:21:15 +0100
+        id 1gtVBP-0008OZ-Cn; Tue, 12 Feb 2019 11:20:55 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] pinctrl: sh-pfc: Updates for v5.1 (take two)
-Date:   Tue, 12 Feb 2019 11:21:04 +0100
-Message-Id: <20190212102104.32299-1-geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v5.1 (take two)
+Date:   Tue, 12 Feb 2019 11:20:50 +0100
+Message-Id: <20190212102050.32229-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus,
+	Hi Mike, Stephen,
 
-The following changes since commit 8e32e881947be98abaa917157fefc4a3319e90af:
+The following changes since commit d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
 
-  pinctrl: sh-pfc: r8a7778: Fix HSPI pin numbers and names (2019-01-21 13:25:38 +0100)
+  clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08 +0100)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v5.1-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.1-tag2
 
-for you to fetch changes up to 79dbbdbeccc6784d5e189710adcca750c03d3bd4:
+for you to fetch changes up to d1de227de8145e661e940377e050286098197eeb:
 
-  pinctrl: sh-pfc: r8a77965: Add DRIF pins, groups and functions (2019-02-11 14:16:11 +0100)
+  clk: renesas: r8a774c0: Add TMU clock (2019-02-05 10:40:05 +0100)
 
 ----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v5.1 (take two)
+clk: renesas: Updates for v5.1 (take two)
 
-  - Add DRIF (digital radio) pin groups on R-Car E3 and M3-N,
-  - Add TMU (timer) pin groups on R-Car M3-N,
-  - Miscellaneous fixes,
-  - Build-time validation for fixed-size field width mismatches.
+  - Add RPC (QSPI/HyperFLASH) clocks on R-Car V3H,
+  - Add TMU (timer) clocks on RZ/G2E,
+  - Small fixes and cleanups.
 
 Thanks for pulling!
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (5):
-      pinctrl: sh-pfc: emev2: Add missing pinmux functions
-      pinctrl: sh-pfc: r8a7791: Fix scifb2_data_c pin group
-      pinctrl: sh-pfc: r8a7792: Fix vin1_data18_b pin group
-      pinctrl: sh-pfc: sh73a0: Fix fsic_spdif pin groups
-      pinctrl: sh-pfc: Validate fixed-size field widths at build time
+Biju Das (1):
+      clk: renesas: r8a774c0: Add TMU clock
 
-Takeshi Kihara (3):
-      pinctrl: sh-pfc: r8a77990: Add DRIF pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add TMU pins, groups and functions
-      pinctrl: sh-pfc: r8a77965: Add DRIF pins, groups and functions
+Sergei Shtylyov (4):
+      clk: renesas: rcar-gen3: Factor out cpg_reg_modify()
+      clk: renesas: rcar-gen3: Add spinlock
+      clk: renesas: rcar-gen3: Add RPC clocks
+      clk: renesas: r8a77980: Add RPC clocks
 
- drivers/pinctrl/sh-pfc/pfc-emev2.c    |  20 ++
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c  |   2 +-
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c  |   1 +
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 398 ++++++++++++++++++++++++++++++++++
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 255 +++++++++++++++++++++-
- drivers/pinctrl/sh-pfc/pfc-sh73a0.c   |   3 +-
- drivers/pinctrl/sh-pfc/sh_pfc.h       |   3 +-
- 7 files changed, 677 insertions(+), 5 deletions(-)
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c |   5 ++
+ drivers/clk/renesas/r8a77980-cpg-mssr.c |   8 ++
+ drivers/clk/renesas/rcar-gen3-cpg.c     | 147 ++++++++++++++++++++++++++++----
+ drivers/clk/renesas/rcar-gen3-cpg.h     |   4 +
+ 4 files changed, 146 insertions(+), 18 deletions(-)
 
 Gr{oetje,eeting}s,
 
