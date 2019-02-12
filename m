@@ -2,115 +2,152 @@ Return-Path: <SRS0=s4Ke=QT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AC6C282C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB710C282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA376214DA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:33:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A7062186A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hqGMfKq1"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="t4NHeFhL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfBLOdQ (ORCPT
+        id S1726748AbfBLOfa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:33:16 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40128 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727952AbfBLOdQ (ORCPT
+        Tue, 12 Feb 2019 09:35:30 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38474 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729528AbfBLOfa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:33:16 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q21so3241060wmc.5;
-        Tue, 12 Feb 2019 06:33:14 -0800 (PST)
+        Tue, 12 Feb 2019 09:35:30 -0500
+Received: by mail-ot1-f66.google.com with SMTP id m1so4722527otf.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Feb 2019 06:35:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Avxomx1Az8M5EHN2sdyj06xmtx0wYvL0zluK5+/IMaI=;
-        b=hqGMfKq1hZTg0gjddW4ba6k1iH9UAj09LJzc3tm6CRMYGh3jgEw3GCZUp6f2ZYmfiC
-         IpoDhRCS6F0mlnAOdA6FGfKw6bDiPbhRxUNpQzp1yOjZUv2UqAVqbyuxyUsvr4JVi+PZ
-         5VN0fbIzmBa4O41Dn+j/0zMAdVU07SQ6CQJherWx60U1QGVwDMCUPRQ7Xe7ivAXn0Zb5
-         gDpgOa7Opzo2T1l/ZdsIXN7KBiVa6KDPP+qcrOaf1JOIBQ3mlN+GnLjabUSlCLvBgsGQ
-         XbcXpTKk+2suL4rSi6ca/8zi8cfzNzYScF4PCH0521lFFPmCrKcjF/g2sHQdY4CNfa1K
-         b6dg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CPX9OAcUsPK24kBxydGkmqfxgoh4s7OnFGV7n+XAerI=;
+        b=t4NHeFhL5jA0IIOIdWD4r1rSKzTrKZ5CD0oDbUcMlejDpklvepXF1e70pAS9zgYTtq
+         0pahLmMx5ZKosk9Rdppk/B+sY3WIHCYUpa/PMBOqvoSgDnLsOa5dWTZV2q9sbgCQrb8G
+         Aw9t2qiYAmnUjewlR3istU9sE3dxgzHgphmtrOUe7fz63W9F6KRCoa1G66HUrSgexvNj
+         b5BGKlYJez7L1oHoyefZg9GgrYJ1mT7oWevIk9pBXfKZMScJsRcXpcl4Orc6o+w1G47f
+         yHgOT7ptteEzcdRyF4gm5XShefqc3bW1cB2FtUo2HTvBsdmU/v4o5kzIhZaxnPVE12HP
+         b88A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Avxomx1Az8M5EHN2sdyj06xmtx0wYvL0zluK5+/IMaI=;
-        b=At4s+hvL6tfJ64n8IXKHUuJ4vfcaKcU/TpPTGO/RqPsti9nrVcTGvEbvrfsICgeLis
-         icGzrxwoimOMMDymuf4JKAqMBcj2cmMKRPsynwyZgGaiR6ARLLnrDWzG1jpen309aRgx
-         jEO+KTLicDsyjJQ1YiZpD3Z9NzPTvkN0FbrMeQEyJ57BQPfr2U+DzfhyR5L0ogpne3eV
-         fNXAivjdJfKfgGR084AUl+Tz1BZCjNapamAGXDt94B1UwN8FQ9d1eTiyyLo+ZwHnhV9x
-         YcaTPlDVogZELQZkfg3riYgdOB3XuIBQ2j18huNe5t4b/q+PJXZHhNgIncSd8wg+G+XV
-         Yw4Q==
-X-Gm-Message-State: AHQUAubetgcJmN516RwPCnoXFdNGr0ZtzhuAdnnfKYaxBAMmzXBCWltf
-        UvHMxFLKngmiALE7X/3QvWI=
-X-Google-Smtp-Source: AHgI3IZx227cBTMcXkzNAA4Su+BjGjBWJ7tre6DYGxtyvKQa/Yv6G4D1JujTnFhchiot6tXkgOSSGQ==
-X-Received: by 2002:a1c:cf82:: with SMTP id f124mr3229119wmg.95.1549981993880;
-        Tue, 12 Feb 2019 06:33:13 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id 90sm22098998wrk.95.2019.02.12.06.33.12
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Feb 2019 06:33:13 -0800 (PST)
-Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver" to the spi tree
-To:     Mark Brown <broonie@kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
-Date:   Tue, 12 Feb 2019 15:33:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CPX9OAcUsPK24kBxydGkmqfxgoh4s7OnFGV7n+XAerI=;
+        b=aMIt0UeDr/MgYtZRbnJq9n8qum4/zjb1DmK8zbo22Rpy0P8kLpsC2gJRqbBDab5Dhx
+         eJ5ymAYK6jOVksPvVoLnGvOw3iBwilRd2ItoEzRbyCYJY+OC3k36anA7EIR1ZpdfhHH1
+         A4Ux6KZZP59Mw62X7GbFwTSUaO+IG3jNlWDySpZSQC1LXu9eR3/OX91tctu+DvUDlU1z
+         ko2++Jg2mRTywCO+eTAI9VocPtQotKFhWkgipz4wLGvjYEsGO/uj++myMeCK7bKKkwTg
+         q35WNSGZUlxSvR9YvoojEPvkgo9NMmlRyjLC692thAN0lHfKKoBaT3gpem3tPOE9e01h
+         L60g==
+X-Gm-Message-State: AHQUAub7+nic0get1StQKbZQWyregIwNujMutjXCzai30mBDbOel7NZL
+        Yp3k1S2QNaDHGY1W/s8xG9K9OYk/MPejNv+8IEZbgInf+YY=
+X-Google-Smtp-Source: AHgI3IavRgL03tGqRzjcGE03IDBmj06Wwir2qRWfhZsayu32jXDXFHjK/C1BJIQS5KmgvybcmDrhKx7rlbq6GSfP/fw=
+X-Received: by 2002:a9d:6191:: with SMTP id g17mr4210900otk.56.1549982129260;
+ Tue, 12 Feb 2019 06:35:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190212142236.2807D1128113@debutante.sirena.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190212141715.3966-1-geert+renesas@glider.be>
+In-Reply-To: <20190212141715.3966-1-geert+renesas@glider.be>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Tue, 12 Feb 2019 15:35:18 +0100
+Message-ID: <CAMpxmJWcSkCBf+vcOg=ksjeSxvo7N+WQ2gNqxPe5BW01vPFH8w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pca953x: Add wake-up support
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2/12/19 3:22 PM, Mark Brown wrote:
-> The patch
-> 
->    spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-> 
-> has been applied to the spi tree at
-> 
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
-> 
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.  
-> 
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
-> 
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
-> 
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
+wt., 12 lut 2019 o 15:17 Geert Uytterhoeven <geert+renesas@glider.be>
+napisa=C5=82(a):
+>
+> Implement the irq_set_wake() method in the (optional) irq_chip of the
+> GPIO expander, and propagate wake-up settings to the upstream interrupt
+> controller.  This allows GPIOs connected to a PCA953X GPIO expander to
+> serve as wake-up sources.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Tested with a PCA9654 and gpio-keys on an R-Car Ebisu-4D board.
+> ---
+>  drivers/gpio/gpio-pca953x.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index de52f63863dbe59b..8dfb8e326b9d12ca 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -151,6 +151,7 @@ struct pca953x_chip {
+>         u8 irq_trig_raise[MAX_BANK];
+>         u8 irq_trig_fall[MAX_BANK];
+>         struct irq_chip irq_chip;
+> +       unsigned int irq_parent;
+>  #endif
+>
+>         struct i2c_client *client;
+> @@ -513,6 +514,24 @@ static void pca953x_irq_unmask(struct irq_data *d)
+>         chip->irq_mask[d->hwirq / BANK_SZ] |=3D 1 << (d->hwirq % BANK_SZ)=
+;
+>  }
+>
+> +static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
+> +{
+> +       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+> +       struct pca953x_chip *chip =3D gpiochip_get_data(gc);
+> +       int error =3D 0;
+> +
+> +       if (chip->irq_parent) {
+> +               error =3D irq_set_irq_wake(chip->irq_parent, on);
+> +               if (error) {
+> +                       dev_dbg(&chip->client->dev,
+> +                               "irq %u doesn't support irq_set_wake\n",
+> +                               chip->irq_parent);
+> +                       chip->irq_parent =3D 0;
+> +               }
+> +       }
+> +       return error;
+> +}
+> +
+>  static void pca953x_irq_bus_lock(struct irq_data *d)
+>  {
+>         struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
+> @@ -732,6 +751,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chi=
+p,
+>         irq_chip->name =3D dev_name(&chip->client->dev);
+>         irq_chip->irq_mask =3D pca953x_irq_mask;
+>         irq_chip->irq_unmask =3D pca953x_irq_unmask;
+> +       irq_chip->irq_set_wake =3D pca953x_irq_set_wake;
 
-How did that happen when there were still comments and open topics ?
+Is it possible to assign this callback conditionally depending on
+client->irq and avoid the if (chip->irq_parent) in
+pca953x_irq_set_wake()?
 
--- 
-Best regards,
-Marek Vasut
+Bart
+
+>         irq_chip->irq_bus_lock =3D pca953x_irq_bus_lock;
+>         irq_chip->irq_bus_sync_unlock =3D pca953x_irq_bus_sync_unlock;
+>         irq_chip->irq_set_type =3D pca953x_irq_set_type;
+> @@ -747,6 +767,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chi=
+p,
+>         }
+>
+>         gpiochip_set_nested_irqchip(&chip->gpio_chip, irq_chip, client->i=
+rq);
+> +       chip->irq_parent =3D client->irq;
+>
+>         return 0;
+>  }
+> --
+> 2.17.1
+>
