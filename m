@@ -2,167 +2,115 @@ Return-Path: <SRS0=s4Ke=QT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A7BC282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 08:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B491CC282C4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 10:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C271D21773
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 08:52:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78AAB2186A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 10:03:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g19MCneH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbfBLIwp (ORCPT
+        id S1726480AbfBLKDd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Feb 2019 03:52:45 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46564 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbfBLIwp (ORCPT
+        Tue, 12 Feb 2019 05:03:33 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54902 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727768AbfBLKDd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Feb 2019 03:52:45 -0500
-Received: by mail-ua1-f65.google.com with SMTP id j8so595226uae.13;
-        Tue, 12 Feb 2019 00:52:44 -0800 (PST)
+        Tue, 12 Feb 2019 05:03:33 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a62so2234223wmh.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Feb 2019 02:03:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2grwhljsSffbLGt83W342UGOBDifsfkLexG8Xca3D9Y=;
+        b=g19MCneHSdzFvvGDTJ26WYOmZeQyPvZzntIiNbUpEnjqUJCdklEC0tvMORsU9EvO62
+         f1r0J0A1TORTXndvxi7JFfOlmxIACO+sRefEAkcCkvlVmjmJZjZpTvImsaRRzymKWhdO
+         QUgEPQcD9zgzwo9GNjQ0E8me+6xhWlaJ+dt68SbhNkRbrxgo9QTNEOhRyy8Wujkl0FuM
+         orChO8upjOnZzNNIwv7VvHtK2G7frC+ciZ8q4mbMBSwyzhpXeg9Z+7oD+TNWvsqA7WR9
+         Bynjstbukxt5nzwmKKujjRukQN2/LGHQW/m1QQhI30hQ8Amy2xp0y7OWoHTKEmLN5uRP
+         U1pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d0f2h6/PSCtqA+tAPeNLb/jo2IEr2qwo+STy14wU4ok=;
-        b=o+9PXaIdSLLqM3UhX61XeJx+36y+Kca0YpkAgenkiIiaWIMB4SCOhNkE5FdhJ6Ywzd
-         VQb6wSakNMlOZ2notEKtoDuIBRWrv7Y4Av8bNei5VWKz2Oq3e593nDOXhwv3uSgP3bmA
-         12VaVY0V/0/TJi03UxtWq9QaMkOiADW1O4f4IFrhqKYYD9reSDW0XSXoDXT6fYOWE5C2
-         zVzmH4Sdh82idF8r1T311EtTJ0IY3nfTQedvMuJDbbwuG7PuJKRXFC/8YHLURdfs04RM
-         BSUpgttO/hnkAn/OZ76JjubxAYD9YB45CkzjtPCz+AfFO0mzCEeW2HPQVpAa+M/gHbDR
-         X9Ug==
-X-Gm-Message-State: AHQUAuZN8dUXu/Cg4cdg4nKi7iCTzL8aIMavw1VAzG9w7h2rkIUZNsX5
-        GfjMqw3tM04cF5dC0EqoS8dl+7i5BEeI2Q5frz8=
-X-Google-Smtp-Source: AHgI3IYaWcD58+fGpP35XEJ6XG1vwdB+jt7r7L7bIbH+uu+CHWrxB7NHy69+D5AD5E0hZayFzBUczOgsc/PO5Ay9DF4=
-X-Received: by 2002:a9f:2726:: with SMTP id a35mr1061155uaa.75.1549961563502;
- Tue, 12 Feb 2019 00:52:43 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2grwhljsSffbLGt83W342UGOBDifsfkLexG8Xca3D9Y=;
+        b=o5xz2XxZ/ZalCUg6srtRr2D4qrnsvZwHL1bPOcRgVOuYJbucg8klv3LD6MbhBk5o9N
+         309xnI/BalU38/ohPIlibczqR+NKYMPrnHUTl438GqR1gumk7CNftLQMtcnCPjvOi877
+         a748BaNAWvX/0ZqqlFw4cHqCnq+Q1ctnn8mQR6ThktqQTXnT14rty/yYHeWCzkADtxvI
+         +xxz8EpoB+PS8wKb6Xw54sbgRMtRyBZwr7l41kMLUkkwspHcWX8Fz7L8j6hNoAeuX4o4
+         Vahm4gqa3ezKUTxB2kOXXO5QbXjCr2Zw5653NrnkXqP/QbnPIHLUKrHFYwkVRfU4mvdw
+         xFDw==
+X-Gm-Message-State: AHQUAuZ+EsFpJ73/FRu4OH8U1fzpFm9HhXjr693MCx1Pn2N1/pA/DMI1
+        WYKgyfguX0GIRFyq5HHHRszkkdxmv90=
+X-Google-Smtp-Source: AHgI3IaNA5v9F8QCCayfOOOHl8UssWSopEhquayb5vLGi06QFGXECTrOKATNo1NnW9tMuj4q7CKRAg==
+X-Received: by 2002:a1c:400a:: with SMTP id n10mr2186158wma.56.1549965810911;
+        Tue, 12 Feb 2019 02:03:30 -0800 (PST)
+Received: from [192.168.27.65] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id 2sm34496215wrj.27.2019.02.12.02.03.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 02:03:30 -0800 (PST)
+Subject: Re: [PATCH v2 0/5] Add CMT/TMU support for RZ/G2E
+To:     Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <1549272007-33471-1-git-send-email-biju.das@bp.renesas.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <86c16302-8f7e-52b6-d183-5a90c8a0fc85@linaro.org>
+Date:   Tue, 12 Feb 2019 11:03:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20181217155644.29278-1-marek.vasut@gmail.com> <20181217155644.29278-4-marek.vasut@gmail.com>
- <20181218214439.GB8850@localhost.localdomain> <867ffa18-9c16-685a-7c83-7534bc14e41d@gmail.com>
- <a4aa607d-f83a-2ed4-09c2-fdcba308664d@gmail.com> <2b24720c-c649-44e0-0337-c8a52c78d33d@gmail.com>
- <20190205232442.GA4423@localhost.localdomain> <1b331713-d1d1-1fe0-277e-2fea4866c244@gmail.com>
-In-Reply-To: <1b331713-d1d1-1fe0-277e-2fea4866c244@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Feb 2019 09:52:31 +0100
-Message-ID: <CAMuHMdW_ifuQqz9Y_-o4JXX42d+NMOt5L6chszcvw0MriSq8LA@mail.gmail.com>
-Subject: Re: [PATCH V3 3/6] thermal: Register hwmon in thermal_zone_of_sensor_register_param()
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-hwmon@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1549272007-33471-1-git-send-email-biju.das@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi all,
+On 04/02/2019 10:20, Biju Das wrote:
+> This patch series aims to add CMT/TMU timer support for RZ/G2E SoC.
+> 
+> This patch series is tested against renesas-dev and linux-next.
 
-On Mon, Feb 11, 2019 at 9:43 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 2/6/19 12:24 AM, Eduardo Valentin wrote:
-> > On Mon, Jan 28, 2019 at 01:10:11PM +0100, Marek Vasut wrote:
-> >> On 1/15/19 1:35 AM, Marek Vasut wrote:
-> >>> On 12/22/18 3:19 AM, Marek Vasut wrote:
-> >>>> On 12/18/2018 10:44 PM, Eduardo Valentin wrote:
-> >>>>> On Mon, Dec 17, 2018 at 04:56:41PM +0100, marek.vasut@gmail.com wrote:
-> >>>>>> From: Marek Vasut <marek.vasut@gmail.com>
-> >>>>>>
-> >>>>>> Register hwmon sysfs interface in thermal_zone_of_sensor_register_param()
-> >>>>>> in case thermal_zone_params->no_hwmon is set to false. This behavior is
-> >>>>>> the same as thermal_zone_device_register().
-> >>>>>>
-> >>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >>>>>> Cc: Eduardo Valentin <edubezval@gmail.com>
-> >>>>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> >>>>>> Cc: Zhang Rui <rui.zhang@intel.com>
-> >>>>>> Cc: linux-renesas-soc@vger.kernel.org
-> >>>>>> To: linux-pm@vger.kernel.org
-> >>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>>>> ---
-> >>>>>> V2: No change
-> >>>>>> V3: - Work around the From line and SoB line checkpatch warning
-> >>>>>>     - Reorder the SoB line at the end
-> >>>>>> ---
-> >>>>>>  drivers/thermal/of-thermal.c | 12 +++++++++++-
-> >>>>>>  1 file changed, 11 insertions(+), 1 deletion(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-> >>>>>> index e1a303a5698c..5ccff7b678de 100644
-> >>>>>> --- a/drivers/thermal/of-thermal.c
-> >>>>>> +++ b/drivers/thermal/of-thermal.c
-> >>>>>> @@ -15,6 +15,7 @@
-> >>>>>>  #include <linux/string.h>
-> >>>>>>
-> >>>>>>  #include "thermal_core.h"
-> >>>>>> +#include "thermal_hwmon.h"
-> >>>>>>
-> >>>>>>  /***   Private data structures to represent thermal device tree data ***/
-> >>>>>>
-> >>>>>> @@ -521,8 +522,15 @@ thermal_zone_of_sensor_register_params(struct device *dev, int sensor_id,
-> >>>>>>                  if (sensor_specs.np == sensor_np && id == sensor_id) {
-> >>>>>>                          tzd = thermal_zone_of_add_sensor(child, sensor_np,
-> >>>>>>                                                           data, ops);
-> >>>>>> -                        if (!IS_ERR(tzd))
-> >>>>>> +                        if (!IS_ERR(tzd)) {
-> >>>>>> +                                tzd->tzp = tzp;
-> >>>>>
-> >>>>> So, here you will overwrite what was done in of_parse_thermal_zones().
-> >>>>> That means, after this point, property like sustainable power, slope and
-> >>>>> offset are gone.
-> >>>>
-> >>>> Hmmmmm, that was rather inobvious, indeed.
-> >>>>
-> >>>> Do you have some suggestion how to pass in the no_hwmon = false then ?
-> >>>> Since tzp->no_hwmon is set to true in of_parse_thermal_zones(), the
-> >>>> three drivers (stm32, rcar, rcar_gen3) seem to hack around it. I'd like
-> >>>> to clean that up.
-> >>>
-> >
-> > Yeah, that is an issue.
-> >
-> >>> Bump ?
-> >>
-> >> Bump again, any suggestions ?
-> >
-> > Yeah, a couple of ideas have been proposed for this issue.
-> >
-> > First most tempting one is to have a DT property per thermal zone.
-> > Making it linux specific, something prefixed by linux,<property>. I
-> > recall Amit Kutcheria trying something similar to this, but dont
-> > remember where that went. Frankly, this is a Linux thing, I am not
-> > convinced DT is really the right place to fix this.
->
-> DT is not the right place for this, DT describes hardware and this is
-> policy, so it shouldn't be in DT.
+Do you want me to take the patch 1/5 and 4/5 through my tree ?
 
-Indeed.
+> -----
+> V1 -->V2 Incoporated Geert's review comment for TMU clock
+> 
+> Biju Das (5):
+>   dt-bindings: timer: renesas, cmt: Document r8a774c0 CMT support
+>   arm64: dts: renesas: r8a774c0: Add CMT device nodes
+>   clk: renesas: r8a774c0: Add TMU clock
+>   dt-bindings: timer: renesas: tmu: Document r8a774c0 bindings
+>   arm64: dts: renesas: r8a774c0: Add TMU device nodes
+> 
+>  .../devicetree/bindings/timer/renesas,cmt.txt      |   2 +
+>  .../devicetree/bindings/timer/renesas,tmu.txt      |   1 +
+>  arch/arm64/boot/dts/renesas/r8a774c0.dtsi          | 135 +++++++++++++++++++++
+>  drivers/clk/renesas/r8a774c0-cpg-mssr.c            |   5 +
+>  4 files changed, 143 insertions(+)
+> 
 
-> > Another hack that could be written is a module parameter for of-thermal
-> > that would reflect the no_hwmon value, globally. The down side here is
-> > you have to make sure all drivers match that no_hwmon value, right?
->
-> Indeed, it should be the driver which decides whether or not to register
-> a HWMON interface for the thermal zone.
->
-> I guess for now, I'll just discard this entire series and hack the data
-> structure like other drivers do, since I don't see any reasonable solution.
-
-Pardon my ignorance, but when would a thermal driver (not) want to register
-a hwmon interface for the thermal zone?
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
