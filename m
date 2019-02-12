@@ -2,105 +2,79 @@ Return-Path: <SRS0=s4Ke=QT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 124D9C282C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57578C282C4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 15:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4FA52083B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:44:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549982648;
-	bh=NimxK33LgnlIe82zRyz8rcBUqquKZf6SQ+47CDpwDsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lDZKFLoNgmkINrLJeVQwzNlai9Ici7Dn8jFUowyS9W8fvRMpvjlaVKIvJKSnD6Ly3
-	 IbNzvXpCEXsHWdIO7GwSlu54uBQnhb4glEcZ7yh1bUrhvmVM3AWY16Am8UWCk912Ke
-	 78/U45vIhlu/TVXFZNuRVqD/ll7VKEM4VVy2ZQ54=
+	by mail.kernel.org (Postfix) with ESMTP id 3230D207E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 15:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729904AbfBLOoI (ORCPT
+        id S1726550AbfBLPVf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:44:08 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35784 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729855AbfBLOoI (ORCPT
+        Tue, 12 Feb 2019 10:21:35 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:53638 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729440AbfBLPVf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:44:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VdUMJMPfmd7CVWgmSlFs/CqCotbmfz3h3GhpnUrZs54=; b=Nnsyn3Xqlfn5dxrbeGLeoRsbc
-        xJk4Y26c10ozucROTaYLXbxXzuapBFl25yuDtbMJHHzKpkPF6t1Zoa76p/mGfwOVfPntX5M42p2ZJ
-        ulYRytqMGQUzNSqVxIRhmihzqwkGNo0eOaY4QAGSOSOAncPEeLjWaVw3pGypY2DSqi/MU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gtZI0-0004s0-3f; Tue, 12 Feb 2019 14:44:00 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 9DA351128113; Tue, 12 Feb 2019 14:43:59 +0000 (GMT)
-Date:   Tue, 12 Feb 2019 14:43:59 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver" to the spi tree
-Message-ID: <20190212144359.GD20635@sirena.org.uk>
-References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
- <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GyRA7555PLgSTuth"
-Content-Disposition: inline
-In-Reply-To: <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
-X-Cookie: tax office, n.:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 12 Feb 2019 10:21:35 -0500
+Received: from ramsan ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id brMZ1z00B3XaVaC06rMZwz; Tue, 12 Feb 2019 16:21:33 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gtZsK-0005ux-SU; Tue, 12 Feb 2019 16:21:32 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gtZsK-0002lu-QF; Tue, 12 Feb 2019 16:21:32 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: r8a77990: Fix SPDX license identifier style
+Date:   Tue, 12 Feb 2019 16:21:29 +0100
+Message-Id: <20190212152129.10613-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+According to Documentation/process/license-rules.rst, SPDX license
+identifiers in DTS files should use C++ style comments.
 
---GyRA7555PLgSTuth
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fixes: f37a7767f6c4ec66 ("arm64: dts: renesas: Add Renesas R8A77990 SoC support")
+Fixes: 77049191b24b4586 ("arm64: dts: renesas: Add Renesas Ebisu board support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On Tue, Feb 12, 2019 at 03:33:12PM +0100, Marek Vasut wrote:
-> On 2/12/19 3:22 PM, Mark Brown wrote:
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index b5c0dbf4982febd0..c1aff350308e784b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the ebisu board
+  *
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index cc64dfab03bb3b09..051d3fcc56dfc85f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Device Tree Source for the R-Car E3 (R8A77990) SoC
+  *
+-- 
+2.17.1
 
-> > Please add any relevant lists and maintainers to the CCs when replying
-> > to this mail.
-
-> How did that happen when there were still comments and open topics ?
-
-Mason had submitted a new verison a couple of weeks ago and there'd been
-no replies on the new version so I'd thought that all the prior issues
-had been addressed.  I guess that's not the case?  The thread on the
-version before was a bit long but seemed to peter out, though looking at
-the archives it seems the main issue was that Mason stopped replying.
-
---GyRA7555PLgSTuth
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxi264ACgkQJNaLcl1U
-h9AFBQf+InV2NQw09IwJftrVq6O+axOUZvzplV30iug74PogmmP4Um4nY7LxWIqL
-m3DJjb5leTEYHkn8oPLj5LP/X7+kaIOBkH/+b+IuCDnEV1YMsKh7uZILX5TXdHH1
-GVDdp6E6wotMDarZSK2h1w08ote9kc4XGbuULxkYzPqKHSdqGWQBknh5D0TGU7Mx
-sRq8r15vXFIW+RlJIN+r+CIWj8eyqEdezi+FNlqDY0bGRrwBlGxtZb/XneenmE84
-zV5QlKPYUeRgVgJGCFHylh8ca/0lC0M+x79lv4pntAXkZ3f4H3LKX3rGKDfDPc1x
-crJRcDiEUKJGrJjiWx1pP/zMdLmx3w==
-=6Yyo
------END PGP SIGNATURE-----
-
---GyRA7555PLgSTuth--
