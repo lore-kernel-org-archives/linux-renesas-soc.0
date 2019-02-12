@@ -2,99 +2,109 @@ Return-Path: <SRS0=s4Ke=QT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 485FAC282C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 16:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390A3C282CA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 16:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F16E820842
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 16:33:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="G8QlyMhW"
+	by mail.kernel.org (Postfix) with ESMTP id 09FB5217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 16:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549990195;
+	bh=Gs8QNVyr12LwnX3nDEr8WikT0LclhdrDnMCy3/DVpiA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sEGMP4WzL+vGGL7rv5Mis6I8gwYjWB3odW45GCMzh0NvshYD+Y4cn1v0H066UY6c5
+	 f4S0oDfPv4+KNvzJ4cnGPPnLCJRI1XnEqpPCZFYevRqxNnhqhmJeWfH/+lzJR/NwDl
+	 TaaQdJ8qX+aD4TFFIK9g12FVbLAerd5tT2lY3iZ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbfBLQdn (ORCPT
+        id S1730744AbfBLQtt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Feb 2019 11:33:43 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:54049 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727372AbfBLQdn (ORCPT
+        Tue, 12 Feb 2019 11:49:49 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49044 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729078AbfBLQtt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Feb 2019 11:33:43 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 99AA925B7DA;
-        Wed, 13 Feb 2019 03:33:41 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1549989221; bh=f20b1i4cffJJ5ka9LDTXAdSd9V8QcrZoIDoY0A13LLA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G8QlyMhWC1KSZsADt7i3jit//uLnPIWHz1ZSYroCWrQy6i1I4pBib64A65uYz0o6Y
-         nCUSaup5Q4WYAKBlF9EFZwjQPKnunKCd/wekRorL9ahTGkkbB0CT8pKI5/mz7bbvC3
-         hGL8EIyOPq4ScQ2ihzoalX3XvkFqKgt5mWKsqhBQ=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id DBEB8940362; Tue, 12 Feb 2019 17:33:39 +0100 (CET)
-Date:   Tue, 12 Feb 2019 17:33:39 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Add GPIO expander
-Message-ID: <20190212163339.oqxixynflcfquwkt@verge.net.au>
-References: <20190212142000.4312-1-geert+renesas@glider.be>
+        Tue, 12 Feb 2019 11:49:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ltyMI1FR9wXzP0Sg9dSkZ6eWigBzhyAQrSd0PssNcWA=; b=mzKHNJiOBnkPN9O58piOZuGwx
+        QXZpxLWW8uzKltAyBctwJ1EZr9OuxXVEfZ17pi6LUYreOBo2PnWc640L+rrwA5gjAhmpyfbS0BXKc
+        5SWcGdRmVjyIXMRTYyX7hrM4z6uXsfwgrJapUJdR2VxGyHnFotPo672kC2nMDJDJQxFT0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtbFd-0005bU-0Y; Tue, 12 Feb 2019 16:49:41 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 6870E1128113; Tue, 12 Feb 2019 16:49:40 +0000 (GMT)
+Date:   Tue, 12 Feb 2019 16:49:40 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver" to the spi tree
+Message-ID: <20190212164940.GI20635@sirena.org.uk>
+References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
+ <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
+ <20190212144359.GD20635@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="l0l+eSofNeLXHSnY"
 Content-Disposition: inline
-In-Reply-To: <20190212142000.4312-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190212144359.GD20635@sirena.org.uk>
+X-Cookie: tax office, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 03:20:00PM +0100, Geert Uytterhoeven wrote:
-> Describe the ON Semiconductor PCA9654 I/O expander on the first I2C
-> bus, which provides 8 extra GPIOs.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
+--l0l+eSofNeLXHSnY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
+On Tue, Feb 12, 2019 at 02:43:59PM +0000, Mark Brown wrote:
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Mason had submitted a new verison a couple of weeks ago and there'd been
+> no replies on the new version so I'd thought that all the prior issues
+> had been addressed.  I guess that's not the case?  The thread on the
+> version before was a bit long but seemed to peter out, though looking at
+> the archives it seems the main issue was that Mason stopped replying.
 
-> ---
-> GPIOs 5-7 are accessible on test points CP16, CP17, and CP72.
-> 
-> Output tested with a multi-meter using /sys/class/gpio/.
-> Input and interrupt capability tested using gpio-keys.
-> ---
->  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> index 5ac159b7830d58c1..b5c0dbf4982febd0 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> @@ -337,6 +337,15 @@
->  &i2c0 {
->  	status = "okay";
->  
-> +	io_expander: gpio@20 {
-> +		compatible = "onnn,pca9654";
-> +		reg = <0x20>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-parent = <&gpio2>;
-> +		interrupts = <22 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
->  	hdmi-encoder@39 {
->  		compatible = "adi,adv7511w";
->  		reg = <0x39>;
-> -- 
-> 2.17.1
-> 
+Following some IRC discussion with Marek and Sergei I've dropped these
+for now.  The interaction with the HyperFlash support seems unclear
+still and might be a bit more than a simple refactoring, worst case
+it'll be binding incompatible though hopefully not.  Mason, if you could
+work with them to figure out the MFD that'll be needed the driver looks
+fine from a SPI subsystem point of view.
+
+Sorry about the confusion for everyone here.
+
+--l0l+eSofNeLXHSnY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxi+SMACgkQJNaLcl1U
+h9C84Af/cS7fCpLU+Lf+jhGYKtuIzQ+L2S3hPAMWRwg7OoBXok3jTyMHLs3Tin9e
+ev69K6yi+yIObemPTHA0K74u7LHtNbe3qZhGmuJ864+3FpPecUbgqmnrGd9eBENH
+S28tgG0rORO+IfzwxjvfIFfRdL4Btqra5UbtIyJRvMPM4XXRiIE/iHX4z87XtRkt
+QOS8nYfasrQQsF0tUEi2xSWdXMTIss9uilYc/Y6EXlaPw1BgmLu9dn7i/YI6ox8e
+wi35bMH12U8lDvlgu/izyZOXO3asTCzhIwhtaP+JYMtmd6NX7CjDBSjcDpiOSuEq
+vHOxR7tEKoAn3ZW/5zTy0msgWxf2gQ==
+=ykMc
+-----END PGP SIGNATURE-----
+
+--l0l+eSofNeLXHSnY--
