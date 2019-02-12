@@ -2,152 +2,105 @@ Return-Path: <SRS0=s4Ke=QT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB710C282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124D9C282C4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7062186A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:35:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="t4NHeFhL"
+	by mail.kernel.org (Postfix) with ESMTP id D4FA52083B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Feb 2019 14:44:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549982648;
+	bh=NimxK33LgnlIe82zRyz8rcBUqquKZf6SQ+47CDpwDsY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=lDZKFLoNgmkINrLJeVQwzNlai9Ici7Dn8jFUowyS9W8fvRMpvjlaVKIvJKSnD6Ly3
+	 IbNzvXpCEXsHWdIO7GwSlu54uBQnhb4glEcZ7yh1bUrhvmVM3AWY16Am8UWCk912Ke
+	 78/U45vIhlu/TVXFZNuRVqD/ll7VKEM4VVy2ZQ54=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbfBLOfa (ORCPT
+        id S1729904AbfBLOoI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Feb 2019 09:35:30 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38474 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729528AbfBLOfa (ORCPT
+        Tue, 12 Feb 2019 09:44:08 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35784 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729855AbfBLOoI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Feb 2019 09:35:30 -0500
-Received: by mail-ot1-f66.google.com with SMTP id m1so4722527otf.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Feb 2019 06:35:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=CPX9OAcUsPK24kBxydGkmqfxgoh4s7OnFGV7n+XAerI=;
-        b=t4NHeFhL5jA0IIOIdWD4r1rSKzTrKZ5CD0oDbUcMlejDpklvepXF1e70pAS9zgYTtq
-         0pahLmMx5ZKosk9Rdppk/B+sY3WIHCYUpa/PMBOqvoSgDnLsOa5dWTZV2q9sbgCQrb8G
-         Aw9t2qiYAmnUjewlR3istU9sE3dxgzHgphmtrOUe7fz63W9F6KRCoa1G66HUrSgexvNj
-         b5BGKlYJez7L1oHoyefZg9GgrYJ1mT7oWevIk9pBXfKZMScJsRcXpcl4Orc6o+w1G47f
-         yHgOT7ptteEzcdRyF4gm5XShefqc3bW1cB2FtUo2HTvBsdmU/v4o5kzIhZaxnPVE12HP
-         b88A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=CPX9OAcUsPK24kBxydGkmqfxgoh4s7OnFGV7n+XAerI=;
-        b=aMIt0UeDr/MgYtZRbnJq9n8qum4/zjb1DmK8zbo22Rpy0P8kLpsC2gJRqbBDab5Dhx
-         eJ5ymAYK6jOVksPvVoLnGvOw3iBwilRd2ItoEzRbyCYJY+OC3k36anA7EIR1ZpdfhHH1
-         A4Ux6KZZP59Mw62X7GbFwTSUaO+IG3jNlWDySpZSQC1LXu9eR3/OX91tctu+DvUDlU1z
-         ko2++Jg2mRTywCO+eTAI9VocPtQotKFhWkgipz4wLGvjYEsGO/uj++myMeCK7bKKkwTg
-         q35WNSGZUlxSvR9YvoojEPvkgo9NMmlRyjLC692thAN0lHfKKoBaT3gpem3tPOE9e01h
-         L60g==
-X-Gm-Message-State: AHQUAub7+nic0get1StQKbZQWyregIwNujMutjXCzai30mBDbOel7NZL
-        Yp3k1S2QNaDHGY1W/s8xG9K9OYk/MPejNv+8IEZbgInf+YY=
-X-Google-Smtp-Source: AHgI3IavRgL03tGqRzjcGE03IDBmj06Wwir2qRWfhZsayu32jXDXFHjK/C1BJIQS5KmgvybcmDrhKx7rlbq6GSfP/fw=
-X-Received: by 2002:a9d:6191:: with SMTP id g17mr4210900otk.56.1549982129260;
- Tue, 12 Feb 2019 06:35:29 -0800 (PST)
+        Tue, 12 Feb 2019 09:44:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=VdUMJMPfmd7CVWgmSlFs/CqCotbmfz3h3GhpnUrZs54=; b=Nnsyn3Xqlfn5dxrbeGLeoRsbc
+        xJk4Y26c10ozucROTaYLXbxXzuapBFl25yuDtbMJHHzKpkPF6t1Zoa76p/mGfwOVfPntX5M42p2ZJ
+        ulYRytqMGQUzNSqVxIRhmihzqwkGNo0eOaY4QAGSOSOAncPEeLjWaVw3pGypY2DSqi/MU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gtZI0-0004s0-3f; Tue, 12 Feb 2019 14:44:00 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 9DA351128113; Tue, 12 Feb 2019 14:43:59 +0000 (GMT)
+Date:   Tue, 12 Feb 2019 14:43:59 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver" to the spi tree
+Message-ID: <20190212144359.GD20635@sirena.org.uk>
+References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
+ <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
 MIME-Version: 1.0
-References: <20190212141715.3966-1-geert+renesas@glider.be>
-In-Reply-To: <20190212141715.3966-1-geert+renesas@glider.be>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 12 Feb 2019 15:35:18 +0100
-Message-ID: <CAMpxmJWcSkCBf+vcOg=ksjeSxvo7N+WQ2gNqxPe5BW01vPFH8w@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: Add wake-up support
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GyRA7555PLgSTuth"
+Content-Disposition: inline
+In-Reply-To: <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
+X-Cookie: tax office, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-wt., 12 lut 2019 o 15:17 Geert Uytterhoeven <geert+renesas@glider.be>
-napisa=C5=82(a):
->
-> Implement the irq_set_wake() method in the (optional) irq_chip of the
-> GPIO expander, and propagate wake-up settings to the upstream interrupt
-> controller.  This allows GPIOs connected to a PCA953X GPIO expander to
-> serve as wake-up sources.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Tested with a PCA9654 and gpio-keys on an R-Car Ebisu-4D board.
-> ---
->  drivers/gpio/gpio-pca953x.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index de52f63863dbe59b..8dfb8e326b9d12ca 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -151,6 +151,7 @@ struct pca953x_chip {
->         u8 irq_trig_raise[MAX_BANK];
->         u8 irq_trig_fall[MAX_BANK];
->         struct irq_chip irq_chip;
-> +       unsigned int irq_parent;
->  #endif
->
->         struct i2c_client *client;
-> @@ -513,6 +514,24 @@ static void pca953x_irq_unmask(struct irq_data *d)
->         chip->irq_mask[d->hwirq / BANK_SZ] |=3D 1 << (d->hwirq % BANK_SZ)=
-;
->  }
->
-> +static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-> +       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> +       struct pca953x_chip *chip =3D gpiochip_get_data(gc);
-> +       int error =3D 0;
-> +
-> +       if (chip->irq_parent) {
-> +               error =3D irq_set_irq_wake(chip->irq_parent, on);
-> +               if (error) {
-> +                       dev_dbg(&chip->client->dev,
-> +                               "irq %u doesn't support irq_set_wake\n",
-> +                               chip->irq_parent);
-> +                       chip->irq_parent =3D 0;
-> +               }
-> +       }
-> +       return error;
-> +}
-> +
->  static void pca953x_irq_bus_lock(struct irq_data *d)
->  {
->         struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> @@ -732,6 +751,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chi=
-p,
->         irq_chip->name =3D dev_name(&chip->client->dev);
->         irq_chip->irq_mask =3D pca953x_irq_mask;
->         irq_chip->irq_unmask =3D pca953x_irq_unmask;
-> +       irq_chip->irq_set_wake =3D pca953x_irq_set_wake;
 
-Is it possible to assign this callback conditionally depending on
-client->irq and avoid the if (chip->irq_parent) in
-pca953x_irq_set_wake()?
+--GyRA7555PLgSTuth
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Bart
+On Tue, Feb 12, 2019 at 03:33:12PM +0100, Marek Vasut wrote:
+> On 2/12/19 3:22 PM, Mark Brown wrote:
 
->         irq_chip->irq_bus_lock =3D pca953x_irq_bus_lock;
->         irq_chip->irq_bus_sync_unlock =3D pca953x_irq_bus_sync_unlock;
->         irq_chip->irq_set_type =3D pca953x_irq_set_type;
-> @@ -747,6 +767,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chi=
-p,
->         }
->
->         gpiochip_set_nested_irqchip(&chip->gpio_chip, irq_chip, client->i=
-rq);
-> +       chip->irq_parent =3D client->irq;
->
->         return 0;
->  }
-> --
-> 2.17.1
->
+> > Please add any relevant lists and maintainers to the CCs when replying
+> > to this mail.
+
+> How did that happen when there were still comments and open topics ?
+
+Mason had submitted a new verison a couple of weeks ago and there'd been
+no replies on the new version so I'd thought that all the prior issues
+had been addressed.  I guess that's not the case?  The thread on the
+version before was a bit long but seemed to peter out, though looking at
+the archives it seems the main issue was that Mason stopped replying.
+
+--GyRA7555PLgSTuth
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxi264ACgkQJNaLcl1U
+h9AFBQf+InV2NQw09IwJftrVq6O+axOUZvzplV30iug74PogmmP4Um4nY7LxWIqL
+m3DJjb5leTEYHkn8oPLj5LP/X7+kaIOBkH/+b+IuCDnEV1YMsKh7uZILX5TXdHH1
+GVDdp6E6wotMDarZSK2h1w08ote9kc4XGbuULxkYzPqKHSdqGWQBknh5D0TGU7Mx
+sRq8r15vXFIW+RlJIN+r+CIWj8eyqEdezi+FNlqDY0bGRrwBlGxtZb/XneenmE84
+zV5QlKPYUeRgVgJGCFHylh8ca/0lC0M+x79lv4pntAXkZ3f4H3LKX3rGKDfDPc1x
+crJRcDiEUKJGrJjiWx1pP/zMdLmx3w==
+=6Yyo
+-----END PGP SIGNATURE-----
+
+--GyRA7555PLgSTuth--
