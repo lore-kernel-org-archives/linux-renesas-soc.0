@@ -2,113 +2,116 @@ Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8A1C282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 12:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D09C282CA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 12:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E147222B1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 12:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550060205;
-	bh=Rf8OeXFJAsC6iPy6gtijbSotEBgxmHzIU3P49vCQBMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FKdzT4oVyuTsgm0WXkptJnwxv8t1paHlFxQAMN5FFN4sbApcpo+OAAVWYDDSVXB29
-	 sLm3TzS7RzOqbrgbZTyVCdfkBHf47JlVIVhyMhRkyarSwOtjVo3fnQbAe/EFhGgNUp
-	 oos9aadpnuVsQm/4wPhoyhldurcEp9RnglcCO6u0=
+	by mail.kernel.org (Postfix) with ESMTP id 56DC9222B2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 12:37:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwEfcXRD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbfBMMQo (ORCPT
+        id S1729767AbfBMMhg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:16:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60128 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfBMMQo (ORCPT
+        Wed, 13 Feb 2019 07:37:36 -0500
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:37182 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfBMMhg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:16:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Rf8OeXFJAsC6iPy6gtijbSotEBgxmHzIU3P49vCQBMY=; b=suNGuixZGiYd6HpV/DmUpdqlm
-        3usp5PLma/PSaWGtpHYTEC4AVcNVYAdrFoE7H1pp7ml7HB2s3fvN3SVNwXACxvivmgELJj0p/0WAR
-        05cMiYOfckc4Wl0QQx/G/awjEmo/v1PEkbgSlNTp20NQvZaMF2MpWie4mKTA1UaqsdD40=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gttSt-0004EJ-PR; Wed, 13 Feb 2019 12:16:35 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3DF741128159; Wed, 13 Feb 2019 12:16:35 +0000 (GMT)
-Date:   Wed, 13 Feb 2019 12:16:35 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     masonccyang@mxic.com.tw
+        Wed, 13 Feb 2019 07:37:36 -0500
+Received: by mail-wr1-f48.google.com with SMTP id c8so2315270wrs.4;
+        Wed, 13 Feb 2019 04:37:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wZcckwGbNKuxqmiEBKZgD7KWzvad4ZX7KVMbLTqJqug=;
+        b=FwEfcXRDbhMdRqqI9EYmprN8T9jkTpsVO9VJBlJiCeInhTaayupzzUv3dSyhpWOsO5
+         ZKgP0pE8fHwy5dwPLclhHGrMdmF4hC7RCiYvWeKfgoT3UHJCj2qjMV9P9+Du/Aig7Urc
+         DOAv8t3OssnTT6CcjIsGHpb/DJDsK/WymFzfXnG5Nai8xSS0BmrVII/jJRh2AJkQzpWe
+         GW59y11Xx026ivfWjzJzBGHyH66XsEDx6UM/+ZVxdcrRd8aCjUO7DSJvDhBL23C/qYW5
+         IJeKkAqIgq8/t6TqV1sb7HiIS6R/XWsXfSZqH0rZMDAnJs2H2tsN4fVTGDMFDj5ZuNtc
+         HtOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wZcckwGbNKuxqmiEBKZgD7KWzvad4ZX7KVMbLTqJqug=;
+        b=SNTckPDQ2gtzqpvmFQU3Nzmw5qmZC2XsLuOia1fIeWTwiwLnSRKwLN+7gLx5V2VIi4
+         ovqz7pKlgWfIcDo595R1quGO5RdiNqcbpDzYbPhWoy2TZmYy96FbT4aTISWHx/A3v6jr
+         jXnpEoIHQm9d9vC8nkUYrrET7zKxTt9GUPgiLhsBuveoXlz3xUxZxwyeciLJNv5p0wm2
+         cYK7JBbl4LTfSCixSfOKJJns/ZhLlpsuU7A7IkpXAVl4Jz7mcblsfSnKw+Z//t0l3lbw
+         E/Pf6HIlaS273NUf39mT8UbbIz/BJu07jmqkOM4zrAO5uiy43eWcsRzBhu++SXuGTdhg
+         bA2w==
+X-Gm-Message-State: AHQUAuZKhrERR7j4Jjm0V7x0b5uOJF5R1BitMDzeJHIOSI1Vt+CDcR0+
+        bECKJJk+3AdIxt+J4qOZ7UM=
+X-Google-Smtp-Source: AHgI3IYbKl5IIpvwv9Yt/ty7IrMhM7ou6eUZKQfyTXofE7Fv8MBoGbp+rRriNv/xQe6gPgy5xdYPGg==
+X-Received: by 2002:adf:fbc8:: with SMTP id d8mr247630wrs.318.1550061453962;
+        Wed, 13 Feb 2019 04:37:33 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id e9sm28251012wrc.56.2019.02.13.04.37.32
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 04:37:32 -0800 (PST)
+Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver" to the spi tree
+To:     Mark Brown <broonie@kernel.org>, masonccyang@mxic.com.tw
 Cc:     bbrezillon@kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
         linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        linux-spi@vger.kernel.org,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         zhengxunli@mxic.com.tw
-Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver" to the spi tree
-Message-ID: <20190213121635.GD7540@sirena.org.uk>
 References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
  <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
- <20190212144359.GD20635@sirena.org.uk>
- <20190212164940.GI20635@sirena.org.uk>
+ <20190212144359.GD20635@sirena.org.uk> <20190212164940.GI20635@sirena.org.uk>
  <OF9C8DA179.15D69C0A-ON482583A0.00283EB5-482583A0.002E45C8@mxic.com.tw>
+ <20190213121635.GD7540@sirena.org.uk>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <acb7940e-df38-97a7-8500-4825fb0f6604@gmail.com>
+Date:   Wed, 13 Feb 2019 13:37:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xB0nW4MQa6jZONgY"
-Content-Disposition: inline
-In-Reply-To: <OF9C8DA179.15D69C0A-ON482583A0.00283EB5-482583A0.002E45C8@mxic.com.tw>
-X-Cookie: Nothing is but what is not.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190213121635.GD7540@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On 2/13/19 1:16 PM, Mark Brown wrote:
+> On Wed, Feb 13, 2019 at 04:25:32PM +0800, masonccyang@mxic.com.tw wrote:
+> 
+>> From current mainline branch, MFD seems support the device which is on 
+>> the same hardware bus(i.e, I2C, SPI, MMIO and SPMI)for multi-function 
+>> by Read/Write the common same registers.
+> 
+> That's most MFDs but there are some that do some level of enumeration
+> (even if it's just looking at the device ID that got registered) to
+> decide what subdevices get registered, that's what people are suggesting
+> here I think.
 
---xB0nW4MQa6jZONgY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Right. Although I think some of the code could be shared between the SPI
+and HF modes.
 
-On Wed, Feb 13, 2019 at 04:25:32PM +0800, masonccyang@mxic.com.tw wrote:
+>> I am checking and not sure if MMIO of MFD could support RPC-IF for 
+>> different hardware bus on SPI and CFI.
+>> I also doubt if this method is a correct solution for RPC-IF works
+>> either in SPI mode or CFI mode.
+> 
+> For MMIO devices MFD just passes through the parent resources.
+> 
 
-> From current mainline branch, MFD seems support the device which is on=20
-> the same hardware bus(i.e, I2C, SPI, MMIO and SPMI)for multi-function=20
-> by Read/Write the common same registers.
 
-That's most MFDs but there are some that do some level of enumeration
-(even if it's just looking at the device ID that got registered) to
-decide what subdevices get registered, that's what people are suggesting
-here I think.
-
-> I am checking and not sure if MMIO of MFD could support RPC-IF for=20
-> different hardware bus on SPI and CFI.
-> I also doubt if this method is a correct solution for RPC-IF works
-> either in SPI mode or CFI mode.
-
-For MMIO devices MFD just passes through the parent resources.
-
---xB0nW4MQa6jZONgY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxkCqIACgkQJNaLcl1U
-h9DInQf/VCq6GImO2gWzb8POBs/8E+Zowh70BkglP3V8cajNwCqJm9L18qzSqyRe
-C8GPNxySkek+ROrDjdDsGrRjtTkQYjG5+6/XLG63HQZRvbmutc/x2fIgzZlYXNWK
-v9cRpwT3hBpDwI4jXqAX3Vz7aPUklAf5r2t1ui0tfN8ijrPefqrOkzgBJn6V0QUp
-MJg0+9oGeGysfA3ssX2FKWBxU9d0B0C/acn4c46ZfKcANpwxufN9jZb33AON2uAQ
-4LYtxSg2JZww1ZYlBd0BBKWb+bZg1TAvFjNvTrwUJWpeqJ7yS7IGR0BlvKO2VJAc
-b3+u/ZFH9iS+ACmhOLukNPcuPpH0sg==
-=Unbo
------END PGP SIGNATURE-----
-
---xB0nW4MQa6jZONgY--
+-- 
+Best regards,
+Marek Vasut
