@@ -2,82 +2,113 @@ Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CD0C282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 10:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8A1C282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 12:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0032190A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 10:33:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="RIN3LL9T"
+	by mail.kernel.org (Postfix) with ESMTP id 3E147222B1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 12:16:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550060205;
+	bh=Rf8OeXFJAsC6iPy6gtijbSotEBgxmHzIU3P49vCQBMY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FKdzT4oVyuTsgm0WXkptJnwxv8t1paHlFxQAMN5FFN4sbApcpo+OAAVWYDDSVXB29
+	 sLm3TzS7RzOqbrgbZTyVCdfkBHf47JlVIVhyMhRkyarSwOtjVo3fnQbAe/EFhGgNUp
+	 oos9aadpnuVsQm/4wPhoyhldurcEp9RnglcCO6u0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389683AbfBMKdI (ORCPT
+        id S1727277AbfBMMQo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:33:08 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:39985 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbfBMKdI (ORCPT
+        Wed, 13 Feb 2019 07:16:44 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60128 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbfBMMQo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:33:08 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id AB03125BE34;
-        Wed, 13 Feb 2019 21:33:05 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1550053985; bh=swDuxpMPf2iGMdMXiuRnN++eM8qPXGjWku44J0GdQBA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RIN3LL9TLKWzaXa7giloykhG/VbVLXaAU0u1PuwhBo7PYbMag5tFLwgYy/iVlgmhO
-         D6DdZd6maxJrjr3wwpqM0HhUK/SFWcYBcKvCIwFGE/fwcW/5uMlA72WjC9G8GnWmMV
-         t8r1xoznGxJS5P3gyX2sJiqxPYzdq8mf0U1LNE9k=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id F0BEC944500; Wed, 13 Feb 2019 11:33:03 +0100 (CET)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH/RFT] arm64: dts: renesas: r8a77995: draak: Fix EthernetAVB phy mode to rgmii
-Date:   Wed, 13 Feb 2019 11:32:55 +0100
-Message-Id: <20190213103255.1265-1-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
+        Wed, 13 Feb 2019 07:16:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Rf8OeXFJAsC6iPy6gtijbSotEBgxmHzIU3P49vCQBMY=; b=suNGuixZGiYd6HpV/DmUpdqlm
+        3usp5PLma/PSaWGtpHYTEC4AVcNVYAdrFoE7H1pp7ml7HB2s3fvN3SVNwXACxvivmgELJj0p/0WAR
+        05cMiYOfckc4Wl0QQx/G/awjEmo/v1PEkbgSlNTp20NQvZaMF2MpWie4mKTA1UaqsdD40=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gttSt-0004EJ-PR; Wed, 13 Feb 2019 12:16:35 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 3DF741128159; Wed, 13 Feb 2019 12:16:35 +0000 (GMT)
+Date:   Wed, 13 Feb 2019 12:16:35 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     masonccyang@mxic.com.tw
+Cc:     bbrezillon@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        zhengxunli@mxic.com.tw
+Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver" to the spi tree
+Message-ID: <20190213121635.GD7540@sirena.org.uk>
+References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
+ <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
+ <20190212144359.GD20635@sirena.org.uk>
+ <20190212164940.GI20635@sirena.org.uk>
+ <OF9C8DA179.15D69C0A-ON482583A0.00283EB5-482583A0.002E45C8@mxic.com.tw>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xB0nW4MQa6jZONgY"
+Content-Disposition: inline
+In-Reply-To: <OF9C8DA179.15D69C0A-ON482583A0.00283EB5-482583A0.002E45C8@mxic.com.tw>
+X-Cookie: Nothing is but what is not.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
-August 24, 2018, the TX clock internal Delay mode does'nt support
-on R-Car D3. This patch fixes EthernetAVB phy mode to rgmii.
+--xB0nW4MQa6jZONgY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is achieved by simply dropping the phy-mode property from
-r8a77995-draak.dts as the default property for this for r8a77995,
-as set in r8a77995.dtsi, is "rgmii".
+On Wed, Feb 13, 2019 at 04:25:32PM +0800, masonccyang@mxic.com.tw wrote:
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 1 -
- 1 file changed, 1 deletion(-)
+> From current mainline branch, MFD seems support the device which is on=20
+> the same hardware bus(i.e, I2C, SPI, MMIO and SPMI)for multi-function=20
+> by Read/Write the common same registers.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index db2bed1751b8..bfa260c9f78c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -168,7 +168,6 @@
- 	pinctrl-names = "default";
- 	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
--	phy-mode = "rgmii-txid";
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
--- 
-2.11.0
+That's most MFDs but there are some that do some level of enumeration
+(even if it's just looking at the device ID that got registered) to
+decide what subdevices get registered, that's what people are suggesting
+here I think.
 
+> I am checking and not sure if MMIO of MFD could support RPC-IF for=20
+> different hardware bus on SPI and CFI.
+> I also doubt if this method is a correct solution for RPC-IF works
+> either in SPI mode or CFI mode.
+
+For MMIO devices MFD just passes through the parent resources.
+
+--xB0nW4MQa6jZONgY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxkCqIACgkQJNaLcl1U
+h9DInQf/VCq6GImO2gWzb8POBs/8E+Zowh70BkglP3V8cajNwCqJm9L18qzSqyRe
+C8GPNxySkek+ROrDjdDsGrRjtTkQYjG5+6/XLG63HQZRvbmutc/x2fIgzZlYXNWK
+v9cRpwT3hBpDwI4jXqAX3Vz7aPUklAf5r2t1ui0tfN8ijrPefqrOkzgBJn6V0QUp
+MJg0+9oGeGysfA3ssX2FKWBxU9d0B0C/acn4c46ZfKcANpwxufN9jZb33AON2uAQ
+4LYtxSg2JZww1ZYlBd0BBKWb+bZg1TAvFjNvTrwUJWpeqJ7yS7IGR0BlvKO2VJAc
+b3+u/ZFH9iS+ACmhOLukNPcuPpH0sg==
+=Unbo
+-----END PGP SIGNATURE-----
+
+--xB0nW4MQa6jZONgY--
