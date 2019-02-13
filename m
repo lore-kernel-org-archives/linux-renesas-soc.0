@@ -6,111 +6,90 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF5DC282CA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 13:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51619C282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 13:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7CE72070C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 13:14:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BA1F222B1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 13:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389183AbfBMNOS (ORCPT
+        id S2390048AbfBMNPI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:14:18 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:55580 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388548AbfBMNOS (ORCPT
+        Wed, 13 Feb 2019 08:15:08 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41194 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389633AbfBMNPI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:14:18 -0500
+        Wed, 13 Feb 2019 08:15:08 -0500
 Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id cDEF1z00K3XaVaC01DEFiU; Wed, 13 Feb 2019 14:14:15 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id cDF61z00H3XaVaC01DF6n4; Wed, 13 Feb 2019 14:15:06 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gtuMh-0003xv-DI; Wed, 13 Feb 2019 14:14:15 +0100
+        id 1gtuNW-0003yB-BW; Wed, 13 Feb 2019 14:15:06 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gtuMh-0006w8-B7; Wed, 13 Feb 2019 14:14:15 +0100
+        id 1gtuNW-0006zb-9j; Wed, 13 Feb 2019 14:15:06 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] gpio: pcf857x: Simpify wake-up handling
-Date:   Wed, 13 Feb 2019 14:14:09 +0100
-Message-Id: <20190213131409.26607-1-geert+renesas@glider.be>
+Subject: [PATCH v2] gpio: pca953x: Add wake-up support
+Date:   Wed, 13 Feb 2019 14:15:03 +0100
+Message-Id: <20190213131503.26801-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Unlike gpio_rcar_irq_set_wake(), where this solution was based on,
-pcf857x_irq_set_wake() does not need to do anything else than calling
-irq_set_irq_wake() for the upstream interrupt controller.  Hence there
-is no reason for making this call conditional, and no longer a need for
-keeping a copy of the interrupt number that also serves as a flag.
-
-Just propagate irq_set_irq_wake() to the upstream interrupt controller,
-using the original interrupt number.
+Implement the irq_set_wake() method in the (optional) irq_chip of the
+GPIO expander, and propagate wake-up settings to the upstream interrupt
+controller.  This allows GPIOs connected to a PCA953X GPIO expander to
+serve as wake-up sources.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-I can no longer reproduce the issue fixed by commit ffb8e44bd7617ede
-("gpio: pcf857x: Check for irq_set_irq_wake() failures") on current
-kernels: if .irq_set_wake() fails, system suspend is aborted, and the
-imbalance on resume never happens.
+Tested with a PCA9654 and gpio-keys on an R-Car Ebisu-4D board.
 
-Looking at old logs, the system used to continue suspending, leading to
-the imbalance.  Presumably I could run git bisect to find out when that
-was changed, but that would require downgrading my cross-compiler (Linux
-v4.1-rc3 didn't support building using gcc-7)...
+v2:
+  - Just propagate irq_set_irq_wake().  As pca953x_irq_set_wake()
+    doesn't need to do anything else, there's no reason for making it
+    conditional.
 ---
- drivers/gpio/gpio-pcf857x.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 68a35b65925aca76..c9b650f617fa687c 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -89,7 +89,6 @@ struct pcf857x {
- 	struct mutex		lock;		/* protect 'out' */
- 	unsigned		out;		/* software latch */
- 	unsigned		status;		/* current status */
--	unsigned int		irq_parent;
- 	unsigned		irq_enabled;	/* enabled irqs */
- 
- 	int (*write)(struct i2c_client *client, unsigned data);
-@@ -211,18 +210,7 @@ static int pcf857x_irq_set_wake(struct irq_data *data, unsigned int on)
- {
- 	struct pcf857x *gpio = irq_data_get_irq_chip_data(data);
- 
--	int error = 0;
--
--	if (gpio->irq_parent) {
--		error = irq_set_irq_wake(gpio->irq_parent, on);
--		if (error) {
--			dev_dbg(&gpio->client->dev,
--				"irq %u doesn't support irq_set_wake\n",
--				gpio->irq_parent);
--			gpio->irq_parent = 0;
--		}
--	}
--	return error;
-+	return irq_set_irq_wake(gpio->client->irq, on);
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index de52f63863dbe59b..86c00a3980c47c3b 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -513,6 +513,14 @@ static void pca953x_irq_unmask(struct irq_data *d)
+ 	chip->irq_mask[d->hwirq / BANK_SZ] |= 1 << (d->hwirq % BANK_SZ);
  }
  
- static void pcf857x_irq_enable(struct irq_data *data)
-@@ -392,7 +380,6 @@ static int pcf857x_probe(struct i2c_client *client,
- 
- 		gpiochip_set_nested_irqchip(&gpio->chip, &gpio->irqchip,
- 					    client->irq);
--		gpio->irq_parent = client->irq;
- 	}
- 
- 	/* Let platform code set up the GPIOs and their users.
++static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct pca953x_chip *chip = gpiochip_get_data(gc);
++
++	return irq_set_irq_wake(chip->client->irq, on);
++}
++
+ static void pca953x_irq_bus_lock(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+@@ -732,6 +740,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
+ 	irq_chip->name = dev_name(&chip->client->dev);
+ 	irq_chip->irq_mask = pca953x_irq_mask;
+ 	irq_chip->irq_unmask = pca953x_irq_unmask;
++	irq_chip->irq_set_wake = pca953x_irq_set_wake;
+ 	irq_chip->irq_bus_lock = pca953x_irq_bus_lock;
+ 	irq_chip->irq_bus_sync_unlock = pca953x_irq_bus_sync_unlock;
+ 	irq_chip->irq_set_type = pca953x_irq_set_type;
 -- 
 2.17.1
 
