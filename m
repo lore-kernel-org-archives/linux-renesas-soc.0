@@ -2,118 +2,88 @@ Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD3EC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826CFC282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50CDC222C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50E23222BA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:42:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="G+fPHMdh"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IgNy/l/R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729556AbfBMJWN (ORCPT
+        id S1733151AbfBMJm4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:22:13 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40961 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729333AbfBMJWN (ORCPT
+        Wed, 13 Feb 2019 04:42:56 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40642 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733153AbfBMJm4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:22:13 -0500
-Received: by mail-lf1-f65.google.com with SMTP id e27so1206886lfj.8
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Feb 2019 01:22:12 -0800 (PST)
+        Wed, 13 Feb 2019 04:42:56 -0500
+Received: by mail-lf1-f66.google.com with SMTP id t14so1255812lfk.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Feb 2019 01:42:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=JQ22X/4UZtcBww2Gl8Z9E4LsW9dFKKODbzD6nSDr9ZM=;
-        b=G+fPHMdh8D1aQgm2AgAFlGjVDMorON1UaCW1qNloTpCF9p+mOrNwYxR+3D6OTjQ8Qd
-         EYp228o0ff3xGM0jUVULyRoj8mnhFg6O3B1HLz/XqBjqyKc2KPKP3UwPa0ToaMoIxZR7
-         veYO3oqCzb+sqoCvBzyVZ6fdiSZQlI59kXqyvxdvBlHCxN5sPbaJ/sgwrdQyFzkcPOqN
-         WkRQx4h6mCQuUEcwwsKB3ZukoXYOBD1237JiaZwo0Urp17d7FEPZEiFrmLlVOFrj60E3
-         hFCYksocVWR71hvS5S3K00oG8ABR7GNmdQVXhoUdNiiqElx7Zy2OUfpVuf7C2fekwOT1
-         pd+A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hQQiEdaQIt8Oc6X3wVfJxsdUbFg9UlIve4GLDcA0k7w=;
+        b=IgNy/l/Rhl2pUNw6696wNSowhIhOSeT92gVls1gqnuaK81T6XmmxJNsQCT13WsfSDw
+         8rQm9mKVpFe2bQ3Q2K+MOnH5bf3SRI4+Y3gqEDhZWPm54O+NhSf2Nu4Xn6/udJE9lsQa
+         PPMkz2lruIkcR+PAWYn5bEB26imlSI4LMzg1g3bIfn79PpJczyHPjIbbTzD25kCCJpt4
+         NtZ3L2jny+pqOJw3rqRknF9F61nOYb97SWnPxQzF7IlXaYPAtHSF+eUbVbhbVF0stcw4
+         oPfak+A77olFNTsk7mMYjU5kvZORTZFtii7QlndyCzbKsrFXrwstD8PrPSBlwvuzab5L
+         O+dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=JQ22X/4UZtcBww2Gl8Z9E4LsW9dFKKODbzD6nSDr9ZM=;
-        b=AGuOvU23K4vwb54jq1DPPPwjsfqD4KOsj+nfH3LNOsFUGSTngPXqzb913Ecim+Ai3Z
-         EzJ+UuQ26ya06PjG1eJ45TzmDuF0PP5MPEXibHFFLp6M/Bs6pdn9x9UgGLquQb1jBsrz
-         DV0Pkkw9sjqR4eACF6IM3n3mIZsMlt0Hj5D3isU5WMOd0kWdyhP1j9fCKwI7sSv1TwZl
-         ni3yphyEcrItqbqY7jpFukQw+u7avw7H2Y57jtL1bBWsNmJv4rHCjLdjgHbqyqoJ+pbF
-         inzvXH4A4PNJv1n25cRol9vG7KdyST2EX6pEj8dXAwv+0blB6c3t+LjtE3L5hy41i7pH
-         s/hw==
-X-Gm-Message-State: AHQUAuZSX653kgVV9yAdnL6rUmKy3jGkmhLoTehjAAmK8WkBMoDVPqDx
-        QfhcyYhSr8JHeTCPKlIAPd7vB4JnTCc=
-X-Google-Smtp-Source: AHgI3IbTdBBTTiearoO6vZA09lpxSZ5tqvL7vaFhG4nEdN22ck0YdB8exVWWIRzq5tK6DI6tecVS3w==
-X-Received: by 2002:ac2:5303:: with SMTP id c3mr5422523lfh.97.1550049731388;
-        Wed, 13 Feb 2019 01:22:11 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm3349172ljh.89.2019.02.13.01.22.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 01:22:10 -0800 (PST)
-Date:   Wed, 13 Feb 2019 10:22:10 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: Change HW adjustment register
- according to speed mode
-Message-ID: <20190213092210.GG31044@bigcity.dyn.berto.se>
-References: <20190208193002.16915-1-wsa+renesas@sang-engineering.com>
- <20190210133926.GD31044@bigcity.dyn.berto.se>
- <d6d064f2-fa58-d31e-83b8-1cc3ffbc7dee@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hQQiEdaQIt8Oc6X3wVfJxsdUbFg9UlIve4GLDcA0k7w=;
+        b=sN+/6+YvTKo3BL6uwwiHrrAvUQE7OQbIZenfQWfm3vdrSiTKQNM3ZjaCAJ3w/Ddr7x
+         npGt0fmpNJs8iRsmeXdcYOFgtG+rmGKZJXedVn/3ddRPINxoHekL+WlzP9Cig3ho0rEo
+         5xjfIcCWWUYATMfFCVnmnEbcmjtdQb6P/8AGKEd29WjMdM3vR5giPO09EfX0xLBN0NgX
+         J4v96ycCFiPttBq0Y6nnxGl/YZMo/b99TkPmYqvYAfBXv2BAO/4TqY4AEjjDU6CTzBfh
+         6DNA2gTCT8tiCAhOTHwSif1v0EJ0rLR5tQK1Q2uxPZJTf/6DGP7Rsnk6C5w5rV7SL/XH
+         VeHQ==
+X-Gm-Message-State: AHQUAuZHsI/jTjyHU4qGmS6AjWJ2z3DP8lXECobOD9lqkrBbm5T8PfqL
+        Dxm1MvtX+eVXLAHVGfc0TffYAdDITWxFYUnmtny4yFWv
+X-Google-Smtp-Source: AHgI3IZeUAMz+Vu/iF/6rSo8LPN3YdKgvzqPvAbfbCD1iCr5QFB8OjPd9tap+jn4pykXpyfe3Kat4ef3Mti6i8pDeTY=
+X-Received: by 2002:ac2:4343:: with SMTP id o3mr4770873lfl.129.1550050974343;
+ Wed, 13 Feb 2019 01:42:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d6d064f2-fa58-d31e-83b8-1cc3ffbc7dee@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190212102104.32299-1-geert+renesas@glider.be>
+In-Reply-To: <20190212102104.32299-1-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 13 Feb 2019 10:42:42 +0100
+Message-ID: <CACRpkdbJAaxLDq7kVg==5m798fnze8Nz4bdC_RdJZuPkeG_kXw@mail.gmail.com>
+Subject: Re: [git pull] pinctrl: sh-pfc: Updates for v5.1 (take two)
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
+On Tue, Feb 12, 2019 at 11:48 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-On 2019-02-10 17:39:34 +0100, Marek Vasut wrote:
-> On 2/10/19 2:39 PM, Niklas Söderlund wrote:
-> > Hi Wolfram,
-> 
-> Hi,
-> 
-> > Thanks for your patch.
-> > 
-> > On 2019-02-08 20:30:02 +0100, Wolfram Sang wrote:
-> >> From: Takeshi Saito <takeshi.saito.xv@renesas.com>
-> >>
-> >> SCC is used for SDR104/HS200/HS400. We need to change SCC_DT2FF
-> >> according to the mode. If it is inappropriate, CRC error tends to occur.
-> >>
-> >> This adds variable "tap_hs400" for HS400 mode and configures SCC_DT2FF
-> >> as needed.
-> >>
-> >> Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-> >> [wsa: rebased to upstream and updated commit message]
-> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > 
-> > I think this looks good.
-> > 
-> > Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-> Can you test this on E3 Ebisu (do you have a board) ?
+> The following changes since commit 8e32e881947be98abaa917157fefc4a3319e90af:
+>
+>   pinctrl: sh-pfc: r8a7778: Fix HSPI pin numbers and names (2019-01-21 13:25:38 +0100)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v5.1-tag2
+>
+> for you to fetch changes up to 79dbbdbeccc6784d5e189710adcca750c03d3bd4:
+>
+>   pinctrl: sh-pfc: r8a77965: Add DRIF pins, groups and functions (2019-02-11 14:16:11 +0100)
 
-I do not have a E3 so I'm afraid I can not provide a tested by tag for 
-that board.
+Pulled into my "devel" branch for v5.1, thanks!
 
--- 
-Regards,
-Niklas Söderlund
+Yours,
+Linus Walleij
