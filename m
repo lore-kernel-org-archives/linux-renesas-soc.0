@@ -2,141 +2,229 @@ Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A730CC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 17:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67806C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 22:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F0D20838
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 17:27:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="BC+3oz0N"
+	by mail.kernel.org (Postfix) with ESMTP id 3736921872
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 22:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392923AbfBMR1l (ORCPT
+        id S2389713AbfBMWOk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:27:41 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43466 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390484AbfBMR1k (ORCPT
+        Wed, 13 Feb 2019 17:14:40 -0500
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:15395 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387646AbfBMWOk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:27:40 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z20so1706754ljj.10
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Feb 2019 09:27:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=XwhHYrO1omjgzueimQUEcVVscrx6tTHMKUiuhys5oqk=;
-        b=BC+3oz0N8NJSfUeAsgWuHQvDVHvenSLYNUwzw2Mk79uj+ZYADWerWALo42FD7/S+LA
-         qyBR/jVUeiCd3SWpeAKZ2QrWrHOxzNZS4IcAnDSoQOpv/IZHkO+ragY16DjpzBgtYleG
-         s+yRzC566Rvgs7hR8HfBhqELd2uuIAFex5BIoJVMmdydsciHrFREjIyAArNKCos50aNn
-         MG9JG8k8m+PsFkpHkxdLt4sGOBNa7/TkUbnVf5gu81RGjHfsOixxDK21QoFTFEqT+BVP
-         6TvZmJFcvbVgU6LxuSZqc8gzUN7Dun1FDK9As8x4Zs0wVm4sRJ+6Z/bRLMOw0D1rxS/I
-         wIkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=XwhHYrO1omjgzueimQUEcVVscrx6tTHMKUiuhys5oqk=;
-        b=iiCJo+GwA80BtQjXxheGKMZ4TRjitThylkDg7946trqbuTbZDANndDB1dWsGhkJfO1
-         iD0rpkso3MGuo4Ph7fOrA8r5/lZ0kaX/Ysk+q+sky29gkU0/nbZY+dd00vZito61gBCN
-         L167asGefg3kjWPCDVE2ASJnP3zy/zg6/tbueaZFrSmpa8dwW47XJ1FVgrF7qjngJuKT
-         A5v0FJbj5Rs8RwxwksAWelzvcol0KP8TAXSC+KE9ZxKUwNkuUfkZdDjrhBrBkm1lKVTI
-         OynjLgvovDtMGOCvYz+rP/iJn7zidvE7hpWyW827TYSBztyhok51JdA44vCTD/sV9sGk
-         XGsg==
-X-Gm-Message-State: AHQUAuZvyh7VARKk789aHfBmDNpzHrcUbDULYOEorAiAMALIosAhNWq7
-        qo9okDtcvJMFX8hylVKRxCOtkA==
-X-Google-Smtp-Source: AHgI3IY2OLfVXgi+pbQ2yG8RnIAsK+0A56t/J84KdnkDEoH5dzGdCIsLea+2SFLpSn+221f+L1i6vQ==
-X-Received: by 2002:a2e:94ce:: with SMTP id r14-v6mr1005269ljh.34.1550078858874;
-        Wed, 13 Feb 2019 09:27:38 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id q123-v6sm3551453ljb.60.2019.02.13.09.27.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 09:27:38 -0800 (PST)
-Date:   Wed, 13 Feb 2019 18:27:37 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: pca953x: Add wake-up support
-Message-ID: <20190213172737.GB31263@bigcity.dyn.berto.se>
-References: <20190213131503.26801-1-geert+renesas@glider.be>
+        Wed, 13 Feb 2019 17:14:40 -0500
+X-Halon-ID: e39726f8-2fdb-11e9-a58a-005056917f90
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (unknown [89.233.230.99])
+        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
+        id e39726f8-2fdb-11e9-a58a-005056917f90;
+        Wed, 13 Feb 2019 23:08:33 +0100 (CET)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] rcar-vin: Fix lockdep warning at stream on
+Date:   Wed, 13 Feb 2019 23:07:54 +0100
+Message-Id: <20190213220754.14664-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190213131503.26801-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Changes to v4l2-fwnode in commit [1] triggered a lockdep warning in
+rcar-vin. The first attempt to solve this warning in the rcar-vin driver
+was incomplete and only pushed the warning to happen at at stream on
+time instead of at probe time.
 
-Thanks for your patch,
+This change reverts the incomplete fix and properly fix the warning by
+removing the need to hold the rcar-vin specific group lock when calling
+v4l2_async_notifier_parse_fwnode_endpoints_by_port(). And instead takes
+it in the callback where it's really needed.
 
-On 2019-02-13 14:15:03 +0100, Geert Uytterhoeven wrote:
-> Implement the irq_set_wake() method in the (optional) irq_chip of the
-> GPIO expander, and propagate wake-up settings to the upstream interrupt
-> controller.  This allows GPIOs connected to a PCA953X GPIO expander to
-> serve as wake-up sources.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+1. commit eae2aed1eab9bf08 ("media: v4l2-fwnode: Switch to v4l2_async_notifier_add_subdev")
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Fixes: 6458afc8c49148f0 ("media: rcar-vin: remove unneeded locking in async callbacks")
+Signed-off-by: Niklas SÃ¶derlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 43 +++++++++++++++------
+ 1 file changed, 32 insertions(+), 11 deletions(-)
 
-> ---
-> Tested with a PCA9654 and gpio-keys on an R-Car Ebisu-4D board.
-> 
-> v2:
->   - Just propagate irq_set_irq_wake().  As pca953x_irq_set_wake()
->     doesn't need to do anything else, there's no reason for making it
->     conditional.
-> ---
->  drivers/gpio/gpio-pca953x.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index de52f63863dbe59b..86c00a3980c47c3b 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -513,6 +513,14 @@ static void pca953x_irq_unmask(struct irq_data *d)
->  	chip->irq_mask[d->hwirq / BANK_SZ] |= 1 << (d->hwirq % BANK_SZ);
->  }
->  
-> +static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-> +	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +	struct pca953x_chip *chip = gpiochip_get_data(gc);
-> +
-> +	return irq_set_irq_wake(chip->client->irq, on);
-> +}
-> +
->  static void pca953x_irq_bus_lock(struct irq_data *d)
->  {
->  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> @@ -732,6 +740,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
->  	irq_chip->name = dev_name(&chip->client->dev);
->  	irq_chip->irq_mask = pca953x_irq_mask;
->  	irq_chip->irq_unmask = pca953x_irq_unmask;
-> +	irq_chip->irq_set_wake = pca953x_irq_set_wake;
->  	irq_chip->irq_bus_lock = pca953x_irq_bus_lock;
->  	irq_chip->irq_bus_sync_unlock = pca953x_irq_bus_sync_unlock;
->  	irq_chip->irq_set_type = pca953x_irq_set_type;
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 594d804340047511..abbb5820223965e3 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -546,7 +546,9 @@ static void rvin_parallel_notify_unbind(struct v4l2_async_notifier *notifier,
+ 
+ 	vin_dbg(vin, "unbind parallel subdev %s\n", subdev->name);
+ 
++	mutex_lock(&vin->lock);
+ 	rvin_parallel_subdevice_detach(vin);
++	mutex_unlock(&vin->lock);
+ }
+ 
+ static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
+@@ -556,7 +558,9 @@ static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
+ 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
+ 	int ret;
+ 
++	mutex_lock(&vin->lock);
+ 	ret = rvin_parallel_subdevice_attach(vin, subdev);
++	mutex_unlock(&vin->lock);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -664,6 +668,7 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+ 	}
+ 
+ 	/* Create all media device links between VINs and CSI-2's. */
++	mutex_lock(&vin->group->lock);
+ 	for (route = vin->info->routes; route->mask; route++) {
+ 		struct media_pad *source_pad, *sink_pad;
+ 		struct media_entity *source, *sink;
+@@ -699,6 +704,7 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+ 			break;
+ 		}
+ 	}
++	mutex_unlock(&vin->group->lock);
+ 
+ 	return ret;
+ }
+@@ -714,6 +720,8 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+ 		if (vin->group->vin[i])
+ 			rvin_v4l2_unregister(vin->group->vin[i]);
+ 
++	mutex_lock(&vin->group->lock);
++
+ 	for (i = 0; i < RVIN_CSI_MAX; i++) {
+ 		if (vin->group->csi[i].fwnode != asd->match.fwnode)
+ 			continue;
+@@ -721,6 +729,8 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+ 		vin_dbg(vin, "Unbind CSI-2 %s from slot %u\n", subdev->name, i);
+ 		break;
+ 	}
++
++	mutex_unlock(&vin->group->lock);
+ }
+ 
+ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+@@ -730,6 +740,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+ 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
+ 	unsigned int i;
+ 
++	mutex_lock(&vin->group->lock);
++
+ 	for (i = 0; i < RVIN_CSI_MAX; i++) {
+ 		if (vin->group->csi[i].fwnode != asd->match.fwnode)
+ 			continue;
+@@ -738,6 +750,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+ 		break;
+ 	}
+ 
++	mutex_unlock(&vin->group->lock);
++
+ 	return 0;
+ }
+ 
+@@ -752,6 +766,7 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
+ 				     struct v4l2_async_subdev *asd)
+ {
+ 	struct rvin_dev *vin = dev_get_drvdata(dev);
++	int ret = 0;
+ 
+ 	if (vep->base.port != 1 || vep->base.id >= RVIN_CSI_MAX)
+ 		return -EINVAL;
+@@ -762,38 +777,48 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
+ 		return -ENOTCONN;
+ 	}
+ 
++	mutex_lock(&vin->group->lock);
++
+ 	if (vin->group->csi[vep->base.id].fwnode) {
+ 		vin_dbg(vin, "OF device %pOF already handled\n",
+ 			to_of_node(asd->match.fwnode));
+-		return -ENOTCONN;
++		ret = -ENOTCONN;
++		goto out;
+ 	}
+ 
+ 	vin->group->csi[vep->base.id].fwnode = asd->match.fwnode;
+ 
+ 	vin_dbg(vin, "Add group OF device %pOF to slot %u\n",
+ 		to_of_node(asd->match.fwnode), vep->base.id);
++out:
++	mutex_unlock(&vin->group->lock);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+ {
+-	unsigned int count = 0;
++	unsigned int count = 0, vin_mask = 0;
+ 	unsigned int i;
+ 	int ret;
+ 
+ 	mutex_lock(&vin->group->lock);
+ 
+ 	/* If not all VIN's are registered don't register the notifier. */
+-	for (i = 0; i < RCAR_VIN_NUM; i++)
+-		if (vin->group->vin[i])
++	for (i = 0; i < RCAR_VIN_NUM; i++) {
++		if (vin->group->vin[i]) {
+ 			count++;
++			vin_mask |= BIT(i);
++		}
++	}
+ 
+ 	if (vin->group->count != count) {
+ 		mutex_unlock(&vin->group->lock);
+ 		return 0;
+ 	}
+ 
++	mutex_unlock(&vin->group->lock);
++
+ 	v4l2_async_notifier_init(&vin->group->notifier);
+ 
+ 	/*
+@@ -802,21 +827,17 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+ 	 * will only be registered once with the group notifier.
+ 	 */
+ 	for (i = 0; i < RCAR_VIN_NUM; i++) {
+-		if (!vin->group->vin[i])
++		if (!(vin_mask & BIT(i)))
+ 			continue;
+ 
+ 		ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+ 				vin->group->vin[i]->dev, &vin->group->notifier,
+ 				sizeof(struct v4l2_async_subdev), 1,
+ 				rvin_mc_parse_of_endpoint);
+-		if (ret) {
+-			mutex_unlock(&vin->group->lock);
++		if (ret)
+ 			return ret;
+-		}
+ 	}
+ 
+-	mutex_unlock(&vin->group->lock);
+-
+ 	if (list_empty(&vin->group->notifier.asd_list))
+ 		return 0;
+ 
 -- 
-Regards,
-Niklas Söderlund
+2.20.1
+
