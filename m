@@ -2,150 +2,157 @@ Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A899C282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572FFC282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A1FF222BA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:45:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gNdz4lbA"
+	by mail.kernel.org (Postfix) with ESMTP id 286F0222C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:59:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732170AbfBMJpM (ORCPT
+        id S1732738AbfBMJ7K convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:45:12 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38489 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfBMJpL (ORCPT
+        Wed, 13 Feb 2019 04:59:10 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39787 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729507AbfBMJ7K (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:45:11 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j19so627178ljg.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Feb 2019 01:45:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wBI7PDWfGY9Hx7vVNev8Q9U4lCVp9g/pYuVwGAyz5yM=;
-        b=gNdz4lbAjrvDAya06SGq3A9/Lu8TIOTyUE4M2UKuzQhw8crK+MgbXLpgdE3vz9u7Ih
-         chpLuDxwDyOph00JD4Dnfttbj4r9rXmKaW567t7UxhLpjO1kpnnN6lkO/9s8RewuYqBR
-         NCF9wO9EK4GlDuhspY/Merm3DH1DsFJCtEFwRwQfV1/uc29JEbi03YqPGK+RY5aryyCw
-         szFq5cq/vxEMryALIxHtiCXJqs1p+XJOrrOWCVKbjGE2+jA3Zdt3ewxpEqEt9ekwxj/C
-         y3gzO/hSXATczZylX8ugoGi+7dKj9Il3uAadaEM30dnYD1V4lEz7/TTDg2SyttrlpemS
-         Sy6g==
+        Wed, 13 Feb 2019 04:59:10 -0500
+Received: by mail-ua1-f66.google.com with SMTP id s15so569556uap.6;
+        Wed, 13 Feb 2019 01:59:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wBI7PDWfGY9Hx7vVNev8Q9U4lCVp9g/pYuVwGAyz5yM=;
-        b=ISZVTvstKbyNMQcJNmzuQif3FEl+t/OI+qhG+inEBFrI1a0uVdNAZ4AWBSEusAAXFu
-         8AXCZWs2GZssjqr7YCkPHzIhhiviwGRuWKhjLNa34D7MJPa4GJyOBGGKxoo5VUIoPsJl
-         oNpdsJAs+pVFWRlmg4PgR4L+GfOyz2rsjbC7U1VvSRdXXbO0hSnFWDhNoUXPdlWOl8XZ
-         qM+lmt1SPLMoG0AjDUV+44IwwRSb1deUhdDGjrpWxrv5K1AMIFamjui9U5PsK+HEvqxQ
-         b/j2JIkdBNjI5MLq0e45FCzsqXA1/jmmMdPYpDuDTxSmIefcq6tr/OFc88EteEONHs+4
-         rTNQ==
-X-Gm-Message-State: AHQUAubNHD+TEBh6nEryEPEnsxH6rjZKXfhPHEbMg/8SxrEKglMnYJfW
-        SuYf4pa6gn5C1v6wfdQXyHQhIbeK4SwNvkvrxDr3DA==
-X-Google-Smtp-Source: AHgI3Ib84QBXf7y+2/IsSTslK5mNqrSvrfUBHeD+5E3HQijwtckM9PKk1If0oIYeOgNbZ8KoJWFncmLUVntrWn7UWaU=
-X-Received: by 2002:a2e:131a:: with SMTP id 26-v6mr4828848ljt.107.1550051109803;
- Wed, 13 Feb 2019 01:45:09 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lda/5yBH4fyHEJRZpjaJyzHKLz2fobQMz6w0mMPkuNo=;
+        b=VkUs5XL+eRniY9k5/XtkJe0Nzs3qWHuCWuNr3BvrVoClszZnKFewQ6qET+L/7tF7nh
+         E4XPt3PBex7lcajKOudVg9vgCfMJ8MToMZEDtJLfrfj2k1xQ9XPlx2uqghmLg5GdhFRi
+         64NdZCEycn26XolRCa+ldO/fkiSSyjp6okIHkPfwDBHx2wmRsEwXqnNkF1QecgsHi68y
+         yja/Ax4rwgbUi2OjhoJgQDi3g+WaOLW8WnKWOfwRey7p2UgFryou1+jF5EN0BdeHNVN6
+         Af26DPZNbyO6nMPGrL0gwCUKs9KQrvQYjtV3V9C1N2phQypz1y7RSmQuK5SDaf2iMyj6
+         QCTA==
+X-Gm-Message-State: AHQUAuY9J7lucXPdEexiRU1uN7OGma7PTI5P+AR1UWP0fkTUs2FYXjJL
+        yXYUw0dvbBGu8VjGGYCkkFmk5lVMOpzQDY1PZHQ=
+X-Google-Smtp-Source: AHgI3Iaca5ozuufJHAp4GYPl0Hf8etrqDwOrOA1dc9VQ+UMG2Wq7PwJ0kV7ST1vDxfe75cGuE74rkkbeTXIjfWCae2Y=
+X-Received: by 2002:a9f:2726:: with SMTP id a35mr3351791uaa.75.1550051948949;
+ Wed, 13 Feb 2019 01:59:08 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212141715.3966-1-geert+renesas@glider.be>
-In-Reply-To: <20190212141715.3966-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 13 Feb 2019 10:44:57 +0100
-Message-ID: <CACRpkdZ60MEv8t2WZkDzv8pbLoYbPmcKJdFmSBABGkmk+SSKGg@mail.gmail.com>
+References: <20190212141715.3966-1-geert+renesas@glider.be> <CAMpxmJWcSkCBf+vcOg=ksjeSxvo7N+WQ2gNqxPe5BW01vPFH8w@mail.gmail.com>
+In-Reply-To: <CAMpxmJWcSkCBf+vcOg=ksjeSxvo7N+WQ2gNqxPe5BW01vPFH8w@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 13 Feb 2019 10:58:55 +0100
+Message-ID: <CAMuHMdVYKdE68hgi=G-VmJZwTXS+ymu7qMTH41sHv4q2CCy0TA@mail.gmail.com>
 Subject: Re: [PATCH] gpio: pca953x: Add wake-up support
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Top-posting to Thomas Petazzoni, he's been working on this driver
-recently and is also on top of thing when it comes to wakeup.
+Hi Bartosz,
 
-Thomas, it would be great if you can take a look at this.
+CC Thomas
 
-Yours,
-Linus Walleij
+On Tue, Feb 12, 2019 at 3:35 PM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> wt., 12 lut 2019 o 15:17 Geert Uytterhoeven <geert+renesas@glider.be> napisał(a):
+> > Implement the irq_set_wake() method in the (optional) irq_chip of the
+> > GPIO expander, and propagate wake-up settings to the upstream interrupt
+> > controller.  This allows GPIOs connected to a PCA953X GPIO expander to
+> > serve as wake-up sources.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Feb 12, 2019 at 3:17 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+> > --- a/drivers/gpio/gpio-pca953x.c
+> > +++ b/drivers/gpio/gpio-pca953x.c
+> > @@ -151,6 +151,7 @@ struct pca953x_chip {
+> >         u8 irq_trig_raise[MAX_BANK];
+> >         u8 irq_trig_fall[MAX_BANK];
+> >         struct irq_chip irq_chip;
+> > +       unsigned int irq_parent;
+> >  #endif
+> >
+> >         struct i2c_client *client;
+> > @@ -513,6 +514,24 @@ static void pca953x_irq_unmask(struct irq_data *d)
+> >         chip->irq_mask[d->hwirq / BANK_SZ] |= 1 << (d->hwirq % BANK_SZ);
+> >  }
+> >
+> > +static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
+> > +{
+> > +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> > +       struct pca953x_chip *chip = gpiochip_get_data(gc);
+> > +       int error = 0;
+> > +
+> > +       if (chip->irq_parent) {
+> > +               error = irq_set_irq_wake(chip->irq_parent, on);
+> > +               if (error) {
+> > +                       dev_dbg(&chip->client->dev,
+> > +                               "irq %u doesn't support irq_set_wake\n",
+> > +                               chip->irq_parent);
+> > +                       chip->irq_parent = 0;
+> > +               }
+> > +       }
+> > +       return error;
+> > +}
+> > +
+> >  static void pca953x_irq_bus_lock(struct irq_data *d)
+> >  {
+> >         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+> > @@ -732,6 +751,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
+> >         irq_chip->name = dev_name(&chip->client->dev);
+> >         irq_chip->irq_mask = pca953x_irq_mask;
+> >         irq_chip->irq_unmask = pca953x_irq_unmask;
+> > +       irq_chip->irq_set_wake = pca953x_irq_set_wake;
 >
-> Implement the irq_set_wake() method in the (optional) irq_chip of the
-> GPIO expander, and propagate wake-up settings to the upstream interrupt
-> controller.  This allows GPIOs connected to a PCA953X GPIO expander to
-> serve as wake-up sources.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Tested with a PCA9654 and gpio-keys on an R-Car Ebisu-4D board.
-> ---
->  drivers/gpio/gpio-pca953x.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index de52f63863dbe59b..8dfb8e326b9d12ca 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -151,6 +151,7 @@ struct pca953x_chip {
->         u8 irq_trig_raise[MAX_BANK];
->         u8 irq_trig_fall[MAX_BANK];
->         struct irq_chip irq_chip;
-> +       unsigned int irq_parent;
->  #endif
->
->         struct i2c_client *client;
-> @@ -513,6 +514,24 @@ static void pca953x_irq_unmask(struct irq_data *d)
->         chip->irq_mask[d->hwirq / BANK_SZ] |= 1 << (d->hwirq % BANK_SZ);
->  }
->
-> +static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
-> +{
-> +       struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> +       struct pca953x_chip *chip = gpiochip_get_data(gc);
-> +       int error = 0;
-> +
-> +       if (chip->irq_parent) {
-> +               error = irq_set_irq_wake(chip->irq_parent, on);
-> +               if (error) {
-> +                       dev_dbg(&chip->client->dev,
-> +                               "irq %u doesn't support irq_set_wake\n",
-> +                               chip->irq_parent);
-> +                       chip->irq_parent = 0;
-> +               }
-> +       }
-> +       return error;
-> +}
-> +
->  static void pca953x_irq_bus_lock(struct irq_data *d)
->  {
->         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-> @@ -732,6 +751,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
->         irq_chip->name = dev_name(&chip->client->dev);
->         irq_chip->irq_mask = pca953x_irq_mask;
->         irq_chip->irq_unmask = pca953x_irq_unmask;
-> +       irq_chip->irq_set_wake = pca953x_irq_set_wake;
->         irq_chip->irq_bus_lock = pca953x_irq_bus_lock;
->         irq_chip->irq_bus_sync_unlock = pca953x_irq_bus_sync_unlock;
->         irq_chip->irq_set_type = pca953x_irq_set_type;
-> @@ -747,6 +767,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
->         }
->
->         gpiochip_set_nested_irqchip(&chip->gpio_chip, irq_chip, client->irq);
-> +       chip->irq_parent = client->irq;
->
->         return 0;
->  }
-> --
-> 2.17.1
->
+> Is it possible to assign this callback conditionally depending on
+> client->irq and avoid the if (chip->irq_parent) in
+> pca953x_irq_set_wake()?
+
+Note that pca953x_irq_setup() already returns early if client->irq is not
+a valid interrupt number.
+
+chip->irq_parent is also used as a flag to indicate if the parent
+interrupt controller supports wake-up.  If it doesn't, it is cleared
+again.  See e.g. commit ffb8e44bd7617ede ("gpio: pcf857x: Check for
+irq_set_irq_wake() failures").
+
+Or would it better to clear irq_chip->irq_set_wake instead?
+That's something we couldn't do before each instance started using its
+own irq_chip instance (e.g. commit 5c4fee63c5ed8133 ("gpio: pca953x: use
+a per instance irq_chip structure")).
+
+[more hacking]
+
+Yep, clearing irq_chip->irq_set_wake also works.
+
+But given pca953x_irq_set_wake() doesn't do anything, besides forwarding
+to the parent, it seems it can just call irq_set_irq_wake() unconditionally,
+and propagate its error code.  I failed to realize that when fixing pcf857x,
+where I used the solution for rcar-gpio, which does need to do other things.
+
+Note that we can't use irq_chip_set_wake_parent() as the callback, as that
+relies on CONFIG_IRQ_DOMAIN_HIERARCHY (which may not be set), and
+setting up irq_data.parent_data (else it crashes).
+
+Will send a v2, and will simplify pcf857x, after some more testing,...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
