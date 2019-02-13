@@ -2,129 +2,94 @@ Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C24C282CA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 10:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D50C282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 10:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6282147C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 10:11:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="CZ6uJBMI"
+	by mail.kernel.org (Postfix) with ESMTP id 96EAB20842
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 10:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388063AbfBMKLa (ORCPT
+        id S2389109AbfBMKYs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:11:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35315 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbfBMKLa (ORCPT
+        Wed, 13 Feb 2019 05:24:48 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:16081 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732488AbfBMKYs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:11:30 -0500
-Received: by mail-lj1-f195.google.com with SMTP id j13-v6so1508761ljc.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Feb 2019 02:11:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=BLKKukhCIGWS86lTw8VnARSddUgRd2lKfB5f3tNYLXk=;
-        b=CZ6uJBMIGSQgQY0PW7hzKudmWwfSNY3Ay8NGeigtw9UZfA57SUCoz5ytNRZ9LmIK7B
-         74OY8ORrNRibvRPM6j3Lig8qAKxh/BXj5zJYfeoA6+JSHnmMJ9eeqITvvJNUT5k8d8Yx
-         zcL4orhU5O1M59ynhEN25oHMa5ee95/8VnjV4qdqlT680f6eIweMU8es+Orx/ux2mhN8
-         0Jz2wV+7afzu4Qq4nazN3Sn8izbipQJ8Ha0C7YBW/yIVDL45YAPZvZvqqYUEyDKOgqaY
-         X+a3I4oE1VKK5rC47luaqufRIZe+6DVVsNDLB1yE/vNtpKFRlXksyLVUHQr4UJdi19JB
-         LS0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=BLKKukhCIGWS86lTw8VnARSddUgRd2lKfB5f3tNYLXk=;
-        b=SL4B0Hx5fBJehREAgR6iUUxSd8svQ8usvTIJAVYbGwd8F6uVynmQ170r80UFL+58Sy
-         z8JPj35H3Uvwl41aWtyjS37Ihy309/uwkuZQCM7AGtdYYhX5UIgH0ITlwLY6+r4Lrq0e
-         4y2YsxumaYlkKVmnyikFHTZYZv0SMfPLcRIUZ0CIwDiwEud6sj/W+R7AoJSIKHAZstXW
-         5mFtzSTZKHTCEirawbmAI6+koy4hwnl/vJKlVPXorEX/N61nnwNlnNl+YlLRoC/b4oe8
-         YGE0MAHWDZdHB50vqAgBeBwIOn6zMf12k6VqWF0eJbRK81bYghLtGNMKRdFIRHtIgGpo
-         1vQw==
-X-Gm-Message-State: AHQUAuZooX8ILRsn+EMgM8xN+DDGfX/wqeOks4vDD0YqLXkMTZZaN0ED
-        GT4FbXFtp63tG2xGwW4EnlN7JA==
-X-Google-Smtp-Source: AHgI3IY++LJ1IAtoL0vdrrPW+EidIppLq2S7z+SFWZd5QDxbnaronIb9r6JbHFXRTofFK2B/vTCBOg==
-X-Received: by 2002:a2e:97ce:: with SMTP id m14mr504866ljj.162.1550052687909;
-        Wed, 13 Feb 2019 02:11:27 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id e72sm449861lfg.48.2019.02.13.02.11.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 02:11:27 -0800 (PST)
-Date:   Wed, 13 Feb 2019 11:11:26 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: ebisu: Add GPIO expander
-Message-ID: <20190213101126.GI31044@bigcity.dyn.berto.se>
-References: <20190212142000.4312-1-geert+renesas@glider.be>
+        Wed, 13 Feb 2019 05:24:48 -0500
+X-IronPort-AV: E=Sophos;i="5.58,365,1544511600"; 
+   d="scan'208";a="24583419"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Feb 2019 03:24:47 -0700
+Received: from localhost (10.10.76.4) by chn-sv-exch07.mchp-main.com
+ (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Wed, 13 Feb 2019
+ 03:24:46 -0700
+Date:   Wed, 13 Feb 2019 11:24:37 +0100
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC:     <linux-i2c@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH] i2c: document the SDA hold time binding
+Message-ID: <20190213102437.dtemwn4amsosqba7@M43218.corp.atmel.com>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+References: <20190211132515.24163-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190212142000.4312-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190211132515.24163-1-wsa+renesas@sang-engineering.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Wolfram,
 
-Thanks for your patch.
-
-On 2019-02-12 15:20:00 +0100, Geert Uytterhoeven wrote:
-> Describe the ON Semiconductor PCA9654 I/O expander on the first I2C
-> bus, which provides 8 extra GPIOs.
+On Mon, Feb 11, 2019 at 02:25:15PM +0100, Wolfram Sang wrote:
+> The documentation was forgotten when the feature was added.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-
+> Fixes: 4717be73c284 ("i2c: core: Parse SDA hold time from firmware")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
-> GPIOs 5-7 are accessible on test points CP16, CP17, and CP72.
 > 
-> Output tested with a multi-meter using /sys/class/gpio/.
-> Input and interrupt capability tested using gpio-keys.
-> ---
->  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> To everyone on CC: I want to confirm here that you use the value really for
+> t(hd:sta) and not t(hd:dat). I'd be a little confused otherwise...
+
+
+No in our case, it's t(hd:dat):
+TWD is kept unchanged after TWCK falling edge for a
+period of (HOLD + 3) × t peripheral clock
+
+
+Ludovic
+
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> index 5ac159b7830d58c1..b5c0dbf4982febd0 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> @@ -337,6 +337,15 @@
->  &i2c0 {
->  	status = "okay";
+>  Documentation/devicetree/bindings/i2c/i2c.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+> index 44efafdfd7f5..b7bc4c4cc2e6 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+> @@ -55,6 +55,10 @@ wants to support one of the below features, it should adapt the bindings below.
+>  	Number of nanoseconds the SDA signal takes to fall; t(f) in the I2C
+>  	specification.
 >  
-> +	io_expander: gpio@20 {
-> +		compatible = "onnn,pca9654";
-> +		reg = <0x20>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		interrupt-parent = <&gpio2>;
-> +		interrupts = <22 IRQ_TYPE_LEVEL_LOW>;
-> +	};
+> +- i2c-sda-hold-time-ns
+> +	Number of nanoseconds the SDA signal needs to be held; t(hd:sta) in
+> +	the I2C specification.
 > +
->  	hdmi-encoder@39 {
->  		compatible = "adi,adv7511w";
->  		reg = <0x39>;
+>  - interrupts
+>  	interrupts used by the device.
+>  
 > -- 
-> 2.17.1
+> 2.11.0
 > 
-
--- 
-Regards,
-Niklas Söderlund
