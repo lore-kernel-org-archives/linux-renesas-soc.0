@@ -2,130 +2,118 @@ Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B3FC282C2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 08:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD3EC282C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352B5222C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 08:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50CDC222C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 09:22:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tnfl9cWZ"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="G+fPHMdh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731876AbfBMIo1 (ORCPT
+        id S1729556AbfBMJWN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:44:27 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38382 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732602AbfBMIo1 (ORCPT
+        Wed, 13 Feb 2019 04:22:13 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40961 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729333AbfBMJWN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:44:27 -0500
-Received: by mail-wm1-f67.google.com with SMTP id v26so1441599wmh.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Feb 2019 00:44:25 -0800 (PST)
+        Wed, 13 Feb 2019 04:22:13 -0500
+Received: by mail-lf1-f65.google.com with SMTP id e27so1206886lfj.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Feb 2019 01:22:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bquKdyy4/V8+Gk4SR2G7inaXLB7NXbaiR8XLpfBhKtg=;
-        b=tnfl9cWZRRpTarObJdolsCnPRE5LhqB4YF2m+PrdGwG1m/evABN5mnv/BTH4r/kjlX
-         YASzz/Wils2jIfwx/Fum3r6daIpIdFuw4QOeuV7Au5hPPQVmQfoZe/ZA26+kITohxYS6
-         vm9dTojyGHYkgwYzhlm1FY+Xo+sXMeE7Hq7L8e8ApBHamqmogzeA+1Kghd+Nc4tuRna9
-         C1BrfIlxwBE/nY8aOTvdeLftc+TQJXp9jJnqIp4uocRriHEhMtwOlxPJWxHHEYiYZkFI
-         C1CXw2iGMp3P4h3tmpLLFN8U9Ndt9TdxdJX23ROz7XrZzR2MqIrSHINouWI5FMplfp8p
-         4+eQ==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=JQ22X/4UZtcBww2Gl8Z9E4LsW9dFKKODbzD6nSDr9ZM=;
+        b=G+fPHMdh8D1aQgm2AgAFlGjVDMorON1UaCW1qNloTpCF9p+mOrNwYxR+3D6OTjQ8Qd
+         EYp228o0ff3xGM0jUVULyRoj8mnhFg6O3B1HLz/XqBjqyKc2KPKP3UwPa0ToaMoIxZR7
+         veYO3oqCzb+sqoCvBzyVZ6fdiSZQlI59kXqyvxdvBlHCxN5sPbaJ/sgwrdQyFzkcPOqN
+         WkRQx4h6mCQuUEcwwsKB3ZukoXYOBD1237JiaZwo0Urp17d7FEPZEiFrmLlVOFrj60E3
+         hFCYksocVWR71hvS5S3K00oG8ABR7GNmdQVXhoUdNiiqElx7Zy2OUfpVuf7C2fekwOT1
+         pd+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bquKdyy4/V8+Gk4SR2G7inaXLB7NXbaiR8XLpfBhKtg=;
-        b=FyISSeQ3AAfR9A6WLQM5AhlllGi5D8fmaU2njVUJyh1DqNtcRhcKqmIpykE1kSEiEi
-         EwznFY/vdCkrmcRp7tjY1PBmGVyZb/6FXFnJpPGRk0kvtFFZQpCmUKU9+L5fVsfXpFe2
-         0H3aOBXuEHkO+fv4dOP7b6sF0YFRp41nnCkY2oidmgYy9BkjmZTDj56pvSGbAhHKKMeH
-         wu12XU344SuKvL/bUy9GNnKU5S+ycIS4ZNz9gtOrde9KpAMVO5Ql/uuk6gxBs1R5bqnc
-         fj/+T8S1iuCdhALVzU2MQCvwgVwh5+ES/1I+LueCs63xFQXxryeTSXUAE2D+nIQT4Q2z
-         H99A==
-X-Gm-Message-State: AHQUAuYOYN6F3eEKG1izFIGLXNachaGbG7A0kfrdeSLXHND3ksX7LJHv
-        Fyc3IHGT388Wln/MURyf5N98MW3Flp4=
-X-Google-Smtp-Source: AHgI3IbBUeUQvQf45XlHZOmiqDcN/ftaeC7s/dcImy8uLeaqV8yX/ozay6vFVAykrJtvkrlZqm9FOQ==
-X-Received: by 2002:a1c:4d6:: with SMTP id 205mr1723756wme.66.1550047464822;
-        Wed, 13 Feb 2019 00:44:24 -0800 (PST)
-Received: from [192.168.27.65] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id c129sm3050523wma.48.2019.02.13.00.44.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 00:44:24 -0800 (PST)
-Subject: Re: [PATCH v2 0/5] Add CMT/TMU support for RZ/G2E
-To:     Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-References: <1549272007-33471-1-git-send-email-biju.das@bp.renesas.com>
- <86c16302-8f7e-52b6-d183-5a90c8a0fc85@linaro.org>
- <OSBPR01MB210392463D9EB86AE0BE8C36B8650@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <ea8a581f-56ce-bea0-86d6-7688741c3fca@linaro.org>
-Date:   Wed, 13 Feb 2019 09:44:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=JQ22X/4UZtcBww2Gl8Z9E4LsW9dFKKODbzD6nSDr9ZM=;
+        b=AGuOvU23K4vwb54jq1DPPPwjsfqD4KOsj+nfH3LNOsFUGSTngPXqzb913Ecim+Ai3Z
+         EzJ+UuQ26ya06PjG1eJ45TzmDuF0PP5MPEXibHFFLp6M/Bs6pdn9x9UgGLquQb1jBsrz
+         DV0Pkkw9sjqR4eACF6IM3n3mIZsMlt0Hj5D3isU5WMOd0kWdyhP1j9fCKwI7sSv1TwZl
+         ni3yphyEcrItqbqY7jpFukQw+u7avw7H2Y57jtL1bBWsNmJv4rHCjLdjgHbqyqoJ+pbF
+         inzvXH4A4PNJv1n25cRol9vG7KdyST2EX6pEj8dXAwv+0blB6c3t+LjtE3L5hy41i7pH
+         s/hw==
+X-Gm-Message-State: AHQUAuZSX653kgVV9yAdnL6rUmKy3jGkmhLoTehjAAmK8WkBMoDVPqDx
+        QfhcyYhSr8JHeTCPKlIAPd7vB4JnTCc=
+X-Google-Smtp-Source: AHgI3IbTdBBTTiearoO6vZA09lpxSZ5tqvL7vaFhG4nEdN22ck0YdB8exVWWIRzq5tK6DI6tecVS3w==
+X-Received: by 2002:ac2:5303:: with SMTP id c3mr5422523lfh.97.1550049731388;
+        Wed, 13 Feb 2019 01:22:11 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id h22-v6sm3349172ljh.89.2019.02.13.01.22.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 01:22:10 -0800 (PST)
+Date:   Wed, 13 Feb 2019 10:22:10 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Takeshi Saito <takeshi.saito.xv@renesas.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: Change HW adjustment register
+ according to speed mode
+Message-ID: <20190213092210.GG31044@bigcity.dyn.berto.se>
+References: <20190208193002.16915-1-wsa+renesas@sang-engineering.com>
+ <20190210133926.GD31044@bigcity.dyn.berto.se>
+ <d6d064f2-fa58-d31e-83b8-1cc3ffbc7dee@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <OSBPR01MB210392463D9EB86AE0BE8C36B8650@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <d6d064f2-fa58-d31e-83b8-1cc3ffbc7dee@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/02/2019 11:17, Biju Das wrote:
-> Hi Daniel,
+Hi Marek,
+
+On 2019-02-10 17:39:34 +0100, Marek Vasut wrote:
+> On 2/10/19 2:39 PM, Niklas Söderlund wrote:
+> > Hi Wolfram,
 > 
-> Thanks  for  the feedback.
+> Hi,
 > 
->> -----Original Message-----
->> From: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Sent: 12 February 2019 10:03
->> To: Biju Das <biju.das@bp.renesas.com>; Rob Herring
->> <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>; devicetree@vger.kernel.org;
->> Simon Horman <horms@verge.net.au>; Geert Uytterhoeven
->> <geert+renesas@glider.be>; Chris Paterson
->> <Chris.Paterson2@renesas.com>; Fabrizio Castro
->> <fabrizio.castro@bp.renesas.com>; linux-renesas-soc@vger.kernel.org
->> Subject: Re: [PATCH v2 0/5] Add CMT/TMU support for RZ/G2E
->>
->> On 04/02/2019 10:20, Biju Das wrote:
->>> This patch series aims to add CMT/TMU timer support for RZ/G2E SoC.
->>>
->>> This patch series is tested against renesas-dev and linux-next.
->>
->> Do you want me to take the patch 1/5 and 4/5 through my tree ?
-> 
-> Yes, please.
-> 
+> > Thanks for your patch.
+> > 
+> > On 2019-02-08 20:30:02 +0100, Wolfram Sang wrote:
+> >> From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+> >>
+> >> SCC is used for SDR104/HS200/HS400. We need to change SCC_DT2FF
+> >> according to the mode. If it is inappropriate, CRC error tends to occur.
+> >>
+> >> This adds variable "tap_hs400" for HS400 mode and configures SCC_DT2FF
+> >> as needed.
+> >>
+> >> Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
+> >> [wsa: rebased to upstream and updated commit message]
+> >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > 
+> > I think this looks good.
+> > 
+> > Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+> Can you test this on E3 Ebisu (do you have a board) ?
 
-Both applied for 5.1.
-
-Thanks
-
-  -- Daniel
-
-
-
+I do not have a E3 so I'm afraid I can not provide a tested by tag for 
+that board.
 
 -- 
- <http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Regards,
+Niklas Söderlund
