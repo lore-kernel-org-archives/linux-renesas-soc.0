@@ -2,101 +2,139 @@ Return-Path: <SRS0=Vdsz=QV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 099E2C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 08:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CFBC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 10:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A1A222A1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 08:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C48CC222A4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 10:52:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nQp9muhQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDjnHQu8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391807AbfBNIEH (ORCPT
+        id S2405563AbfBNKw3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:04:07 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34766 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388779AbfBNIEH (ORCPT
+        Thu, 14 Feb 2019 05:52:29 -0500
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:34429 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387932AbfBNKw3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:04:07 -0500
-Received: by mail-lj1-f196.google.com with SMTP id l5so987173lje.1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Feb 2019 00:04:05 -0800 (PST)
+        Thu, 14 Feb 2019 05:52:29 -0500
+Received: by mail-wr1-f49.google.com with SMTP id f14so5975013wrg.1;
+        Thu, 14 Feb 2019 02:52:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ghUxM9bjDJJxcwAKlGMh9PrZoPIiztM5kGeucDnmCN4=;
-        b=nQp9muhQbTm/Soogb6B2Mpt6O0M6I3ArexxJA8vk7TZWMRzamYgjAoaaT5+YhtzjPv
-         ehbGOc7lMcNvE9bTr/NrG3pXIqTotEXIEGbxumJTTWNIVaiW0j2qlRsDlrDy/rQu5gNe
-         CsSUD16qCvYbQummoKw4aQfitmVF4H09f6VLMs/TQX5kSk/pTz4K6i1AKx3rPIudt5kQ
-         KHHcIUgs12D4d/wrU29Dkj2pYI7PPoL0+T6MhLTtm1i/MukiWlB9RTlXFcBb0jXEQMzX
-         nYeraTszm5gbsy6fo+dHEv8kVz1kXsitOvLNPdH8FzYxixi/nUutCfDHBmQiyJEMxTcc
-         aZyw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8MGEOkp3CKKQ4Y/lKtdp9ntcnCekqC3jqFbG8lyNeDw=;
+        b=BDjnHQu85ptFY5yKeuQOCo3cJXhqHvpvIpRt44A67SbAn6Xj+QiqQ/8Fh5hWzRgW4B
+         kJIfu0Dnd4mBMJxSWOEzOqGcpkbDFWnm7QyBd9t17Bl2mT7D1RL4S6YAYJAEp4PUujtl
+         aoIhrAiDUyn25pV/YldSvVlpEg1UbSFJemILWEFN4JNcA3oco0FLsiEaAaqpH62TDpUe
+         qoK1rIAWqplWdVVw82S2zaq7C/Fc7R/cyjnlAVHRlVwBgMx5vVcjlqoUUmSkymPzIVsq
+         cz5ckLlZxR6NV/AWDAsYrENew/dinTauA7fIUOPwhViBohXMMT/NGmu7l+xhlAyRIH/t
+         SWLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ghUxM9bjDJJxcwAKlGMh9PrZoPIiztM5kGeucDnmCN4=;
-        b=CVVduR605kD6VynivNiwAkBsyIBiH7/s1Jvwttc3QRkc7JR8O0NECFW2VXC2HvrqAa
-         QGU1u4H0Jgyb7qyGtWKuyAymAw/yE/7NOQfOOSEL9y2ykiM5is0FCcyNnJmSef2aRQES
-         q4v5+cHhqjH0+DydwEcnDqoo3yEJhkJAPREg8wA7XsHXfmCCcwfP7n+idx/cW2YpG7QX
-         fBXkuDQC9I85Kvsp0s07nkw+2dqs0c7CGamYYudUfJCa+hMPQyD2EXvyhUorszKy13Pw
-         fP+A3sfweHEDwZS11QJVLvLLEjonnctw/2M7kSCIhlShUh9b0zF4aoTyBD/ztOGYkyl0
-         0JxQ==
-X-Gm-Message-State: AHQUAubhICNrhK4fUENUOILug7Gr24qU4RV9O72EqydKAo9igXAvt3Jk
-        BTAqdFV8WgqIiIAeFRK8dlw6hY4mpdfBCjACH295wg==
-X-Google-Smtp-Source: AHgI3IaJg1WJ4l8GWVXdm/uoYBzyE8iL4mu0qpG1mXSQxAa6p27aCVWKgeTdYrjHvytcjrkBlEmtWDAQz3/EgclTXbo=
-X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr1447608ljt.159.1550131444643;
- Thu, 14 Feb 2019 00:04:04 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8MGEOkp3CKKQ4Y/lKtdp9ntcnCekqC3jqFbG8lyNeDw=;
+        b=hHHWMWmXE1PgvV0EITXnfePCkbbUlIeEPpk+2yo7LFUSqF2OUviLRzSCMsEmyW4eXz
+         sQ5DQ0Aeu990WwjnXow9qMtS5yiE6qShUQFRQAy5CcWMi92Y2IYw4j/I+L0uv+hS6yuH
+         +VPFc1hIy2CqgonE5FoR0OH8CPOaBNE52vRFmLZuKGUFSe4NU0ft3RdL0jYQWaYRvB5M
+         oNslxJCrZ3dXlca5JT4K78SVSbpmktdP5xNao1NPaDz2Z/2pENtvkk2k5E+B0C0Barlo
+         jvNCjJQFS8ReXHmxf8x2aXbQdcF0eCtMVpBK5t9ZJ+ZM1gyb69438u9svtlOSlkymPHt
+         +hug==
+X-Gm-Message-State: AHQUAuYYLD+sLbWCPHfkTPyyVP84uwD87jl7S818fPRtlOGmSWQOFSn6
+        JTyBStSo9TOc1Scov5eq1AlYphK8
+X-Google-Smtp-Source: AHgI3IYWCBEe3dMv1ZO/mxfUdikFGWqOa6ZCkjzEjtLrVZwGyeKhLxYi3XnHbXVQ0THS79+Yiuovtg==
+X-Received: by 2002:a5d:550f:: with SMTP id b15mr2445223wrv.251.1550141547144;
+        Thu, 14 Feb 2019 02:52:27 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id z16sm1105342wrr.66.2019.02.14.02.52.25
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 02:52:26 -0800 (PST)
+Subject: Re: Applied "spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver" to the spi tree
+To:     masonccyang@mxic.com.tw, Mark Brown <broonie@kernel.org>
+Cc:     bbrezillon@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        zhengxunli@mxic.com.tw
+References: <20190212142236.2807D1128113@debutante.sirena.org.uk>
+ <4f91497a-96ee-4c10-436f-4d011edb3834@gmail.com>
+ <20190212144359.GD20635@sirena.org.uk> <20190212164940.GI20635@sirena.org.uk>
+ <OF9C8DA179.15D69C0A-ON482583A0.00283EB5-482583A0.002E45C8@mxic.com.tw>
+ <20190213121635.GD7540@sirena.org.uk>
+ <acb7940e-df38-97a7-8500-4825fb0f6604@gmail.com>
+ <OF9B3A3A20.C0BF34B8-ON482583A1.002D5F3B-482583A1.00329653@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <0f26ffa5-e517-742f-ebd3-0093eda27145@gmail.com>
+Date:   Thu, 14 Feb 2019 11:52:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190213131409.26607-1-geert+renesas@glider.be>
-In-Reply-To: <20190213131409.26607-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Feb 2019 09:03:53 +0100
-Message-ID: <CACRpkdYbW1biruWYdr3fCsUcMUHR7LHP+SuAnGfvLbTRf_z0ZA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pcf857x: Simpify wake-up handling
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <OF9B3A3A20.C0BF34B8-ON482583A1.002D5F3B-482583A1.00329653@mxic.com.tw>
+Content-Type: text/plain; charset=big5
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 2:14 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On 2/14/19 10:12 AM, masonccyang@mxic.com.tw wrote:
+> Hi,
 
-> Unlike gpio_rcar_irq_set_wake(), where this solution was based on,
-> pcf857x_irq_set_wake() does not need to do anything else than calling
-> irq_set_irq_wake() for the upstream interrupt controller.  Hence there
-> is no reason for making this call conditional, and no longer a need for
-> keeping a copy of the interrupt number that also serves as a flag.
->
-> Just propagate irq_set_irq_wake() to the upstream interrupt controller,
-> using the original interrupt number.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> I can no longer reproduce the issue fixed by commit ffb8e44bd7617ede
-> ("gpio: pcf857x: Check for irq_set_irq_wake() failures") on current
-> kernels: if .irq_set_wake() fails, system suspend is aborted, and the
-> imbalance on resume never happens.
->
-> Looking at old logs, the system used to continue suspending, leading to
-> the imbalance.  Presumably I could run git bisect to find out when that
-> was changed, but that would require downgrading my cross-compiler (Linux
-> v4.1-rc3 didn't support building using gcc-7)...
+Hi,
 
-Patch applied (used some fuzzing so check the result) and incorporated
-Niklas' review tag.
+>> "Marek Vasut" <marek.vasut@gmail.com>
+>> 2019/02/13 ¤U¤È 08:37
+>>
+>> On 2/13/19 1:16 PM, Mark Brown wrote:
+>> > On Wed, Feb 13, 2019 at 04:25:32PM +0800, masonccyang@mxic.com.tw wrote:
+>> >
+>> >> From current mainline branch, MFD seems support the device which is on
+>> >> the same hardware bus(i.e, I2C, SPI, MMIO and SPMI)for multi-function
+>> >> by Read/Write the common same registers.
+>> >
+>> > That's most MFDs but there are some that do some level of enumeration
+>> > (even if it's just looking at the device ID that got registered) to
+>> > decide what subdevices get registered, that's what people are suggesting
+>> > here I think.
+>>
+>> Right. Although I think some of the code could be shared between the SPI
+>> and HF modes.
+> 
+> If it is right that MFD is based on the same hardware bus for multi
+> function
+> device,i.e,. based on SPI/I2C/PCI bus to register device by
+> mfd_add_devices().
+> 
+> For a multi function device works on different hardware bus, it has nothing
+> to do with mfd-core.c(MFD framework) even though their driver are in
+> drivers/mfd directory, i.e,. mcp-core.x, sm501.c.
+> 
+> Since RPC-IF works on different hardware bus for SPI bus or CFI
+> HyperFlash bus,
+> is it a good idea to implement MFD framework for RPC-IF ?
+> Or we just separate RPC-IF driver by spi mode and cfi mode ?
+> 
+> any comments/opinions on RPC-IF/MFD-framework is welcome!
 
-Yours.
-Linus Walleij
+Mark mentioned it before, you can use the MFD for MMIO too.
+The goal here is to have some common code which is shared by the SPI and
+HF part of the driver, and then a separate SPI handling code and HF
+handling code. The common code should determine which part to activate
+based on the DT.
+
+-- 
+Best regards,
+Marek Vasut
