@@ -1,230 +1,102 @@
-Return-Path: <SRS0=YTPq=QU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=Vdsz=QV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67806C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 22:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099E2C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 08:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3736921872
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Feb 2019 22:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9A1A222A1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 08:04:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nQp9muhQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389713AbfBMWOk (ORCPT
+        id S2391807AbfBNIEH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:14:40 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:15395 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387646AbfBMWOk (ORCPT
+        Thu, 14 Feb 2019 03:04:07 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34766 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388779AbfBNIEH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:14:40 -0500
-X-Halon-ID: e39726f8-2fdb-11e9-a58a-005056917f90
-Authorized-sender: niklas@soderlund.pp.se
-Received: from bismarck.berto.se (unknown [89.233.230.99])
-        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id e39726f8-2fdb-11e9-a58a-005056917f90;
-        Wed, 13 Feb 2019 23:08:33 +0100 (CET)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] rcar-vin: Fix lockdep warning at stream on
-Date:   Wed, 13 Feb 2019 23:07:54 +0100
-Message-Id: <20190213220754.14664-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.20.1
+        Thu, 14 Feb 2019 03:04:07 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l5so987173lje.1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Feb 2019 00:04:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ghUxM9bjDJJxcwAKlGMh9PrZoPIiztM5kGeucDnmCN4=;
+        b=nQp9muhQbTm/Soogb6B2Mpt6O0M6I3ArexxJA8vk7TZWMRzamYgjAoaaT5+YhtzjPv
+         ehbGOc7lMcNvE9bTr/NrG3pXIqTotEXIEGbxumJTTWNIVaiW0j2qlRsDlrDy/rQu5gNe
+         CsSUD16qCvYbQummoKw4aQfitmVF4H09f6VLMs/TQX5kSk/pTz4K6i1AKx3rPIudt5kQ
+         KHHcIUgs12D4d/wrU29Dkj2pYI7PPoL0+T6MhLTtm1i/MukiWlB9RTlXFcBb0jXEQMzX
+         nYeraTszm5gbsy6fo+dHEv8kVz1kXsitOvLNPdH8FzYxixi/nUutCfDHBmQiyJEMxTcc
+         aZyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ghUxM9bjDJJxcwAKlGMh9PrZoPIiztM5kGeucDnmCN4=;
+        b=CVVduR605kD6VynivNiwAkBsyIBiH7/s1Jvwttc3QRkc7JR8O0NECFW2VXC2HvrqAa
+         QGU1u4H0Jgyb7qyGtWKuyAymAw/yE/7NOQfOOSEL9y2ykiM5is0FCcyNnJmSef2aRQES
+         q4v5+cHhqjH0+DydwEcnDqoo3yEJhkJAPREg8wA7XsHXfmCCcwfP7n+idx/cW2YpG7QX
+         fBXkuDQC9I85Kvsp0s07nkw+2dqs0c7CGamYYudUfJCa+hMPQyD2EXvyhUorszKy13Pw
+         fP+A3sfweHEDwZS11QJVLvLLEjonnctw/2M7kSCIhlShUh9b0zF4aoTyBD/ztOGYkyl0
+         0JxQ==
+X-Gm-Message-State: AHQUAubhICNrhK4fUENUOILug7Gr24qU4RV9O72EqydKAo9igXAvt3Jk
+        BTAqdFV8WgqIiIAeFRK8dlw6hY4mpdfBCjACH295wg==
+X-Google-Smtp-Source: AHgI3IaJg1WJ4l8GWVXdm/uoYBzyE8iL4mu0qpG1mXSQxAa6p27aCVWKgeTdYrjHvytcjrkBlEmtWDAQz3/EgclTXbo=
+X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr1447608ljt.159.1550131444643;
+ Thu, 14 Feb 2019 00:04:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190213131409.26607-1-geert+renesas@glider.be>
+In-Reply-To: <20190213131409.26607-1-geert+renesas@glider.be>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 14 Feb 2019 09:03:53 +0100
+Message-ID: <CACRpkdYbW1biruWYdr3fCsUcMUHR7LHP+SuAnGfvLbTRf_z0ZA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pcf857x: Simpify wake-up handling
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Changes to v4l2-fwnode in commit [1] triggered a lockdep warning in
-rcar-vin. The first attempt to solve this warning in the rcar-vin driver
-was incomplete and only pushed the warning to happen at at stream on
-time instead of at probe time.
+On Wed, Feb 13, 2019 at 2:14 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-This change reverts the incomplete fix and properly fix the warning by
-removing the need to hold the rcar-vin specific group lock when calling
-v4l2_async_notifier_parse_fwnode_endpoints_by_port(). And instead takes
-it in the callback where it's really needed.
+> Unlike gpio_rcar_irq_set_wake(), where this solution was based on,
+> pcf857x_irq_set_wake() does not need to do anything else than calling
+> irq_set_irq_wake() for the upstream interrupt controller.  Hence there
+> is no reason for making this call conditional, and no longer a need for
+> keeping a copy of the interrupt number that also serves as a flag.
+>
+> Just propagate irq_set_irq_wake() to the upstream interrupt controller,
+> using the original interrupt number.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> I can no longer reproduce the issue fixed by commit ffb8e44bd7617ede
+> ("gpio: pcf857x: Check for irq_set_irq_wake() failures") on current
+> kernels: if .irq_set_wake() fails, system suspend is aborted, and the
+> imbalance on resume never happens.
+>
+> Looking at old logs, the system used to continue suspending, leading to
+> the imbalance.  Presumably I could run git bisect to find out when that
+> was changed, but that would require downgrading my cross-compiler (Linux
+> v4.1-rc3 didn't support building using gcc-7)...
 
-1. commit eae2aed1eab9bf08 ("media: v4l2-fwnode: Switch to v4l2_async_notifier_add_subdev")
+Patch applied (used some fuzzing so check the result) and incorporated
+Niklas' review tag.
 
-Fixes: 6458afc8c49148f0 ("media: rcar-vin: remove unneeded locking in async callbacks")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/media/platform/rcar-vin/rcar-core.c | 43 +++++++++++++++------
- 1 file changed, 32 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 594d804340047511..abbb5820223965e3 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -546,7 +546,9 @@ static void rvin_parallel_notify_unbind(struct v4l2_async_notifier *notifier,
- 
- 	vin_dbg(vin, "unbind parallel subdev %s\n", subdev->name);
- 
-+	mutex_lock(&vin->lock);
- 	rvin_parallel_subdevice_detach(vin);
-+	mutex_unlock(&vin->lock);
- }
- 
- static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
-@@ -556,7 +558,9 @@ static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
- 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
- 	int ret;
- 
-+	mutex_lock(&vin->lock);
- 	ret = rvin_parallel_subdevice_attach(vin, subdev);
-+	mutex_unlock(&vin->lock);
- 	if (ret)
- 		return ret;
- 
-@@ -664,6 +668,7 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
- 	}
- 
- 	/* Create all media device links between VINs and CSI-2's. */
-+	mutex_lock(&vin->group->lock);
- 	for (route = vin->info->routes; route->mask; route++) {
- 		struct media_pad *source_pad, *sink_pad;
- 		struct media_entity *source, *sink;
-@@ -699,6 +704,7 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
- 			break;
- 		}
- 	}
-+	mutex_unlock(&vin->group->lock);
- 
- 	return ret;
- }
-@@ -714,6 +720,8 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
- 		if (vin->group->vin[i])
- 			rvin_v4l2_unregister(vin->group->vin[i]);
- 
-+	mutex_lock(&vin->group->lock);
-+
- 	for (i = 0; i < RVIN_CSI_MAX; i++) {
- 		if (vin->group->csi[i].fwnode != asd->match.fwnode)
- 			continue;
-@@ -721,6 +729,8 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
- 		vin_dbg(vin, "Unbind CSI-2 %s from slot %u\n", subdev->name, i);
- 		break;
- 	}
-+
-+	mutex_unlock(&vin->group->lock);
- }
- 
- static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
-@@ -730,6 +740,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
- 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
- 	unsigned int i;
- 
-+	mutex_lock(&vin->group->lock);
-+
- 	for (i = 0; i < RVIN_CSI_MAX; i++) {
- 		if (vin->group->csi[i].fwnode != asd->match.fwnode)
- 			continue;
-@@ -738,6 +750,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
- 		break;
- 	}
- 
-+	mutex_unlock(&vin->group->lock);
-+
- 	return 0;
- }
- 
-@@ -752,6 +766,7 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
- 				     struct v4l2_async_subdev *asd)
- {
- 	struct rvin_dev *vin = dev_get_drvdata(dev);
-+	int ret = 0;
- 
- 	if (vep->base.port != 1 || vep->base.id >= RVIN_CSI_MAX)
- 		return -EINVAL;
-@@ -762,38 +777,48 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
- 		return -ENOTCONN;
- 	}
- 
-+	mutex_lock(&vin->group->lock);
-+
- 	if (vin->group->csi[vep->base.id].fwnode) {
- 		vin_dbg(vin, "OF device %pOF already handled\n",
- 			to_of_node(asd->match.fwnode));
--		return -ENOTCONN;
-+		ret = -ENOTCONN;
-+		goto out;
- 	}
- 
- 	vin->group->csi[vep->base.id].fwnode = asd->match.fwnode;
- 
- 	vin_dbg(vin, "Add group OF device %pOF to slot %u\n",
- 		to_of_node(asd->match.fwnode), vep->base.id);
-+out:
-+	mutex_unlock(&vin->group->lock);
- 
--	return 0;
-+	return ret;
- }
- 
- static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
- {
--	unsigned int count = 0;
-+	unsigned int count = 0, vin_mask = 0;
- 	unsigned int i;
- 	int ret;
- 
- 	mutex_lock(&vin->group->lock);
- 
- 	/* If not all VIN's are registered don't register the notifier. */
--	for (i = 0; i < RCAR_VIN_NUM; i++)
--		if (vin->group->vin[i])
-+	for (i = 0; i < RCAR_VIN_NUM; i++) {
-+		if (vin->group->vin[i]) {
- 			count++;
-+			vin_mask |= BIT(i);
-+		}
-+	}
- 
- 	if (vin->group->count != count) {
- 		mutex_unlock(&vin->group->lock);
- 		return 0;
- 	}
- 
-+	mutex_unlock(&vin->group->lock);
-+
- 	v4l2_async_notifier_init(&vin->group->notifier);
- 
- 	/*
-@@ -802,21 +827,17 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
- 	 * will only be registered once with the group notifier.
- 	 */
- 	for (i = 0; i < RCAR_VIN_NUM; i++) {
--		if (!vin->group->vin[i])
-+		if (!(vin_mask & BIT(i)))
- 			continue;
- 
- 		ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
- 				vin->group->vin[i]->dev, &vin->group->notifier,
- 				sizeof(struct v4l2_async_subdev), 1,
- 				rvin_mc_parse_of_endpoint);
--		if (ret) {
--			mutex_unlock(&vin->group->lock);
-+		if (ret)
- 			return ret;
--		}
- 	}
- 
--	mutex_unlock(&vin->group->lock);
--
- 	if (list_empty(&vin->group->notifier.asd_list))
- 		return 0;
- 
--- 
-2.20.1
-
+Yours.
+Linus Walleij
