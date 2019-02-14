@@ -2,130 +2,505 @@ Return-Path: <SRS0=Vdsz=QV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B7CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 15:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01345C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 15:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8501F218EA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 15:59:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+Ux7OUx"
+	by mail.kernel.org (Postfix) with ESMTP id BBDA8218EA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 15:59:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730939AbfBNP73 (ORCPT
+        id S2388137AbfBNP7f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:59:29 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45213 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730784AbfBNP72 (ORCPT
+        Thu, 14 Feb 2019 10:59:35 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:48226 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730784AbfBNP7f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:59:28 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w17so7009977wrn.12;
-        Thu, 14 Feb 2019 07:59:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k+evPRC3xxzuTC4JiDiyyICz6rl2+2gdyC1neSTF58Q=;
-        b=B+Ux7OUxk1NRxDtxIRdaNK+D0i4R7Xggm4Gvd4XbO4vT2Z472wWqYNlXO9h2T23kQ+
-         91myejrtxrH03LdtSRx99ZFpdTdtP2Ws/27FetAROl74vhC4iziSdgw9s+pd7GT0xZ1s
-         VOfLmzV8UGlIWbpXGLVGBH0XDusTMZdEUH13KdVv4pmjhG9c8cAuw4OK6nYn5EutX1Ol
-         Rg6eIvhejpkvkFvIl046vnO2fs4EpkhAsh3EcnuAsux78CRSOPcatq5g7tjTNO+NoyYj
-         ABnIU1r7hy8H+ilp8zaCWoqy4NE7LZ8vTNy8nrk4jhEXxUW2jSfSUWN0Q45VVwRL2fhm
-         8iqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k+evPRC3xxzuTC4JiDiyyICz6rl2+2gdyC1neSTF58Q=;
-        b=YE9YfkH7r0nwmPsDuYejxTgR67wiyvH9SzdYG2G0z0Syvt9hP+PSBBykLasSpRcI1W
-         7WSVUAYZ5sG2htuKxy6I3INNUP1SQXzNxB+CmEWouW5/PFdAR8N4KjI5Bg+CEvkqJjKb
-         oOyDRI/oK3hmaUFkZjFwXVZI2abifqMyOuSk2MvoioKGXe4rnZndgWi3XejJWO2BFmwV
-         MIVicB4RsUUEO1/RtqebvFoTxAnZN7QsfUGHQw9MgiuPpP+DMjXN/W68eDYnAzlog5ml
-         jPA4DtORRQ0qWXxaOx/yDZESxEA6nr/bjwBggnmlnvdK81k/bWRn0Yt79CyhqYL4wCZo
-         Vubg==
-X-Gm-Message-State: AHQUAuYJqjw56pdgAuUz391KXo3pTu2+JdySo2OKNdEtlPD1aftbzhz1
-        50/FbRGG8pegqEOxkmR1Sm4=
-X-Google-Smtp-Source: AHgI3IbR8ati0qWovYtf9mV4JzzTSooMtDBOwfNyVMegL8Iyy67Ew2QWDf8LT3/oGM7eVt27XRf+Vw==
-X-Received: by 2002:adf:b784:: with SMTP id s4mr3352150wre.155.1550159966889;
-        Thu, 14 Feb 2019 07:59:26 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id f13sm4193255wmh.41.2019.02.14.07.59.25
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 07:59:26 -0800 (PST)
-Subject: Re: [PATCH] mmc: renesas_sdhi: Change HW adjustment register
- according to speed mode
-To:     Simon Horman <horms@verge.net.au>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>
-References: <20190208193002.16915-1-wsa+renesas@sang-engineering.com>
- <20190210133926.GD31044@bigcity.dyn.berto.se>
- <d6d064f2-fa58-d31e-83b8-1cc3ffbc7dee@gmail.com>
- <20190213092210.GG31044@bigcity.dyn.berto.se>
- <20190214124648.qkr7p5qss4kdzigh@verge.net.au>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <73936058-e7a4-462f-1550-f419b6b04364@gmail.com>
-Date:   Thu, 14 Feb 2019 16:25:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 10:59:35 -0500
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 02EAE3A8412
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Feb 2019 16:53:10 +0100 (CET)
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 41857FF808;
+        Thu, 14 Feb 2019 15:53:06 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 16:53:28 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 05/30] media: entity: Move the pipeline from entity to
+ pads
+Message-ID: <20190214155328.zwco2mes53v4qdsg@uno.localdomain>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-6-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20190214124648.qkr7p5qss4kdzigh@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xym4w6ja4nt5b2pg"
+Content-Disposition: inline
+In-Reply-To: <20181101233144.31507-6-niklas.soderlund+renesas@ragnatech.se>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2/14/19 1:46 PM, Simon Horman wrote:
-> On Wed, Feb 13, 2019 at 10:22:10AM +0100, Niklas Söderlund wrote:
->> Hi Marek,
->>
->> On 2019-02-10 17:39:34 +0100, Marek Vasut wrote:
->>> On 2/10/19 2:39 PM, Niklas Söderlund wrote:
->>>> Hi Wolfram,
->>>
->>> Hi,
->>>
->>>> Thanks for your patch.
->>>>
->>>> On 2019-02-08 20:30:02 +0100, Wolfram Sang wrote:
->>>>> From: Takeshi Saito <takeshi.saito.xv@renesas.com>
->>>>>
->>>>> SCC is used for SDR104/HS200/HS400. We need to change SCC_DT2FF
->>>>> according to the mode. If it is inappropriate, CRC error tends to occur.
->>>>>
->>>>> This adds variable "tap_hs400" for HS400 mode and configures SCC_DT2FF
->>>>> as needed.
->>>>>
->>>>> Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
->>>>> [wsa: rebased to upstream and updated commit message]
->>>>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>>
->>>> I think this looks good.
->>>>
->>>> Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
->>> Can you test this on E3 Ebisu (do you have a board) ?
->>
->> I do not have a E3 so I'm afraid I can not provide a tested by tag for 
->> that board.
-> 
-> I am happy to test. Is anything specific required?
 
-Not anymore.
+--xym4w6ja4nt5b2pg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On E3 Ebisu 4D
-Tested-by: Marek Vasut <marek.vasut@gmail.com>
+Hi Sakari,
+    thanks for the patches
 
--- 
-Best regards,
-Marek Vasut
+On Fri, Nov 02, 2018 at 12:31:19AM +0100, Niklas S=C3=B6derlund wrote:
+> From: Sakari Ailus <sakari.ailus@linux.intel.com>
+>
+> This moves the pipe and stream_count fields from struct media_entity to
+> struct media_pad. Effectively streams become pad-specific rather than
+> being stream specific, allowing several independent streams to traverse a
+> single entity.
+>
+
+There will be quite some rebase here :)
+
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/media-entity.c                  | 61 ++++++++++++-------
+>  drivers/media/platform/exynos4-is/fimc-isp.c  |  2 +-
+>  drivers/media/platform/exynos4-is/fimc-lite.c |  2 +-
+>  drivers/media/platform/omap3isp/isp.c         |  2 +-
+>  drivers/media/platform/omap3isp/ispvideo.c    |  2 +-
+>  drivers/media/platform/omap3isp/ispvideo.h    |  2 +-
+>  drivers/media/platform/rcar-vin/rcar-dma.c    |  2 +-
+>  drivers/media/platform/xilinx/xilinx-dma.c    |  2 +-
+>  drivers/media/platform/xilinx/xilinx-dma.h    |  2 +-
+>  drivers/staging/media/imx/imx-media-utils.c   |  2 +-
+>  drivers/staging/media/omap4iss/iss.c          |  2 +-
+>  drivers/staging/media/omap4iss/iss_video.c    |  2 +-
+>  drivers/staging/media/omap4iss/iss_video.h    |  2 +-
+>  include/media/media-entity.h                  | 17 ++++--
+>  14 files changed, 61 insertions(+), 41 deletions(-)
+>
+> diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+> index 70db03fa33a21db1..13260149c4dfc90c 100644
+> --- a/drivers/media/media-entity.c
+> +++ b/drivers/media/media-entity.c
+> @@ -419,7 +419,7 @@ __must_check int __media_pipeline_start(struct media_=
+entity *entity,
+>  	struct media_pad *pad =3D entity->pads;
+>  	struct media_pad *pad_err =3D pad;
+>  	struct media_link *link;
+> -	int ret;
+> +	int ret =3D 0;
+>
+>  	if (!pipe->streaming_count++) {
+>  		ret =3D media_graph_walk_init(&pipe->graph, mdev);
+> @@ -431,21 +431,27 @@ __must_check int __media_pipeline_start(struct medi=
+a_entity *entity,
+>
+>  	while ((pad =3D media_graph_walk_next(graph))) {
+>  		struct media_entity *entity =3D pad->entity;
+> +		unsigned int i;
+> +		bool skip_validation =3D pad->pipe;
+>
+>  		DECLARE_BITMAP(active, MEDIA_ENTITY_MAX_PADS);
+>  		DECLARE_BITMAP(has_no_links, MEDIA_ENTITY_MAX_PADS);
+>
+> -		entity->stream_count++;
+> +		for (i =3D 0; i < entity->num_pads; i++) {
+> +			struct media_pad *iter =3D &entity->pads[i];
+>
+> -		if (WARN_ON(entity->pipe && entity->pipe !=3D pipe)) {
+> -			ret =3D -EBUSY;
+> -			goto error;
+> +			if (iter->pipe && WARN_ON(iter->pipe !=3D pipe))
+> +				ret =3D -EBUSY;
+> +			else
+> +				iter->pipe =3D pipe;
+> +			iter->stream_count++;
+>  		}
+>
+> -		entity->pipe =3D pipe;
+> +		if (ret)
+> +			goto error;
+>
+>  		/* Already streaming --- no need to check. */
+> -		if (entity->stream_count > 1)
+> +		if (skip_validation)
+>  			continue;
+>
+>  		if (!entity->ops || !entity->ops->link_validate)
+> @@ -514,19 +520,24 @@ __must_check int __media_pipeline_start(struct medi=
+a_entity *entity,
+>
+>  	while ((pad_err =3D media_graph_walk_next(graph))) {
+>  		struct media_entity *entity_err =3D pad_err->entity;
+> +		unsigned int i;
+> +
+> +		for (i =3D 0; i < entity_err->num_pads; i++) {
+> +			struct media_pad *iter =3D &entity_err->pads[i];
+>
+> -		/* Sanity check for negative stream_count */
+> -		if (!WARN_ON_ONCE(entity_err->stream_count <=3D 0)) {
+> -			entity_err->stream_count--;
+> -			if (entity_err->stream_count =3D=3D 0)
+> -				entity_err->pipe =3D NULL;
+> +			/* Sanity check for negative stream_count */
+> +			if (!WARN_ON_ONCE(iter->stream_count <=3D 0)) {
+> +				--iter->stream_count;
+> +				if (iter->stream_count =3D=3D 0)
+> +					iter->pipe =3D NULL;
+> +			}
+>  		}
+>
+>  		/*
+>  		 * We haven't increased stream_count further than this
+>  		 * so we quit here.
+>  		 */
+> -		if (pad_err =3D=3D pad)
+> +		if (pad_err->entity =3D=3D pad->entity)
+>  			break;
+>  	}
+>
+> @@ -553,7 +564,7 @@ EXPORT_SYMBOL_GPL(media_pipeline_start);
+>
+>  void __media_pipeline_stop(struct media_entity *entity)
+>  {
+> -	struct media_pipeline *pipe =3D entity->pipe;
+> +	struct media_pipeline *pipe =3D entity->pads->pipe;
+>  	struct media_graph *graph =3D &pipe->graph;
+>  	struct media_pad *pad;
+>
+> @@ -567,13 +578,17 @@ void __media_pipeline_stop(struct media_entity *ent=
+ity)
+>  	media_graph_walk_start(graph, entity->pads);
+>
+>  	while ((pad =3D media_graph_walk_next(graph))) {
+> -		struct media_entity *entity =3D pad->entity;
+> +		unsigned int i;
+>
+> -		/* Sanity check for negative stream_count */
+> -		if (!WARN_ON_ONCE(entity->stream_count <=3D 0)) {
+> -			entity->stream_count--;
+> -			if (entity->stream_count =3D=3D 0)
+> -				entity->pipe =3D NULL;
+> +		for (i =3D 0; i < entity->num_pads; i++) {
+> +			struct media_pad *iter =3D &entity->pads[i];
+> +
+> +			/* Sanity check for negative stream_count */
+> +			if (!WARN_ON_ONCE(iter->stream_count <=3D 0)) {
+> +				iter->stream_count--;
+> +				if (iter->stream_count =3D=3D 0)
+> +					iter->pipe =3D NULL;
+> +			}
+>  		}
+>  	}
+>
+> @@ -865,7 +880,7 @@ int __media_entity_setup_link(struct media_link *link=
+, u32 flags)
+>  {
+>  	const u32 mask =3D MEDIA_LNK_FL_ENABLED;
+>  	struct media_device *mdev;
+> -	struct media_entity *source, *sink;
+> +	struct media_pad *source, *sink;
+>  	int ret =3D -EBUSY;
+>
+>  	if (link =3D=3D NULL)
+> @@ -881,8 +896,8 @@ int __media_entity_setup_link(struct media_link *link=
+, u32 flags)
+>  	if (link->flags =3D=3D flags)
+>  		return 0;
+>
+> -	source =3D link->source->entity;
+> -	sink =3D link->sink->entity;
+> +	source =3D link->source;
+> +	sink =3D link->sink;
+>
+>  	if (!(link->flags & MEDIA_LNK_FL_DYNAMIC) &&
+>  	    (source->stream_count || sink->stream_count))
+> diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media=
+/platform/exynos4-is/fimc-isp.c
+> index 9a48c0f69320ba35..79d128a57e87fd58 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-isp.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+> @@ -229,7 +229,7 @@ static int fimc_isp_subdev_set_fmt(struct v4l2_subdev=
+ *sd,
+>  			}
+>  		}
+>  	} else {
+> -		if (sd->entity.stream_count =3D=3D 0) {
+> +		if (sd->entity.pads->stream_count =3D=3D 0) {
+>  			if (fmt->pad =3D=3D FIMC_ISP_SD_PAD_SINK) {
+>  				struct v4l2_subdev_format format =3D *fmt;
+>
+> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/medi=
+a/platform/exynos4-is/fimc-lite.c
+> index 96f0a8a0dcae591f..dbadcba6739a286b 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> @@ -1096,7 +1096,7 @@ static int fimc_lite_subdev_set_fmt(struct v4l2_sub=
+dev *sd,
+>  	mutex_lock(&fimc->lock);
+>
+>  	if ((atomic_read(&fimc->out_path) =3D=3D FIMC_IO_ISP &&
+> -	    sd->entity.stream_count > 0) ||
+> +	    sd->entity.pads->stream_count > 0) ||
+
+I'm not sure this is correct. Shouldn't we check the stream count of
+the entity.pads[fmt->pad] entry instead of accessing the first one?
+
+Here and in the fimc-isp one as well..
+
+Thanks
+   j
+
+>  	    (atomic_read(&fimc->out_path) =3D=3D FIMC_IO_DMA &&
+>  	    vb2_is_busy(&fimc->vb_queue))) {
+>  		mutex_unlock(&fimc->lock);
+> diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platfo=
+rm/omap3isp/isp.c
+> index 77fb7987b42f33cd..3663dfd00cadc2f0 100644
+> --- a/drivers/media/platform/omap3isp/isp.c
+> +++ b/drivers/media/platform/omap3isp/isp.c
+> @@ -927,7 +927,7 @@ static int isp_pipeline_is_last(struct media_entity *=
+me)
+>  	struct isp_pipeline *pipe;
+>  	struct media_pad *pad;
+>
+> -	if (!me->pipe)
+> +	if (!me->pads->pipe)
+>  		return 0;
+>  	pipe =3D to_isp_pipeline(me);
+>  	if (pipe->stream_state =3D=3D ISP_PIPELINE_STREAM_STOPPED)
+> diff --git a/drivers/media/platform/omap3isp/ispvideo.c b/drivers/media/p=
+latform/omap3isp/ispvideo.c
+> index dc11b732dc05b00b..f354cd7ceb8ffce5 100644
+> --- a/drivers/media/platform/omap3isp/ispvideo.c
+> +++ b/drivers/media/platform/omap3isp/ispvideo.c
+> @@ -1102,7 +1102,7 @@ isp_video_streamon(struct file *file, void *fh, enu=
+m v4l2_buf_type type)
+>  	/* Start streaming on the pipeline. No link touching an entity in the
+>  	 * pipeline can be activated or deactivated once streaming is started.
+>  	 */
+> -	pipe =3D video->video.entity.pipe
+> +	pipe =3D video->video.entity.pads->pipe
+>  	     ? to_isp_pipeline(&video->video.entity) : &video->pipe;
+>
+>  	ret =3D media_entity_enum_init(&pipe->ent_enum, &video->isp->media_dev);
+> diff --git a/drivers/media/platform/omap3isp/ispvideo.h b/drivers/media/p=
+latform/omap3isp/ispvideo.h
+> index f6a2082b4a0a7708..8f4146c25a1b1293 100644
+> --- a/drivers/media/platform/omap3isp/ispvideo.h
+> +++ b/drivers/media/platform/omap3isp/ispvideo.h
+> @@ -103,7 +103,7 @@ struct isp_pipeline {
+>  };
+>
+>  #define to_isp_pipeline(__e) \
+> -	container_of((__e)->pipe, struct isp_pipeline, pipe)
+> +	container_of((__e)->pads->pipe, struct isp_pipeline, pipe)
+>
+>  static inline int isp_pipeline_ready(struct isp_pipeline *pipe)
+>  {
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/p=
+latform/rcar-vin/rcar-dma.c
+> index 92323310f7352147..e749096926f34d4a 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -1128,7 +1128,7 @@ static int rvin_set_stream(struct rvin_dev *vin, in=
+t on)
+>  	 */
+>  	mdev =3D vin->vdev.entity.graph_obj.mdev;
+>  	mutex_lock(&mdev->graph_mutex);
+> -	pipe =3D sd->entity.pipe ? sd->entity.pipe : &vin->vdev.pipe;
+> +	pipe =3D sd->entity.pads->pipe ? sd->entity.pads->pipe : &vin->vdev.pip=
+e;
+>  	ret =3D __media_pipeline_start(&vin->vdev.entity, pipe);
+>  	mutex_unlock(&mdev->graph_mutex);
+>  	if (ret)
+> diff --git a/drivers/media/platform/xilinx/xilinx-dma.c b/drivers/media/p=
+latform/xilinx/xilinx-dma.c
+> index a2a329336243bdc7..f27a7be5f5d0f0b5 100644
+> --- a/drivers/media/platform/xilinx/xilinx-dma.c
+> +++ b/drivers/media/platform/xilinx/xilinx-dma.c
+> @@ -406,7 +406,7 @@ static int xvip_dma_start_streaming(struct vb2_queue =
+*vq, unsigned int count)
+>  	 * Use the pipeline object embedded in the first DMA object that starts
+>  	 * streaming.
+>  	 */
+> -	pipe =3D dma->video.entity.pipe
+> +	pipe =3D dma->video.entity.pads->pipe
+>  	     ? to_xvip_pipeline(&dma->video.entity) : &dma->pipe;
+>
+>  	ret =3D media_pipeline_start(&dma->video.entity, &pipe->pipe);
+> diff --git a/drivers/media/platform/xilinx/xilinx-dma.h b/drivers/media/p=
+latform/xilinx/xilinx-dma.h
+> index e95d136c153a8f5f..c12e053ff41eed1c 100644
+> --- a/drivers/media/platform/xilinx/xilinx-dma.h
+> +++ b/drivers/media/platform/xilinx/xilinx-dma.h
+> @@ -50,7 +50,7 @@ struct xvip_pipeline {
+>
+>  static inline struct xvip_pipeline *to_xvip_pipeline(struct media_entity=
+ *e)
+>  {
+> -	return container_of(e->pipe, struct xvip_pipeline, pipe);
+> +	return container_of(e->pads->pipe, struct xvip_pipeline, pipe);
+>  }
+>
+>  /**
+> diff --git a/drivers/staging/media/imx/imx-media-utils.c b/drivers/stagin=
+g/media/imx/imx-media-utils.c
+> index 0eaa353d5cb39768..ba9d9a8337cb159e 100644
+> --- a/drivers/staging/media/imx/imx-media-utils.c
+> +++ b/drivers/staging/media/imx/imx-media-utils.c
+> @@ -917,7 +917,7 @@ int imx_media_pipeline_set_stream(struct imx_media_de=
+v *imxmd,
+>  			__media_pipeline_stop(entity);
+>  	} else {
+>  		v4l2_subdev_call(sd, video, s_stream, 0);
+> -		if (entity->pipe)
+> +		if (entity->pads->pipe)
+>  			__media_pipeline_stop(entity);
+>  	}
+>
+> diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media=
+/omap4iss/iss.c
+> index c8be1db532ab2555..030808b222cf3ae5 100644
+> --- a/drivers/staging/media/omap4iss/iss.c
+> +++ b/drivers/staging/media/omap4iss/iss.c
+> @@ -543,7 +543,7 @@ static int iss_pipeline_is_last(struct media_entity *=
+me)
+>  	struct iss_pipeline *pipe;
+>  	struct media_pad *pad;
+>
+> -	if (!me->pipe)
+> +	if (!me->pads->pipe)
+>  		return 0;
+>  	pipe =3D to_iss_pipeline(me);
+>  	if (pipe->stream_state =3D=3D ISS_PIPELINE_STREAM_STOPPED)
+> diff --git a/drivers/staging/media/omap4iss/iss_video.c b/drivers/staging=
+/media/omap4iss/iss_video.c
+> index 1271bbacf9e7bdeb..65f1e358271b3743 100644
+> --- a/drivers/staging/media/omap4iss/iss_video.c
+> +++ b/drivers/staging/media/omap4iss/iss_video.c
+> @@ -877,7 +877,7 @@ iss_video_streamon(struct file *file, void *fh, enum =
+v4l2_buf_type type)
+>  	 * Start streaming on the pipeline. No link touching an entity in the
+>  	 * pipeline can be activated or deactivated once streaming is started.
+>  	 */
+> -	pipe =3D pad->entity->pipe
+> +	pipe =3D pad->pipe
+>  	     ? to_iss_pipeline(pad->entity) : &video->pipe;
+>  	pipe->external =3D NULL;
+>  	pipe->external_rate =3D 0;
+> diff --git a/drivers/staging/media/omap4iss/iss_video.h b/drivers/staging=
+/media/omap4iss/iss_video.h
+> index f22489edb5624af2..cdea8543b3f93ecf 100644
+> --- a/drivers/staging/media/omap4iss/iss_video.h
+> +++ b/drivers/staging/media/omap4iss/iss_video.h
+> @@ -94,7 +94,7 @@ struct iss_pipeline {
+>  };
+>
+>  #define to_iss_pipeline(__e) \
+> -	container_of((__e)->pipe, struct iss_pipeline, pipe)
+> +	container_of((__e)->pads->pipe, struct iss_pipeline, pipe)
+>
+>  static inline int iss_pipeline_ready(struct iss_pipeline *pipe)
+>  {
+> diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> index cde6350d752bb0ae..ca0b79288ea7fd11 100644
+> --- a/include/media/media-entity.h
+> +++ b/include/media/media-entity.h
+> @@ -188,15 +188,25 @@ enum media_pad_signal_type {
+>   *
+>   * @graph_obj:	Embedded structure containing the media object common data
+>   * @entity:	Entity this pad belongs to
+> + * @pipe:	Pipeline this entity belongs to.
+> + * @stream_count: Stream count for the entity.
+>   * @index:	Pad index in the entity pads array, numbered from 0 to n
+>   * @sig_type:	Type of the signal inside a media pad
+>   * @flags:	Pad flags, as defined in
+>   *		:ref:`include/uapi/linux/media.h <media_header>`
+>   *		(seek for ``MEDIA_PAD_FL_*``)
+> + * .. note::
+> + *
+> + *    @stream_count reference counts must never be negative, but are
+> + *    signed integers on purpose: a simple ``WARN_ON(<0)`` check can
+> + *    be used to detect reference count bugs that would make them
+> + *    negative.
+>   */
+>  struct media_pad {
+>  	struct media_gobj graph_obj;	/* must be first field in struct */
+>  	struct media_entity *entity;
+> +	struct media_pipeline *pipe;
+> +	int stream_count;
+>  	u16 index;
+>  	enum media_pad_signal_type sig_type;
+>  	unsigned long flags;
+> @@ -274,9 +284,7 @@ enum media_entity_type {
+>   * @pads:	Pads array with the size defined by @num_pads.
+>   * @links:	List of data links.
+>   * @ops:	Entity operations.
+> - * @stream_count: Stream count for the entity.
+>   * @use_count:	Use count for the entity.
+> - * @pipe:	Pipeline this entity belongs to.
+>   * @info:	Union with devnode information.  Kept just for backward
+>   *		compatibility.
+>   * @info.dev:	Contains device major and minor info.
+> @@ -289,7 +297,7 @@ enum media_entity_type {
+>   *
+>   * .. note::
+>   *
+> - *    @stream_count and @use_count reference counts must never be
+> + *    @use_count reference counts must never be
+>   *    negative, but are signed integers on purpose: a simple ``WARN_ON(<=
+0)``
+>   *    check can be used to detect reference count bugs that would make t=
+hem
+>   *    negative.
+> @@ -311,11 +319,8 @@ struct media_entity {
+>
+>  	const struct media_entity_operations *ops;
+>
+> -	int stream_count;
+>  	int use_count;
+>
+> -	struct media_pipeline *pipe;
+> -
+>  	union {
+>  		struct {
+>  			u32 major;
+> --
+> 2.19.1
+>
+
+--xym4w6ja4nt5b2pg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlxljvgACgkQcjQGjxah
+VjyTMBAAivb973U0+bgZ/OX3ITew0f9w6zS+FZCFXRiVxwMy3DnN2Malfa/mBuit
+2bOS4sfmWKou9YFQYBRNzoUU7ajfOCi5r9NcUvftrCNiF3QQ6UU1Xn8AageYr57Y
+cyfFmAPxnMTAYnEMiSSh9/OwzTyCBDMH+vkL8EWEs0QjdCJO/TgNsgSf9PLwNz+Z
+hsE6RF7d1CyzFbK0C7YNSfWZziih5pKuHCIkVUtS6M3iuaOYr41GqhoTB5Zxac1b
+G8TrGlQdgwEnZRCEjyX6AztdXDSWVBaOQJTX9R63Iem0Kv0x1lUPb7gEfNVCHsmE
+ytiL8UADy65VKLhjt0Qx5YYtVxenDnDWKAgcNNx2lmmWhmhOq2NUPXMJ41CS8a+f
+KSFB2utbSMsjwCQTslqeG+638ZlB3u1wkOOccuCQ1V2DPGZDQPuk7rvg2DmzicTm
+Ew40oRwtPMvpUxJRhE8SJxTdTTkwUqHjoBL5nJCs3ilInAz1mUmdboBMBt7iRdKc
+C7HZ5AWYLeH+zyAr2mxY4lMhxUxPOWbKhivpI4J1XuPicf6+E0TG6CyAEd5SVQJH
+DRWXjyhtwcQ//N9tBK87xx31C+HyS4sEIzRe2PCX2EP/YC4krMnaW8e5ahVRkYVD
+oeM12S36qRy5mywzqwQMkSKhcmAkB4/smSq6Kvwnpm+jywczmsU=
+=K8IK
+-----END PGP SIGNATURE-----
+
+--xym4w6ja4nt5b2pg--
