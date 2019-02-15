@@ -2,90 +2,81 @@ Return-Path: <SRS0=NmnW=QW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41329C10F02
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 13:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91DEC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 14:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0838921B18
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 13:17:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="k+sQK83+"
+	by mail.kernel.org (Postfix) with ESMTP id 77CDA2192D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 14:45:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437038AbfBONRJ (ORCPT
+        id S1726325AbfBOOpH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:17:09 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:50433 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbfBONRJ (ORCPT
+        Fri, 15 Feb 2019 09:45:07 -0500
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:39720 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfBOOpH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:17:09 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1C0B425AD7F;
-        Sat, 16 Feb 2019 00:17:07 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1550236627; bh=85IsyTkwGg6mvYiApzTyTvV48R93/8OwUvWYQD/8/2o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k+sQK83+HjVC4CsJ5UFfhByaVcHu35CYUmqukhftxrfdZnLpXnB74KW5XiOPdAPrX
-         2caInkraxop9gpcctXgVE+atftcwR9Poz9srCYmeWwNfJsIWab/57V39JEMBGQmG2I
-         Gh30qIqseCnPXv41BUwMVCO/uykGJI0ZfZX7OYTY=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 850929402D4; Fri, 15 Feb 2019 14:17:04 +0100 (CET)
-Date:   Fri, 15 Feb 2019 14:17:04 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] clk: renesas: r8a774c0: Add Z2 clock
-Message-ID: <20190215131658.hfpwkq2lxnwdjeln@verge.net.au>
-References: <20190211135858.23635-1-horms+renesas@verge.net.au>
- <20190211135858.23635-7-horms+renesas@verge.net.au>
+        Fri, 15 Feb 2019 09:45:07 -0500
+Received: by mail-qt1-f181.google.com with SMTP id o6so11083264qtk.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Feb 2019 06:45:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4dQCXtTh70dEt+QcWeT5aM6/sFGGCiwIdXV4fLqL9O4=;
+        b=oIreIZDRN8L+OJ/Wzx0H21mFt8pvOUjbDf95Po6PwPT8MWDSnl5Cm2AmFB9KgccOP2
+         z/pyZRurFnzH9XDNHJTSfpxqSerE5gkRgKJJ+vwUuNlZ+wzCvkQWgCLH6CYZwLFF13Fa
+         ElUIicKqeQ98Nt077ogqtNWrR8DGVFUdY4mWnZVOyyQMKEasTzt7ZPNMdd0aHWz8SNaF
+         VAbbErA2C9EbzQfS2mtRnCiKbu+FfbxjeYtjGOPwXy4X8RQc2c2I/wXmsFkl/UWqGuj0
+         CjTnQ0tUNFFWjOXDutNdASDil8cZTepLKGCRIeyArZwT1P/CwjCv0WKrP9SsyD1iQhQo
+         J75g==
+X-Gm-Message-State: AHQUAua8kBBMzJok+j0Inda8hascWoJxR2tUDzhaYpuZ8+J9c11oIkFF
+        +b44WPdhZwKhK4wGgZ1c76+io+hO25NvY3vHF/Y=
+X-Google-Smtp-Source: AHgI3IZyGjXtjh6SrpM/ESzMCdISR/8UvnnwOUA/T/fLl6o6Cv09C45/e3AQoZsT1u0Mvls5DDH54Lr/gXjj1sMq3yA=
+X-Received: by 2002:ac8:445a:: with SMTP id m26mr7740711qtn.212.1550241906159;
+ Fri, 15 Feb 2019 06:45:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211135858.23635-7-horms+renesas@verge.net.au>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <cover.1549623801.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1549623801.git.horms+renesas@verge.net.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 15 Feb 2019 15:44:49 +0100
+Message-ID: <CAK8P3a2UW2yQPFfrWBGDzcJJ3a+2cP3kKwigKiafPWOADgwsZg@mail.gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v5.1
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 02:58:58PM +0100, Simon Horman wrote:
-> Adds support for R-Car RZ/G2E (r8a774c0) Z2 clock.
+On Fri, Feb 8, 2019 at 12:13 PM Simon Horman <horms+renesas@verge.net.au> wrote:
 
-R-Car should not appear on the line above.
+> Second Round of Renesas ARM64 Based SoC DT Updates for v5.1
+>
+> * R-Car Gen3 SoC based Salvator-X, Salvator-XS and ULCB boards
+>   - Enable HS400 support for eMMC
+>
+> * R-Car E3 (r7a77990) SoC
+>   - Add OPPs table for cpu devices
+>
+> * RZ/G2E (r8a774c0) SoC
+>   - Describe TMU, CMT, SDHI devices in DT
+>   - Describe pincontrol support for SCIF2 device in DT
+>   - Add OPPs table for cpu devices
+>
+> * RZ/G2E (r8a774c0) based EK874 board and CAT875 sub-board,
+>   and CAT874 board
+>   - Initial support
 
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v3: New patch
-> ---
->  drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> index 10b96895d452..24634ca94f69 100644
-> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-> @@ -79,6 +79,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
->  	/* Core Clock Outputs */
->  	DEF_FIXED("za2",       R8A774C0_CLK_ZA2,   CLK_PLL0D24,    1, 1),
->  	DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
-> +	DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
->  	DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
->  	DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
->  	DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
-> -- 
-> 2.11.0
-> 
+Pulled into arm/dt, thanks!
+
+      Arnd
