@@ -2,85 +2,90 @@ Return-Path: <SRS0=NmnW=QW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2CEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 13:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41329C10F02
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 13:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00A3021A80
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 13:02:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0838921B18
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 13:17:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="k+sQK83+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfBONCk (ORCPT
+        id S2437038AbfBONRJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:02:40 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:34058 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394842AbfBONCk (ORCPT
+        Fri, 15 Feb 2019 08:17:09 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:50433 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfBONRJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:02:40 -0500
-Received: by mail-ua1-f67.google.com with SMTP id a42so2713150uad.1;
-        Fri, 15 Feb 2019 05:02:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Mtmf4WB4XOrKLFFnPepzq0C7fIWgpkFqozKc3+zlqI=;
-        b=HwEjlEfeBev16mnLiW+iQnW0JnGY4YCc3vPFpuOt9dqUdS4oEQLUX41kiTiC12oOnY
-         BcFOsZMSFbNOO+GaIPepio99zsNBKavVkVfDazVAIiKQZLSryrGvVGhj5svmv43ulV9+
-         WUa8XUFe6HHu0j6y2clULwlZSrY/ks8NJ4UvDBgvyoBABHFnOzn1OGQjO8b82f67DydP
-         SCH6yXdzb03+NP+Ij3Ea+rMtDW6hqpQrErN4FbOePH3+FKXxV7DGE/gIjKSozOLwGNUW
-         bPXlSGEtiOwrb5jMjwwx1iW5AOgbD+pGCNP6Oa1nM9/0RLoBXuO52j/41qmF1soRCSD5
-         eh3w==
-X-Gm-Message-State: AHQUAuYWctIpoRue/a91Yy4THifGlZYNppdfpi4ibftcR2JG/ye97OTj
-        +1KALE/VLLWxczlQuiE9ZWsW3ybxvamlBsEoxd0=
-X-Google-Smtp-Source: AHgI3IZPU012ZNt702vpB+ITHpjj53hns2SZJXsBSiVm+pBzHyRyhH6+1zMVxKc1p38s5a3BUadWT1EqD9h1LCk9w8Q=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr4622582uad.78.1550235759161;
- Fri, 15 Feb 2019 05:02:39 -0800 (PST)
+        Fri, 15 Feb 2019 08:17:09 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 1C0B425AD7F;
+        Sat, 16 Feb 2019 00:17:07 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1550236627; bh=85IsyTkwGg6mvYiApzTyTvV48R93/8OwUvWYQD/8/2o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k+sQK83+HjVC4CsJ5UFfhByaVcHu35CYUmqukhftxrfdZnLpXnB74KW5XiOPdAPrX
+         2caInkraxop9gpcctXgVE+atftcwR9Poz9srCYmeWwNfJsIWab/57V39JEMBGQmG2I
+         Gh30qIqseCnPXv41BUwMVCO/uykGJI0ZfZX7OYTY=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 850929402D4; Fri, 15 Feb 2019 14:17:04 +0100 (CET)
+Date:   Fri, 15 Feb 2019 14:17:04 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 6/6] clk: renesas: r8a774c0: Add Z2 clock
+Message-ID: <20190215131658.hfpwkq2lxnwdjeln@verge.net.au>
+References: <20190211135858.23635-1-horms+renesas@verge.net.au>
+ <20190211135858.23635-7-horms+renesas@verge.net.au>
 MIME-Version: 1.0
-References: <1550233589-13891-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1550233589-13891-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 15 Feb 2019 14:02:27 +0100
-Message-ID: <CAMuHMdXXovDP-Ss2UvnXPVNGx5Tp=z9pwuWLJedfhN1GjaoS_Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a774c0: Fix cpu nodes style
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211135858.23635-7-horms+renesas@verge.net.au>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 1:26 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> We usually leave a space between "=" and the value of device
-> tree properties, but unfortunately that was overlooked for the
-> "clocks" property of cpu@0 and cpu@1.
-> This patch fixes the spacing with the "clocks" property of
-> cpu@0 and cpu@1.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Mon, Feb 11, 2019 at 02:58:58PM +0100, Simon Horman wrote:
+> Adds support for R-Car RZ/G2E (r8a774c0) Z2 clock.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+R-Car should not appear on the line above.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Tested-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3: New patch
+> ---
+>  drivers/clk/renesas/r8a774c0-cpg-mssr.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> index 10b96895d452..24634ca94f69 100644
+> --- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+> @@ -79,6 +79,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+>  	/* Core Clock Outputs */
+>  	DEF_FIXED("za2",       R8A774C0_CLK_ZA2,   CLK_PLL0D24,    1, 1),
+>  	DEF_FIXED("za8",       R8A774C0_CLK_ZA8,   CLK_PLL0D8,     1, 1),
+> +	DEF_GEN3_Z("z2",       R8A774C0_CLK_Z2,    CLK_TYPE_GEN3_Z2, CLK_PLL0, 4, 8),
+>  	DEF_FIXED("ztr",       R8A774C0_CLK_ZTR,   CLK_PLL1,       6, 1),
+>  	DEF_FIXED("zt",        R8A774C0_CLK_ZT,    CLK_PLL1,       4, 1),
+>  	DEF_FIXED("zx",        R8A774C0_CLK_ZX,    CLK_PLL1,       3, 1),
+> -- 
+> 2.11.0
+> 
