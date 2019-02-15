@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91DEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 14:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE0BC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 14:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77CDA2192D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 14:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84F462192D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 14:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbfBOOpH (ORCPT
+        id S1726365AbfBOOtl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:45:07 -0500
-Received: from mail-qt1-f181.google.com ([209.85.160.181]:39720 "EHLO
-        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBOOpH (ORCPT
+        Fri, 15 Feb 2019 09:49:41 -0500
+Received: from mail-qk1-f176.google.com ([209.85.222.176]:39924 "EHLO
+        mail-qk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbfBOOtk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:45:07 -0500
-Received: by mail-qt1-f181.google.com with SMTP id o6so11083264qtk.6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Feb 2019 06:45:06 -0800 (PST)
+        Fri, 15 Feb 2019 09:49:40 -0500
+Received: by mail-qk1-f176.google.com with SMTP id x6so5817392qki.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Feb 2019 06:49:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4dQCXtTh70dEt+QcWeT5aM6/sFGGCiwIdXV4fLqL9O4=;
-        b=oIreIZDRN8L+OJ/Wzx0H21mFt8pvOUjbDf95Po6PwPT8MWDSnl5Cm2AmFB9KgccOP2
-         z/pyZRurFnzH9XDNHJTSfpxqSerE5gkRgKJJ+vwUuNlZ+wzCvkQWgCLH6CYZwLFF13Fa
-         ElUIicKqeQ98Nt077ogqtNWrR8DGVFUdY4mWnZVOyyQMKEasTzt7ZPNMdd0aHWz8SNaF
-         VAbbErA2C9EbzQfS2mtRnCiKbu+FfbxjeYtjGOPwXy4X8RQc2c2I/wXmsFkl/UWqGuj0
-         CjTnQ0tUNFFWjOXDutNdASDil8cZTepLKGCRIeyArZwT1P/CwjCv0WKrP9SsyD1iQhQo
-         J75g==
-X-Gm-Message-State: AHQUAua8kBBMzJok+j0Inda8hascWoJxR2tUDzhaYpuZ8+J9c11oIkFF
-        +b44WPdhZwKhK4wGgZ1c76+io+hO25NvY3vHF/Y=
-X-Google-Smtp-Source: AHgI3IZyGjXtjh6SrpM/ESzMCdISR/8UvnnwOUA/T/fLl6o6Cv09C45/e3AQoZsT1u0Mvls5DDH54Lr/gXjj1sMq3yA=
-X-Received: by 2002:ac8:445a:: with SMTP id m26mr7740711qtn.212.1550241906159;
- Fri, 15 Feb 2019 06:45:06 -0800 (PST)
+        bh=ls4TuvD97ikE+e3QT4DuO6Sck09Xcnoh+BEr5oId9DA=;
+        b=dZkmQ4JwJMxNPZJvv3jxug9RV29Ni10Qi4qH5KnkVF9cCNBB5dUU5IgVyKSyjANTXO
+         OwX8DXfbmJaVhLXY8EQQ8fVqm6wZW4AB81pg262iBFh0bGHiWg2PYy8s7ZWW2oT5zCL4
+         4p1b4OBcapVyR9CR3TeBTdsQUuukj8oO85pTQ8RUcq533pnPyD8cJ3RYLMpEgvnvZXwv
+         dHtx3eEq5pQznKtEGgR8l1ip6jNIjcrKuwoAmsEX+6WHZCHA7ODuWPGHX/uVh1WvB/nn
+         8UGtQ9ol7vtaa7fS8KNiEN+dWusdfEFl7gyqGTS+gOnY881ey1gJqxDokK5lGvH6AbIC
+         f+3w==
+X-Gm-Message-State: AHQUAuYDgC8ym3bdNN5vEKIwK61RICNexDr/N+aek+yeYroh0UMWQuSN
+        VYvA3YCW9vXeRI+Z8x3//OTy2u5pnqMVdx0f904=
+X-Google-Smtp-Source: AHgI3Ia/9H2F+WloxiAKHfZv4GYot/sFYBE+8h5fbwc4EFp+jaQ1Q1AMSTwb0ldjcg/+dgpvmfai0G8vkMtm7NxyOg8=
+X-Received: by 2002:a37:d492:: with SMTP id s18mr6912080qks.343.1550242177818;
+ Fri, 15 Feb 2019 06:49:37 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1549623801.git.horms+renesas@verge.net.au>
-In-Reply-To: <cover.1549623801.git.horms+renesas@verge.net.au>
+References: <cover.1549623128.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1549623128.git.horms+renesas@verge.net.au>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 15 Feb 2019 15:44:49 +0100
-Message-ID: <CAK8P3a2UW2yQPFfrWBGDzcJJ3a+2cP3kKwigKiafPWOADgwsZg@mail.gmail.com>
-Subject: Re: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v5.1
+Date:   Fri, 15 Feb 2019 15:49:21 +0100
+Message-ID: <CAK8P3a0kYxNOU9PRWwAXJf-u49Ozu=vnL8KFw6HYOqHC-YBHgg@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC DT Updates for v5.1
 To:     Simon Horman <horms+renesas@verge.net.au>
 Cc:     arm-soc <arm@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -58,23 +58,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 12:13 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-
-> Second Round of Renesas ARM64 Based SoC DT Updates for v5.1
+On Fri, Feb 8, 2019 at 12:14 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> Renesas ARM Based SoC DT Updates for v5.1
 >
-> * R-Car Gen3 SoC based Salvator-X, Salvator-XS and ULCB boards
->   - Enable HS400 support for eMMC
+> * R-Car H2 (r8a7790) based Stout board
+>   - Convert to new LVDS DT bindings
 >
-> * R-Car E3 (r7a77990) SoC
->   - Add OPPs table for cpu devices
+> * R-Car H1 (r8a7779) and M1A (r8a7778) SoCs
+>   - Describe HSCIF0/1 devices in DT
 >
-> * RZ/G2E (r8a774c0) SoC
->   - Describe TMU, CMT, SDHI devices in DT
->   - Describe pincontrol support for SCIF2 device in DT
->   - Add OPPs table for cpu devices
+> * RZ/G1M (r8a7743) SoC
+>   - Correct sort order of the RWDT node
+>   - Remove aliases: should be defined in board rather than SoC DT if needed
+>   - Remove generic compatible string from iic3: it is not compatible
 >
-> * RZ/G2E (r8a774c0) based EK874 board and CAT875 sub-board,
->   and CAT874 board
+> * RZ/G1N (r8a7744) SoC
+>   - Describe LVDS and DU devices in DT
+>   - Correct sort order of VSP and MSIOF noces
+>
+> * RZ/G1C (r8a7747) based iWave SBC
+>   - Enable RTC
+>
+> * RZ/A2M (r7s9210) SoC and EVB
 >   - Initial support
 
 Pulled into arm/dt, thanks!
