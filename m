@@ -1,103 +1,110 @@
-Return-Path: <SRS0=Vdsz=QV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=NmnW=QW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E62C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 19:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8552BC10F04
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C6C021B68
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Feb 2019 19:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 553522073D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550197721;
+	bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=XrThkqeHmjOB+n/cTfiArdCTh1Trnt28r03UUflEaQRPdOl59VEG39TZHSpLQLCh0
+	 bVBSS3791LbV3+tkUnzPNxwM4PQTyJda4/GyRVNZQrzhAz9C9POIGxcTQFWnS9txV/
+	 +tthRgqIFIzltiAhbvGg+03cfS9n1HgT1KyP5TSk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391900AbfBNTUV (ORCPT
+        id S1728277AbfBOC2c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Feb 2019 14:20:21 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:39902 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390213AbfBNTUV (ORCPT
+        Thu, 14 Feb 2019 21:28:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404694AbfBOCNX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Feb 2019 14:20:21 -0500
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id cjLJ1z00t3XaVaC01jLJwE; Thu, 14 Feb 2019 20:20:19 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1guMYU-0002mH-Sa; Thu, 14 Feb 2019 20:20:18 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1guMYU-0006ec-Q8; Thu, 14 Feb 2019 20:20:18 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] sh: sh7786: Add explicit I/O cast to sh7786_mm_sel()
-Date:   Thu, 14 Feb 2019 20:20:16 +0100
-Message-Id: <20190214192016.25532-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Thu, 14 Feb 2019 21:13:23 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCF61222D4;
+        Fri, 15 Feb 2019 02:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550196802;
+        bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UkyfpNYAVnzPboSS2hQGKQ0bTZnDrw5bLT5JvNLB02CbX4T54j5l7g3S2qL8o89zg
+         MNRCgeX5oOrbwPWMybGaBvVKKWjFtmQLImHyNYehpwUsfGpLbPxs2QfPKqcXmZDIJx
+         gTfL35bqoO2IhosZJY7OzFtWRM5214slIyRPpNVY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 05/40] clk: vc5: Abort clock configuration without upstream clock
+Date:   Thu, 14 Feb 2019 21:12:38 -0500
+Message-Id: <20190215021313.178476-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
+References: <20190215021313.178476-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When compile-testing on arm:
+From: Marek Vasut <marek.vasut@gmail.com>
 
-    arch/sh/include/cpu-sh4/cpu/sh7786.h: In function ‘sh7786_mm_sel’:
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:21: warning: passing argument 1 of ‘__raw_readl’ makes pointer from integer without a cast [-Wint-conversion]
-      return __raw_readl(0xFC400020) & 0x7;
-			 ^~~~~~~~~~
-    In file included from include/linux/io.h:25:0,
-		     from arch/sh/include/cpu-sh4/cpu/sh7786.h:14,
-		     from drivers/pinctrl/sh-pfc/pfc-sh7786.c:15:
-    arch/arm/include/asm/io.h:113:21: note: expected ‘const volatile void *’ but argument is of type ‘unsigned int’
-     #define __raw_readl __raw_readl
-			 ^
-    arch/arm/include/asm/io.h:114:19: note: in expansion of macro ‘__raw_readl’
-     static inline u32 __raw_readl(const volatile void __iomem *addr)
-		       ^~~~~~~~~~~
+[ Upstream commit 2137a109a5e39c2bdccfffe65230ed3fadbaac0e ]
 
-__raw_readl() on SuperH is a macro that casts the passed I/O address to
-the correct type, while its implementations on most other architectures
-expect to be passed the correct pointer type.
+In case the upstream clock are not set, which can happen in case the
+VC5 has no valid upstream clock, the $src variable is used uninited
+by regmap_update_bits(). Check for this condition and return -EINVAL
+in such case.
 
-Add an explicit cast to fix this.
+Note that in case the VC5 has no valid upstream clock, the VC5 can
+not operate correctly. That is a hardware property of the VC5. The
+internal oscilator present in some VC5 models is also considered
+upstream clock.
 
-Note that this also gets rid of a sparse warning on SuperH:
-
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:16: warning: incorrect type in argument 1 (different base types)
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:16:    expected void const volatile [noderef] <asn:2>*<noident>
-    arch/sh/include/cpu-sh4/cpu/sh7786.h:135:16:    got unsigned int
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org
+[sboyd@kernel.org: Added comment about probe preventing this from
+happening in the first place]
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-As this is a dependency for sh-pfc compile-testing, I intend to queue
-this up in sh-pfc-for-v5.2, unless it appears in v5.1 first.
----
- arch/sh/include/cpu-sh4/cpu/sh7786.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-versaclock5.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7786.h b/arch/sh/include/cpu-sh4/cpu/sh7786.h
-index 8f9bfbf3cdb1097f..d6cce65b48713f60 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7786.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7786.h
-@@ -132,7 +132,7 @@ enum {
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index decffb3826ec..a738af893532 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -262,8 +262,10 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
  
- static inline u32 sh7786_mm_sel(void)
- {
--	return __raw_readl(0xFC400020) & 0x7;
-+	return __raw_readl((const volatile void __iomem *)0xFC400020) & 0x7;
- }
+ 		if (vc5->clk_mux_ins == VC5_MUX_IN_XIN)
+ 			src = VC5_PRIM_SRC_SHDN_EN_XTAL;
+-		if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
++		else if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
+ 			src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
++		else /* Invalid; should have been caught by vc5_probe() */
++			return -EINVAL;
+ 	}
  
- #endif /* __CPU_SH7786_H__ */
+ 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
 -- 
-2.17.1
+2.19.1
 
