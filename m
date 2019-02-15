@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8552BC10F04
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CEDC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 553522073D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA462229F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197721;
+	s=default; t=1550198089;
 	bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XrThkqeHmjOB+n/cTfiArdCTh1Trnt28r03UUflEaQRPdOl59VEG39TZHSpLQLCh0
-	 bVBSS3791LbV3+tkUnzPNxwM4PQTyJda4/GyRVNZQrzhAz9C9POIGxcTQFWnS9txV/
-	 +tthRgqIFIzltiAhbvGg+03cfS9n1HgT1KyP5TSk=
+	b=2BHYq+35U0Dup3jMeiHxH3yK9hk3zn7kR0tlo4NzGVMxLKvFzOIANvErsmmCaJJgS
+	 eFCYHxeDWpLClIEvIuzaOAjyF8IqtKmshV7qYJs5Ub7hmpPorB/lzDb9+YBT13L9AY
+	 gWjg+gT6Eem9flu7Z3NPl8bDYF1m0b7sNL08EeTU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbfBOC2c (ORCPT
+        id S1727684AbfBOCer (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:28:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53308 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:34:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404694AbfBOCNX (ORCPT
+        id S2403772AbfBOCLd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:23 -0500
+        Thu, 14 Feb 2019 21:11:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCF61222D4;
-        Fri, 15 Feb 2019 02:13:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D6DA21934;
+        Fri, 15 Feb 2019 02:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196802;
+        s=default; t=1550196693;
         bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UkyfpNYAVnzPboSS2hQGKQ0bTZnDrw5bLT5JvNLB02CbX4T54j5l7g3S2qL8o89zg
-         MNRCgeX5oOrbwPWMybGaBvVKKWjFtmQLImHyNYehpwUsfGpLbPxs2QfPKqcXmZDIJx
-         gTfL35bqoO2IhosZJY7OzFtWRM5214slIyRPpNVY=
+        b=m9fwyiXAZ+XtuVKnGrlCQFYGd5oyewxRwnizuWtHX2vuBN/lQMy5iT8+pE6Kv8MXj
+         rAaF/V/EaM4TOZfuN+KQNNLOqDvMY1L9A1LbVT9+4z14rQw/aoBxK+LsSSMkXmwlcL
+         nbxihKMAPx+BBywcdBkkpmBAvucbhQ22GxYvQ1as=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Vasut <marek.vasut@gmail.com>,
@@ -48,12 +48,12 @@ Cc:     Marek Vasut <marek.vasut@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 05/40] clk: vc5: Abort clock configuration without upstream clock
-Date:   Thu, 14 Feb 2019 21:12:38 -0500
-Message-Id: <20190215021313.178476-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 07/65] clk: vc5: Abort clock configuration without upstream clock
+Date:   Thu, 14 Feb 2019 21:10:23 -0500
+Message-Id: <20190215021121.177674-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
-References: <20190215021313.178476-1-sashal@kernel.org>
+In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
+References: <20190215021121.177674-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
