@@ -2,110 +2,105 @@ Return-Path: <SRS0=NmnW=QW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FB5C10F04
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5809C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 06:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D644521A80
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8499D21924
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 06:34:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198575;
-	bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m+sCNASAUFMmhX32mhmN/tSxpUfTbPH4WS7Km5/JJihVwqJePbccdkmkZuK8S/MBV
-	 MBUrySEl0o5WyZC363DccDlAbnEC5zQ2pfdZJYL2JPZ42rmnVW3LvYEtHDAzGK8yTH
-	 dkbPCqli72BhM5lIp/v3FLTz5JxOdddVb0TpFFoo=
+	s=default; t=1550212490;
+	bh=Koq/By03Fqo70AQJabU0pv/6l1f3avPpuI7nt1i27+8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=xJSTucj7PR+J+ZEuLN0HBIFwwNkdtY99w27VKW0QB8ObMGdHFooEmVv6atUJj9Map
+	 7j2P4vgu8QV3ATkOIUd9aJsi9oMj2HrvOE0EfXq/5IHfDswZduioSOwLfMz7QM69KS
+	 FdYqnm/njfLvFJAmEZjqdYeY6XeEz9jFVNjOQBN8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731563AbfBOCJL (ORCPT
+        id S1731028AbfBOGeu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:09:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49366 "EHLO mail.kernel.org"
+        Fri, 15 Feb 2019 01:34:50 -0500
+Received: from mga06.intel.com ([134.134.136.31]:14746 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731535AbfBOCJK (ORCPT
+        id S1725924AbfBOGet (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:10 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 788D9222D0;
-        Fri, 15 Feb 2019 02:09:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196549;
-        bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a23cWfYGRUczzqhidRrixsauxnZK303QKDha7tgaU+wGz4ZCfrsgnQ7Y+Nh+I+xK9
-         nOV8M+YH4aVp8MNkPZXG+D34UIYYIcHMbSfDUs8otoB9wHnA5skEcUNkkYfEMWGQPm
-         54CxFLcfi9LOcfs3aVhRRehiXoEvSzZoWPaSSZjk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 09/77] clk: vc5: Abort clock configuration without upstream clock
-Date:   Thu, 14 Feb 2019 21:07:47 -0500
-Message-Id: <20190215020855.176727-9-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
-References: <20190215020855.176727-1-sashal@kernel.org>
+        Fri, 15 Feb 2019 01:34:49 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 22:34:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,371,1544515200"; 
+   d="asc'?scan'208";a="118117026"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by orsmga008.jf.intel.com with ESMTP; 14 Feb 2019 22:34:45 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc\@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: RE: [PATCH] usb: gadget: udc: renesas_usb3: add support for r8a774c0
+In-Reply-To: <TY1PR01MB1770317703AABF9DBAFD2FC5C0670@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1544732635-7367-1-git-send-email-fabrizio.castro@bp.renesas.com> <TY1PR01MB1770317703AABF9DBAFD2FC5C0670@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Date:   Fri, 15 Feb 2019 08:34:41 +0200
+Message-ID: <8736op4l1a.fsf@linux.intel.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut@gmail.com>
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit 2137a109a5e39c2bdccfffe65230ed3fadbaac0e ]
 
-In case the upstream clock are not set, which can happen in case the
-VC5 has no valid upstream clock, the $src variable is used uninited
-by regmap_update_bits(). Check for this condition and return -EINVAL
-in such case.
+Hi,
 
-Note that in case the VC5 has no valid upstream clock, the VC5 can
-not operate correctly. That is a hardware property of the VC5. The
-internal oscilator present in some VC5 models is also considered
-upstream clock.
+(no top-posting, please)
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
-[sboyd@kernel.org: Added comment about probe preventing this from
-happening in the first place]
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/clk-versaclock5.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Fabrizio Castro <fabrizio.castro@bp.renesas.com> writes:
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index decffb3826ec..a738af893532 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -262,8 +262,10 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
- 
- 		if (vc5->clk_mux_ins == VC5_MUX_IN_XIN)
- 			src = VC5_PRIM_SRC_SHDN_EN_XTAL;
--		if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
-+		else if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
- 			src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
-+		else /* Invalid; should have been caught by vc5_probe() */
-+			return -EINVAL;
- 	}
- 
- 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
--- 
-2.19.1
+> Hello Felipe,
+>
+> Who is the best person for taking patches for renesas_usb3.c?
 
+they're already in my 'next' branch. I'll send pull request to Greg shortly
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlxmXYEACgkQzL64meEa
+mQZGcxAAvQlccQ1au/kz+gm2fxQO3IaSTvcAf/P63MhN9LzxgDI2RC82lV/Jxmry
+LQ8mGyj37lWV1bqWxOXaT/bANhbroDjBAWQq7x1MxMeK1+H+fnmoWPCdOqdI1fzX
+OIUk4hRiLCNFOJOvcUoxtHUsMWOnRtW8Xs9r+lcXgw7bGsfSg8x6kxDkqF/cq3q5
+TACuLB42l4zbr6Ztc/px0d0N8ie3EAW+4fyX5ZDf0hwrz187U6dhXODOEQrljJNg
+8Y7iwfZ5R7Ntl69Dghuj0zuBLuvKQK6ek1YBcTzczGsb26dDAGxo5/AuZY1UFd5V
+/A/rn34zI4KkTc7glhWUyJ/FKwKSC6ztTxUkZOBUZJnKDEXtMSwdDx++hGdAUoEw
+KAHKUxYosEkAPBznFriLhkshh36FywZ+zmtDWyvTZf/J5jIcMXWVbJ1lMPcc6Acq
+gvCuUc/Oa6vu4WR6rcwQtLzMQgV5k3IXIPZZiS7+L1FUKEKZcWcBRUFjBskpTwxz
+UxHTbz+fqg9eGVRLFX8mmnf4Rqx/iCuZlDB391w7reipxLh0rky7AB1PEi2AnsMR
+7CT2CIR0O07tXgR8bx/EIl4sDhYF9WC3yIuGXksxsmOaUyYAPTJLZvKQq+9xEwEZ
+a7xkMsSBZMEuTxmcTBGqUVibULqTfP28iSQiQqM4M/MYMCBv5v0=
+=ursq
+-----END PGP SIGNATURE-----
+--=-=-=--
