@@ -4,41 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CEDC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FB5C10F04
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA462229F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D644521A80
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Feb 2019 02:42:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198089;
+	s=default; t=1550198575;
 	bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2BHYq+35U0Dup3jMeiHxH3yK9hk3zn7kR0tlo4NzGVMxLKvFzOIANvErsmmCaJJgS
-	 eFCYHxeDWpLClIEvIuzaOAjyF8IqtKmshV7qYJs5Ub7hmpPorB/lzDb9+YBT13L9AY
-	 gWjg+gT6Eem9flu7Z3NPl8bDYF1m0b7sNL08EeTU=
+	b=m+sCNASAUFMmhX32mhmN/tSxpUfTbPH4WS7Km5/JJihVwqJePbccdkmkZuK8S/MBV
+	 MBUrySEl0o5WyZC363DccDlAbnEC5zQ2pfdZJYL2JPZ42rmnVW3LvYEtHDAzGK8yTH
+	 dkbPCqli72BhM5lIp/v3FLTz5JxOdddVb0TpFFoo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbfBOCer (ORCPT
+        id S1731563AbfBOCJL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:34:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51586 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:09:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403772AbfBOCLd (ORCPT
+        id S1731535AbfBOCJK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:33 -0500
+        Thu, 14 Feb 2019 21:09:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D6DA21934;
-        Fri, 15 Feb 2019 02:11:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 788D9222D0;
+        Fri, 15 Feb 2019 02:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196693;
+        s=default; t=1550196549;
         bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m9fwyiXAZ+XtuVKnGrlCQFYGd5oyewxRwnizuWtHX2vuBN/lQMy5iT8+pE6Kv8MXj
-         rAaF/V/EaM4TOZfuN+KQNNLOqDvMY1L9A1LbVT9+4z14rQw/aoBxK+LsSSMkXmwlcL
-         nbxihKMAPx+BBywcdBkkpmBAvucbhQ22GxYvQ1as=
+        b=a23cWfYGRUczzqhidRrixsauxnZK303QKDha7tgaU+wGz4ZCfrsgnQ7Y+Nh+I+xK9
+         nOV8M+YH4aVp8MNkPZXG+D34UIYYIcHMbSfDUs8otoB9wHnA5skEcUNkkYfEMWGQPm
+         54CxFLcfi9LOcfs3aVhRRehiXoEvSzZoWPaSSZjk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Vasut <marek.vasut@gmail.com>,
@@ -48,12 +49,12 @@ Cc:     Marek Vasut <marek.vasut@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 07/65] clk: vc5: Abort clock configuration without upstream clock
-Date:   Thu, 14 Feb 2019 21:10:23 -0500
-Message-Id: <20190215021121.177674-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 09/77] clk: vc5: Abort clock configuration without upstream clock
+Date:   Thu, 14 Feb 2019 21:07:47 -0500
+Message-Id: <20190215020855.176727-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
-References: <20190215021121.177674-1-sashal@kernel.org>
+In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
+References: <20190215020855.176727-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
