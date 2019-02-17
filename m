@@ -4,42 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FC3C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901C0C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 179652184A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 545E62184A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:51:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BR7oreQm"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fqD9i537"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbfBQUsQ (ORCPT
+        id S1726124AbfBQUv7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 15:48:16 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59754 "EHLO
+        Sun, 17 Feb 2019 15:51:59 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59864 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBQUsQ (ORCPT
+        with ESMTP id S1725916AbfBQUv6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 15:48:16 -0500
+        Sun, 17 Feb 2019 15:51:58 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5BF2B49;
-        Sun, 17 Feb 2019 21:48:13 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F180D49;
+        Sun, 17 Feb 2019 21:51:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550436493;
-        bh=9Zws9U4rhClKj7XKDEOTtk52QK46X4yifxgjnBXJPL8=;
+        s=mail; t=1550436716;
+        bh=ccKZDxz+AaGBK9wb1FIJmD39tFbzcAJ6n/pP2JC29CM=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BR7oreQmbYNLomSWr5j8iFp+YKrSAixa5qM1o+pQn2//tDLnvf0G/o13cLWaAPciz
-         VNtv71nx+nhv1gKZgRCwCGU6n7pI8z7GtWTrKzzJGN43GEZ2hcqevoJsvvlxoXIpWn
-         P5sKcfGWrsZ9Yaaj224z9Ck/kmqr4ilE1xuyIvVM=
+        b=fqD9i537x0E0ltpbaAy0zgQve8GvHOobzWI3ae3avxHtg7XDx0Pbc/actdkdpBN90
+         1wEANwonAHZ4CUIcE/8EGjn8WXmLVD+I6s/SiGItWkVbeG/boNDQU7ZTW6qzi1avf/
+         un0eLpjLaDVjFcSH8k389GYj7dOvoTSXexjt2/9Q=
 Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [VSP-Tests PATCH 4/7] vsp-lib: trivial: Fix spelling of Reference
+Subject: Re: [VSP-Tests PATCH 5/7] vsp-lib: Allow forcing pixel perfect
+ comparisons
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
 References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
- <20181204155146.9726-5-kieran.bingham@ideasonboard.com>
- <20190217024235.GB20463@pendragon.ideasonboard.com>
+ <20181204155146.9726-6-kieran.bingham@ideasonboard.com>
+ <20190217115907.GA3514@pendragon.ideasonboard.com>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
@@ -86,12 +88,12 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <3edbdd51-7223-cf26-cddd-75cd8372df11@ideasonboard.com>
-Date:   Sun, 17 Feb 2019 20:48:10 +0000
+Message-ID: <c69a16fc-98d5-8fe9-0c1d-7b06995b4ced@ideasonboard.com>
+Date:   Sun, 17 Feb 2019 20:51:52 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190217024235.GB20463@pendragon.ideasonboard.com>
+In-Reply-To: <20190217115907.GA3514@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -102,41 +104,70 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Laurent,
 
-On 17/02/2019 02:42, Laurent Pinchart wrote:
+On 17/02/2019 11:59, Laurent Pinchart wrote:
 > Hi Kieran,
 > 
 > Thank you for the patch.
 > 
-> On Tue, Dec 04, 2018 at 03:51:43PM +0000, Kieran Bingham wrote:
+> On Tue, Dec 04, 2018 at 03:51:44PM +0000, Kieran Bingham wrote:
+>> Provide a means for the tester to request pixel perfect matches on tests.
+>> This can be either through setting the environment variable VSP_PIXEL_PERFECT, or
+>> by passing either '-p' or '--pixel-perfect' on the test command line.
+> 
+> What's the use case for this ?
+
+Some of the tests (i.e. scaling) provide 'fuzzy comparisons' to allow "a
+close match" to pass.
+
+It can be desirable to 'turn that off' so that you can generate a set of
+frames (using the '-k' option) to diff the expected against the actual
+frames.
+
+This helps while improving the system without making changes to the
+specific tests.
+
+It could be called 'disable fuzzy matching' if you like?
+
+
+> 
 >> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-
-Thanks, This has no dependency on the rest of the series. Feel free to
-apply early if you wish.
-
---
-Kieran
-
-
 >> ---
->>  scripts/vsp-lib.sh | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>  scripts/vsp-lib.sh | 11 ++++++++++-
+>>  1 file changed, 10 insertions(+), 1 deletion(-)
 >>
 >> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
->> index 56969606382f..cf15a045ea8c 100755
+>> index cf15a045ea8c..9140254c7459 100755
 >> --- a/scripts/vsp-lib.sh
 >> +++ b/scripts/vsp-lib.sh
->> @@ -95,7 +95,7 @@ vsp1_set_control() {
->>  }
+>> @@ -287,7 +287,11 @@ compare_frames() {
+>>  	params=${params//)/_}
+>>  	params=$pipe-$in_fmt-$out_fmt-$size$params
 >>  
->>  # -----------------------------------------------------------------------------
->> -# Referance frame generation
->> +# Reference frame generation
->>  #
+>> -	if [ x$__vsp_pixel_perfect != xtrue ] ; then
+>> +	# The system can hint when pixel-perfection is not supported,
+>> +	# however the user can override to force this requirement with
+>> +	# VSP_PIXEL_PERFECT=1 in the environment or by passing -p, or
+>> +	# --pixel-perfect on the commandline.
+>> +	if [ x$__vsp_pixel_perfect != xtrue -a x$VSP_PIXEL_PERFECT != x1 ] ; then
+>>  		method=fuzzy
+>>  	fi
 >>  
->>  reference_frame() {
+>> @@ -1113,10 +1117,15 @@ case $1 in
+>>  		export VSP_KEEP_FRAMES=1
+>>  		shift
+>>  		;;
+>> +	-p|--pixel-perfect)
+>> +		export VSP_PIXEL_PERFECT=1
+>> +		shift
+>> +		;;
+>>  	-h|--help)
+>>  		echo "$(basename $0): VSP Test library"
+>>  		echo "  -x|--debug          enable shell debug"
+>>  		echo "  -k|--keep-frames    keep generated and captured frames"
+>> +		echo "  -p|--pixel-perfect  frames must match with pixel perfection"
+>>  		echo "  -h|--help           this help"
+>>  		exit
+>>  		shift
 > 
 
 -- 
