@@ -2,79 +2,83 @@ Return-Path: <SRS0=hAs+=QY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E51CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 21:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D35C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 21:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7043C217F9
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 21:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A54EC217F9
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 21:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOSLW/Hy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+GuiU64"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbfBQV6G (ORCPT
+        id S1726344AbfBQV7y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 16:58:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38324 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfBQV6F (ORCPT
+        Sun, 17 Feb 2019 16:59:54 -0500
+Received: from mail-wm1-f53.google.com ([209.85.128.53]:55834 "EHLO
+        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfBQV7y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 16:58:05 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so16220179wrw.5;
-        Sun, 17 Feb 2019 13:58:04 -0800 (PST)
+        Sun, 17 Feb 2019 16:59:54 -0500
+Received: by mail-wm1-f53.google.com with SMTP id q187so3112338wme.5;
+        Sun, 17 Feb 2019 13:59:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YX8ky3miDkgEkW7DHbIN9+OCTvgteRysSsmh4dTzPh8=;
-        b=kOSLW/HynslQEvfkOk4Wd5ao+WEHiRkWMJ2/ag6QzlLiQ7+745WpJiBVh/nh+C//q0
-         U9BoomeQIcyFD89kxsin2ZlImqzAoMgVvNRQWKIwGvQcPQ3I3FMPAjF243+Vyw2K8cLA
-         Hos0dMtR4oLAbfzulxD6mw7hiGCqT5FCNBFdM7w8Ld4BPQqsXdryDZtk+0TXH7LJfW5Q
-         WW5RKF8f1R3XdnieHNrNzlrvwuvt0doW5Qo75c36qRlVfLqhLTGbdyxApZUocO2Edudx
-         uwXN0SREaPaKLDTVxPsDdzDieAtXa4svKR/eLTeUd99rYrNnJtmk9IYSlKu9l4JODN2x
-         98XA==
+        bh=oy60bUOz/w5bWEOGstugOoK5hjCS73U1OET9NxlxUuU=;
+        b=l+GuiU648teUlo0S0+9enxPJVmjIg06s5J82O6v0X5R22O6KZoHFsFJt4tW1fPYeTj
+         aHTDqhGktC6Nvp7ox1+nBjrXOacCu1k8J4g7HiUDytMBymM1JGrg0cXKEUb4iC5Nv0dg
+         9zt0Wdw2l51/O94/ctT+Bte8RFiD0T8Gce+sBFybOzdnKV6RgbyLfCFK9TLa1Yds8KDd
+         6txYAnCRbPoD9/QWxs+Fsw7X0Sp69Cqv90LCvLtvSXH9ydUHGJ0AMMq6Fv/nsgo4Yp9s
+         1WAfQ/z3Dq6QyMpazHWU2AhjcgsmX6fQXVebCNxnrYMYBEMMn71meqRVwNqAo1b9tHSq
+         foEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=YX8ky3miDkgEkW7DHbIN9+OCTvgteRysSsmh4dTzPh8=;
-        b=fPHFBM1dY7/b4AVL3RF0TVW/ERbDZNjxTvVgK99AQizEI/cAYrRb0ULuLy4mJu39iz
-         A/dUXItYRdUxB7hwgpwMUgoX5dgaT4M4lw1q3KroSfWzQneriWDVq27Fl89pnqhGnV7a
-         M4oKRupeFuTAx2csYJluJDQwwrxD8fCMRHdSqNJnt313HFgJxXjs3Gqb07MWs23tSaxs
-         i/ST0R6aRyGVjGQ37SGs7eTDwhwVeCCwHN3V/2NI6cDp65PNRSC6XsDH3mRNxeD65Y1z
-         f9HNTJ+ZeteuDrOTBjDIKfqtVkwLs336/x50PCIqFffRRQAfTzYTKvBNOqViIXHvj6We
-         bcSQ==
-X-Gm-Message-State: AHQUAubLV9Vxao//VREQu90tKOAKjpwnAbXUNkE4x1Mql9HRel8ZUnWa
-        1fwmPHrWW4QdVf6VtbbmUF9h7/ns
-X-Google-Smtp-Source: AHgI3IbYWIKBcoyzoix21hey1CrvlgvkhNGJUlQC5y/qbbhi5KUje7OkIOcNuVvLdBwNRRIrz1x+yA==
-X-Received: by 2002:adf:ec8f:: with SMTP id z15mr13943877wrn.290.1550440683248;
-        Sun, 17 Feb 2019 13:58:03 -0800 (PST)
+        bh=oy60bUOz/w5bWEOGstugOoK5hjCS73U1OET9NxlxUuU=;
+        b=gM2RSjfC0DB8kAv70LsDzj5RJm37cquQdA+RcRoGuuo9EGzT5Yvb76lr2OoQZIvffn
+         F5+dYRQQmm1IVrimt+ebowL44yPlXG52jP5xJjTtmGJWQib6WAgDy2VA71p/IfNfHxz9
+         uy2spui8TlCPzSlSxIryYFiYrTO/mrFO1QPbFdpAWG42GlJqsdOaXC8N7uLmIezcPxMi
+         k8ztqxngIhiWoFviVezMEDguAMxGxHTOdCADANtYnD/M202K4vdIPcutCZP1zBm4AM+C
+         smHqJ1B30TG7gJVIDgbvPUc+bIrMoFEQLoa+RNidJl0qIGzFPs2Fn5lDCFnHugnQlGKd
+         +arA==
+X-Gm-Message-State: AHQUAuav9JLofj6uqfPySCCPCMb4aKxSwq4RMt1CFTCkdFZXqnqgiuAr
+        LtgWJXuIOC0VBekhChUi9lRWyLbC
+X-Google-Smtp-Source: AHgI3IYaGoy7WMtWtWGpbOv0j3ou+T1kky/BlyrKrQvs0DZDJ0raBiq96DNOLDaEt/D0W6gS54teSQ==
+X-Received: by 2002:a1c:96ce:: with SMTP id y197mr14113546wmd.36.1550440790072;
+        Sun, 17 Feb 2019 13:59:50 -0800 (PST)
 Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id z15sm17172572wrh.18.2019.02.17.13.58.01
+        by smtp.gmail.com with ESMTPSA id s3sm4952496wrt.81.2019.02.17.13.59.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 13:58:02 -0800 (PST)
-Subject: Re: [PATCH] gpio: of: Apply regulator-gpio quirk only to enable-gpios
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sun, 17 Feb 2019 13:59:49 -0800 (PST)
+Subject: Re: [PATCH] regulator: gpio: Reword the binding document
+To:     Harald Geyer <harald@ccbib.org>
+Cc:     devicetree@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20190216134627.1601-1-marek.vasut@gmail.com>
- <CACRpkdaFL=M1Q5r=8TpjeE3wfHMEnRRXTaTVLVwgK6vjcjK56w@mail.gmail.com>
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+References: <20190216174859.15738-1-marek.vasut@gmail.com>
+ <E1gv6SG-0000Jv-KB@stardust.g4.wien.funkfeuer.at>
+ <83550921-b0ec-fa34-b120-2dd159f256d8@gmail.com>
+ <E1gvNOx-0000Kc-Dc@stardust.g4.wien.funkfeuer.at>
+ <75846117-242c-6861-ace5-dccf88711208@gmail.com>
+ <E1gvSbw-0000K8-Hj@stardust.g4.wien.funkfeuer.at>
 From:   Marek Vasut <marek.vasut@gmail.com>
 Openpgp: preference=signencrypt
-Message-ID: <0119ea9b-ba4b-1c62-4b0b-7bda97e24a57@gmail.com>
-Date:   Sun, 17 Feb 2019 22:58:01 +0100
+Message-ID: <7a993282-9137-caf4-ca0b-b2c01ea9959c@gmail.com>
+Date:   Sun, 17 Feb 2019 22:57:26 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdaFL=M1Q5r=8TpjeE3wfHMEnRRXTaTVLVwgK6vjcjK56w@mail.gmail.com>
+In-Reply-To: <E1gvSbw-0000K8-Hj@stardust.g4.wien.funkfeuer.at>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -83,75 +87,142 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2/17/19 10:21 PM, Linus Walleij wrote:
-> On Sat, Feb 16, 2019 at 2:46 PM <marek.vasut@gmail.com> wrote:
+On 2/17/19 9:00 PM, Harald Geyer wrote:
+> Marek Vasut writes:
+>> On 2/17/19 3:26 PM, Harald Geyer wrote:
+>>> Marek Vasut writes:
+>>>> On 2/16/19 9:20 PM, Harald Geyer wrote:
+>>>>> marek.vasut@gmail.com writes:
+>>>>>> +			  regulator voltage/current listed in "states".
+>>>>>> +- gpios-states		: Initial state of GPIO pins in "gpios" array.
+>>>>>> +			  0: LOW, 1: HIGH.
+>>>>>> +			  Default is LOW if nothing else is specified.
+>>>>>
+>>>>> This is not very clear. Maybe add an example below or explain it better.
+>>>>>
+>>>>> I guess we can't change it now anymore anyway, but it's not clear to
+>>>>> me, why we have this in the first place: A regulator should only be
+>>>>> active when it has a consumer or is "always-on".
+>>>>
+>>>> Be careful here, the regulator-gpio may be instantiated such that it
+>>>> will select between two voltage states, neither of which is 0V/off.
+>>>> Consider eMMC vccq supply, which alternates between 1V8 and 3V3, but
+>>>> does not have a third, 0V/off state (unless you pull the plug).
+>>>
+>>> Yes, if it is always on (or simply has no enable-gpio) then we might
+>>> select a voltage while probing the device. My point is: At some point
+>>> (probably when the first consumer probes, but I think there are no
+>>> guarantees) the core will switch the regulator state. That usually
+>>> happens a few milliseconds to seconds after probing the regulator
+>>> itself. This seems to be nothing but a source of undefined behaviour.
+>>
+>> Why would the core switch the regulator state when the first consumer
+>> probes ? It is up to the consumer to reconfigure the regulator when/as
+>> it sees fit.
 > 
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>
->> Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
->> the GPIO regulator had inverted the polarity of the control GPIO. This
->> problem manifested itself on systems with DT containing the following
->> description (snippet from salvator-common.dtsi):
->>
->>         gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
->>         gpios-states = <1>;
->>         states = <3300000 1
->>                   1800000 0>;
->>
->> Prior to the aforementioned commit, the gpio-regulator code used
->> gpio_request_array() to claim the GPIO(s) specified in the "gpios"
->> DT node, while the commit changed that to devm_gpiod_get_index().
->>
->> The legacy gpio_request_array() calls gpio_request_one() and then
->> gpiod_request(), which parses the DT flags of the "gpios" node and
->> populates the GPIO descriptor flags field accordingly.
->>
->> The new devm_gpiod_get_index() calls gpiod_get_index(), then
->> of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
->> and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
->> ("gpio: of: Add special quirk to parse regulator flags"),
->> of_gpio_flags_quirks() contains a quirk for regulator-gpio
->> which was never triggered by the legacy gpio_request_array()
->> code path, but is triggered by devm_gpiod_get_index() code
->> path.
->>
->> This quirk checks whether a GPIO is associated with a fixed
->> or gpio-regulator and if so, checks two additional conditions.
->> First, whether such GPIO is active-low, and if so, ignores the
->> active-low flag. Second, whether the regulator DT node does
->> have an "enable-active-high" property and if the property is
->> NOT present, sets the GPIO flags as active-low.
->>
->> The second check triggers a problem, since it is applied to all
->> GPIOs associated with a gpio-regulator, rather than only on the
->> "enable" GPIOs, as the old code did. This changes the way the
->> gpio-regulator interprets the DT description of the control
->> GPIOs.
->>
->> The old code using gpio_request_array() explicitly parsed the
->> "enable-active-high" DT property and only applied it to the
->> GPIOs described in the "enable-gpios" DT node, and only if
->> those were present.
->>
->> This patch fixes the quirk code by only applying the quirk
->> to "enable-gpios", thus restoring the old behavior.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Jan Kotas <jank@cadence.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Mark Brown <broonie@kernel.org>
->> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Cc: linux-renesas-soc@vger.kernel.org
->> To: linux-gpio@vger.kernel.org
-> 
-> Patch applied for v5.1, the regulator and GPIO changes should work
-> fine together in -next and merge nicely in the merge window.
-> 
-> Bonus for a long and descriptive commit message and keeping
-> me company over the Facebook chat while fixing it up! :D
+> AFAIK the core is free to switch the regulator to any state that is
+> compatible with all consumers. Ie there are no guarantees before the
+> first consumer requests the regulator.
 
-:-))
+That's correct.
+
+> I only mentioned probing the
+> first consumer, because it is a time where the core is likely to
+> revisit it's decisions. The root problem is, that this property (as it
+> is documented now, and also as it is implemented in linux now) doesn't
+> acutally define behaviour beyond "gpios will be set to this state once
+> (but at an unkown time and for an unkown duration)".
+
+ACK
+
+>> The core should only set the default state and that's it.
+> 
+> That's hits exactly the problem I see:
+> * gpios-states is not a _default_ state (but an initial state)
+
+Right, OK, this we should clarify.
+
+> * the core doesn't set this state (the driver writes it during probe - maybe
+>   at a time where probing might still fail)
+
+Presumably the regulator driver, yes ?
+
+> * the core doesn't even know about this state
+> 
+>>> If continuous operation of the regulator is important, I'd expect
+>>> we don't touch whatever the firmware setup instead of by default
+>>> setting all gpios to low.
+>>>
+>>> However as we can't change this now, there isn't much point in
+>>> discussin this further.
+>>
+>> The firmware could've left the regulator in non-default state.
+> 
+> If this is the case, why would we need to set an initial state instead
+> of just waiting what the first consumer requests. I still don't see
+> a use case (aside from don't accidentally shut down something important
+> during probing).
+
+Possibly to prevent a state which might be harmful until the first
+consumer comes up. However this is rather theoretical.
+
+>>>>> IIRC the regulator
+>>>>> core automatically selects the lowest voltage/current compatible with
+>>>>> all consumers. It seems the only usecase is to specify an initial
+>>>>> state that is different from all states in the "states" property, before
+>>>>> the regulator is turned on for the first time. However it also is not
+>>>>> an off-state, because it won't be set again on turning the regulator off.
+>>>>
+>>>> Correct, this is not an off state. If you have a better wording, I am
+>>>> open to that.
+>>>
+>>> I think it should be clearer that this is an array. (Looking at various
+>>> users I doubt everybody was aware of that, but since we have only instances
+>>> with one gpio, there is no functional difference between array and bit field.)
+>>> Also it should be recommended to set this to match whatever the bootloader
+>>> sets up. Maybe something like:
+>>>
+>>> - gpios-states: Array of GPIOs values set during probing the regulator.
+>>> 		0: LOW, 1: HIGH. If continous operation during boot is
+>>> 		desired, this needs to match what the firmware or bootloader
+>>> 		sets up. By default all GPIOs are set to low during probing.
+>>
+>> gpio-states has nothing to do with continuous operation, that's what
+>> enable-gpios is for, we should not confuse the readers with it.
+> 
+> I think we have some misunderstanding here, because I don't see how
+> enable-gpios is relevant. Also maybe I still haven't understood the
+> usecase, but IMO that indicates, that it should be cleared up in
+> the document.
+
+The enable-gpios property is what turns the regulator ON/OFF , the
+gpio-states is what selects the output voltage/current . Thus, I think
+we should not mention "continuous operation" in the description.
+
+>> Also
+>> note that "probing" is OS specific, so we should use "default" instead.
+>> What about this:
+> 
+>> gpios-states		: Array of initial states of GPIO pins in "gpios" array.
+>> 0: LOW, 1: HIGH. Default is LOW if nothing else is specified.
+> 
+> "initial" is a bit too unspecific IMO.
+
+Well, got any better idea ? It's not "default" either.
+
+> I believe this description doesn't define behaviour sufficiently and a
+> future rewrite (or reimplementation for a different OS) is likely to
+> interpret it in an incompatible way. I think one could even argue that
+> completely ignoring this property and just setting up a valid state from
+> "states" is allowed behaviour. This would likely break existing DTs, where
+> among other things this regulator is used to set the CPU's voltage.
+
+I suspect ignoring this property, when it's present, wouldn't be a good
+idea. After all, it adds additional information about the behavior of
+the system upon start up.
+
+btw I am rewording it exactly because there was a recent breakage in the
+regulator code.
 
 -- 
 Best regards,
