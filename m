@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E48AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FC3C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55DE82184A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 179652184A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:48:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vucCR6Cl"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BR7oreQm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbfBQUrO (ORCPT
+        id S1726059AbfBQUsQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 15:47:14 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59670 "EHLO
+        Sun, 17 Feb 2019 15:48:16 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59754 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBQUrN (ORCPT
+        with ESMTP id S1725916AbfBQUsQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 15:47:13 -0500
+        Sun, 17 Feb 2019 15:48:16 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D887349;
-        Sun, 17 Feb 2019 21:47:10 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5BF2B49;
+        Sun, 17 Feb 2019 21:48:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550436431;
-        bh=MGNQuBzemM3ZR4K4gR9nu+OrkM19pzD4gwakGUUREaM=;
+        s=mail; t=1550436493;
+        bh=9Zws9U4rhClKj7XKDEOTtk52QK46X4yifxgjnBXJPL8=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=vucCR6ClS/PHpuowazdGn6425KswPUKlOi94QudliluFgDwuafVMeU3R5Ivomz7sv
-         gdgWH3QSmga0887SvMXe7xblQEYUGZfgZsPmuZAjYHEY24VFoE2WWKmEOjOnER1YzP
-         HYJqAlpSHoFV3/bgAYyiu8Bb1MkJCvq96/yd+0dM=
+        b=BR7oreQmbYNLomSWr5j8iFp+YKrSAixa5qM1o+pQn2//tDLnvf0G/o13cLWaAPciz
+         VNtv71nx+nhv1gKZgRCwCGU6n7pI8z7GtWTrKzzJGN43GEZ2hcqevoJsvvlxoXIpWn
+         P5sKcfGWrsZ9Yaaj224z9Ck/kmqr4ilE1xuyIvVM=
 Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [VSP-Tests PATCH 3/7] vsp-lib: Provide command line argument
- parsing
+Subject: Re: [VSP-Tests PATCH 4/7] vsp-lib: trivial: Fix spelling of Reference
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
 References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
- <20181204155146.9726-4-kieran.bingham@ideasonboard.com>
- <20190217024809.GD20463@pendragon.ideasonboard.com>
+ <20181204155146.9726-5-kieran.bingham@ideasonboard.com>
+ <20190217024235.GB20463@pendragon.ideasonboard.com>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
@@ -87,12 +86,12 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <9d2aec74-d073-c7bc-a838-3daf93eec2b7@ideasonboard.com>
-Date:   Sun, 17 Feb 2019 20:47:08 +0000
+Message-ID: <3edbdd51-7223-cf26-cddd-75cd8372df11@ideasonboard.com>
+Date:   Sun, 17 Feb 2019 20:48:10 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190217024809.GD20463@pendragon.ideasonboard.com>
+In-Reply-To: <20190217024235.GB20463@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -103,74 +102,41 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Laurent,
 
-On 17/02/2019 02:48, Laurent Pinchart wrote:
+On 17/02/2019 02:42, Laurent Pinchart wrote:
 > Hi Kieran,
 > 
 > Thank you for the patch.
 > 
-> On Tue, Dec 04, 2018 at 03:51:42PM +0000, Kieran Bingham wrote:
->> Extend the vsp-lib to support command line parsing for all tests.  The
->> arguments parsed here should be common to all tests, and initially
->> provide shell level verbose debug output, and the option to easily keep
->> frames output by the VSP1.
->>
+> On Tue, Dec 04, 2018 at 03:51:43PM +0000, Kieran Bingham wrote:
 >> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+
+Thanks, This has no dependency on the rest of the series. Feel free to
+apply early if you wish.
+
+--
+Kieran
+
+
 >> ---
->>  scripts/vsp-lib.sh | 34 ++++++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
+>>  scripts/vsp-lib.sh | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
 >> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
->> index 0f3992a7827e..56969606382f 100755
+>> index 56969606382f..cf15a045ea8c 100755
 >> --- a/scripts/vsp-lib.sh
 >> +++ b/scripts/vsp-lib.sh
->> @@ -1094,3 +1094,37 @@ test_complete() {
->>  test_run() {
->>  	test_main | ./logger.sh error >> $logfile
+>> @@ -95,7 +95,7 @@ vsp1_set_control() {
 >>  }
->> +
->> +# ------------------------------------------------------------------------------
->> +# Common argument parsing
->> +#
->> +# non-recognised arguments are restored, to allow tests to implement their own
->> +# parsing if necessary.
->> +
->> +POSITIONAL=()
-> 
-> This work in bash only :-( Any chance to implement a solution that would
-> work in ash too ?
-> 
-
-Hrm ... I'll have to look into that. Or drop the 'feature'. This was
-nice because it let me parse arguments I could handle here, and just
-pass everything else through.
-
-
->> +while [[ $# -gt 0 ]]
->> +do
->> +case $1 in
->> +	-x|--debug)
->> +		set -x;
->> +		shift
->> +		;;
->> +	-k|--keep-frames)
->> +		export VSP_KEEP_FRAMES=1
->> +		shift
->> +		;;
->> +	-h|--help)
->> +		echo "$(basename $0): VSP Test library"
->> +		echo "  -x|--debug          enable shell debug"
->> +		echo "  -k|--keep-frames    keep generated and captured frames"
->> +		echo "  -h|--help           this help"
->> +		exit
->> +		shift
->> +		;;
->> +	*)    # unknown option
->> +		POSITIONAL+=("$1") # save it in an array for later
->> +		shift # past argument
->> +		;;
->> +esac
->> +done
->> +set -- "${POSITIONAL[@]}" # restore positional parameters
+>>  
+>>  # -----------------------------------------------------------------------------
+>> -# Referance frame generation
+>> +# Reference frame generation
+>>  #
+>>  
+>>  reference_frame() {
 > 
 
 -- 
