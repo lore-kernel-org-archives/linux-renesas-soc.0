@@ -2,134 +2,156 @@ Return-Path: <SRS0=hAs+=QY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92DBC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 12:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 434F3C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 13:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A43C12192C
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 12:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D52A2192C
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 13:24:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7KxdwYJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725795AbfBQMld (ORCPT
+        id S1728780AbfBQNYt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 07:41:33 -0500
-Received: from sauhun.de ([88.99.104.3]:51112 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728712AbfBQMlc (ORCPT
+        Sun, 17 Feb 2019 08:24:49 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39334 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfBQNYt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 07:41:32 -0500
-Received: from localhost (unknown [195.52.228.164])
-        by pokefinder.org (Postfix) with ESMTPSA id 5D5D22E354E;
-        Sun, 17 Feb 2019 13:41:30 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/2] i2c: gpio: fault-injector: add 'inject_panic' injector
-Date:   Sun, 17 Feb 2019 13:41:26 +0100
-Message-Id: <20190217124126.7257-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190217124126.7257-1-wsa+renesas@sang-engineering.com>
-References: <20190217124126.7257-1-wsa+renesas@sang-engineering.com>
+        Sun, 17 Feb 2019 08:24:49 -0500
+Received: by mail-wm1-f66.google.com with SMTP id z84so7112374wmg.4;
+        Sun, 17 Feb 2019 05:24:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MSptzy+12iGHE4TbMpXPmq/FfqzSMP67DCj+W3LRFG4=;
+        b=L7KxdwYJH+nX8ovhwVXEnn2w9kFP0bkMXIfnt7HVBn3zGOSc7rxGgpsNF4wUl9R+69
+         TJD0nFZmXrEhAnaEMDaJ4F/6rjnP1p56rUdIFjH6Em4vYXCNJmnMgFeSIxjoMTNk0HTJ
+         C3CmwcnuKwE0nE9oKFvSB6XygQ80Igp1FgnvqAk6iMyM9h1UC/WAmZYaGrWW5BQJS62/
+         nqIo9v29nIvUkroJ5OwkLy/QnaSH6c6ywp1pghizdTmfb+ptsFH7at/ywYa/0WQ2HKsT
+         6b3nNvgIakOiqztuOXX+a0l4VBxhx49HH+4ZdZ+9czPDfJkdjR/Qt1WyfH4bXswrBzG6
+         lH0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MSptzy+12iGHE4TbMpXPmq/FfqzSMP67DCj+W3LRFG4=;
+        b=br0eIBsrlwdcQPsNbEHUVJYStZVMI5qa4WtjaGW04t2BsDJ3XarLyIzrptECnNV7WB
+         KiVqELOD6HUBKnBE9I4mHaO9KZZdMbo1szzV9iQfB8VUoDQSJzaEmLfHc+C0SX44r2Wp
+         oILySenPvloBF0p7myCWPg3x8b2WdpfjewJvNASNEOayxLwOfTOTRj9XmZ/MXPdDe27q
+         LN9ZYLtWqbD5zXOejz1QHU8rkIE61a+3kuDqn1VH+N/E/KFPecz6PuBgE5ykaO6wUk/D
+         5Ao54r8XpYMoYyvo9bPHL3u0gDh359dIHa8FTMMl5fp1J6AF8k5RkCsxCbxbvwGdqBFX
+         7JfQ==
+X-Gm-Message-State: AHQUAuZoKzbBl7Shwm7cPOGSJlb2v4qPUZL4RiwTbHv4t89/kwsyd/jo
+        /oOgo3Bm6Yl4FmzIbiZNPYa1f1UC
+X-Google-Smtp-Source: AHgI3IZzsjsRg6fFs5AMOntua06fFCqXH05xKpaOmXFuDHCrJFtxahfj03ktcLj7+73GqBV5Jt1cOg==
+X-Received: by 2002:a1c:cc0d:: with SMTP id h13mr2892518wmb.85.1550409886939;
+        Sun, 17 Feb 2019 05:24:46 -0800 (PST)
+Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id x3sm12443074wrd.19.2019.02.17.05.24.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 05:24:45 -0800 (PST)
+From:   marek.vasut@gmail.com
+To:     linux-pci@vger.kernel.org
+Cc:     Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in resume_noirq
+Date:   Sun, 17 Feb 2019 14:24:41 +0100
+Message-Id: <20190217132441.15139-1-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a fault injector simulating a Kernel panic happening after starting
-a transfer. Read the docs for its usage.
+From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reestablish the PCIe link very early in the resume process in case it
+went down to prevent PCI accesses from hanging the bus. Such accesses
+can happen early in the PCI resume process, in the resume_noirq, thus
+the link must be reestablished in the resume_noirq callback of the
+driver.
+
+Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- Documentation/i2c/gpio-fault-injection | 26 ++++++++++++++++++++++++++
- drivers/i2c/busses/i2c-gpio.c          | 28 +++++++++++++++++++++++++++-
- 2 files changed, 53 insertions(+), 1 deletion(-)
+V2: - Use BIT() macro for (1 << n)
+    - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
+      add extra changes to this function anymore
+    - Make resume_noirq return early and clean up parenthesis therein
+---
+ drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/Documentation/i2c/gpio-fault-injection b/Documentation/i2c/gpio-fault-injection
-index 5262801438e6..fc85c1ab6f68 100644
---- a/Documentation/i2c/gpio-fault-injection
-+++ b/Documentation/i2c/gpio-fault-injection
-@@ -108,3 +108,29 @@ idle bus is:
+diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+index c8febb009454..b8f8fb3bc640 100644
+--- a/drivers/pci/controller/pcie-rcar.c
++++ b/drivers/pci/controller/pcie-rcar.c
+@@ -46,6 +46,7 @@
  
- # echo 200 > lose_arbitration &
- # i2cget -y <bus_to_test> 0x3f
-+
-+Panic during transfer
-+=====================
-+
-+This fault injector will create a Kernel panic once the master under test
-+started a transfer. This usually means that the state machine of the bus master
-+driver will be ungracefully interrupted and the bus may end up in an unusual
-+state. Use this to check if your shutdown/reboot/boot code can handle this
-+scenario.
-+
-+"inject_panic"
-+--------------
-+
-+This file is write only and you need to write the delay between the detected
-+start of a transmission and the induced Kernel panic (in us). The calling
-+process will then sleep and wait for the next bus clock. The process is
-+interruptible, though.
-+
-+Start of a transfer is detected by waiting for SCL going down by the master
-+under test.  A good starting point for using this fault injector is:
-+
-+# echo 0 > inject_panic &
-+# i2cget -y <bus_to_test> <some_address>
-+
-+Note that there doesn't need to be a device listening to the address you are
-+using. Results may vary depending on that, though.
-diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
-index f3645148d120..a07544dc2da5 100644
---- a/drivers/i2c/busses/i2c-gpio.c
-+++ b/drivers/i2c/busses/i2c-gpio.c
-@@ -228,6 +228,29 @@ static int fops_lose_arbitration_set(void *data, u64 duration)
+ /* Transfer control */
+ #define PCIETCTLR		0x02000
++#define  DL_DOWN		BIT(3)
+ #define  CFINIT			1
+ #define PCIETSTR		0x02004
+ #define  DATA_LINK_ACTIVE	1
+@@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	pcie = pci_host_bridge_priv(bridge);
+ 
+ 	pcie->dev = dev;
++	platform_set_drvdata(pdev, pcie);
+ 
+ 	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
+ 	if (err)
+@@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	return err;
  }
- DEFINE_DEBUGFS_ATTRIBUTE(fops_lose_arbitration, NULL, fops_lose_arbitration_set, "%llu\n");
  
-+static irqreturn_t inject_panic_irq(int irq, void *dev_id)
++static int rcar_pcie_resume_noirq(struct device *dev)
 +{
-+	struct i2c_gpio_private_data *priv = dev_id;
++	struct rcar_pcie *pcie = dev_get_drvdata(dev);
 +
-+	udelay(priv->scl_irq_data);
-+	panic("I2C fault injector induced panic");
++	if (rcar_pci_read_reg(pcie, PMSR) &&
++	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
++		return 0;
 +
-+	return IRQ_HANDLED;
++	/* Re-establish the PCIe link */
++	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
++	return rcar_pcie_wait_for_dl(pcie);
 +}
 +
-+static int fops_inject_panic_set(void *data, u64 duration)
-+{
-+	struct i2c_gpio_private_data *priv = data;
++static const struct dev_pm_ops rcar_pcie_pm_ops = {
++	.resume_noirq = rcar_pcie_resume_noirq,
++};
 +
-+	priv->scl_irq_data = duration;
-+	/*
-+	 * Interrupt on falling SCL. This ensures that the master under test has
-+	 * really started the transfer.
-+	 */
-+	return i2c_gpio_fi_act_on_scl_irq(priv, inject_panic_irq);
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_inject_panic, NULL, fops_inject_panic_set, "%llu\n");
-+
- static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- {
- 	struct i2c_gpio_private_data *priv = platform_get_drvdata(pdev);
-@@ -253,9 +276,12 @@ static void i2c_gpio_fault_injector_init(struct platform_device *pdev)
- 				   priv, &fops_incomplete_addr_phase);
- 	debugfs_create_file_unsafe("incomplete_write_byte", 0200, priv->debug_dir,
- 				   priv, &fops_incomplete_write_byte);
--	if (priv->bit_data.getscl)
-+	if (priv->bit_data.getscl) {
-+		debugfs_create_file_unsafe("inject_panic", 0200, priv->debug_dir,
-+					   priv, &fops_inject_panic);
- 		debugfs_create_file_unsafe("lose_arbitration", 0200, priv->debug_dir,
- 					   priv, &fops_lose_arbitration);
-+	}
- 	debugfs_create_file_unsafe("scl", 0600, priv->debug_dir, priv, &fops_scl);
- 	debugfs_create_file_unsafe("sda", 0600, priv->debug_dir, priv, &fops_sda);
- }
+ static struct platform_driver rcar_pcie_driver = {
+ 	.driver = {
+ 		.name = "rcar-pcie",
+ 		.of_match_table = rcar_pcie_of_match,
++		.pm = &rcar_pcie_pm_ops,
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = rcar_pcie_probe,
 -- 
-2.11.0
+2.19.2
 
