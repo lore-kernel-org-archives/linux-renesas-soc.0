@@ -4,45 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A23C4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D81C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 667B221773
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E5D22173C
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:27:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ri8JvtFw"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="g5Ozr74A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfBQWNa (ORCPT
+        id S1726418AbfBQW1f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 17:13:30 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:32910 "EHLO
+        Sun, 17 Feb 2019 17:27:35 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33572 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfBQWNa (ORCPT
+        with ESMTP id S1726349AbfBQW1e (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 17:13:30 -0500
+        Sun, 17 Feb 2019 17:27:34 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 043BA49;
-        Sun, 17 Feb 2019 23:13:19 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7AFDE49;
+        Sun, 17 Feb 2019 23:27:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550441601;
-        bh=N1MdPdNHhNlaIlUoJSPSBCvUh9dSuASWwZOtA5HTBQ4=;
-        h=Subject:To:Cc:References:From:Reply-To:Date:In-Reply-To:From;
-        b=ri8JvtFwq6QI3GcjSkWD8PVxkN820/grvVL88/kDXshh1KBjyF+RBTHE55v3dDpFI
-         wRTC+Vgi2Osc32R3qly+KhAZ/1wKXKfZMkS/vmYC4E8bjK66WOPctJz+SfIVEz30Tv
-         3Xqr9NHwpdI63Euu0gMiDhvDmk1XQtEPqV0Cl2+c=
-Subject: Re: [PATCH 1/2] arm64: dts: r8a77990-ebisu: Fix adv7482 hexadecimal
- register address
+        s=mail; t=1550442450;
+        bh=WFVMi80p5kAihWj01Mc4b/F1/sCBjeAL/OTCz1TE0A0=;
+        h=Subject:To:Cc:References:Reply-To:From:Date:In-Reply-To:From;
+        b=g5Ozr74AfLw0k5uVxjtJ7COihNjmzWu9hJ5vDYXSLBk/5gWHFenYRj8K8ovnQSax5
+         jnP5aS+W1QHXgfEe0/ueKTrWKHhmzl/d67uRJ6aD3pb6TieHenR7lTEt4E5KQLjZPJ
+         adHtJZkFGyq4tL0mFgUIqAp8wxpxuZ8EhiN1pVaU=
+Subject: Re: [PATCH] rcar-vin: Fix lockdep warning at stream on
 To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>
-References: <20190216235854.15244-1-niklas.soderlund+renesas@ragnatech.se>
- <20190216235854.15244-2-niklas.soderlund+renesas@ragnatech.se>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+References: <20190213220754.14664-1-niklas.soderlund+renesas@ragnatech.se>
 Reply-To: kieran.bingham@ideasonboard.com
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  mQINBFYE/WYBEACs1PwjMD9rgCu1hlIiUA1AXR4rv2v+BCLUq//vrX5S5bjzxKAryRf0uHat
@@ -88,70 +87,236 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <959b482d-09a1-2ffc-1144-101348bb27d9@ideasonboard.com>
-Date:   Sun, 17 Feb 2019 22:13:17 +0000
+Message-ID: <5a6c4b25-7639-b4b9-bcc8-0da9374e6697@ideasonboard.com>
+Date:   Sun, 17 Feb 2019 22:27:27 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190216235854.15244-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20190213220754.14664-1-niklas.soderlund+renesas@ragnatech.se>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas, Takeshi,
+Hi Niklas,
 
-On 16/02/2019 23:58, Niklas Söderlund wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 13/02/2019 22:07, Niklas Söderlund wrote:
+> Changes to v4l2-fwnode in commit [1] triggered a lockdep warning in
+> rcar-vin. The first attempt to solve this warning in the rcar-vin driver
+> was incomplete and only pushed the warning to happen at at stream on
+> time instead of at probe time.
 > 
-> The register address used for the reg property of the adv7482 node in
-> other Renesas device trees are decimal not hex, change this for Ebisu to
-> align it with the others.
+> This change reverts the incomplete fix and properly fix the warning by
+> removing the need to hold the rcar-vin specific group lock when calling
+> v4l2_async_notifier_parse_fwnode_endpoints_by_port(). And instead takes
+> it in the callback where it's really needed.
 > 
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [Niklas: rewrite commit message]
+
+It might have been more readable to provide the revert and the fix
+separately, as it's hard to know which parts of this are the revert, and
+which are 'new', but don't worry about that as it is fortuanately a
+fairly clear separation below..
+
+
+> 1. commit eae2aed1eab9bf08 ("media: v4l2-fwnode: Switch to v4l2_async_notifier_add_subdev")
+> 
+> Fixes: 6458afc8c49148f0 ("media: rcar-vin: remove unneeded locking in async callbacks")
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+
+Only a couple of minorish comments below.
+
+With those fixed:
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+
+
 > ---
->  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/media/platform/rcar-vin/rcar-core.c | 43 +++++++++++++++------
+>  1 file changed, 32 insertions(+), 11 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> index 62bdddcbbae7d9e9..23914c2b83965621 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> @@ -383,7 +383,7 @@
->  		};
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index 594d804340047511..abbb5820223965e3 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -546,7 +546,9 @@ static void rvin_parallel_notify_unbind(struct v4l2_async_notifier *notifier,
 >  
->  		port@a {
-> -			reg = <0xa>;
-> +			reg = <10>;
+>  	vin_dbg(vin, "unbind parallel subdev %s\n", subdev->name);
+>  
+> +	mutex_lock(&vin->lock);
+>  	rvin_parallel_subdevice_detach(vin);
+> +	mutex_unlock(&vin->lock);
+>  }
+>  
+>  static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
+> @@ -556,7 +558,9 @@ static int rvin_parallel_notify_bound(struct v4l2_async_notifier *notifier,
+>  	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
+>  	int ret;
+>  
+> +	mutex_lock(&vin->lock);
+>  	ret = rvin_parallel_subdevice_attach(vin, subdev);
+> +	mutex_unlock(&vin->lock);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -664,6 +668,7 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+>  	}
+>  
+>  	/* Create all media device links between VINs and CSI-2's. */
+> +	mutex_lock(&vin->group->lock);
+>  	for (route = vin->info->routes; route->mask; route++) {
+>  		struct media_pad *source_pad, *sink_pad;
+>  		struct media_entity *source, *sink;
+> @@ -699,6 +704,7 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+>  			break;
+>  		}
+>  	}
+> +	mutex_unlock(&vin->group->lock);
+>  
+>  	return ret;
+>  }
+> @@ -714,6 +720,8 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+>  		if (vin->group->vin[i])
+>  			rvin_v4l2_unregister(vin->group->vin[i]);
+>  
+> +	mutex_lock(&vin->group->lock);
+> +
+>  	for (i = 0; i < RVIN_CSI_MAX; i++) {
+>  		if (vin->group->csi[i].fwnode != asd->match.fwnode)
+>  			continue;
+> @@ -721,6 +729,8 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+>  		vin_dbg(vin, "Unbind CSI-2 %s from slot %u\n", subdev->name, i);
+>  		break;
+>  	}
+> +
+> +	mutex_unlock(&vin->group->lock);
+>  }
+>  
+>  static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+> @@ -730,6 +740,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+>  	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
+>  	unsigned int i;
+>  
+> +	mutex_lock(&vin->group->lock);
+> +
+>  	for (i = 0; i < RVIN_CSI_MAX; i++) {
+>  		if (vin->group->csi[i].fwnode != asd->match.fwnode)
+>  			continue;
+> @@ -738,6 +750,8 @@ static int rvin_group_notify_bound(struct v4l2_async_notifier *notifier,
+>  		break;
+>  	}
+>  
+> +	mutex_unlock(&vin->group->lock);
+> +
+>  	return 0;
+>  }
 
-From the discussions on this before, we converted the port number to be hex.
+So if I'm not mistaken, everything above this is the 'revert' and the
+below is the 'fix'
 
-I really dislike that we have port@a, but reg=<10>;
 
-However as long as the value is written by the DTC as 'ten' and
-correctly interpreted as decimal this is still correct.
 
-I guess it doesn't hurt to have a decimal representation as that will
-then match the bindings port descriptions. It's a shame this can't be
-the 'port@10' for comprehension though.
-
-My only hesitation on providing either an RB/or AB tag here is whether
-perhaps we should instead convert the salvator-common to use hex so that
-they match that way instead?
-
---
-Regards
-
-Kieran
 
 >  
->  			adv7482_txa: endpoint {
->  				clock-lanes = <0>;
+> @@ -752,6 +766,7 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
+>  				     struct v4l2_async_subdev *asd)
+>  {
+>  	struct rvin_dev *vin = dev_get_drvdata(dev);
+> +	int ret = 0;
+>  
+>  	if (vep->base.port != 1 || vep->base.id >= RVIN_CSI_MAX)
+>  		return -EINVAL;
+> @@ -762,38 +777,48 @@ static int rvin_mc_parse_of_endpoint(struct device *dev,
+>  		return -ENOTCONN;
+>  	}
+>  
+> +	mutex_lock(&vin->group->lock);
+> +
+>  	if (vin->group->csi[vep->base.id].fwnode) {
+>  		vin_dbg(vin, "OF device %pOF already handled\n",
+>  			to_of_node(asd->match.fwnode));
+> -		return -ENOTCONN;
+> +		ret = -ENOTCONN;
+> +		goto out;
+>  	}
+>  
+>  	vin->group->csi[vep->base.id].fwnode = asd->match.fwnode;
+>  
+>  	vin_dbg(vin, "Add group OF device %pOF to slot %u\n",
+>  		to_of_node(asd->match.fwnode), vep->base.id);
+> +out:
+> +	mutex_unlock(&vin->group->lock);
+
+I think you could unlock before you print the debug... But perhaps
+that's not a critical path.
+
+
+
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+>  {
+> -	unsigned int count = 0;
+> +	unsigned int count = 0, vin_mask = 0;
+
+Shouldn't vin_mask have it's own line?
+
+>  	unsigned int i;
+>  	int ret;
+>  
+>  	mutex_lock(&vin->group->lock);
+>  
+>  	/* If not all VIN's are registered don't register the notifier. */
+> -	for (i = 0; i < RCAR_VIN_NUM; i++)
+> -		if (vin->group->vin[i])
+> +	for (i = 0; i < RCAR_VIN_NUM; i++) {
+> +		if (vin->group->vin[i]) {
+>  			count++;
+> +			vin_mask |= BIT(i);
+> +		}
+> +	}
+>  
+>  	if (vin->group->count != count) {
+>  		mutex_unlock(&vin->group->lock);
+>  		return 0;
+>  	}
+>  
+> +	mutex_unlock(&vin->group->lock);
+> +
+>  	v4l2_async_notifier_init(&vin->group->notifier);
+>  
+>  	/*
+> @@ -802,21 +827,17 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+>  	 * will only be registered once with the group notifier.
+>  	 */
+>  	for (i = 0; i < RCAR_VIN_NUM; i++) {
+> -		if (!vin->group->vin[i])
+> +		if (!(vin_mask & BIT(i)))
+>  			continue;
+>  
+>  		ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+>  				vin->group->vin[i]->dev, &vin->group->notifier,
+>  				sizeof(struct v4l2_async_subdev), 1,
+>  				rvin_mc_parse_of_endpoint);
+> -		if (ret) {
+> -			mutex_unlock(&vin->group->lock);
+> +		if (ret)
+>  			return ret;
+> -		}
+>  	}
+>  
+> -	mutex_unlock(&vin->group->lock);
+> -
+>  	if (list_empty(&vin->group->notifier.asd_list))
+>  		return 0;
+>  
 > 
 
 
