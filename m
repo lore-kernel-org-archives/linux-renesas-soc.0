@@ -2,156 +2,126 @@ Return-Path: <SRS0=hAs+=QY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 434F3C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 13:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEEEC10F08
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 14:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D52A2192C
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 13:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54FBB21924
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 14:26:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7KxdwYJ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ccbib.org header.i=@ccbib.org header.b="knptqMOx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbfBQNYt (ORCPT
+        id S1727246AbfBQO0r (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 08:24:49 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39334 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfBQNYt (ORCPT
+        Sun, 17 Feb 2019 09:26:47 -0500
+Received: from h1.radempa.de ([176.9.142.194]:53114 "EHLO mail.cosmopool.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725795AbfBQO0r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 08:24:49 -0500
-Received: by mail-wm1-f66.google.com with SMTP id z84so7112374wmg.4;
-        Sun, 17 Feb 2019 05:24:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MSptzy+12iGHE4TbMpXPmq/FfqzSMP67DCj+W3LRFG4=;
-        b=L7KxdwYJH+nX8ovhwVXEnn2w9kFP0bkMXIfnt7HVBn3zGOSc7rxGgpsNF4wUl9R+69
-         TJD0nFZmXrEhAnaEMDaJ4F/6rjnP1p56rUdIFjH6Em4vYXCNJmnMgFeSIxjoMTNk0HTJ
-         C3CmwcnuKwE0nE9oKFvSB6XygQ80Igp1FgnvqAk6iMyM9h1UC/WAmZYaGrWW5BQJS62/
-         nqIo9v29nIvUkroJ5OwkLy/QnaSH6c6ywp1pghizdTmfb+ptsFH7at/ywYa/0WQ2HKsT
-         6b3nNvgIakOiqztuOXX+a0l4VBxhx49HH+4ZdZ+9czPDfJkdjR/Qt1WyfH4bXswrBzG6
-         lH0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MSptzy+12iGHE4TbMpXPmq/FfqzSMP67DCj+W3LRFG4=;
-        b=br0eIBsrlwdcQPsNbEHUVJYStZVMI5qa4WtjaGW04t2BsDJ3XarLyIzrptECnNV7WB
-         KiVqELOD6HUBKnBE9I4mHaO9KZZdMbo1szzV9iQfB8VUoDQSJzaEmLfHc+C0SX44r2Wp
-         oILySenPvloBF0p7myCWPg3x8b2WdpfjewJvNASNEOayxLwOfTOTRj9XmZ/MXPdDe27q
-         LN9ZYLtWqbD5zXOejz1QHU8rkIE61a+3kuDqn1VH+N/E/KFPecz6PuBgE5ykaO6wUk/D
-         5Ao54r8XpYMoYyvo9bPHL3u0gDh359dIHa8FTMMl5fp1J6AF8k5RkCsxCbxbvwGdqBFX
-         7JfQ==
-X-Gm-Message-State: AHQUAuZoKzbBl7Shwm7cPOGSJlb2v4qPUZL4RiwTbHv4t89/kwsyd/jo
-        /oOgo3Bm6Yl4FmzIbiZNPYa1f1UC
-X-Google-Smtp-Source: AHgI3IZzsjsRg6fFs5AMOntua06fFCqXH05xKpaOmXFuDHCrJFtxahfj03ktcLj7+73GqBV5Jt1cOg==
-X-Received: by 2002:a1c:cc0d:: with SMTP id h13mr2892518wmb.85.1550409886939;
-        Sun, 17 Feb 2019 05:24:46 -0800 (PST)
-Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id x3sm12443074wrd.19.2019.02.17.05.24.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 05:24:45 -0800 (PST)
-From:   marek.vasut@gmail.com
-To:     linux-pci@vger.kernel.org
-Cc:     Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Sun, 17 Feb 2019 09:26:47 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.cosmopool.net (Postfix) with ESMTP id A000290140D;
+        Sun, 17 Feb 2019 15:26:43 +0100 (CET)
+Received: from mail.cosmopool.net ([127.0.0.1])
+        by localhost (mail.b.radempa.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id JwRdcspJ1PMP; Sun, 17 Feb 2019 15:26:43 +0100 (CET)
+Received: from stardust.g4.wien.funkfeuer.at (178.112.137.110.wireless.dyn.drei.com [178.112.137.110])
+        by mail.cosmopool.net (Postfix) with ESMTPSA id A68BB9004DD;
+        Sun, 17 Feb 2019 15:26:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ccbib.org; s=201902;
+        t=1550413603; bh=jVIV7kJo1QJUwZHmzmcFNymioUdUgvhK37MSgDZZ9FY=;
+        h=From:To:cc:Subject:In-reply-to:References:Date:From;
+        b=knptqMOxamE/7YZnLkxRdjpojgZy1hM9rI44mCwiufqlWBZRnAgd0M0Jk18kC8FcP
+         EHp+cHMiyudzRnO0D6Qtd4QJ6eha1jB+LCoCyc3yiLybxmrP07L2UCNkBUcTrq+G/L
+         btQ2x0CFTd+rF8oi2+k1KAtsETaN6YP3zY3xApBM=
+Received: from lambda by stardust.g4.wien.funkfeuer.at with local (Exim 4.89)
+        (envelope-from <harald@ccbib.org>)
+        id 1gvNOx-0000Kc-Dc; Sun, 17 Feb 2019 15:26:39 +0100
+From:   Harald Geyer <harald@ccbib.org>
+To:     Marek Vasut <marek.vasut@gmail.com>
+cc:     devicetree@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in resume_noirq
-Date:   Sun, 17 Feb 2019 14:24:41 +0100
-Message-Id: <20190217132441.15139-1-marek.vasut@gmail.com>
-X-Mailer: git-send-email 2.19.2
+Subject: Re: [PATCH] regulator: gpio: Reword the binding document
+In-reply-to: <83550921-b0ec-fa34-b120-2dd159f256d8@gmail.com>
+References: <20190216174859.15738-1-marek.vasut@gmail.com> <E1gv6SG-0000Jv-KB@stardust.g4.wien.funkfeuer.at> <83550921-b0ec-fa34-b120-2dd159f256d8@gmail.com>
+Comments: In-reply-to Marek Vasut <marek.vasut@gmail.com>
+   message dated "Sat, 16 Feb 2019 22:37:37 +0100."
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1276.1550413598.1@stardust.g4.wien.funkfeuer.at>
+Date:   Sun, 17 Feb 2019 15:26:39 +0100
+Message-Id: <E1gvNOx-0000Kc-Dc@stardust.g4.wien.funkfeuer.at>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+Marek Vasut writes:
+> On 2/16/19 9:20 PM, Harald Geyer wrote:
+> > marek.vasut@gmail.com writes:
+> >> +			  regulator voltage/current listed in "states".
+> >> +- gpios-states		: Initial state of GPIO pins in "gpios" array.
+> >> +			  0: LOW, 1: HIGH.
+> >> +			  Default is LOW if nothing else is specified.
+> > 
+> > This is not very clear. Maybe add an example below or explain it better.
+> > 
+> > I guess we can't change it now anymore anyway, but it's not clear to
+> > me, why we have this in the first place: A regulator should only be
+> > active when it has a consumer or is "always-on".
+> 
+> Be careful here, the regulator-gpio may be instantiated such that it
+> will select between two voltage states, neither of which is 0V/off.
+> Consider eMMC vccq supply, which alternates between 1V8 and 3V3, but
+> does not have a third, 0V/off state (unless you pull the plug).
 
-Reestablish the PCIe link very early in the resume process in case it
-went down to prevent PCI accesses from hanging the bus. Such accesses
-can happen early in the PCI resume process, in the resume_noirq, thus
-the link must be reestablished in the resume_noirq callback of the
-driver.
+Yes, if it is always on (or simply has no enable-gpio) then we might
+select a voltage while probing the device. My point is: At some point
+(probably when the first consumer probes, but I think there are no
+guarantees) the core will switch the regulator state. That usually
+happens a few milliseconds to seconds after probing the regulator
+itself. This seems to be nothing but a source of undefined behaviour.
 
-Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: - Use BIT() macro for (1 << n)
-    - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
-      add extra changes to this function anymore
-    - Make resume_noirq return early and clean up parenthesis therein
----
- drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+If continuous operation of the regulator is important, I'd expect
+we don't touch whatever the firmware setup instead of by default
+setting all gpios to low.
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index c8febb009454..b8f8fb3bc640 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -46,6 +46,7 @@
- 
- /* Transfer control */
- #define PCIETCTLR		0x02000
-+#define  DL_DOWN		BIT(3)
- #define  CFINIT			1
- #define PCIETSTR		0x02004
- #define  DATA_LINK_ACTIVE	1
-@@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	pcie = pci_host_bridge_priv(bridge);
- 
- 	pcie->dev = dev;
-+	platform_set_drvdata(pdev, pcie);
- 
- 	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
- 	if (err)
-@@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	return err;
- }
- 
-+static int rcar_pcie_resume_noirq(struct device *dev)
-+{
-+	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-+
-+	if (rcar_pci_read_reg(pcie, PMSR) &&
-+	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
-+		return 0;
-+
-+	/* Re-establish the PCIe link */
-+	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
-+	return rcar_pcie_wait_for_dl(pcie);
-+}
-+
-+static const struct dev_pm_ops rcar_pcie_pm_ops = {
-+	.resume_noirq = rcar_pcie_resume_noirq,
-+};
-+
- static struct platform_driver rcar_pcie_driver = {
- 	.driver = {
- 		.name = "rcar-pcie",
- 		.of_match_table = rcar_pcie_of_match,
-+		.pm = &rcar_pcie_pm_ops,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = rcar_pcie_probe,
+However as we can't change this now, there isn't much point in
+discussin this further.
+
+> > IIRC the regulator
+> > core automatically selects the lowest voltage/current compatible with
+> > all consumers. It seems the only usecase is to specify an initial
+> > state that is different from all states in the "states" property, before
+> > the regulator is turned on for the first time. However it also is not
+> > an off-state, because it won't be set again on turning the regulator off.
+> 
+> Correct, this is not an off state. If you have a better wording, I am
+> open to that.
+
+I think it should be clearer that this is an array. (Looking at various
+users I doubt everybody was aware of that, but since we have only instances
+with one gpio, there is no functional difference between array and bit field.)
+Also it should be recommended to set this to match whatever the bootloader
+sets up. Maybe something like:
+
+- gpios-states: Array of GPIOs values set during probing the regulator.
+		0: LOW, 1: HIGH. If continous operation during boot is
+		desired, this needs to match what the firmware or bootloader
+		sets up. By default all GPIOs are set to low during probing.
+
+HTH,
+Harald
+
 -- 
-2.19.2
-
+If you want to support my work:
+see http://friends.ccbib.org/harald/supporting/
+or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
+or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
