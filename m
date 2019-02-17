@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 939E8C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E48AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 634B620645
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55DE82184A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:47:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="B0Vh2OPD"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vucCR6Cl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbfBQUn6 (ORCPT
+        id S1726015AbfBQUrO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 15:43:58 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59460 "EHLO
+        Sun, 17 Feb 2019 15:47:14 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59670 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBQUn5 (ORCPT
+        with ESMTP id S1725916AbfBQUrN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 15:43:57 -0500
+        Sun, 17 Feb 2019 15:47:13 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0301C49;
-        Sun, 17 Feb 2019 21:43:55 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D887349;
+        Sun, 17 Feb 2019 21:47:10 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550436236;
-        bh=7vmEoKnrZ+FUauMNBBrpxyQxwzfVojOHTNVV4LnTJ+k=;
+        s=mail; t=1550436431;
+        bh=MGNQuBzemM3ZR4K4gR9nu+OrkM19pzD4gwakGUUREaM=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=B0Vh2OPDovAxTvadJGKYZoyI4EtXvkT3UgFlvFwTGxdYTituma1Y8NfUxjViBJPHR
-         xPyfu0nuVxrq2cKMIYPmQ+G/b0km1lDNsjQxTsvpH1DfKyeScX+DW3Fs0IBrYOMWEc
-         110nbgRVfnACygNtkZA4m3nzDSFXk6WgeRpfFKhM=
+        b=vucCR6ClS/PHpuowazdGn6425KswPUKlOi94QudliluFgDwuafVMeU3R5Ivomz7sv
+         gdgWH3QSmga0887SvMXe7xblQEYUGZfgZsPmuZAjYHEY24VFoE2WWKmEOjOnER1YzP
+         HYJqAlpSHoFV3/bgAYyiu8Bb1MkJCvq96/yd+0dM=
 Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [VSP-Tests PATCH 2/7] tests: Provide copy test to validate 1xN
- streams
+Subject: Re: [VSP-Tests PATCH 3/7] vsp-lib: Provide command line argument
+ parsing
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
 References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
- <20181204155146.9726-3-kieran.bingham@ideasonboard.com>
- <20190217024722.GC20463@pendragon.ideasonboard.com>
+ <20181204155146.9726-4-kieran.bingham@ideasonboard.com>
+ <20190217024809.GD20463@pendragon.ideasonboard.com>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
@@ -87,12 +87,12 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <aab1e357-742b-570f-0926-83dfb037528d@ideasonboard.com>
-Date:   Sun, 17 Feb 2019 20:43:53 +0000
+Message-ID: <9d2aec74-d073-c7bc-a838-3daf93eec2b7@ideasonboard.com>
+Date:   Sun, 17 Feb 2019 20:47:08 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190217024722.GC20463@pendragon.ideasonboard.com>
+In-Reply-To: <20190217024809.GD20463@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -103,89 +103,74 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Laurent,
 
-On 17/02/2019 02:47, Laurent Pinchart wrote:
+On 17/02/2019 02:48, Laurent Pinchart wrote:
 > Hi Kieran,
 > 
 > Thank you for the patch.
 > 
-> On Tue, Dec 04, 2018 at 03:51:41PM +0000, Kieran Bingham wrote:
->> Validate that a 1xN stream can be read through the RPF and written
->> through the WPF.
->>
->> The test framework does not currently support processing images where
->> the stride does not match the output width - so the testing is currently
->> limited to testing only the vertical direction in this aspect.
+> On Tue, Dec 04, 2018 at 03:51:42PM +0000, Kieran Bingham wrote:
+>> Extend the vsp-lib to support command line parsing for all tests.  The
+>> arguments parsed here should be common to all tests, and initially
+>> provide shell level verbose debug output, and the option to easily keep
+>> frames output by the VSP1.
 >>
 >> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 >> ---
->>  tests/vsp-unit-test-0025.sh | 45 +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>  create mode 100755 tests/vsp-unit-test-0025.sh
+>>  scripts/vsp-lib.sh | 34 ++++++++++++++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
 >>
->> diff --git a/tests/vsp-unit-test-0025.sh b/tests/vsp-unit-test-0025.sh
->> new file mode 100755
->> index 000000000000..57a1fac6e369
->> --- /dev/null
->> +++ b/tests/vsp-unit-test-0025.sh
->> @@ -0,0 +1,45 @@
->> +#!/bin/sh
+>> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
+>> index 0f3992a7827e..56969606382f 100755
+>> --- a/scripts/vsp-lib.sh
+>> +++ b/scripts/vsp-lib.sh
+>> @@ -1094,3 +1094,37 @@ test_complete() {
+>>  test_run() {
+>>  	test_main | ./logger.sh error >> $logfile
+>>  }
 >> +
+>> +# ------------------------------------------------------------------------------
+>> +# Common argument parsing
 >> +#
->> +# Test pipelines which have a single pixel dimension. Use a RPF -> WPF
->> +# pipeline with identical input and output formats to generate our output.
->> +#
+>> +# non-recognised arguments are restored, to allow tests to implement their own
+>> +# parsing if necessary.
 >> +
->> +. ./vsp-lib.sh
->> +
->> +features="rpf.0 uds wpf.0"
->> +formats="RGB24 ARGB32"
->> +
->> +# Input is directly copied to the output. No change in format or size.
->> +test_copy() {
->> +	local format=$1
->> +	local insize=$2
->> +
->> +	test_start "copying $insize in $format"
->> +
->> +	pipe_configure rpf-wpf 0 0
->> +	format_configure rpf-wpf 0 0 $format $insize $format
->> +
->> +	vsp_runner rpf.0 &
->> +	vsp_runner wpf.0
->> +
->> +	local result=$(compare_frames)
->> +
->> +	test_complete $result
->> +}
->> +
->> +test_main() {
->> +	local format
->> +
->> +	for format in $formats ; do
->> +		test_copy $format 1024x768
->> +		test_copy $format 128x128
->> +		test_copy $format 128x1
+>> +POSITIONAL=()
 > 
-> If the purpose is to test Nx1 and 1xN, do we need the first two
-> resolutions ? Shouldn't the test_start message describe the exact
-> purpose ?
-
-Hrm ... It's been too long. I don't recall if the first two were a
-copy/paste left-over or if they had more meaning.
-
-They don't look like they have much meaning now though - so they can be
-removed. I'm all for speeding up the full test-suite :-)
-
-
+> This work in bash only :-( Any chance to implement a solution that would
+> work in ash too ?
 > 
->> +
->> +		# Skipped : Test framework does not yet support strides != width
->> +		#test_copy $format 1x128
->> +	done
->> +}
->> +
->> +test_init $0 "$features"
->> +test_run
+
+Hrm ... I'll have to look into that. Or drop the 'feature'. This was
+nice because it let me parse arguments I could handle here, and just
+pass everything else through.
+
+
+>> +while [[ $# -gt 0 ]]
+>> +do
+>> +case $1 in
+>> +	-x|--debug)
+>> +		set -x;
+>> +		shift
+>> +		;;
+>> +	-k|--keep-frames)
+>> +		export VSP_KEEP_FRAMES=1
+>> +		shift
+>> +		;;
+>> +	-h|--help)
+>> +		echo "$(basename $0): VSP Test library"
+>> +		echo "  -x|--debug          enable shell debug"
+>> +		echo "  -k|--keep-frames    keep generated and captured frames"
+>> +		echo "  -h|--help           this help"
+>> +		exit
+>> +		shift
+>> +		;;
+>> +	*)    # unknown option
+>> +		POSITIONAL+=("$1") # save it in an array for later
+>> +		shift # past argument
+>> +		;;
+>> +esac
+>> +done
+>> +set -- "${POSITIONAL[@]}" # restore positional parameters
 > 
 
 -- 
