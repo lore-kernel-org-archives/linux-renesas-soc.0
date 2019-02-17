@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF08AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5FDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 21:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F7962186A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 635B42186A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 21:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SJdox6xA"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Osid76kR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbfBQU54 (ORCPT
+        id S1726124AbfBQVAj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 15:57:56 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59876 "EHLO
+        Sun, 17 Feb 2019 16:00:39 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59896 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBQU54 (ORCPT
+        with ESMTP id S1725916AbfBQVAi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 15:57:56 -0500
+        Sun, 17 Feb 2019 16:00:38 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5AF4649;
-        Sun, 17 Feb 2019 21:57:54 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DE25649;
+        Sun, 17 Feb 2019 22:00:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550437074;
-        bh=IMHyOwL/c6XYnkZF1hxu4IsYbxGs6dROp5aiXi0OeMM=;
+        s=mail; t=1550437236;
+        bh=aJxb65s8CAUm5RJ4CjuKb2vdXQeDrgpT4RCgnXQnsrU=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=SJdox6xAm80yUNdimBuNNvjNBWilBPVMYTXN9UBeIdol5VlrGu8rdQ5mSnSgavZ+A
-         RJtZ4zxTO7ZD6oO95hgU2rjMHl722+bUuqOTT7jZ5KvU20gA+JnE0VFjkDc0nYnWIM
-         LRXJiCZwDDmHWCy4JLW0yg9mkFY3fD/doYGgBfVA=
+        b=Osid76kR4FHau8G2Gfz1aX+I/r6iqFmP/64N04PiW5yt8yAwuG+IyLlYHKEsacL9k
+         MZufAEWuwAWo5UZaIJE+0pWlfVtF8s2XGbdQFj6bGiMam7Xxzv9lgbNY6eYZzAkTqU
+         U6DOi5plo9yfH+M2bcjXTkeGhHLrW0qKZG3bB/oM=
 Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [VSP-Tests PATCH 6/7] vsp-lib: Support late queuing of buffers in
- yavta
+Subject: Re: [VSP-Tests PATCH 7/7] vsp-lib: Reset controls to defaults on each
+ test run
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
 References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
- <20181204155146.9726-7-kieran.bingham@ideasonboard.com>
- <20190217120005.GB3514@pendragon.ideasonboard.com>
+ <20181204155146.9726-8-kieran.bingham@ideasonboard.com>
+ <20190217120142.GC3514@pendragon.ideasonboard.com>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
@@ -87,15 +87,15 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <3fd7a967-fe76-d363-356a-7da27bcab8f6@ideasonboard.com>
-Date:   Sun, 17 Feb 2019 20:57:51 +0000
+Message-ID: <6ec20198-e613-8fa3-4ca6-ee57a2ee0097@ideasonboard.com>
+Date:   Sun, 17 Feb 2019 21:00:33 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190217120005.GB3514@pendragon.ideasonboard.com>
+In-Reply-To: <20190217120142.GC3514@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -103,64 +103,77 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Laurent,
 
-On 17/02/2019 12:00, Laurent Pinchart wrote:
+On 17/02/2019 12:01, Laurent Pinchart wrote:
 > Hi Kieran,
 > 
 > Thank you for the patch.
 > 
-> On Tue, Dec 04, 2018 at 03:51:45PM +0000, Kieran Bingham wrote:
->> Provide the pass-through option of --queue-late to vsp-runner, to request
->> that yavta will queue frames after the stream has started.
+> On Tue, Dec 04, 2018 at 03:51:46PM +0000, Kieran Bingham wrote:
+>> Some of our tests set flipping and rotation controls, and the VSP cell
 > 
-> As with 5/7, what is the use case for this ?
+> cell ?
 
-I'm sure it had a very good use case at the time.
-Please ask 2 months ago Kieran ... Current Kieran has no idea :)
+Hrm ... Block, Module, Instance ?
+What is your preferred name for a particular instance of the HW entity ?
 
-And then let me borrow your time machine - I have some good uses for it :D
+I think VSP instance might be the right choice.
 
-I remember asking  you about this option in fact, but I can't remember
-what I was testing specifically, or why I have added this here.
+> 
+>> can be used again by later tests. If these controls are not reset, then
+>> that operation is applied to later tests incorrectly causing that test
+> 
+> s/that test/those tests/ ?
 
-Maybe I was using it to investigate something ... It might perhaps be
-useful to add a test which uses this to make sure the VSP1 is happy with
-late queued frames?
+Yes, agreed.
 
+
+> 
+>> to fail.
+>>
+>> In an ideal world, tests should clean up after themselves, and leave the
+>> system in a known state. However the world is not ideal and we would not
+>> be able to guarantee any previous system state before a test was run
+>> anyway. Therefore it is more effective to reset state at the beginning
+>> of a test.
+>>
+>> To repair this - reset all control values to their defaults at the start
+>> of every test during test_init()
+>>
 >> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
 >> ---
->>  scripts/vsp-lib.sh | 4 ++++
->>  1 file changed, 4 insertions(+)
+>>  scripts/vsp-lib.sh | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
 >>
 >> diff --git a/scripts/vsp-lib.sh b/scripts/vsp-lib.sh
->> index 9140254c7459..3d2792707d24 100755
+>> index 3d2792707d24..33442816f208 100755
 >> --- a/scripts/vsp-lib.sh
 >> +++ b/scripts/vsp-lib.sh
->> @@ -898,6 +898,7 @@ vsp_runner() {
->>  	local count=10
->>  	local pause=
->>  	local skip=7
->> +	local queue_late=
+>> @@ -94,6 +94,14 @@ vsp1_set_control() {
+>>  	$yavta --no-query -w "$control $value" $subdev | ./logger.sh "$entity" >> $logfile
+>>  }
 >>  
->>  	for option in $* ; do
->>  		case $option in
->> @@ -916,6 +917,8 @@ vsp_runner() {
->>  		--skip=*)
->>  			skip=${option/--skip=/}
->>  			;;
->> +		--queue-late)
->> +			queue_late=queue-late
-
-erm ... missing ";;"?
-
+>> +vsp1_reset_controls() {
+>> +	local entity=$1
+>> +	local subdev=$(vsp1_entity_subdev $entity)
+>> +
+>> +	echo "Resetting controls on $subdev" | ./logger.sh "$entity" >> $logfile
+>> +	$yavta --no-query --reset-controls $subdev | ./logger.sh "$entity" >> $logfile
+>> +}
+>> +
+>>  # -----------------------------------------------------------------------------
+>>  # Reference frame generation
+>>  #
+>> @@ -1082,6 +1090,9 @@ test_init() {
+>>  	dev=$(vsp1_device $mdev)
+>>  	echo "Using device $mdev ($dev)" | ./logger.sh config >> $logfile
 >>  
->>  		*)
->>  			return 1
->> @@ -959,6 +962,7 @@ vsp_runner() {
->>  
->>  	$yavta -c$count -n $buffers ${format:+-f $format} ${size:+-s $size} \
->>  		${skip:+--skip $skip} ${file:+--file=$file} ${pause:+-p$pause} \
->> +		${queue_late:+--$queue_late} \
->>  		$videodev | ./logger.sh $entity >> $logfile
+>> +	# Reset any rotation or flipping controls
+>> +	vsp1_reset_controls wpf.0
+>> +
+>>  	vsp_runner=./vsp-runner.sh
 >>  }
 >>  
 > 
