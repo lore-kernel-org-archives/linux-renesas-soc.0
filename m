@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB04C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939E8C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0185D2173C
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:41:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 634B620645
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 20:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="YRyZtF1w"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="B0Vh2OPD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbfBQUlO (ORCPT
+        id S1726015AbfBQUn6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 15:41:14 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59286 "EHLO
+        Sun, 17 Feb 2019 15:43:58 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59460 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfBQUlO (ORCPT
+        with ESMTP id S1725916AbfBQUn5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 15:41:14 -0500
+        Sun, 17 Feb 2019 15:43:57 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 58A0449;
-        Sun, 17 Feb 2019 21:41:12 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0301C49;
+        Sun, 17 Feb 2019 21:43:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550436072;
-        bh=Ff7aIwYpu1KRCTOJK6rWCbwvdQD9KZ2WUKfVRbnv3ME=;
+        s=mail; t=1550436236;
+        bh=7vmEoKnrZ+FUauMNBBrpxyQxwzfVojOHTNVV4LnTJ+k=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=YRyZtF1wO8bGJhG1RqOaiVmvo3SD6OuxaSFETvFMuAAc1XifJt7C5Pp1gARWLdNtQ
-         B13sohHEChRFzXFa6LtNUUXc0jaR2091Niu4Ks7gu6PFs0r+gOYyCFZNxSfoRuLE2u
-         cHT6cryOZfUCsa9Jh7JyuVrg13cTkjVuE9evMnQ0=
+        b=B0Vh2OPDovAxTvadJGKYZoyI4EtXvkT3UgFlvFwTGxdYTituma1Y8NfUxjViBJPHR
+         xPyfu0nuVxrq2cKMIYPmQ+G/b0km1lDNsjQxTsvpH1DfKyeScX+DW3Fs0IBrYOMWEc
+         110nbgRVfnACygNtkZA4m3nzDSFXk6WgeRpfFKhM=
 Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [VSP-Tests PATCH 1/7] tests: add pseudo platform test
+Subject: Re: [VSP-Tests PATCH 2/7] tests: Provide copy test to validate 1xN
+ streams
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
 References: <20181204155146.9726-1-kieran.bingham@ideasonboard.com>
- <20181204155146.9726-2-kieran.bingham@ideasonboard.com>
- <20190217024155.GA20463@pendragon.ideasonboard.com>
+ <20181204155146.9726-3-kieran.bingham@ideasonboard.com>
+ <20190217024722.GC20463@pendragon.ideasonboard.com>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
@@ -87,12 +87,12 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <b8f9f02a-7dc7-ec6e-f85a-24237061ac7a@ideasonboard.com>
-Date:   Sun, 17 Feb 2019 20:41:09 +0000
+Message-ID: <aab1e357-742b-570f-0926-83dfb037528d@ideasonboard.com>
+Date:   Sun, 17 Feb 2019 20:43:53 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190217024155.GA20463@pendragon.ideasonboard.com>
+In-Reply-To: <20190217024722.GC20463@pendragon.ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -103,71 +103,89 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Laurent,
 
-On 17/02/2019 02:41, Laurent Pinchart wrote:
+On 17/02/2019 02:47, Laurent Pinchart wrote:
 > Hi Kieran,
 > 
 > Thank you for the patch.
 > 
-> On Tue, Dec 04, 2018 at 03:51:40PM +0000, Kieran Bingham wrote:
->> Provide an initial test which can run as part of the test suite.
->> This test will report the platform and kernel version, along with
->> the identified paths of required utilities.
+> On Tue, Dec 04, 2018 at 03:51:41PM +0000, Kieran Bingham wrote:
+>> Validate that a 1xN stream can be read through the RPF and written
+>> through the WPF.
 >>
->> This will aid in ensuring that required tools are available on a
->> running platform - and report the kernel and platform details in
->> any test suite output for clarification of results.
+>> The test framework does not currently support processing images where
+>> the stride does not match the output width - so the testing is currently
+>> limited to testing only the vertical direction in this aspect.
 >>
 >> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 >> ---
->>  tests/vsp-unit-test-0000.sh | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>  create mode 100755 tests/vsp-unit-test-0000.sh
+>>  tests/vsp-unit-test-0025.sh | 45 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 45 insertions(+)
+>>  create mode 100755 tests/vsp-unit-test-0025.sh
 >>
->> diff --git a/tests/vsp-unit-test-0000.sh b/tests/vsp-unit-test-0000.sh
+>> diff --git a/tests/vsp-unit-test-0025.sh b/tests/vsp-unit-test-0025.sh
 >> new file mode 100755
->> index 000000000000..144cfc677b32
+>> index 000000000000..57a1fac6e369
 >> --- /dev/null
->> +++ b/tests/vsp-unit-test-0000.sh
->> @@ -0,0 +1,20 @@
+>> +++ b/tests/vsp-unit-test-0025.sh
+>> @@ -0,0 +1,45 @@
 >> +#!/bin/sh
 >> +
->> +# Report testing conditions
+>> +#
+>> +# Test pipelines which have a single pixel dimension. Use a RPF -> WPF
+>> +# pipeline with identical input and output formats to generate our output.
+>> +#
 >> +
->> +model=`cat /sys/firmware/devicetree/base/model`
-> 
-> Please use $(...) instead of `...`, it's more readable.
-
-Sure.
-
-> 
+>> +. ./vsp-lib.sh
 >> +
->> +echo "Test Conditions:"
+>> +features="rpf.0 uds wpf.0"
+>> +formats="RGB24 ARGB32"
 >> +
->> +function check_all() {
->> +	echo "  Platform: " "$model"
->> +	echo "  Kernel release: " `uname -r`
->> +	echo "  convert: " `which convert`
->> +	echo "  compare: " `which compare`
->> +	echo "  killall: " `which killall`
->> +	echo "  raw2rgbpnm: " `which raw2rgbpnm`
->> +	echo "  stress: " `which stress`
->> +	echo "  yavta: " `which yavta`
+>> +# Input is directly copied to the output. No change in format or size.
+>> +test_copy() {
+>> +	local format=$1
+>> +	local insize=$2
+>> +
+>> +	test_start "copying $insize in $format"
+>> +
+>> +	pipe_configure rpf-wpf 0 0
+>> +	format_configure rpf-wpf 0 0 $format $insize $format
+>> +
+>> +	vsp_runner rpf.0 &
+>> +	vsp_runner wpf.0
+>> +
+>> +	local result=$(compare_frames)
+>> +
+>> +	test_complete $result
 >> +}
 >> +
->> +check_all | column -ts ":"
+>> +test_main() {
+>> +	local format
+>> +
+>> +	for format in $formats ; do
+>> +		test_copy $format 1024x768
+>> +		test_copy $format 128x128
+>> +		test_copy $format 128x1
 > 
-> Could we remove the dependency on the column tool ? I don't have it in
-> my buildroot environment :-) I could of course add it, but in this case
-> I think it's easy enough to align the columns manually.
+> If the purpose is to test Nx1 and 1xN, do we need the first two
+> resolutions ? Shouldn't the test_start message describe the exact
+> purpose ?
 
-Ahh yes - good point. A few spaces aught to do it :)
+Hrm ... It's been too long. I don't recall if the first two were a
+copy/paste left-over or if they had more meaning.
 
-and s/`.*`/$(.*)/ here too :)
+They don't look like they have much meaning now though - so they can be
+removed. I'm all for speeding up the full test-suite :-)
+
 
 > 
-> With these fixed,
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> +
+>> +		# Skipped : Test framework does not yet support strides != width
+>> +		#test_copy $format 1x128
+>> +	done
+>> +}
+>> +
+>> +test_init $0 "$features"
+>> +test_run
 > 
 
 -- 
