@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8C7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A23C4C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C8E2184E
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:05:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 667B221773
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Feb 2019 22:13:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="g0as494K"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ri8JvtFw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfBQWFw (ORCPT
+        id S1726304AbfBQWNa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Feb 2019 17:05:52 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60792 "EHLO
+        Sun, 17 Feb 2019 17:13:30 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:32910 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfBQWFw (ORCPT
+        with ESMTP id S1726124AbfBQWNa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Feb 2019 17:05:52 -0500
+        Sun, 17 Feb 2019 17:13:30 -0500
 Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1EB8349;
-        Sun, 17 Feb 2019 23:05:49 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 043BA49;
+        Sun, 17 Feb 2019 23:13:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550441149;
-        bh=yrK+qu9v5nQlHAqDQcMkl44DFfV6O6nULJwPAb9Gb8o=;
+        s=mail; t=1550441601;
+        bh=N1MdPdNHhNlaIlUoJSPSBCvUh9dSuASWwZOtA5HTBQ4=;
         h=Subject:To:Cc:References:From:Reply-To:Date:In-Reply-To:From;
-        b=g0as494K4qJV0hirq+ovaGCyRWarkoGZOPGSdD32j2t26cpE3k9hISTWUtMrdyrfg
-         uZJdsxendJ8UNUmuPxNcZ0pOCgMb/6BESNiZwRQAGu3Yqz5alzfeAQTZ2FIwCHE/9D
-         nRGRoNKEGQyU1y4kg4HdUuRfglp0GdC4EeRTbzu0=
-Subject: Re: [PATCH 2/2] arm64: dts: r8a77990-ebisu: Enable VIN5
+        b=ri8JvtFwq6QI3GcjSkWD8PVxkN820/grvVL88/kDXshh1KBjyF+RBTHE55v3dDpFI
+         wRTC+Vgi2Osc32R3qly+KhAZ/1wKXKfZMkS/vmYC4E8bjK66WOPctJz+SfIVEz30Tv
+         3Xqr9NHwpdI63Euu0gMiDhvDmk1XQtEPqV0Cl2+c=
+Subject: Re: [PATCH 1/2] arm64: dts: r8a77990-ebisu: Fix adv7482 hexadecimal
+ register address
 To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>,
         Simon Horman <horms@verge.net.au>,
         linux-renesas-soc@vger.kernel.org
 Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>
 References: <20190216235854.15244-1-niklas.soderlund+renesas@ragnatech.se>
- <20190216235854.15244-3-niklas.soderlund+renesas@ragnatech.se>
+ <20190216235854.15244-2-niklas.soderlund+renesas@ragnatech.se>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Reply-To: kieran.bingham@ideasonboard.com
 Openpgp: preference=signencrypt
@@ -88,12 +88,12 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <a74a18e5-b5ef-bf27-6fa7-bed6c09e15f2@ideasonboard.com>
-Date:   Sun, 17 Feb 2019 22:05:45 +0000
+Message-ID: <959b482d-09a1-2ffc-1144-101348bb27d9@ideasonboard.com>
+Date:   Sun, 17 Feb 2019 22:13:17 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190216235854.15244-3-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20190216235854.15244-2-niklas.soderlund+renesas@ragnatech.se>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
@@ -107,36 +107,51 @@ Hi Niklas, Takeshi,
 On 16/02/2019 23:58, Niklas Söderlund wrote:
 > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> Both VIN4 and VIN5 are connected to CSI40 and can be configured at
-> runtime to use the single video source connected to CSI40. Enable VIN5
-> to allow it to be used in this fashion.
+> The register address used for the reg property of the adv7482 node in
+> other Renesas device trees are decimal not hex, change this for Ebisu to
+> align it with the others.
 > 
 > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > [Niklas: rewrite commit message]
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-
 > ---
->  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 4 ++++
->  1 file changed, 4 insertions(+)
+>  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> index 23914c2b83965621..2c4d1cbe05acad37 100644
+> index 62bdddcbbae7d9e9..23914c2b83965621 100644
 > --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
 > +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> @@ -635,6 +635,10 @@
->  	status = "okay";
->  };
+> @@ -383,7 +383,7 @@
+>  		};
 >  
-> +&vin5 {
-> +	status = "okay";
-> +};
-> +
->  &xhci0 {
->  	pinctrl-0 = <&usb30_pins>;
->  	pinctrl-names = "default";
+>  		port@a {
+> -			reg = <0xa>;
+> +			reg = <10>;
+
+From the discussions on this before, we converted the port number to be hex.
+
+I really dislike that we have port@a, but reg=<10>;
+
+However as long as the value is written by the DTC as 'ten' and
+correctly interpreted as decimal this is still correct.
+
+I guess it doesn't hurt to have a decimal representation as that will
+then match the bindings port descriptions. It's a shame this can't be
+the 'port@10' for comprehension though.
+
+My only hesitation on providing either an RB/or AB tag here is whether
+perhaps we should instead convert the salvator-common to use hex so that
+they match that way instead?
+
+--
+Regards
+
+Kieran
+
+>  
+>  			adv7482_txa: endpoint {
+>  				clock-lanes = <0>;
 > 
 
 
