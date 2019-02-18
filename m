@@ -2,105 +2,81 @@ Return-Path: <SRS0=S9WZ=QZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7386CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC15C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ED5A21901
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 14:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0758E2081B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 14:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388761AbfBROVc (ORCPT
+        id S1733063AbfBRO3a (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:21:32 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39165 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732892AbfBROVc (ORCPT
+        Mon, 18 Feb 2019 09:29:30 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:56736 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388575AbfBRN7c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:21:32 -0500
-Received: by mail-qt1-f195.google.com with SMTP id o6so19303202qtk.6;
-        Mon, 18 Feb 2019 06:21:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tedBm7tEj+42p5CtJWgjBm2AF23zaCje89BVBJneM0M=;
-        b=M07yrDGP4dCkWIh5bPtNcgF1CWAGo4JKW78al+r5T9nVZ0LHXygZhdVwY0Vbr/xpiR
-         L3Q4mzcJ/MBLjECM3id5llyjhIRHakU5ghbn+eLS431/VBsFJnr4E13FLBkAL10qO9Bc
-         6yMTx112xIWaO7BIfYSCJAH0DT89kSmiT9/CiycdOzQ5vFm+BoU94N4TRDpAcroPMbvE
-         pa0mjcHZRfyA0uGNH8OKSIJRjPNnw+a7UUuyI5x3+5CK8kq+t2BSFTjL8nZSQrBs7Dz+
-         CFwrgAn2WJN6y9cZDExTah5+v3HzR2plRJlNd74Qka1ZOZY2QO/dHkn1hbnivdUkyyqv
-         JOsg==
-X-Gm-Message-State: AHQUAubTl/eZ9l0FuI5j9vXr00BF/UohCUeMn6MLxQ2v3f2JqJ7YqLFa
-        T6ugu1Q+wca2wDtc+PmEMWxzJPfZxKDiD6JN4jo=
-X-Google-Smtp-Source: AHgI3IYDAZCUlkI7uxhgCkk4TDyxQIXuDT4FYtE1p2U9SAK447aJaSaRygET62vtdWwZLvPjF3nMocbUC5+AbSI/fvg=
-X-Received: by 2002:ac8:445a:: with SMTP id m26mr18226786qtn.212.1550499691188;
- Mon, 18 Feb 2019 06:21:31 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1549622472.git.horms+renesas@verge.net.au>
- <CAK8P3a0prd-4eyVOVUpp2Bhn1mGOVZwA_we79TNjSa4FF5DP6A@mail.gmail.com>
- <20190218112715.zufzr3knrhs37t6h@verge.net.au> <CAK8P3a1BrahyfrRD=1dSLNzc1mujh+rxdLoU8CtGruRSbo3JVg@mail.gmail.com>
- <20190218141417.7n6q5petp5oepd55@verge.net.au>
-In-Reply-To: <20190218141417.7n6q5petp5oepd55@verge.net.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 18 Feb 2019 15:21:14 +0100
-Message-ID: <CAK8P3a3ULz5BG=hUmhX0a+AX4yYs9gB9G8QEjYjV9pDO=5BBuw@mail.gmail.com>
-Subject: Re: [GIT PULL] Renesas ARM Based SoC Updates for v5.1
-To:     Simon Horman <horms@verge.net.au>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 18 Feb 2019 08:59:32 -0500
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id eDzV1z0013XaVaC01DzVF5; Mon, 18 Feb 2019 14:59:29 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gvjSC-0003kF-Sm; Mon, 18 Feb 2019 14:59:28 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gvjSC-0007pk-R8; Mon, 18 Feb 2019 14:59:28 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] pinctrl: sh-pfc: rcar-gen3: Rename IOCTRLx registers
+Date:   Mon, 18 Feb 2019 14:59:24 +0100
+Message-Id: <20190218135927.30068-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 3:15 PM Simon Horman <horms@verge.net.au> wrote:
->
-> On Mon, Feb 18, 2019 at 02:12:07PM +0100, Arnd Bergmann wrote:
-> > On Mon, Feb 18, 2019 at 12:27 PM Simon Horman <horms@verge.net.au> wrote:
-> > > On Fri, Feb 15, 2019 at 05:49:32PM +0100, Arnd Bergmann wrote:
-> > > > On Fri, Feb 8, 2019 at 12:14 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> > > > > Renesas ARM Based SoC Updates for v5.1
-> > > > >
-> > > > > * Correct shared IRQ handling of R-Car Gen2 Regulator quirk
-> > > > > * Add missing dts files to MAINTAINERS
-> > > >
-> > > > Should the bugfix be marked Cc:stable and and Fixes:... ?
-> > > >
-> > > Sorry for missing that, I think that the bugfix should have had the following.
-> > > Let me know if/how you want to handle updating the patch's changelog.
-> > >
-> > > Fixes: 6d14d4d313d09dab ("ARM: shmobile: Rework the PMIC IRQ line quirk")
-> >
-> > I think the easiest way is to send an email to stable@kernel.org asking for
-> > a backport of commit 5347a0203709 ("ARM: shmobile: Fix R-Car Gen2 regulator
-> > quirk") after that has hit the mainline kernel and asking for a backport.
-> >
-> > I've added it to Cc here, but I don't know if that's sufficient.
-> >
-> > If you'd rather have me pick up the patch for 5.0 as well, I can also do
-> > that and add the Cc/Fixes lines there. We will then have a duplicate
-> > commit in 5.1, but it should not cause any merge issues.
->
-> Thanks Arnd,
->
-> I'm happy to handle this via stable and avoid the duplicate.
-> If I don't hear back from them in a few days I'll make a formal
-> submission there.
+	Hi all,
 
-Ok, sounds good.
+The R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Jul 2, 2018)
+renamed the various miscellaneous I/O control registers (IOCTRLx) on
+R-Car V3M, V3H, and E3, to reflect better their actual purposes, and
+matching other SoCs.
 
-To clarify: I think you should only write them /after/ the commit
-is in mainline then, i.e. near the end of the 5.1 merge window.
+Update to code to match this.
 
-      Arnd
+I plan to queue these in sh-pfc-for-v5.2.
+
+Thanks!
+
+Geert Uytterhoeven (3):
+  pinctrl: sh-pfc: r8a77970: Rename IOCTRLx registers
+  pinctrl: sh-pfc: r8a77980: Rename IOCTRLx registers
+  pinctrl: sh-pfc: r8a77990: Rename IOCTRLx registers
+
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c | 16 ++++++++--------
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c | 22 +++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c |  6 +++---
+ 3 files changed, 22 insertions(+), 22 deletions(-)
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
