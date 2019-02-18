@@ -3,186 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A47C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9596C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C34E2184E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:17:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981872184A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728355AbfBRJR3 convert rfc822-to-8bit (ORCPT
+        id S1729373AbfBRJbL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:17:29 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37759 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfBRJR3 (ORCPT
+        Mon, 18 Feb 2019 04:31:11 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:37141 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728342AbfBRJbK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:17:29 -0500
-Received: by mail-ua1-f67.google.com with SMTP id v26so5587313uap.4;
-        Mon, 18 Feb 2019 01:17:28 -0800 (PST)
+        Mon, 18 Feb 2019 04:31:10 -0500
+Received: by mail-vs1-f67.google.com with SMTP id s16so9265851vsk.4;
+        Mon, 18 Feb 2019 01:31:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1GbkbC+bM5IK/UD8NKAzp6jV9tHiKOfNmDikXEIekRE=;
-        b=M0TOjsrztARVbEFBG5AXTwofcdYddEmzL8mErDXHHlbGZIzoBuAbFILWU+TVUHXAeL
-         i+3g0xUgJO7sgl0C0h8io8vhg9ulenF7qy9nihmO4Y7zNq+1JxP5M3GAxa8qXMjtOzKX
-         XXoN1fePvJI2KAFzVzM6FaJrlLVc5EbcsGDVwzXbW+k0Smd7MOaz/OkMFy4/Kgv7qgNI
-         +4B5Et3bdCbOWIcA8JWMb5JA0Xehs82iL1ibYfquKiVOypYg2GEKnxrT7/hXr33yQatW
-         j3/X8xsDPPTyCx+EVcjHH/96PMzJGWMvnsV8Wt/SyV2OBsJYCAHRTvPDe5hN6xwbu+Kq
-         guKw==
-X-Gm-Message-State: AHQUAuZLQjmU48ZMUEiNY1oaCgyFf6T5pS32Q8u9ilm0y6uxH2/hmHva
-        Jdsu7lgAdA8jXBOT+6JJL9mDuavdtmKeHfjuYb7mCADy
-X-Google-Smtp-Source: AHgI3IbdEQrIriNOJmyuRUOEv9yb5ey1b+cls2i9Wi1yLB/1A0vXNVfQFTRCrCir0dDmZQcSbxC2buHTXPXRG1KDdwM=
-X-Received: by 2002:a9f:30dc:: with SMTP id k28mr4245836uab.75.1550481447585;
- Mon, 18 Feb 2019 01:17:27 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=dC51Vd3PQ4saZjc086ujbamshrVevcl8Fxr/D/BWGvI=;
+        b=lEDXTaIDTzJbE94LtH4U2QlARqW0UhZgK5nvHOpjzeJn6wb3IAd5UhVxa31fVoCzUg
+         jWrqPNNxWSPYJGontyQmnd3o3BpiV02Y69KGPmGPB3LqzU7isCbvAWfxFQHld+EL3q5W
+         hz9cr6Vp168i9gO8y9gGu5GgQA5pkRfCs07bPRt6kwCjb+mVuPZM4yOUIFlbftmqdTV1
+         ipSzYIupy3mvQGfaUd/XLfMwsSbrllGxPaGAv/Whu6BcBDCwzas8vy9dslJyHDSMt4Ir
+         9g+ewkyOlFVbAp9KTXlCMqGqvbGHS+uE7sdX9Rkblynjfb4u77pBw2uy7XVCDFeklize
+         2qrQ==
+X-Gm-Message-State: AHQUAuZxYUC7dmkSzSt/BqRNmD7ZUrFm3O9LyIAK5edO4q0Z+9k9BoDV
+        NXwzUwZ6WLA9Kacwr9bCus1Y4e0xmb6tTy7s+UwZFO3c
+X-Google-Smtp-Source: AHgI3IbUeUJYYKJMezIjOx7WXYR+n1Ii1ofKqJD/0EREFtoxOuRGPttZ6BwyUFxARW9lli5TRdh9vAlErI2CBw9qHKg=
+X-Received: by 2002:a67:e3d3:: with SMTP id k19mr10287494vsm.96.1550482269188;
+ Mon, 18 Feb 2019 01:31:09 -0800 (PST)
 MIME-Version: 1.0
-References: <20190217124126.7257-1-wsa+renesas@sang-engineering.com> <20190217124126.7257-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190217124126.7257-2-wsa+renesas@sang-engineering.com>
+References: <20190216174859.15738-1-marek.vasut@gmail.com>
+In-Reply-To: <20190216174859.15738-1-marek.vasut@gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Feb 2019 10:17:16 +0100
-Message-ID: <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] i2c: gpio: fault-injector: add 'lose_arbitration' injector
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Mon, 18 Feb 2019 10:30:56 +0100
+Message-ID: <CAMuHMdXeuaqLEFfV6_7cPdiq_+vuo97brx1Xa1N6c_GFSKmM0A@mail.gmail.com>
+Subject: Re: [PATCH] regulator: gpio: Reword the binding document
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Hi Marek,
 
-On Sun, Feb 17, 2019 at 1:41 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Add a fault injector simulating 'arbitration lost' from multi-master
-> setups. Read the docs for its usage.
+On Sun, Feb 17, 2019 at 8:00 AM <marek.vasut@gmail.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Reword the binding document to make it clear how the propeties work
+> and which properties affect which other properties.
 >
-> A helper function for future fault injectors using SCL interrupts is
-> created to achieve this.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Harald Geyer <harald@ccbib.org>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: devicetree@vger.kernel.org
 > ---
+> Note: The recent gpio-regulator rework caused breakage. While the
+>       changes in the gpio-regulator code were according to the DT
+>       binding document, they stopped working with older DTs. Make
+>       the binding document clearer to prevent such breakage in the
+>       future.
+
+Thanks, adding more worms to the can, below...
+
+> --- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
+> @@ -4,16 +4,25 @@ Required properties:
+>  - compatible           : Must be "regulator-gpio".
+>  - regulator-name       : Defined in regulator.txt as optional, but required
+>                           here.
+> -- states               : Selection of available voltages and GPIO configs.
+> -                          if there are no states, then use a fixed regulator
+> +- states               : Selection of available voltages/currents provided by
+> +                         this regulator and matching GPIO configurations to
+> +                         achieve them. If there are no states in the "states"
+> +                         array, use a fixed regulator instead.
 >
-> Change since RFC:
->
-> * user supplied value is now duration of interference instead of number of
->   interferences
-> * refactored code to suppy a resusable helper function to install SCL interrupt
->   handlers
-> * added error checks to interrupt number
-> * slightly renamed the SCL interrupt when registering
+>  Optional properties:
+> -- enable-gpio          : GPIO to use to enable/disable the regulator.
+> -- gpios                        : GPIO group used to control voltage.
+> -- gpios-states         : gpios pin's initial states array. 0: LOW, 1: HIGH.
+> -                         defualt is LOW if nothing is specified.
+> +- enable-gpio          : GPIO used to enable/disable the regulator.
 
-Thanks for the update!
+According to modern GPIO rules, that should be "enable-gpios" (plural) ...
 
-> --- a/Documentation/i2c/gpio-fault-injection
-> +++ b/Documentation/i2c/gpio-fault-injection
-> @@ -83,3 +83,28 @@ This is why bus recovery (up to 9 clock pulses) must either check SDA or send
->  additional STOP conditions to ensure the bus has been released. Otherwise
->  random data will be written to a device!
->
-> +Lost arbitration
-> +================
-> +
-> +Here, we want to simulate the condition where the master under tests loses the
+> +                         Warning, the GPIO phandle flags are ignored and the
+> +                         GPIO polarity is controlled solely by the presence
+> +                         of "enable-active-high" DT property. This is due to
+> +                         compatibility with old DTs.
 
-test
+Wasn't the purpose of the various *active-* flags to accommodate GPIOs
+lacking a flags cell (i.e. typically #gpio-cells = <1>)?
+When the flags cell is present, there's indeed opportunity for confusion
+(and breakage), combined with the presence/lack of *active-* below...
 
-> +bus arbitration against another master in a multi-master setup.
-> +
-> +"lose_arbitration"
-> +------------------
-> +
-> +This file is write only and you need to write the duration of the arbitration
-> +interference (in us). The calling process will then sleep and wait for the
-
-µs
-
-We do UTF-8 in documentation, don't we?
-
-> --- a/drivers/i2c/busses/i2c-gpio.c
-> +++ b/drivers/i2c/busses/i2c-gpio.c
-
-> @@ -162,6 +167,67 @@ static int fops_incomplete_write_byte_set(void *data, u64 addr)
->  }
->  DEFINE_DEBUGFS_ATTRIBUTE(fops_incomplete_write_byte, NULL, fops_incomplete_write_byte_set, "%llu\n");
->
-> +static int i2c_gpio_fi_act_on_scl_irq(struct i2c_gpio_private_data *priv,
-> +                                      irqreturn_t handler(int, void*))
-> +{
-> +       int ret, irq = gpiod_to_irq(priv->scl);
-> +
-> +       if (irq < 0)
-> +               return irq;
-> +
-> +       i2c_lock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
-> +
-> +       ret = gpiod_direction_input(priv->scl);
-> +       if (ret)
-> +               goto unlock;
-> +
-> +       reinit_completion(&priv->scl_irq_completion);
-> +
-> +       ret = request_irq(irq, handler, IRQF_TRIGGER_FALLING,
-> +                         "i2c_gpio_fault_injector_scl_irq", priv);
-> +       if (ret)
-> +               goto output;
-> +
-> +       wait_for_completion_interruptible(&priv->scl_irq_completion);
-
-Error checking/propagation (-ERESTARTSYS)?
-
-> +
-> +       free_irq(irq, priv);
-> + output:
-> +       ret = gpiod_direction_output(priv->scl, 1);
-
-This may overwrite the error code returned by request_irq().
-
-> + unlock:
-> +       i2c_unlock_bus(&priv->adap, I2C_LOCK_ROOT_ADAPTER);
-> +
-> +       return ret;
-> +}
-> +
-> +static irqreturn_t lose_arbitration_irq(int irq, void *dev_id)
-> +{
-> +       struct i2c_gpio_private_data *priv = dev_id;
-> +
-> +       setsda(&priv->bit_data, 0);
-> +       udelay(priv->scl_irq_data);
-
-On 32-bit, u64 scl_irq_data is truncated...
-
-> +       setsda(&priv->bit_data, 1);
-> +
-> +       complete(&priv->scl_irq_completion);
-> +
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +static int fops_lose_arbitration_set(void *data, u64 duration)
-> +{
-> +       struct i2c_gpio_private_data *priv = data;
-> +
-> +       priv->scl_irq_data = duration;
-
-... since calling udelay() with large numbers can be dangerous, perhaps you
-want to limit it to say 100 ms max anyway?
-
-> +       /*
-> +        * Interrupt on falling SCL. This ensures that the master under test has
-> +        * really started the transfer. Interrupt on falling SDA did only
-> +        * exercise 'bus busy' detection on some HW but not 'arbitration lost'.
-> +        * Note that the interrupt latency may cause the first bits to be
-> +        * transmitted correctly.
-> +        */
-> +       return i2c_gpio_fi_act_on_scl_irq(priv, lose_arbitration_irq);
-> +}
+> +- enable-active-high   : Polarity of "enable-gpio" GPIO is active HIGH.
+> +                         Default is active LOW.
+> +- gpios                        : Array of one or more GPIO pins used to select the
+> +                         regulator voltage/current listed in "states".
+> +- gpios-states         : Initial state of GPIO pins in "gpios" array.
+> +                         0: LOW, 1: HIGH.
+> +                         Default is LOW if nothing else is specified.
+>  - startup-delay-us     : Startup time in microseconds.
+> -- enable-active-high   : Polarity of GPIO is active high (default is low).
+>  - regulator-type       : Specifies what is being regulated, must be either
+>                           "voltage" or "current", defaults to voltage.
 
 Gr{oetje,eeting}s,
 
