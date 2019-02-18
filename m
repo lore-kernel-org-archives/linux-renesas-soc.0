@@ -2,140 +2,171 @@ Return-Path: <SRS0=S9WZ=QZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9596C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD6FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981872184A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:31:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54E332184A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729373AbfBRJbL (ORCPT
+        id S1728342AbfBRJbS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:31:11 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:37141 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728342AbfBRJbK (ORCPT
+        Mon, 18 Feb 2019 04:31:18 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:37660 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729660AbfBRJbR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:31:10 -0500
-Received: by mail-vs1-f67.google.com with SMTP id s16so9265851vsk.4;
-        Mon, 18 Feb 2019 01:31:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dC51Vd3PQ4saZjc086ujbamshrVevcl8Fxr/D/BWGvI=;
-        b=lEDXTaIDTzJbE94LtH4U2QlARqW0UhZgK5nvHOpjzeJn6wb3IAd5UhVxa31fVoCzUg
-         jWrqPNNxWSPYJGontyQmnd3o3BpiV02Y69KGPmGPB3LqzU7isCbvAWfxFQHld+EL3q5W
-         hz9cr6Vp168i9gO8y9gGu5GgQA5pkRfCs07bPRt6kwCjb+mVuPZM4yOUIFlbftmqdTV1
-         ipSzYIupy3mvQGfaUd/XLfMwsSbrllGxPaGAv/Whu6BcBDCwzas8vy9dslJyHDSMt4Ir
-         9g+ewkyOlFVbAp9KTXlCMqGqvbGHS+uE7sdX9Rkblynjfb4u77pBw2uy7XVCDFeklize
-         2qrQ==
-X-Gm-Message-State: AHQUAuZxYUC7dmkSzSt/BqRNmD7ZUrFm3O9LyIAK5edO4q0Z+9k9BoDV
-        NXwzUwZ6WLA9Kacwr9bCus1Y4e0xmb6tTy7s+UwZFO3c
-X-Google-Smtp-Source: AHgI3IbUeUJYYKJMezIjOx7WXYR+n1Ii1ofKqJD/0EREFtoxOuRGPttZ6BwyUFxARW9lli5TRdh9vAlErI2CBw9qHKg=
-X-Received: by 2002:a67:e3d3:: with SMTP id k19mr10287494vsm.96.1550482269188;
- Mon, 18 Feb 2019 01:31:09 -0800 (PST)
+        Mon, 18 Feb 2019 04:31:17 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 12EE23A6791
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Feb 2019 10:20:47 +0100 (CET)
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 8A153200012;
+        Mon, 18 Feb 2019 09:20:42 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 10:21:07 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 09/30] media: entity: Swap pads if route is checked
+ from source to sink
+Message-ID: <20190218092107.omddljghnv3l2ss6@uno.localdomain>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
+ <20190115225743.GH28397@pendragon.ideasonboard.com>
+ <20190122151506.fnlfvwtoq7qunz45@paasikivi.fi.intel.com>
+ <20190122152030.GB11461@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-References: <20190216174859.15738-1-marek.vasut@gmail.com>
-In-Reply-To: <20190216174859.15738-1-marek.vasut@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Feb 2019 10:30:56 +0100
-Message-ID: <CAMuHMdXeuaqLEFfV6_7cPdiq_+vuo97brx1Xa1N6c_GFSKmM0A@mail.gmail.com>
-Subject: Re: [PATCH] regulator: gpio: Reword the binding document
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cynd3sxjjzirrrlt"
+Content-Disposition: inline
+In-Reply-To: <20190122152030.GB11461@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
 
-On Sun, Feb 17, 2019 at 8:00 AM <marek.vasut@gmail.com> wrote:
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Reword the binding document to make it clear how the propeties work
-> and which properties affect which other properties.
+--cynd3sxjjzirrrlt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Laurent, Sakari,
+
+On Tue, Jan 22, 2019 at 05:20:30PM +0200, Laurent Pinchart wrote:
+> Hi Sakari,
 >
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Harald Geyer <harald@ccbib.org>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> To: devicetree@vger.kernel.org
-> ---
-> Note: The recent gpio-regulator rework caused breakage. While the
->       changes in the gpio-regulator code were according to the DT
->       binding document, they stopped working with older DTs. Make
->       the binding document clearer to prevent such breakage in the
->       future.
-
-Thanks, adding more worms to the can, below...
-
-> --- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-> +++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-> @@ -4,16 +4,25 @@ Required properties:
->  - compatible           : Must be "regulator-gpio".
->  - regulator-name       : Defined in regulator.txt as optional, but required
->                           here.
-> -- states               : Selection of available voltages and GPIO configs.
-> -                          if there are no states, then use a fixed regulator
-> +- states               : Selection of available voltages/currents provided by
-> +                         this regulator and matching GPIO configurations to
-> +                         achieve them. If there are no states in the "states"
-> +                         array, use a fixed regulator instead.
+> On Tue, Jan 22, 2019 at 05:15:06PM +0200, Sakari Ailus wrote:
+> > On Wed, Jan 16, 2019 at 12:57:43AM +0200, Laurent Pinchart wrote:
+> > >>
+> > >> This way the pads are always passed to the has_route() op sink pad f=
+irst.
+> > >> Makes sense.
+> > >
+> > > Is there anything in the API that mandates one pad to be a sink and t=
+he
+> > > other pad to the a source ? I had designed the operation to allow
+> > > sink-sink and source-source connections to be checked too.
+> >
+> > Do you have a use case in mind for sink--sink or source--source routes?=
+ The
+> > routes are about flows of data, so I'd presume only source--sink or
+> > sink--source routes are meaningful.
+> >
+> > If you did, then the driver would have to handle that by itself. This s=
+till
+> > simplifies the implementation for drivers that do not.
 >
->  Optional properties:
-> -- enable-gpio          : GPIO to use to enable/disable the regulator.
-> -- gpios                        : GPIO group used to control voltage.
-> -- gpios-states         : gpios pin's initial states array. 0: LOW, 1: HIGH.
-> -                         defualt is LOW if nothing is specified.
-> +- enable-gpio          : GPIO used to enable/disable the regulator.
+> I don't have use cases for such routes, but we use the has_route
+> operation when traversing pipelines, and at that point we need to get
+> all the internally connected pads. In another patch in this series you
+> implement a helper function that handles this, but its implementation
+> isn't complete. I explained in my review of that patch that I fear a
+> correct generic implementation would become quite complex, while the
+> complexity should be easy to handle on the driver side as the code can
+> then be specialized for the case at hand.
+>
 
-According to modern GPIO rules, that should be "enable-gpios" (plural) ...
+As a compromise, in v3 I'm thinking of maintaining support for the
+most common case of two sources connected to the same sink, as
+Sakari's patch does, but let more complex cases be handled by the
+driver implementation of has_route().
 
-> +                         Warning, the GPIO phandle flags are ignored and the
-> +                         GPIO polarity is controlled solely by the presence
-> +                         of "enable-active-high" DT property. This is due to
-> +                         compatibility with old DTs.
+Ack?
 
-Wasn't the purpose of the various *active-* flags to accommodate GPIOs
-lacking a flags cell (i.e. typically #gpio-cells = <1>)?
-When the flags cell is present, there's indeed opportunity for confusion
-(and breakage), combined with the presence/lack of *active-* below...
+> > > If your goal is to simplify the implementation of the .has_route()
+> > > operation in drivers, I would instead sort pad0 and pad1 by value.
+> >
+> > That'd be another option to make the order deterministic for the driver.
+> > I'm fine with that as well.
+> >
 
-> +- enable-active-high   : Polarity of "enable-gpio" GPIO is active HIGH.
-> +                         Default is active LOW.
-> +- gpios                        : Array of one or more GPIO pins used to select the
-> +                         regulator voltage/current listed in "states".
-> +- gpios-states         : Initial state of GPIO pins in "gpios" array.
-> +                         0: LOW, 1: HIGH.
-> +                         Default is LOW if nothing else is specified.
->  - startup-delay-us     : Startup time in microseconds.
-> -- enable-active-high   : Polarity of GPIO is active high (default is low).
->  - regulator-type       : Specifies what is being regulated, must be either
->                           "voltage" or "current", defaults to voltage.
+In v3 I have taken both suggestions in: try the "sink then source" order
+first, then order by index in case the pads are of the same time. This
+needs to be documented in has_route() operation definition though.
 
-Gr{oetje,eeting}s,
+Would that be fine with you?
 
-                        Geert
+Thanks
+   j
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > >> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > >> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnate=
+ch.se>
+> > >> ---
+> > >>  drivers/media/media-entity.c | 4 ++++
+> > >>  1 file changed, 4 insertions(+)
+> > >>
+> > >> diff --git a/drivers/media/media-entity.c b/drivers/media/media-enti=
+ty.c
+> > >> index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
+> > >> --- a/drivers/media/media-entity.c
+> > >> +++ b/drivers/media/media-entity.c
+> > >> @@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_entity=
+ *entity, unsigned int pad0,
+> > >>  	if (!entity->ops || !entity->ops->has_route)
+> > >>  		return true;
+> > >>
+> > >> +	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
+> > >> +	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
+> > >> +		swap(pad0, pad1);
+> > >> +
+> > >>  	return entity->ops->has_route(entity, pad0, pad1);
+> > >>  }
+> > >>  EXPORT_SYMBOL_GPL(media_entity_has_route);
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--cynd3sxjjzirrrlt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlxqeQMACgkQcjQGjxah
+VjwDGg//dOq5CHZ07nr8XM7CsSi03rBsnh08Ihfd6tIgMF8E0xgdEOxqEIFHnHDf
+i54ApZBQ5PC03iNU57AT/s2atMwfhKQLPKiPIwdVRJaRwXogb3XCzn80swdLY/qy
+6ATTOqyWtklyVFGM5fsXiK/68PvTsj8xh17GryvFbFL60OfwT3QMIABC/2iw1BbL
+q57jYT3anQAhxkfdM9hHfk0l5ZSiH+iEx+HpTIEUbj0fBhg5xFErdWaXVXRP+r2H
+UNvt7TrIXibVJ7Z7rs0/mI7bivULXzrK4H0x5ehuRtHfy/aaIb1cT2nN2V9TGu9t
+pdqe/tUvDEDAiOrTkr8lN96JxTzxJO3JlfQtVTZW/J2AawFGNyGrqJkE1qv4hD+w
+CA+SjQk8o8NWfEHvLQjQhY5uuS5uZ/ooFeMPz/HkRSNCAde8T7xt1+d5/japhoo9
+t2mdUjN0xVHKG6XNxxmjv44B34aQbQe/lMxrtIFv2udXIICP+V8oZv6HeNTCNFbT
+jo8it82DrsxRpInbjXTBFaTWXaD2EBFPQnUt+d1hIB3u/8CIMb11sZ1jw8eA3ngQ
+I9F8fxHMgMkcBsTSzEVOXp6VEuj4Ld/DCVraCkFmqR3vXQGi/NVk2RKU+VEYAd4y
+t6PNtgSWNxNz8duLUBXScpYWTGuQXvoQeYWOXmx8vP0MP0Al/G8=
+=sEFy
+-----END PGP SIGNATURE-----
+
+--cynd3sxjjzirrrlt--
