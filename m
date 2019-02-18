@@ -2,93 +2,133 @@ Return-Path: <SRS0=S9WZ=QZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2CBC10F02
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2A9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E2C20700
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550522041;
-	bh=P6lSUXknodIFXmFgoB/x2BT5r86NeJAHZReuyH6rTdc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pBzY0lPjWpWOvk2SdMj4HE+Z2PWbd6/vIAfzC6WDNHUnBMiKhI5MdIEGgyRTL0S7C
-	 L3YzAY8gxXTvsAFO2lxSVKMh/Izpg8i4hznYBpnWuNQbKQM4jGgieNLl9cFGUy6vwU
-	 bNE0wtNAyd+fk1tvbJQAxNRPgnQX6cSUQVjy6K9U=
+	by mail.kernel.org (Postfix) with ESMTP id 922B820C01
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:41:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729660AbfBRUeA (ORCPT
+        id S1727920AbfBRUl2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:34:00 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40974 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726831AbfBRUd7 (ORCPT
+        Mon, 18 Feb 2019 15:41:28 -0500
+Received: from sauhun.de ([88.99.104.3]:39362 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727682AbfBRUl1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:33:59 -0500
-Received: by mail-ot1-f65.google.com with SMTP id t7so14086158otk.8;
-        Mon, 18 Feb 2019 12:33:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tI0tOm+JTfqXv6/Wd6g7Josnoz8kBg/ODVHIVdK6Mn4=;
-        b=WBvFy4QZP5Rk3eKF0Pr8T21AvsflkjfBnAAlVmHySUH29rVnXDFjOCPmixfck0SSI7
-         dVGtyYrdefObcSx159QmfcUqqzI1sPLXOMPckUSO8GAqI9iEhJ13IrXhL7dJuHfZjsAQ
-         27bOLnl0iq5BPQFnmr7YtO5cQ3efpi6LzflQ94MIe4ZwXyhT0NDCEnpZzU+z1k7AiPXY
-         ry3HP4PM1Qo71UH/7ZTi3ElMYLU3PZ2MVcKI2Kgp44uI9Ek1xpGegSbrn70PEc3nNtOo
-         BWUSmfxS8pt2aYER03tfk/4QRCqdIa2/ZJta6llIG3NooMU/KpTHq/YHmGB2+TTjHX+j
-         g+lQ==
-X-Gm-Message-State: AHQUAuYm6gcQtYbGwekeuZ/QVMUK/OGZ2kvW0MSRtY0Y/GcPsmmB2lP9
-        bbGqQOnjc6qO0rewctvitg+oIFfa4A==
-X-Google-Smtp-Source: AHgI3IbpjZ1kD4A9v/21DquVqMuPSCJ9I6m6Oze8v0VxHEzoPK3kpDUo80wYDtAvHOEphl55r3jUYg==
-X-Received: by 2002:a9d:27e6:: with SMTP id c93mr14901213otb.195.1550522038719;
-        Mon, 18 Feb 2019 12:33:58 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l204sm6436492oia.54.2019.02.18.12.33.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 12:33:58 -0800 (PST)
-Date:   Mon, 18 Feb 2019 14:33:57 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: can: rcar_canfd: Document r8a774a1
- support
-Message-ID: <20190218203357.GA19340@bogus>
-References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547736856-16539-4-git-send-email-fabrizio.castro@bp.renesas.com>
+        Mon, 18 Feb 2019 15:41:27 -0500
+Received: from localhost (p54B3327C.dip0.t-ipconnect.de [84.179.50.124])
+        by pokefinder.org (Postfix) with ESMTPSA id 7E0BD2C7BF4;
+        Mon, 18 Feb 2019 21:41:25 +0100 (CET)
+Date:   Mon, 18 Feb 2019 21:41:22 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] i2c: gpio: fault-injector: add 'lose_arbitration'
+ injector
+Message-ID: <20190218204122.j35itmqth3avo3a6@ninjato>
+References: <20190217124126.7257-1-wsa+renesas@sang-engineering.com>
+ <20190217124126.7257-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qwz2uwssdtpo7ey6"
 Content-Disposition: inline
-In-Reply-To: <1547736856-16539-4-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 17 Jan 2019 14:54:16 +0000, Fabrizio Castro wrote:
-> Document support for rcar_canfd on R8A774A1 SoC devices.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
-> This patch depends on:
-> https://patchwork.kernel.org/patch/10766781/
-> 
->  Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--qwz2uwssdtpo7ey6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Geert,
+
+thanks for this review, too!
+
+> >
+> > +Lost arbitration
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Here, we want to simulate the condition where the master under tests l=
+oses the
+>=20
+> test
+
+Ack.
+
+> > +This file is write only and you need to write the duration of the arbi=
+tration
+> > +interference (in us). The calling process will then sleep and wait for=
+ the
+>=20
+> =C2=B5s
+>=20
+> We do UTF-8 in documentation, don't we?
+
+Dunno, I can change. Only 4 occcurences of '=C2=B5s' in Documentation/ so f=
+ar.
+
+> > +       wait_for_completion_interruptible(&priv->scl_irq_completion);
+>=20
+> Error checking/propagation (-ERESTARTSYS)?
+
+Are you sure? ERESTARTSYS belongs to the "These should never be seen by
+user programs." group.
+
+>=20
+> > +
+> > +       free_irq(irq, priv);
+> > + output:
+> > +       ret =3D gpiod_direction_output(priv->scl, 1);
+>=20
+> This may overwrite the error code returned by request_irq().
+
+Yeah. What do you think about this, is this too dense?
+
+	ret =3D gpiod_direction_output(priv->scl, 1) ?: ret;
+
+> > +       priv->scl_irq_data =3D duration;
+>=20
+> ... since calling udelay() with large numbers can be dangerous, perhaps y=
+ou
+> want to limit it to say 100 ms max anyway?
+
+Yeah, good idea. Will apply it for both injectors.
+
+Happy hacking,
+
+   Wolfram
+
+
+--qwz2uwssdtpo7ey6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxrGG4ACgkQFA3kzBSg
+KbaKew/9HFm7a+yDzhhd2CEiwEN81gIJvJEAuMtgWMvbnD4Y2bydedJI1GVJQyef
+qrvMOWpHzX+xELmUPCfdSAmYckZV+awQtxd1E1Dq4kl1wD1PH11nq37p2F6Bdg4z
+/XYMSbos1DGm/xGQIydp5QbVDR6102Uu93GTHr/f8PJooX0Rg76BBMau3vhrNfUz
+jTYukldXud91miWg4QUD2m89BX48xHPLoy5mUGUhumgA1YMcPrTJO4I2MI4MsD0K
+ZvT2q0PpLzd9ZckM3ajH14FtzCf4KK2lNYapG+r/U+o0JmnJmy4ttTGlTcv8NkBr
+V0I2WPrbg2dJUBPiBibu1fnp/LT9fpgznXdCFDcIzL7h82FChLaChhHzTK3dy9iZ
+nY5RktiD5AfxTCBExcgsQhiPgJiuYb5QDMnpS0zVlj7YIUGbYpyRN7wxRt0tNLit
+xgeDE5ziFRd5nD9vfVDltTpVMlfa3rvPrDTt49GLVDI/Sme99ZnBmDeNvxd0LZ26
+S24G9SMa+BJfUrV38TYiRgRnvCZwo9VQi0b4Vd6k10a4RSjOX53uttmS+1WluebL
+aZyZaf+oCZ44lpBVzOTRMmh7q4UPJt6uOG/DHkXTnoEa6AaDmXCCk5mRVO1NYGNS
+oVa3wZ8c6Ad2o/dXky0QMCW66jxittD7H4W1mtyboTPYdxlEVgg=
+=ZdBH
+-----END PGP SIGNATURE-----
+
+--qwz2uwssdtpo7ey6--
