@@ -2,133 +2,94 @@ Return-Path: <SRS0=S9WZ=QZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2A9C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E742C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 22:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922B820C01
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6872217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 22:18:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ccbib.org header.i=@ccbib.org header.b="Agv3J908"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfBRUl2 (ORCPT
+        id S1731614AbfBRWS2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:41:28 -0500
-Received: from sauhun.de ([88.99.104.3]:39362 "EHLO pokefinder.org"
+        Mon, 18 Feb 2019 17:18:28 -0500
+Received: from h1.radempa.de ([176.9.142.194]:39663 "EHLO mail.cosmopool.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727682AbfBRUl1 (ORCPT
+        id S1731611AbfBRWS1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:41:27 -0500
-Received: from localhost (p54B3327C.dip0.t-ipconnect.de [84.179.50.124])
-        by pokefinder.org (Postfix) with ESMTPSA id 7E0BD2C7BF4;
-        Mon, 18 Feb 2019 21:41:25 +0100 (CET)
-Date:   Mon, 18 Feb 2019 21:41:22 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 1/2] i2c: gpio: fault-injector: add 'lose_arbitration'
- injector
-Message-ID: <20190218204122.j35itmqth3avo3a6@ninjato>
-References: <20190217124126.7257-1-wsa+renesas@sang-engineering.com>
- <20190217124126.7257-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
+        Mon, 18 Feb 2019 17:18:27 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.cosmopool.net (Postfix) with ESMTP id DFFC9900B0F;
+        Mon, 18 Feb 2019 23:18:24 +0100 (CET)
+Received: from mail.cosmopool.net ([127.0.0.1])
+        by localhost (mail.b.radempa.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id o7l6AdSbOyyR; Mon, 18 Feb 2019 23:18:24 +0100 (CET)
+Received: from stardust.g4.wien.funkfeuer.at (213162072137.public.t-mobile.at [213.162.72.137])
+        by mail.cosmopool.net (Postfix) with ESMTPSA id 87663900316;
+        Mon, 18 Feb 2019 23:18:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ccbib.org; s=201902;
+        t=1550528304; bh=fszfhVL9GFAz80iZgaicybagEQsldwNeUejuk6k8lnw=;
+        h=From:To:cc:Subject:In-reply-to:References:Date:From;
+        b=Agv3J908iV1JWiEeeMp+MioA0DvOGtnkG384L+2IDn9VxMHwDD/luxdtVq6j6v598
+         WR1KvXjVnt3rCevIEW7l4eCq3A8W2qbvJXa0/cnPaLnrmg8EJ424DI1vs92BrIl6v4
+         ucCybH9wQCrV6r+dGpfcxFKjueAxi8LD0WA8jDkw=
+Received: from lambda by stardust.g4.wien.funkfeuer.at with local (Exim 4.89)
+        (envelope-from <harald@ccbib.org>)
+        id 1gvrEx-0000K7-Ks; Mon, 18 Feb 2019 23:18:19 +0100
+From:   Harald Geyer <harald@ccbib.org>
+To:     Marek Vasut <marek.vasut@gmail.com>
+cc:     devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] regulator: gpio: Reword the binding document
+In-reply-to: <e2e9e577-b110-fc9b-c129-26f61e862fb4@gmail.com>
+References: <20190216174859.15738-1-marek.vasut@gmail.com> <E1gv6SG-0000Jv-KB@stardust.g4.wien.funkfeuer.at> <83550921-b0ec-fa34-b120-2dd159f256d8@gmail.com> <E1gvNOx-0000Kc-Dc@stardust.g4.wien.funkfeuer.at> <75846117-242c-6861-ace5-dccf88711208@gmail.com> <E1gvSbw-0000K8-Hj@stardust.g4.wien.funkfeuer.at> <7a993282-9137-caf4-ca0b-b2c01ea9959c@gmail.com> <E1gvfnE-0000Il-Jo@stardust.g4.wien.funkfeuer.at> <e2e9e577-b110-fc9b-c129-26f61e862fb4@gmail.com>
+Comments: In-reply-to Marek Vasut <marek.vasut@gmail.com>
+   message dated "Mon, 18 Feb 2019 19:58:09 +0100."
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qwz2uwssdtpo7ey6"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1245.1550528299.1@stardust.g4.wien.funkfeuer.at>
+Date:   Mon, 18 Feb 2019 23:18:19 +0100
+Message-Id: <E1gvrEx-0000K7-Ks@stardust.g4.wien.funkfeuer.at>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Marek Vasut writes:
+> So what about
+> 
+> gpios-states : Initial state of GPIO pins in "gpios" array, set on
+> system start and retained until consumer changes the state. 0: LOW, 1:
+> HIGH. Default is LOW if nothing else is specified.
 
---qwz2uwssdtpo7ey6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No. "retained until consumer changes the state" is promising more then
+is guaranteed.
 
-Hi Geert,
+From the explanations provided by Mark it is clear that this property
+is an artifact of the implementation in linux. I think we should document
+is as such. How about:
 
-thanks for this review, too!
+gpios-states : On operating systems, that don't support reading back gpio
+	       values in output mode (most notably linux), this array
+	       provides the state of GPIO pins set when requesting them
+	       from the gpio controller. Systems, that are capable of
+	       preserving state when requesting the lines, are free to
+	       ignore this property. 0: LOW, 1: HIGH. Default is LOW if
+	       nothing else is specified.
 
-> >
-> > +Lost arbitration
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +Here, we want to simulate the condition where the master under tests l=
-oses the
->=20
-> test
+HTH,
+Harald
 
-Ack.
-
-> > +This file is write only and you need to write the duration of the arbi=
-tration
-> > +interference (in us). The calling process will then sleep and wait for=
- the
->=20
-> =C2=B5s
->=20
-> We do UTF-8 in documentation, don't we?
-
-Dunno, I can change. Only 4 occcurences of '=C2=B5s' in Documentation/ so f=
-ar.
-
-> > +       wait_for_completion_interruptible(&priv->scl_irq_completion);
->=20
-> Error checking/propagation (-ERESTARTSYS)?
-
-Are you sure? ERESTARTSYS belongs to the "These should never be seen by
-user programs." group.
-
->=20
-> > +
-> > +       free_irq(irq, priv);
-> > + output:
-> > +       ret =3D gpiod_direction_output(priv->scl, 1);
->=20
-> This may overwrite the error code returned by request_irq().
-
-Yeah. What do you think about this, is this too dense?
-
-	ret =3D gpiod_direction_output(priv->scl, 1) ?: ret;
-
-> > +       priv->scl_irq_data =3D duration;
->=20
-> ... since calling udelay() with large numbers can be dangerous, perhaps y=
-ou
-> want to limit it to say 100 ms max anyway?
-
-Yeah, good idea. Will apply it for both injectors.
-
-Happy hacking,
-
-   Wolfram
-
-
---qwz2uwssdtpo7ey6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxrGG4ACgkQFA3kzBSg
-KbaKew/9HFm7a+yDzhhd2CEiwEN81gIJvJEAuMtgWMvbnD4Y2bydedJI1GVJQyef
-qrvMOWpHzX+xELmUPCfdSAmYckZV+awQtxd1E1Dq4kl1wD1PH11nq37p2F6Bdg4z
-/XYMSbos1DGm/xGQIydp5QbVDR6102Uu93GTHr/f8PJooX0Rg76BBMau3vhrNfUz
-jTYukldXud91miWg4QUD2m89BX48xHPLoy5mUGUhumgA1YMcPrTJO4I2MI4MsD0K
-ZvT2q0PpLzd9ZckM3ajH14FtzCf4KK2lNYapG+r/U+o0JmnJmy4ttTGlTcv8NkBr
-V0I2WPrbg2dJUBPiBibu1fnp/LT9fpgznXdCFDcIzL7h82FChLaChhHzTK3dy9iZ
-nY5RktiD5AfxTCBExcgsQhiPgJiuYb5QDMnpS0zVlj7YIUGbYpyRN7wxRt0tNLit
-xgeDE5ziFRd5nD9vfVDltTpVMlfa3rvPrDTt49GLVDI/Sme99ZnBmDeNvxd0LZ26
-S24G9SMa+BJfUrV38TYiRgRnvCZwo9VQi0b4Vd6k10a4RSjOX53uttmS+1WluebL
-aZyZaf+oCZ44lpBVzOTRMmh7q4UPJt6uOG/DHkXTnoEa6AaDmXCCk5mRVO1NYGNS
-oVa3wZ8c6Ad2o/dXky0QMCW66jxittD7H4W1mtyboTPYdxlEVgg=
-=ZdBH
------END PGP SIGNATURE-----
-
---qwz2uwssdtpo7ey6--
+-- 
+If you want to support my work:
+see http://friends.ccbib.org/harald/supporting/
+or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
+or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
