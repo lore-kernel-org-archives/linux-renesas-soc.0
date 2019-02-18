@@ -2,135 +2,93 @@ Return-Path: <SRS0=S9WZ=QZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4542C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 19:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2CBC10F02
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE8F221773
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 19:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2E2C20700
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 20:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550522041;
+	bh=P6lSUXknodIFXmFgoB/x2BT5r86NeJAHZReuyH6rTdc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pBzY0lPjWpWOvk2SdMj4HE+Z2PWbd6/vIAfzC6WDNHUnBMiKhI5MdIEGgyRTL0S7C
+	 L3YzAY8gxXTvsAFO2lxSVKMh/Izpg8i4hznYBpnWuNQbKQM4jGgieNLl9cFGUy6vwU
+	 bNE0wtNAyd+fk1tvbJQAxNRPgnQX6cSUQVjy6K9U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbfBRTVk (ORCPT
+        id S1729660AbfBRUeA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:21:40 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41604 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfBRTVk (ORCPT
+        Mon, 18 Feb 2019 15:34:00 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40974 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726831AbfBRUd7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:21:40 -0500
-Received: by mail-vs1-f66.google.com with SMTP id m20so9791141vsq.8;
-        Mon, 18 Feb 2019 11:21:39 -0800 (PST)
+        Mon, 18 Feb 2019 15:33:59 -0500
+Received: by mail-ot1-f65.google.com with SMTP id t7so14086158otk.8;
+        Mon, 18 Feb 2019 12:33:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FZDD21bqtvImTnXKrqslQCkIa9LBFLDsAjN9JGdYoAY=;
-        b=QTSi/3hEF1ymRe/nhcRlwmUMIc+jM64SzlHuDmxVw6+uIHLcqFs/kwzYLl8ayD6v/S
-         AsSuc8ph4RKm5HL8Zkv9m6GIo2P+H9K2iYnsNL/ltWuQb10SiR0VvxLJpqgMjlEFK/U9
-         dpK68ilF7OAd5FAEq5yU79KU0/GxUjRuWt2J1P+oz/vx29BsaBpyxH1ovuP6i8n4DWr0
-         pifEizW/VsIzEd7p20I40QbRmYobo+ZowggRnCs3SCuSBVnuouEvoF20IZ78XpNZRDp3
-         rhwlPg7kW2Fu58SkKoW7WBfS+i3WrzS82GXvJfAz+TPaEc+Ix4b7Qsrsbszo/n9c5hOR
-         wdsQ==
-X-Gm-Message-State: AHQUAuZ674SOSLjGnvaxAy1RjTfgZo6t5ai7M2+5pMh5eGZWazONyTdG
-        cDXDdUKIKN+jabmDIanC0Eh6v8+/quT7AXRX7O4=
-X-Google-Smtp-Source: AHgI3Ib9XLq9wxF+IG7NV1LKCzMLBr36uBx2F0JK9K6LEx6VPD9fJAWeKJbAo0u78Yg3maZFEDmR+5wPgSjKiPopUiM=
-X-Received: by 2002:a67:541:: with SMTP id 62mr12324616vsf.11.1550517698534;
- Mon, 18 Feb 2019 11:21:38 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tI0tOm+JTfqXv6/Wd6g7Josnoz8kBg/ODVHIVdK6Mn4=;
+        b=WBvFy4QZP5Rk3eKF0Pr8T21AvsflkjfBnAAlVmHySUH29rVnXDFjOCPmixfck0SSI7
+         dVGtyYrdefObcSx159QmfcUqqzI1sPLXOMPckUSO8GAqI9iEhJ13IrXhL7dJuHfZjsAQ
+         27bOLnl0iq5BPQFnmr7YtO5cQ3efpi6LzflQ94MIe4ZwXyhT0NDCEnpZzU+z1k7AiPXY
+         ry3HP4PM1Qo71UH/7ZTi3ElMYLU3PZ2MVcKI2Kgp44uI9Ek1xpGegSbrn70PEc3nNtOo
+         BWUSmfxS8pt2aYER03tfk/4QRCqdIa2/ZJta6llIG3NooMU/KpTHq/YHmGB2+TTjHX+j
+         g+lQ==
+X-Gm-Message-State: AHQUAuYm6gcQtYbGwekeuZ/QVMUK/OGZ2kvW0MSRtY0Y/GcPsmmB2lP9
+        bbGqQOnjc6qO0rewctvitg+oIFfa4A==
+X-Google-Smtp-Source: AHgI3IbpjZ1kD4A9v/21DquVqMuPSCJ9I6m6Oze8v0VxHEzoPK3kpDUo80wYDtAvHOEphl55r3jUYg==
+X-Received: by 2002:a9d:27e6:: with SMTP id c93mr14901213otb.195.1550522038719;
+        Mon, 18 Feb 2019 12:33:58 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l204sm6436492oia.54.2019.02.18.12.33.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 12:33:58 -0800 (PST)
+Date:   Mon, 18 Feb 2019 14:33:57 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: can: rcar_canfd: Document r8a774a1
+ support
+Message-ID: <20190218203357.GA19340@bogus>
+References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547736856-16539-4-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-References: <20190216174859.15738-1-marek.vasut@gmail.com> <CAMuHMdXeuaqLEFfV6_7cPdiq_+vuo97brx1Xa1N6c_GFSKmM0A@mail.gmail.com>
- <8374074b-9ef0-1286-71b4-756934e7d405@gmail.com>
-In-Reply-To: <8374074b-9ef0-1286-71b4-756934e7d405@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Feb 2019 20:21:26 +0100
-Message-ID: <CAMuHMdVex9js2_yvrFoG+CM1WQE42RpZEJ3vEqB-ziQt-zdKVw@mail.gmail.com>
-Subject: Re: [PATCH] regulator: gpio: Reword the binding document
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547736856-16539-4-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
+On Thu, 17 Jan 2019 14:54:16 +0000, Fabrizio Castro wrote:
+> Document support for rcar_canfd on R8A774A1 SoC devices.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> ---
+> This patch depends on:
+> https://patchwork.kernel.org/patch/10766781/
+> 
+>  Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
 
-On Mon, Feb 18, 2019 at 8:04 PM Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 2/18/19 10:30 AM, Geert Uytterhoeven wrote:
-> > On Sun, Feb 17, 2019 at 8:00 AM <marek.vasut@gmail.com> wrote:
-> >> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >> Reword the binding document to make it clear how the propeties work
-> >> and which properties affect which other properties.
-> >>
-> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-
-> >> --- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-> >> +++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-> >> @@ -4,16 +4,25 @@ Required properties:
-> >>  - compatible           : Must be "regulator-gpio".
-> >>  - regulator-name       : Defined in regulator.txt as optional, but required
-> >>                           here.
-> >> -- states               : Selection of available voltages and GPIO configs.
-> >> -                          if there are no states, then use a fixed regulator
-> >> +- states               : Selection of available voltages/currents provided by
-> >> +                         this regulator and matching GPIO configurations to
-> >> +                         achieve them. If there are no states in the "states"
-> >> +                         array, use a fixed regulator instead.
-> >>
-> >>  Optional properties:
-> >> -- enable-gpio          : GPIO to use to enable/disable the regulator.
-> >> -- gpios                        : GPIO group used to control voltage.
-> >> -- gpios-states         : gpios pin's initial states array. 0: LOW, 1: HIGH.
-> >> -                         defualt is LOW if nothing is specified.
-> >> +- enable-gpio          : GPIO used to enable/disable the regulator.
-> >
-> > According to modern GPIO rules, that should be "enable-gpios" (plural) ...
->
-> Isn't that changing the ABI spec then ?
-
-of_find_gpio() supports both anyway, through gpio_suffixes[].
-
-> >> +                         Warning, the GPIO phandle flags are ignored and the
-> >> +                         GPIO polarity is controlled solely by the presence
-> >> +                         of "enable-active-high" DT property. This is due to
-> >> +                         compatibility with old DTs.
-> >
-> > Wasn't the purpose of the various *active-* flags to accommodate GPIOs
-> > lacking a flags cell (i.e. typically #gpio-cells = <1>)?
->
-> Yes
->
-> > When the flags cell is present, there's indeed opportunity for confusion
-> > (and breakage), combined with the presence/lack of *active-* below...
->
-> The code is rather clear that the flags cell is ignored.
->
-> drivers/gpio/gpiolib-of.c:
->  91 /*
->  92  * The regulator GPIO handles are specified such that the
->  93  * presence or absence of "enable-active-high" solely controls
->  94  * the polarity of the GPIO line. Any phandle flags must
->  95  * be actively ignored.
->  96  */
-
-Yeah, the code is the binding doc...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Rob Herring <robh@kernel.org>
