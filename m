@@ -2,57 +2,54 @@ Return-Path: <SRS0=S9WZ=QZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29432C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19048C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009C62175B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F12206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Feb 2019 09:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727570AbfBRJB4 convert rfc822-to-8bit (ORCPT
+        id S1728823AbfBRJHR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:01:56 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40645 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfBRJB4 (ORCPT
+        Mon, 18 Feb 2019 04:07:17 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:41454 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbfBRJHQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:01:56 -0500
-Received: by mail-vs1-f66.google.com with SMTP id z18so9201833vso.7
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Feb 2019 01:01:55 -0800 (PST)
+        Mon, 18 Feb 2019 04:07:16 -0500
+Received: by mail-ua1-f67.google.com with SMTP id z24so5554264ual.8;
+        Mon, 18 Feb 2019 01:07:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QQdaZAHhLdCdq4IjiHayTI4rQ43YV1OpB0oRJ0lquFU=;
-        b=lparqqLQiNBuLrcOYIcrZb9WgKtqahINfzqsVAyj7x7GJPeOsENn+WtUXUeljTo1NH
-         zq8eijwhHpe/4ehWBQyRVKX/vacP+MB+dNdyMqERbCwVlXWQNmyriHdVftMtANzqafol
-         sfVL4KEohiWRWuJwjqRSIejpYa7dOsdAbSSUifCZV0W+KZjdWHYHP047gsPDpjNZMUHi
-         UM/IP51dI7Oj5FaheYXOwgoIeUVqtisCmSMlxvRVauiMubzNAEu8c/YrvsHGuo8/gaqP
-         i3auLGkz4r+WT6X+OCnP2vOZ7hRZvOkLzFLOOn84X0kPJP5TaD+lMASVyoWFU25/87kf
-         FUjA==
-X-Gm-Message-State: AHQUAuYai/d/4PgJAzhSG/k+n5kO5ejJGUtCAhLn/aJrZRiuIrw79x7u
-        71uEoRq5ct5sI9/YKgpeejOlxhjGOEqFKOQ6WHE=
-X-Google-Smtp-Source: AHgI3IYNzzn8zknYAi5KdVLVQ2JaDVRbdgy7OyPn4P5BWkVF74B/kCbpjOuIJlaZgAv9iDJmFLFSuZD/DP1kq8B3Yzo=
-X-Received: by 2002:a67:fc9a:: with SMTP id x26mr4085351vsp.166.1550480515159;
- Mon, 18 Feb 2019 01:01:55 -0800 (PST)
+        bh=B6S0H04HTAomNezrtT8nJl7aWmSqM3cscv4l462UHHM=;
+        b=f5Sfp0PnC0FF/UGt3IfUpJBBpgEbCzd3dBYlitm4zhmWkHH7i64BqZsDqbRsCyzy5F
+         HnUinnl+QX0dUSdw/1RHtkj4wsso3vhvOvTzMS9cHkOwvd45UAwsIDiTVvTrh9bDNaMm
+         nKdyc+alMClBz//1avRBqdkKHWTYpu7XlyR6tobQ23l/oc1Y/+mmSPYIhMZqhOR6gh0D
+         TgEx1pv9EyBp+1Bs08P1/NS8xce6GWsImBJNxj8b2BiGdM8nQ0zdIJugXPjXC6ioXaFH
+         EkJU11IncTX1nVjzz8/zGPdLhLAWslhaQPxuc167h2xgvJLUleMt95gT5Zo7vpfjoDhf
+         f4og==
+X-Gm-Message-State: AHQUAubgzzCPvZtAmdfmMi5pcv5Vv2SDJMsQi7QLkQIYkJ9vffLCRhnb
+        7BlVWYlkyQBMvxqfS56oTeoRQWbgVyMdXgSWTX7+R35K
+X-Google-Smtp-Source: AHgI3IabRubpJALmQyGM7UfgbF8BOLM7nSzlJA4iGqQOC3bNjTolr8DXGKcPhsI3NVK2kv2HqI5j+/6lxuhVpQ2kBog=
+X-Received: by 2002:a9f:30dc:: with SMTP id k28mr4229312uab.75.1550480835848;
+ Mon, 18 Feb 2019 01:07:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20190216235854.15244-1-niklas.soderlund+renesas@ragnatech.se>
- <20190216235854.15244-2-niklas.soderlund+renesas@ragnatech.se> <959b482d-09a1-2ffc-1144-101348bb27d9@ideasonboard.com>
-In-Reply-To: <959b482d-09a1-2ffc-1144-101348bb27d9@ideasonboard.com>
+References: <20190216225638.7159-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20190216225638.7159-1-niklas.soderlund+renesas@ragnatech.se>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Feb 2019 10:01:43 +0100
-Message-ID: <CAMuHMdXgPYkCi+pK9FsfsCuWtAL1Ly7d=Ty88+qGH7m7L67aOA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: r8a77990-ebisu: Fix adv7482 hexadecimal
- register address
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Date:   Mon, 18 Feb 2019 10:07:04 +0100
+Message-ID: <CAMuHMdUcGeffyxgZ2eBU2A=t-8c2Mo2eqvr-czSMRJy13AyYJA@mail.gmail.com>
+Subject: Re: [PATCH] rcar-csi2: Use standby mode instead of resetting
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -60,55 +57,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Hi Niklas,
 
-On Sun, Feb 17, 2019 at 11:13 PM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
-> On 16/02/2019 23:58, Niklas Söderlund wrote:
-> > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> >
-> > The register address used for the reg property of the adv7482 node in
-> > other Renesas device trees are decimal not hex, change this for Ebisu to
-> > align it with the others.
-> >
-> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > [Niklas: rewrite commit message]
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> > index 62bdddcbbae7d9e9..23914c2b83965621 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> > @@ -383,7 +383,7 @@
-> >               };
-> >
-> >               port@a {
-> > -                     reg = <0xa>;
-> > +                     reg = <10>;
+On Sun, Feb 17, 2019 at 8:54 AM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Later versions of the datasheet updates the reset procedure to more
+> closely resemble the standby mode. Update the driver to enter and exit
+> the standby mode instead of resetting the hardware before and after
+> streaming is started and stopped.
 >
-> From the discussions on this before, we converted the port number to be hex.
+> While at it break out the full start and stop procedures from
+> rcsi2_s_stream() into the existing helper functions.
 >
-> I really dislike that we have port@a, but reg=<10>;
->
-> However as long as the value is written by the DTC as 'ten' and
-> correctly interpreted as decimal this is still correct.
->
-> I guess it doesn't hurt to have a decimal representation as that will
-> then match the bindings port descriptions. It's a shame this can't be
-> the 'port@10' for comprehension though.
->
-> My only hesitation on providing either an RB/or AB tag here is whether
-> perhaps we should instead convert the salvator-common to use hex so that
-> they match that way instead?
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-(More rationale, which may be considered bikeshedding ;-)
+Thanks for your patch!
 
-I believe we tend to use decimal for small numbers, and hex for large numbers.
-Exceptions are values where the meaning of the individual bits is important,
-and hex is thus more suitable (e.g. rohm,ddr-backup-power = <0xf>).
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+
+> @@ -936,6 +947,10 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
+>         if (irq < 0)
+>                 return irq;
+>
+> +       priv->rstc = devm_reset_control_get(&pdev->dev, NULL);
+> +       if (IS_ERR(priv->rstc))
+> +               return PTR_ERR(priv->rstc);
+> +
+>         return 0;
+
+Does the driver Kconfig option need "select RESET_CONTROLLER"?
+If the option is not enabled, devm_reset_control_get() will return -ENOTSUPP.
 
 Gr{oetje,eeting}s,
 
