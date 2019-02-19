@@ -2,96 +2,102 @@ Return-Path: <SRS0=FLKL=Q2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB392C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 10:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE900C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 13:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95DFE21917
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 10:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2CD52146E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 13:13:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfBSK4f (ORCPT
+        id S1728369AbfBSNNo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:56:35 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42060 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbfBSK4f (ORCPT
+        Tue, 19 Feb 2019 08:13:44 -0500
+Received: from sauhun.de ([88.99.104.3]:45936 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727246AbfBSNNn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:56:35 -0500
-Received: by mail-vs1-f65.google.com with SMTP id b20so11408230vsl.9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Feb 2019 02:56:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aBXD3rWRJfGxs5SbbHGFbAnlRDHOwUWZrbX5iOWsOY4=;
-        b=S1PlOmbewNqvwauhr07FnOcC0dkSfqyVYz1fLoWDu9vw8bO2SgtHgU8PCluagquBZo
-         ALVCXb5qyPNT/oWjuf/Uv2TWxBvlGmSfFbzVwN2hCntVH0QdyDRaVQ6M7JXYNzZinH5R
-         iDdWIB1ZS07TyJlEG20sGhlrHaJf57Dxvn/wB3lgqwn75mT5bW/WRdec0HjJij785waN
-         b8bVRTWLgQZ04lot5lIB9/rOdTkpikTe0XDDtjonLPXymZTXN+lnhdYq2KyZegGv+aTP
-         vWag4lcjg+14sEZGlOuEECr9M0axjYEINWrrOb1wl8w1t/++NRvz0cihaRyS0NhQK7Pj
-         R6Rw==
-X-Gm-Message-State: AHQUAuaycg6w1tXx9/Gf9AS76Caj4ofpkabffRP212UsV+tUO0rBMj4x
-        GSVfMIvI3H1QkNQmTlDiNETHwr4wELERIWhY5a1qWryG
-X-Google-Smtp-Source: AHgI3IYJIrdaAgy3przt1lTfUPDOze5YHtBGIQkX2OCLAP4TJE602pcgeHSFRChELsYPsQUGy887UNsWt2CXIOzw/co=
-X-Received: by 2002:a67:78ce:: with SMTP id t197mr13734797vsc.152.1550573794175;
- Tue, 19 Feb 2019 02:56:34 -0800 (PST)
+        Tue, 19 Feb 2019 08:13:43 -0500
+Received: from localhost (p54B338D8.dip0.t-ipconnect.de [84.179.56.216])
+        by pokefinder.org (Postfix) with ESMTPSA id 7D0CC2CF689;
+        Tue, 19 Feb 2019 14:13:41 +0100 (CET)
+Date:   Tue, 19 Feb 2019 14:13:38 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] i2c: gpio: fault-injector: add 'lose_arbitration'
+ injector
+Message-ID: <20190219131338.buwlfcxdutckpqqc@ninjato>
+References: <20190217124126.7257-1-wsa+renesas@sang-engineering.com>
+ <20190217124126.7257-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
+ <20190218204122.j35itmqth3avo3a6@ninjato>
+ <a8b62504-49c3-33a7-e8ec-46b253af13b8@axentia.se>
 MIME-Version: 1.0
-References: <1663509.2FqCFAqz4G@avalon> <CAMuHMdXG7PyN1UOPwNBJ=48NKv=V6bku3ZsQ40TbDZNZmr4UDQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXG7PyN1UOPwNBJ=48NKv=V6bku3ZsQ40TbDZNZmr4UDQ@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 19 Feb 2019 11:56:22 +0100
-Message-ID: <CAMuHMdXExtxrDkMTsHvCUBsmH=vatjFEZpEu7QtrLwyUP2Sd6Q@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] R-Car DU IOMMU
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dt7r6r2alwa363kc"
+Content-Disposition: inline
+In-Reply-To: <a8b62504-49c3-33a7-e8ec-46b253af13b8@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
 
-On Tue, Nov 20, 2018 at 1:42 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Wed, Nov 15, 2017 at 8:13 AM Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
-> > The following changes since commit d65d31388a23b14df9494135ad6c6549a59a3caa:
-> >
-> >   Merge tag 'drm-misc-next-fixes-2017-11-07' of git://anongit.freedesktop.org/
-> > drm/drm-misc into drm-next (2017-11-08 05:22:49 +1000)
-> >
-> > are available in the git repository at:
-> >
-> >   git://linuxtv.org/pinchartl/media.git drm-du-iommu-v1-20171115
-> >
-> > for you to fetch changes up to 6cb711c0fabae1101bfde1c8dce0dfd992822f6b:
-> >
-> >   drm: rcar-du: Allow importing non-contiguous dma-buf with VSP (2017-11-15
-> > 09:00:43 +0200)
->
-> The above branch has been included in renesas-drivers for one year,
-> unchanged.  Surprisingly, it still merged in cleanly, without any merge
-> conflicts.
->
-> Are there any plans to continue development, and/or submit it for
-> upstream integration? If not, should it be dropped?
+--dt7r6r2alwa363kc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Given this now fails to compile (missing #include <linux/dma-mapping.h>),
-I have used that as an excuse to drop this topic branch from today's
-renesas-drivers.
 
-Thanks for your understanding ;-)
+> >>> +       ret =3D gpiod_direction_output(priv->scl, 1);
+> >>
+> >> This may overwrite the error code returned by request_irq().
+> >=20
+> > Yeah. What do you think about this, is this too dense?
+> >=20
+> > 	ret =3D gpiod_direction_output(priv->scl, 1) ?: ret;
+>=20
+> That may also overwrite the error code, of course. Isn't it
+> usually best to return the first error? I have no clue if that
+> guideline does not apply here, though...
 
-Gr{oetje,eeting}s,
+I am neither entirely sure here. My take was that the above was the more
+severe error. Because if setting to output fails, the GPIO I2C bus will
+be broken. If the former stuff fails, well, the injection didn't work or
+was interrupted.
 
-                        Geert
+However, the GPIO was set to output before the injector. So, if setting
+it back fails, then the system likely has more severe problems anyhow?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+I am open to any better solution. However, let's not forget, this is
+debug code aimed to be used by devs.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+--dt7r6r2alwa363kc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxsAP0ACgkQFA3kzBSg
+KbZoiA/9EGaHZDHeJUNSMoHH3eZ7uA0drqPGJUtdZTrPUgNRvLTbsuI5fjQwL5b4
+9XbTtPCMFjQ65qBdNwh2ZyQDGJYFVbgfveigYFFMJIP9tSvZy0ev7yrb0E2gac/N
+mAYr0LIzs7NbMzMblyL1imUWs/NRKBwSBrFrn2i8K0mitF+JTn1AEjNbhILr8ncK
+DvjhX3paMzAe8zRtaEA5agtTLc7qQ1ERGh4rMbMA6CzUsKgSBdXhDHeWmNej1Mni
+70BWSBSZlSNyKz2RfhGcGxd/CdKwxGdnlxjLC38rtTQV9iHlfJzLDTk0skU6upsH
+4wB+xVB1vKriMsW4G+iPjCI8zkLrSb0sVJPBoF9CUD4I02aJ3re3KAfp3LXko5lh
+GQ+dahLW4bknkDCV90IOMMuhICmfpa+2L4G7BvgfW4ks4/+gFEktsvb+TCkKX5GR
+Uc9h+u7x34NFBI0TF7ZpurjdHW0uV7562sjT5GPXPONr+3aPtPad7PN2lLsXWd0T
+bFjHt9zAanBj1s3872vsrnaLy2WGLc0gFRamzGnSAnKS68TMtr9IKnKEFIoVVtOg
+UAhjCIpC/HCXrozAdykKmgFeAfkeHNb4hzX/BiiLUOgBrD05GYKD/okWdRATBpvs
+Sj87P9XaPS4YHDg0WHqPbfUG9HagP//jeHvz8tGZxe5OTa0LgWo=
+=LYgq
+-----END PGP SIGNATURE-----
+
+--dt7r6r2alwa363kc--
