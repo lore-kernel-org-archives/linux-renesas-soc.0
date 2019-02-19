@@ -2,99 +2,118 @@ Return-Path: <SRS0=FLKL=Q2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5399AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 13:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D642EC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 13:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB0E2146E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 13:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B17D921736
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 13:24:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbfBSNSy (ORCPT
+        id S1727529AbfBSNYN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 08:18:54 -0500
-Received: from sauhun.de ([88.99.104.3]:45974 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfBSNSy (ORCPT
+        Tue, 19 Feb 2019 08:24:13 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:38546 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728160AbfBSNYN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 08:18:54 -0500
-Received: from localhost (p54B338D8.dip0.t-ipconnect.de [84.179.56.216])
-        by pokefinder.org (Postfix) with ESMTPSA id A556C2CF689;
-        Tue, 19 Feb 2019 14:18:52 +0100 (CET)
-Date:   Tue, 19 Feb 2019 14:18:52 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 1/2] i2c: gpio: fault-injector: add 'lose_arbitration'
- injector
-Message-ID: <20190219131852.c26hvxieficunmsj@ninjato>
-References: <20190217124126.7257-1-wsa+renesas@sang-engineering.com>
- <20190217124126.7257-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
- <20190218204122.j35itmqth3avo3a6@ninjato>
- <CAMuHMdUB--d6_tJ4oYnvSiXy0YNNoAtMqAyyGfK+qRuX4akhAA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zgivt6hg3vdwagru"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUB--d6_tJ4oYnvSiXy0YNNoAtMqAyyGfK+qRuX4akhAA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 19 Feb 2019 08:24:13 -0500
+Received: from ramsan ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id edQA1z00B3XaVaC01dQAXs; Tue, 19 Feb 2019 14:24:10 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gw5Na-0004Ub-BB
+        for linux-renesas-soc@vger.kernel.org; Tue, 19 Feb 2019 14:24:10 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gw5Na-0004oR-9C
+        for linux-renesas-soc@vger.kernel.org; Tue, 19 Feb 2019 14:24:10 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2019-02-19-v5.0-rc7
+Date:   Tue, 19 Feb 2019 14:24:10 +0100
+Message-Id: <20190219132410.18450-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+I have pushed renesas-drivers-2019-02-19-v5.0-rc7 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
---zgivt6hg3vdwagru
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
+Today's version is based on renesas-devel-20190214-v5.0-rc6.
 
-> > > > +       wait_for_completion_interruptible(&priv->scl_irq_completion=
-);
-> > >
-> > > Error checking/propagation (-ERESTARTSYS)?
-> >
-> > Are you sure? ERESTARTSYS belongs to the "These should never be seen by
-> > user programs." group.
->=20
-> How else can you inform the user the operation has been interrupted?
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/clk-r8a77990-z2-v5
+  - topic/sh-pfc-validation-v3
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
 
-Definately not by using something which is marked "should never be seen
-by user programs" :)
+Included fixes:
+  - [LOCAL] arm64: defconfig: Reduce NR_CPUS to 8
+  - ARM: shmobile: defconfig: Update shmobile_defconfig
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
-In the worst case, I'll add:
-	if (ret) ret =3D -EINTR;
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
 
-I tested the current code with CTRL+C, there we get EOWNERDEAD back to
-userspace, even with my code not propagating anything. With sending
-SIGKILL, I got 143 which is not defined. I want to double check the
-latter first, might be my tests were flaky...
+Gr{oetje,eeting}s,
 
+						Geert
 
---zgivt6hg3vdwagru
-Content-Type: application/pgp-signature; name="signature.asc"
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxsAjwACgkQFA3kzBSg
-KbZ0QBAAqSD6oM0kcm3g5pYix9nfQP/U+SHyJ8v+cALxa/knWNFOa9GKBbXk7e7V
-Z5je/uOx5IM8Zne/QbfTiuatZhdl6ljcDmsZNWoUj6KHRGrzWGuuphbSwDgjvq+0
-NwMu/kMzgKypsa5ak6U1ag+JOkPccaTGl+TFIYAjcirNAoQiHf8rSMP/jb5OLM1D
-97polFquZytXe3TromIyGCvxL0til49yBhwjnY3ppdFcmjeW6YmMmAF15C9IMITs
-voJpsmoXPFceVYdiozxS6t5iHZDCM5sVEqDAX3E5KCqJw1vpaqzXXEv5gH82NOHS
-0IaWAmkbnxhylJMzh9a8BHUErvcskRGGa541IV+IzpzyLnvoSGIY2XOK7ExJ4xZP
-V94sDKmDFVo9h3hIYU/eUuMn5T49F9sUbXWGXSPDLlOk1/5oXeoKVmIE9ZjZJibN
-d4xAzl71nC0+2KqgdNbQaCPKH9P+RXV1ftiBfMJ1jp8yhltIQlJLSfWiCSD9CzY+
-abYWYYu92AGbLbuxAWLgzc566dggCsSj6DYmoED7dnOo8BnUxKGZrdTH3sF8pPwk
-y2KitCFmz2hL6nH1awlWpjunG4qjlRYgZiWI7HDy5uBoRNbfu300tG9/ZsVODGAi
-VFIOdQsnwgRwun7TnDM7h8UTarmQ0TVNYXpoL60DdFM+D1jmL8Y=
-=ErFL
------END PGP SIGNATURE-----
-
---zgivt6hg3vdwagru--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
