@@ -2,106 +2,96 @@ Return-Path: <SRS0=FLKL=Q2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5559C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 10:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB392C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 10:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C5B21773
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 10:10:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ccbib.org header.i=@ccbib.org header.b="cnPXBWj8"
+	by mail.kernel.org (Postfix) with ESMTP id 95DFE21917
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 10:56:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfBSKKN (ORCPT
+        id S1727628AbfBSK4f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 05:10:13 -0500
-Received: from h1.radempa.de ([176.9.142.194]:56336 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727640AbfBSKKM (ORCPT
+        Tue, 19 Feb 2019 05:56:35 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42060 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbfBSK4f (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 05:10:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.cosmopool.net (Postfix) with ESMTP id 8EE0D90168C;
-        Tue, 19 Feb 2019 11:10:09 +0100 (CET)
-Received: from mail.cosmopool.net ([127.0.0.1])
-        by localhost (mail.b.radempa.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 2coHmZ9xB1-A; Tue, 19 Feb 2019 11:10:08 +0100 (CET)
-Received: from stardust.g4.wien.funkfeuer.at (77.117.235.60.wireless.dyn.drei.com [77.117.235.60])
-        by mail.cosmopool.net (Postfix) with ESMTPSA id 7DD099001FA;
-        Tue, 19 Feb 2019 11:10:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ccbib.org; s=201902;
-        t=1550571008; bh=xwH2QEX3sds6cyFov67VVqHWXtJwZDgjzAdz6Q/TfXo=;
-        h=From:To:cc:Subject:In-reply-to:References:Date:From;
-        b=cnPXBWj850qyL/7E8QIBnQ/pRbuTXsmSWD0J7GNbCgiOM0k2ggcrcjbhCChnRxRVp
-         3opz1ZgtchhvzHQcA6PSPtMGkXMovshk4XO4/Ym+exlfy8y2ndB9RKNbCho9+qu4Lh
-         XwdbhFobbjWIDWvqF6zqN+2hKPIFnDSR7zhkgG/0=
-Received: from lambda by stardust.g4.wien.funkfeuer.at with local (Exim 4.89)
-        (envelope-from <harald@ccbib.org>)
-        id 1gw2Ll-0000MN-40; Tue, 19 Feb 2019 11:10:05 +0100
-From:   Harald Geyer <harald@ccbib.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-cc:     devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] regulator: gpio: Reword the binding document
-In-reply-to: <72363317-8259-eda2-4cd8-4f336f0c155f@gmail.com>
-References: <20190216174859.15738-1-marek.vasut@gmail.com> <E1gv6SG-0000Jv-KB@stardust.g4.wien.funkfeuer.at> <83550921-b0ec-fa34-b120-2dd159f256d8@gmail.com> <E1gvNOx-0000Kc-Dc@stardust.g4.wien.funkfeuer.at> <75846117-242c-6861-ace5-dccf88711208@gmail.com> <E1gvSbw-0000K8-Hj@stardust.g4.wien.funkfeuer.at> <7a993282-9137-caf4-ca0b-b2c01ea9959c@gmail.com> <E1gvfnE-0000Il-Jo@stardust.g4.wien.funkfeuer.at> <e2e9e577-b110-fc9b-c129-26f61e862fb4@gmail.com> <E1gvrEx-0000K7-Ks@stardust.g4.wien.funkfeuer.at> <72363317-8259-eda2-4cd8-4f336f0c155f@gmail.com>
-Comments: In-reply-to Marek Vasut <marek.vasut@gmail.com>
-   message dated "Tue, 19 Feb 2019 03:51:43 +0100."
+        Tue, 19 Feb 2019 05:56:35 -0500
+Received: by mail-vs1-f65.google.com with SMTP id b20so11408230vsl.9
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Feb 2019 02:56:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aBXD3rWRJfGxs5SbbHGFbAnlRDHOwUWZrbX5iOWsOY4=;
+        b=S1PlOmbewNqvwauhr07FnOcC0dkSfqyVYz1fLoWDu9vw8bO2SgtHgU8PCluagquBZo
+         ALVCXb5qyPNT/oWjuf/Uv2TWxBvlGmSfFbzVwN2hCntVH0QdyDRaVQ6M7JXYNzZinH5R
+         iDdWIB1ZS07TyJlEG20sGhlrHaJf57Dxvn/wB3lgqwn75mT5bW/WRdec0HjJij785waN
+         b8bVRTWLgQZ04lot5lIB9/rOdTkpikTe0XDDtjonLPXymZTXN+lnhdYq2KyZegGv+aTP
+         vWag4lcjg+14sEZGlOuEECr9M0axjYEINWrrOb1wl8w1t/++NRvz0cihaRyS0NhQK7Pj
+         R6Rw==
+X-Gm-Message-State: AHQUAuaycg6w1tXx9/Gf9AS76Caj4ofpkabffRP212UsV+tUO0rBMj4x
+        GSVfMIvI3H1QkNQmTlDiNETHwr4wELERIWhY5a1qWryG
+X-Google-Smtp-Source: AHgI3IYJIrdaAgy3przt1lTfUPDOze5YHtBGIQkX2OCLAP4TJE602pcgeHSFRChELsYPsQUGy887UNsWt2CXIOzw/co=
+X-Received: by 2002:a67:78ce:: with SMTP id t197mr13734797vsc.152.1550573794175;
+ Tue, 19 Feb 2019 02:56:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1385.1550571004.1@stardust.g4.wien.funkfeuer.at>
-Date:   Tue, 19 Feb 2019 11:10:04 +0100
-Message-Id: <E1gw2Ll-0000MN-40@stardust.g4.wien.funkfeuer.at>
+References: <1663509.2FqCFAqz4G@avalon> <CAMuHMdXG7PyN1UOPwNBJ=48NKv=V6bku3ZsQ40TbDZNZmr4UDQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXG7PyN1UOPwNBJ=48NKv=V6bku3ZsQ40TbDZNZmr4UDQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Feb 2019 11:56:22 +0100
+Message-ID: <CAMuHMdXExtxrDkMTsHvCUBsmH=vatjFEZpEu7QtrLwyUP2Sd6Q@mail.gmail.com>
+Subject: Re: [GIT PULL FOR renesas-drivers] R-Car DU IOMMU
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Marek Vasut writes:
-> On 2/18/19 11:18 PM, Harald Geyer wrote:
-> > From the explanations provided by Mark it is clear that this property
-> > is an artifact of the implementation in linux. I think we should document
-> > is as such. How about:
-> > 
-> > gpios-states : On operating systems, that don't support reading back gpio
-> > 	       values in output mode (most notably linux), this array
-> > 	       provides the state of GPIO pins set when requesting them
-> > 	       from the gpio controller.
-> 
-> That's good.
-> 
-> > Systems, that are capable of
-> > 	       preserving state when requesting the lines, are free to
-> > 	       ignore this property.
-> 
-> Are they ?
+Hi Laurent,
 
-I think so. Also this seems to be what Mark wrote yesterday:
+On Tue, Nov 20, 2018 at 1:42 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Wed, Nov 15, 2017 at 8:13 AM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > The following changes since commit d65d31388a23b14df9494135ad6c6549a59a3caa:
+> >
+> >   Merge tag 'drm-misc-next-fixes-2017-11-07' of git://anongit.freedesktop.org/
+> > drm/drm-misc into drm-next (2017-11-08 05:22:49 +1000)
+> >
+> > are available in the git repository at:
+> >
+> >   git://linuxtv.org/pinchartl/media.git drm-du-iommu-v1-20171115
+> >
+> > for you to fetch changes up to 6cb711c0fabae1101bfde1c8dce0dfd992822f6b:
+> >
+> >   drm: rcar-du: Allow importing non-contiguous dma-buf with VSP (2017-11-15
+> > 09:00:43 +0200)
+>
+> The above branch has been included in renesas-drivers for one year,
+> unchanged.  Surprisingly, it still merged in cleanly, without any merge
+> conflicts.
+>
+> Are there any plans to continue development, and/or submit it for
+> upstream integration? If not, should it be dropped?
 
-| With the GPIO API as it stands it is unfortunately not possible to
-| preserve the state, if the API were fixed we'd preserve state.
+Given this now fails to compile (missing #include <linux/dma-mapping.h>),
+I have used that as an excuse to drop this topic branch from today's
+renesas-drivers.
 
-> I think there are systems which depend on preconfiguring the
-> GPIO according to this property.
+Thanks for your understanding ;-)
 
-These systems need to preconfigure the GPIOs in firmware anyway, so
-they should be fine so long as the driver preserves state.
+Gr{oetje,eeting}s,
 
-Since the original wording doesn't give any guarantees, I think the
-new wording doesn't change anything. It just makes it clearer, that
-there are no guarantees and that some drivers will happily overwrite
-state when this property is absent.
-
-Harald
+                        Geert
 
 -- 
-If you want to support my work:
-see http://friends.ccbib.org/harald/supporting/
-or donate via CLAM to xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
-or via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
