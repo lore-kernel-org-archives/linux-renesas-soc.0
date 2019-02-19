@@ -2,79 +2,83 @@ Return-Path: <SRS0=FLKL=Q2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C77C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 07:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF50BC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 08:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A68FB21848
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 07:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24D3F21902
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 08:57:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="AmedZmia"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfBSHxi (ORCPT
+        id S1727426AbfBSI5d (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 02:53:38 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:42814 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfBSHxi (ORCPT
+        Tue, 19 Feb 2019 03:57:33 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.217]:22464 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbfBSI5d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 02:53:38 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d21so6652176uap.9;
-        Mon, 18 Feb 2019 23:53:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l4UxPTHdTrjHGCOWpwrFo/C2Vf6EZL3yWskXVpNuKLY=;
-        b=evKt7eNn4ecY7gNiQwMV0RYE+HrBa1ejk/CU2a1TEEzBxu04jlLC2JiOhuuGCUObh+
-         w15bfJMmVtJNV82hxLjTVBMDmUT2kCdDYah4DaUsYV3g+lp4qdWBpRR6n87rf1gTBu6V
-         kWZGjwdUvW/zDNnpnZHu3rUuLON/xm4U01OWUXhHyOdMoMXjnZ02E9T9nk2G9zcHPc0S
-         JwwGRdDdYSoEH3rq5d1MDa+jryavZ5j8J3bC+pmza/e24Gmsb9fjA3bSyTWLafwwxaBR
-         /u5PgHkNt0jTRJitBhMOpTO6yvjp1XEVNAc44eF2ACrXnPVZlcNqu3oaBm1EHZyB8ZUS
-         lSdQ==
-X-Gm-Message-State: AHQUAuYyNCyNCGBTVIpyJwpqIu1tXEZ4y7eq35li5jlfh9l3bvErURg8
-        kN29BqTQRhwBcS49LPswX8kxCehpX4ibx9gyFe1kyA==
-X-Google-Smtp-Source: AHgI3IaL/KvrI8RFQ4I59c6bdkb1DegoZ0Zf9jUl+Sdk9nalvjj16ADv/G4wyvXIZXTFsbafEIU5kpaxSimegESlO9Q=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr13965030ual.20.1550562817314;
- Mon, 18 Feb 2019 23:53:37 -0800 (PST)
+        Tue, 19 Feb 2019 03:57:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1550566651;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Ndo8qPlDA0Hd46QZSdngRMfM+t9kNMRVot4n9w8pbzg=;
+        b=AmedZmiafMueXlrg3fTubf0Sl34bUDrNxcPa0e0xpqW9V01oJDrsRi5/uI+dLSh8l4
+        HI4ori30V+/0KQrkSWlzyFoS2aJN7taYRukVXdZsW0cHIQATF81ZsO2Q4yfJ/AcIZz3P
+        I6nuF7bnT/jlSvPF9vyEmZoq3gLUVqqVA6KARCkG5Lz2YaLwKyM6lJNm/EfROYk401wH
+        24TV349gtXUvuUriBdaHlz/3IX+xyiBXEl4nAi1kP8iaWmTjhykymXfuwBIqHnNo/23O
+        K59Ars/CxPQD9zsQ8kiOtaZoosRSEm95pqdIC4VVwU79BILgY7z27C+yCox/BnWZM6kK
+        BTBg==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp01-03.back.ox.d0m.de
+        by smtp-ox.front (RZmta 44.9 AUTH)
+        with ESMTPSA id V028b8v1J8vVTVV
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Tue, 19 Feb 2019 09:57:31 +0100 (CET)
+Date:   Tue, 19 Feb 2019 09:57:31 +0100 (CET)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Message-ID: <296667801.568794.1550566651459@webmail.strato.com>
+In-Reply-To: <20190218135927.30068-2-geert+renesas@glider.be>
+References: <20190218135927.30068-1-geert+renesas@glider.be>
+ <20190218135927.30068-2-geert+renesas@glider.be>
+Subject: Re: [PATCH 1/3] pinctrl: sh-pfc: r8a77970: Rename IOCTRLx registers
 MIME-Version: 1.0
-References: <20190217124126.7257-1-wsa+renesas@sang-engineering.com>
- <20190217124126.7257-2-wsa+renesas@sang-engineering.com> <CAMuHMdVLEeJ4i0rZKv8w2bAO5Q7StxqQWEEV611PPMGeE60JHA@mail.gmail.com>
- <20190218204122.j35itmqth3avo3a6@ninjato>
-In-Reply-To: <20190218204122.j35itmqth3avo3a6@ninjato>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 19 Feb 2019 08:53:25 +0100
-Message-ID: <CAMuHMdUB--d6_tJ4oYnvSiXy0YNNoAtMqAyyGfK+qRuX4akhAA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] i2c: gpio: fault-injector: add 'lose_arbitration' injector
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev50
+X-Originating-IP: 188.192.207.28
+X-Originating-Client: open-xchange-appsuite
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
 
-On Mon, Feb 18, 2019 at 9:41 PM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > > +       wait_for_completion_interruptible(&priv->scl_irq_completion);
-> >
-> > Error checking/propagation (-ERESTARTSYS)?
->
-> Are you sure? ERESTARTSYS belongs to the "These should never be seen by
-> user programs." group.
+> On February 18, 2019 at 2:59 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> 
+> 
+> The R-Car Gen3 HardWare Manual Errata for Rev. 1.00 (Jul 2, 2018)
+> renamed the various miscellaneous I/O control registers (IOCTRLx) on
+> R-Car V3M, to reflect better their actual purposes, and matching other
+> SoCs.
+> 
+> Update to code to match this.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-How else can you inform the user the operation has been interrupted?
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+CU
+Uli
