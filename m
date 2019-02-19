@@ -2,194 +2,276 @@ Return-Path: <SRS0=FLKL=Q2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77874C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 16:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AADC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C62421738
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 16:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E9E42183E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cqipvIE5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qjzj7Ptj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbfBSQ1x (ORCPT
+        id S1728984AbfBSQak (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:27:53 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49408 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727956AbfBSQ1x (ORCPT
+        Tue, 19 Feb 2019 11:30:40 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37615 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729120AbfBSQak (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:27:53 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 11B4F329;
-        Tue, 19 Feb 2019 17:27:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550593672;
-        bh=IHeoPL87dk6Uj1ERE8hxF4Z8/jHj09DxlJ8XbmVbavU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cqipvIE5B/2Juq4MucdrFUedmxl6rCasKERSTvCdvbZBFhOUaOBOUHvjnJkLg+9Dz
-         U8Mk1bLlqFO+6KKT0ZcQYShKRadSxijHL6yFxScpMJAh4CB+NYpast++tm0KZ0iHD4
-         9YNFq5wa0fN+nNBcKHV3AocpGN6Gp8BIJjgE/3VI=
-Date:   Tue, 19 Feb 2019 18:27:48 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] Add support to reset device controls
-Message-ID: <20190219162748.GC3526@pendragon.ideasonboard.com>
-References: <20181203120331.4097-1-kieran.bingham@ideasonboard.com>
+        Tue, 19 Feb 2019 11:30:40 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c8so22677950wrs.4;
+        Tue, 19 Feb 2019 08:30:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6q++gBrLXTjKOY8uWK5ky40m1AUZGrK80GjNv/a+DmI=;
+        b=qjzj7PtjRMXK7CyUTeb3gbxJKB7xvtN4LJ1ROCiMeRr9sk70UBxLrEBlLv3nwGfjx/
+         FMVtnxBipBWzLhg9bsmWhVrn3f6lphRQS7BYWDHFFrIC0pH2mF88slgDyJbiXn7DMjRW
+         fztYvEY26DWKF6B41xLMT8KBuSPxq0tZe6h8NBDmPww89BZhCaJYTNk1BHuZ24kZa+rm
+         6gmefNYVWM3U63DQvpi3a+Tbah3jpiuHkeGx0rSHQ154Z6alW01A8KCx3Z1JqpN6l2xp
+         S/Rzvh9YunnaTzgxHgb4n4gDO/t3tT+1XfxJLsKQ3NCv4fZBHfIC2QDHIMRumbJWUoEQ
+         1qBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6q++gBrLXTjKOY8uWK5ky40m1AUZGrK80GjNv/a+DmI=;
+        b=QF8H2Ntx26BrbrFZ7xHy14tFKqqkDKnsOsa6KOpuIrFzg8xNxaRFFtNJxVGv9m/yC3
+         f0lGw7nYFt2uBDop48CAGW1us9ouhba+YMPNG+iqONVRvR5+r7Sr9UhWcPrjrzVXlyYM
+         Uak2KBVykfNWZKHGcPhN5Hmys2d4nvWKYHU4++jzsdQj+gyatCoVKuttnVWglhK7T4iS
+         KClxckMWI74ExgSHrCsdcWWsJeLEgRnzQAZBCAC3KTIWREBotxQGca7jPPc8WdJb9SWD
+         LnMBznrFIUF8dc6vF01l0jBwg95lWZLv7Xm/bPuE6Q7HdooAW08KekFnf6cWsWP9tX2B
+         vogA==
+X-Gm-Message-State: AHQUAuZHyYFdS59LcY81QYSpZNEVmQpI7uVjYKhMz6wEr8Bky35MHGIo
+        O9Il880QRC/J4qQBcHrV2JMrdo8c
+X-Google-Smtp-Source: AHgI3IY2zKiNMmNMgLVVwl+9tYwYq36aO5imLXoYjWDZhd0j6A5hGd5SscZ2AzW6F7oJKiSuVir2CQ==
+X-Received: by 2002:adf:f691:: with SMTP id v17mr22005621wrp.66.1550593837370;
+        Tue, 19 Feb 2019 08:30:37 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id s3sm17243526wrt.81.2019.02.19.08.30.36
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Feb 2019 08:30:36 -0800 (PST)
+Subject: Re: [PATCH] gpio: of: Apply regulator-gpio quirk only to enable-gpios
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>, Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20190216134627.1601-1-marek.vasut@gmail.com>
+ <20190219151811.GA13354@ulmo>
+ <631beb2b-786e-e182-acea-561b0706b041@gmail.com>
+ <20190219160800.GA30280@ulmo>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <805f638e-2d55-803b-b09c-617d3a503408@gmail.com>
+Date:   Tue, 19 Feb 2019 17:30:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181203120331.4097-1-kieran.bingham@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190219160800.GA30280@ulmo>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+On 2/19/19 5:08 PM, Thierry Reding wrote:
+> On Tue, Feb 19, 2019 at 04:25:59PM +0100, Marek Vasut wrote:
+>> On 2/19/19 4:18 PM, Thierry Reding wrote:
+>>> On Sat, Feb 16, 2019 at 02:46:27PM +0100, marek.vasut@gmail.com wrote:
+>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>
+>>>> Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
+>>>> the GPIO regulator had inverted the polarity of the control GPIO. This
+>>>> problem manifested itself on systems with DT containing the following
+>>>> description (snippet from salvator-common.dtsi):
+>>>>
+>>>> 	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+>>>> 	gpios-states = <1>;
+>>>> 	states = <3300000 1
+>>>> 		  1800000 0>;
+>>>>
+>>>> Prior to the aforementioned commit, the gpio-regulator code used
+>>>> gpio_request_array() to claim the GPIO(s) specified in the "gpios"
+>>>> DT node, while the commit changed that to devm_gpiod_get_index().
+>>>>
+>>>> The legacy gpio_request_array() calls gpio_request_one() and then
+>>>> gpiod_request(), which parses the DT flags of the "gpios" node and
+>>>> populates the GPIO descriptor flags field accordingly.
+>>>>
+>>>> The new devm_gpiod_get_index() calls gpiod_get_index(), then
+>>>> of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
+>>>> and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
+>>>> ("gpio: of: Add special quirk to parse regulator flags"),
+>>>> of_gpio_flags_quirks() contains a quirk for regulator-gpio
+>>>> which was never triggered by the legacy gpio_request_array()
+>>>> code path, but is triggered by devm_gpiod_get_index() code
+>>>> path.
+>>>>
+>>>> This quirk checks whether a GPIO is associated with a fixed
+>>>> or gpio-regulator and if so, checks two additional conditions.
+>>>> First, whether such GPIO is active-low, and if so, ignores the
+>>>> active-low flag. Second, whether the regulator DT node does
+>>>> have an "enable-active-high" property and if the property is
+>>>> NOT present, sets the GPIO flags as active-low.
+>>>>
+>>>> The second check triggers a problem, since it is applied to all
+>>>> GPIOs associated with a gpio-regulator, rather than only on the
+>>>> "enable" GPIOs, as the old code did. This changes the way the
+>>>> gpio-regulator interprets the DT description of the control
+>>>> GPIOs.
+>>>>
+>>>> The old code using gpio_request_array() explicitly parsed the
+>>>> "enable-active-high" DT property and only applied it to the
+>>>> GPIOs described in the "enable-gpios" DT node, and only if
+>>>> those were present.
+>>>>
+>>>> This patch fixes the quirk code by only applying the quirk
+>>>> to "enable-gpios", thus restoring the old behavior.
+>>>>
+>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>>> Cc: Jan Kotas <jank@cadence.com>
+>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>>> Cc: Mark Brown <broonie@kernel.org>
+>>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>> To: linux-gpio@vger.kernel.org
+>>>> ---
+>>>>  drivers/gpio/gpiolib-of.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>
+>>> This causes a runtime regression on Jetson TX1. The symptoms are that
+>>> HDMI monitors are no longer reliably detected as plugged in. The reason
+>>> is because the GPIO polarity for the HDMI +5V regulator is now reversed
+>>> and therefore the HPD signal, which is usually fed by the +5V signal,
+>>> does not reflect the correct value.
+>>>
+>>> Now it's somewhat confusing to me why this wasn't broken before. We have
+>>> this in device tree:
+>>>
+>>> 		vdd_hdmi: regulator@10 {
+>>> 			compatible = "regulator-fixed";
+>>> 			reg = <10>;
+>>> 			regulator-name = "VDD_HDMI_5V0";
+>>> 			regulator-min-microvolt = <5000000>;
+>>> 			regulator-max-microvolt = <5000000>;
+>>> 			gpio = <&exp1 12 GPIO_ACTIVE_LOW>;
+>>> 			enable-active-high;
+>>> 			vin-supply = <&vdd_5v0_sys>;
+>>> 		};
+>>>
+>>> This is from arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi. The above
+>>> is obviously wrong because it specifies GPIO_ACTIVE_LOW and I do see the
+>>> warning from the GPIO library about how this is being ignored. However,
+>>> the above works fine on today's linux-next with this commit reverted
+>>> because the quirks will cause the GPIO_ACTIVE_LOW flag to be ignored.
+>>>
+>>> However, with this commit applied, the quirk will be skipped for the
+>>> regulator and cause the GPIO_ACTIVE_LOW flag to be used to invert the
+>>> GPIO during enable and disable operations.
+>>>
+>>> Now, this is clearly a bug in the DT and I'm going to send out a patch
+>>> to fix that up, but I think we need to revert this patch for now because
+>>> there may be other cases out there that are broken.
+>>
+>> This patch fixes a breakage on R-Car Gen3 platforms, so reverting this
+>> patch will break those platforms. However, those platforms do not have a
+>> buggy DT, unlike the Jetson.
+> 
+> Erm... that's not how we do things. You can't break one platform just to
+> make another work. By all means let's fix breakage on R-Car Gen3
+> platforms, but let's do it in a way that keeps everyone else happy as
+> well.
 
-Thank you for the patch.
+Erm... that's not what I suggested. It's just that this regulator rework
+( d6cd33ad7102 ) changed the behavior of the gpio-regulator because
+there are a lot of obscure, inobvious and undocumented edge-cases in the
+gpio-regulator code.
 
-On Mon, Dec 03, 2018 at 12:03:31PM +0000, Kieran Bingham wrote:
-> Provide a new option '--reset-controls' which will enumerate the
-> available controls on a device or sub-device, and re-initialise them to
-> defaults.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> 
-> ---
-> 
-> This 'extends' the video_list_controls() function with an extra bool
-> flag for 'reset' to prevent duplicating the iteration functionality.
-> 
-> The patch could also pass the same flag into 'video_print_control()'
-> rather than implementing 'video_reset_control()' which necessitates
-> calling query_control() a second time.
-> 
-> I have chosen to add the extra call, as I feel it makes the code
-> cleaner, and pollutes the existing implementation less. The cost of the
-> extra query, while a little redundant should be minimal and produces a
-> simple function to reset the control independently.
+If we were to revert this patch, we'd have to revert the d6cd33ad7102
+too to fix the Gen3. But since d6cd33ad7102 is a nice cleanup and it
+makes sense, I'd rather if we fixed the situation, restored the DT
+handling to the way it was before and moved forward.
 
-I think we can do a bit better by separating control
-enumeration/iteration and control print, to implement reset on top of a
-function that would do enumeration/iteration only. I've sent two patches
-in reply to this mail thread.
+Handling broken DTs only adds to the complexity, but I think this cannot
+be helped, since those DTs can be stored in some ROM.
 
-> ---
->  yavta.c | 41 +++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 39 insertions(+), 2 deletions(-)
+btw if you can, also look at
+[PATCH] regulator: gpio: Reword the binding document
+the binding document could use a once-over.
+
+>>> The whole point of
+>>> these quirks is also to make sure that existing device trees continue to
+>>> work.
+>>>
+>>> Also, checking for only the enable-gpio property is wrong in this case.
+>>> enable-gpio is only specified for regulator-gpio. The standard GPIO for
+>>> regulator-fixed is "gpio", so the quirks must be applied to that
+>>> property in order to ensure backwards-compatibility.
+>>>
+>>>> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+>>>> index 03ec3ddaba60..1b4c741e0635 100644
+>>>> --- a/drivers/gpio/gpiolib-of.c
+>>>> +++ b/drivers/gpio/gpiolib-of.c
+>>>> @@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
+>>>>  	 * Note that active low is the default.
+>>>>  	 */
+>>>>  	if (IS_ENABLED(CONFIG_REGULATOR) &&
+>>>> +	    !strcmp(propname, "enable-gpio") &&
+>>>>  	    (of_device_is_compatible(np, "regulator-fixed") ||
+>>>>  	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+>>>>  	     of_device_is_compatible(np, "regulator-gpio"))) {
+>>>
+>>> I think this would need to be something like the below to reflect what
+>>> you were trying to achieve, while keeping backwards compatibility:
+>>>
+>>> --- >8 ---
+>>> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+>>> index 1b4c741e0635..bddfc6102a50 100644
+>>> --- a/drivers/gpio/gpiolib-of.c
+>>> +++ b/drivers/gpio/gpiolib-of.c
+>>> @@ -84,10 +84,10 @@ static void of_gpio_flags_quirks(struct device_node *np,
+>>>  	 * Note that active low is the default.
+>>>  	 */
+>>>  	if (IS_ENABLED(CONFIG_REGULATOR) &&
+>>> -	    !strcmp(propname, "enable-gpio") &&
+>>>  	    (of_device_is_compatible(np, "regulator-fixed") ||
+>>>  	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+>>> -	     of_device_is_compatible(np, "regulator-gpio"))) {
+>>> +	     (of_device_is_compatible(np, "regulator-gpio") &&
+>>> +	      strcmp(propname, "enable-gpio") == 0))) {
+>>>  		/*
+>>>  		 * The regulator GPIO handles are specified such that the
+>>>  		 * presence or absence of "enable-active-high" solely controls
+>>> --- >8 ---
+>>>
+>>> That applied on top of today's linux-next fixes the regression for me
+>>> without a need to modify the device tree. Feel free to integrate that
+>>> into your patch.
+>>
+>> This one works on R-Car Gen3 too, so if we can add that on top of this
+>> patch, fine by me . Can you send a formal patch ?
 > 
-> diff --git a/yavta.c b/yavta.c
-> index c7986bd9e031..30022c45ed5b 100644
-> --- a/yavta.c
-> +++ b/yavta.c
-> @@ -1186,7 +1186,28 @@ static int video_print_control(struct device *dev, unsigned int id, bool full)
->  	return query.id;
->  }
->  
-> -static void video_list_controls(struct device *dev)
-> +static int video_reset_control(struct device *dev, unsigned int id)
-> +{
-> +	struct v4l2_queryctrl query;
-> +	int ret;
-> +
-> +	ret = query_control(dev, id, &query);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (query.flags & V4L2_CTRL_FLAG_DISABLED)
-> +		return query.id;
-> +
-> +	if (query.type == V4L2_CTRL_TYPE_CTRL_CLASS)
-> +		return query.id;
-> +
-> +	printf("Reset control 0x%08x to %d:\n", query.id, query.default_value);
-> +	set_control(dev, query.id, query.default_value);
-> +
-> +	return query.id;
-> +}
-> +
-> +static void video_list_controls(struct device *dev, bool reset)
->  {
->  	unsigned int nctrls = 0;
->  	unsigned int id;
-> @@ -1207,6 +1228,12 @@ static void video_list_controls(struct device *dev)
->  		if (ret < 0)
->  			break;
->  
-> +		if (reset) {
-> +			ret = video_reset_control(dev, id);
-> +			if (ret < 0)
-> +				break;
-> +		}
-> +
->  		id = ret;
->  		nctrls++;
->  	}
-> @@ -1837,6 +1864,7 @@ static void usage(const char *argv0)
->  	printf("    --offset			User pointer buffer offset from page start\n");
->  	printf("    --premultiplied		Color components are premultiplied by alpha value\n");
->  	printf("    --queue-late		Queue buffers after streamon, not before\n");
-> +	printf("    --reset-controls		Enumerate available controls and reset to defaults\n");
->  	printf("    --requeue-last		Requeue the last buffers before streamoff\n");
->  	printf("    --timestamp-source		Set timestamp source on output buffers [eof, soe]\n");
->  	printf("    --skip n			Skip the first n frames\n");
-> @@ -1860,6 +1888,7 @@ static void usage(const char *argv0)
->  #define OPT_PREMULTIPLIED	269
->  #define OPT_QUEUE_LATE		270
->  #define OPT_DATA_PREFIX		271
-> +#define OPT_RESET_CONTROLS	272
->  
->  static struct option opts[] = {
->  	{"buffer-size", 1, 0, OPT_BUFFER_SIZE},
-> @@ -1888,6 +1917,7 @@ static struct option opts[] = {
->  	{"queue-late", 0, 0, OPT_QUEUE_LATE},
->  	{"get-control", 1, 0, 'r'},
->  	{"requeue-last", 0, 0, OPT_REQUEUE_LAST},
-> +	{"reset-controls", 0, 0, OPT_RESET_CONTROLS},
->  	{"realtime", 2, 0, 'R'},
->  	{"size", 1, 0, 's'},
->  	{"set-control", 1, 0, 'w'},
-> @@ -1915,6 +1945,7 @@ int main(int argc, char *argv[])
->  	int do_enum_formats = 0, do_set_format = 0;
->  	int do_enum_inputs = 0, do_set_input = 0;
->  	int do_list_controls = 0, do_get_control = 0, do_set_control = 0;
-> +	int do_reset_controls = 0;
->  	int do_sleep_forever = 0, do_requeue_last = 0;
->  	int do_rt = 0, do_log_status = 0;
->  	int no_query = 0, do_queue_late = 0;
-> @@ -2107,6 +2138,9 @@ int main(int argc, char *argv[])
->  		case OPT_QUEUE_LATE:
->  			do_queue_late = 1;
->  			break;
-> +		case OPT_RESET_CONTROLS:
-> +			do_reset_controls = 1;
-> +			break;
->  		case OPT_REQUEUE_LAST:
->  			do_requeue_last = 1;
->  			break;
-> @@ -2185,7 +2219,10 @@ int main(int argc, char *argv[])
->  		set_control(&dev, ctrl_name, ctrl_value);
->  
->  	if (do_list_controls)
-> -		video_list_controls(&dev);
-> +		video_list_controls(&dev, false);
-> +
-> +	if (do_reset_controls)
-> +		video_list_controls(&dev, true);
->  
->  	if (do_enum_formats) {
->  		printf("- Available formats:\n");
-> -- 
-> 2.17.1
+> Linus,
 > 
+> can you squash this into Marek's original commit? I'd rather not make
+> that two patches because that would potentially cause bisectability
+> issues.
+
+I am happy with this solution too, sure.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Marek Vasut
