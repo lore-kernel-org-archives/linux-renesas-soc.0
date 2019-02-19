@@ -2,243 +2,393 @@ Return-Path: <SRS0=FLKL=Q2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0049C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8041FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13DA2146E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BDCD21736
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:27:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGttzoJO"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="AZqLKbpS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfBSP0F (ORCPT
+        id S1727566AbfBSP1b (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:26:05 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42554 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbfBSP0E (ORCPT
+        Tue, 19 Feb 2019 10:27:31 -0500
+Received: from mail-eopbgr1410109.outbound.protection.outlook.com ([40.107.141.109]:47136
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726110AbfBSP1b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:26:04 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r5so9071452wrg.9;
-        Tue, 19 Feb 2019 07:26:02 -0800 (PST)
+        Tue, 19 Feb 2019 10:27:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wCYqUzbvdjO1/VVIHm0a/+gfkA+1LkYSd+YlZbRg/fg=;
-        b=SGttzoJOOJsTA3iWYR7CMJzMRm983LvosDEKRprV5FnfOarFYQYer/NVy+2wQZX/+A
-         vtBzOqgFCgmGwKBeyHCe34joZG1F/zmIkSQO8wAobt/8gTbbBMaWfJ5qx4ZXKhFxZ2V6
-         CFU1kq7N7gY0PLrgxMdd62qhzerGDFbc2+3DqkHxotLF1BmnDD6JHsgQbjD9G5jFkNhP
-         t1IvA4ZTaxi2Dbyd8RlweljwD4jRy935CEGHgZIZlQBh9AmpfB3BdChflptNmC1f63x2
-         YM2JPOIpfmdrbwe+VQ+FA/KUW54AxxjU3i1+zWq8yiWn47SKzMvcBln3/T6yju5+MfmW
-         CJcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wCYqUzbvdjO1/VVIHm0a/+gfkA+1LkYSd+YlZbRg/fg=;
-        b=Xp++dbJDe8zJ+xv1OWVvRojkq1wVzg0w1oUVjZEmFLo1Bv9ToehqR6llXkscYYg/JP
-         iaeLXJ1grNJ7MNpQoSsv9wv5mPsqkUNDGwZznquBBVEoAoSlbsLiV/FIaDesyAbXEtGQ
-         RBdfYah7+fHP+X8RWcE9m2to0vlAJ4f5V0fPaG1PkvxHw1CRT03Od+QsYgcKlfrX3UWB
-         TZuZVSIKUHca75U8nniwt1EfQd9JbUd9I6MY0lYWaa7RtFhvutw9J+8ZoEHOGFJwGJTw
-         X6blkELz+9h3u8T02CifmA1F0mRWFv92Pe2AFV8efWndBW1LZgNe7eZcQnBpUVjUAQeq
-         vfVg==
-X-Gm-Message-State: AHQUAub4M9prJrT5MhVIt/Up5DsZvtaKRz8PhH3UU7HFyGn47CS8z7Pr
-        v6+jLDLEqTbddfwI9pCCNoqd+quP
-X-Google-Smtp-Source: AHgI3IbWEGtzjXQU04iMKf/Sy/hH1G4gYymyFWnQp61HbhuOOlIoNysy32QS00xqTNUOrRebNMDMVQ==
-X-Received: by 2002:adf:8143:: with SMTP id 61mr20338799wrm.47.1550589961223;
-        Tue, 19 Feb 2019 07:26:01 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c1sm3926586wmb.14.2019.02.19.07.25.59
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Feb 2019 07:26:00 -0800 (PST)
-Subject: Re: [PATCH] gpio: of: Apply regulator-gpio quirk only to enable-gpios
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-gpio@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20190216134627.1601-1-marek.vasut@gmail.com>
- <20190219151811.GA13354@ulmo>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <631beb2b-786e-e182-acea-561b0706b041@gmail.com>
-Date:   Tue, 19 Feb 2019 16:25:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190219151811.GA13354@ulmo>
-Content-Type: text/plain; charset=windows-1252
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wVfCWRJTpR/Zs1uiUDH20IwiMc2ky5zJz9b+XG7Eyh0=;
+ b=AZqLKbpSTpkMgsDxmbK3oEEtfue01X5VYFIdc11iN9kC6uKxlTEfiqjroQU0Se8J74HfzkYmY0Crhg/59Fo1K1W6e0XDIcYTyQNDoz2y9bWe4aQLPnj6xL79aWU+9/ct0LRgZ4PSkDmvvivxF72Vp6uMdkvdIGrwHY06NWzk/QI=
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
+ TY1PR01MB1785.jpnprd01.prod.outlook.com (52.133.163.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.14; Tue, 19 Feb 2019 15:27:25 +0000
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::4cc6:14ba:d8cd:4107]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::4cc6:14ba:d8cd:4107%2]) with mapi id 15.20.1622.020; Tue, 19 Feb 2019
+ 15:27:25 +0000
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
+ interrupt multiplexer
+Thread-Topic: [PATCH v3 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
+ interrupt multiplexer
+Thread-Index: AQHUe1IlvyEF46yudE+txVssKQML5aXn2Eqw
+Date:   Tue, 19 Feb 2019 15:27:25 +0000
+Message-ID: <TY1PR01MB1769ECBED0DE9BCC39DF1FDCF57C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20181113130910.22130-1-phil.edworthy@renesas.com>
+ <20181113130910.22130-3-phil.edworthy@renesas.com>
+In-Reply-To: <20181113130910.22130-3-phil.edworthy@renesas.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e3eb47d7-14cb-4373-51cb-08d6967ec056
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1785;
+x-ms-traffictypediagnostic: TY1PR01MB1785:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com; 
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1785;20:S/XQRtdEO+kJGJoipLaA0qDp5XsVJM0g+nmw3OCjkKzSrQMNYDZ9QXeX50Th+YBn9dznXz76FyfxEmZfnJYJLzOTK3ScmU3repUTm92cT7j0jw95eBC4EowA9f4js1WN3MABcX9TvvowGKz2MAQAynIaUyC0VJP2x8+pwrxLlbY=
+x-microsoft-antispam-prvs: <TY1PR01MB17851AA8876B6C2B7D1B6BC8F57C0@TY1PR01MB1785.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 09538D3531
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(366004)(39860400002)(396003)(376002)(13464003)(199004)(189003)(2906002)(25786009)(4326008)(6246003)(66066001)(102836004)(86362001)(26005)(7736002)(55016002)(6436002)(9686003)(229853002)(316002)(68736007)(5660300002)(6116002)(3846002)(99286004)(6506007)(110136005)(97736004)(14444005)(256004)(7696005)(76176011)(54906003)(71200400001)(14454004)(33656002)(446003)(486006)(11346002)(44832011)(476003)(478600001)(74316002)(8676002)(81156014)(81166006)(106356001)(186003)(305945005)(53936002)(8936002)(105586002)(53546011)(71190400001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1785;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 9gG0vHB9XOtuzCeU6UAoHO/k65MGw0SoHGoifO1d3secM/Re6QqyEyHsZQ3ieWGp1oWz59pzQ02yPA6F8HmXjQ4TBBSfJgScpLohGxJxfJN2IIyW9kpGqegjxJmXeP5cREGjtZQZWMNwdO/BZbEhgUtBVVCgygiBBrrJumuFAQkYfRP9hhlTAG2jd7gp28MO8Ni77w0xoPyNFdMM7CwgolK5y3+LAIOK4b26xjhQ/lSOcFdVU7Jtv2ICbm3m98RsOfwzdCcSetziXRVHywgoYNEZIPvXHY4bprnS9yxTFUk3pLK8KPQB/y5hMOB6smuMXv9QLkhPx57Qb+sY2UfMBA2scpe1q2pJlREdNbD1qAuXRlusAS2j07OcslGlMxqKJoGbThV4VK002srdh8Uw3gmUMDqh4o3UNO6vdvQMwfI=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3eb47d7-14cb-4373-51cb-08d6967ec056
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2019 15:27:25.4590
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1785
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2/19/19 4:18 PM, Thierry Reding wrote:
-> On Sat, Feb 16, 2019 at 02:46:27PM +0100, marek.vasut@gmail.com wrote:
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>
->> Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
->> the GPIO regulator had inverted the polarity of the control GPIO. This
->> problem manifested itself on systems with DT containing the following
->> description (snippet from salvator-common.dtsi):
->>
->> 	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
->> 	gpios-states = <1>;
->> 	states = <3300000 1
->> 		  1800000 0>;
->>
->> Prior to the aforementioned commit, the gpio-regulator code used
->> gpio_request_array() to claim the GPIO(s) specified in the "gpios"
->> DT node, while the commit changed that to devm_gpiod_get_index().
->>
->> The legacy gpio_request_array() calls gpio_request_one() and then
->> gpiod_request(), which parses the DT flags of the "gpios" node and
->> populates the GPIO descriptor flags field accordingly.
->>
->> The new devm_gpiod_get_index() calls gpiod_get_index(), then
->> of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
->> and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
->> ("gpio: of: Add special quirk to parse regulator flags"),
->> of_gpio_flags_quirks() contains a quirk for regulator-gpio
->> which was never triggered by the legacy gpio_request_array()
->> code path, but is triggered by devm_gpiod_get_index() code
->> path.
->>
->> This quirk checks whether a GPIO is associated with a fixed
->> or gpio-regulator and if so, checks two additional conditions.
->> First, whether such GPIO is active-low, and if so, ignores the
->> active-low flag. Second, whether the regulator DT node does
->> have an "enable-active-high" property and if the property is
->> NOT present, sets the GPIO flags as active-low.
->>
->> The second check triggers a problem, since it is applied to all
->> GPIOs associated with a gpio-regulator, rather than only on the
->> "enable" GPIOs, as the old code did. This changes the way the
->> gpio-regulator interprets the DT description of the control
->> GPIOs.
->>
->> The old code using gpio_request_array() explicitly parsed the
->> "enable-active-high" DT property and only applied it to the
->> GPIOs described in the "enable-gpios" DT node, and only if
->> those were present.
->>
->> This patch fixes the quirk code by only applying the quirk
->> to "enable-gpios", thus restoring the old behavior.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Jan Kotas <jank@cadence.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Mark Brown <broonie@kernel.org>
->> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Cc: linux-renesas-soc@vger.kernel.org
->> To: linux-gpio@vger.kernel.org
->> ---
->>  drivers/gpio/gpiolib-of.c | 1 +
->>  1 file changed, 1 insertion(+)
-> 
-> This causes a runtime regression on Jetson TX1. The symptoms are that
-> HDMI monitors are no longer reliably detected as plugged in. The reason
-> is because the GPIO polarity for the HDMI +5V regulator is now reversed
-> and therefore the HPD signal, which is usually fed by the +5V signal,
-> does not reflect the correct value.
-> 
-> Now it's somewhat confusing to me why this wasn't broken before. We have
-> this in device tree:
-> 
-> 		vdd_hdmi: regulator@10 {
-> 			compatible = "regulator-fixed";
-> 			reg = <10>;
-> 			regulator-name = "VDD_HDMI_5V0";
-> 			regulator-min-microvolt = <5000000>;
-> 			regulator-max-microvolt = <5000000>;
-> 			gpio = <&exp1 12 GPIO_ACTIVE_LOW>;
-> 			enable-active-high;
-> 			vin-supply = <&vdd_5v0_sys>;
-> 		};
-> 
-> This is from arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi. The above
-> is obviously wrong because it specifies GPIO_ACTIVE_LOW and I do see the
-> warning from the GPIO library about how this is being ignored. However,
-> the above works fine on today's linux-next with this commit reverted
-> because the quirks will cause the GPIO_ACTIVE_LOW flag to be ignored.
-> 
-> However, with this commit applied, the quirk will be skipped for the
-> regulator and cause the GPIO_ACTIVE_LOW flag to be used to invert the
-> GPIO during enable and disable operations.
-> 
-> Now, this is clearly a bug in the DT and I'm going to send out a patch
-> to fix that up, but I think we need to revert this patch for now because
-> there may be other cases out there that are broken.
+Hello,
 
-This patch fixes a breakage on R-Car Gen3 platforms, so reverting this
-patch will break those platforms. However, those platforms do not have a
-buggy DT, unlike the Jetson.
+Any comments on this patch?
 
-> The whole point of
-> these quirks is also to make sure that existing device trees continue to
-> work.
-> 
-> Also, checking for only the enable-gpio property is wrong in this case.
-> enable-gpio is only specified for regulator-gpio. The standard GPIO for
-> regulator-fixed is "gpio", so the quirks must be applied to that
-> property in order to ensure backwards-compatibility.
-> 
->> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
->> index 03ec3ddaba60..1b4c741e0635 100644
->> --- a/drivers/gpio/gpiolib-of.c
->> +++ b/drivers/gpio/gpiolib-of.c
->> @@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
->>  	 * Note that active low is the default.
->>  	 */
->>  	if (IS_ENABLED(CONFIG_REGULATOR) &&
->> +	    !strcmp(propname, "enable-gpio") &&
->>  	    (of_device_is_compatible(np, "regulator-fixed") ||
->>  	     of_device_is_compatible(np, "reg-fixed-voltage") ||
->>  	     of_device_is_compatible(np, "regulator-gpio"))) {
-> 
-> I think this would need to be something like the below to reflect what
-> you were trying to achieve, while keeping backwards compatibility:
-> 
-> --- >8 ---
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 1b4c741e0635..bddfc6102a50 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -84,10 +84,10 @@ static void of_gpio_flags_quirks(struct device_node *np,
->  	 * Note that active low is the default.
->  	 */
->  	if (IS_ENABLED(CONFIG_REGULATOR) &&
-> -	    !strcmp(propname, "enable-gpio") &&
->  	    (of_device_is_compatible(np, "regulator-fixed") ||
->  	     of_device_is_compatible(np, "reg-fixed-voltage") ||
-> -	     of_device_is_compatible(np, "regulator-gpio"))) {
-> +	     (of_device_is_compatible(np, "regulator-gpio") &&
-> +	      strcmp(propname, "enable-gpio") == 0))) {
->  		/*
->  		 * The regulator GPIO handles are specified such that the
->  		 * presence or absence of "enable-active-high" solely controls
-> --- >8 ---
-> 
-> That applied on top of today's linux-next fixes the regression for me
-> without a need to modify the device tree. Feel free to integrate that
-> into your patch.
+Thanks
+Phil
 
-This one works on R-Car Gen3 too, so if we can add that on top of this
-patch, fine by me . Can you send a formal patch ?
+> -----Original Message-----
+> From: Phil Edworthy <phil.edworthy@renesas.com>
+> Sent: 13 November 2018 13:09
+> To: Marc Zyngier <marc.zyngier@arm.com>; Thomas Gleixner
+> <tglx@linutronix.de>; Jason Cooper <jason@lakedaemon.net>
+> Cc: Geert Uytterhoeven <geert@linux-m68k.org>; linux-renesas-
+> soc@vger.kernel.org; linux-kernel@vger.kernel.org; Phil Edworthy
+> <phil.edworthy@renesas.com>
+> Subject: [PATCH v3 2/2] irqchip: Add support for Renesas RZ/N1 GPIO
+> interrupt multiplexer
+>=20
+> On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+> configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+> interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
+> 8 of the GPIO interrupts to pass onto the GIC. The interrupt signals aren=
+'t
+> latched, so there is nothing to do in this driver when an interrupt is re=
+ceived,
+> other than tell the corresponding GPIO block.
+>=20
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> v3:
+>  - Use 'interrupt-map' DT property to map the interrupts, this is very si=
+milar
+>    to PCIe MSI. The only difference is that we need to get hold of the in=
+terrupt
+>    specifier for the interupts coming into the irqmux.
+>  - Do not use a chained interrupt controller.
+> v2:
+>  - Use interrupt-map to allow the GPIO controller info to be specified
+>    as part of the irq.
+>  - Renamed struct and funcs from 'girq' to a more comprehenisble 'irqmux'=
+.
+> ---
+>  drivers/irqchip/Kconfig        |   9 ++
+>  drivers/irqchip/Makefile       |   1 +
+>  drivers/irqchip/rzn1-irq-mux.c | 205
+> +++++++++++++++++++++++++++++++++
+>  3 files changed, 215 insertions(+)
+>  create mode 100644 drivers/irqchip/rzn1-irq-mux.c
+>=20
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig index
+> 96451b581452..53c54bba1dd8 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -204,6 +204,15 @@ config RENESAS_IRQC
+>  	select GENERIC_IRQ_CHIP
+>  	select IRQ_DOMAIN
+>=20
+> +config RENESAS_RZN1_IRQ_MUX
+> +	bool "Renesas RZ/N1 GPIO IRQ multiplexer support"
+> +	depends on ARCH_RZN1
+> +	select IRQ_DOMAIN
+> +	help
+> +	  Say yes here to add support for the GPIO IRQ multiplexer
+> embedded
+> +	  in Renesas RZ/N1 SoC devices. The GPIO IRQ Muxer selects which of
+> +	  the interrupts coming from the GPIO controllers are used.
+> +
+>  config ST_IRQCHIP
+>  	bool
+>  	select REGMAP
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile index
+> b822199445ff..b090f84dd42e 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -45,6 +45,7 @@ obj-$(CONFIG_SIRF_IRQ)			+=3D irq-
+> sirfsoc.o
+>  obj-$(CONFIG_JCORE_AIC)			+=3D irq-jcore-aic.o
+>  obj-$(CONFIG_RENESAS_INTC_IRQPIN)	+=3D irq-renesas-intc-irqpin.o
+>  obj-$(CONFIG_RENESAS_IRQC)		+=3D irq-renesas-irqc.o
+> +obj-$(CONFIG_RENESAS_RZN1_IRQ_MUX)	+=3D rzn1-irq-mux.o
+>  obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+=3D irq-versatile-fpga.o
+>  obj-$(CONFIG_ARCH_NSPIRE)		+=3D irq-zevio.o
+>  obj-$(CONFIG_ARCH_VT8500)		+=3D irq-vt8500.o
+> diff --git a/drivers/irqchip/rzn1-irq-mux.c b/drivers/irqchip/rzn1-irq-mu=
+x.c
+> new file mode 100644 index 000000000000..ee7810b9b3f3
+> --- /dev/null
+> +++ b/drivers/irqchip/rzn1-irq-mux.c
+> @@ -0,0 +1,205 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RZ/N1 GPIO Interrupt Multiplexer
+> + *
+> + * Copyright (C) 2018 Renesas Electronics Europe Limited
+> + *
+> + * On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+> +configured
+> + * to have 32 interrupt outputs, so we have a total of 96 GPIO interrupt=
+s.
+> + * All of these are passed to the GPIO IRQ Muxer, which selects 8 of
+> +the GPIO
+> + * interrupts to pass onto the GIC.
+> + */
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/of_platform.h>
+> +
+> +#define MAX_NR_INPUT_IRQS	96
+> +#define MAX_NR_OUTPUT_IRQS	8
+> +
+> +/*
+> + * "interrupt-map" consists of 1 interrupt cell, 0 address cells,
+> +phandle to
+> + * interrupt parent, and parent interrupt specifier (3 cells for GIC),
+> +giving
+> + * a total of 5 cells.
+> + */
+> +#define IMAP_LENGTH		5
+> +
+> +struct irqmux_priv;
+> +struct irqmux_one {
+> +	unsigned int irq;
+> +	unsigned int src_hwirq;
+> +	struct irqmux_priv *priv;
+> +};
+> +
+> +struct irqmux_priv {
+> +	struct device *dev;
+> +	struct irq_domain *irq_domain;
+> +	unsigned int nr_irqs;
+> +	struct irqmux_one mux[MAX_NR_OUTPUT_IRQS]; };
+> +
+> +static irqreturn_t irqmux_handler(int irq, void *data) {
+> +	struct irqmux_one *mux =3D data;
+> +	struct irqmux_priv *priv =3D mux->priv;
+> +	unsigned int virq;
+> +
+> +	virq =3D irq_find_mapping(priv->irq_domain, mux->src_hwirq);
+> +
+> +	generic_handle_irq(virq);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int irqmux_domain_map(struct irq_domain *h, unsigned int irq,
+> +			     irq_hw_number_t hwirq)
+> +{
+> +	irq_set_chip_data(irq, h->host_data);
+> +	irq_set_chip_and_handler(irq, &dummy_irq_chip,
+> handle_simple_irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops irqmux_domain_ops =3D {
+> +	.map =3D irqmux_domain_map,
+> +};
+> +
+> +static int irqmux_probe(struct platform_device *pdev) {
+> +	struct device *dev =3D &pdev->dev;
+> +	struct device_node *np =3D dev->of_node;
+> +	struct resource *res;
+> +	u32 __iomem *regs;
+> +	struct irqmux_priv *priv;
+> +	unsigned int i;
+> +	int nr_irqs;
+> +	int ret;
+> +	const __be32 *imap;
+> +	int imaplen;
+> +
+> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->dev =3D dev;
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	regs =3D devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(regs))
+> +		return PTR_ERR(regs);
+> +
+> +	nr_irqs =3D of_irq_count(np);
+> +	if (nr_irqs < 0)
+> +		return nr_irqs;
+> +
+> +	if (nr_irqs > MAX_NR_OUTPUT_IRQS) {
+> +		dev_err(dev, "too many output interrupts\n");
+> +		return -ENOENT;
+> +	}
+> +
+> +	priv->nr_irqs =3D nr_irqs;
+> +
+> +	/* Look for the interrupt-map */
+> +	imap =3D of_get_property(np, "interrupt-map", &imaplen);
+> +	if (!imap)
+> +		return -ENOENT;
+> +	imaplen /=3D IMAP_LENGTH * sizeof(__be32);
+> +
+> +	/* Sometimes not all muxs are used */
+> +	if (imaplen < priv->nr_irqs)
+> +		priv->nr_irqs =3D imaplen;
+> +
+> +	/* Create IRQ domain for the interrupts coming from the GPIO blocks
+> */
+> +	priv->irq_domain =3D irq_domain_add_linear(np,
+> MAX_NR_INPUT_IRQS,
+> +						 &irqmux_domain_ops, priv);
+> +	if (!priv->irq_domain)
+> +		return -ENOMEM;
+> +
+> +	for (i =3D 0; i < MAX_NR_INPUT_IRQS; i++)
+> +		irq_create_mapping(priv->irq_domain, i);
+> +
+> +	for (i =3D 0; i < priv->nr_irqs; i++) {
+> +		struct irqmux_one *mux =3D &priv->mux[i];
+> +
+> +		ret =3D irq_of_parse_and_map(np, i);
+> +		if (ret < 0) {
+> +			ret =3D -ENOENT;
+> +			goto err;
+> +		}
+> +
+> +		mux->irq =3D ret;
+> +		mux->priv =3D priv;
+> +
+> +		/*
+> +		 * We need the first cell of the interrupt-map to configure
+> +		 * the hardware.
+> +		 */
+> +		mux->src_hwirq =3D be32_to_cpu(*imap);
+> +		imap +=3D IMAP_LENGTH;
+> +
+> +		dev_info(dev, "%u: %u mapped irq %u\n", i,  mux-
+> >src_hwirq,
+> +			 mux->irq);
+> +
+> +		ret =3D devm_request_irq(dev, mux->irq, irqmux_handler,
+> +				       IRQF_SHARED | IRQF_NO_THREAD,
+> +				       "irqmux", mux);
+> +		if (ret < 0) {
+> +			dev_err(dev, "failed to request IRQ: %d\n", ret);
+> +			goto err;
+> +		}
+> +
+> +		/* Set up the hardware to pass the interrupt through */
+> +		writel(mux->src_hwirq, &regs[i]);
+> +	}
+> +
+> +	dev_info(dev, "probed, %d gpio interrupts\n", priv->nr_irqs);
+> +
+> +	return 0;
+> +
+> +err:
+> +	while (i--)
+> +		irq_dispose_mapping(priv->mux[i].irq);
+> +	irq_domain_remove(priv->irq_domain);
+> +
+> +	return ret;
+> +}
+> +
+> +static int irqmux_remove(struct platform_device *pdev) {
+> +	struct irqmux_priv *priv =3D platform_get_drvdata(pdev);
+> +	unsigned int i;
+> +
+> +	for (i =3D 0; i < priv->nr_irqs; i++)
+> +		irq_dispose_mapping(priv->mux[i].irq);
+> +	irq_domain_remove(priv->irq_domain);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id irqmux_match[] =3D {
+> +	{ .compatible =3D "renesas,rzn1-gpioirqmux", },
+> +	{ /* sentinel */ },
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, irqmux_match);
+> +
+> +static struct platform_driver irqmux_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "gpio_irq_mux",
+> +		.owner =3D THIS_MODULE,
+> +		.of_match_table =3D irqmux_match,
+> +	},
+> +	.probe =3D irqmux_probe,
+> +	.remove =3D irqmux_remove,
+> +};
+> +
+> +module_platform_driver(irqmux_driver);
+> +
+> +MODULE_DESCRIPTION("Renesas RZ/N1 GPIO IRQ Multiplexer Driver");
+> +MODULE_AUTHOR("Phil Edworthy <phil.edworthy@renesas.com>");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.17.1
 
--- 
-Best regards,
-Marek Vasut
