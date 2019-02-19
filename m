@@ -6,42 +6,41 @@ X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC13C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 20:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A615C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 20:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAB332146F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 20:23:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 409C02146F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 20:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbfBSUXz (ORCPT
+        id S1725963AbfBSUZb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 15:23:55 -0500
-Received: from sauhun.de ([88.99.104.3]:49246 "EHLO pokefinder.org"
+        Tue, 19 Feb 2019 15:25:31 -0500
+Received: from sauhun.de ([88.99.104.3]:49298 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfBSUXy (ORCPT
+        id S1726110AbfBSUZa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 15:23:54 -0500
+        Tue, 19 Feb 2019 15:25:30 -0500
 Received: from localhost (p54B338D8.dip0.t-ipconnect.de [84.179.56.216])
-        by pokefinder.org (Postfix) with ESMTPSA id 43E5F2CF689;
-        Tue, 19 Feb 2019 21:23:52 +0100 (CET)
-Date:   Tue, 19 Feb 2019 21:23:48 +0100
+        by pokefinder.org (Postfix) with ESMTPSA id 78A892CF689;
+        Tue, 19 Feb 2019 21:25:28 +0100 (CET)
+Date:   Tue, 19 Feb 2019 21:25:27 +0100
 From:   Wolfram Sang <wsa@the-dreams.de>
 To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org,
         Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt: snps,designware-i2c: Add clock bindings
- documentation
-Message-ID: <20190219202348.qhpjv24rnhgupek7@katana>
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] i2c: designware: Add support for a bus clock
+Message-ID: <20190219202527.rz45advkmpyzvaf4@katana>
 References: <1550589042-11096-1-git-send-email-gareth.williams.jx@renesas.com>
- <1550589042-11096-2-git-send-email-gareth.williams.jx@renesas.com>
+ <1550589042-11096-3-git-send-email-gareth.williams.jx@renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bdo75lbtwoend5ij"
+        protocol="application/pgp-signature"; boundary="xncw63d3ut7d66zp"
 Content-Disposition: inline
-In-Reply-To: <1550589042-11096-2-git-send-email-gareth.williams.jx@renesas.com>
+In-Reply-To: <1550589042-11096-3-git-send-email-gareth.williams.jx@renesas.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -49,40 +48,41 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---bdo75lbtwoend5ij
+--xncw63d3ut7d66zp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 19, 2019 at 03:10:41PM +0000, Gareth Williams wrote:
-> From: Phil Edworthy <phil.edworthy@renesas.com>
->=20
-> The driver requires an undocumented clock property, so detail it.
-> Add documentation for a separate, optional, bus clock.
-
-Is it named "bus clock" in the datasheets? If so, then be it, but if
-possible, I'd avoid this term because it is ambigious (Is it the I2C bus
-or the interconnect bus or...?). pclk sounds more precise to me.
 
 
---bdo75lbtwoend5ij
+> -	if (prepare)
+> +	if (prepare) {
+> +		/* Optional bus clock */
+> +		ret = clk_prepare_enable(dev->busclk);
+> +		if (ret)
+> +			return ret;
+> +
+>  		return clk_prepare_enable(dev->clk);
+
+This leaves 'busclk' enabled when the other clock fails.
+
+
+--xncw63d3ut7d66zp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxsZdAACgkQFA3kzBSg
-KbZM8A/+JpJk7b3PKMeXAMlgep5zcDk8JIxGUSBf958/bSMGmk84vcKM/m5dDUJ0
-60uhqksU0XCInt/dQmZN9HyQRVDel2ZM/z0rJn2Yq0IScrZW1Yvr9gjDrTSpQZLI
-dxeHIe1Oc7es2IcUv+00JX0guGn18eksQKz1m+aZCWZqSLXnhfcWFaXJMt3ipUt1
-LXbr+FhLf2uYwdgs5ih/kUAhq8+BCMMg+ux3XwMPjtDWu2o2xYqX5rpaTNmrOspp
-WXd7d1x8lIMhAy20ATXy0XPEPEe2wcjxRoH6U8K7+hilXK6eIvodzEQdNkUBUePH
-FVCBr3IOk2AUtUgm2ilme9f4BmdmRbyMsH+aW2G+ZCLQFnq8qDZZQoNbwmzghhfM
-VFEvZO6Pt1n+9fJjXiF7LejxsEtjy/gqNnmFP44yeolH12cRFmuDzp67me3fn2sv
-nwqQTYg8yMQ9pMJr3QYWickbDtg/aYIhGOGRfEtX1TY/O31/klOSZg+fHei4ZG44
-f3GfbtfvobTJnVR9uSgc5tAjkolat1znkEuaHrbM3TltNdMDFFcTmCNwxcDUnLPp
-kSa7pZcM/K2rI20DmULl0Sp027kGWTnoy8eAvJzUo/12OaBEhLjl9tg/0I8u+dI5
-AWq6uE7Zex9nnVBY+EwY32YP4Ec6bfWjHGvvN6djaBb8Z9bZpvo=
-=79hq
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxsZjcACgkQFA3kzBSg
+KbYF/Q//YfCWlIPd7f5aibwFWpnbkSx2UvQwQg/+XuG/IA8BTP3NTwXD6r/S5zOZ
+5DSUrYAkyRlvzisB7IEKhTzAG9lTNgIhGZxYWraI00zw9ahpfxJP9Eu45t7sPmPW
+nWRg6WlHtVlEYIOP+AAR4+qnlb6FaNYISpy14pSA1xNSGf3SidE9yKZANblrKGuS
+HECknFMvMHTJ4AayzyjzZXUH3AIXvTKXVgKGOgkk1Uv5AdI5AOtRmVFpaW5Ax30J
+LRKr2Ald7345U4uyuA9nXctaLu2PR9UyVJ/Vpiu5k8K1ucW7XMMUcHnHNXdZUqMI
+yAIZimb5tjAHh3TbsBQ00CG9vip9FkpavPLjLouGBXvc0ixKXZlpJyCkYn5C4d8+
+vn/YdV3GzEcicXSPKh8dJA5OSCeeAtIDIo+C46tNDnm9vw/3ZROi3Al+SDdzPAtl
+TbUR7thUTQ2bz6rMJD4HPYQ3Pi3D0EGGpQJ0yhfgBaCdJhBHwP1jSH05NfgffODt
+TBj690d1s+xaU0LAR/vSVQFPXjqwC5BBYUTu92CopAIJJc9/6EfsQTCQbKa5zI1y
+/ZLX9SeBFRKMdGx0C7odTmcudUi9N9UkPiVVpsYJApAAKd6rjYpRc14eEwHpQqFg
+qo1Jny5QJ5fQWwgNOKHkMePzdnwVME0BXNzHzAw2SGbbkHDDKPw=
+=1A/8
 -----END PGP SIGNATURE-----
 
---bdo75lbtwoend5ij--
+--xncw63d3ut7d66zp--
