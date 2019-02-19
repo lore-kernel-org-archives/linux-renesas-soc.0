@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D1CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E69C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2423621736
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A85C20665
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Feb 2019 15:12:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbfBSPL4 (ORCPT
+        id S1726817AbfBSPMi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Feb 2019 10:11:56 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:55160 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728888AbfBSPL4 (ORCPT
+        Tue, 19 Feb 2019 10:12:38 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:54540 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726384AbfBSPMh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Feb 2019 10:11:56 -0500
+        Tue, 19 Feb 2019 10:12:37 -0500
 X-IronPort-AV: E=Sophos;i="5.58,388,1544454000"; 
-   d="scan'208";a="8285359"
+   d="scan'208";a="8078121"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 20 Feb 2019 00:11:53 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 20 Feb 2019 00:12:35 +0900
 Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E3CE94485B1C;
-        Wed, 20 Feb 2019 00:11:51 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 85A634485C21;
+        Wed, 20 Feb 2019 00:12:33 +0900 (JST)
 From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wolfram Sang <wsa@the-dreams.de>
+To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org
 Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: [PATCH v2 1/2] dt: snps,designware-i2c: Add clock bindings documentation
-Date:   Tue, 19 Feb 2019 15:10:41 +0000
-Message-Id: <1550589042-11096-2-git-send-email-gareth.williams.jx@renesas.com>
+Subject: [PATCH v2 2/2] i2c: designware: Add support for a bus clock
+Date:   Tue, 19 Feb 2019 15:10:42 +0000
+Message-Id: <1550589042-11096-3-git-send-email-gareth.williams.jx@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550589042-11096-1-git-send-email-gareth.williams.jx@renesas.com>
 References: <1550589042-11096-1-git-send-email-gareth.williams.jx@renesas.com>
@@ -49,45 +48,80 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Phil Edworthy <phil.edworthy@renesas.com>
 
-The driver requires an undocumented clock property, so detail it.
-Add documentation for a separate, optional, bus clock.
+The Synopsys I2C Controller has a bus clock, but most SoCs hide this away.
+However, on some SoCs you need to explicity enable the bus clock in order
+to access the registers. Therefore, add support for an optional bus clock.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+
 ---
 v2:
- - No changes.
+ - Use new devm_clk_get_optional() function as it simplifies handling when
+   the optional clock is not present.
 ---
- Documentation/devicetree/bindings/i2c/i2c-designware.txt | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/i2c/busses/i2c-designware-common.c  | 12 +++++++++++-
+ drivers/i2c/busses/i2c-designware-core.h    |  1 +
+ drivers/i2c/busses/i2c-designware-platdrv.c |  5 +++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-index 3e4bcc2..822ebce 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-@@ -6,12 +6,21 @@ Required properties :
-                 or "mscc,ocelot-i2c" with "snps,designware-i2c" for fallback
-  - reg : Offset and length of the register set for the device
-  - interrupts : <IRQ> where IRQ is the interrupt number.
-+ - clocks : phandles for the clocks, see the description of clock-names below.
-+   The phandle for the "ic_clk" clock is required. The phandle for the "bus"
-+   clock is optional. If a single clock is specified but no clock-name, it is
-+   the "ic_clk" clock. If both clocks are listed, the "ic_clk" must be first.
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index a473011..febcea6 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -251,13 +251,23 @@ unsigned long i2c_dw_clk_rate(struct dw_i2c_dev *dev)
  
- Recommended properties :
- 
-  - clock-frequency : desired I2C bus clock frequency in Hz.
- 
- Optional properties :
+ int i2c_dw_prepare_clk(struct dw_i2c_dev *dev, bool prepare)
+ {
++	int ret;
 +
-+ - clock-names : Contains the names of the clocks:
-+    "ic_clk", for the core clock used to generate the external I2C clock.
-+    "bus", the bus clock, sometimes described as pclk, for register accesses.
-+
-  - reg : for "mscc,ocelot-i2c", a second register set to configure the SDA hold
-    time, named ICPU_CFG:TWI_DELAY in the datasheet.
+ 	if (IS_ERR(dev->clk))
+ 		return PTR_ERR(dev->clk);
  
+-	if (prepare)
++	if (prepare) {
++		/* Optional bus clock */
++		ret = clk_prepare_enable(dev->busclk);
++		if (ret)
++			return ret;
++
+ 		return clk_prepare_enable(dev->clk);
++	}
+ 
+ 	clk_disable_unprepare(dev->clk);
++	clk_disable_unprepare(dev->busclk);
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(i2c_dw_prepare_clk);
+diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+index b4a0b2b..9388ae3 100644
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@ -226,6 +226,7 @@ struct dw_i2c_dev {
+ 	void __iomem		*ext;
+ 	struct completion	cmd_complete;
+ 	struct clk		*clk;
++	struct clk		*busclk;
+ 	struct reset_control	*rst;
+ 	struct i2c_client		*slave;
+ 	u32			(*get_clk_rate_khz) (struct dw_i2c_dev *dev);
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 9eaac3b..fbaa6aa 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -346,6 +346,11 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+ 	else
+ 		i2c_dw_configure_master(dev);
+ 
++	/* Optional bus clock */
++	dev->busclk = devm_clk_get_optional(&pdev->dev, "bus");
++	if (IS_ERR(dev->busclk))
++		return PTR_ERR(dev->busclk);
++
+ 	dev->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (!i2c_dw_prepare_clk(dev, true)) {
+ 		u64 clk_khz;
 -- 
 2.7.4
 
