@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8389C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CFCC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 996B720880
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E85C20880
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hKIZgyEo"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UJg0dHA3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfBTPbE (ORCPT
+        id S1726013AbfBTPbj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:31:04 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42124 "EHLO
+        Wed, 20 Feb 2019 10:31:39 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42144 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbfBTPbD (ORCPT
+        with ESMTP id S1726437AbfBTPbj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:31:03 -0500
+        Wed, 20 Feb 2019 10:31:39 -0500
 Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D1392D1;
-        Wed, 20 Feb 2019 16:31:01 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E3992D1;
+        Wed, 20 Feb 2019 16:31:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550676661;
-        bh=GqxeuJFbeTzGILdrnIayvVM4Pw2sI2xaNjheL8cab70=;
+        s=mail; t=1550676697;
+        bh=JoraJcQ6MqFsIgkh7YJkuacZR5K+y+Q9v1vqMYM9Zjo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hKIZgyEob6d61sdjQ0av87TifVZgKVd9/zxItCbU23uByfqIfo1c8F7i5MBuZsG5n
-         E+kuzm8iWagj56Xb0SkhBbmgSH5xuuw/cMegbIiYpKoIumzkKSl3GDeZgyj2DvUr/u
-         F/Hs3rCiZk05BlU6qL/R3aJNvedprZCQgLa7RZME=
-Date:   Wed, 20 Feb 2019 17:30:57 +0200
+        b=UJg0dHA38oxMH01UF9s+L+XcJNji1Fmx4Ngr2zrR9CAT38XURb+snR2AdHEGn7pQS
+         WQPRoaFYqOzRIHdFvOUKhmzLKCjm3ysaZ+p1aEwqVf5GMznizWq4/kBuaux21TLb20
+         r40IFHd8bw6+3gE1mhzPU7CHb9PLimEP4SswlYjA=
+Date:   Wed, 20 Feb 2019 17:31:33 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Joerg Roedel <joro@8bytes.org>,
@@ -41,15 +41,14 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] iommu/ipmmu-vmsa: Prepare to handle 40-bit error
- addresses
-Message-ID: <20190220153057.GF3516@pendragon.ideasonboard.com>
+Subject: Re: [PATCH 4/7] iommu/ipmmu-vmsa: Make IPMMU_CTX_MAX unsigned
+Message-ID: <20190220153133.GG3516@pendragon.ideasonboard.com>
 References: <20190220150531.2462-1-geert+renesas@glider.be>
- <20190220150531.2462-4-geert+renesas@glider.be>
+ <20190220150531.2462-5-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190220150531.2462-4-geert+renesas@glider.be>
+In-Reply-To: <20190220150531.2462-5-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -60,80 +59,43 @@ Hi Geert,
 
 Thank you for the patch.
 
-On Wed, Feb 20, 2019 at 04:05:27PM +0100, Geert Uytterhoeven wrote:
-> On R-Car Gen3, the faulting virtual address is a 40-bit address, and
-> comprised of two registers.  Read the upper address part, and combine
-> both parts, when running on a 64-bit system.
+On Wed, Feb 20, 2019 at 04:05:28PM +0100, Geert Uytterhoeven wrote:
+> Make the IPMMU_CTX_MAX constant unsigned, to match the type of
+> ipmmu_features.number_of_contexts.
+> 
+> This allows to use plain min() instead of type-casting min_t().
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
-> Apart from this, the driver doesn't support 40-bit IOVA addresses yet.
-> ---
->  drivers/iommu/ipmmu-vmsa.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
+>  drivers/iommu/ipmmu-vmsa.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index ac70cb967ff821c6..4d07c26c97848b65 100644
+> index 4d07c26c97848b65..4e3134a9a52f8d87 100644
 > --- a/drivers/iommu/ipmmu-vmsa.c
 > +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -186,7 +186,9 @@ static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
->  #define IMMAIR_ATTR_IDX_WBRWA		1
->  #define IMMAIR_ATTR_IDX_DEV		2
+> @@ -36,7 +36,7 @@
+>  #define arm_iommu_detach_device(...)	do {} while (0)
+>  #endif
 >  
-> -#define IMEAR				0x0030
-> +#define IMEAR				0x0030	/* R-Car Gen2 */
-> +#define IMELAR				IMEAR	/* R-Car Gen3 */
-
-I would have defined that as a single macro.
-
-> +#define IMEUAR				0x0034	/* R-Car Gen3 */
+> -#define IPMMU_CTX_MAX 8
+> +#define IPMMU_CTX_MAX 8U
 >  
->  #define IMPCTR				0x0200
->  #define IMPSTR				0x0208
-> @@ -521,14 +523,16 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
->  {
->  	const u32 err_mask = IMSTR_MHIT | IMSTR_ABORT | IMSTR_PF | IMSTR_TF;
->  	struct ipmmu_vmsa_device *mmu = domain->mmu;
-> +	unsigned long iova;
-
-Isn't there a more appropriate type, such as dma_addr_t possibly ?
-
->  	u32 status;
-> -	u32 iova;
+>  struct ipmmu_features {
+>  	bool use_ns_alias_offset;
+> @@ -1060,8 +1060,7 @@ static int ipmmu_probe(struct platform_device *pdev)
+>  	if (mmu->features->use_ns_alias_offset)
+>  		mmu->base += IM_NS_ALIAS_OFFSET;
 >  
->  	status = ipmmu_ctx_read_root(domain, IMSTR);
->  	if (!(status & err_mask))
->  		return IRQ_NONE;
+> -	mmu->num_ctx = min_t(unsigned int, IPMMU_CTX_MAX,
+> -			     mmu->features->number_of_contexts);
+> +	mmu->num_ctx = min(IPMMU_CTX_MAX, mmu->features->number_of_contexts);
 >  
-> -	iova = ipmmu_ctx_read_root(domain, IMEAR);
-> +	iova = ipmmu_ctx_read_root(domain, IMELAR);
-> +	if (IS_ENABLED(CONFIG_64BIT))
-> +		iova |= (u64)ipmmu_ctx_read_root(domain, IMEUAR) << 32;
+>  	irq = platform_get_irq(pdev, 0);
 >  
->  	/*
->  	 * Clear the error status flags. Unlike traditional interrupt flag
-> @@ -540,10 +544,10 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
->  
->  	/* Log fatal errors. */
->  	if (status & IMSTR_MHIT)
-> -		dev_err_ratelimited(mmu->dev, "Multiple TLB hits @0x%08x\n",
-> +		dev_err_ratelimited(mmu->dev, "Multiple TLB hits @0x%lx\n",
->  				    iova);
->  	if (status & IMSTR_ABORT)
-> -		dev_err_ratelimited(mmu->dev, "Page Table Walk Abort @0x%08x\n",
-> +		dev_err_ratelimited(mmu->dev, "Page Table Walk Abort @0x%lx\n",
->  				    iova);
->  
->  	if (!(status & (IMSTR_PF | IMSTR_TF)))
-> @@ -559,7 +563,7 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
->  		return IRQ_HANDLED;
->  
->  	dev_err_ratelimited(mmu->dev,
-> -			    "Unhandled fault: status 0x%08x iova 0x%08x\n",
-> +			    "Unhandled fault: status 0x%08x iova 0x%lx\n",
->  			    status, iova);
->  
->  	return IRQ_HANDLED;
 
 -- 
 Regards,
