@@ -2,83 +2,99 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3365C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 08:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F856C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 09:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5012146E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 08:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C10121773
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 09:02:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FIBoId5G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbfBTIFP (ORCPT
+        id S1726142AbfBTJCD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 03:05:15 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:38443 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfBTIFO (ORCPT
+        Wed, 20 Feb 2019 04:02:03 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35160 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfBTJCD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 03:05:14 -0500
-Received: by mail-ua1-f67.google.com with SMTP id p9so7907266uaa.5;
-        Wed, 20 Feb 2019 00:05:14 -0800 (PST)
+        Wed, 20 Feb 2019 04:02:03 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v7so16992193lfd.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Feb 2019 01:02:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EE1CuSpIwbUQSlQlHEp8pbMqrzzS9SZsL2FB+OJKHeI=;
+        b=FIBoId5GeIXyFLY86TsxJxfO2GuVcNGDmcwHWqPEvj7/6Ta8MfVJsECFYH0iDMlR4C
+         Q+NzwuC1sMT7FOChiUshc+aM3GAWNbBVKE8DwYOHUWvszT++KqckKmyQMvP24TdSeXkb
+         2z/POIAWaUQ4SY7SMdVC7syLzMwNUDDgo9PeU0HGayqgRhul3BxEIlAQ0fcPTcXw3fgZ
+         yen5AvpYn7uTwEUU7zsTmZeKpGjy7DQ6hPU3zfsxbIMB/+mqVFGCfneJYnmVEjYnwG06
+         ZrMX98Xk6M4S/2K+uQSLlcIOCjNM67JqkA4dhDLyQUP3ASna4LjrXrbTMEZyckVmVGd1
+         gVaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PCfikV/o5bpgXE4j02lG18Da4dSxFHCIWOEUQU7wWxI=;
-        b=aDPjJwQj8pZuEGBAZ59Wi4LiaknZb6ALQYAL2yindZx/8+KHaegAUKyVFTxwh1XVLa
-         kKh8QPaIWnNfDV2DsPnWGIrSgoLpvrvlsL3/APQhaf7TlFrfKwq1BaWDjUraCRs49DxJ
-         3pt8hWBzaULAE6sZPwhpX3k14ojRdlKsEylnhVTR2vhgYMsUz+dJyYyXnkeS1y+zXBDL
-         WztytIZgac3Yx9oL3Haj9eZMcXhZv1PMP7Lr3OVoIwqcyRP9s+hLmzU+vA8fLQYTPk1N
-         0CSbzAzGU/N0+L1f3ieQ65Pc1UmzNdXFHQ6yiZa2Z9xPbkgX7KTb6bTWnH8bkVTtRQy1
-         W8pA==
-X-Gm-Message-State: AHQUAuak/eI60B8orivflf2fvpkLonlt1ritSOAL+QazXOYDawr6MtO0
-        3XmuYgggYFfdgRdwHvawGMB1+pGpeKx7xY5bucA=
-X-Google-Smtp-Source: AHgI3IbqE/X+inhkskZAFlpeGlhOvjrq6UA5nstek35iIri9KqMtrPjax6JMPKg5ZOyWCE/m7CM4d2HW6lZ2bOSjego=
-X-Received: by 2002:ab0:7191:: with SMTP id l17mr17073428uao.28.1550649913671;
- Wed, 20 Feb 2019 00:05:13 -0800 (PST)
+        bh=EE1CuSpIwbUQSlQlHEp8pbMqrzzS9SZsL2FB+OJKHeI=;
+        b=uicj+o/DAum+ltHJmHcN4Em7WEF+B1Ob5yW8UgHST4A9AlVvOvjPQZkUow5M53TQM8
+         3yMm5g/vV3x1xpXVox1oackeVqWE/bn+f6rvb4Cn6l3NV5OrVnr0USWs1LR3wBQkNsSV
+         a6ryfxJieh7xvztML2zWoXFhTsUzpgD5YzaZgWpOGqaEXYfV6jQSXbWKVqC6BbvHkn0l
+         IiJTtczetO4wRSb4NSX9SRDQqOrnMCayThIvsOo/ZW/L4Z97YJSCEOucueWgIpgfkWMM
+         Q8FUUp1Gzfjr/z4+9uFcfi4GaNgNbadFIORKq7HN9SgmpNkZCIcqirA9o7oqjUiY4CH+
+         ZQAg==
+X-Gm-Message-State: AHQUAuZUo3//7IV96s1TMBLFZvxuWbFZx5CXH98usTOf3WyjodA3CaHg
+        A9sz64DWOpMBlBjSeatUHjXEBfmeFccGIKQHt4pRKg==
+X-Google-Smtp-Source: AHgI3IZ9Zyz8EYHANpSg2YwGQnsM3G7KFepVLF6vVKE3FD+9XrhQvwxEVvkobX20BS/xeBwpcESc5enkETb9neb2OsU=
+X-Received: by 2002:ac2:4343:: with SMTP id o3mr17825675lfl.129.1550653322246;
+ Wed, 20 Feb 2019 01:02:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20190220052435.20508-1-jiada_wang@mentor.com> <20190220052435.20508-3-jiada_wang@mentor.com>
-In-Reply-To: <20190220052435.20508-3-jiada_wang@mentor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 20 Feb 2019 09:05:02 +0100
-Message-ID: <CAMuHMdVVo7LkYu6taKBndssmHMHS5U=nw+FnBoUXuF-r19Yuiw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] arm64: dts: renesas: r8a7796: use extended audio
- dmac register
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+References: <20190216134627.1601-1-marek.vasut@gmail.com> <20190219151811.GA13354@ulmo>
+ <631beb2b-786e-e182-acea-561b0706b041@gmail.com> <20190219160800.GA30280@ulmo>
+ <805f638e-2d55-803b-b09c-617d3a503408@gmail.com>
+In-Reply-To: <805f638e-2d55-803b-b09c-617d3a503408@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 20 Feb 2019 10:01:50 +0100
+Message-ID: <CACRpkdb6g4fd2bXg81p1+iQ4Vgm0d+Z3nW38qy9D+romM0aj1g@mail.gmail.com>
+Subject: Re: [PATCH] gpio: of: Apply regulator-gpio quirk only to enable-gpios
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>, Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Feb 20, 2019 at 6:25 AM Jiada Wang <jiada_wang@mentor.com> wrote:
-> Basic audio dmac register only supports busif from 0 to 3,
-> in order to use busif4 ~ busif7, extended audio dmac register
-> need to be used
->
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+On Tue, Feb 19, 2019 at 5:30 PM Marek Vasut <marek.vasut@gmail.com> wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-but please consider my comments to the cover letter.
+> Handling broken DTs only adds to the complexity, but I think this cannot
+> be helped, since those DTs can be stored in some ROM.
 
-Gr{oetje,eeting}s,
+I agree, but if the broken DT needs to be supported going forward
+I would like it to be quite explicit, so that the code down in
+gpiolib-of.c does this:
 
-                        Geert
+/*
+ * Comment about this machine
+ */
+if (of_machine_is_compatible("nvidia,problematic-board") {
+   /* Quirk for this specific DT for this machine*/
+}
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+This makes the standard behavior clear and avoids the risk
+of applying hairy machine-specific quirks to any other machine,
+but even more importantly it makes it easy for people reading
+the code to see what is going on and why.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
