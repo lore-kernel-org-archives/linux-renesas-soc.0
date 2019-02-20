@@ -2,126 +2,103 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CCFC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D79C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A6B2086D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:42:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WzFThoOI"
+	by mail.kernel.org (Postfix) with ESMTP id BF3CB2147A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:44:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbfBTPmv (ORCPT
+        id S1725890AbfBTPoK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:42:51 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42242 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbfBTPmv (ORCPT
+        Wed, 20 Feb 2019 10:44:10 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:33243 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfBTPoK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:42:51 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C29E62D1;
-        Wed, 20 Feb 2019 16:42:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550677368;
-        bh=YhxvAFkolvLn268p1eu9ujULBb6L7/qCzXE6g6jrB4A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WzFThoOIH7QsN7rMzA5yA0xwV8lWzyPIE9DBOXdiT9UxkZy1apdIBzLqkgbir6iwO
-         /wb3lTfhqjMpSXmN0wAma8XlNX0PuUrd9yJnUXuA5kMKiVc9oRS6YImAP08OScw1DF
-         PSRbelzoyqEWtqxl05kOsdFA+x16DoHvbM3CIhyY=
-Date:   Wed, 20 Feb 2019 17:42:44 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Joerg Roedel <joro@8bytes.org>,
+        Wed, 20 Feb 2019 10:44:10 -0500
+Received: by mail-ua1-f66.google.com with SMTP id q17so8409680uam.0;
+        Wed, 20 Feb 2019 07:44:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OKmoKFPA+ZYy/hUAI9OFMS9xv1Mzt2jaoQIoF31S6y0=;
+        b=V7XXofknQ8VS1LByZliI2FpHtTTAK4jwEzA2Q/XslXGmBrMYajpAAJLwOo9QFH1km0
+         vtmLE0HfFmLnZjoyJwiFhZbsYhJUsKjrYOzXjD4LMZSgM32fYK+m2hIIRa6SvNugmscy
+         cQKNeHUNPNdJOpj1zX/QJIx0PWS1xjJXtf6EVIi8kB5KRhXamwMFC1/wbKXYgVt5Kr+Y
+         aXfdg4pILy5aFWPFIpwIz3d5zwDSr4bDQtbKVEXhochtURbRq1Lwb3+C/n7IXasYsBAv
+         BAXGHZUe2xq+5vDif0PDZj4R3PJWYQPezQVrTLgjmnSb/jVeZjjNgOlx0GKhdEjg6MHv
+         gPVg==
+X-Gm-Message-State: AHQUAube89n0eFwihsOTuojgsjGCi0PXSvhIcAdcBFzoVu5sjvf6kfjw
+        MvUirs6u/aXmhLE4XjiezTs9eJG55rLX8ZGuiOk=
+X-Google-Smtp-Source: AHgI3IZemqvmtUQmDtv+AEwAzyJFUptDh9qgqIdF58cHBYQyxtA4tkkGAYOjiEG2C6d7YUIi4NaQ5mmAENhgM/2OFi4=
+X-Received: by 2002:a9f:2f0b:: with SMTP id x11mr10966485uaj.78.1550677449039;
+ Wed, 20 Feb 2019 07:44:09 -0800 (PST)
+MIME-Version: 1.0
+References: <20190220150531.2462-1-geert+renesas@glider.be>
+ <20190220150531.2462-7-geert+renesas@glider.be> <20190220153533.GH3516@pendragon.ideasonboard.com>
+In-Reply-To: <20190220153533.GH3516@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 20 Feb 2019 16:43:57 +0100
+Message-ID: <CAMuHMdUo+XtRiNY_nOW8ZgCGFVo3au1=0Q7L2nU29QcPYVkgNg@mail.gmail.com>
+Subject: Re: [PATCH 6/7] iommu/ipmmu-vmsa: Extract hardware context initialization
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <joro@8bytes.org>,
         Magnus Damm <damm+renesas@opensource.se>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific
- features
-Message-ID: <20190220154244.GJ3516@pendragon.ideasonboard.com>
-References: <20190220150531.2462-1-geert+renesas@glider.be>
- <20190220150531.2462-6-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190220150531.2462-6-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Laurent,
 
-Thank you for the patch.
+On Wed, Feb 20, 2019 at 4:35 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Wed, Feb 20, 2019 at 04:05:30PM +0100, Geert Uytterhoeven wrote:
+> > ipmmu_domain_init_context() takes care of (1) initializing the software
+> > domain, and (2) initializing the hardware context for the domain.
+> >
+> > Extract the code to initialize the hardware context into a new subroutine
+> > ipmmu_context_init(), to prepare for later reuse.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  drivers/iommu/ipmmu-vmsa.c | 91 ++++++++++++++++++++------------------
+> >  1 file changed, 48 insertions(+), 43 deletions(-)
+> >
+> > diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> > index 0a21e734466eb1bd..92a766dd8b459f0c 100644
+> > --- a/drivers/iommu/ipmmu-vmsa.c
+> > +++ b/drivers/iommu/ipmmu-vmsa.c
+> > @@ -404,52 +404,10 @@ static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
+> >       spin_unlock_irqrestore(&mmu->lock, flags);
+> >  }
+> >
+> > -static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+> > +static void ipmmu_context_init(struct ipmmu_vmsa_domain *domain)
+>
+> ipmmu_context_init() vs. ipmmmu_domain_init_context() is confusing. You
+> could call this one ipmmu_domain_setup_context() maybe ?
 
-On Wed, Feb 20, 2019 at 04:05:29PM +0100, Geert Uytterhoeven wrote:
-> The maximum number of micro-TLBs per IPMMU instance is not fixed, but
-> depends on the SoC type.  Hence move it from struct ipmmu_vmsa_device to
-> struct ipmmu_features, and set up the correct value for both R-Car Gen2
-> and Gen3 SoCs.
-> 
-> Note that currently no code uses this value.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks, that name was actually on my shortlist, and may make most sense.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Gr{oetje,eeting}s,
 
-> ---
->  drivers/iommu/ipmmu-vmsa.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 4e3134a9a52f8d87..0a21e734466eb1bd 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -42,6 +42,7 @@ struct ipmmu_features {
->  	bool use_ns_alias_offset;
->  	bool has_cache_leaf_nodes;
->  	unsigned int number_of_contexts;
-> +	unsigned int num_utlbs;
->  	bool setup_imbuscr;
->  	bool twobit_imttbcr_sl0;
->  	bool reserved_context;
-> @@ -53,7 +54,6 @@ struct ipmmu_vmsa_device {
->  	struct iommu_device iommu;
->  	struct ipmmu_vmsa_device *root;
->  	const struct ipmmu_features *features;
-> -	unsigned int num_utlbs;
->  	unsigned int num_ctx;
->  	spinlock_t lock;			/* Protects ctx and domains[] */
->  	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-> @@ -972,6 +972,7 @@ static const struct ipmmu_features ipmmu_features_default = {
->  	.use_ns_alias_offset = true,
->  	.has_cache_leaf_nodes = false,
->  	.number_of_contexts = 1, /* software only tested with one context */
-> +	.num_utlbs = 32,
->  	.setup_imbuscr = true,
->  	.twobit_imttbcr_sl0 = false,
->  	.reserved_context = false,
-> @@ -981,6 +982,7 @@ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
->  	.use_ns_alias_offset = false,
->  	.has_cache_leaf_nodes = true,
->  	.number_of_contexts = 8,
-> +	.num_utlbs = 48,
->  	.setup_imbuscr = false,
->  	.twobit_imttbcr_sl0 = true,
->  	.reserved_context = true,
-> @@ -1033,7 +1035,6 @@ static int ipmmu_probe(struct platform_device *pdev)
->  	}
->  
->  	mmu->dev = &pdev->dev;
-> -	mmu->num_utlbs = 48;
->  	spin_lock_init(&mmu->lock);
->  	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
->  	mmu->features = of_device_get_match_data(&pdev->dev);
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
