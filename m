@@ -2,139 +2,101 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9FCC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 19:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D16D1C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 19:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12FD2146E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 19:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DEC72086A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 19:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726003AbfBTTwx (ORCPT
+        id S1725806AbfBTTye (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 14:52:53 -0500
-Received: from sauhun.de ([88.99.104.3]:58208 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725798AbfBTTwx (ORCPT
+        Wed, 20 Feb 2019 14:54:34 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:44865 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTTye (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 14:52:53 -0500
-Received: from localhost (p54B33552.dip0.t-ipconnect.de [84.179.53.82])
-        by pokefinder.org (Postfix) with ESMTPSA id BC6EA2C33D1;
-        Wed, 20 Feb 2019 20:52:49 +0100 (CET)
-Date:   Wed, 20 Feb 2019 20:52:49 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt: snps,designware-i2c: Add clock bindings
- documentation
-Message-ID: <20190220195249.GA2523@kunai>
-References: <1550677803-29716-1-git-send-email-gareth.williams.jx@renesas.com>
- <1550677803-29716-2-git-send-email-gareth.williams.jx@renesas.com>
+        Wed, 20 Feb 2019 14:54:34 -0500
+Received: by mail-ua1-f66.google.com with SMTP id v9so8663172uar.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Feb 2019 11:54:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TUzowNOEMvtJzG78eSaKZiRNXsPark9DdbpYihCbK10=;
+        b=LdlW481+WzQNlQV0EK9iB8yfJZePj3RsryRy5bznI/0KcTO/i0f8fQlS2m0r9gsm+I
+         pRJ+4JW42AJX3CwaNPzGsPqq3fAeGsPeFLYaB9lu/msxj1d0hkMZFrzXBQhyo48GAbDS
+         BKZOwUn39H6hEIMUvtr75nx38TNVgoK6+YRtM3MlaPSIjLKzdm49pfw2CK6/Wgr5DHSc
+         lGGiv+FxYiREO9/KETSRxM3yN0h76UvMHjqKYg4IHpW40Ibj3T/07WA0KDc8FFQpL7qV
+         jEWi3/lKf03i/Nb5yN/ekbUwRit6C2i5UH82/OmK1v1CH6b3ef6jlXiBn6bXFzX6wked
+         14QQ==
+X-Gm-Message-State: AHQUAuZHMzGkSN8OAdaOfN91tyQsRgspohv1WJh05Ab65mOPCw5zHwXF
+        WuvS5SX0u7wzhTC4Ttl5yqqISWPLsO5blVE5DLA=
+X-Google-Smtp-Source: AHgI3IavH6VKZT6jCqqFWVS4oJv2RE2HPYAY990+zjp8ciRSW3ILa4+aXXx3eFjN2Y9q5C3HH/wEmAGyVCD7yLKJI54=
+X-Received: by 2002:a9f:30dc:: with SMTP id k28mr11826773uab.75.1550692473183;
+ Wed, 20 Feb 2019 11:54:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
-Content-Disposition: inline
-In-Reply-To: <1550677803-29716-2-git-send-email-gareth.williams.jx@renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <155067454871.15971.12157033067057246708.sendpatchset@octo> <155067457726.15971.1787990365004385103.sendpatchset@octo>
+In-Reply-To: <155067457726.15971.1787990365004385103.sendpatchset@octo>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 20 Feb 2019 20:54:21 +0100
+Message-ID: <CAMuHMdVveNfGae3LghKpzR+X4hUs1YXX_ffkc9sUSMSHZXLGwg@mail.gmail.com>
+Subject: Re: [PATCH/RFC 03/09] iommu/ipmmu-vmsa: Introduce keepipmmu boot parameter
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Magnus,
 
---MGYHOYXEY6WxJCY8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Feb 20, 2019 at 03:50:02PM +0000, Gareth Williams wrote:
-> From: Phil Edworthy <phil.edworthy@renesas.com>
->=20
-> The driver requires an undocumented clock property, so detail it.
-> Add documentation for a separate, optional, bus clock.
->=20
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-
-Looks good to me:
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Let's see what the designware maintainers have to say.
-
->=20
-> v3:
->  - Changed clocks and clock-names sections to use term "peripheral clock"
->    (pclk) instead of "bus clock" (busclk).
-> v2:
->  - No changes.
-> v1:
->  - Reviewed-by: Rob Herring <robh@kernel.org>
+On Wed, Feb 20, 2019 at 3:55 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> Introduce a keepipmmu boot paramenter to let the user override.
+>
+> Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 > ---
->  Documentation/devicetree/bindings/i2c/i2c-designware.txt | 9 +++++++++
->  1 file changed, 9 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-designware.txt b/D=
-ocumentation/devicetree/bindings/i2c/i2c-designware.txt
-> index 3e4bcc2..f94aa59 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-designware.txt
-> @@ -6,12 +6,21 @@ Required properties :
->                  or "mscc,ocelot-i2c" with "snps,designware-i2c" for fall=
-back
->   - reg : Offset and length of the register set for the device
->   - interrupts : <IRQ> where IRQ is the interrupt number.
-> + - clocks : phandles for the clocks, see the description of clock-names =
-below.
-> +   The phandle for the "ic_clk" clock is required. The phandle for the "=
-pclk"
-> +   clock is optional. If a single clock is specified but no clock-name, =
-it is
-> +   the "ic_clk" clock. If both clocks are listed, the "ic_clk" must be f=
-irst.
-> =20
->  Recommended properties :
-> =20
->   - clock-frequency : desired I2C bus clock frequency in Hz.
-> =20
->  Optional properties :
+>
+>  drivers/iommu/ipmmu-vmsa.c |   14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+>
+> --- 0004/drivers/iommu/ipmmu-vmsa.c
+> +++ work/drivers/iommu/ipmmu-vmsa.c     2019-02-20 23:17:54.038850305 +0900
+> @@ -759,6 +759,17 @@ static int ipmmu_init_platform_device(st
+>         return 0;
+>  }
+>
 > +
-> + - clock-names : Contains the names of the clocks:
-> +    "ic_clk", for the core clock used to generate the external I2C clock.
-> +    "pclk", the peripheral clock, required for register accesses.
+> +static int keep_ipmmu;
 > +
->   - reg : for "mscc,ocelot-i2c", a second register set to configure the S=
-DA hold
->     time, named ICPU_CFG:TWI_DELAY in the datasheet.
-> =20
-> --=20
-> 2.7.4
->=20
+> +static int __init keepipmmu_setup(char *__unused)
+> +{
+> +       keep_ipmmu = 1;
+> +       return 1;
+> +}
+> +
+> +__setup("keepipmmu", keepipmmu_setup);
 
---MGYHOYXEY6WxJCY8
-Content-Type: application/pgp-signature; name="signature.asc"
+Documentation/admin-guide/kernel-parameters.txt shows other IOMMUs
+implement binary parameters, which allow to override the default, to
+disable or enable the IOMMU.
 
------BEGIN PGP SIGNATURE-----
+Perhaps you want the default to be enabled when running in HYP mode,
+so the IPMMU can be used for KVM+VFIO device pass-through?
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxtsAwACgkQFA3kzBSg
-KbbLdA/+IJumuoJcK+yvECoRVPUftlwpO4ehEYPPbjRp9scRSB7mUl4PWLubHqkw
-0f6oJh8JCqOWSEVIVFj7i1Fn8EcebN7HG/61CbBMYc5gDdB/XIIgM3kvPHIa88Pj
-nd4GbuSY/f/JFJhk7eHwaLmQTGOlFG3OO7XCsVF23QKifr+S4DM+GRK3RudOZt1G
-8212ua5UgcIQ2KrGIe6XptFxpQzihwBbRjMiQDiVr/Hlh7D8p74redj1WzGO+eN/
-6f2ULtEdbFWtnadLVN0tSCzlSQ0vNZa+CZ2ob3VKDwmG4MF7HN9vs2S4zJVulHbc
-QoUXfPGHgDffeYvGp7iu9PANiBnGm9WNkaAAcfk4Lgt8/Zk+V0J34qKpGt0XBruU
-nkLd0fHje4NW5l3nYuXMz1ItgYCiLFuu7mUqdNnxb3BpReJ4ZdNO/COXtBk8IfrA
-CTbzLgPaIxp6GH+gpLlwpmYtb3tWRaqzBSFa7mGTGpHpbvvBZ3UdNv0bZ09Ycxfv
-mLIp+X2yM5apWAosSfsXC9eVDG2fz4xcezCx7sD0dsODG8dAneKOuQkAEmyPbq/R
-dCOCzmCL/sQRRXRf19SlnnaIqJ1iH/KNiPCI2YqV+lDRj0/N/ZSDKrdgc9bjYIW8
-Fhl0e8cxm3c8d27NKTk5F7gHUrvHAwHDDNYmDrVCYqvTazB1iw4=
-=algl
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---MGYHOYXEY6WxJCY8--
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
