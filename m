@@ -2,89 +2,140 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D13C10F0B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8389C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59CD720880
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 996B720880
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hKIZgyEo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbfBTP2t (ORCPT
+        id S1726882AbfBTPbE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:28:49 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34134 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfBTP2s (ORCPT
+        Wed, 20 Feb 2019 10:31:04 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42124 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfBTPbD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:28:48 -0500
-Received: by mail-vs1-f68.google.com with SMTP id e10so14202756vsp.1;
-        Wed, 20 Feb 2019 07:28:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pZ1u7eACj/FY+2gWRn5pNp3X84LM8EHST706hzAYIro=;
-        b=PM4dT49Z4aboB8yck6nO0g1lhiL+2nl5mIEq7GnWOUqGgh/bw9XZLzNrezoH8kM7gS
-         l5XOocOuEGobEpOrjyzLgmn6jMue2Gukhn2ttppD2dSorTAxIcKjQzYEtquW18lB/VeU
-         D2fb4AZdCPFwIWZjflhS/63+KrmUCKRheGBnmlPn4+1ozFOcs+alqXKlvFLkqTQQyssJ
-         0bGJ1sMhYRBZ6SXUWFdzxaFTN0JabEn4hmO031SL66K6Yrk+XOrWMLpjaLbRmNoQfdI3
-         I/o7fi1OkxLWVWT6by3SeSSI4wF1Fg3baLkE1rTPMQ7OA3eyUX/L6eKj/qxVlouHpp/g
-         SA7Q==
-X-Gm-Message-State: AHQUAubR0gd8+PkaUXZZajqqw09KjCWbrSmLMqPCfP9dgcBTsschsElR
-        Tg1tBTOpwTa8WE4j//NifOLNQqAWWY8aole9E+M=
-X-Google-Smtp-Source: AHgI3IYu8lwfEA/3vfRKC0sE3mj5o4/WjvXhu9Q6d2hoF61XTcvEfu8wBT2h7brBgk5tcz/Bi9w6JNpMe0MTFVi65nE=
-X-Received: by 2002:a67:78ce:: with SMTP id t197mr17551596vsc.152.1550676527705;
- Wed, 20 Feb 2019 07:28:47 -0800 (PST)
+        Wed, 20 Feb 2019 10:31:03 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D1392D1;
+        Wed, 20 Feb 2019 16:31:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550676661;
+        bh=GqxeuJFbeTzGILdrnIayvVM4Pw2sI2xaNjheL8cab70=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hKIZgyEob6d61sdjQ0av87TifVZgKVd9/zxItCbU23uByfqIfo1c8F7i5MBuZsG5n
+         E+kuzm8iWagj56Xb0SkhBbmgSH5xuuw/cMegbIiYpKoIumzkKSl3GDeZgyj2DvUr/u
+         F/Hs3rCiZk05BlU6qL/R3aJNvedprZCQgLa7RZME=
+Date:   Wed, 20 Feb 2019 17:30:57 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] iommu/ipmmu-vmsa: Prepare to handle 40-bit error
+ addresses
+Message-ID: <20190220153057.GF3516@pendragon.ideasonboard.com>
+References: <20190220150531.2462-1-geert+renesas@glider.be>
+ <20190220150531.2462-4-geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <1550674238-10435-1-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1550674238-10435-1-git-send-email-uli+renesas@fpond.eu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 20 Feb 2019 16:28:35 +0100
-Message-ID: <CAMuHMdXTc9-v4XcxUVn_2kmWgXfBgVxaYdYxyXyJ_FZP=ad8ng@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7779: add HSCIF0/1 pins
-To:     Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190220150531.2462-4-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Uli,
+Hi Geert,
 
-On Wed, Feb 20, 2019 at 3:50 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> Adds HSCIF0 and HSCIF1 pins, groups and functions for R8A7779.
->
-> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for the patch.
+
+On Wed, Feb 20, 2019 at 04:05:27PM +0100, Geert Uytterhoeven wrote:
+> On R-Car Gen3, the faulting virtual address is a 40-bit address, and
+> comprised of two registers.  Read the upper address part, and combine
+> both parts, when running on a 64-bit system.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> This revision should fix the issues found by Geert in v1.
->
-> CU
-> Uli
->
-> Changes in v2:
-> - added comments to the pin definitions
-> - fixed names of hscif1_clk_b_{pins,mux}
-> - added Reviewed-bys
+> Apart from this, the driver doesn't support 40-bit IOVA addresses yet.
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index ac70cb967ff821c6..4d07c26c97848b65 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -186,7 +186,9 @@ static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
+>  #define IMMAIR_ATTR_IDX_WBRWA		1
+>  #define IMMAIR_ATTR_IDX_DEV		2
+>  
+> -#define IMEAR				0x0030
+> +#define IMEAR				0x0030	/* R-Car Gen2 */
+> +#define IMELAR				IMEAR	/* R-Car Gen3 */
 
-Thanks for the update!
-Will queue in sh-pfc-for-v5.2.
+I would have defined that as a single macro.
 
-Gr{oetje,eeting}s,
+> +#define IMEUAR				0x0034	/* R-Car Gen3 */
+>  
+>  #define IMPCTR				0x0200
+>  #define IMPSTR				0x0208
+> @@ -521,14 +523,16 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
+>  {
+>  	const u32 err_mask = IMSTR_MHIT | IMSTR_ABORT | IMSTR_PF | IMSTR_TF;
+>  	struct ipmmu_vmsa_device *mmu = domain->mmu;
+> +	unsigned long iova;
 
-                        Geert
+Isn't there a more appropriate type, such as dma_addr_t possibly ?
+
+>  	u32 status;
+> -	u32 iova;
+>  
+>  	status = ipmmu_ctx_read_root(domain, IMSTR);
+>  	if (!(status & err_mask))
+>  		return IRQ_NONE;
+>  
+> -	iova = ipmmu_ctx_read_root(domain, IMEAR);
+> +	iova = ipmmu_ctx_read_root(domain, IMELAR);
+> +	if (IS_ENABLED(CONFIG_64BIT))
+> +		iova |= (u64)ipmmu_ctx_read_root(domain, IMEUAR) << 32;
+>  
+>  	/*
+>  	 * Clear the error status flags. Unlike traditional interrupt flag
+> @@ -540,10 +544,10 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
+>  
+>  	/* Log fatal errors. */
+>  	if (status & IMSTR_MHIT)
+> -		dev_err_ratelimited(mmu->dev, "Multiple TLB hits @0x%08x\n",
+> +		dev_err_ratelimited(mmu->dev, "Multiple TLB hits @0x%lx\n",
+>  				    iova);
+>  	if (status & IMSTR_ABORT)
+> -		dev_err_ratelimited(mmu->dev, "Page Table Walk Abort @0x%08x\n",
+> +		dev_err_ratelimited(mmu->dev, "Page Table Walk Abort @0x%lx\n",
+>  				    iova);
+>  
+>  	if (!(status & (IMSTR_PF | IMSTR_TF)))
+> @@ -559,7 +563,7 @@ static irqreturn_t ipmmu_domain_irq(struct ipmmu_vmsa_domain *domain)
+>  		return IRQ_HANDLED;
+>  
+>  	dev_err_ratelimited(mmu->dev,
+> -			    "Unhandled fault: status 0x%08x iova 0x%08x\n",
+> +			    "Unhandled fault: status 0x%08x iova 0x%lx\n",
+>  			    status, iova);
+>  
+>  	return IRQ_HANDLED;
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
