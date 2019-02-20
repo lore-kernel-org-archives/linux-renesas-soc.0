@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CFCC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B74FBC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E85C20880
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8075020880
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:35:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UJg0dHA3"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FenfkPDA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbfBTPbj (ORCPT
+        id S1727281AbfBTPfk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:31:39 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42144 "EHLO
+        Wed, 20 Feb 2019 10:35:40 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42176 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbfBTPbj (ORCPT
+        with ESMTP id S1725929AbfBTPfj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:31:39 -0500
+        Wed, 20 Feb 2019 10:35:39 -0500
 Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E3992D1;
-        Wed, 20 Feb 2019 16:31:37 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 759AC2D1;
+        Wed, 20 Feb 2019 16:35:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550676697;
-        bh=JoraJcQ6MqFsIgkh7YJkuacZR5K+y+Q9v1vqMYM9Zjo=;
+        s=mail; t=1550676937;
+        bh=wG+g31GiUc4JVZIGRc/sSbALzRZekWDi60DOT4brgOM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UJg0dHA38oxMH01UF9s+L+XcJNji1Fmx4Ngr2zrR9CAT38XURb+snR2AdHEGn7pQS
-         WQPRoaFYqOzRIHdFvOUKhmzLKCjm3ysaZ+p1aEwqVf5GMznizWq4/kBuaux21TLb20
-         r40IFHd8bw6+3gE1mhzPU7CHb9PLimEP4SswlYjA=
-Date:   Wed, 20 Feb 2019 17:31:33 +0200
+        b=FenfkPDAPQEMixguEcfCcYYTF4dzqqa8I7KSreI/xvJDrbdz6rV6E4Teg2eA3DsVr
+         Qcwh62TcEpE5N2LppCtQWHbs7D2Ex5oPLpXsIywU8hMOyMccUXscDmd/vDidI2FAp7
+         RfNzo/b8w+Dpt3/6nh4+J8CzmnLxSKp2NuLR12ys=
+Date:   Wed, 20 Feb 2019 17:35:33 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Joerg Roedel <joro@8bytes.org>,
@@ -41,14 +41,15 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] iommu/ipmmu-vmsa: Make IPMMU_CTX_MAX unsigned
-Message-ID: <20190220153133.GG3516@pendragon.ideasonboard.com>
+Subject: Re: [PATCH 6/7] iommu/ipmmu-vmsa: Extract hardware context
+ initialization
+Message-ID: <20190220153533.GH3516@pendragon.ideasonboard.com>
 References: <20190220150531.2462-1-geert+renesas@glider.be>
- <20190220150531.2462-5-geert+renesas@glider.be>
+ <20190220150531.2462-7-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190220150531.2462-5-geert+renesas@glider.be>
+In-Reply-To: <20190220150531.2462-7-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -59,42 +60,134 @@ Hi Geert,
 
 Thank you for the patch.
 
-On Wed, Feb 20, 2019 at 04:05:28PM +0100, Geert Uytterhoeven wrote:
-> Make the IPMMU_CTX_MAX constant unsigned, to match the type of
-> ipmmu_features.number_of_contexts.
+On Wed, Feb 20, 2019 at 04:05:30PM +0100, Geert Uytterhoeven wrote:
+> ipmmu_domain_init_context() takes care of (1) initializing the software
+> domain, and (2) initializing the hardware context for the domain.
 > 
-> This allows to use plain min() instead of type-casting min_t().
+> Extract the code to initialize the hardware context into a new subroutine
+> ipmmu_context_init(), to prepare for later reuse.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
 > ---
->  drivers/iommu/ipmmu-vmsa.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  drivers/iommu/ipmmu-vmsa.c | 91 ++++++++++++++++++++------------------
+>  1 file changed, 48 insertions(+), 43 deletions(-)
 > 
 > diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 4d07c26c97848b65..4e3134a9a52f8d87 100644
+> index 0a21e734466eb1bd..92a766dd8b459f0c 100644
 > --- a/drivers/iommu/ipmmu-vmsa.c
 > +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -36,7 +36,7 @@
->  #define arm_iommu_detach_device(...)	do {} while (0)
->  #endif
+> @@ -404,52 +404,10 @@ static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
+>  	spin_unlock_irqrestore(&mmu->lock, flags);
+>  }
 >  
-> -#define IPMMU_CTX_MAX 8
-> +#define IPMMU_CTX_MAX 8U
+> -static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+> +static void ipmmu_context_init(struct ipmmu_vmsa_domain *domain)
+
+ipmmu_context_init() vs. ipmmmu_domain_init_context() is confusing. You
+could call this one ipmmu_domain_setup_context() maybe ?
+
+>  {
+>  	u64 ttbr;
+>  	u32 tmp;
+> -	int ret;
+> -
+> -	/*
+> -	 * Allocate the page table operations.
+> -	 *
+> -	 * VMSA states in section B3.6.3 "Control of Secure or Non-secure memory
+> -	 * access, Long-descriptor format" that the NStable bit being set in a
+> -	 * table descriptor will result in the NStable and NS bits of all child
+> -	 * entries being ignored and considered as being set. The IPMMU seems
+> -	 * not to comply with this, as it generates a secure access page fault
+> -	 * if any of the NStable and NS bits isn't set when running in
+> -	 * non-secure mode.
+> -	 */
+> -	domain->cfg.quirks = IO_PGTABLE_QUIRK_ARM_NS;
+> -	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
+> -	domain->cfg.ias = 32;
+> -	domain->cfg.oas = 40;
+> -	domain->cfg.tlb = &ipmmu_gather_ops;
+> -	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
+> -	domain->io_domain.geometry.force_aperture = true;
+> -	/*
+> -	 * TODO: Add support for coherent walk through CCI with DVM and remove
+> -	 * cache handling. For now, delegate it to the io-pgtable code.
+> -	 */
+> -	domain->cfg.iommu_dev = domain->mmu->root->dev;
+> -
+> -	/*
+> -	 * Find an unused context.
+> -	 */
+> -	ret = ipmmu_domain_allocate_context(domain->mmu->root, domain);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	domain->context_id = ret;
+> -
+> -	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
+> -					   domain);
+> -	if (!domain->iop) {
+> -		ipmmu_domain_free_context(domain->mmu->root,
+> -					  domain->context_id);
+> -		return -EINVAL;
+> -	}
 >  
->  struct ipmmu_features {
->  	bool use_ns_alias_offset;
-> @@ -1060,8 +1060,7 @@ static int ipmmu_probe(struct platform_device *pdev)
->  	if (mmu->features->use_ns_alias_offset)
->  		mmu->base += IM_NS_ALIAS_OFFSET;
+>  	/* TTBR0 */
+>  	ttbr = domain->cfg.arm_lpae_s1_cfg.ttbr[0];
+> @@ -495,7 +453,54 @@ static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+>  	 */
+>  	ipmmu_ctx_write_all(domain, IMCTR,
+>  			    IMCTR_INTEN | IMCTR_FLUSH | IMCTR_MMUEN);
+> +}
+> +
+> +static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
+> +{
+> +	int ret;
+> +
+> +	/*
+> +	 * Allocate the page table operations.
+> +	 *
+> +	 * VMSA states in section B3.6.3 "Control of Secure or Non-secure memory
+> +	 * access, Long-descriptor format" that the NStable bit being set in a
+> +	 * table descriptor will result in the NStable and NS bits of all child
+> +	 * entries being ignored and considered as being set. The IPMMU seems
+> +	 * not to comply with this, as it generates a secure access page fault
+> +	 * if any of the NStable and NS bits isn't set when running in
+> +	 * non-secure mode.
+> +	 */
+> +	domain->cfg.quirks = IO_PGTABLE_QUIRK_ARM_NS;
+> +	domain->cfg.pgsize_bitmap = SZ_1G | SZ_2M | SZ_4K;
+> +	domain->cfg.ias = 32;
+> +	domain->cfg.oas = 40;
+> +	domain->cfg.tlb = &ipmmu_gather_ops;
+> +	domain->io_domain.geometry.aperture_end = DMA_BIT_MASK(32);
+> +	domain->io_domain.geometry.force_aperture = true;
+> +	/*
+> +	 * TODO: Add support for coherent walk through CCI with DVM and remove
+> +	 * cache handling. For now, delegate it to the io-pgtable code.
+> +	 */
+> +	domain->cfg.iommu_dev = domain->mmu->root->dev;
+> +
+> +	/*
+> +	 * Find an unused context.
+> +	 */
+> +	ret = ipmmu_domain_allocate_context(domain->mmu->root, domain);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	domain->context_id = ret;
+> +
+> +	domain->iop = alloc_io_pgtable_ops(ARM_32_LPAE_S1, &domain->cfg,
+> +					   domain);
+> +	if (!domain->iop) {
+> +		ipmmu_domain_free_context(domain->mmu->root,
+> +					  domain->context_id);
+> +		return -EINVAL;
+> +	}
 >  
-> -	mmu->num_ctx = min_t(unsigned int, IPMMU_CTX_MAX,
-> -			     mmu->features->number_of_contexts);
-> +	mmu->num_ctx = min(IPMMU_CTX_MAX, mmu->features->number_of_contexts);
->  
->  	irq = platform_get_irq(pdev, 0);
+> +	ipmmu_context_init(domain);
+>  	return 0;
+>  }
 >  
 
 -- 
