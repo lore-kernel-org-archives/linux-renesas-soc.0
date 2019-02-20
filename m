@@ -2,103 +2,75 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D79C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D68C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3CB2147A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:44:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 628BF2086D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbfBTPoK (ORCPT
+        id S1726174AbfBTPxe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:44:10 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:33243 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfBTPoK (ORCPT
+        Wed, 20 Feb 2019 10:53:34 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:39674 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbfBTPxd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:44:10 -0500
-Received: by mail-ua1-f66.google.com with SMTP id q17so8409680uam.0;
-        Wed, 20 Feb 2019 07:44:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OKmoKFPA+ZYy/hUAI9OFMS9xv1Mzt2jaoQIoF31S6y0=;
-        b=V7XXofknQ8VS1LByZliI2FpHtTTAK4jwEzA2Q/XslXGmBrMYajpAAJLwOo9QFH1km0
-         vtmLE0HfFmLnZjoyJwiFhZbsYhJUsKjrYOzXjD4LMZSgM32fYK+m2hIIRa6SvNugmscy
-         cQKNeHUNPNdJOpj1zX/QJIx0PWS1xjJXtf6EVIi8kB5KRhXamwMFC1/wbKXYgVt5Kr+Y
-         aXfdg4pILy5aFWPFIpwIz3d5zwDSr4bDQtbKVEXhochtURbRq1Lwb3+C/n7IXasYsBAv
-         BAXGHZUe2xq+5vDif0PDZj4R3PJWYQPezQVrTLgjmnSb/jVeZjjNgOlx0GKhdEjg6MHv
-         gPVg==
-X-Gm-Message-State: AHQUAube89n0eFwihsOTuojgsjGCi0PXSvhIcAdcBFzoVu5sjvf6kfjw
-        MvUirs6u/aXmhLE4XjiezTs9eJG55rLX8ZGuiOk=
-X-Google-Smtp-Source: AHgI3IZemqvmtUQmDtv+AEwAzyJFUptDh9qgqIdF58cHBYQyxtA4tkkGAYOjiEG2C6d7YUIi4NaQ5mmAENhgM/2OFi4=
-X-Received: by 2002:a9f:2f0b:: with SMTP id x11mr10966485uaj.78.1550677449039;
- Wed, 20 Feb 2019 07:44:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20190220150531.2462-1-geert+renesas@glider.be>
- <20190220150531.2462-7-geert+renesas@glider.be> <20190220153533.GH3516@pendragon.ideasonboard.com>
-In-Reply-To: <20190220153533.GH3516@pendragon.ideasonboard.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 20 Feb 2019 16:43:57 +0100
-Message-ID: <CAMuHMdUo+XtRiNY_nOW8ZgCGFVo3au1=0Q7L2nU29QcPYVkgNg@mail.gmail.com>
-Subject: Re: [PATCH 6/7] iommu/ipmmu-vmsa: Extract hardware context initialization
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Feb 2019 10:53:33 -0500
+X-IronPort-AV: E=Sophos;i="5.58,391,1544454000"; 
+   d="scan'208";a="8394686"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Feb 2019 00:53:31 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 33D1940031CB;
+        Thu, 21 Feb 2019 00:53:29 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] i2c: designware: Add support for a bus clock
+Date:   Wed, 20 Feb 2019 15:50:01 +0000
+Message-Id: <1550677803-29716-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+The Synopsys I2C Controller has a bus clock that some SoCs require to access
+the registers. This series also details the new clock property in the bindings
+documentation.
 
-On Wed, Feb 20, 2019 at 4:35 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wed, Feb 20, 2019 at 04:05:30PM +0100, Geert Uytterhoeven wrote:
-> > ipmmu_domain_init_context() takes care of (1) initializing the software
-> > domain, and (2) initializing the hardware context for the domain.
-> >
-> > Extract the code to initialize the hardware context into a new subroutine
-> > ipmmu_context_init(), to prepare for later reuse.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> >  drivers/iommu/ipmmu-vmsa.c | 91 ++++++++++++++++++++------------------
-> >  1 file changed, 48 insertions(+), 43 deletions(-)
-> >
-> > diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> > index 0a21e734466eb1bd..92a766dd8b459f0c 100644
-> > --- a/drivers/iommu/ipmmu-vmsa.c
-> > +++ b/drivers/iommu/ipmmu-vmsa.c
-> > @@ -404,52 +404,10 @@ static void ipmmu_domain_free_context(struct ipmmu_vmsa_device *mmu,
-> >       spin_unlock_irqrestore(&mmu->lock, flags);
-> >  }
-> >
-> > -static int ipmmu_domain_init_context(struct ipmmu_vmsa_domain *domain)
-> > +static void ipmmu_context_init(struct ipmmu_vmsa_domain *domain)
->
-> ipmmu_context_init() vs. ipmmmu_domain_init_context() is confusing. You
-> could call this one ipmmu_domain_setup_context() maybe ?
+v3:
+ - busclk renamed to pclk.
+ - Added comment with dw_i2c_dev struct definition describing pclk.
+ - Added enable rollback of first clock if second fails to enable.
+ - Changed clocks and clock-names sections to use term "peripheral clock"
+   (pclk) instead of "bus clock" (busclk) in dt-bindings documentation.
+v2:
+ - Use new devm_clk_get_optional() function as it simplifies handling when
+   the optional clock is not present.
+   
+Phil Edworthy (2):
+  dt: snps,designware-i2c: Add clock bindings documentation
+  i2c: designware: Add support for a bus clock
 
-Thanks, that name was actually on my shortlist, and may make most sense.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../devicetree/bindings/i2c/i2c-designware.txt         |  9 +++++++++
+ drivers/i2c/busses/i2c-designware-common.c             | 18 ++++++++++++++++--
+ drivers/i2c/busses/i2c-designware-core.h               |  2 ++
+ drivers/i2c/busses/i2c-designware-platdrv.c            |  5 +++++
+ 4 files changed, 32 insertions(+), 2 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
