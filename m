@@ -2,92 +2,93 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1ABFC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 09:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D87E7C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 10:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9F1B2070B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 09:31:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k07RYVS1"
+	by mail.kernel.org (Postfix) with ESMTP id B373120C01
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 10:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbfBTJby (ORCPT
+        id S1727138AbfBTKEm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 04:31:54 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:32861 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfBTJby (ORCPT
+        Wed, 20 Feb 2019 05:04:42 -0500
+Received: from foss.arm.com ([217.140.101.70]:55078 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbfBTKEm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 04:31:54 -0500
-Received: by mail-lf1-f66.google.com with SMTP id q12so17078747lfm.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Feb 2019 01:31:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R9fycZ7J9tBvAeuGxWRe1as4bJBqFt7vlHEW8OtVDjg=;
-        b=k07RYVS1lqXEg+zPQcPDF2tURc5k/mSlYGJ6+vrieu4JpTTVXEEBGKkcSrXXGrMbxd
-         x0IRZNmYrLlkAYmOnrBBnkWdSg54RhaqjzjgoxTcJ9ULc46NB0tuvmlt+wC7R9lJT5pU
-         3HrFgx+w4KGHf1LCyBX8Xh5DjCayaOoBTI+AX+5QmPReyMTZMr1OR0BeRL1di5/3zDk3
-         rpNlfgutOLNb/rmkN2BESDqLHPsttnTGjOtfAO3BqdA2aEMxcnc3SZ9aiFCNu0XF6YpM
-         uSo7xzJ5oUqR64foreOjrQgvjoVMwy80dciQ+p7dOWXyQNWhgDJa5a1gtJudCzXBwTjG
-         QJBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R9fycZ7J9tBvAeuGxWRe1as4bJBqFt7vlHEW8OtVDjg=;
-        b=RG6+WZa1Cqe6w6v6z7WnKtWF+OG6yk6W2GQbee1bXV6BdSjhR39lCe5oZ/tEwD3KWC
-         Zd+Y9RuBDoPS8KB12UsMBWLTblQRrWtZuGBRmjC+4pJuVxgu2OBofl42O1ujmV3EuTP1
-         ypDv3uwqHdUTMF/S4joqP+oZ/R3yOvDJIZ00IsogxbeMEXP/6A5zdxCkGIJIAp8Usguk
-         CAemTaIvzxp/xlUjdkV5OuYa2suoHmKU17U37Z9gIhqZQYtCXnbFyXE3Ed9yEo2zfuWW
-         A3VvqrbacMeuqXihR8xIQGXmrsn04ViOsBNJO8HkJZjOxqJb09TQR1MsZOgnnpviyi+F
-         grzA==
-X-Gm-Message-State: AHQUAuaCezAdk+3CZIjeAIrUUL1UdFinDG2LbrbdPZBFZHUk8esijAFa
-        eSlcKUShXI/9kxcsRwMe73fSkG6TpeKuJvmZc+JVbA==
-X-Google-Smtp-Source: AHgI3IbYpFfVREXEuRSwOtOmo1cR18Z4LsLh/jBf0utzvOKms47pOtisjCHikuXkYp2XGGnmJ258gUXnI5HMTo+ng0I=
-X-Received: by 2002:ac2:4343:: with SMTP id o3mr17900809lfl.129.1550655112071;
- Wed, 20 Feb 2019 01:31:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20190213131503.26801-1-geert+renesas@glider.be>
-In-Reply-To: <20190213131503.26801-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 20 Feb 2019 10:31:40 +0100
-Message-ID: <CACRpkdbt5hM++no16nDH=tWXf3C366XXQe+JWXYBxPRvzVGMjw@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: pca953x: Add wake-up support
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 20 Feb 2019 05:04:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B751A78;
+        Wed, 20 Feb 2019 02:04:41 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B618C3F575;
+        Wed, 20 Feb 2019 02:04:39 -0800 (PST)
+Date:   Wed, 20 Feb 2019 10:04:36 +0000
+Message-ID: <86va1erd1n.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/2] irqchip: Add support for Renesas RZ/N1 GPIO interrupt multiplexer
+In-Reply-To: <TY1PR01MB17696D6C85CE6294B8C75F11F57D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20190219155511.28507-1-phil.edworthy@renesas.com>
+        <20190219155511.28507-3-phil.edworthy@renesas.com>
+        <20190219202842.59bc7719@why.wild-wind.fr.eu.org>
+        <TY1PR01MB17696D6C85CE6294B8C75F11F57D0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 2:15 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Wed, 20 Feb 2019 09:07:02 +0000,
+Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> 
+> Hi Marc
+> 
+> On 19 February 2019 20:29 Marc Zyngier wrote:
 
-> Implement the irq_set_wake() method in the (optional) irq_chip of the
-> GPIO expander, and propagate wake-up settings to the upstream interrupt
-> controller.  This allows GPIOs connected to a PCA953X GPIO expander to
-> serve as wake-up sources.
+[...]
+
+> > > +	for (i = 0; i < MAX_NR_INPUT_IRQS; i++)
+> > > +		irq_create_mapping(priv->irq_domain, i);
+> > 
+> > This should never happen. Mappings should be created from discovering the
+> > interrupt specifiers for devices in the DT, and not eagerly at probe time.
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Tested with a PCA9654 and gpio-keys on an R-Car Ebisu-4D board.
->
-> v2:
->   - Just propagate irq_set_irq_wake().  As pca953x_irq_set_wake()
->     doesn't need to do anything else, there's no reason for making it
->     conditional.
+> The key issue here is that the mappings should not be dynamically
+> allocated.  On the device that has this hardware, there is a Cortex
+> M3 that is likely to use some of these GPIO interrupts.  Maybe it
+> would be better to limit the number of GPIO irqs that Linux can
+> configure dynamically.
 
-Patch applied with Niklas' review tag.
+But whatever the M3 is going to use is known statically for a given
+instance of this platform, right? You can always tell from the device
+tree which pins are available for Linux and which are not. Or can't you?
 
-Yours,
-Linus Walleij
+> Looks like I've gone off in the wrong direction yet again.
+
+Nothing we can't help with. If you can explain all the constraints of
+the platform, we can come up with a fairly simple driver. And surely
+LinusW can chime in for the DT part, which seems to need some loving
+too.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
