@@ -2,118 +2,209 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53CFC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 16:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D28C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 16:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8078F2146E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 16:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA212084D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 16:11:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KRvgp1lW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfBTQKZ (ORCPT
+        id S1725842AbfBTQLV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 11:10:25 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:53116 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725842AbfBTQKZ (ORCPT
+        Wed, 20 Feb 2019 11:11:21 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42410 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbfBTQLV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 11:10:25 -0500
-X-IronPort-AV: E=Sophos;i="5.58,391,1544454000"; 
-   d="scan'208";a="8396001"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Feb 2019 01:10:22 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.184])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1D5D24038EED;
-        Thu, 21 Feb 2019 01:10:20 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] pinctrl: sh-pfc: r8a77990: move CANFD pin groups and functions
-Date:   Wed, 20 Feb 2019 16:10:18 +0000
-Message-Id: <1550679018-1380-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 20 Feb 2019 11:11:21 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 433752D1;
+        Wed, 20 Feb 2019 17:11:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1550679078;
+        bh=3vktqlHSvk5t4nglVW2sftM3SZBxLGSfZr3JVP9DQ34=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KRvgp1lWeVCBolto0SuGp9R8/UZXYh+aW7qYkctZD3OPwcu1KxaI77zBfgAMiRfzh
+         nn183l5UvXVm9fU5iGKfO81CWkjaRVGGTCdXAB2G4ACzRp7d6/lHq3bUfKR3njg9aZ
+         i1saXdgoFaximEwFgDR9o9daT+mkHu3ghSCuBwbw=
+Date:   Wed, 20 Feb 2019 18:11:13 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 7/7] iommu/ipmmu-vmsa: Add suspend/resume support
+Message-ID: <20190220161113.GK3516@pendragon.ideasonboard.com>
+References: <20190220150531.2462-1-geert+renesas@glider.be>
+ <20190220150531.2462-8-geert+renesas@glider.be>
+ <20190220154236.GI3516@pendragon.ideasonboard.com>
+ <CAMuHMdW2KR=rbtgxbnhW94VCzehX821TMxoTZGKh8uQZMY80cA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdW2KR=rbtgxbnhW94VCzehX821TMxoTZGKh8uQZMY80cA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-CANFD is found also on the R8A774C0, therefore move CANFD pin
-groups and functions to "common".
+Hi Geert,
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On Wed, Feb 20, 2019 at 05:05:49PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Feb 20, 2019 at 4:42 PM Laurent Pinchart wrote:
+> > On Wed, Feb 20, 2019 at 04:05:31PM +0100, Geert Uytterhoeven wrote:
+> >> During PSCI system suspend, R-Car Gen3 SoCs are powered down, and all
+> >> IPMMU state is lost.  Hence after s2ram, devices wired behind an IPMMU,
+> >> and configured to use it, will see their DMA operations hang.
+> >>
+> >> To fix this, restore all IPMMU contexts, and re-enable all active
+> >> micro-TLBs during system resume.
+> >>
+> >> To avoid overhead on platforms not needing it, the resume code has a
+> >> build time dependency on sleep and PSCI support, and a runtime
+> >> dependency on PSCI.
+> >>
+> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> ---
+> >> This patch takes a different approach than the BSP, which implements a
+> >> bulk save/restore of all registers during system suspend/resume.
+> >
+> > I like this approach better too.
+> 
+> Thanks ;-)
+> 
+> >> --- a/drivers/iommu/ipmmu-vmsa.c
+> >> +++ b/drivers/iommu/ipmmu-vmsa.c
+> 
+> >> @@ -58,6 +62,7 @@ struct ipmmu_vmsa_device {
+> >>       spinlock_t lock;                        /* Protects ctx and domains[] */
+> >>       DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+> >>       struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
+> >> +     s8 utlb_ctx[IPMMU_UTLB_MAX];
+> >
+> > How about making this a bitmask instead to save memory ? I would also
+> > rename it as utlb_ctx doesn't really carry the meaning of the field,
+> > whose purpose is to store whether the µTLB is enabled or disabled.
+> 
+> This field isn't just a binary flag, but stores the context used for the
+> uTLB, so we can map from micro-TLB to context.
+> Given there can be 8 contexts, plus the need to indicate unused contexts,
+> that means 4 bits/micro-TLB.  So the overhead is just 24 bytes per IPMMU
+> instance.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 52daa56..d3b1cd6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -3767,8 +3767,8 @@ static const unsigned int vin5_clk_b_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[245];
--	struct sh_pfc_pin_group automotive[23];
-+	struct sh_pfc_pin_group common[247];
-+	struct sh_pfc_pin_group automotive[21];
- } pinmux_groups = {
- 	.common = {
- 		SH_PFC_PIN_GROUP(audio_clk_a),
-@@ -3799,6 +3799,8 @@ static const struct {
- 		SH_PFC_PIN_GROUP(can0_data),
- 		SH_PFC_PIN_GROUP(can1_data),
- 		SH_PFC_PIN_GROUP(can_clk),
-+		SH_PFC_PIN_GROUP(canfd0_data),
-+		SH_PFC_PIN_GROUP(canfd1_data),
- 		SH_PFC_PIN_GROUP(du_rgb666),
- 		SH_PFC_PIN_GROUP(du_rgb888),
- 		SH_PFC_PIN_GROUP(du_clk_in_0),
-@@ -4018,8 +4020,6 @@ static const struct {
- 		SH_PFC_PIN_GROUP(vin5_clk_b),
- 	},
- 	.automotive = {
--		SH_PFC_PIN_GROUP(canfd0_data),
--		SH_PFC_PIN_GROUP(canfd1_data),
- 		SH_PFC_PIN_GROUP(drif0_ctrl_a),
- 		SH_PFC_PIN_GROUP(drif0_data0_a),
- 		SH_PFC_PIN_GROUP(drif0_data1_a),
-@@ -4466,8 +4466,8 @@ static const char * const vin5_groups[] = {
- };
- 
- static const struct {
--	struct sh_pfc_function common[45];
--	struct sh_pfc_function automotive[6];
-+	struct sh_pfc_function common[47];
-+	struct sh_pfc_function automotive[4];
- } pinmux_functions = {
- 	.common = {
- 		SH_PFC_FUNCTION(audio_clk),
-@@ -4475,6 +4475,8 @@ static const struct {
- 		SH_PFC_FUNCTION(can0),
- 		SH_PFC_FUNCTION(can1),
- 		SH_PFC_FUNCTION(can_clk),
-+		SH_PFC_FUNCTION(canfd0),
-+		SH_PFC_FUNCTION(canfd1),
- 		SH_PFC_FUNCTION(du),
- 		SH_PFC_FUNCTION(hscif0),
- 		SH_PFC_FUNCTION(hscif1),
-@@ -4517,8 +4519,6 @@ static const struct {
- 		SH_PFC_FUNCTION(vin5),
- 	},
- 	.automotive = {
--		SH_PFC_FUNCTION(canfd0),
--		SH_PFC_FUNCTION(canfd1),
- 		SH_PFC_FUNCTION(drif0),
- 		SH_PFC_FUNCTION(drif1),
- 		SH_PFC_FUNCTION(drif2),
+My bad, I've overlooked that.
+
+> I considered allocating the array dynamically (by having s8 utlb_ctx[]
+> at the end of the structure), but didn't go that route, as the domains[]
+> array already uses more memory.
+> 
+> >> @@ -1158,10 +1166,52 @@ static int ipmmu_remove(struct platform_device *pdev)
+> >>       return 0;
+> >>  }
+> >>
+> >> +#if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM_PSCI_FW)
+> >> +static int ipmmu_resume_noirq(struct device *dev)
+> >> +{
+> >> +     struct ipmmu_vmsa_device *mmu = dev_get_drvdata(dev);
+> >> +     unsigned int i;
+> >> +
+> >> +     /* This is the best we can do to check for the presence of PSCI */
+> >> +     if (!psci_ops.cpu_suspend)
+> >> +             return 0;
+> >
+> > PSCI suspend disabling power to the SoC completely may be a common
+> > behaviour on our development boards, but isn't mandated by the PSCI
+> > specification if I'm not mistaken. Is there a way to instead detect that
+> > power has been lost, perhaps by checking whether a register has been
+> > reset to its default value ?
+> 
+> The approach here is the same as in the clk and pinctrl drivers.
+> 
+> I think we could check if the IMCTR registers for allocated domains in root
+> IPMMUs are non-zero.  But that's about as expensive as doing the full
+> restore, I think.
+
+Would reading just one register be more expensive that full
+reconfiguration ? Or is there no single register that could serve this
+purpose ?
+
+> And it may have to be done for each and every IPMMU instance, or do
+> you trust caching for this?
+
+If we can find a single register I think that reading it for every IPMMU
+instance wouldn't be an issue.
+
+> >> +
+> >> +     /* Reset root MMU and restore contexts */
+> >
+> > I think the rest of the code adds a period at the end of sentences in
+> > comments.
+> 
+> The balance seems to be just under 50% ;-)
+> 
+> >> +     if (ipmmu_is_root(mmu)) {
+> >> +             ipmmu_device_reset(mmu);
+> >> +
+> >> +             for (i = 0; i < mmu->num_ctx; i++) {
+> >> +                     if (!mmu->domains[i])
+> >> +                             continue;
+> >> +
+> >> +                     ipmmu_context_init(mmu->domains[i]);
+> >> +             }
+> >> +     }
+> >> +
+> >> +     /* Re-enable active micro-TLBs */
+> >> +     for (i = 0; i < mmu->features->num_utlbs; i++) {
+> >> +             if (mmu->utlb_ctx[i] == IPMMU_CTX_INVALID)
+> >> +                     continue;
+> >> +
+> >> +             ipmmu_utlb_enable(mmu->root->domains[mmu->utlb_ctx[i]], i);
+> >> +     }
+> >> +
+> >> +     return 0;
+> >> +}
+> >> +
+> >> +static const struct dev_pm_ops ipmmu_pm  = {
+> >> +     SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, ipmmu_resume_noirq)
+> >> +};
+> >> +#define DEV_PM_OPS   &ipmmu_pm
+> >> +#else
+> >> +#define DEV_PM_OPS   NULL
+> >> +#endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+> >> +
+> >>  static struct platform_driver ipmmu_driver = {
+> >>       .driver = {
+> >>               .name = "ipmmu-vmsa",
+> >>               .of_match_table = of_match_ptr(ipmmu_of_ids),
+> >> +             .pm = DEV_PM_OPS,
+> >
+> > I would have used conditional compilation here instead of using a
+> > DEV_PM_OPS macro, as I think the macro decreases readability (and also
+> > given how its generic name could later conflict with something else).
+> 
+> You mean
+> 
+>     #ifdef ...
+>     .pm = &ipmmu_pm,
+>     #endif
+> 
+> and marking ipmmu_pm __maybe_unused__?
+
+Yes. Up to you.
+
 -- 
-2.7.4
+Regards,
 
+Laurent Pinchart
