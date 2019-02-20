@@ -2,93 +2,89 @@ Return-Path: <SRS0=Daww=Q3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BA9C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D13C10F0B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F0720880
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:27:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="egldZYVC"
+	by mail.kernel.org (Postfix) with ESMTP id 59CD720880
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Feb 2019 15:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbfBTP1u (ORCPT
+        id S1726019AbfBTP2t (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:27:50 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42104 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726013AbfBTP1u (ORCPT
+        Wed, 20 Feb 2019 10:28:49 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:34134 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfBTP2s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:27:50 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 500EC2D1;
-        Wed, 20 Feb 2019 16:27:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1550676468;
-        bh=b2pip1/suCF+mHqkWBmO8CCbcXzJCfy5FmSJWlzZSgg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=egldZYVCaSKujZL2o78xqajKqBzfnP1XvK5OZVF8XMLkfkS7dQRBOQJC40NI9Nfm1
-         sEo3nvbiKQipgcAMCda4bAGfc83qBo951ud/+iRS3kjFvr0LcP9GWqpKod+84ZFqF1
-         IwaaxT6655p1JlBOuL5qIQg/GmvFnMK4VWT9uO5o=
-Date:   Wed, 20 Feb 2019 17:27:44 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] iommu/ipmmu-vmsa: Call ipmmu_ctx_write_root()
- instead of open coding
-Message-ID: <20190220152744.GE3516@pendragon.ideasonboard.com>
-References: <20190220150531.2462-1-geert+renesas@glider.be>
- <20190220150531.2462-3-geert+renesas@glider.be>
+        Wed, 20 Feb 2019 10:28:48 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e10so14202756vsp.1;
+        Wed, 20 Feb 2019 07:28:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pZ1u7eACj/FY+2gWRn5pNp3X84LM8EHST706hzAYIro=;
+        b=PM4dT49Z4aboB8yck6nO0g1lhiL+2nl5mIEq7GnWOUqGgh/bw9XZLzNrezoH8kM7gS
+         l5XOocOuEGobEpOrjyzLgmn6jMue2Gukhn2ttppD2dSorTAxIcKjQzYEtquW18lB/VeU
+         D2fb4AZdCPFwIWZjflhS/63+KrmUCKRheGBnmlPn4+1ozFOcs+alqXKlvFLkqTQQyssJ
+         0bGJ1sMhYRBZ6SXUWFdzxaFTN0JabEn4hmO031SL66K6Yrk+XOrWMLpjaLbRmNoQfdI3
+         I/o7fi1OkxLWVWT6by3SeSSI4wF1Fg3baLkE1rTPMQ7OA3eyUX/L6eKj/qxVlouHpp/g
+         SA7Q==
+X-Gm-Message-State: AHQUAubR0gd8+PkaUXZZajqqw09KjCWbrSmLMqPCfP9dgcBTsschsElR
+        Tg1tBTOpwTa8WE4j//NifOLNQqAWWY8aole9E+M=
+X-Google-Smtp-Source: AHgI3IYu8lwfEA/3vfRKC0sE3mj5o4/WjvXhu9Q6d2hoF61XTcvEfu8wBT2h7brBgk5tcz/Bi9w6JNpMe0MTFVi65nE=
+X-Received: by 2002:a67:78ce:: with SMTP id t197mr17551596vsc.152.1550676527705;
+ Wed, 20 Feb 2019 07:28:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190220150531.2462-3-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1550674238-10435-1-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1550674238-10435-1-git-send-email-uli+renesas@fpond.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 20 Feb 2019 16:28:35 +0100
+Message-ID: <CAMuHMdXTc9-v4XcxUVn_2kmWgXfBgVxaYdYxyXyJ_FZP=ad8ng@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a7779: add HSCIF0/1 pins
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Uli,
 
-Thank you for the patch.
-
-On Wed, Feb 20, 2019 at 04:05:26PM +0100, Geert Uytterhoeven wrote:
-> There is a helper to write to the root IPMMU instance's registers, so
-> let's use it.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Feb 20, 2019 at 3:50 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> Adds HSCIF0 and HSCIF1 pins, groups and functions for R8A7779.
+>
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  drivers/iommu/ipmmu-vmsa.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index 9f2b781e20a0eba6..ac70cb967ff821c6 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -280,8 +280,7 @@ static void ipmmu_ctx_write_all(struct ipmmu_vmsa_domain *domain,
->  		ipmmu_write(domain->mmu,
->  			    domain->context_id * IM_CTX_SIZE + reg, data);
->  
-> -	ipmmu_write(domain->mmu->root,
-> -		    domain->context_id * IM_CTX_SIZE + reg, data);
-> +	ipmmu_ctx_write_root(domain, reg, data);
+> This revision should fix the issues found by Geert in v1.
+>
+> CU
+> Uli
+>
+> Changes in v2:
+> - added comments to the pin definitions
+> - fixed names of hscif1_clk_b_{pins,mux}
+> - added Reviewed-bys
 
-This makes the code harder to read in my opinion, and I don't think it
-bring much optimization.
+Thanks for the update!
+Will queue in sh-pfc-for-v5.2.
 
->  }
->  
->  /* -----------------------------------------------------------------------------
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
