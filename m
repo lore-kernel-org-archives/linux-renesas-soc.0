@@ -2,120 +2,90 @@ Return-Path: <SRS0=UKHE=Q4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD55C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 19:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A8EC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 21:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED9572077B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 19:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D1122083E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 21:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550783425;
+	bh=4/wBKIrAjXYWFrYaS/gZt2IYII13yKOy67ryd3L2+D8=;
+	h=Subject:References:From:In-Reply-To:To:Cc:Date:List-ID:From;
+	b=T74FxZistJmDOTb8O/QmyuzYqOCUHbXbct1VdP40a9BWETpvIbLN6CBd7GjxDE/k3
+	 ATYAur8x3ZGitZU9pty5vZi3wVpz1ixB+ks9pHn7EbQx+1hF74XM+9RoJ03wVPlMg8
+	 g9eA2cPWgUvsO720Ka6S1SqY7RrSKQq0Td0ybmUo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbfBUTih (ORCPT
+        id S1726165AbfBUVKY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Feb 2019 14:38:37 -0500
-Received: from sauhun.de ([88.99.104.3]:38814 "EHLO pokefinder.org"
+        Thu, 21 Feb 2019 16:10:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725932AbfBUTih (ORCPT
+        id S1725891AbfBUVKY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Feb 2019 14:38:37 -0500
-Received: from localhost (p54B336C3.dip0.t-ipconnect.de [84.179.54.195])
-        by pokefinder.org (Postfix) with ESMTPSA id 960F62C088A;
-        Thu, 21 Feb 2019 20:38:34 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>
-Subject: [PATCH] mmc: tmio: fix access width of Block Count Register
-Date:   Thu, 21 Feb 2019 20:38:05 +0100
-Message-Id: <20190221193805.1427-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 21 Feb 2019 16:10:24 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB1E82080F;
+        Thu, 21 Feb 2019 21:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550783424;
+        bh=4/wBKIrAjXYWFrYaS/gZt2IYII13yKOy67ryd3L2+D8=;
+        h=Subject:References:From:In-Reply-To:To:Cc:Date:From;
+        b=AeKZ6+RWOveZ8XeDLaeOTv+aqT0JS+m9Mk4y+DFVVMp5aTI48OWUebdpRRTclRPvF
+         wdspA/InDX1lNdITjlqWnnvr8Tf7WT1RlXcDP/woK6wskqzQPkbsBclw3C5Eg3MZjN
+         DiWemwrHhSfgOZONFz+lpeI8g2kBlV6OYE/h29kE=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
+Message-ID: <155078342316.77512.8478244735968237818@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+References: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com> <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Date:   Thu, 21 Feb 2019 13:10:23 -0800
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+Quoting Geert Uytterhoeven (2019-02-21 10:33:42)
+> On Wed, Feb 20, 2019 at 5:09 PM Fabrizio Castro
+> <fabrizio.castro@bp.renesas.com> wrote:
+> > Enum LAST_DT_CORE_CLK needs updating as R8A774C0_CLK_CANFD
+> > was recently added and it's the core clock with the highest
+> > index.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>=20
+> Nice catch!
+> You only notice this kind of bug when you start referencing the clock
+> from DT, right? At registration time, the clock number space is shared wi=
+th
+> internal core clocks, so no error is detected.
+> Can we improve that?
+>=20
+> Fixes: 2a6efbc6da5d248c ("clk: renesas: r8a774c0: Add missing CANFD clock=
+")
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> Mike/Stephen: can you please take this one directly, as it is a fix for
+> clk-next?
+>=20
 
-In R-Car Gen2 or later, the maximum number of transfer blocks are
-changed from 0xFFFF to 0xFFFFFFFF. Therefore, Block Count Register
-should use iowrite32().
-
-If another system (U-boot, Hypervisor OS, etc) uses bit[31:16], this
-value will not be cleared. So, SD/MMC card initialization fails.
-
-So, check for the bigger register and use apropriate write. Also, mark
-the register as extended on Gen2.
-
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-[wsa: use max_blk_count in if(), add Gen2, update commit message]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: stable@kernel.org
----
-
-No Fixes tag because it is hard to point to a specific commit. So, just a
-stable tag. I think as long as it applies, we are good to go.
-
-Yamada-san, please check if your driver needs to set max_blk_count, too.
-
-Tested on a Renesas Lager board (R-Car H2) and Salvator-XS (R-Car M3N).
-Verified with debug prints that the correct code path was executed, no
-regressions encountered when checksumming large files.
-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 1 +
- drivers/mmc/host/tmio_mmc.h              | 5 +++++
- drivers/mmc/host/tmio_mmc_core.c         | 5 ++++-
- 3 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 8471160316e0..02cd878e209f 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -65,6 +65,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
- 	.scc_offset	= 0x0300,
- 	.taps		= rcar_gen2_scc_taps,
- 	.taps_num	= ARRAY_SIZE(rcar_gen2_scc_taps),
-+	.max_blk_count  = 0xffffffff,
- };
- 
- /* Definitions for sampling clocks */
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index c03529e3f01a..2adb0d24360f 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -277,6 +277,11 @@ static inline void sd_ctrl_write32_as_16_and_16(struct tmio_mmc_host *host,
- 	iowrite16(val >> 16, host->ctl + ((addr + 2) << host->bus_shift));
- }
- 
-+static inline void sd_ctrl_write32(struct tmio_mmc_host *host, int addr, u32 val)
-+{
-+	iowrite32(val, host->ctl + (addr << host->bus_shift));
-+}
-+
- static inline void sd_ctrl_write32_rep(struct tmio_mmc_host *host, int addr,
- 				       const u32 *buf, int count)
- {
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 085a0fab769c..198c811b478c 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -700,7 +700,10 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- 
- 	/* Set transfer length / blocksize */
- 	sd_ctrl_write16(host, CTL_SD_XFER_LEN, data->blksz);
--	sd_ctrl_write16(host, CTL_XFER_BLK_COUNT, data->blocks);
-+	if (host->mmc->max_blk_count >= SZ_64K)
-+		sd_ctrl_write32(host, CTL_XFER_BLK_COUNT, data->blocks);
-+	else
-+		sd_ctrl_write16(host, CTL_XFER_BLK_COUNT, data->blocks);
- 
- 	tmio_mmc_start_dma(host, data);
- 
--- 
-2.11.0
+Yep. Applied to clk-renesas and merged up.
 
