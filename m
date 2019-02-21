@@ -2,130 +2,113 @@ Return-Path: <SRS0=UKHE=Q4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB691C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA54BC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 893AE2086A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:14:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPOaU0Aq"
+	by mail.kernel.org (Postfix) with ESMTP id B50DE2086A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfBUJOF (ORCPT
+        id S1727579AbfBUJSz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:14:05 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51226 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbfBUJOF (ORCPT
+        Thu, 21 Feb 2019 04:18:55 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:40501 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbfBUJSz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:14:05 -0500
-Received: by mail-wm1-f68.google.com with SMTP id n19so9400278wmi.1;
-        Thu, 21 Feb 2019 01:14:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2FwZ+KmSyxfQjYvPuHaupVFMGOzJPZdtQ0rB1Bd3Foo=;
-        b=aPOaU0AqlhpNiP3rjVUc0tIg7c9tSLJH+sTL4WBBBU1Ocnjbzp1OH4XW04/YAL93Ef
-         qnWkojscZsA2/JUHdwWe+XWjA40m02IYwfdX5wBbBByMUCZRsOK40vSDLVbCN4vE2lHO
-         M6Y1pnmci/E6ma2QFUvKB8jsY9IwAXFW/L4UUqcKNeXs2064k7wfy1OjkvEUYDKJriCT
-         XDmcoSMqXFC4CXIU617T0SmrFi07Q31W/RK8jbW/Rc+oSCPz6mr0y91CpU05e3C4aIEP
-         TQF+/WRJOkFKeinN9BZ7ic0izx2z3/w34ZDj/EuqcylHRGIhsu1XkhwJ7WrsuwC+zmtb
-         nnZw==
+        Thu, 21 Feb 2019 04:18:55 -0500
+Received: by mail-vs1-f66.google.com with SMTP id z18so15755559vso.7;
+        Thu, 21 Feb 2019 01:18:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2FwZ+KmSyxfQjYvPuHaupVFMGOzJPZdtQ0rB1Bd3Foo=;
-        b=jxNsRBAajJ4yxP2ecv+nt5psFm3KixzZUHlxExjLeXYrQvWDEpr3pYH4U8KHJQ23zK
-         QzFdbTsrKF2BE3R4tngOgIVlIVK9PDz7SUFT7DCL5p2zGUVLubiuZ0H+Du0yXlDgjCkO
-         7GxgL8lFyBWLjXc7Ro9MqrujbyUHdm8jYeNkcBUFfIhx+McpwKOCBAxiLIuVKKkDSUsL
-         gVg2bQCWYJ9TTbZc2h/wCftZGi2h8D7IWNIVmva8s9sG4u+Utd+lnwKWqtN4SrKNtR04
-         fl/XDtVNAIdvU3xpAQ2byTaoJAdhRuu2R37dAMXz5fI91BHf5Q2eumCDsT76Wn24ISWK
-         4VpA==
-X-Gm-Message-State: AHQUAuYryATFqwRoHcw3IFnWUvKCvxcZetP24I/tmlan/koU6NB2+/fp
-        ilg0BZRU/TsyqTz1FjOBvCBQ0qaY
-X-Google-Smtp-Source: AHgI3IZmKQM6IQpbfQgdJg0CpPi0oYHqFrR8Etkay3B/gsfR3XGwqs2pHHrn8B/JNQfy+5byf6l4Fw==
-X-Received: by 2002:a7b:c08a:: with SMTP id r10mr9252565wmh.112.1550740442775;
-        Thu, 21 Feb 2019 01:14:02 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id f10sm4973738wmb.35.2019.02.21.01.14.01
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 21 Feb 2019 01:14:02 -0800 (PST)
-Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Register hwmon sysfs
- interface
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-pm@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20190211195620.32753-1-marek.vasut@gmail.com>
- <20190221084945.ruyyshoiy5klbpzy@katana>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <64e6e16c-d92a-32e0-e80f-eea1b944c7d6@gmail.com>
-Date:   Thu, 21 Feb 2019 10:14:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GLQ9kgqysd7lyEgI1/YYsugDHPv6WJmjwqK5/jhuiJ4=;
+        b=gMWYayph9zF92NBcSkgDaK2gnXdmYt+cw07s8hL8igKV6g+Sf6osmQTg35yEgCWhux
+         acTALTiqEc0YYboSAeh1SlNlF8F9QAxCl9uCadnNYjwfQ/Fwjo15E7XkN53Zz14ukzbG
+         5w9NBbu3Au8W2keKVW2sqbp2yCzOiaaXFkZJzYjpsgxH2y9TYKA/8NNuPf1kvfvj9iXN
+         H6ytnTBX+ZvtJ+/bvnunfsKURlYL5BuOV0kDPInOucIgrHzHCasW7JUVuqIz8LdEKURa
+         wJBs5Oj90VWoSNoqTkdjeiT9ACY3PEiE1+in0pjZJAQ5WjbBeNak7uOHepkGHbK7Z/vn
+         FgDw==
+X-Gm-Message-State: AHQUAubyVmQfp/OMnrwv5WCouM4x1jBEBmPBRzdfHmMOvUCbtHXoJrER
+        4i4DAqcRqUQR8N5gTXuNXkpE7qyvub6YIDPxe9twMw==
+X-Google-Smtp-Source: AHgI3IZ+xaYPn7zfWuDCm0psP7/YLIwcrv/WfmYw13e432blmMfOHVH8WSssGDCFnp0JB9x70ZAx+mTOOcWhhs6DIfk=
+X-Received: by 2002:a67:78ce:: with SMTP id t197mr19824839vsc.152.1550740734096;
+ Thu, 21 Feb 2019 01:18:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190221084945.ruyyshoiy5klbpzy@katana>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190212102050.32229-1-geert+renesas@glider.be>
+In-Reply-To: <20190212102050.32229-1-geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Feb 2019 10:18:41 +0100
+Message-ID: <CAMuHMdUwNwVQ-4o8WKdH4pEUtk=Jmyq7gy7frXGW82rgu+afVA@mail.gmail.com>
+Subject: Re: [git pull] clk: renesas: Updates for v5.1 (take two)
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2/21/19 9:49 AM, Wolfram Sang wrote:
-> 
->> +static void rcar_gen3_hwmon_action(void *data)
->> +{
->> +	struct thermal_zone_device *zone = data;
->> +
->> +	thermal_remove_hwmon_sysfs(zone);
->> +}
->> +
->>  static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->>  {
->>  	struct rcar_gen3_thermal_priv *priv;
->> @@ -429,6 +437,17 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->>  		if (ret < 0)
->>  			goto error_unregister;
->>  
->> +		tsc->zone->tzp->no_hwmon = false;
->> +		ret = thermal_add_hwmon_sysfs(tsc->zone);
->> +		if (ret)
->> +			goto error_unregister;
->> +
->> +		ret = devm_add_action(dev, rcar_gen3_hwmon_action, zone);
->> +		if (ret) {
->> +			rcar_gen3_hwmon_action(zone);
->> +			goto error_unregister;
->> +		}
->> +
->>  		dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
->>  	}
-> 
-> This slipped through the cracks for me, I am sorry about that. I know it
-> is applied by now but I still wonder if the above functionality couldn't
-> be moved into the core as a generic helper? There is nothing R-Car
-> specific in here. From what I see it could be something like:
-> 
-> 	devm_thermal_activate_hwmon_sysfs(dev, zone);
-> 
-> ?
+Hi Mike, Stephen,
 
-Do you want to grow function name for each parameter to be changed ?
-I don't think that scales. However, I don't have any better idea how to
-deal with the hwmon thus far.
+On Tue, Feb 12, 2019 at 11:48 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> The following changes since commit d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
+>
+>   clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08 +0100)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.1-tag2
+>
+> for you to fetch changes up to d1de227de8145e661e940377e050286098197eeb:
+>
+>   clk: renesas: r8a774c0: Add TMU clock (2019-02-05 10:40:05 +0100)
+>
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v5.1 (take two)
+>
+>   - Add RPC (QSPI/HyperFLASH) clocks on R-Car V3H,
+>   - Add TMU (timer) clocks on RZ/G2E,
+>   - Small fixes and cleanups.
+>
+> Thanks for pulling!
+>
+> ----------------------------------------------------------------
+> Biju Das (1):
+>       clk: renesas: r8a774c0: Add TMU clock
+>
+> Sergei Shtylyov (4):
+>       clk: renesas: rcar-gen3: Factor out cpg_reg_modify()
+>       clk: renesas: rcar-gen3: Add spinlock
+>       clk: renesas: rcar-gen3: Add RPC clocks
+>       clk: renesas: r8a77980: Add RPC clocks
+>
+>  drivers/clk/renesas/r8a774c0-cpg-mssr.c |   5 ++
+>  drivers/clk/renesas/r8a77980-cpg-mssr.c |   8 ++
+>  drivers/clk/renesas/rcar-gen3-cpg.c     | 147 ++++++++++++++++++++++++++++----
+>  drivers/clk/renesas/rcar-gen3-cpg.h     |   4 +
+>  4 files changed, 146 insertions(+), 18 deletions(-)
+
+I was wondering if you've received my pull request?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Best regards,
-Marek Vasut
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
