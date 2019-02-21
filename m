@@ -2,148 +2,95 @@ Return-Path: <SRS0=UKHE=Q4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52473C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 16:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933A7C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 18:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1112083E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 16:11:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D2EE2075A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 18:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbfBUQLg (ORCPT
+        id S1728025AbfBUSdz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:11:36 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:30900 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725880AbfBUQLg (ORCPT
+        Thu, 21 Feb 2019 13:33:55 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:46900 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727126AbfBUSdz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:11:36 -0500
-X-IronPort-AV: E=Sophos;i="5.58,395,1544454000"; 
-   d="scan'208";a="8500159"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2019 01:11:34 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C01FC40A6A10;
-        Fri, 22 Feb 2019 01:11:31 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: [PATCH v4 2/2] i2c: designware: Add support for a peripheral clock
-Date:   Thu, 21 Feb 2019 16:10:59 +0000
-Message-Id: <1550765459-14519-3-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
-References: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
+        Thu, 21 Feb 2019 13:33:55 -0500
+Received: by mail-vk1-f196.google.com with SMTP id j68so7107153vke.13;
+        Thu, 21 Feb 2019 10:33:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M+WOkWRBssrtpVfH1qKg/+BBfeLuK8WLv6dFxZ5Q2WU=;
+        b=elKMSPLpmuCAlNoY9DWL3jm7wvLhjF4FDpwkj+zCR2WJQmq16kwTJCAuS/MZagFhrP
+         Mz5stnGIoHf0AzBfl1+oCbGzv4vPRgQXqn2a902ckXscLzJtdpi7sbrQ6HLhhWUtjhD1
+         mVLzzf2pFzRK0RsfCQpvlqmCzOEOEkqy/6OXGRPdHmQ4ZKpZZlKwfmlsG8iD3vHLJYJS
+         XPfB8Ok73Drjrr5wbNlYqUIgOfhxOxS68/1TmW4VyQMk8FA6WtvKkMYXQipcxRD+Z4Yp
+         O1jQpf0qybsODABihvTTmbEHDbPXlU4A2zhluDHimVuNk3tXTdUTcZ+5TcQQPl9/QpyR
+         oezQ==
+X-Gm-Message-State: AHQUAubGEfdDblaMGR0C5NNsghHONfyKMpsJQ9oLoyiK98+xOuyIl7Ln
+        2z6VevlY68n2J/nwZ23PeSnnrD3wmGhSPVnsSpa1Dq1Z
+X-Google-Smtp-Source: AHgI3Iale/6oc0Gtee5i6oMuxDhDTYH3loN3ZwTtpwuKVoiEFCLJY2LGbeVSI17Lw50WTsqie6U7JgDbelslq69XfK8=
+X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr14985576vke.40.1550774034566;
+ Thu, 21 Feb 2019 10:33:54 -0800 (PST)
+MIME-Version: 1.0
+References: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1550678960-1264-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 21 Feb 2019 19:33:42 +0100
+Message-ID: <CAMuHMdU=qGGi0jgaN=uvsPPK1XkJChLAdwKZJ+cf4_rJt+gNYQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a774c0: Fix LAST_DT_CORE_CLK
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+On Wed, Feb 20, 2019 at 5:09 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Enum LAST_DT_CORE_CLK needs updating as R8A774C0_CLK_CANFD
+> was recently added and it's the core clock with the highest
+> index.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-The Synopsys I2C Controller has a peripheral clock, but most SoCs hide
-this away. However, some SoCs need explicit enabling of the peripheral
-clock in order to access the registers. Therefore, add support for an
-optional peripheral clock.
+Nice catch!
+You only notice this kind of bug when you start referencing the clock
+from DT, right? At registration time, the clock number space is shared with
+internal core clocks, so no error is detected.
+Can we improve that?
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v4:
- - Updated comments to reference "peripheral clock" 
-   instead of "bus clock".
- - Added Wolfram's Acked-by
-v3:
- - busclk renamed to pclk.
- - Added comment with dw_i2c_dev struct definition describing pclk.
- - Added enable rollback of first clock if second fails to enable.
-v2:
- - Use new devm_clk_get_optional() function as it simplifies handling when
-   the optional clock is not present.
----
- drivers/i2c/busses/i2c-designware-common.c  | 18 ++++++++++++++++--
- drivers/i2c/busses/i2c-designware-core.h    |  2 ++
- drivers/i2c/busses/i2c-designware-platdrv.c |  5 +++++
- 3 files changed, 23 insertions(+), 2 deletions(-)
+Fixes: 2a6efbc6da5d248c ("clk: renesas: r8a774c0: Add missing CANFD clock")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index a473011..e807aa2 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -251,13 +251,27 @@ unsigned long i2c_dw_clk_rate(struct dw_i2c_dev *dev)
- 
- int i2c_dw_prepare_clk(struct dw_i2c_dev *dev, bool prepare)
- {
-+	int ret;
-+
- 	if (IS_ERR(dev->clk))
- 		return PTR_ERR(dev->clk);
- 
--	if (prepare)
--		return clk_prepare_enable(dev->clk);
-+	if (prepare) {
-+		/* Optional peripheral clock */
-+		ret = clk_prepare_enable(dev->pclk);
-+		if (ret)
-+			return ret;
-+
-+		ret = clk_prepare_enable(dev->clk);
-+		if (ret)
-+			clk_disable_unprepare(dev->pclk);
-+
-+		return ret;
-+	}
- 
- 	clk_disable_unprepare(dev->clk);
-+	clk_disable_unprepare(dev->pclk);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(i2c_dw_prepare_clk);
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index b4a0b2b..e88c711 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -177,6 +177,7 @@
-  * @base: IO registers pointer
-  * @cmd_complete: tx completion indicator
-  * @clk: input reference clock
-+ * @pclk: clock required to access the registers
-  * @slave: represent an I2C slave device
-  * @cmd_err: run time hadware error code
-  * @msgs: points to an array of messages currently being transferred
-@@ -226,6 +227,7 @@ struct dw_i2c_dev {
- 	void __iomem		*ext;
- 	struct completion	cmd_complete;
- 	struct clk		*clk;
-+	struct clk		*pclk;
- 	struct reset_control	*rst;
- 	struct i2c_client		*slave;
- 	u32			(*get_clk_rate_khz) (struct dw_i2c_dev *dev);
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 9eaac3b..03fff6a 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -346,6 +346,11 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	else
- 		i2c_dw_configure_master(dev);
- 
-+	/* Optional peripheral clock */
-+	dev->pclk = devm_clk_get_optional(&pdev->dev, "pclk");
-+	if (IS_ERR(dev->pclk))
-+		return PTR_ERR(dev->pclk);
-+
- 	dev->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (!i2c_dw_prepare_clk(dev, true)) {
- 		u64 clk_khz;
+Mike/Stephen: can you please take this one directly, as it is a fix for
+clk-next?
+
+Fabrizio: Looks like R8A774A1 has the same bug. Care to fix that as well?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
