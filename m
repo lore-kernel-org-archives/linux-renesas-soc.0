@@ -2,113 +2,75 @@ Return-Path: <SRS0=UKHE=Q4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA54BC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FDFC00319
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B50DE2086A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C15BD2148D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 09:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727579AbfBUJSz (ORCPT
+        id S1725978AbfBUJqW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Feb 2019 04:18:55 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40501 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfBUJSz (ORCPT
+        Thu, 21 Feb 2019 04:46:22 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:47347 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725385AbfBUJqW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Feb 2019 04:18:55 -0500
-Received: by mail-vs1-f66.google.com with SMTP id z18so15755559vso.7;
-        Thu, 21 Feb 2019 01:18:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GLQ9kgqysd7lyEgI1/YYsugDHPv6WJmjwqK5/jhuiJ4=;
-        b=gMWYayph9zF92NBcSkgDaK2gnXdmYt+cw07s8hL8igKV6g+Sf6osmQTg35yEgCWhux
-         acTALTiqEc0YYboSAeh1SlNlF8F9QAxCl9uCadnNYjwfQ/Fwjo15E7XkN53Zz14ukzbG
-         5w9NBbu3Au8W2keKVW2sqbp2yCzOiaaXFkZJzYjpsgxH2y9TYKA/8NNuPf1kvfvj9iXN
-         H6ytnTBX+ZvtJ+/bvnunfsKURlYL5BuOV0kDPInOucIgrHzHCasW7JUVuqIz8LdEKURa
-         wJBs5Oj90VWoSNoqTkdjeiT9ACY3PEiE1+in0pjZJAQ5WjbBeNak7uOHepkGHbK7Z/vn
-         FgDw==
-X-Gm-Message-State: AHQUAubyVmQfp/OMnrwv5WCouM4x1jBEBmPBRzdfHmMOvUCbtHXoJrER
-        4i4DAqcRqUQR8N5gTXuNXkpE7qyvub6YIDPxe9twMw==
-X-Google-Smtp-Source: AHgI3IZ+xaYPn7zfWuDCm0psP7/YLIwcrv/WfmYw13e432blmMfOHVH8WSssGDCFnp0JB9x70ZAx+mTOOcWhhs6DIfk=
-X-Received: by 2002:a67:78ce:: with SMTP id t197mr19824839vsc.152.1550740734096;
- Thu, 21 Feb 2019 01:18:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20190212102050.32229-1-geert+renesas@glider.be>
-In-Reply-To: <20190212102050.32229-1-geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Feb 2019 10:18:41 +0100
-Message-ID: <CAMuHMdUwNwVQ-4o8WKdH4pEUtk=Jmyq7gy7frXGW82rgu+afVA@mail.gmail.com>
-Subject: Re: [git pull] clk: renesas: Updates for v5.1 (take two)
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 21 Feb 2019 04:46:22 -0500
+X-IronPort-AV: E=Sophos;i="5.58,394,1544454000"; 
+   d="scan'208";a="8478507"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Feb 2019 18:46:20 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 02F88431ECF1;
+        Thu, 21 Feb 2019 18:46:16 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/5] Add EPSON RX-8571 RTC support
+Date:   Thu, 21 Feb 2019 09:40:43 +0000
+Message-Id: <1550742048-28068-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Mike, Stephen,
+This patch set aims to add support for EPSON RX-8571 real-time clock.
+EPSON RX-8571 rtc is compatible with EPSON RX-8581 rtc except that
+former has 16 bytes additional RAM.
 
-On Tue, Feb 12, 2019 at 11:48 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> The following changes since commit d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
->
->   clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08 +0100)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.1-tag2
->
-> for you to fetch changes up to d1de227de8145e661e940377e050286098197eeb:
->
->   clk: renesas: r8a774c0: Add TMU clock (2019-02-05 10:40:05 +0100)
->
-> ----------------------------------------------------------------
-> clk: renesas: Updates for v5.1 (take two)
->
->   - Add RPC (QSPI/HyperFLASH) clocks on R-Car V3H,
->   - Add TMU (timer) clocks on RZ/G2E,
->   - Small fixes and cleanups.
->
-> Thanks for pulling!
->
-> ----------------------------------------------------------------
-> Biju Das (1):
->       clk: renesas: r8a774c0: Add TMU clock
->
-> Sergei Shtylyov (4):
->       clk: renesas: rcar-gen3: Factor out cpg_reg_modify()
->       clk: renesas: rcar-gen3: Add spinlock
->       clk: renesas: rcar-gen3: Add RPC clocks
->       clk: renesas: r8a77980: Add RPC clocks
->
->  drivers/clk/renesas/r8a774c0-cpg-mssr.c |   5 ++
->  drivers/clk/renesas/r8a77980-cpg-mssr.c |   8 ++
->  drivers/clk/renesas/rcar-gen3-cpg.c     | 147 ++++++++++++++++++++++++++++----
->  drivers/clk/renesas/rcar-gen3-cpg.h     |   4 +
->  4 files changed, 146 insertions(+), 18 deletions(-)
+1 byte of nvmem is supported on both RX-8581 and RX-8571. It is
+exposed through sysfs along with  support for 16 bytes additional RAM
+present only on EPSON RX-8571.
 
-I was wondering if you've received my pull request?
+This patch series is tested against renesas-dev and linux-next.
 
-Thanks!
+Biju Das (5):
+  rtc: rx8581: Add rx8571 compatible
+  rtc: rx8581: Add support for rx8571 RTC
+  rtc: rx8581: Add support for Epson rx8571 RTC
+  arm64: defconfig: enable RX-8581 config option
+  arm64: dts: renesas: r8a774c0-cat874: add RTC support
 
-Gr{oetje,eeting}s,
-
-                        Geert
+ Documentation/devicetree/bindings/rtc/rtc.txt   |   1 +
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts |  18 ++++
+ arch/arm64/configs/defconfig                    |   1 +
+ drivers/rtc/Kconfig                             |   5 +-
+ drivers/rtc/rtc-rx8581.c                        | 114 ++++++++++++++++++++++--
+ 5 files changed, 128 insertions(+), 11 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
