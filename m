@@ -1,89 +1,104 @@
-Return-Path: <SRS0=UKHE=Q4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=c3Ds=Q5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8CCC10F0B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01715C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Feb 2019 03:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ECD520818
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Feb 2019 23:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D01332086A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Feb 2019 03:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfBUXvk (ORCPT
+        id S1726281AbfBVDtZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:51:40 -0500
-Received: from mga01.intel.com ([192.55.52.88]:50776 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727265AbfBUXvI (ORCPT
+        Thu, 21 Feb 2019 22:49:25 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:35815 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfBVDtZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:51:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:51:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="118122756"
-Received: from oliviapo-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.249.44.84])
-  by orsmga006.jf.intel.com with ESMTP; 21 Feb 2019 15:51:05 -0800
-Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
-        id D689721D81; Fri, 22 Feb 2019 01:50:59 +0200 (EET)
-Date:   Fri, 22 Feb 2019 01:50:59 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 17/30] v4l: subdev: compat: Implement handling for
- VIDIOC_SUBDEV_[GS]_ROUTING
-Message-ID: <20190221235059.eekgbwj7zsgnrpmf@kekkonen.localdomain>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
- <20181101233144.31507-18-niklas.soderlund+renesas@ragnatech.se>
- <20190115235303.GG31088@pendragon.ideasonboard.com>
- <20190218112109.slu6kkcbwb6fn2hr@uno.localdomain>
+        Thu, 21 Feb 2019 22:49:25 -0500
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gx199-00071w-8A from Jiada_Wang@mentor.com ; Thu, 21 Feb 2019 19:05:07 -0800
+Received: from [172.30.112.120] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 21 Feb 2019 19:05:03 -0800
+From:   jiada <jiada_wang@mentor.com>
+Subject: Re: [PATCH v1 0/2] rsnd: dts: change to use extended audio dmac
+ register
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190220052435.20508-1-jiada_wang@mentor.com>
+ <CAMuHMdX1OqmwtCAtx8mxQtrG0D6bxkJ-trkA50qw=t16kBfdTQ@mail.gmail.com>
+ <871s427ux5.wl-kuninori.morimoto.gx@renesas.com>
+Message-ID: <021012f9-f522-0efd-4bb2-c56917623266@mentor.com>
+Date:   Fri, 22 Feb 2019 12:05:02 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190218112109.slu6kkcbwb6fn2hr@uno.localdomain>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <871s427ux5.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SVR-ORW-MBX-05.mgc.mentorg.com (147.34.90.205) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 12:21:09PM +0100, Jacopo Mondi wrote:
-> Hi Laurent, Sakari,
-> 
-> On Wed, Jan 16, 2019 at 01:53:03AM +0200, Laurent Pinchart wrote:
-> > Hi Niklas,
-> >
-> > Thank you for the patch.
-> >
-> > On Fri, Nov 02, 2018 at 12:31:31AM +0100, Niklas Söderlund wrote:
-> > > From: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > >
-> > > Implement compat IOCTL handling for VIDIOC_SUBDEV_G_ROUTING and
-> > > VIDIOC_SUBDEV_S_ROUTING IOCTLs.
-> >
-> > Let's instead design the ioctl in a way that doesn't require compat
-> > handling.
-> >
-> 
-> Care to explain what makes this ioctl require a compat version? I
-> don't see assumptions on the word length on the implementation. What
-> am I missing?
+Hi Geert
 
-The size of the "routes" pointer isn't constant, therefore affecting the
-memory layout of the struct (and thus requiring compat code). It should be
-__u64. (Please see my other reply to the same patch.)
 
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+On 2019/02/20 17:10, Kuninori Morimoto wrote:
+> 
+> Hi Geert
+> 
+>>> According to user reference manual for R-CAR H3 and M3-W SoCs,
+>>> in order to access busif4 ~ busif7, extended audio dmac registers
+>>> (PDMASAREn, PDMADAREn, PDMACHCREn)
+>>> need to be used, rather than basic audio dmac registers
+>>> (PDMASARn, PDMADARn, PDMACHCRn)
+>>>
+>>> This patch set updates H3 (= r8a7795) and M3-W (= r8a7796)
+>>> to use extended audio dmac registers
+>>
+>> The same change should be applied for M3-N and RZ/G2M, right?
+>>
+Currently only H3 and M3-W support to use busif other than busif0,
+I feel currently it's only necessary to use extended audio dmac register 
+for these SoCs
+
+>> R-Car E3 and RZ/G2E already use the extended register set, as they do not
+>> have the basic set.
+>>
+>> For SoCs having both, this feels a bit like describing software policy, instead
+>> of hardware, to me. Would it make sense to extend the audio bindings, and
+>> allow describing both the basic and extended register sets, and let the driver
+>> make the decision which one to use?
+> 
+> I don't think we need to use basic register.
+> This means extended register only is very enough.
+> I'm not sure why datasheet is indicating basic...
+> 
+Extended audio dmac registers covers all function of basic ones,
+so there is no need to use basic registers
+
+Thanks,
+Jiada
+
+> Best regards
+> ---
+> Kuninori Morimoto
+> 
