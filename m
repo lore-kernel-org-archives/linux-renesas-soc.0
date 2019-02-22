@@ -2,103 +2,396 @@ Return-Path: <SRS0=c3Ds=Q5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01715C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Feb 2019 03:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF8CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Feb 2019 08:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01332086A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Feb 2019 03:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D89320700
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Feb 2019 08:39:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726281AbfBVDtZ (ORCPT
+        id S1725944AbfBVIj5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Feb 2019 22:49:25 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:35815 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfBVDtZ (ORCPT
+        Fri, 22 Feb 2019 03:39:57 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:49863 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfBVIj5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Feb 2019 22:49:25 -0500
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gx199-00071w-8A from Jiada_Wang@mentor.com ; Thu, 21 Feb 2019 19:05:07 -0800
-Received: from [172.30.112.120] (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Thu, 21 Feb 2019 19:05:03 -0800
-From:   jiada <jiada_wang@mentor.com>
-Subject: Re: [PATCH v1 0/2] rsnd: dts: change to use extended audio dmac
- register
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190220052435.20508-1-jiada_wang@mentor.com>
- <CAMuHMdX1OqmwtCAtx8mxQtrG0D6bxkJ-trkA50qw=t16kBfdTQ@mail.gmail.com>
- <871s427ux5.wl-kuninori.morimoto.gx@renesas.com>
-Message-ID: <021012f9-f522-0efd-4bb2-c56917623266@mentor.com>
-Date:   Fri, 22 Feb 2019 12:05:02 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 22 Feb 2019 03:39:57 -0500
+X-Originating-IP: 31.157.247.153
+Received: from uno.localdomain (unknown [31.157.247.153])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id AA0D820010;
+        Fri, 22 Feb 2019 08:39:52 +0000 (UTC)
+Date:   Fri, 22 Feb 2019 09:40:19 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v2 16/30] v4l: subdev: Add [GS]_ROUTING subdev ioctls and
+ operations
+Message-ID: <20190222084019.62atdkk6qipnugvf@uno.localdomain>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-17-niklas.soderlund+renesas@ragnatech.se>
+ <20190221143940.k56z2vwovu3y5okh@uno.localdomain>
+ <20190221223131.rago5jmpxhygtuep@kekkonen.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <871s427ux5.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SVR-ORW-MBX-05.mgc.mentorg.com (147.34.90.205) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hm5x2ccoeh3cj5j2"
+Content-Disposition: inline
+In-Reply-To: <20190221223131.rago5jmpxhygtuep@kekkonen.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert
 
+--hm5x2ccoeh3cj5j2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2019/02/20 17:10, Kuninori Morimoto wrote:
-> 
-> Hi Geert
-> 
->>> According to user reference manual for R-CAR H3 and M3-W SoCs,
->>> in order to access busif4 ~ busif7, extended audio dmac registers
->>> (PDMASAREn, PDMADAREn, PDMACHCREn)
->>> need to be used, rather than basic audio dmac registers
->>> (PDMASARn, PDMADARn, PDMACHCRn)
->>>
->>> This patch set updates H3 (= r8a7795) and M3-W (= r8a7796)
->>> to use extended audio dmac registers
->>
->> The same change should be applied for M3-N and RZ/G2M, right?
->>
-Currently only H3 and M3-W support to use busif other than busif0,
-I feel currently it's only necessary to use extended audio dmac register 
-for these SoCs
+Hi Sakari,
 
->> R-Car E3 and RZ/G2E already use the extended register set, as they do not
->> have the basic set.
->>
->> For SoCs having both, this feels a bit like describing software policy, instead
->> of hardware, to me. Would it make sense to extend the audio bindings, and
->> allow describing both the basic and extended register sets, and let the driver
->> make the decision which one to use?
-> 
-> I don't think we need to use basic register.
-> This means extended register only is very enough.
-> I'm not sure why datasheet is indicating basic...
-> 
-Extended audio dmac registers covers all function of basic ones,
-so there is no need to use basic registers
+On Fri, Feb 22, 2019 at 12:31:32AM +0200, Sakari Ailus wrote:
+> Hi Jacopo,
+>
+> On Thu, Feb 21, 2019 at 03:39:40PM +0100, Jacopo Mondi wrote:
+> > Hi Sakari,
+> >    one quick question
+> >
+> > On Fri, Nov 02, 2018 at 12:31:30AM +0100, Niklas S=C3=B6derlund wrote:
+> > > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > >
+> > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > >
+> > > - Add sink and source streams for multiplexed links
+> > > - Copy the argument back in case of an error. This is needed to let t=
+he
+> > >   caller know the number of routes.
+> > >
+> > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
+h.se>
+> > > ---
+> > >  drivers/media/v4l2-core/v4l2-ioctl.c  | 20 +++++++++++++-
+> > >  drivers/media/v4l2-core/v4l2-subdev.c | 28 +++++++++++++++++++
+> > >  include/media/v4l2-subdev.h           |  7 +++++
+> > >  include/uapi/linux/v4l2-subdev.h      | 40 +++++++++++++++++++++++++=
+++
+> > >  4 files changed, 94 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l=
+2-core/v4l2-ioctl.c
+> > > index 7de041bae84fb2f2..40406acb51ec0906 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > > @@ -19,6 +19,7 @@
+> > >  #include <linux/kernel.h>
+> > >  #include <linux/version.h>
+> > >
+> > > +#include <linux/v4l2-subdev.h>
+> > >  #include <linux/videodev2.h>
+> > >
+> > >  #include <media/v4l2-common.h>
+> > > @@ -2924,6 +2925,23 @@ static int check_array_args(unsigned int cmd, =
+void *parg, size_t *array_size,
+> > >  		}
+> > >  		break;
+> > >  	}
+> > > +
+> > > +	case VIDIOC_SUBDEV_G_ROUTING:
+> > > +	case VIDIOC_SUBDEV_S_ROUTING: {
+> > > +		struct v4l2_subdev_routing *route =3D parg;
+> > > +
+> > > +		if (route->num_routes > 0) {
+> > > +			if (route->num_routes > 256)
+> > > +				return -EINVAL;
+> > > +
+> > > +			*user_ptr =3D (void __user *)route->routes;
+> > > +			*kernel_ptr =3D (void *)&route->routes;
+> > > +			*array_size =3D sizeof(struct v4l2_subdev_route)
+> > > +				    * route->num_routes;
+> > > +			ret =3D 1;
+> > > +		}
+> > > +		break;
+> > > +	}
+> > >  	}
+> > >
+> > >  	return ret;
+> > > @@ -3033,7 +3051,7 @@ video_usercopy(struct file *file, unsigned int =
+cmd, unsigned long arg,
+> > >  	 * Some ioctls can return an error, but still have valid
+> > >  	 * results that must be returned.
+> > >  	 */
+> > > -	if (err < 0 && !always_copy)
+> > > +	if (err < 0 && !always_copy && cmd !=3D VIDIOC_SUBDEV_G_ROUTING)
+> > >  		goto out;
+> > >
+> > >  out_array_args:
+> > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4=
+l2-core/v4l2-subdev.c
+> > > index 792f41dffe2329b9..1d3b37cf548fa533 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > @@ -516,7 +516,35 @@ static long subdev_do_ioctl(struct file *file, u=
+nsigned int cmd, void *arg)
+> > >
+> > >  	case VIDIOC_SUBDEV_QUERYSTD:
+> > >  		return v4l2_subdev_call(sd, video, querystd, arg);
+> > > +
+> > > +	case VIDIOC_SUBDEV_G_ROUTING:
+> > > +		return v4l2_subdev_call(sd, pad, get_routing, arg);
+> > > +
+> > > +	case VIDIOC_SUBDEV_S_ROUTING: {
+> > > +		struct v4l2_subdev_routing *route =3D arg;
+> > > +		unsigned int i;
+> > > +
+> > > +		if (route->num_routes > sd->entity.num_pads)
+> > > +			return -EINVAL;
+> >
+> > Can't the number of routes exceeds the total number of pad?
+> >
+> > To make an example, a subdevice with 2 sink pads, and 1 multiplexed
+> > source pad, with 2 streams would expose the following routing table,
+> > right?
+> >
+> > pad #0 =3D sink, 1 stream
+> > pad #1 =3D sink, 1 stream
+> > pad #2 =3D source, 2 streams
+> >
+> > Routing table:
+> > 0/0 -> 2/0
+> > 0/0 -> 2/1
+> > 1/0 -> 2/0
+> > 1/0 -> 2/1
+> >
+> > In general, the number of accepted routes should depend on the number
+> > of streams, not pads, and that's better handled by drivers, am I
+> > wrong?
+>
+> Good point. Is the above configuration meaningful? I.e. you have a mux
+> device that does some processing as well by combining the streams?
+>
+> It's far-fetched but at the moment the API does not really bend for that.
+> It still might in the future.
 
-Thanks,
-Jiada
+Well, how would you expect a routing table for a device that
+supports multiplexing using Virtual Channels to look like?
 
-> Best regards
-> ---
-> Kuninori Morimoto
-> 
+As far as I got it, even with a single sink and a single source, it
+would be:
+
+[SINK/SINK_STREAM -> SOURCE/SOURCE_STREAM]
+0/0 -> 1/0
+0/0 -> 1/1
+0/0 -> 1/2
+0/0 -> 1/3
+
+On the previous example, I thought about GMSL-like devices, that can
+output the video streams received from different remotes in a
+separate virtual channel, at the same time.
+
+A possible routing table in that case would be like:
+
+Pads 0, 1, 2, 3 =3D SINKS
+Pad 4 =3D SOURCE with 4 streams (1 for each VC)
+
+0/0 -> 4/0
+0/0 -> 4/1
+0/0 -> 4/2
+0/0 -> 4/3
+1/0 -> 4/0
+1/0 -> 4/1
+1/0 -> 4/2
+1/0 -> 4/3
+2/0 -> 4/0
+2/0 -> 4/1
+2/0 -> 4/2
+2/0 -> 4/3
+3/0 -> 4/0
+3/0 -> 4/1
+3/0 -> 4/2
+3/0 -> 4/3
+
+With only one route per virtual channel active at a time.
+
+Does this match your idea?
+
+>
+> I guess we could just remove the check, and let drivers handle it.
+>
+
+Yup, I agree!
+
+> >
+> > Thanks
+> >   j
+> >
+> > > +
+> > > +		for (i =3D 0; i < route->num_routes; ++i) {
+> > > +			unsigned int sink =3D route->routes[i].sink_pad;
+> > > +			unsigned int source =3D route->routes[i].source_pad;
+> > > +			struct media_pad *pads =3D sd->entity.pads;
+> > > +
+> > > +			if (sink >=3D sd->entity.num_pads ||
+> > > +			    source >=3D sd->entity.num_pads)
+> > > +				return -EINVAL;
+> > > +
+> > > +			if (!(pads[sink].flags & MEDIA_PAD_FL_SINK) ||
+> > > +			    !(pads[source].flags & MEDIA_PAD_FL_SOURCE))
+> > > +				return -EINVAL;
+> > > +		}
+> > > +
+> > > +		return v4l2_subdev_call(sd, pad, set_routing, route);
+> > > +	}
+> > >  #endif
+> > > +
+> > >  	default:
+> > >  		return v4l2_subdev_call(sd, core, ioctl, cmd, arg);
+> > >  	}
+> > > diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+> > > index 9102d6ca566e01f2..5acaeeb9b3cacefa 100644
+> > > --- a/include/media/v4l2-subdev.h
+> > > +++ b/include/media/v4l2-subdev.h
+> > > @@ -679,6 +679,9 @@ struct v4l2_subdev_pad_config {
+> > >   *
+> > >   * @set_frame_desc: set the low level media bus frame parameters, @f=
+d array
+> > >   *                  may be adjusted by the subdev driver to device c=
+apabilities.
+> > > + *
+> > > + * @get_routing: callback for VIDIOC_SUBDEV_G_ROUTING IOCTL handler.
+> > > + * @set_routing: callback for VIDIOC_SUBDEV_S_ROUTING IOCTL handler.
+> > >   */
+> > >  struct v4l2_subdev_pad_ops {
+> > >  	int (*init_cfg)(struct v4l2_subdev *sd,
+> > > @@ -719,6 +722,10 @@ struct v4l2_subdev_pad_ops {
+> > >  			      struct v4l2_mbus_frame_desc *fd);
+> > >  	int (*set_frame_desc)(struct v4l2_subdev *sd, unsigned int pad,
+> > >  			      struct v4l2_mbus_frame_desc *fd);
+> > > +	int (*get_routing)(struct v4l2_subdev *sd,
+> > > +			   struct v4l2_subdev_routing *route);
+> > > +	int (*set_routing)(struct v4l2_subdev *sd,
+> > > +			   struct v4l2_subdev_routing *route);
+> > >  };
+> > >
+> > >  /**
+> > > diff --git a/include/uapi/linux/v4l2-subdev.h b/include/uapi/linux/v4=
+l2-subdev.h
+> > > index 03970ce3074193e6..af069bfb10ca23a5 100644
+> > > --- a/include/uapi/linux/v4l2-subdev.h
+> > > +++ b/include/uapi/linux/v4l2-subdev.h
+> > > @@ -155,6 +155,44 @@ struct v4l2_subdev_selection {
+> > >  	__u32 reserved[8];
+> > >  };
+> > >
+> > > +#define V4L2_SUBDEV_ROUTE_FL_ACTIVE	(1 << 0)
+> > > +#define V4L2_SUBDEV_ROUTE_FL_IMMUTABLE	(1 << 1)
+> > > +
+> > > +/**
+> > > + * struct v4l2_subdev_route - A signal route inside a subdev
+> > > + * @sink_pad: the sink pad
+> > > + * @sink_stream: the sink stream
+> > > + * @source_pad: the source pad
+> > > + * @source_stream: the source stream
+> > > + * @flags: route flags:
+> > > + *
+> > > + *	V4L2_SUBDEV_ROUTE_FL_ACTIVE: Is the stream in use or not? An
+> > > + *	active stream will start when streaming is enabled on a video
+> > > + *	node. Set by the user.
+> > > + *
+> > > + *	V4L2_SUBDEV_ROUTE_FL_IMMUTABLE: Is the stream immutable, i.e.
+> > > + *	can it be activated and inactivated? Set by the driver.
+> > > + */
+> > > +struct v4l2_subdev_route {
+> > > +	__u32 sink_pad;
+> > > +	__u32 sink_stream;
+> > > +	__u32 source_pad;
+> > > +	__u32 source_stream;
+> > > +	__u32 flags;
+> > > +	__u32 reserved[5];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct v4l2_subdev_routing - Routing information
+> > > + * @routes: the routes array
+> > > + * @num_routes: the total number of routes in the routes array
+> > > + */
+> > > +struct v4l2_subdev_routing {
+> > > +	struct v4l2_subdev_route *routes;
+>
+> This should be just __u64, to avoid writing compat code. The patch was
+> written before we started doing that. :-) Please see e.g. the media device
+> topology IOCTL.
+>
+
+Thanks, I had a look at the MEDIA_ ioctls yesterday, G_TOPOLOGY in
+particular, which uses several pointers to arrays.
+
+Unfortunately, I didn't come up with anything better than using a
+translation structure, from the IOCTL layer to the subdevice
+operations layer:
+https://paste.debian.net/hidden/b192969d/
+(sharing a link for early comments, I can send v3 and you can comment
+there directly if you prefer to :)
+
+Thanks
+   j
+
+> > > +	__u32 num_routes;
+> > > +	__u32 reserved[5];
+> > > +};
+> > > +
+> > >  /* Backwards compatibility define --- to be removed */
+> > >  #define v4l2_subdev_edid v4l2_edid
+> > >
+> > > @@ -181,5 +219,7 @@ struct v4l2_subdev_selection {
+> > >  #define VIDIOC_SUBDEV_ENUM_DV_TIMINGS		_IOWR('V', 98, struct v4l2_en=
+um_dv_timings)
+> > >  #define VIDIOC_SUBDEV_QUERY_DV_TIMINGS		_IOR('V', 99, struct v4l2_dv=
+_timings)
+> > >  #define VIDIOC_SUBDEV_DV_TIMINGS_CAP		_IOWR('V', 100, struct v4l2_dv=
+_timings_cap)
+> > > +#define VIDIOC_SUBDEV_G_ROUTING			_IOWR('V', 38, struct v4l2_subdev_=
+routing)
+> > > +#define VIDIOC_SUBDEV_S_ROUTING			_IOWR('V', 39, struct v4l2_subdev_=
+routing)
+> > >
+> > >  #endif
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
+--hm5x2ccoeh3cj5j2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlxvtXMACgkQcjQGjxah
+VjxXUA/+MRfkVydJLN8ZMESTYBdRd4jNVn0nehoQBQ/DUl1CGhDMXvFOEZfXwsM8
+jkwDJwI09XkJnO1RSKQZexizhg6Fb1RXDC819KQ1XqscFBHqh5z/KRQ7Y2ypAHMV
+fUez2JSNGKD0GAwTZnbp4af/KHc6yjXwyd//7xmKdXs0Fii01XGpfLCS7+ArUtZO
+NAXEJCy32t+cN7cTST7sc4EnxnCQP+rXaDZGnoyIrh24rM5iKcJUlbUIpiCIj20T
+w0Oor+cSom2uB4dExNhxhYY0MTK/QeyRV+eXT8exVGp1I4fQVkxYwVW2VBAsCK32
+uhQCx2YJMc+xrZfLsrwyuLRGeSG8ocX2zuOHKgZtIpUH2YrnxIu4beFSGtLKlD3X
+KHJ4h57cOMlDCc2UpBTpukRbRgDRiYwy00SMxhHq3Za2nzGiC0/5RXB9suUqtQ6o
+dynG8uhWZYdRriIVt0eY2VGB+3IsX2sgErVFrbJcXejXSW59AxxCgRVztgp3aTV5
+uAFiH1UbTFH8AG35MLwZQOPPKqyOyCvPBdQw6ETBeQ3wPrF+qS5Vw4WA5wwqFP/Z
+Q0XoUnh9AIIgF7/eGNS3KAyypHIO1RW6jWKZizlLVtF7mW7/owDnGfkn8Q5mhTSq
+WHXaTCrbOtBYx6EqTOnfRKt+3JyMS2XXCQALYBNCPlr84/0cWOM=
+=9ddd
+-----END PGP SIGNATURE-----
+
+--hm5x2ccoeh3cj5j2--
