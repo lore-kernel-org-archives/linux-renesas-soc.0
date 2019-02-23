@@ -2,121 +2,86 @@ Return-Path: <SRS0=cYIn=Q6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C96C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3F0C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 09:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E17A0206C0
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 01:45:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="CM6z72CT"
+	by mail.kernel.org (Postfix) with ESMTP id 77BF620684
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 09:32:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbfBWBpy (ORCPT
+        id S1725888AbfBWJcK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Feb 2019 20:45:54 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44103 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfBWBpy (ORCPT
+        Sat, 23 Feb 2019 04:32:10 -0500
+Received: from sauhun.de ([88.99.104.3]:53562 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbfBWJcK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Feb 2019 20:45:54 -0500
-Received: by mail-lf1-f65.google.com with SMTP id g2so3085655lfh.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Feb 2019 17:45:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=t7Nr7YA0FZnqEHzEIq2JrQfxhnPVlfu/7JGESE0K9/Y=;
-        b=CM6z72CTyGSTezk2kD60ON258QYdybTAQcXayNM6p2nba5mCrUi2rqWQ5i7swFdhEn
-         YDY6zOP2tJFTXd0uAENPN4kquveZN8EyPD1qgVxaM/d7M7P4jlwZYs3RBqEcizuCTh91
-         mMDuWHeCUFHyKh7aa3rQtl8JzaJPrhFbsGDF2VEtcu7sWmwAYm214Wc6GISyIglieUzk
-         6oyvt+cPy8ZJVsm/hSIIN3/HIAnZE9t8MwyDAvmG89dAnTKHe0UPkgSdpcLoYLFaTOzf
-         6CmAvgXEoyppCevQrNmk/LSGQgoFxvK517ftFobAVVryyX2R7K1DnpM3AD/fDknFn6Xo
-         4I0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=t7Nr7YA0FZnqEHzEIq2JrQfxhnPVlfu/7JGESE0K9/Y=;
-        b=O10yv21Qhu/B44Gaio3/MrMYIqIOmmJevpykFrp0pE/b8vG4fqENofKNYxso5lJKxI
-         j+ebdiVS3WB8q4+75s763wtcIfmc8ByLFa+Uvk1vSUNl38FGh50xSKO8WvqGaS7BA+Gy
-         u3OtjDYqbnu2nk/rkqSw69ZnLOSWTLtiqfkaaGuOyqyd+//ObocXv1DAsbh1h1wIsGZa
-         NOwPriJKkCA7geMkduNeuDBJ9IEGG4apg1GL7HbiG4Ujn0mxTAx9kqmvI3pRTT5I3w/h
-         m3bWHzkqljGZhMdUYWXiyFiF86P8pYSeYvTQ1ipYsEja1mjvwj8ltJYcWoPOomIh8sRS
-         Wp5Q==
-X-Gm-Message-State: AHQUAuY/LbMCURb78NlRzD3dIw2Z3C46wDjBUHK9unXopbMUEkafCjFa
-        /X7+YMeKD1chFwNxURyVNpGpsBU1ldg=
-X-Google-Smtp-Source: AHgI3IZuj3QrhdgOV0D9HMhQKSNLh3MuvuCsu/ZBO8twcBhd68P0V/6fYjJnN4zsngp0zRTdz9Rmzg==
-X-Received: by 2002:a19:fc12:: with SMTP id a18mr4022387lfi.74.1550886351892;
-        Fri, 22 Feb 2019 17:45:51 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id u11sm954875lfb.85.2019.02.22.17.45.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 17:45:51 -0800 (PST)
-Date:   Sat, 23 Feb 2019 02:45:50 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH VSP test suite] Remove dependency on a particular yavta
- branch
-Message-ID: <20190223014550.GT11484@bigcity.dyn.berto.se>
-References: <20190222100257.4847-1-laurent.pinchart@ideasonboard.com>
+        Sat, 23 Feb 2019 04:32:10 -0500
+Received: from localhost (p57BC9845.dip0.t-ipconnect.de [87.188.152.69])
+        by pokefinder.org (Postfix) with ESMTPSA id BC7312C3312;
+        Sat, 23 Feb 2019 10:32:07 +0100 (CET)
+Date:   Sat, 23 Feb 2019 10:32:07 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Gareth Williams <gareth.williams.jx@renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: Re: [PATCH v4 0/2] i2c: designware: Add support for a bus clock
+Message-ID: <20190223093207.GC1018@kunai>
+References: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="mvpLiMfbWzRoNl4x"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190222100257.4847-1-laurent.pinchart@ideasonboard.com>
+In-Reply-To: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
 
-Thanks for your patch.
+--mvpLiMfbWzRoNl4x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2019-02-22 12:02:57 +0200, Laurent Pinchart wrote:
-> All the changes required by the VSP test suite have been integrated in
-> the master branch of yavta. There is no need to depend on the vsp branch
-> anymore, remove the corresponding paragraph from the documentation.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Thu, Feb 21, 2019 at 04:10:57PM +0000, Gareth Williams wrote:
+> The Synopsys I2C Controller has a peripheral clock that some SoCs=20
+> require to access the registers. This series also details the new clock
+> property in the bindings documentation.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Your SoB is missing for patch 1. And besides my ack, I'd still like some
+feedback from the actual driver maintainers.
 
-> ---
->  README | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/README b/README
-> index 17920ee663c8..0d5a6967d7f5 100644
-> --- a/README
-> +++ b/README
-> @@ -45,10 +45,6 @@ system in a directory included in $PATH.
->  * raw2rgbpnm (available at git://git.retiisi.org.uk/~sailus/raw2rgbpnm.git)
->  * yavta (available at git://git.ideasonboard.org/yavta.git)
->  
-> -All but the HGO and CLU/LUT tests can be run with the latest version of these
-> -tools. To test the HGO, HGT and CLU/LUT, the 'vsp' branch of 'yavta' is currently
-> -needed.
-> -
->  The following tool is additionally required to run some of the tests. If the
->  tool is not available the corresponding tests will be skipped.
->  
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
 
--- 
-Regards,
-Niklas Söderlund
+--mvpLiMfbWzRoNl4x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxxExcACgkQFA3kzBSg
+Kbbf4g//TujUaeMwqhkaKlx4ZBmDq4MuNjaJkLFxuwd6+UM/aLM4g81XAUhNIF8f
+Rj0fDiMgsxOGmxlq668hN8vayZen0fcCYM2yAhjfMstIhALWF10x8ckupGd82YMm
+BAJ1eigAf02PO9Af/JDPlAdGHmoCQ6bkbawB7QFlfTqkaBrPJPOjdL2V0kO+Orh8
+jhuuZLr2X2IdmYzx+egDvL7AWDypuruwonJTFpw5reosqKPmRzH6IZJ4w+iFo2G6
+8bjSvpoyyci83TTaLFuhMcxvVH/42Izq7vHq9uRIgJakcr7TSitOPhx3Pl+Y8PLL
+/rJYSt1jwozxMA1dIbB3thjF/hW8qe7KgZByKd46ax3P5iikKoYlkWal5CW+OIEI
+D1TKycw9tXGlcVGKHJK+kVmOOOihp7gD5cNmg4bqULiYe+sEAzVhVTY+xzkL3eM5
+vBtRRB5TdZeDNJ0kDZbXLlJgPJSnTgYZpbMsRPy40w7WLj5mw7/Zg6xBul3sYiu8
+cYdq8jHGhavXhgOWeJN23hYdF3ly/SLSMfoswbRWBZ3zzCSjrKu1+8tRfVvGS+Gh
+HzTuDa09MgX50JwsNw+XSzPugZWDFrEG1l9rS7yuR6e31b6bHxVKZjsky8i8u68F
+AJZYZS7V5lIUgE8WXl6T/DXU5DGM/1Wzxd/zzOnCt5wnfGhosHc=
+=H1Po
+-----END PGP SIGNATURE-----
+
+--mvpLiMfbWzRoNl4x--
