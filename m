@@ -2,47 +2,42 @@ Return-Path: <SRS0=cYIn=Q6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3F0C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 09:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 242ACC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 09:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77BF620684
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 09:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8D5A20684
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 Feb 2019 09:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725888AbfBWJcK (ORCPT
+        id S1725886AbfBWJhA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 23 Feb 2019 04:32:10 -0500
-Received: from sauhun.de ([88.99.104.3]:53562 "EHLO pokefinder.org"
+        Sat, 23 Feb 2019 04:37:00 -0500
+Received: from sauhun.de ([88.99.104.3]:53618 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfBWJcK (ORCPT
+        id S1725820AbfBWJhA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 23 Feb 2019 04:32:10 -0500
+        Sat, 23 Feb 2019 04:37:00 -0500
 Received: from localhost (p57BC9845.dip0.t-ipconnect.de [87.188.152.69])
-        by pokefinder.org (Postfix) with ESMTPSA id BC7312C3312;
-        Sat, 23 Feb 2019 10:32:07 +0100 (CET)
-Date:   Sat, 23 Feb 2019 10:32:07 +0100
+        by pokefinder.org (Postfix) with ESMTPSA id 8B2AF2C3312;
+        Sat, 23 Feb 2019 10:36:58 +0100 (CET)
+Date:   Sat, 23 Feb 2019 10:36:58 +0100
 From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: Re: [PATCH v4 0/2] i2c: designware: Add support for a bus clock
-Message-ID: <20190223093207.GC1018@kunai>
-References: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v2 1/2] i2c: gpio: fault-injector: add 'lose_arbitration'
+ injector
+Message-ID: <20190223093657.GD1018@kunai>
+References: <20190219163946.13559-1-wsa+renesas@sang-engineering.com>
+ <20190219163946.13559-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mvpLiMfbWzRoNl4x"
+        protocol="application/pgp-signature"; boundary="GyRA7555PLgSTuth"
 Content-Disposition: inline
-In-Reply-To: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
+In-Reply-To: <20190219163946.13559-2-wsa+renesas@sang-engineering.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -50,38 +45,41 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---mvpLiMfbWzRoNl4x
+--GyRA7555PLgSTuth
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 21, 2019 at 04:10:57PM +0000, Gareth Williams wrote:
-> The Synopsys I2C Controller has a peripheral clock that some SoCs=20
-> require to access the registers. This series also details the new clock
-> property in the bindings documentation.
+On Tue, Feb 19, 2019 at 05:39:45PM +0100, Wolfram Sang wrote:
+> Add a fault injector simulating 'arbitration lost' from multi-master
+> setups. Read the docs for its usage.
+>=20
+> A helper function for future fault injectors using SCL interrupts is
+> created to achieve this.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Your SoB is missing for patch 1. And besides my ack, I'd still like some
-feedback from the actual driver maintainers.
+Applied to for-next, thanks!
 
 
---mvpLiMfbWzRoNl4x
+--GyRA7555PLgSTuth
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxxExcACgkQFA3kzBSg
-Kbbf4g//TujUaeMwqhkaKlx4ZBmDq4MuNjaJkLFxuwd6+UM/aLM4g81XAUhNIF8f
-Rj0fDiMgsxOGmxlq668hN8vayZen0fcCYM2yAhjfMstIhALWF10x8ckupGd82YMm
-BAJ1eigAf02PO9Af/JDPlAdGHmoCQ6bkbawB7QFlfTqkaBrPJPOjdL2V0kO+Orh8
-jhuuZLr2X2IdmYzx+egDvL7AWDypuruwonJTFpw5reosqKPmRzH6IZJ4w+iFo2G6
-8bjSvpoyyci83TTaLFuhMcxvVH/42Izq7vHq9uRIgJakcr7TSitOPhx3Pl+Y8PLL
-/rJYSt1jwozxMA1dIbB3thjF/hW8qe7KgZByKd46ax3P5iikKoYlkWal5CW+OIEI
-D1TKycw9tXGlcVGKHJK+kVmOOOihp7gD5cNmg4bqULiYe+sEAzVhVTY+xzkL3eM5
-vBtRRB5TdZeDNJ0kDZbXLlJgPJSnTgYZpbMsRPy40w7WLj5mw7/Zg6xBul3sYiu8
-cYdq8jHGhavXhgOWeJN23hYdF3ly/SLSMfoswbRWBZ3zzCSjrKu1+8tRfVvGS+Gh
-HzTuDa09MgX50JwsNw+XSzPugZWDFrEG1l9rS7yuR6e31b6bHxVKZjsky8i8u68F
-AJZYZS7V5lIUgE8WXl6T/DXU5DGM/1Wzxd/zzOnCt5wnfGhosHc=
-=H1Po
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxxFDkACgkQFA3kzBSg
+KbYClg/9FytijXZDbuJ5/RTMfdCjKxuorhBZrZ8Fo+xtVuyqNXhioUUMlrLfVy3G
+70nR188NQqOsGXC0yOzl86Wx5kfEbyuRrFmIplncWbzMfWw/NT/QYm1Skk9gUkra
+dq4vHCs8cYHiALf1y5m0dtgvzPOzKkSxLrjaih1KMzQEhQf1CKRMxWicv8EwjiLo
+PpoCFeNlkJ0r44wnivwl8adbuZ+v7sVaEBotzErze9fM13/ZKi7b2FQO3jmi7i8x
+M70USwVaRoVX8MHy9ftfUIhuqtoAAe+zzV60Q9nILlpiIbAQQh4mLhTwh9F44zoK
+4qOH7/srFvl3iutMVTIZLH2M9CIU9lSlGb3ADq8uJh9sylE0F1BPkVJY2PvovJVB
+gDSITxNxARgsIUUo7m4pC01qSSJxTpH47Ll4qO6gomwVb7+55Q07NY7Wcgv5X4ET
+o8zmRYO40jx7+bXBG1rPxz86kJcv5OMiH2Oox+pmNs/bthkKwlSGeovbzzWqM74U
+CeuoBtMTOtWqjpC8KKEN3PPi0lxEoBM3KmpcObtMsvcjMfed2Z+J+yfqgorKofk5
+GIQbFL6tVeNJ8vRdMBkL6qdWDHT/y/bLLVHFdIF8E2j9Ykcgw+YSebxrLMVCH6E/
+SjHJxrSVeKbCRKZIAMcWaPtxycBDwwO8f6WomU7xkBv7C02yWJk=
+=HnNQ
 -----END PGP SIGNATURE-----
 
---mvpLiMfbWzRoNl4x--
+--GyRA7555PLgSTuth--
