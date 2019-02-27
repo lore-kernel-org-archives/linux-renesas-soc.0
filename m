@@ -2,106 +2,128 @@ Return-Path: <SRS0=BEXM=RC=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C069AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 09:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E18DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 09:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90075213A2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 09:29:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E3412084D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 09:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="OptVRGii"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="f1L8weY0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbfB0J3q (ORCPT
+        id S1729643AbfB0JoT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Feb 2019 04:29:46 -0500
-Received: from mail-it1-f169.google.com ([209.85.166.169]:36330 "EHLO
-        mail-it1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbfB0J3q (ORCPT
+        Wed, 27 Feb 2019 04:44:19 -0500
+Received: from smtprelay.synopsys.com ([198.182.47.9]:54420 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbfB0JoT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Feb 2019 04:29:46 -0500
-Received: by mail-it1-f169.google.com with SMTP id v83so8866330itf.1
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Feb 2019 01:29:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=27ZEZ3TqtQr3legt74k3dzceyx9SkeNJ2DvAJAtdtc0=;
-        b=OptVRGiit/Lr3tPexTrlSyTr9LzkyiVwd+wpghZb2GT60o3c6+On0+cKDNtcfjJuWN
-         mHYIaTXDnanIbFm1nriwnJ57zKmlmE3To87JZFauoBswWXst22OSTV5XMU4HSnMSsmhY
-         i8ELmVpqSsJPYFGtFch24PDa7poYqulSlZVZgCFmwHMdWvUeduO8cCJ/ytxBRA922Q1v
-         9OpCEs879x82qYpFPrrb7OztD4Ov3lma+fl1vP+cgX0ZG3DTZzuMYEZe5Cfix3lOt9Ky
-         82C5BT+8Mxghjny4q9KDW1VNDZvo7/9XEk7FWPbqgIkNMJR5rUQ6CsPYM9np9nxFwYEW
-         J3uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=27ZEZ3TqtQr3legt74k3dzceyx9SkeNJ2DvAJAtdtc0=;
-        b=r8scXg9S+Wbd/OHRsIGyDJFnnelzJq2sWKa6eeIGM3TEh1Xbfr8g6OlqoNDOTs4tCz
-         +Y7jabefvI7uiItjPD0IpBfWkYjmIemubP8jPSAsXiPxiFLpEq9PZXu80nNlE+nvftr8
-         V+owC8dERJ3Gbfxmzkl2aGTwELBd9uv8I4hiyTXPVj9ISmg0t9anspQLJ6Vm2Jwzo4HL
-         5X2rXe+NOri4WWmaLJMP73VwYyY1WZ37LoWn9JLtdqEs0WyEg2vGOMhupPMIFHgXPNU+
-         +NqjefLTIzFYUsKUzjiwzSSs0b9N+47lsJMhgCeID2+mHGnWO/OA0dNzoaTSUxgM12Wk
-         aEuQ==
-X-Gm-Message-State: APjAAAUge4XqNB9a9hjXnyrSS/RTMZcYrP5KTEPDsvufzRuzeZgEwLng
-        gO5h+c20S1f3AVkMmha4f2si+BoFD+EakZTWTD4r4w==
-X-Google-Smtp-Source: AHgI3IZBgtGODEhydD+t1ECzKd8x4n2LJ9Tv9EX87sT3iSpmEnzCPRVVs+FlP202a35j0TCC20FKLybvxo6gUj8/fA4=
-X-Received: by 2002:a24:418c:: with SMTP id b12mr172246itd.74.1551259784637;
- Wed, 27 Feb 2019 01:29:44 -0800 (PST)
+        Wed, 27 Feb 2019 04:44:19 -0500
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id BAD0A24E220F;
+        Wed, 27 Feb 2019 01:44:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1551260658; bh=Qartb1fl6+3Z0PhRvy65hQ1oEHFzoIopL5Q6JksUPwI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=f1L8weY01PxaE6FnxZBAL1Tl0NcmIaH2+NghcaLHqOMtnb2+i/2L8H+EytuacNrVi
+         bpyCMmTKgpQLBvXYhdmeZWExmBn194MQb2wPrIN2odxvk04AqsB5iBGEyEsdqvLusA
+         JHpTP86IqIQ9dQAgH2wCLYF2gITC2fUk6JEGVelDhXsp8ZKvP1/PfWPw3BQnc9ANT5
+         LcuQF0+J4IS1gUwcF9qqp7r3vy26D+Ff/Bkff7Sy11u1+UGwOOuGGONNlZnRuL2MSw
+         ObX2Mdjg+319iuvBR0Vq149EJ9iEPI99DzvNBhq9Qi2bwKDzvueRMCpiD21+MTyCZJ
+         8DvJ4z2Ye4FBQ==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id B5393A0098;
+        Wed, 27 Feb 2019 09:44:17 +0000 (UTC)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 27 Feb 2019 01:43:34 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 27 Feb 2019 10:43:33 +0100
+Received: from [10.107.19.50] (10.107.19.50) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 27 Feb 2019 10:43:33 +0100
+Subject: Re: [PATCH v4 1/2] dt: snps,designware-i2c: Add clock bindings
+ documentation
+To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+CC:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        <devicetree@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        Luis Oliveira <luis.oliveira@synopsys.com>
+References: <1550765459-14519-1-git-send-email-gareth.williams.jx@renesas.com>
+ <1550765459-14519-2-git-send-email-gareth.williams.jx@renesas.com>
+ <de2a72f3-6d2c-cc18-73f3-1e925bd5b88f@linux.intel.com>
+ <20190226153921.GC839@kunai>
+ <8ad4aca6-cdbd-d2bf-81e2-5e2cd04a05c0@linux.intel.com>
+From:   Luis de Oliveira <luis.oliveira@synopsys.com>
+Message-ID: <a05b567d-0db9-d1a5-f793-db804c66f311@synopsys.com>
+Date:   Wed, 27 Feb 2019 09:43:31 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <CAMuHMdVXsLDPiGw81LVuoOpOnnRX_gswkqB--6mGodP06UqHmw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVXsLDPiGw81LVuoOpOnnRX_gswkqB--6mGodP06UqHmw@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Wed, 27 Feb 2019 10:29:33 +0100
-Message-ID: <CAMRc=MfCn+XeALaF1V71NKLnMWbqiUrt6AFJie9wTeRDQi_MDg@mail.gmail.com>
-Subject: Re: Requesting false output GPIO as IRQ
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8ad4aca6-cdbd-d2bf-81e2-5e2cd04a05c0@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [10.107.19.50]
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-wt., 26 lut 2019 o 11:01 Geert Uytterhoeven <geert@linux-m68k.org> napisa=
-=C5=82(a):
->
-> Hi Linus, Bartosz,
->
-> If request_irq() is called on an otherwise unused GPIO that was
-> incorrectly configured for output by the firmware, this fails with:
->
->     gpio gpiochip2: (e6052000.gpio): gpiochip_lock_as_irq: tried to
-> flag a GPIO set as output for IRQ
->     gpio gpiochip2: (e6052000.gpio): unable to lock HW IRQ 22 for IRQ
->     genirq: Failed to request resources for 0-0020 (irq 142) on
-> irqchip e6052000.gpio
->
-> This happens since commit ad817297418539b8 ("gpio: rcar: Implement
-> .get_direction() callback"), as the (default) input state is changed to
-> output by reading the hardware state.  Without that callback, the code
-> just continues.
->
-> While I strongly agree the firmware should be fixed not to configure
-> random GPIOs as outputs, shouldn't Linux just override this, if the GPIO
-> is not marked in use (has not been requested)?
->
-> What is your opinion on this?
-> Thanks!
->
+Hi,
 
-I think you're right about overriding this, because it's not only the
-firmware that can change the configuration. Let's imagine user-space
-that sets a GPIO, then releases it - it now stays configured as
-output. We should probably force input in this case and maybe just
-hint it with a pr_debug()?
+Thanks Jarkko.
+Yes, "interface clock" for pclk seems good.
 
-Bart
+Thanks,
+Luis
+
+On 27-Feb-19 7:10, Jarkko Nikula wrote:
+> On 2/26/19 5:39 PM, Wolfram Sang wrote:
+>>
+>>>> + - clock-names : Contains the names of the clocks:
+>>>> +=C2=A0=C2=A0=C2=A0 "ic_clk", for the core clock used to generate th=
+e external I2C clock.
+>>>> +=C2=A0=C2=A0=C2=A0 "pclk", the peripheral clock, required for regis=
+ter accesses.
+>>>> +
+>>>
+>>> Actually it looks there is need to revert back to bus clock (or bette=
+r) in
+>>> comments but keep the "pclk" property.
+>>>
+>>> The specification I have tells the ic_clk is the peripheral clock whi=
+ch runs
+>>> the logic and the pclk (exactly pclk) is for bus interface and where
+>>> registers are.
+>>
+>> Can we make it "bus interface clock" then? I'd think this is a tad
+>> better.
+>>
+> Yes, that makes it clear. Plain "interface clock" might work too. TI OM=
+APs are
+> using that term for register access clock domains.
+>=20
+> Luis: Does that make sense for HW point of view? You mention PCLK is ca=
+lled also
+> as application clock but for me personally it is not as clear as interf=
+ace clock
+> when I see it. I'll let Luis have the final word here.
+>=20
+> ic_clk - peripheral clock
+> pclk - (bus) interface/application clock
+>=20
+
