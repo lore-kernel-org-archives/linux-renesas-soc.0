@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDA6C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 05:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6587DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 05:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33DBD218E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 05:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3448D218E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Feb 2019 05:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725914AbfB0FCz (ORCPT
+        id S1725919AbfB0FDK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Feb 2019 00:02:55 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:41246 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725903AbfB0FCz (ORCPT
+        Wed, 27 Feb 2019 00:03:10 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:13409 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725903AbfB0FDJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Feb 2019 00:02:55 -0500
-Date:   27 Feb 2019 14:02:54 +0900
-X-IronPort-AV: E=Sophos;i="5.58,417,1544454000"; 
-   d="scan'208";a="8758222"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Feb 2019 14:02:54 +0900
+        Wed, 27 Feb 2019 00:03:09 -0500
+Date:   27 Feb 2019 14:03:08 +0900
+X-IronPort-AV: E=Sophos;i="5.58,418,1544454000"; 
+   d="scan'208";a="8965108"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 27 Feb 2019 14:03:08 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0B179401BA44;
-        Wed, 27 Feb 2019 14:02:54 +0900 (JST)
-Message-ID: <87o96xsul3.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 671A9429455D;
+        Wed, 27 Feb 2019 14:03:08 +0900 (JST)
+Message-ID: <87mumhsuko.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 1/2] arm64: dts: renesas: r8a77965-salvator-x: enable HDMI sound
+Subject: [PATCH 2/2] arm64: dts: renesas: r8a77965-salvator-xs: enable HDMI sound
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Simon <horms@verge.net.au>
 Cc:     Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
@@ -47,13 +47,13 @@ From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts | 28 ++++++++++++++++++++++
+ .../boot/dts/renesas/r8a77965-salvator-xs.dts      | 28 ++++++++++++++++++++++
  1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-index 340a3c7..28a2b83 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-x.dts
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+index f03a5e9..e6f6601 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
 @@ -31,6 +31,11 @@
  		      "dclkin.0", "dclkin.1", "dclkin.3";
  };
@@ -66,7 +66,7 @@ index 340a3c7..28a2b83 100644
  &hdmi0 {
  	status = "okay";
  
-@@ -41,9 +46,32 @@
+@@ -41,6 +46,12 @@
  				remote-endpoint = <&hdmi0_con>;
  			};
  		};
@@ -79,8 +79,9 @@ index 340a3c7..28a2b83 100644
  	};
  };
  
- &hdmi0_con {
- 	remote-endpoint = <&rcar_dw_hdmi0_out>;
+@@ -61,3 +72,20 @@
+ &sata {
+ 	status = "okay";
  };
 +
 +&rcar_sound {
