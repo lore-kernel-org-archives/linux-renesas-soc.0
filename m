@@ -2,109 +2,111 @@ Return-Path: <SRS0=CNOd=RD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DDDC10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 11:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC2BC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 11:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7406E218AE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 11:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0806221850
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 11:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbfB1LCY (ORCPT
+        id S1731126AbfB1LFR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Feb 2019 06:02:24 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:49884 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731481AbfB1LCX (ORCPT
+        Thu, 28 Feb 2019 06:05:17 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:44074 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731073AbfB1LFR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Feb 2019 06:02:23 -0500
+        Thu, 28 Feb 2019 06:05:17 -0500
 Received: from ramsan ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id iB2N1z0073XaVaC06B2NCe; Thu, 28 Feb 2019 12:02:22 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id iB5F1z00R3XaVaC06B5FBD; Thu, 28 Feb 2019 12:05:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gzJSI-0007Sr-4R; Thu, 28 Feb 2019 12:02:22 +0100
+        id 1gzJV5-0007Tm-2D; Thu, 28 Feb 2019 12:05:15 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gzJSI-0000RS-2r; Thu, 28 Feb 2019 12:02:22 +0100
+        id 1gzJV5-0000UP-0R; Thu, 28 Feb 2019 12:05:15 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] spi: sh-msiof: Add reset of registers before starting transfer
-Date:   Thu, 28 Feb 2019 12:02:15 +0100
-Message-Id: <20190228110215.1657-1-geert+renesas@glider.be>
+Subject: [PATCH] spi: sh-msiof: Restrict bits per word to 8/16/24/32 on R-Car Gen2/3
+Date:   Thu, 28 Feb 2019 12:05:13 +0100
+Message-Id: <20190228110513.1833-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+While the MSIOF variants in older SuperH and SH/R-Mobile SoCs support
+bits-per-word values in the full range 8..32, the variants present in
+R-Car Gen2 and Gen3 SoCs are restricted to 8, 16, 24, or 32.
 
-In accordance with hardware specification Ver 1.0, reset register
-transmission / reception setting before transfer.
+Obtain the value from family-specific sh_msiof_chipdata to fix this.
 
-Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/spi/spi-sh-msiof.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Tested on SH-Mobile AG5 with 12 bits per word.
+
+ drivers/spi/spi-sh-msiof.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index b20e70a2bdd115d7..6e83368874839d09 100644
+index 6e83368874839d09..48535e95102c9b08 100644
 --- a/drivers/spi/spi-sh-msiof.c
 +++ b/drivers/spi/spi-sh-msiof.c
-@@ -130,6 +130,8 @@ struct sh_msiof_spi_priv {
- #define CTR_TFSE	0x00004000 /* Transmit Frame Sync Signal Output Enable */
- #define CTR_TXE		0x00000200 /* Transmit Enable */
- #define CTR_RXE		0x00000100 /* Receive Enable */
-+#define CTR_TXRST	0x00000002 /* Transmit Reset */
-+#define CTR_RXRST	0x00000001 /* Receive Reset */
+@@ -32,6 +32,7 @@
+ #include <asm/unaligned.h>
  
- /* FCTR */
- #define FCTR_TFWM_MASK	0xe0000000 /* Transmit FIFO Watermark */
-@@ -246,6 +248,25 @@ static irqreturn_t sh_msiof_spi_irq(int irq, void *data)
- 	return IRQ_HANDLED;
+ struct sh_msiof_chipdata {
++	u32 bits_per_word_mask;
+ 	u16 tx_fifo_size;
+ 	u16 rx_fifo_size;
+ 	u16 ctlr_flags;
+@@ -1072,6 +1073,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
  }
  
-+static void sh_msiof_spi_reset_regs(struct sh_msiof_spi_priv *p)
-+{
-+	u32 mask = CTR_TXRST | CTR_RXRST;
-+	u32 data;
-+	int k;
-+
-+	data = sh_msiof_read(p, CTR);
-+	data |= mask;
-+
-+	sh_msiof_write(p, CTR, data);
-+
-+	for (k = 100; k > 0; k--) {
-+		if (!(sh_msiof_read(p, CTR) & mask))
-+			break;
-+
-+		udelay(1);
-+	}
-+}
-+
- static const u32 sh_msiof_spi_div_array[] = {
- 	SCR_BRDV_DIV_1, SCR_BRDV_DIV_2,	 SCR_BRDV_DIV_4,
- 	SCR_BRDV_DIV_8,	SCR_BRDV_DIV_16, SCR_BRDV_DIV_32,
-@@ -925,6 +946,9 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
- 	bool swab;
- 	int ret;
+ static const struct sh_msiof_chipdata sh_data = {
++	.bits_per_word_mask = SPI_BPW_RANGE_MASK(8, 32),
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.ctlr_flags = 0,
+@@ -1079,6 +1081,8 @@ static const struct sh_msiof_chipdata sh_data = {
+ };
  
-+	/* reset registers */
-+	sh_msiof_spi_reset_regs(p);
-+
- 	/* setup clocks (clock already enabled in chipselect()) */
- 	if (!spi_controller_is_slave(p->ctlr))
- 		sh_msiof_spi_set_clk_regs(p, clk_get_rate(p->clk), t->speed_hz);
+ static const struct sh_msiof_chipdata rcar_gen2_data = {
++	.bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16) |
++			      SPI_BPW_MASK(24) | SPI_BPW_MASK(32),
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.ctlr_flags = SPI_CONTROLLER_MUST_TX,
+@@ -1086,6 +1090,8 @@ static const struct sh_msiof_chipdata rcar_gen2_data = {
+ };
+ 
+ static const struct sh_msiof_chipdata rcar_gen3_data = {
++	.bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16) |
++			      SPI_BPW_MASK(24) | SPI_BPW_MASK(32),
+ 	.tx_fifo_size = 64,
+ 	.rx_fifo_size = 64,
+ 	.ctlr_flags = SPI_CONTROLLER_MUST_TX,
+@@ -1410,7 +1416,7 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+ 	ctlr->setup = sh_msiof_spi_setup;
+ 	ctlr->prepare_message = sh_msiof_prepare_message;
+ 	ctlr->slave_abort = sh_msiof_slave_abort;
+-	ctlr->bits_per_word_mask = SPI_BPW_RANGE_MASK(8, 32);
++	ctlr->bits_per_word_mask = chipdata->bits_per_word_mask;
+ 	ctlr->auto_runtime_pm = true;
+ 	ctlr->transfer_one = sh_msiof_transfer_one;
+ 
 -- 
 2.17.1
 
