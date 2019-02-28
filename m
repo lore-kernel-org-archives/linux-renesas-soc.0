@@ -2,153 +2,112 @@ Return-Path: <SRS0=CNOd=RD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3874DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 14:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE18C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 14:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1147720C01
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 14:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474772184A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 14:39:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ccIV4rLp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731198AbfB1OBV (ORCPT
+        id S1730388AbfB1Oj5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Feb 2019 09:01:21 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:54989 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730687AbfB1OBV (ORCPT
+        Thu, 28 Feb 2019 09:39:57 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45921 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731713AbfB1Oj5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Feb 2019 09:01:21 -0500
-X-IronPort-AV: E=Sophos;i="5.58,423,1544454000"; 
-   d="scan'208";a="8917342"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Feb 2019 23:01:19 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 11F11446E12D;
-        Thu, 28 Feb 2019 23:01:16 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: [PATCH v5 2/2] i2c: designware: Add support for an interface clock
-Date:   Thu, 28 Feb 2019 13:52:10 +0000
-Message-Id: <1551361930-24434-3-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1551361930-24434-1-git-send-email-gareth.williams.jx@renesas.com>
-References: <1551361930-24434-1-git-send-email-gareth.williams.jx@renesas.com>
+        Thu, 28 Feb 2019 09:39:57 -0500
+Received: by mail-lf1-f66.google.com with SMTP id h10so15401676lfc.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Feb 2019 06:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QI78aKxiETsK6ZhT2vHUjQU76cSioe3lKkBF2I5biYA=;
+        b=ccIV4rLpuh4MCl00S5yNsakMc/CuZA+IOaxI6tjeQ9WsUV9Av5NvYc8cil921OJGRF
+         L6y6zkPDlr8PN6/+t7QQpwzVMagqCsCNFKhLv5+oS3CDm+zhCV2wpETHf74fKkwadRJ2
+         X1+Ng6EihVIW9N89PTZXHd7N68RBAgfKyiHRfFGC/v8u20p6bzto9K3cqXnfqELZgN0g
+         35jcH5Nx3Cc7QcceWC5KzygMIfqFtpEOaaLgnhrc4fL7ckeTocAOzXvI4FY+vLjrUN13
+         ZKNf/ipQewEfblnoHlCxw73MNO6jSgHMWHsg3+xJdZ+ngDdfFr4CvAjUhrPpNdqGhmHI
+         1/kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=QI78aKxiETsK6ZhT2vHUjQU76cSioe3lKkBF2I5biYA=;
+        b=DOBwFMQXD75QhkkoPscPCxGvKfzoyNOIaD8P7zEaGa80PAntYMPuOCPwqNXo36H9Kq
+         YqXgDOYSNLxO3MsQrOXZqTizoJXnc4d71O5wDbtFhTJJQwHhD5Z9kTa3q6wKl9e78IC3
+         ASeMZV/yIPSajfWqZStASBMZHxr2FTK8vZAhXiyGylaP+1QhXvmIBTHZ5wbZTjkrlHyT
+         DmO4DrEk7CUz136XdGQumYWydiyAzMouxp7RatuCmWAZsPRPxvfZPbdhJ+eX+UBGAIRJ
+         cyP+xFcSMm+N3Vt09luNHA/ZPNsO6Tz/tMTL3WriFoBGdl4HMNFup2Iz+9GyYoUMbKFH
+         1DMQ==
+X-Gm-Message-State: AHQUAuY0uChmqcZwfJ0MPn1t0Ppv1Ykix2ciozHD4Xcw9G/jdJbZ8Av+
+        bQaCr+RLHS2s4TOLqJHscx/L3cIeUP8=
+X-Google-Smtp-Source: AHgI3IbSQbzhCdzjwWG/KCgtkIq1hsSjNFnfuRJGErFS+13geJdtzmvMhFZr+QFL8TEk6qZlareiMg==
+X-Received: by 2002:a19:5209:: with SMTP id m9mr4323970lfb.51.1551364794811;
+        Thu, 28 Feb 2019 06:39:54 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.84.83])
+        by smtp.gmail.com with ESMTPSA id g11sm877881lfh.15.2019.02.28.06.39.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 28 Feb 2019 06:39:54 -0800 (PST)
+Subject: Re: [PATCH] media: rcar_drif: Remove devm_ioremap_resource() error
+ printing
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20190228110616.1966-1-geert+renesas@glider.be>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <db628fcf-7101-3466-e7b6-b57a76bd271c@cogentembedded.com>
+Date:   Thu, 28 Feb 2019 17:39:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190228110616.1966-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+Hello!
 
-The Synopsys I2C Controller has an interface clock, but most SoCs hide
-this away. However, on some SoCs you need to explicitly enable the
-interface clock in order to access the registers. Therefore, add 
-support for an optional interface clock.
+On 02/28/2019 02:06 PM, Geert Uytterhoeven wrote:
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v5:
- - Updated comments to reference "interface clock" instead of
-   "peripheral clock".
- - Corrected spelling in commit message, changing "explicity" to
-   "explicitly".
-v4:
- - Updated comments to reference "peripheral clock"
-   instead of "bus clock".
- - Added Wolfram's Acked-by
-v3:
- - busclk renamed to pclk.
- - Added comment with dw_i2c_dev struct definition describing pclk.
- - Added enable rollback of first clock if second fails to enable.
-v2:
- - Use new devm_clk_get_optional() function as it simplifies handling when
-   the optional clock is not present.
----
- drivers/i2c/busses/i2c-designware-common.c  | 18 ++++++++++++++++--
- drivers/i2c/busses/i2c-designware-core.h    |  2 ++
- drivers/i2c/busses/i2c-designware-platdrv.c |  5 +++++
- 3 files changed, 23 insertions(+), 2 deletions(-)
+> devm_ioremap_resource() already prints an error message on failure, so
+> there is no need to repeat that.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/media/platform/rcar_drif.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
+> index c417ff8f6fe548f3..d4efade7aea60e32 100644
+> --- a/drivers/media/platform/rcar_drif.c
+> +++ b/drivers/media/platform/rcar_drif.c
+> @@ -1407,7 +1407,6 @@ static int rcar_drif_probe(struct platform_device *pdev)
+>  	ch->base = devm_ioremap_resource(&pdev->dev, res);
+>  	if (IS_ERR(ch->base)) {
+>  		ret = PTR_ERR(ch->base);
+> -		dev_err(&pdev->dev, "ioremap failed (%d)\n", ret);
+>  		return ret;
 
-diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
-index a473011..2de7452 100644
---- a/drivers/i2c/busses/i2c-designware-common.c
-+++ b/drivers/i2c/busses/i2c-designware-common.c
-@@ -251,13 +251,27 @@ unsigned long i2c_dw_clk_rate(struct dw_i2c_dev *dev)
- 
- int i2c_dw_prepare_clk(struct dw_i2c_dev *dev, bool prepare)
- {
-+	int ret;
-+
- 	if (IS_ERR(dev->clk))
- 		return PTR_ERR(dev->clk);
- 
--	if (prepare)
--		return clk_prepare_enable(dev->clk);
-+	if (prepare) {
-+		/* Optional interface clock */
-+		ret = clk_prepare_enable(dev->pclk);
-+		if (ret)
-+			return ret;
-+
-+		ret = clk_prepare_enable(dev->clk);
-+		if (ret)
-+			clk_disable_unprepare(dev->pclk);
-+
-+		return ret;
-+	}
- 
- 	clk_disable_unprepare(dev->clk);
-+	clk_disable_unprepare(dev->pclk);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(i2c_dw_prepare_clk);
-diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
-index b4a0b2b..e88c711 100644
---- a/drivers/i2c/busses/i2c-designware-core.h
-+++ b/drivers/i2c/busses/i2c-designware-core.h
-@@ -177,6 +177,7 @@
-  * @base: IO registers pointer
-  * @cmd_complete: tx completion indicator
-  * @clk: input reference clock
-+ * @pclk: clock required to access the registers
-  * @slave: represent an I2C slave device
-  * @cmd_err: run time hadware error code
-  * @msgs: points to an array of messages currently being transferred
-@@ -226,6 +227,7 @@ struct dw_i2c_dev {
- 	void __iomem		*ext;
- 	struct completion	cmd_complete;
- 	struct clk		*clk;
-+	struct clk		*pclk;
- 	struct reset_control	*rst;
- 	struct i2c_client		*slave;
- 	u32			(*get_clk_rate_khz) (struct dw_i2c_dev *dev);
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 9eaac3b..97129f5 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -346,6 +346,11 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	else
- 		i2c_dw_configure_master(dev);
- 
-+	/* Optional interface clock */
-+	dev->pclk = devm_clk_get_optional(&pdev->dev, "pclk");
-+	if (IS_ERR(dev->pclk))
-+		return PTR_ERR(dev->pclk);
-+
- 	dev->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (!i2c_dw_prepare_clk(dev, true)) {
- 		u64 clk_khz;
--- 
-2.7.4
+   No need to use 'ret' now -- how about merging the assignment and *return*?
 
+>  	}
+>  	ch->start = res->start;
+> 
+
+MBR, Sergei
