@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61513C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 15:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 924FFC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 15:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 314E720C01
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 15:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57D99206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Feb 2019 15:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551367641;
-	bh=p1nk1bptIWpR0xUwnKFtinx6hZEgsQYkg0qsrM1SrqI=;
+	s=default; t=1551368053;
+	bh=Crh+1a83igD6xXKKizyGkRXio+hd1RulNcHhL9yqiUA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JHCcJzyigCpk4zMgZeqgo+ZonkV/LxFyMyv6J+qazY5LNtDbZ3/+Gr1+F1biLlWUs
-	 uuZ34iqkTktF3RFM/hV8fnN47h+QghE6g7xFelJXbKuleZvom/WnwzXKntD8R9Hybj
-	 +VLGAcLCjc9trjqg0gm1nH340aZyvYO9+WzqGLkk=
+	b=uJJq2DUYDUOxuYxUbbJHDEM4Klmd+9zC5fmrlSUII76XI/END2l88CGIUSic4EdYw
+	 1VmBfysFLgDf8RwfSeq6A/LiROe7JuljKztn5a33dwNjFBPUAZulZTEBZSD7U9NKns
+	 JMieGcQN6NMh7L38/wghAXHNut1dkUB+auUzoM20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388197AbfB1P1O (ORCPT
+        id S1730870AbfB1PIc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Feb 2019 10:27:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44360 "EHLO mail.kernel.org"
+        Thu, 28 Feb 2019 10:08:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387472AbfB1PLR (ORCPT
+        id S1732830AbfB1PIa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Feb 2019 10:11:17 -0500
+        Thu, 28 Feb 2019 10:08:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 919AA218FC;
-        Thu, 28 Feb 2019 15:11:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7216B218CD;
+        Thu, 28 Feb 2019 15:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551366676;
-        bh=p1nk1bptIWpR0xUwnKFtinx6hZEgsQYkg0qsrM1SrqI=;
+        s=default; t=1551366509;
+        bh=Crh+1a83igD6xXKKizyGkRXio+hd1RulNcHhL9yqiUA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LBmOKXaO6d33A4a9xJ/BDGSl5AiMPsmR+EIFEr+7jCyhpMg/5vVEMLFuSYIEr+Hs6
-         cCsTazKxqYxE6QZhdeq581kkxlQ6UKTl+ygYmIwRmGWlafiz3PFn0y+rEF+v4KOPxM
-         EOqksuQ2zBohFrRVccShZVv0l9fe1N4rMzEcSBbY=
+        b=x5gpEkkJcbtA4OlbJzdydb1RPU19kT3Y6vL3u3+hyWP//LeXdQ+/j+ASDdWuxrRFk
+         dQn1qd6T5genaTEwLts0FYQreNB/jYKGW3wLL9knV+/vRG8NEPFP9OEqlZTUW+Aosc
+         71VYNWdy79JJvZi0+qp9Wqe3eWUV8yaLuGH2IKjw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 09/64] arm64: dts: renesas: r8a77965: Enable DMA for SCIF2
-Date:   Thu, 28 Feb 2019 10:10:10 -0500
-Message-Id: <20190228151105.11277-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 11/81] arm64: dts: renesas: r8a77965: Enable DMA for SCIF2
+Date:   Thu, 28 Feb 2019 10:07:03 -0500
+Message-Id: <20190228150813.10256-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190228151105.11277-1-sashal@kernel.org>
-References: <20190228151105.11277-1-sashal@kernel.org>
+In-Reply-To: <20190228150813.10256-1-sashal@kernel.org>
+References: <20190228150813.10256-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 0cd44461a0bd2..f60f08ba1a6f9 100644
+index 83946ca2eba5d..d59dada137223 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -951,6 +951,9 @@
+@@ -1028,6 +1028,9 @@
  				 <&cpg CPG_CORE R8A77965_CLK_S3D1>,
  				 <&scif_clk>;
  			clock-names = "fck", "brg_int", "scif_clk";
