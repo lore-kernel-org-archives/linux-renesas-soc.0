@@ -2,151 +2,81 @@ Return-Path: <SRS0=w5fC=RE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DA0C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 13:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DEBC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 13:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB1D20851
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 13:39:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D59820851
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 13:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbfCANjD (ORCPT
+        id S1727697AbfCANjG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 08:39:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:35066 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727697AbfCANjD (ORCPT
+        Fri, 1 Mar 2019 08:39:06 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39917 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387795AbfCANjF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 08:39:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3BB9A78;
-        Fri,  1 Mar 2019 05:39:02 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 564053F5C1;
-        Fri,  1 Mar 2019 05:38:59 -0800 (PST)
-Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a774c0
- support
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>
-References: <1544732284-5951-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <TYXPR01MB1775847A1B243C0B30C69CFBC0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <dde90e93-e8ca-acd2-ffd0-976c51ec309f@arm.com>
-Date:   Fri, 1 Mar 2019 13:38:57 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 1 Mar 2019 08:39:05 -0500
+Received: by mail-ua1-f67.google.com with SMTP id s15so22437164uap.6;
+        Fri, 01 Mar 2019 05:39:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yw1Hwom0nO7sn24blU6hKG6bXWDVebNp0d6RM3O/I3A=;
+        b=QXPW6CIQgtqA52xjE/RIXlcleycPe0oXLPy5tMD0qMAiKqy4GKJR1JbhtTXZv0SX7m
+         bKcX0cdPLq/45wc4HwmAJ56hNqehJTAg+BfHYKwEAjhWo3tI7vYVbjyxIiLDYLfBtDQp
+         MRf4fREA27z+VcR8dz6PawNAtmXJP/emPI30g1OqESwsHdpetaqw4bnocCuJ6VUhOMOb
+         6VYEqGrqtkr52x/tBq+lFam6TxMPM3pWR0FM7TOka0u5f4Go120CfFIwU1/MKkG5IfuS
+         f/YN/nif3F7udtxMLR/UuvhsaB6x5SVp2zZYfzvzT1T/1XJr3EurguL1ZPZYVzH80Reb
+         CDMw==
+X-Gm-Message-State: APjAAAUlYszLrMhVRbiolVXVIr9a+VmUnXosIZBdw4WfIFr5mhfJTZvx
+        K+BcwcukwesLaPG5ucdUSBxA/X++c4vI18gNrs8=
+X-Google-Smtp-Source: APXvYqwqNE0xh+jUQB9izRLrpxnG8IFiAwaCIcPqlaZP3Gga5STna75/5Of4CBbdi8Ifu5p4TkKzBqD1WhsE8fmEbEo=
+X-Received: by 2002:a67:8588:: with SMTP id h130mr2503664vsd.11.1551447544370;
+ Fri, 01 Mar 2019 05:39:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <TYXPR01MB1775847A1B243C0B30C69CFBC0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1551438256-22065-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1551438256-22065-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 1 Mar 2019 14:38:53 +0100
+Message-ID: <CAMuHMdWNqFkSRnX9kGGFOCMTEHguQtsD=JfqLaHUpB=kgETPWA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a774c0: Add CANFD support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 01/03/2019 11:49, Fabrizio Castro wrote:
-> Hello Marc,
-> 
-> I am sorry to bother you.
-> Do you think you can take this patch?
+On Fri, Mar 1, 2019 at 12:04 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> The CANFD implementation on the RZ/G2E (a.k.a. r8a774c0) is
+> identical to the one found on the r8a77990.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-It already missed the boat for the merge window, as I sent the pull
-request last week. Please resend it after -rc1, and I'll pick it up.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
+Gr{oetje,eeting}s,
 
-	M.
-
-> 
-> Thanks,
-> Fab
-> 
->> From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-owner@vger.kernel.org> On Behalf Of Fabrizio Castro
->> Sent: 13 December 2018 20:18
->> Subject: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a774c0 support
->>
->> Document RZ/G2E (R8A774C0) SoC bindings.
->>
->> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->> ---
->>  Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
->> b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
->> index 8de96a4..f977ea7 100644
->> --- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
->> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
->> @@ -16,6 +16,7 @@ Required properties:
->>      - "renesas,irqc-r8a7793" (R-Car M2-N)
->>      - "renesas,irqc-r8a7794" (R-Car E2)
->>      - "renesas,intc-ex-r8a774a1" (RZ/G2M)
->> +    - "renesas,intc-ex-r8a774c0" (RZ/G2E)
->>      - "renesas,intc-ex-r8a7795" (R-Car H3)
->>      - "renesas,intc-ex-r8a7796" (R-Car M3-W)
->>      - "renesas,intc-ex-r8a77965" (R-Car M3-N)
->> --
->> 2.7.4
-> 
-
+                        Geert
 
 -- 
-Jazz is not dead. It just smells funny...
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
