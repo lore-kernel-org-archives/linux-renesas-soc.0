@@ -4,69 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D92C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A080C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 500FB20830
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:06:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0158E20851
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:10:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="JXtLWSby"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="LVBelYcc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388084AbfCAMGc (ORCPT
+        id S1732397AbfCAMKB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 07:06:32 -0500
-Received: from mail-eopbgr1400093.outbound.protection.outlook.com ([40.107.140.93]:40274
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        Fri, 1 Mar 2019 07:10:01 -0500
+Received: from mail-eopbgr1410104.outbound.protection.outlook.com ([40.107.141.104]:17488
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732687AbfCAMGc (ORCPT
+        id S1727952AbfCAMKB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 07:06:32 -0500
+        Fri, 1 Mar 2019 07:10:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e1wICsfZvkqL3eB+Pikqhufu684XxFcmnCAURWGBxDg=;
- b=JXtLWSby/iGVmlbXBfAkKxGQl+4cMbv/2FoAGoebcVtwgG+F7+OvxAZzyq4pfPFv5hY+siSSw+K7hNtHKK7DsFKd+IOusHN4NkEBlV2j3qtj3pFG+6b51YcK69ZjhygZUKa6qRCzqq3Ye4PJkWI0c9HFSQEtKxIBlm/q2sPIPLQ=
+ bh=uUGPZr5K5vqsb+JUgenJJ82PnQTeaQ028pHDBIvkJiU=;
+ b=LVBelYccwvIxhQpLwR45qNssUomNgh+h0QeNEyAvkvRCBjtd2dtpZPtNCQt8NXVzW5LWuux5BN1Yd7D68MTGCoV7es1pCcWE8ioMZaxZb12GX5d+42rRdW9P2WsJ6SEGBAXk49r5pDny2A/lAoTwgw52+UakmY29uJidGnuVsu0=
 Received: from TYXPR01MB1775.jpnprd01.prod.outlook.com (52.133.168.140) by
- TYXPR01MB1535.jpnprd01.prod.outlook.com (52.133.166.21) with Microsoft SMTP
+ TYXPR01MB1871.jpnprd01.prod.outlook.com (52.133.166.142) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.20; Fri, 1 Mar 2019 12:06:26 +0000
+ 15.20.1643.18; Fri, 1 Mar 2019 12:09:56 +0000
 Received: from TYXPR01MB1775.jpnprd01.prod.outlook.com
  ([fe80::88d2:545c:9212:c8cf]) by TYXPR01MB1775.jpnprd01.prod.outlook.com
  ([fe80::88d2:545c:9212:c8cf%5]) with mapi id 15.20.1665.015; Fri, 1 Mar 2019
- 12:06:26 +0000
+ 12:09:56 +0000
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>
-CC:     "David S. Miller" <davem@davemloft.net>,
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+CC:     Biju Das <biju.das@bp.renesas.com>,
+        =?iso-8859-1?Q?Niklas_S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH 3/3] dt-bindings: can: rcar_canfd: Document r8a774a1
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1
  support
-Thread-Topic: [PATCH 3/3] dt-bindings: can: rcar_canfd: Document r8a774a1
+Thread-Topic: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1
  support
-Thread-Index: AQHUrnSUcDbl6zEXA0CIBhvMaZjM6qX28T9Q
-Date:   Fri, 1 Mar 2019 12:06:26 +0000
-Message-ID: <TYXPR01MB1775BCD55E8E4A66D1EBCADDC0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
-References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547736856-16539-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1547736856-16539-4-git-send-email-fabrizio.castro@bp.renesas.com>
+Thread-Index: AQHUSRPkccN3Ce6NF0WYXZsqMZnzMqX3vODQ
+Date:   Fri, 1 Mar 2019 12:09:55 +0000
+Message-ID: <TYXPR01MB1775F18270FB477D010C180EC0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
+ <1536589878-26218-2-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1536589878-26218-2-git-send-email-biju.das@bp.renesas.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -75,109 +68,80 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
 x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4d4c858f-14e0-4852-6252-08d69e3e54d9
+x-ms-office365-filtering-correlation-id: d45e61e9-b4a7-48de-9602-08d69e3ed1a3
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYXPR01MB1535;
-x-ms-traffictypediagnostic: TYXPR01MB1535:
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: 1;TYXPR01MB1535;20:XTaesiuj8WgTefTT4ao1ChHyTPWj1pWqUQQ2fsczuvLjh0b9OQ050A0CAiX+w7AyiasRTom7roeU6M/SqPPU7lVCNN8hMBowXl7sK1trOHQSeFGxB0JFjnkIcRoanh9lpLO59c8Tuy7KKqeclvbSWdpWdKtD41OFWJQjAoKsOPs=
-x-microsoft-antispam-prvs: <TYXPR01MB15351879FB112C16206B40A9C0760@TYXPR01MB1535.jpnprd01.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYXPR01MB1871;
+x-ms-traffictypediagnostic: TYXPR01MB1871:
+x-microsoft-exchange-diagnostics: 1;TYXPR01MB1871;20:v67NiWY+EMjnnWYKlXoP49aeEWvvoUjTK3IIxnNywkI2rkk70mw01CqEAMwfKySb+PxXsgbL3jNQCKv+x/cHnSRn8q04KiuY9H3sZBdPHFGeucwOeR0+aignFgqwFbU1BQor3iZfcFW/PB8nVtqzBZ2ktEE85zEeRt+T30EgTmw=
+x-microsoft-antispam-prvs: <TYXPR01MB1871099E06083B0FABA3FD10C0760@TYXPR01MB1871.jpnprd01.prod.outlook.com>
 x-forefront-prvs: 09634B1196
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(39860400002)(376002)(396003)(366004)(189003)(199004)(106356001)(11346002)(446003)(52536013)(186003)(66066001)(7736002)(305945005)(8936002)(486006)(68736007)(476003)(44832011)(7416002)(74316002)(86362001)(25786009)(81156014)(81166006)(97736004)(256004)(8676002)(5660300002)(3846002)(6116002)(71200400001)(71190400001)(4326008)(53936002)(6306002)(102836004)(26005)(7696005)(76176011)(9686003)(229853002)(55016002)(316002)(54906003)(6436002)(6246003)(33656002)(99286004)(105586002)(6916009)(53546011)(6506007)(2906002)(14454004)(478600001)(966005);DIR:OUT;SFP:1102;SCL:1;SRVR:TYXPR01MB1535;H:TYXPR01MB1775.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(376002)(346002)(39860400002)(396003)(199004)(189003)(55016002)(9686003)(66066001)(8936002)(68736007)(52536013)(186003)(6246003)(54906003)(316002)(71200400001)(6916009)(71190400001)(102836004)(53936002)(86362001)(5660300002)(486006)(256004)(11346002)(81166006)(81156014)(53546011)(76176011)(106356001)(8676002)(105586002)(97736004)(14454004)(26005)(25786009)(7696005)(229853002)(99286004)(478600001)(446003)(33656002)(6436002)(2906002)(4326008)(44832011)(305945005)(476003)(6506007)(7736002)(74316002)(6116002)(3846002);DIR:OUT;SFP:1102;SCL:1;SRVR:TYXPR01MB1871;H:TYXPR01MB1775.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
 received-spf: None (protection.outlook.com: bp.renesas.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4Snt9gs306QCy2ELRWj7HLatsxqONVc4f4PTgbVFgEc40Vs+3EXa8QDjZ+5HYjn5g3cN+CDolZvZwVn2t7KvtG/xTVCZtCatbFvjpQABVssWPG5PHrQepy2k5X/wi8LIoc8h5EkIKynMyMjrXKyAALSCHYu03goDBZJofX8Q2d4etOtrVo0LagCRnhog23ykE78WfJCU84Fn+5VfTO011rK2el7YnJP/OFgPo2f4GVfhR9u2OuXBsLkVBKg8/tMdSkw0lHRS5AJDvXJaHgNJyGOxIjHg2kkGyVaY+7dKFurzEsthiXbL4tGE5kPIT6LW6f5ESF6PuBJUkTC6DhWcbZn6Bta+qvXfZOdAiobzWXJ9CswR6qeXKEJYy2mGoR0aGKLB6skFTOS+bziHCuVWh2BA7pslyDIT991vCRLQemI=
-Content-Type: text/plain; charset="us-ascii"
+x-microsoft-antispam-message-info: e/bR6szgHRm309Cwi+um4bHH9Sv6/wtGe6pgMDBJ16oo8Ir29k7LU1fmUdoIcpxiEVIts0vqchnXvtFlaC0R/1f24zGhkeEonmcnTMgIVzr+yVixMi+84A/7KsjZEb8xO3enxbMaFstaxinR0tWAkPwEeF2WxyJ8T7XkYbzrbxveKMG1uOI+xzRWyje6WH4JOF4oRlTov3e7XMWpcZ52/Z9pKuNFWp9511/4VT/AWivhx+bTGQvcrKMbxxlIhumrFJyU+CNKcEVL8ecOz4h9htWHbonES+2InMIpH+YC90mBvLsBh7fWpYB+VwC7Dh6t2jMkQffd2QImrClZIz8T3j5/AXU46kr4fqvNJEBBgsfftEUlfuaRqFK5PrOY9N2WIBQ33Aazo389RgqXTLGhKtZNAf9ebTq6T++kYEIxCy0=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d4c858f-14e0-4852-6252-08d69e3e54d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2019 12:06:26.6196
+X-MS-Exchange-CrossTenant-Network-Message-Id: d45e61e9-b4a7-48de-9602-08d69e3ed1a3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2019 12:09:55.9652
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB1535
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB1871
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Marc,
+Hello Mauro,
 
-I am sorry to bother you.
-Do you think you can take this patch?
+This patch has been around for some time now, do you think you can take it?
 
-Thanks,
+Cheers,
 Fab
 
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Sent: 17 January 2019 14:54
-> Subject: [PATCH 3/3] dt-bindings: can: rcar_canfd: Document r8a774a1 supp=
-ort
+> From: Biju Das <biju.das@bp.renesas.com>
+> Sent: 10 September 2018 15:31
+> Subject: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1 s=
+upport
 >=20
-> Document support for rcar_canfd on R8A774A1 SoC devices.
+> Document RZ/G2M (R8A774A1) SoC bindings.
 >=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> The RZ/G2M SoC is similar to R-Car M3-W (R8A7796).
+>=20
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > ---
-> This patch depends on:
-> https://patchwork.kernel.org/patch/10766781/
+>  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >=20
->  Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 15 ++++++++--=
------
->  1 file changed, 8 insertions(+), 7 deletions(-)
+> diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.tx=
+t
+> b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+> index 2d385b6..12fe685 100644
+> --- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+> +++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+> @@ -2,12 +2,13 @@ Renesas R-Car MIPI CSI-2
+>  ------------------------
 >=20
-> diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> index 32f051f..fd353a9 100644
-> --- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> +++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> @@ -4,6 +4,7 @@ Renesas R-Car CAN FD controller Device Tree Bindings
->  Required properties:
->  - compatible: Must contain one or more of the following:
->    - "renesas,rcar-gen3-canfd" for R-Car Gen3 and RZ/G2 compatible contro=
-llers.
-> +  - "renesas,r8a774a1-canfd" for R8A774A1 (RZ/G2M) compatible controller=
+>  The R-Car CSI-2 receiver device provides MIPI CSI-2 capabilities for the
+> -Renesas R-Car family of devices. It is used in conjunction with the
+> -R-Car VIN module, which provides the video capture capabilities.
+> +Renesas R-Car Gen3 and RZ/G2 family of devices. It is used in conjunctio=
+n
+> +with the R-Car VIN module, which provides the video capture capabilities=
 .
->    - "renesas,r8a774c0-canfd" for R8A774C0 (RZ/G2E) compatible controller=
-.
->    - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller=
-.
->    - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3-W) compatible controll=
-er.
-> @@ -29,13 +30,13 @@ The name of the child nodes are "channel0" and "chann=
-el1" respectively. Each
->  child node supports the "status" property only, which is used to
->  enable/disable the respective channel.
 >=20
-> -Required properties for "renesas,r8a774c0-canfd", "renesas,r8a7795-canfd=
-",
-> -"renesas,r8a7796-canfd", "renesas,r8a77965-canfd", and "renesas,r8a77990=
--canfd"
-> -compatible:
-> -In R8A774C0, R8A7795, R8A7796, R8A77965, and R8A77990 SoCs, canfd clock =
-is a
-> -div6 clock and can be used by both CAN and CAN FD controller at the same=
- time.
-> -It needs to be scaled to maximum frequency if any of these controllers u=
-se it.
-> -This is done using the below properties:
-> +Required properties for "renesas,r8a774a1-canfd", "renesas,r8a774c0-canf=
-d",
-> +"renesas,r8a7795-canfd", "renesas,r8a7796-canfd", "renesas,r8a77965-canf=
-d", and
-> +"renesas,r8a77990-canfd" compatible:
-> +In R8A774A1, R8A774C0, R8A7795, R8A7796, R8A77965, and R8A77990 SoCs, ca=
-nfd
-> +clock is a div6 clock and can be used by both CAN and CAN FD controller =
-at the
-> +same time. It needs to be scaled to maximum frequency if any of these
-> +controllers use it. This is done using the below properties:
->=20
->  - assigned-clocks: phandle of canfd clock.
->  - assigned-clock-rates: maximum frequency of this clock.
+>  Mandatory properties
+>  --------------------
+>   - compatible: Must be one or more of the following
+> +   - "renesas,r8a774a1-csi2" for the R8A774A1 device.
+>     - "renesas,r8a7795-csi2" for the R8A7795 device.
+>     - "renesas,r8a7796-csi2" for the R8A7796 device.
+>     - "renesas,r8a77965-csi2" for the R8A77965 device.
 > --
 > 2.7.4
 
