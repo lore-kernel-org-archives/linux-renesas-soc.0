@@ -2,103 +2,67 @@ Return-Path: <SRS0=w5fC=RE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A62C10F06
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 08:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABAFC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D9C1218D8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 08:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFB3E206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:02:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="XS/aLoyf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733124AbfCAI5K (ORCPT
+        id S1733007AbfCAJCs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 03:57:10 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:59352 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbfCAI5H (ORCPT
+        Fri, 1 Mar 2019 04:02:48 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:59629 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731675AbfCAJCs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 03:57:07 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id F2CE5393152F0DEE746D;
-        Fri,  1 Mar 2019 16:56:58 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x218uqOa086450;
-        Fri, 1 Mar 2019 16:56:52 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019030116573096-2498916 ;
-          Fri, 1 Mar 2019 16:57:30 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     liviu.dudau@arm.com
-Cc:     sudeep.holla@arm.com, lorenzo.pieralisi@arm.com,
-        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kgene@kernel.org, krzk@kernel.org,
-        linux-samsung-soc@vger.kernel.org, michal.simek@xilinx.com,
-        afaerber@suse.de, manivannan.sadhasivam@linaro.org,
-        dinguyen@kernel.org, heiko@sntech.de,
-        linux-rockchip@lists.infradead.org, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org,
-        avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        openbmc@lists.ozlabs.org, xuwei5@hisilicon.com,
-        maxime.ripard@bootlin.com, wens@csie.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, horms@verge.net.au, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, wang.yi59@zte.com.cn,
-        Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 02/15] ARM: bcm: fix a leaked reference by addingmissing of_node_put
-Date:   Fri, 1 Mar 2019 16:56:43 +0800
-Message-Id: <1551430616-42014-2-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-03-01 16:57:31,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-03-01 16:56:36,
-        Serialize complete at 2019-03-01 16:56:36
-X-MAIL: mse01.zte.com.cn x218uqOa086450
+        Fri, 1 Mar 2019 04:02:48 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0D94125B73F;
+        Fri,  1 Mar 2019 20:02:46 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551430966; bh=chWR74qWW3qXfnlWmUgwB0blsaJEntLWH0UkhfWAqTU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XS/aLoyfQcI41ubsiCW0CxyoB9ne3tWy32QC3YTwglnjAAgEiDkx6eD+qeMS99lBf
+         5Fz25sTyg6cENCwyeVMrQ4Mpd4y4I02Qy/g8svm29HikUbsYoWjfpp6TzBybA82e2i
+         4s8Wqb5q07LULRN4JFIBARGQwfD3Qr2vco+NL0As=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 274CA940421; Fri,  1 Mar 2019 10:02:44 +0100 (CET)
+Date:   Fri, 1 Mar 2019 10:02:44 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] soc: renesas: Identify R-Car M3-W ES1.3
+Message-ID: <20190301090243.d2qrzn65uup4cwj5@verge.net.au>
+References: <20190228110048.1491-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190228110048.1491-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The call to of_get_next_child returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+On Thu, Feb 28, 2019 at 12:00:48PM +0100, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> The Product Register of R-Car M3-W ES1.3 incorrectly identifies the SoC
+> revision as ES2.1. Add a workaround to fix this.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Detected by coccinelle with the following warnings:
-./arch/arm/mach-bcm/board_bcm281xx.c:43:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 35, but without a corresponding object release within this function.
+Thanks Geert,
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Scott Branden <sbranden@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm/mach-bcm/board_bcm281xx.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/mach-bcm/board_bcm281xx.c b/arch/arm/mach-bcm/board_bcm281xx.c
-index b81bb38..1238ac8 100644
---- a/arch/arm/mach-bcm/board_bcm281xx.c
-+++ b/arch/arm/mach-bcm/board_bcm281xx.c
-@@ -38,6 +38,7 @@ static void bcm281xx_restart(enum reboot_mode mode, const char *cmd)
- 		return;
- 	}
- 	base = of_iomap(np_wdog, 0);
-+	of_node_put(np_wdog);
- 	if (!base) {
- 		pr_emerg("Couldn't map brcm,kona-wdt\n");
- 		return;
--- 
-2.9.5
-
+applied for v5.2.
