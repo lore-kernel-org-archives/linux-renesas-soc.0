@@ -2,91 +2,68 @@ Return-Path: <SRS0=w5fC=RE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E02C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECB4C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 13:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15CBF2084F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:58:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B73D62084F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 13:02:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfCAM6g (ORCPT
+        id S1727697AbfCANCA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 07:58:36 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:42583 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbfCAM6g (ORCPT
+        Fri, 1 Mar 2019 08:02:00 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:33081 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725978AbfCANCA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 07:58:36 -0500
-Received: by mail-ua1-f65.google.com with SMTP id s26so11678644uao.9;
-        Fri, 01 Mar 2019 04:58:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LIV7jgvplFoXjxFwM7fMQDRTfuDaqaDZMno/qvgOPHY=;
-        b=sYs89zLn/TnRRCSpjgUNqjnNCygUEQ7C7Yx8g2Z71lgzzuO3AFvqXDv5lAtuqjCyK9
-         SogQDIFC74+jS9sB5c2lzG+B+kLmnV4o9Ea6cU8NRcIk0BNDvWcvA1qMGDCldcfiidYM
-         /lKZJ1Py2chCwyaZyVHt4OSmUu8p2qGaN8zm44/v4wIp+09dEEff3ngja5j5AA9KB6Wm
-         u9wV1jmilNwnzJuXyrAwwpgmzX/NfERZlAruxEF9Ton1AEhzvE3ygj/uQGunFc2qE5Jf
-         zEUZWcGxaMxRKm3+MMKClQxCseGYkn+plOpWtdChDJ43loRdNr/ZyLQJofWDj6rM13CA
-         tfUQ==
-X-Gm-Message-State: APjAAAWDWvz1AAVE74gjnb44q/hTRV3ZpFmk7sQvu0v7bQPbPQI2lSnE
-        YdZQ78Y5oJ7PUuO0NhMrHtizze6QSoAQQRrsoJs=
-X-Google-Smtp-Source: APXvYqwK3suBL6Qw9L2wIymA0WNCsUwXqi7YfqAZi9CdCqK2rqGek78uvwaSsicltbz1ylW8GNPhXB2XbbGuiAxg22c=
-X-Received: by 2002:a9f:30dc:: with SMTP id k28mr2515863uab.75.1551445115439;
- Fri, 01 Mar 2019 04:58:35 -0800 (PST)
-MIME-Version: 1.0
-References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
- <1536589878-26218-2-git-send-email-biju.das@bp.renesas.com>
- <TYXPR01MB1775F18270FB477D010C180EC0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
- <8a5429a0-b4c5-a208-3e56-406bd031b01b@xs4all.nl>
-In-Reply-To: <8a5429a0-b4c5-a208-3e56-406bd031b01b@xs4all.nl>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Mar 2019 13:58:23 +0100
-Message-ID: <CAMuHMdXOcFaQiLUNiuUS_p5H0r3ZWMrWd09m5xZk4qitvLS25g@mail.gmail.com>
-Subject: Re: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1 support
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 1 Mar 2019 08:02:00 -0500
+X-IronPort-AV: E=Sophos;i="5.58,427,1544454000"; 
+   d="scan'208";a="9017346"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Mar 2019 22:01:58 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A20FF44767CB;
+        Fri,  1 Mar 2019 22:01:56 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] arm64: renesas_defconfig: Enable RX-8581 config option
+Date:   Fri,  1 Mar 2019 12:56:16 +0000
+Message-Id: <1551444976-48763-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hans,
+Enable support for RX-8571/RX-8581 RTC, which is used by
+RZ/G2E (r8a774c0) based Silicon Linux CAT874 board.
 
-On Fri, Mar 1, 2019 at 1:55 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> It looks like this series fell through the cracks.
->
-> I looked at it and the main problem is that it is missing a Reviewed-by
-> from Rob Herring (devicetree maintainer). It's a bit surprising since he
-> is usually fairly prompt.
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ arch/arm64/configs/renesas_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-He actually did provide his Rb on Sep 17.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index d9390aec..5561d30 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -267,6 +267,7 @@ CONFIG_LEDS_TRIGGER_CPU=y
+ CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
+ CONFIG_EDAC=y
+ CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_RX8581=y
+ CONFIG_DMADEVICES=y
+ CONFIG_RCAR_DMAC=y
+ CONFIG_RENESAS_USB_DMAC=y
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
