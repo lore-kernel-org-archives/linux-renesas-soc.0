@@ -2,538 +2,167 @@ Return-Path: <SRS0=w5fC=RE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7957C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 17:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CE3C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 18:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6188320848
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 17:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EA9E2084F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 18:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Vk7HGpOz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsYyTO5C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389409AbfCARJF (ORCPT
+        id S2389049AbfCAS33 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 12:09:05 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45358 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389400AbfCARJE (ORCPT
+        Fri, 1 Mar 2019 13:29:29 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34214 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388202AbfCAS32 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 12:09:04 -0500
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3DC8F6F6;
-        Fri,  1 Mar 2019 18:08:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1551460139;
-        bh=Pzoe6eG0fgb8CLcUZNin7GqEf1hXy5/QcZF7/dMerQM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vk7HGpOzWU05tu0ke5VaX94Y1eyo1Y8ILDFvSKMqIQKo729yBkkkjmHWqddn2p3iZ
-         2w0MX3imRJCweZgmE0BwW9WZ/aRWtRkwpaFu/bWYvnMQWG4LP4ek1lXfmL6g+y91nS
-         2rpkaf6EdA6MtHS34WULkBnxjhOcC7KhTfxIIJD4=
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH v2 5/5] media: vsp1: Provide partition overlap algorithm
-Date:   Fri,  1 Mar 2019 17:08:48 +0000
-Message-Id: <20190301170848.6598-6-kieran.bingham@ideasonboard.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190301170848.6598-1-kieran.bingham@ideasonboard.com>
-References: <20190301170848.6598-1-kieran.bingham@ideasonboard.com>
+        Fri, 1 Mar 2019 13:29:28 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u9so11807730pfn.1;
+        Fri, 01 Mar 2019 10:29:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MN/+0HJfK/P/AfUMNpDKU1vNs90v8HMaarb5ymQ9O6A=;
+        b=SsYyTO5CHq/60KMWOyRHaaiiWYnGm8GgAJEcVp6+kJSS4uHaTWz6dEuoQDqI3f9aSn
+         Se/OIDUK6fiaWG3p92OK+rDgkX2dwiPAGQnlrhKX6Nbf1ycfrYEKDnVz2VcrMEvk3B2y
+         4UEtRuEGJwtFJ2+JK0dimZyKa7D7kmzj1mzY3F8excW7TlU9lE0etOsWIm0KL4AVza2s
+         E3I4dUsUKHdKqAo0cRN0Q57zy0HawTDKmhku0JpbiJLjCSJgb6yc3q+oKJElpMXquVGQ
+         KWRRCauVvhVk1A0CT0LGdOQvGa57opoqqFA3QzNGykZR+LsMl/iXJizXb5opYiY/9fU6
+         1iVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=MN/+0HJfK/P/AfUMNpDKU1vNs90v8HMaarb5ymQ9O6A=;
+        b=LkHyPoEvDVk/7LGYtkn2J4EDCCgMzhxzOtYcLCCNm9qSBzJw0XTfnV/ksgydg8XOhI
+         kxpzkrLRSFJjTEmlf3qbqy2k+7NLqblytWpzXmnOKmMlYS8BgZfp7BfIMlZUI4z62V8r
+         iHIHGr7C/zlD21o30Y5HdVmePSD2CuEf4EemXPCINOV5VZy7hFm+Q8+lOXrpYIZzfeEV
+         YVAJqMfwjcesfwSSNJpe7oLm0WkKWYfuZfxL2Ii4eVieQ15RSd6MdOVrtfutnEiujvz9
+         xg2hH91r1wiV+tDwhhYWugNKAZgNI5X6IYw2wJhmVWiatrQJ6lAyZl7ov4VJbvLrP4oj
+         YTgQ==
+X-Gm-Message-State: APjAAAUiwqXShDKw+Q2TR++tJB946vX5MvZ/E5j1Uj+Msyma8O/CphW+
+        upjCcr2xAAxUMU8bXSyo/jo=
+X-Google-Smtp-Source: APXvYqxc3VTXqaRTQzGHIu4GAITJgzB3hWvZuUbO23z4dRCItHpI2RFLjWCIiaXQT4hlOFhL8Ef6hQ==
+X-Received: by 2002:a65:6148:: with SMTP id o8mr6205693pgv.442.1551464967326;
+        Fri, 01 Mar 2019 10:29:27 -0800 (PST)
+Received: from [10.67.50.0] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id 73sm4007968pga.19.2019.03.01.10.29.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Mar 2019 10:29:26 -0800 (PST)
+Subject: Re: [PATCH 02/15] ARM: bcm: fix a leaked reference by addingmissing
+ of_node_put
+To:     Wen Yang <wen.yang99@zte.com.cn>, liviu.dudau@arm.com
+Cc:     sudeep.holla@arm.com, lorenzo.pieralisi@arm.com,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kgene@kernel.org, krzk@kernel.org,
+        linux-samsung-soc@vger.kernel.org, michal.simek@xilinx.com,
+        afaerber@suse.de, manivannan.sadhasivam@linaro.org,
+        dinguyen@kernel.org, heiko@sntech.de,
+        linux-rockchip@lists.infradead.org, rjui@broadcom.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        linus.walleij@linaro.org, avifishman70@gmail.com,
+        tmaimon77@gmail.com, venture@google.com, yuenn@google.com,
+        brendanhiggins@google.com, openbmc@lists.ozlabs.org,
+        xuwei5@hisilicon.com, maxime.ripard@bootlin.com, wens@csie.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, horms@verge.net.au,
+        magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, wang.yi59@zte.com.cn
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
+ <1551430616-42014-2-git-send-email-wen.yang99@zte.com.cn>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <d4e943ba-d817-2559-1872-81a5d6785c83@gmail.com>
+Date:   Fri, 1 Mar 2019 10:28:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1551430616-42014-2-git-send-email-wen.yang99@zte.com.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On 3/1/19 12:56 AM, Wen Yang wrote:
+> The call to of_get_next_child returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+> 
+> Detected by coccinelle with the following warnings:
+> ./arch/arm/mach-bcm/board_bcm281xx.c:43:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 35, but without a corresponding object release within this function.
 
-To improve image quality when scaling using the UDS we need to correctly
-determine the start phase value for each partition window, and apply a
-margin to overlap discontinous pixels.
+This looks fine, if you resubmit, can you add a missing space between
+"adding" and "missing"? This applies to all of your patches, so I am
+assuming you somehow scripted that, which should be easy to fix.
 
-Provide helper functions for calculating the phase parameters, and source
-locations for a given output position and use these values to calculate our
-parition window parameters.
+With that changed:
 
-Extend the partition algorithm to sweep first backwards, then forwards
-through the entity list. Each entity is given the opportunity to expand it's window on the reverse sweep, and clip
-or increase the offset on the forwards sweep.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
----
-v2:
- - Configure HSTP and HEDP in uds_configure_partition for single partitions
- - refactored to use individual functions for various phase and position calculations
- - squashed forwards and backwards propagation work to a single patch
- - Fixed a few 'off-by-ones'
- - considerable other changes :)
----
- drivers/media/platform/vsp1/vsp1_entity.h |   2 +-
- drivers/media/platform/vsp1/vsp1_pipe.c   |  40 +++++-
- drivers/media/platform/vsp1/vsp1_pipe.h   |   6 +
- drivers/media/platform/vsp1/vsp1_rpf.c    |   8 +-
- drivers/media/platform/vsp1/vsp1_sru.c    |  37 +++++-
- drivers/media/platform/vsp1/vsp1_uds.c    | 151 +++++++++++++++++++++-
- drivers/media/platform/vsp1/vsp1_video.c  |   1 +
- drivers/media/platform/vsp1/vsp1_wpf.c    |  16 ++-
- 8 files changed, 242 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/media/platform/vsp1/vsp1_entity.h b/drivers/media/platform/vsp1/vsp1_entity.h
-index 97acb7795cf1..772492877764 100644
---- a/drivers/media/platform/vsp1/vsp1_entity.h
-+++ b/drivers/media/platform/vsp1/vsp1_entity.h
-@@ -88,7 +88,7 @@ struct vsp1_entity_operations {
- 	unsigned int (*max_width)(struct vsp1_entity *, struct vsp1_pipeline *);
- 	void (*partition)(struct vsp1_entity *, struct vsp1_pipeline *,
- 			  struct vsp1_partition *, unsigned int,
--			  struct vsp1_partition_window *);
-+			  struct vsp1_partition_window *, bool);
- };
- 
- struct vsp1_entity {
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-index f1bd21a01bcd..137ebe0ecad2 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.c
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-@@ -375,10 +375,32 @@ bool vsp1_pipeline_partitioned(struct vsp1_pipeline *pipe)
- /*
-  * Propagate the partition calculations through the pipeline
-  *
-- * Work backwards through the pipe, allowing each entity to update the partition
-- * parameters based on its configuration, and the entity connected to its
-- * source. Each entity must produce the partition required for the previous
-- * entity in the pipeline.
-+ * Work backwards through the pipe, allowing each entity to update the
-+ * partition parameters based on its configuration. Each entity must produce
-+ * the partition window required for the previous entity in the pipeline
-+ * to generate. This window can be passed through if no changes are necessary.
-+ *
-+ * Entities are processed in reverse order:
-+ *	DDDD = Destination pixels
-+ *	SSSS = Source pixels
-+ *	==== = Intermediate pixels
-+ *	____ = Disposable pixels
-+ *
-+ * WPF			    |DDDD|	WPF determines it's required partition
-+ * SRU			    |====|	Interconnected entities pass through
-+ * UDS(source)		   |<====>|	UDS Source requests overlap
-+ * UDS(sink)		|<-|======|->|	UDS Sink calculates input size
-+ * RPF			|__SSSSSSSS__|	RPF provides extra pixels
-+ *
-+ * Then work forwards through the pipe allowing entities to communicate any
-+ * clipping required based on any overlap and expansions they may have
-+ * generated.
-+ *
-+ * RPF			|__SSSSSSSS__|	Partition window is propagated forwards
-+ * UDS(sink)		|============|
-+ * UDS(source)		   |<====>|	UDS Source reports overlap
-+ * SRU			   |======|	Interconnected entities are updated
-+ * WPF			   |_DDDD_|	WPF handles clipping
-  */
- void vsp1_pipeline_propagate_partition(struct vsp1_pipeline *pipe,
- 				       struct vsp1_partition *partition,
-@@ -387,10 +409,18 @@ void vsp1_pipeline_propagate_partition(struct vsp1_pipeline *pipe,
- {
- 	struct vsp1_entity *entity;
- 
-+	/* Move backwards through the pipeline to propagate any expansion. */
- 	list_for_each_entry_reverse(entity, &pipe->entities, list_pipe) {
- 		if (entity->ops->partition)
- 			entity->ops->partition(entity, pipe, partition, index,
--					       window);
-+					       window, false);
-+	}
-+
-+	/* Move forwards through the pipeline and propagate any updates. */
-+	list_for_each_entry(entity, &pipe->entities, list_pipe) {
-+		if (entity->ops->partition)
-+			entity->ops->partition(entity, pipe, partition, index,
-+					       window, true);
- 	}
- }
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_pipe.h b/drivers/media/platform/vsp1/vsp1_pipe.h
-index dd8b2cdc6452..3e263a60f79b 100644
---- a/drivers/media/platform/vsp1/vsp1_pipe.h
-+++ b/drivers/media/platform/vsp1/vsp1_pipe.h
-@@ -58,10 +58,12 @@ enum vsp1_pipeline_state {
-  * @left: horizontal coordinate of the partition start in pixels relative to the
-  *	  left edge of the image
-  * @width: partition width in pixels
-+ * @offset: The number of pixels from the left edge of the window to clip
-  */
- struct vsp1_partition_window {
- 	unsigned int left;
- 	unsigned int width;
-+	unsigned int offset;
- };
- 
- /*
-@@ -71,6 +73,8 @@ struct vsp1_partition_window {
-  * @uds_source: The UDS output partition window configuration
-  * @sru: The SRU partition window configuration
-  * @wpf: The WPF partition window configuration
-+ * @start_phase: The UDS start phase for this partition
-+ * @end_phase: The UDS end phase for this partition
-  */
- struct vsp1_partition {
- 	struct vsp1_partition_window rpf;
-@@ -78,6 +82,8 @@ struct vsp1_partition {
- 	struct vsp1_partition_window uds_source;
- 	struct vsp1_partition_window sru;
- 	struct vsp1_partition_window wpf;
-+	unsigned int start_phase;
-+	unsigned int end_phase;
- };
- 
- /*
-diff --git a/drivers/media/platform/vsp1/vsp1_rpf.c b/drivers/media/platform/vsp1/vsp1_rpf.c
-index ef9bf5dd55a0..46d270644fe2 100644
---- a/drivers/media/platform/vsp1/vsp1_rpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_rpf.c
-@@ -324,9 +324,13 @@ static void rpf_partition(struct vsp1_entity *entity,
- 			  struct vsp1_pipeline *pipe,
- 			  struct vsp1_partition *partition,
- 			  unsigned int partition_idx,
--			  struct vsp1_partition_window *window)
-+			  struct vsp1_partition_window *window,
-+			  bool forwards)
- {
--	partition->rpf = *window;
-+	if (forwards)
-+		*window = partition->rpf;
-+	else
-+		partition->rpf = *window;
- }
- 
- static const struct vsp1_entity_operations rpf_entity_ops = {
-diff --git a/drivers/media/platform/vsp1/vsp1_sru.c b/drivers/media/platform/vsp1/vsp1_sru.c
-index b1617cb1f2b9..39f6e80a02a9 100644
---- a/drivers/media/platform/vsp1/vsp1_sru.c
-+++ b/drivers/media/platform/vsp1/vsp1_sru.c
-@@ -327,24 +327,57 @@ static void sru_partition(struct vsp1_entity *entity,
- 			  struct vsp1_pipeline *pipe,
- 			  struct vsp1_partition *partition,
- 			  unsigned int partition_idx,
--			  struct vsp1_partition_window *window)
-+			  struct vsp1_partition_window *window,
-+			  bool forwards)
- {
- 	struct vsp1_sru *sru = to_sru(&entity->subdev);
- 	struct v4l2_mbus_framefmt *input;
- 	struct v4l2_mbus_framefmt *output;
-+	int scale_up;
-+
-+	/* The partition->sru represents the SRU sink pad configuration. */
- 
- 	input = vsp1_entity_get_pad_format(&sru->entity, sru->entity.config,
- 					   SRU_PAD_SINK);
- 	output = vsp1_entity_get_pad_format(&sru->entity, sru->entity.config,
- 					    SRU_PAD_SOURCE);
- 
-+	scale_up = (input->width != output->width);
-+
-+	if (forwards) {
-+		/* Propagate the clipping offsets forwards. */
-+		window->offset += partition->sru.offset;
-+
-+		if (scale_up)
-+			window->offset *= 2;
-+
-+		return;
-+	}
-+
- 	/* Adapt if SRUx2 is enabled. */
--	if (input->width != output->width) {
-+	if (scale_up) {
-+		/* Clipping offsets are not back-propagated. */
- 		window->width /= 2;
- 		window->left /= 2;
-+
-+		/* SRUx2 requires an extra pixel at the right edge. */
-+		window->width++;
- 	}
- 
-+	/* Store our adapted sink window. */
- 	partition->sru = *window;
-+
-+	/* Expand to the left edge. */
-+	if (window->left != 0) {
-+		window->left--;
-+		window->width++;
-+		partition->sru.offset = 1;
-+	} else {
-+		partition->sru.offset = 0;
-+	}
-+
-+	/* Expand to the right edge. */
-+	window->width++;
- }
- 
- static const struct vsp1_entity_operations sru_entity_ops = {
-diff --git a/drivers/media/platform/vsp1/vsp1_uds.c b/drivers/media/platform/vsp1/vsp1_uds.c
-index c71c24363d54..e2bd44740ad6 100644
---- a/drivers/media/platform/vsp1/vsp1_uds.c
-+++ b/drivers/media/platform/vsp1/vsp1_uds.c
-@@ -58,6 +58,85 @@ static unsigned int uds_multiplier(int ratio)
- 	return mp < 4 ? 1 : (mp < 8 ? 2 : 4);
- }
- 
-+/*
-+ *  These functions all assume a starting phase of 0.
-+ *	i.e. the left edge of the image.
-+ */
-+
-+/*
-+ * uds_residual - Return the residual phase cycle at the given position
-+ * @pos: source destination position
-+ * @ratio: scaling ratio in U4.12 fixed-point format
-+ */
-+static unsigned int uds_residual(unsigned int pos, unsigned int ratio)
-+{
-+	unsigned int mp = uds_multiplier(ratio);
-+	unsigned int residual = (pos * ratio) % (mp * 4096);
-+
-+	return residual;
-+}
-+
-+/*
-+ * uds_left_src_pixel - Return the sink pixel location for the given source
-+ * position
-+ *
-+ * @pos: source destination position
-+ * @ratio: scaling ratio in U4.12 fixed-point format
-+ */
-+static unsigned int uds_left_src_pixel(unsigned int pos, unsigned int ratio)
-+{
-+	unsigned int mp = uds_multiplier(ratio);
-+	unsigned int prefilter_out = (pos * ratio) / (mp * 4096);
-+	unsigned int residual = (pos * ratio) % (mp * 4096);
-+
-+	/* Todo: Section 32.3.7.5 : Procedure 3
-+	 *
-+	 * A restriction is described where the destination position must
-+	 * satisfy the following conditions:
-+	 *
-+	 *  (pos * ratio) must be a multiple of mp
-+	 *
-+	 * This is not yet guaranteed and thus this check is in place
-+	 * until the pull-back is correctly calculated for all ratio
-+	 * and position values.
-+	 */
-+	WARN_ONCE((mp == 2 && (residual & 0x01)) ||
-+		  (mp == 4 && (residual & 0x03)),
-+		       "uds_left_pixel restrictions failed");
-+
-+	return mp * (prefilter_out + (residual ? 1 : 0));
-+}
-+
-+/*
-+ * uds_right_src_pixel - Return the sink pixel location for the given source
-+ * position
-+ *
-+ * @pos: source destination position
-+ * @ratio: scaling ratio in U4.12 fixed-point format
-+ */
-+static unsigned int uds_right_src_pixel(unsigned int pos, unsigned int ratio)
-+{
-+	unsigned int mp = uds_multiplier(ratio);
-+	unsigned int prefilter_out = (pos * ratio) / (mp * 4096);
-+
-+	return mp * (prefilter_out + 2) + (mp / 2);
-+}
-+
-+/*
-+ * uds_start_phase - Return the sink pixel location for the given source
-+ * position
-+ *
-+ * @pos: source destination position
-+ * @ratio: scaling ratio in U4.12 fixed-point format
-+ */
-+static unsigned int uds_start_phase(unsigned int pos, unsigned int ratio)
-+{
-+	unsigned int mp = uds_multiplier(ratio);
-+	unsigned int residual = (pos * ratio) % (mp * 4096);
-+
-+	return residual ? (4096 - residual / mp) : 0;
-+}
-+
- /*
-  * uds_output_size - Return the output size for an input size and scaling ratio
-  * @input: input size in pixels
-@@ -270,6 +349,7 @@ static void uds_configure_stream(struct vsp1_entity *entity,
- 	const struct v4l2_mbus_framefmt *input;
- 	unsigned int hscale;
- 	unsigned int vscale;
-+	bool manual_phase = vsp1_pipeline_partitioned(pipe);
- 	bool multitap;
- 
- 	input = vsp1_entity_get_pad_format(&uds->entity, uds->entity.config,
-@@ -294,7 +374,8 @@ static void uds_configure_stream(struct vsp1_entity *entity,
- 
- 	vsp1_uds_write(uds, dlb, VI6_UDS_CTRL,
- 		       (uds->scale_alpha ? VI6_UDS_CTRL_AON : 0) |
--		       (multitap ? VI6_UDS_CTRL_BC : 0));
-+		       (multitap ? VI6_UDS_CTRL_BC : 0) |
-+		       (manual_phase ? VI6_UDS_CTRL_AMDSLH : 0));
- 
- 	vsp1_uds_write(uds, dlb, VI6_UDS_PASS_BWIDTH,
- 		       (uds_passband_width(hscale)
-@@ -332,6 +413,12 @@ static void uds_configure_partition(struct vsp1_entity *entity,
- 				<< VI6_UDS_CLIP_SIZE_HSIZE_SHIFT) |
- 		       (output->height
- 				<< VI6_UDS_CLIP_SIZE_VSIZE_SHIFT));
-+
-+	vsp1_uds_write(uds, dlb, VI6_UDS_HPHASE,
-+		       (partition->start_phase
-+				<< VI6_UDS_HPHASE_HSTP_SHIFT) |
-+		       (partition->end_phase
-+				<< VI6_UDS_HPHASE_HEDP_SHIFT));
- }
- 
- static unsigned int uds_max_width(struct vsp1_entity *entity,
-@@ -374,11 +461,23 @@ static void uds_partition(struct vsp1_entity *entity,
- 			  struct vsp1_pipeline *pipe,
- 			  struct vsp1_partition *partition,
- 			  unsigned int partition_idx,
--			  struct vsp1_partition_window *window)
-+			  struct vsp1_partition_window *window,
-+			  bool forwards)
- {
- 	struct vsp1_uds *uds = to_uds(&entity->subdev);
- 	const struct v4l2_mbus_framefmt *output;
- 	const struct v4l2_mbus_framefmt *input;
-+	unsigned int hscale;
-+	unsigned int right_sink;
-+	unsigned int margin;
-+	unsigned int left;
-+	unsigned int right;
-+
-+	/* For forwards propagation - simply pass on our output. */
-+	if (forwards) {
-+		*window = partition->uds_source;
-+		return;
-+	}
- 
- 	/* Initialise the partition state. */
- 	partition->uds_sink = *window;
-@@ -389,11 +488,51 @@ static void uds_partition(struct vsp1_entity *entity,
- 	output = vsp1_entity_get_pad_format(&uds->entity, uds->entity.config,
- 					    UDS_PAD_SOURCE);
- 
--	partition->uds_sink.width = window->width * input->width
--				  / output->width;
--	partition->uds_sink.left = window->left * input->width
--				 / output->width;
-+	hscale = uds_compute_ratio(input->width, output->width);
-+
-+	/*
-+	 * Quantify the margin required for discontinuous overlap, and expand
-+	 * the window no further than the limits of the image.
-+	 */
-+	margin = hscale < 0x200 ? 32 : /* 8 <  scale */
-+		 hscale < 0x400 ? 16 : /* 4 <  scale <= 8 */
-+		 hscale < 0x800 ?  8 : /* 2 <  scale <= 4 */
-+				   4;  /*      scale <= 2 */
-+
-+	left = max_t(int, 0, window->left - margin);
-+	right = min_t(int, output->width - 1,
-+			   window->left + window->width - 1 + margin);
-+
-+	/*
-+	 * Handle our output partition configuration.
-+	 * We can clip the pixels from the right edge, thus the
-+	 * uds_source.width does not include the right margin.
-+	 */
-+	partition->uds_source.left = left;
-+	partition->uds_source.width = window->left - left + window->width;
-+
-+	/*
-+	 * The UDS can not clip the left pixels so this value will be
-+	 * propagated forwards until it reaches the WPF.
-+	 */
-+	partition->uds_source.offset = window->left - left;
-+
-+	/* Identify the input positions from the expanded partition. */
-+	partition->uds_sink.left = uds_left_src_pixel(left, hscale);
-+
-+	right_sink = uds_right_src_pixel(right, hscale);
-+	partition->uds_sink.width = right_sink - partition->uds_sink.left;
-+
-+	/*
-+	 * We do not currently use VI6_UDS_CTRL_AMD from VI6_UDS_CTRL.
-+	 * In the event that we enable VI6_UDS_CTRL_AMD, we must set the end
-+	 * phase for the final partition to the phase_edge.
-+	 */
-+	partition->end_phase = 0;
-+	partition->start_phase = uds_start_phase(partition->uds_source.left,
-+						 hscale);
- 
-+	/* Pass a copy of our sink down to the previous entity. */
- 	*window = partition->uds_sink;
- }
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index d1ecc3d91290..3638a4e9bb19 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -221,6 +221,7 @@ static void vsp1_video_calculate_partition(struct vsp1_pipeline *pipe,
- 	/* Initialise the partition with sane starting conditions. */
- 	window.left = index * div_size;
- 	window.width = div_size;
-+	window.offset = 0;
- 
- 	modulus = format->width % div_size;
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index 9e8dbf99878b..2e8cc4195c31 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -371,16 +371,19 @@ static void wpf_configure_partition(struct vsp1_entity *entity,
- 						 RWPF_PAD_SINK);
- 	width = sink_format->width;
- 	height = sink_format->height;
-+	offset = 0;
- 
- 	/*
- 	 * Cropping. The partition algorithm can split the image into
- 	 * multiple slices.
- 	 */
--	if (vsp1_pipeline_partitioned(pipe))
-+	if (vsp1_pipeline_partitioned(pipe)) {
- 		width = pipe->partition->wpf.width;
-+		offset = pipe->partition->wpf.offset;
-+	}
- 
- 	vsp1_wpf_write(wpf, dlb, VI6_WPF_HSZCLIP, VI6_WPF_SZCLIP_EN |
--		       (0 << VI6_WPF_SZCLIP_OFST_SHIFT) |
-+		       (offset << VI6_WPF_SZCLIP_OFST_SHIFT) |
- 		       (width << VI6_WPF_SZCLIP_SIZE_SHIFT));
- 	vsp1_wpf_write(wpf, dlb, VI6_WPF_VSZCLIP, VI6_WPF_SZCLIP_EN |
- 		       (0 << VI6_WPF_SZCLIP_OFST_SHIFT) |
-@@ -491,8 +494,15 @@ static void wpf_partition(struct vsp1_entity *entity,
- 			  struct vsp1_pipeline *pipe,
- 			  struct vsp1_partition *partition,
- 			  unsigned int partition_idx,
--			  struct vsp1_partition_window *window)
-+			  struct vsp1_partition_window *window,
-+			  bool forwards)
- {
-+	if (forwards) {
-+		/* Only handle incoming cropping requirements. */
-+		partition->wpf.offset = window->offset;
-+		return;
-+	}
-+
- 	partition->wpf = *window;
- }
- 
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
-2.19.1
-
+Florian
