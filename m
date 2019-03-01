@@ -2,92 +2,113 @@ Return-Path: <SRS0=w5fC=RE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9CDC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE69C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B9BA2087E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:41:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="jP14hbOR"
+	by mail.kernel.org (Postfix) with ESMTP id 0632E20851
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387634AbfCAJlD (ORCPT
+        id S1733049AbfCAJvl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 04:41:03 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:60709 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733133AbfCAJk4 (ORCPT
+        Fri, 1 Mar 2019 04:51:41 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:41050 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727915AbfCAJvl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 04:40:56 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1420E25B78D;
-        Fri,  1 Mar 2019 20:40:54 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551433254; bh=t7u77P4UsdRP58k51CrA3S8lPGALoalYvkVg6lRHykU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jP14hbORNQr+97WfuEqRafOlmgNvPqQjfb17NGGSiBH41T0ajnWBZmC2XleAjzQb8
-         kcujI2eiW+Bu/XUsgFvY82kd9Q4XA/m9KbjphejMsGoHRMXJpud7QXA0PvXn1QRc6y
-         j/el+8bsW/ZjmepCfMcn+/hKSnIHorUAyAZS1cXE=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 41CA9940421; Fri,  1 Mar 2019 10:40:52 +0100 (CET)
-Date:   Fri, 1 Mar 2019 10:40:52 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Subject: Re: [PATCH] spi: sh-msiof: Add reset of registers before starting
- transfer
-Message-ID: <20190301094051.dbu4bx6njzole4gd@verge.net.au>
-References: <20190228110215.1657-1-geert+renesas@glider.be>
- <20190301092454.elhpld6q2ucaql5v@verge.net.au>
- <CAMuHMdX_LdNnMikRb1osO8ii4Mpi7ZsPpgvavQ6Qu-s9M4goHg@mail.gmail.com>
+        Fri, 1 Mar 2019 04:51:41 -0500
+Received: by mail-ua1-f66.google.com with SMTP id j7so7095073uak.8;
+        Fri, 01 Mar 2019 01:51:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5wRZYJMbL7YK8sFkJdZpCHVpLmSHoA0VUyOgYXV8p3E=;
+        b=SN3tDlSldR4eZIQ5olWibakWmqF3VIn+IO/vmjsDUUdILr0RMgaTp+rpehsJsgTSoI
+         rL4oo83qlKoIzNGdQ+1AnbJKlwov5ELQIukCcUjyAh04UrROxw+m4D8WQvuFJd6jhiTU
+         z6qRh2hsDERyg//q9jpNVRtrO9JS/J/fPhCMsbTO9MTC2gaWST0U6W0TsIhm8s8be1YV
+         PsYFUcoBOrTmQiw7kOzrj2UmbD9rGyqm9PXv7waZllkwldyNIsApKVlOKewpfr9S+4g7
+         L5lgmj9mvVp+1Gld0yjE/hEs3rBcK2poro6cDoNt3REmYCExoWwoZboe1toMFkjd1t2+
+         crFA==
+X-Gm-Message-State: APjAAAWjCUHRHBI0O7kwcnSuUW/XjIobnkkEEfom8TJWop4wgIXQPA/o
+        /ofS8RixlHJivCatdpJowToG2Kpy3CcB6YvLrfQ=
+X-Google-Smtp-Source: APXvYqwQqmv0qSf/5I7Q7XSoWMbil550gLemcgNm3OkWBAPRfchw5wWM4WxaHoIxWPSOeqFbfrsBQFGlYJTQ+WlPsfk=
+X-Received: by 2002:a67:78ce:: with SMTP id t197mr2151989vsc.152.1551433899715;
+ Fri, 01 Mar 2019 01:51:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX_LdNnMikRb1osO8ii4Mpi7ZsPpgvavQ6Qu-s9M4goHg@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <1551430616-42014-8-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1551430616-42014-8-git-send-email-wen.yang99@zte.com.cn>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 1 Mar 2019 10:51:27 +0100
+Message-ID: <CAMuHMdWrY0UNhCA7a8oHVfdVNXaB=15qFuWqvuU9OZpf7-ecmg@mail.gmail.com>
+Subject: Re: [PATCH 08/15] ARM: shmobile: fix a leaked reference by
+ addingmissing of_node_put
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
+        yuenn@google.com, brendanhiggins@google.com,
+        openbmc@lists.ozlabs.org, Wei Xu <xuwei5@hisilicon.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
+        wang.yi59@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 10:28:21AM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Fri, Mar 1, 2019 at 10:25 AM Simon Horman <horms@verge.net.au> wrote:
-> > On Thu, Feb 28, 2019 at 12:02:15PM +0100, Geert Uytterhoeven wrote:
-> > > From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-> > >
-> > > In accordance with hardware specification Ver 1.0, reset register
-> > > transmission / reception setting before transfer.
-> > >
-> > > Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Thanks!
-> 
-> > > --- a/drivers/spi/spi-sh-msiof.c
-> > > +++ b/drivers/spi/spi-sh-msiof.c
-> > > @@ -130,6 +130,8 @@ struct sh_msiof_spi_priv {
-> > >  #define CTR_TFSE     0x00004000 /* Transmit Frame Sync Signal Output Enable */
-> > >  #define CTR_TXE              0x00000200 /* Transmit Enable */
-> > >  #define CTR_RXE              0x00000100 /* Receive Enable */
-> > > +#define CTR_TXRST    0x00000002 /* Transmit Reset */
-> > > +#define CTR_RXRST    0x00000001 /* Receive Reset */
-> >
-> > nit: can we start using the BIT() macro here?
-> 
-> Sure, if you want to convert the whole driver... ;-)
-> Note that many of them are multi-bit fields.
+On Fri, Mar 1, 2019 at 9:57 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
+> The call to of_get_next_child returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+>
+> Detected by coccinelle with the following warnings:
+> ./arch/arm/mach-shmobile/pm-rcar-gen2.c:77:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+> ./arch/arm/mach-shmobile/pm-rcar-gen2.c:85:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+> ./arch/arm/mach-shmobile/pm-rcar-gen2.c:90:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+>
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
 
-Yes, my 2c worth is to use BIT() and GENMASK() throughout the driver.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
