@@ -6,101 +6,127 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBB5C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57990C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453A22084D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 313EF2084D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 12:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfCAMxD (ORCPT
+        id S1728321AbfCAM4A (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 07:53:03 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:41045 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727920AbfCAMxC (ORCPT
+        Fri, 1 Mar 2019 07:56:00 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:57612 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728244AbfCAMz7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 07:53:02 -0500
-Received: by mail-vk1-f194.google.com with SMTP id b6so5586565vkf.8;
-        Fri, 01 Mar 2019 04:53:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P7qszWOfoLfuGJhgFmotpkeWhfLT6IfLYkVq3D/FMYE=;
-        b=HeAlrUdlzyn80SElOWH8OM3IBMdvrNWZewxSGMowXO3dCBZPeAW6iN7Dg3JiFx6o46
-         KQFBmCU9FydLnms0ANdM/0gtD0rt/9CYCPTzDnO7n3wruipaqHfVd7YopteWoikTxgOD
-         kCqhGzFlSxPvxW0SO6QIpMvfUgQ9ERlUf7bvriwTkHTGirKmGpf9mQ5Bjomv9kmuN3ld
-         QObQnuc9J7eBtlAis8Zo9NVC9m2lZTp0DYVnJuScyC7EjPuEKEHvrOanREy18IRV/jvi
-         RwCdYCCGm9SkfaNU1ANSBDv0FSjxJd9tFn+SDQtpxXBDUsK3IxMY4ByIJt8G6nLfh43I
-         eGaQ==
-X-Gm-Message-State: APjAAAVToCp54NS9OENABgDigxStzzoSJUvWP447SU7KGVFB4tLMG1pS
-        fCJkkTqkBxyI6F/fh0K6mX4pU37fq35sxqja4Mwe8XpJ
-X-Google-Smtp-Source: APXvYqxERk+iblTxq/3AhASSN0NYr9xx8sv6Q2WQSEXZeeUo7j6bdC4OTtu7L24WK/sFB8RWiFx7GI89D3/6PHZVwJ0=
-X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr2722870vke.40.1551444781658;
- Fri, 01 Mar 2019 04:53:01 -0800 (PST)
+        Fri, 1 Mar 2019 07:55:59 -0500
+Received: from [IPv6:2001:983:e9a7:1:e06f:53e3:ca47:5e48] ([IPv6:2001:983:e9a7:1:e06f:53e3:ca47:5e48])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id zhhhgNqNPLMwIzhhigicvn; Fri, 01 Mar 2019 13:55:57 +0100
+Subject: Re: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1
+ support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <1536589878-26218-1-git-send-email-biju.das@bp.renesas.com>
+ <1536589878-26218-2-git-send-email-biju.das@bp.renesas.com>
+ <TYXPR01MB1775F18270FB477D010C180EC0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <8a5429a0-b4c5-a208-3e56-406bd031b01b@xs4all.nl>
+Date:   Fri, 1 Mar 2019 13:55:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <20190228135246.31714-1-horms+renesas@verge.net.au> <20190228135246.31714-3-horms+renesas@verge.net.au>
-In-Reply-To: <20190228135246.31714-3-horms+renesas@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 1 Mar 2019 13:52:50 +0100
-Message-ID: <CAMuHMdU8AWAWjGHQC6tJnxqZRU1W+LmLvnw0nhWqNAKotGApMw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: renesas: r8a77990: Add ZG clock
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <TYXPR01MB1775F18270FB477D010C180EC0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfI5nxj7txHHF9FH5EdcLbWCp+C4F8bNpeOuCi9CQINBf8jMtKmsfA+M7ygYlx4wkt1ma7V1Tsvc9xnsxWD/esUl8+8IaRkEC0WRmhvNi78gvcSekbbhd
+ e7l2Vbw3dEzdHZZLtCx43DN3Q6Xyuf3jHYWLC7P8JBmkI/GrLhxpKs9cqO4x9yMyE9gus9teo3yjGua0My8P+1hCVjiyWLKG+DJZYeoFaC8cZp66hbljByok
+ 6YvvhbVJ8gNdj7NiQAF3YoYuVraXZcOSPY70ciOAXzZXngiGQ0MSFHvQNHS5vc4bZxqjDW4Dyl4hXcAKjENBQMmZVMBEyG1fK7V4ynaI2Ukr/bNguVAZC8EP
+ ivTGIap7E3cCfG+xRRCK3cI3VAFCQ9xLYfdaLM8fKK87OTnxSqY6z26igCZ2oiW9DraAx/htUWBZ9gd9Epy5Cb9o8jNVIWiDeT4U4AW9m6KKiFgKIjHZ/zHl
+ 4o8XelcSuld70KD4moRamkqPn2nIynd4vsBPWrsqKaQi/9/MmBefnpxBjy+9RPtZePVtrv5fbolmNfNZMjxbwapjw5AQ228VEcd7/UysafsRoGScbdvaIKHs
+ QSVeIUan9MfMBHEKZga0YKKVLOxyJg+HqPV0VJU9BmrbOb8+ldRvxWJwMj9Y/7HibqZWsE79Tq8PY5KIFSW03+kgJNboDEa4Z/JvjtHSWsmr9O7z9O7pWU95
+ 6Fd7KO1SJLgaT76gKqOrWcLdOSd3PFWS
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+Hi Fabrizio,
 
-On Thu, Feb 28, 2019 at 2:52 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> Adds support for R-Car E3 (r8a77990) ZG clock.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> Tested on Ebisu to the extent that the clock rate is 600MHz on boot
-> ---
->  drivers/clk/renesas/r8a77990-cpg-mssr.c | 2 ++
->  drivers/clk/renesas/rcar-gen3-cpg.c     | 1 -
->  drivers/clk/renesas/rcar-gen3-cpg.h     | 1 +
->  3 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> index 0e475dcb68b9..d0d29fc942ff 100644
-> --- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-> @@ -83,6 +83,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
->         DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
->         DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z, CLK_PLL0,
->                    4, CPG_FRQCRC, 8),
-> +       DEF_GEN3_Z("zg",       R8A77990_CLK_ZG,    CLK_TYPE_GEN3_Z, CLK_PLL0,
-> +                  8, CPG_FRQCRB, 24),
+It looks like this series fell through the cracks.
 
-While this approach may be correct for R-Car H3, M3-W, and M3-N, this is
-not correct for R-Car E3, due to the presence of Spread Spectrum Clock
-Generator support:
-  - When SCCG is enabled (MD12=1), the parent clock is either S0 or S1,
-    with only 2 or 3 (out of 32) supported dividers,
-  - When SCCG is disabled (MD12=0), the parent clock is PLL0, with only
-    2 (out of 32) supported dividers.
+I looked at it and the main problem is that it is missing a Reviewed-by
+from Rob Herring (devicetree maintainer). It's a bit surprising since he
+is usually fairly prompt.
 
-So I'm afraid the ZG clock on SCCG-capable SoCs needs its own very special
-clock type.
+I recommend that you rebase and repost it and I'll delegate the v2 series
+to me so we can hopefully get it in for 5.2 (5.1 is likely too late) once
+Rob reviews it.
 
-This applies also to R-Car D3 and RZ/G2E.
+BTW, I'm the one who usually processes rcar patches. But it was delegated in
+patchwork to Laurent, so I never saw it.
 
-Gr{oetje,eeting}s,
+Regards,
 
-                        Geert
+	Hans
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+On 3/1/19 1:09 PM, Fabrizio Castro wrote:
+> Hello Mauro,
+> 
+> This patch has been around for some time now, do you think you can take it?
+> 
+> Cheers,
+> Fab
+> 
+>> From: Biju Das <biju.das@bp.renesas.com>
+>> Sent: 10 September 2018 15:31
+>> Subject: [PATCH 1/5] media: dt-bindings: media: rcar-csi2: Add r8a774a1 support
+>>
+>> Document RZ/G2M (R8A774A1) SoC bindings.
+>>
+>> The RZ/G2M SoC is similar to R-Car M3-W (R8A7796).
+>>
+>> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>> ---
+>>  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+>> b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+>> index 2d385b6..12fe685 100644
+>> --- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+>> +++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+>> @@ -2,12 +2,13 @@ Renesas R-Car MIPI CSI-2
+>>  ------------------------
+>>
+>>  The R-Car CSI-2 receiver device provides MIPI CSI-2 capabilities for the
+>> -Renesas R-Car family of devices. It is used in conjunction with the
+>> -R-Car VIN module, which provides the video capture capabilities.
+>> +Renesas R-Car Gen3 and RZ/G2 family of devices. It is used in conjunction
+>> +with the R-Car VIN module, which provides the video capture capabilities.
+>>
+>>  Mandatory properties
+>>  --------------------
+>>   - compatible: Must be one or more of the following
+>> +   - "renesas,r8a774a1-csi2" for the R8A774A1 device.
+>>     - "renesas,r8a7795-csi2" for the R8A7795 device.
+>>     - "renesas,r8a7796-csi2" for the R8A7796 device.
+>>     - "renesas,r8a77965-csi2" for the R8A77965 device.
+>> --
+>> 2.7.4
+> 
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
