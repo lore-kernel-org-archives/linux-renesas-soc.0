@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D82C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 11:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDDFC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 11:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B2DC20851
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 11:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88ECA20851
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 11:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725978AbfCALDE (ORCPT
+        id S1728336AbfCALDs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 06:03:04 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:13988 "EHLO
+        Fri, 1 Mar 2019 06:03:48 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:21031 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387881AbfCALDD (ORCPT
+        by vger.kernel.org with ESMTP id S1728114AbfCALDs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 06:03:03 -0500
+        Fri, 1 Mar 2019 06:03:48 -0500
 X-IronPort-AV: E=Sophos;i="5.58,427,1544454000"; 
-   d="scan'208";a="9010849"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 01 Mar 2019 20:03:01 +0900
+   d="scan'208";a="9010901"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Mar 2019 20:03:44 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.184])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 548684072633;
-        Fri,  1 Mar 2019 20:02:59 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E2B724377036;
+        Fri,  1 Mar 2019 20:03:41 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -37,60 +37,58 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>, ebiharaml@si-linux.co.jp
-Subject: [PATCH] arm64: dts: renesas: cat875: Add CAN support
-Date:   Fri,  1 Mar 2019 11:02:37 +0000
-Message-Id: <1551438157-21916-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] arm64: dts: renesas: r8a774c0-cat874: Add LEDs support
+Date:   Fri,  1 Mar 2019 11:03:32 +0000
+Message-Id: <1551438212-22013-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add CAN support to the CAT875 sub board.
+This patch adds LEDs support to the CAT874 board specific
+device tree.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/cat875.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/cat875.dtsi b/arch/arm64/boot/dts/renesas/cat875.dtsi
-index 14db667..aaefc3a 100644
---- a/arch/arm64/boot/dts/renesas/cat875.dtsi
-+++ b/arch/arm64/boot/dts/renesas/cat875.dtsi
-@@ -30,6 +30,18 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index 96ee0d2c..f86b3628 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -22,6 +22,30 @@
+ 		stdout-path = "serial0:115200n8";
  	};
- };
  
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
++	leds {
++		compatible = "gpio-leds";
 +
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
++		led0 {
++			gpios = <&gpio5 19 GPIO_ACTIVE_HIGH>;
++			label = "LED0";
++		};
 +
- &pciec0 {
- 	status = "okay";
- };
-@@ -41,4 +53,14 @@
- 			function = "avb";
- 		};
- 	};
++		led1 {
++			gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
++			label = "LED1";
++		};
 +
-+	can0_pins: can0 {
-+		groups = "can0_data";
-+		function = "can0";
++		led2 {
++			gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
++			label = "LED2";
++		};
++
++		led3 {
++			gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
++			label = "LED3";
++		};
 +	};
 +
-+	can1_pins: can1 {
-+		groups = "can1_data";
-+		function = "can1";
-+	};
- };
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
 -- 
 2.7.4
 
