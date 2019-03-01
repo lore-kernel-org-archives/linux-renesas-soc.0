@@ -2,102 +2,126 @@ Return-Path: <SRS0=w5fC=RE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC44C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BBFC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA0852085A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:14:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551431680;
-	bh=adRrWvZswv6/A0CZm9xhGl59CI2WDzORwkMwbCYtQlc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=GBGAFnGnIY8MfaktIdqwi4CxgN/TcN5VzEnIT66GPGNbPakiAU1rPF0IIplKAZ5cu
-	 nUBkTRXhyxV4rBM+AIxwgfwkU/R8Nn097zf7nQxPhFNdEFudh2Gq3/yZOYFut4LVIN
-	 bGtXGPxa6/DMY+L1oXg9bVi6YwsFlUpqYrx+vWj8=
+	by mail.kernel.org (Postfix) with ESMTP id E9F892085A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 09:24:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="AVdsuhRo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbfCAJOe (ORCPT
+        id S1731686AbfCAJY7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 04:14:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726424AbfCAJOe (ORCPT
+        Fri, 1 Mar 2019 04:24:59 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:60098 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727825AbfCAJY7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 04:14:34 -0500
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC842218FC;
-        Fri,  1 Mar 2019 09:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551431673;
-        bh=adRrWvZswv6/A0CZm9xhGl59CI2WDzORwkMwbCYtQlc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=BCl6n1mhiS0jcoDyT/08ZNvSQm5sLptP37zarhchbNnjvkwXifbJBkuYNiKHlnHog
-         qRatBMZsA5uxOd8eg2MQiuKD5wDfsERQOzeKGre4+m/M8VxEJiam8z42FkNVLKBgbU
-         Uby4zE8sASZJbpEhkYcoicuitwL0zOGXcWpW+PpY=
-Received: by mail-lj1-f175.google.com with SMTP id v16so19709885ljg.13;
-        Fri, 01 Mar 2019 01:14:32 -0800 (PST)
-X-Gm-Message-State: APjAAAUehajj/grGWReaRlskYGYJkP9iyA5WWWn1xA0tCdAhK4CTy9xd
-        InE8bAI9OfKQRIytJI5nNyGeAaHeMLFbg4EJjGk=
-X-Google-Smtp-Source: APXvYqzeo89Plxq0Q8UMuie44AXbgyZ693kY16HuhEKYLKV3/3K1xVsYsb+In2YxJwz56HVlLG7GExZh6IWcIBtaTOA=
-X-Received: by 2002:a2e:88d1:: with SMTP id a17mr1970816ljk.169.1551431670964;
- Fri, 01 Mar 2019 01:14:30 -0800 (PST)
+        Fri, 1 Mar 2019 04:24:59 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 5E35325B78D;
+        Fri,  1 Mar 2019 20:24:57 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551432297; bh=Qb0LZq6ywaQNv4PoXK1ehQq6bXj9ZkoZ3Mdw0xZ5XdA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AVdsuhRoA2ryOLwDJsuz+p5VQkyCDA8ZMi5hfo9hV4BQObPrk106OxysXymuo0WVi
+         OCxHcLSS+CCMQJMxcErSmS9a87URH7sm0fJQFZXWay0TZvLgVY8A5sOvdHriRTDQ+G
+         LstN7a9LoNo2OUo/MiGPN+lyigxHFwfFCffJi5Pg=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 631F3940421; Fri,  1 Mar 2019 10:24:55 +0100 (CET)
+Date:   Fri, 1 Mar 2019 10:24:55 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Subject: Re: [PATCH] spi: sh-msiof: Add reset of registers before starting
+ transfer
+Message-ID: <20190301092454.elhpld6q2ucaql5v@verge.net.au>
+References: <20190228110215.1657-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <1551430616-42014-3-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1551430616-42014-3-git-send-email-wen.yang99@zte.com.cn>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 1 Mar 2019 10:14:19 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPcn=eP1h0_DNVuKBcb3WXb3mzvPGm-mkk6D8auvC7ABGA@mail.gmail.com>
-Message-ID: <CAJKOXPcn=eP1h0_DNVuKBcb3WXb3mzvPGm-mkk6D8auvC7ABGA@mail.gmail.com>
-Subject: Re: [PATCH 03/15] ARM: exynos: fix a leaked reference by
- addingmissing of_node_put
-To:     Wen Yang <wen.yang99@zte.com.cn>
-Cc:     liviu.dudau@arm.com, sudeep.holla@arm.com,
-        lorenzo.pieralisi@arm.com, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kgene@kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, michal.simek@xilinx.com,
-        afaerber@suse.de, manivannan.sadhasivam@linaro.org,
-        dinguyen@kernel.org, heiko@sntech.de,
-        linux-rockchip@lists.infradead.org, f.fainelli@gmail.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, linus.walleij@linaro.org,
-        avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        openbmc@lists.ozlabs.org, xuwei5@hisilicon.com,
-        maxime.ripard@bootlin.com, wens@csie.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, horms@verge.net.au, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, wang.yi59@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190228110215.1657-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, 1 Mar 2019 at 09:57, Wen Yang <wen.yang99@zte.com.cn> wrote:
->
-> The call to of_get_next_child returns a node pointer with refcount
-> incremented thus it must be explicitly decremented after the last
-> usage.
->
-> Detected by coccinelle with the following warnings:
-> ./arch/arm/mach-exynos/firmware.c:201:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
-> ./arch/arm/mach-exynos/firmware.c:204:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
-> ./arch/arm/mach-exynos/suspend.c:642:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 634, but without a corresponding object release within this function.
+On Thu, Feb 28, 2019 at 12:02:15PM +0100, Geert Uytterhoeven wrote:
+> From: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> 
+> In accordance with hardware specification Ver 1.0, reset register
+> transmission / reception setting before transfer.
+> 
+> Signed-off-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks, looks good. I'll take it however after merge window.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-There are no dependencies between patches therefore you could limit
-the amount of people you CC. You put specific "Cc" fields in patch but
-you did not use them and sent it to 40 addresses. The CC in the patch
-has exactly this purpose - do not send everything to everyone...
+> ---
+>  drivers/spi/spi-sh-msiof.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+> index b20e70a2bdd115d7..6e83368874839d09 100644
+> --- a/drivers/spi/spi-sh-msiof.c
+> +++ b/drivers/spi/spi-sh-msiof.c
+> @@ -130,6 +130,8 @@ struct sh_msiof_spi_priv {
+>  #define CTR_TFSE	0x00004000 /* Transmit Frame Sync Signal Output Enable */
+>  #define CTR_TXE		0x00000200 /* Transmit Enable */
+>  #define CTR_RXE		0x00000100 /* Receive Enable */
+> +#define CTR_TXRST	0x00000002 /* Transmit Reset */
+> +#define CTR_RXRST	0x00000001 /* Receive Reset */
 
-Best regards,
-Krzysztof
+nit: can we start using the BIT() macro here?
+
+>  /* FCTR */
+>  #define FCTR_TFWM_MASK	0xe0000000 /* Transmit FIFO Watermark */
+> @@ -246,6 +248,25 @@ static irqreturn_t sh_msiof_spi_irq(int irq, void *data)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static void sh_msiof_spi_reset_regs(struct sh_msiof_spi_priv *p)
+> +{
+> +	u32 mask = CTR_TXRST | CTR_RXRST;
+> +	u32 data;
+> +	int k;
+> +
+> +	data = sh_msiof_read(p, CTR);
+> +	data |= mask;
+> +
+> +	sh_msiof_write(p, CTR, data);
+> +
+> +	for (k = 100; k > 0; k--) {
+> +		if (!(sh_msiof_read(p, CTR) & mask))
+> +			break;
+> +
+> +		udelay(1);
+> +	}
+> +}
+> +
+>  static const u32 sh_msiof_spi_div_array[] = {
+>  	SCR_BRDV_DIV_1, SCR_BRDV_DIV_2,	 SCR_BRDV_DIV_4,
+>  	SCR_BRDV_DIV_8,	SCR_BRDV_DIV_16, SCR_BRDV_DIV_32,
+> @@ -925,6 +946,9 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
+>  	bool swab;
+>  	int ret;
+>  
+> +	/* reset registers */
+> +	sh_msiof_spi_reset_regs(p);
+> +
+>  	/* setup clocks (clock already enabled in chipselect()) */
+>  	if (!spi_controller_is_slave(p->ctlr))
+>  		sh_msiof_spi_set_clk_regs(p, clk_get_rate(p->clk), t->speed_hz);
+> -- 
+> 2.17.1
+> 
