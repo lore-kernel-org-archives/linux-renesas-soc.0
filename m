@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68588C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 08:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C096AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 08:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42D7C2087E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 08:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97428218B0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 08:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731833AbfCAI5H (ORCPT
+        id S2387447AbfCAI5P (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 03:57:07 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:9558 "EHLO mxhk.zte.com.cn"
+        Fri, 1 Mar 2019 03:57:15 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:59650 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733008AbfCAI5G (ORCPT
+        id S1726195AbfCAI5P (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 03:57:06 -0500
+        Fri, 1 Mar 2019 03:57:15 -0500
 Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id BC2BAED9311404AC15A7;
-        Fri,  1 Mar 2019 16:57:03 +0800 (CST)
+        by Forcepoint Email with ESMTPS id EF3AE2ACC4777F4E14F6;
+        Fri,  1 Mar 2019 16:57:12 +0800 (CST)
 Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x218utNL086492;
-        Fri, 1 Mar 2019 16:56:55 +0800 (GMT-8)
+        by mse01.zte.com.cn with ESMTP id x218v1Zh086712;
+        Fri, 1 Mar 2019 16:57:01 +0800 (GMT-8)
         (envelope-from wen.yang99@zte.com.cn)
 Received: from fox-host8.localdomain ([10.74.120.8])
           by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019030116573424-2498920 ;
-          Fri, 1 Mar 2019 16:57:34 +0800 
+          with ESMTP id 2019030116574040-2498968 ;
+          Fri, 1 Mar 2019 16:57:40 +0800 
 From:   Wen Yang <wen.yang99@zte.com.cn>
 To:     liviu.dudau@arm.com
 Cc:     sudeep.holla@arm.com, lorenzo.pieralisi@arm.com,
@@ -50,19 +50,21 @@ Cc:     sudeep.holla@arm.com, lorenzo.pieralisi@arm.com,
         linux-renesas-soc@vger.kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de,
         fabio.estevam@nxp.com, linux-imx@nxp.com, wang.yi59@zte.com.cn,
-        Wen Yang <wen.yang99@zte.com.cn>
-Subject: [PATCH 03/15] ARM: exynos: fix a leaked reference by addingmissing of_node_put
-Date:   Fri, 1 Mar 2019 16:56:44 +0800
-Message-Id: <1551430616-42014-3-git-send-email-wen.yang99@zte.com.cn>
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Fabio Estevam <festevam@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH 05/15] ARM: imx51: fix a leaked reference by addingmissing of_node_put
+Date:   Fri, 1 Mar 2019 16:56:46 +0800
+Message-Id: <1551430616-42014-5-git-send-email-wen.yang99@zte.com.cn>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
 References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
 X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-03-01 16:57:34,
+ 21, 2013) at 2019-03-01 16:57:40,
         Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-03-01 16:56:40,
-        Serialize complete at 2019-03-01 16:56:40
-X-MAIL: mse01.zte.com.cn x218utNL086492
+ 2019-03-01 16:56:46,
+        Serialize complete at 2019-03-01 16:56:46
+X-MAIL: mse01.zte.com.cn x218v1Zh086712
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -73,49 +75,34 @@ incremented thus it must be explicitly decremented after the last
 usage.
 
 Detected by coccinelle with the following warnings:
-./arch/arm/mach-exynos/firmware.c:201:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
-./arch/arm/mach-exynos/firmware.c:204:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 193, but without a corresponding object release within this function.
-./arch/arm/mach-exynos/suspend.c:642:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 634, but without a corresponding object release within this function.
+./arch/arm/mach-imx/mach-imx51.c:64:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 57, but without a corresponding object release within this function.
 
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
 Cc: Russell King <linux@armlinux.org.uk>
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
 Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm/mach-exynos/firmware.c | 1 +
- arch/arm/mach-exynos/suspend.c  | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/arm/mach-imx/mach-imx51.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-index d602e3b..2eaf2db 100644
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -196,6 +196,7 @@ bool __init exynos_secure_firmware_available(void)
- 		return false;
- 
- 	addr = of_get_address(nd, 0, NULL, NULL);
-+	of_node_put(nd);
- 	if (!addr) {
- 		pr_err("%s: No address specified.\n", __func__);
- 		return false;
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 0850505..9afb0c6 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -639,8 +639,10 @@ void __init exynos_pm_init(void)
- 
- 	if (WARN_ON(!of_find_property(np, "interrupt-controller", NULL))) {
- 		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
-+		of_node_put(np);
+diff --git a/arch/arm/mach-imx/mach-imx51.c b/arch/arm/mach-imx/mach-imx51.c
+index c7169c2..08c7892 100644
+--- a/arch/arm/mach-imx/mach-imx51.c
++++ b/arch/arm/mach-imx/mach-imx51.c
+@@ -59,6 +59,7 @@ static void __init imx51_m4if_setup(void)
  		return;
- 	}
+ 
+ 	m4if_base = of_iomap(np, 0);
 +	of_node_put(np);
- 
- 	pm_data = (const struct exynos_pm_data *) match->data;
- 
+ 	if (!m4if_base) {
+ 		pr_err("Unable to map M4IF registers\n");
+ 		return;
 -- 
 2.9.5
 
