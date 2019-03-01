@@ -2,137 +2,101 @@ Return-Path: <SRS0=w5fC=RE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C7A2C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 16:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB8AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 17:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3AB20857
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 16:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5000F20848
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Mar 2019 17:09:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="JD3S1C9P"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OsD31j+e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389042AbfCAQg7 (ORCPT
+        id S2389334AbfCARJA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Mar 2019 11:36:59 -0500
-Received: from mail-eopbgr1400090.outbound.protection.outlook.com ([40.107.140.90]:33427
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728517AbfCAQg7 (ORCPT
+        Fri, 1 Mar 2019 12:09:00 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45338 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389295AbfCARI7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Mar 2019 11:36:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HewLh+G4Pz1E+uDS72qXtqTEjC3nwRTDkQuSTfLiJ6U=;
- b=JD3S1C9Pyh7GIUe83HVEIMXlFwUu3wxlAzC3vqeHQlvFeHZSCqm+V6EUkdR6ljL3kviC8KpvPCq31sI9NcX+VvCeE+sGxn8kQ3HuvXqWopLxvt/tR+JmiY5G9F48AeRHEg5oH2Qq+AG4De9QP9ibYuPXczq6VU/t9Z1FoMA+MPw=
-Received: from TYXPR01MB1775.jpnprd01.prod.outlook.com (52.133.168.140) by
- TYXPR01MB1888.jpnprd01.prod.outlook.com (52.133.169.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1665.15; Fri, 1 Mar 2019 16:36:52 +0000
-Received: from TYXPR01MB1775.jpnprd01.prod.outlook.com
- ([fe80::88d2:545c:9212:c8cf]) by TYXPR01MB1775.jpnprd01.prod.outlook.com
- ([fe80::88d2:545c:9212:c8cf%5]) with mapi id 15.20.1665.015; Fri, 1 Mar 2019
- 16:36:52 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "mathias.nyman@intel.com" <mathias.nyman@intel.com>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: RE: [PATCH] dt-bindings: usb-xhci: Add r8a774c0 support
-Thread-Topic: [PATCH] dt-bindings: usb-xhci: Add r8a774c0 support
-Thread-Index: AQHUkyFpi/45UrthxEeTw5QuFUj6AaX3HGuggABRjACAAAQ+0A==
-Date:   Fri, 1 Mar 2019 16:36:52 +0000
-Message-ID: <TYXPR01MB17756DBAF2FD7A1F2A9B82B0C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
-References: <1544732471-6730-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <TYXPR01MB1775A4A3AF86097F284C4A08C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
- <20190301161624.GA19937@kroah.com>
-In-Reply-To: <20190301161624.GA19937@kroah.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e381ad49-cc13-4dce-0a47-08d69e641c1e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYXPR01MB1888;
-x-ms-traffictypediagnostic: TYXPR01MB1888:
-x-microsoft-exchange-diagnostics: 1;TYXPR01MB1888;20:D47Nj5t80BQ72tHejK82DIltFN/KQRlaCBFf7T4dnWD1zg2du1l3absRcyginf2+jPNP36L+MDDqb2lxXUTcNzr4MKqAeYgxSDJTlCXwVKUfP0wFWyr8kpwjs9kNVFcU21PHpAgiccp6Ox7TOq4O9A4vi8f028BmxeNgAbJBFFw=
-x-microsoft-antispam-prvs: <TYXPR01MB18880B6E62CA246039C5EEBDC0760@TYXPR01MB1888.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 09634B1196
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(346002)(39860400002)(366004)(136003)(199004)(189003)(5660300002)(52536013)(478600001)(6436002)(229853002)(68736007)(14454004)(2501003)(74316002)(7736002)(305945005)(55016002)(8936002)(9686003)(4744005)(81166006)(8676002)(81156014)(66066001)(2906002)(7696005)(71190400001)(33656002)(71200400001)(4326008)(476003)(11346002)(105586002)(76176011)(446003)(486006)(44832011)(99286004)(6116002)(25786009)(256004)(3846002)(54906003)(110136005)(316002)(53936002)(97736004)(7416002)(106356001)(6246003)(86362001)(102836004)(6506007)(186003)(53546011)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:TYXPR01MB1888;H:TYXPR01MB1775.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 8m53GT7t/eOCW8VhwMrZ5mDIBEsTmjaFGIM5aYvcjaov0bCo/jp0s0UJrjHUo7pB+2UIlzJnk0+dHSd/PCnxVCh53cc+rgIVW/4Z4jnR4VHXCwz17XMMIA8lqffqH27r1cDzSBlOy24zB0/7jxTPWb0meS7NXi3q1GUGAJzXKsPvfGUJYAdZ5ZicZ+0EDwRRYTXGyPQ6W75YPPCeKeapz/RfcbtY1S1gJ01n7lDHxiOPhyT8f/GMgX0/qWhKA2yrwNZIo3OtMW54fsp6GWhMbrFAG0MdVf90O7bOLE1GnXvsCL9OeLTpQfjWd8TzW+75S6/dH3FjIttUPHU9clFQc5V3EvYN9VOdr9ei6xmKRcjsOdihUmCM1lujOJreH2FpBSY68uC7TQ8mfztEhZiD2rOCXXvI5n/U3oYVs5faFP4=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 1 Mar 2019 12:08:59 -0500
+Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 233F349;
+        Fri,  1 Mar 2019 18:08:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1551460137;
+        bh=ZU9Fuw13XkqLKY7V4fdC/0o7EwcKg0+0EIiN0YrrU9c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OsD31j+ev8zcalb7gNkYuLDBldio0Fng/4rw5t8Uey9FUU4+JKskAozTZ0OymQHqu
+         wtzfhK3lhWAPq8p8aVRqws3YkySx+KR1uBVbIDr1hUlKyX3sDGFLEmN6y4f2nXaYXK
+         9ewBkPz8b7qRoXHUSiEk0wc3u3vSvXTtp7tOWfD4=
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC PATCH v2 0/5] media: vsp1: Partition phased overlap support
+Date:   Fri,  1 Mar 2019 17:08:43 +0000
+Message-Id: <20190301170848.6598-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e381ad49-cc13-4dce-0a47-08d69e641c1e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Mar 2019 16:36:52.3171
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB1888
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Greg,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Thank you for your reply!
+The UDS and SRU (and SHP) require expanded partition windows to support
+overlapping partition windows as a means of discarding discontinous pixel data,
+due to repeated pixels in their input filters.
 
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Sent: 01 March 2019 16:16
-> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Cc: linux-usb@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@v=
-ger.kernel.org; Simon Horman <horms@verge.net.au>;
-> Geert Uytterhoeven <geert+renesas@glider.be>; Chris Paterson <Chris.Pater=
-son2@renesas.com>; Biju Das
-> <biju.das@bp.renesas.com>; linux-renesas-soc@vger.kernel.org; Rob Herring=
- <robh+dt@kernel.org>; Mark Rutland
-> <mark.rutland@arm.com>
-> Subject: Re: [PATCH] dt-bindings: usb-xhci: Add r8a774c0 support
->=20
-> On Fri, Mar 01, 2019 at 11:25:33AM +0000, Fabrizio Castro wrote:
-> > Hello Greg,
-> >
-> > I am sorry to bother you.
-> > Do you think you take this patch?
->=20
-> device tree bindings need an ack from the DT maintainers before I can
-> take them.  Also, this is for xhci, the xhci maintainer is responsible
-> for those, not me :)
+The first four patches are clean ups and helpers to facilitate the
+implementation of an updated procedure for calculating the partition windows.
 
-I am so sorry.
+The entities are iterated first backwards through the pipeline allowing them to
+request an expanded input window if needed to satisfy their required output.
 
-The patch has been reviewed by Geert Uytterhoeven, Simon Horman, and Rob He=
-rring already.
+Then, as only the WPF can support clipping on the left edge, (though the UDS
+can clip on it's right edge) the partition window is then propagated forwards
+through the entity list allowing them to update any offset which will mark left
+pixels to be discarded by the WPF.
 
-Mathias, are you the one taking the patches for Documentation/devicetree/bi=
-ndings/usb/usb-xhci.txt now?
+Any expanded pixels to the right edge will automatically be clipped by the WPF
+as it's partition window will remain fixed.
 
-Thanks,
-Fab
+TODO:
 
->=20
-> thanks,
->=20
-> greg k-h
+There is one component left in this patch which is still to be completed. The
+UDS calculation for the left input pixel position requires the output position
+to be a multiple of the mp prefilter multiplier.
+
+Getting the right correction to pull back the left window for this is still a
+work in progress, and may be posted separately.
+
+This series is posted as an RFC to get some review coverage (I'm looking at you
+Laurent of course) while I continue to investigate the pull-back factor.
+
+
+Kieran Bingham (5):
+  media: vsp1: Define partition algorithm helper
+  media: vsp1: Initialise partition windows
+  media: vsp1: Document partition algorithm in code header
+  media: vsp1: Split out pre-filter multiplier
+  media: vsp1: Provide partition overlap algorithm
+
+ drivers/media/platform/vsp1/vsp1_entity.h |   2 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |  48 +++++-
+ drivers/media/platform/vsp1/vsp1_pipe.h   |   7 +
+ drivers/media/platform/vsp1/vsp1_rpf.c    |  10 +-
+ drivers/media/platform/vsp1/vsp1_sru.c    |  37 ++++-
+ drivers/media/platform/vsp1/vsp1_uds.c    | 173 ++++++++++++++++++++--
+ drivers/media/platform/vsp1/vsp1_video.c  |  13 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c    |  16 +-
+ 8 files changed, 276 insertions(+), 30 deletions(-)
+
+-- 
+2.19.1
+
