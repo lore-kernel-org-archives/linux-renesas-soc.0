@@ -2,27 +2,27 @@ Return-Path: <SRS0=Xcmt=RF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9379C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 13:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCFCC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 13:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95D8D20838
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 13:48:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F3A820838
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 13:48:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbfCBNrr (ORCPT
+        id S1727061AbfCBNs3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 2 Mar 2019 08:47:47 -0500
-Received: from sauhun.de ([88.99.104.3]:36240 "EHLO pokefinder.org"
+        Sat, 2 Mar 2019 08:48:29 -0500
+Received: from sauhun.de ([88.99.104.3]:36324 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726113AbfCBNrr (ORCPT
+        id S1726119AbfCBNrr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sat, 2 Mar 2019 08:47:47 -0500
 Received: from localhost (p54B33179.dip0.t-ipconnect.de [84.179.49.121])
-        by pokefinder.org (Postfix) with ESMTPSA id 2F45D4A1772;
-        Sat,  2 Mar 2019 14:47:43 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id D8C6B4A1776;
+        Sat,  2 Mar 2019 14:47:44 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -36,123 +36,155 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH v2 0/7] i2c: core: introduce atomic transfers
-Date:   Sat,  2 Mar 2019 14:47:28 +0100
-Message-Id: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v2 3/7] i2c: core: introduce callbacks for atomic transfers
+Date:   Sat,  2 Mar 2019 14:47:31 +0100
+Message-Id: <20190302134735.4393-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-So, finally, here is the second RFC for supporting I2C transfers in atomic
-contexts (i.e. very late). This will need some text because I tried some things
-on the way but had to discard them. However, I think it is important to have
-that documented.
+We had the request to access devices very late when interrupts are not
+available anymore multiple times now. Mostly to prepare shutdown or
+reboot. Allow adapters to specify a specific callback for this case.
+Note that we fall back to the generic {master|smbus}_xfer callback if
+this new atomic one is not present. This is intentional to preserve the
+previous behaviour and avoid regressions. Because there are drivers not
+using interrupts or because it might have worked "accidently" before.
 
-One thing I really wanted to have is a kind of whitelist for devices which are
-allowed to use atomic transfers. So we could identify the "unauthorized" ones
-as buggy. To be useful, this should not add new API calls for transfers,
-otherwise things would have become way more complicated for I2C users like
-regmap. So, I tried e.g. to flag clients and provide that information
-throughout the i2c tree (think muxes here). In the end, I concluded that this
-is not an I2C specific problem, so it can't have an I2C specifc solution.
-Imagine a GPIO which is needed to reboot (drivers/power/reset/gpio-restart.c).
-This is the device which needs to whitelisted but the driver doesn't even know
-if the GPIO is behind I2C or not. So, if we want this, it should probably be
-handled on 'struct device' level. Including all the hierarchy. Postponed.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/i2c-core-base.c  |  6 +++++-
+ drivers/i2c/i2c-core-smbus.c | 18 ++++++++++++++----
+ drivers/i2c/i2c-core.h       |  7 +++++--
+ include/linux/i2c.h          | 15 ++++++++++++---
+ 4 files changed, 36 insertions(+), 10 deletions(-)
 
-So, this RFC v2 is much more similar to v1 than I expected. Main changes:
-
-* cleaned up 'struct i2c_adapter' a bit before adding the new stuff
-* added an atomic callback for SMBus, too. Only build-tested so far. But spent
-  a few braincells of getting the SMBus logic readable because we could have
-  an I2C fallback just for the atomic case
-* add a WARN for atomic transfers with no atomic transfer handler
-* added support for the i2c-demuxer, so I could test the series. Support
-  for I2C muxes is missing because of the locking issue (see later) which
-  may mean a redesign anyhow
-* imported the omap support into this series to have another user. I didn't
-  pick up the patch for imx from Stefan because it is bigger and probably
-  needs seperate review first
-* I converted the tegra-bpmp driver which already had handling for the atomic
-  case*. I did not convert the pxa driver which has a polling-only mode, too.
-  This also seems like a bigger task and its current behaviour shouldn't be
-  affected by this series. *only build tested
-* added a HACK to allow the i2c-gpio driver atomic transfers. This will only
-  work if accessing the GPIO can be done in atomic contexts, too, so this is
-  for testing only
-
-For the regular cases this series works well on my Renesas Lager board*
-which needs an I2C access to the PMIC to reboot the board. *if I use the
-i2c-gpio driver, the i2c-sh_mobile is not converted yet.
-
-However, during the last review, Russell King brought up an interesting corner
-case. What if we want to reboot because of a panic and the bus is not in a
-consistent state? To create this situation, I recently created the 'inject-panic'
-fault injector [1] which is merged into i2c/for-next meanwhile.
-
-With this fault injector and 'reboot after panic' settings, I can create
-the problem Russell described: a) the bus is in an inconsistent state because
-the driver was interrupted (SCL/SDA both low) and b) the lock for this driver
-is taken, so trylock fails.
-
-I think b) is an interesting question: shall we give atomic transfers priority
-and ignore the lock? Do we need a seperate one then (SMP is turned off already,
-or?)? If so, that would probably mean way more complicated mux-locking code
-(Peter?)? And what if some mux in the path needs interrupts? And how academic
-is all that? Because someone putting the reboot functionality behind muxed I2C
-is kind of asking for problems :)
-
-That being said: this is an issue I think it is worth tackling. However, this
-issue is not introduced by this series. It is already there. It might just
-become more visible.
-
-Sidenote: I think problem a) is easier once we solved b). E.g. if we decide on
-a higher priority, we can postulate that IP cores should be reset first and
-bus recovery can also be applied. This will not help all cases but IMO is all
-we can do.
-
-Another topic where I'd like input from other people is the use of 'in_atomic'
-in this series. It was already there, so I kept it to avoid regressions. I am
-aware that 'in_atomic' should not be used in drivers. So, if someone has
-expertise to say if it can be removed or replaced with something else, I am
-all ears.
-
-A branch (based on i2c/for-next) can be found here:
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/atomic_xfer
-
-Sorry, no TLDR; text here - I think this topic deserves a few words ;)
-
-Looking forward to comments, thanks!
-
-   Wolfram
-
-
-[1] http://patchwork.ozlabs.org/patch/1044789/
-
-
-Tero Kristo (1):
-  i2c: busses: omap: Add the master_xfer_irqless hook
-
-Wolfram Sang (6):
-  i2c: apply coding style for struct i2c_adapter
-  i2c: core: use I2C locking behaviour also for SMBUS
-  i2c: core: introduce callbacks for atomic transfers
-  i2c: demux: WIP: handle the new atomic callbacks
-  i2c: tegra-bpmp: convert to use new atomic callbacks
-  i2c: algo: bit: HACK! add atomic callback
-
- drivers/i2c/algos/i2c-algo-bit.c      |  5 ++-
- drivers/i2c/busses/i2c-omap.c         | 79 +++++++++++++++++++++++++++++------
- drivers/i2c/busses/i2c-tegra-bpmp.c   | 27 +++++++++---
- drivers/i2c/i2c-core-base.c           | 17 ++++----
- drivers/i2c/i2c-core-smbus.c          | 25 ++++++++---
- drivers/i2c/i2c-core.h                | 15 +++++++
- drivers/i2c/muxes/i2c-demux-pinctrl.c |  3 ++
- include/linux/i2c.h                   | 38 +++++++++++------
- 8 files changed, 162 insertions(+), 47 deletions(-)
-
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 004f8a3b6365..2127dd08ff01 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1890,7 +1890,11 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	/* Retry automatically on arbitration loss */
+ 	orig_jiffies = jiffies;
+ 	for (ret = 0, try = 0; try <= adap->retries; try++) {
+-		ret = adap->algo->master_xfer(adap, msgs, num);
++		if ((in_atomic() || irqs_disabled()) && adap->algo->master_xfer_atomic)
++			ret = adap->algo->master_xfer_atomic(adap, msgs, num);
++		else
++			ret = adap->algo->master_xfer(adap, msgs, num);
++
+ 		if (ret != -EAGAIN)
+ 			break;
+ 		if (time_after(jiffies, orig_jiffies + adap->timeout))
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index 357e083e8f45..e01a548fc559 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -548,6 +548,9 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
+ 		     unsigned short flags, char read_write,
+ 		     u8 command, int protocol, union i2c_smbus_data *data)
+ {
++	int (*xfer_func)(struct i2c_adapter *adap, u16 addr,
++			 unsigned short flags, char read_write,
++			 u8 command, int size, union i2c_smbus_data *data);
+ 	unsigned long orig_jiffies;
+ 	int try;
+ 	s32 res;
+@@ -562,13 +565,20 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
+ 
+ 	flags &= I2C_M_TEN | I2C_CLIENT_PEC | I2C_CLIENT_SCCB;
+ 
+-	if (adapter->algo->smbus_xfer) {
++	xfer_func = adapter->algo->smbus_xfer;
++	if (in_atomic() || irqs_disabled()) {
++		if (adapter->algo->smbus_xfer_atomic)
++			xfer_func = adapter->algo->smbus_xfer_atomic;
++		else if (adapter->algo->master_xfer_atomic)
++			xfer_func = NULL; /* fallback to I2C emulation */
++	}
++
++	if (xfer_func) {
+ 		/* Retry automatically on arbitration loss */
+ 		orig_jiffies = jiffies;
+ 		for (res = 0, try = 0; try <= adapter->retries; try++) {
+-			res = adapter->algo->smbus_xfer(adapter, addr, flags,
+-							read_write, command,
+-							protocol, data);
++			res = xfer_func(adapter, addr, flags, read_write,
++					command, protocol, data);
+ 			if (res != -EAGAIN)
+ 				break;
+ 			if (time_after(jiffies,
+diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
+index 6e98aa811980..01a6cb9b53aa 100644
+--- a/drivers/i2c/i2c-core.h
++++ b/drivers/i2c/i2c-core.h
+@@ -33,10 +33,13 @@ static inline int __i2c_lock_bus_helper(struct i2c_adapter *adap)
+ {
+ 	int ret = 0;
+ 
+-	if (in_atomic() || irqs_disabled())
++	if (in_atomic() || irqs_disabled()) {
++		WARN(!adap->algo->master_xfer_atomic && !adap->algo->smbus_xfer_atomic,
++		     "No atomic I2C transfer handler for '%s'\n", dev_name(&adap->dev));
+ 		ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT) ? 0 : -EAGAIN;
+-	else
++	} else {
+ 		i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 758a6db864c9..3cd921dd39e3 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -499,9 +499,13 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * @master_xfer: Issue a set of i2c transactions to the given I2C adapter
+  *   defined by the msgs array, with num messages available to transfer via
+  *   the adapter specified by adap.
++ * @master_xfer_atomic: same as @master_xfer. Yet, only using atomic context
++ *   so e.g. PMICs can be accessed very late before shutdown. Optional.
+  * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If this
+  *   is not present, then the bus layer will try and convert the SMBus calls
+  *   into I2C transfers instead.
++ * @smbus_xfer_atomic: same as @smbus_xfer. Yet, only using atomic context
++ *   so e.g. PMICs can be accessed very late before shutdown. Optional.
+  * @functionality: Return the flags that this algorithm/adapter pair supports
+  *   from the I2C_FUNC_* flags.
+  * @reg_slave: Register given client to I2C slave mode of this adapter
+@@ -512,9 +516,9 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
+  * to name two of the most common.
+  *
+- * The return codes from the @master_xfer field should indicate the type of
+- * error code that occurred during the transfer, as documented in the kernel
+- * Documentation file Documentation/i2c/fault-codes.
++ * The return codes from the @master_xfer{_atomic} field should indicate the
++ * type of error code that occurred during the transfer, as documented in the
++ * Kernel Documentation file Documentation/i2c/fault-codes.
+  */
+ struct i2c_algorithm {
+ 	/*
+@@ -528,9 +532,14 @@ struct i2c_algorithm {
+ 	 */
+ 	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+ 			   int num);
++	int (*master_xfer_atomic)(struct i2c_adapter *adap,
++				   struct i2c_msg *msgs, int num);
+ 	int (*smbus_xfer)(struct i2c_adapter *adap, u16 addr,
+ 			  unsigned short flags, char read_write,
+ 			  u8 command, int size, union i2c_smbus_data *data);
++	int (*smbus_xfer_atomic)(struct i2c_adapter *adap, u16 addr,
++				 unsigned short flags, char read_write,
++				 u8 command, int size, union i2c_smbus_data *data);
+ 
+ 	/* To determine what the adapter supports */
+ 	u32 (*functionality)(struct i2c_adapter *adap);
 -- 
 2.11.0
 
