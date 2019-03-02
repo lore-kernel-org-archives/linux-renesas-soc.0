@@ -2,136 +2,148 @@ Return-Path: <SRS0=Xcmt=RF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1677CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 15:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACF0C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 16:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D55BE20857
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 15:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E837E20836
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 16:17:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tPge/DIS"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MQZbyyGS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfCBPso (ORCPT
+        id S1726305AbfCBQRk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 2 Mar 2019 10:48:44 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44560 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbfCBPso (ORCPT
+        Sat, 2 Mar 2019 11:17:40 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58460 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfCBQRk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Mar 2019 10:48:44 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w2so934686wrt.11;
-        Sat, 02 Mar 2019 07:48:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sx8ucg/+pa/huUpBUnMBZPqK7D7OJDljZl/HsqEZvgM=;
-        b=tPge/DIS0V9mQ3XHlWxBGYTCtVQtJSeet1SG0TGefJ47spwvgWn3dLIW7HQqAWrEnP
-         cmiORqBODCU1KGU6riRvJ3IfWKjHJ2iRkprX8JCEP8mAukSDAb75kk0Iq2jePlW0b/Er
-         rm4t6V9UJ36CrwxJmwmMYAb3FDZCW1feULvQ7TdYl90ySdQc8jW8qbL9LW7EyQPVMcKy
-         jYXWYCOQWV6g8d+b6mhqDvkbjEGsylYfcxFSBnx82FdPwMUgB4d4UnysavNbPAeKaJv2
-         3wC00c7fgK/lgKQU9wtXWRoL9L9/aWCPmfm8nscA60X/iwfSaStXUZlsKKeKdDD4HbwS
-         LEcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sx8ucg/+pa/huUpBUnMBZPqK7D7OJDljZl/HsqEZvgM=;
-        b=TttYpkqCxOAnZB6518ACv5bhsAj6s91FEDiu2sENSLjuHfxFlFnK+2ah5CFUZt6ulv
-         KZGKf9sXapUO7BZtOHLAN4kB6XdTJvQglZEn1a4qvYbmpQyU13mFEJSmfvalvgpORJKe
-         LL+/21uN8iOj/n1cy4wNNA/MEv9q4ULveo2BNFT7AiOJopvWtkb+wSaerFlmOhVc+Mhe
-         l5+LbQchWweopsYdAbBEtsvW20zNjp4GwFJf5q37Tq5jn/EQSZhLKgfOFNrO9D3ypAPv
-         m3JS+UFyDw/PGIRol1/79aVY5boBFDXGXiULd2plbts9ORnA7mZu/jnNBegPs8OCH/HU
-         9hmg==
-X-Gm-Message-State: APjAAAW2EHqalCJQU88RUAWAa7IhKZpmp6G5ioJb5GuhcP1RBP7Kbf1k
-        SvzNhiCgksZLpUE9DUyG++ChV7uD
-X-Google-Smtp-Source: APXvYqw5Zfwf1JZ4qspmH8Qcwbd+K0aL3ToDwN50i29uMx9dw+s9i7mjgsnWjVQcr26+VnoFsxwO5A==
-X-Received: by 2002:adf:dfc4:: with SMTP id q4mr7384087wrn.276.1551541721933;
-        Sat, 02 Mar 2019 07:48:41 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id d21sm5012208wrc.44.2019.03.02.07.48.40
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Mar 2019 07:48:41 -0800 (PST)
-Subject: Re: [PATCH] regulator: gpio: Reword the binding document
-To:     Harald Geyer <harald@ccbib.org>
-Cc:     devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-References: <20190216174859.15738-1-marek.vasut@gmail.com>
- <E1gv6SG-0000Jv-KB@stardust.g4.wien.funkfeuer.at>
- <83550921-b0ec-fa34-b120-2dd159f256d8@gmail.com>
- <E1gvNOx-0000Kc-Dc@stardust.g4.wien.funkfeuer.at>
- <75846117-242c-6861-ace5-dccf88711208@gmail.com>
- <E1gvSbw-0000K8-Hj@stardust.g4.wien.funkfeuer.at>
- <7a993282-9137-caf4-ca0b-b2c01ea9959c@gmail.com>
- <E1gvfnE-0000Il-Jo@stardust.g4.wien.funkfeuer.at>
- <e2e9e577-b110-fc9b-c129-26f61e862fb4@gmail.com>
- <E1gvrEx-0000K7-Ks@stardust.g4.wien.funkfeuer.at>
- <72363317-8259-eda2-4cd8-4f336f0c155f@gmail.com>
- <E1gw2Ll-0000MN-40@stardust.g4.wien.funkfeuer.at>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <fc83b1ce-52e5-b197-4679-69b576233726@gmail.com>
-Date:   Sat, 2 Mar 2019 15:55:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 2 Mar 2019 11:17:40 -0500
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3E68754E;
+        Sat,  2 Mar 2019 17:17:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1551543457;
+        bh=IdC5xMCZcmsJPuzzkzOoubaWHkeEXlSh6gnIc2h9A1A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MQZbyyGSM7FNzutHb18c3DQsx5y6Hlfe5BT6skA1B646IAxXblogPgLlUFRHBqriH
+         EN6BjYfodSrcylItHqyU658820hpfV5Z+l7hd5F788vtABbEhK7o6tNwROWRJqVsLW
+         ww/wqAUJer5a01qHVxbSlsG9ZZtPxt0oXuSf1ZjU=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kevin Key <kevin.key@gentex.com>
+Subject: [PATCH] drm: rcar-du: Support panels connected directly to the DPAD outputs
+Date:   Sat,  2 Mar 2019 18:17:25 +0200
+Message-Id: <20190302161725.25104-1-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <E1gw2Ll-0000MN-40@stardust.g4.wien.funkfeuer.at>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2/19/19 11:10 AM, Harald Geyer wrote:
-> Marek Vasut writes:
->> On 2/18/19 11:18 PM, Harald Geyer wrote:
->>> From the explanations provided by Mark it is clear that this property
->>> is an artifact of the implementation in linux. I think we should document
->>> is as such. How about:
->>>
->>> gpios-states : On operating systems, that don't support reading back gpio
->>> 	       values in output mode (most notably linux), this array
->>> 	       provides the state of GPIO pins set when requesting them
->>> 	       from the gpio controller.
->>
->> That's good.
->>
->>> Systems, that are capable of
->>> 	       preserving state when requesting the lines, are free to
->>> 	       ignore this property.
->>
->> Are they ?
-> 
-> I think so. Also this seems to be what Mark wrote yesterday:
-> 
-> | With the GPIO API as it stands it is unfortunately not possible to
-> | preserve the state, if the API were fixed we'd preserve state.
-> 
->> I think there are systems which depend on preconfiguring the
->> GPIO according to this property.
-> 
-> These systems need to preconfigure the GPIOs in firmware anyway, so
-> they should be fine so long as the driver preserves state.
-> 
-> Since the original wording doesn't give any guarantees, I think the
-> new wording doesn't change anything. It just makes it clearer, that
-> there are no guarantees and that some drivers will happily overwrite
-> state when this property is absent.
+The R-Car DU driver assumes that a bridge is always connected to the DU
+output. This is valid for the LVDS and HDMI outputs, but the DPAD
+outputs can be connected directly to a panel, in which case no bridge is
+available.
 
-OK, so how can we move forward with this ? We discussed a lot, but I
-don't know what we should do about the patch.
+To support this use case, detect whether the entities connected to the
+DU DPAD outputs are encoders or panels based on the number of ports of
+their DT node, and retrieve the corresponding type of DRM objects. For
+panels, additionally create panel bridge instances.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 54 ++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index 8ee4e762f4e5..595ecfa1ff0e 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -28,13 +28,33 @@ static const struct drm_encoder_funcs encoder_funcs = {
+ 	.destroy = drm_encoder_cleanup,
+ };
+ 
++static unsigned int rcar_du_encoder_count_ports(struct device_node *node)
++{
++	struct device_node *ports;
++	struct device_node *port;
++	unsigned int num_ports = 0;
++
++	ports = of_get_child_by_name(node, "ports");
++	if (!ports)
++		ports = of_node_get(node);
++
++	for_each_child_of_node(ports, port) {
++		if (of_node_name_eq(port, "port"))
++			num_ports++;
++	}
++
++	of_node_put(node);
++
++	return num_ports;
++}
++
+ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 			 enum rcar_du_output output,
+ 			 struct device_node *enc_node)
+ {
+ 	struct rcar_du_encoder *renc;
+ 	struct drm_encoder *encoder;
+-	struct drm_bridge *bridge = NULL;
++	struct drm_bridge *bridge;
+ 	int ret;
+ 
+ 	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
+@@ -48,11 +68,33 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
+ 		enc_node, output);
+ 
+-	/* Locate the DRM bridge from the encoder DT node. */
+-	bridge = of_drm_find_bridge(enc_node);
+-	if (!bridge) {
+-		ret = -EPROBE_DEFER;
+-		goto done;
++	/*
++	 * Locate the DRM bridge from the DT node. For the DPAD outputs, if the
++	 * DT node has a single port, consider it describes a panel and create a
++	 * panel bridge.
++	 */
++	if ((output == RCAR_DU_OUTPUT_DPAD0 ||
++	     output == RCAR_DU_OUTPUT_DPAD1) &&
++	    rcar_du_encoder_count_ports(enc_node) == 1) {
++		struct drm_panel *panel = of_drm_find_panel(enc_node);
++
++		if (IS_ERR(panel)) {
++			ret = PTR_ERR(panel);
++			goto done;
++		}
++
++		bridge = devm_drm_panel_bridge_add(rcdu->dev, panel,
++						   DRM_MODE_CONNECTOR_DPI);
++		if (IS_ERR(bridge)) {
++			ret = PTR_ERR(bridge);
++			goto done;
++		}
++	} else {
++		bridge = of_drm_find_bridge(enc_node);
++		if (!bridge) {
++			ret = -EPROBE_DEFER;
++			goto done;
++		}
+ 	}
+ 
+ 	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
 -- 
-Best regards,
-Marek Vasut
+Regards,
+
+Laurent Pinchart
+
