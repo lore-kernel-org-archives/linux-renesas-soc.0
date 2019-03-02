@@ -2,153 +2,230 @@ Return-Path: <SRS0=Xcmt=RF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C736DC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 10:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248EDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 13:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 952E72085A
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 10:15:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="1P6ZFaIM"
+	by mail.kernel.org (Postfix) with ESMTP id F12C020838
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Mar 2019 13:48:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbfCBKPa (ORCPT
+        id S1726744AbfCBNru (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 2 Mar 2019 05:15:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33827 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfCBKP3 (ORCPT
+        Sat, 2 Mar 2019 08:47:50 -0500
+Received: from sauhun.de ([88.99.104.3]:36372 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfCBNrt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Mar 2019 05:15:29 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l5so286254lje.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 02 Mar 2019 02:15:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=cHHNRHPJqf7aByI4pP6V3ueWusNGY7S6yJanIoX8rTY=;
-        b=1P6ZFaIM1F95ENHgM3CW+4bVcUDbaBO0y1+qHrrX2gu7yaOiS8YNDYxKnXIbelJBXX
-         fpBUxJ9UfJbeXl1uyD+Z9jK5DQWCOvQPgKoH+yjHqJPeqvWXiLS6Zb/2zxFe6edeSPCN
-         Wo+sCvW9Fgtc+LebR6XqrYSJwQPmhHJcJK9+3O2aerJlO9gQK4DX5s2Bhir8YNXyMUwi
-         hQIiIkApoMaWQcTSK9UXBcYGmPGPzi5SbPqUZlC3ZaxizeEOoYgJ+IHkpxr8iYM1fBXj
-         RqhJv1qxYlZbMWDOqh+WC/HGVt0PN0sESMyj8hY4Y7xW4Z98CrKDv4wuAqCcoJHPRVyr
-         yCjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=cHHNRHPJqf7aByI4pP6V3ueWusNGY7S6yJanIoX8rTY=;
-        b=brEuCzmMllvLktBULJ8I3begzpFtk+HBtlBqHdFZ2G9OCuhYCavuDcgRoOt/Eh1E86
-         UGtw9WpdwXaoEoIUdbTbV5DeMfgbApSxlFyFklXRlslydvstDqlD9/dZhB1cfNKf3kbn
-         bV4weS8UNii+vA5gkcSIUPG1VL3lLdUmK8XKQW/82TUPmUA5SQnpZCrF5d67ixKatpzo
-         U4DgVkEfGSLHCwsM/2Ocj9oG8RYCA4qaX2OSe008ACu14RQ2wQdbxCUdgfYpDQlgmcCP
-         X0ux6+ZlhTtmt9u3RcRNZC9bv6hVNb3yoTOhPqnGvefl+l7Cjru3oOvkewkLvyNGTHzf
-         7alA==
-X-Gm-Message-State: APjAAAWEd+q1N2EwYdbFecTe+fE2YhYxTChhVreDG4Fz90CbbKZnWFa0
-        afGv8k532gULZkZMxv3mZh1gKiwvRas=
-X-Google-Smtp-Source: APXvYqxVIXcZ7Aw/RkZDXIEJju6w+sr+4U+X5vnxKPSG8gghr1cTT7GC9Fvx8n3N2igqgYmFV3T3JA==
-X-Received: by 2002:a2e:8092:: with SMTP id i18mr5426826ljg.91.1551521727624;
-        Sat, 02 Mar 2019 02:15:27 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id u14sm108891lfu.94.2019.03.02.02.15.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 02 Mar 2019 02:15:26 -0800 (PST)
-Date:   Sat, 2 Mar 2019 11:15:26 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Pass name/offset to
- cpg_sd_clk_register()
-Message-ID: <20190302101526.GB22550@bigcity.dyn.berto.se>
-References: <20190301123822.808-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190301123822.808-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 2 Mar 2019 08:47:49 -0500
+Received: from localhost (p54B33179.dip0.t-ipconnect.de [84.179.49.121])
+        by pokefinder.org (Postfix) with ESMTPSA id ED96F4A1778;
+        Sat,  2 Mar 2019 14:47:45 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Keerthy <j-keerthy@ti.com>,
+        Peter Rosin <peda@axentia.se>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        Phil Reid <preid@electromag.com.au>,
+        Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH v2 5/7] i2c: busses: omap: Add the master_xfer_irqless hook
+Date:   Sat,  2 Mar 2019 14:47:33 +0100
+Message-Id: <20190302134735.4393-6-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+From: Tero Kristo <t-kristo@ti.com>
 
-Thanks for your patch.
+Add the master_xfer_irqless hook to enable i2c transactions
+in irq disabled contexts like the poweroff case.
 
-On 2019-03-01 13:38:22 +0100, Geert Uytterhoeven wrote:
-> Explicitly pass the clock's name and register offset to
-> cpg_sd_clk_register(), so the latter doesn't have to extract them from
-> the cpg_core_clk object.
-> 
-> This keeps all cpg_core_clk parsing and unmarshalling contained in a
-> single function (rcar_gen3_cpg_clk_register()).
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-omap.c | 79 ++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 66 insertions(+), 13 deletions(-)
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> To be queued in clk-renesas-for-v5.2.
-> 
->  drivers/clk/renesas/rcar-gen3-cpg.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-> index 9a8071a8114daec9..dcd4ac389326b932 100644
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -369,8 +369,8 @@ static u32 cpg_quirks __initdata;
->  #define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
->  #define SD_SKIP_FIRST	BIT(2)		/* Skip first clock in SD table */
->  
-> -static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
-> -	void __iomem *base, const char *parent_name,
-> +static struct clk * __init cpg_sd_clk_register(const char *name,
-> +	void __iomem *base, unsigned int offset, const char *parent_name,
->  	struct raw_notifier_head *notifiers)
->  {
->  	struct clk_init_data init;
-> @@ -383,13 +383,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
->  	if (!clock)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	init.name = core->name;
-> +	init.name = name;
->  	init.ops = &cpg_sd_clock_ops;
->  	init.flags = CLK_SET_RATE_PARENT;
->  	init.parent_names = &parent_name;
->  	init.num_parents = 1;
->  
-> -	clock->csn.reg = base + core->offset;
-> +	clock->csn.reg = base + offset;
->  	clock->hw.init = &init;
->  	clock->div_table = cpg_sd_div_table;
->  	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
-> @@ -606,8 +606,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->  		break;
->  
->  	case CLK_TYPE_GEN3_SD:
-> -		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
-> -					   notifiers);
-> +		return cpg_sd_clk_register(core->name, base, core->offset,
-> +					   __clk_get_name(parent), notifiers);
->  
->  	case CLK_TYPE_GEN3_R:
->  		if (cpg_quirks & RCKCR_CKSEL) {
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index cd9c65f3d404..bf48126faf94 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -269,6 +269,8 @@ static const u8 reg_map_ip_v2[] = {
+ 	[OMAP_I2C_IP_V2_IRQENABLE_CLR] = 0x30,
+ };
+ 
++static int omap_i2c_xfer_data(struct omap_i2c_dev *omap);
++
+ static inline void omap_i2c_write_reg(struct omap_i2c_dev *omap,
+ 				      int reg, u16 val)
+ {
+@@ -648,15 +650,28 @@ static void omap_i2c_resize_fifo(struct omap_i2c_dev *omap, u8 size, bool is_rx)
+ 			(1000 * omap->speed / 8);
+ }
+ 
++static void omap_i2c_wait(struct omap_i2c_dev *omap)
++{
++	u16 stat;
++	u16 mask = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG);
++	int count = 0;
++
++	do {
++		stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
++		count++;
++	} while (!(stat & mask) && count < 5);
++}
++
+ /*
+  * Low level master read/write transaction.
+  */
+ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+-			     struct i2c_msg *msg, int stop)
++			     struct i2c_msg *msg, int stop, bool polling)
+ {
+ 	struct omap_i2c_dev *omap = i2c_get_adapdata(adap);
+ 	unsigned long timeout;
+ 	u16 w;
++	int ret;
+ 
+ 	dev_dbg(omap->dev, "addr: 0x%04x, len: %d, flags: 0x%x, stop: %d\n",
+ 		msg->addr, msg->len, msg->flags, stop);
+@@ -680,7 +695,8 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 	w |= OMAP_I2C_BUF_RXFIF_CLR | OMAP_I2C_BUF_TXFIF_CLR;
+ 	omap_i2c_write_reg(omap, OMAP_I2C_BUF_REG, w);
+ 
+-	reinit_completion(&omap->cmd_complete);
++	if (!polling)
++		reinit_completion(&omap->cmd_complete);
+ 	omap->cmd_err = 0;
+ 
+ 	w = OMAP_I2C_CON_EN | OMAP_I2C_CON_MST | OMAP_I2C_CON_STT;
+@@ -732,8 +748,21 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+ 	 * REVISIT: We should abort the transfer on signals, but the bus goes
+ 	 * into arbitration and we're currently unable to recover from it.
+ 	 */
+-	timeout = wait_for_completion_timeout(&omap->cmd_complete,
+-						OMAP_I2C_TIMEOUT);
++	if (!polling) {
++		timeout = wait_for_completion_timeout(&omap->cmd_complete,
++						      OMAP_I2C_TIMEOUT);
++	} else {
++		do {
++			omap_i2c_wait(omap);
++			ret = omap_i2c_xfer_data(omap);
++		} while (ret == -EAGAIN);
++
++		if (!ret)
++			timeout = 1;
++		else
++			timeout = 0;
++	}
++
+ 	if (timeout == 0) {
+ 		dev_err(omap->dev, "controller timed out\n");
+ 		omap_i2c_reset(omap);
+@@ -772,7 +801,8 @@ static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+  * to do the work during IRQ processing.
+  */
+ static int
+-omap_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
++omap_i2c_xfer_common(struct i2c_adapter *adap, struct i2c_msg msgs[], int num,
++		     bool polling)
+ {
+ 	struct omap_i2c_dev *omap = i2c_get_adapdata(adap);
+ 	int i;
+@@ -794,7 +824,8 @@ omap_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 		omap->set_mpu_wkup_lat(omap->dev, omap->latency);
+ 
+ 	for (i = 0; i < num; i++) {
+-		r = omap_i2c_xfer_msg(adap, &msgs[i], (i == (num - 1)));
++		r = omap_i2c_xfer_msg(adap, &msgs[i], (i == (num - 1)),
++				      polling);
+ 		if (r != 0)
+ 			break;
+ 	}
+@@ -813,6 +844,18 @@ omap_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 	return r;
+ }
+ 
++static int
++omap_i2c_xfer_irq(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
++{
++	return omap_i2c_xfer_common(adap, msgs, num, false);
++}
++
++static int
++omap_i2c_xfer_polling(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
++{
++	return omap_i2c_xfer_common(adap, msgs, num, true);
++}
++
+ static u32
+ omap_i2c_func(struct i2c_adapter *adap)
+ {
+@@ -1035,10 +1078,8 @@ omap_i2c_isr(int irq, void *dev_id)
+ 	return ret;
+ }
+ 
+-static irqreturn_t
+-omap_i2c_isr_thread(int this_irq, void *dev_id)
++static int omap_i2c_xfer_data(struct omap_i2c_dev *omap)
+ {
+-	struct omap_i2c_dev *omap = dev_id;
+ 	u16 bits;
+ 	u16 stat;
+ 	int err = 0, count = 0;
+@@ -1056,7 +1097,8 @@ omap_i2c_isr_thread(int this_irq, void *dev_id)
+ 
+ 		if (!stat) {
+ 			/* my work here is done */
+-			goto out;
++			err = -EAGAIN;
++			break;
+ 		}
+ 
+ 		dev_dbg(omap->dev, "IRQ (ISR = 0x%04x)\n", stat);
+@@ -1165,14 +1207,25 @@ omap_i2c_isr_thread(int this_irq, void *dev_id)
+ 		}
+ 	} while (stat);
+ 
+-	omap_i2c_complete_cmd(omap, err);
++	return err;
++}
++
++static irqreturn_t
++omap_i2c_isr_thread(int this_irq, void *dev_id)
++{
++	int ret;
++	struct omap_i2c_dev *omap = dev_id;
++
++	ret = omap_i2c_xfer_data(omap);
++	if (ret != -EAGAIN)
++		omap_i2c_complete_cmd(omap, ret);
+ 
+-out:
+ 	return IRQ_HANDLED;
+ }
+ 
+ static const struct i2c_algorithm omap_i2c_algo = {
+-	.master_xfer	= omap_i2c_xfer,
++	.master_xfer	= omap_i2c_xfer_irq,
++	.master_xfer_atomic	= omap_i2c_xfer_polling,
+ 	.functionality	= omap_i2c_func,
+ };
+ 
 -- 
-Regards,
-Niklas Söderlund
+2.11.0
+
