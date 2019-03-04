@@ -2,154 +2,144 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64059C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 14:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53160C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 15:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33B5620663
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 14:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21D4920657
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 15:39:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fJ7xw8Jd"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxKfaJGu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfCDOss (ORCPT
+        id S1727092AbfCDPjj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 09:48:48 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37917 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727025AbfCDOss (ORCPT
+        Mon, 4 Mar 2019 10:39:39 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43145 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbfCDPjj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 09:48:48 -0500
-Received: by mail-pf1-f193.google.com with SMTP id n125so3182508pfn.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 06:48:47 -0800 (PST)
+        Mon, 4 Mar 2019 10:39:39 -0500
+Received: by mail-io1-f66.google.com with SMTP id y6so4262588ioq.10;
+        Mon, 04 Mar 2019 07:39:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5M7OwyO6HgUrUJtcdI80kaZEhRjVtvCmXtUf3SxvANc=;
-        b=fJ7xw8JdMM4dAArAke476bB1uuQCPCkRpvrEuv694j/65AqpQw4dwu0rT0PLE8CMUq
-         8ZZdQa1JhYV/PFADTEKW8EQf740m7UiBQafFMPw0f+JWB6gkNQT1sRny56yLgtwfbyam
-         BOXTPFokqTqcXuP1LyUJ3aB7CeOLkIh9sxSpzOQTkgls61EHY1hX56biugQNpS8QZSxd
-         mKv1oHHQCqBB5tpWWqtGljY/YWIdAs6CEidAP37ohcKFD7YG14I6eQ4YCA53qJzIxWko
-         9MDgc2PyBF6FA1jwGT8IxR4EuM/jf6gZCESscyiP3T75KlE9ZaP4HRq+cF6o6IYWVkyo
-         Zc8w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qE0Zu8808ijdzE0BYmvxkSngUFssgXh8tClUyxa3sPs=;
+        b=XxKfaJGuBJFgk/cdzD/2HpobQxzZr57hTbpvfh13vBE5YuF1CzL5NjGfXYEyubSy45
+         mrZeA//EbvTkN/Dc/l47MzxTn0blpFiRh3HUUek9XzoSZo0oONipY3wgWQJPxf1a3JOc
+         kcyDmj3yESxM27HELfXm3OvSdgldEL+ef/FqFkq9L6LZ7WoPxmHVxRREoWTWkjgJ2aZZ
+         Uy1R4mLYOPh0AV/lS+Y1oL5RuwJHBheMeytrI0eF68IZm9r4/sLVBXMmkbq9h4ljPs2y
+         JpmYdd4rzleV1s3KJpV6MSVDlix4/rP0huFfFs3oqrhe8E0pxWzDpiJ52SPLkWjvzRix
+         w5Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5M7OwyO6HgUrUJtcdI80kaZEhRjVtvCmXtUf3SxvANc=;
-        b=S/lhsKtPNYIjzwEJJlu5MMltV0DHB0Lzo+GjgcP0By2qSq18ebk6ZDI3Jz/Ksa9981
-         7hfkcdLG7Mkfgl51Axm7wL0hAXENu7Kq5lFwQtSXwiSm20ZO+m3SI8fXR27ft185/S4K
-         1QWhAw2/2ZHJpbGC5mRyAqwkul3pQdtpfQcK51uOizu+coYDrjYBaXR8M8a2QKThDhyr
-         wk5EjYC2sDTyQdohO8mjTpYJH0GwnA6tx6bfNN3oQs6FHLpmrelAQYLaZpG5f0OBHaVo
-         gxFRL62KHyHuxdHOrIlfnc1zEkJ+BB7yIaYXH3D6lZtQFLrgsnYiMoGYhqGx+O5vZQL4
-         tR4g==
-X-Gm-Message-State: APjAAAV3RtLHGgy7OuKoPJ/3/MI2nDUSZtUNy7X9O84m2Z1N/hCZgxJx
-        PCWH4dlB3hcuBHCSph57bIMU
-X-Google-Smtp-Source: APXvYqzFd3N9m0cOwhgb2geq+smMS20gI7hq9k0RX5n0UIhO8QQjfez/wbEryv8i0R0DnsQNDgpong==
-X-Received: by 2002:a63:f07:: with SMTP id e7mr18909505pgl.173.1551710926837;
-        Mon, 04 Mar 2019 06:48:46 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:88c:f338:bc65:e0ee:7524:9950])
-        by smtp.gmail.com with ESMTPSA id 63sm10441906pfy.110.2019.03.04.06.48.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Mar 2019 06:48:46 -0800 (PST)
-Date:   Mon, 4 Mar 2019 20:18:29 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qE0Zu8808ijdzE0BYmvxkSngUFssgXh8tClUyxa3sPs=;
+        b=UW6TecJh+U3cY88S4hrMT/+po4WstCrQR+K1WPkQZxj1qmfc7vZRn2nui8pg5JREhh
+         RNvE9WUVBpre+n2NXtFdYeRGiIS7E9XWNowBGzz6pKG1reNN4hLYN9KuLUSq5gVU3Yx/
+         08wfVTaSM8lvltFtXYV6GVrtTBj3EiGB4tuYhArilVPExEwPZk2MJ3dqEHhhQLhAYFlP
+         zRSKbUeJqV1CAlRch2zeVsJguztwrkxBuy2A6nqKEsF3K76CE45EU29o6DGYeTtkQ0Kc
+         PiXhcCnLHIvSKHYAcOSCNQwUv2LxJq479l18Gtv0J/gEwhAHYO3yCVPwJURSmdF2pwGp
+         xp1g==
+X-Gm-Message-State: APjAAAVzGW/Doqf47V0PSm5xRRP697+fA0euenqSaHk3rpvGQhdB4OJ9
+        YjJ+hL1mw4qarY0I9/d8zgRdbXvcjpBSgI1k7Q==
+X-Google-Smtp-Source: APXvYqwWnygP/CYpVoom77HVoDG4du5ty9Av0tuv/JeGLUOQ0LxSf9rbgiHm7uq2/vEea5xSyJtthzBi3q2mIa56j88=
+X-Received: by 2002:a6b:6e11:: with SMTP id d17mr9864707ioh.297.1551713977983;
+ Mon, 04 Mar 2019 07:39:37 -0800 (PST)
+MIME-Version: 1.0
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <1551430616-42014-6-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <1551430616-42014-6-git-send-email-wen.yang99@zte.com.cn>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Mon, 4 Mar 2019 17:39:28 +0200
+Message-ID: <CAKKbWA5GkC7M9gm_HRN-4=neJKNH4JGRj1aaNsHyR7Ar54dS0A@mail.gmail.com>
+Subject: Re: [PATCH 06/15] arm: npcm: fix a leaked reference by addingmissing of_node_put
+To:     Wen Yang <wen.yang99@zte.com.cn>
+Cc:     liviu.dudau@arm.com, sudeep.holla@arm.com,
+        lorenzo.pieralisi@arm.com, Russell King <linux@armlinux.org.uk>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        avifishman70@gmail.com, Tomer Maimon <tmaimon77@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kgene@kernel.org, krzk@kernel.org,
+        linux-samsung-soc@vger.kernel.org, michal.simek@xilinx.com,
+        afaerber@suse.de, manivannan.sadhasivam@linaro.org,
+        dinguyen@kernel.org, heiko@sntech.de,
+        linux-rockchip@lists.infradead.org,
+        Florian Fainelli <f.fainelli@gmail.com>, rjui@broadcom.com,
+        sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        linus.walleij@linaro.org, Tomer Maimon <tmaimon77@gmail.com>,
         Patrick Venture <venture@google.com>,
         Nancy Yuen <yuenn@google.com>,
         Brendan Higgins <brendanhiggins@google.com>,
         OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Xu Wei <xuwei5@hisilicon.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>, wang.yi59@zte.com.cn
-Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
- addingmissing of_node_put
-Message-ID: <20190304144829.GA5265@Mani-XPS-13-9360>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
- <20190301155523.GA1915@Mani-XPS-13-9360>
- <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        xuwei5@hisilicon.com, maxime.ripard@bootlin.com, wens@csie.org,
+        catalin.marinas@arm.com, will.deacon@arm.com, horms@verge.net.au,
+        magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, wang.yi59@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Linus,
+Reviewed-by: Avi Fishman <avifishman70@gmail.com>
 
-On Mon, Mar 04, 2019 at 01:29:33PM +0100, Linus Walleij wrote:
-> On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> > Hi Wen,
-> >
-> > On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
-> > > The call to of_get_next_child returns a node pointer with refcount
-> > > incremented thus it must be explicitly decremented after the last
-> > > usage.
-> > >
-> > > Detected by coccinelle with the following warnings:
-> > > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 103, but without a corresponding object release within this function.
-> > > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 115, but without a corresponding object release within this function.
-> > > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 128, but without a corresponding object release within this function.
-> > >
-> >
-> > We have a floating patch for this:
-> > https://www.spinics.net/lists/arm-kernel/msg694544.html
-> >
-> > Andreas: Can you please take a second look at the patchset submitted by Linus
-> > Walleij and Russel for simplifying the Actions startup code?
-> 
-> Andreas wrote a version of simplifying secondary startup in the
-> same spirit as Russell's patches, and it's merged and all
-> is fine I think.
-> 
+Thanks
 
-Oops. I think I missed that! Can you please point me to that patch? And how it
-got merged? I did the PR for actions stuff this time and haven't included any
-mach-actions patches.
+On Fri, Mar 1, 2019 at 10:57 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
+>
+> The call to of_get_next_child returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+>
+> Detected by coccinelle with the following warnings:
+> ./arch/arm/mach-npcm/platsmp.c:52:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 31, but without a corresponding object release within this function.
+> ./arch/arm/mach-npcm/platsmp.c:68:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 60, but without a corresponding object release within this function.
+>
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Cc: Avi Fishman <avifishman70@gmail.com>
+> Cc: Tomer Maimon <tmaimon77@gmail.com>
+> Cc: Patrick Venture <venture@google.com>
+> Cc: Nancy Yuen <yuenn@google.com>
+> Cc: Brendan Higgins <brendanhiggins@google.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: openbmc@lists.ozlabs.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/arm/mach-npcm/platsmp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm/mach-npcm/platsmp.c b/arch/arm/mach-npcm/platsmp.c
+> index 21633c7..fe63edc 100644
+> --- a/arch/arm/mach-npcm/platsmp.c
+> +++ b/arch/arm/mach-npcm/platsmp.c
+> @@ -35,6 +35,7 @@ static int npcm7xx_smp_boot_secondary(unsigned int cpu,
+>                 goto out;
+>         }
+>         gcr_base = of_iomap(gcr_np, 0);
+> +       of_node_put(gcr_np);
+>         if (!gcr_base) {
+>                 pr_err("could not iomap gcr");
+>                 ret = -ENOMEM;
+> @@ -63,6 +64,7 @@ static void __init npcm7xx_smp_prepare_cpus(unsigned int max_cpus)
+>                 return;
+>         }
+>         scu_base = of_iomap(scu_np, 0);
+> +       of_node_put(scu_np);
+>         if (!scu_base) {
+>                 pr_err("could not iomap scu");
+>                 return;
+> --
+> 2.9.5
+>
 
-Thanks,
-Mani
 
-> If this patch applied on top of the current upstream code I'd say
-> just forget about my patch and merge Wen's patch instead.
-> 
-> Yours,
-> Linus Walleij
+-- 
+Regards,
+Avi
