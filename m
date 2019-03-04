@@ -2,175 +2,134 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FB8C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F97CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E7892075B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:25:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A7D2070B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:29:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="sCcuVfyd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZu9tlVv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfCDMZk (ORCPT
+        id S1726111AbfCDM3r (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 07:25:40 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18744 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbfCDMZj (ORCPT
+        Mon, 4 Mar 2019 07:29:47 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34367 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbfCDM3r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 07:25:39 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c7d193a0001>; Mon, 04 Mar 2019 04:25:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 04 Mar 2019 04:25:37 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 04 Mar 2019 04:25:37 -0800
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 Mar
- 2019 12:25:37 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 4 Mar 2019 12:25:36 +0000
-Received: from [10.21.24.139] (Not Verified[10.21.24.139]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c7d193e0001>; Mon, 04 Mar 2019 04:25:37 -0800
-Subject: Re: [RFC PATCH v2 6/7] i2c: tegra-bpmp: convert to use new atomic
- callbacks
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, Keerthy <j-keerthy@ti.com>,
-        Peter Rosin <peda@axentia.se>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        Phil Reid <preid@electromag.com.au>,
-        Tero Kristo <t-kristo@ti.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
- <20190302134735.4393-7-wsa+renesas@sang-engineering.com>
-From:   Timo Alho <talho@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <66ad8bfa-12fc-3bda-a2f0-55a9f82e82a2@nvidia.com>
-Date:   Mon, 4 Mar 2019 14:25:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 4 Mar 2019 07:29:47 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l5so4168511lje.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 04:29:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fgxOZP+dFQBUPmSEDR9WfH52m7XyQaNgMzlC/Q0birs=;
+        b=hZu9tlVv49i8EUfictk3sxX9NSdfhxtF6JwpGqTjGVCtqDrBsnLl3ParhWyXQzWgg8
+         8LwN9FvowN3pgbMWVla1VDGTGvtb7Pal8paz4s0+1Yt8gP3jkYfJx24Pk0847kC2kOcY
+         OKi5N6vLYqMdXXfd/euYJJjBuLw3OymL0hvvLa8isn9xyILlCIhef8rJ6zoFDEgbCm5W
+         Dj3XpBaakqkvkQQXl3y0to7P1YHLA44pEq1TPQFc6y+Hta6oDaNha7PWGSYVlyqkpmh+
+         J54b471LNq8ZwKYehc4//UffGvfVZFw8IEMo4GW+Cy/yoNVlgrvm0+cjKtynfQ+ig0+S
+         rkdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fgxOZP+dFQBUPmSEDR9WfH52m7XyQaNgMzlC/Q0birs=;
+        b=rtT3fLuaONflkod3fEs9Tj6xrq3X2+oYnTWZrQhZd87ejGHGnI8OcMknrInrB153KS
+         IZH2+6z5fAdOJgbzdKWArbc+yEdfGN21psAErF7SXVl+81x9TN6fpbZHJrb8nsIg9nbV
+         7C2XvQi7IFSe+C0OteHvXqLWQzqWcoxjmjSlgyLPZGDw0KnccDfwoJe548snzAKladgo
+         gxBZcT2arj913UmsXbaJ0f+GGVj+6ptrAz+e3uyX+bDRIRYhALT/rS+yMqw5Mc7gg8Fo
+         A0dJOOryXEc6iKd3o4Oq+AMzjR0bGK1eLMVQ9Tf73D+W4S0QdTdVaW2BCFMoJtYuJXrm
+         fpvw==
+X-Gm-Message-State: APjAAAV1PaAsq4H8mKjwLW8vKqJT+Sv2c4OnDAkpOHsk+4sZUM3r1a7B
+        if9bbC8zkWbFySgLgvMyxsYLeN+liMIgONBHMKuPRQ==
+X-Google-Smtp-Source: APXvYqyRCcxE5/JHDMK7y8Rs7CXj1wxJ3SX/WwI4wHVUkEXfmNIrUVn4FdFrzzky24sHnlYZuHrfdhcCxPaq9L8v4oo=
+X-Received: by 2002:a2e:9217:: with SMTP id k23mr512827ljg.159.1551702585121;
+ Mon, 04 Mar 2019 04:29:45 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190302134735.4393-7-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1551702330; bh=tkx6dOeECawjII7ZM4RCHNO6TRXAAJAI2ekdDjZ8hsQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:Content-Type:
-         Content-Language:Content-Transfer-Encoding;
-        b=sCcuVfydBCqpWwrsQi6yddOgDJh1TtfCZ7XEK3D5607FscDJ07vuFy84DikWZ9uDh
-         6/KUCcTJoAKkOFCuD4sd2fsckHqbzBxVKI6Yj36xTmi38sn7BRlQPASS2oHlN0HWpu
-         GN8zFWyCDeyib5FE46Wy2Sa06b5M+qWnb0aWSBal/OCLGZ8fYVTI1zY7nK9fV6U43r
-         zDyZtGK+sRGuYdijy0t0Gy6xWgIme8fc1xNoYp4RsqhFEoodpA8sNDg4lsJ2qylSnK
-         mSSNrceprhndIjcXzLHBoXSJR4R8e2MyJ/DHf79kXG0Uzrx2DnHmEevlmvEA6ngAGF
-         Ay8alzFZyCAJw==
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <20190301155523.GA1915@Mani-XPS-13-9360>
+In-Reply-To: <20190301155523.GA1915@Mani-XPS-13-9360>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 4 Mar 2019 13:29:33 +0100
+Message-ID: <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
+Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
+ addingmissing of_node_put
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        avifishman70@gmail.com, Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Xu Wei <xuwei5@hisilicon.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>, wang.yi59@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> Hi Wen,
+>
+> On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
+> > The call to of_get_next_child returns a node pointer with refcount
+> > incremented thus it must be explicitly decremented after the last
+> > usage.
+> >
+> > Detected by coccinelle with the following warnings:
+> > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 103, but without a corresponding object release within this function.
+> > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 115, but without a corresponding object release within this function.
+> > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 128, but without a corresponding object release within this function.
+> >
+>
+> We have a floating patch for this:
+> https://www.spinics.net/lists/arm-kernel/msg694544.html
+>
+> Andreas: Can you please take a second look at the patchset submitted by Linus
+> Walleij and Russel for simplifying the Actions startup code?
 
+Andreas wrote a version of simplifying secondary startup in the
+same spirit as Russell's patches, and it's merged and all
+is fine I think.
 
-On 2.3.2019 15.47, Wolfram Sang wrote:
-> The driver did handle this internally, convert it to use the new
-> callbacks.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->   drivers/i2c/busses/i2c-tegra-bpmp.c | 27 ++++++++++++++++++++++-----
->   1 file changed, 22 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c b/drivers/i2c/busses/i2c-tegra-bpmp.c
-> index f6cd35d0a2ac..02b78ba5b23b 100644
-> --- a/drivers/i2c/busses/i2c-tegra-bpmp.c
-> +++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
-> @@ -207,7 +207,8 @@ static int tegra_bpmp_i2c_msg_len_check(struct i2c_msg *msgs, unsigned int num)
->   
->   static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
->   				   struct mrq_i2c_request *request,
-> -				   struct mrq_i2c_response *response)
-> +				   struct mrq_i2c_response *response,
-> +				   bool atomic)
->   {
->   	struct tegra_bpmp_message msg;
->   	int err;
-> @@ -222,7 +223,7 @@ static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
->   	msg.rx.data = response;
->   	msg.rx.size = sizeof(*response);
->   
-> -	if (irqs_disabled())
-> +	if (atomic)
->   		err = tegra_bpmp_transfer_atomic(i2c->bpmp, &msg);
->   	else
->   		err = tegra_bpmp_transfer(i2c->bpmp, &msg);
-> @@ -230,8 +231,9 @@ static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
->   	return err;
->   }
->   
-> -static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
-> -			       struct i2c_msg *msgs, int num)
-> +static int tegra_bpmp_i2c_xfer_common(struct i2c_adapter *adapter,
-> +				      struct i2c_msg *msgs, int num,
-> +				      bool atomic)
->   {
->   	struct tegra_bpmp_i2c *i2c = i2c_get_adapdata(adapter);
->   	struct mrq_i2c_response response;
-> @@ -253,7 +255,7 @@ static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
->   		return err;
->   	}
->   
-> -	err = tegra_bpmp_i2c_msg_xfer(i2c, &request, &response);
-> +	err = tegra_bpmp_i2c_msg_xfer(i2c, &request, &response, atomic);
->   	if (err < 0) {
->   		dev_err(i2c->dev, "failed to transfer message: %d\n", err);
->   		return err;
-> @@ -268,6 +270,20 @@ static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
->   	return num;
->   }
->   
-> +static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
-> +			       struct i2c_msg *msgs, int num)
-> +
-> +{
-> +	return tegra_bpmp_i2c_xfer_common(adapter, msgs, num, false);
-> +}
-> +
-> +static int tegra_bpmp_i2c_xfer_atomic(struct i2c_adapter *adapter,
-> +				      struct i2c_msg *msgs, int num)
-> +
-> +{
-> +	return tegra_bpmp_i2c_xfer_common(adapter, msgs, num, true);
-> +}
-> +
->   static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
->   {
->   	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR |
-> @@ -276,6 +292,7 @@ static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
->   
->   static const struct i2c_algorithm tegra_bpmp_i2c_algo = {
->   	.master_xfer = tegra_bpmp_i2c_xfer,
-> +	.master_xfer_atomic = tegra_bpmp_i2c_xfer_atomic,
->   	.functionality = tegra_bpmp_i2c_func,
->   };
->   
-> 
+If this patch applied on top of the current upstream code I'd say
+just forget about my patch and merge Wen's patch instead.
 
-Looks good to me.
-
-Reviewed-by: Timo Alho <talho@nvidia.com>
+Yours,
+Linus Walleij
