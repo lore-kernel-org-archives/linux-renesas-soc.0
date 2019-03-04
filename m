@@ -7,62 +7,50 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B995C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B57EC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B5C20836
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:52:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAA2B206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:54:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Hb35SrX8"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="TzDJ9+Ms"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbfCDJw7 (ORCPT
+        id S1726066AbfCDJyw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 04:52:59 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38755 "EHLO
+        Mon, 4 Mar 2019 04:54:52 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:38788 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfCDJw6 (ORCPT
+        with ESMTP id S1726032AbfCDJyw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 04:52:58 -0500
+        Mon, 4 Mar 2019 04:54:52 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id EA57925B74E;
-        Mon,  4 Mar 2019 20:52:56 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E780325B7C0;
+        Mon,  4 Mar 2019 20:54:49 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551693177; bh=4EVotGWzLoANxaEsI/QERejYmSSj7GtS2TsnqKOUrrk=;
+        t=1551693290; bh=Iil3U9crypxnwiSTSLwqys63KiVPNlMFxvlTtW/ztRU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hb35SrX8J647yDg1Xk44H4vsqK1L1QIv+rwZR6HSp4rT6asP9rMUle1Fgluk/WRZF
-         I8KxWMirSTAbSyPQqTEpfVXtAT93201Z8RWIaxj5iKyzzwqkUadgBc4Bcea6gDoFT2
-         rZJLiFGnCCIldYQf1nfJ8KcJ0eIk63ymLbGrOwKQ=
+        b=TzDJ9+MsXhqW9sxdLiFZ8K7opM7+WghGrT0PZ1LxuND8sflQRa5nG5IypfkkLJxQc
+         ca1nVzHqg6Q9doLF0+th4IqzwYq6G/o9HamR7WEmQp4ifYTmjTYYIMxEa5l1x2Kneh
+         dzz5h9HecikKcKfprIb93iVK/yS2bXSCrGLyI81A=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 2FCEA94030D; Mon,  4 Mar 2019 10:52:55 +0100 (CET)
-Date:   Mon, 4 Mar 2019 10:52:55 +0100
+        id 2802394030D; Mon,  4 Mar 2019 10:54:48 +0100 (CET)
+Date:   Mon, 4 Mar 2019 10:54:48 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Olof Johansson <olof@lixom.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 4/5] arm64: defconfig: enable RX-8581 config option
-Message-ID: <20190304095254.m5ihwwex4pm4tplo@verge.net.au>
-References: <1550742048-28068-1-git-send-email-biju.das@bp.renesas.com>
- <1550742048-28068-5-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdVfaHXPWpTHJNMkNX1hEXBbM_zdbkoTj9NPf4cBNfpiWA@mail.gmail.com>
- <OSBPR01MB2103EC5F538696499211DAEBB8760@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] arm64: renesas_defconfig: Enable RX-8581 config option
+Message-ID: <20190304095447.5hhwzlfwmsv7ihtz@verge.net.au>
+References: <1551444976-48763-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdWX4107EcCA0UMW=Cbj5DTFkame_FR9UVwMEd+5GzouAg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <OSBPR01MB2103EC5F538696499211DAEBB8760@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+In-Reply-To: <CAMuHMdWX4107EcCA0UMW=Cbj5DTFkame_FR9UVwMEd+5GzouAg@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -70,26 +58,18 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 10:46:00AM +0000, Biju Das wrote:
-> Hi Geert,
-> 
-> Thanks for the feedback.
-> 
-> > Subject: Re: [PATCH 4/5] arm64: defconfig: enable RX-8581 config option
+On Fri, Mar 01, 2019 at 02:14:34PM +0100, Geert Uytterhoeven wrote:
+> On Fri, Mar 1, 2019 at 2:02 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Enable support for RX-8571/RX-8581 RTC, which is used by
+> > RZ/G2E (r8a774c0) based Silicon Linux CAT874 board.
 > >
-> > On Thu, Feb 21, 2019 at 10:46 AM Biju Das <biju.das@bp.renesas.com>
-> > wrote:
-> > > Enable support for RX-8571/RX-8581 RTC by turning on
-> > > CONFIG_RTC_DRV_RX8581 as module.
-> > >
-> > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Probably you want to enable this in (local) renesas_defconfig, too?
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > 
-> Yes. Will send another patch to enable this in renesas_defconfig as well.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks, I see that.
+Thanks,
 
-I have gone ahead and applied this patch for v5.2.
+I have applied this to the topic/renesas-defconfig branch.
+This branch is included in the devel branch of the renesas tree.
+But it is not included in the next branch nor targeted at inclusion
+in mainline.
