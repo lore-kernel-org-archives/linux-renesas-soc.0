@@ -2,105 +2,116 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D28C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8E4C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5757D208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:24:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="IutLse4u"
+	by mail.kernel.org (Postfix) with ESMTP id 8626C206B8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726098AbfCDKYb (ORCPT
+        id S1726249AbfCDKfN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 05:24:31 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:39262 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfCDKYa (ORCPT
+        Mon, 4 Mar 2019 05:35:13 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:38427 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726063AbfCDKfN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 05:24:30 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id CA79A25B74E;
-        Mon,  4 Mar 2019 21:24:25 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551695066; bh=T4VWP9pUoWbbuL67atuRtOPA0w+w3i3Vld6gseaDoe0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IutLse4uF4sxg3SheIN7qB0rz5LEVdQ07/xnctYgzGGU0p4qtHyvGENCsNpNiWCPZ
-         IoN9F9M0rq+b/JY1qsD+3KanuOXfrqseIS3aRGitja7PKO+QKmioNAqL92F58Xh5br
-         c3SDjEbg25QJwLqftZXTIooabNOMJDy3Mti8ZxkM=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 18A9594030D; Mon,  4 Mar 2019 11:24:24 +0100 (CET)
-Date:   Mon, 4 Mar 2019 11:24:24 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        openbmc@lists.ozlabs.org, Wei Xu <xuwei5@hisilicon.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
-        wang.yi59@zte.com.cn
-Subject: Re: [PATCH 08/15] ARM: shmobile: fix a leaked reference by
- addingmissing of_node_put
-Message-ID: <20190304102423.bipib6frc6ma2ltv@verge.net.au>
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
- <1551430616-42014-8-git-send-email-wen.yang99@zte.com.cn>
- <CAMuHMdWrY0UNhCA7a8oHVfdVNXaB=15qFuWqvuU9OZpf7-ecmg@mail.gmail.com>
+        Mon, 4 Mar 2019 05:35:13 -0500
+Received: by mail-ua1-f65.google.com with SMTP id d4so3946158uap.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 02:35:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F5whef2h4+/kouGMAnV00js/+W6ORMLLekuCTU4PUX8=;
+        b=bUF1OpqYpXQpkHtCS2+2inBYO8NSSHJAsoamwZRk3mwcQr8SEa3pA+dp1o0qTXNPPk
+         9YuwN+nlkmD8n1m/STWOEW5k35mPYZoXT5ziGS7YI//l9dZ+N1Z9pTOTuqYQJccpk0f0
+         1OwGWrm+5NWws3jfTICrDxfGKyH6Rdq0pHGKC1Dv7nZ2WbQ0zyFYZIolXz9q9ObZ7gqU
+         ZsI5wOuCzCd/tb6qyVxwJy/Jw+kYZcEz5dyZDXHCbZp0N9QLpdO+utyzxHrmn+f03vV4
+         nqJ3672pESSCN+crSJyafR6irjnxpFRZquuulwG+dsiWb2YHyH+2ck5iOHD3+QM3FMcs
+         JCow==
+X-Gm-Message-State: APjAAAWpJgwSuwnxUvorvy+VkmNkSN35cDR14aWwIXjuZAQVRcoyXMWf
+        ezZvCJ6AqOUYPs7BE9JqsZUtq24+2C7B3cPwIys=
+X-Google-Smtp-Source: APXvYqyVom/11llDFz+Fdc29/u65Qy2+rdrdLbtLSOz0gU+VuOEt2IyYmYAfFP9LMybWbn0Hd6PqfsCBHttxxGAUs64=
+X-Received: by 2002:a67:78ce:: with SMTP id t197mr9168583vsc.152.1551695711828;
+ Mon, 04 Mar 2019 02:35:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWrY0UNhCA7a8oHVfdVNXaB=15qFuWqvuU9OZpf7-ecmg@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190303190059.31155-1-marek.vasut@gmail.com>
+In-Reply-To: <20190303190059.31155-1-marek.vasut@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 4 Mar 2019 11:35:00 +0100
+Message-ID: <CAMuHMdWStD+on70-e1p0SXbe2igNJxDM1RzeYsdXW+80SA9+sw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: alt: Add DA9063 PMIC node
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 10:51:27AM +0100, Geert Uytterhoeven wrote:
-> On Fri, Mar 1, 2019 at 9:57 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
-> > The call to of_get_next_child returns a node pointer with refcount
-> > incremented thus it must be explicitly decremented after the last
-> > usage.
-> >
-> > Detected by coccinelle with the following warnings:
-> > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:77:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-> > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:85:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-> > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:90:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-> >
-> > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Marek,
 
-Thanks, applied for v5.2.
+On Sun, Mar 3, 2019 at 8:01 PM <marek.vasut@gmail.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>
+> Add DA9063 PMIC node to the I2C bus.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+
+Thanks for your patch!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/arch/arm/boot/dts/r8a7794-alt.dts
+> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
+> @@ -377,6 +377,27 @@
+>         pinctrl-names = "i2c-exio4";
+>  };
+>
+> +&i2c7 {
+> +       status = "okay";
+> +       clock-frequency = <100000>;
+
+According to the DA9063 datasheet, the PMIC supports up to 400 kHz.
+It looks like there are no other devices on the bus.
+
+Wolfram, what's your stance on this?
+
+> +
+> +       pmic@58 {
+> +               compatible = "dlg,da9063";
+> +               reg = <0x58>;
+> +               interrupt-parent = <&gpio3>;
+> +               interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
+> +               interrupt-controller;
+> +
+> +               rtc {
+> +                       compatible = "dlg,da9063-rtc";
+> +               };
+> +
+> +               wdt {
+> +                       compatible = "dlg,da9063-watchdog";
+> +               };
+> +       };
+> +};
+> +
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
