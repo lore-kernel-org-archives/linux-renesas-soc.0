@@ -2,116 +2,170 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8E4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9569DC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8626C206B8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 657EA21019
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:37:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DwcV7RlS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbfCDKfN (ORCPT
+        id S1726090AbfCDKhk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 05:35:13 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:38427 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfCDKfN (ORCPT
+        Mon, 4 Mar 2019 05:37:40 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35398 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbfCDKhk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 05:35:13 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d4so3946158uap.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 02:35:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F5whef2h4+/kouGMAnV00js/+W6ORMLLekuCTU4PUX8=;
-        b=bUF1OpqYpXQpkHtCS2+2inBYO8NSSHJAsoamwZRk3mwcQr8SEa3pA+dp1o0qTXNPPk
-         9YuwN+nlkmD8n1m/STWOEW5k35mPYZoXT5ziGS7YI//l9dZ+N1Z9pTOTuqYQJccpk0f0
-         1OwGWrm+5NWws3jfTICrDxfGKyH6Rdq0pHGKC1Dv7nZ2WbQ0zyFYZIolXz9q9ObZ7gqU
-         ZsI5wOuCzCd/tb6qyVxwJy/Jw+kYZcEz5dyZDXHCbZp0N9QLpdO+utyzxHrmn+f03vV4
-         nqJ3672pESSCN+crSJyafR6irjnxpFRZquuulwG+dsiWb2YHyH+2ck5iOHD3+QM3FMcs
-         JCow==
-X-Gm-Message-State: APjAAAWpJgwSuwnxUvorvy+VkmNkSN35cDR14aWwIXjuZAQVRcoyXMWf
-        ezZvCJ6AqOUYPs7BE9JqsZUtq24+2C7B3cPwIys=
-X-Google-Smtp-Source: APXvYqyVom/11llDFz+Fdc29/u65Qy2+rdrdLbtLSOz0gU+VuOEt2IyYmYAfFP9LMybWbn0Hd6PqfsCBHttxxGAUs64=
-X-Received: by 2002:a67:78ce:: with SMTP id t197mr9168583vsc.152.1551695711828;
- Mon, 04 Mar 2019 02:35:11 -0800 (PST)
+        Mon, 4 Mar 2019 05:37:40 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4EAED322;
+        Mon,  4 Mar 2019 11:37:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1551695857;
+        bh=O3zqWrnAmDYOCl80b7GVUP0H2B3jmPPNWjQT7CWu9c0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DwcV7RlSbEEFj0LZAouK+w9RZ0eTafltwUAimxrEmYuLeN2nUp/fXis3TPDJ//qUz
+         rnnM8ms9jP2Y4VGIpxJdTCZ8m0WfaB/ddGsQyeeszpNyuMqyHupbl+SFCa6NTkmc4M
+         X86BemTFUlvRa3b940XEWk3INrbjf4Qa1DN3FZSI=
+Date:   Mon, 4 Mar 2019 12:37:32 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Dirk Behme <dirk.behme@de.bosch.com>
+Cc:     linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        vkoul@kernel.org, geert+renesas@glider.be,
+        niklas.soderlund+renesas@ragnatech.se,
+        laurent.pinchart+renesas@ideasonboard.com,
+        Achim.Dahlhoff@de.bosch.com, stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] dmaengine: sh: rcar-dmac: Fix glitch in
+ dmaengine_tx_status
+Message-ID: <20190304103732.GB5342@pendragon.ideasonboard.com>
+References: <20190304075610.10810-1-dirk.behme@de.bosch.com>
+ <20190304075610.10810-2-dirk.behme@de.bosch.com>
 MIME-Version: 1.0
-References: <20190303190059.31155-1-marek.vasut@gmail.com>
-In-Reply-To: <20190303190059.31155-1-marek.vasut@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 4 Mar 2019 11:35:00 +0100
-Message-ID: <CAMuHMdWStD+on70-e1p0SXbe2igNJxDM1RzeYsdXW+80SA9+sw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: alt: Add DA9063 PMIC node
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190304075610.10810-2-dirk.behme@de.bosch.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
+Hi Dirk,
 
-On Sun, Mar 3, 2019 at 8:01 PM <marek.vasut@gmail.com> wrote:
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->
-> Add DA9063 PMIC node to the I2C bus.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Thank you for the patch.
 
-Thanks for your patch!
+On Mon, Mar 04, 2019 at 08:56:10AM +0100, Dirk Behme wrote:
+> From: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+> 
+> The tx_status poll in the rcar_dmac driver reads the status register
+> which indicates which chunk is busy (DMACHCRB). Afterwards the point
+> inside the chunk is read from DMATCRB. It is possible that the chunk
+> has changed between the two reads. The result is a non-monotonous
+> increase of the residue. Fix this by introducing a 'safe read' logic.
+> 
+> Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
+> Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Cc: <stable@vger.kernel.org> # v4.16+
+> ---
+> Note: Patch done against mainline v5.0
+> 
+>  drivers/dma/sh/rcar-dmac.c | 24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 2ea59229d7f5..b8afd7f4e07c 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -1273,6 +1273,13 @@ static int rcar_dmac_chan_terminate_all(struct dma_chan *chan)
+>  	return 0;
+>  }
+>  
+> +static inline
+> +unsigned int rcar_dmac_read_chcrb_mask(struct rcar_dmac_chan *chan)
+> +{
+> +	return rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
+> +				   RCAR_DMACHCRB_DPTR_MASK;
+> +}
+> +
+>  static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>  					       dma_cookie_t cookie)
+>  {
+> @@ -1282,6 +1289,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>  	enum dma_status status;
+>  	unsigned int residue = 0;
+>  	unsigned int dptr = 0;
+> +	unsigned int tcrb, chcrb;
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+We tend to use one variable per line in the rcar-dmac driver.
 
-> --- a/arch/arm/boot/dts/r8a7794-alt.dts
-> +++ b/arch/arm/boot/dts/r8a7794-alt.dts
-> @@ -377,6 +377,27 @@
->         pinctrl-names = "i2c-exio4";
->  };
->
-> +&i2c7 {
-> +       status = "okay";
-> +       clock-frequency = <100000>;
+>  
+>  	if (!desc)
+>  		return 0;
+> @@ -1329,6 +1337,17 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>  		return 0;
+>  	}
+>  
+> +	/*
+> +	 * We need to read two registers.
+> +	 * Make sure the control register does not skip to next chunk
+> +	 * while reading the counter.
+> +	 */
+> + retry:
+> +	chcrb = rcar_dmac_read_chcrb_mask(chan);
+> +	tcrb = rcar_dmac_chan_read(chan, RCAR_DMATCRB);
+> +	if (chcrb != rcar_dmac_read_chcrb_mask(chan)) /* Still the same? */
+> +		goto retry;
 
-According to the DA9063 datasheet, the PMIC supports up to 400 kHz.
-It looks like there are no other devices on the bus.
+How about a loop instead of a goto ?
 
-Wolfram, what's your stance on this?
+	unsigned int chcrb = ~0;
+	...
+
+	while (1) {
+		chcrb = rcar_dmac_chan_read(chan, RCAR_DMACHCRB)
+		      & RCAR_DMACHCRB_DPTR_MASK;
+		if (chcrb == prev_chcrb)
+			break;
+
+		tcrb = rcar_dmac_chan_read(chan, RCAR_DMATCRB);
+		prev_chcrb = chcrb;
+	}
+
+I would even turn this into a for loop to cap the maximum number of
+iterations, just in case.
 
 > +
-> +       pmic@58 {
-> +               compatible = "dlg,da9063";
-> +               reg = <0x58>;
-> +               interrupt-parent = <&gpio3>;
-> +               interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
-> +               interrupt-controller;
-> +
-> +               rtc {
-> +                       compatible = "dlg,da9063-rtc";
-> +               };
-> +
-> +               wdt {
-> +                       compatible = "dlg,da9063-watchdog";
-> +               };
-> +       };
-> +};
-> +
-
-Gr{oetje,eeting}s,
-
-                        Geert
+>  	/*
+>  	 * In descriptor mode the descriptor running pointer is not maintained
+>  	 * by the interrupt handler, find the running descriptor from the
+> @@ -1336,8 +1355,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>  	 * mode just use the running descriptor pointer.
+>  	 */
+>  	if (desc->hwdescs.use) {
+> -		dptr = (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
+> -			RCAR_DMACHCRB_DPTR_MASK) >> RCAR_DMACHCRB_DPTR_SHIFT;
+> +		dptr = chcrb >> RCAR_DMACHCRB_DPTR_SHIFT;
+>  		if (dptr == 0)
+>  			dptr = desc->nchunks;
+>  		dptr--;
+> @@ -1355,7 +1373,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>  	}
+>  
+>  	/* Add the residue for the current chunk. */
+> -	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
+> +	residue += tcrb << desc->xfer_shift;
+>  
+>  	return residue;
+>  }
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
