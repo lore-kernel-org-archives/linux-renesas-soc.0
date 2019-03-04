@@ -6,50 +6,81 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FFCC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D28C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E121220823
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5757D208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="k15Rl2mE"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="IutLse4u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbfCDKXJ (ORCPT
+        id S1726098AbfCDKYb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 05:23:09 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:39192 "EHLO
+        Mon, 4 Mar 2019 05:24:31 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:39262 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfCDKXJ (ORCPT
+        with ESMTP id S1726032AbfCDKYa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 05:23:09 -0500
+        Mon, 4 Mar 2019 05:24:30 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id C968325B74E;
-        Mon,  4 Mar 2019 21:23:06 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id CA79A25B74E;
+        Mon,  4 Mar 2019 21:24:25 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551694987; bh=wo/2J9Yij7N0LqaOYSrJjfP9zXWKAOJQJFGcLGLfWnI=;
+        t=1551695066; bh=T4VWP9pUoWbbuL67atuRtOPA0w+w3i3Vld6gseaDoe0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k15Rl2mE+PflnzbFGZfAvDcWANZIrSKLD5506YeAHICKHkrx3Kwd7FZj4sOUuVYO5
-         WTmJDnSOvCgLikUzjDYNlo+tgW6TVxtUsqWoSxuIVFhBSXMAnleBw369nJNIdC8Mb6
-         0uRo/qRCZCN5eDR1GjGrrOZgaZwegrNI6BIctIKM=
+        b=IutLse4uF4sxg3SheIN7qB0rz5LEVdQ07/xnctYgzGGU0p4qtHyvGENCsNpNiWCPZ
+         IoN9F9M0rq+b/JY1qsD+3KanuOXfrqseIS3aRGitja7PKO+QKmioNAqL92F58Xh5br
+         c3SDjEbg25QJwLqftZXTIooabNOMJDy3Mti8ZxkM=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 151FA94030D; Mon,  4 Mar 2019 11:23:05 +0100 (CET)
-Date:   Mon, 4 Mar 2019 11:23:05 +0100
+        id 18A9594030D; Mon,  4 Mar 2019 11:24:24 +0100 (CET)
+Date:   Mon, 4 Mar 2019 11:24:24 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     marek.vasut@gmail.com, linux-arm-kernel@lists.infradead.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] ARM: shmobile: porter: enable R-Car Gen2 regulator quirk
-Message-ID: <20190304102300.4b7hmbtvk3jtm4mv@verge.net.au>
-References: <20190303194140.11757-1-marek.vasut@gmail.com>
- <20190303230842.GA3949@kunai>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
+        yuenn@google.com, brendanhiggins@google.com,
+        openbmc@lists.ozlabs.org, Wei Xu <xuwei5@hisilicon.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
+        wang.yi59@zte.com.cn
+Subject: Re: [PATCH 08/15] ARM: shmobile: fix a leaked reference by
+ addingmissing of_node_put
+Message-ID: <20190304102423.bipib6frc6ma2ltv@verge.net.au>
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
+ <1551430616-42014-8-git-send-email-wen.yang99@zte.com.cn>
+ <CAMuHMdWrY0UNhCA7a8oHVfdVNXaB=15qFuWqvuU9OZpf7-ecmg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190303230842.GA3949@kunai>
+In-Reply-To: <CAMuHMdWrY0UNhCA7a8oHVfdVNXaB=15qFuWqvuU9OZpf7-ecmg@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -57,17 +88,19 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 04, 2019 at 12:08:42AM +0100, Wolfram Sang wrote:
-> On Sun, Mar 03, 2019 at 08:41:40PM +0100, marek.vasut@gmail.com wrote:
-> > From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > 
-> > Porter needs the regulator quirk, just like the other boards.
-> > But unlike the other boards, the Porter uses DA9063L, which
-> > is at 0x5a. Otherwise, DA9063L and DA9210 IRQ line is still
-> > connected to CPU IRQ2 .
-> > 
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+On Fri, Mar 01, 2019 at 10:51:27AM +0100, Geert Uytterhoeven wrote:
+> On Fri, Mar 1, 2019 at 9:57 AM Wen Yang <wen.yang99@zte.com.cn> wrote:
+> > The call to of_get_next_child returns a node pointer with refcount
+> > incremented thus it must be explicitly decremented after the last
+> > usage.
+> >
+> > Detected by coccinelle with the following warnings:
+> > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:77:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+> > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:85:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+> > ./arch/arm/mach-shmobile/pm-rcar-gen2.c:90:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+> >
+> > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
 > 
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Thanks, applied for v5.2.
