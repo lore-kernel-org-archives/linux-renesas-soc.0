@@ -2,134 +2,197 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F97CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2142C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A7D2070B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:29:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZu9tlVv"
+	by mail.kernel.org (Postfix) with ESMTP id 7C5CD208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbfCDM3r (ORCPT
+        id S1726528AbfCDMfM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 07:29:47 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34367 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbfCDM3r (ORCPT
+        Mon, 4 Mar 2019 07:35:12 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:59125 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfCDMfM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 07:29:47 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l5so4168511lje.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 04:29:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fgxOZP+dFQBUPmSEDR9WfH52m7XyQaNgMzlC/Q0birs=;
-        b=hZu9tlVv49i8EUfictk3sxX9NSdfhxtF6JwpGqTjGVCtqDrBsnLl3ParhWyXQzWgg8
-         8LwN9FvowN3pgbMWVla1VDGTGvtb7Pal8paz4s0+1Yt8gP3jkYfJx24Pk0847kC2kOcY
-         OKi5N6vLYqMdXXfd/euYJJjBuLw3OymL0hvvLa8isn9xyILlCIhef8rJ6zoFDEgbCm5W
-         Dj3XpBaakqkvkQQXl3y0to7P1YHLA44pEq1TPQFc6y+Hta6oDaNha7PWGSYVlyqkpmh+
-         J54b471LNq8ZwKYehc4//UffGvfVZFw8IEMo4GW+Cy/yoNVlgrvm0+cjKtynfQ+ig0+S
-         rkdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fgxOZP+dFQBUPmSEDR9WfH52m7XyQaNgMzlC/Q0birs=;
-        b=rtT3fLuaONflkod3fEs9Tj6xrq3X2+oYnTWZrQhZd87ejGHGnI8OcMknrInrB153KS
-         IZH2+6z5fAdOJgbzdKWArbc+yEdfGN21psAErF7SXVl+81x9TN6fpbZHJrb8nsIg9nbV
-         7C2XvQi7IFSe+C0OteHvXqLWQzqWcoxjmjSlgyLPZGDw0KnccDfwoJe548snzAKladgo
-         gxBZcT2arj913UmsXbaJ0f+GGVj+6ptrAz+e3uyX+bDRIRYhALT/rS+yMqw5Mc7gg8Fo
-         A0dJOOryXEc6iKd3o4Oq+AMzjR0bGK1eLMVQ9Tf73D+W4S0QdTdVaW2BCFMoJtYuJXrm
-         fpvw==
-X-Gm-Message-State: APjAAAV1PaAsq4H8mKjwLW8vKqJT+Sv2c4OnDAkpOHsk+4sZUM3r1a7B
-        if9bbC8zkWbFySgLgvMyxsYLeN+liMIgONBHMKuPRQ==
-X-Google-Smtp-Source: APXvYqyRCcxE5/JHDMK7y8Rs7CXj1wxJ3SX/WwI4wHVUkEXfmNIrUVn4FdFrzzky24sHnlYZuHrfdhcCxPaq9L8v4oo=
-X-Received: by 2002:a2e:9217:: with SMTP id k23mr512827ljg.159.1551702585121;
- Mon, 04 Mar 2019 04:29:45 -0800 (PST)
+        Mon, 4 Mar 2019 07:35:12 -0500
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 2DA0810000A;
+        Mon,  4 Mar 2019 12:35:08 +0000 (UTC)
+Date:   Mon, 4 Mar 2019 13:35:36 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 09/30] media: entity: Swap pads if route is checked
+ from source to sink
+Message-ID: <20190304123520.et24vsesfulyzybs@uno.localdomain>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
+ <20190115225743.GH28397@pendragon.ideasonboard.com>
+ <20190122151506.fnlfvwtoq7qunz45@paasikivi.fi.intel.com>
+ <20190122152030.GB11461@pendragon.ideasonboard.com>
+ <20190218092107.omddljghnv3l2ss6@uno.localdomain>
+ <20190222121811.GU3522@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn> <20190301155523.GA1915@Mani-XPS-13-9360>
-In-Reply-To: <20190301155523.GA1915@Mani-XPS-13-9360>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 4 Mar 2019 13:29:33 +0100
-Message-ID: <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
-Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
- addingmissing of_node_put
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        avifishman70@gmail.com, Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Xu Wei <xuwei5@hisilicon.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>, wang.yi59@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="d5f4xeuz34cicmdj"
+Content-Disposition: inline
+In-Reply-To: <20190222121811.GU3522@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> Hi Wen,
+
+--d5f4xeuz34cicmdj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Laurent,
+
+On Fri, Feb 22, 2019 at 02:18:11PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
 >
-> On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
-> > The call to of_get_next_child returns a node pointer with refcount
-> > incremented thus it must be explicitly decremented after the last
-> > usage.
+> On Mon, Feb 18, 2019 at 10:21:07AM +0100, Jacopo Mondi wrote:
+> > On Tue, Jan 22, 2019 at 05:20:30PM +0200, Laurent Pinchart wrote:
+> > > On Tue, Jan 22, 2019 at 05:15:06PM +0200, Sakari Ailus wrote:
+> > >> On Wed, Jan 16, 2019 at 12:57:43AM +0200, Laurent Pinchart wrote:
+> > >>>>
+> > >>>> This way the pads are always passed to the has_route() op sink pad=
+ first.
+> > >>>> Makes sense.
+> > >>>
+> > >>> Is there anything in the API that mandates one pad to be a sink and=
+ the
+> > >>> other pad to the a source ? I had designed the operation to allow
+> > >>> sink-sink and source-source connections to be checked too.
+> > >>
+> > >> Do you have a use case in mind for sink--sink or source--source rout=
+es? The
+> > >> routes are about flows of data, so I'd presume only source--sink or
+> > >> sink--source routes are meaningful.
+> > >>
+> > >> If you did, then the driver would have to handle that by itself. Thi=
+s still
+> > >> simplifies the implementation for drivers that do not.
+> > >
+> > > I don't have use cases for such routes, but we use the has_route
+> > > operation when traversing pipelines, and at that point we need to get
+> > > all the internally connected pads. In another patch in this series you
+> > > implement a helper function that handles this, but its implementation
+> > > isn't complete. I explained in my review of that patch that I fear a
+> > > correct generic implementation would become quite complex, while the
+> > > complexity should be easy to handle on the driver side as the code can
+> > > then be specialized for the case at hand.
+> > >
 > >
-> > Detected by coccinelle with the following warnings:
-> > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 103, but without a corresponding object release within this function.
-> > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 115, but without a corresponding object release within this function.
-> > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 128, but without a corresponding object release within this function.
+> > As a compromise, in v3 I'm thinking of maintaining support for the
+> > most common case of two sources connected to the same sink, as
+> > Sakari's patch does, but let more complex cases be handled by the
+> > driver implementation of has_route().
 > >
+> > Ack?
 >
-> We have a floating patch for this:
-> https://www.spinics.net/lists/arm-kernel/msg694544.html
+> I fear this will be confusing for subdevs, as they would have to
+> implement part of the operation.
 >
-> Andreas: Can you please take a second look at the patchset submitted by Linus
-> Walleij and Russel for simplifying the Actions startup code?
+> Could it be that the subdev has_route operation isn't the best API for
+> the job, if it gets that complex ? I wonder if it would be easier to
+> create another operation that takes a pad index as argument, and returns
+> the list of pads (possibly as a bitmask ?) or connected pads.
+> media_entity_has_route() could easily be implemented on top of that, and
+> these new semantics may be easier for subdevs to implement.
+>
 
-Andreas wrote a version of simplifying secondary startup in the
-same spirit as Russell's patches, and it's merged and all
-is fine I think.
+I see, but if subdevs can easily elaborate that list, they could as
+well easily check if the pad provided as argument is on that list.
 
-If this patch applied on top of the current upstream code I'd say
-just forget about my patch and merge Wen's patch instead.
+> > >>> If your goal is to simplify the implementation of the .has_route()
+> > >>> operation in drivers, I would instead sort pad0 and pad1 by value.
+> > >>
+> > >> That'd be another option to make the order deterministic for the dri=
+ver.
+> > >> I'm fine with that as well.
+> >
+> > In v3 I have taken both suggestions in: try the "sink then source" order
+> > first, then order by index in case the pads are of the same time. This
+> > needs to be documented in has_route() operation definition though.
+> >
+> > Would that be fine with you?
+>
+> I think that's the worst of both worlds from a subdev point of view :-)
+>
 
-Yours,
-Linus Walleij
+Possibly :)
+
+Should we drop completely the sink-source ordering in favour of
+ordering by value, and drop [15/30] that adds support for trivial
+indirect routes?
+
+Let's reach consensus so I could send v3.
+
+Thanks
+   j
+
+> > >>>> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > >>>> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragna=
+tech.se>
+> > >>>> ---
+> > >>>>  drivers/media/media-entity.c | 4 ++++
+> > >>>>  1 file changed, 4 insertions(+)
+> > >>>>
+> > >>>> diff --git a/drivers/media/media-entity.c b/drivers/media/media-en=
+tity.c
+> > >>>> index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
+> > >>>> --- a/drivers/media/media-entity.c
+> > >>>> +++ b/drivers/media/media-entity.c
+> > >>>> @@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_enti=
+ty *entity, unsigned int pad0,
+> > >>>>  	if (!entity->ops || !entity->ops->has_route)
+> > >>>>  		return true;
+> > >>>>
+> > >>>> +	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
+> > >>>> +	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
+> > >>>> +		swap(pad0, pad1);
+> > >>>> +
+> > >>>>  	return entity->ops->has_route(entity, pad0, pad1);
+> > >>>>  }
+> > >>>>  EXPORT_SYMBOL_GPL(media_entity_has_route);
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+--d5f4xeuz34cicmdj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlx9G5gACgkQcjQGjxah
+VjxLLw//ejXwfmvprHk3gxtWoNUVLCrA/yfwwKAHJJ/sV5d8MsNTbgg9Wxp4XuDo
+5O41j+ibrjErGeRnAtfaZxQHrF5r/lH53xiVSpJRVdg3ENo+LOyxfMMpG4JVC3m8
+gj6bXmIXF72oLCaC4aMh3WHUU77UQJxfeRaLYQeO+AjRGltzBBAyTSFN2vPif2QM
+6l4czV7Nt5zLfNtL5QZYKsPaDPNcMts3fD5i94EcS+SNBr1onYc9G7JEPuX+9RbB
+sKF4b3BPUkIBfh9sTShVQsPqqkyaQOV6LJfu8sVwh/A/ZjAHwbzRhIQWAgWWa36Z
+k4WA3LbKzBQ4KDDqABcBk3NFXcupRFw+HcFBuUJKx3ccfpT90K65b0Jj2121TXR/
+vCSEP5NWvN5j9Hkx2uWSXLEyZ1nbA4Q+/Ey9dOtBaQU1FPd/XXLdq5Qdp0WM3pcT
+sHDmiceDOl2xdImGR8ragV9f1Db612GOdg4g7Z/W6xLXGRA3QgWhbbpytZFT22rb
+LJo0YVY4uftltRVAgo63RqYT9XTu0zpVzWsxxEFcCZaDSBtjb+sgq6Bi6WCp1eSy
+Bpbkz65i7TcuHF5ngac3YuzZ0stTC+hcFFl6BnVveaRqsX722FcIXSmTy5z0wep8
+0OMo4fAZN9+bfnJajaqLWScqGp86LVSwg1QujC5hBZ59kzqtLnM=
+=Wo+J
+-----END PGP SIGNATURE-----
+
+--d5f4xeuz34cicmdj--
