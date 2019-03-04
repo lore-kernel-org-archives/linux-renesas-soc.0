@@ -2,119 +2,114 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 441B3C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAA6C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15054208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:03:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="XxlFqW03"
+	by mail.kernel.org (Postfix) with ESMTP id C65C22082F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 10:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbfCDKDK (ORCPT
+        id S1726120AbfCDKFA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 05:03:10 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38906 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfCDKDK (ORCPT
+        Mon, 4 Mar 2019 05:05:00 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:44558 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfCDKFA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 05:03:10 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 439C725B74E;
-        Mon,  4 Mar 2019 21:03:08 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551693788; bh=4DBMyYf1rL9mvwX8dA1g2df0CLX/e38QBIT9eC3BkuY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XxlFqW03zhuuHxNywV0rrgCA+idX9kLM3LETzuBPOKVyoO2lD2YbgBnd37JxNTjk1
-         E6G6NGu8gRwRF7pHWW6fN/VhDXuJJaiVh/uSe3Bg2TRZFyECn31NtJrP9X5rXQGgex
-         wCYGba/L8MByoAqZGa4UrwyXAxGGrgvDGupIzo0c=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 3C25894030D; Mon,  4 Mar 2019 11:03:06 +0100 (CET)
-Date:   Mon, 4 Mar 2019 11:03:06 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Pass name/offset to
- cpg_sd_clk_register()
-Message-ID: <20190304100305.lbzf7pqny7flxp7c@verge.net.au>
-References: <20190301123822.808-1-geert+renesas@glider.be>
+        Mon, 4 Mar 2019 05:05:00 -0500
+Received: by mail-vk1-f195.google.com with SMTP id w85so989008vkw.11;
+        Mon, 04 Mar 2019 02:04:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PrOjmrpU/zSVGEfsYuKQOlM7nLLpK8rzakLMAP1C8PM=;
+        b=b8I1g9ZwN1aBXBWtCr2eCDGfg/08ic14Q8+StMAF5/sJCAJB4im17u3eeCuh6bsce2
+         938hHvInPUHxfsi/QSL4Xb+gacbTRHLebxC6iyaPr8rhJJRMI6uBkxKza56ROJqq/iQB
+         UxbduOKRvhE978l5ZjV47pGQPsEQHnVlRMD69n8jKvodtKpa5NpoZgVkIcuVdgJncGME
+         Ga8V10trodL0I+9U8hXcu4GPV6agvnK6OnAMuAVw4WAxIZv6TY5GS7yF1yRvYi4t8Qb1
+         9wFsZX+mwWfm4Uf6r22jaamKQu6lMyg9/YGInK0vp/xZWXwPtOAXM4/NHja0vPfNMntE
+         fr3A==
+X-Gm-Message-State: APjAAAW5fojXVmJQgzv4Do3vlbzDyAFzY7mYIvED+RcUEY0dq/ZzzOxD
+        EqZZRZCpx4L58oiTahlifClYg29lmsHH8O3/Od3FrA==
+X-Google-Smtp-Source: APXvYqwoq+DOw8QCUZCfGMVub9TsfD66byRdJdDRBJr+tEhtrqcQY/3QWumB0dEwEQSsnqCVHmtiEe6BiIi7C3W0uCM=
+X-Received: by 2002:a1f:711:: with SMTP id 17mr9812191vkh.65.1551693898615;
+ Mon, 04 Mar 2019 02:04:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190301123822.808-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190228135246.31714-1-horms+renesas@verge.net.au>
+ <20190228135246.31714-3-horms+renesas@verge.net.au> <CAMuHMdU8AWAWjGHQC6tJnxqZRU1W+LmLvnw0nhWqNAKotGApMw@mail.gmail.com>
+ <20190304094517.xlr73yi2chkf3qvi@verge.net.au>
+In-Reply-To: <20190304094517.xlr73yi2chkf3qvi@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 4 Mar 2019 11:04:46 +0100
+Message-ID: <CAMuHMdU6TXTQWvWq6jVLwwUAom6qpt0UQAjvjvut5s+zN5-30Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: r8a77990: Add ZG clock
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 01:38:22PM +0100, Geert Uytterhoeven wrote:
-> Explicitly pass the clock's name and register offset to
-> cpg_sd_clk_register(), so the latter doesn't have to extract them from
-> the cpg_core_clk object.
-> 
-> This keeps all cpg_core_clk parsing and unmarshalling contained in a
-> single function (rcar_gen3_cpg_clk_register()).
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Simon,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On Mon, Mar 4, 2019 at 10:45 AM Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Mar 01, 2019 at 01:52:50PM +0100, Geert Uytterhoeven wrote:
+> > On Thu, Feb 28, 2019 at 2:52 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> > > Adds support for R-Car E3 (r8a77990) ZG clock.
+> > >
+> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > > ---
+> > > Tested on Ebisu to the extent that the clock rate is 600MHz on boot
+> > > ---
+> > >  drivers/clk/renesas/r8a77990-cpg-mssr.c | 2 ++
+> > >  drivers/clk/renesas/rcar-gen3-cpg.c     | 1 -
+> > >  drivers/clk/renesas/rcar-gen3-cpg.h     | 1 +
+> > >  3 files changed, 3 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+> > > index 0e475dcb68b9..d0d29fc942ff 100644
+> > > --- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
+> > > +++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+> > > @@ -83,6 +83,8 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+> > >         DEF_FIXED("za8",       R8A77990_CLK_ZA8,   CLK_PLL0D8,     1, 1),
+> > >         DEF_GEN3_Z("z2",       R8A77990_CLK_Z2,    CLK_TYPE_GEN3_Z, CLK_PLL0,
+> > >                    4, CPG_FRQCRC, 8),
+> > > +       DEF_GEN3_Z("zg",       R8A77990_CLK_ZG,    CLK_TYPE_GEN3_Z, CLK_PLL0,
+> > > +                  8, CPG_FRQCRB, 24),
+> >
+> > While this approach may be correct for R-Car H3, M3-W, and M3-N, this is
+> > not correct for R-Car E3, due to the presence of Spread Spectrum Clock
+> > Generator support:
+> >   - When SCCG is enabled (MD12=1), the parent clock is either S0 or S1,
+> >     with only 2 or 3 (out of 32) supported dividers,
+> >   - When SCCG is disabled (MD12=0), the parent clock is PLL0, with only
+> >     2 (out of 32) supported dividers.
+> >
+> > So I'm afraid the ZG clock on SCCG-capable SoCs needs its own very special
+> > clock type.
+>
+> Thanks for pointing this out, I'll investigate further.
 
-> ---
-> To be queued in clk-renesas-for-v5.2.
-> 
->  drivers/clk/renesas/rcar-gen3-cpg.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-> index 9a8071a8114daec9..dcd4ac389326b932 100644
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -369,8 +369,8 @@ static u32 cpg_quirks __initdata;
->  #define RCKCR_CKSEL	BIT(1)		/* Manual RCLK parent selection */
->  #define SD_SKIP_FIRST	BIT(2)		/* Skip first clock in SD table */
->  
-> -static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
-> -	void __iomem *base, const char *parent_name,
-> +static struct clk * __init cpg_sd_clk_register(const char *name,
-> +	void __iomem *base, unsigned int offset, const char *parent_name,
->  	struct raw_notifier_head *notifiers)
->  {
->  	struct clk_init_data init;
-> @@ -383,13 +383,13 @@ static struct clk * __init cpg_sd_clk_register(const struct cpg_core_clk *core,
->  	if (!clock)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	init.name = core->name;
-> +	init.name = name;
->  	init.ops = &cpg_sd_clock_ops;
->  	init.flags = CLK_SET_RATE_PARENT;
->  	init.parent_names = &parent_name;
->  	init.num_parents = 1;
->  
-> -	clock->csn.reg = base + core->offset;
-> +	clock->csn.reg = base + offset;
->  	clock->hw.init = &init;
->  	clock->div_table = cpg_sd_div_table;
->  	clock->div_num = ARRAY_SIZE(cpg_sd_div_table);
-> @@ -606,8 +606,8 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
->  		break;
->  
->  	case CLK_TYPE_GEN3_SD:
-> -		return cpg_sd_clk_register(core, base, __clk_get_name(parent),
-> -					   notifiers);
-> +		return cpg_sd_clk_register(core->name, base, core->offset,
-> +					   __clk_get_name(parent), notifiers);
->  
->  	case CLK_TYPE_GEN3_R:
->  		if (cpg_quirks & RCKCR_CKSEL) {
-> -- 
-> 2.17.1
-> 
+Given MD12 is sampled a reset time, there's no need to handle both cases
+at runtime. I.e. if MD12=0, you can register a simple clock with one parent
+and two dividers. If MD12=1, you can register a more complex custom clock
+with two parents and 2 or 3 dividers.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
