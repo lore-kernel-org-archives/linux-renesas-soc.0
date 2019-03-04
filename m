@@ -2,197 +2,90 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2142C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD8BC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C5CD208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C70812070B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 12:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfCDMfM (ORCPT
+        id S1726553AbfCDMfY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 07:35:12 -0500
-Received: from relay11.mail.gandi.net ([217.70.178.231]:59125 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfCDMfM (ORCPT
+        Mon, 4 Mar 2019 07:35:24 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:43615 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfCDMfX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 07:35:12 -0500
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 2DA0810000A;
-        Mon,  4 Mar 2019 12:35:08 +0000 (UTC)
-Date:   Mon, 4 Mar 2019 13:35:36 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 09/30] media: entity: Swap pads if route is checked
- from source to sink
-Message-ID: <20190304123520.et24vsesfulyzybs@uno.localdomain>
-References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
- <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
- <20190115225743.GH28397@pendragon.ideasonboard.com>
- <20190122151506.fnlfvwtoq7qunz45@paasikivi.fi.intel.com>
- <20190122152030.GB11461@pendragon.ideasonboard.com>
- <20190218092107.omddljghnv3l2ss6@uno.localdomain>
- <20190222121811.GU3522@pendragon.ideasonboard.com>
+        Mon, 4 Mar 2019 07:35:23 -0500
+Received: by mail-ua1-f68.google.com with SMTP id g1so4208547uae.10;
+        Mon, 04 Mar 2019 04:35:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w1B3TxawuZfoWnukQ4aoJb63D7QoG/Hwq34wP9Ec4OI=;
+        b=rr/6NLDdthOpsLXk5/DEzmP1a1wh0+9CkOkcyAfoOJHDf011EVNFhpsz35DP1Zw26h
+         PVOlIAhisxJOkgcFE0S19S3ViTee3eiHg/PcfzXE+TQGwNvEYHiJ9BXXuXBvstKEl0wB
+         /uJ3/WGyJaeo2uDOMblDaujOBrZA2eAHi0X80CR4j+D7sNX+ptyQeDZpE6osr1uFQqXN
+         ybDfjuPw9aYqk3XBxOJnZlrgcwz0UpUn7RnyQ4HD7sKHqIKlNPySYXejzRAWr0tAyXqy
+         UpAMltAEY5vjx1wNbQXnLUhYg9Fy5kQbuHOuWrs7wYcct0FgzjVIqBJbXNGhDbjX6DYI
+         d9mg==
+X-Gm-Message-State: APjAAAX6S/r72U8zDckuO001cEVitX6qP85LZGMkOkYT0g9hwW9P76v1
+        6psKxhf9J5qCrnQ11CRl+Fn/eNCZjtE+G8tVfwA=
+X-Google-Smtp-Source: APXvYqx15knVAJlVLnsNJ7lOTEOyK4t5K1D8vGqLHSbnE6QPK9fpmDKdGe7rmE1nuayLqkO6dqYtiKQq7JhGzqsuzEs=
+X-Received: by 2002:a67:7dd1:: with SMTP id y200mr8481973vsc.96.1551702922539;
+ Mon, 04 Mar 2019 04:35:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="d5f4xeuz34cicmdj"
-Content-Disposition: inline
-In-Reply-To: <20190222121811.GU3522@pendragon.ideasonboard.com>
-User-Agent: NeoMutt/20180716
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com> <20190302134735.4393-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190302134735.4393-3-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 4 Mar 2019 13:35:10 +0100
+Message-ID: <CAMuHMdXPbsoWD3kJKK25=KL1kXsA23o7-7LsayMSoB=so4-zxw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/7] i2c: core: use I2C locking behaviour also for SMBUS
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        Phil Reid <preid@electromag.com.au>,
+        Tero Kristo <t-kristo@ti.com>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-
---d5f4xeuz34cicmdj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Laurent,
-
-On Fri, Feb 22, 2019 at 02:18:11PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
+On Sat, Mar 2, 2019 at 2:49 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> If I2C transfers are executed in atomic contexts, trylock is used
+> instead of lock. This behaviour was missing for SMBUS, although a lot of
+> transfers are of SMBUS type, either emulated or direct. So, factor out
+> the locking routine into a helper and use it for I2C and SMBUS.
 >
-> On Mon, Feb 18, 2019 at 10:21:07AM +0100, Jacopo Mondi wrote:
-> > On Tue, Jan 22, 2019 at 05:20:30PM +0200, Laurent Pinchart wrote:
-> > > On Tue, Jan 22, 2019 at 05:15:06PM +0200, Sakari Ailus wrote:
-> > >> On Wed, Jan 16, 2019 at 12:57:43AM +0200, Laurent Pinchart wrote:
-> > >>>>
-> > >>>> This way the pads are always passed to the has_route() op sink pad=
- first.
-> > >>>> Makes sense.
-> > >>>
-> > >>> Is there anything in the API that mandates one pad to be a sink and=
- the
-> > >>> other pad to the a source ? I had designed the operation to allow
-> > >>> sink-sink and source-source connections to be checked too.
-> > >>
-> > >> Do you have a use case in mind for sink--sink or source--source rout=
-es? The
-> > >> routes are about flows of data, so I'd presume only source--sink or
-> > >> sink--source routes are meaningful.
-> > >>
-> > >> If you did, then the driver would have to handle that by itself. Thi=
-s still
-> > >> simplifies the implementation for drivers that do not.
-> > >
-> > > I don't have use cases for such routes, but we use the has_route
-> > > operation when traversing pipelines, and at that point we need to get
-> > > all the internally connected pads. In another patch in this series you
-> > > implement a helper function that handles this, but its implementation
-> > > isn't complete. I explained in my review of that patch that I fear a
-> > > correct generic implementation would become quite complex, while the
-> > > complexity should be easy to handle on the driver side as the code can
-> > > then be specialized for the case at hand.
-> > >
-> >
-> > As a compromise, in v3 I'm thinking of maintaining support for the
-> > most common case of two sources connected to the same sink, as
-> > Sakari's patch does, but let more complex cases be handled by the
-> > driver implementation of has_route().
-> >
-> > Ack?
->
-> I fear this will be confusing for subdevs, as they would have to
-> implement part of the operation.
->
-> Could it be that the subdev has_route operation isn't the best API for
-> the job, if it gets that complex ? I wonder if it would be easier to
-> create another operation that takes a pad index as argument, and returns
-> the list of pads (possibly as a bitmask ?) or connected pads.
-> media_entity_has_route() could easily be implemented on top of that, and
-> these new semantics may be easier for subdevs to implement.
->
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Acked-by: Peter Rosin <peda@axentia.se>
+> Acked-by: Tony Lindgren <tony@atomide.com>
 
-I see, but if subdevs can easily elaborate that list, they could as
-well easily check if the pad provided as argument is on that list.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> > >>> If your goal is to simplify the implementation of the .has_route()
-> > >>> operation in drivers, I would instead sort pad0 and pad1 by value.
-> > >>
-> > >> That'd be another option to make the order deterministic for the dri=
-ver.
-> > >> I'm fine with that as well.
-> >
-> > In v3 I have taken both suggestions in: try the "sink then source" order
-> > first, then order by index in case the pads are of the same time. This
-> > needs to be documented in has_route() operation definition though.
-> >
-> > Would that be fine with you?
->
-> I think that's the worst of both worlds from a subdev point of view :-)
->
+Gr{oetje,eeting}s,
 
-Possibly :)
+                        Geert
 
-Should we drop completely the sink-source ordering in favour of
-ordering by value, and drop [15/30] that adds support for trivial
-indirect routes?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Let's reach consensus so I could send v3.
-
-Thanks
-   j
-
-> > >>>> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > >>>> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragna=
-tech.se>
-> > >>>> ---
-> > >>>>  drivers/media/media-entity.c | 4 ++++
-> > >>>>  1 file changed, 4 insertions(+)
-> > >>>>
-> > >>>> diff --git a/drivers/media/media-entity.c b/drivers/media/media-en=
-tity.c
-> > >>>> index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
-> > >>>> --- a/drivers/media/media-entity.c
-> > >>>> +++ b/drivers/media/media-entity.c
-> > >>>> @@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_enti=
-ty *entity, unsigned int pad0,
-> > >>>>  	if (!entity->ops || !entity->ops->has_route)
-> > >>>>  		return true;
-> > >>>>
-> > >>>> +	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
-> > >>>> +	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
-> > >>>> +		swap(pad0, pad1);
-> > >>>> +
-> > >>>>  	return entity->ops->has_route(entity, pad0, pad1);
-> > >>>>  }
-> > >>>>  EXPORT_SYMBOL_GPL(media_entity_has_route);
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
---d5f4xeuz34cicmdj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlx9G5gACgkQcjQGjxah
-VjxLLw//ejXwfmvprHk3gxtWoNUVLCrA/yfwwKAHJJ/sV5d8MsNTbgg9Wxp4XuDo
-5O41j+ibrjErGeRnAtfaZxQHrF5r/lH53xiVSpJRVdg3ENo+LOyxfMMpG4JVC3m8
-gj6bXmIXF72oLCaC4aMh3WHUU77UQJxfeRaLYQeO+AjRGltzBBAyTSFN2vPif2QM
-6l4czV7Nt5zLfNtL5QZYKsPaDPNcMts3fD5i94EcS+SNBr1onYc9G7JEPuX+9RbB
-sKF4b3BPUkIBfh9sTShVQsPqqkyaQOV6LJfu8sVwh/A/ZjAHwbzRhIQWAgWWa36Z
-k4WA3LbKzBQ4KDDqABcBk3NFXcupRFw+HcFBuUJKx3ccfpT90K65b0Jj2121TXR/
-vCSEP5NWvN5j9Hkx2uWSXLEyZ1nbA4Q+/Ey9dOtBaQU1FPd/XXLdq5Qdp0WM3pcT
-sHDmiceDOl2xdImGR8ragV9f1Db612GOdg4g7Z/W6xLXGRA3QgWhbbpytZFT22rb
-LJo0YVY4uftltRVAgo63RqYT9XTu0zpVzWsxxEFcCZaDSBtjb+sgq6Bi6WCp1eSy
-Bpbkz65i7TcuHF5ngac3YuzZ0stTC+hcFFl6BnVveaRqsX722FcIXSmTy5z0wep8
-0OMo4fAZN9+bfnJajaqLWScqGp86LVSwg1QujC5hBZ59kzqtLnM=
-=Wo+J
------END PGP SIGNATURE-----
-
---d5f4xeuz34cicmdj--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
