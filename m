@@ -8,66 +8,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1214AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 19:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C80D3C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 20:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D83206B6
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 19:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C5020830
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 20:00:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQTVFXmD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezW8ZNaZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbfCDTke (ORCPT
+        id S1726344AbfCDUAE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 14:40:34 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35564 "EHLO
+        Mon, 4 Mar 2019 15:00:04 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38037 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfCDTke (ORCPT
+        with ESMTP id S1726080AbfCDUAD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 14:40:34 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y15so348334wma.0;
-        Mon, 04 Mar 2019 11:40:32 -0800 (PST)
+        Mon, 4 Mar 2019 15:00:03 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a188so366655wmf.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 12:00:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=2lct7q7QWXK+Vus3AvCH//oMJEkIXegYcs0c1jlb7Sg=;
-        b=AQTVFXmDDHGW6nzSJGaoRq1GTfDus9orGAh6h/BGR/S/Ms2jZvMWokUkBeoqtEVopT
-         vAQp5nCMyvNvWX0B9istKIyN9r2QzAV7Q+zU6cYimQa3AkaUxDumN/lbsu/sPYJRiJ02
-         gVHdHXkJRuc1aNPkpmqMEqAz8Uk+yryIIm+Gpo0rVHhTueumCz6RwJLiuzAz/l0Mh59F
-         xLQ2Xraa+7EBf6By18wQ4UQm2PDTCipiJu4zkRCt0d4DZ+dOdDGeBhUkv1ZFD+NNEth4
-         koyGeL+vFFNe7ANPzF2ZSGV496nCY37WN4xwYNifkuMcSMWEql3w6YCCANJScYbGP5MG
-         guhQ==
+        bh=izeC3MPzkJiN0dwgJ1xAUmbwdWlmdpbDHFnmDaGbcxY=;
+        b=ezW8ZNaZE2QzCYkmnhzNuZ1XGvjtqgY1N+LoTum6pq+VPb6OjbaQzet3ZGdQY6QdJ6
+         QKgxtRUFtJSlj7kpHHH94ns3/RFa62sJrmjpCBX+OJeNg0q8YwJ8JCB3Ueh0piabb7IH
+         74OQo2Gvxovx3v/bav5o0u2a646SalVyGrlSK/3folnqsXAq6iR7vnqjTXdq3oAA1Vhn
+         YnjwtOk5zdESiRYPm/yPhnqwl8Y/hz+uzfj3D0E7v3c+7irov/jIpBP8jS+5+Pz1Zd29
+         Zzbd8Rf6rEsKtI66CF1F4lPewOFfL0fz14oTsfM3jvU3x290bQ7hu5DC5voXOkzD6m0M
+         SBfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=2lct7q7QWXK+Vus3AvCH//oMJEkIXegYcs0c1jlb7Sg=;
-        b=dsTx7tvoDuaUTtXxF8yQoLQJYTPeedZI9/sWn2jzNG+Otq2ZFH2/DPji2WSned2z4K
-         i3lkjIxxF+Zb8Hv615p9S9+hRpdNzh59OcratlmsFft31TtKZ0PNa0LjBrmj4ILlLfaP
-         6o5zFIcBBK14725VO5ayvORVWdZbZ9xkZO+rX0JwjnwbFkzul8KkrBqgZVJKMSJTAVEQ
-         X57w7rtufFrN66qZ4ZGk98rKUK4TgypTtMp7jx/VnKJ2w6kmeeT6QZtvSxOrtXTjdLHe
-         XmMZMIgway6wV1t6N6LYzj1zuhUA12rQrdTIQz2gktzuM1zVn9737YfRgyGUL+86+dTG
-         NFqQ==
-X-Gm-Message-State: APjAAAXYywFTuph9sF9snOdO97435cJizv4ecZURWiSfOHZAUHqDHCDS
-        NHR7VlXHO3aSz31XAI2TLZXEKyuD
-X-Google-Smtp-Source: APXvYqzRX15ugo4UMuokjqkDjv0SeD3wytgERDpKGZwd6d0LG7dnVfX1Wx4OF00cw5PNGMpaNVVi9w==
-X-Received: by 2002:a1c:9c04:: with SMTP id f4mr416329wme.149.1551728430114;
-        Mon, 04 Mar 2019 11:40:30 -0800 (PST)
+        bh=izeC3MPzkJiN0dwgJ1xAUmbwdWlmdpbDHFnmDaGbcxY=;
+        b=RAp/Bjsz39dVSaaP9WNnFAGVa9SINQ9nefmmFl25P6p/T5Fqsh4WgYPzpJIpI8vlMF
+         neOx1o1sVuDHxzrvoA/S+Sabvb25lD5lPKwnBDPex9HDD8Jat/j1rWgCHi0M4ByIXcM0
+         ap96DsQKoZp0sznmzIcZY1pNTYlgw8PE28GxyOsSUG5UWHCS/kCxmKL0rnvQAYRWOrPp
+         a2vcHcOA3Kok/HpaaPFYuhfTUmQGIn9f0g9eugcgi02KZl7Yx/HUAu96N/OfnZlSC+LB
+         NoSQTBfHwzkpuWqJBxzWMuzv+w5Ylid8e61yYUG9X3T+fipHnH7nr65014mVeOXkL55s
+         d4gw==
+X-Gm-Message-State: APjAAAVHh5Iiq2WDKRG4AKfS00NAFeV8Nt0upxk6qi2lZu1Wuj9ycdZY
+        yolV+LivUUyVd2C+JSFaGcI=
+X-Google-Smtp-Source: APXvYqwPHvCPVCNqaVH2g2cUZUBvvTObIhTRNjMczeve+kBJyNAxET+zVDJHrSjlG5tURfEkbTZLxg==
+X-Received: by 2002:a1c:67c2:: with SMTP id b185mr499187wmc.68.1551729601461;
+        Mon, 04 Mar 2019 12:00:01 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id o18sm20314106wrg.40.2019.03.04.11.40.28
+        by smtp.gmail.com with ESMTPSA id p1sm5921595wrx.50.2019.03.04.12.00.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Mar 2019 11:40:29 -0800 (PST)
+        Mon, 04 Mar 2019 12:00:00 -0800 (PST)
 From:   marek.vasut@gmail.com
-To:     devicetree@vger.kernel.org
+To:     linux-arm-kernel@lists.infradead.org
 Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2] regulator: gpio: Reword the binding document
-Date:   Mon,  4 Mar 2019 20:40:23 +0100
-Message-Id: <20190304194023.10926-1-marek.vasut@gmail.com>
+Subject: [PATCH] ARM: dts: r8a7792: blanche: Add IIC3 and DA9063 PMIC node
+Date:   Mon,  4 Mar 2019 20:59:58 +0100
+Message-Id: <20190304195958.8383-1-marek.vasut@gmail.com>
 X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -78,76 +76,89 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Reword the binding document to make it clear how the propeties work
-and which properties affect which other properties.
+Add IIC3 node to R8A7792 SoC device tree and a DA9063 PMIC node
+to V2H Blanche board device tree.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Harald Geyer <harald@ccbib.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Simon Horman <horms+renesas@verge.net.au>
 Cc: linux-renesas-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 ---
-V2: - Make "gpios" a mandatory property
-    - Reword "gpio-states" property description
-    - Change "enable-gpio" to "enable-gpios" to match modern DT rules
-Note: The recent gpio-regulator rework caused breakage. While the
-      changes in the gpio-regulator code were according to the DT
-      binding document, they stopped working with older DTs. Make
-      the binding document clearer to prevent such breakage in the
-      future.
+NOTE: R8A7792 Blanche does not share the PMIC IRQ line with other PMICs,
+      hence the regulator-quirk-rcar-gen2.c does not need a new entry.
 ---
- .../bindings/regulator/gpio-regulator.txt     | 25 +++++++++++++------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/r8a7792-blanche.dts | 20 ++++++++++++++++++++
+ arch/arm/boot/dts/r8a7792.dtsi        | 18 ++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-index 1f496159e2bb..d7f8c1b17db6 100644
---- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-@@ -4,16 +4,25 @@ Required properties:
- - compatible		: Must be "regulator-gpio".
- - regulator-name	: Defined in regulator.txt as optional, but required
- 			  here.
--- states		: Selection of available voltages and GPIO configs.
--                          if there are no states, then use a fixed regulator
-+- gpios			: Array of one or more GPIO pins used to select the
-+			  regulator voltage/current listed in "states".
-+- states		: Selection of available voltages/currents provided by
-+			  this regulator and matching GPIO configurations to
-+			  achieve them. If there are no states in the "states"
-+			  array, use a fixed regulator instead.
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index f92301290b02..b6fa80c3b07e 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -308,6 +308,26 @@
+ 	};
+ };
  
- Optional properties:
--- enable-gpio		: GPIO to use to enable/disable the regulator.
--- gpios			: GPIO group used to control voltage.
--- gpios-states		: gpios pin's initial states array. 0: LOW, 1: HIGH.
--			  defualt is LOW if nothing is specified.
-+- enable-gpios		: GPIO used to enable/disable the regulator.
-+			  Warning, the GPIO phandle flags are ignored and the
-+			  GPIO polarity is controlled solely by the presence
-+			  of "enable-active-high" DT property. This is due to
-+			  compatibility with old DTs.
-+- enable-active-high	: Polarity of "enable-gpio" GPIO is active HIGH.
-+			  Default is active LOW.
-+- gpios-states		: State of GPIO pins in "gpios" array that is set until
-+			  changed by the first consumer. 0: LOW, 1: HIGH.
-+			  Default is LOW if nothing else is specified.
- - startup-delay-us	: Startup time in microseconds.
--- enable-active-high	: Polarity of GPIO is active high (default is low).
- - regulator-type	: Specifies what is being regulated, must be either
- 			  "voltage" or "current", defaults to voltage.
++&iic3 {
++	status = "okay";
++
++	pmic@58 {
++		compatible = "dlg,da9063";
++		reg = <0x58>;
++		interrupt-parent = <&irqc>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++
++		rtc {
++			compatible = "dlg,da9063-rtc";
++		};
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
++};
++
+ &du {
+ 	pinctrl-0 = <&du0_pins &du1_pins>;
+ 	pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 8e9eb4b704d3..38fb43d11b27 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -22,6 +22,7 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &iic3;
+ 		spi0 = &qspi;
+ 		spi1 = &msiof0;
+ 		spi2 = &msiof1;
+@@ -444,6 +445,23 @@
+ 			status = "disabled";
+ 		};
  
-@@ -30,7 +39,7 @@ Example:
- 		regulator-max-microvolt = <2600000>;
- 		regulator-boot-on;
- 
--		enable-gpio = <&gpio0 23 0x4>;
-+		enable-gpios = <&gpio0 23 0x4>;
- 		gpios = <&gpio0 24 0x4
- 			 &gpio0 25 0x4>;
- 		states = <1800000 0x3
++		iic3: i2c@e60b0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7792",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe60b0000 0 0x425>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++			       <&dmac1 0x77>, <&dmac1 0x78>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			status = "disabled";
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7792",
+ 				     "renesas,rcar-dmac";
 -- 
 2.19.2
 
