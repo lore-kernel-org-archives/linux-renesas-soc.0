@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDE0C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 08:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BB4C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 08:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E278820836
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 08:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FEA20823
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 08:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551688728;
-	bh=9lzJTIzRu4rT9E1tfaXLMIK9xqFApuQHQwQRhmt4uEo=;
+	s=default; t=1551689166;
+	bh=b0WFPjyC8WBRnDjCS43IGPSB7Uv8ShFDJ2IkNZGc7l4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wFCOtMuIRsh7X4x4SMpDdSkyp9glaFZi4hMYjR+YtoAGe9Q27HpwRqHGQC9HSVrEf
-	 9gsHEIJw1STCJXIkNyQUINqWeF11CNAiiqbvyeCtdAdjqj8cohIZ/nucg/HvrNdh8L
-	 64cSLuigyBdhXkvNhhNTU3b/f4q6cfeEugjmIeR4=
+	b=ZHHODu/+zpYE0OskageFNFhpp3Wzn0Qxq+BVy8tE4r0f6XTjc2IUnD32/I+mzHixd
+	 /CG+9StFdvkgDkkPDql34OKmoNNyWUqIQHlh1X4AFJ0eeyH9Ncx1xaLJi/CLLSBVmv
+	 0iWmOZZnutoU8HW2RpGaOmmu/fSNaTYtSLkDpC4A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbfCDIee (ORCPT
+        id S1726173AbfCDI1I (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 03:34:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40886 "EHLO mail.kernel.org"
+        Mon, 4 Mar 2019 03:27:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727931AbfCDIec (ORCPT
+        id S1726957AbfCDI1G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 03:34:32 -0500
+        Mon, 4 Mar 2019 03:27:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92FDD208E4;
-        Mon,  4 Mar 2019 08:34:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D8A20823;
+        Mon,  4 Mar 2019 08:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551688472;
-        bh=9lzJTIzRu4rT9E1tfaXLMIK9xqFApuQHQwQRhmt4uEo=;
+        s=default; t=1551688025;
+        bh=b0WFPjyC8WBRnDjCS43IGPSB7Uv8ShFDJ2IkNZGc7l4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ckWPTtm+cCjuqQAOwTIQptDlhWTQHTU+HLYggW/Q1x273HuhUMa2xcdOZXLvjhPxS
-         sY3TnQqsdnu71KyOwBFPliSHAHCcICcCHPK3Ycxnc+R04ZsA41gTd4Y1RbYSLOmib2
-         yfDGghVV7OdCutHTR9eHZIYx0L+WF8u+g8dusF2o=
+        b=MBJ1qOapgbpuqywrNSmEu8DQMgHIuKor4lh3TZopqGMZ/6/aX0LdoDY9/Dm6pUTxp
+         RGHkfY5hlsmGWAy1Cv6jGQuWrvMTt8eOym6oPfkAu82sZjZnldY6CK5gSirf7lFfvw
+         rrRee4nEKcvsinTGzeZ8DJKIic+IESfBYlCFyco4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,12 +49,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 10/88] clk: vc5: Abort clock configuration without upstream clock
-Date:   Mon,  4 Mar 2019 09:21:53 +0100
-Message-Id: <20190304081630.970544833@linuxfoundation.org>
+Subject: [PATCH 4.14 11/52] clk: vc5: Abort clock configuration without upstream clock
+Date:   Mon,  4 Mar 2019 09:22:09 +0100
+Message-Id: <20190304081617.773994763@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190304081630.610632175@linuxfoundation.org>
-References: <20190304081630.610632175@linuxfoundation.org>
+In-Reply-To: <20190304081617.159014799@linuxfoundation.org>
+References: <20190304081617.159014799@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -66,7 +66,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
