@@ -4,78 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA691C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E252DC10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8191820823
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B50CC20863
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:44:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="X5x+M1yx"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="oJn3GTGL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbfCDJlB (ORCPT
+        id S1726384AbfCDJoU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 04:41:01 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:38554 "EHLO
+        Mon, 4 Mar 2019 04:44:20 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:38586 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbfCDJlB (ORCPT
+        with ESMTP id S1726054AbfCDJoT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 04:41:01 -0500
+        Mon, 4 Mar 2019 04:44:19 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id A364525BE43;
-        Mon,  4 Mar 2019 20:40:54 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id C0A0B25B74E;
+        Mon,  4 Mar 2019 20:44:16 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551692455; bh=TdGoX41akHOpCM9eMpDPEDl0eg/oyg57a+AgVWGGb0k=;
+        t=1551692657; bh=MB07TkT/OuMOjAuKvgajp83eRwk92tFRbt7ThSMpWbI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X5x+M1yxVQiWjzmOE1cFD/vsE1/mM6RupH2RqtPg/P/n8pjRNlsIJeeif4w/T/nkH
-         vKc79Dh9KtMm9XQHHWlxA+YrkDBInGg6bjKhHHvwPYSjtXu7KRcgB+sDt2mQXls9Jl
-         DA2PuNQBRPfA8iqk9DtDLaU1nX02Hl3WfBDfY5A8=
+        b=oJn3GTGL+ZQiFJhIJZmA8UHLX6t86P55THmUZ4rCY4rCLTZiY4hNuQ31uO75rpkby
+         NmVQINCw9MkVKG+i9Lbl3XMYm0+9yM5UYGiRWT5+NQsN3/9eFq5qHF1EOR7E/W8FgN
+         zuhKOhoPhlt+DWmw4LdkI5bwDdcL9jmq3jqIpbfk=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id D6BBD94030D; Mon,  4 Mar 2019 10:40:52 +0100 (CET)
-Date:   Mon, 4 Mar 2019 10:40:52 +0100
+        id 0240994030D; Mon,  4 Mar 2019 10:44:14 +0100 (CET)
+Date:   Mon, 4 Mar 2019 10:44:14 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>,
-        Lukasz Majewski <lukma@denx.de>
-Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
-Message-ID: <20190304094052.huutusp3erakcfea@verge.net.au>
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <TY1PR01MB1770A46D7FA45A8AFA923DADC0670@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20190215075226.413d55dc@jawa>
- <c2eb829b-96a7-20cb-913f-ce4214f2156c@suse.de>
- <TYXPR01MB1775ECF6D79FCA2C0040DA06C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 1/4] clk: renesas: rcar-gen3: Parameterise Z and Z2 clock
+ register offset
+Message-ID: <20190304094414.lbyg3ykz4yectkwo@verge.net.au>
+References: <20190228135246.31714-1-horms+renesas@verge.net.au>
+ <20190228135246.31714-2-horms+renesas@verge.net.au>
+ <CAMuHMdUyE6qADd_QAAKBW8LJSHHB8T1nLUS=6bNtv+bjAO+juA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYXPR01MB1775ECF6D79FCA2C0040DA06C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+In-Reply-To: <CAMuHMdUyE6qADd_QAAKBW8LJSHHB8T1nLUS=6bNtv+bjAO+juA@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -83,106 +57,126 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 01, 2019 at 12:03:06PM +0000, Fabrizio Castro wrote:
-> Thank you Andreas.
+On Fri, Mar 01, 2019 at 01:38:43PM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> > From: Andreas Färber <afaerber@suse.de>
-> > Sent: 15 February 2019 09:10
-> > Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
-> > 
-> > Hi Lukasz and Fabrizio,
-> > 
-> > Am 15.02.19 um 07:52 schrieb Lukasz Majewski:
-> > > The best approach is to run:
-> > >
-> > > git format patch -1 <your patch sha>
-> > >
-> > > And then
-> > >
-> > > scripts/get_maintainer.pl 0001-xxxxxxx
-> > >
-> > > You shall see the the list of people to send the patch.
-> > 
-> > No, that does not answer his question. And please don't top-post.
-> > 
-> > >> Who is the best person for taking this patch?
-> > 
-> > The answer is: whomever is taking dt-bindings patches in the following
-> > 10 patches that make use of this prefix, once you have a Reviewed-by
-> > from Rob. So, most likely the Renesas kernel maintainer(s), i.e. Simon,
-> > which differs from get_maintainers.pl of vendor-prefixes.txt.
+> Thanks for your patch!
 > 
-> Simon, do you think you can take this patch?
+> On Thu, Feb 28, 2019 at 2:53 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> > Parameterise the offset of the control register for
+> > for Z and Z2 clocks.
+> 
+> double "for"
+> 
+> > This is in preparation for supporting the ZG clock on the R-Car E3
+> > (r8a77990), D3 (r8a7795) and RZ/G2E (r8a774c0) SoCs which uses a different
+> 
+> D3 (r8a77995) ... use
+> 
+> > control register to existing support for Z and Z2 clocks.
+> >
+> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> > --- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+> > +++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+> > @@ -71,8 +71,10 @@ static const struct cpg_core_clk r8a774a1_core_clks[] __initconst = {
+> >         DEF_GEN3_OSC(".r",      CLK_RINT,          CLK_EXTAL,      32),
+> >
+> >         /* Core Clock Outputs */
+> > -       DEF_GEN3_Z("z",         R8A774A1_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
+> > -       DEF_GEN3_Z("z2",        R8A774A1_CLK_Z2,    CLK_TYPE_GEN3_Z,  CLK_PLL2, 2, 0),
+> 
+> Given "[PATCH v5 0/6] clk: renesas: r8a77990, r8a774c0: Add Z2 clock"
+> still used CLK_TYPE_GEN3_Z2, this patch does not apply.
+> Have you forgotten to send out v6?
 
-Sure, I have queued it up for v5.2.
+There was supposed to be a consolidation patch at the beginning
+of this series. Sorry for omitting it.
 
 > 
-> Thanks,
-> Fab
+> > +       DEF_GEN3_Z("z",         R8A774A1_CLK_Z,     CLK_TYPE_GEN3_Z,
+> > +                  CLK_PLL0, 2, CPG_FRQCRC, 8),
+> > +       DEF_GEN3_Z("z2",        R8A774A1_CLK_Z2,    CLK_TYPE_GEN3_Z,
+> > +                  CLK_PLL2, 2, CPG_FRQCRC, 0),
+> >         DEF_FIXED("ztr",        R8A774A1_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+> >         DEF_FIXED("ztrd2",      R8A774A1_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+> >         DEF_FIXED("zt",         R8A774A1_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
 > 
-> > 
-> > Regards,
-> > Andreas
-> > 
-> > >>> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >>> Sent: 16 January 2019 18:38
-> > >>> Subject: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon
-> > >>> Linux.
-> > >>>
-> > >>> From: Biju Das <biju.das@bp.renesas.com>
-> > >>>
-> > >>> Add Silicon Linux to the list of devicetree vendor prefixes.
-> > >>>
-> > >>> Website: http://www.si-linux.co.jp
-> > >>>
-> > >>> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > >>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >>> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> > >>> ---
-> > >>>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
-> > >>>  1 file changed, 1 insertion(+)
-> > >>>
-> > >>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> > >>> b/Documentation/devicetree/bindings/vendor-prefixes.txt index
-> > >>> 4b1a2a8..02a7037 100644 ---
-> > >>> a/Documentation/devicetree/bindings/vendor-prefixes.txt +++
-> > >>> b/Documentation/devicetree/bindings/vendor-prefixes.txt @@ -344,6
-> > >>> +344,7 @@ sgxSGX Sensortech sharpSharp Corporation
-> > >>>  shimafujiShimafuji Electric, Inc.
-> > >>>  si-enSi-En Technology Ltd.
-> > >>> +si-linuxSilicon Linux Corporation
-> > >>>  sifiveSiFive, Inc.
-> > >>>  sigmaSigma Designs, Inc.
-> > >>>  siiSeiko Instruments, Inc.
-> > >>> --
-> > >>> 2.7.4
-> > >>
-> > >>
-> > >>
-> > >> Renesas Electronics Europe GmbH,Geschaeftsfuehrer/President : Michael
-> > >> Hannawald, Sitz der Gesellschaft/Registered office: Duesseldorf,
-> > >> Arcadiastrasse 10, 40472 Duesseldorf,
-> > >> Germany,Handelsregister/Commercial Register: Duesseldorf, HRB 3708
-> > >> USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE
-> > >> reg. no.: DE 14978647
-> > >
-> > >
-> > >
-> > >
-> > > Best regards,
-> > >
-> > > Lukasz Majewski
-> > >
-> > > --
-> > >
-> > > DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-> > > HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-> > > Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-> > >
-> > 
-> > 
-> > --
-> > SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-> > GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> > HRB 21284 (AG Nürnberg)
+> > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> 
+> > @@ -166,7 +165,7 @@ static const struct clk_ops cpg_z_clk_ops = {
+> >
+> >  static struct clk * __init cpg_z_clk_register(const char *name,
+> >                                               const char *parent_name,
+> > -                                             void __iomem *reg,
+> > +                                             void __iomem *base,
+> >                                               unsigned int div,
+> >                                               unsigned int offset)
+> >  {
+> > @@ -184,10 +183,11 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+> >         init.parent_names = &parent_name;
+> >         init.num_parents = 1;
+> >
+> > -       zclk->reg = reg + CPG_FRQCRC;
+> > -       zclk->kick_reg = reg + CPG_FRQCRB;
+> > +       zclk->reg = base + GEN3_Z_REG_OFFSET(offset);
+> > +       zclk->kick_reg = base + CPG_FRQCRB;
+> >         zclk->hw.init = &init;
+> > -       zclk->mask = GENMASK(offset + 4, offset);
+> > +       zclk->mask = GENMASK(GEN3_Z_BIT_OFFSET(offset) + 4,
+> > +                            GEN3_Z_BIT_OFFSET(offset));
+> 
+> I think the code would be easier to read if you would move the splitting
+> of offset to the caller, and thus pass separate reg_offset and bit_offset
+> parameters.
+
+Sure, that sounds reasonable.
+
+> 
+> >         zclk->fixed_div = div; /* PLLVCO x 1/div x SYS-CPU divider */
+> >
+> >         clk = clk_register(NULL, &zclk->hw);
+> > diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+> > index a0535341b5da..02bf3785263c 100644
+> > --- a/drivers/clk/renesas/rcar-gen3-cpg.h
+> > +++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+> > @@ -48,8 +48,16 @@ enum rcar_gen3_clk_types {
+> >         DEF_BASE(_name, _id, CLK_TYPE_GEN3_RCKSEL,      \
+> >                  (_parent0) << 16 | (_parent1), .div = (_div0) << 16 | (_div1))
+> >
+> > -#define DEF_GEN3_Z(_name, _id, _type, _parent, _div, _offset)  \
+> > -       DEF_BASE(_name, _id, _type, _parent, .div = _div, .offset = _offset)
+> > +#define DEF_GEN3_Z_OFFSET(_reg_offset, _bit_offset) \
+> > +       ((_reg_offset) << 16 | (_bit_offset) )
+> > +
+> > +#define GEN3_Z_REG_OFFSET(_offset) ((_offset) >> 16)
+> > +
+> > +#define GEN3_Z_BIT_OFFSET(_offset) ((_offset) & 0xffff)
+> 
+> Do you think these 3 (un)marshalling macros add much value, given they're
+> used in a single place only?
+
+Yes, they make things very clear to my mind.
+But I'm open to an alternative if you have one in mind.
+
+> 
+> > +
+> > +#define DEF_GEN3_Z(_name, _id, _type, _parent, _div, _reg_offset, _bit_offset)\
+> > +       DEF_BASE(_name, _id, _type, _parent, .div = _div, \
+> > +                .offset = DEF_GEN3_Z_OFFSET(_reg_offset, _bit_offset))
+> >
+> >  struct rcar_gen3_cpg_pll_config {
+> >         u8 extal_div;
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 > 
