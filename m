@@ -2,102 +2,155 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9C7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0F4C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E555020823
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1994920823
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:38:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/pqUSxt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726088AbfCDW1z (ORCPT
+        id S1726178AbfCDWiC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 17:27:55 -0500
-Received: from sauhun.de ([88.99.104.3]:57408 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726076AbfCDW1z (ORCPT
+        Mon, 4 Mar 2019 17:38:02 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44788 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbfCDWiC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 17:27:55 -0500
-Received: from localhost (p54B337B5.dip0.t-ipconnect.de [84.179.55.181])
-        by pokefinder.org (Postfix) with ESMTPSA id 657F22C3637;
-        Mon,  4 Mar 2019 23:27:52 +0100 (CET)
-Date:   Mon, 4 Mar 2019 23:27:49 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
-Subject: Re: [PATCH 1/2] i2c: rcar: fix concurrency issue related to ICDMAER
-Message-ID: <20190304222749.srrttj3hnsyf2cot@ninjato>
-References: <20190303150314.6528-1-wsa+renesas@sang-engineering.com>
- <20190303150314.6528-2-wsa+renesas@sang-engineering.com>
+        Mon, 4 Mar 2019 17:38:02 -0500
+Received: by mail-lf1-f66.google.com with SMTP id u9so593876lfe.11
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 14:38:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zhzJRAZt/R3PF5BQzh2oLYrOEtPSkbVjGUE3eqKeFF4=;
+        b=i/pqUSxtkZTGQee4dyx8hrGiQrrcDTKPONLULgYNsJ2AzkjzVjfdBDhjIHInC62gfg
+         DW7IvlZrIxjqbN9ivBT61CTVwE573URms1XXpmpJ7tYce4+jTWlWb4qa2mc3dYtL3Sph
+         o+lAcxX96jnbMrttUrBFJYkjh+JNAN+544IGWLhJv1I7Qg0ngpndI8XHvACB8hQhOupT
+         F9+mOnmrz+zeaYhxzXiPA+ZQCbto65SSHf8/44JSbxuiSZoWYqv75JgCZfIvSVewPfEL
+         zWAs2f6+ED3qgR1osxaG9eDYNs2+HnLB13VTPjz6tqNrnxETFtreoYDQ513hqrG/8kw9
+         1ITg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zhzJRAZt/R3PF5BQzh2oLYrOEtPSkbVjGUE3eqKeFF4=;
+        b=Jx7xXJguI9hg3YM+YGl6BkrZVrO8qBq9zQu95dJtJVTVwS62RLIQq2mGwFO+S/vK5F
+         Lm0qLXb3l5dlLfMVEuWclmBN0vOVgAZuf1xugYwUPSUhTHDJokRtnv/AvL3x1iHm8rr0
+         GLhVSJSgDaoLM70ypMjzZv10zH+qA8+l/9AfoW5rpGcHPIHr3divlDVv3rlFN+qYmIFK
+         mhQZQHBaIPI7lh/9u+4PSy9OKhdvP8PeGFU+o37NRBpVV3acvmctVBNZVDn75UNm+QkW
+         ZRGNvU5asAPc0UU0cO8tV9cbiabwt9yHgdGUOF/YrZe0EES8EB5Fwf1TrpEr/n/wOicP
+         zSiA==
+X-Gm-Message-State: APjAAAUASvGp5evrXbDWJT+vjn6Ynff6lys07UFu+8RF9mD54ZqeW+UI
+        1erNKG0WFU2l9AazAOYfkQxs79NsmLjGWXLrmvT8gw==
+X-Google-Smtp-Source: APXvYqxVKHRb41Wd2WOnYPv9vOYsDDZaIXMzjxDoSa/W5A+CwtjIrx8OHtkfSEfyBwCR8HWS/le0gY70BOKnXzVeixE=
+X-Received: by 2002:a19:a417:: with SMTP id q23mr7220186lfc.27.1551739080195;
+ Mon, 04 Mar 2019 14:38:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pa7a6djvo2nbhuao"
-Content-Disposition: inline
-In-Reply-To: <20190303150314.6528-2-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
+ <20190301155523.GA1915@Mani-XPS-13-9360> <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
+ <20190304144829.GA5265@Mani-XPS-13-9360>
+In-Reply-To: <20190304144829.GA5265@Mani-XPS-13-9360>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 4 Mar 2019 23:37:48 +0100
+Message-ID: <CACRpkda+8QZnaT-YoeccQGjg78y9-E-JoWBr3LJs62T03H4wQw@mail.gmail.com>
+Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
+ addingmissing of_node_put
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        avifishman70@gmail.com, Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Xu Wei <xuwei5@hisilicon.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>, wang.yi59@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, Mar 4, 2019 at 3:48 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> On Mon, Mar 04, 2019 at 01:29:33PM +0100, Linus Walleij wrote:
+> > On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > > Hi Wen,
+> > >
+> > > On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
+> > > > The call to of_get_next_child returns a node pointer with refcount
+> > > > incremented thus it must be explicitly decremented after the last
+> > > > usage.
+> > > >
+> > > > Detected by coccinelle with the following warnings:
+> > > > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 103, but without a corresponding object release within this function.
+> > > > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 115, but without a corresponding object release within this function.
+> > > > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 128, but without a corresponding object release within this function.
+> > > >
+> > >
+> > > We have a floating patch for this:
+> > > https://www.spinics.net/lists/arm-kernel/msg694544.html
+> > >
+> > > Andreas: Can you please take a second look at the patchset submitted by Linus
+> > > Walleij and Russel for simplifying the Actions startup code?
+> >
+> > Andreas wrote a version of simplifying secondary startup in the
+> > same spirit as Russell's patches, and it's merged and all
+> > is fine I think.
+> >
+>
+> Oops. I think I missed that! Can you please point me to that patch? And how it
+> got merged? I did the PR for actions stuff this time and haven't included any
+> mach-actions patches.
 
---pa7a6djvo2nbhuao
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I just did git log arch/arm/mach-actions but I think it came in quite some time
+ago, not last merge window:
 
+But you see:
+commit 6c2eb3e76fb84e2eb46d484f71fab469c0d9532c
+"ARM: owl: smp: Drop owl_secondary_boot()"
+commit bad29933fef76fb6ee577f4a0b6d145c1f52f663
+"ARM: owl: smp: Use __pa_symbol()"
+commit 18cfd9429d8a82c49add8f3ca9d366599bfcac45
+"ARM: owl: smp: Drop bogus holding pen"
 
-> Reproduction test:
-> 1. Add udelay(1) after disabling ICDMAER. (It is expected to
-> generate an interrupt of rcar_i2c_irq())
->=20
->     void rcar_i2c_dma_unmap(struct rcar_i2c_priv *priv)
->     {
->         ...
->         rcar_i2c_write(priv, ICDMAER, 0);
->         udelay(1);                        <-- Add this line
+platsmp.c looks just fine these days. Except for what Wei's patch is fixing,
+of_node_put().
 
-For the record (and self-documentation): I needed to increase the delay
-and was using usleep_range(500, 800) in the end.
-
->         ...
->         priv->dma_direction =3D DMA_NONE;
->     }
->=20
-> 2. Execute DMA transfer.
-> Performs DMA transfer of read or write. In the sample, write was used.
->=20
->  $ i2cset -y -f 4 0x6a 0x01 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 i
-
-And I used this command instead to make sure another message is waiting:
-
-$ i2ctransfer -y 4 w9@0x6a 1 1+ r16
-
-Yet, in general, I could reproduce that this patch fixes the issue, so
-all is fine, I think.
-
-
---pa7a6djvo2nbhuao
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlx9pmEACgkQFA3kzBSg
-KbYx9g/+MUuzM+g3j3R2fl/xtUprB8BJy1FcMnD2inGwZhPsybZRlote0Qehm6Oo
-RKwPjPRE4kL+uvlXAxdJoeC0jNkLZeoDa5sUFc/T3kP9kK0jr9iRKcIjrxNWDGSa
-MXUPefxcrkeEl/PkRByHuFT+XSTqOWGe2C4iS2FVw3Qo2qj2RuSsgEtKqWGd3XmU
-FatWV3TmOrbn3RO8i2SQpPmo618QZMMx4/RZruwTODeMsYcBAPLO5oIIUFZNOYQ1
-1+jLf3AW31kt761f37FvLynOLefWk7fb++gllBs8M84bHXfLOymFFf6JC8/ZB0ny
-rllilfW5l9d2qitO29c+rPjgCkZzpStRyiVxTl48EvLpeJALK6XE9AXxrep8RhbG
-vAJ5VcMhv/IDfE6hXVuY5DFKgVIX9uIYhA1FsaudZrfjqLyhT1ew+uBpvjFIodJb
-nLyeH3PQxR/7VQ/iUuEhhsiQQs343TQ2QAUHeHlTJhQo3qc3/iQYLhEUbf8EZSvH
-GnhIX3h59Lx33b/rfKYBlR4QOkAOrveqn9JOVPCgp2tsTT/AL3ZI6XHgzivRN7Io
-fBvcTDnUPEjOV12b48DVlCfgv1vs3cI2h+BCj1B7pUw4ILvvRGgKFvx6oW8UDL17
-hggp8I7QRowMqeKFP6PduLeGh2gqmCqdqOmo6hVO7qWek9BuxIk=
-=oUdc
------END PGP SIGNATURE-----
-
---pa7a6djvo2nbhuao--
+Yours,
+Linus Walleij
