@@ -2,117 +2,114 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BB4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 08:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C50C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43FEA20823
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 08:46:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551689166;
-	bh=b0WFPjyC8WBRnDjCS43IGPSB7Uv8ShFDJ2IkNZGc7l4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZHHODu/+zpYE0OskageFNFhpp3Wzn0Qxq+BVy8tE4r0f6XTjc2IUnD32/I+mzHixd
-	 /CG+9StFdvkgDkkPDql34OKmoNNyWUqIQHlh1X4AFJ0eeyH9Ncx1xaLJi/CLLSBVmv
-	 0iWmOZZnutoU8HW2RpGaOmmu/fSNaTYtSLkDpC4A=
+	by mail.kernel.org (Postfix) with ESMTP id 097A120823
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 09:38:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="mIYfLjlA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfCDI1I (ORCPT
+        id S1726069AbfCDJif (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 03:27:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbfCDI1G (ORCPT
+        Mon, 4 Mar 2019 04:38:35 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:38503 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfCDJif (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 03:27:06 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1D8A20823;
-        Mon,  4 Mar 2019 08:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551688025;
-        bh=b0WFPjyC8WBRnDjCS43IGPSB7Uv8ShFDJ2IkNZGc7l4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MBJ1qOapgbpuqywrNSmEu8DQMgHIuKor4lh3TZopqGMZ/6/aX0LdoDY9/Dm6pUTxp
-         RGHkfY5hlsmGWAy1Cv6jGQuWrvMTt8eOym6oPfkAu82sZjZnldY6CK5gSirf7lFfvw
-         rrRee4nEKcvsinTGzeZ8DJKIic+IESfBYlCFyco4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 11/52] clk: vc5: Abort clock configuration without upstream clock
-Date:   Mon,  4 Mar 2019 09:22:09 +0100
-Message-Id: <20190304081617.773994763@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190304081617.159014799@linuxfoundation.org>
-References: <20190304081617.159014799@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 4 Mar 2019 04:38:35 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 7FEBC25B74E;
+        Mon,  4 Mar 2019 20:38:33 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551692313; bh=9abut3tPvLi0lPfjqIukI6lMcXFsfCG25FfmhBlGmAM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mIYfLjlAIMiVr6qVt4uyTCnAtv/ely8HLKgV55JV2YOs/1V/nbniRYvTZ+06dZ+8B
+         2ETiisP2LIV6dSY/GUwaKsArKBpYIIfKkB6p4HKa2YH63NZuVzkn479EIxiUzeX7O6
+         iMBHFJhJ47dPkgI5PSX23WwMkgshZZchbzBoxoaU=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 8E85694030D; Mon,  4 Mar 2019 10:38:31 +0100 (CET)
+Date:   Mon, 4 Mar 2019 10:38:31 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a774c0: Fix cpu nodes style
+Message-ID: <20190304093831.4rchfgz574nb6itm@verge.net.au>
+References: <1550233589-13891-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TYXPR01MB17752BA491B4A41F1257EB61C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TYXPR01MB17752BA491B4A41F1257EB61C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Fri, Mar 01, 2019 at 12:00:39PM +0000, Fabrizio Castro wrote:
+> Hello Simon,
+> 
+> Are you happy with this patch?
+> 
+> Thanks,
+> Fab
+> 
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Sent: 15 February 2019 12:26
+> > Subject: [PATCH] arm64: dts: renesas: r8a774c0: Fix cpu nodes style
+> > 
+> > We usually leave a space between "=" and the value of device
+> > tree properties, but unfortunately that was overlooked for the
+> > "clocks" property of cpu@0 and cpu@1.
+> > This patch fixes the spacing with the "clocks" property of
+> > cpu@0 and cpu@1.
+> > 
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-------------------
+Thanks, and sorry for the delay.
 
-[ Upstream commit 2137a109a5e39c2bdccfffe65230ed3fadbaac0e ]
+Applied for v5.2.
 
-In case the upstream clock are not set, which can happen in case the
-VC5 has no valid upstream clock, the $src variable is used uninited
-by regmap_update_bits(). Check for this condition and return -EINVAL
-in such case.
-
-Note that in case the VC5 has no valid upstream clock, the VC5 can
-not operate correctly. That is a hardware property of the VC5. The
-internal oscilator present in some VC5 models is also considered
-upstream clock.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Alexey Firago <alexey_firago@mentor.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
-[sboyd@kernel.org: Added comment about probe preventing this from
-happening in the first place]
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/clk-versaclock5.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index decffb3826ece..a738af893532f 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -262,8 +262,10 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
- 
- 		if (vc5->clk_mux_ins == VC5_MUX_IN_XIN)
- 			src = VC5_PRIM_SRC_SHDN_EN_XTAL;
--		if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
-+		else if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
- 			src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
-+		else /* Invalid; should have been caught by vc5_probe() */
-+			return -EINVAL;
- 	}
- 
- 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
--- 
-2.19.1
-
-
-
+> > ---
+> >  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> > index 61a0afb..0bbcaf1 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> > @@ -76,7 +76,7 @@
+> >  			power-domains = <&sysc R8A774C0_PD_CA53_CPU0>;
+> >  			next-level-cache = <&L2_CA53>;
+> >  			enable-method = "psci";
+> > -			clocks =<&cpg CPG_CORE R8A774C0_CLK_Z2>;
+> > +			clocks = <&cpg CPG_CORE R8A774C0_CLK_Z2>;
+> >  			operating-points-v2 = <&cluster1_opp>;
+> >  		};
+> > 
+> > @@ -87,7 +87,7 @@
+> >  			power-domains = <&sysc R8A774C0_PD_CA53_CPU1>;
+> >  			next-level-cache = <&L2_CA53>;
+> >  			enable-method = "psci";
+> > -			clocks =<&cpg CPG_CORE R8A774C0_CLK_Z2>;
+> > +			clocks = <&cpg CPG_CORE R8A774C0_CLK_Z2>;
+> >  			operating-points-v2 = <&cluster1_opp>;
+> >  		};
+> > 
+> > --
+> > 2.7.4
+> 
