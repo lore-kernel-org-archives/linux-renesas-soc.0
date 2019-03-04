@@ -2,103 +2,102 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC9DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9C7C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABAD620663
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:22:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q87YY63B"
+	by mail.kernel.org (Postfix) with ESMTP id E555020823
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbfCDWWM (ORCPT
+        id S1726088AbfCDW1z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 17:22:12 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46399 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfCDWWM (ORCPT
+        Mon, 4 Mar 2019 17:27:55 -0500
+Received: from sauhun.de ([88.99.104.3]:57408 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726076AbfCDW1z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 17:22:12 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v16so5727753ljg.13
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 14:22:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QDGEY2aOlHXpUEdIMKl0rQXcFMDI8l1OeliI4/4nBPI=;
-        b=Q87YY63Bn7QzMJYWFoNg8jnf2ggLTseCf50Wsc9+Bz90qG/dFFZtLHSFr9T23AIXvl
-         uGd++/8GPKD/ScLFKQa6KiWMWJmL2rdeolpioguhmOZqmMmDmHh+EPtguIbRr7LsQaaN
-         RNMROgez9IwXr5E2gADRiGF/1gRxXJpHQKtFH/I1LYTn642+zwEscGsE7zLOiGbMeKlQ
-         KEtGXoAzLCy7gpSTH2w88PxO48vEhZWzOGCGPFA0nT5K/r9quhzfgRLdv0lK6gv31WPZ
-         Oj96x1n67XdFlrgq6bI6o5s4tMN77yDLnfdzuJXIdNzd8TOVJ9mDE7qRlBv4O2sz0WCt
-         C5Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QDGEY2aOlHXpUEdIMKl0rQXcFMDI8l1OeliI4/4nBPI=;
-        b=eGqCFW+V3UFMoezzdVEz+ywHPPdEAyinXMrT6rNWBUaInwVWufvpGque1tz0BUEZIV
-         dd8JkshlQ/6jUIBuNMDme9LaktxAh71pkwAvfvP+EQkCxEYx+mkbecC3GNsFP0sc4e0X
-         aCm4dRN4r3a+46yKQcnGAwgmI0X3WczSt4RK4xapJkwmvmtoNL6MFpoTcDDG4gq+/dUU
-         VOGrV9gXklxnJz6N/wwDXbKlQ9lng7ml13SwTg/zHNbesn6j8pn6qcfRXOJm2AZSnn3u
-         J7eUWP68ABZ5XcSR0aOkMXiCeQZH2gA3O8c5qbp0/s05nK1COzBCifc4wsGF0TcstwC6
-         uVCQ==
-X-Gm-Message-State: APjAAAVtCbuonbKkB1jRyj7DzRrFVj3BQHOCaPVOdhqPPRLMRnFbAZTm
-        Oa9mgJie8lCeLzGwC6C0ytvibf3BchL37b8RNdxMcA==
-X-Google-Smtp-Source: APXvYqwrsxB8to3V5v+WR2uuk1vzh1E9LvO+5F87V1zUGxnoKUvksszTjhTFDhNMBqFpsZzaSpwx/xb/tlVz6fsXBUs=
-X-Received: by 2002:a2e:9217:: with SMTP id k23mr1919482ljg.159.1551738129752;
- Mon, 04 Mar 2019 14:22:09 -0800 (PST)
+        Mon, 4 Mar 2019 17:27:55 -0500
+Received: from localhost (p54B337B5.dip0.t-ipconnect.de [84.179.55.181])
+        by pokefinder.org (Postfix) with ESMTPSA id 657F22C3637;
+        Mon,  4 Mar 2019 23:27:52 +0100 (CET)
+Date:   Mon, 4 Mar 2019 23:27:49 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Subject: Re: [PATCH 1/2] i2c: rcar: fix concurrency issue related to ICDMAER
+Message-ID: <20190304222749.srrttj3hnsyf2cot@ninjato>
+References: <20190303150314.6528-1-wsa+renesas@sang-engineering.com>
+ <20190303150314.6528-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <20190304194023.10926-1-marek.vasut@gmail.com>
-In-Reply-To: <20190304194023.10926-1-marek.vasut@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 4 Mar 2019 23:20:39 +0100
-Message-ID: <CACRpkdbQyT6X=_nrtmuU7q40dgY26dxeMRKNjUd9uP6XDMpmwg@mail.gmail.com>
-Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
-To:     Mark Vasut <marek.vasut@gmail.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pa7a6djvo2nbhuao"
+Content-Disposition: inline
+In-Reply-To: <20190303150314.6528-2-wsa+renesas@sang-engineering.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 4, 2019 at 8:40 PM <marek.vasut@gmail.com> wrote:
 
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->
-> Reword the binding document to make it clear how the propeties work
-> and which properties affect which other properties.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Harald Geyer <harald@ccbib.org>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> To: devicetree@vger.kernel.org
-> ---
-> V2: - Make "gpios" a mandatory property
->     - Reword "gpio-states" property description
->     - Change "enable-gpio" to "enable-gpios" to match modern DT rules
-> Note: The recent gpio-regulator rework caused breakage. While the
->       changes in the gpio-regulator code were according to the DT
->       binding document, they stopped working with older DTs. Make
->       the binding document clearer to prevent such breakage in the
->       future.
+--pa7a6djvo2nbhuao
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Excellent work!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Yours,
-Linus Walleij
+> Reproduction test:
+> 1. Add udelay(1) after disabling ICDMAER. (It is expected to
+> generate an interrupt of rcar_i2c_irq())
+>=20
+>     void rcar_i2c_dma_unmap(struct rcar_i2c_priv *priv)
+>     {
+>         ...
+>         rcar_i2c_write(priv, ICDMAER, 0);
+>         udelay(1);                        <-- Add this line
+
+For the record (and self-documentation): I needed to increase the delay
+and was using usleep_range(500, 800) in the end.
+
+>         ...
+>         priv->dma_direction =3D DMA_NONE;
+>     }
+>=20
+> 2. Execute DMA transfer.
+> Performs DMA transfer of read or write. In the sample, write was used.
+>=20
+>  $ i2cset -y -f 4 0x6a 0x01 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08 i
+
+And I used this command instead to make sure another message is waiting:
+
+$ i2ctransfer -y 4 w9@0x6a 1 1+ r16
+
+Yet, in general, I could reproduce that this patch fixes the issue, so
+all is fine, I think.
+
+
+--pa7a6djvo2nbhuao
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlx9pmEACgkQFA3kzBSg
+KbYx9g/+MUuzM+g3j3R2fl/xtUprB8BJy1FcMnD2inGwZhPsybZRlote0Qehm6Oo
+RKwPjPRE4kL+uvlXAxdJoeC0jNkLZeoDa5sUFc/T3kP9kK0jr9iRKcIjrxNWDGSa
+MXUPefxcrkeEl/PkRByHuFT+XSTqOWGe2C4iS2FVw3Qo2qj2RuSsgEtKqWGd3XmU
+FatWV3TmOrbn3RO8i2SQpPmo618QZMMx4/RZruwTODeMsYcBAPLO5oIIUFZNOYQ1
+1+jLf3AW31kt761f37FvLynOLefWk7fb++gllBs8M84bHXfLOymFFf6JC8/ZB0ny
+rllilfW5l9d2qitO29c+rPjgCkZzpStRyiVxTl48EvLpeJALK6XE9AXxrep8RhbG
+vAJ5VcMhv/IDfE6hXVuY5DFKgVIX9uIYhA1FsaudZrfjqLyhT1ew+uBpvjFIodJb
+nLyeH3PQxR/7VQ/iUuEhhsiQQs343TQ2QAUHeHlTJhQo3qc3/iQYLhEUbf8EZSvH
+GnhIX3h59Lx33b/rfKYBlR4QOkAOrveqn9JOVPCgp2tsTT/AL3ZI6XHgzivRN7Io
+fBvcTDnUPEjOV12b48DVlCfgv1vs3cI2h+BCj1B7pUw4ILvvRGgKFvx6oW8UDL17
+hggp8I7QRowMqeKFP6PduLeGh2gqmCqdqOmo6hVO7qWek9BuxIk=
+=oUdc
+-----END PGP SIGNATURE-----
+
+--pa7a6djvo2nbhuao--
