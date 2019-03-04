@@ -2,155 +2,161 @@ Return-Path: <SRS0=YxuQ=RH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0F4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FCFC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1994920823
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:38:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/pqUSxt"
+	by mail.kernel.org (Postfix) with ESMTP id 5784B2070B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 Mar 2019 22:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfCDWiC (ORCPT
+        id S1726485AbfCDWtA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Mar 2019 17:38:02 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44788 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbfCDWiC (ORCPT
+        Mon, 4 Mar 2019 17:49:00 -0500
+Received: from sauhun.de ([88.99.104.3]:57554 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726066AbfCDWtA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Mar 2019 17:38:02 -0500
-Received: by mail-lf1-f66.google.com with SMTP id u9so593876lfe.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Mar 2019 14:38:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zhzJRAZt/R3PF5BQzh2oLYrOEtPSkbVjGUE3eqKeFF4=;
-        b=i/pqUSxtkZTGQee4dyx8hrGiQrrcDTKPONLULgYNsJ2AzkjzVjfdBDhjIHInC62gfg
-         DW7IvlZrIxjqbN9ivBT61CTVwE573URms1XXpmpJ7tYce4+jTWlWb4qa2mc3dYtL3Sph
-         o+lAcxX96jnbMrttUrBFJYkjh+JNAN+544IGWLhJv1I7Qg0ngpndI8XHvACB8hQhOupT
-         F9+mOnmrz+zeaYhxzXiPA+ZQCbto65SSHf8/44JSbxuiSZoWYqv75JgCZfIvSVewPfEL
-         zWAs2f6+ED3qgR1osxaG9eDYNs2+HnLB13VTPjz6tqNrnxETFtreoYDQ513hqrG/8kw9
-         1ITg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zhzJRAZt/R3PF5BQzh2oLYrOEtPSkbVjGUE3eqKeFF4=;
-        b=Jx7xXJguI9hg3YM+YGl6BkrZVrO8qBq9zQu95dJtJVTVwS62RLIQq2mGwFO+S/vK5F
-         Lm0qLXb3l5dlLfMVEuWclmBN0vOVgAZuf1xugYwUPSUhTHDJokRtnv/AvL3x1iHm8rr0
-         GLhVSJSgDaoLM70ypMjzZv10zH+qA8+l/9AfoW5rpGcHPIHr3divlDVv3rlFN+qYmIFK
-         mhQZQHBaIPI7lh/9u+4PSy9OKhdvP8PeGFU+o37NRBpVV3acvmctVBNZVDn75UNm+QkW
-         ZRGNvU5asAPc0UU0cO8tV9cbiabwt9yHgdGUOF/YrZe0EES8EB5Fwf1TrpEr/n/wOicP
-         zSiA==
-X-Gm-Message-State: APjAAAUASvGp5evrXbDWJT+vjn6Ynff6lys07UFu+8RF9mD54ZqeW+UI
-        1erNKG0WFU2l9AazAOYfkQxs79NsmLjGWXLrmvT8gw==
-X-Google-Smtp-Source: APXvYqxVKHRb41Wd2WOnYPv9vOYsDDZaIXMzjxDoSa/W5A+CwtjIrx8OHtkfSEfyBwCR8HWS/le0gY70BOKnXzVeixE=
-X-Received: by 2002:a19:a417:: with SMTP id q23mr7220186lfc.27.1551739080195;
- Mon, 04 Mar 2019 14:38:00 -0800 (PST)
-MIME-Version: 1.0
-References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
- <20190301155523.GA1915@Mani-XPS-13-9360> <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
- <20190304144829.GA5265@Mani-XPS-13-9360>
-In-Reply-To: <20190304144829.GA5265@Mani-XPS-13-9360>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 4 Mar 2019 23:37:48 +0100
-Message-ID: <CACRpkda+8QZnaT-YoeccQGjg78y9-E-JoWBr3LJs62T03H4wQw@mail.gmail.com>
-Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
- addingmissing of_node_put
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mon, 4 Mar 2019 17:49:00 -0500
+Received: from localhost (p54B337B5.dip0.t-ipconnect.de [84.179.55.181])
+        by pokefinder.org (Postfix) with ESMTPSA id 450192E4031;
+        Mon,  4 Mar 2019 23:48:57 +0100 (CET)
+Date:   Mon, 4 Mar 2019 23:48:56 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        avifishman70@gmail.com, Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Xu Wei <xuwei5@hisilicon.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>, wang.yi59@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, Keerthy <j-keerthy@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        Phil Reid <preid@electromag.com.au>,
+        Tero Kristo <t-kristo@ti.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 0/7] i2c: core: introduce atomic transfers
+Message-ID: <20190304224856.w7egngqynl3hlabp@ninjato>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+ <71aaab62-2965-8ad8-61b9-02d02694919d@axentia.se>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i2ufgd73rsxv6a7m"
+Content-Disposition: inline
+In-Reply-To: <71aaab62-2965-8ad8-61b9-02d02694919d@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 4, 2019 at 3:48 PM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
-> On Mon, Mar 04, 2019 at 01:29:33PM +0100, Linus Walleij wrote:
-> > On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > > Hi Wen,
-> > >
-> > > On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
-> > > > The call to of_get_next_child returns a node pointer with refcount
-> > > > incremented thus it must be explicitly decremented after the last
-> > > > usage.
-> > > >
-> > > > Detected by coccinelle with the following warnings:
-> > > > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 103, but without a corresponding object release within this function.
-> > > > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 115, but without a corresponding object release within this function.
-> > > > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 128, but without a corresponding object release within this function.
-> > > >
-> > >
-> > > We have a floating patch for this:
-> > > https://www.spinics.net/lists/arm-kernel/msg694544.html
-> > >
-> > > Andreas: Can you please take a second look at the patchset submitted by Linus
-> > > Walleij and Russel for simplifying the Actions startup code?
-> >
-> > Andreas wrote a version of simplifying secondary startup in the
-> > same spirit as Russell's patches, and it's merged and all
-> > is fine I think.
-> >
->
-> Oops. I think I missed that! Can you please point me to that patch? And how it
-> got merged? I did the PR for actions stuff this time and haven't included any
-> mach-actions patches.
 
-I just did git log arch/arm/mach-actions but I think it came in quite some time
-ago, not last merge window:
+--i2ufgd73rsxv6a7m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But you see:
-commit 6c2eb3e76fb84e2eb46d484f71fab469c0d9532c
-"ARM: owl: smp: Drop owl_secondary_boot()"
-commit bad29933fef76fb6ee577f4a0b6d145c1f52f663
-"ARM: owl: smp: Use __pa_symbol()"
-commit 18cfd9429d8a82c49add8f3ca9d366599bfcac45
-"ARM: owl: smp: Drop bogus holding pen"
+Hi Peda,
 
-platsmp.c looks just fine these days. Except for what Wei's patch is fixing,
-of_node_put().
+> The way I read this series, you are not giving atomic transfers priority.=
+ The
 
-Yours,
-Linus Walleij
+You are reading correctly. I could have made more clear that the issue
+pointed out by Russell is not handled by this series but discussion
+about it is welcome / needed to decide if we can take this series as is
+or if we need to redesign it. But here we are anyhow :)
+
+> only thing that happens is that if an xfer happens in atomic/irq context,
+> trylock is used instead of an ordinary (unconditional) lock (this is just
+> like it is already). If a mux is sitting in between the client device and
+> the root adapter, the trylock operation will percolate to the root. Sure,
+> there are more trylock ops that may fail and abort the xfer, but if
+> everything is uncontended, then things should proceed in orderly fashion.
+> Also, sure, the mux may need additional resources that are no longer
+> available if the machine is half way down (or worse). But I don't see any
+> fundamental *locking* issue with muxes that is different from the case
+> without a mux.
+
+Good, that was my conclusion as well. The series, as is, doesn't change
+the locking behaviour, so that will work exactly as before. Or, it will
+not work in the case described by Russell. Like before.
+
+> That said, if you then want to introduce xfers that want to circumvent the
+> locking, then parent-locked muxes are easier since the actual muxing oper=
+ation
+> is performed as an unlocked xfer (if one is needed) while the client devi=
+ce
+> has grabbed the adapter lock "from the outside". Sure, there is a list of
+> locks going up through the adapter tree to handle, but that can probably =
+be
+> handled in one place. I.e. the locking must have been avoided prior to the
+> actual muxing operation, but the code to do so can be in one place. The
+
+That was my gut feeling, too...
+
+> mux-locked case is where the trouble is, since the muxing operation is do=
+ne
+> as a normal xfer and needs to be classified as a special xfer that just l=
+ike
+> the original client xfer also needs to break through any existing locks in
+> the adapter tree. And those muxing xfers might come from anywhere, e.g.
+>=20
+> 	- IO-expander controlling a gpio/pinctrl mux
+> 	- dedicated I2C mux (e.g. the LTC4306)
+> 	- regmap device
+> 	- etc, who knows what muxing options will evolve?
+>=20
+> So, any scheme that require a white-list will work poorly for mux-locked
+> muxes, unless you can add some new grip/pinctrl/regmap flags to
+> gpios/pins/registers so that the particular accesses can be white-listed.
+> Adding those flags seem rather invasive?
+
+=2E.. and sadly, this too. We would need the same kind of flag which I
+described in my first paragraph of the original posting where I wanted
+the flag to detect "unauthorized" uses of late I2C transfers. And this
+is gonna be invasive. And I am not sure it is worth the effort.
+
+I wonder what a reasonable effort is? Simply ignore the lock from the
+"current" adapter and hope for the best that there is no mux or at
+least no mux which needs interrupts / a lock attached to it?
+
+> But of course, you need to actually do something about the added FIXME in
+> the demux-pinctrl driver... BTW, that driver should forward ->smbus_xfer
+> just like it does for ->master_xfer, no?
+
+Yes. The idea of having two seperate SMBus controllers in one SoC which
+would need demuxing is amusing, but still, it exists for I2C and you are
+right.
+
+Thanks,
+
+   Wolfram
+
+
+--i2ufgd73rsxv6a7m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlx9q1gACgkQFA3kzBSg
+KbYX3BAAjQDCFpbGfGXB8PlBXZzY6XS+1sO3YC6TcePKhtRbKNzfW4QConML5j+g
+KlTrgTUx82i4bv7IVtbOw5in2PB/rMiv6FyZ68Ezy5Z2dmCnH9WS9T7+OWIMNDwB
+6F4YJZ+1JfsL6G7IlapHMlDuIcXIXJzL4UMzcpQHQXrkoxO6dPOkbRGGvSA9u0/K
+Lw+IPnkBa/TROkUrWMzmjqKiAXNw7Ddr8fBPopllklAmD+lL6ZtElrgS95tjHS1X
+pGEKNZgZC7AY+7v7kzieLbtDIBQalOaixJbSZ3Ckm+Eo+ejpnWxjqLAnxZ2zjBGS
+N4opb/qvklrxCv+/vUTqtWqTQ3XhLnIlY4+tZINJF4BxTTqaWXheREYuHOn7fFN8
+fAxeU8p6aYDiszl4djPBBuRha+NDHEY8MySklHh5H8iR495c1vM+aYq4N/dTXlta
+J/AVwAbq89Nh/rSlkxcxNbNu/eb2IP/4ZmFCk62+xtklydaH8yOv1jiKl/oCmHVD
+PCnd8Sd8siY9s0fyUnaxAeaverSyjdu/kucrVdqs4AYDn57iMqsNB4CmeGjxx6ko
+3sAiJQb5mwLONtDW3viQ6zCBrnQ3I+/vxS/7u7q+AXnOzpSy/nid/0zY9eXeJBHh
+WFSVTwuhq4IGzGaqUSHGqcfO4FsjL0KgXnP7cSJWzmBURW0JgzE=
+=Al+e
+-----END PGP SIGNATURE-----
+
+--i2ufgd73rsxv6a7m--
