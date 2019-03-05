@@ -2,96 +2,111 @@ Return-Path: <SRS0=F/Q8=RI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79621C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 11:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F47C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 12:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531DD20842
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 11:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1795B206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 12:07:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="CsZh7Qbj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfCELdM (ORCPT
+        id S1727935AbfCEMHR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Mar 2019 06:33:12 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:41592 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727897AbfCELdM (ORCPT
+        Tue, 5 Mar 2019 07:07:17 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.25]:28423 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfCEMHR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Mar 2019 06:33:12 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 2C015217BFE4A0B764F7;
-        Tue,  5 Mar 2019 19:33:10 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x25BX2j8072428;
-        Tue, 5 Mar 2019 19:33:02 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019030519331802-3291598 ;
-          Tue, 5 Mar 2019 19:33:18 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     linux-kernel@vger.kernel.org
-Cc:     wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
-        Simon Horman <horms@verge.net.au>,
+        Tue, 5 Mar 2019 07:07:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1551787635;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=jDmr7nA5BwBIcZ/UuWZLWkYwdNXH2xs9CMKIg6mmFRI=;
+        b=CsZh7QbjEwkXuHOs8tVVIuVQ5FM26uTtJunMx3hpvoNPrLr0ZhdDehtfzPsREO037y
+        5fLkCpDlUeBRiYSZpfWO/QsU80JgkKLwutnET/ohpMUwoTNwouj1JC0dp+h5ddfS1lq3
+        ugBwDMQvxuG6aUIub4lEmQIzvoZa00N3HnNA47SJFd3j1cmo9Qo3viw4DwTYn2cKTled
+        WTXPiKU8AUYJCe9DG+rXQZit83fY/Yb754KjMGEqueLMZ/nwUqeSTCBci2RrWeptOU4U
+        HrFCOdW3mqhJNqvcEjYqV+JLJi+l+kbSy6xylMicoIcm13cuUSkPUv2DPpuJOQxtmBP8
+        wbqw==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp01-03.back.ox.d0m.de
+        by smtp-ox.front (RZmta 44.13 AUTH)
+        with ESMTPSA id u08fcfv25C6qPIZ
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Tue, 5 Mar 2019 13:06:52 +0100 (CET)
+Date:   Tue, 5 Mar 2019 13:06:52 +0100 (CET)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 08/15] ARM: shmobile: fix a leaked reference by adding missing of_node_put
-Date:   Tue, 5 Mar 2019 19:33:59 +0800
-Message-Id: <1551785646-46173-8-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1551785646-46173-1-git-send-email-wen.yang99@zte.com.cn>
-References: <1551785646-46173-1-git-send-email-wen.yang99@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-03-05 19:33:18,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-03-05 19:32:58,
-        Serialize complete at 2019-03-05 19:32:58
-X-MAIL: mse01.zte.com.cn x25BX2j8072428
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Message-ID: <1770426335.645190.1551787612347@webmail.strato.com>
+In-Reply-To: <20190213103255.1265-1-horms+renesas@verge.net.au>
+References: <20190213103255.1265-1-horms+renesas@verge.net.au>
+Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77995: draak: Fix
+ EthernetAVB phy mode to rgmii
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev51
+X-Originating-IP: 85.212.94.77
+X-Originating-Client: open-xchange-appsuite
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The call to of_get_next_child returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
 
-Detected by coccinelle with the following warnings:
-./arch/arm/mach-shmobile/pm-rcar-gen2.c:77:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-./arch/arm/mach-shmobile/pm-rcar-gen2.c:85:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
-./arch/arm/mach-shmobile/pm-rcar-gen2.c:90:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+> On February 13, 2019 at 11:32 AM Simon Horman <horms+renesas@verge.net.au> wrote:
+> 
+> 
+> From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> 
+> According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
+> August 24, 2018, the TX clock internal Delay mode does'nt support
+> on R-Car D3. This patch fixes EthernetAVB phy mode to rgmii.
+> 
+> This is achieved by simply dropping the phy-mode property from
+> r8a77995-draak.dts as the default property for this for r8a77995,
+> as set in r8a77995.dtsi, is "rgmii".
+> 
+> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> index db2bed1751b8..bfa260c9f78c 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> @@ -168,7 +168,6 @@
+>  	pinctrl-names = "default";
+>  	renesas,no-ether-link;
+>  	phy-handle = <&phy0>;
+> -	phy-mode = "rgmii-txid";
+>  	status = "okay";
+>  
+>  	phy0: ethernet-phy@0 {
+> -- 
+> 2.11.0
+>
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
-v2->v1: add a missing space between "adding" and "missing"
+Works for me.
 
- arch/arm/mach-shmobile/pm-rcar-gen2.c | 1 +
- 1 file changed, 1 insertion(+)
+Tested-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-diff --git a/arch/arm/mach-shmobile/pm-rcar-gen2.c b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-index 8c2a205..e84599d 100644
---- a/arch/arm/mach-shmobile/pm-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/pm-rcar-gen2.c
-@@ -72,6 +72,7 @@ void __init rcar_gen2_pm_init(void)
- 	}
- 
- 	error = of_address_to_resource(np, 0, &res);
-+	of_node_put(np);
- 	if (error) {
- 		pr_err("Failed to get smp-sram address: %d\n", error);
- 		return;
--- 
-2.9.5
-
+CU
+Uli
