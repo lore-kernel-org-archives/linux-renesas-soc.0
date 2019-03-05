@@ -2,200 +2,159 @@ Return-Path: <SRS0=F/Q8=RI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 764DBC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 21:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B74C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 22:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 264B720675
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 21:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDA2D20661
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 22:26:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentexmi.onmicrosoft.com header.i=@gentexmi.onmicrosoft.com header.b="II2N0K63"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D57qyiIC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbfCEVkS (ORCPT
+        id S1727974AbfCEW0L (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Mar 2019 16:40:18 -0500
-Received: from mail-eopbgr710111.outbound.protection.outlook.com ([40.107.71.111]:22849
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726214AbfCEVkS (ORCPT
+        Tue, 5 Mar 2019 17:26:11 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53061 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfCEW0L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Mar 2019 16:40:18 -0500
+        Tue, 5 Mar 2019 17:26:11 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f65so4061371wma.2;
+        Tue, 05 Mar 2019 14:26:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gentexmi.onmicrosoft.com; s=selector1-gentex-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BM9TPkScqM5RPODPMkJzSaU7+GaLnPZP8h5LIpi6/eA=;
- b=II2N0K63BepjpFRFTGKL8FPBD9uxzwjy5l5WWhQktHzhOPwNPxK3roi4ofNUAvdzUMYR1SsykGRr6NzdnHBJTEa51ijQkmIUsKyl54XpnfeL7nhC4wSMF7Gx0pspwu7XCdoNN4KM/HhY5lT5iiUNEUjZDDs5huvMgZyroux7gMg=
-Received: from DM2PR0101MB1006.prod.exchangelabs.com (10.160.129.148) by
- DM2PR0101MB0800.prod.exchangelabs.com (10.160.93.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.16; Tue, 5 Mar 2019 21:38:35 +0000
-Received: from DM2PR0101MB1006.prod.exchangelabs.com
- ([fe80::594d:376c:1dd6:58c3]) by DM2PR0101MB1006.prod.exchangelabs.com
- ([fe80::594d:376c:1dd6:58c3%5]) with mapi id 15.20.1643.022; Tue, 5 Mar 2019
- 21:38:34 +0000
-From:   "Key, Kevin" <kevin.key@gentex.com>
-To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "laurent.pinchart+renesas@ideasonboard.com" 
-        <laurent.pinchart+renesas@ideasonboard.com>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH] drm: rcar-du: Support panels connected directly to the
- DPAD outputs
-Thread-Topic: [PATCH] drm: rcar-du: Support panels connected directly to the
- DPAD outputs
-Thread-Index: AQHU0RN3qLyOabZG3UmMRcCAdpzar6X9lWmA
-Date:   Tue, 5 Mar 2019 21:38:34 +0000
-Message-ID: <fe05620c4920c9357902da311bd027732fdb3aac.camel@gentex.com>
-References: <20190302161725.25104-1-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20190302161725.25104-1-laurent.pinchart+renesas@ideasonboard.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kevin.key@gentex.com; 
-x-originating-ip: [204.19.223.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 71c72c7d-418c-48bc-b21e-08d6a1b2eb9b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:DM2PR0101MB0800;
-x-ms-traffictypediagnostic: DM2PR0101MB0800:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtETTJQUjAxMDFNQjA4MDA7MjM6RFBGRjBpZkxPbW1CVW1WRU1rWjdhLzBs?=
- =?utf-8?B?NCtGVUpIWnhxZkJSbTVRNGFvZER0cnNwdlhGUnAzUGdtRGR1L0lyODJkaUQv?=
- =?utf-8?B?VzRicnhYc2JjVlVHZnJKRGo5bnFaUXFDKzV4clZlRFJld2MwOExoNExOT0xO?=
- =?utf-8?B?MHJNbjdiKy9hbXNSdUVTeGRVMWt6Qzh3MGFQdTZldG4rVkI1NDVOazNvSUQw?=
- =?utf-8?B?OExZc08rWFFHdm01M0lzM1Iwd29JdG1qSGo2NVJLclpBSHhQeWtJQnQyMHlN?=
- =?utf-8?B?R1hzRmZUUC91eWZ2RytocllmMTJqeEdWRnpDbk5yYzJVZENCU1RyRXhZNTZw?=
- =?utf-8?B?VUh1U01uc2g2WnNEUy9uVUk1a0pBT045dWV3TzNhajBZNWJ3a21XNld3QSsv?=
- =?utf-8?B?SU05UE15SGhmaHptdE51bGs3dUhzdWR3dTAwd3pZNEpJanRWZ0FvdXJ2bDBk?=
- =?utf-8?B?c283WE5JL1dtb1RHeDU2cUNObEZZclgrNllpcU1TWTJQTXJ5MDZaNkZsSGd5?=
- =?utf-8?B?ckFycTdZRXVmRHJhOUtRbDBWYVROL3o4clFoWWV0WGJiZVdrbU54L0h2VmY0?=
- =?utf-8?B?blZPUGI1RWFta05lajBCTnZlTzZmTW9RUlFGUHREcktyck1QakNVQVdjaFE0?=
- =?utf-8?B?TGhUR3VQMmhsa2FKTE4vN3dTSzJTcmcxYzBNNkw3Zjd6Qm5KWk1Rb051VTJY?=
- =?utf-8?B?UlQ2MGErd2JqREV6R0FLME5UVmozZ3pGLzl6bkVZZ2NvS0Z5Nmc0aDBiSjdi?=
- =?utf-8?B?MnM5c0FQVjFQZlJkaC9kWHl0M1V6cmo4Z00rcVRmMDN0Y1FCK0FmOVM4Rktk?=
- =?utf-8?B?UXgwS2NDS05XMjFKWUQweTgvTTl0MDVqU2pXbUVzYVhRKzloczR0amF5R244?=
- =?utf-8?B?WUQ0THFNYXRkM1N5YzhXeElJVW05V3RiYlFEczVZZnBpNlFlWUhHd0NQa0g4?=
- =?utf-8?B?VmhrVmgweDgvZWJmdktHZmtlZTdQSytDUU4yV1VtNk02SFgxcDBEcDlueWlW?=
- =?utf-8?B?OWFxcm9FZEhBTXJkeXpXRmQrTkJMcGZaZWxEN3JXTnMvNzRkMTM3OFAzM3BF?=
- =?utf-8?B?MHBKd2M4UE5zaGtlb1MvSGpWL0htTE4yN3JNZEU0azAzQk5YNmxJMnZvWFhH?=
- =?utf-8?B?b0RjY2tZNnRETEpkMi9iM3pIU0I5eUt4ZWk2bXFqb3RXbmk5ZlVhbVcveVAy?=
- =?utf-8?B?NVkxL0p3VkVKTk1XQ21WUXBPZHVLM3FRZHZSRTlPMTVmcEZ4M3lzMHV5V1g1?=
- =?utf-8?B?bVZ0RDA2U29Uc242V0ROMDVESnh6WVMwZVc4Rjd5VFZ0Z3FsVkU3M0lJSWpx?=
- =?utf-8?B?MDdxZmFQTlhialc4R2NCNlp6amRvT01rOWVleG82YlBlRzNySUJ3eEs1WlZz?=
- =?utf-8?B?UVdXbXZiZmpzd3BaTWNNOGYwQkhmRHNmNnlaY0RncnNURk9Ba3hRcjhNZUFw?=
- =?utf-8?B?R3pEaXdvN2UwREZ0ZkNNQ0wzTHN0VnB6dGxjOUhyckZKdTF0eTVndm16SU02?=
- =?utf-8?B?QjU2UlJlYkQ3ME5lUW1EQXpGVWRWM0xaVEkwR0NpZnNOYzJrMktDRVdqTzda?=
- =?utf-8?B?U0ZHdy9JTUJTRGFMY25OUEZNZHRoWWw2NXJSWXVwMlFNQUZFOTRkWmNxOVJh?=
- =?utf-8?B?RnZjZkp3bGh6MndST2R5b0xhTWREdHZCOWg5RFlZUGdYQm9DWWM2TXNFRTV4?=
- =?utf-8?Q?weChoTEOn1qsJPxrA0AY=3D?=
-x-microsoft-antispam-prvs: <DM2PR0101MB0800B6B2C6A6DB7D8894FFCF96720@DM2PR0101MB0800.prod.exchangelabs.com>
-x-forefront-prvs: 0967749BC1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(346002)(396003)(136003)(366004)(376002)(199004)(189003)(68736007)(6512007)(11346002)(97736004)(3846002)(186003)(316002)(486006)(8936002)(105586002)(25786009)(71190400001)(6116002)(106356001)(446003)(2906002)(2616005)(476003)(110136005)(81166006)(66066001)(81156014)(5660300002)(8676002)(6506007)(71200400001)(54906003)(2501003)(99286004)(118296001)(5024004)(14444005)(256004)(14454004)(6436002)(76176011)(102836004)(36756003)(53936002)(4326008)(305945005)(6486002)(229853002)(86362001)(26005)(7736002)(6246003)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM2PR0101MB0800;H:DM2PR0101MB1006.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: gentex.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: TN0GA5hAamYu2iZNQOc1tNDNINhL2g4fPgjG+JRxWSXn9MZEwCaBYuZwVmVYMWszyZDOkNsuR3bGSHuOoI1QkebOb6KwqF1sC2AoPRcgZ+d1Fj3ewRgvHSrx3rCArJKP1EczedFzr/iwGSXnqh26ysOSWZeRlGaI6N4uDd+H9yxNtyzYCdQDJuJoO04UlxncsCSTvY/3ZR/Q1yu7bQs5HQaNltW/AzmD39eruQcv0BrbnyETQVd67oTYbsY0ijPIAT+nHcfs5g0sdfG93Vqt/8fpAt6uV2h4CT5N7K/A2JPtYTWDZBW2/9aUJ70rv9vfiyzh9WIOeHVFXi9nIAawBEBVT9ru1L0Z59woIvSjb4DTXWYR6ytczW+Sy3RRoECz5xKRFZkbGzbmA526YKp2VHX03NQCEc0HPH3TarNMF9Q=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <98C99CC9C51E2E4F98784F31F67E7D6F@prod.exchangelabs.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=L2VkHUD3HY+YnosTxPabeLmu3opcuXxbIOBMzW73AfA=;
+        b=D57qyiICdojCMi0zACxxAYiBAnbYwAFT4E9DE090tZzy+dy6BwkuA+YI46jtoUWhMG
+         loiQ28ApV5EwoG7wBzFIL1bNDC/eMiZZL7lJkrXi1Wos3hXSOZ4b1cCiqeyrTvm59WFz
+         dCyjoUhyR4wn9Y18emHnb/qZ0J93hOCpaH0BmYOR4yP8kr94nfD8fvO5CBRnc+v9nzUJ
+         uPegShcYuiHhxozq/+zrr7tz+9sxkrtBBOrLiEBvbWJokFePggmNtyZ9v0VlAqVidHj9
+         iI08obU1g27jJ1FdKTXqbzjCqBHqdZ9um/3qXCEL5eL6CihJiYj0UphPDvqaXSQu5SBH
+         bzwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=L2VkHUD3HY+YnosTxPabeLmu3opcuXxbIOBMzW73AfA=;
+        b=PvKQ9BZHOwzDXdQtJ6aiEK/0GtY4V6XRdrRV/6I+u/KX9h9KJHItN4iY1oKWAtS3Vm
+         wfJSgkhvVSfcJmAwEXXw8kGHcPM04ihyst8I4hZoa3rqOshg+v/6lZKym0jsahhFVEjn
+         LZbah1zFwlWE5H6+s9CYpIkouu1mmOlP/hNevEkj97aDCOVj3+SXp9O3MlLJzRep7u8q
+         f2fMFDKC8v7YS44qfFgY8C6HSU7bc2XCS9kS+URVb/uwy2J3jzXfMzEydlz9NDPSBb1F
+         1SQOQuGpYSquY2otgLbJhS2KfCobWfKVgn8Suej7qJC6//Zxjwisp65dv7f+0bSOzLyr
+         xiMw==
+X-Gm-Message-State: APjAAAUUEbRUKyWXk+2lHBbTFvTOeyOF7g0A/QZXgz4SGyW2p8NMOxwE
+        QvbvmYbCTCpv25g533j1Is9mdieP
+X-Google-Smtp-Source: APXvYqxuCfXIwAOTSGJXVJjA+MQSgM2OpLHKc0yK6IEf58KRM3J7N+E6Lk19vZPgbY71h3Z01oZLuw==
+X-Received: by 2002:a1c:670a:: with SMTP id b10mr447199wmc.82.1551824768105;
+        Tue, 05 Mar 2019 14:26:08 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id y20sm42133wmi.34.2019.03.05.14.26.06
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Mar 2019 14:26:07 -0800 (PST)
+Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
+To:     Harald Geyer <harald@ccbib.org>
+Cc:     devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+References: <20190304194023.10926-1-marek.vasut@gmail.com>
+ <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at>
+ <834f8576-73a4-be0f-e322-91601bed5388@gmail.com>
+ <E1h1Ce9-0000JA-Rs@stardust.g4.wien.funkfeuer.at>
+ <4d1cd905-c322-78e5-cb9c-dadba01b0324@gmail.com>
+ <E1h1Hjl-0000Nv-Ri@stardust.g4.wien.funkfeuer.at>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <89743562-bb2a-de3f-a57b-331f43bf8982@gmail.com>
+Date:   Tue, 5 Mar 2019 23:23:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: gentex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71c72c7d-418c-48bc-b21e-08d6a1b2eb9b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2019 21:38:34.6712
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: cc8eac22-5629-41a8-b33d-28a72cf42b23
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR0101MB0800
+In-Reply-To: <E1h1Hjl-0000Nv-Ri@stardust.g4.wien.funkfeuer.at>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-VGVzdGVkIGFuZCBjb25maXJtZWQgdGhlIGNvcnJlY3Qgb3BlcmF0aW9uIHRoZSBwYXRjaGVkIGRy
-aXZlciBvbiB0aGUNClJlbmVzYXMgcjhhNzc5Ni1tM3VsY2IgcGxhdGZvcm0uDQoNClRlc3RlZC1i
-eTogS2V2aW4gS2V5IDxrZXZpbi5rZXlAZ2VudGV4LmNvbT4NCg0KT24gU2F0LCAyMDE5LTAzLTAy
-IGF0IDE4OjE3ICswMjAwLCBMYXVyZW50IFBpbmNoYXJ0IHdyb3RlOg0KPiBUaGUgUi1DYXIgRFUg
-ZHJpdmVyIGFzc3VtZXMgdGhhdCBhIGJyaWRnZSBpcyBhbHdheXMgY29ubmVjdGVkIHRvIHRoZQ0K
-PiBEVQ0KPiBvdXRwdXQuIFRoaXMgaXMgdmFsaWQgZm9yIHRoZSBMVkRTIGFuZCBIRE1JIG91dHB1
-dHMsIGJ1dCB0aGUgRFBBRA0KPiBvdXRwdXRzIGNhbiBiZSBjb25uZWN0ZWQgZGlyZWN0bHkgdG8g
-YSBwYW5lbCwgaW4gd2hpY2ggY2FzZSBubyBicmlkZ2UNCj4gaXMNCj4gYXZhaWxhYmxlLg0KPg0K
-PiBUbyBzdXBwb3J0IHRoaXMgdXNlIGNhc2UsIGRldGVjdCB3aGV0aGVyIHRoZSBlbnRpdGllcyBj
-b25uZWN0ZWQgdG8NCj4gdGhlDQo+IERVIERQQUQgb3V0cHV0cyBhcmUgZW5jb2RlcnMgb3IgcGFu
-ZWxzIGJhc2VkIG9uIHRoZSBudW1iZXIgb2YgcG9ydHMNCj4gb2YNCj4gdGhlaXIgRFQgbm9kZSwg
-YW5kIHJldHJpZXZlIHRoZSBjb3JyZXNwb25kaW5nIHR5cGUgb2YgRFJNIG9iamVjdHMuDQo+IEZv
-cg0KPiBwYW5lbHMsIGFkZGl0aW9uYWxseSBjcmVhdGUgcGFuZWwgYnJpZGdlIGluc3RhbmNlcy4N
-Cj4NCj4gU2lnbmVkLW9mZi1ieTogTGF1cmVudCBQaW5jaGFydCA8DQo+IGxhdXJlbnQucGluY2hh
-cnQrcmVuZXNhc0BpZGVhc29uYm9hcmQuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9y
-Y2FyLWR1L3JjYXJfZHVfZW5jb2Rlci5jIHwgNTQgKysrKysrKysrKysrKysrKysrKystDQo+IC0t
-DQo+ICAxIGZpbGUgY2hhbmdlZCwgNDggaW5zZXJ0aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4N
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfZW5jb2Rlci5j
-DQo+IGIvZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9lbmNvZGVyLmMNCj4gaW5kZXgg
-OGVlNGU3NjJmNGU1Li41OTVlY2ZhMWZmMGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9yY2FyLWR1L3JjYXJfZHVfZW5jb2Rlci5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yY2Fy
-LWR1L3JjYXJfZHVfZW5jb2Rlci5jDQo+IEBAIC0yOCwxMyArMjgsMzMgQEAgc3RhdGljIGNvbnN0
-IHN0cnVjdCBkcm1fZW5jb2Rlcl9mdW5jcw0KPiBlbmNvZGVyX2Z1bmNzID0gew0KPiAgICAgICAg
-IC5kZXN0cm95ID0gZHJtX2VuY29kZXJfY2xlYW51cCwNCj4gIH07DQo+DQo+ICtzdGF0aWMgdW5z
-aWduZWQgaW50IHJjYXJfZHVfZW5jb2Rlcl9jb3VudF9wb3J0cyhzdHJ1Y3QgZGV2aWNlX25vZGUN
-Cj4gKm5vZGUpDQo+ICt7DQo+ICsgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpwb3J0czsNCj4g
-KyAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKnBvcnQ7DQo+ICsgICAgICAgdW5zaWduZWQgaW50
-IG51bV9wb3J0cyA9IDA7DQo+ICsNCj4gKyAgICAgICBwb3J0cyA9IG9mX2dldF9jaGlsZF9ieV9u
-YW1lKG5vZGUsICJwb3J0cyIpOw0KPiArICAgICAgIGlmICghcG9ydHMpDQo+ICsgICAgICAgICAg
-ICAgICBwb3J0cyA9IG9mX25vZGVfZ2V0KG5vZGUpOw0KPiArDQo+ICsgICAgICAgZm9yX2VhY2hf
-Y2hpbGRfb2Zfbm9kZShwb3J0cywgcG9ydCkgew0KPiArICAgICAgICAgICAgICAgaWYgKG9mX25v
-ZGVfbmFtZV9lcShwb3J0LCAicG9ydCIpKQ0KPiArICAgICAgICAgICAgICAgICAgICAgICBudW1f
-cG9ydHMrKzsNCj4gKyAgICAgICB9DQo+ICsNCj4gKyAgICAgICBvZl9ub2RlX3B1dChub2RlKTsN
-Cj4gKw0KPiArICAgICAgIHJldHVybiBudW1fcG9ydHM7DQo+ICt9DQo+ICsNCj4gIGludCByY2Fy
-X2R1X2VuY29kZXJfaW5pdChzdHJ1Y3QgcmNhcl9kdV9kZXZpY2UgKnJjZHUsDQo+ICAgICAgICAg
-ICAgICAgICAgICAgICAgICBlbnVtIHJjYXJfZHVfb3V0cHV0IG91dHB1dCwNCj4gICAgICAgICAg
-ICAgICAgICAgICAgICAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqZW5jX25vZGUpDQo+ICB7DQo+ICAg
-ICAgICAgc3RydWN0IHJjYXJfZHVfZW5jb2RlciAqcmVuYzsNCj4gICAgICAgICBzdHJ1Y3QgZHJt
-X2VuY29kZXIgKmVuY29kZXI7DQo+IC0gICAgICAgc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSA9
-IE5VTEw7DQo+ICsgICAgICAgc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZTsNCj4gICAgICAgICBp
-bnQgcmV0Ow0KPg0KPiAgICAgICAgIHJlbmMgPSBkZXZtX2t6YWxsb2MocmNkdS0+ZGV2LCBzaXpl
-b2YoKnJlbmMpLCBHRlBfS0VSTkVMKTsNCj4gQEAgLTQ4LDExICs2OCwzMyBAQCBpbnQgcmNhcl9k
-dV9lbmNvZGVyX2luaXQoc3RydWN0IHJjYXJfZHVfZGV2aWNlDQo+ICpyY2R1LA0KPiAgICAgICAg
-IGRldl9kYmcocmNkdS0+ZGV2LCAiaW5pdGlhbGl6aW5nIGVuY29kZXIgJXBPRiBmb3Igb3V0cHV0
-DQo+ICV1XG4iLA0KPiAgICAgICAgICAgICAgICAgZW5jX25vZGUsIG91dHB1dCk7DQo+DQo+IC0g
-ICAgICAgLyogTG9jYXRlIHRoZSBEUk0gYnJpZGdlIGZyb20gdGhlIGVuY29kZXIgRFQgbm9kZS4g
-Ki8NCj4gLSAgICAgICBicmlkZ2UgPSBvZl9kcm1fZmluZF9icmlkZ2UoZW5jX25vZGUpOw0KPiAt
-ICAgICAgIGlmICghYnJpZGdlKSB7DQo+IC0gICAgICAgICAgICAgICByZXQgPSAtRVBST0JFX0RF
-RkVSOw0KPiAtICAgICAgICAgICAgICAgZ290byBkb25lOw0KPiArICAgICAgIC8qDQo+ICsgICAg
-ICAgICogTG9jYXRlIHRoZSBEUk0gYnJpZGdlIGZyb20gdGhlIERUIG5vZGUuIEZvciB0aGUgRFBB
-RA0KPiBvdXRwdXRzLCBpZiB0aGUNCj4gKyAgICAgICAgKiBEVCBub2RlIGhhcyBhIHNpbmdsZSBw
-b3J0LCBjb25zaWRlciBpdCBkZXNjcmliZXMgYSBwYW5lbA0KPiBhbmQgY3JlYXRlIGENCj4gKyAg
-ICAgICAgKiBwYW5lbCBicmlkZ2UuDQo+ICsgICAgICAgICovDQo+ICsgICAgICAgaWYgKChvdXRw
-dXQgPT0gUkNBUl9EVV9PVVRQVVRfRFBBRDAgfHwNCj4gKyAgICAgICAgICAgIG91dHB1dCA9PSBS
-Q0FSX0RVX09VVFBVVF9EUEFEMSkgJiYNCj4gKyAgICAgICAgICAgcmNhcl9kdV9lbmNvZGVyX2Nv
-dW50X3BvcnRzKGVuY19ub2RlKSA9PSAxKSB7DQo+ICsgICAgICAgICAgICAgICBzdHJ1Y3QgZHJt
-X3BhbmVsICpwYW5lbCA9DQo+IG9mX2RybV9maW5kX3BhbmVsKGVuY19ub2RlKTsNCj4gKw0KPiAr
-ICAgICAgICAgICAgICAgaWYgKElTX0VSUihwYW5lbCkpIHsNCj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgcmV0ID0gUFRSX0VSUihwYW5lbCk7DQo+ICsgICAgICAgICAgICAgICAgICAgICAgIGdv
-dG8gZG9uZTsNCj4gKyAgICAgICAgICAgICAgIH0NCj4gKw0KPiArICAgICAgICAgICAgICAgYnJp
-ZGdlID0gZGV2bV9kcm1fcGFuZWxfYnJpZGdlX2FkZChyY2R1LT5kZXYsIHBhbmVsLA0KPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBEUk1fTU9ERV9D
-T05ORUNUT1INCj4gX0RQSSk7DQo+ICsgICAgICAgICAgICAgICBpZiAoSVNfRVJSKGJyaWRnZSkp
-IHsNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gUFRSX0VSUihicmlkZ2UpOw0KPiAr
-ICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGRvbmU7DQo+ICsgICAgICAgICAgICAgICB9DQo+
-ICsgICAgICAgfSBlbHNlIHsNCj4gKyAgICAgICAgICAgICAgIGJyaWRnZSA9IG9mX2RybV9maW5k
-X2JyaWRnZShlbmNfbm9kZSk7DQo+ICsgICAgICAgICAgICAgICBpZiAoIWJyaWRnZSkgew0KPiAr
-ICAgICAgICAgICAgICAgICAgICAgICByZXQgPSAtRVBST0JFX0RFRkVSOw0KPiArICAgICAgICAg
-ICAgICAgICAgICAgICBnb3RvIGRvbmU7DQo+ICsgICAgICAgICAgICAgICB9DQo+ICAgICAgICAg
-fQ0KPg0KPiAgICAgICAgIHJldCA9IGRybV9lbmNvZGVyX2luaXQocmNkdS0+ZGRldiwgZW5jb2Rl
-ciwgJmVuY29kZXJfZnVuY3MsDQo+IC0tDQo+IFJlZ2FyZHMsDQo+DQo+IExhdXJlbnQgUGluY2hh
-cnQNCj4NCj4NCj4NCj4gVGhpcyBlLW1haWwgd2FzIHJlY2VpdmVkIGZyb20gb3V0c2lkZSBvZiBH
-ZW50ZXggQ29ycG9yYXRpb24uIFVzZQ0KPiBjYXV0aW9uIHdoZW4gY2xpY2tpbmcgb24gbGlua3Mv
-YXR0YWNobWVudHMuDQpUSEUgSU5GT1JNQVRJT04gQ09OVEFJTkVEIElOIFRISVMgRS1NQUlMIE1F
-U1NBR0UgQU5EIEFOWSBBVFRBQ0hNRU5UUyBTRU5UIEZST00gR0VOVEVYIENPUlBPUkFUSU9OIElT
-IEdFTlRFWCBDT05GSURFTlRJQUwgSU5GT1JNQVRJT04gSU5URU5ERUQgT05MWSBGT1IgVEhFIFBF
-UlNPTkFMIFVTRSBPRiBUSEUgSU5ESVZJRFVBTCBPUiBFTlRJVFkgTkFNRUQgQUJPVkUuIElmIHlv
-dSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIHlvdSBhcmUgaGVyZWJ5IG5vdGlmaWVk
-IHRoYXQgYW55IHJldmlldywgZGlzdHJpYnV0aW9uLCBvciBjb3B5aW5nIG9mIHRoaXMgY29tbXVu
-aWNhdGlvbiBpcyBzdHJpY3RseSBwcm9oaWJpdGVkLiBJZiB5b3UgaGF2ZSByZWNlaXZlZCB0aGlz
-IGNvbW11bmljYXRpb24gaW4gZXJyb3IsIHBsZWFzZSBpbW1lZGlhdGVseSBub3RpZnkgdGhlIHNl
-bmRlciBieSByZXR1cm4gZS1tYWlsLCBhbmQgZGVsZXRlIHRoaXMgZS1tYWlsIG1lc3NhZ2UgYW5k
-IGFueSBhdHRhY2htZW50cyBmcm9tIHlvdXIgY29tcHV0ZXIuPD4NCg==
+On 3/5/19 10:36 PM, Harald Geyer wrote:
+> Marek Vasut writes:
+>> On 3/5/19 5:10 PM, Harald Geyer wrote:
+>>> Marek Vasut writes:
+>>>> On 3/5/19 11:07 AM, Harald Geyer wrote:
+>>>>> marek.vasut@gmail.com writes:
+>>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>>
+>>>>>> Reword the binding document to make it clear how the propeties work
+>>>>>> and which properties affect which other properties.
+>>>>>>
+>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>> Cc: Harald Geyer <harald@ccbib.org>
+>>>>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>>>>> Cc: Mark Brown <broonie@kernel.org>
+>>>>>> Cc: Rob Herring <robh@kernel.org>
+>>>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>>>> To: devicetree@vger.kernel.org
+>>>>>> ---
+>>>>>> V2: - Make "gpios" a mandatory property
+>>>>>>     - Reword "gpio-states" property description
+>>>>>>     - Change "enable-gpio" to "enable-gpios" to match modern DT rules
+>>>>>> Note: The recent gpio-regulator rework caused breakage. While the
+>>>>>>       changes in the gpio-regulator code were according to the DT
+>>>>>>       binding document, they stopped working with older DTs. Make
+>>>>>>       the binding document clearer to prevent such breakage in the
+>>>>>>       future.
+>>>>>
+>>>>> Thanks for the update. I think it addresses all my concerns except for
+>>>>> one:
+>>>>>
+>>>>>> +- gpios-states	: State of GPIO pins in "gpios" array that is set until
+>>>>>> +			  changed by the first consumer. 0: LOW, 1: HIGH.
+>>>>>> +			  Default is LOW if nothing else is specified.
+>>>>>
+>>>>> I still believe this not true: There is no guarantee that the regulator
+>>>>> core won't change the state of GPIO pins before the first consumer comes
+>>>>> up.
+>>>>
+>>>> Why would it do that ?
+>>>
+>>> Because the regulator core doesn't know about this driver specific
+>>> property at all. And without any constraints placed by consumers, the
+>>> core is free to choose any state whatsoever at any point in time.
+>>
+>> But git grep seems to disagree, see drivers/regulator/gpio-regulator.c:
+>>                     ret = of_property_read_u32_index(np, "gpios-states", i,
+>>
+>> The core sets the pins to such a value until the consumer takes over.
+> 
+> I think we have a misunderstanding of terminology. When I write "regulator
+> core", I mean the driver independent regulator code. The line you quote
+> above is part of the gpio-regulator driver and thus not part of what
+> I call the "regulator core".
+> 
+> AFAICS the data from the property is only stored in a driver specific
+> data structure (and not used at all outside of probe) but never passed
+> to what I call the regulator core.
+> 
+> Why do you believe there is a guarantee that the value set during
+> probeing is preserved until a consumer takes over?
+
+It is the only sensible behavior and the behavior I see people expect
+from this property. I presume it solidified in this sort of semi-defined
+state, so we're stuck with assuming it behaves this way to maintain
+compatibility.
+
+-- 
+Best regards,
+Marek Vasut
