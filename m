@@ -2,148 +2,127 @@ Return-Path: <SRS0=F/Q8=RI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCC4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 12:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED23C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 14:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0761D2084F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 12:38:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETrybv2A"
+	by mail.kernel.org (Postfix) with ESMTP id B841820842
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 14:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbfCEMi2 (ORCPT
+        id S1728049AbfCEOFX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Mar 2019 07:38:28 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55543 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbfCEMi2 (ORCPT
+        Tue, 5 Mar 2019 09:05:23 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:37272 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726250AbfCEOFX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Mar 2019 07:38:28 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q187so2406643wme.5;
-        Tue, 05 Mar 2019 04:38:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ai2zzdBSHoIfjMAF1bDaEJ1Dm1JDnQP1t5RdE32s68c=;
-        b=ETrybv2AWJa099CkmM0caEjXki7lO2lJh1KHrq4/7YSvNlRnseF9o/QVOzcEOnuBeR
-         cXXZMJxU0SRmikJ0rFJPFsQfoqPMdZrwERtCInQcgMwWmfhZIvw1PMogQnb3y0rTI/fd
-         tePoVxADZC5jsOx4cJZ/w8+9wf1x/p43rLcxmBwchqAzGHOt00eXbQSw91lzJAqhRvbw
-         XebmAqUCdncWAgsdEjaSBpQ1tqF/8VJhNSg6QAwJRvJpfKuCwm2M1wgF5jE4eXe/kt5T
-         YlZhMPz+zsP7Zw4sYJ6Xqnvspr652EyimvCPe2x6m0SXYuijwYtwQOCaJNtg/tjF8Jnu
-         RAVw==
+        Tue, 5 Mar 2019 09:05:23 -0500
+Received: by mail-ua1-f66.google.com with SMTP id x1so7734767uaj.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 05 Mar 2019 06:05:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ai2zzdBSHoIfjMAF1bDaEJ1Dm1JDnQP1t5RdE32s68c=;
-        b=NniVlgkdkJOemG9xPDPBMmuja4kGOyxmIR5RYJo/pHy7uaoQVkJydNmQaAWaDGdYLS
-         XSW6rUlNZt8kT7CJQbDHxT84J4Pr2kGPYzgRFTBjVZtCyTUJKAPdvyvYzQerEnc1LfC4
-         r4IstjFSBgkBTe64VwSVDmUhEJhThubqDaTqvmh2DP6c7e8eIVIr1fXhp42G8KfMm00m
-         IkTmYiZyXGU7ErnvXM55hklXGChslwLL+emzkBE6bB8b36tRJQ1FxG4kfYaCzFonJyAC
-         9ooFvy7BsbTpHbKSfZH96W4WCf7/uYHYMF187XGjq439MSGKEV7v4HAsK9RiPANSkDaL
-         XdZQ==
-X-Gm-Message-State: APjAAAXGm9WKVkx0sZ/Ao0DMujWl0dhjekjRAK4m2zSr1VuLF/148yIj
-        iXPU1Tiu68rLCs+TWsl9Jcoo9Ee1
-X-Google-Smtp-Source: APXvYqyEIeoZKI++WEreKu94C6IekPQ3D8J9N8ch16wB4uPbydL6mFLRmnnUuOvpBBA+sfPUf8ZHvw==
-X-Received: by 2002:a1c:4009:: with SMTP id n9mr2560013wma.132.1551789504736;
-        Tue, 05 Mar 2019 04:38:24 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id i74sm11795539wmg.48.2019.03.05.04.38.23
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Mar 2019 04:38:23 -0800 (PST)
-Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
-To:     Harald Geyer <harald@ccbib.org>
-Cc:     devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-References: <20190304194023.10926-1-marek.vasut@gmail.com>
- <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <834f8576-73a4-be0f-e322-91601bed5388@gmail.com>
-Date:   Tue, 5 Mar 2019 11:59:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MYXkgi80vTtMx51TYzxZQuyfsOpsBgFFPSuFh4joC88=;
+        b=JaG/gqm1RzwM6mlcL+ORCqFbEalgAMsYFH+Qp6kp9GnZAl96FqySHFDsnBHfL5ISvE
+         TN2D2f6XvajBMJGOqC1vEriUYz+vGk6k/7T0DdQ5t9E0cO5O7AV8H/TNNFGDnNC71pp9
+         Vys8vMxKzCn9bYZ3wANPqY6DvFL7XrOa6w1D02EU6OdxnT1Vpi6wxmTWaSa65FwQdUXa
+         29SGT8ytiRJHf6Ntt6q5/2eKtYWVdR+0NexbFIQFYr6fRHewBCh1OhSebysHXjs4+ng+
+         6b4BnHEQxLVYpIj4Bxpix0XPg8rDLzLqYFOdX8JsxvRrOSH8vzqs7raYTUOEoPu8CbEt
+         j0fA==
+X-Gm-Message-State: APjAAAWEpjjYCTV3Tcwp54hdY1LG3FCBZdqi36B5WFDZM4a9vp+BpTbN
+        rwkefWlMlhp63D4q4D4B4Y5O+Moc9ET7U6kkK4o=
+X-Google-Smtp-Source: APXvYqyx/fTIRHtoLcLJ3wHPwHk2jK52tYdNL0seM4Uz2uQpSoqHTNF16kHxW9zMEQ9Rp0cVYtHcw3Yczj4XWZL/ygg=
+X-Received: by 2002:a9f:30dc:: with SMTP id k28mr1261608uab.75.1551794721536;
+ Tue, 05 Mar 2019 06:05:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <610761cf-5a19-c182-07d8-8d118ca20035@cogentembedded.com> <09a2508e-f63e-4804-bf11-76832faae1f5@cogentembedded.com>
+In-Reply-To: <09a2508e-f63e-4804-bf11-76832faae1f5@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 5 Mar 2019 15:05:09 +0100
+Message-ID: <CAMuHMdVjvbcK21r9ajp9xKEGx=VHbXkrSB0ob2EjR8+dmNVdPw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: spi-nor: refine Spansion S25FL512S ID
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 3/5/19 11:07 AM, Harald Geyer wrote:
-> marek.vasut@gmail.com writes:
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>
->> Reword the binding document to make it clear how the propeties work
->> and which properties affect which other properties.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Harald Geyer <harald@ccbib.org>
->> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Mark Brown <broonie@kernel.org>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: linux-renesas-soc@vger.kernel.org
->> To: devicetree@vger.kernel.org
->> ---
->> V2: - Make "gpios" a mandatory property
->>     - Reword "gpio-states" property description
->>     - Change "enable-gpio" to "enable-gpios" to match modern DT rules
->> Note: The recent gpio-regulator rework caused breakage. While the
->>       changes in the gpio-regulator code were according to the DT
->>       binding document, they stopped working with older DTs. Make
->>       the binding document clearer to prevent such breakage in the
->>       future.
-> 
-> Thanks for the update. I think it addresses all my concerns except for
-> one:
-> 
->> +- gpios-states	: State of GPIO pins in "gpios" array that is set until
->> +			  changed by the first consumer. 0: LOW, 1: HIGH.
->> +			  Default is LOW if nothing else is specified.
-> 
-> I still believe this not true: There is no guarantee that the regulator
-> core won't change the state of GPIO pins before the first consumer comes
-> up.
+Hi Sergei,
 
-Why would it do that ? That would completely invalidate any remaining
-useful-ness of this property.
+On Wed, Jan 16, 2019 at 6:53 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Spansion S25FL512S ID is erroneously using 5-byte JEDEC ID, while the chip
+> family ID is stored in the 6th byte. Due to using only 5-byte ID, it's also
+> covering S25FS512S and now that we have added 6-byte ID for that chip, we
+> can convert S25FL512S to using a proper 6-byte ID as well...
+>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> I still think my proposal describes the property more acurately:
-> gpios-states : On operating systems, that don't support reading back gpio
->                values in output mode (most notably linux), this array
->                provides the state of GPIO pins set when requesting them
->                from the gpio controller. Systems, that are capable of
->                preserving state when requesting the lines, are free to
->                ignore this property. 0: LOW, 1: HIGH. Default is LOW if
->                nothing else is specified.
-> 
-> Since we had this discussion already in the V1 thread and you clearly don't
-> agree with me, the maintainers will need to decide. You can add 
-> Reviewed-by: Harald Geyer <harald@ccbib.org>
-> once Rob and/or Mark have addressed this issue.
+This is now commit a2126b0a010905e5 ("mtd: spi-nor: refine Spansion
+S25FL512S ID"), and turns out to cause a regression on r8a7791/koelsch.
+Dmesg diff before/after:
 
-I think we're just looking at this from two different perspectives and
-for whatever reason can't reconcile them.
+    -m25p80 spi0.0: s25fl512s (65536 Kbytes)
+    -3 fixed-partitions partitions found on MTD device spi0.0
+    -Creating 3 MTD partitions on "spi0.0":
+    -0x000000000000-0x000000080000 : "loader"
+    -0x000000080000-0x000000600000 : "user"
+    -0x000000600000-0x000004000000 : "flash"
+    +m25p80 spi0.0: unrecognized JEDEC id bytes: 01, 02, 20
 
-> Thanks for your work!
-> Harald
-> 
+As the (old) U-Boot on my Koelsch keeps many module clocks enabled, I
+typically merge in my topic/renesas-debug branch, which makes sure all
+non-critical module clocks are disabled early during boot, to catch
+drivers not properly implementing Runtime PM.
 
+However, it turns out this has some impact on JEDEC ID detection:
+  - When module clocks are left untouched, spi_nor_read_id() reads
+    0x01:0x02:0x20:0x4d:0x00:0x80.
+  - When my debug code has disabled module clocks during early boot,
+    The last byte is 0x00.
 
--- 
-Best regards,
-Marek Vasut
+Before the above commit, only the first 5 bytes were compared, and the
+last byte was ignored, thus not causing problems.
+When comparing all 6 bytes, detection fails if the last byte is 0x00.
+
+I believe mainline U-Boot for R-Car Gen2 boards doesn't keep the QSPI
+module clock enabled, so this commit may breaks those boards.
+
+To be investigated more (e.g. with a logic analyzer)...
+
+> --- linux-mtd.orig/drivers/mtd/spi-nor/spi-nor.c
+> +++ linux-mtd/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1887,8 +1887,8 @@ static const struct flash_info spi_nor_i
+>         { "s25sl064p",  INFO(0x010216, 0x4d00,  64 * 1024, 128, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+>         { "s25fl256s0", INFO(0x010219, 0x4d00, 256 * 1024, 128, USE_CLSR) },
+>         { "s25fl256s1", INFO(0x010219, 0x4d01,  64 * 1024, 512, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
+> +       { "s25fl512s",  INFO6(0x010220, 0x4d0080, 256 * 1024, 256, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
+>         { "s25fs512s",  INFO6(0x010220, 0x4d0081, 256 * 1024, 256, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
+> -       { "s25fl512s",  INFO(0x010220, 0x4d00, 256 * 1024, 256, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
+>         { "s70fl01gs",  INFO(0x010221, 0x4d00, 256 * 1024, 256, 0) },
+>         { "s25sl12800", INFO(0x012018, 0x0300, 256 * 1024,  64, 0) },
+>         { "s25sl12801", INFO(0x012018, 0x0301,  64 * 1024, 256, 0) },
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
