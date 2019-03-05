@@ -2,169 +2,180 @@ Return-Path: <SRS0=F/Q8=RI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F26C10F0C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 05:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A720C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 09:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023C920842
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 05:56:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 203A320842
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 09:55:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="xAHg6EQY"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Ckd119AE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbfCEF4h (ORCPT
+        id S1727100AbfCEJzd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Mar 2019 00:56:37 -0500
-Received: from de-out1.bosch-org.com ([139.15.230.186]:45646 "EHLO
-        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfCEF4h (ORCPT
+        Tue, 5 Mar 2019 04:55:33 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:41118 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfCEJzd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Mar 2019 00:56:37 -0500
-X-Greylist: delayed 79205 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Mar 2019 00:56:34 EST
-Received: from fe0vm1650.rbesz01.com (unknown [139.15.230.188])
-        by fe0vms0186.rbdmz01.com (Postfix) with ESMTPS id 44D5k91jlxz1XLFjj;
-        Tue,  5 Mar 2019 06:56:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
-        s=2015-01-21; t=1551765393;
-        bh=uzfkAeBUABvAjefBm6TuwCwstgh+jM8v7OZAw7mZ6fo=; l=10;
-        h=From:From:Reply-To:Sender;
-        b=xAHg6EQYNz23Ytf8oKYHOO7rsHG77Bzmv+bb7IU245kOCYnWxRlNw+HvwiUKDcZDM
-         dFmMp6wtRPYh3cHq2nbJLShE2t3C7nZGulKc7OxW9b1YkxR6Oo9FpXmiRJYmyj899l
-         clzwMwMv4Y78HFOwHraytAynS1xZOgcNIno+nptk=
-Received: from si0vm2083.rbesz01.com (unknown [10.58.172.176])
-        by fe0vm1650.rbesz01.com (Postfix) with ESMTPS id 44D5k91MSZz1Cy;
-        Tue,  5 Mar 2019 06:56:33 +0100 (CET)
-X-AuditID: 0a3aad17-68bff70000004a10-b1-5c7e0f91428c
-Received: from fe0vm1651.rbesz01.com ( [10.58.173.29])
-        (using TLS with cipher AES128-SHA (128/128 bits))
-        (Client did not present a certificate)
-        by si0vm2083.rbesz01.com (SMG Outbound) with SMTP id 5B.E2.18960.19F0E7C5; Tue,  5 Mar 2019 06:56:33 +0100 (CET)
-Received: from SI-HUB2000.de.bosch.com (si-hub2000.de.bosch.com [10.4.103.108])
-        by fe0vm1651.rbesz01.com (Postfix) with ESMTPS id 44D5k870DxzQn5;
-        Tue,  5 Mar 2019 06:56:32 +0100 (CET)
-Received: from HI-Z0EVG.hi.de.bosch.com (10.34.218.219) by
- SI-HUB2000.de.bosch.com (10.4.103.108) with Microsoft SMTP Server id
- 15.1.1713.5; Tue, 5 Mar 2019 06:56:32 +0100
-From:   Dirk Behme <dirk.behme@de.bosch.com>
-To:     <linux-renesas-soc@vger.kernel.org>
-CC:     <dmaengine@vger.kernel.org>, <vkoul@kernel.org>,
-        <geert+renesas@glider.be>, <niklas.soderlund+renesas@ragnatech.se>,
-        <laurent.pinchart+renesas@ideasonboard.com>,
-        <Achim.Dahlhoff@de.bosch.com>, <dirk.behme@de.bosch.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH 2/2] dmaengine: sh: rcar-dmac: Fix glitch in dmaengine_tx_status
-Date:   Tue, 5 Mar 2019 06:56:28 +0100
-Message-ID: <20190305055628.11826-2-dirk.behme@de.bosch.com>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190305055628.11826-1-dirk.behme@de.bosch.com>
-References: <20190305055628.11826-1-dirk.behme@de.bosch.com>
+        Tue, 5 Mar 2019 04:55:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=B4wdFcvaQS9jQ+A96f4iwiWLIVrRdXxvFqFNs+W8ziA=; b=Ckd119AEXAaocwB1e1eYphnMi
+        FeX6nPYqK/kOiCtUOoy1uHwB63/BD5ZCx/amoMcFoJkbu4tugwe/vHyBEcyEy//3fITVthW+v/f68
+        R3TS8hZT/7tsQ/SKTadOcemkA+jONlRdnHwIJacWd8zRw13qfVubvadHfClbxRzt01nUuXidg77wf
+        WEvk0UwP4kWjYdb9LsGHxWtfS0nZlscINv//lhVigNKxU2pRjmzcJMzMPTCFXc3z1VrgB6BAexzFt
+        zJPc98WB5ghjkAF5f60OEXoF1xWFYEQYw3mlXwPDOpZMiwO6Llt+hqM+l26APzDzkVBox9Kk+8t2G
+        pl5YdglNQ==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:54940)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1h16nB-0000Mp-VA; Tue, 05 Mar 2019 09:55:22 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1h16mv-00035r-Sh; Tue, 05 Mar 2019 09:55:05 +0000
+Date:   Tue, 5 Mar 2019 09:55:05 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        avifishman70@gmail.com, Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Xu Wei <xuwei5@hisilicon.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>, wang.yi59@zte.com.cn
+Subject: Re: [PATCH 01/15] ARM: actions: fix a leaked reference by
+ addingmissing of_node_put
+Message-ID: <20190305095505.znposuv6avjtbfwf@shell.armlinux.org.uk>
+References: <1551430616-42014-1-git-send-email-wen.yang99@zte.com.cn>
+ <20190301155523.GA1915@Mani-XPS-13-9360>
+ <CACRpkdb=E9_rm4_7DQV3dS5uOs1gozxEwN9MtWr0tTwmjcYe=A@mail.gmail.com>
+ <20190304144829.GA5265@Mani-XPS-13-9360>
+ <CACRpkda+8QZnaT-YoeccQGjg78y9-E-JoWBr3LJs62T03H4wQw@mail.gmail.com>
+ <CAOZjjhnDYHkWCd-zDqkFpg5FPoj-UxxNwVxfbg6QEahiASm10w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.34.218.219]
-X-Brightmail-Tracker: H4sIAAAAAAAAA22Sa0xTZxzG+55z2p52HDw93P60ItmZ26JTB3hJozh3zRq/yDKzD0sNFjnS
-        Zr2QcwqjNDMElSBKBkswaxs7ES8Iuk4IiThlsxtZywQvLDgERiQ6kRBM1iFrJrJzKNh+2Lcn
-        /+f/e5/3ffKSOPNYqSUtdifH201WVqEm1FsvZq1vXHHAmHOxU65vb5qX60/4vkL6xupRQt/1
-        eAbTj4XX6U9emkD67tEQ/rbS0Ni/3uCr9cgNHW1HFIZHg3MKQ6RjVYH8U3V+MWe1lHP8m2/t
-        VZsHH84qS4fTKzyt26rQeaYOqUigN0Hg4RghaYauweBalasOqUX9PYKZm1dRzAggqP9zcUlB
-        r4XuhlqlpFPp12F+7A4uATj9HEFzpAaXjBS6AIZ8x+SSJujVUFv1dBGg6HyYi85hseRsON5e
-        t6hV9HZoavGILCmG5cN37XhsXQNhz4PFXFxcP9jlw2Ma4PrkJB475mW44O2WNyCNNwHxJiDe
-        BOQkwttQmmDJKbfl5eg3buCLOKEyJ3fDPoetA8W6z7iMzg3tDyKaRGwSdejZF0ZGbioXXLYg
-        2kxibBr1+a/iKLnIUewymwRzIV9m5QRWS628tdPIpLwYC2VFNosgWBz2IAISZ1OpI/IDRoYq
-        NrkqOd4Rw4JIRxJsBlVC7jIydInJyX3GcaUcv+xuI0kWqIFkEdTwXAlXsd9idS7bbBaFZDIZ
-        k57oJMZipCqINpJJYvY0JWULpSabYClZwjNjOLM8jaN96D3y/uHICZwh7A47p82gRqQr0NKm
-        ucz+4gbalVT0A7eRSUsw4qdMoWEkdphCRaTwJPGLx7OB0kl1aZaGcSjvjMjQ91Vwun4Cgf/y
-        LILxrmkMDt9tIKDvUL0S7lzxKiHq95Ew7H9CwuQfN1XwQ/+gCjp7jr4ENzr7KZjsqV4B49EZ
-        GhZqmjTgf17NwMST2ynwo/9qKngDZ9Jg4G5/OoxGftNCJDyqhZHgTzoITYd18M9f8zqYWujN
-        gtb5X7LBf6WXhQfNzathoffeqxAJnHsNfvdMvDElFouJxUYG3VKxTpPzf4pdmsZfp61ChXvW
-        sJU8kVtwPvD1sb709vHjH/U8fefbdzf/HNTVKm5V7Mtfs4oiMlubt8x6MP6GrOV9PugOZdbt
-        Kf3kWsiaJ1MZg+u25m66d7Tw9odYG30p/HFy9dDBv3cMnLJef/RlQXj3N/aWU27lWc3Iv3t3
-        T9O9Zy/sCG2vsLoadr3ybEvUnc0SgtmUuxbnBdN/GjfSB3wEAAA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOZjjhnDYHkWCd-zDqkFpg5FPoj-UxxNwVxfbg6QEahiASm10w@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+On Tue, Mar 05, 2019 at 07:21:19AM +0530, Manivannan Sadhasivam wrote:
+> On Tue, 5 Mar, 2019, 4:08 AM Linus Walleij <linus.walleij@linaro.org wrote:
+> 
+> > On Mon, Mar 4, 2019 at 3:48 PM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > > On Mon, Mar 04, 2019 at 01:29:33PM +0100, Linus Walleij wrote:
+> > > > On Fri, Mar 1, 2019 at 4:55 PM Manivannan Sadhasivam
+> > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > > Hi Wen,
+> > > > >
+> > > > > On Fri, Mar 01, 2019 at 04:56:42PM +0800, Wen Yang wrote:
+> > > > > > The call to of_get_next_child returns a node pointer with refcount
+> > > > > > incremented thus it must be explicitly decremented after the last
+> > > > > > usage.
+> > > > > >
+> > > > > > Detected by coccinelle with the following warnings:
+> > > > > > ./arch/arm/mach-actions/platsmp.c:112:2-8: ERROR: missing
+> > of_node_put; acquired a node pointer with refcount incremented on line 103,
+> > but without a corresponding object release within this function.
+> > > > > > ./arch/arm/mach-actions/platsmp.c:124:2-8: ERROR: missing
+> > of_node_put; acquired a node pointer with refcount incremented on line 115,
+> > but without a corresponding object release within this function.
+> > > > > > ./arch/arm/mach-actions/platsmp.c:137:3-9: ERROR: missing
+> > of_node_put; acquired a node pointer with refcount incremented on line 128,
+> > but without a corresponding object release within this function.
+> > > > > >
+> > > > >
+> > > > > We have a floating patch for this:
+> > > > > https://www.spinics.net/lists/arm-kernel/msg694544.html
+> > > > >
+> > > > > Andreas: Can you please take a second look at the patchset submitted
+> > by Linus
+> > > > > Walleij and Russel for simplifying the Actions startup code?
+> > > >
+> > > > Andreas wrote a version of simplifying secondary startup in the
+> > > > same spirit as Russell's patches, and it's merged and all
+> > > > is fine I think.
+> > > >
+> > >
+> > > Oops. I think I missed that! Can you please point me to that patch? And
+> > how it
+> > > got merged? I did the PR for actions stuff this time and haven't
+> > included any
+> > > mach-actions patches.
+> >
+> > I just did git log arch/arm/mach-actions but I think it came in quite some
+> > time
+> > ago, not last merge window:
+> >
+> > But you see:
+> > commit 6c2eb3e76fb84e2eb46d484f71fab469c0d9532c
+> > "ARM: owl: smp: Drop owl_secondary_boot()"
+> > commit bad29933fef76fb6ee577f4a0b6d145c1f52f663
+> > "ARM: owl: smp: Use __pa_symbol()"
+> > commit 18cfd9429d8a82c49add8f3ca9d366599bfcac45
+> > "ARM: owl: smp: Drop bogus holding pen"
+> >
+> > platsmp.c looks just fine these days. Except for what Wei's patch is
+> > fixing,
+> > of_node_put().
+> >
+> 
+> Nope. platsmp.c still requires some cleanup like removing the redundant
+> bootlock and pen_release flag as pointed out by Russel. Andreas just
+> replied to your cleanup patches but there was no follow up since that. So,
+> I guess we can just apply Russell's patches and this patch once Andreas is
+> fine with it (it looks good to me though).
 
-The tx_status poll in the rcar_dmac driver reads the status register
-which indicates which chunk is busy (DMACHCRB). Afterwards the point
-inside the chunk is read from DMATCRB. It is possible that the chunk
-has changed between the two reads. The result is a non-monotonous
-increase of the residue. Fix this by introducing a 'safe read' logic.
+No.  My patches are in my tree queued for this merge window.  They
+are part of a series that can not be broken up and merged separately
+because all the per-platform patches need to be merged before the final
+patch "ARM: smp: remove arch-provided "pen_release"" otherwise the
+platforms break.  I thought that was already explained.
 
-Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
-Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: <stable@vger.kernel.org> # v4.16+
----
-Note: Patch done against mainline v5.0
-
-Changes in v2: Switch goto/retry to for loop
-
- drivers/dma/sh/rcar-dmac.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 2ea59229d7f5..cceddc7099b0 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1282,6 +1282,9 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
- 	enum dma_status status;
- 	unsigned int residue = 0;
- 	unsigned int dptr = 0;
-+	unsigned int chcrb;
-+	unsigned int tcrb;
-+	unsigned int i;
- 
- 	if (!desc)
- 		return 0;
-@@ -1329,6 +1332,24 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
- 		return 0;
- 	}
- 
-+	/*
-+	 * We need to read two registers.
-+	 * Make sure the control register does not skip to next chunk
-+	 * while reading the counter.
-+	 * Trying it 3 times should be enough: Initial read, retry, retry
-+	 * for the paranoid.
-+	 */
-+	for (i = 0; i < 3; i++) {
-+		chcrb = rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
-+					    RCAR_DMACHCRB_DPTR_MASK;
-+		tcrb = rcar_dmac_chan_read(chan, RCAR_DMATCRB);
-+		/* Still the same? */
-+		if (chcrb == (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
-+			      RCAR_DMACHCRB_DPTR_MASK))
-+			break;
-+	}
-+	WARN_ONCE(i >= 3, "residue might be not continuous!");
-+
- 	/*
- 	 * In descriptor mode the descriptor running pointer is not maintained
- 	 * by the interrupt handler, find the running descriptor from the
-@@ -1336,8 +1357,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
- 	 * mode just use the running descriptor pointer.
- 	 */
- 	if (desc->hwdescs.use) {
--		dptr = (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
--			RCAR_DMACHCRB_DPTR_MASK) >> RCAR_DMACHCRB_DPTR_SHIFT;
-+		dptr = chcrb >> RCAR_DMACHCRB_DPTR_SHIFT;
- 		if (dptr == 0)
- 			dptr = desc->nchunks;
- 		dptr--;
-@@ -1355,7 +1375,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
- 	}
- 
- 	/* Add the residue for the current chunk. */
--	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
-+	residue += tcrb << desc->xfer_shift;
- 
- 	return residue;
- }
 -- 
-2.20.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
