@@ -4,39 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 798AEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 18:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E45D6C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 18:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A87208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 18:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C212E208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Mar 2019 18:51:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727864AbfCESvm (ORCPT
+        id S1726069AbfCESvp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Mar 2019 13:51:42 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:41115 "EHLO
+        Tue, 5 Mar 2019 13:51:45 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:46799 "EHLO
         relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbfCESvl (ORCPT
+        with ESMTP id S1727755AbfCESvp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Mar 2019 13:51:41 -0500
+        Tue, 5 Mar 2019 13:51:45 -0500
 Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 85E91200011;
-        Tue,  5 Mar 2019 18:51:39 +0000 (UTC)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 7AEB4200012;
+        Tue,  5 Mar 2019 18:51:42 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
         niklas.soderlund+renesas@ragnatech.se
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Michal Simek <michal.simek@xilinx.com>
-Subject: [PATCH v3 08/31] media: entity: Add has_route entity operation
-Date:   Tue,  5 Mar 2019 19:51:27 +0100
-Message-Id: <20190305185150.20776-9-jacopo+renesas@jmondi.org>
+Subject: [PATCH v3 10/31] media: entity: Use routing information during graph traversal
+Date:   Tue,  5 Mar 2019 19:51:29 +0100
+Message-Id: <20190305185150.20776-11-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
 References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -45,52 +46,98 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-The optional operation can be used by entities to report whether two
-pads are internally connected.
-
-While at there, fix a Sphinx compiler warning in a comment block a few
-lines above.
+Take internal routing information as reported by the entity has_route
+operation into account during graph traversal to avoid following
+unrelated links.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- include/media/media-entity.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/media/media-entity.c | 44 ++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 17 deletions(-)
 
-diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-index e806356b1512..675bc27b8b3c 100644
---- a/include/media/media-entity.h
-+++ b/include/media/media-entity.h
-@@ -195,6 +195,7 @@ enum media_pad_signal_type {
-  * @flags:	Pad flags, as defined in
-  *		:ref:`include/uapi/linux/media.h <media_header>`
-  *		(seek for ``MEDIA_PAD_FL_*``)
-+ *
-  * .. note::
-  *
-  *    @stream_count reference count must never be negative, but is a signed
-@@ -222,6 +223,10 @@ struct media_pad {
-  * @link_validate:	Return whether a link is valid from the entity point of
-  *			view. The media_pipeline_start() function
-  *			validates all links by calling this operation. Optional.
-+ * @has_route:		Return whether a route exists inside the entity between
-+ *			two given pads. Pads are passed to the operation ordered
-+ *			by index. Optional: If the operation isn't implemented
-+ *			all pads will be considered as connected.
-  *
-  * .. note::
-  *
-@@ -234,6 +239,8 @@ struct media_entity_operations {
- 			  const struct media_pad *local,
- 			  const struct media_pad *remote, u32 flags);
- 	int (*link_validate)(struct media_link *link);
-+	bool (*has_route)(struct media_entity *entity, unsigned int pad0,
-+			  unsigned int pad1);
- };
+diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+index 8e0ca8b1cfa2..3304e76bbafa 100644
+--- a/drivers/media/media-entity.c
++++ b/drivers/media/media-entity.c
+@@ -257,15 +257,6 @@ bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+ }
+ EXPORT_SYMBOL_GPL(media_entity_has_route);
  
- /**
+-static struct media_pad *
+-media_pad_other(struct media_pad *pad, struct media_link *link)
+-{
+-	if (link->source == pad)
+-		return link->sink;
+-	else
+-		return link->source;
+-}
+-
+ /* push an entity to traversal stack */
+ static void stack_push(struct media_graph *graph, struct media_pad *pad)
+ {
+@@ -336,7 +327,8 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ {
+ 	struct media_pad *pad = stack_top(graph);
+ 	struct media_link *link;
+-	struct media_pad *next;
++	struct media_pad *remote;
++	struct media_pad *local;
+ 
+ 	link = list_entry(link_top(graph), typeof(*link), list);
+ 
+@@ -350,23 +342,41 @@ static void media_graph_walk_iter(struct media_graph *graph)
+ 		return;
+ 	}
+ 
+-	/* Get the entity in the other end of the link . */
+-	next = media_pad_other(pad, link);
++	/*
++	 * Get the local pad, the remote pad and the entity at the other
++	 * end of the link.
++	 */
++	if (link->source->entity == pad->entity) {
++		remote = link->sink;
++		local = link->source;
++	} else {
++		remote = link->source;
++		local = link->sink;
++	}
++
++	/*
++	 * Are the local pad and the pad we came from connected
++	 * internally in the entity ?
++	 */
++	if (!media_entity_has_route(pad->entity, pad->index, local->index)) {
++		link_top(graph) = link_top(graph)->next;
++		return;
++	}
+ 
+ 	/* Has the entity already been visited? */
+-	if (media_entity_enum_test_and_set(&graph->ent_enum, next->entity)) {
++	if (media_entity_enum_test_and_set(&graph->ent_enum, remote->entity)) {
+ 		link_top(graph) = link_top(graph)->next;
+ 		dev_dbg(pad->graph_obj.mdev->dev,
+ 			"walk: skipping entity '%s' (already seen)\n",
+-			next->entity->name);
++			remote->entity->name);
+ 		return;
+ 	}
+ 
+ 	/* Push the new entity to stack and start over. */
+ 	link_top(graph) = link_top(graph)->next;
+-	stack_push(graph, next);
+-	dev_dbg(next->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
+-		next->entity->name, next->index);
++	stack_push(graph, remote);
++	dev_dbg(remote->graph_obj.mdev->dev, "walk: pushing '%s':%u on stack\n",
++		remote->entity->name, remote->index);
+ }
+ 
+ struct media_pad *media_graph_walk_next(struct media_graph *graph)
 -- 
 2.20.1
 
