@@ -2,109 +2,107 @@ Return-Path: <SRS0=TFpS=RJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AF7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F343C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6186520684
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1257420684
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:10:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="PnRQ9jcQ"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="RmAzh8/p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbfCFNJ4 (ORCPT
+        id S1728139AbfCFNK0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 08:09:56 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:53591 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbfCFNJ4 (ORCPT
+        Wed, 6 Mar 2019 08:10:26 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:47044 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbfCFNK0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 08:09:56 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 4D66825B7D0;
-        Thu,  7 Mar 2019 00:09:54 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1551877794; bh=q+ZrR6CH1SbLrwN+o81eXHnoEpH5rvgtU1hw7QBR0uo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PnRQ9jcQBxQIXhnq4QOa4JhsA36n5a/0IEbi8raiPpfhghC0ltX1zuQpNLpeiGDIT
-         +IwuMp0LH88axH9dsnA3TM7GghEKuvCwRf2ozrKPp5gSeGvNPukEgCTBv7m7l5t/db
-         /HhQYyAijfw8yzF7IjbAFGtrxsjH7YnSkjLAiREY=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 796B394030D; Wed,  6 Mar 2019 14:09:52 +0100 (CET)
-Date:   Wed, 6 Mar 2019 14:09:52 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/9] Add USB3.0 and TI HD3SS3220 driver support
-Message-ID: <20190306130952.3ehrtw23ji2phir6@verge.net.au>
-References: <1551863246-11656-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 6 Mar 2019 08:10:26 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v16so10780081ljg.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Mar 2019 05:10:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=dbvEi6vKeqM7rsL8tUw0vqAoDfWTetxS+73UGwJUOUE=;
+        b=RmAzh8/pz9yglvDVKV/yW+f2W12/4ptSY8tQVgrx9C5VmiLVIgBD/59MrWlzm066Fc
+         pbkoG+6/1DJTwDzenmjYV2pk6vsvVkb071oRJJoRru+6VaW6RqmUzd2bc3QavEcwJDQE
+         EvDcSfwoLjxPKwQ2dCbPFieyk7CfJksuL3eRbVpzy4jTIZsjKXGdPzv8qSUvFUESAWui
+         z+C5EI6wIlyiIImZ0o3aBLDWolNbn/vZuCS4V41w6f0VUkYyswXJZf+WFzEpjA1RoR/F
+         6lgxZpjIQ8PgNZNAovw+Imp3972Pk35MJc8WkxZ47VO9CgqZJ362cSiWCkxNWlYav/0I
+         szcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=dbvEi6vKeqM7rsL8tUw0vqAoDfWTetxS+73UGwJUOUE=;
+        b=GVhCN08gK2zuWK2JiXYu7yL1aZ+cr3tAqWVYOhOiVUC3p2VoVVWBN2VMIVR88vd1R+
+         r7wIL/2YAPZPWx/tBh4p6TzxBcfCLYetyhSiSgNf1Rb6wvnuxDkYFMRePP/L/v1lJpzA
+         DsSRGty/4z9vq5jo5J5jlMqziH1Gx55dGlyVwQp9gUeGrn43nbxW5ZQ4LL046lnEB0lL
+         m5Q/jXJFK3wz0nqIGKlV37qIk3FjCjRzs+hBh7NU2PS2vkbKKATslCaPFL6DGSmPAApY
+         doNA2At1+afcBTWn3VCSmXCkVqpQ/va/ioLnABurN4UQEt1NJ9JKq7I2tgN0ghQnxZyU
+         0dHg==
+X-Gm-Message-State: APjAAAVPzzeHD6IzCK0klq2K9VUx7bfDLA0xhuEFXDIchSpWTFfi5v+o
+        6PXTvki8J1UFSjL5aVRlqFOpbA==
+X-Google-Smtp-Source: APXvYqwP3Yp4NiRzsTkDBOHibSIvpo13LDsyzPosL9IMEsyAUtDEjBJTogj5aOtXbrVjViPw2T0O+g==
+X-Received: by 2002:a2e:934a:: with SMTP id m10mr2409348ljh.164.1551877824072;
+        Wed, 06 Mar 2019 05:10:24 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id 5sm362804lje.18.2019.03.06.05.10.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Mar 2019 05:10:23 -0800 (PST)
+Date:   Wed, 6 Mar 2019 14:10:23 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH 1/2] arm64: dts: r8a77990-ebisu: Fix adv7482 hexadecimal
+ register address
+Message-ID: <20190306131022.GA21288@bigcity.dyn.berto.se>
+References: <20190216235854.15244-1-niklas.soderlund+renesas@ragnatech.se>
+ <20190216235854.15244-2-niklas.soderlund+renesas@ragnatech.se>
+ <959b482d-09a1-2ffc-1144-101348bb27d9@ideasonboard.com>
+ <CAMuHMdXgPYkCi+pK9FsfsCuWtAL1Ly7d=Ty88+qGH7m7L67aOA@mail.gmail.com>
+ <59664792-ce36-d068-077f-e6cd12dc549b@ideasonboard.com>
+ <20190225100954.jvwbty52lgpcovrx@verge.net.au>
+ <20190306114736.GA2750@bigcity.dyn.berto.se>
+ <20190306130435.7bfqt5r7etshljxw@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1551863246-11656-1-git-send-email-biju.das@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190306130435.7bfqt5r7etshljxw@verge.net.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 06, 2019 at 09:07:17AM +0000, Biju Das wrote:
-> This series adds USB 3.0 support for the CAT874 platform, including a
-> new driver for the TI HD3SS3220 USB Type-C DRP port controller.
+On 2019-03-06 14:04:35 +0100, Simon Horman wrote:
+> On Wed, Mar 06, 2019 at 12:47:36PM +0100, Niklas Söderlund wrote:
+> > Hi Simon,
+> > 
+> > On 2019-02-25 11:09:54 +0100, Simon Horman wrote:
+> > [snip]
+> > > Thanks, applied with the subject prefix updated to
+> > > 
+> > > "arm64: dts: renesas: ebisu:"
+> > 
+> > You took patch 1/2 from this series but not 2/2. Was that intentional?
 > 
-> This patch series supports:
-> 1) Host hotplug operation
-> 2) Device hot plug operation
-> 3) USB type-C data_role switch 
->    (Tested with 2 RZ/G2E boards connected with a Type-C cable)
-> 
-> This patchset is based on usb_next and renesas-devel-20190304-v5.0 branch.
-> 
-> Biju Das (9):
->   dt-bindings: usb: hd3ss3220 device tree binding document
->   dt-bindings: usb: renesas_usb3: add extcon support
->   usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller
->   usb: gadget: udc: renesas_usb3: use extcon framework to receive
->     connect/disconnect
+> Thanks, that was an oversight. I now have 2/2 too.
 
-Hi Biju,
+Thanks!
 
-I am marking the patches below as deffered pending acceptance of
-the dt-bindings patches above.
-
->   arm64: defconfig: enable TYPEC_HD3SS3220 config option
->   arm64: renesas_defconfig: Enable TYPEC_HD3SS3220 config option
->   arm64: dts: renesas: r8a774c0-cat874: enable USB3.0 host/peripheral
->     device node
->   arm64: dts: renesas: r8a774c0-cat874: Enable TI HD3SS3220 support
->   arm64: dts: renesas: r8a774c0-cat874: Enable extcon support
-> 
->  .../devicetree/bindings/usb/renesas_usb3.txt       |   2 +
->  .../devicetree/bindings/usb/ti,hd3ss3220.txt       |  15 ++
->  arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts    |  31 +++
->  arch/arm64/configs/defconfig                       |   2 +
->  arch/arm64/configs/renesas_defconfig               |   2 +
->  drivers/usb/gadget/udc/renesas_usb3.c              | 115 +++++++--
->  drivers/usb/typec/Kconfig                          |  10 +
->  drivers/usb/typec/Makefile                         |   1 +
->  drivers/usb/typec/hd3ss3220.c                      | 284 +++++++++++++++++++++
->  9 files changed, 446 insertions(+), 16 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
->  create mode 100644 drivers/usb/typec/hd3ss3220.c
-> 
-> -- 
-> 2.7.4
-> 
+-- 
+Regards,
+Niklas Söderlund
