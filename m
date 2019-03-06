@@ -2,185 +2,131 @@ Return-Path: <SRS0=TFpS=RJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAFDC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 21:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EF7C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5052B20663
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 21:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3A3C20663
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAjD1p/Y"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="moKEpcNc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbfCFV4y (ORCPT
+        id S1726299AbfCFXYA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 16:56:54 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51929 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfCFV4x (ORCPT
+        Wed, 6 Mar 2019 18:24:00 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46728 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725747AbfCFXYA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 16:56:53 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n19so7374581wmi.1;
-        Wed, 06 Mar 2019 13:56:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Pk4oMuzUc9FlexbFs78UCW8bO7TDoIekFf7NjKNLv5M=;
-        b=IAjD1p/YYCZWLxngWEY7Lcn7mNxNHlce6wfAsSUOYcB/vlrJGfPPnygrrYyBnUyVL9
-         JO1CBYUbNmfOfsSddMIzXmFywlxpb8hXhW94NK0Mv754NRTMChqH/1CTyubthHPHeQfU
-         k9KPiC64i7n+hnqvlXN5TYZgL8hc51DPj4wPdQ1plywHgDT27nXRnDtPdfEq2az8PjZM
-         setJ8MLtqYU2267F+dN90pdpa8O9b1jqDZ5gIRrh5HbLGKnlNfJcUkkg2cor+rhKl3z7
-         hV0yWdeylPKh22L6d9yiGvD5dPLyFBJ2j2cZ36YRjYyUqhVcl2i1//jcUtMfHvUt4XCO
-         ZGlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Pk4oMuzUc9FlexbFs78UCW8bO7TDoIekFf7NjKNLv5M=;
-        b=i3y/x+nD6tFgT9jpPoIuifOb1pH2+TUpqmj6nBXkvj9gaTvW8eUmBCICgBcUPapDdP
-         noi02NWLjHNnIaLOo2UuuAi3PJVyiNydlCsFSpGyURXGcEeFJ3amTawXkicYwAHwpBje
-         Rko5zDIrL4ZT+XPCWeEO2vNrkORDLcpXL6Yqwj5My2vcyFO7iNjJK7ARtCVqr9QMbJvj
-         3ckrcIAYTe3A/CK538utvBFsJ2k0eGXjQ0JGCoSmArNk92yAVPZk4wsvS+Ns/BHHmwdX
-         NIMiRjbiEbXtYOHkN8AhDqgnbx5FZZs7XnRjqxB68t+h8/qm0FGBLP048lltazHQybsH
-         CfNQ==
-X-Gm-Message-State: APjAAAWfyuqWdjHVcdQZUIO6pi6zILA3gkq1UXEUyOkCjP/O396wmHeo
-        UrYuz2ZbeFD6pVg7edkFRn+bRsp+
-X-Google-Smtp-Source: APXvYqwLzmH5jubr0dswEK+py+uVe1KRKenjTUD2dup5EwbKlyZXKvlEcY8B9O60epdT73S4xA4E7g==
-X-Received: by 2002:a7b:cf27:: with SMTP id m7mr3659084wmg.80.1551909410951;
-        Wed, 06 Mar 2019 13:56:50 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id a1sm4233625wrq.96.2019.03.06.13.56.49
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Mar 2019 13:56:50 -0800 (PST)
-Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
-To:     Harald Geyer <harald@ccbib.org>
-Cc:     devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-References: <20190304194023.10926-1-marek.vasut@gmail.com>
- <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at>
- <834f8576-73a4-be0f-e322-91601bed5388@gmail.com>
- <E1h1Ce9-0000JA-Rs@stardust.g4.wien.funkfeuer.at>
- <4d1cd905-c322-78e5-cb9c-dadba01b0324@gmail.com>
- <E1h1Hjl-0000Nv-Ri@stardust.g4.wien.funkfeuer.at>
- <89743562-bb2a-de3f-a57b-331f43bf8982@gmail.com>
- <E1h1Rk2-0000NG-Jp@stardust.g4.wien.funkfeuer.at>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <96fe2cd4-c680-31c9-98f2-31a400e6c44b@gmail.com>
-Date:   Wed, 6 Mar 2019 22:56:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Mar 2019 18:24:00 -0500
+Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 67F09309;
+        Thu,  7 Mar 2019 00:23:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1551914637;
+        bh=UDC2uZs6xo1APMkgcDwmq1pOcWNZ7TYT6FBamodUEvY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=moKEpcNc3SicyzHC+hl1n8+/RZoMJM+lef7aCv1YaYxkYgWUorPxYCqrun3rnbWw/
+         UjgnKlQz0QeaHeEUyZ1aC7m+mYAdlHyVRA+Z0L1piuaz8l7Z2PJCg50aGFFAvt75lf
+         DgcOdYzBPv7cVRoFDyIb3G0R/gcAgbPESoRgXB8U=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH/RFC 01/15] drm: Clarify definition of the DRM_BUS_FLAG_(PIXDATA|SYNC)_* macros
+Date:   Thu,  7 Mar 2019 01:23:31 +0200
+Message-Id: <20190306232345.23052-2-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <E1h1Rk2-0000NG-Jp@stardust.g4.wien.funkfeuer.at>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 3/6/19 9:17 AM, Harald Geyer wrote:
-> Marek Vasut writes:
->> On 3/5/19 10:36 PM, Harald Geyer wrote:
->>> Marek Vasut writes:
->>>> On 3/5/19 5:10 PM, Harald Geyer wrote:
->>>>> Marek Vasut writes:
->>>>>> On 3/5/19 11:07 AM, Harald Geyer wrote:
->>>>>>> marek.vasut@gmail.com writes:
->>>>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>>>>
->>>>>>>> Reword the binding document to make it clear how the propeties work
->>>>>>>> and which properties affect which other properties.
->>>>>>>>
->>>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>>>> Cc: Harald Geyer <harald@ccbib.org>
->>>>>>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->>>>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>>>>>>> Cc: Mark Brown <broonie@kernel.org>
->>>>>>>> Cc: Rob Herring <robh@kernel.org>
->>>>>>>> Cc: linux-renesas-soc@vger.kernel.org
->>>>>>>> To: devicetree@vger.kernel.org
->>>>>>>> ---
->>>>>>>> V2: - Make "gpios" a mandatory property
->>>>>>>>     - Reword "gpio-states" property description
->>>>>>>>     - Change "enable-gpio" to "enable-gpios" to match modern DT rules
->>>>>>>> Note: The recent gpio-regulator rework caused breakage. While the
->>>>>>>>       changes in the gpio-regulator code were according to the DT
->>>>>>>>       binding document, they stopped working with older DTs. Make
->>>>>>>>       the binding document clearer to prevent such breakage in the
->>>>>>>>       future.
->>>>>>>
->>>>>>> Thanks for the update. I think it addresses all my concerns except for
->>>>>>> one:
->>>>>>>
->>>>>>>> +- gpios-states	: State of GPIO pins in "gpios" array that is set until
->>>>>>>> +			  changed by the first consumer. 0: LOW, 1: HIGH.
->>>>>>>> +			  Default is LOW if nothing else is specified.
->>>>>>>
->>>>>>> I still believe this not true: There is no guarantee that the regulator
->>>>>>> core won't change the state of GPIO pins before the first consumer comes
->>>>>>> up.
->>>>>>
->>>>>> Why would it do that ?
->>>>>
->>>>> Because the regulator core doesn't know about this driver specific
->>>>> property at all. And without any constraints placed by consumers, the
->>>>> core is free to choose any state whatsoever at any point in time.
->>>>
->>>> But git grep seems to disagree, see drivers/regulator/gpio-regulator.c:
->>>>                     ret = of_property_read_u32_index(np, "gpios-states", i,
->>>>
->>>> The core sets the pins to such a value until the consumer takes over.
->>>
->>> I think we have a misunderstanding of terminology. When I write "regulator
->>> core", I mean the driver independent regulator code. The line you quote
->>> above is part of the gpio-regulator driver and thus not part of what
->>> I call the "regulator core".
->>>
->>> AFAICS the data from the property is only stored in a driver specific
->>> data structure (and not used at all outside of probe) but never passed
->>> to what I call the regulator core.
->>>
->>> Why do you believe there is a guarantee that the value set during
->>> probeing is preserved until a consumer takes over?
->>
->> It is the only sensible behavior and the behavior I see people expect
->> from this property. I presume it solidified in this sort of semi-defined
->> state, so we're stuck with assuming it behaves this way to maintain
->> compatibility.
-> 
-> Maybe the behaviour you want would be more sensible, but AFAIK it just
-> isn't true in general (it might work that way by chance in many cases).
-> If people expect this behaviour, it is a misunderstanding of the old wording.
-> I'd prefer we don't have to add a quirk to the regulator subsystem to
-> cater for a misunderstanding.
-> 
-> I think, if you really want to go forward with making this behaviour
-> officially maintained, then we should first add the code to linux and
-> only then add the promise to the binding document. This isn't the scope
-> of this patch, so I guess we would need to keep the ambiguous wording as
-> it is for now. I believe it is more important for a binding document
-> to be correct than to be sensible.
-> 
-> However I don't think we actually need to go to such extremes: In linux
-> we currently have (arm/boot/dts and arm64/boot/dts) 38 uses of this
-> property in 29 DTs. All the examples, that I studied in some detail,
-> seem to either don't need this property at all or have a usecase that is
-> supported by my proposed wording. I don't expect any problems if we just
-> document the status quo clearly.
+The DRM_BUS_FLAG_PIXDATA_POSEDGE and DRM_BUS_FLAG_PIXDATA_NEGEDGE macros
+and their DRM_BUS_FLAG_SYNC_* counterparts define on which pixel clock
+edge data and sync signals are driven. They are however used in some
+drivers to define on which pixel clock edge data and sync signals are
+sampled, which should usually (but not always) be the opposite edge of
+the driving edge. This creates confusion.
 
-In that case, provide a suggestion how to document this property better?
+Create four new macros for both PIXDATA and SYNC that explicitly state
+the driving and sampling edge in their name to remove the confusion. The
+driving macros are defined as the opposite of the sampling macros to
+made code simpler based on the assumption that the driving and sampling
+edges are opposite.
 
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ include/drm/drm_connector.h | 36 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
+
+diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+index 8fe22abb1e10..411c0eb4c00e 100644
+--- a/include/drm/drm_connector.h
++++ b/include/drm/drm_connector.h
+@@ -330,19 +330,47 @@ struct drm_display_info {
+ 
+ #define DRM_BUS_FLAG_DE_LOW		(1<<0)
+ #define DRM_BUS_FLAG_DE_HIGH		(1<<1)
+-/* drive data on pos. edge */
++
++/*
++ * Don't use those two flags directly, use the DRM_BUS_FLAG_PIXDATA_DRIVE_*
++ * and DRM_BUS_FLAG_PIXDATA_SAMPLE_* variants to qualify the flags explicitly.
++ * The DRM_BUS_FLAG_PIXDATA_SAMPLE_* flags are defined as the opposite of the
++ * DRM_BUS_FLAG_PIXDATA_DRIVE_* flags to make code simpler, as signals are
++ * usually to be sampled on the opposite edge of the driving edge.
++ */
+ #define DRM_BUS_FLAG_PIXDATA_POSEDGE	(1<<2)
+-/* drive data on neg. edge */
+ #define DRM_BUS_FLAG_PIXDATA_NEGEDGE	(1<<3)
++
++/* Drive data on rising edge */
++#define DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE	DRM_BUS_FLAG_PIXDATA_POSEDGE
++/* Drive data on falling edge */
++#define DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE	DRM_BUS_FLAG_PIXDATA_NEGEDGE
++/* Sample data on rising edge */
++#define DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE	DRM_BUS_FLAG_PIXDATA_NEGEDGE
++/* Sample data on falling edge */
++#define DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE	DRM_BUS_FLAG_PIXDATA_POSEDGE
++
+ /* data is transmitted MSB to LSB on the bus */
+ #define DRM_BUS_FLAG_DATA_MSB_TO_LSB	(1<<4)
+ /* data is transmitted LSB to MSB on the bus */
+ #define DRM_BUS_FLAG_DATA_LSB_TO_MSB	(1<<5)
+-/* drive sync on pos. edge */
++
++/*
++ * Similarly to the DRM_BUS_FLAG_PIXDATA_* flags, don't use these two flags
++ * directly, use one of the DRM_BUS_FLAG_SYNC_(DRIVE|SAMPLE)_* instead.
++ */
+ #define DRM_BUS_FLAG_SYNC_POSEDGE	(1<<6)
+-/* drive sync on neg. edge */
+ #define DRM_BUS_FLAG_SYNC_NEGEDGE	(1<<7)
+ 
++/* Drive sync on rising edge */
++#define DRM_BUS_FLAG_SYNC_DRIVE_POSEDGE		DRM_BUS_FLAG_SYNC_POSEDGE
++/* Drive sync on falling edge */
++#define DRM_BUS_FLAG_SYNC_DRIVE_NEGEDGE		DRM_BUS_FLAG_SYNC_NEGEDGE
++/* Sample sync on rising edge */
++#define DRM_BUS_FLAG_SYNC_SAMPLE_POSEDGE	DRM_BUS_FLAG_SYNC_NEGEDGE
++/* Sample sync on falling edge */
++#define DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE	DRM_BUS_FLAG_SYNC_POSEDGE
++
+ 	/**
+ 	 * @bus_flags: Additional information (like pixel signal polarity) for
+ 	 * the pixel data on the bus, using DRM_BUS_FLAGS\_ defines.
 -- 
-Best regards,
-Marek Vasut
+Regards,
+
+Laurent Pinchart
+
