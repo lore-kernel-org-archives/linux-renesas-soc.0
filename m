@@ -2,172 +2,228 @@ Return-Path: <SRS0=TFpS=RJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34903C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 08:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C115FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 08:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F264C20661
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 08:17:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ccbib.org header.i=@ccbib.org header.b="VygqOYZh"
+	by mail.kernel.org (Postfix) with ESMTP id 90F442064A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 08:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbfCFIRk (ORCPT
+        id S1728373AbfCFI3T (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 03:17:40 -0500
-Received: from h1.radempa.de ([176.9.142.194]:45900 "EHLO mail.cosmopool.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727106AbfCFIRk (ORCPT
+        Wed, 6 Mar 2019 03:29:19 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:54847 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfCFI3T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 03:17:40 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.cosmopool.net (Postfix) with ESMTP id C85F0902D08;
-        Wed,  6 Mar 2019 09:17:34 +0100 (CET)
-Received: from mail.cosmopool.net ([127.0.0.1])
-        by localhost (mail.b.radempa.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vhjuRg8RI-WT; Wed,  6 Mar 2019 09:17:33 +0100 (CET)
-Received: from stardust.g4.wien.funkfeuer.at (178.113.180.10.wireless.dyn.drei.com [178.113.180.10])
-        by mail.cosmopool.net (Postfix) with ESMTPSA id E01A4901054;
-        Wed,  6 Mar 2019 09:17:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ccbib.org; s=201902;
-        t=1551860253; bh=dURgji5XgiHn4/c67yvHVe6tx6K1Q3agRyetB9h799o=;
-        h=From:To:cc:Subject:In-reply-to:References:Date:From;
-        b=VygqOYZhiVCd9xsWGLLdJP373JIxrJRGPls+VU5mcuKTtzazcm9/i+ReX7lFZk+ma
-         ZOLPUxqZJvhRZoCdESoqQkTjjuOf9jN8OHvRxsYUEHX1ceDazxqgvKope1wLQGgKDR
-         4NwZAWiG4Fi+dwyNV3KHplLsHTAOyW/jChjoi4+s=
-Received: from lambda by stardust.g4.wien.funkfeuer.at with local (Exim 4.89)
-        (envelope-from <harald@ccbib.org>)
-        id 1h1Rk2-0000NG-Jp; Wed, 06 Mar 2019 09:17:30 +0100
-From:   Harald Geyer <harald@ccbib.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-cc:     devicetree@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Wed, 6 Mar 2019 03:29:19 -0500
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id DB5E8240007;
+        Wed,  6 Mar 2019 08:29:13 +0000 (UTC)
+Date:   Wed, 6 Mar 2019 09:29:46 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Benoit Parrot <bparrot@ti.com>, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
-In-reply-to: <89743562-bb2a-de3f-a57b-331f43bf8982@gmail.com>
-References: <20190304194023.10926-1-marek.vasut@gmail.com> <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at> <834f8576-73a4-be0f-e322-91601bed5388@gmail.com> <E1h1Ce9-0000JA-Rs@stardust.g4.wien.funkfeuer.at> <4d1cd905-c322-78e5-cb9c-dadba01b0324@gmail.com> <E1h1Hjl-0000Nv-Ri@stardust.g4.wien.funkfeuer.at> <89743562-bb2a-de3f-a57b-331f43bf8982@gmail.com>
-Comments: In-reply-to Marek Vasut <marek.vasut@gmail.com>
-   message dated "Tue, 05 Mar 2019 23:23:38 +0100."
+Subject: Re: [PATCH v2 09/30] media: entity: Swap pads if route is checked
+ from source to sink
+Message-ID: <20190306082946.bxcf6jnl52nrc6q3@uno.localdomain>
+References: <20181101233144.31507-1-niklas.soderlund+renesas@ragnatech.se>
+ <20181101233144.31507-10-niklas.soderlund+renesas@ragnatech.se>
+ <20190115225743.GH28397@pendragon.ideasonboard.com>
+ <20190122151506.fnlfvwtoq7qunz45@paasikivi.fi.intel.com>
+ <20190122152030.GB11461@pendragon.ideasonboard.com>
+ <20190218092107.omddljghnv3l2ss6@uno.localdomain>
+ <20190222121811.GU3522@pendragon.ideasonboard.com>
+ <20190304123520.et24vsesfulyzybs@uno.localdomain>
+ <20190305200458.GK14928@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1440.1551860250.1@stardust.g4.wien.funkfeuer.at>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 06 Mar 2019 09:17:30 +0100
-Message-Id: <E1h1Rk2-0000NG-Jp@stardust.g4.wien.funkfeuer.at>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ujeqxfwldlxyvs2i"
+Content-Disposition: inline
+In-Reply-To: <20190305200458.GK14928@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Marek Vasut writes:
-> On 3/5/19 10:36 PM, Harald Geyer wrote:
-> > Marek Vasut writes:
-> >> On 3/5/19 5:10 PM, Harald Geyer wrote:
-> >>> Marek Vasut writes:
-> >>>> On 3/5/19 11:07 AM, Harald Geyer wrote:
-> >>>>> marek.vasut@gmail.com writes:
-> >>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>>>>
-> >>>>>> Reword the binding document to make it clear how the propeties wo=
-rk
-> >>>>>> and which properties affect which other properties.
-> >>>>>>
-> >>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>>>> Cc: Harald Geyer <harald@ccbib.org>
-> >>>>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
-> >>>>>> Cc: Mark Brown <broonie@kernel.org>
-> >>>>>> Cc: Rob Herring <robh@kernel.org>
-> >>>>>> Cc: linux-renesas-soc@vger.kernel.org
-> >>>>>> To: devicetree@vger.kernel.org
-> >>>>>> ---
-> >>>>>> V2: - Make "gpios" a mandatory property
-> >>>>>>     - Reword "gpio-states" property description
-> >>>>>>     - Change "enable-gpio" to "enable-gpios" to match modern DT r=
-ules
-> >>>>>> Note: The recent gpio-regulator rework caused breakage. While the
-> >>>>>>       changes in the gpio-regulator code were according to the DT
-> >>>>>>       binding document, they stopped working with older DTs. Make
-> >>>>>>       the binding document clearer to prevent such breakage in th=
-e
-> >>>>>>       future.
-> >>>>>
-> >>>>> Thanks for the update. I think it addresses all my concerns except=
- for
-> >>>>> one:
-> >>>>>
-> >>>>>> +- gpios-states	: State of GPIO pins in "gpios" array that is set=
- until
-> >>>>>> +			  changed by the first consumer. 0: LOW, 1: HIGH.
-> >>>>>> +			  Default is LOW if nothing else is specified.
-> >>>>>
-> >>>>> I still believe this not true: There is no guarantee that the regu=
-lator
-> >>>>> core won't change the state of GPIO pins before the first consumer=
- comes
-> >>>>> up.
-> >>>>
-> >>>> Why would it do that ?
-> >>>
-> >>> Because the regulator core doesn't know about this driver specific
-> >>> property at all. And without any constraints placed by consumers, th=
-e
-> >>> core is free to choose any state whatsoever at any point in time.
-> >>
-> >> But git grep seems to disagree, see drivers/regulator/gpio-regulator.=
-c:
-> >>                     ret =3D of_property_read_u32_index(np, "gpios-sta=
-tes", i,
-> >>
-> >> The core sets the pins to such a value until the consumer takes over.
-> > =
 
-> > I think we have a misunderstanding of terminology. When I write "regul=
-ator
-> > core", I mean the driver independent regulator code. The line you quot=
-e
-> > above is part of the gpio-regulator driver and thus not part of what
-> > I call the "regulator core".
-> > =
+--ujeqxfwldlxyvs2i
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > AFAICS the data from the property is only stored in a driver specific
-> > data structure (and not used at all outside of probe) but never passed
-> > to what I call the regulator core.
-> > =
+HI Laurent,
 
-> > Why do you believe there is a guarantee that the value set during
-> > probeing is preserved until a consumer takes over?
-> =
+On Tue, Mar 05, 2019 at 10:04:58PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> On Mon, Mar 04, 2019 at 01:35:36PM +0100, Jacopo Mondi wrote:
+> > On Fri, Feb 22, 2019 at 02:18:11PM +0200, Laurent Pinchart wrote:
+> > > On Mon, Feb 18, 2019 at 10:21:07AM +0100, Jacopo Mondi wrote:
+> > >> On Tue, Jan 22, 2019 at 05:20:30PM +0200, Laurent Pinchart wrote:
+> > >>> On Tue, Jan 22, 2019 at 05:15:06PM +0200, Sakari Ailus wrote:
+> > >>>> On Wed, Jan 16, 2019 at 12:57:43AM +0200, Laurent Pinchart wrote:
+> > >>>>>>
+> > >>>>>> This way the pads are always passed to the has_route() op sink p=
+ad first.
+> > >>>>>> Makes sense.
+> > >>>>>
+> > >>>>> Is there anything in the API that mandates one pad to be a sink a=
+nd the
+> > >>>>> other pad to the a source ? I had designed the operation to allow
+> > >>>>> sink-sink and source-source connections to be checked too.
+> > >>>>
+> > >>>> Do you have a use case in mind for sink--sink or source--source ro=
+utes? The
+> > >>>> routes are about flows of data, so I'd presume only source--sink or
+> > >>>> sink--source routes are meaningful.
+> > >>>>
+> > >>>> If you did, then the driver would have to handle that by itself. T=
+his still
+> > >>>> simplifies the implementation for drivers that do not.
+> > >>>
+> > >>> I don't have use cases for such routes, but we use the has_route
+> > >>> operation when traversing pipelines, and at that point we need to g=
+et
+> > >>> all the internally connected pads. In another patch in this series =
+you
+> > >>> implement a helper function that handles this, but its implementati=
+on
+> > >>> isn't complete. I explained in my review of that patch that I fear a
+> > >>> correct generic implementation would become quite complex, while the
+> > >>> complexity should be easy to handle on the driver side as the code =
+can
+> > >>> then be specialized for the case at hand.
+> > >>>
+> > >>
+> > >> As a compromise, in v3 I'm thinking of maintaining support for the
+> > >> most common case of two sources connected to the same sink, as
+> > >> Sakari's patch does, but let more complex cases be handled by the
+> > >> driver implementation of has_route().
+> > >>
+> > >> Ack?
+> > >
+> > > I fear this will be confusing for subdevs, as they would have to
+> > > implement part of the operation.
+> > >
+> > > Could it be that the subdev has_route operation isn't the best API for
+> > > the job, if it gets that complex ? I wonder if it would be easier to
+> > > create another operation that takes a pad index as argument, and retu=
+rns
+> > > the list of pads (possibly as a bitmask ?) or connected pads.
+> > > media_entity_has_route() could easily be implemented on top of that, =
+and
+> > > these new semantics may be easier for subdevs to implement.
+> > >
+> >
+> > I see, but if subdevs can easily elaborate that list, they could as
+> > well easily check if the pad provided as argument is on that list.
+>
+> Possibly. In any case, if we keep this operation as-is, I wouldn't try
+> to split the logic between the subdev drivers and the core, that would
+> be asking for trouble. If it gets too complex to implement for subdev
+> drivers, then we need a different operation with a different logic in
+> the subdev API, and a helper that wraps around it.
 
-> It is the only sensible behavior and the behavior I see people expect
-> from this property. I presume it solidified in this sort of semi-defined
-> state, so we're stuck with assuming it behaves this way to maintain
-> compatibility.
+In v3 I have removed support for indirect routes from the framework
+part. It's all on the subdevice driver for now.
+>
+> > >>>>> If your goal is to simplify the implementation of the .has_route()
+> > >>>>> operation in drivers, I would instead sort pad0 and pad1 by value.
+> > >>>>
+> > >>>> That'd be another option to make the order deterministic for the d=
+river.
+> > >>>> I'm fine with that as well.
+> > >>
+> > >> In v3 I have taken both suggestions in: try the "sink then source" o=
+rder
+> > >> first, then order by index in case the pads are of the same time. Th=
+is
+> > >> needs to be documented in has_route() operation definition though.
+> > >>
+> > >> Would that be fine with you?
+> > >
+> > > I think that's the worst of both worlds from a subdev point of view :=
+-)
+> >
+> > Possibly :)
+> >
+> > Should we drop completely the sink-source ordering in favour of
+> > ordering by value, and drop [15/30] that adds support for trivial
+> > indirect routes?
+> >
+> > Let's reach consensus so I could send v3.
+>
+> I would certainly drop 15/30, and I don't think ordering by value would
+> help subdev drivers much.
 
-Maybe the behaviour you want would be more sensible, but AFAIK it just
-isn't true in general (it might work that way by chance in many cases).
-If people expect this behaviour, it is a misunderstanding of the old wordi=
-ng.
-I'd prefer we don't have to add a quirk to the regulator subsystem to
-cater for a misunderstanding.
+Yes, but sorting by index makes it easier to deal with the sink-sink
+and source-source use cases, if the subdevice supports indirect
+routes.
 
-I think, if you really want to go forward with making this behaviour
-officially maintained, then we should first add the code to linux and
-only then add the promise to the binding document. This isn't the scope
-of this patch, so I guess we would need to keep the ambiguous wording as
-it is for now. I believe it is more important for a binding document
-to be correct than to be sensible.
+I have dropped 15/30 and specified pads are passed by index in v3.
 
-However I don't think we actually need to go to such extremes: In linux
-we currently have (arm/boot/dts and arm64/boot/dts) 38 uses of this
-property in 29 DTs. All the examples, that I studied in some detail,
-seem to either don't need this property at all or have a usecase that is
-supported by my proposed wording. I don't expect any problems if we just
-document the status quo clearly.
+Thanks
+  j
 
-Harald
+>
+> > >>>>>> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > >>>>>> Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@rag=
+natech.se>
+> > >>>>>> ---
+> > >>>>>>  drivers/media/media-entity.c | 4 ++++
+> > >>>>>>  1 file changed, 4 insertions(+)
+> > >>>>>>
+> > >>>>>> diff --git a/drivers/media/media-entity.c b/drivers/media/media-=
+entity.c
+> > >>>>>> index 3c0e7425c8983b45..33f00e35ccd92c6f 100644
+> > >>>>>> --- a/drivers/media/media-entity.c
+> > >>>>>> +++ b/drivers/media/media-entity.c
+> > >>>>>> @@ -249,6 +249,10 @@ bool media_entity_has_route(struct media_en=
+tity *entity, unsigned int pad0,
+> > >>>>>>  	if (!entity->ops || !entity->ops->has_route)
+> > >>>>>>  		return true;
+> > >>>>>>
+> > >>>>>> +	if (entity->pads[pad0].flags & MEDIA_PAD_FL_SOURCE
+> > >>>>>> +	    && entity->pads[pad1].flags & MEDIA_PAD_FL_SINK)
+> > >>>>>> +		swap(pad0, pad1);
+> > >>>>>> +
+> > >>>>>>  	return entity->ops->has_route(entity, pad0, pad1);
+> > >>>>>>  }
+> > >>>>>>  EXPORT_SYMBOL_GPL(media_entity_has_route);
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+--ujeqxfwldlxyvs2i
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlx/hPoACgkQcjQGjxah
+VjwKhRAAl/CBce5OfACH8HpLqI5AkPxanpKk1bnigbjvrlC38sUTNe1EXz6Ea3Cl
+tiABEhvZHd8LUi7vMOT/EvcpySo/fW4906ZQRHCv8it0ySTxfH65HLiwhrM6Bm+C
+Afo5ef0+JyRGpC3mWi+1numYuyGAx5SbeCfI7VxPSF5gs/WZg2uoz2pkfcJyLftz
+GbqYqGh2fnMXJr0s7R1QLNEClLOk/WwDbgY/AMqLsc05bdeSt3pvy/OmCXOVBqFd
+b3J6pLZ6Xv6+3JNQcysSj+AaxxNmc6rijO+hKHOXHkiGtyIg/UO1xwtdvTT6bjTI
+yLIbTuUR8yGRi/1Hu98qSAA2eAlLFwXR722wiWotQC/qQNsf57ukpxMYpIPt3WuR
+Ok0icY+3U8vUKxGBQ/lCFJovjsFhI/ZUxeL8TS+qjfeT6864MsSWZfcdmRd/YkV/
+krIOGoX2iOJEcnhcY8O+70EY4HVtHu37xddGidTqvhlC7rymG1ceOlKX16M8lcwB
+DincX1cpoXGq8hGFBt/gA41DOI07p/RAX55ebdabKQ6WwO6w1RbrD6vjydfk3oVX
+xWSzr8P2UdpXJGEtTSyaCOKRxzurhCFZSddX6e1nGw3vpULBPH1D9gc0xoKcc6bf
+otKxul5HhHujagVHuI5nM9kDPRX7W8YfE+0M1n6nHaAZoiR2VLA=
+=D110
+-----END PGP SIGNATURE-----
+
+--ujeqxfwldlxyvs2i--
