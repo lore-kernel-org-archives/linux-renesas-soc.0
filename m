@@ -2,215 +2,49 @@ Return-Path: <SRS0=TFpS=RJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3B6C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF8CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 16:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89D1120675
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8DA820663
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 16:55:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728905AbfCFN3V (ORCPT
+        id S1729861AbfCFQzz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 08:29:21 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40663 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727304AbfCFN3V (ORCPT
+        Wed, 6 Mar 2019 11:55:55 -0500
+Received: from serv1.kernkonzept.com ([159.69.200.6]:36995 "EHLO
+        mx.kernkonzept.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbfCFQzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 08:29:21 -0500
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 423C4E0010;
-        Wed,  6 Mar 2019 13:29:17 +0000 (UTC)
-Date:   Wed, 6 Mar 2019 14:29:50 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kevin Key <kevin.key@gentex.com>
-Subject: Re: [PATCH] drm: rcar-du: Support panels connected directly to the
- DPAD outputs
-Message-ID: <20190306132950.udpv57uei3ghxocb@uno.localdomain>
-References: <20190302161725.25104-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190306100332.je6buhiyyjtv2fmk@uno.localdomain>
- <20190306131355.GB4791@pendragon.ideasonboard.com>
+        Wed, 6 Mar 2019 11:55:55 -0500
+X-Greylist: delayed 1494 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Mar 2019 11:55:55 EST
+Received: from ip5f5a5d64.dynamic.kabel-deutschland.de ([95.90.93.100] helo=noys4.localnet)
+        by mx.kernkonzept.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256) (Exim 4.89)
+        id 1h1ZRb-0000bM-Go
+        for linux-renesas-soc@vger.kernel.org; Wed, 06 Mar 2019 17:30:59 +0100
+From:   Frank Mehnert <frank.mehnert@kernkonzept.com>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: Reference manual of Renesas SDHI controller
+Date:   Wed, 06 Mar 2019 17:30:59 +0100
+Message-ID: <7536072.idt63dpu4t@noys4>
+Organization: Kernkonzept
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zvk74nep6dhi44fq"
-Content-Disposition: inline
-In-Reply-To: <20190306131355.GB4791@pendragon.ideasonboard.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi all,
 
---zvk74nep6dhi44fq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+could anybody provide me a link to a reference manual of the Renesas SDHI
+controller which are used in the RCar3 SoC?
 
-Hi Laurent!
+Thanks in advance!
 
-On Wed, Mar 06, 2019 at 03:13:55PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> On Wed, Mar 06, 2019 at 11:03:32AM +0100, Jacopo Mondi wrote:
-> > On Sat, Mar 02, 2019 at 06:17:25PM +0200, Laurent Pinchart wrote:
-> > > The R-Car DU driver assumes that a bridge is always connected to the DU
-> > > output. This is valid for the LVDS and HDMI outputs, but the DPAD
-> > > outputs can be connected directly to a panel, in which case no bridge is
-> > > available.
-> > >
-> > > To support this use case, detect whether the entities connected to the
-> > > DU DPAD outputs are encoders or panels based on the number of ports of
-> > > their DT node, and retrieve the corresponding type of DRM objects. For
-> > > panels, additionally create panel bridge instances.
-> > >
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > ---
-> > >  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 54 ++++++++++++++++++++---
-> > >  1 file changed, 48 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > > index 8ee4e762f4e5..595ecfa1ff0e 100644
-> > > --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > > @@ -28,13 +28,33 @@ static const struct drm_encoder_funcs encoder_funcs = {
-> > >  	.destroy = drm_encoder_cleanup,
-> > >  };
-> > >
-> > > +static unsigned int rcar_du_encoder_count_ports(struct device_node *node)
-> > > +{
-> > > +	struct device_node *ports;
-> > > +	struct device_node *port;
-> > > +	unsigned int num_ports = 0;
-> > > +
-> > > +	ports = of_get_child_by_name(node, "ports");
-> > > +	if (!ports)
-> > > +		ports = of_node_get(node);
-> > > +
-> > > +	for_each_child_of_node(ports, port) {
-> > > +		if (of_node_name_eq(port, "port"))
-> > > +			num_ports++;
-> > > +	}
-> > > +
-> > > +	of_node_put(node);
-> > > +
-> > > +	return num_ports;
-> > > +}
-> > > +
-> > >  int rcar_du_encoder_init(struct rcar_du_device *rcdu,
-> > >  			 enum rcar_du_output output,
-> > >  			 struct device_node *enc_node)
-> > >  {
-> >
-> > You received a Tested-by, so I might surely be mistaken, but the
-> > caller of this function skips all remote nodes with a single port,
-> > doesn't it?
-> > https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/rcar-du/rcar_du_kms.c#L308
-> >
-> > I don't have any DTS with a panel connected to the DPAD output so, as
-> > a test, I removed all endpoints except endpoint@0 from the 'hdmi0' device
-> > node, and the 'rcar_du_encoder_init()' function never gets called and DU
-> > probing fails with:
-> > rcar-du feb00000.display: no encoder found for endpoint /soc/display@feb00000/ports/port@1/endpoint, skipping
-> >
-> > What am I missing?
->
-> You're missing drm-next :-)
->
-> https://cgit.freedesktop.org/drm/drm/tree/drivers/gpu/drm/rcar-du/rcar_du_kms.c#n331
+Frank
 
-Oh, I see!
 
-Thanks, with this clarified, please add
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-
-Thanks
-  j
->
-> > >  	struct rcar_du_encoder *renc;
-> > >  	struct drm_encoder *encoder;
-> > > -	struct drm_bridge *bridge = NULL;
-> > > +	struct drm_bridge *bridge;
-> > >  	int ret;
-> > >
-> > >  	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
-> > > @@ -48,11 +68,33 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
-> > >  	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
-> > >  		enc_node, output);
-> > >
-> > > -	/* Locate the DRM bridge from the encoder DT node. */
-> > > -	bridge = of_drm_find_bridge(enc_node);
-> > > -	if (!bridge) {
-> > > -		ret = -EPROBE_DEFER;
-> > > -		goto done;
-> > > +	/*
-> > > +	 * Locate the DRM bridge from the DT node. For the DPAD outputs, if the
-> > > +	 * DT node has a single port, consider it describes a panel and create a
-> > > +	 * panel bridge.
-> > > +	 */
-> > > +	if ((output == RCAR_DU_OUTPUT_DPAD0 ||
-> > > +	     output == RCAR_DU_OUTPUT_DPAD1) &&
-> > > +	    rcar_du_encoder_count_ports(enc_node) == 1) {
-> >
-> > Could this be cached?
->
-> How so ? This function is run once per enc_node, so the cache wouldn't
-> be used again, would it ?
->
-> > > +		struct drm_panel *panel = of_drm_find_panel(enc_node);
-> > > +
-> > > +		if (IS_ERR(panel)) {
-> > > +			ret = PTR_ERR(panel);
-> > > +			goto done;
-> > > +		}
-> > > +
-> > > +		bridge = devm_drm_panel_bridge_add(rcdu->dev, panel,
-> > > +						   DRM_MODE_CONNECTOR_DPI);
-> > > +		if (IS_ERR(bridge)) {
-> > > +			ret = PTR_ERR(bridge);
-> > > +			goto done;
-> > > +		}
-> > > +	} else {
-> > > +		bridge = of_drm_find_bridge(enc_node);
-> > > +		if (!bridge) {
-> > > +			ret = -EPROBE_DEFER;
-> > > +			goto done;
-> > > +		}
-> > >  	}
-> > >
-> > >  	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
---zvk74nep6dhi44fq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlx/y00ACgkQcjQGjxah
-VjxQgg/9G+B3p4jBYuFG2ne54LhPKq/kVh65jr73ny7O+LFZuPs/BXbQ8DYrhfAZ
-ye0Iesk4T7W8L8E8tffQr/Wr1ACvn6AhXXYL+pjqOh+TJEYymxV9n+e1r/CvCtiI
-ZD3UxBhbJAfgzjLff8wkgjiZG0cp7WAffaHv+ZAYgpKwJHVUG4R0/tWz5l4fu0aL
-TMJUXrV4b1Ho+Z8TMcNF+53iUf+OPv1JtNyfA4zoyLIIDYZINDHFsrjDIJxyXdrd
-XsGEZZ4Y3lCzT8ztPK/yOMgiy/izUm7RgWJknLN3rEM198AMkMIrXBy/F8fdF+9R
-AsR+v+cIQv05l3ry1cskVV30VpVicBEbmPkxej0uZUL34b35Oj3F3jTdTxvzeXEH
-5cJcZEDG0N8tIcLp5/CCW8pk6mzZVaB4PqNRXxzaqQJha0NsyEYDfI77KadMZutW
-ZD7D6T/YO5GkmVZTgLCrd87C3v8J/5y8iXMnBPJm1aW8GpvKXQit03Oxu/PoOldH
-Q28B8zEYaOrb+Nln53S52E83CQZmiQcGEU3yjahoiRB3wdjVKRviBGb8PJfu8FzV
-eCLBX3gOSNZ89GXNKkZ+URfA0MbeMh6wutdESM0faZbNDajIpIHyG5Zwu9RgjiND
-VYLH0jmkgf5tDAHvSOIP08yaRhmFKDCN5SjhiL6/0KzX8SNzsao=
-=5b/i
------END PGP SIGNATURE-----
-
---zvk74nep6dhi44fq--
