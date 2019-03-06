@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFB5C4360F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FC8C43381
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB6820663
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C93820663
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NLA2NdNu"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wEmWcsCM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbfCFXYL (ORCPT
+        id S1726348AbfCFXYM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 18:24:11 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46772 "EHLO
+        Wed, 6 Mar 2019 18:24:12 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46758 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbfCFXYL (ORCPT
+        with ESMTP id S1725747AbfCFXYM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 18:24:11 -0500
+        Wed, 6 Mar 2019 18:24:12 -0500
 Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BCFFDE84;
-        Thu,  7 Mar 2019 00:24:02 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 260CC242;
+        Thu,  7 Mar 2019 00:24:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1551914643;
-        bh=wQXCrYOgfS6jdJSGF1H3ZMT4URHeRDWlnICE5c/HVW4=;
+        bh=KpeO/PDmpjMs34L4nplewkmCBPbCYHU++uw+VOM6fD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NLA2NdNu7BGag13XHRIEw1VQeCzHsQqNUCC7ygknD9lPAaEzPqHMBiuJImhJIloHh
-         faVKuez6kj7z/2tsHnzB17vb2IH/3RATyhDtCXU9v/de7IuQdmnmoS6TB6oFpy6tPk
-         EyuVlYix7HhLSYWNO+7lSnPHF9zC9KIheOT7ysxg=
+        b=wEmWcsCMR0yt176YRIUBt087NYQBpkh7McgjnnE2XqUpW15MReHjby7cZznkpcxPy
+         CkTCCeg0g3HtsvQTnr0kjS8yxFo4UH3y5IGIzaKkt6I4wiGSWQRgB868kP2M8LFyMq
+         0WNKJJNa7xE3Zy67y6Qq0wDOk/+4Ifut2pkhJJiQ=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH/RFC 13/15] arm64: dts: renesas: r8a7799[05]: Point LVDS0 to its companion LVDS1
-Date:   Thu,  7 Mar 2019 01:23:43 +0200
-Message-Id: <20190306232345.23052-14-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH/RFC 14/15] [HACK] arm64: dts: renesas: draak: Enable LVDS dual-link operation
+Date:   Thu,  7 Mar 2019 01:23:44 +0200
+Message-Id: <20190306232345.23052-15-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -50,41 +50,68 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the new renesas,companion property to the LVDS0 node to point to the
-companion LVDS encoder LVDS1.
+Enable and connect the second LVDS encoder to the second LVDS input of
+the THC63LVD1024 for dual-link LVDS operation. This requires changing
+the default settings of SW45 and SW47 to OFF and ON respectively.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 ++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 ++
- 2 files changed, 4 insertions(+)
+ .../arm64/boot/dts/renesas/r8a77995-draak.dts | 21 +++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index b2f606e286ce..90c5ce8ab7e1 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -1678,6 +1678,8 @@
- 			resets = <&cpg 727>;
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index 89df9bc844c0..f48dbe35c4b1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -77,11 +77,18 @@
  
-+			renesas,companion = <&lvds1>;
-+
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 8530d9fc1371..81762884a2dc 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -1038,6 +1038,8 @@
- 			resets = <&cpg 727>;
- 			status = "disabled";
+ 			port@0 {
+ 				reg = <0>;
+-				thc63lvd1024_in: endpoint {
++				thc63lvd1024_in0: endpoint {
+ 					remote-endpoint = <&lvds0_out>;
+ 				};
+ 			};
  
-+			renesas,companion = <&lvds1>;
++			port@1 {
++				reg = <1>;
++				thc63lvd1024_in1: endpoint {
++					remote-endpoint = <&lvds1_out>;
++				};
++			};
 +
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
+ 			port@2 {
+ 				reg = <2>;
+ 				thc63lvd1024_out: endpoint {
+@@ -349,17 +356,27 @@
+ 	ports {
+ 		port@1 {
+ 			lvds0_out: endpoint {
+-				remote-endpoint = <&thc63lvd1024_in>;
++				remote-endpoint = <&thc63lvd1024_in0>;
+ 			};
+ 		};
+ 	};
+ };
+ 
+ &lvds1 {
++	status = "okay";
++
+ 	clocks = <&cpg CPG_MOD 727>,
+ 		 <&x12_clk>,
+ 		 <&extal_clk>;
+ 	clock-names = "fck", "dclkin.0", "extal";
++
++	ports {
++		port@1 {
++			lvds1_out: endpoint {
++				remote-endpoint = <&thc63lvd1024_in1>;
++			};
++		};
++	};
+ };
+ 
+ &ohci0 {
 -- 
 Regards,
 
