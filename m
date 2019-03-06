@@ -2,108 +2,185 @@ Return-Path: <SRS0=TFpS=RJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 907A4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 19:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAFDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 21:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 596D920661
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 19:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5052B20663
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 21:56:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uoOMiBHt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAjD1p/Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbfCFTPa (ORCPT
+        id S1726111AbfCFV4y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 14:15:30 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41022 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbfCFTP3 (ORCPT
+        Wed, 6 Mar 2019 16:56:54 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51929 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfCFV4x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 14:15:29 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 05EFF242;
-        Wed,  6 Mar 2019 20:15:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1551899728;
-        bh=EYX97lC0nyQAK/XNAW7yCh9+61BXDQa/bGN9hQNsFlE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uoOMiBHtshP3WNa9RUHYaOJaI2ahBWp1E9V6KGQO3zHP+S6fVGpL2By1n7xG7LGWj
-         t5cF2cuNCp1MILrmdRWwi7+siAfi29thuRPEiObNCPk9ERErkWkX8FBn1dnhUQtM8r
-         oJYMh9l5PnLivu4lRWMMWcK/JmzzGi49BoaMYWjc=
-Date:   Wed, 6 Mar 2019 21:15:21 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
+        Wed, 6 Mar 2019 16:56:53 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n19so7374581wmi.1;
+        Wed, 06 Mar 2019 13:56:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Pk4oMuzUc9FlexbFs78UCW8bO7TDoIekFf7NjKNLv5M=;
+        b=IAjD1p/YYCZWLxngWEY7Lcn7mNxNHlce6wfAsSUOYcB/vlrJGfPPnygrrYyBnUyVL9
+         JO1CBYUbNmfOfsSddMIzXmFywlxpb8hXhW94NK0Mv754NRTMChqH/1CTyubthHPHeQfU
+         k9KPiC64i7n+hnqvlXN5TYZgL8hc51DPj4wPdQ1plywHgDT27nXRnDtPdfEq2az8PjZM
+         setJ8MLtqYU2267F+dN90pdpa8O9b1jqDZ5gIRrh5HbLGKnlNfJcUkkg2cor+rhKl3z7
+         hV0yWdeylPKh22L6d9yiGvD5dPLyFBJ2j2cZ36YRjYyUqhVcl2i1//jcUtMfHvUt4XCO
+         ZGlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Pk4oMuzUc9FlexbFs78UCW8bO7TDoIekFf7NjKNLv5M=;
+        b=i3y/x+nD6tFgT9jpPoIuifOb1pH2+TUpqmj6nBXkvj9gaTvW8eUmBCICgBcUPapDdP
+         noi02NWLjHNnIaLOo2UuuAi3PJVyiNydlCsFSpGyURXGcEeFJ3amTawXkicYwAHwpBje
+         Rko5zDIrL4ZT+XPCWeEO2vNrkORDLcpXL6Yqwj5My2vcyFO7iNjJK7ARtCVqr9QMbJvj
+         3ckrcIAYTe3A/CK538utvBFsJ2k0eGXjQ0JGCoSmArNk92yAVPZk4wsvS+Ns/BHHmwdX
+         NIMiRjbiEbXtYOHkN8AhDqgnbx5FZZs7XnRjqxB68t+h8/qm0FGBLP048lltazHQybsH
+         CfNQ==
+X-Gm-Message-State: APjAAAWfyuqWdjHVcdQZUIO6pi6zILA3gkq1UXEUyOkCjP/O396wmHeo
+        UrYuz2ZbeFD6pVg7edkFRn+bRsp+
+X-Google-Smtp-Source: APXvYqwLzmH5jubr0dswEK+py+uVe1KRKenjTUD2dup5EwbKlyZXKvlEcY8B9O60epdT73S4xA4E7g==
+X-Received: by 2002:a7b:cf27:: with SMTP id m7mr3659084wmg.80.1551909410951;
+        Wed, 06 Mar 2019 13:56:50 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id a1sm4233625wrq.96.2019.03.06.13.56.49
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Mar 2019 13:56:50 -0800 (PST)
+Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
+To:     Harald Geyer <harald@ccbib.org>
+Cc:     devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: adv748x: Don't disable CSI-2 on link_setup
-Message-ID: <20190306191521.GE4791@pendragon.ideasonboard.com>
-References: <20190306112659.8310-1-jacopo+renesas@jmondi.org>
+References: <20190304194023.10926-1-marek.vasut@gmail.com>
+ <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at>
+ <834f8576-73a4-be0f-e322-91601bed5388@gmail.com>
+ <E1h1Ce9-0000JA-Rs@stardust.g4.wien.funkfeuer.at>
+ <4d1cd905-c322-78e5-cb9c-dadba01b0324@gmail.com>
+ <E1h1Hjl-0000Nv-Ri@stardust.g4.wien.funkfeuer.at>
+ <89743562-bb2a-de3f-a57b-331f43bf8982@gmail.com>
+ <E1h1Rk2-0000NG-Jp@stardust.g4.wien.funkfeuer.at>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <96fe2cd4-c680-31c9-98f2-31a400e6c44b@gmail.com>
+Date:   Wed, 6 Mar 2019 22:56:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <E1h1Rk2-0000NG-Jp@stardust.g4.wien.funkfeuer.at>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190306112659.8310-1-jacopo+renesas@jmondi.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+On 3/6/19 9:17 AM, Harald Geyer wrote:
+> Marek Vasut writes:
+>> On 3/5/19 10:36 PM, Harald Geyer wrote:
+>>> Marek Vasut writes:
+>>>> On 3/5/19 5:10 PM, Harald Geyer wrote:
+>>>>> Marek Vasut writes:
+>>>>>> On 3/5/19 11:07 AM, Harald Geyer wrote:
+>>>>>>> marek.vasut@gmail.com writes:
+>>>>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>>>>
+>>>>>>>> Reword the binding document to make it clear how the propeties work
+>>>>>>>> and which properties affect which other properties.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>>>> Cc: Harald Geyer <harald@ccbib.org>
+>>>>>>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>>>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>>>>>>> Cc: Mark Brown <broonie@kernel.org>
+>>>>>>>> Cc: Rob Herring <robh@kernel.org>
+>>>>>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>>>>>> To: devicetree@vger.kernel.org
+>>>>>>>> ---
+>>>>>>>> V2: - Make "gpios" a mandatory property
+>>>>>>>>     - Reword "gpio-states" property description
+>>>>>>>>     - Change "enable-gpio" to "enable-gpios" to match modern DT rules
+>>>>>>>> Note: The recent gpio-regulator rework caused breakage. While the
+>>>>>>>>       changes in the gpio-regulator code were according to the DT
+>>>>>>>>       binding document, they stopped working with older DTs. Make
+>>>>>>>>       the binding document clearer to prevent such breakage in the
+>>>>>>>>       future.
+>>>>>>>
+>>>>>>> Thanks for the update. I think it addresses all my concerns except for
+>>>>>>> one:
+>>>>>>>
+>>>>>>>> +- gpios-states	: State of GPIO pins in "gpios" array that is set until
+>>>>>>>> +			  changed by the first consumer. 0: LOW, 1: HIGH.
+>>>>>>>> +			  Default is LOW if nothing else is specified.
+>>>>>>>
+>>>>>>> I still believe this not true: There is no guarantee that the regulator
+>>>>>>> core won't change the state of GPIO pins before the first consumer comes
+>>>>>>> up.
+>>>>>>
+>>>>>> Why would it do that ?
+>>>>>
+>>>>> Because the regulator core doesn't know about this driver specific
+>>>>> property at all. And without any constraints placed by consumers, the
+>>>>> core is free to choose any state whatsoever at any point in time.
+>>>>
+>>>> But git grep seems to disagree, see drivers/regulator/gpio-regulator.c:
+>>>>                     ret = of_property_read_u32_index(np, "gpios-states", i,
+>>>>
+>>>> The core sets the pins to such a value until the consumer takes over.
+>>>
+>>> I think we have a misunderstanding of terminology. When I write "regulator
+>>> core", I mean the driver independent regulator code. The line you quote
+>>> above is part of the gpio-regulator driver and thus not part of what
+>>> I call the "regulator core".
+>>>
+>>> AFAICS the data from the property is only stored in a driver specific
+>>> data structure (and not used at all outside of probe) but never passed
+>>> to what I call the regulator core.
+>>>
+>>> Why do you believe there is a guarantee that the value set during
+>>> probeing is preserved until a consumer takes over?
+>>
+>> It is the only sensible behavior and the behavior I see people expect
+>> from this property. I presume it solidified in this sort of semi-defined
+>> state, so we're stuck with assuming it behaves this way to maintain
+>> compatibility.
+> 
+> Maybe the behaviour you want would be more sensible, but AFAIK it just
+> isn't true in general (it might work that way by chance in many cases).
+> If people expect this behaviour, it is a misunderstanding of the old wording.
+> I'd prefer we don't have to add a quirk to the regulator subsystem to
+> cater for a misunderstanding.
+> 
+> I think, if you really want to go forward with making this behaviour
+> officially maintained, then we should first add the code to linux and
+> only then add the promise to the binding document. This isn't the scope
+> of this patch, so I guess we would need to keep the ambiguous wording as
+> it is for now. I believe it is more important for a binding document
+> to be correct than to be sensible.
+> 
+> However I don't think we actually need to go to such extremes: In linux
+> we currently have (arm/boot/dts and arm64/boot/dts) 38 uses of this
+> property in 29 DTs. All the examples, that I studied in some detail,
+> seem to either don't need this property at all or have a usecase that is
+> supported by my proposed wording. I don't expect any problems if we just
+> document the status quo clearly.
 
-On Wed, Mar 06, 2019 at 12:26:59PM +0100, Jacopo Mondi wrote:
-> When both the media links between AFE and HDMI and the two TX CSI-2 outputs
-> gets disabled, the routing register ADV748X_IO_10 gets zeroed causing both
-> TXA and TXB output to get disabled.
-> 
-> This causes some HDMI transmitters to stop working after both AFE and
-> HDMI links are disabled.
-
-Could you elaborate on why this would be the case ? By HDMI transmitter,
-I assume you mean the device connected to the HDMI input of the ADV748x.
-Why makes it fail (and how ?) when the TXA and TXB are both disabled ?
-
-> Fix this by preventing writing 0 to
-> ADV748X_IO_10 register, which gets only updated when links are enabled
-> again.
-> 
-> Fixes: 9423ca350df7 ("media: adv748x: Implement TX link_setup callback")
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
-> The issue presents itself only on some HDMI transmitters, and went unnoticed
-> during the development of:
-> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
-> 
-> Patch intended to be applied on top of latest media-master, where the
-> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
-> series is applied.
-> 
-> The patch reports a "Fixes" tag, but should actually be merged with the above
-> mentioned series.
-> 
-> ---
->  drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-> index f57cd77a32fa..0e5a75eb6d75 100644
-> --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> @@ -354,6 +354,9 @@ static int adv748x_link_setup(struct media_entity *entity,
-> 
->  	tx->src = enable ? rsd : NULL;
-> 
-> +	if (!enable)
-> +		return 0;
-> +
->  	if (state->afe.tx) {
->  		/* AFE Requires TXA enabled, even when output to TXB */
->  		io10 |= ADV748X_IO_10_CSI4_EN;
+In that case, provide a suggestion how to document this property better?
 
 -- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Marek Vasut
