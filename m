@@ -2,122 +2,157 @@ Return-Path: <SRS0=TFpS=RJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD268C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 18:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2408C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 18:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92ED420652
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 18:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8378F2063F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 18:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="VPCEuO+2"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cp2elqi9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbfCFSEM (ORCPT
+        id S1726903AbfCFSmJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 13:04:12 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40825 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbfCFSEL (ORCPT
+        Wed, 6 Mar 2019 13:42:09 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38938 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727389AbfCFSmI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 13:04:11 -0500
-Received: by mail-lf1-f65.google.com with SMTP id a8so9622843lfi.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Mar 2019 10:04:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=XhGxJDH5mS3FJsmVMemT7YPWgT4kHqX0C0O9m2xCt08=;
-        b=VPCEuO+2PTiHBZ5E+gvVyCbU7TLNgqzHLIp3U8tcaMBdi8R5JP47jwfRegPFtYSn/f
-         JKQUbbU81/XAdh1SSjYpHSFsahEwib+rzzwC9SL2fAsPLkmq/23yjoCh5FrVtXM2Ovbd
-         til7HUTOzvfT1YvICo/H39IqmV0L7v+L25WsJtHT+tHtpa7R5w6Rw1G/AWJhAthv+s16
-         FZZRfHH6+Lr2BND2X/ccc5Liy16q0D+GZLUtqRvCnxHPZqP+6dkloIm44lLk12bZg/GU
-         AnEKB8Uuh2A69JVgevRCltGJCnP+X9k2U69lwgaOcBF2CeFzb7SvXLlEmzl5QMwoEBl/
-         EYZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=XhGxJDH5mS3FJsmVMemT7YPWgT4kHqX0C0O9m2xCt08=;
-        b=GsanEVurZe1ls3KB4eWGCYUChf0dmJTH6pb1ZsbZOsmYBpVknEuiSfMotNVvg5Phpv
-         OsgWUy4UrOBZjkfM4kK9LbWUGGQemltpdbkEt0ToB0ya0TLbTq7Qv0p2DkINfuXWgIgj
-         aF1Rjeqis+joTRiLjlzyRxK5HjPuh8Nc+Ky+OCQpSqXUe6vN/cgdUXRH+dMIRDiq6s7r
-         EiPn3Ysdf1MjbIOJtXxA0TdAP6pY8vxq8oxxoM3XGuJEn0Db/fkTmwk2jzTPYDfntGQh
-         CN9LyhyJJw4OLCfdZ+agerRwKkoi4OdFkXK05kY7NC7r4mRcU1gIlXFnr3Cehd472b7Z
-         ALpA==
-X-Gm-Message-State: APjAAAV9HsycZWOCU0qyr2QdeGyYj20Y+Rer4dfR1iUPxvSZBDW4JqUY
-        upTXCUVHOgHLM7NaCoVxRHuH9a7a9Do=
-X-Google-Smtp-Source: APXvYqxEJsQFKprTRLBVCKkam38jnmEBI/Yi+la6SCI1c0nduTV2XoM+QMRe5RgA+0N4WfjL9PiWHA==
-X-Received: by 2002:ac2:518d:: with SMTP id u13mr3342294lfi.133.1551895449457;
-        Wed, 06 Mar 2019 10:04:09 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id b26sm426936lfa.5.2019.03.06.10.04.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Mar 2019 10:04:08 -0800 (PST)
-From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date:   Wed, 6 Mar 2019 19:04:08 +0100
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: Remove invalid compatible
- value for CSI40
-Message-ID: <20190306180408.GA31006@bigcity.dyn.berto.se>
-References: <20190306123926.10064-1-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdXV_wNaXq388_r-20yB-+38y4ZDt0w=oOPf1Bz9Xe1arA@mail.gmail.com>
+        Wed, 6 Mar 2019 13:42:08 -0500
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 65678242;
+        Wed,  6 Mar 2019 19:42:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1551897726;
+        bh=OauLMf75HrVVCqGzihomVcONa6Nab3dNUpN/NhSlBY0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cp2elqi9u8cJ5H74jXPqLZYSMQJ+a9G7OtrkgmM3B6Bjisdh/8kHVwFFOLkrfmFZj
+         4ex2PwRB5kEqIjjVmv2YVg7MtJcprLg2kym58lq1/AzCxfLlkdGKyjNv4XDDDlhYG4
+         RDxQjKmnYCXEp2qaeZHI85g/nVH+RCGMbGpXBils=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kevin Key <kevin.key@gentex.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH v2] drm: rcar-du: Support panels connected directly to the DPAD outputs
+Date:   Wed,  6 Mar 2019 20:41:56 +0200
+Message-Id: <20190306184156.11764-1-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdXV_wNaXq388_r-20yB-+38y4ZDt0w=oOPf1Bz9Xe1arA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+The R-Car DU driver assumes that a bridge is always connected to the DU
+output. This is valid for the LVDS and HDMI outputs, but the DPAD
+outputs can be connected directly to a panel, in which case no bridge is
+available.
 
-On 2019-03-06 18:45:56 +0100, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Wed, Mar 6, 2019 at 4:14 PM Niklas Söderlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > The compatible value renesas,rcar-gen3-csi2 was used while prototyping
-> > the R-Car CSI-2 driver but was removed before the driver was merged.
-> > Remove the only occurrence of the compatible value which manage to make
-> 
-> Nah, there's a second one, in r8a774c0.dtsi ;-)
+To support this use case, detect whether the entities connected to the
+DU DPAD outputs are encoders or panels based on the number of ports of
+their DT node, and retrieve the corresponding type of DRM objects. For
+panels, additionally create panel bridge instances.
 
-Not upstream that is in renesas/next :-)
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Tested-by: Kevin Key <kevin.key@gentex.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 54 ++++++++++++++++++++---
+ 1 file changed, 48 insertions(+), 6 deletions(-)
 
-I did not know that, thanks for pointing it out and I will handle that 
-one as well.
+Changes since v1:
 
-> 
-> > it upstream.
-> >
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+- Fix of_node_put() call in rcar_du_encoder_count_ports(), release the
+  reference to ports, not to node
 
-Thanks.
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index 8ee4e762f4e5..6c91753af7bc 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -28,13 +28,33 @@ static const struct drm_encoder_funcs encoder_funcs = {
+ 	.destroy = drm_encoder_cleanup,
+ };
+ 
++static unsigned int rcar_du_encoder_count_ports(struct device_node *node)
++{
++	struct device_node *ports;
++	struct device_node *port;
++	unsigned int num_ports = 0;
++
++	ports = of_get_child_by_name(node, "ports");
++	if (!ports)
++		ports = of_node_get(node);
++
++	for_each_child_of_node(ports, port) {
++		if (of_node_name_eq(port, "port"))
++			num_ports++;
++	}
++
++	of_node_put(ports);
++
++	return num_ports;
++}
++
+ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 			 enum rcar_du_output output,
+ 			 struct device_node *enc_node)
+ {
+ 	struct rcar_du_encoder *renc;
+ 	struct drm_encoder *encoder;
+-	struct drm_bridge *bridge = NULL;
++	struct drm_bridge *bridge;
+ 	int ret;
+ 
+ 	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
+@@ -48,11 +68,33 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
+ 		enc_node, output);
+ 
+-	/* Locate the DRM bridge from the encoder DT node. */
+-	bridge = of_drm_find_bridge(enc_node);
+-	if (!bridge) {
+-		ret = -EPROBE_DEFER;
+-		goto done;
++	/*
++	 * Locate the DRM bridge from the DT node. For the DPAD outputs, if the
++	 * DT node has a single port, assume that it describes a panel and
++	 * create a panel bridge.
++	 */
++	if ((output == RCAR_DU_OUTPUT_DPAD0 ||
++	     output == RCAR_DU_OUTPUT_DPAD1) &&
++	    rcar_du_encoder_count_ports(enc_node) == 1) {
++		struct drm_panel *panel = of_drm_find_panel(enc_node);
++
++		if (IS_ERR(panel)) {
++			ret = PTR_ERR(panel);
++			goto done;
++		}
++
++		bridge = devm_drm_panel_bridge_add(rcdu->dev, panel,
++						   DRM_MODE_CONNECTOR_DPI);
++		if (IS_ERR(bridge)) {
++			ret = PTR_ERR(bridge);
++			goto done;
++		}
++	} else {
++		bridge = of_drm_find_bridge(enc_node);
++		if (!bridge) {
++			ret = -EPROBE_DEFER;
++			goto done;
++		}
+ 	}
+ 
+ 	ret = drm_encoder_init(rcdu->ddev, encoder, &encoder_funcs,
 -- 
 Regards,
-Niklas Söderlund
+
+Laurent Pinchart
+
