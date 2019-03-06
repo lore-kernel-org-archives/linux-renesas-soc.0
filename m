@@ -7,40 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8CAC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE5AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE3E20663
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF62220663
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 23:24:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eYIvjFdQ"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Q8qMZGr3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726319AbfCFXYE (ORCPT
+        id S1726318AbfCFXYF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 18:24:04 -0500
+        Wed, 6 Mar 2019 18:24:05 -0500
 Received: from perceval.ideasonboard.com ([213.167.242.64]:46772 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726318AbfCFXYE (ORCPT
+        with ESMTP id S1726264AbfCFXYF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 18:24:04 -0500
+        Wed, 6 Mar 2019 18:24:05 -0500
 Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id ECE379C8;
-        Thu,  7 Mar 2019 00:23:58 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6C608B81;
+        Thu,  7 Mar 2019 00:23:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1551914639;
-        bh=ydsRlSm2FAGElFSC9A6E/gNHX2afRhPMyV4tR486vaM=;
+        bh=86PhQOJnL1iP4srL5wcOUY+fFuMJaX9O2IV5M3mB8sg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eYIvjFdQzlEn0+SbKTt/2c2nIeH5/r57aoOCOxkXNxWLLEJAXmr54OON27ukR+ag2
-         P1H17Uf0zew+IG5ZVjoKHJDp/zD8TcCE+q4/62X2FMnEwWAM3USbW1nlbO3Y5SArpR
-         HbMmzB42Mrl9Tn29hL3MKUAARbLfY1tlRZbPrbTg=
+        b=Q8qMZGr3P7ptuIyGFiOid354XDYDW7ogk8X8LiYDE4U8xPagrU5zHg15QoPbD663H
+         1xJTFdUVstaDA6vyCvA6naSQcPez9JF+eO4rCQPWA8iMKe993yhMPPpNxpNSpH9jkg
+         khoRgrQXxPFQUNdtAvi/AXCHqkZaq9IoS2qAvSn4=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH/RFC 04/15] drm: bridge: Add dual_link field to the drm_bridge_timings structure
-Date:   Thu,  7 Mar 2019 01:23:34 +0200
-Message-Id: <20190306232345.23052-5-laurent.pinchart+renesas@ideasonboard.com>
+        devicetree@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH/RFC 05/15] dt-bindings: display: bridge: thc63lvd1024: Document dual-link operation
+Date:   Thu,  7 Mar 2019 01:23:35 +0200
+Message-Id: <20190306232345.23052-6-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -51,35 +52,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Extend the drm_bridge_timings structure with a new dual_link field to
-indicate that the bridge's input bus carries data on two separate
-physical links. The first use case is LVDS dual-link mode where even-
-and odd-numbered pixels are transferred on separate LVDS links.
+The THC63LVD1024 LVDS decoder can operate in two modes, single-link or
+dual-link. In dual-link mode both input ports are used to carry even-
+and odd-numbered pixels separately. Document this in the DT bindings,
+along with the related rules governing port and usage.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- include/drm/drm_bridge.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../bindings/display/bridge/thine,thc63lvd1024.txt         | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index d4428913a4e1..aea1fcfd92a7 100644
---- a/include/drm/drm_bridge.h
-+++ b/include/drm/drm_bridge.h
-@@ -265,6 +265,14 @@ struct drm_bridge_timings {
- 	 * input signal after the clock edge.
- 	 */
- 	u32 hold_time_ps;
-+	/**
-+	 * @dual_link:
-+	 *
-+	 * True if the bus operates in dual-link mode. The exact meaning is
-+	 * dependent on the bus type. For LVDS buses, this indicates that even-
-+	 * and odd-numbered pixels are received on separate links.
-+	 */
-+	bool dual_link;
- };
+diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+index 37f0c04d5a28..4ff6eb9bbc19 100644
+--- a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
++++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+@@ -28,6 +28,13 @@ Optional video port nodes:
+ - port@1: Second LVDS input port
+ - port@3: Second digital CMOS/TTL parallel output
  
- /**
++The device can operate in single-link mode or dual-link mode. In single-link
++mode, all pixels are received on port@0, and port@1 shall not contain any
++endpoint. In dual-link mode, even-numbered pixels are received on port@0 and
++odd-numbered pixels on port@1, and both port@0 and port@1 shall contain
++endpoints.
++
++
+ Example:
+ --------
+ 
 -- 
 Regards,
 
