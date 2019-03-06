@@ -2,107 +2,98 @@ Return-Path: <SRS0=TFpS=RJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F343C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A57C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1257420684
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:10:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F252064A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 13:13:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="RmAzh8/p"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="bLt22DxX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbfCFNK0 (ORCPT
+        id S1727522AbfCFNNv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 08:10:26 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:47044 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbfCFNK0 (ORCPT
+        Wed, 6 Mar 2019 08:13:51 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:53678 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbfCFNNv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 08:10:26 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v16so10780081ljg.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Mar 2019 05:10:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=dbvEi6vKeqM7rsL8tUw0vqAoDfWTetxS+73UGwJUOUE=;
-        b=RmAzh8/pz9yglvDVKV/yW+f2W12/4ptSY8tQVgrx9C5VmiLVIgBD/59MrWlzm066Fc
-         pbkoG+6/1DJTwDzenmjYV2pk6vsvVkb071oRJJoRru+6VaW6RqmUzd2bc3QavEcwJDQE
-         EvDcSfwoLjxPKwQ2dCbPFieyk7CfJksuL3eRbVpzy4jTIZsjKXGdPzv8qSUvFUESAWui
-         z+C5EI6wIlyiIImZ0o3aBLDWolNbn/vZuCS4V41w6f0VUkYyswXJZf+WFzEpjA1RoR/F
-         6lgxZpjIQ8PgNZNAovw+Imp3972Pk35MJc8WkxZ47VO9CgqZJ362cSiWCkxNWlYav/0I
-         szcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=dbvEi6vKeqM7rsL8tUw0vqAoDfWTetxS+73UGwJUOUE=;
-        b=GVhCN08gK2zuWK2JiXYu7yL1aZ+cr3tAqWVYOhOiVUC3p2VoVVWBN2VMIVR88vd1R+
-         r7wIL/2YAPZPWx/tBh4p6TzxBcfCLYetyhSiSgNf1Rb6wvnuxDkYFMRePP/L/v1lJpzA
-         DsSRGty/4z9vq5jo5J5jlMqziH1Gx55dGlyVwQp9gUeGrn43nbxW5ZQ4LL046lnEB0lL
-         m5Q/jXJFK3wz0nqIGKlV37qIk3FjCjRzs+hBh7NU2PS2vkbKKATslCaPFL6DGSmPAApY
-         doNA2At1+afcBTWn3VCSmXCkVqpQ/va/ioLnABurN4UQEt1NJ9JKq7I2tgN0ghQnxZyU
-         0dHg==
-X-Gm-Message-State: APjAAAVPzzeHD6IzCK0klq2K9VUx7bfDLA0xhuEFXDIchSpWTFfi5v+o
-        6PXTvki8J1UFSjL5aVRlqFOpbA==
-X-Google-Smtp-Source: APXvYqwP3Yp4NiRzsTkDBOHibSIvpo13LDsyzPosL9IMEsyAUtDEjBJTogj5aOtXbrVjViPw2T0O+g==
-X-Received: by 2002:a2e:934a:: with SMTP id m10mr2409348ljh.164.1551877824072;
-        Wed, 06 Mar 2019 05:10:24 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id 5sm362804lje.18.2019.03.06.05.10.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Mar 2019 05:10:23 -0800 (PST)
-Date:   Wed, 6 Mar 2019 14:10:23 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH 1/2] arm64: dts: r8a77990-ebisu: Fix adv7482 hexadecimal
- register address
-Message-ID: <20190306131022.GA21288@bigcity.dyn.berto.se>
-References: <20190216235854.15244-1-niklas.soderlund+renesas@ragnatech.se>
- <20190216235854.15244-2-niklas.soderlund+renesas@ragnatech.se>
- <959b482d-09a1-2ffc-1144-101348bb27d9@ideasonboard.com>
- <CAMuHMdXgPYkCi+pK9FsfsCuWtAL1Ly7d=Ty88+qGH7m7L67aOA@mail.gmail.com>
- <59664792-ce36-d068-077f-e6cd12dc549b@ideasonboard.com>
- <20190225100954.jvwbty52lgpcovrx@verge.net.au>
- <20190306114736.GA2750@bigcity.dyn.berto.se>
- <20190306130435.7bfqt5r7etshljxw@verge.net.au>
+        Wed, 6 Mar 2019 08:13:51 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 25A0A25B7D0;
+        Thu,  7 Mar 2019 00:13:49 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1551878029; bh=Iovi3/PwwhUPGPh1XmRckzx/kr1+7pYbt4vIBp8jWxY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bLt22DxXASLvApNffypaUpZe7K+EFrVJ0uX9/dypVzExtBHfyy9L4Pisr46/GP+dj
+         XceskqoeoQkM+8DnVt0fytXgyBANnWrtD4o3FU4Qp07rZI2k7a6EpB2gbY+bDsJP0i
+         k+JYR/3uujlCTnjb6zQN5KNFThLWvyaRSLzzEH4w=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 3215894030D; Wed,  6 Mar 2019 14:13:47 +0100 (CET)
+Date:   Wed, 6 Mar 2019 14:13:47 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-usb@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH 0/4] Add USB-HOST support to cat874
+Message-ID: <20190306131346.shp4hzcelplfzeeb@verge.net.au>
+References: <1551438348-22119-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190306130435.7bfqt5r7etshljxw@verge.net.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1551438348-22119-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2019-03-06 14:04:35 +0100, Simon Horman wrote:
-> On Wed, Mar 06, 2019 at 12:47:36PM +0100, Niklas Söderlund wrote:
-> > Hi Simon,
-> > 
-> > On 2019-02-25 11:09:54 +0100, Simon Horman wrote:
-> > [snip]
-> > > Thanks, applied with the subject prefix updated to
-> > > 
-> > > "arm64: dts: renesas: ebisu:"
-> > 
-> > You took patch 1/2 from this series but not 2/2. Was that intentional?
+On Fri, Mar 01, 2019 at 11:05:44AM +0000, Fabrizio Castro wrote:
+> While trying to add USB-HOST support to the cat874 board,
+> it came up that of_usb_get_dr_mode_by_phy was selecting
+> the wrong DT node to use for dr_mode.
+> Also, drivers/phy/renesas/phy-rcar-gen3-usb2.c was registering
+> IRQs, no matter the dr_mode.
 > 
-> Thanks, that was an oversight. I now have 2/2 too.
+> This series adds all that is required to add USB-HOST support
+> to the cat874 board, and also removes the hsusb from Draak's DT
+> as not necessary anymore.
+> 
+> Thanks,
+> Fab
+> 
+> Fabrizio Castro (4):
+>   usb: common: Consider only available nodes for dr_mode
+>   phy: renesas: rcar-gen3-usb2: No need to request IRQ for non-OTG
 
-Thanks!
+Hi Fabrizio,
 
--- 
-Regards,
-Niklas Söderlund
+I am marking the patches below deferred pending acceptance of the patches
+above.
+
+>   arm64: dts: renesas: r8a774c0-cat874: Add USB-HOST support
+>   arm64: dts: renesas: r8a77995: draak: Remove hsusb node
+> 
+>  arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 15 ++++++++++++++
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts  |  5 -----
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c        | 26 ++++++++++++-------------
+>  drivers/usb/common/common.c                     |  2 ++
+>  4 files changed, 30 insertions(+), 18 deletions(-)
+> 
+> -- 
+> 2.7.4
+> 
