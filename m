@@ -6,41 +6,43 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032C6C10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 09:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEE9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 09:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA5C2146F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 09:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F063C21019
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Mar 2019 09:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbfCFJN3 (ORCPT
+        id S1729565AbfCFJNb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 04:13:29 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:41143 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726391AbfCFJN2 (ORCPT
+        Wed, 6 Mar 2019 04:13:31 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:9706 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729307AbfCFJNa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 04:13:28 -0500
+        Wed, 6 Mar 2019 04:13:30 -0500
 X-IronPort-AV: E=Sophos;i="5.58,447,1544454000"; 
-   d="scan'208";a="9597940"
+   d="scan'208";a="9391012"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Mar 2019 18:13:25 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 06 Mar 2019 18:13:28 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 908A14209848;
-        Wed,  6 Mar 2019 18:13:22 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id AB09B4209848;
+        Wed,  6 Mar 2019 18:13:25 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Felipe Balbi <balbi@kernel.org>
 Cc:     Biju Das <biju.das@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/9] usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller
-Date:   Wed,  6 Mar 2019 09:07:20 +0000
-Message-Id: <1551863246-11656-4-git-send-email-biju.das@bp.renesas.com>
+Subject: [PATCH 4/9] usb: gadget: udc: renesas_usb3: use extcon framework to receive connect/disconnect
+Date:   Wed,  6 Mar 2019 09:07:21 +0000
+Message-Id: <1551863246-11656-5-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1551863246-11656-1-git-send-email-biju.das@bp.renesas.com>
 References: <1551863246-11656-1-git-send-email-biju.das@bp.renesas.com>
@@ -49,340 +51,169 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Driver for TI HD3SS3220 USB Type-C DRP port controller.
-
-The driver currently registers the port and supports data role swapping.
+RZ/G2E cat874 board is capable of detecting cable connect and disconnect
+events. Add support for renesas_usb3 to receive connect and disconnect
+notification using extcon framework.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- drivers/usb/typec/Kconfig     |  10 ++
- drivers/usb/typec/Makefile    |   1 +
- drivers/usb/typec/hd3ss3220.c | 284 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 295 insertions(+)
- create mode 100644 drivers/usb/typec/hd3ss3220.c
+ drivers/usb/gadget/udc/renesas_usb3.c | 115 +++++++++++++++++++++++++++++-----
+ 1 file changed, 99 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
-index 30a847c..91696d2 100644
---- a/drivers/usb/typec/Kconfig
-+++ b/drivers/usb/typec/Kconfig
-@@ -49,6 +49,16 @@ source "drivers/usb/typec/tcpm/Kconfig"
+diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
+index 7dc2485..2c69d5d 100644
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -351,6 +351,11 @@ struct renesas_usb3 {
+ 	int disabled_count;
  
- source "drivers/usb/typec/ucsi/Kconfig"
+ 	struct usb_request *ep0_req;
++
++	struct extcon_dev *edev;
++	struct notifier_block ufp_nb;
++	struct notifier_block dfp_nb;
++
+ 	u16 test_mode;
+ 	u8 ep0_buf[USB3_EP0_BUF_SIZE];
+ 	bool softconnect;
+@@ -644,22 +649,6 @@ static void usb3_disconnect(struct renesas_usb3 *usb3)
+ 		usb3->driver->disconnect(&usb3->gadget);
+ }
  
-+config TYPEC_HD3SS3220
-+	tristate "TI HD3SS3220 Type-C DRP Port controller driver"
-+	depends on I2C
-+	help
-+	  Say Y or M here if your system has TI HD3SS3220 Type-C DRP Port
-+	  controller driver.
-+
-+	  If you choose to build this driver as a dynamically linked module, the
-+	  module will be called hd3ss3220.ko.
-+
- config TYPEC_TPS6598X
- 	tristate "TI TPS6598x USB Power Delivery controller driver"
- 	depends on I2C
-diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
-index 6696b72..7753a5c3 100644
---- a/drivers/usb/typec/Makefile
-+++ b/drivers/usb/typec/Makefile
-@@ -4,5 +4,6 @@ typec-y				:= class.o mux.o bus.o
- obj-$(CONFIG_TYPEC)		+= altmodes/
- obj-$(CONFIG_TYPEC_TCPM)	+= tcpm/
- obj-$(CONFIG_TYPEC_UCSI)	+= ucsi/
-+obj-$(CONFIG_TYPEC_HD3SS3220)	+= hd3ss3220.o
- obj-$(CONFIG_TYPEC_TPS6598X)	+= tps6598x.o
- obj-$(CONFIG_TYPEC)		+= mux/
-diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
-new file mode 100644
-index 0000000..bd3e1ec
---- /dev/null
-+++ b/drivers/usb/typec/hd3ss3220.c
-@@ -0,0 +1,284 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * TI HD3SS3220 Type-C DRP Port Controller Driver
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/i2c.h>
-+#include <linux/extcon-provider.h>
-+#include <linux/irqreturn.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/usb/typec.h>
-+#include <linux/delay.h>
-+
-+#define HD3SS3220_REG_CN_STAT_CTRL	0x09
-+#define HD3SS3220_REG_GEN_CTRL		0x0A
-+#define HD3SS3220_REG_DEV_REV		0xA0
-+
-+/* Register HD3SS3220_REG_CN_STAT_CTRL*/
-+#define HD3SS3220_REG_CN_STAT_CTRL_ATTACHED_STATE_MASK	(BIT(7) | BIT(6))
-+#define HD3SS3220_REG_CN_STAT_CTRL_AS_DFP		BIT(6)
-+#define HD3SS3220_REG_CN_STAT_CTRL_AS_UFP		BIT(7)
-+#define HD3SS3220_REG_CN_STAT_CTRL_TO_ACCESSORY		(BIT(7) | BIT(6))
-+#define HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS		BIT(4)
-+
-+/* Register HD3SS3220_REG_GEN_CTRL*/
-+#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_MASK		(BIT(2) | BIT(1))
-+#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT	0x00
-+#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SNK	BIT(1)
-+#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SRC	(BIT(2) | BIT(1))
-+
-+struct hd3ss3220 {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct extcon_dev *extcon;
-+	struct typec_port *port;
-+	struct typec_capability typec_cap;
-+};
-+
-+static const unsigned int hd3ss3220_cable[] = {
-+	EXTCON_USB,
-+	EXTCON_USB_HOST,
-+	EXTCON_NONE
-+};
-+
-+static int hd3ss3220_set_source_pref(struct hd3ss3220 *hd3ss3220, int src_pref)
+-static void usb3_check_vbus(struct renesas_usb3 *usb3)
+-{
+-	if (usb3->workaround_for_vbus) {
+-		usb3_connect(usb3);
+-	} else {
+-		usb3->extcon_usb = !!(usb3_read(usb3, USB3_USB_STA) &
+-							USB_STA_VBUS_STA);
+-		if (usb3->extcon_usb)
+-			usb3_connect(usb3);
+-		else
+-			usb3_disconnect(usb3);
+-
+-		schedule_work(&usb3->extcon_work);
+-	}
+-}
+-
+ static void renesas_usb3_role_work(struct work_struct *work)
+ {
+ 	struct renesas_usb3 *usb3 =
+@@ -724,6 +713,32 @@ static void usb3_check_id(struct renesas_usb3 *usb3)
+ 	schedule_work(&usb3->extcon_work);
+ }
+ 
++static void usb3_check_vbus(struct renesas_usb3 *usb3)
 +{
-+	unsigned int reg_val;
-+	int ret;
-+
-+	ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL, &reg_val);
-+	if (ret < 0)
-+		return ret;
-+
-+	reg_val &= ~HD3SS3220_REG_GEN_CTRL_SRC_PREF_MASK;
-+	reg_val |= src_pref;
-+
-+	return regmap_write(hd3ss3220->regmap,
-+					HD3SS3220_REG_GEN_CTRL, reg_val);
-+}
-+
-+static int hd3ss3220_attached_state_detect(struct hd3ss3220 *hd3ss3220)
-+{
-+	unsigned int reg_val;
-+	int ret, attached_state;
-+
-+	ret = regmap_read(hd3ss3220->regmap,
-+				HD3SS3220_REG_CN_STAT_CTRL, &reg_val);
-+	if (ret < 0)
-+		return ret;
-+
-+	reg_val &= HD3SS3220_REG_CN_STAT_CTRL_ATTACHED_STATE_MASK;
-+	switch (reg_val) {
-+	case HD3SS3220_REG_CN_STAT_CTRL_AS_DFP:
-+		attached_state = EXTCON_USB_HOST;
-+	break;
-+	case HD3SS3220_REG_CN_STAT_CTRL_AS_UFP:
-+		attached_state = EXTCON_USB;
-+	break;
-+	default:
-+		attached_state = EXTCON_NONE;
-+	}
-+
-+	return attached_state;
-+}
-+
-+static int hd3ss3220_dr_set(const struct typec_capability *cap,
-+					enum typec_data_role role)
-+{
-+	struct hd3ss3220 *hd3ss3220 =
-+				container_of(cap, struct hd3ss3220, typec_cap);
-+	int ret = 0;
-+
-+	if (role == TYPEC_HOST) {
-+		extcon_set_state_sync(hd3ss3220->extcon, EXTCON_USB, false);
-+		ret = hd3ss3220_set_source_pref(hd3ss3220,
-+				HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SRC);
-+		mdelay(100);
-+		extcon_set_state_sync(hd3ss3220->extcon, EXTCON_USB_HOST, true);
++	if (usb3->workaround_for_vbus) {
++		if (usb3->edev) {
++			if (extcon_get_state(usb3->edev, EXTCON_USB) == true) {
++				usb3->forced_b_device = true;
++				usb3->start_to_connect = true;
++				usb3_disconnect(usb3);
++				usb3_check_id(usb3);
++			} else if (extcon_get_state(usb3->edev,
++						EXTCON_USB_HOST) == false)
++				usb3_vbus_out(usb3, false);
++		} else
++			usb3_connect(usb3);
 +	} else {
-+		extcon_set_state_sync(hd3ss3220->extcon,
-+						EXTCON_USB_HOST, false);
-+		ret = hd3ss3220_set_source_pref(hd3ss3220,
-+				HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SNK);
-+		mdelay(100);
-+		extcon_set_state_sync(hd3ss3220->extcon, EXTCON_USB, true);
-+	}
++		usb3->extcon_usb = !!(usb3_read(usb3, USB3_USB_STA) &
++							USB_STA_VBUS_STA);
++		if (usb3->extcon_usb)
++			usb3_connect(usb3);
++		else
++			usb3_disconnect(usb3);
 +
-+	typec_set_data_role(hd3ss3220->port, role);
-+
-+	return ret;
-+}
-+
-+static void hd3ss3220_set_extcon_state(struct hd3ss3220 *hd3ss3220)
-+{
-+	int attached_state = hd3ss3220_attached_state_detect(hd3ss3220);
-+
-+	if (attached_state == EXTCON_USB_HOST) {
-+		extcon_set_state_sync(hd3ss3220->extcon, EXTCON_USB, false);
-+		extcon_set_state_sync(hd3ss3220->extcon, EXTCON_USB_HOST, true);
-+		typec_set_data_role(hd3ss3220->port, TYPEC_HOST);
-+	} else if (attached_state == EXTCON_USB) {
-+		extcon_set_state_sync(hd3ss3220->extcon,
-+						 EXTCON_USB_HOST, false);
-+		extcon_set_state_sync(hd3ss3220->extcon, EXTCON_USB, true);
-+		typec_set_data_role(hd3ss3220->port, TYPEC_DEVICE);
-+	} else {
-+		hd3ss3220_set_source_pref(hd3ss3220,
-+				HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT);
-+		extcon_set_state_sync(hd3ss3220->extcon,
-+						EXTCON_USB_HOST, false);
-+		extcon_set_state_sync(hd3ss3220->extcon, EXTCON_USB, false);
++		schedule_work(&usb3->extcon_work);
 +	}
 +}
 +
-+irqreturn_t hd3ss3220_irq(struct hd3ss3220 *hd3ss3220)
+ static void renesas_usb3_init_controller(struct renesas_usb3 *usb3)
+ {
+ 	usb3_init_axi_bridge(usb3);
+@@ -2656,6 +2671,47 @@ static const struct usb_role_switch_desc renesas_usb3_role_switch_desc = {
+ 	.allow_userspace_control = true,
+ };
+ 
++static int renesas_usb3_ufp_notifier(struct notifier_block *nb,
++					unsigned long event, void *ptr)
 +{
-+	int err;
-+	unsigned int data;
++	struct renesas_usb3 *usb3 = container_of(nb,
++					struct renesas_usb3, ufp_nb);
 +
-+	hd3ss3220_set_extcon_state(hd3ss3220);
-+
-+	err = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL, &data);
-+	if (err < 0)
-+		return IRQ_NONE;
-+
-+	err = regmap_write(hd3ss3220->regmap,
-+			HD3SS3220_REG_CN_STAT_CTRL,
-+			data | HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS);
-+	if (err < 0)
-+		return IRQ_NONE;
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t hd3ss3220_irq_handler(int irq, void *data)
-+{
-+	struct i2c_client *client = to_i2c_client(data);
-+	struct hd3ss3220 *hd3ss3220 = i2c_get_clientdata(client);
-+
-+	return hd3ss3220_irq(hd3ss3220);
-+}
-+
-+static int hd3ss3220_probe(struct i2c_client *client,
-+		const struct i2c_device_id *id)
-+{
-+	struct hd3ss3220 *hd3ss3220;
-+	int ret;
-+	unsigned int data;
-+	static const struct regmap_config config = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0x0A,
-+	};
-+
-+	hd3ss3220 = devm_kzalloc(&client->dev, sizeof(struct hd3ss3220),
-+				GFP_KERNEL);
-+	if (!hd3ss3220)
-+		return -ENOMEM;
-+
-+	i2c_set_clientdata(client, hd3ss3220);
-+
-+	hd3ss3220->regmap = devm_regmap_init_i2c(client, &config);
-+	if (IS_ERR(hd3ss3220->regmap))
-+		return PTR_ERR(hd3ss3220->regmap);
-+
-+	hd3ss3220_set_source_pref(hd3ss3220,
-+				HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT);
-+
-+	hd3ss3220->extcon = devm_extcon_dev_allocate(&client->dev,
-+						hd3ss3220_cable);
-+	if (IS_ERR(hd3ss3220->extcon)) {
-+		dev_err(&client->dev, "failed to allocate extcon device\n");
-+		return PTR_ERR(hd3ss3220->extcon);
++	usb3->start_to_connect = false;
++	if (event && usb3->driver) {
++		usb3->forced_b_device = true;
++		usb3->start_to_connect = true;
 +	}
 +
-+	ret = devm_extcon_dev_register(&client->dev, hd3ss3220->extcon);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "failed to register extcon device\n");
-+		return ret;
++	if (usb3->driver) {
++		usb3_disconnect(usb3);
++		usb3_check_id(usb3);
 +	}
 +
-+	hd3ss3220->dev = &client->dev;
-+	hd3ss3220->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
-+	hd3ss3220->typec_cap.dr_set = hd3ss3220_dr_set;
-+	hd3ss3220->typec_cap.type = TYPEC_PORT_DRP;
-+	hd3ss3220->typec_cap.data = TYPEC_PORT_DRD;
++	usb3_vbus_out(usb3, false);
++	dev_dbg(usb3_to_dev(usb3), "ufp_notifier event=%ld", event);
 +
-+	hd3ss3220->port = typec_register_port(&client->dev,
-+						&hd3ss3220->typec_cap);
-+	if (IS_ERR(hd3ss3220->port))
-+		return PTR_ERR(hd3ss3220->port);
++	return NOTIFY_DONE;
++}
 +
-+	hd3ss3220_set_extcon_state(hd3ss3220);
-+	if (client->irq > 0) {
-+		ret = regmap_read(hd3ss3220->regmap,
-+			HD3SS3220_REG_CN_STAT_CTRL, &data);
++static int renesas_usb3_dfp_notifier(struct notifier_block *nb,
++					unsigned long event, void *ptr)
++{
++	struct renesas_usb3 *usb3 = container_of(nb,
++					struct renesas_usb3, dfp_nb);
++
++	if (event) {
++		usb3->forced_b_device = false;
++		usb3_disconnect(usb3);
++		usb3_check_id(usb3);
++	} else
++		usb3_vbus_out(usb3, false);
++
++	dev_dbg(usb3_to_dev(usb3), "dfp_notifier event=%ld", event);
++
++	return NOTIFY_DONE;
++}
++
+ static int renesas_usb3_probe(struct platform_device *pdev)
+ {
+ 	struct renesas_usb3 *usb3;
+@@ -2703,6 +2759,33 @@ static int renesas_usb3_probe(struct platform_device *pdev)
+ 		return ret;
+ 
+ 	INIT_WORK(&usb3->extcon_work, renesas_usb3_extcon_work);
++
++	if (priv->workaround_for_vbus &&
++			of_property_read_bool(pdev->dev.of_node, "extcon")) {
++		usb3->edev = extcon_get_edev_by_phandle(&pdev->dev, 0);
++		if (IS_ERR(usb3->edev))
++			return PTR_ERR(usb3->edev);
++
++		usb3->ufp_nb.notifier_call = renesas_usb3_ufp_notifier;
++		ret = devm_extcon_register_notifier(&pdev->dev, usb3->edev,
++						EXTCON_USB, &usb3->ufp_nb);
 +		if (ret < 0)
-+			goto error;
++			dev_dbg(&pdev->dev, "USB register notifier failed\n");
 +
-+		if (data & HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS) {
-+			ret = regmap_write(hd3ss3220->regmap,
-+				HD3SS3220_REG_CN_STAT_CTRL,
-+				data | HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS);
-+			if (ret < 0)
-+				goto error;
-+		}
-+
-+		ret = devm_request_threaded_irq(&client->dev, client->irq,
-+			NULL, hd3ss3220_irq_handler,
-+			IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+			"hd3ss3220", &client->dev);
-+		if (ret)
-+			goto error;
++		usb3->dfp_nb.notifier_call = renesas_usb3_dfp_notifier;
++		ret = devm_extcon_register_notifier(&pdev->dev, usb3->edev,
++						EXTCON_USB_HOST, &usb3->dfp_nb);
++		if (ret < 0)
++			dev_dbg(&pdev->dev,
++					"USB-HOST register notifier failed\n");
++		if (extcon_get_state(usb3->edev, EXTCON_USB) == true) {
++			usb3->forced_b_device = true;
++			usb3->start_to_connect = true;
++		} else	if (extcon_get_state(usb3->edev,
++						 EXTCON_USB_HOST) == false)
++			usb3_vbus_out(usb3, false);
 +	}
 +
-+	ret = i2c_smbus_read_byte_data(client, HD3SS3220_REG_DEV_REV);
-+	if (ret < 0)
-+		goto error;
-+
-+	dev_info(&client->dev, "probed revision=0x%x\n", ret);
-+
-+	return 0;
-+error:
-+	typec_unregister_port(hd3ss3220->port);
-+
-+	return ret;
-+}
-+
-+static int hd3ss3220_remove(struct i2c_client *client)
-+{
-+	struct hd3ss3220 *hd3ss3220 = i2c_get_clientdata(client);
-+
-+	typec_unregister_port(hd3ss3220->port);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id dev_ids[] = {
-+	{ .compatible = "ti,hd3ss3220"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, dev_ids);
-+
-+static struct i2c_driver hd3ss3220_driver = {
-+	.driver = {
-+		.name = "hd3ss3220",
-+		.owner = THIS_MODULE,
-+		.of_match_table = of_match_ptr(dev_ids),
-+	},
-+	.probe = hd3ss3220_probe,
-+	.remove =  hd3ss3220_remove,
-+};
-+
-+module_i2c_driver(hd3ss3220_driver);
-+
-+MODULE_AUTHOR("Biju Das <biju.das@bp.renesas.com>");
-+MODULE_DESCRIPTION("TI HD3SS3220 DRP Port Controller Driver");
-+MODULE_LICENSE("GPL");
+ 	usb3->extcon = devm_extcon_dev_allocate(&pdev->dev, renesas_usb3_cable);
+ 	if (IS_ERR(usb3->extcon))
+ 		return PTR_ERR(usb3->extcon);
 -- 
 2.7.4
 
