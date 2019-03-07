@@ -2,94 +2,160 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B2CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA94C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060CB20840
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22E7820851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1551991817;
+	bh=1hi/Vwp2apJ/sVLtqASMN8pGP0T0d+D9yegIbgG9W1I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HyztnyrcQwsj7lPSfYqWjNlfmHwVFGN34R1kF2KTS4JT0CbUMkXp9BSm2TNIeaBg3
+	 X38ZLNv91UULLF0K6Uzkth7fBoNnRXRp/fFGe7dSxxC/pud2p1glNF3pbfCi4OCMRh
+	 hxMAV7P7PTfvLntnoQs2wJ9uFgHSsHfzmLWzvMJM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfCGUSK (ORCPT
+        id S1726186AbfCGUuQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 15:18:10 -0500
-Received: from sauhun.de ([88.99.104.3]:54966 "EHLO pokefinder.org"
+        Thu, 7 Mar 2019 15:50:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbfCGUSK (ORCPT
+        id S1726185AbfCGUuQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 15:18:10 -0500
-Received: from localhost (p54B334C5.dip0.t-ipconnect.de [84.179.52.197])
-        by pokefinder.org (Postfix) with ESMTPSA id 2BCD82E3551;
-        Thu,  7 Mar 2019 21:18:08 +0100 (CET)
-Date:   Thu, 7 Mar 2019 21:18:07 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-ID: <20190307201807.GA950@kunai>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
- <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
+        Thu, 7 Mar 2019 15:50:16 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90B5020684;
+        Thu,  7 Mar 2019 20:50:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1551991814;
+        bh=1hi/Vwp2apJ/sVLtqASMN8pGP0T0d+D9yegIbgG9W1I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rAUfvBH2tnWtnqDf258Ygs/ejbmYA1OCX04UADWu63j7PLGF0DcPALnmzc7/Karjs
+         cGKaS6SUOx0kvdXvwoCHqn5lt+csTTUStn1z9YLnEV2m+UbsJ8PgcoCph3d7dLOXNk
+         //2k/WutmlWMpxJpPhpaEuJFSyiycc5aZv7yiP6k=
+Date:   Thu, 7 Mar 2019 14:50:13 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in
+ resume_noirq
+Message-ID: <20190307205013.GA208051@google.com>
+References: <20190217132441.15139-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
+In-Reply-To: <20190217132441.15139-1-marek.vasut@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
+> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> 
+> Reestablish the PCIe link very early in the resume process in case it
+> went down to prevent PCI accesses from hanging the bus. Such accesses
+> can happen early in the PCI resume process, in the resume_noirq, thus
+> the link must be reestablished in the resume_noirq callback of the
+> driver.
+> 
+> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: - Use BIT() macro for (1 << n)
+>     - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
+>       add extra changes to this function anymore
+>     - Make resume_noirq return early and clean up parenthesis therein
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index c8febb009454..b8f8fb3bc640 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -46,6 +46,7 @@
+>  
+>  /* Transfer control */
+>  #define PCIETCTLR		0x02000
+> +#define  DL_DOWN		BIT(3)
+>  #define  CFINIT			1
 
---J/dobhs11T7y2rNN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I saw discussion after the V1 patch about using BIT() and making
+similar constants also use BIT() for consistency.  That makes sense to
+me, and I think the best way would be:
 
+  1) in *this* patch, use "#define DL_DOWN 8"
+  2) in a followup patch, convert them all to BIT()
 
-> It's been almost a year later, and several Linux revisions, and this
-> still seems stuck somewhere/somehow.
+That way each revision of pcie-rcar.c is self-consistent.
 
-I wanted to respin this series once rc1 is released.
+>  #define PCIETSTR		0x02004
+>  #define  DATA_LINK_ACTIVE	1
+> @@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	pcie = pci_host_bridge_priv(bridge);
+>  
+>  	pcie->dev = dev;
+> +	platform_set_drvdata(pdev, pcie);
+>  
+>  	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
+>  	if (err)
+> @@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	return err;
+>  }
+>  
+> +static int rcar_pcie_resume_noirq(struct device *dev)
+> +{
+> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
+> +
+> +	if (rcar_pci_read_reg(pcie, PMSR) &&
+> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
+> +		return 0;
+> +
+> +	/* Re-establish the PCIe link */
+> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
+> +	return rcar_pcie_wait_for_dl(pcie);
+> +}
+> +
+> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
+> +	.resume_noirq = rcar_pcie_resume_noirq,
+> +};
 
+I think there's the beginning of a convention to use #ifdef
+CONFIG_PM_SLEEP around the ops themselves [1].  Otherwise I think
+we'll get a warning about unused code when CONFIG_PM_SLEEP is unset.
 
---J/dobhs11T7y2rNN
-Content-Type: application/pgp-signature; name="signature.asc"
+>  static struct platform_driver rcar_pcie_driver = {
+>  	.driver = {
+>  		.name = "rcar-pcie",
+>  		.of_match_table = rcar_pcie_of_match,
+> +		.pm = &rcar_pcie_pm_ops,
+>  		.suppress_bind_attrs = true,
+>  	},
+>  	.probe = rcar_pcie_probe,
+> -- 
+> 2.19.2
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyBfHsACgkQFA3kzBSg
-Kbb87BAAgY8Zdjph2MvnTtWsLVlR20N3tzC48BqMW6+mCkS/GBg4G+shi+L5bN9r
-eKruZXQ505sEuRpB/v1PC7QlGJ0Bp5Dk7VVaQolgC7Jx2ubqRYhaW2UWkz3Mr5RO
-3yfmDc1jo4B3z7d4Cqyi7qWcFSB2i4hjR/CA6kz0EXC5LcAPTACDSmliFtoZPvQ/
-wWbpWQN6kO8JYAluEjxOI+EtQL22fha/FrRKEY91X3yPtIzZYA89ZacOsBlKFBKU
-SouRZmq7htq6eatqg7XV4y3X4ZxsOkL0gxWCZiGX4iE9yamM/eF0+6WD6zaVHoKa
-W24fFnqyi+yg7sYZ1iNdokb0JHR/sCZJffPjKKD1OnJFjUedXFA1JazIEDfNARyM
-/Sh/hrcIb4n6CXe1sQ3YHEZkaLffqICJW+OIEWkUI0kSAbSFnKCVxHVb6F0r/I+Q
-PZ3SnruxYHrDWgegpZQkjE9rsZRCkG5KDNZ2fahXW9BUaIXfuWRyzoXaiVW8Matb
-vbyKCym1vwq0SxHIGyCqEYK0GBt6Yx9y/JelHChYWyyiKe+g6SLgctFycF8Fn/Fh
-sbdGgmrtsg+eIepcAvkw/+fvA3ITCCN0QX9WRzrUjftrG6MRoFni1+ec4nXJkwgI
-p+565C1niZxFqf1wRcZT86WxiYI01T0pLi1bKOwunvZ8Riym9b4=
-=vuew
------END PGP SIGNATURE-----
-
---J/dobhs11T7y2rNN--
+[1] https://lore.kernel.org/linux-pci/20180531042020.GQ39853@bhelgaas-glaptop.roam.corp.google.com
