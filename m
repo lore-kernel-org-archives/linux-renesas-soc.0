@@ -2,107 +2,117 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949B0C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 19:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E674C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C99420851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 19:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3002920840
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:13:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="b+FR1ejK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWMd6NRr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbfCGTxX (ORCPT
+        id S1726254AbfCGUNm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 14:53:23 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39498 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfCGTxX (ORCPT
+        Thu, 7 Mar 2019 15:13:42 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43758 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbfCGUNm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 14:53:23 -0500
-Received: by mail-lj1-f196.google.com with SMTP id g80so15356804ljg.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2019 11:53:22 -0800 (PST)
+        Thu, 7 Mar 2019 15:13:42 -0500
+Received: by mail-io1-f66.google.com with SMTP id y6so14706082ioq.10;
+        Thu, 07 Mar 2019 12:13:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:references:organization:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g9M43El7SuHdJ092C/Cq5P1tzW62nPCU8JFHYMuTAeU=;
-        b=b+FR1ejK4aeXfLSwn/PXrZ9vbfiORLj2zPEeCiC573Dy3KXaCCoGse2NGcV94D96jO
-         q00tpeQHAB+K8SzttR6XqAesWTwRqlxq56/EO42ioSXC4pVMjkSIPnap80Jl+jFNaLx2
-         nIVp1VViVA9FQdyPUQkcKfhmOjHPl5lDJxGVwJ3iJkFSSADB0FHjy7Gfh+NyB3oK8sGZ
-         yezb8q/ERxog2nW+8g39lDV/Xe0hAixG+LXOWT4VonYeaRZUBoMlVvd53RTt86VEwF1y
-         x8ZCEWBn5L1/UQtzlsZqLO1lmtWzhAX4rdLLVT43wlDv1u/pOr8EHp0iYXl6um7cUrNR
-         F/oQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3CxfmkaTe+SLFchAVeUhtfdbkP2N5yDM0YsbCbvNGTU=;
+        b=dWMd6NRrstaNGu21WHTRqrsFdgeYfa7sJFHdmAUORtVW7V+OZM/o1DN4bZcXdKyXZq
+         6i6P8Fac3p5xfyuOgaTLKMVsQdCCH9nQw1fRZ4lHjHmB2lKvndplcdrz79PgvpIgg+1v
+         UGLTyALImWYXmivOGa+x/JIV1evpvJJ5vVrnVqWQwO+qJT/HJlxl17b7145FHLb5Kjkg
+         iJYC6jCmAlqrBeF9Y6ASVy+Lyq6HIa7pJgLXA5x2FRGUnZMgyLN0YlGiI68d/6J+t3mw
+         d33/ejQpbm4bsMni4Kc2Nf07n1mZy6RQQQnYh2Sqtgw+LkLPsia6xjCM4LHCLVg1XndF
+         Q27Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=g9M43El7SuHdJ092C/Cq5P1tzW62nPCU8JFHYMuTAeU=;
-        b=H4CZcoH2QU7wnPmxXGJSPWTqwy6Ogwd4r7OKSrOO9nmaNGPfbUPCBBiTcyAOt7/sfS
-         d5nCqaNRFBhoFpXWuENux1jihg596dEw5nD3yS8PEi9KyhS3h1YQ3fKdJsa0V0U4DlHp
-         OXR7eXo5lLX+Oy6UvGwljIsS9jZWv8DqELpTsCUqpFlnMFf/V1CFBulNLh+ABP4OWGQs
-         R4OHTfJ/BHs3m42N7veJA3TBYsy9fj8vtAhTo9Kmc9yfFr5vJIsYAo1RWPABevIwIypF
-         QuWHdNtjQDH3rZxr0tLB8zX6QjxaDNFnYmhLOL+ffxDXso2CU2SyGDn/soShyMvcGj6G
-         V2uA==
-X-Gm-Message-State: APjAAAWDWObACbPZ60UuSjOoiqLlkEZM7uB/LX2J1ZK0wFvn0YjZqBAm
-        9uU8lkJ6JQP6TgosuclVspD4Sg==
-X-Google-Smtp-Source: APXvYqxA38Znn+8CKsB1BjtM3Lh3KMtCOW0COFeI2Jy4g+yTZWdZ1w0SpjPjzLAevuVT24BODgdYTw==
-X-Received: by 2002:a2e:161b:: with SMTP id w27mr4105083ljd.40.1551988401324;
-        Thu, 07 Mar 2019 11:53:21 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.80.179])
-        by smtp.gmail.com with ESMTPSA id d12sm1090199lja.72.2019.03.07.11.53.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Mar 2019 11:53:20 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a77980-cpg-mssr: fix RPC-IF module clock's
- parent
-To:     linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-References: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <ebc41558-2a0a-bf6d-05df-077e3c769344@cogentembedded.com>
-Date:   Thu, 7 Mar 2019 22:53:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3CxfmkaTe+SLFchAVeUhtfdbkP2N5yDM0YsbCbvNGTU=;
+        b=bih37J6pe5I3DFMWGzc1C8QXsDH4qRInv5u+r0mpbMXCOIAv6aR+MkQaXWszi4o67z
+         d2zAM2JXXdxVb58adCJlXVltB2PHACtulC2m10qErXerYHKpub7BHHoiS1ql7LrC/mx5
+         OmgKmLP9pALNdV7rLZBXQXaE30c+PYTHG/9zMzfoJ7J4sBhRfn8d+nzPGIUycNdXxS2s
+         yv/2riqb2fbCjsxk/W8lEYi1A5kxDl4tMstQQMNCxLie6ml/8SVXtNvekqUgHsVNf7iC
+         jBvvAirMRjoVy5pv4Us41hW3qMmvtgZzDbQTd7XDGn41hEKtON63MXA8kjFNhXPBrseB
+         rnVQ==
+X-Gm-Message-State: APjAAAXg0ldHT+Z9CNQEJj5qGgIihCnhdNR/bu75ZJxpXqrDHwwZP8Gp
+        mAi2Eza2ds+Qi8jwsY1m0j9YlFhaIa6ADMPMHj8=
+X-Google-Smtp-Source: APXvYqw8BPO/C44mEMiguDrL1oklthAeMfMejkzweughPEBAuiHwDIYzov7HO3BQLZzlL7DV8WP+/bpMJ0rno9pv8U4=
+X-Received: by 2002:a5d:8701:: with SMTP id u1mr7813573iom.69.1551989620631;
+ Thu, 07 Mar 2019 12:13:40 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com> <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+ <20180430092947.GC2270@ulmo>
+In-Reply-To: <20180430092947.GC2270@ulmo>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Thu, 7 Mar 2019 14:13:29 -0600
+Message-ID: <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Testing has shown that the RPC-IF module clock's parent is the RPCD2 clock,
-not the RPC one -- the RPC-IF register reads stall otherwise...
+On Mon, Apr 30, 2018 at 4:30 AM Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
+> > On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
+> > <grygorii.strashko@ti.com> wrote:
+> > > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
+> > >>
+> > >> We should get drvdata from struct device directly. Going via
+> > >> platform_device is an unneeded step back and forth.
+> > >>
+> > >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > >> ---
+> > >>
+> > >> Build tested only. buildbot is happy. Please apply individually.
+> > >
+> > >
+> > > for gpio-omap.c:
+> > > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> >
+> > Hm I only see the responses not the actual patch, I guess I will find it
+> > sooner or later.
+> >
+> > Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
+>
+> I had the same problem, turned out this got classified as spam by Google
+> for some reason. Maybe try your spam folder?
 
-Fixes: 94e3935b5756 ("clk: renesas: r8a77980: Add RPC clocks")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+It's been almost a year later, and several Linux revisions, and this
+still seems stuck somewhere/somehow.
 
----
-This patch is against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo.
-
- drivers/clk/renesas/r8a77980-cpg-mssr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-Index: renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -171,7 +171,7 @@ static const struct mssr_mod_clk r8a7798
- 	DEF_MOD("gpio1",		 911,	R8A77980_CLK_CP),
- 	DEF_MOD("gpio0",		 912,	R8A77980_CLK_CP),
- 	DEF_MOD("can-fd",		 914,	R8A77980_CLK_S3D2),
--	DEF_MOD("rpc-if",		 917,	R8A77980_CLK_RPC),
-+	DEF_MOD("rpc-if",		 917,	R8A77980_CLK_RPCD2),
- 	DEF_MOD("i2c4",			 927,	R8A77980_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A77980_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A77980_CLK_S3D2),
+adam
+>
+> Thierry
