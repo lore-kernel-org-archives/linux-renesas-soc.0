@@ -2,160 +2,96 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA94C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9442CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E7820851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551991817;
-	bh=1hi/Vwp2apJ/sVLtqASMN8pGP0T0d+D9yegIbgG9W1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HyztnyrcQwsj7lPSfYqWjNlfmHwVFGN34R1kF2KTS4JT0CbUMkXp9BSm2TNIeaBg3
-	 X38ZLNv91UULLF0K6Uzkth7fBoNnRXRp/fFGe7dSxxC/pud2p1glNF3pbfCi4OCMRh
-	 hxMAV7P7PTfvLntnoQs2wJ9uFgHSsHfzmLWzvMJM=
+	by mail.kernel.org (Postfix) with ESMTP id 6965820684
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfCGUuQ (ORCPT
+        id S1726305AbfCGUyN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 15:50:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57512 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbfCGUuQ (ORCPT
+        Thu, 7 Mar 2019 15:54:13 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:57377 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfCGUyN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 15:50:16 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90B5020684;
-        Thu,  7 Mar 2019 20:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1551991814;
-        bh=1hi/Vwp2apJ/sVLtqASMN8pGP0T0d+D9yegIbgG9W1I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rAUfvBH2tnWtnqDf258Ygs/ejbmYA1OCX04UADWu63j7PLGF0DcPALnmzc7/Karjs
-         cGKaS6SUOx0kvdXvwoCHqn5lt+csTTUStn1z9YLnEV2m+UbsJ8PgcoCph3d7dLOXNk
-         //2k/WutmlWMpxJpPhpaEuJFSyiycc5aZv7yiP6k=
-Date:   Thu, 7 Mar 2019 14:50:13 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     marek.vasut@gmail.com
-Cc:     linux-pci@vger.kernel.org,
-        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in
- resume_noirq
-Message-ID: <20190307205013.GA208051@google.com>
-References: <20190217132441.15139-1-marek.vasut@gmail.com>
+        Thu, 7 Mar 2019 15:54:13 -0500
+Received: from [192.168.1.110] ([77.9.35.131]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MHG0U-1hFFZX3Vuy-00DF2D; Thu, 07 Mar 2019 21:53:51 +0100
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+To:     Wolfram Sang <wsa@the-dreams.de>, Adam Ford <aford173@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
+ <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+ <20180430092947.GC2270@ulmo>
+ <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
+ <20190307201807.GA950@kunai>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
+Date:   Thu, 7 Mar 2019 21:53:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190217132441.15139-1-marek.vasut@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190307201807.GA950@kunai>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:rORioEcuNxOqGCtA4G9wBudOePC2xQIAML2vCX12uhhkMNxeZXx
+ PWRWsAJhVUkfETngiMgVOka0hTcicwQ9iRcfA7C2oS+6shsOYMzWgAUyWuQ9VqcCSry1mOW
+ GZ6NbvEMysLyFB8qIMRNRT+zuxUNFm20YqXMybV6z6DuZni97dGUNyiScBkI+FR/yySEf6I
+ Jczk+XbB9x56utZMtpt5w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xqCPBT68NxI=:wJlFcWLuvkhSk2nfUtPLVV
+ oKK7J79sI3w/KgGQ4g0pI5+etezgW19kRjEmuKvAdNYsLD5DefmNIBKzBWbM4igmW0xbdEvOk
+ 9ZRTr+OLM2M61dxkpADmGDvV14BJt/XkIf18TgOZIBXC3Jb7MSi0Sd4Qs0D+bdu0853CzzVGi
+ IX/K2DtNkuJSMfLrJTAyWu2mY5HY+6Eed+T/mhjjZYFtANg8/VE/L0Xpx8DRZ5uEpPVMCKRAQ
+ WC5mQzPhfE0ygXvfqvzMcORTdNGqUz+eIU/FG/7GP2Npe0rT8c00jYKI+Z1LMpwrBd2g/3i3L
+ a4Htj8XaN5LmPJAYl7lGj2XLI4lLcHyy+IhdfWrT4ulEr8+5AgjhcbhAmtcSUB6Ri/brxAt3B
+ bMtkV1i/K6uebSlSFqeeaMfKn0EAlISNTU4qI0vxPLW0oubfpgQ2M+bCFGFJPelSKu9hugAbu
+ dYIGG7M07pkkjeUsxECfbehpj4Hp9c2gp3ktjIg5OsiW35XsI4hxWAuIvVJMewdtoeXTj7Twn
+ H/cjveMq+Ba4ghBC5WnUOo9rKARRIQwq19mtVSoYJKSOIEGYxtyJ+ZymwkqAHTq7tapuUa7/u
+ ZwAxQqEno2Ans3mcQEEfCT7tTm57SROn59B86q2zD77dA9/4IwUUVf3x7zbOauYYkUBdsPtit
+ I2rbvmp+txAmlcK/yhvsBg9M4BznmPY+LCTboPPkYQ0G/eZaHg+JDN7ayLM3SaDAybK698a7b
+ G7yZ23Yz/FNA4K6LRWw5xnYPPGSE4I7NSAxS5RRvLO1eOkB4A38PXlq3RN8=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
-> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+On 07.03.19 21:18, Wolfram Sang wrote:
 > 
-> Reestablish the PCIe link very early in the resume process in case it
-> went down to prevent PCI accesses from hanging the bus. Such accesses
-> can happen early in the PCI resume process, in the resume_noirq, thus
-> the link must be reestablished in the resume_noirq callback of the
-> driver.
+>> It's been almost a year later, and several Linux revisions, and this
+>> still seems stuck somewhere/somehow.
 > 
-> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Use BIT() macro for (1 << n)
->     - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
->       add extra changes to this function anymore
->     - Make resume_noirq return early and clean up parenthesis therein
-> ---
->  drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+> I wanted to respin this series once rc1 is released.
 > 
-> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> index c8febb009454..b8f8fb3bc640 100644
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -46,6 +46,7 @@
->  
->  /* Transfer control */
->  #define PCIETCTLR		0x02000
-> +#define  DL_DOWN		BIT(3)
->  #define  CFINIT			1
+Maybe just rebase and repost ?
 
-I saw discussion after the V1 patch about using BIT() and making
-similar constants also use BIT() for consistency.  That makes sense to
-me, and I think the best way would be:
 
-  1) in *this* patch, use "#define DL_DOWN 8"
-  2) in a followup patch, convert them all to BIT()
+--mtx
 
-That way each revision of pcie-rcar.c is self-consistent.
-
->  #define PCIETSTR		0x02004
->  #define  DATA_LINK_ACTIVE	1
-> @@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	pcie = pci_host_bridge_priv(bridge);
->  
->  	pcie->dev = dev;
-> +	platform_set_drvdata(pdev, pcie);
->  
->  	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
->  	if (err)
-> @@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	return err;
->  }
->  
-> +static int rcar_pcie_resume_noirq(struct device *dev)
-> +{
-> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-> +
-> +	if (rcar_pci_read_reg(pcie, PMSR) &&
-> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
-> +		return 0;
-> +
-> +	/* Re-establish the PCIe link */
-> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
-> +	return rcar_pcie_wait_for_dl(pcie);
-> +}
-> +
-> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
-> +	.resume_noirq = rcar_pcie_resume_noirq,
-> +};
-
-I think there's the beginning of a convention to use #ifdef
-CONFIG_PM_SLEEP around the ops themselves [1].  Otherwise I think
-we'll get a warning about unused code when CONFIG_PM_SLEEP is unset.
-
->  static struct platform_driver rcar_pcie_driver = {
->  	.driver = {
->  		.name = "rcar-pcie",
->  		.of_match_table = rcar_pcie_of_match,
-> +		.pm = &rcar_pcie_pm_ops,
->  		.suppress_bind_attrs = true,
->  	},
->  	.probe = rcar_pcie_probe,
-> -- 
-> 2.19.2
-> 
-
-[1] https://lore.kernel.org/linux-pci/20180531042020.GQ39853@bhelgaas-glaptop.roam.corp.google.com
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
