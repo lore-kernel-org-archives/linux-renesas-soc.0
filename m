@@ -4,74 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B939C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 17:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DECC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 17:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD83120675
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 17:39:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB72620661
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 17:50:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="v4er+g9G"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="dsEIyU5H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbfCGRj2 (ORCPT
+        id S1726352AbfCGRut (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 12:39:28 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38954 "EHLO
+        Thu, 7 Mar 2019 12:50:49 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37007 "EHLO
         mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfCGRj2 (ORCPT
+        with ESMTP id S1727129AbfCGRum (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 12:39:28 -0500
-Received: by mail-lf1-f65.google.com with SMTP id r123so12311850lff.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2019 09:39:26 -0800 (PST)
+        Thu, 7 Mar 2019 12:50:42 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u2so5388466lfd.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 07 Mar 2019 09:50:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:organization:message-id:date
+        h=subject:to:cc:references:from:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=h21K5iWUtQFNTja8S3/XcFxPmCuv2pYHU5T8pw5EpLQ=;
-        b=v4er+g9G6iyQvZplofzQafYb0ldxcWcsYSEd4kpWLTWtMUuhwa5tLAcvqCpZkzPmNo
-         tnoY89OWZs8LanLqvyzgp2lhJ+FOpBRt8b4v/HKWeM9TNu3HmKNcG2VIDPz7G2YJNKj6
-         o8iF1+JtoXfkQ11NeoX0wo0zvcTaIsRa/Qk/yz5iBwIddBIVKHEHaOepjKeWGc5PW1UQ
-         1O221YS9QhQoUwgXls8yjBGWJwfHDd15M6NNDEVEMGyAWPITTjzJz4IiclsguBMNeKR2
-         tx76GFhvAOQyVKHaHmd7wqLWlxp7DyaqYQ2/PF5Z/y6XN70I32fep44yf5wxAQdBFeRZ
-         tBnA==
+        bh=nZoviCFVsTrCX9IAb32HfyhhfC36KNP7zZS1oreaM4w=;
+        b=dsEIyU5HeO9ZMz1GCrF7yggqbQtLDND6+HjB3ncGRNtiHMUWJZwmGnKgbZ8sIutHcR
+         dskHBpHMPXa2sSYmZEnkX0gS96MiVZJiRTIdPlyWMMQU37mfsWhpqPqWcZhcLWE1PMLZ
+         s1zprCq/IXOTT3hyPthhx1cUgeSpE4Qp4aiqemSZVn7Cg8L2RNM2pxx9HtP77T+C5EBC
+         Q9nO9hSyonc4uEdkiEY7d5CKbhC+OCGAFmC5EgI29oh+Vg2jT4A/6Z5nzXq/XpBwXIvV
+         IEKs6gz35mlMXED+kdBcuv6DXarPEhdZqdxWhIaPHTlItk1pYrQGxqbwcLpmSI8ZHAhp
+         p9AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:organization
+        h=x-gm-message-state:subject:to:cc:references:from:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=h21K5iWUtQFNTja8S3/XcFxPmCuv2pYHU5T8pw5EpLQ=;
-        b=ncEdodPp7tZJcViHdk6nVLT+EE7cxZgnITOUFrT3Ug7842MB7bwg092zF6mreaZtmu
-         LgAyuHIdcMEK2AAEBdeGCAoR3lSyEQe0HPzHuEQ+Z7gPXjnR/sG22WIdPgAPH+9rEgSH
-         kXzxch/C4/SFzqz7otVO3yh00LCc62Z0QHRvbXMrWo7s6eRr0746w3VWDiq+X0pmLKu8
-         Yzl7ZEW5u/n7nm3hi37a+2omTy2J8RObd0c8bLiXkCdz0oUqzj3nN7wXm/MdFjR6hCwu
-         pcTX91G9lmtgM9lFOJqwKofiFkSYnrljY0GVlOGBWqIXcDGd7DzY2CYRhqCDCYCt7FAI
-         IH+g==
-X-Gm-Message-State: APjAAAWr8Xn902WoatRwrpmUtWKKhV8xk2cKRQDsE4LKyzsRMMKzItkT
-        dyoAV2aqo/r3D2qLCSPQMTGv5A==
-X-Google-Smtp-Source: APXvYqzjJtWDOUnS4fT0hkiwRAZlBPjYToZeM3mq6fn7eyI7zRopm/kdcIkgTdS9ZZ0e+pQo+jsJZQ==
-X-Received: by 2002:a19:7614:: with SMTP id c20mr7825494lff.61.1551980365981;
-        Thu, 07 Mar 2019 09:39:25 -0800 (PST)
+        bh=nZoviCFVsTrCX9IAb32HfyhhfC36KNP7zZS1oreaM4w=;
+        b=Ka6Z712Nr738hZjJuf7GgRQHIqMaAgcsOnypKIzubJosYDPK9iY+8OWvuXAp3pnKr/
+         h+RILmvtdMST78aTFHuRW8wECszCjSEKMJuY4erYqwY8GyMl5UV3sMzs/F15ybbvsvoQ
+         SF2ZvTtXOvXhtnKqeA8ErYScYXSfBa6BrulC3fM9nLq/7JLOa/j3t2cEYZ7B8h7jSYgk
+         Q+CvABgvto+moxV7sRQYjlMCEValNZYpOLCurOJwleOxHojVp9eovrrJ9OoOHagZRQjV
+         tMkIHmWEptwPvDA9kAJxloB2Hu73VJQcQmjtvR+Y04ayHz2wCNYoF8n82l0yiFI1Y7VC
+         +k5A==
+X-Gm-Message-State: APjAAAU5aUX4UFCybPypbfvuWoVy+TSc/9LE+kH611zVfQDetXTQHsNK
+        bw6vd9axCuSo5FJ+QZ+3bOdeXg==
+X-Google-Smtp-Source: APXvYqwUfdL2B64HMbbv5KUItpYvJNq/QxaitnDeZpbDUyRlf6uJr2ZbbBn53anXL8Fkun1YIUI7qQ==
+X-Received: by 2002:a19:4d08:: with SMTP id a8mr7725404lfb.14.1551981039808;
+        Thu, 07 Mar 2019 09:50:39 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.80.179])
-        by smtp.gmail.com with ESMTPSA id l10sm950698lfk.26.2019.03.07.09.39.24
+        by smtp.gmail.com with ESMTPSA id z22sm958466lfb.66.2019.03.07.09.50.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 07 Mar 2019 09:39:25 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH net] ravb: Decrease TxFIFO depth of Q3 and Q2 to one
-To:     Simon Horman <horms+renesas@verge.net.au>,
-        David Miller <davem@davemloft.net>
-Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        Thu, 07 Mar 2019 09:50:39 -0800 (PST)
+Subject: Re: [PATCH v8 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20190307102447.1205-1-horms+renesas@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1548658158-5460-1-git-send-email-masonccyang@mxic.com.tw>
+ <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <da3811c8-4614-6e0e-43f3-bb2e36b88a43@cogentembedded.com>
-Date:   Thu, 7 Mar 2019 20:39:24 +0300
+Message-ID: <0c54ee2c-016a-bc8e-33ae-fbd04191cc49@cogentembedded.com>
+Date:   Thu, 7 Mar 2019 20:50:37 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190307102447.1205-1-horms+renesas@verge.net.au>
+In-Reply-To: <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
@@ -82,48 +86,53 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hello!
 
-On 03/07/2019 01:24 PM, Simon Horman wrote:
+On 01/28/2019 09:49 AM, Mason Yang wrote:
 
-> From: Masaru Nagai <masaru.nagai.vx@renesas.com>
+> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
 > 
-> Hardware has the CBS (Credit Based Shaper) which affects only Q3
-> and Q2. When updating the CBS settings,
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..ea12017
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,804 @@
+[...]
+> +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+> +{
+> +	//
+> +	// NOTE: The 0x260 are undocumented bits, but they must be set.
+> +	//	RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+> +	//	0x0 : the delay is biggest,
+> +	//	0x1 : the delay is 2nd biggest,
+> +	//	On H3 ES1.x, the value should be 0, while on others,
+> +	//	the value should be 6.
+> +	//
+> +	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+> +				  RPC_PHYCNT_STRTIM(6) | 0x260);
+> +
+> +	//
+> +	// NOTE: The 0x1511144 are undocumented bits, but they must be set
+> +	//       for RPC_PHYOFFSET1.
+> +	//	 The 0x31 are undocumented bits, but they must be set
+> +	//	 for RPC_PHYOFFSET2.
+> +	//
+> +	regmap_write(rpc->regmap, RPC_PHYOFFSET1, RPC_PHYOFFSET1_DDRTMG(3) |
+> +		     0x1511144);
+> +	regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
+> +		     RPC_PHYOFFSET2_OCTTMG(4));
+> +	regmap_write(rpc->regmap, RPC_SSLDR, RPC_SSLDR_SPNDL(7) |
+> +		     RPC_SSLDR_SLNDL(7) | RPC_SSLDR_SCKDL(7));
+> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+> +		     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> +		     RPC_CMNCR_BSZ(0));
+> +}
 
-   We seem to only write the defaults into TCG, not update them below...
-Do we really use TX queues 2/3? I though the driver only uses TX queues
-0/1...
+   We clearly need runtime PM get/put() calls around this code. Otherwise,
+we're dependant on U-Boot leaving the clocks enabled...
 
-> even if the driver does so
-> after waiting for Tx DMA finished, there is a possibility that frame
-> data still remains in TxFIFO.
-> 
-> To avoid this, decrease TxFIFO depth of Q3 and Q2 to one.
-> 
-> This patch has been exercised this using netperf TCP_MAERTS, TCP_STREAM
-> and UDP_STREAM tests run on an Ebisu board. No performance change was
-> detected, outside of noise in the tests, both in terms of throughput and
-> CPU utilisation.
-
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> Signed-off-by: Masaru Nagai <masaru.nagai.vx@renesas.com>
-> Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> [simon: updated changelog]
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index d28c8f9ca55b..8154b38c08f7 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -458,7 +458,7 @@ static int ravb_dmac_init(struct net_device *ndev)
->  		   RCR_EFFS | RCR_ENCF | RCR_ETS0 | RCR_ESF | 0x18000000, RCR);
->  
->  	/* Set FIFO size */
-> -	ravb_write(ndev, TGC_TQP_AVBMODE1 | 0x00222200, TGC);
-> +	ravb_write(ndev, TGC_TQP_AVBMODE1 | 0x00112200, TGC);
-
-   Looks harmless... and DaveM has already merged it anyway. :-)
+[...]
 
 MBR, Sergei
