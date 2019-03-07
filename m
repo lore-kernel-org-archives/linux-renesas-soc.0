@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DF9C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E51FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C78620663
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB2D20663
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:05:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfV1/MoD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RtoqJlg2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbfCGAEs (ORCPT
+        id S1726121AbfCGAE7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:04:48 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54150 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfCGAEs (ORCPT
+        Wed, 6 Mar 2019 19:04:59 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36668 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfCGAE7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:04:48 -0500
-Received: by mail-wm1-f67.google.com with SMTP id e74so7578744wmg.3;
-        Wed, 06 Mar 2019 16:04:46 -0800 (PST)
+        Wed, 6 Mar 2019 19:04:59 -0500
+Received: by mail-wr1-f66.google.com with SMTP id o17so15402700wrw.3;
+        Wed, 06 Mar 2019 16:04:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RsyiXtrERdpKhf948BNoHs6KFXRsfkG+m5eMNygOTsY=;
-        b=lfV1/MoDOOOHq6MN2NpUiOVb3tS9Qs7ndM8f2zX2zp+ZshSMY4dErTE4V/5crMXpTr
-         c1vIL1Gh4Y88jHAIg0d5qN0uM3oYcV6fxjIsXxtYgjgBkGRnmQrzn7V2G6lBzEHBhTOH
-         ycNkt7izypZL2fq2irKlTLh9AKkbtsqpvZGEHRBUSG3ayzda/LlOTFujADTQMlIh3Ocu
-         DsMfxKm/zin6TwXcStwV/j0iNJn8DlZAqOoZyj6N0ZSkRoleu8pQilp8H94Ntjm0g2Mb
-         0Nhqtvrv4QfRHiMA7WkIcnpLQibwx64KTV9q+1uAxa87iwzx1LRf84ptDPh4py0S6iK6
-         n+0A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JOq4o/gGBKYosn1k7l7U3C9cWiFchEJt6ahMuB7Tvbg=;
+        b=RtoqJlg22b0Q4xrOjXexLh1hsP8j74VkgY5OWB/UHls24EsvGuKAgOCQBlTmgWACIV
+         1vUaTxjfZEmkjxANiaJgts/7HRd4B4mFISMGD9y56CDQ2q8hWXRO8PiT6uZPzLSCMaX1
+         UhjXyRCiDfqunXnC0JCcN/xQIGIiASNsZbUAJrBi0CzD7KCO1/TEtkGS/x5DdSKKcoTY
+         XKq7gCAL1AlRngIBj01HsbmOMxlv8+ZbRE57GtKx8hWuPdPa0M2bKcZRyfMP2HIpdxoR
+         h6vXk366gQVrb3wAishuy3EUXHJHWQnSu91m4YGDhCoho6/8Pp6b2RxZaVkU+h1Hhilu
+         s6cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RsyiXtrERdpKhf948BNoHs6KFXRsfkG+m5eMNygOTsY=;
-        b=PqHcWpVhBkBXMu3dQ5m0ntV6YHKwOKMk7SLRpz8jRa8aijiTmnEyl527Phs/5Ikadn
-         9KaXN5grTwlB11eaBXhvV1oO9kSuNNkBCD2zAJIMPyhuHz7LlJ0hTVwpr2hglUHcGjtD
-         koECylPaNM8vSd+gsZL3Klz9rwLGLfkv/2EPHt/3bdOGBRi/WUxBc17m4L97WEGd9Ffj
-         sxXb/ouwzmVl4aGSpePZ0h/IIIXQucQejw0ULhNgjPyztIo+5T+Tm+LknOto4nOHdZ2p
-         tfqjj2nsDQNSNBeJErdrXavKio5EO732CPQNyKJAlHoSudIbaxepmY5SdQX1Gwv37zj3
-         pEaA==
-X-Gm-Message-State: APjAAAVWuUQRvU+oZccUHU7FYaaeX3ElY0BxDuk46hM2RBTatjYqftai
-        fP7noI2N06qg4xQeSj6BZ+f/h1OQ
-X-Google-Smtp-Source: APXvYqxQquUdrWyJ/WAJKha1c17+MslNr4y/yfpEN44Oe5nis6OqczmBYSegEnQ54cTT3x035erAYA==
-X-Received: by 2002:a1c:63d4:: with SMTP id x203mr3992117wmb.128.1551917085535;
-        Wed, 06 Mar 2019 16:04:45 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JOq4o/gGBKYosn1k7l7U3C9cWiFchEJt6ahMuB7Tvbg=;
+        b=Mk2xMkbtfAUHuCw6KRqGseAi9pMwwVUAM/tV3kIWykwG2OTruOURRZebhMr8Np6KiC
+         lpxqVCKFdskwdT362WwPZ4OdUS/8McDUQG73WIZfK9TQP//Go5Ae+VU03DRN2cdfCxKw
+         xA4S0DwrrWa2KTKQaU2aXlX1tVLksck3mHhtEH0DfMsMYU1QgnMg/lAocsi8YTrxtR4l
+         MtYJfTEaLJT9T0q7xwZ3Tlk2sEiwVe+FBTjRdmxIn0dJsBP9fEEdXtQULxdKDflgfHY2
+         0CtYZvLdM6yg1vkk8n5VjvBkABwypU2p0NvL9CZNhNwpSC7r7ZAW/+l+2ZFGHNvkWQir
+         U7/A==
+X-Gm-Message-State: APjAAAXeSnSwWgPBxVeLvZCvSsKYmbItCO94uPDnGkBVtPmB7ZTA14Mg
+        9XeiEAFM419ZX0bsVtLp0N+JLFmW
+X-Google-Smtp-Source: APXvYqwMIDUADyD/Qipl8keh4e4um+QfcZHkiUJF2DoDBzXybUfaPKq/R8LrXOuLrB5QgZ3APWNXOA==
+X-Received: by 2002:a05:6000:1c2:: with SMTP id t2mr4993658wrx.109.1551917097157;
+        Wed, 06 Mar 2019 16:04:57 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id a22sm3381642wmj.35.2019.03.06.16.04.44
+        by smtp.gmail.com with ESMTPSA id a22sm3381642wmj.35.2019.03.06.16.04.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Mar 2019 16:04:44 -0800 (PST)
+        Wed, 06 Mar 2019 16:04:56 -0800 (PST)
 From:   marek.vasut@gmail.com
 To:     linux-ide@vger.kernel.org, linux-nvme@lists.infradead.org
 Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -67,10 +67,12 @@ Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
         Sagi Grimberg <sagi@grimberg.me>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] [RFC] ata: ahci: Respect bus DMA constraints
-Date:   Thu,  7 Mar 2019 01:04:39 +0100
-Message-Id: <20190307000440.8708-1-marek.vasut@gmail.com>
+Subject: [PATCH 2/2] [RFC] nvme-pci: Respect bus DMA constraints
+Date:   Thu,  7 Mar 2019 01:04:40 +0100
+Message-Id: <20190307000440.8708-2-marek.vasut@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190307000440.8708-1-marek.vasut@gmail.com>
+References: <20190307000440.8708-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -104,27 +106,23 @@ Cc: linux-renesas-soc@vger.kernel.org
 To: linux-ide@vger.kernel.org
 To: linux-nvme@lists.infradead.org
 ---
- drivers/ata/ahci.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/nvme/host/pci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-index 021ce46e2e57..2acce056dd8c 100644
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -926,6 +926,13 @@ static int ahci_configure_dma_masks(struct pci_dev *pdev, int using_dac)
- 	if (pdev->dma_mask && pdev->dma_mask < DMA_BIT_MASK(32))
- 		return 0;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 92bad1c810ac..8ec873fb86b1 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2323,7 +2323,8 @@ static int nvme_pci_enable(struct nvme_dev *dev)
  
-+	/*
-+	 * The upstream device could have applied DMA constraints already,
-+	 * respect those and do not change the DMA masks.
-+	 */
-+	if (pdev->dev.dma_mask && pdev->dev.coherent_dma_mask)
-+		return 0;
-+
- 	if (using_dac &&
- 	    !dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
- 		rc = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
+ 	pci_set_master(pdev);
+ 
+-	if (dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(64)) &&
++	if (!dev->dev->coherent_dma_mask &&
++	    dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(64)) &&
+ 	    dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(32)))
+ 		goto disable;
+ 
 -- 
 2.20.1
 
