@@ -2,170 +2,94 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A4EC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36B2CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9BE20840
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 060CB20840
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbfCGUSC (ORCPT
+        id S1726332AbfCGUSK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 15:18:02 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41357 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfCGUSB (ORCPT
+        Thu, 7 Mar 2019 15:18:10 -0500
+Received: from sauhun.de ([88.99.104.3]:54966 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726323AbfCGUSK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 15:18:01 -0500
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 4E3FEE0009;
-        Thu,  7 Mar 2019 20:17:58 +0000 (UTC)
-Date:   Thu, 7 Mar 2019 21:18:31 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ian Arkver <ian.arkver.dev@gmail.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 12/31] media: entity: Add an iterator helper for
- connected pads
-Message-ID: <20190307201831.wpzeir5gomnpw45c@uno.localdomain>
-References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
- <20190305185150.20776-13-jacopo+renesas@jmondi.org>
- <20190307100924.4iuabzet67ttgk2p@paasikivi.fi.intel.com>
- <9f07ed66-b67b-500e-1faf-7e9c31447fd1@gmail.com>
+        Thu, 7 Mar 2019 15:18:10 -0500
+Received: from localhost (p54B334C5.dip0.t-ipconnect.de [84.179.52.197])
+        by pokefinder.org (Postfix) with ESMTPSA id 2BCD82E3551;
+        Thu,  7 Mar 2019 21:18:08 +0100 (CET)
+Date:   Thu, 7 Mar 2019 21:18:07 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
+Message-ID: <20190307201807.GA950@kunai>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
+ <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
+ <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
+ <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
+ <20180430092947.GC2270@ulmo>
+ <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4sfti44m4iv2r452"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
 Content-Disposition: inline
-In-Reply-To: <9f07ed66-b67b-500e-1faf-7e9c31447fd1@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---4sfti44m4iv2r452
-Content-Type: text/plain; charset=utf-8
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Ian, Sakari,
-
-On Thu, Mar 07, 2019 at 10:27:36AM +0000, Ian Arkver wrote:
-> On 07/03/2019 10:09, Sakari Ailus wrote:
-> > Hi Jacopo,
-> >
-> > On Tue, Mar 05, 2019 at 07:51:31PM +0100, Jacopo Mondi wrote:
-> > > From: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > >
-> > > Add a helper macro for iterating over pads that are connected through
-> > > enabled routes. This can be used to find all the connected pads withi=
-n an
-> > > entity, for instance starting from the pad which has been obtained du=
-ring
-> > > the graph walk.
-> > >
-> > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > > Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
-h.se>
-> > >
-> > > - Make __media_entity_next_routed_pad() return NULL and adjust the
-> > >    iterator to handle that
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >   include/media/media-entity.h | 27 +++++++++++++++++++++++++++
-> > >   1 file changed, 27 insertions(+)
-> > >
-> > > diff --git a/include/media/media-entity.h b/include/media/media-entit=
-y.h
-> > > index 205561545d7e..82f0bdf2a6d1 100644
-> > > --- a/include/media/media-entity.h
-> > > +++ b/include/media/media-entity.h
-> > > @@ -936,6 +936,33 @@ __must_check int media_graph_walk_init(
-> > >   bool media_entity_has_route(struct media_entity *entity, unsigned i=
-nt pad0,
-> > >   			    unsigned int pad1);
-> > > +static inline struct media_pad *__media_entity_next_routed_pad(
-> > > +	struct media_pad *start, struct media_pad *iter)
-> > > +{
-> > > +	struct media_entity *entity =3D start->entity;
-> > > +
-> > > +	while (iter < &entity->pads[entity->num_pads] &&
-> > > +	       !media_entity_has_route(entity, start->index, iter->index))
-> > > +		iter++;
-> > > +
-> > > +	return iter =3D=3D &entity->pads[entity->num_pads] ? NULL : iter;
-> >
-> > Could you use iter <=3D ...?
-> >
-> > It doesn't seem to matter here, but it'd seem safer to change the check.
-> >
->
-> How about something like...
->
-> for (; iter < &entity->pads[entity->num_pads]; iter++)
->     if (media_entity_has_route(entity, start->index, iter->index))
->         return iter;
->
-> return NULL;
->
-
-Great, thank you both, I'll take this in!
 
 
-> Regards,
-> Ian
->
-> > > +}
-> > > +
-> > > +/**
-> > > + * media_entity_for_each_routed_pad - Iterate over entity pads conne=
-cted by routes
-> > > + *
-> > > + * @start: The stating pad
-> > > + * @iter: The iterator pad
-> > > + *
-> > > + * Iterate over all pads connected through routes from a given pad
-> > > + * within an entity. The iteration will include the starting pad its=
-elf.
-> > > + */
-> > > +#define media_entity_for_each_routed_pad(start, iter)			\
-> > > +	for (iter =3D __media_entity_next_routed_pad(			\
-> > > +		     start, (start)->entity->pads);			\
-> > > +	     iter !=3D NULL;						\
-> > > +	     iter =3D __media_entity_next_routed_pad(start, iter + 1))
-> > > +
-> > >   /**
-> > >    * media_graph_walk_cleanup - Release resources used by graph walk.
-> > >    *
-> >
+> It's been almost a year later, and several Linux revisions, and this
+> still seems stuck somewhere/somehow.
 
---4sfti44m4iv2r452
+I wanted to respin this series once rc1 is released.
+
+
+--J/dobhs11T7y2rNN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyBfJcACgkQcjQGjxah
-Vjz5BBAAt99XK0+LGiwoMkglDAHUy/wpHS5KGktQHgDGVpFZULvTRZdKLxXDjJZB
-ZjRFkYqHeNYT74T1x4gdu3DBsh9ULMaWi1WiQx22GdtFjDctHijnT+imHffEnZ3A
-cMukDjJDqQ4kkUnp9W6eKeYi+YQjR1txalAW6YDSYGX5idEyUDrCWOBE7+x8Wqti
-cNEfPlj8M8lZafUATsp+FlYtcWtDdNr4taDOK6qOW+41dV/BlJD4s1en6kNoUpAJ
-xxI0XVQ1cnMAU7faj3jseAXfZh/xV2Dx0kVIqVOkueB6KmJzsXUysItkLinQT0TN
-1GQRcPV8lVq5ooGdMCx7pW4LxvC0mOMCi8PGE3LGxV1l7JMdA/jMsuykl/YseMnJ
-qjCZvdTHKB15WQ5fYumKzIY0AaqwRqXynsM4Fjww67DcMZgvS4ll+zWE7buQQWWx
-4FAXCbga18bHWSy7eWCXL5aYJ04a4jXvVALstoMXrvzRDvnZN4hPFTIm4bFEMxnE
-yceerXqpdRsTAhLZ7dnCOwmefWF3UioQm8v8ujUTFqYKvVhLdwi2GUGk4ChZSCB5
-N1FuEFtgv0B1ghulbBTQIEyEBEVXG0NaPbXgb+CjX9/Y/MU/Otz6BwbaK/QWW8ym
-GOOkB7hXpgFfheeH2wfvWsNbRMOL+9wINNR6UIuLjkEjGoiaVl0=
-=9iin
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyBfHsACgkQFA3kzBSg
+Kbb87BAAgY8Zdjph2MvnTtWsLVlR20N3tzC48BqMW6+mCkS/GBg4G+shi+L5bN9r
+eKruZXQ505sEuRpB/v1PC7QlGJ0Bp5Dk7VVaQolgC7Jx2ubqRYhaW2UWkz3Mr5RO
+3yfmDc1jo4B3z7d4Cqyi7qWcFSB2i4hjR/CA6kz0EXC5LcAPTACDSmliFtoZPvQ/
+wWbpWQN6kO8JYAluEjxOI+EtQL22fha/FrRKEY91X3yPtIzZYA89ZacOsBlKFBKU
+SouRZmq7htq6eatqg7XV4y3X4ZxsOkL0gxWCZiGX4iE9yamM/eF0+6WD6zaVHoKa
+W24fFnqyi+yg7sYZ1iNdokb0JHR/sCZJffPjKKD1OnJFjUedXFA1JazIEDfNARyM
+/Sh/hrcIb4n6CXe1sQ3YHEZkaLffqICJW+OIEWkUI0kSAbSFnKCVxHVb6F0r/I+Q
+PZ3SnruxYHrDWgegpZQkjE9rsZRCkG5KDNZ2fahXW9BUaIXfuWRyzoXaiVW8Matb
+vbyKCym1vwq0SxHIGyCqEYK0GBt6Yx9y/JelHChYWyyiKe+g6SLgctFycF8Fn/Fh
+sbdGgmrtsg+eIepcAvkw/+fvA3ITCCN0QX9WRzrUjftrG6MRoFni1+ec4nXJkwgI
+p+565C1niZxFqf1wRcZT86WxiYI01T0pLi1bKOwunvZ8Riym9b4=
+=vuew
 -----END PGP SIGNATURE-----
 
---4sfti44m4iv2r452--
+--J/dobhs11T7y2rNN--
