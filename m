@@ -2,106 +2,209 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBABC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76069C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 22:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D64E320840
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D3152081B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 22:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbfCGU6S (ORCPT
+        id S1726241AbfCGW1u (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 15:58:18 -0500
-Received: from sauhun.de ([88.99.104.3]:55344 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfCGU6R (ORCPT
+        Thu, 7 Mar 2019 17:27:50 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:49207 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfCGW1u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 15:58:17 -0500
-Received: from localhost (p54B334C5.dip0.t-ipconnect.de [84.179.52.197])
-        by pokefinder.org (Postfix) with ESMTPSA id 03C7C2E3551;
-        Thu,  7 Mar 2019 21:58:14 +0100 (CET)
-Date:   Thu, 7 Mar 2019 21:58:14 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     Adam Ford <aford173@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-ID: <20190307205814.GB950@kunai>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
- <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
- <20190307201807.GA950@kunai>
- <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
+        Thu, 7 Mar 2019 17:27:50 -0500
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id DD1C9FF803;
+        Thu,  7 Mar 2019 22:27:46 +0000 (UTC)
+Date:   Thu, 7 Mar 2019 23:28:18 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 31/31] media: rcar-csi2: Implement has_route()
+Message-ID: <20190307222818.3tjy77cve7hacfsv@uno.localdomain>
+References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
+ <20190305185150.20776-32-jacopo+renesas@jmondi.org>
+ <20190307125610.xtsobfteeu7ju45e@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r24mbb5u32pp2uat"
 Content-Disposition: inline
-In-Reply-To: <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190307125610.xtsobfteeu7ju45e@paasikivi.fi.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
+--r24mbb5u32pp2uat
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 07, 2019 at 09:53:50PM +0100, Enrico Weigelt, metux IT consult =
-wrote:
-> On 07.03.19 21:18, Wolfram Sang wrote:
-> >=20
-> >> It's been almost a year later, and several Linux revisions, and this
-> >> still seems stuck somewhere/somehow.
-> >=20
-> > I wanted to respin this series once rc1 is released.
-> >=20
-> Maybe just rebase and repost ?
+Hi Sakari,
 
-Then I'd miss all the new drivers which may need this fixed. Coccinelle
-makes respinning a breeze, so no problem with that.
+On Thu, Mar 07, 2019 at 02:56:10PM +0200, Sakari Ailus wrote:
+> Hi Jacopo,
+>
+> On Tue, Mar 05, 2019 at 07:51:50PM +0100, Jacopo Mondi wrote:
+> > Now that the rcar-csi2 subdevice supports internal routing, add an
+> > has_route() operation used during graph traversal.
+> >
+> > The internal routing between the sink and the source pads depends on the
+> > virtual channel used to transmit the video stream from the remote
+> > subdevice to the R-Car CSI-2 receiver.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 35 +++++++++++++++++++++
+> >  1 file changed, 35 insertions(+)
+> >
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > index cc7077b40f18..6c46bcc0ee83 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > @@ -1028,7 +1028,42 @@ static int rcsi2_confirm_start_v3m_e3(struct rcar_csi2 *priv)
+> >   * Platform Device Driver.
+> >   */
+> >
+> > +static bool rcar_csi2_has_route(struct media_entity *entity,
+> > +				unsigned int pad0, unsigned int pad1)
+> > +{
+> > +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+> > +	struct rcar_csi2 *priv = sd_to_csi2(sd);
+> > +	struct v4l2_mbus_frame_desc fd;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	/* Support only direct sink->source routes. */
+> > +	if (pad0 != RCAR_CSI2_SINK)
+> > +		return false;
+> > +
+> > +	/* Get the frame description: from CSI-2 VC to source pad number. */
+> > +	ret = rcsi2_get_remote_frame_desc(priv, &fd);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	for (i = 0; i < fd.num_entries; i++) {
+> > +		struct v4l2_mbus_frame_desc_entry *entry = &fd.entry[i];
+> > +		int source_pad = rcsi2_vc_to_pad(entry->bus.csi2.channel);
+>
+> A newline here would make this prettier IMO.
+>
 
+Yes, it's probably nicer (and actually reported by checkpatch...)
 
---eAbsdosE1cNLO4uF
+> > +		if (source_pad < 0) {
+> > +			dev_err(priv->dev, "Virtual Channel out of range: %u\n",
+> > +				entry->bus.csi2.channel);
+> > +			return -EINVAL;
+>
+> -EINVAL will be cast as true... same above.
+>
+
+Argh, dumb! Thank you
+
+> This op wasn't really intended to fail. That should instead happen in e.g.
+> link or route configuration.
+>
+> I think that if the two endpoints are in an agreement on the fundamental
+> CSI-2 bus parameters, I'd expect this just to work. Or is your CSI-2
+> receiver restricted to fewer virtual channels?
+
+Not exactly. The CSI-2 receivers are connected to the VIN instances
+through 4 data channels and there is a number of valid
+"(CSI-2/VC) -> VIN" routes which are captured in the per-SoC
+"rvin_group_route" structure.
+
+Each source pad of the CSI-2 receiver represent an output channel, and the
+media links to the VINs represent a possible valid route. So far, without
+VC support, all 4 outputs where enabled, and the data was output to
+all the connected VINs.
+
+With the introduction of virtual channels support for the R-Car CSI-2
+receiver in Niklas' [29/31], the video stream to VINs is now only output
+to the channel corresponding to the VC reported by the remote's frame
+descriptor (in this setup, the one reported on the adv748x source pad).
+This work as streaming VC(i) on Channel(i) (which corresponds to pad(i+1))
+is always a safe combination as long as one receiver is use (*) and
+this is reflected by this operation, that reports that the stream received
+on the sink pad is now internally routed only to the source pad that
+corresponds to the enabled output channel.
+
+>
+> Alternatively we could make the frame descriptors settable as well so that
+> the receiver driver could use them to configure the transmitter. That'd
+> probably not be trivial to implement though.
+>
+
+I think that might be something to be considered in future, as
+controlling the VC from the transmitter makes it very hard for VINs to
+validate combinations when multiple receivers are active at the same
+time, while setting routes on the VINs and propagating them backward
+would centralize the validation of the VIN/CSI-2/VC combinations.
+
+That's something quite far-fetched though, and I might got lost a bit,
+so I think what is here at the moment is fine :)
+
+Thanks
+  j
+
+*) Niklas: am I wrong or things might get interesting when
+more than one CSI-2 receiver is enabled simultaneously and if I got
+this right, this might lead to, ie. having both CSI40/VC0 and
+CSI20/VC0 sent to the same VIN0 only?
+
+> > +		}
+> > +
+> > +		if (source_pad == pad1)
+> > +			return true;
+> > +	}
+> > +
+> > +	return false;
+> > +}
+> > +
+> >  static const struct media_entity_operations rcar_csi2_entity_ops = {
+> > +	.has_route = rcar_csi2_has_route,
+> >  	.link_validate = v4l2_subdev_link_validate,
+> >  };
+> >
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
+--r24mbb5u32pp2uat
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyBheIACgkQFA3kzBSg
-KbZj9Q/7BfZMRib+CTRXwFZJ3DHfp+wLWcSFipubqzbJkW8tAqgjyYR4X56NSUOo
-lwaQ5ymhPZuHGYSPYWBhxLKZSVzVyR1XeTyn7+LLctnA2rtfPS5VxXkbYRdAOsdW
-gqRCUiyz5FCuskho/7JwO82N2UBPyH+aOnhkA7nD7Xk2GoFcJXzG7nA/ECqvYOrm
-s6PXZb3tYdTmeT1n5t2AA7GrD3z0U6501rulyi+fTfC5L0cE9vX/vWWZe4H1Pi6S
-rGKl555Oa4tvXGYcJ2GJQXcbk9Mc2Csgch/jWR3d9mg9L5dVmVrkh1meZA/6VEgT
-H/2qvV03XFyCpr9wCOghH/d7LE72MTjWRSlmEKHG52fgYV1+HQrMFGc3OPn+GU6Q
-NN9IYpmVGHe0joajA638iPn+EGE+twimvV8vBDvNNXKubt7nxuFxfMNhdnQ7ZmnJ
-XTeG4jMiWZx2zOnZc5J2CjKib1mPTtvViI7lLF29t3A19gTst37bsWhZJ31lyh3M
-rH6qMapWa9hbkbZikW1EmP1aFRgQAv0xbzq7FnHRppqKkFNNAvQZ+tL8Gm33nUww
-1wkTzDJjJljc4/kkkViSKTX+F8TGW6eUcI3upBktCvdI6j/A47wi5c5oZZ8x+dDs
-uEIWFWfOkZxPnUGhly24Sd1y4O1sHBnbTwkW+793MERzqD4LwYk=
-=4j4A
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyBmwIACgkQcjQGjxah
+Vjz/yBAAl9gltRhEDU9i8TmZ2CLpa75V1rYRV8tFThGnM83HoSFIgtSLjjjSavjH
+wtzghgD5gyw++yQdHO/xlWp6KDZA1V9nyHjZjg3lTt6YLbgSLhASmVDoJMaKvTPj
+JsjgFnCHIURQr06Kvdz9ykK3P0BfNGltFjD2Ta95zDOm9e4svZbLT7Z39YfFjsYI
+IY//imDuGx/WodlQf0lA3jENzrTn6iF2IG+//IbFtcHzAIYSORKGOkMzRnpP7tfY
+xuuTFb1w4+ZwZYQUzENazp8ugtUceW/W0q4adx8zEMMFaG4gQoJjdzTqwAfxFnTS
+RK3AiWcZRjA4ueN+ZwZcFM80I7oj+Fsr0WKDpbfn5LdY9kllLy57YbLUDP5+HVtv
+/rimSEhqTurGjCsCslALCQjrmR5NC9CeBYY+xI+urqB6JKl+LHqOhJe2pHp5HZ/+
+C5CrWo5mlTWa0N8k8/P/PcmfH0F6S/wzy5q7cdFNEUOMSe/NcZgC73eiC5G/BMfI
+8j1wsorxMB60fmGHZhnI4JpYJJ366l+9rWCv1oHb8vqyfco/mwsSdjroRPjkM04j
+ox80mdiHDA5VJUuTs+1PWnSSklcFxXGI0EC7cpXw+rU7FbW3mgD2a/sLMCpTiuxc
+oV7AHHu4T5fAzjRFyTX/PZEGUhE2Amr7mnQ7oRC5mKYJ/pHZRBw=
+=jKY8
 -----END PGP SIGNATURE-----
 
---eAbsdosE1cNLO4uF--
+--r24mbb5u32pp2uat--
