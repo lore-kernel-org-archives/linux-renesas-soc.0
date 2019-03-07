@@ -2,137 +2,250 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2B5C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 12:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368ADC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 14:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC42C20835
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 12:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 037032081B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 14:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726309AbfCGM4P (ORCPT
+        id S1726170AbfCGOpq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 07:56:15 -0500
-Received: from mga18.intel.com ([134.134.136.126]:42960 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbfCGM4O (ORCPT
+        Thu, 7 Mar 2019 09:45:46 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56236 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726243AbfCGOpq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 07:56:14 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Mar 2019 04:56:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,451,1544515200"; 
-   d="scan'208";a="132336267"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Mar 2019 04:56:11 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 8ED73204CC; Thu,  7 Mar 2019 14:56:10 +0200 (EET)
-Date:   Thu, 7 Mar 2019 14:56:10 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 31/31] media: rcar-csi2: Implement has_route()
-Message-ID: <20190307125610.xtsobfteeu7ju45e@paasikivi.fi.intel.com>
-References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
- <20190305185150.20776-32-jacopo+renesas@jmondi.org>
+        Thu, 7 Mar 2019 09:45:46 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E1BC5179E60A5C7C0282;
+        Thu,  7 Mar 2019 22:45:40 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 7 Mar 2019
+ 22:45:36 +0800
+Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
+ devres release
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20190207193653.18221-1-geert+renesas@glider.be>
+ <20190208164019.GY32526@8bytes.org>
+ <fa781547-7fa8-cb1a-50bd-d18351c02afd@arm.com>
+ <CAMuHMdV6T8EsLZaiM-=M=fRPuDXt05aXg6egmMBr6Sc9V39iKA@mail.gmail.com>
+ <6e64e564-aa6c-4193-1f57-ebf88d6932d5@arm.com>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Joerg Roedel" <joro@8bytes.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <1b24a2dc-e9a3-f293-8dd1-360896a554e6@huawei.com>
+Date:   Thu, 7 Mar 2019 14:45:29 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190305185150.20776-32-jacopo+renesas@jmondi.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <6e64e564-aa6c-4193-1f57-ebf88d6932d5@arm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+On 11/02/2019 10:22, Robin Murphy wrote:
+> On 08/02/2019 18:55, Geert Uytterhoeven wrote:
+>> Hi Robin,
+>>
+>> On Fri, Feb 8, 2019 at 6:55 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>>> On 08/02/2019 16:40, Joerg Roedel wrote:
+>>>> On Thu, Feb 07, 2019 at 08:36:53PM +0100, Geert Uytterhoeven wrote:
+>>>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>>>>> index 8ac10af17c0043a3..d62487d024559620 100644
+>>>>> --- a/drivers/base/dd.c
+>>>>> +++ b/drivers/base/dd.c
+>>>>> @@ -968,9 +968,9 @@ static void __device_release_driver(struct
+>>>>> device *dev, struct device *parent)
+>>>>>                       drv->remove(dev);
+>>>>>
+>>>>>               device_links_driver_cleanup(dev);
+>>>>> -            arch_teardown_dma_ops(dev);
+>>>>>
+>>>>>               devres_release_all(dev);
+>>>>> +            arch_teardown_dma_ops(dev);
+>>>>>               dev->driver = NULL;
+>>>>>               dev_set_drvdata(dev, NULL);
+>>>>>               if (dev->pm_domain && dev->pm_domain->dismiss)
+>>>>
+>>>> Thanks for the fix! Should it also be tagged for stable and get a Fixes
+>>
+>> FTR, Greg has added it to driver-core-testing, with a CC to stable.
+>
+> So I see, great!
+>
+>>>> tag? I know it only triggers with a fix in v5.0-rc, but still...
+>>>
+>>> I think so:
+>>>
+>>> Fixes: 09515ef5ddad ("of/acpi: Configure dma operations at probe time
+>>> for platform/amba/pci bus devices")
+>>
+>> Thanks! It won't backport cleanly due to commit dc3c05504d38849f
+>> ("dma-mapping: remove dma_deconfigure") in v4.20, though.
+>
+> Ah yes - backports beyond that should simply be a case of moving the
+> dma_deconfigure() wrapper in the same manner.
+>
 
-On Tue, Mar 05, 2019 at 07:51:50PM +0100, Jacopo Mondi wrote:
-> Now that the rcar-csi2 subdevice supports internal routing, add an
-> has_route() operation used during graph traversal.
-> 
-> The internal routing between the sink and the source pads depends on the
-> virtual channel used to transmit the video stream from the remote
-> subdevice to the R-Car CSI-2 receiver.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 35 +++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index cc7077b40f18..6c46bcc0ee83 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -1028,7 +1028,42 @@ static int rcsi2_confirm_start_v3m_e3(struct rcar_csi2 *priv)
->   * Platform Device Driver.
->   */
->  
-> +static bool rcar_csi2_has_route(struct media_entity *entity,
-> +				unsigned int pad0, unsigned int pad1)
-> +{
-> +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
-> +	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> +	struct v4l2_mbus_frame_desc fd;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	/* Support only direct sink->source routes. */
-> +	if (pad0 != RCAR_CSI2_SINK)
-> +		return false;
-> +
-> +	/* Get the frame description: from CSI-2 VC to source pad number. */
-> +	ret = rcsi2_get_remote_frame_desc(priv, &fd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < fd.num_entries; i++) {
-> +		struct v4l2_mbus_frame_desc_entry *entry = &fd.entry[i];
-> +		int source_pad = rcsi2_vc_to_pad(entry->bus.csi2.channel);
+Hi guys,
 
-A newline here would make this prettier IMO.
+Any idea what happened to this fix?
 
-> +		if (source_pad < 0) {
-> +			dev_err(priv->dev, "Virtual Channel out of range: %u\n",
-> +				entry->bus.csi2.channel);
-> +			return -EINVAL;
+I have this on 5.0:
 
--EINVAL will be cast as true... same above.
+[    0.000000] Linux version 5.0.0 (john@htsatcamb-server) (gcc version 
+4.8.5 (Linaro GCC 4.8-2015.06)) #121 SMP PREEMPT Thu Mar 7 14:28:39 GMT 2019
+[    0.000000] Kernel command line: BOOT_IMAGE=/john/Image rdinit=/init 
+crashkernel=256M@32M earlycon console=ttyAMA0,115200 acpi=force 
+pcie_aspm=off scsi_mod.use_blk_mq=y no_console_suspend pcie-hisi.disable=1
 
-This op wasn't really intended to fail. That should instead happen in e.g.
-link or route configuration.
+...
 
-I think that if the two endpoints are in an agreement on the fundamental
-CSI-2 bus parameters, I'd expect this just to work. Or is your CSI-2
-receiver restricted to fewer virtual channels?
+[   26.806856] pci_bus 000c:20: 2-byte config write to 000c:20:00.0 
+offset 0x44 may corrupt adjacent RW1C bits
+[   26.817521] pcieport 0002:f8:00.0: can't derive routing for PCI INT B
+[   26.837167] pci_bus 000c:20: 2-byte config write to 000c:20:00.0 
+offset 0x44 may corrupt adjacent RW1C bits
+[   26.850091] serial 0002:f9:00.1: PCI INT B: no GSI
+[   26.879364] serial 0002:f9:00.1: enabling device (0000 -> 0003)
+[   26.913131] 0002:f9:00.1: ttyS3 at I/O 0x1008 (irq = 0, base_baud = 
+115200) is a ST16650V2
+[   26.992897] rtc-efi rtc-efi: setting system clock to 
+2019-03-07T14:41:48 UTC (1551969708)
+[   27.009380] ALSA device list:
+[   27.015326]   No soundcards found.
+[   27.022549] Freeing unused kernel memory: 1216K
+[   27.055567] Run /init as init process
+root@(none)$ cd /sys/devices/platform/HISI0162:01
+root@(none)$ echo HISI0162:01 > driver/unbind
+[   36.488040] hisi_sas_v2_hw HISI0162:01: dev[9:1] is gone
+[   36.561077] hisi_sas_v2_hw HISI0162:01: dev[8:1] is gone
+[   36.621061] hisi_sas_v2_hw HISI0162:01: dev[7:1] is gone
+[   36.693074] hisi_sas_v2_hw HISI0162:01: dev[6:1] is gone
+[   36.753066] hisi_sas_v2_hw HISI0162:01: dev[5:1] is gone
+[   36.764276] sd 0:0:3:0: [sdd] Synchronizing SCSI cache
+[   36.821106] hisi_sas_v2_hw HISI0162:01: dev[4:1] is gone
+[   36.889048] hisi_sas_v2_hw HISI0162:01: dev[3:1] is gone
+[   36.993002] hisi_sas_v2_hw HISI0162:01: dev[1:1] is gone
+[   37.004276] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+[   37.014768] sd 0:0:0:0: [sda] Stopping disk
+[   37.709094] hisi_sas_v2_hw HISI0162:01: dev[2:5] is gone
+[   37.721231] hisi_sas_v2_hw HISI0162:01: dev[0:2] is gone
+[   37.803774] BUG: Bad page state in process sh  pfn:11356
+[   37.814444] page:ffff7e000044d580 count:1 mapcount:0 
+mapping:0000000000000000 index:0x0
+[   37.830525] flags: 0xfffc00000001000(reserved)
+[   37.839443] raw: 0fffc00000001000 ffff7e000044d588 ffff7e000044d588 
+0000000000000000
+[   37.854998] raw: 0000000000000000 0000000000000000 00000001ffffffff 
+0000000000000000
+[   37.870552] page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+[   37.883485] bad because of flags: 0x1000(reserved)
+[   37.893098] Modules linked in:
+[   37.899221] CPU: 5 PID: 2691 Comm: sh Not tainted 5.0.0 #121
+[   37.910578] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon 
+D05 IT21 Nemo 2.0 RC0 04/18/2018
+[   37.928924] Call trace:
+[   37.933825]  dump_backtrace+0x0/0x150
+[   37.941166]  show_stack+0x14/0x1c
+[   37.947808]  dump_stack+0x8c/0xb0
+[   37.954451]  bad_page+0xe4/0x144
+[   37.960918]  free_pages_check_bad+0x7c/0x84
+[   37.969307]  __free_pages_ok+0x284/0x290
+[   37.977173]  __free_pages+0x30/0x44
+[   37.984163]  __dma_direct_free_pages+0x68/0x6c
+[   37.993076]  dma_direct_free+0x24/0x38
+[   38.000591]  dma_free_attrs+0x84/0xc0
+[   38.007930]  dmam_release+0x20/0x28
+[   38.014924]  release_nodes+0x128/0x1f8
+[   38.022439]  devres_release_all+0x34/0x4c
+[   38.030478]  device_release_driver_internal+0x190/0x208
+[   38.040963]  device_release_driver+0x14/0x1c
+[   38.049526]  unbind_store+0xbc/0xf4
+[   38.056517]  drv_attr_store+0x20/0x30
+[   38.063859]  sysfs_kf_write+0x44/0x4c
+[   38.071200]  kernfs_fop_write+0xd0/0x1c4
+[   38.079065]  __vfs_write+0x2c/0x158
+[   38.086055]  vfs_write+0xa8/0x19c
+[   38.092696]  ksys_write+0x44/0xa0
+[   38.099338]  __arm64_sys_write+0x1c/0x24
+[   38.107203]  el0_svc_common+0xb0/0x100
+[   38.114718]  el0_svc_handler+0x70/0x88
+[   38.122232]  el0_svc+0x8/0x7c0
+[   38.128356] Disabling lock debugging due to kernel taint
+[   38.139019] BUG: Bad page state in process sh  pfn:11355
+[   38.149682] page:ffff7e000044d540 count:0 mapcount:0 
+mapping:0000000000000000 index:0x0
+[   38.165760] flags: 0xfffc00000001000(reserved)
+[   38.174676] raw: 0fffc00000001000 ffff7e000044d548 ffff7e000044d548 
+0000000000000000
+[   38.190230] raw: 0000000000000000 0000000000000000 00000000ffffffff 
+0000000000000000
+[   38.205783] page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+[   38.218716] bad because of flags: 0x1000(reserved)
+[   38.228329] Modules linked in:
+[   38.234451] CPU: 5 PID: 2691 Comm: sh Tainted: G    B 
+5.0.0 #121
+[   38.248604] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon 
+D05 IT21 Nemo 2.0 RC0 04/18/2018
+[   38.266949] Call trace:
+[   38.271844]  dump_backtrace+0x0/0x150
+[   38.279185]  show_stack+0x14/0x1c
+[   38.285826]  dump_stack+0x8c/0xb0
+[   38.292468]  bad_page+0xe4/0x144
+[   38.298936]  free_pages_check_bad+0x7c/0x84
 
-Alternatively we could make the frame descriptors settable as well so that
-the receiver driver could use them to configure the transmitter. That'd
-probably not be trivial to implement though.
+...
 
-> +		}
-> +
-> +		if (source_pad == pad1)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static const struct media_entity_operations rcar_csi2_entity_ops = {
-> +	.has_route = rcar_csi2_has_route,
->  	.link_validate = v4l2_subdev_link_validate,
->  };
->  
+Thanks,
+John
 
--- 
-Regards,
+> Thanks,
+> Robin.
+>
+>>> There aren't many drivers using dmam_alloc_*(), let alone which would
+>>> also find themselves behind an IOMMU on an Arm system, but it turns out
+>>> I actually have another one which can reproduce the BUG() with 5.0-rc.
+>>
+>> SATA core uses dmam_alloc_*().
+>>
+>>> I've tried a 4.12 kernel with a bit of instrumentation[1] and sure
+>>> enough the devres-managed buffer is freed with the wrong ops[2] even
+>>> then. How it manages not to blow up more catastrophically I have no
+>>> idea... I guess at best it just leaks the buffers and IOMMU mappings,
+>>> and at worst quietly frees random other pages instead.
+>>
+>> May depend on the actual ops, and whether CMA is used or not.
+>>
+>> Gr{oetje,eeting}s,
+>>
+>>                          Geert
+>>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+> .
+>
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+
