@@ -2,207 +2,115 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A18EDC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C92C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF4C20652
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:13:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ccbib.org header.i=@ccbib.org header.b="Kln7dOjj"
+	by mail.kernel.org (Postfix) with ESMTP id AEADB20835
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:32:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbfCGJNB (ORCPT
+        id S1726156AbfCGJc1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 04:13:01 -0500
-Received: from h1.radempa.de ([176.9.142.194]:44598 "EHLO mail.cosmopool.net"
+        Thu, 7 Mar 2019 04:32:27 -0500
+Received: from foss.arm.com ([217.140.101.70]:42880 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfCGJNA (ORCPT
+        id S1726127AbfCGJc1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 04:13:00 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.cosmopool.net (Postfix) with ESMTP id 9DD6A901A31;
-        Thu,  7 Mar 2019 10:12:54 +0100 (CET)
-Received: from mail.cosmopool.net ([127.0.0.1])
-        by localhost (mail.b.radempa.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id EjbkVxvhK5W6; Thu,  7 Mar 2019 10:12:53 +0100 (CET)
-Received: from webmail.cosmopool.net (localhost [127.0.0.1])
-        by mail.cosmopool.net (Postfix) with ESMTPSA id 17A12900D7A;
-        Thu,  7 Mar 2019 10:12:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ccbib.org; s=201902;
-        t=1551949973; bh=WV+U8W3ma3nZPHxxFovbf7KruQDIMpD2QmL6nRIuObk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Kln7dOjjKTjyJ4lzdpA7Kt3Zo1pfDVaf+PTiiQNb8EGKMrCxcp1f1+JhVecpHhUbn
-         /LMmLKxbtMDrmFCYWNUQxQoYKXz0QiTwmTi+k9CyLzBgM3UL+oGQlK70A+dePccTcb
-         3jVc0Zx2b8+W/qfR/D2shRZqRMw0Sc9A8vrH118I=
+        Thu, 7 Mar 2019 04:32:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73DDA80D;
+        Thu,  7 Mar 2019 01:32:26 -0800 (PST)
+Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C4EF3F706;
+        Thu,  7 Mar 2019 01:32:21 -0800 (PST)
+Subject: Re: [PATCH 1/2] [RFC] ata: ahci: Respect bus DMA constraints
+To:     marek.vasut@gmail.com, linux-ide@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jens Axboe <axboe@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20190307000440.8708-1-marek.vasut@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <7c051bbd-7835-9cab-30b2-0acde1364781@arm.com>
+Date:   Thu, 7 Mar 2019 09:32:20 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+In-Reply-To: <20190307000440.8708-1-marek.vasut@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 07 Mar 2019 10:12:52 +0100
-From:   Harald Geyer <harald@ccbib.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     <devicetree@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
-In-Reply-To: <96fe2cd4-c680-31c9-98f2-31a400e6c44b@gmail.com>
-References: <20190304194023.10926-1-marek.vasut@gmail.com>
- <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at>
- <834f8576-73a4-be0f-e322-91601bed5388@gmail.com>
- <E1h1Ce9-0000JA-Rs@stardust.g4.wien.funkfeuer.at>
- <4d1cd905-c322-78e5-cb9c-dadba01b0324@gmail.com>
- <E1h1Hjl-0000Nv-Ri@stardust.g4.wien.funkfeuer.at>
- <89743562-bb2a-de3f-a57b-331f43bf8982@gmail.com>
- <E1h1Rk2-0000NG-Jp@stardust.g4.wien.funkfeuer.at>
- <96fe2cd4-c680-31c9-98f2-31a400e6c44b@gmail.com>
-Message-ID: <c01246ccde58c23ad03b869cedc98f41@ccbib.org>
-X-Sender: harald@ccbib.org
-User-Agent: RoundCube Webmail/0.7.2
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 06.03.2019 22:56, Marek Vasut wrote:
-> On 3/6/19 9:17 AM, Harald Geyer wrote:
->> Marek Vasut writes:
->>> On 3/5/19 10:36 PM, Harald Geyer wrote:
->>>> Marek Vasut writes:
->>>>> On 3/5/19 5:10 PM, Harald Geyer wrote:
->>>>>> Marek Vasut writes:
->>>>>>> On 3/5/19 11:07 AM, Harald Geyer wrote:
->>>>>>>> marek.vasut@gmail.com writes:
->>>>>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>>>>>
->>>>>>>>> Reword the binding document to make it clear how the 
->>>>>>>>> propeties work
->>>>>>>>> and which properties affect which other properties.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>>>>>>> Cc: Harald Geyer <harald@ccbib.org>
->>>>>>>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->>>>>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>>>>>>>> Cc: Mark Brown <broonie@kernel.org>
->>>>>>>>> Cc: Rob Herring <robh@kernel.org>
->>>>>>>>> Cc: linux-renesas-soc@vger.kernel.org
->>>>>>>>> To: devicetree@vger.kernel.org
->>>>>>>>> ---
->>>>>>>>> V2: - Make "gpios" a mandatory property
->>>>>>>>>     - Reword "gpio-states" property description
->>>>>>>>>     - Change "enable-gpio" to "enable-gpios" to match modern 
->>>>>>>>> DT rules
->>>>>>>>> Note: The recent gpio-regulator rework caused breakage. While 
->>>>>>>>> the
->>>>>>>>>       changes in the gpio-regulator code were according to 
->>>>>>>>> the DT
->>>>>>>>>       binding document, they stopped working with older DTs. 
->>>>>>>>> Make
->>>>>>>>>       the binding document clearer to prevent such breakage 
->>>>>>>>> in the
->>>>>>>>>       future.
->>>>>>>>
->>>>>>>> Thanks for the update. I think it addresses all my concerns 
->>>>>>>> except for
->>>>>>>> one:
->>>>>>>>
->>>>>>>>> +- gpios-states	: State of GPIO pins in "gpios" array that is 
->>>>>>>>> set until
->>>>>>>>> +			  changed by the first consumer. 0: LOW, 1: HIGH.
->>>>>>>>> +			  Default is LOW if nothing else is specified.
->>>>>>>>
->>>>>>>> I still believe this not true: There is no guarantee that the 
->>>>>>>> regulator
->>>>>>>> core won't change the state of GPIO pins before the first 
->>>>>>>> consumer comes
->>>>>>>> up.
->>>>>>>
->>>>>>> Why would it do that ?
->>>>>>
->>>>>> Because the regulator core doesn't know about this driver 
->>>>>> specific
->>>>>> property at all. And without any constraints placed by 
->>>>>> consumers, the
->>>>>> core is free to choose any state whatsoever at any point in 
->>>>>> time.
->>>>>
->>>>> But git grep seems to disagree, see 
->>>>> drivers/regulator/gpio-regulator.c:
->>>>>                     ret = of_property_read_u32_index(np, 
->>>>> "gpios-states", i,
->>>>>
->>>>> The core sets the pins to such a value until the consumer takes 
->>>>> over.
->>>>
->>>> I think we have a misunderstanding of terminology. When I write 
->>>> "regulator
->>>> core", I mean the driver independent regulator code. The line you 
->>>> quote
->>>> above is part of the gpio-regulator driver and thus not part of 
->>>> what
->>>> I call the "regulator core".
->>>>
->>>> AFAICS the data from the property is only stored in a driver 
->>>> specific
->>>> data structure (and not used at all outside of probe) but never 
->>>> passed
->>>> to what I call the regulator core.
->>>>
->>>> Why do you believe there is a guarantee that the value set during
->>>> probeing is preserved until a consumer takes over?
->>>
->>> It is the only sensible behavior and the behavior I see people 
->>> expect
->>> from this property. I presume it solidified in this sort of 
->>> semi-defined
->>> state, so we're stuck with assuming it behaves this way to maintain
->>> compatibility.
->>
->> Maybe the behaviour you want would be more sensible, but AFAIK it 
->> just
->> isn't true in general (it might work that way by chance in many 
->> cases).
->> If people expect this behaviour, it is a misunderstanding of the old 
->> wording.
->> I'd prefer we don't have to add a quirk to the regulator subsystem 
->> to
->> cater for a misunderstanding.
->>
->> I think, if you really want to go forward with making this behaviour
->> officially maintained, then we should first add the code to linux 
->> and
->> only then add the promise to the binding document. This isn't the 
->> scope
->> of this patch, so I guess we would need to keep the ambiguous 
->> wording as
->> it is for now. I believe it is more important for a binding document
->> to be correct than to be sensible.
->>
->> However I don't think we actually need to go to such extremes: In 
->> linux
->> we currently have (arm/boot/dts and arm64/boot/dts) 38 uses of this
->> property in 29 DTs. All the examples, that I studied in some detail,
->> seem to either don't need this property at all or have a usecase 
->> that is
->> supported by my proposed wording. I don't expect any problems if we 
->> just
->> document the status quo clearly.
->
-> In that case, provide a suggestion how to document this property 
-> better?
+On 2019-03-07 12:04 am, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Since commit 6c2fb2ea7636 ("of/device: Set bus DMA mask as appropriate"),
+> the upstream bus can constraint device DMA range. Respect that constraint
+> and do not change the device DMA masks if they were already set.
+> 
+> This is applicable e.g. on systems where the PCIe controller cannot expose
+> the full address space range. Such a system may have a 64bit CPU with DRAM
+> mapped both below and above the 32bit address space, yet the PCIe devices
+> can not perform DMA directly to/from the DRAM range above the 32bit limit.
+> Hence, for such setup to work, all the buffers must exist below the 32bit
+> limit.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Jens Axboe <axboe@fb.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Sagi Grimberg <sagi@grimberg.me>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-ide@vger.kernel.org
+> To: linux-nvme@lists.infradead.org
+> ---
+>   drivers/ata/ahci.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+> index 021ce46e2e57..2acce056dd8c 100644
+> --- a/drivers/ata/ahci.c
+> +++ b/drivers/ata/ahci.c
+> @@ -926,6 +926,13 @@ static int ahci_configure_dma_masks(struct pci_dev *pdev, int using_dac)
+>   	if (pdev->dma_mask && pdev->dma_mask < DMA_BIT_MASK(32))
+>   		return 0;
+>   
+> +	/*
+> +	 * The upstream device could have applied DMA constraints already,
+> +	 * respect those and do not change the DMA masks.
+> +	 */
+> +	if (pdev->dev.dma_mask && pdev->dev.coherent_dma_mask)
+> +		return 0;
 
-I did: https://www.spinics.net/lists/devicetree/msg275050.html
+At least for DT platforms, the device masks are always going to be set 
+to some initial value, which will most commonly just be the 32-bit 
+default - that should not prevent the driver from setting wider masks if 
+that's what the device really supports (in fact there are some patches 
+queued in which we're now starting to formalise that properly).
 
-HTH,
-Harald
+Are you seeing a problem with a DMA API backend failing to respect 
+bus_dma_mask?
 
--- 
-If you want to support my work:
-see http://friends.ccbib.org/harald/supporting/
-or donate via peercoin to P98LRdhit3gZbHDBe7ta5jtXrMJUms4p7w
-or CLAM xASPBtezLNqj4cUe8MT5nZjthRSEjrRQXN
+Robin.
+
+> +
+>   	if (using_dac &&
+>   	    !dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
+>   		rc = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
+> 
