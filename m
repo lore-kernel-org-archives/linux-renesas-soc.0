@@ -2,292 +2,129 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DE7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DF9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BAF20663
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C78620663
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:04:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="BxFgzvUl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfV1/MoD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfCGADm (ORCPT
+        id S1726195AbfCGAEs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:03:42 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39762 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbfCGADl (ORCPT
+        Wed, 6 Mar 2019 19:04:48 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54150 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfCGAEs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:03:41 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g80so12553980ljg.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Mar 2019 16:03:40 -0800 (PST)
+        Wed, 6 Mar 2019 19:04:48 -0500
+Received: by mail-wm1-f67.google.com with SMTP id e74so7578744wmg.3;
+        Wed, 06 Mar 2019 16:04:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=MJKxXR05caq5wY43O2yof2CA1nBtk36x9PwvrlYFfwo=;
-        b=BxFgzvUljjpCV8dhdxC0fwFzxaz86IcFC6mYOxKCcD9pXGLqdDsHDgv0XJwAM8MnHP
-         7GpjGPjJUWk8ISt+Xk3C6WYMZidBDMsPIarawwFV7eSy6R/4JTb2dbHaD+6OZtRP7Lu/
-         8oFyk1cEEoBN/f+f70mFxqdXIUlZgIR8HLAUlOl2fEgpiYlG7P0NHmtKSECGy3dcFOVc
-         tTsaKZGZRJft0Pj7p587TIKMR/2J9muLtPHDN1L/Lbu1R/54JK5Y0rn9MZUIMIpHkgC7
-         4UcPE0z8rYfjXxiJKGwzJ19joQY0yWXu8kRtH4v+GcPEjZnQmQtsQQ23H5sdHjZpfnw1
-         ci4Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RsyiXtrERdpKhf948BNoHs6KFXRsfkG+m5eMNygOTsY=;
+        b=lfV1/MoDOOOHq6MN2NpUiOVb3tS9Qs7ndM8f2zX2zp+ZshSMY4dErTE4V/5crMXpTr
+         c1vIL1Gh4Y88jHAIg0d5qN0uM3oYcV6fxjIsXxtYgjgBkGRnmQrzn7V2G6lBzEHBhTOH
+         ycNkt7izypZL2fq2irKlTLh9AKkbtsqpvZGEHRBUSG3ayzda/LlOTFujADTQMlIh3Ocu
+         DsMfxKm/zin6TwXcStwV/j0iNJn8DlZAqOoZyj6N0ZSkRoleu8pQilp8H94Ntjm0g2Mb
+         0Nhqtvrv4QfRHiMA7WkIcnpLQibwx64KTV9q+1uAxa87iwzx1LRf84ptDPh4py0S6iK6
+         n+0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MJKxXR05caq5wY43O2yof2CA1nBtk36x9PwvrlYFfwo=;
-        b=X+tia7u9QBSYnaOQ3BJsi+UrTePpbqw8IxBVgDmQ8br2dTiyySIrjIxAbUPuTssdh9
-         DU8Px/rCiaIA1XQUl56dmrb9Xvlzf15tah2pBYncwAbt9xdjg0z8ZdfnrUDeie6hARnT
-         9t6vR1UY6cwPEzrHnlkGmVsum7P934vMCzs8FhBjqPQ2W/M8gK6FwS0tGq9kjU9mPHSz
-         kLc/LU++grpRtajgL2STRQ0beeRg/6i/Ix3rYPOWcLZ+3e+3mtXK/jQR4IzLOeywESL4
-         nBoDpHpjlhV+hrH+BTs1PdcO9LCJe7VvmYw/6Q/2z/G81+nvh+CE5FD758hQ/jxGjrfM
-         /bpw==
-X-Gm-Message-State: APjAAAW5E09w2TbQDUGEuvDahyOPvvpkeT0gUt1LPl/l3o1Ep5I63FaF
-        TOMwVplIq8nveY48hCDZXHz5DA==
-X-Google-Smtp-Source: APXvYqyRW2gM5ULLEKEAxttWr0u/IEIgrJcZFoKdLkLzleIl33LIyeJD6P1QtSklys8c1ZXBTsknDQ==
-X-Received: by 2002:a2e:2202:: with SMTP id i2mr1414184lji.170.1551917019676;
-        Wed, 06 Mar 2019 16:03:39 -0800 (PST)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id h23sm618794ljk.36.2019.03.06.16.03.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 06 Mar 2019 16:03:38 -0800 (PST)
-From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
-X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date:   Thu, 7 Mar 2019 01:03:38 +0100
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] rcar-csi2: Use standby mode instead of resetting
-Message-ID: <20190307000338.GA10014@bigcity.dyn.berto.se>
-References: <20190216225638.7159-1-niklas.soderlund+renesas@ragnatech.se>
- <20190217194124.fziv3yfr2xlvvcib@uno.localdomain>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RsyiXtrERdpKhf948BNoHs6KFXRsfkG+m5eMNygOTsY=;
+        b=PqHcWpVhBkBXMu3dQ5m0ntV6YHKwOKMk7SLRpz8jRa8aijiTmnEyl527Phs/5Ikadn
+         9KaXN5grTwlB11eaBXhvV1oO9kSuNNkBCD2zAJIMPyhuHz7LlJ0hTVwpr2hglUHcGjtD
+         koECylPaNM8vSd+gsZL3Klz9rwLGLfkv/2EPHt/3bdOGBRi/WUxBc17m4L97WEGd9Ffj
+         sxXb/ouwzmVl4aGSpePZ0h/IIIXQucQejw0ULhNgjPyztIo+5T+Tm+LknOto4nOHdZ2p
+         tfqjj2nsDQNSNBeJErdrXavKio5EO732CPQNyKJAlHoSudIbaxepmY5SdQX1Gwv37zj3
+         pEaA==
+X-Gm-Message-State: APjAAAVWuUQRvU+oZccUHU7FYaaeX3ElY0BxDuk46hM2RBTatjYqftai
+        fP7noI2N06qg4xQeSj6BZ+f/h1OQ
+X-Google-Smtp-Source: APXvYqxQquUdrWyJ/WAJKha1c17+MslNr4y/yfpEN44Oe5nis6OqczmBYSegEnQ54cTT3x035erAYA==
+X-Received: by 2002:a1c:63d4:: with SMTP id x203mr3992117wmb.128.1551917085535;
+        Wed, 06 Mar 2019 16:04:45 -0800 (PST)
+Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id a22sm3381642wmj.35.2019.03.06.16.04.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Mar 2019 16:04:44 -0800 (PST)
+From:   marek.vasut@gmail.com
+To:     linux-ide@vger.kernel.org, linux-nvme@lists.infradead.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jens Axboe <axboe@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/2] [RFC] ata: ahci: Respect bus DMA constraints
+Date:   Thu,  7 Mar 2019 01:04:39 +0100
+Message-Id: <20190307000440.8708-1-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190217194124.fziv3yfr2xlvvcib@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Thanks for your feedback.
+Since commit 6c2fb2ea7636 ("of/device: Set bus DMA mask as appropriate"),
+the upstream bus can constraint device DMA range. Respect that constraint
+and do not change the device DMA masks if they were already set.
 
-On 2019-02-17 20:41:24 +0100, Jacopo Mondi wrote:
-> Hi Niklas,
->    ah, ups, this was maybe the patch the other one I just reviewed was
->    based on... sorry, I missed this one :)
+This is applicable e.g. on systems where the PCIe controller cannot expose
+the full address space range. Such a system may have a 64bit CPU with DRAM
+mapped both below and above the 32bit address space, yet the PCIe devices
+can not perform DMA directly to/from the DRAM range above the 32bit limit.
+Hence, for such setup to work, all the buffers must exist below the 32bit
+limit.
 
-:-)
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jens Axboe <axboe@fb.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+To: linux-ide@vger.kernel.org
+To: linux-nvme@lists.infradead.org
+---
+ drivers/ata/ahci.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> 
-> On Sat, Feb 16, 2019 at 11:56:38PM +0100, Niklas Söderlund wrote:
-> > Later versions of the datasheet updates the reset procedure to more
-> > closely resemble the standby mode. Update the driver to enter and exit
-> > the standby mode instead of resetting the hardware before and after
-> > streaming is started and stopped.
-> >
-> > While at it break out the full start and stop procedures from
-> > rcsi2_s_stream() into the existing helper functions.
-> >
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > ---
-> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 69 +++++++++++++--------
-> >  1 file changed, 42 insertions(+), 27 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > index f64528d2be3c95dd..f3099f3e536d808a 100644
-> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > @@ -14,6 +14,7 @@
-> >  #include <linux/of_graph.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_runtime.h>
-> > +#include <linux/reset.h>
-> >  #include <linux/sys_soc.h>
-> >
-> >  #include <media/v4l2-ctrls.h>
-> > @@ -350,6 +351,7 @@ struct rcar_csi2 {
-> >  	struct device *dev;
-> >  	void __iomem *base;
-> >  	const struct rcar_csi2_info *info;
-> > +	struct reset_control *rstc;
-> >
-> >  	struct v4l2_subdev subdev;
-> >  	struct media_pad pads[NR_OF_RCAR_CSI2_PAD];
-> > @@ -387,11 +389,19 @@ static void rcsi2_write(struct rcar_csi2 *priv, unsigned int reg, u32 data)
-> >  	iowrite32(data, priv->base + reg);
-> >  }
-> >
-> > -static void rcsi2_reset(struct rcar_csi2 *priv)
-> > +static void rcsi2_standby_mode(struct rcar_csi2 *priv, int on)
-> >  {
-> > -	rcsi2_write(priv, SRST_REG, SRST_SRST);
-> > +	if (!on) {
-> 
-> minor thing: if (!on) { "wakeup"; } is confusing. What if you call the
-> variable "standby" or just "off" ?
-
-I agree this was a bad design, I will split this function in two.
-
-    rcsi2_enter_standby()
-    rcsi2_exit_standby()
-
-> 
-> > +		pm_runtime_get_sync(priv->dev);
-> > +		reset_control_deassert(priv->rstc);
-> > +		return;
-> > +	}
-> > +
-> > +	rcsi2_write(priv, PHYCNT_REG, 0);
-> > +	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
-> > +	reset_control_assert(priv->rstc);
-> >  	usleep_range(100, 150);
-> > -	rcsi2_write(priv, SRST_REG, 0);
-> > +	pm_runtime_put(priv->dev);
-> >  }
-> >
-> >  static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
-> > @@ -462,7 +472,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-> >  	return mbps;
-> >  }
-> >
-> > -static int rcsi2_start(struct rcar_csi2 *priv)
-> > +static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >  {
-> >  	const struct rcar_csi2_format *format;
-> >  	u32 phycnt, vcdt = 0, vcdt2 = 0;
-> > @@ -506,7 +516,6 @@ static int rcsi2_start(struct rcar_csi2 *priv)
-> >
-> >  	/* Init */
-> >  	rcsi2_write(priv, TREF_REG, TREF_TREF);
-> > -	rcsi2_reset(priv);
-> >  	rcsi2_write(priv, PHTC_REG, 0);
-> >
-> >  	/* Configure */
-> > @@ -564,19 +573,36 @@ static int rcsi2_start(struct rcar_csi2 *priv)
-> >  	return 0;
-> >  }
-> >
-> > +static int rcsi2_start(struct rcar_csi2 *priv)
-> > +{
-> > +	int ret;
-> > +
-> > +	rcsi2_standby_mode(priv, 0);
-> > +
-> > +	ret = rcsi2_start_receiver(priv);
-> > +	if (ret) {
-> > +		rcsi2_standby_mode(priv, 1);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = v4l2_subdev_call(priv->remote, video, s_stream, 1);
-> 
-> minor thing as well, but I feel this one was better where it was, so
-> that "rcsi2_start()" only handles the hardware, while s_stream handles
-> the pipeline. But then _start() and _stop() becomes very short... so
-> yeah, feel free to keep it the way it is.
-
-Do not agree, I like this :-)
-
-> 
-> > +	if (ret) {
-> > +		rcsi2_standby_mode(priv, 1);
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static void rcsi2_stop(struct rcar_csi2 *priv)
-> >  {
-> > -	rcsi2_write(priv, PHYCNT_REG, 0);
-> > -
-> > -	rcsi2_reset(priv);
-> > -
-> > -	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
-> > +	v4l2_subdev_call(priv->remote, video, s_stream, 0);
-> > +	rcsi2_standby_mode(priv, 1);
-> >  }
-> >
-> >  static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
-> >  {
-> >  	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> > -	struct v4l2_subdev *nextsd;
-> >  	int ret = 0;
-> >
-> >  	mutex_lock(&priv->lock);
-> > @@ -586,27 +612,12 @@ static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
-> >  		goto out;
-> >  	}
-> >
-> > -	nextsd = priv->remote;
-> > -
-> >  	if (enable && priv->stream_count == 0) {
-> > -		pm_runtime_get_sync(priv->dev);
-> > -
-> >  		ret = rcsi2_start(priv);
-> > -		if (ret) {
-> > -			pm_runtime_put(priv->dev);
-> > +		if (ret)
-> >  			goto out;
-> > -		}
-> > -
-> > -		ret = v4l2_subdev_call(nextsd, video, s_stream, 1);
-> > -		if (ret) {
-> > -			rcsi2_stop(priv);
-> > -			pm_runtime_put(priv->dev);
-> > -			goto out;
-> > -		}
-> >  	} else if (!enable && priv->stream_count == 1) {
-> >  		rcsi2_stop(priv);
-> > -		v4l2_subdev_call(nextsd, video, s_stream, 0);
-> > -		pm_runtime_put(priv->dev);
-> >  	}
-> >
-> >  	priv->stream_count += enable ? 1 : -1;
-> > @@ -936,6 +947,10 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
-> >  	if (irq < 0)
-> >  		return irq;
-> >
-> > +	priv->rstc = devm_reset_control_get(&pdev->dev, NULL);
-> > +	if (IS_ERR(priv->rstc))
-> > +		return PTR_ERR(priv->rstc);
-> > +
-> 
-> I don't see 'resets' listed as a mandatory property of the rcar-csi2
-> bindings, shouldn't you fallback to software reset if not 'reset'
-> is specified? True that all mainline users have a reset property specified,
-> so you could also add 'resets' among the mandatory properties, could
-> that break out of tree implementations in your opinion?
-
-Nice catch! I will add a patch to this series listing it as mandatory.  
-It's a good thing the resets property always have been part of the dts 
-sources so it will not create any regressions.
-
-> 
-> Thanks
->    j
-> 
-> >  	return 0;
-> >  }
-> >
-> > --
-> > 2.20.1
-> >
-
-
-
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index 021ce46e2e57..2acce056dd8c 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -926,6 +926,13 @@ static int ahci_configure_dma_masks(struct pci_dev *pdev, int using_dac)
+ 	if (pdev->dma_mask && pdev->dma_mask < DMA_BIT_MASK(32))
+ 		return 0;
+ 
++	/*
++	 * The upstream device could have applied DMA constraints already,
++	 * respect those and do not change the DMA masks.
++	 */
++	if (pdev->dev.dma_mask && pdev->dev.coherent_dma_mask)
++		return 0;
++
+ 	if (using_dac &&
+ 	    !dma_set_mask(&pdev->dev, DMA_BIT_MASK(64))) {
+ 		rc = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(64));
 -- 
-Regards,
-Niklas Söderlund
+2.20.1
+
