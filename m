@@ -2,117 +2,170 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E674C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A4EC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3002920840
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:13:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWMd6NRr"
+	by mail.kernel.org (Postfix) with ESMTP id 6A9BE20840
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 20:18:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbfCGUNm (ORCPT
+        id S1726194AbfCGUSC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 15:13:42 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43758 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfCGUNm (ORCPT
+        Thu, 7 Mar 2019 15:18:02 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41357 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbfCGUSB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 15:13:42 -0500
-Received: by mail-io1-f66.google.com with SMTP id y6so14706082ioq.10;
-        Thu, 07 Mar 2019 12:13:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3CxfmkaTe+SLFchAVeUhtfdbkP2N5yDM0YsbCbvNGTU=;
-        b=dWMd6NRrstaNGu21WHTRqrsFdgeYfa7sJFHdmAUORtVW7V+OZM/o1DN4bZcXdKyXZq
-         6i6P8Fac3p5xfyuOgaTLKMVsQdCCH9nQw1fRZ4lHjHmB2lKvndplcdrz79PgvpIgg+1v
-         UGLTyALImWYXmivOGa+x/JIV1evpvJJ5vVrnVqWQwO+qJT/HJlxl17b7145FHLb5Kjkg
-         iJYC6jCmAlqrBeF9Y6ASVy+Lyq6HIa7pJgLXA5x2FRGUnZMgyLN0YlGiI68d/6J+t3mw
-         d33/ejQpbm4bsMni4Kc2Nf07n1mZy6RQQQnYh2Sqtgw+LkLPsia6xjCM4LHCLVg1XndF
-         Q27Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3CxfmkaTe+SLFchAVeUhtfdbkP2N5yDM0YsbCbvNGTU=;
-        b=bih37J6pe5I3DFMWGzc1C8QXsDH4qRInv5u+r0mpbMXCOIAv6aR+MkQaXWszi4o67z
-         d2zAM2JXXdxVb58adCJlXVltB2PHACtulC2m10qErXerYHKpub7BHHoiS1ql7LrC/mx5
-         OmgKmLP9pALNdV7rLZBXQXaE30c+PYTHG/9zMzfoJ7J4sBhRfn8d+nzPGIUycNdXxS2s
-         yv/2riqb2fbCjsxk/W8lEYi1A5kxDl4tMstQQMNCxLie6ml/8SVXtNvekqUgHsVNf7iC
-         jBvvAirMRjoVy5pv4Us41hW3qMmvtgZzDbQTd7XDGn41hEKtON63MXA8kjFNhXPBrseB
-         rnVQ==
-X-Gm-Message-State: APjAAAXg0ldHT+Z9CNQEJj5qGgIihCnhdNR/bu75ZJxpXqrDHwwZP8Gp
-        mAi2Eza2ds+Qi8jwsY1m0j9YlFhaIa6ADMPMHj8=
-X-Google-Smtp-Source: APXvYqw8BPO/C44mEMiguDrL1oklthAeMfMejkzweughPEBAuiHwDIYzov7HO3BQLZzlL7DV8WP+/bpMJ0rno9pv8U4=
-X-Received: by 2002:a5d:8701:: with SMTP id u1mr7813573iom.69.1551989620631;
- Thu, 07 Mar 2019 12:13:40 -0800 (PST)
+        Thu, 7 Mar 2019 15:18:01 -0500
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 4E3FEE0009;
+        Thu,  7 Mar 2019 20:17:58 +0000 (UTC)
+Date:   Thu, 7 Mar 2019 21:18:31 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Ian Arkver <ian.arkver.dev@gmail.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 12/31] media: entity: Add an iterator helper for
+ connected pads
+Message-ID: <20190307201831.wpzeir5gomnpw45c@uno.localdomain>
+References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
+ <20190305185150.20776-13-jacopo+renesas@jmondi.org>
+ <20190307100924.4iuabzet67ttgk2p@paasikivi.fi.intel.com>
+ <9f07ed66-b67b-500e-1faf-7e9c31447fd1@gmail.com>
 MIME-Version: 1.0
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com> <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
-In-Reply-To: <20180430092947.GC2270@ulmo>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Thu, 7 Mar 2019 14:13:29 -0600
-Message-ID: <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4sfti44m4iv2r452"
+Content-Disposition: inline
+In-Reply-To: <9f07ed66-b67b-500e-1faf-7e9c31447fd1@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 4:30 AM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Mon, Apr 30, 2018 at 11:03:25AM +0200, Linus Walleij wrote:
-> > On Thu, Apr 19, 2018 at 5:14 PM, Grygorii Strashko
-> > <grygorii.strashko@ti.com> wrote:
-> > > On 04/19/2018 09:05 AM, Wolfram Sang wrote:
-> > >>
-> > >> We should get drvdata from struct device directly. Going via
-> > >> platform_device is an unneeded step back and forth.
-> > >>
-> > >> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > >> ---
-> > >>
-> > >> Build tested only. buildbot is happy. Please apply individually.
-> > >
-> > >
-> > > for gpio-omap.c:
-> > > Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> >
-> > Hm I only see the responses not the actual patch, I guess I will find it
-> > sooner or later.
-> >
-> > Wolfram: if I don't find it, poke me with something sharp so I get to apply it.
->
-> I had the same problem, turned out this got classified as spam by Google
-> for some reason. Maybe try your spam folder?
 
-It's been almost a year later, and several Linux revisions, and this
-still seems stuck somewhere/somehow.
+--4sfti44m4iv2r452
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-adam
+Hi Ian, Sakari,
+
+On Thu, Mar 07, 2019 at 10:27:36AM +0000, Ian Arkver wrote:
+> On 07/03/2019 10:09, Sakari Ailus wrote:
+> > Hi Jacopo,
+> >
+> > On Tue, Mar 05, 2019 at 07:51:31PM +0100, Jacopo Mondi wrote:
+> > > From: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > >
+> > > Add a helper macro for iterating over pads that are connected through
+> > > enabled routes. This can be used to find all the connected pads withi=
+n an
+> > > entity, for instance starting from the pad which has been obtained du=
+ring
+> > > the graph walk.
+> > >
+> > > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > > Reviewed-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
+h.se>
+> > >
+> > > - Make __media_entity_next_routed_pad() return NULL and adjust the
+> > >    iterator to handle that
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > ---
+> > >   include/media/media-entity.h | 27 +++++++++++++++++++++++++++
+> > >   1 file changed, 27 insertions(+)
+> > >
+> > > diff --git a/include/media/media-entity.h b/include/media/media-entit=
+y.h
+> > > index 205561545d7e..82f0bdf2a6d1 100644
+> > > --- a/include/media/media-entity.h
+> > > +++ b/include/media/media-entity.h
+> > > @@ -936,6 +936,33 @@ __must_check int media_graph_walk_init(
+> > >   bool media_entity_has_route(struct media_entity *entity, unsigned i=
+nt pad0,
+> > >   			    unsigned int pad1);
+> > > +static inline struct media_pad *__media_entity_next_routed_pad(
+> > > +	struct media_pad *start, struct media_pad *iter)
+> > > +{
+> > > +	struct media_entity *entity =3D start->entity;
+> > > +
+> > > +	while (iter < &entity->pads[entity->num_pads] &&
+> > > +	       !media_entity_has_route(entity, start->index, iter->index))
+> > > +		iter++;
+> > > +
+> > > +	return iter =3D=3D &entity->pads[entity->num_pads] ? NULL : iter;
+> >
+> > Could you use iter <=3D ...?
+> >
+> > It doesn't seem to matter here, but it'd seem safer to change the check.
+> >
 >
-> Thierry
+> How about something like...
+>
+> for (; iter < &entity->pads[entity->num_pads]; iter++)
+>     if (media_entity_has_route(entity, start->index, iter->index))
+>         return iter;
+>
+> return NULL;
+>
+
+Great, thank you both, I'll take this in!
+
+
+> Regards,
+> Ian
+>
+> > > +}
+> > > +
+> > > +/**
+> > > + * media_entity_for_each_routed_pad - Iterate over entity pads conne=
+cted by routes
+> > > + *
+> > > + * @start: The stating pad
+> > > + * @iter: The iterator pad
+> > > + *
+> > > + * Iterate over all pads connected through routes from a given pad
+> > > + * within an entity. The iteration will include the starting pad its=
+elf.
+> > > + */
+> > > +#define media_entity_for_each_routed_pad(start, iter)			\
+> > > +	for (iter =3D __media_entity_next_routed_pad(			\
+> > > +		     start, (start)->entity->pads);			\
+> > > +	     iter !=3D NULL;						\
+> > > +	     iter =3D __media_entity_next_routed_pad(start, iter + 1))
+> > > +
+> > >   /**
+> > >    * media_graph_walk_cleanup - Release resources used by graph walk.
+> > >    *
+> >
+
+--4sfti44m4iv2r452
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyBfJcACgkQcjQGjxah
+Vjz5BBAAt99XK0+LGiwoMkglDAHUy/wpHS5KGktQHgDGVpFZULvTRZdKLxXDjJZB
+ZjRFkYqHeNYT74T1x4gdu3DBsh9ULMaWi1WiQx22GdtFjDctHijnT+imHffEnZ3A
+cMukDjJDqQ4kkUnp9W6eKeYi+YQjR1txalAW6YDSYGX5idEyUDrCWOBE7+x8Wqti
+cNEfPlj8M8lZafUATsp+FlYtcWtDdNr4taDOK6qOW+41dV/BlJD4s1en6kNoUpAJ
+xxI0XVQ1cnMAU7faj3jseAXfZh/xV2Dx0kVIqVOkueB6KmJzsXUysItkLinQT0TN
+1GQRcPV8lVq5ooGdMCx7pW4LxvC0mOMCi8PGE3LGxV1l7JMdA/jMsuykl/YseMnJ
+qjCZvdTHKB15WQ5fYumKzIY0AaqwRqXynsM4Fjww67DcMZgvS4ll+zWE7buQQWWx
+4FAXCbga18bHWSy7eWCXL5aYJ04a4jXvVALstoMXrvzRDvnZN4hPFTIm4bFEMxnE
+yceerXqpdRsTAhLZ7dnCOwmefWF3UioQm8v8ujUTFqYKvVhLdwi2GUGk4ChZSCB5
+N1FuEFtgv0B1ghulbBTQIEyEBEVXG0NaPbXgb+CjX9/Y/MU/Otz6BwbaK/QWW8ym
+GOOkB7hXpgFfheeH2wfvWsNbRMOL+9wINNR6UIuLjkEjGoiaVl0=
+=9iin
+-----END PGP SIGNATURE-----
+
+--4sfti44m4iv2r452--
