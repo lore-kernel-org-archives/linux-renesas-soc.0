@@ -2,107 +2,125 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 462C7C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385AAC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 592D220675
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CBBC20675
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 09:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbfCGJr3 (ORCPT
+        id S1726057AbfCGJsn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 7 Mar 2019 04:47:29 -0500
-Received: from mga02.intel.com ([134.134.136.20]:54894 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbfCGJr3 (ORCPT
+        Thu, 7 Mar 2019 04:48:43 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43030 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725747AbfCGJsn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 7 Mar 2019 04:47:29 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Mar 2019 01:47:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,451,1544515200"; 
-   d="scan'208";a="280540445"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga004.jf.intel.com with ESMTP; 07 Mar 2019 01:47:27 -0800
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 400A4204CC; Thu,  7 Mar 2019 11:47:26 +0200 (EET)
-Date:   Thu, 7 Mar 2019 11:47:26 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        Thu, 7 Mar 2019 04:48:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1D0E80D;
+        Thu,  7 Mar 2019 01:48:42 -0800 (PST)
+Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92FEE3F706;
+        Thu,  7 Mar 2019 01:48:39 -0800 (PST)
+Subject: Re: [PATCH 1/2] [RFC] ata: ahci: Respect bus DMA constraints
+To:     Marek Vasut <marek.vasut@gmail.com>, linux-ide@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jens Axboe <axboe@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 00/31] v4l: add support for multiplexed streams
-Message-ID: <20190307094725.5nrvzz7hn7gfmgxe@paasikivi.fi.intel.com>
-References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
+References: <20190307000440.8708-1-marek.vasut@gmail.com>
+ <7c051bbd-7835-9cab-30b2-0acde1364781@arm.com>
+ <356f3ee8-407f-f865-e5cc-333695d4f857@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <79e44e90-b16a-5315-e02f-101a2ebbb6a0@arm.com>
+Date:   Thu, 7 Mar 2019 09:48:36 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <356f3ee8-407f-f865-e5cc-333695d4f857@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+On 2019-03-07 9:37 am, Marek Vasut wrote:
+> On 3/7/19 10:32 AM, Robin Murphy wrote:
+>> On 2019-03-07 12:04 am, marek.vasut@gmail.com wrote:
+>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>
+>>> Since commit 6c2fb2ea7636 ("of/device: Set bus DMA mask as appropriate"),
+>>> the upstream bus can constraint device DMA range. Respect that constraint
+>>> and do not change the device DMA masks if they were already set.
+>>>
+>>> This is applicable e.g. on systems where the PCIe controller cannot
+>>> expose
+>>> the full address space range. Such a system may have a 64bit CPU with
+>>> DRAM
+>>> mapped both below and above the 32bit address space, yet the PCIe devices
+>>> can not perform DMA directly to/from the DRAM range above the 32bit
+>>> limit.
+>>> Hence, for such setup to work, all the buffers must exist below the 32bit
+>>> limit.
+>>>
+>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>> Cc: Christoph Hellwig <hch@lst.de>
+>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Cc: Jens Axboe <axboe@fb.com>
+>>> Cc: Jens Axboe <axboe@kernel.dk>
+>>> Cc: Keith Busch <keith.busch@intel.com>
+>>> Cc: Robin Murphy <robin.murphy@arm.com>
+>>> Cc: Sagi Grimberg <sagi@grimberg.me>
+>>> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>> Cc: linux-renesas-soc@vger.kernel.org
+>>> To: linux-ide@vger.kernel.org
+>>> To: linux-nvme@lists.infradead.org
+>>> ---
+>>>    drivers/ata/ahci.c | 7 +++++++
+>>>    1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+>>> index 021ce46e2e57..2acce056dd8c 100644
+>>> --- a/drivers/ata/ahci.c
+>>> +++ b/drivers/ata/ahci.c
+>>> @@ -926,6 +926,13 @@ static int ahci_configure_dma_masks(struct
+>>> pci_dev *pdev, int using_dac)
+>>>        if (pdev->dma_mask && pdev->dma_mask < DMA_BIT_MASK(32))
+>>>            return 0;
+>>>    +    /*
+>>> +     * The upstream device could have applied DMA constraints already,
+>>> +     * respect those and do not change the DMA masks.
+>>> +     */
+>>> +    if (pdev->dev.dma_mask && pdev->dev.coherent_dma_mask)
+>>> +        return 0;
+>>
+>> At least for DT platforms, the device masks are always going to be set
+>> to some initial value, which will most commonly just be the 32-bit
+>> default - that should not prevent the driver from setting wider masks if
+>> that's what the device really supports (in fact there are some patches
+>> queued in which we're now starting to formalise that properly).
+>>
+>> Are you seeing a problem with a DMA API backend failing to respect
+>> bus_dma_mask?
+> 
+> Yes, the DMA mask gets overridden here to 64bit one, which on the R-Car
+> Gen3 with PCI with 32bit addressing limitation makes the AHCI driver
+> fail (and NVMe driver, and xHCI PCI etc). All those PCI devices fail the
+> same way because they override the DMA mask.
 
-On Tue, Mar 05, 2019 at 07:51:19PM +0100, Jacopo Mondi wrote:
-> Hello,
->    third version of multiplexed stream support patch series.
-> 
-> V2 sent by Niklas is available at:
-> https://patchwork.kernel.org/cover/10573817/
-> 
-> As per v2, most of the core patches are work from Sakari and Laurent, with
-> Niklas' support on top for adv748x and rcar-csi2.
-> 
-> The use case of the series remains the same: support for virtual channel
-> selection implemented on R-Car Gen3 and adv748x. Quoting the v2 cover letter:
-> 
-> -------------------------------------------------------------------------------
-> I have added driver support for the devices used on the Renesas Gen3
-> platforms, a ADV7482 connected to the R-Car CSI-2 receiver. With these
-> changes I can control which of the analog inputs of the ADV7482 the
-> video source is captured from and on which CSI-2 virtual channel the
-> video is transmitted on to the R-Car CSI-2 receiver.
-> 
-> The series adds two new subdev IOCTLs [GS]_ROUTING which allows
-> user-space to get and set routes inside a subdevice. I have added RFC
-> support for these to v4l-utils [2] which can be used to test this
-> series, example:
-> 
->     Check the internal routing of the adv748x csi-2 transmitter:
->     v4l2-ctl -d /dev/v4l-subdev24 --get-routing
->     0/0 -> 1/0 [ENABLED]
->     0/0 -> 1/1 []
->     0/0 -> 1/2 []
->     0/0 -> 1/3 []
-> 
-> 
->     Select that video should be outputed on VC 2 and check the result:
->     $ v4l2-ctl -d /dev/v4l-subdev24 --set-routing '0/0 -> 1/2 [1]'
-> 
->     $ v4l2-ctl -d /dev/v4l-subdev24 --get-routing
->     0/0 -> 1/0 []
->     0/0 -> 1/1 []
->     0/0 -> 1/2 [ENABLED]
->     0/0 -> 1/3 []
-> -------------------------------------------------------------------------------
-> 
-> Below is reported the media graph of the system used for testing [1].
-> 
-> v4l2-ctl patches to handle the newly introduced IOCTLs are available from
-> Niklas' repository at:
-> git://git.ragnatech.se/v4l-utils routing
+Right, but whoever *interprets* the device masks after the driver has 
+overridden them should be taking the (smaller) bus mask into account as 
+well, so the question is where is *that* not being done correctly?
 
-Could you send the v4l2-ctl patches out as well, please?
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+Robin.
