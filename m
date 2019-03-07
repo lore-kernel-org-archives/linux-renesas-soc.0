@@ -2,180 +2,111 @@ Return-Path: <SRS0=HvZV=RK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F73C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6709DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA85420675
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 303EB20675
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Mar 2019 00:27:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="upESCx2a"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Cq71skF+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbfCGA0y (ORCPT
+        id S1726094AbfCGA1F (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:26:54 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48758 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfCGA0y (ORCPT
+        Wed, 6 Mar 2019 19:27:05 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45760 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbfCGA1E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:26:54 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C8F99242;
-        Thu,  7 Mar 2019 01:26:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1551918412;
-        bh=eM7+ngoHOlZzfZHrqW0GFbNoTQct34BUKGkR5pdiW7I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=upESCx2aaZRDq7AFqtNYcRiAH22vYOHnl839Yubc3BCh8a3aQhcwbP39KnNa5TVEU
-         G2wORlWxCflHrjCt6CSNQe7J0Dsbe84q8pRh+i/Db4yECLJVPQVOowZHRcYVYg0v0i
-         qqg+lqqYWHc1T3Scj3YNUo2qkuRZkcc6DciwMOQA=
-Date:   Thu, 7 Mar 2019 02:26:45 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] rcar-csi2: Allow configuring of video standard
-Message-ID: <20190307002645.GJ4791@pendragon.ideasonboard.com>
-References: <20190216225758.7699-1-niklas.soderlund+renesas@ragnatech.se>
- <20190307001318.GF4791@pendragon.ideasonboard.com>
- <20190307002236.GJ9239@bigcity.dyn.berto.se>
+        Wed, 6 Mar 2019 19:27:04 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f16so10308746lfk.12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Mar 2019 16:27:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=PGgDwKDi97DaYzGzFGNNNd+wQhmn7hANjPmdhqb2fhE=;
+        b=Cq71skF+asI81owqvoiziWlBYS+VOhTZ8tefbE/BAuufhA/qoEIiah7I7qKNNolCwL
+         DfhNGJQh+bTayAFeor2gzJhknTD8BuPzhy6r++lBxVt/XDV18/jb0QMYtjgL9xCmiCBk
+         NpsixkRGUfwNWF1JjRgij7+23TilTqNHw4930jZ4plwYjXYz7g038L3Q+5m6GbNHiydj
+         937XTu1KsjMqLi13M9gIh2q5XcrihCkUisqwh5IqdxBez/NRjDA7oabT777OT6CIvNfx
+         ZnEWPXOtMzLIgz9HDVYVYSrlWc9F1RFlTEHyfTWBQtrA49tY1qEQtMTFYQAcd1dOWwE0
+         BYew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=PGgDwKDi97DaYzGzFGNNNd+wQhmn7hANjPmdhqb2fhE=;
+        b=It61ndQZCbcNs8A/F5NP//vJbXUEK3gWyiQKxGpolgDk2+FplQWWr+LB+6GDT5tKiu
+         7gVi9t2NtL3sZlP3ANABIBBOMGMZWONTmvh/9f6Ax123r17h9+FQknHNNeJPbkGNBOgI
+         5BOAsNgC+s6dtPDi2Hbr8ZY5Fk8neoMOLVhVPC5e9oe2ecOL4L9tLNeoh+oP4Dx71itI
+         Pt4Ikmdk6qe42VOqjvbyRftYCPaY8ZB/bUIfRCVQcdP7hI+Xs8Ho3tfMI38YPbGeXqSy
+         iQ3qv9ZmFqyAfsmhzd6yWnz+0Ask/Bf8U7+yrSK01LZDXy73/4rly6wSSZIYQJK6eo/c
+         AybA==
+X-Gm-Message-State: APjAAAUL6HLdzjjDjO4waFV6jlAqVz3wT7jwZiehKba598522BmtMLD0
+        GFB2+AiP5QPldYuEna7vqjA8yg==
+X-Google-Smtp-Source: APXvYqxWvMzg/r/lc7RErIMv/FHbQeK5DopTwjPkIsX/zxJxNdF7VKdfEzsAoiJ2PgA6Jpmj6aa7YA==
+X-Received: by 2002:ac2:52ae:: with SMTP id r14mr5702153lfm.66.1551918422553;
+        Wed, 06 Mar 2019 16:27:02 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id b141sm614640lfb.72.2019.03.06.16.27.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Mar 2019 16:27:02 -0800 (PST)
+From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Date:   Thu, 7 Mar 2019 01:27:01 +0100
+To:     Ulrich Hecht <uli@fpond.eu>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/3] rcar-csi2: Update start procedure for H3 ES2
+Message-ID: <20190307002701.GK9239@bigcity.dyn.berto.se>
+References: <20190218100313.14529-1-niklas.soderlund+renesas@ragnatech.se>
+ <20190218100313.14529-3-niklas.soderlund+renesas@ragnatech.se>
+ <1597578789.516973.1550488339434@webmail.strato.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190307002236.GJ9239@bigcity.dyn.berto.se>
+In-Reply-To: <1597578789.516973.1550488339434@webmail.strato.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+Hi Ulrich,
 
-On Thu, Mar 07, 2019 at 01:22:36AM +0100, Niklas Söderlund wrote:
-> On 2019-03-07 02:13:18 +0200, Laurent Pinchart wrote:
-> > On Sat, Feb 16, 2019 at 11:57:58PM +0100, Niklas Söderlund wrote:
-> >> Allow the hardware to to do proper field detection for interlaced field
-> >> formats by implementing s_std() and g_std(). Depending on which video
-> >> standard is selected the driver needs to setup the hardware to correctly
-> >> identify fields.
+Thanks for your feedback.
+
+On 2019-02-18 12:12:19 +0100, Ulrich Hecht wrote:
+> 
+> > On February 18, 2019 at 11:03 AM Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se> wrote:
 > > 
-> > I don't think this belongs to the CSI-2 receiver. Standards are really
-> > an analog concept, and should be handled by the analog front-end. At the
-> > CSI-2 level there's no concept of analog standard anymore.
+> > 
+> > Latest information from hardware engineers reveals that H3 ES2 and ES3
+> > of behaves differently when working with link speeds bellow 250 Mpbs.
+> > Add a SoC match for H3 ES2.* and use the correct startup sequence.
 > 
-> I agree it should be handled by the analog front-end. This is patch just 
-> lets the user propagate the information in the pipeline. The driver 
-> could instead find its source subdevice in the media graph and ask which 
-> standard it's supplying.
-> 
-> I wrestled a bit with this and went with this approach as it then works 
-> the same as with other format information, such as dimensions and pixel 
-> format. If the driver acquires the standard by itself why should it no 
-> the same for the format? I'm willing to change this but I would like to 
-> understand where the divider for format propagating in kernel and 
-> user-space is :-)
-> 
-> Also what if there are subdevices between rcar-csi2 and the analog 
-> front-end which do not support the g_std operation?
+> It would be helpful to explain how they behave differently. My guess is that the extra steps "Set the PHTW to H′0139 0105." and "Set the PHTW to the appropriate values for the HS reception frequency." from the flowchart can/must be omitted on ES2+, but I think it would be better if that were stated explicitly somewhere.
 
-My point is that the analog standard shouldn't be propagated at all,
-neither inside the kernel nor in userspace, as it is not applicable to
-CSI-2.
+I wish I could add a more descriptive message on how they changed and 
+why. All I have are the register values in a flow chart. As you point 
+out one can describe how the raw values are different, but that is all 
+in the code. What I really would like to add is why :-)
 
-> >> Later versions of the datasheet have also been updated to make it clear
-> >> that FLD register should be set to 0 when dealing with none interlaced
-> >> field formats.
-> >> 
-> >> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> >> ---
-> >>  drivers/media/platform/rcar-vin/rcar-csi2.c | 33 +++++++++++++++++++--
-> >>  1 file changed, 30 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> >> index f3099f3e536d808a..664d3784be2b9db9 100644
-> >> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> >> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> >> @@ -361,6 +361,7 @@ struct rcar_csi2 {
-> >>  	struct v4l2_subdev *remote;
-> >>  
-> >>  	struct v4l2_mbus_framefmt mf;
-> >> +	v4l2_std_id std;
-> >>  
-> >>  	struct mutex lock;
-> >>  	int stream_count;
-> >> @@ -389,6 +390,22 @@ static void rcsi2_write(struct rcar_csi2 *priv, unsigned int reg, u32 data)
-> >>  	iowrite32(data, priv->base + reg);
-> >>  }
-> >>  
-> >> +static int rcsi2_s_std(struct v4l2_subdev *sd, v4l2_std_id std)
-> >> +{
-> >> +	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> >> +
-> >> +	priv->std = std;
-> >> +	return 0;
-> >> +}
-> >> +
-> >> +static int rcsi2_g_std(struct v4l2_subdev *sd, v4l2_std_id *std)
-> >> +{
-> >> +	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> >> +
-> >> +	*std = priv->std;
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  static void rcsi2_standby_mode(struct rcar_csi2 *priv, int on)
-> >>  {
-> >>  	if (!on) {
-> >> @@ -475,7 +492,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-> >>  static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >>  {
-> >>  	const struct rcar_csi2_format *format;
-> >> -	u32 phycnt, vcdt = 0, vcdt2 = 0;
-> >> +	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
-> >>  	unsigned int i;
-> >>  	int mbps, ret;
-> >>  
-> >> @@ -507,6 +524,15 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >>  			vcdt2 |= vcdt_part << ((i % 2) * 16);
-> >>  	}
-> >>  
-> >> +	if (priv->mf.field != V4L2_FIELD_NONE) {
-> >> +		fld =  FLD_FLD_EN4 | FLD_FLD_EN3 | FLD_FLD_EN2 | FLD_FLD_EN;
-> >> +
-> >> +		if (priv->std & V4L2_STD_525_60)
-> >> +			fld |= FLD_FLD_NUM(2);
-> >> +		else
-> >> +			fld |= FLD_FLD_NUM(1);
-> >> +	}
-> >> +
-> >>  	phycnt = PHYCNT_ENABLECLK;
-> >>  	phycnt |= (1 << priv->lanes) - 1;
-> >>  
-> >> @@ -519,8 +545,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >>  	rcsi2_write(priv, PHTC_REG, 0);
-> >>  
-> >>  	/* Configure */
-> >> -	rcsi2_write(priv, FLD_REG, FLD_FLD_NUM(2) | FLD_FLD_EN4 |
-> >> -		    FLD_FLD_EN3 | FLD_FLD_EN2 | FLD_FLD_EN);
-> >> +	rcsi2_write(priv, FLD_REG, fld);
-> >>  	rcsi2_write(priv, VCDT_REG, vcdt);
-> >>  	if (vcdt2)
-> >>  		rcsi2_write(priv, VCDT2_REG, vcdt2);
-> >> @@ -662,6 +687,8 @@ static int rcsi2_get_pad_format(struct v4l2_subdev *sd,
-> >>  }
-> >>  
-> >>  static const struct v4l2_subdev_video_ops rcar_csi2_video_ops = {
-> >> +	.s_std = rcsi2_s_std,
-> >> +	.g_std = rcsi2_g_std,
-> >>  	.s_stream = rcsi2_s_stream,
-> >>  };
-> >>  
+> 
+> With that fixed:
+> 
+> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> 
+> CU
+> Uli
 
 -- 
 Regards,
-
-Laurent Pinchart
+Niklas Söderlund
