@@ -2,99 +2,127 @@ Return-Path: <SRS0=mNNB=RL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B757DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 08:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303EDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 09:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80D682081B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 08:24:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K+Nn/DLo"
+	by mail.kernel.org (Postfix) with ESMTP id 0A8D620811
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 09:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725789AbfCHIYv (ORCPT
+        id S1726351AbfCHJPE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 03:24:51 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40792 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfCHIYv (ORCPT
+        Fri, 8 Mar 2019 04:15:04 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:46325 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726340AbfCHJPE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 03:24:51 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a8so13705641lfi.7
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 Mar 2019 00:24:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Au5Odvr18Aleb7TW2DRmRmfiWTRoXUyloWuUa41tem4=;
-        b=K+Nn/DLoyMzwlUm4I5cC1iDnxDXOLVo6IP9orle07DqoJdgbIjMxGe5nd09hIDbdbr
-         iFRC1HUINiVZyJs/oUefwl/TXd6VdtWHYBla4gkqKhU5SS6lQjlRhlCdSv0CEKdbFb14
-         652MguoTqrj/6gixp9y56fqEpqizBl92YXnbGVzIPq+X4ZdD6jOURbbW7T+FYi6/XIM/
-         x4PkyWLaaXtT9nIzbYgN1Nu3BA0DFDZIkpbopEWPEoGRRmjYtJz7GbUQQRoY0pAy1zmd
-         Y2XoOx+7QUwYq9idIfxYKcL67a4kqUalnxO4ClMqvXS2Ydb+W2Hux5kbjW1NOCBxi59r
-         egcA==
+        Fri, 8 Mar 2019 04:15:04 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b17so4390928vsr.13;
+        Fri, 08 Mar 2019 01:15:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Au5Odvr18Aleb7TW2DRmRmfiWTRoXUyloWuUa41tem4=;
-        b=Z/IY7dBS2gzMzbgZ9u1iQXBrX4ewq2kem59weg5MQ26P0IQlgu6bUjBwfmfhCm5TMF
-         LHpR+25VrrBCVl73JK/9OSOWHJSVb1l3gtUzeR9aYc8gkAN+KzZHM2ej2wWnXhffjmQw
-         Dm2yMAHjixA1xC3F8eOGzvv9wBinWjkEhQR3Mmnaj9QFRg+aOe93KY/SqK+yZnjR+plV
-         IkApDNk0Ao90ycqkpYiWyyc0A7qthbBMLKK7L2eMcQl2IPM5IL/iTmvQP8VEju1P3xfQ
-         dIM8+HCyVQo6FfIcAh9wrB1Td7xp2j9KEsxbQ0LbItP/aou6rDsVQ779zEpTPNwIFwAX
-         PAAw==
-X-Gm-Message-State: APjAAAW5clpKiCUmSdjvMYemk5OzmdYU/BAy+VPvE8cZNqqDh3cfwqAL
-        CyUaYWnLHQM0peXwd9PVrkcIY7pd+eg+5EgBzTA6QA==
-X-Google-Smtp-Source: APXvYqxK3VHVclXOadAhAJOWUjnzUibbvahW+a7ej2aXt1emcav9lfv1X7IjKVYpvHCgyn0bCxLtVWdC262uq03pfEU=
-X-Received: by 2002:ac2:4343:: with SMTP id o3mr8574168lfl.129.1552033489621;
- Fri, 08 Mar 2019 00:24:49 -0800 (PST)
+        bh=smtJkTEvYhLXfvJ7j6ud+jvOAh89eegxegFHjehZDxE=;
+        b=tvw72b/sQcHwkKj2bEYYP6uxXDs2fOsbE0yNXIO1z/YoWSBblYJI8DVjdy99TzyP8h
+         9Q954xfdPcAmAQiFoOKcQ83YCX3gwG21BlYjGv+mpyxJI4n95752/Okh8H0hDNeWInGU
+         /8+rOaMmTwhFhvRIm/aJMTSHAQPe8Tpw5Ip/Nv1iZHTAy8tiVejk0mpJEkdl8pGrBA++
+         CUcSm96wIRFHY8jlfO9+7+jLOd9toVNuYklecqgGSQIjBsi7bwArAHR+1PFeU3M+ex9G
+         dsC4KDvIwLO3UKavryfTbWbFJB7c+iiTc6a0SUF/O/+zwZby8XoTyYdE0wQQ9PJ0bCIu
+         7rDQ==
+X-Gm-Message-State: APjAAAXxxpvBI5vAZ/RWXEVnKYT43eSIm/3ImK5ILJUfjutQJpG33qyE
+        DSNX5OWYI6V1Q0ikO/fPomo1hl9iOcaOkYG0CysbPA==
+X-Google-Smtp-Source: APXvYqxMqsnuoK6kIm+5BVKa13o0JgfUUC4xZ6uDtozvce8nseRY/LDUUdrAnTWTuiB2yrrVLmAEgvk0FkGp9ly3h8Y=
+X-Received: by 2002:a67:7dd1:: with SMTP id y200mr8326567vsc.96.1552036502736;
+ Fri, 08 Mar 2019 01:15:02 -0800 (PST)
 MIME-Version: 1.0
-References: <1542727156-31432-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1542727156-31432-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CACRpkdbf+MpB24etuXUGypOwHUW_w4ECu-iFFT3aEB10wG0Huw@mail.gmail.com>
- <TY1PR01MB177090970EE98AC699E22E3CC0A90@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <CAMuHMdUxcxRJv_H+_25pavjeJOKoEihrjBQTxjWR-fe9x5rBNw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUxcxRJv_H+_25pavjeJOKoEihrjBQTxjWR-fe9x5rBNw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 8 Mar 2019 09:24:37 +0100
-Message-ID: <CACRpkdbtB9cxA=MhWQSVmGRW64X9jYT8ZQsEfps4B=vY+U1knA@mail.gmail.com>
-Subject: Re: [RFC v3 1/2] pinctrl: core: Add pinctrl_mux_gpio_request_enable
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+References: <1548658158-5460-1-git-send-email-masonccyang@mxic.com.tw>
+ <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw> <0c54ee2c-016a-bc8e-33ae-fbd04191cc49@cogentembedded.com>
+In-Reply-To: <0c54ee2c-016a-bc8e-33ae-fbd04191cc49@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 8 Mar 2019 10:14:51 +0100
+Message-ID: <CAMuHMdVjgWNw4fnzJV=Qxs6zyNiBPubJUL-4WDOy26N4TkQ4gQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>,
+        Mark Brown <broonie@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 1, 2019 at 2:27 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi Sergei,
 
-> /me gives v3 a try on Koelsch, Salvator-XS, and Ebisu-4D:
+On Thu, Mar 7, 2019 at 6:50 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 01/28/2019 09:49 AM, Mason Yang wrote:
+> > Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+> >
+> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> [...]
+> > diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> > new file mode 100644
+> > index 0000000..ea12017
+> > --- /dev/null
+> > +++ b/drivers/spi/spi-renesas-rpc.c
+> > @@ -0,0 +1,804 @@
+> [...]
+> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+> > +{
+> > +     //
+> > +     // NOTE: The 0x260 are undocumented bits, but they must be set.
+> > +     //      RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
+> > +     //      0x0 : the delay is biggest,
+> > +     //      0x1 : the delay is 2nd biggest,
+> > +     //      On H3 ES1.x, the value should be 0, while on others,
+> > +     //      the value should be 6.
+> > +     //
+> > +     regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
+> > +                               RPC_PHYCNT_STRTIM(6) | 0x260);
+> > +
+> > +     //
+> > +     // NOTE: The 0x1511144 are undocumented bits, but they must be set
+> > +     //       for RPC_PHYOFFSET1.
+> > +     //       The 0x31 are undocumented bits, but they must be set
+> > +     //       for RPC_PHYOFFSET2.
+> > +     //
+> > +     regmap_write(rpc->regmap, RPC_PHYOFFSET1, RPC_PHYOFFSET1_DDRTMG(3) |
+> > +                  0x1511144);
+> > +     regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
+> > +                  RPC_PHYOFFSET2_OCTTMG(4));
+> > +     regmap_write(rpc->regmap, RPC_SSLDR, RPC_SSLDR_SPNDL(7) |
+> > +                  RPC_SSLDR_SLNDL(7) | RPC_SSLDR_SCKDL(7));
+> > +     regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+> > +                  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> > +                  RPC_CMNCR_BSZ(0));
+> > +}
 >
->     BUG: sleeping function called from invalid context
->
-> for mmc, adv7511, gpio-keys, and Ethernet PHY.
+>    We clearly need runtime PM get/put() calls around this code. Otherwise,
+> we're dependant on U-Boot leaving the clocks enabled...
 
-This is the usual problem when you call back from any of the
-irqchip callbacks: almost all of them except request/release
-resources are called under a spinlock.
+Even that would be futile, as the common clock framework disables all
+unused clocks at late boot time.
 
-The problem is creeping up in a lot of places, and I can't
-really solve that from the GPIO side. See for example this
-regression that I have no idea what to do with:
-https://marc.info/?l=linux-kernel&m=154349829407463&w=2
+Gr{oetje,eeting}s,
 
-Yours,
-Linus Walleij
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
