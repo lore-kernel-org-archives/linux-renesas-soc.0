@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0591DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 18:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC16BC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 18:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C948220851
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 18:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88B6B20661
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 18:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="R5jdQJpB"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="i+5GoHtW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfCHSHM (ORCPT
+        id S1727041AbfCHSMu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 13:07:12 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37572 "EHLO
+        Fri, 8 Mar 2019 13:12:50 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37798 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbfCHSHM (ORCPT
+        with ESMTP id S1727106AbfCHSMt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 13:07:12 -0500
+        Fri, 8 Mar 2019 13:12:49 -0500
 Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 74C97309;
-        Fri,  8 Mar 2019 19:07:09 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2AF8F309;
+        Fri,  8 Mar 2019 19:12:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552068429;
-        bh=VYnsb2oLlg71FGJY8UIlafnYfXsi79Opc6um6Snj+LY=;
+        s=mail; t=1552068766;
+        bh=qxkPu5Y0+WYRIWUN3S2YsjdFFOT+sYaxtA8LCi1Wa6M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R5jdQJpB3qSksMLSG8/4W445hPKUHFpK1Ep3I1QFUqbj94aQcmaRMwGkBmjcr4qnc
-         wZ8JdB7tqBbfISWJjH1IfC4xoq0WbMei/Ro+6tgETo0M+08S13rgHhwlk7/z0qjXfp
-         +P40vrOPsMbwvwSJggofOXUiNx3hFDY79eUxCwI0=
-Date:   Fri, 8 Mar 2019 20:07:03 +0200
+        b=i+5GoHtWqoOg88657Lfm0QbW/F0afIUO5UGUiDzORYCGjAPsFR3RJ0a98FYmRt9h+
+         z+aOkFr9cUkj1CrAezJiCmvQ1zxV3n/nHCNUAfBRJYvJRcloYfUHrcjAhbef23ZhFh
+         AmRIDEOg0ajUCQhCKzGxLK6UYZkG9FOWIFx31/ag=
+Date:   Fri, 8 Mar 2019 20:12:39 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Jacopo Mondi <jacopo@jmondi.org>
 Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH/RFC 10/15] drm: rcar-du: lvds: Set LVEN and LVRES bits
- together on D3
-Message-ID: <20190308180703.GC11318@pendragon.ideasonboard.com>
+Subject: Re: [PATCH/RFC 11/15] drm: rcar-du: lvds: Add support for dual-link
+ mode
+Message-ID: <20190308181239.GD11318@pendragon.ideasonboard.com>
 References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190306232345.23052-11-laurent.pinchart+renesas@ideasonboard.com>
- <20190308162512.scfltn3657qp3l4v@uno.localdomain>
+ <20190306232345.23052-12-laurent.pinchart+renesas@ideasonboard.com>
+ <20190308172023.vtsvouwo4ltxzgx2@uno.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190308162512.scfltn3657qp3l4v@uno.localdomain>
+In-Reply-To: <20190308172023.vtsvouwo4ltxzgx2@uno.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -57,64 +57,261 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Jacopo,
 
-On Fri, Mar 08, 2019 at 05:25:12PM +0100, Jacopo Mondi wrote:
-> On Thu, Mar 07, 2019 at 01:23:40AM +0200, Laurent Pinchart wrote:
-> > On the D3 SoC the LVDS PHY must be enabled in the same register write
-> > that enables the LVDS output. Skip writing the LVEN bit independently
-> > on that platform, it will be set by the write that sets LVRES.
+On Fri, Mar 08, 2019 at 06:20:23PM +0100, Jacopo Mondi wrote:
+> On Thu, Mar 07, 2019 at 01:23:41AM +0200, Laurent Pinchart wrote:
+> > In dual-link mode the LVDS0 encoder transmits even-numbered pixels, and
+> > sends odd-numbered pixels to the LVDS1 encoder for transmission on a
+> > separate link.
+> >
+> > To implement support for this mode of operation, determine if the LVDS
+> > connection operates in dual-link mode by querying the next device in the
+> > pipeline, locate the companion encoder, and control it directly through
+> > its bridge operations.
 > >
 > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > > ---
-> >  drivers/gpu/drm/rcar-du/rcar_lvds.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >  drivers/gpu/drm/rcar-du/rcar_lvds.c | 104 ++++++++++++++++++++++++----
+> >  drivers/gpu/drm/rcar-du/rcar_lvds.h |   5 ++
+> >  2 files changed, 96 insertions(+), 13 deletions(-)
 > >
 > > diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > index b1abe737dc05..5ac92ee15be0 100644
+> > index 5ac92ee15be0..90d33514bb3e 100644
 > > --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
 > > +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > @@ -475,9 +475,13 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
-> >  	}
+> > @@ -66,6 +66,9 @@ struct rcar_lvds {
 > >
-> >  	if (lvds->info->quirks & RCAR_LVDS_QUIRK_GEN3_LVEN) {
-> > -		/* Turn on the LVDS PHY. */
+> >  	struct drm_display_mode display_mode;
+> >  	enum rcar_lvds_mode mode;
+> > +
+> > +	struct drm_bridge *companion;
+> > +	bool dual_link;
+> >  };
+> >
+> >  #define bridge_to_rcar_lvds(bridge) \
+> > @@ -400,11 +403,6 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
+> >  {
+> >  	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
+> >  	const struct drm_display_mode *mode = &lvds->display_mode;
+> > -	/*
+> > -	 * FIXME: We should really retrieve the CRTC through the state, but how
+> > -	 * do we get a state pointer?
+> > -	 */
+> > -	struct drm_crtc *crtc = lvds->bridge.encoder->crtc;
+> >  	u32 lvdhcr;
+> >  	u32 lvdcr0;
+> >  	int ret;
+> > @@ -413,6 +411,10 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
+> >  	if (ret < 0)
+> >  		return;
+> >
+> > +	/* Enable the companion LVDS encoder in dual-link mode. */
+> > +	if (lvds->dual_link && lvds->companion)
+> > +		lvds->companion->funcs->enable(lvds->companion);
+> > +
+> >  	/*
+> >  	 * Hardcode the channels and control signals routing for now.
+> >  	 *
+> > @@ -435,17 +437,33 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
+> >  	rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
+> >
+> >  	if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK) {
+> > -		/* Disable dual-link mode. */
+> > -		rcar_lvds_write(lvds, LVDSTRIPE, 0);
 > > +		/*
-> > +		 * Turn on the LVDS PHY. On D3, the LVEN and LVRES bit must be
-> > +		 * set at the same time, so don't write the register yet.
+> > +		 * Configure vertical stripe based on the mode of operation of
+> > +		 * the connected device.
 > > +		 */
-> >  		lvdcr0 |= LVDCR0_LVEN;
-> > -		rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-> > +		if (!(lvds->info->quirks & RCAR_LVDS_QUIRK_PWD))
-> 
-> This is quite obscure, and works because D3 is the only SoC that has
-> (quirks & RCAR_LVDS_QUIRK_GEN3_LVEN) and (!(quirks & RCAR_LVDS_QUIRK_PWD)).
-> 
-> I guess there are not many ways around this.
-
-We could add a model field to the info structure, or another quirk, but
-I'd rather not add yet another if it's not needed for now. I agree it's
-not very nice though, it bothered me too when I wrote the code.
-
-> > +			rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-> 
-> I have verified this against the latest v1.50 datasheet, and it
-> matches what's reported in section 37.3.7 so please add my:
-> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> 
-> I would like just to add that the same section prescribes a precise
-> order in which LVDS0 and LVDS1 have to be configured when working with
-> vertical stripe output. Is that enforced in this series?
-
-It is, the companion is enabled before and disabled after the master for
-this reason. My code initially violated the constraint, and the HDMI
-output remained blank.
-
-Note that figure 37.9 describes a sequence where register writes are
-interleaved. As it's titled "The sample setting of the vertical stripe
-output", I've considered it as a sample only.
-
+> > +		rcar_lvds_write(lvds, LVDSTRIPE,
+> > +				lvds->dual_link ? LVDSTRIPE_ST_ON : 0);
 > >  	}
 > >
-> >  	if (!(lvds->info->quirks & RCAR_LVDS_QUIRK_EXT_PLL)) {
+> > -	/* PLL clock configuration. */
+> > -	lvds->info->pll_setup(lvds, mode->clock * 1000);
+> > +	/*
+> > +	 * PLL clock configuration on all instances but the companion in
+> > +	 * dual-link mode.
+> > +	 */
+> > +	if (!lvds->dual_link || lvds->companion)
+> > +		lvds->info->pll_setup(lvds, mode->clock * 1000);
+> >
+> >  	/* Set the LVDS mode and select the input. */
+> >  	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
+> > -	if (drm_crtc_index(crtc) == 2)
+> > -		lvdcr0 |= LVDCR0_DUSEL;
+> > +
+> > +	if (lvds->bridge.encoder) {
+> > +		/*
+> > +		 * FIXME: We should really retrieve the CRTC through the state,
+> > +		 * but how do we get a state pointer?
+> > +		 */
+> > +		if (drm_crtc_index(lvds->bridge.encoder->crtc) == 2)
+> > +			lvdcr0 |= LVDCR0_DUSEL;
+> > +	}
+> > +
+> >  	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+> >
+> >  	/* Turn all the channels on. */
+> > @@ -512,6 +530,10 @@ static void rcar_lvds_disable(struct drm_bridge *bridge)
+> >  	rcar_lvds_write(lvds, LVDCR1, 0);
+> >  	rcar_lvds_write(lvds, LVDPLLCR, 0);
+> >
+> > +	/* Disable the companion LVDS encoder in dual-link mode. */
+> > +	if (lvds->dual_link && lvds->companion)
+> > +		lvds->companion->funcs->disable(lvds->companion);
+> > +
+> >  	clk_disable_unprepare(lvds->clocks.mod);
+> >  }
+> >
+> > @@ -628,10 +650,54 @@ static const struct drm_bridge_funcs rcar_lvds_bridge_ops = {
+> >  	.mode_set = rcar_lvds_mode_set,
+> >  };
+> >
+> > +bool rcar_lvds_dual_link(struct drm_bridge *bridge)
+> > +{
+> > +	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
+> > +
+> > +	return lvds->dual_link;
+> > +}
+> > +EXPORT_SYMBOL_GPL(rcar_lvds_dual_link);
+> > +
+> >  /* -----------------------------------------------------------------------------
+> >   * Probe & Remove
+> >   */
+> >
+> > +static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+> > +{
+> > +	const struct of_device_id *match;
+> > +	struct device_node *companion;
+> > +	struct device *dev = lvds->dev;
+> > +	int ret = 0;
+> > +
+> > +	/* Locate the companion LVDS encoder for dual-link operation, if any. */
+> > +	companion = of_parse_phandle(dev->of_node, "renesas,companion", 0);
+> > +	if (!companion)
+> > +		return -ENODEV;
+> > +
+> > +	/*
+> > +	 * Sanity check: the companion encoder must have the same compatible
+> > +	 * string.
+> > +	 */
+> > +	match = of_match_device(dev->driver->of_match_table, dev);
+> > +	if (!of_device_is_compatible(companion, match->compatible)) {
+> > +		ret = -ENODEV;
+> > +		goto done;
+> > +	}
+> > +
+> > +	lvds->companion = of_drm_find_bridge(companion);
+> > +	if (!lvds->companion) {
+> > +		ret = -EPROBE_DEFER;
+> > +		goto done;
+> > +	}
+> > +
+> > +	dev_dbg(dev, "Found companion encoder %pOF\n", companion);
+> > +
+> > +done:
+> > +	of_node_put(companion);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+> >  {
+> >  	struct device_node *local_output = NULL;
+> > @@ -682,14 +748,26 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+> >
+> >  	if (is_bridge) {
+> >  		lvds->next_bridge = of_drm_find_bridge(remote);
+> > -		if (!lvds->next_bridge)
+> > +		if (!lvds->next_bridge) {
+> >  			ret = -EPROBE_DEFER;
+> > +			goto done;
+> > +		}
+> > +
+> > +		if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
+> > +			lvds->dual_link = lvds->next_bridge->timings
+> > +					? lvds->next_bridge->timings->dual_link
+> > +					: false;
+> 
+> I wonder if, in all this patch, you could not use "lvds->companion" in
+> place of "lvds->dual_link", and thus drop that from timings. This mean
+> "renesas,companion" would only be used when operating in dual link
+> mode, which might be less nice (and could actually called differently
+> in that case).
+> 
+> Both the THC631024 and the rcar_du-lvds driver would decide
+> independently if they operate in dual link mode or not (one counting
+> its endpoints, the other inspecting the "renesas,companion" property).
+
+I decided to specify the companion in DT regardless of which operating
+mode is used, as it's a property of the LVDS encoder, not of the
+operating mode. Furthermore, I can foresee setups where the mode would
+be selected dynamically at runtime. Our development boards don't allow
+that as they hardcode the mode using DIP switches, but nothing would
+prevent the mode selection signals to be connected to GPIOs. I thus
+think lvds->companion should point to the companion unconditionally, and
+lvds->dual_link should select the operating mode. The dual_link field is
+currently set at probe time as I have no need for dynamic configuration
+of the mode and no mean of testing it, so I decided not to implement
+dynamic switching yet.
+
+> The only place where this might be tricky is the here above
+> 
+>  +	/*
+>  +	 * PLL clock configuration on all instances but the companion in
+>  +	 * dual-link mode.
+>  +	 */
+>  +	if (!lvds->dual_link || lvds->companion)
+>  +		lvds->info->pll_setup(lvds, mode->clock * 1000);
+> 
+> but that would remove the need for the thc63 bridge to report its
+> operating mode in timings...
+> 
+> >  	} else {
+> >  		lvds->panel = of_drm_find_panel(remote);
+> > -		if (IS_ERR(lvds->panel))
+> > +		if (IS_ERR(lvds->panel)) {
+> >  			ret = PTR_ERR(lvds->panel);
+> > +			goto done;
+> > +		}
+> >  	}
+> >
+> > +	if (lvds->dual_link)
+> 
+> Note: if (!is_bridge) you would never set lvds->dual_link, so this
+> should be moved inside the here above "if (is_bridge)"
+
+I don't yet, but nothing prevents a panel from operating in dual mode,
+even if not implemented yet. That's why I've move this check out of the
+bridge/panel conditional code.
+
+> > +		ret = rcar_lvds_parse_dt_companion(lvds);
+> > +
+> >  done:
+> >  	of_node_put(local_output);
+> >  	of_node_put(remote_input);
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.h b/drivers/gpu/drm/rcar-du/rcar_lvds.h
+> > index a709cae1bc32..222ec0e60785 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_lvds.h
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.h
+> > @@ -15,6 +15,7 @@ struct drm_bridge;
+> >  #if IS_ENABLED(CONFIG_DRM_RCAR_LVDS)
+> >  int rcar_lvds_clk_enable(struct drm_bridge *bridge, unsigned long freq);
+> >  void rcar_lvds_clk_disable(struct drm_bridge *bridge);
+> > +bool rcar_lvds_dual_link(struct drm_bridge *bridge);
+> >  #else
+> >  static inline int rcar_lvds_clk_enable(struct drm_bridge *bridge,
+> >  				       unsigned long freq)
+> > @@ -22,6 +23,10 @@ static inline int rcar_lvds_clk_enable(struct drm_bridge *bridge,
+> >  	return -ENOSYS;
+> >  }
+> >  static inline void rcar_lvds_clk_disable(struct drm_bridge *bridge) { }
+> > +static inline bool rcar_lvds_dual_link(struct drm_bridge *bridge)
+> > +{
+> > +	return false;
+> > +}
+> >  #endif /* CONFIG_DRM_RCAR_LVDS */
+> >
+> >  #endif /* __RCAR_LVDS_H__ */
 
 -- 
 Regards,
