@@ -2,124 +2,420 @@ Return-Path: <SRS0=mNNB=RL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 254E0C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 14:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F49DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 14:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0001C2087C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 14:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 357FE2087C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 14:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfCHOMe (ORCPT
+        id S1726774AbfCHOOI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 09:12:34 -0500
-Received: from mga14.intel.com ([192.55.52.115]:8231 "EHLO mga14.intel.com"
+        Fri, 8 Mar 2019 09:14:08 -0500
+Received: from mga18.intel.com ([134.134.136.126]:8198 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbfCHOMe (ORCPT
+        id S1726534AbfCHOOI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 09:12:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Fri, 8 Mar 2019 09:14:08 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Mar 2019 06:12:32 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Mar 2019 06:14:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,456,1544515200"; 
-   d="scan'208";a="174110592"
+   d="scan'208";a="326768627"
 Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga001.jf.intel.com with ESMTP; 08 Mar 2019 06:12:30 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 08 Mar 2019 06:14:05 -0800
 Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 7B42720399; Fri,  8 Mar 2019 16:12:29 +0200 (EET)
-Date:   Fri, 8 Mar 2019 16:12:29 +0200
+        id 9D3AE20399; Fri,  8 Mar 2019 16:14:04 +0200 (EET)
+Date:   Fri, 8 Mar 2019 16:14:04 +0200
 From:   Sakari Ailus <sakari.ailus@linux.intel.com>
 To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     niklas soderlund <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         laurent.pinchart@ideasonboard.com,
         niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 00/31] v4l: add support for multiplexed streams
-Message-ID: <20190308141229.qflsxk2lhhdohn6a@paasikivi.fi.intel.com>
+Subject: Re: [PATCH v3 19/31] media: Documentation: Add GS_ROUTING
+ documentation
+Message-ID: <20190308141404.btraw5mdp6drarth@paasikivi.fi.intel.com>
 References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
- <20190307094725.5nrvzz7hn7gfmgxe@paasikivi.fi.intel.com>
- <20190308131903.daja4zzfp47pucsf@uno.localdomain>
+ <20190305185150.20776-20-jacopo+renesas@jmondi.org>
+ <20190307151928.dogdsks22acqawc3@paasikivi.fi.intel.com>
+ <20190308133133.ium6nzkbw6g3z22r@uno.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190308131903.daja4zzfp47pucsf@uno.localdomain>
+In-Reply-To: <20190308133133.ium6nzkbw6g3z22r@uno.localdomain>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 08, 2019 at 02:19:03PM +0100, Jacopo Mondi wrote:
-> Hi Sakari and Niklas,
+Hi Jacopo,
+
+On Fri, Mar 08, 2019 at 02:31:33PM +0100, Jacopo Mondi wrote:
+> Hi Sakari,
+>    thanks for the review
 > 
-> On Thu, Mar 07, 2019 at 11:47:26AM +0200, Sakari Ailus wrote:
+> On Thu, Mar 07, 2019 at 05:19:29PM +0200, Sakari Ailus wrote:
 > > Hi Jacopo,
 > >
-> > On Tue, Mar 05, 2019 at 07:51:19PM +0100, Jacopo Mondi wrote:
-> > > Hello,
-> > >    third version of multiplexed stream support patch series.
-> > >
-> > > V2 sent by Niklas is available at:
-> > > https://patchwork.kernel.org/cover/10573817/
-> > >
-> > > As per v2, most of the core patches are work from Sakari and Laurent, with
-> > > Niklas' support on top for adv748x and rcar-csi2.
-> > >
-> > > The use case of the series remains the same: support for virtual channel
-> > > selection implemented on R-Car Gen3 and adv748x. Quoting the v2 cover letter:
-> > >
-> > > -------------------------------------------------------------------------------
-> > > I have added driver support for the devices used on the Renesas Gen3
-> > > platforms, a ADV7482 connected to the R-Car CSI-2 receiver. With these
-> > > changes I can control which of the analog inputs of the ADV7482 the
-> > > video source is captured from and on which CSI-2 virtual channel the
-> > > video is transmitted on to the R-Car CSI-2 receiver.
-> > >
-> > > The series adds two new subdev IOCTLs [GS]_ROUTING which allows
-> > > user-space to get and set routes inside a subdevice. I have added RFC
-> > > support for these to v4l-utils [2] which can be used to test this
-> > > series, example:
-> > >
-> > >     Check the internal routing of the adv748x csi-2 transmitter:
-> > >     v4l2-ctl -d /dev/v4l-subdev24 --get-routing
-> > >     0/0 -> 1/0 [ENABLED]
-> > >     0/0 -> 1/1 []
-> > >     0/0 -> 1/2 []
-> > >     0/0 -> 1/3 []
-> > >
-> > >
-> > >     Select that video should be outputed on VC 2 and check the result:
-> > >     $ v4l2-ctl -d /dev/v4l-subdev24 --set-routing '0/0 -> 1/2 [1]'
-> > >
-> > >     $ v4l2-ctl -d /dev/v4l-subdev24 --get-routing
-> > >     0/0 -> 1/0 []
-> > >     0/0 -> 1/1 []
-> > >     0/0 -> 1/2 [ENABLED]
-> > >     0/0 -> 1/3 []
-> > > -------------------------------------------------------------------------------
-> > >
-> > > Below is reported the media graph of the system used for testing [1].
-> > >
-> > > v4l2-ctl patches to handle the newly introduced IOCTLs are available from
-> > > Niklas' repository at:
-> > > git://git.ragnatech.se/v4l-utils routing
+> > Thanks for writing the documentation for this!
 > >
-> > Could you send the v4l2-ctl patches out as well, please?
+> > The text is nice and informative; I have a few suggestions below.
+> >
+> > On Tue, Mar 05, 2019 at 07:51:38PM +0100, Jacopo Mondi wrote:
+> > > Add documentation for VIDIOC_SUBDEV_G/S_ROUTING ioctl and add
+> > > description of multiplexed media pads and internal routing to the
+> > > V4L2-subdev documentation section.
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > ---
+> > >  Documentation/media/uapi/v4l/dev-subdev.rst   |  90 +++++++++++
+> > >  Documentation/media/uapi/v4l/user-func.rst    |   1 +
+> > >  .../uapi/v4l/vidioc-subdev-g-routing.rst      | 142 ++++++++++++++++++
+> > >  3 files changed, 233 insertions(+)
+> > >  create mode 100644 Documentation/media/uapi/v4l/vidioc-subdev-g-routing.rst
+> > >
+> > > diff --git a/Documentation/media/uapi/v4l/dev-subdev.rst b/Documentation/media/uapi/v4l/dev-subdev.rst
+> > > index 2c2768c7343b..b9fbb5d2caec 100644
+> > > --- a/Documentation/media/uapi/v4l/dev-subdev.rst
+> > > +++ b/Documentation/media/uapi/v4l/dev-subdev.rst
+> > > @@ -36,6 +36,8 @@ will feature a character device node on which ioctls can be called to
+> > >
+> > >  -  negotiate image formats on individual pads
+> > >
+> > > +-  inspect and modify internal data routing between pads of the same entity
+> > > +
+> > >  Sub-device character device nodes, conventionally named
+> > >  ``/dev/v4l-subdev*``, use major number 81.
+> > >
+> > > @@ -461,3 +463,91 @@ source pads.
+> > >      :maxdepth: 1
+> > >
+> > >      subdev-formats
+> > > +
+> > > +
+> > > +Multiplexed media pads and internal routing
+> > > +-------------------------------------------
+> > > +
+> > > +Subdevice drivers might expose the internal connections between media pads of an
+> >
+> > s/might/may/
+> >
+> > > +entity by providing a routing table that applications can inspect and manipulate
+> >
+> > s/providing/exposing/
 > >
 > 
-> Niklas sent them on late 2017... time flies :)
-> https://patchwork.kernel.org/patch/10113189/
+> Ack on both the above suggestions
 > 
-> Would you like to have them re-sent?
+> > > +to change the internal routing between sink and source pads' data connection
+> > > +endpoints. A routing table is described by a struct
+> > > +:c:type:`v4l2_subdev_routing`, which contains ``num_routes`` route entries, each
+> > > +one represented by a struct :c:type:`v4l2_subdev_route`.
+> > > +
+> > > +Data routes do not just connect one pad to another in an entity, but they refer
+> > > +instead to the ``streams`` a media pad provides. Streams are data connection
+> > > +endpoints in a media pad. Multiplexed media pads expose multiple ``streams``
+> > > +which represent, when the underlying hardware technology allows that, logical
+> > > +data streams transported over a single physical media bus.
+> >
+> > How about s/streams/flows/ for this instance?
+> >
+> 
+> Agreed, there are too many "streams" already in that paragraph
+> 
+> > > +
+> > > +One of the most notable examples of logical stream multiplexing techniques is
+> >
+> > s/One of the most notable examples/A noteworthy example/
+> >
+> > > +represented by the data interleaving mechanism implemented by mean of Virtual
+> > > +Channels identifiers as defined by the MIPI CSI-2 media bus specifications. A
+> >
+> > s/identifiers //
+> >
+> 
+> Ack on both the above suggestions
+> 
+> > > +subdevice that implements support for Virtual Channel data interleaving might
+> > > +expose up to 4 data ``streams``, one for each available Virtual Channel, on the
+> > > +source media pad that represents a CSI-2 connection endpoint.
+> > > +
+> > > +Routes are defined as potential data connections between a ``(sink_pad,
+> > > +sink_stream)`` pair and a ``(source_pad, source_stream)`` one, where
+> > > +``sink_pad`` and ``source_pad`` are the indexes of two media pads part of the
+> > > +same media entity, and ``sink_stream`` and ``source_stream`` are the identifiers
+> > > +of the data streams to be connected in the media pads. Media pads that do not
+> > > +support data multiplexing expose a single stream, usually with identifier 0.
+> > > +
+> > > +Routes are reported to applications in a routing table which can be
+> > > +inspected and manipulated using the :ref:`routing <VIDIOC_SUBDEV_G_ROUTING>`
+> > > +ioctls.
+> > > +
+> > > +Routes can be activated and deactivated by setting or clearing the
+> > > +V4L2_SUBDEV_ROUTE_FL_ACTIVE flag in the ``flags`` field of struct
+> > > +:c:type:`v4l2_subdev_route`.
+> > > +
+> > > +Subdev driver might create routes that cannot be modified by applications. Such
+> >
+> > s/S/A s/
+> 
+> Or "Subdevice drivers" ?
 
-Oh, well, sure, if there are no changes, no need to resend. Thanks for the
-pointer.
+I think singular is fine. And s/might/may/.
+
+> 
+> >
+> > > +routes are identified by the presence of the V4L2_SUBDEV_ROUTE_FL_IMMUTABLE
+> > > +flag in the ``flags`` field of struct :c:type:`v4l2_subdev_route`.
+> > > +
+> > > +As an example, the routing table of a source pad which supports two logical
+> > > +video streams and can be connected to two sink pads is here below described.
+> > > +
+> > > +.. flat-table::
+> > > +    :widths:       1 2 1
+> > > +
+> > > +    * - Pad Index
+> > > +      - Function
+> > > +      - Number of streams
+> > > +    * - 0
+> > > +      - SINK
+> > > +      - 1
+> > > +    * - 1
+> > > +      - SINK
+> > > +      - 1
+> > > +    * - 2
+> > > +      - SOURCE
+> > > +      - 2
+> > > +
+> > > +In such an example, the source media pad will report a routing table with 4
+> > > +entries, one entry for each possible ``(sink_pad, sink_stream) - (source_pad,
+> > > +source_stream)`` combination.
+> > > +
+> > > +.. flat-table:: routing table
+> > > +    :widths:       2 1 2
+> > > +
+> > > +    * - Sink Pad/Sink Stream
+> > > +      - ->
+> > > +      - Source Pad/Source Stream
+> > > +    * - 0/0
+> > > +      - ->
+> > > +      - 2/0
+> > > +    * - 0/0
+> > > +      - ->
+> > > +      - 2/1
+> > > +    * - 1/0
+> > > +      - ->
+> > > +      - 2/0
+> > > +    * - 1/0
+> > > +      - ->
+> > > +      - 2/1
+> > > +
+> > > +Subdev drivers are free to decide how many routes an application can enable on
+> > > +a media pad at the same time, and refuse to enable or disable specific routes.
+> > > diff --git a/Documentation/media/uapi/v4l/user-func.rst b/Documentation/media/uapi/v4l/user-func.rst
+> > > index ca0ef21d77fe..0166446f4ab4 100644
+> > > --- a/Documentation/media/uapi/v4l/user-func.rst
+> > > +++ b/Documentation/media/uapi/v4l/user-func.rst
+> > > @@ -77,6 +77,7 @@ Function Reference
+> > >      vidioc-subdev-g-crop
+> > >      vidioc-subdev-g-fmt
+> > >      vidioc-subdev-g-frame-interval
+> > > +    vidioc-subdev-g-routing
+> > >      vidioc-subdev-g-selection
+> > >      vidioc-subscribe-event
+> > >      func-mmap
+> > > diff --git a/Documentation/media/uapi/v4l/vidioc-subdev-g-routing.rst b/Documentation/media/uapi/v4l/vidioc-subdev-g-routing.rst
+> > > new file mode 100644
+> > > index 000000000000..8b592722c477
+> > > --- /dev/null
+> > > +++ b/Documentation/media/uapi/v4l/vidioc-subdev-g-routing.rst
+> > > @@ -0,0 +1,142 @@
+> > > +.. Permission is granted to copy, distribute and/or modify this
+> > > +.. document under the terms of the GNU Free Documentation License,
+> > > +.. Version 1.1 or any later version published by the Free Software
+> > > +.. Foundation, with no Invariant Sections, no Front-Cover Texts
+> > > +.. and no Back-Cover Texts. A copy of the license is included at
+> > > +.. Documentation/media/uapi/fdl-appendix.rst.
+> > > +..
+> > > +.. TODO: replace it to GFDL-1.1-or-later WITH no-invariant-sections
+> > > +
+> > > +.. _VIDIOC_SUBDEV_G_ROUTING:
+> > > +
+> > > +******************************************************
+> > > +ioctl VIDIOC_SUBDEV_G_ROUTING, VIDIOC_SUBDEV_S_ROUTING
+> > > +******************************************************
+> > > +
+> > > +Name
+> > > +====
+> > > +
+> > > +VIDIOC_SUBDEV_G_ROUTING - VIDIOC_SUBDEV_S_ROUTING - Get or set routing between streams of media pads in a media entity.
+> > > +
+> > > +
+> > > +Synopsis
+> > > +========
+> > > +
+> > > +.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_G_ROUTING, struct v4l2_subdev_routing *argp )
+> > > +    :name: VIDIOC_SUBDEV_G_ROUTING
+> > > +
+> > > +.. c:function:: int ioctl( int fd, VIDIOC_SUBDEV_S_ROUTING, struct v4l2_subdev_routing *argp )
+> > > +    :name: VIDIOC_SUBDEV_S_ROUTING
+> > > +
+> > > +
+> > > +Arguments
+> > > +=========
+> > > +
+> > > +``fd``
+> > > +    File descriptor returned by :ref:`open() <func-open>`.
+> > > +
+> > > +``argp``
+> > > +    Pointer to struct :c:type:`v4l2_subdev_routing`.
+> > > +
+> > > +
+> > > +Description
+> > > +===========
+> > > +
+> > > +These ioctls are used to get and set the routing informations associated to
+> > > +media pads in a media entity. Routing informations are used to enable or disable
+> >
+> > The routing is a property of an entity. How about
+> >
+> > s/the routing informations associated to media pads in/routing/
+> >
+> > s/R[^\.]+(?=\.)/The routing configuration determines the flows of data
+> > inside an entity/
+> 
+> Thanks, you made me discover regexr.com here
+
+:-) Or just man perlre . :-)
+
+> >
+> > > +data connections between stream endpoints of multiplexed media pads.
+> > > +
+> > > +Drivers report their routing tables using VIDIOC_SUBDEV_G_ROUTING and
+> > > +application use the information there reported to enable or disable data
+> > > +connections between streams in a pad, by setting or clearing the
+> >
+> > How about:
+> >
+> > s/applications\K.*a pad/may enable or disable routes with the
+> > VIDIOC_SUBDEV_S_ROUTING IOCTL,
+> >
+> 
+> Yes, reads better
+> 
+> > > +V4L2_SUBDEV_ROUTE_FL_ACTIVE flag of ``flags`` field of a struct
+> > > +:c:type:`v4l2_subdev_route`.
+> > > +
+> > > +When inspecting routes through VIDIOC_SUBDEV_G_ROUTING and the application
+> > > +provided ``num_routes`` is not big enough to contain all the available routes
+> > > +the subdevice exposes, drivers return the ENOSPC error code and adjust the
+> > > +``num_routes`` value. Application should then reserve enough memory for all the
+> >
+> > s/the\K$/value of the/
+> > s/value\K\./field/
+> >
+> 
+> Will update
+> 
+> > > +route entries and call VIDIOC_SUBDEV_G_ROUTING again.
+> > > +
+> > > +.. tabularcolumns:: |p{4.4cm}|p{4.4cm}|p{8.7cm}|
+> > > +
+> > > +.. c:type:: v4l2_subdev_routing
+> > > +
+> > > +.. flat-table:: struct v4l2_subdev_routing
+> > > +    :header-rows:  0
+> > > +    :stub-columns: 0
+> > > +    :widths:       1 1 2
+> > > +
+> > > +    * - struct :c:type:`v4l2_subdev_route`
+> > > +      - ``routes[]``
+> > > +      - Array of struct :c:type:`v4l2_subdev_route` entries
+> > > +    * - __u32
+> > > +      - ``num_routes``
+> > > +      - Number of entries of the routes array
+> > > +    * - __u32
+> > > +      - ``reserved``\ [5]
+> > > +      - Reserved for future extensions. Applications and drivers must set
+> > > +	the array to zero.
+> > > +
+> > > +.. tabularcolumns:: |p{4.4cm}|p{4.4cm}|p{8.7cm}|
+> > > +
+> > > +.. c:type:: v4l2_subdev_route
+> > > +
+> > > +.. flat-table:: struct v4l2_subdev_route
+> > > +    :header-rows:  0
+> > > +    :stub-columns: 0
+> > > +    :widths:       1 1 2
+> > > +
+> > > +    * - __u32
+> > > +      - ``sink_pad``
+> > > +      - Sink pad number
+> > > +    * - __u32
+> > > +      - ``sink_stream``
+> > > +      - Sink pad stream number
+> > > +    * - __u32
+> > > +      - ``source_stream``
+> > > +      - Source pad stream number
+> > > +    * - __u32
+> > > +      - ``sink_stream``
+> > > +      - Sink pad stream number
+> > > +    * - __u32
+> > > +      - ``flags``
+> > > +      - Route enable/disable flags
+> > > +	:ref:`v4l2_subdev_routing_flags <v4l2-subdev-routing-flags>`.
+> > > +    * - __u32
+> > > +      - ``reserved``\ [5]
+> > > +      - Reserved for future extensions. Applications and drivers must set
+> > > +	the array to zero.
+> > > +
+> > > +.. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
+> > > +
+> > > +.. _v4l2-subdev-routing-flags:
+> > > +
+> > > +.. flat-table:: enum v4l2_subdev_routing_flags
+> > > +    :header-rows:  0
+> > > +    :stub-columns: 0
+> > > +    :widths:       3 1 4
+> > > +
+> > > +    * - V4L2_SUBDEV_ROUTE_FL_ACTIVE
+> > > +      - 0
+> > > +      - The route is enabled. Set by applications.
+> > > +    * - V4L2_SUBDEV_ROUTE_FL_IMMUTABLE
+> > > +      - 1
+> > > +      - The route is immutable. Set by the driver.
+> > > +
+> > > +Return Value
+> > > +============
+> > > +
+> > > +On success 0 is returned, on error -1 and the ``errno`` variable is set
+> > > +appropriately. The generic error codes are described at the
+> > > +:ref:`Generic Error Codes <gen-errors>` chapter.
+> > > +
+> > > +ENOSPC
+> > > +   The number of provided route entries is less than the available ones.
+> > > +
+> > > +EINVAL
+> > > +   The sink or source pad identifiers reference a non-existing pad, or refernce
+> > > +   pads of different types (ie. the sink_pad identifiers refers to a source pad)
+> > > +   The sink or source stream identifiers reference a non-existing stream
+> >
+> > s/The/or the/
+> >
+> > > +   in the sink or source pad.
+> >
+> > s/i/o/
+> 
+> Thanks, I will update all of these in v4.
+
+Thanks!
 
 -- 
 Sakari Ailus
