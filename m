@@ -2,149 +2,80 @@ Return-Path: <SRS0=mNNB=RL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F3AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 11:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3777EC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 12:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF1220811
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 11:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E519C20684
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 12:02:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MmhlKK25"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ovmNVO5Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726042AbfCHL3q (ORCPT
+        id S1726375AbfCHMCh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 06:29:46 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:53150 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfCHL3q (ORCPT
+        Fri, 8 Mar 2019 07:02:37 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:47393 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfCHMCh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 06:29:46 -0500
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A6C78309;
-        Fri,  8 Mar 2019 12:29:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552044584;
-        bh=b7cfgF4m93vSIHz+NYNeX5bfcXjY5LjUwf+Eosr+L/g=;
+        Fri, 8 Mar 2019 07:02:37 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0EA4125BEE4;
+        Fri,  8 Mar 2019 23:02:35 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1552046555; bh=GUBFn+FTjk+5LtZtbPoQ4+xNbS23zO4zGNrJ/aZK/OI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MmhlKK25ARLLy/9wkAfDMd0etnVt/h2oHWiyZ8YwejNIqs4xjRvzzT2rp+OweQJJM
-         Oc/dHwfYdtDTc/Eh+5x1kAdOo5CZ+Xf2+r/h9+a0fsU/J+Dto+OahSljXJbNd0cAYD
-         OXO51S6Run8hUDwtAEI+ukHz9P83hs8WfEJX+sGw=
-Date:   Fri, 8 Mar 2019 13:29:38 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: adv748x: Don't disable CSI-2 on link_setup
-Message-ID: <20190308112938.GE4802@pendragon.ideasonboard.com>
-References: <20190306112659.8310-1-jacopo+renesas@jmondi.org>
- <20190306191521.GE4791@pendragon.ideasonboard.com>
- <20190307103511.wtx2c7jecyx4nmms@uno.localdomain>
+        b=ovmNVO5Q3igZFhn0poEbc2QJiGPKa2wDuWkpebj2axkxeCLU7QbkqILo7sdn4gLx8
+         jeqZt0zyfckTLZi/d0hyBjZqQlJwx4Kp9rYBvjSZw/y04js0xnwoRo8sDiQnI75F1V
+         nXaLyxZt1YkkH8NtCqz3nmSbLD3r5r7B/t/X/3iE=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 4B476940270; Fri,  8 Mar 2019 13:02:33 +0100 (CET)
+Date:   Fri, 8 Mar 2019 13:02:33 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77990: Remove invalid compatible
+ value for CSI40
+Message-ID: <20190308120232.kueqdbkwoi2b6l6g@verge.net.au>
+References: <20190306123926.10064-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdXV_wNaXq388_r-20yB-+38y4ZDt0w=oOPf1Bz9Xe1arA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190307103511.wtx2c7jecyx4nmms@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXV_wNaXq388_r-20yB-+38y4ZDt0w=oOPf1Bz9Xe1arA@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
-
-On Thu, Mar 07, 2019 at 11:35:11AM +0100, Jacopo Mondi wrote:
-> On Wed, Mar 06, 2019 at 09:15:21PM +0200, Laurent Pinchart wrote:
-> > On Wed, Mar 06, 2019 at 12:26:59PM +0100, Jacopo Mondi wrote:
-> >> When both the media links between AFE and HDMI and the two TX CSI-2 outputs
-> >> gets disabled, the routing register ADV748X_IO_10 gets zeroed causing both
-> >> TXA and TXB output to get disabled.
-> >>
-> >> This causes some HDMI transmitters to stop working after both AFE and
-> >> HDMI links are disabled.
+On Wed, Mar 06, 2019 at 06:45:56PM +0100, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Wed, Mar 6, 2019 at 4:14 PM Niklas Söderlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > The compatible value renesas,rcar-gen3-csi2 was used while prototyping
+> > the R-Car CSI-2 driver but was removed before the driver was merged.
+> > Remove the only occurrence of the compatible value which manage to make
+> 
+> Nah, there's a second one, in r8a774c0.dtsi ;-)
+> 
+> > it upstream.
 > >
-> > Could you elaborate on why this would be the case ? By HDMI transmitter,
-> > I assume you mean the device connected to the HDMI input of the ADV748x.
-> > Why makes it fail (and how ?) when the TXA and TXB are both disabled ?
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > 
-> I know, it's weird, the HDMI transmitter is connected to the HDMI
-> input of adv748x and should not be bothered by CSI-2 outputs
-> enablement/disablement.
-> 
-> BUT, when I developed the initial adv748x AFE->TXA patches I was
-> testing HDMI capture using a laptop, and things were smooth.
-> 
-> I recently started using a chrome cast device I found in some drawer
-> to test HDMI, as with it I don't need to go through xrandr as I had to
-> do when using a laptop for testing, but it seems the two behaves differently.
-> 
-> Failures are of different types: from detecting a non-realisting
-> resolution from the HDMI subdevice, and then messing up the pipeline
-> configuration, to capture operations apparently completing properly
-> but resulting in mangled images.
-> 
-> Do not deactivate the CSI-2 ouputs seems to fix the issue for the
-> Chromecast, and still work when capturing from laptop. There might be
-> something I am missing about HDMI maybe, but the patch not just fixes
-> the issue for me, but it might make sense on its own as disabling the
-> TXes might trigger some internal power saving state, or simply mess up
-> the HDMI link.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I think this needs more investigation. It feels to me that you're
-working around an issue by chance, and it will come back to bite us
-later :-(
+Thanks,
 
-> As disabling both TXes usually happens at media link reset time, just
-> before enabling one of them (or both), going through a full disable
-> makes little sense, even more if it triggers any sort of malfunctioning.
-> 
-> Does this make sense to you?
+should this patch have:
 
-It also doesn't make too much sense to keep them both enabled when they
-don't need to be :-) You'll end up consuming more power.
-
-> >> Fix this by preventing writing 0 to
-> >> ADV748X_IO_10 register, which gets only updated when links are enabled
-> >> again.
-> >>
-> >> Fixes: 9423ca350df7 ("media: adv748x: Implement TX link_setup callback")
-> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >> ---
-> >> The issue presents itself only on some HDMI transmitters, and went unnoticed
-> >> during the development of:
-> >> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
-> >>
-> >> Patch intended to be applied on top of latest media-master, where the
-> >> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
-> >> series is applied.
-> >>
-> >> The patch reports a "Fixes" tag, but should actually be merged with the above
-> >> mentioned series.
-> >>
-> >> ---
-> >>  drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-> >> index f57cd77a32fa..0e5a75eb6d75 100644
-> >> --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> >> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> >> @@ -354,6 +354,9 @@ static int adv748x_link_setup(struct media_entity *entity,
-> >>
-> >>  	tx->src = enable ? rsd : NULL;
-> >>
-> >> +	if (!enable)
-> >> +		return 0;
-> >> +
-> >>  	if (state->afe.tx) {
-> >>  		/* AFE Requires TXA enabled, even when output to TXB */
-> >>  		io10 |= ADV748X_IO_10_CSI4_EN;
-
--- 
-Regards,
-
-Laurent Pinchart
+Fixes: ec70407ae7d7 ("arm64: dts: renesas: r8a77990: Add VIN and CSI-2 device nodes")
