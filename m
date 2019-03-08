@@ -2,127 +2,149 @@ Return-Path: <SRS0=mNNB=RL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303EDC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 09:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F3AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 11:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8D620811
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 09:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BF1220811
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 11:29:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MmhlKK25"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbfCHJPE (ORCPT
+        id S1726042AbfCHL3q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 04:15:04 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:46325 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfCHJPE (ORCPT
+        Fri, 8 Mar 2019 06:29:46 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53150 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfCHL3q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 04:15:04 -0500
-Received: by mail-vs1-f67.google.com with SMTP id b17so4390928vsr.13;
-        Fri, 08 Mar 2019 01:15:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=smtJkTEvYhLXfvJ7j6ud+jvOAh89eegxegFHjehZDxE=;
-        b=tvw72b/sQcHwkKj2bEYYP6uxXDs2fOsbE0yNXIO1z/YoWSBblYJI8DVjdy99TzyP8h
-         9Q954xfdPcAmAQiFoOKcQ83YCX3gwG21BlYjGv+mpyxJI4n95752/Okh8H0hDNeWInGU
-         /8+rOaMmTwhFhvRIm/aJMTSHAQPe8Tpw5Ip/Nv1iZHTAy8tiVejk0mpJEkdl8pGrBA++
-         CUcSm96wIRFHY8jlfO9+7+jLOd9toVNuYklecqgGSQIjBsi7bwArAHR+1PFeU3M+ex9G
-         dsC4KDvIwLO3UKavryfTbWbFJB7c+iiTc6a0SUF/O/+zwZby8XoTyYdE0wQQ9PJ0bCIu
-         7rDQ==
-X-Gm-Message-State: APjAAAXxxpvBI5vAZ/RWXEVnKYT43eSIm/3ImK5ILJUfjutQJpG33qyE
-        DSNX5OWYI6V1Q0ikO/fPomo1hl9iOcaOkYG0CysbPA==
-X-Google-Smtp-Source: APXvYqxMqsnuoK6kIm+5BVKa13o0JgfUUC4xZ6uDtozvce8nseRY/LDUUdrAnTWTuiB2yrrVLmAEgvk0FkGp9ly3h8Y=
-X-Received: by 2002:a67:7dd1:: with SMTP id y200mr8326567vsc.96.1552036502736;
- Fri, 08 Mar 2019 01:15:02 -0800 (PST)
+        Fri, 8 Mar 2019 06:29:46 -0500
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A6C78309;
+        Fri,  8 Mar 2019 12:29:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552044584;
+        bh=b7cfgF4m93vSIHz+NYNeX5bfcXjY5LjUwf+Eosr+L/g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MmhlKK25ARLLy/9wkAfDMd0etnVt/h2oHWiyZ8YwejNIqs4xjRvzzT2rp+OweQJJM
+         Oc/dHwfYdtDTc/Eh+5x1kAdOo5CZ+Xf2+r/h9+a0fsU/J+Dto+OahSljXJbNd0cAYD
+         OXO51S6Run8hUDwtAEI+ukHz9P83hs8WfEJX+sGw=
+Date:   Fri, 8 Mar 2019 13:29:38 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se,
+        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: adv748x: Don't disable CSI-2 on link_setup
+Message-ID: <20190308112938.GE4802@pendragon.ideasonboard.com>
+References: <20190306112659.8310-1-jacopo+renesas@jmondi.org>
+ <20190306191521.GE4791@pendragon.ideasonboard.com>
+ <20190307103511.wtx2c7jecyx4nmms@uno.localdomain>
 MIME-Version: 1.0
-References: <1548658158-5460-1-git-send-email-masonccyang@mxic.com.tw>
- <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw> <0c54ee2c-016a-bc8e-33ae-fbd04191cc49@cogentembedded.com>
-In-Reply-To: <0c54ee2c-016a-bc8e-33ae-fbd04191cc49@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 8 Mar 2019 10:14:51 +0100
-Message-ID: <CAMuHMdVjgWNw4fnzJV=Qxs6zyNiBPubJUL-4WDOy26N4TkQ4gQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>,
-        Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190307103511.wtx2c7jecyx4nmms@uno.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+Hi Jacopo,
 
-On Thu, Mar 7, 2019 at 6:50 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 01/28/2019 09:49 AM, Mason Yang wrote:
-> > Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+On Thu, Mar 07, 2019 at 11:35:11AM +0100, Jacopo Mondi wrote:
+> On Wed, Mar 06, 2019 at 09:15:21PM +0200, Laurent Pinchart wrote:
+> > On Wed, Mar 06, 2019 at 12:26:59PM +0100, Jacopo Mondi wrote:
+> >> When both the media links between AFE and HDMI and the two TX CSI-2 outputs
+> >> gets disabled, the routing register ADV748X_IO_10 gets zeroed causing both
+> >> TXA and TXB output to get disabled.
+> >>
+> >> This causes some HDMI transmitters to stop working after both AFE and
+> >> HDMI links are disabled.
 > >
-> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> [...]
-> > diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
-> > new file mode 100644
-> > index 0000000..ea12017
-> > --- /dev/null
-> > +++ b/drivers/spi/spi-renesas-rpc.c
-> > @@ -0,0 +1,804 @@
-> [...]
-> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
-> > +{
-> > +     //
-> > +     // NOTE: The 0x260 are undocumented bits, but they must be set.
-> > +     //      RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
-> > +     //      0x0 : the delay is biggest,
-> > +     //      0x1 : the delay is 2nd biggest,
-> > +     //      On H3 ES1.x, the value should be 0, while on others,
-> > +     //      the value should be 6.
-> > +     //
-> > +     regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
-> > +                               RPC_PHYCNT_STRTIM(6) | 0x260);
-> > +
-> > +     //
-> > +     // NOTE: The 0x1511144 are undocumented bits, but they must be set
-> > +     //       for RPC_PHYOFFSET1.
-> > +     //       The 0x31 are undocumented bits, but they must be set
-> > +     //       for RPC_PHYOFFSET2.
-> > +     //
-> > +     regmap_write(rpc->regmap, RPC_PHYOFFSET1, RPC_PHYOFFSET1_DDRTMG(3) |
-> > +                  0x1511144);
-> > +     regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
-> > +                  RPC_PHYOFFSET2_OCTTMG(4));
-> > +     regmap_write(rpc->regmap, RPC_SSLDR, RPC_SSLDR_SPNDL(7) |
-> > +                  RPC_SSLDR_SLNDL(7) | RPC_SSLDR_SCKDL(7));
-> > +     regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
-> > +                  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-> > +                  RPC_CMNCR_BSZ(0));
-> > +}
->
->    We clearly need runtime PM get/put() calls around this code. Otherwise,
-> we're dependant on U-Boot leaving the clocks enabled...
+> > Could you elaborate on why this would be the case ? By HDMI transmitter,
+> > I assume you mean the device connected to the HDMI input of the ADV748x.
+> > Why makes it fail (and how ?) when the TXA and TXB are both disabled ?
+> 
+> I know, it's weird, the HDMI transmitter is connected to the HDMI
+> input of adv748x and should not be bothered by CSI-2 outputs
+> enablement/disablement.
+> 
+> BUT, when I developed the initial adv748x AFE->TXA patches I was
+> testing HDMI capture using a laptop, and things were smooth.
+> 
+> I recently started using a chrome cast device I found in some drawer
+> to test HDMI, as with it I don't need to go through xrandr as I had to
+> do when using a laptop for testing, but it seems the two behaves differently.
+> 
+> Failures are of different types: from detecting a non-realisting
+> resolution from the HDMI subdevice, and then messing up the pipeline
+> configuration, to capture operations apparently completing properly
+> but resulting in mangled images.
+> 
+> Do not deactivate the CSI-2 ouputs seems to fix the issue for the
+> Chromecast, and still work when capturing from laptop. There might be
+> something I am missing about HDMI maybe, but the patch not just fixes
+> the issue for me, but it might make sense on its own as disabling the
+> TXes might trigger some internal power saving state, or simply mess up
+> the HDMI link.
 
-Even that would be futile, as the common clock framework disables all
-unused clocks at late boot time.
+I think this needs more investigation. It feels to me that you're
+working around an issue by chance, and it will come back to bite us
+later :-(
 
-Gr{oetje,eeting}s,
+> As disabling both TXes usually happens at media link reset time, just
+> before enabling one of them (or both), going through a full disable
+> makes little sense, even more if it triggers any sort of malfunctioning.
+> 
+> Does this make sense to you?
 
-                        Geert
+It also doesn't make too much sense to keep them both enabled when they
+don't need to be :-) You'll end up consuming more power.
+
+> >> Fix this by preventing writing 0 to
+> >> ADV748X_IO_10 register, which gets only updated when links are enabled
+> >> again.
+> >>
+> >> Fixes: 9423ca350df7 ("media: adv748x: Implement TX link_setup callback")
+> >> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >> ---
+> >> The issue presents itself only on some HDMI transmitters, and went unnoticed
+> >> during the development of:
+> >> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
+> >>
+> >> Patch intended to be applied on top of latest media-master, where the
+> >> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
+> >> series is applied.
+> >>
+> >> The patch reports a "Fixes" tag, but should actually be merged with the above
+> >> mentioned series.
+> >>
+> >> ---
+> >>  drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> >> index f57cd77a32fa..0e5a75eb6d75 100644
+> >> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> >> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> >> @@ -354,6 +354,9 @@ static int adv748x_link_setup(struct media_entity *entity,
+> >>
+> >>  	tx->src = enable ? rsd : NULL;
+> >>
+> >> +	if (!enable)
+> >> +		return 0;
+> >> +
+> >>  	if (state->afe.tx) {
+> >>  		/* AFE Requires TXA enabled, even when output to TXB */
+> >>  		io10 |= ADV748X_IO_10_CSI4_EN;
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
