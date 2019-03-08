@@ -2,209 +2,318 @@ Return-Path: <SRS0=mNNB=RL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98BC7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 17:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0021C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 17:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64F4D208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 17:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552065462;
-	bh=EkbtiaVXDAkOQiYCFJJan4bXH3o/UkhaM6qN3hvBhF4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Sjujm3o9BTJzZt7+IGlhL203fAejRb9JDVPRK3LmF42FiLE+76cx/8SVNzM2kJfKh
-	 PnSEQNQuzBjCXU60SxSDs8mkqNcR+I5PVytn6chdbU6XEUzo4F8romWukHv0eutgf5
-	 mqYRLv8FmNhY0YGfmlgJgIhmASPZwpKGHyfmNgtU=
+	by mail.kernel.org (Postfix) with ESMTP id 7E9E020851
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 17:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfCHRRm (ORCPT
+        id S1726552AbfCHRTz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 12:17:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726556AbfCHRRm (ORCPT
+        Fri, 8 Mar 2019 12:19:55 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:43667 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfCHRTz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 12:17:42 -0500
-Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9E5920851;
-        Fri,  8 Mar 2019 17:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1552065461;
-        bh=EkbtiaVXDAkOQiYCFJJan4bXH3o/UkhaM6qN3hvBhF4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jSHgFud+gTKua3DBZ9uugUdga8vn/LDoZ6QuvV99hsYFKRqo78CISD5qVmeUvLXwA
-         XEuAIgs5r3UBVK9Q0q1ikfiuSGWxlbnZKcz2IgBD8C60iTzr6GEFqMTHBhiyPj+UOK
-         KNKfm9LESF4NIBwnkyfmM/tSGYjCkPSvMr0rdHiA=
-Date:   Fri, 8 Mar 2019 11:17:38 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-pci@vger.kernel.org,
-        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in
- resume_noirq
-Message-ID: <20190308171738.GB214730@google.com>
-References: <20190217132441.15139-1-marek.vasut@gmail.com>
- <20190307205013.GA208051@google.com>
- <ae3659b1-5355-e6f3-16ef-7b458383a1f6@gmail.com>
+        Fri, 8 Mar 2019 12:19:55 -0500
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id B603F240004;
+        Fri,  8 Mar 2019 17:19:49 +0000 (UTC)
+Date:   Fri, 8 Mar 2019 18:20:23 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH/RFC 11/15] drm: rcar-du: lvds: Add support for dual-link
+ mode
+Message-ID: <20190308172023.vtsvouwo4ltxzgx2@uno.localdomain>
+References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20190306232345.23052-12-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ta7xrcz7fojfknp6"
 Content-Disposition: inline
-In-Reply-To: <ae3659b1-5355-e6f3-16ef-7b458383a1f6@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190306232345.23052-12-laurent.pinchart+renesas@ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-[+cc linux-pm, Rafael for SET_NOIRQ_SYSTEM_SLEEP_PM_OPS question at the end]
 
-On Thu, Mar 07, 2019 at 11:49:34PM +0100, Marek Vasut wrote:
-> On 3/7/19 9:50 PM, Bjorn Helgaas wrote:
-> > On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
-> >> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> >>
-> >> Reestablish the PCIe link very early in the resume process in case it
-> >> went down to prevent PCI accesses from hanging the bus. Such accesses
-> >> can happen early in the PCI resume process, in the resume_noirq, thus
-> >> the link must be reestablished in the resume_noirq callback of the
-> >> driver.
-> >>
-> >> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> >> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> >> Cc: Simon Horman <horms+renesas@verge.net.au>
-> >> Cc: Wolfram Sang <wsa@the-dreams.de>
-> >> Cc: linux-renesas-soc@vger.kernel.org
-> >> ---
-> >> V2: - Use BIT() macro for (1 << n)
-> >>     - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
-> >>       add extra changes to this function anymore
-> >>     - Make resume_noirq return early and clean up parenthesis therein
-> >> ---
-> >>  drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
-> >>  1 file changed, 20 insertions(+)
-> >>
-> >> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> >> index c8febb009454..b8f8fb3bc640 100644
-> >> --- a/drivers/pci/controller/pcie-rcar.c
-> >> +++ b/drivers/pci/controller/pcie-rcar.c
-> >> @@ -46,6 +46,7 @@
-> >>  
-> >>  /* Transfer control */
-> >>  #define PCIETCTLR		0x02000
-> >> +#define  DL_DOWN		BIT(3)
-> >>  #define  CFINIT			1
-> > 
-> > I saw discussion after the V1 patch about using BIT() and making
-> > similar constants also use BIT() for consistency.  That makes sense to
-> > me, and I think the best way would be:
-> > 
-> >   1) in *this* patch, use "#define DL_DOWN 8"
-> >   2) in a followup patch, convert them all to BIT()
-> > 
-> > That way each revision of pcie-rcar.c is self-consistent.
-> 
-> But the BIT() macros are already cleaned , see commit
-> 0ee40820989b330e24926d82953ffb9e1c7a8425
-> 
->     PCI: rcar: Clean up the macros
+--ta7xrcz7fojfknp6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hmmm.  Maybe I'm missing something, but it looks like 0ee40820989b
-didn't touch CFINIT, DATA_LINK_ACTIVE, or MSIFE.  Arguably,
-LINK_SPEED_2_5GTS and LINK_SPEED_5_0GTS could use BIT() also.
+Hi Laurent,
 
-I guess I'm just old-school, but in my personal opinion, BIT() is more
-trouble than it's worth.  I'd rather see a complete bitmask because I
-can easily match it with the typical pictures in a spec, multi-bit
-fields are easy (you don't have to mix BIT() and GENMASK()), it gives
-a hint about the register width, it's easy to match with a hexdump,
-etc, e.g.,
+On Thu, Mar 07, 2019 at 01:23:41AM +0200, Laurent Pinchart wrote:
+> In dual-link mode the LVDS0 encoder transmits even-numbered pixels, and
+> sends odd-numbered pixels to the LVDS1 encoder for transmission on a
+> separate link.
+>
+> To implement support for this mode of operation, determine if the LVDS
+> connection operates in dual-link mode by querying the next device in the
+> pipeline, locate the companion encoder, and control it directly through
+> its bridge operations.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_lvds.c | 104 ++++++++++++++++++++++++----
+>  drivers/gpu/drm/rcar-du/rcar_lvds.h |   5 ++
+>  2 files changed, 96 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> index 5ac92ee15be0..90d33514bb3e 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> @@ -66,6 +66,9 @@ struct rcar_lvds {
+>
+>  	struct drm_display_mode display_mode;
+>  	enum rcar_lvds_mode mode;
+> +
+> +	struct drm_bridge *companion;
+> +	bool dual_link;
+>  };
+>
+>  #define bridge_to_rcar_lvds(bridge) \
+> @@ -400,11 +403,6 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
+>  {
+>  	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
+>  	const struct drm_display_mode *mode = &lvds->display_mode;
+> -	/*
+> -	 * FIXME: We should really retrieve the CRTC through the state, but how
+> -	 * do we get a state pointer?
+> -	 */
+> -	struct drm_crtc *crtc = lvds->bridge.encoder->crtc;
+>  	u32 lvdhcr;
+>  	u32 lvdcr0;
+>  	int ret;
+> @@ -413,6 +411,10 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
+>  	if (ret < 0)
+>  		return;
+>
+> +	/* Enable the companion LVDS encoder in dual-link mode. */
+> +	if (lvds->dual_link && lvds->companion)
+> +		lvds->companion->funcs->enable(lvds->companion);
+> +
+>  	/*
+>  	 * Hardcode the channels and control signals routing for now.
+>  	 *
+> @@ -435,17 +437,33 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
+>  	rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
+>
+>  	if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK) {
+> -		/* Disable dual-link mode. */
+> -		rcar_lvds_write(lvds, LVDSTRIPE, 0);
+> +		/*
+> +		 * Configure vertical stripe based on the mode of operation of
+> +		 * the connected device.
+> +		 */
+> +		rcar_lvds_write(lvds, LVDSTRIPE,
+> +				lvds->dual_link ? LVDSTRIPE_ST_ON : 0);
+>  	}
+>
+> -	/* PLL clock configuration. */
+> -	lvds->info->pll_setup(lvds, mode->clock * 1000);
+> +	/*
+> +	 * PLL clock configuration on all instances but the companion in
+> +	 * dual-link mode.
+> +	 */
+> +	if (!lvds->dual_link || lvds->companion)
+> +		lvds->info->pll_setup(lvds, mode->clock * 1000);
+>
+>  	/* Set the LVDS mode and select the input. */
+>  	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
+> -	if (drm_crtc_index(crtc) == 2)
+> -		lvdcr0 |= LVDCR0_DUSEL;
+> +
+> +	if (lvds->bridge.encoder) {
+> +		/*
+> +		 * FIXME: We should really retrieve the CRTC through the state,
+> +		 * but how do we get a state pointer?
+> +		 */
+> +		if (drm_crtc_index(lvds->bridge.encoder->crtc) == 2)
+> +			lvdcr0 |= LVDCR0_DUSEL;
+> +	}
+> +
+>  	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
+>
+>  	/* Turn all the channels on. */
+> @@ -512,6 +530,10 @@ static void rcar_lvds_disable(struct drm_bridge *bridge)
+>  	rcar_lvds_write(lvds, LVDCR1, 0);
+>  	rcar_lvds_write(lvds, LVDPLLCR, 0);
+>
+> +	/* Disable the companion LVDS encoder in dual-link mode. */
+> +	if (lvds->dual_link && lvds->companion)
+> +		lvds->companion->funcs->disable(lvds->companion);
+> +
+>  	clk_disable_unprepare(lvds->clocks.mod);
+>  }
+>
+> @@ -628,10 +650,54 @@ static const struct drm_bridge_funcs rcar_lvds_bridge_ops = {
+>  	.mode_set = rcar_lvds_mode_set,
+>  };
+>
+> +bool rcar_lvds_dual_link(struct drm_bridge *bridge)
+> +{
+> +	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
+> +
+> +	return lvds->dual_link;
+> +}
+> +EXPORT_SYMBOL_GPL(rcar_lvds_dual_link);
+> +
+>  /* -----------------------------------------------------------------------------
+>   * Probe & Remove
+>   */
+>
+> +static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
+> +{
+> +	const struct of_device_id *match;
+> +	struct device_node *companion;
+> +	struct device *dev = lvds->dev;
+> +	int ret = 0;
+> +
+> +	/* Locate the companion LVDS encoder for dual-link operation, if any. */
+> +	companion = of_parse_phandle(dev->of_node, "renesas,companion", 0);
+> +	if (!companion)
+> +		return -ENODEV;
+> +
+> +	/*
+> +	 * Sanity check: the companion encoder must have the same compatible
+> +	 * string.
+> +	 */
+> +	match = of_match_device(dev->driver->of_match_table, dev);
+> +	if (!of_device_is_compatible(companion, match->compatible)) {
+> +		ret = -ENODEV;
+> +		goto done;
+> +	}
+> +
+> +	lvds->companion = of_drm_find_bridge(companion);
+> +	if (!lvds->companion) {
+> +		ret = -EPROBE_DEFER;
+> +		goto done;
+> +	}
+> +
+> +	dev_dbg(dev, "Found companion encoder %pOF\n", companion);
+> +
+> +done:
+> +	of_node_put(companion);
+> +
+> +	return ret;
+> +}
+> +
+>  static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+>  {
+>  	struct device_node *local_output = NULL;
+> @@ -682,14 +748,26 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+>
+>  	if (is_bridge) {
+>  		lvds->next_bridge = of_drm_find_bridge(remote);
+> -		if (!lvds->next_bridge)
+> +		if (!lvds->next_bridge) {
+>  			ret = -EPROBE_DEFER;
+> +			goto done;
+> +		}
+> +
+> +		if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
+> +			lvds->dual_link = lvds->next_bridge->timings
+> +					? lvds->next_bridge->timings->dual_link
+> +					: false;
 
-  #define  DL_DOWN        0x00000008
-  #define  CFINIT         0x00000001
+I wonder if, in all this patch, you could not use "lvds->companion" in
+place of "lvds->dual_link", and thus drop that from timings. This mean
+"renesas,companion" would only be used when operating in dual link
+mode, which might be less nice (and could actually called differently
+in that case).
 
-But I'm not suggesting that you get rid of BIT() in this driver.  I'm
-fine with it as long as it's used consistently.
+Both the THC631024 and the rcar_du-lvds driver would decide
+independently if they operate in dual link mode or not (one counting
+its endpoints, the other inspecting the "renesas,companion" property).
 
-BTW, while we're looking at it, I think rcar_pci_read_reg() and
-rcar_pci_write_reg() really should use "u32" instead of "unsigned
-long", since they deal with hardware registers that are explicitly
-32 bits wide.
+The only place where this might be tricky is the here above
 
-> >>  #define PCIETSTR		0x02004
-> >>  #define  DATA_LINK_ACTIVE	1
-> >> @@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
-> >>  	pcie = pci_host_bridge_priv(bridge);
-> >>  
-> >>  	pcie->dev = dev;
-> >> +	platform_set_drvdata(pdev, pcie);
-> >>  
-> >>  	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
-> >>  	if (err)
-> >> @@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
-> >>  	return err;
-> >>  }
-> >>  
-> >> +static int rcar_pcie_resume_noirq(struct device *dev)
-> >> +{
-> >> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-> >> +
-> >> +	if (rcar_pci_read_reg(pcie, PMSR) &&
-> >> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
-> >> +		return 0;
-> >> +
-> >> +	/* Re-establish the PCIe link */
-> >> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
-> >> +	return rcar_pcie_wait_for_dl(pcie);
-> >> +}
-> >> +
-> >> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
-> >> +	.resume_noirq = rcar_pcie_resume_noirq,
-> >> +};
-> > 
-> > I think there's the beginning of a convention to use #ifdef
-> > CONFIG_PM_SLEEP around the ops themselves [1].  Otherwise I think
-> > we'll get a warning about unused code when CONFIG_PM_SLEEP is unset.
-> 
-> Only if I used SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() , but I set the
-> resume_noirq directly.
+ +	/*
+ +	 * PLL clock configuration on all instances but the companion in
+ +	 * dual-link mode.
+ +	 */
+ +	if (!lvds->dual_link || lvds->companion)
+ +		lvds->info->pll_setup(lvds, mode->clock * 1000);
 
-Fair enough.  I guess in this case if CONFIG_PM_SLEEP is unset, you
-set the pointer, which avoids the "unused function" warning, but we
-just never use that function pointer.
+but that would remove the need for the thc63 bridge to report its
+operating mode in timings...
 
-My intent is to avoid needless differences when possible, so when I
-review things like this I look at how other drivers do things.  It
-looks like all the other controllers use
-SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() or similar:
+>  	} else {
+>  		lvds->panel = of_drm_find_panel(remote);
+> -		if (IS_ERR(lvds->panel))
+> +		if (IS_ERR(lvds->panel)) {
+>  			ret = PTR_ERR(lvds->panel);
+> +			goto done;
+> +		}
+>  	}
+>
+> +	if (lvds->dual_link)
 
-  git grep -A3 "static.*dev_pm_ops" drivers/pci/controller
+Note: if (!is_bridge) you would never set lvds->dual_link, so this
+should be moved inside the here above "if (is_bridge)"
 
-In the rcar case you only need the resume_fn, not the suspend_fn, so
-SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() does a little more than you need and
-you'd have to pass NULL for suspend_fn.  I didn't check them all
-(suspend_noirq, freeze_noirq, poweroff_noirq), but at least for
-suspend_noirq, all users check for NULL before calling through the
-.suspend_noirq() function pointer, so I think that should be safe.
+> +		ret = rcar_lvds_parse_dt_companion(lvds);
+> +
+>  done:
+>  	of_node_put(local_output);
+>  	of_node_put(remote_input);
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.h b/drivers/gpu/drm/rcar-du/rcar_lvds.h
+> index a709cae1bc32..222ec0e60785 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.h
+> @@ -15,6 +15,7 @@ struct drm_bridge;
+>  #if IS_ENABLED(CONFIG_DRM_RCAR_LVDS)
+>  int rcar_lvds_clk_enable(struct drm_bridge *bridge, unsigned long freq);
+>  void rcar_lvds_clk_disable(struct drm_bridge *bridge);
+> +bool rcar_lvds_dual_link(struct drm_bridge *bridge);
+>  #else
+>  static inline int rcar_lvds_clk_enable(struct drm_bridge *bridge,
+>  				       unsigned long freq)
+> @@ -22,6 +23,10 @@ static inline int rcar_lvds_clk_enable(struct drm_bridge *bridge,
+>  	return -ENOSYS;
+>  }
+>  static inline void rcar_lvds_clk_disable(struct drm_bridge *bridge) { }
+> +static inline bool rcar_lvds_dual_link(struct drm_bridge *bridge)
+> +{
+> +	return false;
+> +}
+>  #endif /* CONFIG_DRM_RCAR_LVDS */
+>
+>  #endif /* __RCAR_LVDS_H__ */
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
 
-This *does* raise the question of whether you should be setting
-.thaw_noirq and .restore_noirq in addition to .resume_noirq, as
-SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() would.  I'm not a PM person, but maybe
-Rafael or others will chime in.
+--ta7xrcz7fojfknp6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Bjorn
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyCpFcACgkQcjQGjxah
+VjzJuRAAjC+TWwWX13gdTH7kat0jacAzr2ACKwuy0yu8cJSk3Hi/qcHRaiJ/TLsm
+oBonlV1z+6cOLAjgMGA0QC6sPl4S5v+WVuSYSQMTdxskrLa+cqTnL2FTOLKp0wuL
+gQ2QMosGz/9VQDlao4iMnlEQoOo2TessuVn0iiF9QK874kQHzlsNu4WOG600f4Mn
+wnKZrCrHr4ym4hL1f8WpN22HetJ4dOyd5gl3DbiKkKBMufTc0e7RVTrqJTa4wWCV
+17BEK7nkKa1lPKKsnEj/xXrsQoKLd1vxIRyLNgbOgkznJFXIRkzFE0v7RwISRipc
+2feLAxBI8j+u7xREh8PSNoMoBu4bICkqXUzVCDERacHOqgMSX32NL3vLKg9K2OrI
+SRVRzmKjDE9tNySRgatQRestIKJaidyFL138YO3N8t5ZvkNk74OhPOIuyNedmPM9
+VEI/OGHRxmWQw4ewqAm9K+xh/kDzP+kckCKJ9jtaGiPrrS/F6oKKOoxx104YCJOl
+XIG+pp+3eT43teNTTO+4OQ6eNqZgL8TWl3m3E2iX29vaHBkpBIJjaV5xiJq+vhbj
+Ddyt0mjK5VPuEjirrGWSRkzAzLB9H98P5e9ufv/8d5Msnjr7P7JXpWRRnnPstr4x
+N+UNsO2MkU764BcjbkSO4rTlJQz/wZUjghlZoH9QZz3arNWB+dY=
+=NglX
+-----END PGP SIGNATURE-----
+
+--ta7xrcz7fojfknp6--
