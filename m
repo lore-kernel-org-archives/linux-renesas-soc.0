@@ -1,84 +1,118 @@
-Return-Path: <SRS0=mNNB=RL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=uGqO=RM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB64C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 23:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23B9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 00:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D14A20684
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Mar 2019 23:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CFE620857
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 00:56:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKZh571e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbfCHX5R (ORCPT
+        id S1726363AbfCIA4U (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 18:57:17 -0500
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:60771 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726446AbfCHX5Q (ORCPT
+        Fri, 8 Mar 2019 19:56:20 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55768 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfCIA4U (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 18:57:16 -0500
-X-Halon-ID: e4211283-41fd-11e9-846a-005056917a89
-Authorized-sender: niklas@soderlund.pp.se
-Received: from bismarck.berto.se (unknown [89.233.230.99])
-        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id e4211283-41fd-11e9-846a-005056917a89;
-        Sat, 09 Mar 2019 00:57:12 +0100 (CET)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 3/3] rcar-csi2: Move setting of Field Detection Control Register
-Date:   Sat,  9 Mar 2019 00:57:02 +0100
-Message-Id: <20190308235702.27057-4-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190308235702.27057-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20190308235702.27057-1-niklas.soderlund+renesas@ragnatech.se>
+        Fri, 8 Mar 2019 19:56:20 -0500
+Received: by mail-wm1-f65.google.com with SMTP id q187so14194538wme.5;
+        Fri, 08 Mar 2019 16:56:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tG1/W45bclxbHIJ/XTTD3wUwj/6fNCMlABDLg542AJ8=;
+        b=WKZh571eKS0sL4qi7PgsDLwTnVcxsMDpnDSASGZk+kdulgPMcPYcc3KHXMzI5dQLvc
+         uiG5B3jK9B12mTO5FZUKxmKo6H/G7WJ3T7gL9oS9fjGUpkrFN4YbW2G34QYZesLpt/se
+         EMZ6C3m0vMaJSu7TBcwFYDzwoZUfvjNCGdGxmvpEvI9tGtQ16bofdVbwu8WW85dvN6EM
+         kW2tn+f+w6HgRz20I2ES9CNdXOYYCMISr1+xPSry9IUJcqjgc4updzzwZgiqY72o5007
+         kdhvkdap9wvW3IyVe7gFhwVe9Vk0GQZvpRamooUdHpGOoFUruyTzO6GiRhVUxhbCxxzz
+         /+Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tG1/W45bclxbHIJ/XTTD3wUwj/6fNCMlABDLg542AJ8=;
+        b=QJdQDex+8dYT6fnqk/NYJoR7jWfDV6M2KuufahmgJCK+WiN9B0AkXJp5Gd/cQjKGX8
+         hpGdKoyV2KhIDFA0s7Q1W8ZRY/K3w36OLr8PVNTBif2mC4VxhsCsc6Q8w8m6StjKhdb9
+         afZRXrb/hqIJV1uMwaqMhhP7CHAn2WoIECJoEzTSMGj7ANFPrUIP9UCl3gcc82CMlFAL
+         dMYZS5CvFHlKt59UT9EHkhaAh2R/F31Nx4Qq3oq5W2gPnL5e/Dr9gYNJ7Wf52ZCBLFfO
+         +jft4XWOsf2d2w7tiEeVz+mQ5by/isQr6i2BPMTQl6K31V583qX21gY0U6duLOc78VfM
+         rvqQ==
+X-Gm-Message-State: APjAAAViC7yIFjgpsIhqYWkp2O1MYKv3kX/vv4FNWPwtgycZLp7+UVWE
+        OfpHeIbGdmji/w6uZf3JjK+Vlp+s
+X-Google-Smtp-Source: APXvYqzmxK8Ho2eIso30bNohfI9EKH1LsnSOaTe3rzdXwUy1WQRVaJQUdmumsEQHqNYEXmwLlRWy/A==
+X-Received: by 2002:a1c:4406:: with SMTP id r6mr10568868wma.114.1552092977678;
+        Fri, 08 Mar 2019 16:56:17 -0800 (PST)
+Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id e23sm8340623wme.15.2019.03.08.16.56.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 08 Mar 2019 16:56:16 -0800 (PST)
+From:   marek.vasut@gmail.com
+To:     linux-pci@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 1/2] PCI: rcar: Clean up remaining macros defining bits
+Date:   Sat,  9 Mar 2019 01:56:12 +0100
+Message-Id: <20190309005613.1493-1-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest datasheet (rev 1.50) clarifies that the FLD register should be
-set after LINKCNT.
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Replace macros using constants with BIT()s instead, no functional change.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+To: linux-pci@vger.kernel.org
 ---
- drivers/media/platform/rcar-vin/rcar-csi2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/controller/pcie-rcar.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 07d5c8c66b7cd382..077e0d344b395b54 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -529,7 +529,6 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- 	rcsi2_write(priv, PHTC_REG, 0);
+diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+index c8febb009454..5b8736f0cd6b 100644
+--- a/drivers/pci/controller/pcie-rcar.c
++++ b/drivers/pci/controller/pcie-rcar.c
+@@ -46,14 +46,14 @@
  
- 	/* Configure */
--	rcsi2_write(priv, FLD_REG, fld);
- 	rcsi2_write(priv, VCDT_REG, vcdt);
- 	if (vcdt2)
- 		rcsi2_write(priv, VCDT2_REG, vcdt2);
-@@ -560,6 +559,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- 	rcsi2_write(priv, PHYCNT_REG, phycnt);
- 	rcsi2_write(priv, LINKCNT_REG, LINKCNT_MONITOR_EN |
- 		    LINKCNT_REG_MONI_PACT_EN | LINKCNT_ICLK_NONSTOP);
-+	rcsi2_write(priv, FLD_REG, fld);
- 	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
- 	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
+ /* Transfer control */
+ #define PCIETCTLR		0x02000
+-#define  CFINIT			1
++#define  CFINIT			BIT(0)
+ #define PCIETSTR		0x02004
+-#define  DATA_LINK_ACTIVE	1
++#define  DATA_LINK_ACTIVE	BIT(0)
+ #define PCIEERRFR		0x02020
+ #define  UNSUPPORTED_REQUEST	BIT(4)
+ #define PCIEMSIFR		0x02044
+ #define PCIEMSIALR		0x02048
+-#define  MSIFE			1
++#define  MSIFE			BIT(0)
+ #define PCIEMSIAUR		0x0204c
+ #define PCIEMSIIER		0x02050
  
 -- 
-2.21.0
+2.20.1
 
