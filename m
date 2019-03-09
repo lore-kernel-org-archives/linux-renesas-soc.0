@@ -8,69 +8,66 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99A7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 00:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB83C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 02:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969AF20857
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 00:56:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0198C2081B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 02:06:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXXcGLZj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nd7oECLX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfCIA4X (ORCPT
+        id S1726412AbfCICGr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Mar 2019 19:56:23 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44253 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfCIA4X (ORCPT
+        Fri, 8 Mar 2019 21:06:47 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39249 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfCICGr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Mar 2019 19:56:23 -0500
-Received: by mail-wr1-f66.google.com with SMTP id w2so23159244wrt.11;
-        Fri, 08 Mar 2019 16:56:21 -0800 (PST)
+        Fri, 8 Mar 2019 21:06:47 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l12so6789879wrp.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 Mar 2019 18:06:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hNFudz8xVpYznoAjgANt/2D9z5OUCW1uMT/VgT+hL5c=;
-        b=DXXcGLZjHqnzaqivhbIAutnsTXvlLDT3J0l/gHEZbXoccicKlyNMjTHqLDY5FdRwwb
-         ZLXXHSxLuMYs0LCr3TyG+uKUylB6VHmUoDG3lKyYvYcnG4tIT2hJn/xGgo3d9D7BTld3
-         oeNyd+M45fMT86Sr1l7YHKcixBADS9NNOla4vrSbzKPUATUAPOFchmQi7HpFoOkZh02F
-         4qC7y6zxvVyMDTv4BQiZ5KbeSnvb8qneiixJHLUihc2vxgAJz3iuTik9qZee4EuptZMM
-         gSv0k/v4Y7eb8AE4LGriegYrsDO5jN7M+c8aObuGucDRw6kn52QRHFt8JtldtdNkMbWA
-         HYkA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gZzmFU13l2yoUQpw6uQVYoOFo9rDJwPZyv5TJlZh1e4=;
+        b=Nd7oECLXYiIz2fLG2yRljPbccwWKaZhOjeXclg0MjIjKO2eGvplAE2WlKs8qfTv2PL
+         MDI6w/J07zZzuNT2q63aiOBhc4BVLHwmpoPp28BbmS4/vN7EjVJQ2SHQSWscn6x7rljL
+         Ul2u+oAv2UK/9WFXsAe3oHe5252i7LMEmrW7B4488cz5NBndzTZWCPULZdvP2T7mOuMY
+         bK1pri5jHL3STc5/L43Wl3Gw7TyxqkNsWYUX/aYFs14vTLdIFuMw1NZEQQ3qTaNCN9QA
+         VPP6OroAKIahVuiRfMwrBkA6EwJe9zDo/DPOU/NusXsUF6mu1cj8KIvrXP4XCtmhPm3V
+         RshQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hNFudz8xVpYznoAjgANt/2D9z5OUCW1uMT/VgT+hL5c=;
-        b=g6lqnwl0epeBWJQ2AgHb+Kn8SmNePpFCKNs7uW1EM7fW//EKa2N/XgK+myYvNV0o5M
-         cE1+O6GKZ97Lki2cy7//FaUzpfWuywGVaKf1qU1ZGAz/n4P+qJT+gAOxlvp9vxFp3g6I
-         4nlfWKx575HbTANvrxIsEKOPCSStOxeTVwEJ+efXwCFpTD79zuOSH1BjiQkMw4z8hygf
-         mVa8eEMTDxsDbmmWdAOnVCs15rSW5KMC5jBtJv/CEr0Y/V+s3xPhAU5gQkMVvHGW6qdQ
-         EP7bYU+uPeLw0TNNG3qkpbwpPphwYE9DM7gtPfVOL9PldD+XeJcR6Z3g6a0zqmabh93n
-         0BUw==
-X-Gm-Message-State: APjAAAV6HX+1zbN5YPNh2ElKBDml6CkaPzxgBf2rvvNg6KCzpwVI1rOV
-        QzZi08KHo1ANpv3hQCyTfokdmjTL
-X-Google-Smtp-Source: APXvYqzCEMFu5BHsWr2yMkI8wAD/xk4Hd4SLCdwTU8zBePBGfQZDpzz3mccng8c/mg3j+cepDKrPiw==
-X-Received: by 2002:adf:e3cb:: with SMTP id k11mr13114361wrm.263.1552092980512;
-        Fri, 08 Mar 2019 16:56:20 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gZzmFU13l2yoUQpw6uQVYoOFo9rDJwPZyv5TJlZh1e4=;
+        b=PazkPGD+YQ5XLsAgxOsYF2dof+nMTsGS2Bho3L3eqmcrQ1CYvbrxgmK4F7k5qPMaZ7
+         63Xk8HgxfTyAfE7spYZdenhRbZhH/SbPNuzBszbFHCUc8KpENJ9aR/t40168kkFHjUpv
+         I63kB8YxHMuRI0j/9lihUlb4elrFDpeL+25UHJuZG9JMN2WKaAbiQEZNtDEkClqEMYFg
+         JDnEP5lB7j2ktIVRv5mGdTJrkzAp/XT7bE1hfsXqUvX+TXLzReEqcx1PmvwJAHKuEhNG
+         7faEUofa9MFubHmG0DkFAS0P22MS1C/zGxxvnrZgias8Lhuzru8BSIYnKCOmzS4lA2Lv
+         7xfw==
+X-Gm-Message-State: APjAAAWcSQMr++HAXygbnLlvm/0cCh0fyeG0H1N7M5VWUO3/yJQAAiZh
+        +M0t2JKPlsEWMO18UIZZw2E=
+X-Google-Smtp-Source: APXvYqxtTy2WfYgn9ivvUibd51tRLmR87jDkT3rwFW1cgI5q5Kk+KgeahwQ+YbkkkRbIvohRPooGNw==
+X-Received: by 2002:a05:6000:1142:: with SMTP id d2mr12691482wrx.43.1552097205745;
+        Fri, 08 Mar 2019 18:06:45 -0800 (PST)
 Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id e23sm8340623wme.15.2019.03.08.16.56.19
+        by smtp.gmail.com with ESMTPSA id r63sm15340468wmr.32.2019.03.08.18.06.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Mar 2019 16:56:19 -0800 (PST)
+        Fri, 08 Mar 2019 18:06:44 -0800 (PST)
 From:   marek.vasut@gmail.com
-To:     linux-pci@vger.kernel.org
+To:     linux-arm-kernel@lists.infradead.org
 Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in register accessors
-Date:   Sat,  9 Mar 2019 01:56:13 +0100
-Message-Id: <20190309005613.1493-2-marek.vasut@gmail.com>
+Subject: [PATCH] arm64: dts: renesas: r8a77995: draak: Enable CAN0, CAN1
+Date:   Sat,  9 Mar 2019 03:06:42 +0100
+Message-Id: <20190309020642.15985-1-marek.vasut@gmail.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190309005613.1493-1-marek.vasut@gmail.com>
-References: <20190309005613.1493-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -80,41 +77,59 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Replace unsigned long with u32 in register accessor functions,
-since they access 32bit registers.
+Enable both CAN0 and CAN1 controllers on R8A77995 Draak board,
+since they are available on connectors CN43, CN44 respectively.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
 Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org
-To: linux-pci@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
 ---
- drivers/pci/controller/pcie-rcar.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ .../arm64/boot/dts/renesas/r8a77995-draak.dts | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 5b8736f0cd6b..1408c8aa758b 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -152,14 +152,12 @@ struct rcar_pcie {
- 	struct			rcar_msi msi;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index db2bed1751b8..9a000a75fe8e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -179,6 +179,18 @@
+ 	};
  };
  
--static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
--			       unsigned long reg)
-+static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
- {
- 	writel(val, pcie->base + reg);
- }
++&can0 {
++	pinctrl-0 = <&can0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&can1 {
++	pinctrl-0 = <&can1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
+ &du {
+ 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-names = "default";
+@@ -375,6 +387,16 @@
+ 		};
+ 	};
  
--static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
--				       unsigned long reg)
-+static u32 rcar_pci_read_reg(struct rcar_pcie *pcie, u32 reg)
- {
- 	return readl(pcie->base + reg);
- }
++	can0_pins: can0 {
++		groups = "can0_data_a";
++		function = "can0";
++	};
++
++	can1_pins: can1 {
++		groups = "can1_data_a";
++		function = "can1";
++	};
++
+ 	du_pins: du {
+ 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
+ 		function = "du";
 -- 
 2.20.1
 
