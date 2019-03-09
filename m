@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E8DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C544BC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018AD2081B
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 945CB2081B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:51:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qpIJeg7h"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="j4dRCpEG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbfCILpp (ORCPT
+        id S1726409AbfCILvi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 9 Mar 2019 06:45:45 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39704 "EHLO
+        Sat, 9 Mar 2019 06:51:38 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39734 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbfCILpp (ORCPT
+        with ESMTP id S1726149AbfCILvh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 9 Mar 2019 06:45:45 -0500
+        Sat, 9 Mar 2019 06:51:37 -0500
 Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2644349;
-        Sat,  9 Mar 2019 12:45:42 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1627949;
+        Sat,  9 Mar 2019 12:51:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552131942;
-        bh=B4sSxo1/w6HHmK8p/7InswhAABD4GlsYdjBNqnaItMU=;
+        s=mail; t=1552132295;
+        bh=RUAvSd16BrcJa0ukFpopdCJLZ+QDt5BH6sgn92Hj+9Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qpIJeg7hihNmwT6/VVj1dLap1iiE/mrwULJC/aVtRL6NtZZVC9oduVtMMLbAVW/pF
-         cJ3jWQOvTiIVak5twnEqLWbYMRLI5BmJpmWsmlhxf2HifGokvxHyC+S6ndr+WAXRCW
-         cXBroB24i20OQd57O0436cAxNFFRAnWAB2IaleaY=
-Date:   Sat, 9 Mar 2019 13:45:35 +0200
+        b=j4dRCpEGz5xqwjehICjiBOldOO4xe1ZBO3XY5bIjLuQEqDUz0pECJKa7Ttq4aEQ2y
+         f2A4morkA9UQmYoQRIeDOViMBYblSX/3O9/lrRxkFs13NlGNuYIiHKKm1TtYBpM8Te
+         VhD8JPx1ZA+tqi/o4CjtwlYcDN5RCQ9FsP1UBntI=
+Date:   Sat, 9 Mar 2019 13:51:28 +0200
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Jacopo Mondi <jacopo@jmondi.org>
 Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        devicetree@vger.kernel.org,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH/RFC 06/15] drm: bridge: thc63: Report input bus mode
- through bridge timings
-Message-ID: <20190309114535.GB4924@pendragon.ideasonboard.com>
+Subject: Re: [PATCH/RFC 05/15] dt-bindings: display: bridge: thc63lvd1024:
+ Document dual-link operation
+Message-ID: <20190309115128.GC4924@pendragon.ideasonboard.com>
 References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190306232345.23052-7-laurent.pinchart+renesas@ideasonboard.com>
- <20190308173259.oize6d766dlzkz2q@uno.localdomain>
- <20190308180028.GB11318@pendragon.ideasonboard.com>
- <20190309112408.2nvshh6hu6iachq3@uno.localdomain>
+ <20190306232345.23052-6-laurent.pinchart+renesas@ideasonboard.com>
+ <20190308164925.jwgq4rdqh6mmwwtf@uno.localdomain>
+ <20190308175739.GA11318@pendragon.ideasonboard.com>
+ <20190309112308.rbuqwvvvxgihmj7d@uno.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190309112408.2nvshh6hu6iachq3@uno.localdomain>
+In-Reply-To: <20190309112308.rbuqwvvvxgihmj7d@uno.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -61,137 +61,75 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Jacopo,
 
-On Sat, Mar 09, 2019 at 12:24:08PM +0100, Jacopo Mondi wrote:
-> On Fri, Mar 08, 2019 at 08:00:28PM +0200, Laurent Pinchart wrote:
-> > On Fri, Mar 08, 2019 at 06:32:59PM +0100, Jacopo Mondi wrote:
-> >> On Thu, Mar 07, 2019 at 01:23:36AM +0200, Laurent Pinchart wrote:
-> >>> Set a drm_bridge_timings in the drm_bridge, and use it to report the
-> >>> input bus mode (single-link or dual-link). The other fields of the
-> >>> timings structure are kept to 0 as they do not apply to LVDS buses.
+On Sat, Mar 09, 2019 at 12:23:08PM +0100, Jacopo Mondi wrote:
+> On Fri, Mar 08, 2019 at 07:57:39PM +0200, Laurent Pinchart wrote:
+> > On Fri, Mar 08, 2019 at 05:49:25PM +0100, Jacopo Mondi wrote:
+> >> On Thu, Mar 07, 2019 at 01:23:35AM +0200, Laurent Pinchart wrote:
+> >>> The THC63LVD1024 LVDS decoder can operate in two modes, single-link or
+> >>> dual-link. In dual-link mode both input ports are used to carry even-
+> >>> and odd-numbered pixels separately. Document this in the DT bindings,
+> >>> along with the related rules governing port and usage.
 > >>>
 > >>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > >>> ---
-> >>>  drivers/gpu/drm/bridge/thc63lvd1024.c | 46 ++++++++++++++++++++-------
-> >>>  1 file changed, 35 insertions(+), 11 deletions(-)
+> >>>  .../bindings/display/bridge/thine,thc63lvd1024.txt         | 7 +++++++
+> >>>  1 file changed, 7 insertions(+)
 > >>>
-> >>> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> >>> index b083a740565c..206b0af5e154 100644
-> >>> --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
-> >>> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> >>> @@ -31,6 +31,8 @@ struct thc63_dev {
+> >>> diff --git a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> >>> index 37f0c04d5a28..4ff6eb9bbc19 100644
+> >>> --- a/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> >>> +++ b/Documentation/devicetree/bindings/display/bridge/thine,thc63lvd1024.txt
+> >>> @@ -28,6 +28,13 @@ Optional video port nodes:
+> >>>  - port@1: Second LVDS input port
+> >>>  - port@3: Second digital CMOS/TTL parallel output
 > >>>
-> >>>  	struct drm_bridge bridge;
-> >>>  	struct drm_bridge *next;
-> >>> +
-> >>> +	struct drm_bridge_timings timings;
-> >>>  };
-> >>>
-> >>>  static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
-> >>> @@ -48,15 +50,28 @@ static int thc63_attach(struct drm_bridge *bridge)
-> >>>  static enum drm_mode_status thc63_mode_valid(struct drm_bridge *bridge,
-> >>>  					const struct drm_display_mode *mode)
-> >>>  {
-> >>> +	struct thc63_dev *thc63 = to_thc63(bridge);
-> >>> +	unsigned int min_freq;
-> >>> +	unsigned int max_freq;
-> >>> +
-> >>>  	/*
-> >>> -	 * The THC63LVD1024 clock frequency range is 8 to 135 MHz in single-in
-> >>> -	 * mode. Note that the limits are different in dual-in, single-out mode,
-> >>> -	 * and will need to be adjusted accordingly.
-> >>> +	 * The THC63LVD1024 pixel rate range is 8 to 135 MHz in all modes but
-> >>> +	 * dual-in, single-out where it is 40 to 150 MHz. As dual-in, dual-out
-> >>> +	 * isn't supported by the driver yet, simply derive the limits from the
-> >>> +	 * input mode.
-> >>>  	 */
-> >>> -	if (mode->clock < 8000)
-> >>> +	if (thc63->timings.dual_link) {
-> >>> +		min_freq = 40000;
-> >>> +		max_freq = 150000;
-> >>> +	} else {
-> >>> +		min_freq = 8000;
-> >>> +		max_freq = 135000;
-> >>> +	}
-> >>> +
-> >>> +	if (mode->clock < min_freq)
-> >>>  		return MODE_CLOCK_LOW;
-> >>>
-> >>> -	if (mode->clock > 135000)
-> >>> +	if (mode->clock > max_freq)
-> >>>  		return MODE_CLOCK_HIGH;
-> >>>
-> >>>  	return MODE_OK;
-> >>> @@ -101,19 +116,19 @@ static const struct drm_bridge_funcs thc63_bridge_func = {
-> >>>
-> >>>  static int thc63_parse_dt(struct thc63_dev *thc63)
-> >>>  {
-> >>> -	struct device_node *thc63_out;
-> >>> +	struct device_node *endpoint;
-> >>>  	struct device_node *remote;
-> >>>
-> >>> -	thc63_out = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
-> >>> -						  THC63_RGB_OUT0, -1);
-> >>> -	if (!thc63_out) {
-> >>> +	endpoint = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
-> >>> +						 THC63_RGB_OUT0, -1);
-> >>> +	if (!endpoint) {
-> >>>  		dev_err(thc63->dev, "Missing endpoint in port@%u\n",
-> >>>  			THC63_RGB_OUT0);
-> >>>  		return -ENODEV;
-> >>>  	}
-> >>>
-> >>> -	remote = of_graph_get_remote_port_parent(thc63_out);
-> >>> -	of_node_put(thc63_out);
-> >>> +	remote = of_graph_get_remote_port_parent(endpoint);
-> >>> +	of_node_put(endpoint);
-> >>>  	if (!remote) {
-> >>>  		dev_err(thc63->dev, "Endpoint in port@%u unconnected\n",
-> >>>  			THC63_RGB_OUT0);
-> >>> @@ -132,6 +147,14 @@ static int thc63_parse_dt(struct thc63_dev *thc63)
-> >>>  	if (!thc63->next)
-> >>>  		return -EPROBE_DEFER;
-> >>>
-> >>> +	endpoint = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
-> >>> +						 THC63_LVDS_IN1, -1);
-> >>> +	of_node_put(endpoint);
-> >>> +
+> >>> +The device can operate in single-link mode or dual-link mode. In single-link
+> >>> +mode, all pixels are received on port@0, and port@1 shall not contain any
+> >>> +endpoint. In dual-link mode, even-numbered pixels are received on port@0 and
+> >>> +odd-numbered pixels on port@1, and both port@0 and port@1 shall contain
+> >>> +endpoints.
 > >>
-> >> Should you check if endpoint is enabled?
+> >> You know, I'm not sure this is helpful, as if we have to go and
+> >> describe what the chip supports, a paragraph for dual ouput mode would
+> >> be required as well. The bindings already document that the chip
+> >> supports single/dual input/output modes, maybe you can just add rules
+> >> that prescribes how to populate the endpoints, for both input and
+> >> output modes?
 > >
-> > Can endpoints be disabled ?
+> > That's what I was trying to do :-) How else would you like to see it
+> > described ?
 > 
-> I meant the remote port parent, sorry about that.
+> I wonder if it won't be enough to expand the Optional endpoint
+> properties description as in:
+> 
+>  - port@1: Second LVDS input port, to be used for dual-input mode
+>  - port@3: Second digital CMOS/TTL parallel output, to be used for
+>    dual-output mode.
 
-Strictly speaking, you're right. I don't know if there's a practical use
-for this, but I'll fix that in v2.
+I think it's useful to explain the constraints regarding presence (or
+absence) of endpoints for ports 0 and 1 depending on which mode the
+device operates under, not just what the ports are used for.
 
-> >> By the way, this seems to me works properly, as in [12/15] if skip
-> >> creation of the LVDS1 encoder if it is operating in dual link mode.
-> >> Without that, we would hit again the issue of matching on device
-> >> nodes, as the same bridge would be attached twice, am I wrong?
-> >>
-> >> I feel we've been there already :)
-> >> https://lkml.org/lkml/2018/3/20/341
-> >>
-> >> and it is not just an issue on matching on endpoints, it's that the
-> >> drm bridge itself that would need to handle multiple attach/detaches..
-> >
-> > Correct. Thanks to 12/15 we don't need this yet :-)
-> >
-> >>> +	thc63->timings.dual_link = endpoint != NULL;
-> >>> +	dev_dbg(thc63->dev, "operating in %s-link mode\n",
-> >>> +		thc63->timings.dual_link ? "dual" : "single");
+> If you prefer providing more context, it's fine what you had, just
+> keep in mind there's also dual-output mode and not just the dual-input
+> one.
+
+Absolutely. The reason why I haven't expanded the bindings to document
+dual-output mode is that I have no way to test it, and I don't think
+untested bindings (meaning without a testable end-to-end implementation)
+are a good idea.
+
+> Up to you, feel free to add my
+> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> if relevant.
+> 
 > >>> +
-> >>>  	return 0;
-> >>>  }
-> >>>
-> >>> @@ -188,6 +211,7 @@ static int thc63_probe(struct platform_device *pdev)
-> >>>  	thc63->bridge.driver_private = thc63;
-> >>>  	thc63->bridge.of_node = pdev->dev.of_node;
-> >>>  	thc63->bridge.funcs = &thc63_bridge_func;
-> >>> +	thc63->bridge.timings = &thc63->timings;
-> >>>
-> >>>  	drm_bridge_add(&thc63->bridge);
+> >>> +
+> >>
+> >> You can drop this empty line.
+> >>
+> >>>  Example:
+> >>>  --------
 > >>>
 
 -- 
