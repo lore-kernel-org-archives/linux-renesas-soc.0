@@ -7,114 +7,129 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0388C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12291C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF862081B
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBDC52081B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:10:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="PM96cNat"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="ePQCTPX3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfCILCV (ORCPT
+        id S1726164AbfCILKt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 9 Mar 2019 06:02:21 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35775 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbfCILCV (ORCPT
+        Sat, 9 Mar 2019 06:10:49 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38975 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfCILKt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 9 Mar 2019 06:02:21 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t13so143290lji.2
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 09 Mar 2019 03:02:19 -0800 (PST)
+        Sat, 9 Mar 2019 06:10:49 -0500
+Received: by mail-lf1-f65.google.com with SMTP id m13so179225lfb.6
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 09 Mar 2019 03:10:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=q7EgyTKkBwCKENlJl+P4FiMkN5L+S2Lq9VbdUR33+dI=;
-        b=PM96cNatutYRGN+iq2u2T2qoRxxFuuER0zpWwSJkvqLaqkSGThHEpAJUuWllBn32UE
-         GmRqoXL86HU3mm+d3rFjVzQmqSFrtvEXn4ijiDMpXXYlU4AJ8PgaCrssqGmhH0mhAjxT
-         Q8eRYVYSP9u5jKrYQei76kYCudXNgPCmGE005d47QHvd70YAoGR7ZvsaQ+6i/ehGey0Y
-         hEjlB5n1O7dZ3f9rPeEATxlgHhuy/6oPQpzWoTBCIcryzUUIvf3tSiHLmq9lrp5yxXBo
-         NFoFxiR486MiWEtHdJ1UPn9rHeEVk5fh2yh783wvy73H39kcmHfY9CBleE+NS7Y35D9r
-         ArPA==
+        bh=2K/HDy9ejUSQlPnuCSMf/sE/kM0/YFTKnZJKNluqV5g=;
+        b=ePQCTPX3TPE8pZ2lmmxmw36pciMcy8aYLXa4ucN/fw6j7Oslht3iE1LN9j/gauOp7L
+         QYhSafMmXHRrkJCSbjSbALEzOLBrUaGv4580Uvn78pHpJNIujGl5OEF0ljkMz4Gg6VS9
+         dvp9SqZubuyZQqya1VhSUrz7yLI2rXQf5sCaFEQEBvQd6qF27CUxb9epbzuSUVc7IZga
+         yWeEOlFdnyvLSO9tuEYiI+UXVdw3ymaQVktzKftBKSHvzTCEkhAXrJ9TLmGahtx8yP2H
+         sA2nB39L+S4wgZ8Kfh6khovRhwur0xHmdzU/hLY6kV3AM8xa3R20jNhxyAHJmPpaIUWn
+         wmhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=q7EgyTKkBwCKENlJl+P4FiMkN5L+S2Lq9VbdUR33+dI=;
-        b=jCvZs5k14H5CYLrNJyq9xJp4nPjJ9BrsNqJIUytFuPaqqrL6ffI+koTircBUx90sns
-         PiRpXxjapPbd+t2BRMmhhhmJoloKsONFnvjZqRw+BZ4bLjW9ur0JZyWVsthxsw5HrSv2
-         YviG1FKrBr7p0auMYRhUXRWbEQ0zfYF/BfiytXvBsFe57AQqXhMy2rhQyftpntcDuwPD
-         w0Mre/UnSG6Pdczzvd5yzJlKaAmuj+1k6eLgJzMpFrS9WW2Eyv0639ksjftUOaWtI48C
-         YBLJUTU3wzohvdcSYew1tqjbvYsau4HBB/MbD+YskUxUKonZVG/Ffg/UPw15UYnA8KCM
-         /ADw==
-X-Gm-Message-State: APjAAAWSdayk/WrDaDAHcVxgmeWK2NlPchY8DGpsVB3IXubb4dEnrvVN
-        RTXX81HrYwvUAb9CQUOWLYCkBg==
-X-Google-Smtp-Source: APXvYqx2ApC9Ka/qjOXmF09vmAZsU6Nz2YoUaT9KO0tMBguw+S7Lk6IrSoXS1bGmWu6FsyEE4mTKwA==
-X-Received: by 2002:a2e:5d88:: with SMTP id v8mr11484224lje.150.1552129338883;
-        Sat, 09 Mar 2019 03:02:18 -0800 (PST)
+        bh=2K/HDy9ejUSQlPnuCSMf/sE/kM0/YFTKnZJKNluqV5g=;
+        b=QrrC9LFVYaKxUoNWkVSm+MyyfdPslYGYZcE+lKFRbSBEJKXDk0B4QaW75H1qXUS2j7
+         EfDPXggbPtEwWK+//l48lu7IFDUp+6nMsMfzVEtj69YJMasQr2ghFR50LgRLlTKUCUM9
+         aofgekA7IeQ/MAKH1BorpUsWuCE8RsF72XHls5O7dKqHlg4VVWMOS980Ab/X+yAIG4gl
+         jPNbQgLs0V7lduyAzceVsXbA5xHvLMNoZFRsH4J2X/LagUBvPVOvUHaf6bKRQyB4bqmf
+         CRU5wPnoWfbiLhibQJE4sTtSeuM6fnqguq8ru+VexjIDvF91/SqTIVF6LZcA791KTh70
+         Waqw==
+X-Gm-Message-State: APjAAAVVU/6Lz2LBFL9Z+bOwndiSSZuSfKLDGsitp1g09Y3wks/TPlmv
+        cO6F6KLw1TGO7uGAt0B/4Fi+ww==
+X-Google-Smtp-Source: APXvYqyl0XxO5cdiYLD3BJsN5uewHFYsXUk+EYIuv+HTZdtSgC+6un2OCJR5zm9nHKL+Si9n4sBlpw==
+X-Received: by 2002:a19:d4cf:: with SMTP id l198mr4385028lfg.151.1552129846872;
+        Sat, 09 Mar 2019 03:10:46 -0800 (PST)
 Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id q2sm36232ljq.19.2019.03.09.03.02.18
+        by smtp.gmail.com with ESMTPSA id r12sm33334ljc.97.2019.03.09.03.10.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Mar 2019 03:02:18 -0800 (PST)
-Date:   Sat, 9 Mar 2019 12:02:17 +0100
+        Sat, 09 Mar 2019 03:10:46 -0800 (PST)
+Date:   Sat, 9 Mar 2019 12:10:45 +0100
 From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund@ragnatech.se>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: rcar-vin: fix a potential NULL pointer dereference
-Message-ID: <20190309110217.GA5281@bigcity.dyn.berto.se>
-References: <20190309070527.2657-1-kjlu@umn.edu>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: rcar: Clean up remaining macros defining bits
+Message-ID: <20190309111045.GB5281@bigcity.dyn.berto.se>
+References: <20190309005613.1493-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190309070527.2657-1-kjlu@umn.edu>
+In-Reply-To: <20190309005613.1493-1-marek.vasut@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kangjie,
+Hi Marek,
 
 Thanks for your patch.
 
-On 2019-03-09 01:05:27 -0600, Kangjie Lu wrote:
-> In case of_match_node cannot find a match, the fix returns
-> -EINVAL to avoid NULL pointer dereference.
+On 2019-03-09 01:56:12 +0100, Marek Vasut wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
 > 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> Replace macros using constants with BIT()s instead, no functional change.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
 > ---
->  drivers/media/platform/rcar-vin/rcar-core.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/pci/controller/pcie-rcar.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-> index f0719ce24b97..a058e2023ca8 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-core.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-> @@ -266,6 +266,8 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index c8febb009454..5b8736f0cd6b 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -46,14 +46,14 @@
 >  
->  	match = of_match_node(vin->dev->driver->of_match_table,
->  			      vin->dev->of_node);
-> +	if (unlikely(!match))
-> +		return -EINVAL;
-
-I don't think this is needed. The driver depends on selects OF and if we 
-get this far we it is because we had a match already. The reason to call 
-of_match_node() here is simply to retrieve which of the possible 
-compatible strings was matched.
-
-Am I missing something? What scenario do you see where this can fail?
-
+>  /* Transfer control */
+>  #define PCIETCTLR		0x02000
+> -#define  CFINIT			1
+> +#define  CFINIT			BIT(0)
+>  #define PCIETSTR		0x02004
+> -#define  DATA_LINK_ACTIVE	1
+> +#define  DATA_LINK_ACTIVE	BIT(0)
+>  #define PCIEERRFR		0x02020
+>  #define  UNSUPPORTED_REQUEST	BIT(4)
+>  #define PCIEMSIFR		0x02044
+>  #define PCIEMSIALR		0x02048
+> -#define  MSIFE			1
+> +#define  MSIFE			BIT(0)
+>  #define PCIEMSIAUR		0x0204c
+>  #define PCIEMSIIER		0x02050
 >  
->  	strscpy(mdev->driver_name, KBUILD_MODNAME, sizeof(mdev->driver_name));
->  	strscpy(mdev->model, match->compatible, sizeof(mdev->model));
 > -- 
-> 2.17.1
+> 2.20.1
 > 
 
 -- 
