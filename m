@@ -2,368 +2,138 @@ Return-Path: <SRS0=uGqO=RM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555ECC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF90C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18D112081B
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30B4D20449
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  9 Mar 2019 11:14:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="kCFj+AU3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbfCILLC (ORCPT
+        id S1726208AbfCILOO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 9 Mar 2019 06:11:02 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:56129 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbfCILLC (ORCPT
+        Sat, 9 Mar 2019 06:14:14 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45226 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725841AbfCILON (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 9 Mar 2019 06:11:02 -0500
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 08A7D40008;
-        Sat,  9 Mar 2019 11:10:57 +0000 (UTC)
-Date:   Sat, 9 Mar 2019 12:11:32 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH/RFC 11/15] drm: rcar-du: lvds: Add support for dual-link
- mode
-Message-ID: <20190309111132.qxpppbokn3stfjhl@uno.localdomain>
-References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190306232345.23052-12-laurent.pinchart+renesas@ideasonboard.com>
- <20190308172023.vtsvouwo4ltxzgx2@uno.localdomain>
- <20190308181239.GD11318@pendragon.ideasonboard.com>
+        Sat, 9 Mar 2019 06:14:13 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f16so167975lfk.12
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 09 Mar 2019 03:14:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=MAOrQ+Gi7pTa1U823xnZmJ85XRtCvB9YgrGTgn+aFPk=;
+        b=kCFj+AU3iSRyF4XgkZYKnuAkKfJIkFOe1vkYFadQjmIQHUJpdC9oXp+nBN6gnod4cK
+         2S5WnJljHskwWmV2lSXdaTqg7pBxGK/TAHW6ljyZO6iPZxPWmk+t5gLi4lJOcGsNTy8l
+         KdZBmCrgXrRPc7QxztXUu/gzgZ3yrs5gUxriXq3OBLfSFiP1rQV4RwhqY7L0l6U1qKcT
+         /pjZdJxsQNlmPbqn0lRPTo8ETCLBYFiCY6mjcgX+fMqapKnH77er9K6S4dJlNVkp3AtX
+         q5cAJUP9YEajg66wrxHyeO6Rhn91kmAtxmtQyouqKI/McycVDR9oaxjPhxWCv5xxNXtd
+         rIyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=MAOrQ+Gi7pTa1U823xnZmJ85XRtCvB9YgrGTgn+aFPk=;
+        b=lfH4IbYUzhw8JSj3zXVxlauhbe9D31IsScSSuAK4guINRaEa8y8VIKgtmBE7P+JKC0
+         a23l0p+Uu2cjsjRTi20wS59rhYll9gXWVNpfX2ItQw94PafXVhUb6mkrHX1bU++0Tm/E
+         HHWk0Zjuts+RMt4VSEEDgfS53CgdIceYYoDuoUwElQwcCsM2JNHuvKUCKQKbU7VoqRzz
+         Vv5KSYoynfNJXGeeHPY7G81vcKw8120gfyU1HzWklFjFrxFsAmhM9gijLfFHt8UClDu4
+         ucYJbHUUnC9vuF09YglZcN9J6SqNGXkop84/fEBN++gxYKiU5atAJoLZ6Ayexiw1eaYJ
+         REZQ==
+X-Gm-Message-State: APjAAAXrjZ3/s/MH8er8gijQML5S4xa/Y2P+vx0qapOUId5+uN7zoJkE
+        DRSkbWUba1b4H0lEerlOYah6ew==
+X-Google-Smtp-Source: APXvYqxVxow8XaLVJvojxd6nRPaClHc6BzOyHXPmdPqKMbRWC9Qq8rn67LbhMxegF4WSThJh6h2X7g==
+X-Received: by 2002:ac2:55ad:: with SMTP id y13mr13391844lfg.97.1552130051659;
+        Sat, 09 Mar 2019 03:14:11 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id c86sm39701ljf.28.2019.03.09.03.14.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Mar 2019 03:14:11 -0800 (PST)
+Date:   Sat, 9 Mar 2019 12:14:10 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in
+ register accessors
+Message-ID: <20190309111410.GC5281@bigcity.dyn.berto.se>
+References: <20190309005613.1493-1-marek.vasut@gmail.com>
+ <20190309005613.1493-2-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="deqblf4q54vkkapg"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190308181239.GD11318@pendragon.ideasonboard.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190309005613.1493-2-marek.vasut@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Marek,
 
---deqblf4q54vkkapg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Thanks for your work.
 
-Hi Laurent,
+On 2019-03-09 01:56:13 +0100, Marek Vasut wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Replace unsigned long with u32 in register accessor functions,
+> since they access 32bit registers.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
 
-On Fri, Mar 08, 2019 at 08:12:39PM +0200, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> On Fri, Mar 08, 2019 at 06:20:23PM +0100, Jacopo Mondi wrote:
-> > On Thu, Mar 07, 2019 at 01:23:41AM +0200, Laurent Pinchart wrote:
-> > > In dual-link mode the LVDS0 encoder transmits even-numbered pixels, and
-> > > sends odd-numbered pixels to the LVDS1 encoder for transmission on a
-> > > separate link.
-> > >
-> > > To implement support for this mode of operation, determine if the LVDS
-> > > connection operates in dual-link mode by querying the next device in the
-> > > pipeline, locate the companion encoder, and control it directly through
-> > > its bridge operations.
-> > >
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > ---
-> > >  drivers/gpu/drm/rcar-du/rcar_lvds.c | 104 ++++++++++++++++++++++++----
-> > >  drivers/gpu/drm/rcar-du/rcar_lvds.h |   5 ++
-> > >  2 files changed, 96 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > > index 5ac92ee15be0..90d33514bb3e 100644
-> > > --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > > @@ -66,6 +66,9 @@ struct rcar_lvds {
-> > >
-> > >  	struct drm_display_mode display_mode;
-> > >  	enum rcar_lvds_mode mode;
-> > > +
-> > > +	struct drm_bridge *companion;
-> > > +	bool dual_link;
-> > >  };
-> > >
-> > >  #define bridge_to_rcar_lvds(bridge) \
-> > > @@ -400,11 +403,6 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
-> > >  {
-> > >  	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
-> > >  	const struct drm_display_mode *mode = &lvds->display_mode;
-> > > -	/*
-> > > -	 * FIXME: We should really retrieve the CRTC through the state, but how
-> > > -	 * do we get a state pointer?
-> > > -	 */
-> > > -	struct drm_crtc *crtc = lvds->bridge.encoder->crtc;
-> > >  	u32 lvdhcr;
-> > >  	u32 lvdcr0;
-> > >  	int ret;
-> > > @@ -413,6 +411,10 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
-> > >  	if (ret < 0)
-> > >  		return;
-> > >
-> > > +	/* Enable the companion LVDS encoder in dual-link mode. */
-> > > +	if (lvds->dual_link && lvds->companion)
-> > > +		lvds->companion->funcs->enable(lvds->companion);
-> > > +
-> > >  	/*
-> > >  	 * Hardcode the channels and control signals routing for now.
-> > >  	 *
-> > > @@ -435,17 +437,33 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
-> > >  	rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
-> > >
-> > >  	if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK) {
-> > > -		/* Disable dual-link mode. */
-> > > -		rcar_lvds_write(lvds, LVDSTRIPE, 0);
-> > > +		/*
-> > > +		 * Configure vertical stripe based on the mode of operation of
-> > > +		 * the connected device.
-> > > +		 */
-> > > +		rcar_lvds_write(lvds, LVDSTRIPE,
-> > > +				lvds->dual_link ? LVDSTRIPE_ST_ON : 0);
-> > >  	}
-> > >
-> > > -	/* PLL clock configuration. */
-> > > -	lvds->info->pll_setup(lvds, mode->clock * 1000);
-> > > +	/*
-> > > +	 * PLL clock configuration on all instances but the companion in
-> > > +	 * dual-link mode.
-> > > +	 */
-> > > +	if (!lvds->dual_link || lvds->companion)
-> > > +		lvds->info->pll_setup(lvds, mode->clock * 1000);
-> > >
-> > >  	/* Set the LVDS mode and select the input. */
-> > >  	lvdcr0 = lvds->mode << LVDCR0_LVMD_SHIFT;
-> > > -	if (drm_crtc_index(crtc) == 2)
-> > > -		lvdcr0 |= LVDCR0_DUSEL;
-> > > +
-> > > +	if (lvds->bridge.encoder) {
-> > > +		/*
-> > > +		 * FIXME: We should really retrieve the CRTC through the state,
-> > > +		 * but how do we get a state pointer?
-> > > +		 */
-> > > +		if (drm_crtc_index(lvds->bridge.encoder->crtc) == 2)
-> > > +			lvdcr0 |= LVDCR0_DUSEL;
-> > > +	}
-> > > +
-> > >  	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
-> > >
-> > >  	/* Turn all the channels on. */
-> > > @@ -512,6 +530,10 @@ static void rcar_lvds_disable(struct drm_bridge *bridge)
-> > >  	rcar_lvds_write(lvds, LVDCR1, 0);
-> > >  	rcar_lvds_write(lvds, LVDPLLCR, 0);
-> > >
-> > > +	/* Disable the companion LVDS encoder in dual-link mode. */
-> > > +	if (lvds->dual_link && lvds->companion)
-> > > +		lvds->companion->funcs->disable(lvds->companion);
-> > > +
-> > >  	clk_disable_unprepare(lvds->clocks.mod);
-> > >  }
-> > >
-> > > @@ -628,10 +650,54 @@ static const struct drm_bridge_funcs rcar_lvds_bridge_ops = {
-> > >  	.mode_set = rcar_lvds_mode_set,
-> > >  };
-> > >
-> > > +bool rcar_lvds_dual_link(struct drm_bridge *bridge)
-> > > +{
-> > > +	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
-> > > +
-> > > +	return lvds->dual_link;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(rcar_lvds_dual_link);
-> > > +
-> > >  /* -----------------------------------------------------------------------------
-> > >   * Probe & Remove
-> > >   */
-> > >
-> > > +static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
-> > > +{
-> > > +	const struct of_device_id *match;
-> > > +	struct device_node *companion;
-> > > +	struct device *dev = lvds->dev;
-> > > +	int ret = 0;
-> > > +
-> > > +	/* Locate the companion LVDS encoder for dual-link operation, if any. */
-> > > +	companion = of_parse_phandle(dev->of_node, "renesas,companion", 0);
-> > > +	if (!companion)
-> > > +		return -ENODEV;
-> > > +
-> > > +	/*
-> > > +	 * Sanity check: the companion encoder must have the same compatible
-> > > +	 * string.
-> > > +	 */
-> > > +	match = of_match_device(dev->driver->of_match_table, dev);
-> > > +	if (!of_device_is_compatible(companion, match->compatible)) {
-> > > +		ret = -ENODEV;
-> > > +		goto done;
-> > > +	}
-> > > +
-> > > +	lvds->companion = of_drm_find_bridge(companion);
-> > > +	if (!lvds->companion) {
-> > > +		ret = -EPROBE_DEFER;
-> > > +		goto done;
-> > > +	}
-> > > +
-> > > +	dev_dbg(dev, "Found companion encoder %pOF\n", companion);
-> > > +
-> > > +done:
-> > > +	of_node_put(companion);
-> > > +
-> > > +	return ret;
-> > > +}
-> > > +
-> > >  static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
-> > >  {
-> > >  	struct device_node *local_output = NULL;
-> > > @@ -682,14 +748,26 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
-> > >
-> > >  	if (is_bridge) {
-> > >  		lvds->next_bridge = of_drm_find_bridge(remote);
-> > > -		if (!lvds->next_bridge)
-> > > +		if (!lvds->next_bridge) {
-> > >  			ret = -EPROBE_DEFER;
-> > > +			goto done;
-> > > +		}
-> > > +
-> > > +		if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
-> > > +			lvds->dual_link = lvds->next_bridge->timings
-> > > +					? lvds->next_bridge->timings->dual_link
-> > > +					: false;
-> >
-> > I wonder if, in all this patch, you could not use "lvds->companion" in
-> > place of "lvds->dual_link", and thus drop that from timings. This mean
-> > "renesas,companion" would only be used when operating in dual link
-> > mode, which might be less nice (and could actually called differently
-> > in that case).
-> >
-> > Both the THC631024 and the rcar_du-lvds driver would decide
-> > independently if they operate in dual link mode or not (one counting
-> > its endpoints, the other inspecting the "renesas,companion" property).
->
-> I decided to specify the companion in DT regardless of which operating
-> mode is used, as it's a property of the LVDS encoder, not of the
-> operating mode. Furthermore, I can foresee setups where the mode would
-> be selected dynamically at runtime. Our development boards don't allow
-> that as they hardcode the mode using DIP switches, but nothing would
-> prevent the mode selection signals to be connected to GPIOs. I thus
-> think lvds->companion should point to the companion unconditionally, and
-> lvds->dual_link should select the operating mode. The dual_link field is
-> currently set at probe time as I have no need for dynamic configuration
-> of the mode and no mean of testing it, so I decided not to implement
-> dynamic switching yet.
->
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Fine, I tried thinking up a bit if the "renesas,companion" property
-could have been made an endpoint property, to be specified in both
-the rcar-lvds endpoints and in the DU endpoints, so that the
-rcar_du_encoder does not need to pick into the lvds-encoder to know
-if it is operating in dual link mode or not and skip creation of the
-encoder associated to LVDS1 in such a case.
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index 5b8736f0cd6b..1408c8aa758b 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -152,14 +152,12 @@ struct rcar_pcie {
+>  	struct			rcar_msi msi;
+>  };
+>  
+> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+> -			       unsigned long reg)
+> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
+>  {
+>  	writel(val, pcie->base + reg);
+>  }
+>  
+> -static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
+> -				       unsigned long reg)
+> +static u32 rcar_pci_read_reg(struct rcar_pcie *pcie, u32 reg)
+>  {
+>  	return readl(pcie->base + reg);
+>  }
+> -- 
+> 2.20.1
+> 
 
-Furthermore, we could make a "vstripe-even" "vstripe-odd" endpoint
-properties, that would allow you to control the ST_SWAP field of
-LVDSTRIPE register, and create another endpoint property that contains
-the phandle to the companion, like "dual-link-companion" or
-"dual-link-slave". Those properties would need to be specified in both
-DU and LVDS endpoints though, which might be clunky, but that would
-possibly save a few cross-driver calls.
-
-Anyway, just putting a few more options on the table, if you have
-already considered those feel free to stick to this implementation...
-
-> > The only place where this might be tricky is the here above
-> >
-> >  +	/*
-> >  +	 * PLL clock configuration on all instances but the companion in
-> >  +	 * dual-link mode.
-> >  +	 */
-> >  +	if (!lvds->dual_link || lvds->companion)
-> >  +		lvds->info->pll_setup(lvds, mode->clock * 1000);
-> >
-> > but that would remove the need for the thc63 bridge to report its
-> > operating mode in timings...
-> >
-> > >  	} else {
-> > >  		lvds->panel = of_drm_find_panel(remote);
-> > > -		if (IS_ERR(lvds->panel))
-> > > +		if (IS_ERR(lvds->panel)) {
-> > >  			ret = PTR_ERR(lvds->panel);
-> > > +			goto done;
-> > > +		}
-> > >  	}
-> > >
-> > > +	if (lvds->dual_link)
-> >
-> > Note: if (!is_bridge) you would never set lvds->dual_link, so this
-> > should be moved inside the here above "if (is_bridge)"
->
-> I don't yet, but nothing prevents a panel from operating in dual mode,
-> even if not implemented yet. That's why I've move this check out of the
-> bridge/panel conditional code.
-
-I see, still right now is of no use. It's fine though, really minor
-stuff.
-
-Thanks
-   j
-
->
-> > > +		ret = rcar_lvds_parse_dt_companion(lvds);
-> > > +
-> > >  done:
-> > >  	of_node_put(local_output);
-> > >  	of_node_put(remote_input);
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.h b/drivers/gpu/drm/rcar-du/rcar_lvds.h
-> > > index a709cae1bc32..222ec0e60785 100644
-> > > --- a/drivers/gpu/drm/rcar-du/rcar_lvds.h
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.h
-> > > @@ -15,6 +15,7 @@ struct drm_bridge;
-> > >  #if IS_ENABLED(CONFIG_DRM_RCAR_LVDS)
-> > >  int rcar_lvds_clk_enable(struct drm_bridge *bridge, unsigned long freq);
-> > >  void rcar_lvds_clk_disable(struct drm_bridge *bridge);
-> > > +bool rcar_lvds_dual_link(struct drm_bridge *bridge);
-> > >  #else
-> > >  static inline int rcar_lvds_clk_enable(struct drm_bridge *bridge,
-> > >  				       unsigned long freq)
-> > > @@ -22,6 +23,10 @@ static inline int rcar_lvds_clk_enable(struct drm_bridge *bridge,
-> > >  	return -ENOSYS;
-> > >  }
-> > >  static inline void rcar_lvds_clk_disable(struct drm_bridge *bridge) { }
-> > > +static inline bool rcar_lvds_dual_link(struct drm_bridge *bridge)
-> > > +{
-> > > +	return false;
-> > > +}
-> > >  #endif /* CONFIG_DRM_RCAR_LVDS */
-> > >
-> > >  #endif /* __RCAR_LVDS_H__ */
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
---deqblf4q54vkkapg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyDn2QACgkQcjQGjxah
-VjwJTA/7BoGJ+dEW4yDsDMtO3gCDNF2gp7OaTKDrcvIXOuMYsZlwXuVrwqD/SZAO
-BqNTLcYo1pImODz6h+fW7MLgX4k9dyvQThd7j8uP8F2hZuykQpeLI5gfPVnt69lU
-f25loDtypW/D3yvGy98weM1HzTlP5kIk+tVjbCsI2kSZ47Ub+5NMe8wwGdUX2ruN
-/atFUBUsKIWMU2XLZBx11/LKTM63PpCySJ1ng5RLHxEf/r0U0HaBHsYryRbtS6rL
-vEmt7LOO6/ni5WglYW5iLQTg39CXloQnj3XTXe03B2Z330LXYIW9/84b3jA4Q+f6
-t4ieWjlhnjpSr3DihTCWpI9HC1JBZjUMS5Ehkf5zyGgulhfBtSZhbKHF6y6R7zLG
-XwsUuwH5SSOZLOehfhqYWyYldZZAo/Xggh9EV6RH+6cqQpALhb83r48+gNHUNN/5
-FwRd3kS9LwkGCG9oNP75zN1WiRqTvOksnFVn1UKxgvgwqsTHtz5sWBgExIisTV9D
-uu5KBo8jAP3TAuGwOWbxQZ4LKattrk1wS5gN6efKn6RT0+2LNDCW6v8cuHjWT03u
-SUhO7zZ4cuL9TTO19RrA7c+6rkaTpeq0349ZmNLeCSxN7r8YHCaetAxPcYyohPg2
-rnZOcblHzN+GBD1bCEAa3cjbz1W3HTVk/zVi/OV5SPDZa5QNcLg=
-=+auG
------END PGP SIGNATURE-----
-
---deqblf4q54vkkapg--
+-- 
+Regards,
+Niklas Söderlund
