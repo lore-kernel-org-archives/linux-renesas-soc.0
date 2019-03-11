@@ -2,244 +2,133 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D308C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 14:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74260C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 17:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79A92087F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 14:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EE0A205F4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 17:14:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="tzQNLFE7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfCKObz (ORCPT
+        id S1727559AbfCKRO1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 10:31:55 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55447 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfCKObz (ORCPT
+        Mon, 11 Mar 2019 13:14:27 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34989 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726625AbfCKRO1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 10:31:55 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id CD97720009;
-        Mon, 11 Mar 2019 14:31:51 +0000 (UTC)
-Date:   Mon, 11 Mar 2019 15:32:26 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] media: adv748x: Don't disable CSI-2 on link_setup
-Message-ID: <20190311143226.wreigi3nmamt2egf@uno.localdomain>
-References: <20190306112659.8310-1-jacopo+renesas@jmondi.org>
- <20190306191521.GE4791@pendragon.ideasonboard.com>
- <20190307103511.wtx2c7jecyx4nmms@uno.localdomain>
- <20190308112938.GE4802@pendragon.ideasonboard.com>
- <20190308131221.g5ueabsbhbog7oxn@uno.localdomain>
- <7edc4c80-541b-473a-f520-a758d73ce8d3@xs4all.nl>
+        Mon, 11 Mar 2019 13:14:27 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t13so4797218lji.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 10:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Tm2sboZ+m13IuloFkRzB7RkPN72xfHg8nIovqn8OW6M=;
+        b=tzQNLFE7DyCxKE81v72sPyCg+S8APQYVucN5HwP1bv+mSV7YPCEF8sOdIZGcsfIcH7
+         dwtxS5nknb98SFjLlskAI/a6rl/2N7IUeQzP+Ivri3w+1Zhuspa416XaLtRWBkeFfxw5
+         dPAB99nue9BeDOKt5MjF26nM8Grr3ypVX8UUDT4p4G4bMFT7xDQfPTbXAgNjuX+BZsvL
+         KqaCn+FPXdrymsyWFKStuPbehf3wIZjexRXrnO9HsdH5B/3oFbuTsyjWsYDCBemhti5c
+         Lm7nAjZyZks+YajXpMJj77s1Xq0cyXUIA/ZYtmOamTuzoSdWvXeakM1+bHaxv1Civ+p0
+         vP8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Tm2sboZ+m13IuloFkRzB7RkPN72xfHg8nIovqn8OW6M=;
+        b=n7ZP+owhlEULnP7AbYU5pbni+UUuou4r+AzCq9gVEz8ezVWZD9AaV3TzZVrMowi0LG
+         dQWsqE/EKFf3GsZLaJrBUgRECHPFK+r1XLn78rKPPiXMNTsmoGyxr1LfPUG9RcrDAA7B
+         MtHMXGdbxjsr2B7ENU9X9updYdie1wLE9o6lGqqQRjZdmqiDyy1LITFMyCzelVGd8Hhp
+         08pRAtIJsZDHVpTDR4odGeJY1ycKrqo6E9ldFvURaX7jBpFqxDKyqoDEZhpvBUgEr9iB
+         vDy3r7RhpxbLxxOqcNayKpAwznQyDDTbNdYfL9Ruiz93mPO4LKgj9j5GYYA90yOoMcb1
+         V3HQ==
+X-Gm-Message-State: APjAAAWak0SgIpN/LMDsGo8Fal6PHFyVg1SgOjFdy7xyzDqwNXhISDU/
+        oZJwGwSq7v5+ivBmAKs5x4oT1A==
+X-Google-Smtp-Source: APXvYqzkgHVpwEUQven0sKqYYjA9A1fQspIOm2/aYWBU64d5Ly1uiTt6WRcJEaYNHceoopOq9saxSw==
+X-Received: by 2002:a2e:85d2:: with SMTP id h18mr1237923ljj.69.1552324465349;
+        Mon, 11 Mar 2019 10:14:25 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.87.168])
+        by smtp.gmail.com with ESMTPSA id t81sm515163lff.21.2019.03.11.10.14.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Mar 2019 10:14:24 -0700 (PDT)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH] clk: renesas: r8a77980-cpg-mssr: fix RPC-IF module
+ clock's parent
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com>
+ <ebc41558-2a0a-bf6d-05df-077e3c769344@cogentembedded.com>
+ <CAMuHMdWxkM2YbLqyz3BemcVJphWYSZi4ejuLiG+fpfDdnuU4Uw@mail.gmail.com>
+Organization: Cogent Embedded
+Message-ID: <981d0e06-76b8-fe69-1a8e-91661ad0faba@cogentembedded.com>
+Date:   Mon, 11 Mar 2019 20:14:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hr3uzs2vfclwp35n"
-Content-Disposition: inline
-In-Reply-To: <7edc4c80-541b-473a-f520-a758d73ce8d3@xs4all.nl>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAMuHMdWxkM2YbLqyz3BemcVJphWYSZi4ejuLiG+fpfDdnuU4Uw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On 03/11/2019 12:30 PM, Geert Uytterhoeven wrote:
 
---hr3uzs2vfclwp35n
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+>> Testing has shown that the RPC-IF module clock's parent is the RPCD2 clock,
+>> not the RPC one -- the RPC-IF register reads stall otherwise...
+> 
+> Perhaps... Or something else is wrong with how the RPC driver uses the
+> clock hierarchy.
 
-Hi Hans,
+   Yes, explicitly enabling RPCD2 did help as well.
 
-On Mon, Mar 11, 2019 at 03:05:24PM +0100, Hans Verkuil wrote:
-> On 3/8/19 2:12 PM, Jacopo Mondi wrote:
-> > Hi Laurent,
-> >
-> > On Fri, Mar 08, 2019 at 01:29:38PM +0200, Laurent Pinchart wrote:
-> >> Hi Jacopo,
-> >>
-> >> On Thu, Mar 07, 2019 at 11:35:11AM +0100, Jacopo Mondi wrote:
-> >>> On Wed, Mar 06, 2019 at 09:15:21PM +0200, Laurent Pinchart wrote:
-> >>>> On Wed, Mar 06, 2019 at 12:26:59PM +0100, Jacopo Mondi wrote:
-> >>>>> When both the media links between AFE and HDMI and the two TX CSI-2 outputs
-> >>>>> gets disabled, the routing register ADV748X_IO_10 gets zeroed causing both
-> >>>>> TXA and TXB output to get disabled.
-> >>>>>
-> >>>>> This causes some HDMI transmitters to stop working after both AFE and
-> >>>>> HDMI links are disabled.
-> >>>>
-> >>>> Could you elaborate on why this would be the case ? By HDMI transmitter,
-> >>>> I assume you mean the device connected to the HDMI input of the ADV748x.
-> >>>> Why makes it fail (and how ?) when the TXA and TXB are both disabled ?
-> >>>
-> >>> I know, it's weird, the HDMI transmitter is connected to the HDMI
-> >>> input of adv748x and should not be bothered by CSI-2 outputs
-> >>> enablement/disablement.
-> >>>
-> >>> BUT, when I developed the initial adv748x AFE->TXA patches I was
-> >>> testing HDMI capture using a laptop, and things were smooth.
-> >>>
-> >>> I recently started using a chrome cast device I found in some drawer
-> >>> to test HDMI, as with it I don't need to go through xrandr as I had to
-> >>> do when using a laptop for testing, but it seems the two behaves differently.
-> >>>
-> >>> Failures are of different types: from detecting a non-realisting
-> >>> resolution from the HDMI subdevice, and then messing up the pipeline
-> >>> configuration, to capture operations apparently completing properly
-> >>> but resulting in mangled images.
-> >>>
-> >>> Do not deactivate the CSI-2 ouputs seems to fix the issue for the
-> >>> Chromecast, and still work when capturing from laptop. There might be
-> >>> something I am missing about HDMI maybe, but the patch not just fixes
-> >>> the issue for me, but it might make sense on its own as disabling the
-> >>> TXes might trigger some internal power saving state, or simply mess up
-> >>> the HDMI link.
-> >>
-> >> I think this needs more investigation. It feels to me that you're
-> >> working around an issue by chance, and it will come back to bite us
-> >> later :-(
-> >>
-> >
-> > I'm sorry I really can't tell what's happening, and why it is
-> > happening on that specific device, which I cannot debug for sure.
-> >
-> > Ian suggested a possible cause, but I cannot tell due to my
-> > HDMI-ignorance.
->
-> I agree with Ian that it is likely related to EDID and/or HPD handling
-> of the adv748x. The only other option is if the HDMI transmitter supports
-> RxSense (i.e. detecting the pull-ups of the TMDS clock lines as a way of
-> detecting that the transmitter is connected to a display).
->
-> Not many transmitters support RxSense, though.
->
-> HPD and/or EDID are the most likely culprits. It certainly has nothing
-> to do with the CSI ports as such.
+> According to the docs, RPC clocks RPC-PHY, and RPCD2 clocks RPC-LINK.
 
-Thanks for adding more details to the issue.
+   I've also read the manual. Note it's not that reading a PHY register
+hangs the kernel but reading CMNCR...
 
-Even if not related to the CSI ports directly, the issue triggers when
-all of the two TXes gets disabled, and this patch prevents that from
-happening. I cannot elaborate a detailed explanation of the reasons
-why, so I understand if you prefer to ditch this patch. In my opinion
-is better to have something that fix the issue and makes the adv748x
-work with a broader number of transmitters than not, but I let you and
-Laurent decide if to take this one in.
+> Currently nothing references RPCD2, so it is disabled automatically.
 
-Thanks
-   j
+  Only on V3H.
 
->
-> Regards,
->
-> 	Hans
->
-> >
-> >>> As disabling both TXes usually happens at media link reset time, just
-> >>> before enabling one of them (or both), going through a full disable
-> >>> makes little sense, even more if it triggers any sort of malfunctioning.
-> >>>
-> >>> Does this make sense to you?
-> >>
-> >> It also doesn't make too much sense to keep them both enabled when they
-> >> don't need to be :-) You'll end up consuming more power.
-> >>
-> >
-> > They've alwyas been up before introduction of dynamic routing, provided
-> > something is connected to the TX source pad in DT.
-> > https://elixir.bootlin.com/linux/latest/source/drivers/media/i2c/adv748x/adv748x-core.c#L489
-> >
-> > Power saving wise, we're not doing worse than before, and if that's a
-> > concern, it should be identified first why the CSI-2 Tx PLL never gets
-> > turned off:
-> > https://elixir.bootlin.com/linux/latest/source/drivers/media/i2c/adv748x/adv748x-core.c#L269
-> > See "mipi_pll_en, CSI-TXA Map, Address 0xDA[0]" registrer description.
-> >
-> > The two issues might be actually connected, I tried fixing this in the past,
-> > but frame capture broke, and I didn't have time to investigate
-> > fruther.
-> >
-> > To sum up, this patch solves an issue on some devices, it does not
-> > perform worse than what we had from a power consumption perspective,
-> > but I agree it might work around some deeper issues it might be worth
-> > chasing.
-> >
-> > If I got your NAK on this, I'll keep carrying it in my tree when
-> > testing with that device.
-> >
-> > Thanks
-> >   j
-> >
-> >
-> >>>>> Fix this by preventing writing 0 to
-> >>>>> ADV748X_IO_10 register, which gets only updated when links are enabled
-> >>>>> again.
-> >>>>>
-> >>>>> Fixes: 9423ca350df7 ("media: adv748x: Implement TX link_setup callback")
-> >>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >>>>> ---
-> >>>>> The issue presents itself only on some HDMI transmitters, and went unnoticed
-> >>>>> during the development of:
-> >>>>> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
-> >>>>>
-> >>>>> Patch intended to be applied on top of latest media-master, where the
-> >>>>> "[PATCH v3 0/6] media: adv748x: Implement dynamic routing support"
-> >>>>> series is applied.
-> >>>>>
-> >>>>> The patch reports a "Fixes" tag, but should actually be merged with the above
-> >>>>> mentioned series.
-> >>>>>
-> >>>>> ---
-> >>>>>  drivers/media/i2c/adv748x/adv748x-core.c | 3 +++
-> >>>>>  1 file changed, 3 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-> >>>>> index f57cd77a32fa..0e5a75eb6d75 100644
-> >>>>> --- a/drivers/media/i2c/adv748x/adv748x-core.c
-> >>>>> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-> >>>>> @@ -354,6 +354,9 @@ static int adv748x_link_setup(struct media_entity *entity,
-> >>>>>
-> >>>>>  	tx->src = enable ? rsd : NULL;
-> >>>>>
-> >>>>> +	if (!enable)
-> >>>>> +		return 0;
-> >>>>> +
-> >>>>>  	if (state->afe.tx) {
-> >>>>>  		/* AFE Requires TXA enabled, even when output to TXB */
-> >>>>>  		io10 |= ADV748X_IO_10_CSI4_EN;
-> >>
-> >> --
-> >> Regards,
-> >>
-> >> Laurent Pinchart
->
+> If you make RPC -> RPCD2 -> RPC-IF, enabling RPC-IF indeed enables
+> both RPC and RPCD2.
 
---hr3uzs2vfclwp35n
-Content-Type: application/pgp-signature; name="signature.asc"
+   Sure, it does. :-)
 
------BEGIN PGP SIGNATURE-----
+> Perhaps the RPC device node does need a reference to RPCD2?
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyGcXoACgkQcjQGjxah
-VjwwGQ/+LgcJg4nwKeTdEXsf5cYa8G+Z+kB6in9SavfndKViCyemH7dpgUEm96rG
-LBWQgNSVEvbQD7La6VF0/JyAJ3EgttDUDGf4M2ZKGucaWbrrBzbvxOFi9K/iC/Jl
-iQWJjgWFJ7Cg8DQ0ExrsdPLAgf3uxM+dWpXPGNdtqL5IwrILiXMRFoMnlxVSRW/n
-gSJS0VsglAFUj6vXNHQk4kUuyhmgA42iOg/gt3bxQeMNodWPEeAbDvjPpF112u/U
-LNXqLgsUCozGoE9ZTdAcfxbLJDGXEt1IWJQnFnnW9ci3ogVnQMXPeJDYzkeqIuqV
-PJ4VT6OE0pR5BhaEvwSFzxjiomhrVw9xoV+a/VQPsoxobLVIWm01sC7z8Gflh10o
-guQd7q0UeasI2Ut5LdUx38k28QN8EKAgK+1SUnaI2evntI/jdn2HJHN4ZoMT1zt5
-ji0U0hHQSZfUn19vEMksT3dCI9exBvI/oZNXoTHTF8Z6VxDk/R1IJ/MEzkWjeNbd
-IBAnFAQUY0rDWgjEvn1G7pe7oG2cKF+UNbfuMUZE/0t2jule4ltzVZi4TgYIrP5N
-o1gGkDTZqTJ4hsAnPvGqW83Zrdd8wmYaAguo1ofFwCWd5hoOJ2vcfgeeJoTCEyVh
-tGGqAh8AGsMhYdLevqHoYZouQ3hJlcpyDF5nTlyj50DLQtZz64g=
-=uJeS
------END PGP SIGNATURE-----
+   Looks like that wouldn't hurt either...
 
---hr3uzs2vfclwp35n--
+> Is this also the case on R-Car V3M, where RPCD2 is not controlled by the
+> CPG, but by the DIVREG register in the RPC-IF module itself?
+
+   No hangs were seen on V3M, despite the RPCD2 clock remained disabled.
+The RPC clocks on both V3H and V3M suffer from a lack of clear documentation...
+
+> See also section 62.4.7 (Frequency change), which does not have a
+> subsection for V3H, but it may be impacted (changing RPCD2 causes
+> an additional read of RPCCKR, satisfying the read-after-write requirement
+> documented there).
+
+   Hmm, haven't seen this item before; it looks like we can't use the standard
+divider component. BTW, this section in the 1.50 manual tells to use the soft
+reset on V3MOK. OK, I'll investigate this...
+
+>> Fixes: 94e3935b5756 ("clk: renesas: r8a77980: Add RPC clocks")
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
+
+MBR, Sergei
