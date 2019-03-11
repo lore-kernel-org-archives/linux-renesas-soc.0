@@ -2,103 +2,115 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691CFC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D87C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2772075C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:39:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SktBlG+E"
+	by mail.kernel.org (Postfix) with ESMTP id 734EF2075C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:42:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfCKJjS (ORCPT
+        id S1727109AbfCKJmE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 05:39:18 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52544 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbfCKJjS (ORCPT
+        Mon, 11 Mar 2019 05:42:04 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:39354 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbfCKJmD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 05:39:18 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 12159304;
-        Mon, 11 Mar 2019 10:39:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552297156;
-        bh=MSovuMsMWqVwIXKVodAnJrIZAie8ACFBUjYrR8bOHYY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SktBlG+EX1qNCJVCpC/o+cuayEJq2L0w/jL0eYEz6S6wZ41AH8EecaOJxIHHkik2T
-         Hn1QTzen9Fx/uU9TPe3AQRs+kLA3rwUi0lgYXk5KnRijCJjoQZlZybXasHV5aBfrth
-         7SG+oKbNPZA1tc61SUZv5nhXLdUn8CLy1tH2qf7Q=
-Date:   Mon, 11 Mar 2019 11:39:10 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 3/3] rcar-csi2: Move setting of Field Detection
- Control Register
-Message-ID: <20190311093910.GK4775@pendragon.ideasonboard.com>
-References: <20190308235702.27057-1-niklas.soderlund+renesas@ragnatech.se>
- <20190308235702.27057-4-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 11 Mar 2019 05:42:03 -0400
+Received: by mail-vs1-f66.google.com with SMTP id w14so2275940vso.6;
+        Mon, 11 Mar 2019 02:42:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=57gL7QIWBOjEMnDeiMi1khiiWRbmBvZUkq/P810Uygo=;
+        b=RWr/Aqe7lYJG+hM3Ns48aNsN0MwND/1KBn4sStYCeYSoJ4xkboEiwoE4RUb5V8wpiX
+         z+jRL9gbFyVrDTVDaWddRC6CFLbuq7bbYOfPNZoic0RRPxCoaiSfqQiWq8MxWlOtrwdJ
+         ZQOPBHz/0qsjdtnHngeQiz+3u6uirE+Cu84NFsgYpWLnqsJFF6MGrWb7avjjEoBnx1zh
+         Hk8DCT9ltnTGT9iHdAIpKbi69XTH8ZjK3hK6bIIsaEA5I27iCaPbc/f2biQrb65Qduce
+         qNMfcgFOXh/C5sre9xc9nEeytDSzjQdJSFR+SKwZ9Z1nWJSvUhaq5MbgteIRkTmFBhhy
+         wQcQ==
+X-Gm-Message-State: APjAAAUhCZo7bZWNTFukizZY04VoZVscOdAkzLyKneV9Kk/vJEpRrNGa
+        w7/vxeDr04dfnzW2rn3fovIFKyDpT3SP2Dfm9Dc=
+X-Google-Smtp-Source: APXvYqz3odPDnMaAqUwgKEsuXF9q5oEMmdw00B2yhdRbxTFyjF/f74GcHeS9ONdgNRXghs1SQsGlerVYQrzxWbbHAxY=
+X-Received: by 2002:a67:78ce:: with SMTP id t197mr16171138vsc.152.1552297322801;
+ Mon, 11 Mar 2019 02:42:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190308235702.27057-4-niklas.soderlund+renesas@ragnatech.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190309005613.1493-1-marek.vasut@gmail.com> <20190309005613.1493-2-marek.vasut@gmail.com>
+In-Reply-To: <20190309005613.1493-2-marek.vasut@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Mar 2019 10:41:51 +0100
+Message-ID: <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in register accessors
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+Hi Marek,
 
-Thank you for the patch.
+On Sat, Mar 9, 2019 at 1:56 AM <marek.vasut@gmail.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>
+> Replace unsigned long with u32 in register accessor functions,
+> since they access 32bit registers.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-On Sat, Mar 09, 2019 at 12:57:02AM +0100, Niklas Söderlund wrote:
-> Latest datasheet (rev 1.50) clarifies that the FLD register should be
-> set after LINKCNT.
+Thanks for your patch!
 
-Wasn't this already the case in rev 1.00 ?
+Minor nit below.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index 07d5c8c66b7cd382..077e0d344b395b54 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -529,7 +529,6 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
->  	rcsi2_write(priv, PHTC_REG, 0);
->  
->  	/* Configure */
-> -	rcsi2_write(priv, FLD_REG, fld);
->  	rcsi2_write(priv, VCDT_REG, vcdt);
->  	if (vcdt2)
->  		rcsi2_write(priv, VCDT2_REG, vcdt2);
-> @@ -560,6 +559,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
->  	rcsi2_write(priv, PHYCNT_REG, phycnt);
->  	rcsi2_write(priv, LINKCNT_REG, LINKCNT_MONITOR_EN |
->  		    LINKCNT_REG_MONI_PACT_EN | LINKCNT_ICLK_NONSTOP);
-> +	rcsi2_write(priv, FLD_REG, fld);
->  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
->  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
->  
+BTW, there are a few more suspicious/incorrect uses of unsigned long:
+  - incorrect debug prints on arm64,
+  - more unsigned long register values,
+  - phys_addr_t
+Care to fix these as well?
 
-The change looks reasonable, so after updating the commit message,
+Thanks!
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -152,14 +152,12 @@ struct rcar_pcie {
+>         struct                  rcar_msi msi;
+>  };
+>
+> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+> -                              unsigned long reg)
+> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
+
+Doesn't unsigned int make more sense for reg?
+
+>  {
+>         writel(val, pcie->base + reg);
+>  }
+>
+> -static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
+> -                                      unsigned long reg)
+> +static u32 rcar_pci_read_reg(struct rcar_pcie *pcie, u32 reg)
+
+Likewise.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
