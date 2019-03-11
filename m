@@ -2,125 +2,178 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2F8C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B223FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C5B206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:43:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="hNzZp1V2"
+	by mail.kernel.org (Postfix) with ESMTP id 8BE6820657
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfCKKn1 (ORCPT
+        id S1727143AbfCKKxH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 06:43:27 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35593 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfCKKn1 (ORCPT
+        Mon, 11 Mar 2019 06:53:07 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:59524 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727099AbfCKKxH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 06:43:27 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t13so3572446lji.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 03:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=c87jzWIZtvLDTsWdnzo/HYHSGIho26mPgXOUYgHAzRE=;
-        b=hNzZp1V2F9T986baoYsBdF+/RWPQUElueA47CpSTyNtyhyAtGEDXNN0lou9OCm2Ivv
-         lDzShv0+yUbipnxIX+H3CN7IeWcRKeqBUgzBEM0yhbJxXUT4EM6f5XFDXizCQqNGiVeU
-         rr1ByKAO1k3fI9g54QTGiB6K6jPBR+I/EbaAyw5Wt8AWTd+n7IA+YQD3v63xKsQL0IiG
-         Fqi1eHEeZPJFCFMMn5wnhagZM8m9v7MuORRwuHDQjgPoQdZyN8Lb9IJxGHDYJ3dgHV9T
-         +EhWaGmTcANa5+Y/z1EeNldEKhUzOd7ypZjh/LzFeF/e3hG2/HgtmQCaGuwg76XfKxRZ
-         tqxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=c87jzWIZtvLDTsWdnzo/HYHSGIho26mPgXOUYgHAzRE=;
-        b=siKiB2vcoTQ0WDWpfvD6ElmhdbDpSL5jYEXQw+1/XH41tRUJJdmoRiANegop12ALGi
-         W+VqugNVnjCwZuQsM1slS5lsTiG/i7eZLOH9raXbEVR/voCC9oPAX7WT7r1GPFy7AZq0
-         0RjzO12gIbDScvBH3hMnnVr9VJouKxFhQMI5Ujh1cjkhJZxtCjgeNfwZ9Vnv+p6eoo0e
-         z4Ui65n9RTC0YNbhLTE0sZk7AjBR4t5qXNq4r4WpRPWZU5ABnZ9tIsAc2Dt4yA0mSosg
-         +/Bg3cfmAkQWTP2XhbJWmvEgc9K8VXL8RvFXDJPJqHDuZkJSwrig8VN17PeGlIy5u2Ve
-         nwiw==
-X-Gm-Message-State: APjAAAXtWDASXKa3qif6K4NFCnVQkxI5HP3YBNeztG7COvdBduCRwY1I
-        POPO8iuDvuDRRuzBid1uftUtvA==
-X-Google-Smtp-Source: APXvYqx4n6QFeBGEX7jnjyS9xY79Xp5DXhb2UtHTpHtXqJbc89CAqvcUMViRK0v63VlR9HTdmSqXPw==
-X-Received: by 2002:a2e:5518:: with SMTP id j24mr16516405ljb.80.1552301005376;
-        Mon, 11 Mar 2019 03:43:25 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.87.180])
-        by smtp.gmail.com with ESMTPSA id 8sm898789ljs.42.2019.03.11.03.43.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Mar 2019 03:43:24 -0700 (PDT)
-Subject: Re: [PATCH] net: renesas: fix a potential NULL pointer dereference
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190311070138.24084-1-kjlu@umn.edu>
- <CAMuHMdUcc2MXwX1sP4QEiWskoDofR8HQv-e2f9nWXhaMPeeZYA@mail.gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <73506a39-1c8c-b5dc-d5df-6f9dc51c09aa@cogentembedded.com>
-Date:   Mon, 11 Mar 2019 13:43:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 11 Mar 2019 06:53:07 -0400
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id 3IYHhPTfc4HFn3IYKhDBDS; Mon, 11 Mar 2019 11:53:05 +0100
+Subject: Re: [PATCH] rcar-csi2: restart CSI-2 link if error is detected
+To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+References: <20190218101541.15819-1-niklas.soderlund+renesas@ragnatech.se>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <0fb0337f-32f7-729b-c30b-1453c3b6e901@xs4all.nl>
+Date:   Mon, 11 Mar 2019 11:53:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUcc2MXwX1sP4QEiWskoDofR8HQv-e2f9nWXhaMPeeZYA@mail.gmail.com>
+In-Reply-To: <20190218101541.15819-1-niklas.soderlund+renesas@ragnatech.se>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfIKMvlGYn4oHXtAHRo1LHbDgoJ5biEEJpDuKu4JtQ7X38NxBq27XPdCguEm5ZOoERhTOXXo05x4GxUoXvPfRG5JK/Fg3iiCtyuqhUZ/coCjYA+fNKeGc
+ 3vTA5jQusPyG1bvjro9U4BcN+Um5FHhoblarLU/M49riZ5nV6qbwALlkrfnxuwQ1AAK2o3j2PGk9j1r6vB+ykn8Y4yLCVSxIx/0rrjGNeS7g2dW4Y9MIDb/c
+ MAVwKXzAmFkEx48tAUSKhino9xlGcHhBoFbmWjMv58IgE8yQdwTkiHVTFOoqkp5/4mvg7A4Pf21peZXNRsbQ3m9yCO2JxmOz4NgXAY7eRi4=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
-
-On 03/11/2019 10:43 AM, Geert Uytterhoeven wrote:
-
->> In case of_get_phy_mode fails, the fix returns NULL to avoid
->> the NULL pointer dereference.
->>
->> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+On 2/18/19 11:15 AM, Niklas Söderlund wrote:
+> Restart the CSI-2 link if the CSI-2 receiver detects an error during
+> reception. The driver did nothing when a link error happened and the
+> data flow simply stopped without the user knowing why.
 > 
-> Thanks for your patch!
+> Change the driver to try and recover from errors by restarting the link
+> and informing the user that something is not right. For obvious reasons
+> it's not possible to recover from all errors (video source disconnected
+> for example) but in such cases the user is at least informed of the
+> error and the same behavior of the stopped data flow is retained.
+
+What you really would like to have is that when a CSI error is detected,
+the CSI driver can ask upstream whether or not a disconnect has taken place.
+
+If that was the case, then there is no point in restarting the CSI.
+
+While a disconnect is very uncommon for a sensor, it is of course perfectly
+normal if an HDMI-to-CSI bridge was connected to the CSI port.
+
+Unfortunately, we don't have such functionality, but perhaps this is something
+to think about?
+
+This does mean, however, that I don't like the dev_err since it doesn't have
+to be an error. I would suggest replacing the first dev_err by dev_info and
+the second by dev_warn.
+
+Regards,
+
+	Hans
+
 > 
->> --- a/drivers/net/ethernet/renesas/sh_eth.c
->> +++ b/drivers/net/ethernet/renesas/sh_eth.c
->> @@ -3187,6 +3187,8 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
->>                 return NULL;
->>
->>         pdata->phy_interface = of_get_phy_mode(np);
->> +       if (unlikely(!pdata->phy_interface))
->> +               return NULL;
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 52 ++++++++++++++++++++-
+>  1 file changed, 51 insertions(+), 1 deletion(-)
 > 
-> of_get_phy_mode() does not return a pointer, but a phy mode index.
-> Hence zero is a valid value.
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> index f90b380478775015..0506fe4106d5c012 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -84,6 +84,9 @@ struct rcar_csi2;
+>  
+>  /* Interrupt Enable */
+>  #define INTEN_REG			0x30
+> +#define INTEN_INT_AFIFO_OF		BIT(27)
+> +#define INTEN_INT_ERRSOTHS		BIT(4)
+> +#define INTEN_INT_ERRSOTSYNCHS		BIT(3)
+>  
+>  /* Interrupt Source Mask */
+>  #define INTCLOSE_REG			0x34
+> @@ -540,6 +543,10 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+>  	if (mbps < 0)
+>  		return mbps;
+>  
+> +	/* Enable interrupts. */
+> +	rcsi2_write(priv, INTEN_REG, INTEN_INT_AFIFO_OF | INTEN_INT_ERRSOTHS
+> +		    | INTEN_INT_ERRSOTSYNCHS);
+> +
+>  	/* Init */
+>  	rcsi2_write(priv, TREF_REG, TREF_TREF);
+>  	rcsi2_write(priv, PHTC_REG, 0);
+> @@ -702,6 +709,43 @@ static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
+>  	.pad	= &rcar_csi2_pad_ops,
+>  };
+>  
+> +static irqreturn_t rcsi2_irq(int irq, void *data)
+> +{
+> +	struct rcar_csi2 *priv = data;
+> +	u32 status, err_status;
+> +
+> +	status = rcsi2_read(priv, INTSTATE_REG);
+> +	err_status = rcsi2_read(priv, INTERRSTATE_REG);
+> +
+> +	if (!status)
+> +		return IRQ_HANDLED;
+> +
+> +	rcsi2_write(priv, INTSTATE_REG, status);
+> +
+> +	if (!err_status)
+> +		return IRQ_HANDLED;
+> +
+> +	rcsi2_write(priv, INTERRSTATE_REG, err_status);
+> +
+> +	dev_err(priv->dev, "Transfer error, restarting CSI-2 receiver\n");
+> +
+> +	return IRQ_WAKE_THREAD;
+> +}
+> +
+> +static irqreturn_t rcsi2_irq_thread(int irq, void *data)
+> +{
+> +	struct rcar_csi2 *priv = data;
+> +
+> +	mutex_lock(&priv->lock);
+> +	rcsi2_stop(priv);
+> +	usleep_range(1000, 2000);
+> +	if (rcsi2_start(priv))
+> +		dev_err(priv->dev, "Failed to restart CSI-2 receiver\n");
+> +	mutex_unlock(&priv->lock);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  /* -----------------------------------------------------------------------------
+>   * Async handling and registration of subdevices and links.
+>   */
+> @@ -982,7 +1026,7 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
+>  				 struct platform_device *pdev)
+>  {
+>  	struct resource *res;
+> -	int irq;
+> +	int irq, ret;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	priv->base = devm_ioremap_resource(&pdev->dev, res);
+> @@ -993,6 +1037,12 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
+>  	if (irq < 0)
+>  		return irq;
+>  
+> +	ret = devm_request_threaded_irq(&pdev->dev, irq, rcsi2_irq,
+> +					rcsi2_irq_thread, IRQF_SHARED,
+> +					KBUILD_MODNAME, priv);
+> +	if (ret)
+> +		return ret;
+> +
+>  	priv->rstc = devm_reset_control_get(&pdev->dev, NULL);
+>  	if (IS_ERR(priv->rstc))
+>  		return PTR_ERR(priv->rstc);
 > 
-> So I'm wondering where is the potential NULL pointer dereference?
 
-   Hm, not seeing NULL deref as well...
-
-> Perhaps we do need to check for negative error codes?
-> Or is this already handled later, by {of_,}phy_connect()?
-
-   Not seeing such handling too...
-   The v2 patch seems good though, as the "phy-mode" prop is mandatory anyway.
-
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-
-MBR, Sergei
