@@ -6,93 +6,199 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA26C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD11C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13A8D20657
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D1E820657
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:12:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfCKKI0 (ORCPT
+        id S1726943AbfCKKMH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 06:08:26 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:39677 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfCKKI0 (ORCPT
+        Mon, 11 Mar 2019 06:12:07 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41646 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbfCKKMF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 06:08:26 -0400
-Received: by mail-ua1-f65.google.com with SMTP id s15so1312242uap.6;
-        Mon, 11 Mar 2019 03:08:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V5CrJAR3f2YrKwqTj6RKoLNNFjGqlBbTTM6ZrZKBdFE=;
-        b=aHINz2UiIRMO9E61jLKk/CsDMfnqgJFetmlQJ51aoU88fPX+ZSUGY3q3lxirMr8yKU
-         p2ftYaA5B5OET8StQsNS//WGO8nr1zQ56tYQo/ke1rK1nhaMUTwMzcUQWx075XAM7R1k
-         Y7eKxf+ibN9Boh4eQChe0wGpt2C4tVy7QdPOibczYuExUzCNZpT8gTSYKHtLMaL3dxvb
-         Lrvb5bNluQkL4Q/+MOhokq8kWsd6ArXKI4/IejOKi5uUR1AvET4/d+dlM7OycNYLRnZ4
-         7XL7ggvxRNFrDxAjyUUi09oFIV0pffRSWo6+ns48cYpw3GQKsemZ9LoKsgOmkhHGa1AR
-         xyFQ==
-X-Gm-Message-State: APjAAAXEQyeC1wT+pNBq4tk4gtsY5070i3pc/r5ZsGTMSgL32e2F6n1E
-        p8LFd7gj9SuH4O8dI3mevSz1GVxsC6JQ0xIFzD0=
-X-Google-Smtp-Source: APXvYqxP5WCYB9TuSYD1Mno83HFrfuVx2l2uPTEipYLBW/VT1EiNh4UaE5mZLRSJ/e+/5UpzrD/OPXEbHtdPAgJvPf4=
-X-Received: by 2002:a9f:30dc:: with SMTP id k28mr16615902uab.75.1552298905142;
- Mon, 11 Mar 2019 03:08:25 -0700 (PDT)
+        Mon, 11 Mar 2019 06:12:05 -0400
+Received: from 79.184.254.189.ipv4.supernova.orange.pl (79.184.254.189) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
+ id 1208b8ed739c5486; Mon, 11 Mar 2019 11:12:02 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in resume_noirq
+Date:   Mon, 11 Mar 2019 11:10:19 +0100
+Message-ID: <4005597.rAmzmIgqgu@aspire.rjw.lan>
+In-Reply-To: <77780c8d-2621-e31f-1cd5-793b4ec0a9f2@gmail.com>
+References: <20190217132441.15139-1-marek.vasut@gmail.com> <20190308171738.GB214730@google.com> <77780c8d-2621-e31f-1cd5-793b4ec0a9f2@gmail.com>
 MIME-Version: 1.0
-References: <20190305175434.13107-1-wsa+renesas@sang-engineering.com> <20190305175434.13107-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190305175434.13107-2-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Mar 2019 11:08:13 +0100
-Message-ID: <CAMuHMdWsChk1i36u_dDAxMV3j64sHputH5jmGyLxsfjAbeK6sw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] i2c: rcar: sanity check for minimal DMA length
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+On Friday, March 8, 2019 10:35:49 PM CET Marek Vasut wrote:
+> On 3/8/19 6:17 PM, Bjorn Helgaas wrote:
+> > [+cc linux-pm, Rafael for SET_NOIRQ_SYSTEM_SLEEP_PM_OPS question at the end]
+> > 
+> > On Thu, Mar 07, 2019 at 11:49:34PM +0100, Marek Vasut wrote:
+> >> On 3/7/19 9:50 PM, Bjorn Helgaas wrote:
+> >>> On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
+> >>>> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> >>>>
+> >>>> Reestablish the PCIe link very early in the resume process in case it
+> >>>> went down to prevent PCI accesses from hanging the bus. Such accesses
+> >>>> can happen early in the PCI resume process, in the resume_noirq, thus
+> >>>> the link must be reestablished in the resume_noirq callback of the
+> >>>> driver.
+> >>>>
+> >>>> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> >>>> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> >>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> >>>> Cc: Simon Horman <horms+renesas@verge.net.au>
+> >>>> Cc: Wolfram Sang <wsa@the-dreams.de>
+> >>>> Cc: linux-renesas-soc@vger.kernel.org
+> >>>> ---
+> >>>> V2: - Use BIT() macro for (1 << n)
+> >>>>     - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
+> >>>>       add extra changes to this function anymore
+> >>>>     - Make resume_noirq return early and clean up parenthesis therein
+> >>>> ---
+> >>>>  drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
+> >>>>  1 file changed, 20 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> >>>> index c8febb009454..b8f8fb3bc640 100644
+> >>>> --- a/drivers/pci/controller/pcie-rcar.c
+> >>>> +++ b/drivers/pci/controller/pcie-rcar.c
+> >>>> @@ -46,6 +46,7 @@
+> >>>>  
+> >>>>  /* Transfer control */
+> >>>>  #define PCIETCTLR		0x02000
+> >>>> +#define  DL_DOWN		BIT(3)
+> >>>>  #define  CFINIT			1
+> >>>
+> >>> I saw discussion after the V1 patch about using BIT() and making
+> >>> similar constants also use BIT() for consistency.  That makes sense to
+> >>> me, and I think the best way would be:
+> >>>
+> >>>   1) in *this* patch, use "#define DL_DOWN 8"
+> >>>   2) in a followup patch, convert them all to BIT()
+> >>>
+> >>> That way each revision of pcie-rcar.c is self-consistent.
+> >>
+> >> But the BIT() macros are already cleaned , see commit
+> >> 0ee40820989b330e24926d82953ffb9e1c7a8425
+> >>
+> >>     PCI: rcar: Clean up the macros
+> > 
+> > Hmmm.  Maybe I'm missing something, but it looks like 0ee40820989b
+> > didn't touch CFINIT, DATA_LINK_ACTIVE, or MSIFE.  Arguably,
+> > LINK_SPEED_2_5GTS and LINK_SPEED_5_0GTS could use BIT() also.
+> > 
+> > I guess I'm just old-school, but in my personal opinion, BIT() is more
+> > trouble than it's worth.  I'd rather see a complete bitmask because I
+> > can easily match it with the typical pictures in a spec, multi-bit
+> > fields are easy (you don't have to mix BIT() and GENMASK()), it gives
+> > a hint about the register width, it's easy to match with a hexdump,
+> > etc, e.g.,
+> > 
+> >   #define  DL_DOWN        0x00000008
+> >   #define  CFINIT         0x00000001
+> > 
+> > But I'm not suggesting that you get rid of BIT() in this driver.  I'm
+> > fine with it as long as it's used consistently.
+> > 
+> > BTW, while we're looking at it, I think rcar_pci_read_reg() and
+> > rcar_pci_write_reg() really should use "u32" instead of "unsigned
+> > long", since they deal with hardware registers that are explicitly
+> > 32 bits wide.
+> 
+> OK, I can send those as separate patches.
+> 
+> >>>>  #define PCIETSTR		0x02004
+> >>>>  #define  DATA_LINK_ACTIVE	1
+> >>>> @@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+> >>>>  	pcie = pci_host_bridge_priv(bridge);
+> >>>>  
+> >>>>  	pcie->dev = dev;
+> >>>> +	platform_set_drvdata(pdev, pcie);
+> >>>>  
+> >>>>  	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
+> >>>>  	if (err)
+> >>>> @@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+> >>>>  	return err;
+> >>>>  }
+> >>>>  
+> >>>> +static int rcar_pcie_resume_noirq(struct device *dev)
+> >>>> +{
+> >>>> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
+> >>>> +
+> >>>> +	if (rcar_pci_read_reg(pcie, PMSR) &&
+> >>>> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
+> >>>> +		return 0;
+> >>>> +
+> >>>> +	/* Re-establish the PCIe link */
+> >>>> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
+> >>>> +	return rcar_pcie_wait_for_dl(pcie);
+> >>>> +}
+> >>>> +
+> >>>> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
+> >>>> +	.resume_noirq = rcar_pcie_resume_noirq,
+> >>>> +};
+> >>>
+> >>> I think there's the beginning of a convention to use #ifdef
+> >>> CONFIG_PM_SLEEP around the ops themselves [1].  Otherwise I think
+> >>> we'll get a warning about unused code when CONFIG_PM_SLEEP is unset.
+> >>
+> >> Only if I used SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() , but I set the
+> >> resume_noirq directly.
+> > 
+> > Fair enough.  I guess in this case if CONFIG_PM_SLEEP is unset, you
+> > set the pointer, which avoids the "unused function" warning, but we
+> > just never use that function pointer.
+> > 
+> > My intent is to avoid needless differences when possible, so when I
+> > review things like this I look at how other drivers do things.  It
+> > looks like all the other controllers use
+> > SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() or similar:
+> > 
+> >   git grep -A3 "static.*dev_pm_ops" drivers/pci/controller
+> > 
+> > In the rcar case you only need the resume_fn, not the suspend_fn, so
+> > SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() does a little more than you need and
+> > you'd have to pass NULL for suspend_fn.  I didn't check them all
+> > (suspend_noirq, freeze_noirq, poweroff_noirq), but at least for
+> > suspend_noirq, all users check for NULL before calling through the
+> > .suspend_noirq() function pointer, so I think that should be safe.
 
-On Tue, Mar 5, 2019 at 7:52 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Use a macro for the hardcoded value and apply a build check. If it is
-> not met, the driver logic will not work anymore.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/i2c/busses/i2c-rcar.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-> index 3ce74edcd70c..925858915569 100644
-> --- a/drivers/i2c/busses/i2c-rcar.c
-> +++ b/drivers/i2c/busses/i2c-rcar.c
+Yes, this should be safe from the NULL pointer checks perspective.
 
-> @@ -921,6 +922,9 @@ static int rcar_i2c_probe(struct platform_device *pdev)
->         struct i2c_timings i2c_t;
->         int irq, ret;
->
-> +       /* Otherwise logic will break because some bytes must always use PIO */
-> +       BUILD_BUG_ON_MSG(RCAR_MIN_DMA_LEN < 3, "Invalid min DMA length");
+> > This *does* raise the question of whether you should be setting
+> > .thaw_noirq and .restore_noirq in addition to .resume_noirq, as
+> > SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() would.  I'm not a PM person, but maybe
+> > Rafael or others will chime in.
 
-Given patch 3/3, it should still work with RCAR_MIN_DMA_LEN == 2, right?
+That depends on what happens during hibernation/restore.
 
-> +
->         priv = devm_kzalloc(dev, sizeof(struct rcar_i2c_priv), GFP_KERNEL);
->         if (!priv)
->                 return -ENOMEM;
+The driver may not need to do anything before the memory snapshot is taken or
+before the restore kernel jumps back to the image kernel.  In that case you
+don't need freeze/thaw/restore_noirq at all.
 
-Gr{oetje,eeting}s,
+However, chances are that it needs to do something and in that case doing
+the same thing as during system-wide suspend/resume generally works, even
+though it may not be particularly energy-efficient.  That's why it very
+ofther is done.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
