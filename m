@@ -2,203 +2,109 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD11C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D678C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D1E820657
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1BD42075C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:29:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="iaqgcbed"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfCKKMH (ORCPT
+        id S1727030AbfCKK3U (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 06:12:07 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:41646 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbfCKKMF (ORCPT
+        Mon, 11 Mar 2019 06:29:20 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45826 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfCKK3O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 06:12:05 -0400
-Received: from 79.184.254.189.ipv4.supernova.orange.pl (79.184.254.189) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
- id 1208b8ed739c5486; Mon, 11 Mar 2019 11:12:02 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
-        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Mon, 11 Mar 2019 06:29:14 -0400
+Received: by mail-lf1-f68.google.com with SMTP id f16so2964110lfk.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 03:29:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=/iIbH8ygU+CPfdNbiqaQx0rc/64Julz8OAtkMlAvsac=;
+        b=iaqgcbedCX9keCWsUCVOpIv3XE6W5qbMGdwe2NtumYrArmo4PrPqZRS8Ggv4ONtl0f
+         HbdFEN9FyL237hOnGu8qbTJu2ZPwtUpJaTU09oYgkpcUi+9lfxFDI8sdbbP1Vf+YVy00
+         02nZVahzLK5/wnQ5bG2m9SOBmYT81SGN+Ntnp4ToZ9wf7GqNakr8ujdT816odOVT7HZJ
+         LlM4p6lEhkT2T8JkUEseA48XxjsdlPM9ZWOgsNCgcrfpXhTbNswIFqwrho+1zvwlQhHM
+         f8BfVkZo/fkw7hU/5kgi+QI1k/UKE7ZuXg+4O1Om5e4n+oo2x8d4YLCfKNL9WecPXZgV
+         PLWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=/iIbH8ygU+CPfdNbiqaQx0rc/64Julz8OAtkMlAvsac=;
+        b=oP6L6WrcnwyUCwspF/yCFzatGOSs/OAZFQ4Y2Ag4Umuf5z8SIUKPDkWKbVdmxtPsPo
+         JOihC94ivw4dyvOcJHe5xVkAh0RQVZnoXBaZFxrJdjyd7qnhrZ90TgP/pL/TWpTFPpHG
+         GtTQ9uASd0ANuo2DCjikBggKbAyhWjTBss1FdlX2MU56Yj3xU0+oWfOt0sZcQRkvMMyL
+         Qto4UOJjt7SHpee8EFGlM6apBe10EqLz/vbSM8ao9ExEGOLcy9OPt0mehZWXXKFF9BNQ
+         IW5NYtf+EoQ9PQXajHvaJ4ggyRyJZfltjRFzQM8N5ZKhBNmewBzp51BURBfCEMx1gmyZ
+         Jtxw==
+X-Gm-Message-State: APjAAAXjhGK3O1I5ywtm2yMQesooimJtwofTvMSssTF7LoDk4VSGhlZl
+        L/EspBvzerqaoSRz1x9PP4bOCw==
+X-Google-Smtp-Source: APXvYqxx/ZuQlNcNAts6twSmIJQ+WOpy9SY8Vpc7wKR9j2XjKLhA9bEJVSCdPOXF+cJW5E810PXIzA==
+X-Received: by 2002:a19:4f44:: with SMTP id a4mr6922335lfk.72.1552300152058;
+        Mon, 11 Mar 2019 03:29:12 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.87.180])
+        by smtp.gmail.com with ESMTPSA id g16sm1045902lfb.56.2019.03.11.03.29.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Mar 2019 03:29:11 -0700 (PDT)
+Subject: Re: [PATCH v2] net: renesas: fix a missing check of of_get_phy_mode
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in resume_noirq
-Date:   Mon, 11 Mar 2019 11:10:19 +0100
-Message-ID: <4005597.rAmzmIgqgu@aspire.rjw.lan>
-In-Reply-To: <77780c8d-2621-e31f-1cd5-793b4ec0a9f2@gmail.com>
-References: <20190217132441.15139-1-marek.vasut@gmail.com> <20190308171738.GB214730@google.com> <77780c8d-2621-e31f-1cd5-793b4ec0a9f2@gmail.com>
+        Chris Brandt <chris.brandt@renesas.com>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190311074939.517-1-kjlu@umn.edu>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <20c5cfde-3c2d-43cb-efc4-be9782b7eb2e@cogentembedded.com>
+Date:   Mon, 11 Mar 2019 13:29:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20190311074939.517-1-kjlu@umn.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Friday, March 8, 2019 10:35:49 PM CET Marek Vasut wrote:
-> On 3/8/19 6:17 PM, Bjorn Helgaas wrote:
-> > [+cc linux-pm, Rafael for SET_NOIRQ_SYSTEM_SLEEP_PM_OPS question at the end]
-> > 
-> > On Thu, Mar 07, 2019 at 11:49:34PM +0100, Marek Vasut wrote:
-> >> On 3/7/19 9:50 PM, Bjorn Helgaas wrote:
-> >>> On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
-> >>>> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> >>>>
-> >>>> Reestablish the PCIe link very early in the resume process in case it
-> >>>> went down to prevent PCI accesses from hanging the bus. Such accesses
-> >>>> can happen early in the PCI resume process, in the resume_noirq, thus
-> >>>> the link must be reestablished in the resume_noirq callback of the
-> >>>> driver.
-> >>>>
-> >>>> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> >>>> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> >>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> >>>> Cc: Simon Horman <horms+renesas@verge.net.au>
-> >>>> Cc: Wolfram Sang <wsa@the-dreams.de>
-> >>>> Cc: linux-renesas-soc@vger.kernel.org
-> >>>> ---
-> >>>> V2: - Use BIT() macro for (1 << n)
-> >>>>     - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
-> >>>>       add extra changes to this function anymore
-> >>>>     - Make resume_noirq return early and clean up parenthesis therein
-> >>>> ---
-> >>>>  drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
-> >>>>  1 file changed, 20 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> >>>> index c8febb009454..b8f8fb3bc640 100644
-> >>>> --- a/drivers/pci/controller/pcie-rcar.c
-> >>>> +++ b/drivers/pci/controller/pcie-rcar.c
-> >>>> @@ -46,6 +46,7 @@
-> >>>>  
-> >>>>  /* Transfer control */
-> >>>>  #define PCIETCTLR		0x02000
-> >>>> +#define  DL_DOWN		BIT(3)
-> >>>>  #define  CFINIT			1
-> >>>
-> >>> I saw discussion after the V1 patch about using BIT() and making
-> >>> similar constants also use BIT() for consistency.  That makes sense to
-> >>> me, and I think the best way would be:
-> >>>
-> >>>   1) in *this* patch, use "#define DL_DOWN 8"
-> >>>   2) in a followup patch, convert them all to BIT()
-> >>>
-> >>> That way each revision of pcie-rcar.c is self-consistent.
-> >>
-> >> But the BIT() macros are already cleaned , see commit
-> >> 0ee40820989b330e24926d82953ffb9e1c7a8425
-> >>
-> >>     PCI: rcar: Clean up the macros
-> > 
-> > Hmmm.  Maybe I'm missing something, but it looks like 0ee40820989b
-> > didn't touch CFINIT, DATA_LINK_ACTIVE, or MSIFE.  Arguably,
-> > LINK_SPEED_2_5GTS and LINK_SPEED_5_0GTS could use BIT() also.
-> > 
-> > I guess I'm just old-school, but in my personal opinion, BIT() is more
-> > trouble than it's worth.  I'd rather see a complete bitmask because I
-> > can easily match it with the typical pictures in a spec, multi-bit
-> > fields are easy (you don't have to mix BIT() and GENMASK()), it gives
-> > a hint about the register width, it's easy to match with a hexdump,
-> > etc, e.g.,
-> > 
-> >   #define  DL_DOWN        0x00000008
-> >   #define  CFINIT         0x00000001
-> > 
-> > But I'm not suggesting that you get rid of BIT() in this driver.  I'm
-> > fine with it as long as it's used consistently.
-> > 
-> > BTW, while we're looking at it, I think rcar_pci_read_reg() and
-> > rcar_pci_write_reg() really should use "u32" instead of "unsigned
-> > long", since they deal with hardware registers that are explicitly
-> > 32 bits wide.
-> 
-> OK, I can send those as separate patches.
-> 
-> >>>>  #define PCIETSTR		0x02004
-> >>>>  #define  DATA_LINK_ACTIVE	1
-> >>>> @@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
-> >>>>  	pcie = pci_host_bridge_priv(bridge);
-> >>>>  
-> >>>>  	pcie->dev = dev;
-> >>>> +	platform_set_drvdata(pdev, pcie);
-> >>>>  
-> >>>>  	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
-> >>>>  	if (err)
-> >>>> @@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
-> >>>>  	return err;
-> >>>>  }
-> >>>>  
-> >>>> +static int rcar_pcie_resume_noirq(struct device *dev)
-> >>>> +{
-> >>>> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-> >>>> +
-> >>>> +	if (rcar_pci_read_reg(pcie, PMSR) &&
-> >>>> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
-> >>>> +		return 0;
-> >>>> +
-> >>>> +	/* Re-establish the PCIe link */
-> >>>> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
-> >>>> +	return rcar_pcie_wait_for_dl(pcie);
-> >>>> +}
-> >>>> +
-> >>>> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
-> >>>> +	.resume_noirq = rcar_pcie_resume_noirq,
-> >>>> +};
-> >>>
-> >>> I think there's the beginning of a convention to use #ifdef
-> >>> CONFIG_PM_SLEEP around the ops themselves [1].  Otherwise I think
-> >>> we'll get a warning about unused code when CONFIG_PM_SLEEP is unset.
-> >>
-> >> Only if I used SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() , but I set the
-> >> resume_noirq directly.
-> > 
-> > Fair enough.  I guess in this case if CONFIG_PM_SLEEP is unset, you
-> > set the pointer, which avoids the "unused function" warning, but we
-> > just never use that function pointer.
-> > 
-> > My intent is to avoid needless differences when possible, so when I
-> > review things like this I look at how other drivers do things.  It
-> > looks like all the other controllers use
-> > SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() or similar:
-> > 
-> >   git grep -A3 "static.*dev_pm_ops" drivers/pci/controller
-> > 
-> > In the rcar case you only need the resume_fn, not the suspend_fn, so
-> > SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() does a little more than you need and
-> > you'd have to pass NULL for suspend_fn.  I didn't check them all
-> > (suspend_noirq, freeze_noirq, poweroff_noirq), but at least for
-> > suspend_noirq, all users check for NULL before calling through the
-> > .suspend_noirq() function pointer, so I think that should be safe.
+Hello!
 
-Yes, this should be safe from the NULL pointer checks perspective.
+On 03/11/2019 10:49 AM, Kangjie Lu wrote:
 
-> > This *does* raise the question of whether you should be setting
-> > .thaw_noirq and .restore_noirq in addition to .resume_noirq, as
-> > SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() would.  I'm not a PM person, but maybe
-> > Rafael or others will chime in.
+> of_get_phy_mode may fail and return a negative error code;
+> the fix checks the return value of of_get_phy_mode and
+> returns NULL of it fails.
 
-That depends on what happens during hibernation/restore.
+  Sorry, I overlooked this issue.
 
-The driver may not need to do anything before the memory snapshot is taken or
-before the restore kernel jumps back to the image kernel.  In that case you
-don't need freeze/thaw/restore_noirq at all.
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 
-However, chances are that it needs to do something and in that case doing
-the same thing as during system-wide suspend/resume generally works, even
-though it may not be particularly energy-efficient.  That's why it very
-ofther is done.
+Fixes: b356e978e92f ("sh_eth: add device tree support")
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
+> ---
+>  drivers/net/ethernet/renesas/sh_eth.c | 2 ++
+>  1 file changed, 2 insertions(+)
+
+   Why are you not fixing ravb_main.c as well? Especially as you have "renesas:"
+in your subject, not "sh_eth:"? :-/
+
+[...]
+
+MBR, Sergei
