@@ -2,109 +2,82 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D678C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B62C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1BD42075C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:29:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="iaqgcbed"
+	by mail.kernel.org (Postfix) with ESMTP id CC4D8206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbfCKK3U (ORCPT
+        id S1726074AbfCKKkB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 06:29:20 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45826 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfCKK3O (ORCPT
+        Mon, 11 Mar 2019 06:40:01 -0400
+Received: from sauhun.de ([88.99.104.3]:56764 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbfCKKkB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 06:29:14 -0400
-Received: by mail-lf1-f68.google.com with SMTP id f16so2964110lfk.12
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 03:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/iIbH8ygU+CPfdNbiqaQx0rc/64Julz8OAtkMlAvsac=;
-        b=iaqgcbedCX9keCWsUCVOpIv3XE6W5qbMGdwe2NtumYrArmo4PrPqZRS8Ggv4ONtl0f
-         HbdFEN9FyL237hOnGu8qbTJu2ZPwtUpJaTU09oYgkpcUi+9lfxFDI8sdbbP1Vf+YVy00
-         02nZVahzLK5/wnQ5bG2m9SOBmYT81SGN+Ntnp4ToZ9wf7GqNakr8ujdT816odOVT7HZJ
-         LlM4p6lEhkT2T8JkUEseA48XxjsdlPM9ZWOgsNCgcrfpXhTbNswIFqwrho+1zvwlQhHM
-         f8BfVkZo/fkw7hU/5kgi+QI1k/UKE7ZuXg+4O1Om5e4n+oo2x8d4YLCfKNL9WecPXZgV
-         PLWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/iIbH8ygU+CPfdNbiqaQx0rc/64Julz8OAtkMlAvsac=;
-        b=oP6L6WrcnwyUCwspF/yCFzatGOSs/OAZFQ4Y2Ag4Umuf5z8SIUKPDkWKbVdmxtPsPo
-         JOihC94ivw4dyvOcJHe5xVkAh0RQVZnoXBaZFxrJdjyd7qnhrZ90TgP/pL/TWpTFPpHG
-         GtTQ9uASd0ANuo2DCjikBggKbAyhWjTBss1FdlX2MU56Yj3xU0+oWfOt0sZcQRkvMMyL
-         Qto4UOJjt7SHpee8EFGlM6apBe10EqLz/vbSM8ao9ExEGOLcy9OPt0mehZWXXKFF9BNQ
-         IW5NYtf+EoQ9PQXajHvaJ4ggyRyJZfltjRFzQM8N5ZKhBNmewBzp51BURBfCEMx1gmyZ
-         Jtxw==
-X-Gm-Message-State: APjAAAXjhGK3O1I5ywtm2yMQesooimJtwofTvMSssTF7LoDk4VSGhlZl
-        L/EspBvzerqaoSRz1x9PP4bOCw==
-X-Google-Smtp-Source: APXvYqxx/ZuQlNcNAts6twSmIJQ+WOpy9SY8Vpc7wKR9j2XjKLhA9bEJVSCdPOXF+cJW5E810PXIzA==
-X-Received: by 2002:a19:4f44:: with SMTP id a4mr6922335lfk.72.1552300152058;
-        Mon, 11 Mar 2019 03:29:12 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.87.180])
-        by smtp.gmail.com with ESMTPSA id g16sm1045902lfb.56.2019.03.11.03.29.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Mar 2019 03:29:11 -0700 (PDT)
-Subject: Re: [PATCH v2] net: renesas: fix a missing check of of_get_phy_mode
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190311074939.517-1-kjlu@umn.edu>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <20c5cfde-3c2d-43cb-efc4-be9782b7eb2e@cogentembedded.com>
-Date:   Mon, 11 Mar 2019 13:29:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 11 Mar 2019 06:40:01 -0400
+Received: from localhost (p54B3359D.dip0.t-ipconnect.de [84.179.53.157])
+        by pokefinder.org (Postfix) with ESMTPSA id 412C02C08C3;
+        Mon, 11 Mar 2019 11:39:58 +0100 (CET)
+Date:   Mon, 11 Mar 2019 11:39:57 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 0/3] i2c: rcar: make DMA more robust
+Message-ID: <20190311103957.GB961@kunai>
+References: <20190305175434.13107-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXx2zKaV1mEBh+br5=BPbCSi3HVa_dpjpz1ippSS_oN9A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190311074939.517-1-kjlu@umn.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+g7M9IMkV8truYOl"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXx2zKaV1mEBh+br5=BPbCSi3HVa_dpjpz1ippSS_oN9A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
 
-On 03/11/2019 10:49 AM, Kangjie Lu wrote:
+--+g7M9IMkV8truYOl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> of_get_phy_mode may fail and return a negative error code;
-> the fix checks the return value of of_get_phy_mode and
-> returns NULL of it fails.
 
-  Sorry, I overlooked this issue.
+> > Tested on a Renesas Salvator XS (R-Car M3N) and now regressions found w=
+hen
+>=20
+> no regressions? ;-)
 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+:DDD
 
-Fixes: b356e978e92f ("sh_eth: add device tree support")
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-> ---
->  drivers/net/ethernet/renesas/sh_eth.c | 2 ++
->  1 file changed, 2 insertions(+)
+--+g7M9IMkV8truYOl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-   Why are you not fixing ravb_main.c as well? Especially as you have "renesas:"
-in your subject, not "sh_eth:"? :-/
+-----BEGIN PGP SIGNATURE-----
 
-[...]
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyGOvkACgkQFA3kzBSg
+KbZ9NA/+J+WBXq98wULp7tryZ06LqnDUCjJXom43bPgECSBKQUaCAMNlwhQ8U8GB
+TEJPu+IZ8rf9ISEIse+Otcay+xLSFbMEQcB74Pjn0ZgV1KNTyf/lbU4gB84rTBRV
+knJo/X6Gxtxti5kwGotnnMAo39MTWCWC7IUvF6DmOSr59yZxGwLYlPNcae4eqVn7
+n0/Acq2k+pVSf/fsgnvWGODd8qm41hwo7FXH2VQ3slU3xLFkR6zN/itUx4XY0BDS
+wKjjeTiYwBP0tFy+Zn3cd7e01qrQDmXnJxoTmIQRd4mNdv44MwZbAo3Tv1ARVCJ0
+LdIXPH6xZWXAzYxh7GPEVatBHQxvRd4yflNF4Aphd5RiqDQZj7fUIK/RT6mamhTB
+mD/qZnFvj+WKKrPXliAELEKN2MQV4S9/QmYuHklntPN3h4Nv5YE7yigzD5Tlpe4T
+zFS4fJAq2X3iVCEfcFWQsFfUNHgp3e0aZ9vhUfffna0L8lZ8PFETA18pAzmrAxcP
+YHYINnZ0hMP7bHmY4b7z/oslz5eDRCs/MNOZt0ZOsRYrnXFIziXAG5e6XQlN9ucI
+tnJ99iv1smZZU172oSsOqjQZZwsayg356zVp1D0xsfc9opGiOBvKrVald/gcNOB9
+olhuTYn2bv2KnQEceSPtgMXPQ8OZkQdHA4ydFqYVFKVKGm+Rz84=
+=Yohd
+-----END PGP SIGNATURE-----
 
-MBR, Sergei
+--+g7M9IMkV8truYOl--
