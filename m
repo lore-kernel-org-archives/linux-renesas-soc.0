@@ -3,55 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D87C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF728C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 734EF2075C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:42:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3B52084D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:46:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfCKJmE (ORCPT
+        id S1727107AbfCKJqQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 05:42:04 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:39354 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbfCKJmD (ORCPT
+        Mon, 11 Mar 2019 05:46:16 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:33081 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbfCKJqQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 05:42:03 -0400
-Received: by mail-vs1-f66.google.com with SMTP id w14so2275940vso.6;
-        Mon, 11 Mar 2019 02:42:03 -0700 (PDT)
+        Mon, 11 Mar 2019 05:46:16 -0400
+Received: by mail-vs1-f65.google.com with SMTP id u13so2290669vsk.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 02:46:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=57gL7QIWBOjEMnDeiMi1khiiWRbmBvZUkq/P810Uygo=;
-        b=RWr/Aqe7lYJG+hM3Ns48aNsN0MwND/1KBn4sStYCeYSoJ4xkboEiwoE4RUb5V8wpiX
-         z+jRL9gbFyVrDTVDaWddRC6CFLbuq7bbYOfPNZoic0RRPxCoaiSfqQiWq8MxWlOtrwdJ
-         ZQOPBHz/0qsjdtnHngeQiz+3u6uirE+Cu84NFsgYpWLnqsJFF6MGrWb7avjjEoBnx1zh
-         Hk8DCT9ltnTGT9iHdAIpKbi69XTH8ZjK3hK6bIIsaEA5I27iCaPbc/f2biQrb65Qduce
-         qNMfcgFOXh/C5sre9xc9nEeytDSzjQdJSFR+SKwZ9Z1nWJSvUhaq5MbgteIRkTmFBhhy
-         wQcQ==
-X-Gm-Message-State: APjAAAUhCZo7bZWNTFukizZY04VoZVscOdAkzLyKneV9Kk/vJEpRrNGa
-        w7/vxeDr04dfnzW2rn3fovIFKyDpT3SP2Dfm9Dc=
-X-Google-Smtp-Source: APXvYqz3odPDnMaAqUwgKEsuXF9q5oEMmdw00B2yhdRbxTFyjF/f74GcHeS9ONdgNRXghs1SQsGlerVYQrzxWbbHAxY=
-X-Received: by 2002:a67:78ce:: with SMTP id t197mr16171138vsc.152.1552297322801;
- Mon, 11 Mar 2019 02:42:02 -0700 (PDT)
+        bh=G1pRqq/6ZZ9DzKr/wC6RDG6m+0XQxSrqMabp97hzN4k=;
+        b=AwpoGIg7SPSRDH6hM3BkRVyoyx1YBaAy/PmQLx36h4xqelbFmDGrCkVXLf7yZZ1GTa
+         NP9bAxasKhp2tQrkxNyHtA30FmyL09ZLXuCLgZmcVb98FrOma8hNWB3Oz82rB4W2FUxz
+         zAqT1N09tpLLts1Ty8ED8tMxE3c7yqpgg1I8WztMza+g0F/1kDV4PpW9WzwTmFVEYdAj
+         R/HyNtWsxfARazaoMNHxvHaGD3WI8ZwdFRExq4HLg3Wd4qljjFAuAdODweUL0H4S5BiX
+         9cdlreTHQGok2H0/cx9Mfi+PiWYTqLNEjJaX5GFHIzFnDJXqAPnC/EmIyJn5Nk8vP3nE
+         HFBw==
+X-Gm-Message-State: APjAAAXfVJZI5n3+Wg3by096NKtl7TrMoF+vaWZr3WShY8MQYivXWRuT
+        J6oSvJlh3A7GlH6VrF1ZoDQRtl/kRrJrnKbha9k=
+X-Google-Smtp-Source: APXvYqzv7ubVduZUtald4TlDJSbe68xj60HuqbEPdwalyie9Qu19JcorYSy3TzIMErvAe/FzQXgYVTvTi+zAoIaUUn8=
+X-Received: by 2002:a67:fc9a:: with SMTP id x26mr16455873vsp.166.1552297574925;
+ Mon, 11 Mar 2019 02:46:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190309005613.1493-1-marek.vasut@gmail.com> <20190309005613.1493-2-marek.vasut@gmail.com>
-In-Reply-To: <20190309005613.1493-2-marek.vasut@gmail.com>
+References: <20190309020642.15985-1-marek.vasut@gmail.com>
+In-Reply-To: <20190309020642.15985-1-marek.vasut@gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Mar 2019 10:41:51 +0100
-Message-ID: <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in register accessors
+Date:   Mon, 11 Mar 2019 10:46:03 +0100
+Message-ID: <CAMuHMdU+Av1JfGNRdQRP=DzxiesNsqNp05taKwjUouOGW_mp3w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: draak: Enable CAN0, CAN1
 To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -61,48 +60,18 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Marek,
 
-On Sat, Mar 9, 2019 at 1:56 AM <marek.vasut@gmail.com> wrote:
+On Sat, Mar 9, 2019 at 3:06 AM <marek.vasut@gmail.com> wrote:
 > From: Marek Vasut <marek.vasut+renesas@gmail.com>
 >
-> Replace unsigned long with u32 in register accessor functions,
-> since they access 32bit registers.
+> Enable both CAN0 and CAN1 controllers on R8A77995 Draak board,
+> since they are available on connectors CN43, CN44 respectively.
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
 Thanks for your patch!
+I assume you have tested this with your CAN-analyzer?
 
-Minor nit below.
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-BTW, there are a few more suspicious/incorrect uses of unsigned long:
-  - incorrect debug prints on arm64,
-  - more unsigned long register values,
-  - phys_addr_t
-Care to fix these as well?
-
-Thanks!
-
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -152,14 +152,12 @@ struct rcar_pcie {
->         struct                  rcar_msi msi;
->  };
->
-> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
-> -                              unsigned long reg)
-> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
-
-Doesn't unsigned int make more sense for reg?
-
->  {
->         writel(val, pcie->base + reg);
->  }
->
-> -static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
-> -                                      unsigned long reg)
-> +static u32 rcar_pci_read_reg(struct rcar_pcie *pcie, u32 reg)
-
-Likewise.
 
 Gr{oetje,eeting}s,
 
