@@ -2,100 +2,110 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7EBC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4404FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B7832084F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:29:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Jm5hr6FQ"
+	by mail.kernel.org (Postfix) with ESMTP id 1E2732084D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfCKJ3K (ORCPT
+        id S1727053AbfCKJbH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 05:29:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51450 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbfCKJ3J (ORCPT
+        Mon, 11 Mar 2019 05:31:07 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:37092 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727026AbfCKJbH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 05:29:09 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 33EA5255;
-        Mon, 11 Mar 2019 10:29:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552296548;
-        bh=lhgOhp5SSrzRDM5MonDKTSPmKJg85AIj3lRDZqI5pPo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jm5hr6FQq5gUWkrdkcWCb7lRbntxTFUkYHCTLPgstgxfPmWc1iq5PYwaWXHrwqYqO
-         jv98tu0kgVYpJ3iQYFi4cSrU4IJmR69iSUFHdm++wfQRE6siXMqCON8PD4AmCKxDzn
-         dfM+PL3DbHZmuzZqTamS2aGyIIkbZ/NIRn22/1sk=
-Date:   Mon, 11 Mar 2019 11:29:02 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: Re: [PATCH v2 1/3] rcar-csi2: Update V3M and E3 start procedure
-Message-ID: <20190311092902.GJ4775@pendragon.ideasonboard.com>
-References: <20190308235702.27057-1-niklas.soderlund+renesas@ragnatech.se>
- <20190308235702.27057-2-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 11 Mar 2019 05:31:07 -0400
+Received: by mail-ua1-f66.google.com with SMTP id x1so1279530uaj.4;
+        Mon, 11 Mar 2019 02:31:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pQG4ls2I/7Yv2nhxsvdQkjXQ28zIa3R4IqAUucuPVWE=;
+        b=tRWRZ0cElLD5DDtDplaDTeWNOuFTuFH5SiMg/BQ62Ek1lGI7yTkz2uILMDih6K1lZk
+         AmzrTz+MQtwmtblRqtNDL7lW5hSeJXT4akZIB65vj2vDuu8ArRVdjBu2ovdEZdgfLCgu
+         UzYMAtBTD201wmUiiKfelvd4qDwtjfNZVEwUklO4aGiyMqTpa3FScOgw12mPW060miFS
+         7c8mFte+DQUwaxGB4h6tyeMJPqc4TRDjVPQmCsVDe9Yfj9+lhKeIq8xuUoqgqJT6ww9l
+         giiGO799L0OpGwnuO9t8R9J8WsyXbQMkp4OQFZr/RIcbt3PNcObXtb8msphdIQXX2dXH
+         gSaQ==
+X-Gm-Message-State: APjAAAWIh2ETX3/jL0U8e0e+xdfVaiNAr5wrTG0zag/oLNB0ojlE4ka/
+        DdkvG9LjFrRGSghrWMIR6u0MHQgsB3+KCMiknZQ=
+X-Google-Smtp-Source: APXvYqy7iFNYKC+S5SfjzqSGAJByiIC1pCx1y+AGClAQolJBP/P2gkCPgX6xEK59QvuR6SBQnTT8TpqSEPpQMdxwbC4=
+X-Received: by 2002:ab0:6419:: with SMTP id x25mr16098588uao.20.1552296666673;
+ Mon, 11 Mar 2019 02:31:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190308235702.27057-2-niklas.soderlund+renesas@ragnatech.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com> <ebc41558-2a0a-bf6d-05df-077e3c769344@cogentembedded.com>
+In-Reply-To: <ebc41558-2a0a-bf6d-05df-077e3c769344@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Mar 2019 10:30:55 +0100
+Message-ID: <CAMuHMdWxkM2YbLqyz3BemcVJphWYSZi4ejuLiG+fpfDdnuU4Uw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77980-cpg-mssr: fix RPC-IF module
+ clock's parent
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+Hi Sergei,
 
-Thank you for the patch.
+Thanks for your patch!
 
-On Sat, Mar 09, 2019 at 12:57:00AM +0100, Niklas Söderlund wrote:
-> The latest datasheet (rev 1.50) updates the start procedure for V3M and
-> E3. Update the driver to match these changes.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+On Thu, Mar 7, 2019 at 8:53 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Testing has shown that the RPC-IF module clock's parent is the RPCD2 clock,
+> not the RPC one -- the RPC-IF register reads stall otherwise...
 
-This matches the datasheet, so
+Perhaps... Or something else is wrong with how the RPC driver uses the
+clock hierarchy.
+According to the docs, RPC clocks RPC-PHY, and RPCD2 clocks RPC-LINK.
+Currently nothing references RPCD2, so it is disabled automatically.
+If you make RPC -> RPCD2 -> RPC-IF, enabling RPC-IF indeed enables
+both RPC and RPCD2.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Perhaps the RPC device node does need a reference to RPCD2?
 
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index d9b29dbbcc2949de..6be81d4839f35a0e 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -922,11 +922,11 @@ static int rcsi2_init_phtw_v3m_e3(struct rcar_csi2 *priv, unsigned int mbps)
->  static int rcsi2_confirm_start_v3m_e3(struct rcar_csi2 *priv)
->  {
->  	static const struct phtw_value step1[] = {
-> -		{ .data = 0xed, .code = 0x34 },
-> -		{ .data = 0xed, .code = 0x44 },
-> -		{ .data = 0xed, .code = 0x54 },
-> -		{ .data = 0xed, .code = 0x84 },
-> -		{ .data = 0xed, .code = 0x94 },
-> +		{ .data = 0xee, .code = 0x34 },
-> +		{ .data = 0xee, .code = 0x44 },
-> +		{ .data = 0xee, .code = 0x54 },
-> +		{ .data = 0xee, .code = 0x84 },
-> +		{ .data = 0xee, .code = 0x94 },
->  		{ /* sentinel */ },
->  	};
->  
+Is this also the case on R-Car V3M, where RPCD2 is not controlled by the
+CPG, but by the DIVREG register in the RPC-IF module itself?
+
+See also section 62.4.7 (Frequency change), which does not have a
+subsection for V3H, but it may be impacted (changing RPCD2 causes
+an additional read of RPCCKR, satisfying the read-after-write requirement
+documented there).
+
+> Fixes: 94e3935b5756 ("clk: renesas: r8a77980: Add RPC clocks")
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
+> --- renesas-drivers.orig/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> +++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
+> @@ -171,7 +171,7 @@ static const struct mssr_mod_clk r8a7798
+>         DEF_MOD("gpio1",                 911,   R8A77980_CLK_CP),
+>         DEF_MOD("gpio0",                 912,   R8A77980_CLK_CP),
+>         DEF_MOD("can-fd",                914,   R8A77980_CLK_S3D2),
+> -       DEF_MOD("rpc-if",                917,   R8A77980_CLK_RPC),
+> +       DEF_MOD("rpc-if",                917,   R8A77980_CLK_RPCD2),
+>         DEF_MOD("i2c4",                  927,   R8A77980_CLK_S0D6),
+>         DEF_MOD("i2c3",                  928,   R8A77980_CLK_S0D6),
+>         DEF_MOD("i2c2",                  929,   R8A77980_CLK_S3D2),
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
