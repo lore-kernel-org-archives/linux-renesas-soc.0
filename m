@@ -2,116 +2,139 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2473C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 07:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFC6C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0BC620643
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 07:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE61A206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:09:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="VDNZtG59"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nWmHPFwL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbfCKHuD (ORCPT
+        id S1727077AbfCKJJK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 03:50:03 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:58532 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfCKHuD (ORCPT
+        Mon, 11 Mar 2019 05:09:10 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49852 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbfCKJJJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 03:50:03 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 8EF439D2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 07:50:01 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id mP77XS0eu1MH for <linux-renesas-soc@vger.kernel.org>;
-        Mon, 11 Mar 2019 02:50:01 -0500 (CDT)
-Received: from mail-it1-f200.google.com (mail-it1-f200.google.com [209.85.166.200])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 5B4C79CB
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 02:50:01 -0500 (CDT)
-Received: by mail-it1-f200.google.com with SMTP id 142so4366223itx.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 00:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ad+Ht6iuPEK3V66itIO25xm2d2MmiWnk2HmclFaUdgw=;
-        b=VDNZtG59PFO7DSh0K1Jhd7J/P9sr1z5nGz5m24NANiVWhaC6/kijvsGQKeLD+9NTV/
-         RlsQoOio6SjU5DcZnFd5dqBdQYO1qDtjNDSHFVx6fZ4tZtElwS6uleVsLehsznLbEQiU
-         Az/VaVelJECl2hvDUu34Sj3sUVD6AL5uHhi/FSaTvucmJ8LTU0nxG7SNKLh9aEGQqM+Q
-         ErilQYuzOGronQY8OiIRExqvOvybK51e4xvuGMfAAC6FJjRaXk6J6APnVsZm9yZ9EjX6
-         KIOIJsRa+hkEhxsDzMBahiY5AoxjcL8VfYLhrcl7ZFG3I+AagOyewqzkEanrnA735PEQ
-         56AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ad+Ht6iuPEK3V66itIO25xm2d2MmiWnk2HmclFaUdgw=;
-        b=njucyCFRpyjkOUEjYRiWwKTBatqUWapAEMaiWzQYFyyfW1f2KjpKK6lxSu4NHCcaVK
-         /T2wBze/pkYH9t/oz5Xgr7/3Z6CiNGDaYUji7ppLppzqMZI0501Lhdo8irTX7hrO+I2l
-         R0weesBOK4/OpCf9jyWRZWoyaFcC+dHz0ev7Y50X8xw4vgm31h9fnmViUfa++miXTJcr
-         zH6Bir7aVoJ4SRX3eLrLndeMLDGjc5JSLmyHZTI/MztCHFPpAQpfmkuwjgCiBXGc9Hzw
-         IpVXs/Zgp3FbjyOCTy5IIZO/cDhgSENtBPp22jklD1n18zpRAe37n8ml0RZap4gsOmY5
-         OGzQ==
-X-Gm-Message-State: APjAAAW1I6CaNz3+csld2G6Ta2En0S3u80GCIwwbLdD4VOrcds7rRWe3
-        zQgZsXHTNtej5a1ZI8RzJwJDedaTtsUFfWVyVfFcXahDW6KIu8uxflA2JNZy3RR6oaNLNz9h0v8
-        rU/qKXmcJAPxFmHya4ZgWmFB9tI9X61wbCRA=
-X-Received: by 2002:a24:1091:: with SMTP id 139mr15197827ity.110.1552290600968;
-        Mon, 11 Mar 2019 00:50:00 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxEcwbeVHeTUD0YZEey71JInwRH/jTEenqU6CZEUTD1zMNotqyC2OqmpD6lJpywuJsoIPrvZg==
-X-Received: by 2002:a24:1091:: with SMTP id 139mr15197810ity.110.1552290600647;
-        Mon, 11 Mar 2019 00:50:00 -0700 (PDT)
-Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
-        by smtp.gmail.com with ESMTPSA id d6sm1852609ioc.44.2019.03.11.00.49.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Mar 2019 00:49:59 -0700 (PDT)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: renesas: fix a missing check of of_get_phy_mode
-Date:   Mon, 11 Mar 2019 02:49:37 -0500
-Message-Id: <20190311074939.517-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.1
+        Mon, 11 Mar 2019 05:09:09 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5394D304;
+        Mon, 11 Mar 2019 10:09:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552295347;
+        bh=nWxTor5ivP5rc1xDjyeIHxjOButKmPATDbP5+d1f5Sw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nWmHPFwL/pSy9dpOssPUZhcpw1p5iS0DM3ChH1repv+Yr4QUbxZglTmO148aF+rjW
+         2h9YRvtO5SQ6PG9QhoKbkme4pE32/QmsW8kw1mnCWDco2ifl022vVfZON7RGQMoyQZ
+         JnI85hTlFTV8LVesC0ofDAr5cNLzFcV3bPwnsvn0=
+Date:   Mon, 11 Mar 2019 11:09:01 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] rcar-csi2: Propagate the FLD signal for NTSC and PAL
+Message-ID: <20190311090901.GG4775@pendragon.ideasonboard.com>
+References: <20190308235157.26357-1-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190308235157.26357-1-niklas.soderlund+renesas@ragnatech.se>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-of_get_phy_mode may fail and return a negative error code;
-the fix checks the return value of of_get_phy_mode and
-returns NULL of it fails.
+Hi Niklas,
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
----
- drivers/net/ethernet/renesas/sh_eth.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thank you for the patch.
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 339b2eae2100..239eeafe1b2d 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3187,6 +3187,8 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
- 		return NULL;
- 
- 	pdata->phy_interface = of_get_phy_mode(np);
-+	if (pdata->phy_interface < 0)
-+		return NULL;
- 
- 	mac_addr = of_get_mac_address(np);
- 	if (mac_addr)
+On Sat, Mar 09, 2019 at 12:51:57AM +0100, Niklas Söderlund wrote:
+> Depending on which video standard is used the driver needs to setup the
+> hardware to correctly handle fields. If stream is identified as NTSC
+> or PAL setup field detection and propagate the field detection signal.
+> 
+> Later versions of the datasheet have been updated to make it clear
+> that FLD register should be set to 0 when dealing with non-interlaced
+> field formats.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 15 ++++++++++++---
+>  1 file changed, 12 insertions(+), 3 deletions(-)
+> 
+> ---
+> 
+> Hi,
+> 
+> This patch depends on [PATCH v2 0/2] rcar-csi2: Use standby mode instead of resetting
+> 
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> index 7a1c9b549e0fffc6..d9b29dbbcc2949de 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -475,7 +475,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
+>  static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+>  {
+>  	const struct rcar_csi2_format *format;
+> -	u32 phycnt, vcdt = 0, vcdt2 = 0;
+> +	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
+>  	unsigned int i;
+>  	int mbps, ret;
+>  
+> @@ -507,6 +507,16 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+>  			vcdt2 |= vcdt_part << ((i % 2) * 16);
+>  	}
+>  
+> +	if (priv->mf.field != V4L2_FIELD_NONE &&
+
+Shouldn't this be
+
+	if (priv->mf.field == V4L2_FIELD_ALTERNATE) {
+
+If the CSI-2 receiver gets a top/bottom-only or sequential field order I
+would expect it not to toggle the field signal.
+
+> +	    (priv->mf.height == 240 || priv->mf.height == 288)) {
+
+I think you can drop this part of the check.
+
+> +		fld =  FLD_FLD_EN4 | FLD_FLD_EN3 | FLD_FLD_EN2 | FLD_FLD_EN;
+> +
+> +		if (priv->mf.height == 240)
+> +			fld |= FLD_FLD_NUM(2);
+> +		else
+> +			fld |= FLD_FLD_NUM(1);
+
+How does this work ? Looking at the datasheet, I was expecting
+FLD_DET_SEL field to be set to 01 in order for the field signal to
+toggle every frame.
+
+>+	}
+> +
+>  	phycnt = PHYCNT_ENABLECLK;
+>  	phycnt |= (1 << priv->lanes) - 1;
+>  
+> @@ -519,8 +529,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+>  	rcsi2_write(priv, PHTC_REG, 0);
+>  
+>  	/* Configure */
+> -	rcsi2_write(priv, FLD_REG, FLD_FLD_NUM(2) | FLD_FLD_EN4 |
+> -		    FLD_FLD_EN3 | FLD_FLD_EN2 | FLD_FLD_EN);
+> +	rcsi2_write(priv, FLD_REG, fld);
+>  	rcsi2_write(priv, VCDT_REG, vcdt);
+>  	if (vcdt2)
+>  		rcsi2_write(priv, VCDT2_REG, vcdt2);
+
 -- 
-2.17.1
+Regards,
 
+Laurent Pinchart
