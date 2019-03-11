@@ -2,248 +2,114 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C77CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B41CDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41056206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:54:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VWiiLRVq"
+	by mail.kernel.org (Postfix) with ESMTP id 8C1A4206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 09:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfCKJyB (ORCPT
+        id S1727099AbfCKJ7g (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 05:54:01 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54006 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbfCKJyA (ORCPT
+        Mon, 11 Mar 2019 05:59:36 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37588 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbfCKJ7g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 05:54:00 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EAA6D304;
-        Mon, 11 Mar 2019 10:53:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552298038;
-        bh=S72wm+jdjgeHOYy9q/yw1NbY+nMoeb4l2PCbnKrOAYs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VWiiLRVqvlJB4MhUoSsqPP2vpyQdcncRfvs8j4opfTaDE3XXMiPGsmx0XtO03zOkz
-         mXSHDUsdneO5KqW0IxifU9kZKRymtx229+UlTw0MxUEL4YYm1jp88XA0kflbYk2Fm3
-         LH5QyIJ3lkLB5CuCUkCidErb7wrs+NLsMvCuhjHk=
-Date:   Mon, 11 Mar 2019 11:53:51 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rcar-csi2: Use standby mode instead of resetting
-Message-ID: <20190311095351.GL4775@pendragon.ideasonboard.com>
-References: <20190308234722.25775-1-niklas.soderlund+renesas@ragnatech.se>
- <20190308234722.25775-3-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 11 Mar 2019 05:59:36 -0400
+Received: by mail-vs1-f68.google.com with SMTP id y19so2306765vsc.4;
+        Mon, 11 Mar 2019 02:59:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kdZpQLT+a578Z5amAEXXRzf2jU4R9Gb48BFyIM+BwlQ=;
+        b=C2IGwkRd1LEbtuwms2uD5AuTct33t6pQu6Ewb6/FFRCdCsCKd9I9DYJ1G0wu/kNqOh
+         N/rrfesqZ7xq0GCus21mb2ypbyKBkikomlzBg7Sk2UH8BSmpYP2IXpSGJTMpFhsMK1x4
+         h6sJJgiOxbjS2ffoaNvjIsCJVto4p2sUZr+1ALDYf2oDLInvne4R4OFyV+Vm3ErntZME
+         msAlxG/oHGAbt4pp4rKP6GCPfNR+x2HhzAgJvuWZOo+sxOKVY2LDH9IqyGnkCEQ8jE10
+         30fvEECOS9xbMBjLoUKJ0ToeMrsZFjPYPLLavWB0/ScOxkxUfd0gK2PqZktlnkQRVLBs
+         vWCg==
+X-Gm-Message-State: APjAAAUz9w7/9kRa/gYbi+FAu7MUfeddPXkodr1Rb4GPzw27RG8wxQt2
+        +FNTBF5dt4KyXaWR78/eyeqL314kQzFY2Aca9vE=
+X-Google-Smtp-Source: APXvYqyjkoTMrxn3JYkTmN23HWadNUbwFuHLhbc7WZPqHTOTtdRtVehg7+Hn4kGQaAw5GK53NqZGz4cGntVxG0RLaFs=
+X-Received: by 2002:a67:ead0:: with SMTP id s16mr15787453vso.63.1552298375032;
+ Mon, 11 Mar 2019 02:59:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190308234722.25775-3-niklas.soderlund+renesas@ragnatech.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190305175434.13107-1-wsa+renesas@sang-engineering.com> <20190305175434.13107-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190305175434.13107-4-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 Mar 2019 10:59:23 +0100
+Message-ID: <CAMuHMdWtNiLcOB_0vTa2nNM+tkdiTfYWP=VAe3GsfjRbxkgYvg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] i2c: rcar: wait for data empty before starting DMA
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+Hi Wolfram,
 
-Thank you for the patch.
+On Tue, Mar 5, 2019 at 7:11 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> When sending with DMA, the driver transfers the first byte with PIO (as
+> documented). However, it started DMA right after the first byte was
+> written. This worked, but was not according to the datasheet which
+> suggests to wait until data register was empty again. Implement this.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Sat, Mar 09, 2019 at 12:47:22AM +0100, Niklas Söderlund wrote:
-> Later versions of the datasheet updates the reset procedure to more
-> closely resemble the standby mode. Update the driver to enter and exit
-> the standby mode instead of resetting the hardware before and after
-> streaming is started and stopped.
+Thanks for your patch!
 
-I was mislead thinking this added support for module reset in addition
-to software reset (SRST_SRST-, but it actually removes the software
-reset completely. Should the commit message make this clear ?
+> --- a/drivers/i2c/busses/i2c-rcar.c
+> +++ b/drivers/i2c/busses/i2c-rcar.c
+> @@ -480,6 +480,10 @@ static void rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
+>         if (!(msr & MDE))
+>                 return;
+>
+> +       /* Check if DMA can be enabled and take over */
+> +       if (priv->pos == 1 && rcar_i2c_dma(priv))
 
-> While at it break out the full start and stop procedures from
-> rcsi2_s_stream() into the existing helper functions.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/Kconfig     |  1 +
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 69 +++++++++++++--------
->  2 files changed, 43 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-> index e3eb8fee253658da..f26f47e3bcf44825 100644
-> --- a/drivers/media/platform/rcar-vin/Kconfig
-> +++ b/drivers/media/platform/rcar-vin/Kconfig
-> @@ -3,6 +3,7 @@ config VIDEO_RCAR_CSI2
->  	tristate "R-Car MIPI CSI-2 Receiver"
->  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF
->  	depends on ARCH_RENESAS || COMPILE_TEST
-> +	select RESET_CONTROLLER
->  	select V4L2_FWNODE
->  	help
->  	  Support for Renesas R-Car MIPI CSI-2 receiver.
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index f64528d2be3c95dd..7a1c9b549e0fffc6 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -14,6 +14,7 @@
->  #include <linux/of_graph.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
->  #include <linux/sys_soc.h>
->  
->  #include <media/v4l2-ctrls.h>
-> @@ -350,6 +351,7 @@ struct rcar_csi2 {
->  	struct device *dev;
->  	void __iomem *base;
->  	const struct rcar_csi2_info *info;
-> +	struct reset_control *rstc;
->  
->  	struct v4l2_subdev subdev;
->  	struct media_pad pads[NR_OF_RCAR_CSI2_PAD];
-> @@ -387,11 +389,19 @@ static void rcsi2_write(struct rcar_csi2 *priv, unsigned int reg, u32 data)
->  	iowrite32(data, priv->base + reg);
->  }
->  
-> -static void rcsi2_reset(struct rcar_csi2 *priv)
-> +static void rcsi2_enter_standby(struct rcar_csi2 *priv)
->  {
-> -	rcsi2_write(priv, SRST_REG, SRST_SRST);
-> +	rcsi2_write(priv, PHYCNT_REG, 0);
-> +	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
-> +	reset_control_assert(priv->rstc);
->  	usleep_range(100, 150);
-> -	rcsi2_write(priv, SRST_REG, 0);
-> +	pm_runtime_put(priv->dev);
-> +}
-> +
-> +static void rcsi2_exit_standby(struct rcar_csi2 *priv)
-> +{
-> +	pm_runtime_get_sync(priv->dev);
-> +	reset_control_deassert(priv->rstc);
->  }
->  
->  static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
-> @@ -462,7 +472,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
->  	return mbps;
->  }
->  
-> -static int rcsi2_start(struct rcar_csi2 *priv)
-> +static int rcsi2_start_receiver(struct rcar_csi2 *priv)
->  {
->  	const struct rcar_csi2_format *format;
->  	u32 phycnt, vcdt = 0, vcdt2 = 0;
-> @@ -506,7 +516,6 @@ static int rcsi2_start(struct rcar_csi2 *priv)
->  
->  	/* Init */
->  	rcsi2_write(priv, TREF_REG, TREF_TREF);
-> -	rcsi2_reset(priv);
->  	rcsi2_write(priv, PHTC_REG, 0);
->  
->  	/* Configure */
-> @@ -564,19 +573,36 @@ static int rcsi2_start(struct rcar_csi2 *priv)
->  	return 0;
->  }
->  
-> +static int rcsi2_start(struct rcar_csi2 *priv)
-> +{
-> +	int ret;
-> +
-> +	rcsi2_exit_standby(priv);
-> +
-> +	ret = rcsi2_start_receiver(priv);
+Shouldn't you check if MSR.MAT is set?
 
-The rcsi2_start_receiver() function should be split in two, with
-rcsi2_wait_phy_start() and below being performed after starting the
-source. Alternatively you could start the source first, but I think a
-split would be better.
+> +               return;
 
-> +	if (ret) {
-> +		rcsi2_enter_standby(priv);
-> +		return ret;
-> +	}
+Hence ICMCR.ESG is not cleared, violating 57.3.8 (Master Transmit
+Operation), Step 3?
+
 > +
-> +	ret = v4l2_subdev_call(priv->remote, video, s_stream, 1);
-> +	if (ret) {
-> +		rcsi2_enter_standby(priv);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void rcsi2_stop(struct rcar_csi2 *priv)
->  {
-> -	rcsi2_write(priv, PHYCNT_REG, 0);
+>         if (priv->pos < msg->len) {
+>                 /*
+>                  * Prepare next data to ICRXTX register.
+> @@ -490,13 +494,6 @@ static void rcar_i2c_irq_send(struct rcar_i2c_priv *priv, u32 msr)
+>                  */
+>                 rcar_i2c_write(priv, ICRXTX, msg->buf[priv->pos]);
+>                 priv->pos++;
 > -
-> -	rcsi2_reset(priv);
-> -
-> -	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
-> +	v4l2_subdev_call(priv->remote, video, s_stream, 0);
-> +	rcsi2_enter_standby(priv);
+> -               /*
+> -                * Try to use DMA to transmit the rest of the data if
+> -                * address transfer phase just finished.
+> -                */
+> -               if (msr & MAT)
+> -                       rcar_i2c_dma(priv);
+>         } else {
+>                 /*
+>                  * The last data was pushed to ICRXTX on _PREV_ empty irq.
 
-Shouldn't you enter standby before stopping the source ? Otherwise
-there's a risk of CSI errors being detected. Figures 25.23.1 and 25.23.2
-seem to agree with me.
+Gr{oetje,eeting}s,
 
->  }
->  
->  static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
->  {
->  	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> -	struct v4l2_subdev *nextsd;
->  	int ret = 0;
->  
->  	mutex_lock(&priv->lock);
-> @@ -586,27 +612,12 @@ static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
->  		goto out;
->  	}
->  
-> -	nextsd = priv->remote;
-> -
->  	if (enable && priv->stream_count == 0) {
-> -		pm_runtime_get_sync(priv->dev);
-> -
->  		ret = rcsi2_start(priv);
-> -		if (ret) {
-> -			pm_runtime_put(priv->dev);
-> +		if (ret)
->  			goto out;
-> -		}
-> -
-> -		ret = v4l2_subdev_call(nextsd, video, s_stream, 1);
-> -		if (ret) {
-> -			rcsi2_stop(priv);
-> -			pm_runtime_put(priv->dev);
-> -			goto out;
-> -		}
->  	} else if (!enable && priv->stream_count == 1) {
->  		rcsi2_stop(priv);
-> -		v4l2_subdev_call(nextsd, video, s_stream, 0);
-> -		pm_runtime_put(priv->dev);
->  	}
->  
->  	priv->stream_count += enable ? 1 : -1;
-> @@ -936,6 +947,10 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
->  	if (irq < 0)
->  		return irq;
->  
-> +	priv->rstc = devm_reset_control_get(&pdev->dev, NULL);
-> +	if (IS_ERR(priv->rstc))
-> +		return PTR_ERR(priv->rstc);
-> +
->  	return 0;
->  }
->  
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
