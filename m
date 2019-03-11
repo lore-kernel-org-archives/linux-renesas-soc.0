@@ -2,111 +2,103 @@ Return-Path: <SRS0=xQI0=RO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4121C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10A8C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 13:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF7A20657
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 10:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 993EF2177E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Mar 2019 13:38:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jT3A1R3t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfCKK7g (ORCPT
+        id S1727485AbfCKNib (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 06:59:36 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:32994 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfCKK7f (ORCPT
+        Mon, 11 Mar 2019 09:38:31 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40720 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727971AbfCKNib (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 06:59:35 -0400
-Received: by mail-ua1-f65.google.com with SMTP id q17so1357385uam.0;
-        Mon, 11 Mar 2019 03:59:35 -0700 (PDT)
+        Mon, 11 Mar 2019 09:38:31 -0400
+Received: by mail-wm1-f68.google.com with SMTP id g20so4278522wmh.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 06:38:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=schwPfgvBQobp2WA+XcmZ8hx+CMnepppt1zErxlagGE=;
+        b=jT3A1R3tvjpiFEBW1qukAU0t+mOGyxaw2dUZ9l8bmeUFhtFIVeVHSLdMM9XxH1p1uo
+         zYZ9qYlrsXLZ9U3dXD6lbqIbSa/9TayqtUrRAb/Yt/BjD/bCCf5rZpkaHLZRuSSGIYes
+         0V/wJcNFMALWbycFPWqufYVqhzheOR/UfEaoJjdmYQQQoNXbyLOY/z6721rq06dfrpPq
+         +YWwn7uHpyM3kC0LlX52lLJLeOfC+tDGSP535o9y6CAW1TlVH0ZaWhvxJ57yxCmz05gv
+         O9/eeGGIRJcg5jv0FtA4xvPpP3Zhchqilr+LCu5PgT6+Ah3hyxM/VGnKAA/ZwMs5qFWG
+         VKaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+OLKVxphRgfnEDcet5lBNBYXLMLeC25lXUE4Z/6oh6k=;
-        b=Vlx/pD08bUjwsFEXF+XVNXqW4iBh1c/ZdhGiutBp22fXHVTJc6ax9+uyS1Aqz2yMLL
-         m0c7mVdDSTR0No2n8IW139SS8QC+7vUDjXQM3tltMmIFRre1DfcSdAhNdOLBl5uX2QU3
-         mj9L2dkKiyXnneP94E2EPwxVnK0SmEDBQ8aLGvCn0nNXiY3zFmur999p3GyRqiZDWc3h
-         xdaekx3/DGCsqxV8z1Fls6tsIH/0yIx6fTe5VO/3fUcxpT7o9V9susLfNmdfSBCvCgJ3
-         XY7zx4zxUOdOG3c3MA0CP7alhDfBH8EpTXJ/jLG7YfR3n+fEF0dQaWmJdjisbh9kzPXx
-         jryA==
-X-Gm-Message-State: APjAAAVnTW+PZzuxmGDEo3dgLcnCxKuuEhHuw1r/bEX4Ev6M0tnUJCsb
-        F7PVKakZCxBwA6KG2LjAx1/TWImO747TIZFEC2c=
-X-Google-Smtp-Source: APXvYqxe/+IjsJNdttwCevT2NzWiqo01fV+MMSfCGQCewnwq5x9tQLnaBxJzUVlqexkZuUdsziOSLC9nBN8IhQZ/dyA=
-X-Received: by 2002:ab0:7191:: with SMTP id l17mr15051652uao.28.1552301974612;
- Mon, 11 Mar 2019 03:59:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190311074939.517-1-kjlu@umn.edu>
-In-Reply-To: <20190311074939.517-1-kjlu@umn.edu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 Mar 2019 11:59:23 +0100
-Message-ID: <CAMuHMdVfhq-d0CExnH+Y37k6pUz6OvOtScf6RbgFQ-Mx4dy4DA@mail.gmail.com>
-Subject: Re: [PATCH v2] net: renesas: fix a missing check of of_get_phy_mode
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     pakki001@umn.edu,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=schwPfgvBQobp2WA+XcmZ8hx+CMnepppt1zErxlagGE=;
+        b=t1qdfMM/+j+9nnJRB1c8zI+nhYaagsiB5Qt+kgdBKCHJ73z5ilRZp/0qzKaika4+Yy
+         r8PROh0ZocB6h38eh1QN7QzGN1gHYlkkqLhmxAwBqt1UEg6KaZlQm7XeY96S/LeafkZn
+         NygqBLXoscJ2KK6E5SwDNScXvWuN8XB7Tg6kBHhkFklITNTdro9Agl7N0NtvoJfjddbp
+         uAj/6OAKao2o6U5r09P+H6GOeZhgmOW4lgj0AIFj7iHLbqCPOIYVgWW8NFviwHqrLude
+         76ug0eOthGdw0jX8J5DM9tJc0CzxnYpRLYY5IKjVuUlWM7IKILu70RAu+WvcdTDGsz1X
+         jdgg==
+X-Gm-Message-State: APjAAAUeEChpVxiWkx7r+DjVqlVfT79MVIZfReXBzV0/AdLbetkB34GK
+        fwVL7WZnFY4n5d+8x1MlS5HqQzYW
+X-Google-Smtp-Source: APXvYqzhuEbBZtLwsEtBJsiYPNVTLHcFvq8/0CN+zlT6iH4cdFI6406VhWPoMewaJ7O8GbySEDYKew==
+X-Received: by 2002:a7b:c344:: with SMTP id l4mr17055840wmj.121.1552311508618;
+        Mon, 11 Mar 2019 06:38:28 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id y66sm29919319wmd.37.2019.03.11.06.38.27
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Mar 2019 06:38:27 -0700 (PDT)
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77995: draak: Enable CAN0, CAN1
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20190309020642.15985-1-marek.vasut@gmail.com>
+ <CAMuHMdU+Av1JfGNRdQRP=DzxiesNsqNp05taKwjUouOGW_mp3w@mail.gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <af0f7c0c-36f9-e350-077d-2c94764e4ae6@gmail.com>
+Date:   Mon, 11 Mar 2019 14:38:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdU+Av1JfGNRdQRP=DzxiesNsqNp05taKwjUouOGW_mp3w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kangjie,
+On 3/11/19 10:46 AM, Geert Uytterhoeven wrote:
+> Hi Marek,
+> 
+> On Sat, Mar 9, 2019 at 3:06 AM <marek.vasut@gmail.com> wrote:
+>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>
+>> Enable both CAN0 and CAN1 controllers on R8A77995 Draak board,
+>> since they are available on connectors CN43, CN44 respectively.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Thanks for your patch!
+> I assume you have tested this with your CAN-analyzer?
 
-On Mon, Mar 11, 2019 at 8:50 AM Kangjie Lu <kjlu@umn.edu> wrote:
-> of_get_phy_mode may fail and return a negative error code;
-> the fix checks the return value of of_get_phy_mode and
-> returns NULL of it fails.
->
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-
-> --- a/drivers/net/ethernet/renesas/sh_eth.c
-> +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> @@ -3187,6 +3187,8 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
->                 return NULL;
->
->         pdata->phy_interface = of_get_phy_mode(np);
-> +       if (pdata->phy_interface < 0)
-> +               return NULL;
-
-sh_eth_plat_data.phy_interface has type phy_interface_t.
-This is an enum containing only positive values, hence it is unsigned.
-So the condition can never be true.
-
-of_get_phy_mode() returns int, as it has to indicate errors by returning
-negative error codes.  Hence please use an intermediate of type int:
-
-    int ret;
-
-    ...
-    ret = of_get_phy_mode(np);
-    if (ret < 0)
-            return NULL;
-
-    pdata->phy_interface = ret;
-
->
->         mac_addr = of_get_mac_address(np);
->         if (mac_addr)
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Nope, only remotely between two CAN ports thus far.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Marek Vasut
