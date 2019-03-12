@@ -2,60 +2,89 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D164AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 21:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8060C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 23:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6AE12077B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 21:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FA9B2087C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 23:19:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="m1ctiNuI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbfCLVvc (ORCPT
+        id S1727133AbfCLXTG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 17:51:32 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:54712 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfCLVvc (ORCPT
+        Tue, 12 Mar 2019 19:19:06 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40482 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbfCLXTF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 17:51:32 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9E95114CCE8DA;
-        Tue, 12 Mar 2019 14:51:31 -0700 (PDT)
-Date:   Tue, 12 Mar 2019 14:51:31 -0700 (PDT)
-Message-Id: <20190312.145131.1160021095999433392.davem@davemloft.net>
-To:     kjlu@umn.edu
-Cc:     pakki001@umn.edu, sergei.shtylyov@cogentembedded.com,
-        vladimir_zapolskiy@mentor.com, geert+renesas@glider.be,
-        vladimir.barinov@cogentembedded.com, chris.brandt@renesas.com,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] net: sh_eth: fix a missing check of of_get_phy_mode
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190312074319.31161-1-kjlu@umn.edu>
-References: <902bc3a0-94b5-cf00-6b41-f2724744fbe6@cogentembedded.com>
-        <20190312074319.31161-1-kjlu@umn.edu>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 12 Mar 2019 14:51:32 -0700 (PDT)
+        Tue, 12 Mar 2019 19:19:05 -0400
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 470552DF;
+        Wed, 13 Mar 2019 00:19:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552432743;
+        bh=NXlZKyakZbnEO70GUVwLvHDMgE/msW09ytzgJvcOp+4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m1ctiNuIdUM1mkVp9OOrKw4zPICRSVfN4o/r745sNyKggSQI7G5+wbnlWmQ4zXlzT
+         ALJT0kDqoTcZ35u9JA+xhbLG3T75Ze1ivzHuNBZms+S7xS0f2+yHxFq/9Jk7UrE3fj
+         x4LCymXbmZfboJUr5g6PSpMgdEIPdmMpj4MAYTZI=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH] drm: rcar-du: lvds: Fix post-DLL divider calculation
+Date:   Wed, 13 Mar 2019 01:18:53 +0200
+Message-Id: <20190312231853.3150-1-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
-Date: Tue, 12 Mar 2019 02:43:18 -0500
+The PLL parameters are computed by looping over the range of acceptable
+M, N and E values, and selecting the combination that produces the
+output frequency closest to the target. The internal frequency
+constraints are taken into account by restricting the tested values for
+the PLL parameters, reducing the search space. The target frequency,
+however, is only taken into account when computing the post-PLL divider,
+which can result in a 0 value for the divider when the PLL output
+frequency being tested is lower than half of the target frequency.
+Subsequent loops will produce a better set of PLL parameters, but for
+some of the iterations this can result in a division by 0.
 
-> of_get_phy_mode may fail and return a negative error code;
-> the fix checks the return value of of_get_phy_mode and
-> returns NULL of it fails.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Fix it by clamping the divider value. We could instead restrict the E
+values being tested in the inner loop, but that would require additional
+calculation that would likely be less efficient as the E parameter can
+only take three different values.
 
-Applied with Fixes: tag added.
+Fixes: c25c01361199 ("drm: rcar-du: lvds: D3/E3 support")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 7ef97b2a6eda..9f5ff1acab4e 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -283,7 +283,7 @@ static void rcar_lvds_d3_e3_pll_calc(struct rcar_lvds *lvds, struct clk *clk,
+ 				 * divider.
+ 				 */
+ 				fout = fvco / (1 << e) / div7;
+-				div = DIV_ROUND_CLOSEST(fout, target);
++				div = max(1UL, DIV_ROUND_CLOSEST(fout, target));
+ 				diff = abs(fout / div - target);
+ 
+ 				if (diff < pll->diff) {
+-- 
+Regards,
+
+Laurent Pinchart
+
