@@ -2,117 +2,124 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AB6C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEB8C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1012147C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE25820693
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:50:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="wwkTpxSH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfCLPpE (ORCPT
+        id S1726360AbfCLPuJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 11:45:04 -0400
-Received: from sauhun.de ([88.99.104.3]:40280 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbfCLPpE (ORCPT
+        Tue, 12 Mar 2019 11:50:09 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38942 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfCLPuJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 11:45:04 -0400
-Received: from localhost (p54B335FE.dip0.t-ipconnect.de [84.179.53.254])
-        by pokefinder.org (Postfix) with ESMTPSA id A876C2C282F;
-        Tue, 12 Mar 2019 16:45:01 +0100 (CET)
-Date:   Tue, 12 Mar 2019 16:45:01 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        Phil Reid <preid@electromag.com.au>,
-        Tero Kristo <t-kristo@ti.com>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/7] i2c: core: introduce atomic transfers
-Message-ID: <20190312154501.6v2symbq6eutp6dj@ninjato>
-References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
- <CAHp75Vc-WYUJgaDPuWUn-_0Cizq=MG7N2cdHJxaEbad+xntcjQ@mail.gmail.com>
+        Tue, 12 Mar 2019 11:50:09 -0400
+Received: by mail-lj1-f195.google.com with SMTP id g80so2768045ljg.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 08:50:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eUMOS/xllJvYP6IP+O3s73/ZfLm0qafxhRBFq5fdCYI=;
+        b=wwkTpxSH7J+GYE9rOC1rbEEUvQfoDv4ouoFTGcYjrOESEHtetaPWpYf/JR0/dVYZnC
+         bWOfBBJkQpE/l8M8Sa7wO3y1n+6t64kHUDzltVlnCWmSz/dIaUR0sfWU+A85PM0EgPzN
+         MrnUjIVHiaVaPKgR6i+lDrogwGNyq3xjMyTmnKJr/yenE0HpUwYiE8scueWkcUeTUSll
+         8yzzG6VNOEm/vzhDgC6zhqzV8nhRYTtn/c19GMOE7PWyFhxBQ2q6noybDa8SmNUPHAxf
+         294eiK9T0kWPVai3kMt5TMVm9D7UQffeDTNGSmqGPvgU3RliieJiIs8Y72yeG8Hxwy03
+         +1Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eUMOS/xllJvYP6IP+O3s73/ZfLm0qafxhRBFq5fdCYI=;
+        b=tCsA9e09yzbdEceS0gFI58xmShpYT8xha+YnparlbyWSlQYKvy7a4mw0Y2ngIRdV7F
+         HM/64/w4E3mk80Q0Dgvx1i/PdD1JduXSYQ3cRHce8wokCDRy+TrtDjnGgVOywjciS4Fy
+         SQovfdwh13WYBIRALPxu1tMsTjdM8iiF3KmLVvObA1NCPXoCSUxdtMtqkHdTAcV/LiJm
+         LNymcyJCetcLC6nkRwWeuYwtsQes/6+tEiah+pbL0JU5ctl2F4NuFquOKYqWQ/p/n/hU
+         yQPlG86Wxb8jnw4lwLyuprda5lOj4GNxYI80ezuyik7+h6pkzQagjRYYmfoCpvYx83BN
+         Sd/Q==
+X-Gm-Message-State: APjAAAWwUnNThxwNaH0dQZo5aapbkQJXOaYEf8eEKKCKp2Ffhw742WvB
+        MDEvChcO8nvm+GhvKCUNpjgNbQ==
+X-Google-Smtp-Source: APXvYqyIqYISVAOrgEKaTAijmhl9eXbsfkPyBzwGqBu5PPDcR4uIsB8vRmj/alxFVwaGmpyLPyYMXA==
+X-Received: by 2002:a2e:9105:: with SMTP id m5mr20893998ljg.100.1552405806819;
+        Tue, 12 Mar 2019 08:50:06 -0700 (PDT)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id y1sm1418029ljj.13.2019.03.12.08.50.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Mar 2019 08:50:06 -0700 (PDT)
+Date:   Tue, 12 Mar 2019 16:50:05 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jean Delvare <jdelvare@suse.de>
+Subject: Re: [PATCH i2c-tools 0/2] tools: improvements to handling restricted
+ addresses
+Message-ID: <20190312155005.GA1776@bigcity.dyn.berto.se>
+References: <20190311223335.18586-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zkokbbl47s6o5i5w"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAHp75Vc-WYUJgaDPuWUn-_0Cizq=MG7N2cdHJxaEbad+xntcjQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190311223335.18586-1-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Wolfram,
 
---zkokbbl47s6o5i5w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your work.
 
+On 2019-03-11 23:33:33 +0100, Wolfram Sang wrote:
+> For debugging, I needed to use the restricted address range. That's when I
+> noticed that the docs for i2ctransfer were missing an update (patch 1). But
+> even more surprising, I noticed that the reserved addresses 0x03-0x07 were not
+> restricted. It seems we all are so used to our lovely i2c-tools that nobody
+> (including me) never questioned that :) But it should be fixed (patch 2), I
+> think.
+> 
+> Open for comments. Happy hacking!
 
-> > So, finally, here is the second RFC for supporting I2C transfers in ato=
-mic
-> > contexts (i.e. very late). This will need some text because I tried som=
-e things
-> > on the way but had to discard them. However, I think it is important to=
- have
-> > that documented.
->=20
-> > Sorry, no TLDR; text here - I think this topic deserves a few words ;)
->=20
-> Thank you for this work! It was indeed interesting reading.
+I'm no expert in i2c but this matches my understanding of reserved 
+addresses in the specification, feel free to add for the whole series
 
-Thanks, glad to hear that :)
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> And since your series is targetting some exiting use cases, I would
-> drop as well academic variants of brain-damaged hw design, I think it
-> worth to go.
+> 
+> 
+> Wolfram Sang (2):
+>   tools: i2ctransfer: man: mention -a everywhere
+>   tools: restrict all addresses defined by the standard
+> 
+>  CHANGES             |  2 ++
+>  tools/i2cbusses.c   |  2 +-
+>  tools/i2cdetect.8   |  2 +-
+>  tools/i2cdetect.c   |  2 +-
+>  tools/i2cdump.8     |  4 ++--
+>  tools/i2cdump.c     |  2 +-
+>  tools/i2cget.8      |  4 ++--
+>  tools/i2cget.c      |  2 +-
+>  tools/i2cset.8      |  4 ++--
+>  tools/i2cset.c      |  2 +-
+>  tools/i2ctransfer.8 | 12 +++++++-----
+>  11 files changed, 21 insertions(+), 17 deletions(-)
+> 
+> -- 
+> 2.11.0
+> 
 
-Well, yes and no. I am with you that some complicated muxed setups could
-be argued to be way over the top. However, with the panic
-fault-injector, I can get my simple "PMIC directly (even exclusively)
-attached to root adapter" setup to stall. By simply ignoring the lock,
-such setups could work again. But this series does not implement this
-because it would need a redesign, i.e. tie into i2c_transfer and not
-later in __i2c_transfer.
-
-Yet, before doing this, I was interested in discussion if ignoring the
-lock is really desirable.
-
-This series seems like a valid approach to me if we still want to
-respect the locking.
-
-
---zkokbbl47s6o5i5w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyH0/0ACgkQFA3kzBSg
-Kbb02g//bFuyt6ZF0xKTx4YGhpVUmqDkQpdYzmFvXr2J4/UUeL43QsGvO4P05zuh
-in13OeiEaWgo1tnE6u9E+DrzEDzPNRiTwER4SB24KbymIncuoyNhBE0UIbuglcbE
-j1XUxgKQMl4YhZuTKGWZVuBCFaPty4vSxSzjrYgE2pk59ETbZiKOplCkklTHhfVX
-u77k21N3rO8DJpqhRAsEc2hA5hIH8PTw/TfDlwC6/QQNmHZDHxBS7Ae6t36mkhSS
-jHhI17n+oXL/WJqcQp0vPaU7rXuS8ZMw9VuoB/djEuZC7POxydKERicPKUKpcM8x
-iFBWBP370FOQGXxOnCUrwz6j9cooR3D7frKliTmQYWn3WKf1mf7lcW1cVqpxzp5h
-U+PbpWwI1ZmqixC2XhNfhmKuWaLfIcCj0UacaSge0Fya+P1nIg+RSnm0OBuMa0uW
-wKrVXMKUPcDY8IFcqygQE0kkmPnws5kQI1/mN62efcLmI5+Z/zNNx+y1Axyv8Mq8
-dteeml5Ig8tiRzUDLBmCv/MYMDEJTi4guZe7NLPCz04Z8TGMgXtp0bkoFM5TRwET
-iWl3w9okHcetxUO8Mf2RkS80p6yy0b0B1Z9ND4IjcSkvunXxRl+ygtwjHtd68iZK
-ujH2j4D5SGLXuygLnSsjpJXRzN+FjoXnuF1Y880JSCoNhJ6aL0c=
-=rDLe
------END PGP SIGNATURE-----
-
---zkokbbl47s6o5i5w--
+-- 
+Regards,
+Niklas Söderlund
