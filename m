@@ -2,124 +2,130 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEB8C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1480CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE25820693
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C0B2054F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:59:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="wwkTpxSH"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aJynixs3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbfCLPuJ (ORCPT
+        id S1726174AbfCLP7W (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 11:50:09 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38942 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbfCLPuJ (ORCPT
+        Tue, 12 Mar 2019 11:59:22 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60228 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfCLP7W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 11:50:09 -0400
-Received: by mail-lj1-f195.google.com with SMTP id g80so2768045ljg.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 08:50:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=eUMOS/xllJvYP6IP+O3s73/ZfLm0qafxhRBFq5fdCYI=;
-        b=wwkTpxSH7J+GYE9rOC1rbEEUvQfoDv4ouoFTGcYjrOESEHtetaPWpYf/JR0/dVYZnC
-         bWOfBBJkQpE/l8M8Sa7wO3y1n+6t64kHUDzltVlnCWmSz/dIaUR0sfWU+A85PM0EgPzN
-         MrnUjIVHiaVaPKgR6i+lDrogwGNyq3xjMyTmnKJr/yenE0HpUwYiE8scueWkcUeTUSll
-         8yzzG6VNOEm/vzhDgC6zhqzV8nhRYTtn/c19GMOE7PWyFhxBQ2q6noybDa8SmNUPHAxf
-         294eiK9T0kWPVai3kMt5TMVm9D7UQffeDTNGSmqGPvgU3RliieJiIs8Y72yeG8Hxwy03
-         +1Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=eUMOS/xllJvYP6IP+O3s73/ZfLm0qafxhRBFq5fdCYI=;
-        b=tCsA9e09yzbdEceS0gFI58xmShpYT8xha+YnparlbyWSlQYKvy7a4mw0Y2ngIRdV7F
-         HM/64/w4E3mk80Q0Dgvx1i/PdD1JduXSYQ3cRHce8wokCDRy+TrtDjnGgVOywjciS4Fy
-         SQovfdwh13WYBIRALPxu1tMsTjdM8iiF3KmLVvObA1NCPXoCSUxdtMtqkHdTAcV/LiJm
-         LNymcyJCetcLC6nkRwWeuYwtsQes/6+tEiah+pbL0JU5ctl2F4NuFquOKYqWQ/p/n/hU
-         yQPlG86Wxb8jnw4lwLyuprda5lOj4GNxYI80ezuyik7+h6pkzQagjRYYmfoCpvYx83BN
-         Sd/Q==
-X-Gm-Message-State: APjAAAWwUnNThxwNaH0dQZo5aapbkQJXOaYEf8eEKKCKp2Ffhw742WvB
-        MDEvChcO8nvm+GhvKCUNpjgNbQ==
-X-Google-Smtp-Source: APXvYqyIqYISVAOrgEKaTAijmhl9eXbsfkPyBzwGqBu5PPDcR4uIsB8vRmj/alxFVwaGmpyLPyYMXA==
-X-Received: by 2002:a2e:9105:: with SMTP id m5mr20893998ljg.100.1552405806819;
-        Tue, 12 Mar 2019 08:50:06 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id y1sm1418029ljj.13.2019.03.12.08.50.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Mar 2019 08:50:06 -0700 (PDT)
-Date:   Tue, 12 Mar 2019 16:50:05 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jean Delvare <jdelvare@suse.de>
-Subject: Re: [PATCH i2c-tools 0/2] tools: improvements to handling restricted
- addresses
-Message-ID: <20190312155005.GA1776@bigcity.dyn.berto.se>
-References: <20190311223335.18586-1-wsa+renesas@sang-engineering.com>
+        Tue, 12 Mar 2019 11:59:22 -0400
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EFC0A33C;
+        Tue, 12 Mar 2019 16:59:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552406359;
+        bh=io54To9FxPECqduKv6dSKmWHoGUJ5duFHD+rfRjcPzY=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aJynixs3pTeSwkK82DMMTlvEVqWz4T/vlx9ReEbCHIgf+ekcAepHdLVOHrDmlLm56
+         b1j/NDjqxQGmH1W9bulGCLUo8/Gq+4IvnCIq23qHpBRPklL+85lzVwB7qF2odoKupk
+         60KSVnXyz4cE4y9iXUHDaxixxHP3Sw3jxvG04x1M=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH v2] gpu: drm: atomic_helper: Fix spelling errors
+To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20190312003307.14116-1-kieran.bingham+renesas@ideasonboard.com>
+ <20190312151443.GE3888@intel.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <7b0ff11c-68f3-4e2e-f969-27a14062158e@ideasonboard.com>
+Date:   Tue, 12 Mar 2019 15:59:15 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20190312151443.GE3888@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190311223335.18586-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Hi Ville,
 
-Thanks for your work.
+On 12/03/2019 15:14, Ville Syrjälä wrote:
+> On Tue, Mar 12, 2019 at 12:33:07AM +0000, Kieran Bingham wrote:
+>> Trivial fixes identified while working on the DRM code.
+>>
+>>   s/artifically/artificially/
+>>   s/achive/achieve/
+>>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>> ---
+>>
+>> v2: - Actually spell achieve correctly!
+> 
+> drm convention is to put this above the --- so that it gets included in
+> the commit msg.
 
-On 2019-03-11 23:33:33 +0100, Wolfram Sang wrote:
-> For debugging, I needed to use the restricted address range. That's when I
-> noticed that the docs for i2ctransfer were missing an update (patch 1). But
-> even more surprising, I noticed that the reserved addresses 0x03-0x07 were not
-> restricted. It seems we all are so used to our lovely i2c-tools that nobody
-> (including me) never questioned that :) But it should be fixed (patch 2), I
-> think.
-> 
-> Open for comments. Happy hacking!
+Oh - in linux-media these are just dropped.
 
-I'm no expert in i2c but this matches my understanding of reserved 
-addresses in the specification, feel free to add for the whole series
+I'll try to remember this for my future work in DRM.
 
-Reviewed-by: Niklas S�derlund <niklas.soderlund+renesas@ragnatech.se>
+I don't have commit access anyway, so can I presume whomever will pick
+this up will adjust if necessary?
+
+Or should I repost? (which might be a bit redundant just to move a patch
+version comment which would then increase again :D )
+
+
+> With that
+> Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+
+Thanks,
+--
+Regards
+
+Kieran
+
 
 > 
-> 
-> Wolfram Sang (2):
->   tools: i2ctransfer: man: mention -a everywhere
->   tools: restrict all addresses defined by the standard
-> 
->  CHANGES             |  2 ++
->  tools/i2cbusses.c   |  2 +-
->  tools/i2cdetect.8   |  2 +-
->  tools/i2cdetect.c   |  2 +-
->  tools/i2cdump.8     |  4 ++--
->  tools/i2cdump.c     |  2 +-
->  tools/i2cget.8      |  4 ++--
->  tools/i2cget.c      |  2 +-
->  tools/i2cset.8      |  4 ++--
->  tools/i2cset.c      |  2 +-
->  tools/i2ctransfer.8 | 12 +++++++-----
->  11 files changed, 21 insertions(+), 17 deletions(-)
-> 
-> -- 
-> 2.11.0
+>>
+>>  drivers/gpu/drm/drm_atomic_helper.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+>> index 540a77a2ade9..2453678d1186 100644
+>> --- a/drivers/gpu/drm/drm_atomic_helper.c
+>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+>> @@ -1752,7 +1752,7 @@ int drm_atomic_helper_commit(struct drm_device *dev,
+>>  	 *
+>>  	 * NOTE: Commit work has multiple phases, first hardware commit, then
+>>  	 * cleanup. We want them to overlap, hence need system_unbound_wq to
+>> -	 * make sure work items don't artifically stall on each another.
+>> +	 * make sure work items don't artificially stall on each another.
+>>  	 */
+>>  
+>>  	drm_atomic_state_get(state);
+>> @@ -1786,7 +1786,7 @@ EXPORT_SYMBOL(drm_atomic_helper_commit);
+>>   *
+>>   * Asynchronous workers need to have sufficient parallelism to be able to run
+>>   * different atomic commits on different CRTCs in parallel. The simplest way to
+>> - * achive this is by running them on the &system_unbound_wq work queue. Note
+>> + * achieve this is by running them on the &system_unbound_wq work queue. Note
+>>   * that drivers are not required to split up atomic commits and run an
+>>   * individual commit in parallel - userspace is supposed to do that if it cares.
+>>   * But it might be beneficial to do that for modesets, since those necessarily
+>> -- 
+>> 2.19.1
 > 
 
--- 
-Regards,
-Niklas S�derlund
