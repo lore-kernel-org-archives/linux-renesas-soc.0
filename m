@@ -7,138 +7,221 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F811C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 18:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4E2C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 18:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BDC8206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 18:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FCD62175B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 18:58:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="u4FM61IZ"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="h317j10/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbfCLSrp (ORCPT
+        id S1726998AbfCLS6S (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 14:47:45 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41627 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfCLSrp (ORCPT
+        Tue, 12 Mar 2019 14:58:18 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36131 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbfCLS6S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 14:47:45 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z25so3267759ljk.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 11:47:44 -0700 (PDT)
+        Tue, 12 Mar 2019 14:58:18 -0400
+Received: by mail-lf1-f66.google.com with SMTP id d18so2226592lfn.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 11:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=5cyBCCut1WdqUxxdADU104NSQRWxK8HivBAwmqUf5is=;
-        b=u4FM61IZUTZjLl3AMbww5F0p+71WIHmTrYGfCDEQQYf785j6OiM7EgTy8fTebjDtBL
-         PrDDoeedeXn9Hj+X6VfhAmF70FlFcIKIGcoRNxdLdlZVY4HLWjbEUpRnK4njuFgXhSbN
-         UN4O/22mGJOYny0UkkUuoM37E8gsUOLr08hEBb79E4ul8vjaHxo3yLTp2CepbsiT6Fx/
-         6nQ1meqLvpFCi9xdtEnJfajjsduYVnPE56rJDhJ00FI3ObcRuytOVGOHxR3xVKSaZCfM
-         FKk8A9qxvTOz1Ha10tufxmP/ZVjEPw3Z1rrXtYrjrKE0+heZ0imAzRO95WJ+eontmEoR
-         MXcA==
+        bh=gUXKk4v3z/w6O3y/bAbmDLgMgw6R3rwXWJ2YFZUboac=;
+        b=h317j10/4GRXkr0KCjl2KqwZTPyeSWZO152z5CCV+mwPVygZH0Nn4C6uwglhTqHDca
+         FDYaQLA4krZtr+6foMjJbRURAT9qoGUsTVEmfkOdzOUObVcgICPuaieGajoYo7kvipMA
+         ZHNV7RotDHU7wZ2iQwiZgBvadLJQEZmNoa2YDyMiv/4u3lvoWVo2GSHk0mB72k9qWIjb
+         Iu/nYhrKmkSHYQYyPSK0NU1v8YiXznQLtQYwMACrNlh3us0HbTf1yLv+6SCn0C4avSc6
+         OSs251ZSV+egPlarqYMR+lKe4YJv08HTaGFhR+ktL8jY2b8GqUEtAgtNiA/82thedN0h
+         PIeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=5cyBCCut1WdqUxxdADU104NSQRWxK8HivBAwmqUf5is=;
-        b=RrBEp603SHV5O7J7PRmWVGiabjKClig9RQ2Yv2ThpMqv78LwBhpoR9/F5J60+FuCZW
-         WCzKRFE1XtORZe2fT0gJ1Ro9Tt+9m06pcZ/+FEp2ISPnS24lUPs2Bn/sdngv3lVbGC+y
-         w8f4lkvOb7wOS9LjhO8Nobon8Hl1Y/DOCfaPY6T3ndFlAWho7yMFmhIHgO1Nd7nTDRSa
-         oQ8WqBQJ/rcifurqIVqZtb0Nqa+CWFs9q/1lpq8m+Yohz7GzqrsPZI7IpOxXR3enSIrF
-         2G14KY8L8TPUJUhrCXdEy9INDgxKICifr59yuTZhMeIdXu3s/VPTcStZEPPHRMZ61/bU
-         jdcw==
-X-Gm-Message-State: APjAAAV+U19Ye/rCIKoTNxkZHypcD+nNA/mf+3GV6VGv2ZYxrvvSXbam
-        n9sUOv+qm8YsiOKo41w9Zt346Q==
-X-Google-Smtp-Source: APXvYqyrWMFuGkiUzPNAfM5TAM9Ph9pBLGtu2H03dYgbXrosgiykubAGDOJrY/wwTtoN8wBmYa7fhA==
-X-Received: by 2002:a2e:9b15:: with SMTP id u21mr20660030lji.82.1552416463413;
-        Tue, 12 Mar 2019 11:47:43 -0700 (PDT)
+        bh=gUXKk4v3z/w6O3y/bAbmDLgMgw6R3rwXWJ2YFZUboac=;
+        b=keUOaDMCwizwuob8Um4Bms5Nx11LjL91JwTDKNSFQ4Y2zEeaAQ9+iMRlp0XsNeqRwf
+         V5lbiNEkjMAN/gGBT9DBmH7Z9FiMtsVVUI2CSMC5xtelJK78cgYXUIq9p6bI8U8/fove
+         WHAg/JnHDL/9acSjfqKp3Fexm4znR8Obm3iRoVsfDLxeQo/x2gVQw9mOPXfYuhCjSLvi
+         GN72AOWj8vge+w7BTxuAwzmv+GXeDkzehmb+cmCPRuv5qCDdHwWEiAVB8DgrG32sr9D4
+         3Izr1mwPhgvEmejy6PW+QNKIF4wyCBUOiYo+VPFBd/Ard7sg1uw0pxWqk8Y3jEiV4mdn
+         egvw==
+X-Gm-Message-State: APjAAAW/QJ2ETZuM+Mz9lHBKTd4OkzniTXPLRA2FTa86U2B+G6ggbK17
+        Rb3bu1NpXGOktpiSj3LCY+fOPA==
+X-Google-Smtp-Source: APXvYqxhddKYdy527cSDReVAYsi8L1RZkCQaI8dGk9d3d3EXmGu7nqNhHxsn4eREy4W/yu4gKvqyrw==
+X-Received: by 2002:a19:cfd1:: with SMTP id f200mr5680135lfg.81.1552417094717;
+        Tue, 12 Mar 2019 11:58:14 -0700 (PDT)
 Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id g65sm1493141lji.74.2019.03.12.11.47.42
+        by smtp.gmail.com with ESMTPSA id w30sm1478451ljd.65.2019.03.12.11.58.13
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Mar 2019 11:47:42 -0700 (PDT)
+        Tue, 12 Mar 2019 11:58:13 -0700 (PDT)
 From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
 X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Date:   Tue, 12 Mar 2019 19:47:42 +0100
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 3/3] rcar-csi2: Move setting of Field Detection
- Control Register
-Message-ID: <20190312184742.GD1776@bigcity.dyn.berto.se>
-References: <20190308235702.27057-1-niklas.soderlund+renesas@ragnatech.se>
- <20190308235702.27057-4-niklas.soderlund+renesas@ragnatech.se>
- <20190311093910.GK4775@pendragon.ideasonboard.com>
+Date:   Tue, 12 Mar 2019 19:58:13 +0100
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] rcar-csi2: restart CSI-2 link if error is detected
+Message-ID: <20190312185813.GE1776@bigcity.dyn.berto.se>
+References: <20190218101541.15819-1-niklas.soderlund+renesas@ragnatech.se>
+ <0fb0337f-32f7-729b-c30b-1453c3b6e901@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190311093910.GK4775@pendragon.ideasonboard.com>
+In-Reply-To: <0fb0337f-32f7-729b-c30b-1453c3b6e901@xs4all.nl>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Hi Hans,
 
 Thanks for your feedback.
 
-On 2019-03-11 11:39:10 +0200, Laurent Pinchart wrote:
-> Hi Niklas,
-> 
-> Thank you for the patch.
-> 
-> On Sat, Mar 09, 2019 at 12:57:02AM +0100, Niklas Söderlund wrote:
-> > Latest datasheet (rev 1.50) clarifies that the FLD register should be
-> > set after LINKCNT.
-> 
-> Wasn't this already the case in rev 1.00 ?
-
-Yes it is, thanks for noticing, will fix for next version.
-
-> 
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > ---
-> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+On 2019-03-11 11:53:01 +0100, Hans Verkuil wrote:
+> On 2/18/19 11:15 AM, Niklas Söderlund wrote:
+> > Restart the CSI-2 link if the CSI-2 receiver detects an error during
+> > reception. The driver did nothing when a link error happened and the
+> > data flow simply stopped without the user knowing why.
 > > 
-> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > index 07d5c8c66b7cd382..077e0d344b395b54 100644
-> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > @@ -529,7 +529,6 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >  	rcsi2_write(priv, PHTC_REG, 0);
-> >  
-> >  	/* Configure */
-> > -	rcsi2_write(priv, FLD_REG, fld);
-> >  	rcsi2_write(priv, VCDT_REG, vcdt);
-> >  	if (vcdt2)
-> >  		rcsi2_write(priv, VCDT2_REG, vcdt2);
-> > @@ -560,6 +559,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >  	rcsi2_write(priv, PHYCNT_REG, phycnt);
-> >  	rcsi2_write(priv, LINKCNT_REG, LINKCNT_MONITOR_EN |
-> >  		    LINKCNT_REG_MONI_PACT_EN | LINKCNT_ICLK_NONSTOP);
-> > +	rcsi2_write(priv, FLD_REG, fld);
-> >  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
-> >  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
-> >  
+> > Change the driver to try and recover from errors by restarting the link
+> > and informing the user that something is not right. For obvious reasons
+> > it's not possible to recover from all errors (video source disconnected
+> > for example) but in such cases the user is at least informed of the
+> > error and the same behavior of the stopped data flow is retained.
 > 
-> The change looks reasonable, so after updating the commit message,
+> What you really would like to have is that when a CSI error is detected,
+> the CSI driver can ask upstream whether or not a disconnect has taken place.
 > 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> If that was the case, then there is no point in restarting the CSI.
+> 
+> While a disconnect is very uncommon for a sensor, it is of course perfectly
+> normal if an HDMI-to-CSI bridge was connected to the CSI port.
+> 
+> Unfortunately, we don't have such functionality, but perhaps this is something
+> to think about?
 
-Thanks!
+I think your idea sounds good and that such a functionality could be 
+useful. I have a  feeling such a functionality could be related to 
+notifications?
 
 > 
-> -- 
+> This does mean, however, that I don't like the dev_err since it doesn't have
+> to be an error. I would suggest replacing the first dev_err by dev_info and
+> the second by dev_warn.
+
+With the background you provides I agree that they should not be 
+dev_err. I will update as you suggest for the next version, thanks.
+
+> 
 > Regards,
 > 
-> Laurent Pinchart
+> 	Hans
+> 
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 52 ++++++++++++++++++++-
+> >  1 file changed, 51 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > index f90b380478775015..0506fe4106d5c012 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > @@ -84,6 +84,9 @@ struct rcar_csi2;
+> >  
+> >  /* Interrupt Enable */
+> >  #define INTEN_REG			0x30
+> > +#define INTEN_INT_AFIFO_OF		BIT(27)
+> > +#define INTEN_INT_ERRSOTHS		BIT(4)
+> > +#define INTEN_INT_ERRSOTSYNCHS		BIT(3)
+> >  
+> >  /* Interrupt Source Mask */
+> >  #define INTCLOSE_REG			0x34
+> > @@ -540,6 +543,10 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+> >  	if (mbps < 0)
+> >  		return mbps;
+> >  
+> > +	/* Enable interrupts. */
+> > +	rcsi2_write(priv, INTEN_REG, INTEN_INT_AFIFO_OF | INTEN_INT_ERRSOTHS
+> > +		    | INTEN_INT_ERRSOTSYNCHS);
+> > +
+> >  	/* Init */
+> >  	rcsi2_write(priv, TREF_REG, TREF_TREF);
+> >  	rcsi2_write(priv, PHTC_REG, 0);
+> > @@ -702,6 +709,43 @@ static const struct v4l2_subdev_ops rcar_csi2_subdev_ops = {
+> >  	.pad	= &rcar_csi2_pad_ops,
+> >  };
+> >  
+> > +static irqreturn_t rcsi2_irq(int irq, void *data)
+> > +{
+> > +	struct rcar_csi2 *priv = data;
+> > +	u32 status, err_status;
+> > +
+> > +	status = rcsi2_read(priv, INTSTATE_REG);
+> > +	err_status = rcsi2_read(priv, INTERRSTATE_REG);
+> > +
+> > +	if (!status)
+> > +		return IRQ_HANDLED;
+> > +
+> > +	rcsi2_write(priv, INTSTATE_REG, status);
+> > +
+> > +	if (!err_status)
+> > +		return IRQ_HANDLED;
+> > +
+> > +	rcsi2_write(priv, INTERRSTATE_REG, err_status);
+> > +
+> > +	dev_err(priv->dev, "Transfer error, restarting CSI-2 receiver\n");
+> > +
+> > +	return IRQ_WAKE_THREAD;
+> > +}
+> > +
+> > +static irqreturn_t rcsi2_irq_thread(int irq, void *data)
+> > +{
+> > +	struct rcar_csi2 *priv = data;
+> > +
+> > +	mutex_lock(&priv->lock);
+> > +	rcsi2_stop(priv);
+> > +	usleep_range(1000, 2000);
+> > +	if (rcsi2_start(priv))
+> > +		dev_err(priv->dev, "Failed to restart CSI-2 receiver\n");
+> > +	mutex_unlock(&priv->lock);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> >  /* -----------------------------------------------------------------------------
+> >   * Async handling and registration of subdevices and links.
+> >   */
+> > @@ -982,7 +1026,7 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
+> >  				 struct platform_device *pdev)
+> >  {
+> >  	struct resource *res;
+> > -	int irq;
+> > +	int irq, ret;
+> >  
+> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >  	priv->base = devm_ioremap_resource(&pdev->dev, res);
+> > @@ -993,6 +1037,12 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
+> >  	if (irq < 0)
+> >  		return irq;
+> >  
+> > +	ret = devm_request_threaded_irq(&pdev->dev, irq, rcsi2_irq,
+> > +					rcsi2_irq_thread, IRQF_SHARED,
+> > +					KBUILD_MODNAME, priv);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	priv->rstc = devm_reset_control_get(&pdev->dev, NULL);
+> >  	if (IS_ERR(priv->rstc))
+> >  		return PTR_ERR(priv->rstc);
+> > 
+> 
 
 -- 
 Regards,
