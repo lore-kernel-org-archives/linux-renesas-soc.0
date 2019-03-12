@@ -2,111 +2,89 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C774C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 19:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC207C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 19:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42F6D2087C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 19:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A717214AE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 19:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1552419032;
+	bh=uLdV61BoSexkd+tMFnMtfJg1umQVZdDeZg691ofTirY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=H6AXaAkuzrfwEgSe9fC3aJ8O0BehMxKFaHeVSDp1QiBbFmzXMk3ukqlTbGJNZI9Zr
+	 x2HdhDJ1iWjjGldKfq+DvGiCJkSRanryA1oka9fvexXZSsysIn+sk+vejwx6YkzxjO
+	 s6UD19RtOjzSDxkhOVP3oZXVpvwJnwqntyVxKU9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfCLTD4 (ORCPT
+        id S1727115AbfCLTab (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 15:03:56 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:39530 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726815AbfCLTDz (ORCPT
+        Tue, 12 Mar 2019 15:30:31 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34311 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbfCLTa3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 15:03:55 -0400
-Received: by mail-vk1-f196.google.com with SMTP id i68so923961vke.6;
-        Tue, 12 Mar 2019 12:03:54 -0700 (PDT)
+        Tue, 12 Mar 2019 15:30:29 -0400
+Received: by mail-ot1-f68.google.com with SMTP id r19so3617776otn.1;
+        Tue, 12 Mar 2019 12:30:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o1h8G2iyppaSn5rKfpYOUBhQRQuqezP7Kg2IErjp+EA=;
-        b=EHGP08rL4yyEBQmnct5qRGCau3m54e/qoobYz6xhmJv9w+l3VI9Z86j7C+lWHGcZaW
-         lpAiTQ5LbCFW2i/m7VVtbrWuEXIhEevuRy4Z/Wp9Y2zr9dJofukDnmJym93gCiaoo8w+
-         skXv7/QjyNcgRaaJt/z5qlKi66qtV3oVJFcKzkxAGJqSXq/ChvN8zmpUZ38b+SUyieRq
-         AMHsXm5+M1AbvT5WQh/Fyqd4KSYU6WvW73t9oImKMhbGYOmFrt4vgIdYsjQmu4KnCzD4
-         lgLeaaG97KM9FdSL4oB0A6r2YvGaHl5HWCzrCZbqpHyae4H4unxVa58bYKiZDDJLgO/t
-         Ghww==
-X-Gm-Message-State: APjAAAVZvl8yLthEbq51SeeBxixHs/9pUdl5iPx7sEV2mm585/BUsloN
-        oE7kOI66OP9kHtjqy8T2+ox/EU8K9Cw15LoBtP0=
-X-Google-Smtp-Source: APXvYqyG0EpO51Ka5tScRa2tTtFpdAjL0eb073YLi8XoTlB5laUBxhwpiaPFTCz1oiyWaXkJQp0h5wzZSLs0shLzTaQ=
-X-Received: by 2002:a1f:95d5:: with SMTP id x204mr20915557vkd.72.1552417433842;
- Tue, 12 Mar 2019 12:03:53 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=g7fBk2E0w6F0Sq10FcEpejKscfp3hSpPjkPjrM5/j7Y=;
+        b=LdCm/sCSTVkvUnb/LxfW5Axy/GxFNC8Gd3R14DMholE8lC0y89B5oGsapnpI7/e1er
+         Vu0RvBpLtf0XhdpoQtErDf+HoBxpoRUvRMmxcuozWkH9L4fgUkY9uCaMJXmmEBpucsUA
+         MRc05A2CrNhXHP5U/+iE9OIVNHTCXct5GJokxRRUZSmIPpQGrR7ym7HgFRswGUvQMDFc
+         fRp+7yGnkgI0j5lzOQDGsOjmUHvuQzAh9kPyoGpAJytV0eHnTCpT8wWzh7B1XLbPF+r3
+         gqCkEBH8OIELhKhV8P4qesjhltjnpMVFBzZNCJDJC+yjvCybI8SgcySASZ23cOabMArn
+         R9uQ==
+X-Gm-Message-State: APjAAAX0AV9KamRZiPm77WqqeB9r9K0FAiBYzH+yFt8z8BCi1mV2xLTV
+        0qL/ihQWkLR4J/NHFHjOt1I/WXY/zg==
+X-Google-Smtp-Source: APXvYqyeBglc2D6gbG5NUs/J+YX0yWU4mMrBtRfG3Ce3zrLe8xieY2ZEaXNlQElEqF8XjNCoUNhfJw==
+X-Received: by 2002:a9d:6f10:: with SMTP id n16mr24766009otq.105.1552419028508;
+        Tue, 12 Mar 2019 12:30:28 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w125sm3722039oiw.10.2019.03.12.12.30.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Mar 2019 12:30:27 -0700 (PDT)
+Date:   Tue, 12 Mar 2019 14:30:27 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: rcar-csi2: List resets as a
+ mandatory property
+Message-ID: <20190312193027.GA26420@bogus>
+References: <20190308234722.25775-1-niklas.soderlund+renesas@ragnatech.se>
+ <20190308234722.25775-2-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-References: <1552330521-4276-1-git-send-email-info@metux.net> <1552330521-4276-26-git-send-email-info@metux.net>
-In-Reply-To: <1552330521-4276-26-git-send-email-info@metux.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Mar 2019 20:03:42 +0100
-Message-ID: <CAMuHMdX7HCHJiKYXVMzYrHmjjDy6YbLntZbep_AKsLY3bxpZWA@mail.gmail.com>
-Subject: Re: [PATCH 26/42] drivers: gpio: rcar: pendantic formatting
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, hoan@os.amperecomputing.com,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Lyra Zhang <zhang.lyra@gmail.com>, keguang.zhang@gmail.com,
-        vz@mleia.com, Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Jun Nie <jun.nie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190308234722.25775-2-niklas.soderlund+renesas@ragnatech.se>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-CC linux-renesas-soc
+On Sat,  9 Mar 2019 00:47:21 +0100, =?UTF-8?q?Niklas=20S=C3=B6derlund?= wrote:
+> The resets property will become mandatory to operate the device, list it
+> as such. All device tree source files have always included the reset
+> property so making it mandatory will not introduce any regressions.
+> 
+> While at it improve the description for the clocks property.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-On Mon, Mar 11, 2019 at 7:57 PM Enrico Weigelt, metux IT consult
-<info@metux.net> wrote:
-> a tab sneaked in, where it shouldn't be.
->
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-
-With Thierry's comments addressed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/drivers/gpio/gpio-rcar.c
-> +++ b/drivers/gpio/gpio-rcar.c
-> @@ -490,7 +490,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
->         irq_chip->irq_unmask = gpio_rcar_irq_enable;
->         irq_chip->irq_set_type = gpio_rcar_irq_set_type;
->         irq_chip->irq_set_wake = gpio_rcar_irq_set_wake;
-> -       irq_chip->flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
-> +       irq_chip->flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
->
->         ret = gpiochip_add_data(gpio_chip, p);
->         if (ret) {
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Rob Herring <robh@kernel.org>
