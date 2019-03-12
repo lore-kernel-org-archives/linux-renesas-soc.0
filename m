@@ -2,103 +2,117 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37ADC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AB6C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 822A92054F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:14:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E1012147C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:45:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725894AbfCLPOu (ORCPT
+        id S1726329AbfCLPpE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 11:14:50 -0400
-Received: from mga03.intel.com ([134.134.136.65]:14262 "EHLO mga03.intel.com"
+        Tue, 12 Mar 2019 11:45:04 -0400
+Received: from sauhun.de ([88.99.104.3]:40280 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbfCLPOu (ORCPT
+        id S1726255AbfCLPpE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 11:14:50 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2019 08:14:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,471,1544515200"; 
-   d="scan'208";a="133677353"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by fmsmga007.fm.intel.com with SMTP; 12 Mar 2019 08:14:44 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Tue, 12 Mar 2019 17:14:43 +0200
-Date:   Tue, 12 Mar 2019 17:14:43 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2] gpu: drm: atomic_helper: Fix spelling errors
-Message-ID: <20190312151443.GE3888@intel.com>
-References: <20190312003307.14116-1-kieran.bingham+renesas@ideasonboard.com>
+        Tue, 12 Mar 2019 11:45:04 -0400
+Received: from localhost (p54B335FE.dip0.t-ipconnect.de [84.179.53.254])
+        by pokefinder.org (Postfix) with ESMTPSA id A876C2C282F;
+        Tue, 12 Mar 2019 16:45:01 +0100 (CET)
+Date:   Tue, 12 Mar 2019 16:45:01 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        Phil Reid <preid@electromag.com.au>,
+        Tero Kristo <t-kristo@ti.com>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [RFC PATCH v2 0/7] i2c: core: introduce atomic transfers
+Message-ID: <20190312154501.6v2symbq6eutp6dj@ninjato>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+ <CAHp75Vc-WYUJgaDPuWUn-_0Cizq=MG7N2cdHJxaEbad+xntcjQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zkokbbl47s6o5i5w"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190312003307.14116-1-kieran.bingham+renesas@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHp75Vc-WYUJgaDPuWUn-_0Cizq=MG7N2cdHJxaEbad+xntcjQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 12:33:07AM +0000, Kieran Bingham wrote:
-> Trivial fixes identified while working on the DRM code.
-> 
->   s/artifically/artificially/
->   s/achive/achieve/
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
-> 
-> v2: - Actually spell achieve correctly!
 
-drm convention is to put this above the --- so that it gets included in
-the commit msg.
+--zkokbbl47s6o5i5w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-With that
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-> 
->  drivers/gpu/drm/drm_atomic_helper.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 540a77a2ade9..2453678d1186 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -1752,7 +1752,7 @@ int drm_atomic_helper_commit(struct drm_device *dev,
->  	 *
->  	 * NOTE: Commit work has multiple phases, first hardware commit, then
->  	 * cleanup. We want them to overlap, hence need system_unbound_wq to
-> -	 * make sure work items don't artifically stall on each another.
-> +	 * make sure work items don't artificially stall on each another.
->  	 */
->  
->  	drm_atomic_state_get(state);
-> @@ -1786,7 +1786,7 @@ EXPORT_SYMBOL(drm_atomic_helper_commit);
->   *
->   * Asynchronous workers need to have sufficient parallelism to be able to run
->   * different atomic commits on different CRTCs in parallel. The simplest way to
-> - * achive this is by running them on the &system_unbound_wq work queue. Note
-> + * achieve this is by running them on the &system_unbound_wq work queue. Note
->   * that drivers are not required to split up atomic commits and run an
->   * individual commit in parallel - userspace is supposed to do that if it cares.
->   * But it might be beneficial to do that for modesets, since those necessarily
-> -- 
-> 2.19.1
+> > So, finally, here is the second RFC for supporting I2C transfers in ato=
+mic
+> > contexts (i.e. very late). This will need some text because I tried som=
+e things
+> > on the way but had to discard them. However, I think it is important to=
+ have
+> > that documented.
+>=20
+> > Sorry, no TLDR; text here - I think this topic deserves a few words ;)
+>=20
+> Thank you for this work! It was indeed interesting reading.
 
--- 
-Ville Syrjälä
-Intel
+Thanks, glad to hear that :)
+
+> And since your series is targetting some exiting use cases, I would
+> drop as well academic variants of brain-damaged hw design, I think it
+> worth to go.
+
+Well, yes and no. I am with you that some complicated muxed setups could
+be argued to be way over the top. However, with the panic
+fault-injector, I can get my simple "PMIC directly (even exclusively)
+attached to root adapter" setup to stall. By simply ignoring the lock,
+such setups could work again. But this series does not implement this
+because it would need a redesign, i.e. tie into i2c_transfer and not
+later in __i2c_transfer.
+
+Yet, before doing this, I was interested in discussion if ignoring the
+lock is really desirable.
+
+This series seems like a valid approach to me if we still want to
+respect the locking.
+
+
+--zkokbbl47s6o5i5w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyH0/0ACgkQFA3kzBSg
+Kbb02g//bFuyt6ZF0xKTx4YGhpVUmqDkQpdYzmFvXr2J4/UUeL43QsGvO4P05zuh
+in13OeiEaWgo1tnE6u9E+DrzEDzPNRiTwER4SB24KbymIncuoyNhBE0UIbuglcbE
+j1XUxgKQMl4YhZuTKGWZVuBCFaPty4vSxSzjrYgE2pk59ETbZiKOplCkklTHhfVX
+u77k21N3rO8DJpqhRAsEc2hA5hIH8PTw/TfDlwC6/QQNmHZDHxBS7Ae6t36mkhSS
+jHhI17n+oXL/WJqcQp0vPaU7rXuS8ZMw9VuoB/djEuZC7POxydKERicPKUKpcM8x
+iFBWBP370FOQGXxOnCUrwz6j9cooR3D7frKliTmQYWn3WKf1mf7lcW1cVqpxzp5h
+U+PbpWwI1ZmqixC2XhNfhmKuWaLfIcCj0UacaSge0Fya+P1nIg+RSnm0OBuMa0uW
+wKrVXMKUPcDY8IFcqygQE0kkmPnws5kQI1/mN62efcLmI5+Z/zNNx+y1Axyv8Mq8
+dteeml5Ig8tiRzUDLBmCv/MYMDEJTi4guZe7NLPCz04Z8TGMgXtp0bkoFM5TRwET
+iWl3w9okHcetxUO8Mf2RkS80p6yy0b0B1Z9ND4IjcSkvunXxRl+ygtwjHtd68iZK
+ujH2j4D5SGLXuygLnSsjpJXRzN+FjoXnuF1Y880JSCoNhJ6aL0c=
+=rDLe
+-----END PGP SIGNATURE-----
+
+--zkokbbl47s6o5i5w--
