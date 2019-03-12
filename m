@@ -2,130 +2,303 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1480CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488A8C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 18:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C0B2054F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 15:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED2D22087C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 18:12:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aJynixs3"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="LOCVvLL+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfCLP7W (ORCPT
+        id S1727327AbfCLSMM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 11:59:22 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60228 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbfCLP7W (ORCPT
+        Tue, 12 Mar 2019 14:12:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40921 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbfCLSMI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 11:59:22 -0400
-Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EFC0A33C;
-        Tue, 12 Mar 2019 16:59:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552406359;
-        bh=io54To9FxPECqduKv6dSKmWHoGUJ5duFHD+rfRjcPzY=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aJynixs3pTeSwkK82DMMTlvEVqWz4T/vlx9ReEbCHIgf+ekcAepHdLVOHrDmlLm56
-         b1j/NDjqxQGmH1W9bulGCLUo8/Gq+4IvnCIq23qHpBRPklL+85lzVwB7qF2odoKupk
-         60KSVnXyz4cE4y9iXUHDaxixxHP3Sw3jxvG04x1M=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v2] gpu: drm: atomic_helper: Fix spelling errors
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <20190312003307.14116-1-kieran.bingham+renesas@ideasonboard.com>
- <20190312151443.GE3888@intel.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <7b0ff11c-68f3-4e2e-f969-27a14062158e@ideasonboard.com>
-Date:   Tue, 12 Mar 2019 15:59:15 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Mar 2019 14:12:08 -0400
+Received: by mail-lj1-f193.google.com with SMTP id w6so3167538ljd.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 11:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=BEFAAliEV8zfpXpE49t1BnKYgkzZTC1nKbmHkqxWCL8=;
+        b=LOCVvLL+Z17BayuxuHBFy5QS8XMVKTGBEPOUo1cGrdL28rWyvaIutwIeVcI3s1rLrn
+         kRSrcIdjSaGLmUfIq7qUOOYOODqxXYW7Jk9za8Vv5BLaLMuWfu5lK3EPQUdnkDtErR7G
+         gVdW9Dao2fZsiagnFuiWwlmPjWHphNR/+keGVQelhKMkdp4kvIZO8+2UPveRIyYng1Kj
+         up4rCUd6rw3aC6VigPQpwqohygbSqns08apAIQbsmsp2EfHBajO6n7JicnhbTMOBAMH/
+         jtLAO3OJSACR7r0HJ5y5fIk3n0tDEmgKiATDuP+yZBvij7Y1q/Pjh/9B91ENzIj9BI/H
+         /4hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=BEFAAliEV8zfpXpE49t1BnKYgkzZTC1nKbmHkqxWCL8=;
+        b=MPux9udkTld5PIlyxMpL5RQe/PvsXb/6wQkOC6f4uNgmnWLCgpn8LBWlcVv0y9k7sM
+         XhF4IKOYSKe7G542Z2Ityr0noYNkDzJc9gYSALdWTzyfqYa+3ttkWTqh5uPRjV3hucDp
+         8VkhPjo3Mlk/Kd/JFgqA13S2nwNDWg3j7nhn7Yyw3GAbq5dVOIB7IbdJP7fFzUO/tY44
+         JTT5iSJAdnObA/sH9aAO8/TUy3+GsYGvN7Odqrp2iui89TYWajma9R/ODgaiO69uoC95
+         gMxOCJqUGBBciMrEXOsjWM61kywdcZjZuUYcWg/OsVBKfs+BZ0TSv6jJhmZglk0K6XWN
+         dJtA==
+X-Gm-Message-State: APjAAAVCI76MWB2xMFeJnGBx0rsILT08chBDQJu71mUDcjCMXUlyGJiI
+        uxZwLrwPGHaaXvuNagvSgWAz2Q==
+X-Google-Smtp-Source: APXvYqyLrlJN6JH6ThqNhn2ONVcnx3GWmtLsK5WSIrvOeVIAkpld8EbYptdsWntyFeNvogCNmEsi9Q==
+X-Received: by 2002:a2e:8018:: with SMTP id j24mr19825439ljg.118.1552414208859;
+        Tue, 12 Mar 2019 11:10:08 -0700 (PDT)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id d5sm1689578lfi.95.2019.03.12.11.10.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Mar 2019 11:10:08 -0700 (PDT)
+From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Date:   Tue, 12 Mar 2019 19:10:07 +0100
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rcar-csi2: Use standby mode instead of resetting
+Message-ID: <20190312181007.GB1776@bigcity.dyn.berto.se>
+References: <20190308234722.25775-1-niklas.soderlund+renesas@ragnatech.se>
+ <20190308234722.25775-3-niklas.soderlund+renesas@ragnatech.se>
+ <20190311095351.GL4775@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <20190312151443.GE3888@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190311095351.GL4775@pendragon.ideasonboard.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Ville,
+Hi Laurent,
 
-On 12/03/2019 15:14, Ville SyrjÃ¤lÃ¤ wrote:
-> On Tue, Mar 12, 2019 at 12:33:07AM +0000, Kieran Bingham wrote:
->> Trivial fixes identified while working on the DRM code.
->>
->>   s/artifically/artificially/
->>   s/achive/achieve/
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>
->> v2: - Actually spell achieve correctly!
+Thanks for your feedback.
+
+On 2019-03-11 11:53:51 +0200, Laurent Pinchart wrote:
+> Hi Niklas,
 > 
-> drm convention is to put this above the --- so that it gets included in
-> the commit msg.
+> Thank you for the patch.
+> 
+> On Sat, Mar 09, 2019 at 12:47:22AM +0100, Niklas Söderlund wrote:
+> > Later versions of the datasheet updates the reset procedure to more
+> > closely resemble the standby mode. Update the driver to enter and exit
+> > the standby mode instead of resetting the hardware before and after
+> > streaming is started and stopped.
+> 
+> I was mislead thinking this added support for module reset in addition
+> to software reset (SRST_SRST-, but it actually removes the software
+> reset completely. Should the commit message make this clear ?
 
-Oh - in linux-media these are just dropped.
-
-I'll try to remember this for my future work in DRM.
-
-I don't have commit access anyway, so can I presume whomever will pick
-this up will adjust if necessary?
-
-Or should I repost? (which might be a bit redundant just to move a patch
-version comment which would then increase again :D )
-
-
-> With that
-> Reviewed-by: Ville SyrjÃ¤lÃ¤ <ville.syrjala@linux.intel.com>
-
-Thanks,
---
-Regards
-
-Kieran
-
+Good point, will add a clarification in next version.
 
 > 
->>
->>  drivers/gpu/drm/drm_atomic_helper.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
->> index 540a77a2ade9..2453678d1186 100644
->> --- a/drivers/gpu/drm/drm_atomic_helper.c
->> +++ b/drivers/gpu/drm/drm_atomic_helper.c
->> @@ -1752,7 +1752,7 @@ int drm_atomic_helper_commit(struct drm_device *dev,
->>  	 *
->>  	 * NOTE: Commit work has multiple phases, first hardware commit, then
->>  	 * cleanup. We want them to overlap, hence need system_unbound_wq to
->> -	 * make sure work items don't artifically stall on each another.
->> +	 * make sure work items don't artificially stall on each another.
->>  	 */
->>  
->>  	drm_atomic_state_get(state);
->> @@ -1786,7 +1786,7 @@ EXPORT_SYMBOL(drm_atomic_helper_commit);
->>   *
->>   * Asynchronous workers need to have sufficient parallelism to be able to run
->>   * different atomic commits on different CRTCs in parallel. The simplest way to
->> - * achive this is by running them on the &system_unbound_wq work queue. Note
->> + * achieve this is by running them on the &system_unbound_wq work queue. Note
->>   * that drivers are not required to split up atomic commits and run an
->>   * individual commit in parallel - userspace is supposed to do that if it cares.
->>   * But it might be beneficial to do that for modesets, since those necessarily
->> -- 
->> 2.19.1
+> > While at it break out the full start and stop procedures from
+> > rcsi2_s_stream() into the existing helper functions.
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > ---
+> >  drivers/media/platform/rcar-vin/Kconfig     |  1 +
+> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 69 +++++++++++++--------
+> >  2 files changed, 43 insertions(+), 27 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
+> > index e3eb8fee253658da..f26f47e3bcf44825 100644
+> > --- a/drivers/media/platform/rcar-vin/Kconfig
+> > +++ b/drivers/media/platform/rcar-vin/Kconfig
+> > @@ -3,6 +3,7 @@ config VIDEO_RCAR_CSI2
+> >  	tristate "R-Car MIPI CSI-2 Receiver"
+> >  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF
+> >  	depends on ARCH_RENESAS || COMPILE_TEST
+> > +	select RESET_CONTROLLER
+> >  	select V4L2_FWNODE
+> >  	help
+> >  	  Support for Renesas R-Car MIPI CSI-2 receiver.
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > index f64528d2be3c95dd..7a1c9b549e0fffc6 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> > @@ -14,6 +14,7 @@
+> >  #include <linux/of_graph.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_runtime.h>
+> > +#include <linux/reset.h>
+> >  #include <linux/sys_soc.h>
+> >  
+> >  #include <media/v4l2-ctrls.h>
+> > @@ -350,6 +351,7 @@ struct rcar_csi2 {
+> >  	struct device *dev;
+> >  	void __iomem *base;
+> >  	const struct rcar_csi2_info *info;
+> > +	struct reset_control *rstc;
+> >  
+> >  	struct v4l2_subdev subdev;
+> >  	struct media_pad pads[NR_OF_RCAR_CSI2_PAD];
+> > @@ -387,11 +389,19 @@ static void rcsi2_write(struct rcar_csi2 *priv, unsigned int reg, u32 data)
+> >  	iowrite32(data, priv->base + reg);
+> >  }
+> >  
+> > -static void rcsi2_reset(struct rcar_csi2 *priv)
+> > +static void rcsi2_enter_standby(struct rcar_csi2 *priv)
+> >  {
+> > -	rcsi2_write(priv, SRST_REG, SRST_SRST);
+> > +	rcsi2_write(priv, PHYCNT_REG, 0);
+> > +	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
+> > +	reset_control_assert(priv->rstc);
+> >  	usleep_range(100, 150);
+> > -	rcsi2_write(priv, SRST_REG, 0);
+> > +	pm_runtime_put(priv->dev);
+> > +}
+> > +
+> > +static void rcsi2_exit_standby(struct rcar_csi2 *priv)
+> > +{
+> > +	pm_runtime_get_sync(priv->dev);
+> > +	reset_control_deassert(priv->rstc);
+> >  }
+> >  
+> >  static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
+> > @@ -462,7 +472,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
+> >  	return mbps;
+> >  }
+> >  
+> > -static int rcsi2_start(struct rcar_csi2 *priv)
+> > +static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+> >  {
+> >  	const struct rcar_csi2_format *format;
+> >  	u32 phycnt, vcdt = 0, vcdt2 = 0;
+> > @@ -506,7 +516,6 @@ static int rcsi2_start(struct rcar_csi2 *priv)
+> >  
+> >  	/* Init */
+> >  	rcsi2_write(priv, TREF_REG, TREF_TREF);
+> > -	rcsi2_reset(priv);
+> >  	rcsi2_write(priv, PHTC_REG, 0);
+> >  
+> >  	/* Configure */
+> > @@ -564,19 +573,36 @@ static int rcsi2_start(struct rcar_csi2 *priv)
+> >  	return 0;
+> >  }
+> >  
+> > +static int rcsi2_start(struct rcar_csi2 *priv)
+> > +{
+> > +	int ret;
+> > +
+> > +	rcsi2_exit_standby(priv);
+> > +
+> > +	ret = rcsi2_start_receiver(priv);
 > 
+> The rcsi2_start_receiver() function should be split in two, with
+> rcsi2_wait_phy_start() and below being performed after starting the
+> source. Alternatively you could start the source first, but I think a
+> split would be better.
 
+I don't think that would work nor is correct. In Figure 25.16.1.1 data 
+transfer should be started after confirmation of PHY start. If we call 
+s_stream on the source before confirming PHY start we will never be able 
+to detect LP-11.
+
+I interpret the diagram as the CSI-2 transmitter should be powered on 
+before conforming PHY start, something that should happen in s_power not 
+s_stream. We handle s_power correctly today using the v4l2-mc link 
+handling so I believe the current code is correct.
+
+Would you agree with my reasoning?
+
+> 
+> > +	if (ret) {
+> > +		rcsi2_enter_standby(priv);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = v4l2_subdev_call(priv->remote, video, s_stream, 1);
+> > +	if (ret) {
+> > +		rcsi2_enter_standby(priv);
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static void rcsi2_stop(struct rcar_csi2 *priv)
+> >  {
+> > -	rcsi2_write(priv, PHYCNT_REG, 0);
+> > -
+> > -	rcsi2_reset(priv);
+> > -
+> > -	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
+> > +	v4l2_subdev_call(priv->remote, video, s_stream, 0);
+> > +	rcsi2_enter_standby(priv);
+> 
+> Shouldn't you enter standby before stopping the source ? Otherwise
+> there's a risk of CSI errors being detected. Figures 25.23.1 and 25.23.2
+> seem to agree with me.
+
+I agree with you on this, it should enter standby before stopping the 
+source. Will change this for next version.
+
+> 
+> >  }
+> >  
+> >  static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
+> >  {
+> >  	struct rcar_csi2 *priv = sd_to_csi2(sd);
+> > -	struct v4l2_subdev *nextsd;
+> >  	int ret = 0;
+> >  
+> >  	mutex_lock(&priv->lock);
+> > @@ -586,27 +612,12 @@ static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
+> >  		goto out;
+> >  	}
+> >  
+> > -	nextsd = priv->remote;
+> > -
+> >  	if (enable && priv->stream_count == 0) {
+> > -		pm_runtime_get_sync(priv->dev);
+> > -
+> >  		ret = rcsi2_start(priv);
+> > -		if (ret) {
+> > -			pm_runtime_put(priv->dev);
+> > +		if (ret)
+> >  			goto out;
+> > -		}
+> > -
+> > -		ret = v4l2_subdev_call(nextsd, video, s_stream, 1);
+> > -		if (ret) {
+> > -			rcsi2_stop(priv);
+> > -			pm_runtime_put(priv->dev);
+> > -			goto out;
+> > -		}
+> >  	} else if (!enable && priv->stream_count == 1) {
+> >  		rcsi2_stop(priv);
+> > -		v4l2_subdev_call(nextsd, video, s_stream, 0);
+> > -		pm_runtime_put(priv->dev);
+> >  	}
+> >  
+> >  	priv->stream_count += enable ? 1 : -1;
+> > @@ -936,6 +947,10 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
+> >  	if (irq < 0)
+> >  		return irq;
+> >  
+> > +	priv->rstc = devm_reset_control_get(&pdev->dev, NULL);
+> > +	if (IS_ERR(priv->rstc))
+> > +		return PTR_ERR(priv->rstc);
+> > +
+> >  	return 0;
+> >  }
+> >  
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+
+-- 
+Regards,
+Niklas Söderlund
