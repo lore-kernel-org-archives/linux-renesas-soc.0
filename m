@@ -2,172 +2,79 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403B3C10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 12:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FAEC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 12:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0760120883
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 12:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14118206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 12:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfCLMKD (ORCPT
+        id S1726304AbfCLMMB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 08:10:03 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46817 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbfCLMKD (ORCPT
+        Tue, 12 Mar 2019 08:12:01 -0400
+Received: from sauhun.de ([88.99.104.3]:38670 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726284AbfCLMMB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 08:10:03 -0400
-Received: by mail-vs1-f65.google.com with SMTP id b17so1378804vsr.13;
-        Tue, 12 Mar 2019 05:10:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kbde4+uEsPNO6a+5RSI+FxTKy81CROniP1qUtHhNpIk=;
-        b=Nx/NrhyGQ0t/LKAx1iSbY+4G6lwSx9SfPBDqvF3FgmdKRqwbmodbrkijgMTO4o41Cv
-         u7TQL64jzbCkGLpzw3zsB2h3oorwy8CTogsqWklh48KGAdoFGKqr/jI11JznG8Of2VvT
-         EmtaZrMEn9WLs3bKemXMYQwRmGetmDKBqe08Ae3ddzlf36znKbR7435yvjVCVvPJLUDS
-         AXrDb0+SPRPG8dHD50uKBvZwlj0OYIhCRzcS5bkkU+jxOoc+UhAJO94Q/90XKoKS7uA9
-         fAAkHSRuDf8AfYU3lH4VO/z5RWCaDZjC1FCucFDZSnLEQ0xdqIwhd+EsxCxToAkpdjGC
-         D7hQ==
-X-Gm-Message-State: APjAAAW1/H7ZxdBfxTPJpvZLub7BWpZatJOmhdCxBPrr47lpto4JsZtu
-        M8DYS/62Rl883h3wCbHneQPEVQS9RaihlApqczwmDhF1
-X-Google-Smtp-Source: APXvYqw9BpMW1sPHB1IhUJoS/QugUjPwZVOkmcxEAMYKne2jSPC+T+OOeAVdM6x6l0XxFEYz9jhpI0ksoE7zQqNQ08Y=
-X-Received: by 2002:a67:ead0:: with SMTP id s16mr19022643vso.63.1552392601782;
- Tue, 12 Mar 2019 05:10:01 -0700 (PDT)
+        Tue, 12 Mar 2019 08:12:01 -0400
+Received: from localhost (p54B335FE.dip0.t-ipconnect.de [84.179.53.254])
+        by pokefinder.org (Postfix) with ESMTPSA id 18C582C282F;
+        Tue, 12 Mar 2019 13:11:59 +0100 (CET)
+Date:   Tue, 12 Mar 2019 13:11:55 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: add extra check to safe DMA buffer helper
+Message-ID: <20190312121155.yuug3mfcwxomqmba@ninjato>
+References: <20190309105441.18472-1-wsa+renesas@sang-engineering.com>
+ <CAJMQK-iDbBhD95Dweq2q8cMpJ65RCKUTzm8CLTYms6BxpqADXQ@mail.gmail.com>
+ <20190311184630.5yqy3wf2xkhukwp5@ninjato>
+ <CAJMQK-jPPdGO_-UK5qS1rqt0=Xg7RneLvyKApY3EFd33OPnSaw@mail.gmail.com>
 MIME-Version: 1.0
-References: <1552360594-21547-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20190312115458.GL31026@ulmo>
-In-Reply-To: <20190312115458.GL31026@ulmo>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 12 Mar 2019 13:09:49 +0100
-Message-ID: <CAMuHMdWQr3g3-4hpRXW4XcSkveAAN0T6ckHyU_afkQmoHX7Pag@mail.gmail.com>
-Subject: Re: [PATCH] pwm: Avoid deadlock warning when removing PWM device
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phong Hoang <phong.hoang.wz@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nco6njdw4ej4j6of"
+Content-Disposition: inline
+In-Reply-To: <CAJMQK-jPPdGO_-UK5qS1rqt0=Xg7RneLvyKApY3EFd33OPnSaw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Thierry,
 
-On Tue, Mar 12, 2019 at 12:55 PM Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Tue, Mar 12, 2019 at 12:16:34PM +0900, Yoshihiro Shimoda wrote:
-> > From: Phong Hoang <phong.hoang.wz@renesas.com>
-> >
-> > This patch fixes deadlock warning if removing PWM device
-> > when CONFIG_PROVE_LOCKING is enabled.
-> >
-> > This issue can be reproceduced by the following steps on
-> > the R-Car H3 Salvator-X board if the backlight is disabled:
-> >
-> >  # cd /sys/class/pwm/pwmchip0
-> >  # echo 0 > export
-> >  # ls
-> >  device  export  npwm  power  pwm0  subsystem  uevent  unexport
-> >  # cd device/driver
-> >  # ls
-> >  bind  e6e31000.pwm  uevent  unbind
-> >  # echo e6e31000.pwm > unbind
-> >
-> > [   87.659974] ======================================================
-> > [   87.666149] WARNING: possible circular locking dependency detected
-> > [   87.672327] 5.0.0 #7 Not tainted
-> > [   87.675549] ------------------------------------------------------
-> > [   87.681723] bash/2986 is trying to acquire lock:
-> > [   87.686337] 000000005ea0e178 (kn->count#58){++++}, at: kernfs_remove_by_name_ns+0x50/0xa0
-> > [   87.694528]
-> > [   87.694528] but task is already holding lock:
-> > [   87.700353] 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
-> > [   87.707405]
-> > [   87.707405] which lock already depends on the new lock.
-> > [   87.707405]
-> > [   87.715574]
-> > [   87.715574] the existing dependency chain (in reverse order) is:
-> > [   87.723048]
-> > [   87.723048] -> #1 (pwm_lock){+.+.}:
-> > [   87.728017]        __mutex_lock+0x70/0x7e4
-> > [   87.732108]        mutex_lock_nested+0x1c/0x24
-> > [   87.736547]        pwm_request_from_chip.part.6+0x34/0x74
-> > [   87.741940]        pwm_request_from_chip+0x20/0x40
-> > [   87.746725]        export_store+0x6c/0x1f4
-> > [   87.750820]        dev_attr_store+0x18/0x28
-> > [   87.754998]        sysfs_kf_write+0x54/0x64
-> > [   87.759175]        kernfs_fop_write+0xe4/0x1e8
-> > [   87.763615]        __vfs_write+0x40/0x184
-> > [   87.767619]        vfs_write+0xa8/0x19c
-> > [   87.771448]        ksys_write+0x58/0xbc
-> > [   87.775278]        __arm64_sys_write+0x18/0x20
-> > [   87.779721]        el0_svc_common+0xd0/0x124
-> > [   87.783986]        el0_svc_compat_handler+0x1c/0x24
-> > [   87.788858]        el0_svc_compat+0x8/0x18
-> > [   87.792947]
-> > [   87.792947] -> #0 (kn->count#58){++++}:
-> > [   87.798260]        lock_acquire+0xc4/0x22c
-> > [   87.802353]        __kernfs_remove+0x258/0x2c4
-> > [   87.806790]        kernfs_remove_by_name_ns+0x50/0xa0
-> > [   87.811836]        remove_files.isra.1+0x38/0x78
-> > [   87.816447]        sysfs_remove_group+0x48/0x98
-> > [   87.820971]        sysfs_remove_groups+0x34/0x4c
-> > [   87.825583]        device_remove_attrs+0x6c/0x7c
-> > [   87.830197]        device_del+0x11c/0x33c
-> > [   87.834201]        device_unregister+0x14/0x2c
-> > [   87.838638]        pwmchip_sysfs_unexport+0x40/0x4c
-> > [   87.843509]        pwmchip_remove+0xf4/0x13c
-> > [   87.847773]        rcar_pwm_remove+0x28/0x34
-> > [   87.852039]        platform_drv_remove+0x24/0x64
-> > [   87.856651]        device_release_driver_internal+0x18c/0x21c
-> > [   87.862391]        device_release_driver+0x14/0x1c
-> > [   87.867175]        unbind_store+0xe0/0x124
-> > [   87.871265]        drv_attr_store+0x20/0x30
-> > [   87.875442]        sysfs_kf_write+0x54/0x64
-> > [   87.879618]        kernfs_fop_write+0xe4/0x1e8
-> > [   87.884055]        __vfs_write+0x40/0x184
-> > [   87.888057]        vfs_write+0xa8/0x19c
-> > [   87.891887]        ksys_write+0x58/0xbc
-> > [   87.895716]        __arm64_sys_write+0x18/0x20
-> > [   87.900154]        el0_svc_common+0xd0/0x124
-> > [   87.904417]        el0_svc_compat_handler+0x1c/0x24
-> > [   87.909289]        el0_svc_compat+0x8/0x18
->
-> I'm not sure I understand this correctly. The above looks like pwm_lock
-> is held as part of the syscall writing 0 to the export attribute and the
-> second callchain looks like it's originating from the write to the
-> unbind attribute for the driver. But pwm_request_from_chip() should have
-> already released the lock before it returned, so how can the above
-> situation even happen?
+--nco6njdw4ej4j6of
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Note that it says "_possible_ circular locking dependency detected".
-AFAIU, this does not mean that the above two callchains actually did
-happen at the same time.
 
-Lockdep keeps tracks of the order in which locks are taken.  If it
-notices that one chain takes locks in one order, and a second chain
-takes those locks in a different order, it prints a warning, as this
-could cause a deadlock if/when the two callchains would ever happen
-at the same time.
+> Yes. But I think the debug message here is just to tell caller that
+> threshold == 0 might not make sense.
 
-Note that there may be other reasons, outside the view of lockdep, which
-guarantee this cannot actually happen...
+I can agree to the debug message. I'll send V2 soon.
 
-So far my understanding...
 
-Gr{oetje,eeting}s,
+--nco6njdw4ej4j6of
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyHogcACgkQFA3kzBSg
+KbY24g/+LIZWa9Ex3xmX8UZlRh+CBCMa3McxrOlk1wL7XA8rsqwpBpabTLJXwY/9
+7KnQ2vP+MO+MrtBgqLDbWJCTRhMLovy2qMzROn1WFiontajzxDJobGJJEGCgGJRj
+ZB7Of8SGa/wInnG6Eep6i0s7YCvLHCqMmdf3RejmCcbLSQC0VJ5GJ1DCuSZHFNjD
+384RBNh9UX1DgdrTY2MV01seP/mniTBvdUaRAoQxSaKKcf7UJ1jTDuS2QuB93DYF
+9eZNaoSajX3BMfJ2bBmY5RnphIcX0/WH6CIIpsKeN99bUUtQ+t4nUjrYGjJpjWaE
+XqjYXLt375ctU+R45eZBdy0icaLYirZSnXcVuF3l3t+fAZwGuJS+ZbAms+jnsHG3
+J9q8gobUUgFj+WcsLLFAt1Zi3hkW4hXqfeV9feciT5D4GcGkbcSjUW50O24MApML
+0AAvnZlBegDBve4yEY3VrevpWep5FKjLW98qtrhyRJTMJw+f/eqrcsKWpsa9Z20B
+v3faUrN09E6YQlxPgwiXcVs8/8siCiyXUPE2Eg7yeduv79/VT63YFtSroZyFdiDE
+qnO0Ys5aMKRnNz1IDkSh3Vp4vkcR3qp69O+XX5trceeGoNCOHfUrmFhAzm7zhLGc
+/iqpKm0TojgLfwM/QWtybWmUrLXq7dR2miz80fkqFAuAGxgOqwE=
+=t+1O
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--nco6njdw4ej4j6of--
