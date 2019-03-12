@@ -4,89 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B82C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 06:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA21C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 06:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A951F214AE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 06:33:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF0FF214AE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 06:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="jWGw53lZ"
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="DoizHe/h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfCLGdL (ORCPT
+        id S1726325AbfCLGik (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 02:33:11 -0400
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:37904 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbfCLGdL (ORCPT
+        Tue, 12 Mar 2019 02:38:40 -0400
+Received: from mta-p6.oit.umn.edu ([134.84.196.206]:54430 "EHLO
+        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726629AbfCLGii (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 02:33:11 -0400
+        Tue, 12 Mar 2019 02:38:38 -0400
 Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 6A0B898E
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 06:33:09 +0000 (UTC)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 26C43B35
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 06:38:37 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zD83r-Fn28Bv for <linux-renesas-soc@vger.kernel.org>;
-        Tue, 12 Mar 2019 01:33:09 -0500 (CDT)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+Received: from mta-p6.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id KD_Za2xnIaMK for <linux-renesas-soc@vger.kernel.org>;
+        Tue, 12 Mar 2019 01:38:36 -0500 (CDT)
+Received: from mail-it1-f198.google.com (mail-it1-f198.google.com [209.85.166.198])
         (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 423839A8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 01:33:09 -0500 (CDT)
-Received: by mail-io1-f70.google.com with SMTP id n23so1070636ioj.10
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 23:33:09 -0700 (PDT)
+        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id D67B6B32
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 01:38:36 -0500 (CDT)
+Received: by mail-it1-f198.google.com with SMTP id j127so1355496itj.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 23:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ha9PW7pIPJPn/3E35z3kTO9/Th37iu1RWxZGXsOeCtg=;
-        b=jWGw53lZcMw7+b3WK4goiihsxr7OqN+Auv/UvXG/K13EIP5f+cOiWxsUEq9odYb4M2
-         XvOEGEZToOxyZhhTCIiHEJkYRNPDizZEIw6fu7SN4ZcGB3NeDUtWm4wqo0hpeGIKKyPb
-         YRxDp1zrrnS2B3eFlYq5RKun/Ijmhm9i0AFo5E8zUTrlJSKDgMs+lSqoAvBqBU/Xh0vH
-         IzSD2DlaoZZ2diMf1Cyca/zr0ryO3CBNuoUEuz9X+Mk2QUs5d/vhJPCV3u4WBj0AvMr3
-         CigBfr54gBncNW0yhoTirEKoHvZlyy5ZGFe6MB1ETmam2r3HUvPfGH1twc+iZqN9M7k8
-         bSww==
+        h=from:to:cc:subject:date:message-id;
+        bh=BFz1nugcEtlUOsGtar042lMEs7it+P+LEHQB9+9a60Q=;
+        b=DoizHe/hZBidSBbs+E2WmmyukUS6MIfkl64098Ih/jG6ndsyTiNeWS0hYU7QzyGgvy
+         y01y3r68vIlKds3mhqiaLQKLgApbppCVaDg+oom5iwqsmva+nD31OpX9mf+e6yklzDDT
+         nKyy0V2IRR6IB4jEteZzkenCujpUQEept4JCp+FbHTycj6U9Keld806jSb2UvriHzzgJ
+         tIwspFi3heC6M36hMHXfh8CywgtinlVY1ogkA+kvgKOuxGeSVdi+eJpMlYstjnxmursw
+         0o5veKKbbWFLoHiYtFojEcYNFUStyhiCwfj5HKnfzBpvz1Dm2t5EfS8ibgkzirLMO+uy
+         mp7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Ha9PW7pIPJPn/3E35z3kTO9/Th37iu1RWxZGXsOeCtg=;
-        b=Lb91L2zMWJqeoVekar2deh7Ibi1cwH4zYq6hmZmO2ui/peSvYx5DqTA2dGct4IPvyM
-         TRaFa3Ue7wlSArruJ8oP1ygUKgRcJs2YmSxHvEZMh0iPVvbuDuIUHcVKQq4azojFie1y
-         RcRzchIl3FEnOfTA1HjPffxgnrZpp9eT4dGiAHUze/LKuu018uBhG1em3g88nTwRvZFT
-         BGRWM6Uunkbby5LSigq2woJ49HBSRSs8CIgA79YvKu92xFkVI74o9M6FPqWqhfHPnBIh
-         RjqLyM7xhd3XbH6DWvurK3FVeO+QLSkwJQnD7tN/b0M4S3cNRIvxBSJAQVdlXCb+DPFF
-         elew==
-X-Gm-Message-State: APjAAAVcLpKZe7ivwAZAn3HKCwaDmb2ne+xzZ9eA+Xl1Sv73bn5x0hV4
-        +/PXzO8D63feHfGus+ODMGCZYo9u34pqDrtEbRDsg3Wwfg5TJkt7L29+0ZyuXIC25O1TlMuqEdU
-        +z8CuL8+QScnIxfIy+h+d73BJQ2nXIAU3iOs=
-X-Received: by 2002:a6b:ea19:: with SMTP id m25mr9689471ioc.291.1552372388769;
-        Mon, 11 Mar 2019 23:33:08 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwJKL43alLWjqG0b6skYN7rnA1g31yJYG8Wi9Bu3Xc6MwUOEVw6D/gxFoQ0Q+dN5gP/rfYZEQ==
-X-Received: by 2002:a6b:ea19:: with SMTP id m25mr9689450ioc.291.1552372388470;
-        Mon, 11 Mar 2019 23:33:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BFz1nugcEtlUOsGtar042lMEs7it+P+LEHQB9+9a60Q=;
+        b=CV9UzcrjM00sM4XNPnFZmA0u3UtH7+Cespsy4TeLvY+24EOMrIhdg4XI/XelNEIGZx
+         YUALwtt8d26BZfzsTDPqwsCcQ/hAUAM+CFRxqr/XD92GAHgdSAVj0sgcJ3I6toNbCSu5
+         +zlTOnc20fjd0Pp39ACARFLgFBzb7nEYN9RQT1zmYN+8VYV9EIDfUJn4Kh1jawDL7AXs
+         8ZlYzHBTd64h2U03uVUBBsBDMlTaJNjFPb5L1jAR5CD9W4TkXC6SoDqjTEnzhBtqUMc8
+         gHz5DYBQlg7i8oxq4JBRP+pRUiaAAb6MH2ya8/2CWTgMq9OvQ8zfZ+uvQp1uu2X4Ov7C
+         mmMw==
+X-Gm-Message-State: APjAAAX/DvFmmeYwkx+PMhV4uxjig4UY5+6VZMmljBas5RNdoKUrV4nM
+        blsa73Aq2/2APuQzLpp3dvWqxSCtHJozG7mpQU16xl3gW9yghnWJQuDuKhARgFEzcbpaexBytCs
+        nO8NrunWxPE/BhKcS+g7x42eajLxU7fqad1I=
+X-Received: by 2002:a6b:b285:: with SMTP id b127mr6531925iof.179.1552372716454;
+        Mon, 11 Mar 2019 23:38:36 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqy7Vqi7AwBVApRs6dZSptd+Uoi/O7Z4l2//nf2gOtOPSjQg+DJNCPibKFsINzojSh8o3eyc0w==
+X-Received: by 2002:a6b:b285:: with SMTP id b127mr6531912iof.179.1552372716225;
+        Mon, 11 Mar 2019 23:38:36 -0700 (PDT)
 Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
-        by smtp.gmail.com with ESMTPSA id p18sm897264itp.10.2019.03.11.23.33.07
+        by smtp.gmail.com with ESMTPSA id j66sm851877itb.38.2019.03.11.23.38.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Mar 2019 23:33:07 -0700 (PDT)
+        Mon, 11 Mar 2019 23:38:35 -0700 (PDT)
 From:   Kangjie Lu <kjlu@umn.edu>
 To:     kjlu@umn.edu
 Cc:     pakki001@umn.edu,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "David S. Miller" <davem@davemloft.net>,
         Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Brandt <chris.brandt@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net: sh_eth: fix a missing check of of_get_phy_mode
-Date:   Tue, 12 Mar 2019 01:30:24 -0500
-Message-Id: <20190312063026.15083-1-kjlu@umn.edu>
+Subject: [PATCH] net: ravb_main: fix a missing check of of_get_phy_mode
+Date:   Tue, 12 Mar 2019 01:38:26 -0500
+Message-Id: <20190312063827.16046-1-kjlu@umn.edu>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <c205461c-edb1-c9c1-a928-8068374aef2b@cogentembedded.com>
-References: <c205461c-edb1-c9c1-a928-8068374aef2b@cogentembedded.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -94,36 +96,39 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 of_get_phy_mode may fail and return a negative error code;
 the fix checks the return value of of_get_phy_mode and
-returns NULL of it fails.
+goes to out_release if it fails.
 
 Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 239eeafe1b2d..e33af371b169 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3181,14 +3181,16 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
- 	struct device_node *np = dev->of_node;
- 	struct sh_eth_plat_data *pdata;
- 	const char *mac_addr;
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index d28c8f9ca55b..791b6842eb12 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1996,6 +1996,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 	int error, irq, q;
+ 	struct resource *res;
+ 	int i;
 +	int ret;
  
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
- 		return NULL;
+ 	if (!np) {
+ 		dev_err(&pdev->dev,
+@@ -2054,7 +2055,12 @@ static int ravb_probe(struct platform_device *pdev)
+ 	spin_lock_init(&priv->lock);
+ 	INIT_WORK(&priv->work, ravb_tx_timeout_work);
  
--	pdata->phy_interface = of_get_phy_mode(np);
--	if (pdata->phy_interface < 0)
+-	priv->phy_interface = of_get_phy_mode(np);
 +	ret = of_get_phy_mode(np);
-+	if (ret < 0)
- 		return NULL;
-+	pdata->phy_interface = ret;
++	if (ret < 0) {
++		error = -EINVAL;
++		goto out_release;
++	}
++	priv->phy_interface = ret;
  
- 	mac_addr = of_get_mac_address(np);
- 	if (mac_addr)
+ 	priv->no_avb_link = of_property_read_bool(np, "renesas,no-ether-link");
+ 	priv->avb_link_active_low =
 -- 
 2.17.1
 
