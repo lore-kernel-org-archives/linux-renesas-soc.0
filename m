@@ -2,227 +2,108 @@ Return-Path: <SRS0=vwGd=RP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1CCC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 03:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB73C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 04:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235E520842
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 03:16:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58514214AE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 04:54:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Se6vd18n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbfCLDQf (ORCPT
+        id S1726396AbfCLEyN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Mar 2019 23:16:35 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:19222 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726866AbfCLDQf (ORCPT
+        Tue, 12 Mar 2019 00:54:13 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38569 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbfCLEyN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Mar 2019 23:16:35 -0400
-X-IronPort-AV: E=Sophos;i="5.58,468,1544454000"; 
-   d="scan'208";a="9882403"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Mar 2019 12:16:32 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F1965418C6D9;
-        Tue, 12 Mar 2019 12:16:32 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     thierry.reding@gmail.com
-Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Phong Hoang <phong.hoang.wz@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] pwm: Avoid deadlock warning when removing PWM device
-Date:   Tue, 12 Mar 2019 12:16:34 +0900
-Message-Id: <1552360594-21547-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 12 Mar 2019 00:54:13 -0400
+Received: by mail-qt1-f194.google.com with SMTP id s1so1190890qte.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Mar 2019 21:54:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qK394f5AYv1OODgM21/Wj6QDEyEj3dZQNItdFh1rC7M=;
+        b=Se6vd18nQir52z4nqqhvFCfRILF+48hWcEmg56hURBVDVtIFPZVWzqb9mZmcG03yUo
+         Pmhoh6fyCs3+2Csp+Xmxu2SP8Ydzo/pUEBGob/4Xhu9HXbd3w5xNYP1+WJXQFSyfABaf
+         uELGEUUbDaC1ubd+yNsM/PBw2cYb3+HtnznFc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qK394f5AYv1OODgM21/Wj6QDEyEj3dZQNItdFh1rC7M=;
+        b=BZh94N2UWtI0099kdzZclYpwBns4yeYLnlRan+Q3a0GMOWVbpZ62Ap7HJYsiz1fNXs
+         jPM2733kTZgw7j/ryHTtzwN7ufphdvsqI6uAgWNMG5ILXRMeqKlGB11i25KVs6oMCIyr
+         ZvAoW8DYJkIdeDNrHFe6vJR5YFHbHITkagz1vefeXrzcxxC1deRimCXH7ezplcs6MHyz
+         ucfdCoDOq04f14MTfSpu+KU5bo64BklTCABw/uvkARIOSSlAFTHHPaOLJ57n6wJuvJLu
+         EKpbVv0rQuQcpicJsPcAMgawscyhLYAMS8BDKbsU79jdggDbE5gAXbSFRvCdKtTMICyv
+         ot4Q==
+X-Gm-Message-State: APjAAAXgoADGRmqrc3RA5BWSiIhxQaQWzdenHlO+/WHoPz99IZzKYjcj
+        s0SF+8nxTp8Pti5ngUEi1ci81aIAUNqgz/1Z0NSNGQ==
+X-Google-Smtp-Source: APXvYqye08RkoXJEE9Lsv0Y0JXQkjkh+Mw9t0Phm3h52EYf69Vxxz/URuMEujUW+r9Ns61eosGdm5UmNecH+EUPO6+I=
+X-Received: by 2002:a0c:c689:: with SMTP id d9mr9114540qvj.20.1552366452435;
+ Mon, 11 Mar 2019 21:54:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190309105441.18472-1-wsa+renesas@sang-engineering.com>
+ <CAJMQK-iDbBhD95Dweq2q8cMpJ65RCKUTzm8CLTYms6BxpqADXQ@mail.gmail.com> <20190311184630.5yqy3wf2xkhukwp5@ninjato>
+In-Reply-To: <20190311184630.5yqy3wf2xkhukwp5@ninjato>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Tue, 12 Mar 2019 12:54:01 +0800
+Message-ID: <CAJMQK-jPPdGO_-UK5qS1rqt0=Xg7RneLvyKApY3EFd33OPnSaw@mail.gmail.com>
+Subject: Re: [PATCH] i2c: add extra check to safe DMA buffer helper
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Phong Hoang <phong.hoang.wz@renesas.com>
+On Tue, Mar 12, 2019 at 2:46 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+>
+> > How about also printing some warning if threshold is zero? Since
+>
+> Hmm, not a warning because a user of a kernel can't do much about it. A
+> debug might make sense; it is for developers and will be compiled away
+> for production use.
+>
+> > caller might expect that if msg->len >= threshold, they will get valid
+> > pointer. But they will get valid pointer if (msg->len, threshold) is
+> > (>0, 0) and NULL if (=0, 0). So warn them that the threshold is bogus.
+>
+> Well, callers should always check for NULL because a valid pointer can
+> not be guaranteed (ENOMEM case). And I still don't get why would you
+> want a valid DMA-able pointer if the msg length is 0?
 
-This patch fixes deadlock warning if removing PWM device
-when CONFIG_PROVE_LOCKING is enabled.
+Yes. But I think the debug message here is just to tell caller that
+threshold == 0 might not make sense. For threshold > 0, msg->len >=
+threshold returns valid. But it's not the case when threshold is 0.
+Also, threshold is 0 and 1 behaves the same: msg->len == 0 returns
+NULL, msg->len > 0 returns valid.
 
-This issue can be reproceduced by the following steps on
-the R-Car H3 Salvator-X board if the backlight is disabled:
-
- # cd /sys/class/pwm/pwmchip0
- # echo 0 > export
- # ls
- device  export  npwm  power  pwm0  subsystem  uevent  unexport
- # cd device/driver
- # ls
- bind  e6e31000.pwm  uevent  unbind
- # echo e6e31000.pwm > unbind
-
-[   87.659974] ======================================================
-[   87.666149] WARNING: possible circular locking dependency detected
-[   87.672327] 5.0.0 #7 Not tainted
-[   87.675549] ------------------------------------------------------
-[   87.681723] bash/2986 is trying to acquire lock:
-[   87.686337] 000000005ea0e178 (kn->count#58){++++}, at: kernfs_remove_by_name_ns+0x50/0xa0
-[   87.694528]
-[   87.694528] but task is already holding lock:
-[   87.700353] 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
-[   87.707405]
-[   87.707405] which lock already depends on the new lock.
-[   87.707405]
-[   87.715574]
-[   87.715574] the existing dependency chain (in reverse order) is:
-[   87.723048]
-[   87.723048] -> #1 (pwm_lock){+.+.}:
-[   87.728017]        __mutex_lock+0x70/0x7e4
-[   87.732108]        mutex_lock_nested+0x1c/0x24
-[   87.736547]        pwm_request_from_chip.part.6+0x34/0x74
-[   87.741940]        pwm_request_from_chip+0x20/0x40
-[   87.746725]        export_store+0x6c/0x1f4
-[   87.750820]        dev_attr_store+0x18/0x28
-[   87.754998]        sysfs_kf_write+0x54/0x64
-[   87.759175]        kernfs_fop_write+0xe4/0x1e8
-[   87.763615]        __vfs_write+0x40/0x184
-[   87.767619]        vfs_write+0xa8/0x19c
-[   87.771448]        ksys_write+0x58/0xbc
-[   87.775278]        __arm64_sys_write+0x18/0x20
-[   87.779721]        el0_svc_common+0xd0/0x124
-[   87.783986]        el0_svc_compat_handler+0x1c/0x24
-[   87.788858]        el0_svc_compat+0x8/0x18
-[   87.792947]
-[   87.792947] -> #0 (kn->count#58){++++}:
-[   87.798260]        lock_acquire+0xc4/0x22c
-[   87.802353]        __kernfs_remove+0x258/0x2c4
-[   87.806790]        kernfs_remove_by_name_ns+0x50/0xa0
-[   87.811836]        remove_files.isra.1+0x38/0x78
-[   87.816447]        sysfs_remove_group+0x48/0x98
-[   87.820971]        sysfs_remove_groups+0x34/0x4c
-[   87.825583]        device_remove_attrs+0x6c/0x7c
-[   87.830197]        device_del+0x11c/0x33c
-[   87.834201]        device_unregister+0x14/0x2c
-[   87.838638]        pwmchip_sysfs_unexport+0x40/0x4c
-[   87.843509]        pwmchip_remove+0xf4/0x13c
-[   87.847773]        rcar_pwm_remove+0x28/0x34
-[   87.852039]        platform_drv_remove+0x24/0x64
-[   87.856651]        device_release_driver_internal+0x18c/0x21c
-[   87.862391]        device_release_driver+0x14/0x1c
-[   87.867175]        unbind_store+0xe0/0x124
-[   87.871265]        drv_attr_store+0x20/0x30
-[   87.875442]        sysfs_kf_write+0x54/0x64
-[   87.879618]        kernfs_fop_write+0xe4/0x1e8
-[   87.884055]        __vfs_write+0x40/0x184
-[   87.888057]        vfs_write+0xa8/0x19c
-[   87.891887]        ksys_write+0x58/0xbc
-[   87.895716]        __arm64_sys_write+0x18/0x20
-[   87.900154]        el0_svc_common+0xd0/0x124
-[   87.904417]        el0_svc_compat_handler+0x1c/0x24
-[   87.909289]        el0_svc_compat+0x8/0x18
-[   87.913378]
-[   87.913378] other info that might help us debug this:
-[   87.913378]
-[   87.921374]  Possible unsafe locking scenario:
-[   87.921374]
-[   87.927286]        CPU0                    CPU1
-[   87.931808]        ----                    ----
-[   87.936331]   lock(pwm_lock);
-[   87.939293]                                lock(kn->count#58);
-[   87.945120]                                lock(pwm_lock);
-[   87.950599]   lock(kn->count#58);
-[   87.953908]
-[   87.953908]  *** DEADLOCK ***
-[   87.953908]
-[   87.959821] 4 locks held by bash/2986:
-[   87.963563]  #0: 00000000ace7bc30 (sb_writers#6){.+.+}, at: vfs_write+0x188/0x19c
-[   87.971044]  #1: 00000000287991b2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xb4/0x1e8
-[   87.978872]  #2: 00000000f739d016 (&dev->mutex){....}, at: device_release_driver_internal+0x40/0x21c
-[   87.988001]  #3: 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
-[   87.995481]
-[   87.995481] stack backtrace:
-[   87.999836] CPU: 0 PID: 2986 Comm: bash Not tainted 5.0.0 #7
-[   88.005489] Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
-[   88.012791] Call trace:
-[   88.015235]  dump_backtrace+0x0/0x190
-[   88.018891]  show_stack+0x14/0x1c
-[   88.022204]  dump_stack+0xb0/0xec
-[   88.025514]  print_circular_bug.isra.32+0x1d0/0x2e0
-[   88.030385]  __lock_acquire+0x1318/0x1864
-[   88.034388]  lock_acquire+0xc4/0x22c
-[   88.037958]  __kernfs_remove+0x258/0x2c4
-[   88.041874]  kernfs_remove_by_name_ns+0x50/0xa0
-[   88.046398]  remove_files.isra.1+0x38/0x78
-[   88.050487]  sysfs_remove_group+0x48/0x98
-[   88.054490]  sysfs_remove_groups+0x34/0x4c
-[   88.058580]  device_remove_attrs+0x6c/0x7c
-[   88.062671]  device_del+0x11c/0x33c
-[   88.066154]  device_unregister+0x14/0x2c
-[   88.070070]  pwmchip_sysfs_unexport+0x40/0x4c
-[   88.074421]  pwmchip_remove+0xf4/0x13c
-[   88.078163]  rcar_pwm_remove+0x28/0x34
-[   88.081906]  platform_drv_remove+0x24/0x64
-[   88.085996]  device_release_driver_internal+0x18c/0x21c
-[   88.091215]  device_release_driver+0x14/0x1c
-[   88.095478]  unbind_store+0xe0/0x124
-[   88.099048]  drv_attr_store+0x20/0x30
-[   88.102704]  sysfs_kf_write+0x54/0x64
-[   88.106359]  kernfs_fop_write+0xe4/0x1e8
-[   88.110275]  __vfs_write+0x40/0x184
-[   88.113757]  vfs_write+0xa8/0x19c
-[   88.117065]  ksys_write+0x58/0xbc
-[   88.120374]  __arm64_sys_write+0x18/0x20
-[   88.124291]  el0_svc_common+0xd0/0x124
-[   88.128034]  el0_svc_compat_handler+0x1c/0x24
-[   88.132384]  el0_svc_compat+0x8/0x18
-
-This warning occurs because pwmchip_remove still keeps pwm_lock
-when removing sysfs. That's why it leads to that conflict.
-Hence, this patch unlocks pwm_lock before removing sysfs.
-Also, pwmchip_sysfs_export() doesn't seem to need the pwm_lock
-held so that to achieve consistance between export and
-unexport this patch also modifies it.
-
-Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
-[shimoda: revise the commit log and code]
-Fixes: 76abbdde2d95 ("pwm: Add sysfs interface")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- drivers/pwm/core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 1581f6a..2fdd6611 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -311,10 +311,12 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
- 	if (IS_ENABLED(CONFIG_OF))
- 		of_pwmchip_add(chip);
- 
--	pwmchip_sysfs_export(chip);
--
- out:
- 	mutex_unlock(&pwm_lock);
-+
-+	if (!ret)
-+		pwmchip_sysfs_export(chip);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(pwmchip_add_with_polarity);
-@@ -368,10 +370,12 @@ int pwmchip_remove(struct pwm_chip *chip)
- 
- 	free_pwms(chip);
- 
--	pwmchip_sysfs_unexport(chip);
--
- out:
- 	mutex_unlock(&pwm_lock);
-+
-+	if (!ret)
-+		pwmchip_sysfs_unexport(chip);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(pwmchip_remove);
--- 
-2.7.4
-
+>
+> Thanks!
+>
+> -----BEGIN PGP SIGNATURE-----
+>
+> iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyGrQIACgkQFA3kzBSg
+> Kbb61Q//XZoT6dJYvO2WdyhYQf2Zpb4S1JEwSkMxa1XRQmw4caIdOLyJVt+OPzFo
+> 6Swbg0GQbFPV0tagj9VRTTWWTA6biRf69t+d5fNCMFWJ4Rx89CuJvy1EOA6A8LHN
+> Ckce/8HUXJAFdIaMwlkCagwepfO3WJ7GYDrGxiOM9e8cCOGkNgw/bXe3Xks2rcgC
+> 8eFiUGqDrrG3LwsTlqBfjBC1aErwYgC/QBO0uhWiodkszggEV8T1D9ykbfTSOvCr
+> LHZro3jzmR8E+K1zsujXuP2eDAhaN5V1s7VNI2mrzsQcxl/v7YKd17Us5Iqzq/1d
+> 4Ynv0gr7kTLoq5wOv5gamESXQ+m8PBmU7gikrIBh7ie0HXXyQY1U7sO5iSwBoMwC
+> eMegBAK8IDr5qM2YAb+urQQ/w7NdA731cYpm0+srfVSsxdpCvWJSROXHjRcrBzkm
+> xkw9fY0s5l5hWzWtjrOocYVd68MOmj6hnVFW6n9itAuRsi7CZJ4UnxxpcCbBgfEQ
+> +fhru8D6Ie1VkUtLtQlNFh61KJDTZ1Sg2YisL1M1N/nRAH22pSaMxyX2kpXsZI7f
+> WsCVIj3Rgow6vOqqUa85aYOqcyWllO29AMTMu+srAbfUWTIZ6iTtB5Dz5bC9oUPN
+> YyfviJYySO6UocuuZH1AAmvPdoqlly11ouTiA69vlPIx0hW8o9U=
+> =ZJU8
+> -----END PGP SIGNATURE-----
