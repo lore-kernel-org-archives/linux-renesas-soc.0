@@ -7,57 +7,58 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4019CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 07:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74E2C10F00
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 07:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD592147C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 07:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 777CD2171F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Mar 2019 07:42:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="xSX2iaf3"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="EJCptjVc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbfCLHib (ORCPT
+        id S1726671AbfCLHmU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 03:38:31 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40721 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbfCLHib (ORCPT
+        Tue, 12 Mar 2019 03:42:20 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46907 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfCLHmU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 03:38:31 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w6so1358112ljd.7
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 00:38:29 -0700 (PDT)
+        Tue, 12 Mar 2019 03:42:20 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v16so1338449ljg.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Mar 2019 00:42:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9hhftaVgVrniey3X0IakDynrD/6wVUpVi+JgLVE0q/s=;
-        b=xSX2iaf33GvGyEch8HD4cxYiMvXYuWpCsJZyP8hJtqjf2lhhTus4Mc4sIqhSnaaYC7
-         TRv4IfFU5amEUJAlGBF+XYHmZX6TYM1lglsUx/XHa7gD4GQcfeZH5Q8ZQXrIrJQIyb3S
-         /Aq7ukCZAVD0WkYLgFdG/dpJM9h705eUuDtb3fmNKO8nC58h6eoRsHcAKWvSjFFu+Jsr
-         ShmCjNX9ekDU/P/s7thcpHKDE5xPGoJNJuGYB8BgQMxA299hdvtOs0bpGWMrJYwwwvh/
-         nIy2kE/SKLYkZRtTtkhKuzjpu4CB7YCT+msZqxrLSJi4zVJuX+BTcpSr6DehLZBDRA2G
-         1x4g==
+        bh=x1AK6hGQYnn1yU9WidTpaVTYV5OktyA94EjAW9zkrNs=;
+        b=EJCptjVc0CXr0pvMveEyTVmTcTdSekYyOdJDz4mxg06KBvwyjYnpPY6SBIDO+MEw6A
+         m8uPfb0/JyasWw8HFo5QRVIcMci7JvkSVil+b6BonGi6Kmq35MR40eq33ajdjrSfQu/4
+         tDO1AICd3TY7/i4X6Q7BSK3fx7LF1Km6/BDO4u8EppJES8hUT+jSc2oc9eM66olKj/FB
+         SUAALWItpw3qs4Bq41uG7jtcj7zIsnyRErHbmp7iEq0dedA5kiCUBWM1lCWRNXx9Vumf
+         3s7ve0lFpV1RGEiki07i/iS76XWlCxdH8AXHEyg6jVfwripe+fUvaza7QhWc5yLvfHtg
+         HgmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=9hhftaVgVrniey3X0IakDynrD/6wVUpVi+JgLVE0q/s=;
-        b=BniFU46nTniWT3o1wwc1rw2dw4EB7rM0ckNPdW+XWYVmVbwnpCjrjqZZ+eXsrypC0i
-         0ETsGfonCxi8LOcPIbOLVvzN1PiLDV5KBdqTUBNSbD7u4cKDSbRDJDDP2BEnYyGhlZgM
-         TfqMt3JCzopz+EKvmkOkkg8Ipks8MEw8QvvEF6hzZkAVhN1NiVqPWUXqD6vJPMSGghnH
-         1mkmKw+jxgdQnOcMmn1Z0TENC21Sh9OlvoHNuv8/kPxxMIJ4x2l/zR2tz4bUsnmZFyon
-         7Y2GUdWk4FdBEoVnpdbUbzxVzBSUqhTimSQxKLPkvIogfQ+o3yl9M1Zeyyws6qYTUAbe
-         A70A==
-X-Gm-Message-State: APjAAAVVtACizX3UQvDKun6TXdi7oIODtL61rBOBtH0gP4mXjDLjHdt9
-        bB7Hu8M9IIRRWQGkryoVeJf1EA==
-X-Google-Smtp-Source: APXvYqz4HHX7mcqlYt6rzI1na8X8zajRbd5WOQUlUrFHWmyS0E8ccuHcQlQn03RlRqJO7Ob+KaXSzQ==
-X-Received: by 2002:a2e:82c5:: with SMTP id n5mr1075127ljh.91.1552376309166;
-        Tue, 12 Mar 2019 00:38:29 -0700 (PDT)
+        bh=x1AK6hGQYnn1yU9WidTpaVTYV5OktyA94EjAW9zkrNs=;
+        b=U878ps8HKwGtmnXk7a8PfKGo+2RubqUmVnUvUcDr9xNiY0QRmg2rlnXYJEGp5cphvk
+         y1QIFrB3/wh42PM8G8X33c1feyFMOFUW+x93Ar3gXGJ7F573taYs72smM8NnEphWEJcM
+         Gm29uOao4dnqkL3PuOB9lQuoMTrGF+k3ep9JqtvGZxCry0gMuSYsubiNyENlgCRW96ew
+         QbH3Q9jauoCFxxlYvZ8uEHkCdNBVVzeOW3rz0ivw+ixHSvqywUBNCVq8i4pbcXRUoB4E
+         BQtEM04NdwisbhN42ksJu6B5oW4OlHHLe62M7DJxfBQAILCQ1ftaMrs2/+7sbCCXijL6
+         VyOw==
+X-Gm-Message-State: APjAAAUHxj4uYN4+8l3pFIbi0G9GEKObsbfbeKGx+J1IO+VVfHcSrmvf
+        5RREFNbKpFGgeHjW8H+MPTnJ9i3/Izo=
+X-Google-Smtp-Source: APXvYqz+T2cByxyuRCxMT1ND4g2cvW9ws1m0Mqj1X8B3yyYz1noIBggrIQ6+mXv5z10Ci8rYvUJXbw==
+X-Received: by 2002:a2e:9204:: with SMTP id k4mr14448661ljg.0.1552376537959;
+        Tue, 12 Mar 2019 00:42:17 -0700 (PDT)
 Received: from [192.168.0.199] ([31.173.87.174])
-        by smtp.gmail.com with ESMTPSA id l21sm1446211lfh.30.2019.03.12.00.38.27
+        by smtp.gmail.com with ESMTPSA id v16sm1237651ljh.80.2019.03.12.00.42.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Mar 2019 00:38:28 -0700 (PDT)
+        Tue, 12 Mar 2019 00:42:17 -0700 (PDT)
 Subject: Re: [PATCH] net: ravb_main: fix a missing check of of_get_phy_mode
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To:     Kangjie Lu <kjlu@umn.edu>
 Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
         Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
@@ -71,57 +72,47 @@ Cc:     pakki001@umn.edu, "David S. Miller" <davem@davemloft.net>,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20190312063827.16046-1-kjlu@umn.edu>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <076a4b31-3e83-9e3d-81a7-55bb7f25a37f@cogentembedded.com>
-Date:   Tue, 12 Mar 2019 10:38:21 +0300
+ <076a4b31-3e83-9e3d-81a7-55bb7f25a37f@cogentembedded.com>
+Message-ID: <1574a042-b614-27e1-e149-4097781824e7@cogentembedded.com>
+Date:   Tue, 12 Mar 2019 10:42:10 +0300
 User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.3
 MIME-Version: 1.0
-In-Reply-To: <20190312063827.16046-1-kjlu@umn.edu>
+In-Reply-To: <076a4b31-3e83-9e3d-81a7-55bb7f25a37f@cogentembedded.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12.03.2019 9:38, Kangjie Lu wrote:
+On 12.03.2019 10:38, Sergei Shtylyov wrote:
 
-> of_get_phy_mode may fail and return a negative error code;
-> the fix checks the return value of of_get_phy_mode and
-> goes to out_release if it fails.
+>> of_get_phy_mode may fail and return a negative error code;
+>> the fix checks the return value of of_get_phy_mode and
+>> goes to out_release if it fails.
+>>
+>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+>> ---
+>>   drivers/net/ethernet/renesas/ravb_main.c | 8 +++++++-
+>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c 
+>> b/drivers/net/ethernet/renesas/ravb_main.c
+>> index d28c8f9ca55b..791b6842eb12 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> @@ -1996,6 +1996,7 @@ static int ravb_probe(struct platform_device *pdev)
+>>       int error, irq, q;
+>>       struct resource *res;
+>>       int i;
+>> +    int ret;
 > 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> ---
->   drivers/net/ethernet/renesas/ravb_main.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index d28c8f9ca55b..791b6842eb12 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -1996,6 +1996,7 @@ static int ravb_probe(struct platform_device *pdev)
->   	int error, irq, q;
->   	struct resource *res;
->   	int i;
-> +	int ret;
+>     There's the 'error' variable already for such things, use it.
 
-    There's the 'error' variable already for such things, use it.
-
->   
->   	if (!np) {
->   		dev_err(&pdev->dev,
-> @@ -2054,7 +2055,12 @@ static int ravb_probe(struct platform_device *pdev)
->   	spin_lock_init(&priv->lock);
->   	INIT_WORK(&priv->work, ravb_tx_timeout_work);
->   
-> -	priv->phy_interface = of_get_phy_mode(np);
-> +	ret = of_get_phy_mode(np);
-> +	if (ret < 0) {
-> +		error = -EINVAL;
-
-    We typically propagate the errors upstream...
+    Please ignore that. But the variable could be named 'interface' or 
+somesuch. :-)
 
 [...]
 
