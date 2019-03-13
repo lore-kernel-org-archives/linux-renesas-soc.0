@@ -2,134 +2,145 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75270C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0BCC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 16:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 471CF20643
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:59:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 899D420643
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 16:08:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bgj+5BUD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725876AbfCMP7m (ORCPT
+        id S1726033AbfCMQIe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 11:59:42 -0400
-Received: from mga12.intel.com ([192.55.52.136]:13196 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfCMP7l (ORCPT
+        Wed, 13 Mar 2019 12:08:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:56070 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfCMQId (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 11:59:41 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2019 08:59:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,474,1544515200"; 
-   d="scan'208";a="126623426"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga006.jf.intel.com with SMTP; 13 Mar 2019 08:59:36 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 13 Mar 2019 17:59:36 +0200
-Date:   Wed, 13 Mar 2019 17:59:36 +0200
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Wed, 13 Mar 2019 12:08:33 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5F85F5AA;
+        Wed, 13 Mar 2019 17:08:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552493311;
+        bh=ODSUg5zqu3rNwpMkV16HNS3Ziqe8c//LRwI/ItxvdJM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bgj+5BUDGP3nJ8PvbaPj8K3etCLEIjatRIqbU/B/99dGCtK64g9ujPiLQEk9zjkgW
+         Succ7z6dviImaZejq7NYe8rvgWLch5KeWHyycz9v3hodERGcIOsuSDXjb9RcwmQlII
+         jeJEeV0ZiSKUmZ7J4HxT/9kC92NxQw6OL/dmVg3Q=
+Date:   Wed, 13 Mar 2019 18:08:24 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2] gpu: drm: atomic_helper: Fix spelling errors
-Message-ID: <20190313155936.GM3888@intel.com>
-References: <20190312003307.14116-1-kieran.bingham+renesas@ideasonboard.com>
- <20190312151443.GE3888@intel.com>
- <7b0ff11c-68f3-4e2e-f969-27a14062158e@ideasonboard.com>
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>
+Subject: Re: [PATCH v6 18/18] drm: rcar-du: Add writeback support for R-Car
+ Gen3
+Message-ID: <20190313160824.GG4722@pendragon.ideasonboard.com>
+References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20190313000532.7087-19-laurent.pinchart+renesas@ideasonboard.com>
+ <b2c70be1-f423-e3ad-9ad8-ef7a074f10a0@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7b0ff11c-68f3-4e2e-f969-27a14062158e@ideasonboard.com>
+In-Reply-To: <b2c70be1-f423-e3ad-9ad8-ef7a074f10a0@ideasonboard.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 12, 2019 at 03:59:15PM +0000, Kieran Bingham wrote:
-> Hi Ville,
-> 
-> On 12/03/2019 15:14, Ville Syrjälä wrote:
-> > On Tue, Mar 12, 2019 at 12:33:07AM +0000, Kieran Bingham wrote:
-> >> Trivial fixes identified while working on the DRM code.
-> >>
-> >>   s/artifically/artificially/
-> >>   s/achive/achieve/
-> >>
-> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >> ---
-> >>
-> >> v2: - Actually spell achieve correctly!
-> > 
-> > drm convention is to put this above the --- so that it gets included in
-> > the commit msg.
-> 
-> Oh - in linux-media these are just dropped.
-> 
-> I'll try to remember this for my future work in DRM.
-> 
-> I don't have commit access anyway, so can I presume whomever will pick
-> this up will adjust if necessary?
+Hi Kieran,
 
-Ah. Yeah, it's fine. Now pushed with the adjustement. Thanks for the
-patch.
+On Wed, Mar 13, 2019 at 12:06:40PM +0000, Kieran Bingham wrote:
+> On 13/03/2019 00:05, Laurent Pinchart wrote:
+> > Implement writeback support for R-Car Gen3 by exposing writeback
+> > connectors. Behind the scene the calls are forwarded to the VSP
+> > backend.
+> > 
+> > Using writeback connectors will allow implemented writeback support for
+> > R-Car Gen2 with a consistent API if desired.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> An extra blank line, and I was a bit concerned about a function naming
+> below - but other than that:
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> > ---
+> > Changes since v5:
+> > 
+> > - Skip writeback connector when configuring output routing
+> > - Implement writeback connector atomic state operations
+> > ---
+> >  drivers/gpu/drm/rcar-du/Kconfig             |   4 +
+> >  drivers/gpu/drm/rcar-du/Makefile            |   3 +-
+> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c      |   7 +-
+> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.h      |   7 +-
+> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c       |  12 +
+> >  drivers/gpu/drm/rcar-du/rcar_du_vsp.c       |   5 +
+> >  drivers/gpu/drm/rcar-du/rcar_du_writeback.c | 243 ++++++++++++++++++++
+> >  drivers/gpu/drm/rcar-du/rcar_du_writeback.h |  39 ++++
+> >  8 files changed, 317 insertions(+), 3 deletions(-)
+> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_writeback.c
+> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_writeback.h
 
+[snip]
+
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > index 0806a69c4679..99ae03a1713a 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > @@ -25,6 +25,7 @@
+> >  #include "rcar_du_drv.h"
+> >  #include "rcar_du_kms.h"
+> >  #include "rcar_du_vsp.h"
+> > +#include "rcar_du_writeback.h"
+> >  
+> >  static void rcar_du_vsp_complete(void *private, unsigned int status, u32 crc)
+> >  {
+> > @@ -35,6 +36,8 @@ static void rcar_du_vsp_complete(void *private, unsigned int status, u32 crc)
+> >  
+> >  	if (status & VSP1_DU_STATUS_COMPLETE)
+> >  		rcar_du_crtc_finish_page_flip(crtc);
+> > +	if (status & VSP1_DU_STATUS_WRITEBACK)
+> > +		rcar_du_writeback_complete(crtc);
+> >  
+> >  	drm_crtc_add_crc_entry(&crtc->crtc, false, 0, &crc);
+> >  }
+> > @@ -106,6 +109,8 @@ void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc)
+> >  	state = to_rcar_crtc_state(crtc->crtc.state);
+> >  	cfg.crc = state->crc;
+> >  
+> > +	rcar_du_writeback_atomic_flush(crtc, &cfg.writeback);
 > 
-> Or should I repost? (which might be a bit redundant just to move a patch
-> version comment which would then increase again :D )
+> Hrm ...the naming here worries me a bit. This doesn't do the actual
+> flushing (execution?) of the writeback operation, it just configures the
+> writeback into the VSP cfg structure. The 'flush' to hardware takes
+> place in vsp1_du_atomic_flush().
 > 
-> 
-> > With that
-> > Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> 
-> Thanks,
-> --
-> Regards
-> 
-> Kieran
-> 
-> 
-> > 
-> >>
-> >>  drivers/gpu/drm/drm_atomic_helper.c | 4 ++--
-> >>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> >> index 540a77a2ade9..2453678d1186 100644
-> >> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> >> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> >> @@ -1752,7 +1752,7 @@ int drm_atomic_helper_commit(struct drm_device *dev,
-> >>  	 *
-> >>  	 * NOTE: Commit work has multiple phases, first hardware commit, then
-> >>  	 * cleanup. We want them to overlap, hence need system_unbound_wq to
-> >> -	 * make sure work items don't artifically stall on each another.
-> >> +	 * make sure work items don't artificially stall on each another.
-> >>  	 */
-> >>  
-> >>  	drm_atomic_state_get(state);
-> >> @@ -1786,7 +1786,7 @@ EXPORT_SYMBOL(drm_atomic_helper_commit);
-> >>   *
-> >>   * Asynchronous workers need to have sufficient parallelism to be able to run
-> >>   * different atomic commits on different CRTCs in parallel. The simplest way to
-> >> - * achive this is by running them on the &system_unbound_wq work queue. Note
-> >> + * achieve this is by running them on the &system_unbound_wq work queue. Note
-> >>   * that drivers are not required to split up atomic commits and run an
-> >>   * individual commit in parallel - userspace is supposed to do that if it cares.
-> >>   * But it might be beneficial to do that for modesets, since those necessarily
-> >> -- 
-> >> 2.19.1
-> > 
+> Or maybe it is ok becuase it calls drm_writeback_queue_job() as well as
+> setting up the cfg...
+
+You've got a point. I've renamed the function to
+rcar_du_writeback_setup().
+
+> > +
+> >  	vsp1_du_atomic_flush(crtc->vsp->vsp, crtc->vsp_pipe, &cfg);
+> >  }
+> >  
+
+[snip]
 
 -- 
-Ville Syrjälä
-Intel
+Regards,
+
+Laurent Pinchart
