@@ -4,44 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E939C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67CDC10F00
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD938214AE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76463214AE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:06:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fxYdsHgJ"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="huYrlFVj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfCMAF6 (ORCPT
+        id S1727480AbfCMAGB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 20:05:58 -0400
+        Tue, 12 Mar 2019 20:06:01 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:42062 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbfCMAFz (ORCPT
+        with ESMTP id S1727433AbfCMAGB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 20:05:55 -0400
+        Tue, 12 Mar 2019 20:06:01 -0400
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F35419DB;
-        Wed, 13 Mar 2019 01:05:49 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7A2449C3;
+        Wed, 13 Mar 2019 01:05:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552435550;
-        bh=wJ9TD5iSpzEG8YYZBSzgMSH8VQMOVzLjHqElJ+znd+c=;
+        s=mail; t=1552435555;
+        bh=wpJmKqfUIM3L8oEUrliQ0HF1hoZze+33PlEUXb375FU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fxYdsHgJGmWCgLDFvXmRRd2jqoYXchKLhnuPvdeR0IMoSImn0YXbNbYSXDElE3aVX
-         0EwTvomjLHion307kl8UOKQbD3Ci9VXpt+6Y5dxZXgWfDP51UdsenwFYRSKWQcJqlK
-         FTV3+aqMRIeYQ+Kotl9FWqUJgHWFeNLRiPWi4Zus=
+        b=huYrlFVjRLf0m54zG3FtclVIlFk2xc1sMZrANxKlDsB6MqCUmRzcziAXilevkT+5l
+         g3K7lXgvRXCgs3jh/Vq0CUiaFom5RKSJCH4x4+3m32blnavZLU+kkSN6W8Z/mZwMDh
+         I4MqnmkWASDl2vh0fdb92nn+9ZCmhQ4khtod6EL8=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Liviu Dudau <Liviu.Dudau@arm.com>,
         Brian Starkey <brian.starkey@arm.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v6 10/18] media: vsp1: drm: Extend frame completion API to the DU driver
-Date:   Wed, 13 Mar 2019 02:05:24 +0200
-Message-Id: <20190313000532.7087-11-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v6 16/18] drm: rcar-du: Store V4L2 fourcc in rcar_du_format_info structure
+Date:   Wed, 13 Mar 2019 02:05:30 +0200
+Message-Id: <20190313000532.7087-17-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -52,95 +52,265 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The VSP1 driver will need to pass extra flags to the DU through the
-frame completion API. Replace the completed bool flag by a bitmask to
-support this.
+The mapping between DRM and V4L2 fourcc's is stored in two separate
+tables in rcar_du_vsp.c. In order to make it reusable to implement
+writeback support, move it to the rcar_du_format_info structure.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 4 ++--
- drivers/media/platform/vsp1/vsp1_drm.c | 4 ++--
- drivers/media/platform/vsp1/vsp1_drm.h | 2 +-
- include/media/vsp1.h                   | 4 +++-
- 4 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 25 +++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_kms.h |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 44 ++++-----------------------
+ 3 files changed, 32 insertions(+), 38 deletions(-)
 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index b0c80dffd8b8..999440c7b258 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -32,60 +32,70 @@
+ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+ 	{
+ 		.fourcc = DRM_FORMAT_RGB565,
++		.v4l2 = V4L2_PIX_FMT_RGB565,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_ARGB1555,
++		.v4l2 = V4L2_PIX_FMT_ARGB555,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_ARGB,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_XRGB1555,
++		.v4l2 = V4L2_PIX_FMT_XRGB555,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_ARGB,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_XRGB8888,
++		.v4l2 = V4L2_PIX_FMT_XBGR32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
+ 		.edf = PnDDCR4_EDF_RGB888,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_ARGB8888,
++		.v4l2 = V4L2_PIX_FMT_ABGR32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_16BPP,
+ 		.edf = PnDDCR4_EDF_ARGB8888,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_UYVY,
++		.v4l2 = V4L2_PIX_FMT_UYVY,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUYV,
++		.v4l2 = V4L2_PIX_FMT_YUYV,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV12,
++		.v4l2 = V4L2_PIX_FMT_NV12M,
+ 		.bpp = 12,
+ 		.planes = 2,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV21,
++		.v4l2 = V4L2_PIX_FMT_NV21M,
+ 		.bpp = 12,
+ 		.planes = 2,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV16,
++		.v4l2 = V4L2_PIX_FMT_NV16M,
+ 		.bpp = 16,
+ 		.planes = 2,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+@@ -97,62 +107,77 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+ 	 */
+ 	{
+ 		.fourcc = DRM_FORMAT_RGB332,
++		.v4l2 = V4L2_PIX_FMT_RGB332,
+ 		.bpp = 8,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_ARGB4444,
++		.v4l2 = V4L2_PIX_FMT_ARGB444,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_XRGB4444,
++		.v4l2 = V4L2_PIX_FMT_XRGB444,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_BGR888,
++		.v4l2 = V4L2_PIX_FMT_RGB24,
+ 		.bpp = 24,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_RGB888,
++		.v4l2 = V4L2_PIX_FMT_BGR24,
+ 		.bpp = 24,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_BGRA8888,
++		.v4l2 = V4L2_PIX_FMT_ARGB32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_BGRX8888,
++		.v4l2 = V4L2_PIX_FMT_XRGB32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVYU,
++		.v4l2 = V4L2_PIX_FMT_YVYU,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV61,
++		.v4l2 = V4L2_PIX_FMT_NV61M,
+ 		.bpp = 16,
+ 		.planes = 2,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUV420,
++		.v4l2 = V4L2_PIX_FMT_YUV420M,
+ 		.bpp = 12,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVU420,
++		.v4l2 = V4L2_PIX_FMT_YVU420M,
+ 		.bpp = 12,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUV422,
++		.v4l2 = V4L2_PIX_FMT_YUV422M,
+ 		.bpp = 16,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVU422,
++		.v4l2 = V4L2_PIX_FMT_YVU422M,
+ 		.bpp = 16,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUV444,
++		.v4l2 = V4L2_PIX_FMT_YUV444M,
+ 		.bpp = 24,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVU444,
++		.v4l2 = V4L2_PIX_FMT_YVU444M,
+ 		.bpp = 24,
+ 		.planes = 3,
+ 	},
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.h b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+index e171527abdaa..0346504d8c59 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+@@ -19,6 +19,7 @@ struct rcar_du_device;
+ 
+ struct rcar_du_format_info {
+ 	u32 fourcc;
++	u32 v4l2;
+ 	unsigned int bpp;
+ 	unsigned int planes;
+ 	unsigned int pnmr;
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 76a39eee7c9c..28bfeb8c24fb 100644
+index 28bfeb8c24fb..29a08f7b0761 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -26,14 +26,14 @@
- #include "rcar_du_kms.h"
- #include "rcar_du_vsp.h"
+@@ -109,8 +109,7 @@ void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc)
+ 	vsp1_du_atomic_flush(crtc->vsp->vsp, crtc->vsp_pipe, &cfg);
+ }
  
--static void rcar_du_vsp_complete(void *private, bool completed, u32 crc)
-+static void rcar_du_vsp_complete(void *private, unsigned int status, u32 crc)
- {
- 	struct rcar_du_crtc *crtc = private;
- 
- 	if (crtc->vblank_enable)
- 		drm_crtc_handle_vblank(&crtc->crtc);
- 
--	if (completed)
-+	if (status & VSP1_DU_STATUS_COMPLETE)
- 		rcar_du_crtc_finish_page_flip(crtc);
- 
- 	drm_crtc_add_crc_entry(&crtc->crtc, false, 0, &crc);
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index 5601a787688b..0367f88135bf 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -34,14 +34,14 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
- 				       unsigned int completion)
- {
- 	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
--	bool complete = completion & VSP1_DL_FRAME_END_COMPLETED;
- 
- 	if (drm_pipe->du_complete) {
- 		struct vsp1_entity *uif = drm_pipe->uif;
-+		unsigned int status = completion & VSP1_DU_STATUS_COMPLETE;
- 		u32 crc;
- 
- 		crc = uif ? vsp1_uif_get_crc(to_uif(&uif->subdev)) : 0;
--		drm_pipe->du_complete(drm_pipe->du_private, complete, crc);
-+		drm_pipe->du_complete(drm_pipe->du_private, status, crc);
- 	}
- 
- 	if (completion & VSP1_DL_FRAME_END_INTERNAL) {
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
-index 8dfd274a59e2..e85ad4366fbb 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.h
-+++ b/drivers/media/platform/vsp1/vsp1_drm.h
-@@ -42,7 +42,7 @@ struct vsp1_drm_pipeline {
- 	struct vsp1_du_crc_config crc;
- 
- 	/* Frame synchronisation */
--	void (*du_complete)(void *data, bool completed, u32 crc);
-+	void (*du_complete)(void *data, unsigned int status, u32 crc);
- 	void *du_private;
+-/* Keep the two tables in sync. */
+-static const u32 formats_kms[] = {
++static const u32 rcar_du_vsp_formats[] = {
+ 	DRM_FORMAT_RGB332,
+ 	DRM_FORMAT_ARGB4444,
+ 	DRM_FORMAT_XRGB4444,
+@@ -138,40 +137,13 @@ static const u32 formats_kms[] = {
+ 	DRM_FORMAT_YVU444,
  };
  
-diff --git a/include/media/vsp1.h b/include/media/vsp1.h
-index 1cf868360701..877496936487 100644
---- a/include/media/vsp1.h
-+++ b/include/media/vsp1.h
-@@ -17,6 +17,8 @@ struct device;
+-static const u32 formats_v4l2[] = {
+-	V4L2_PIX_FMT_RGB332,
+-	V4L2_PIX_FMT_ARGB444,
+-	V4L2_PIX_FMT_XRGB444,
+-	V4L2_PIX_FMT_ARGB555,
+-	V4L2_PIX_FMT_XRGB555,
+-	V4L2_PIX_FMT_RGB565,
+-	V4L2_PIX_FMT_RGB24,
+-	V4L2_PIX_FMT_BGR24,
+-	V4L2_PIX_FMT_ARGB32,
+-	V4L2_PIX_FMT_XRGB32,
+-	V4L2_PIX_FMT_ABGR32,
+-	V4L2_PIX_FMT_XBGR32,
+-	V4L2_PIX_FMT_UYVY,
+-	V4L2_PIX_FMT_YUYV,
+-	V4L2_PIX_FMT_YVYU,
+-	V4L2_PIX_FMT_NV12M,
+-	V4L2_PIX_FMT_NV21M,
+-	V4L2_PIX_FMT_NV16M,
+-	V4L2_PIX_FMT_NV61M,
+-	V4L2_PIX_FMT_YUV420M,
+-	V4L2_PIX_FMT_YVU420M,
+-	V4L2_PIX_FMT_YUV422M,
+-	V4L2_PIX_FMT_YVU422M,
+-	V4L2_PIX_FMT_YUV444M,
+-	V4L2_PIX_FMT_YVU444M,
+-};
+-
+ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
+ {
+ 	struct rcar_du_vsp_plane_state *state =
+ 		to_rcar_vsp_plane_state(plane->plane.state);
+ 	struct rcar_du_crtc *crtc = to_rcar_crtc(state->state.crtc);
+ 	struct drm_framebuffer *fb = plane->plane.state->fb;
++	const struct rcar_du_format_info *format;
+ 	struct vsp1_du_atomic_config cfg = {
+ 		.pixelformat = 0,
+ 		.pitch = fb->pitches[0],
+@@ -194,12 +166,8 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
+ 		cfg.mem[i] = sg_dma_address(state->sg_tables[i].sgl)
+ 			   + fb->offsets[i];
  
- int vsp1_du_init(struct device *dev);
+-	for (i = 0; i < ARRAY_SIZE(formats_kms); ++i) {
+-		if (formats_kms[i] == state->format->fourcc) {
+-			cfg.pixelformat = formats_v4l2[i];
+-			break;
+-		}
+-	}
++	format = rcar_du_format_info(state->format->fourcc);
++	cfg.pixelformat = format->v4l2;
  
-+#define VSP1_DU_STATUS_COMPLETE		BIT(0)
-+
- /**
-  * struct vsp1_du_lif_config - VSP LIF configuration
-  * @width: output frame width
-@@ -32,7 +34,7 @@ struct vsp1_du_lif_config {
- 	unsigned int height;
- 	bool interlaced;
+ 	vsp1_du_atomic_update(plane->vsp->vsp, crtc->vsp_pipe,
+ 			      plane->index, &cfg);
+@@ -394,8 +362,8 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
  
--	void (*callback)(void *data, bool completed, u32 crc);
-+	void (*callback)(void *data, unsigned int status, u32 crc);
- 	void *callback_data;
- };
- 
+ 		ret = drm_universal_plane_init(rcdu->ddev, &plane->plane, crtcs,
+ 					       &rcar_du_vsp_plane_funcs,
+-					       formats_kms,
+-					       ARRAY_SIZE(formats_kms),
++					       rcar_du_vsp_formats,
++					       ARRAY_SIZE(rcar_du_vsp_formats),
+ 					       NULL, type, NULL);
+ 		if (ret < 0)
+ 			return ret;
 -- 
 Regards,
 
