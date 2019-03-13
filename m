@@ -2,142 +2,189 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FABAC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 13:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD95C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F23482087C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 13:46:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Y6QNyegy"
+	by mail.kernel.org (Postfix) with ESMTP id 7853C214AE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725888AbfCMNqc (ORCPT
+        id S1725895AbfCMOpQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 09:46:32 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35029 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfCMNqc (ORCPT
+        Wed, 13 Mar 2019 10:45:16 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:35266 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfCMOpQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 09:46:32 -0400
-Received: by mail-lj1-f196.google.com with SMTP id t13so1627342lji.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Mar 2019 06:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+hrJbiRXmiXEOY4leyXpayOu7lKXT7DUlk7pP+Nq//s=;
-        b=Y6QNyegyWauovdBqU8n+Aw9bmTit+IuNe71nA7A8djgo0RvxhNsZNt7bFYKsIJYnv/
-         wSwZnxd2TxHav29EyN2zrWIkhIlkG7sxSCwRG2tohnB6R1oUjqHaXE0OqXmSw6bMqgaS
-         /L/MRt6WDj1HUq73ChG12J7jKcCF+XpeZzuFdopTqYYWjQ+vfwtzV6S43HiU6N54vweF
-         ZQ4g0Avi70CZXTrVLIQm/sUUfg2hDKus6LgzTGirR1UPLuMFRa9ii7Y/MrnA5U2u8cSK
-         5QsDuPM0L+Ng/GhyeBqPF7cqWAPJLpRe5H927pbugDMkB6dHBaFoPCfbAazx/O1tzzbD
-         asKA==
+        Wed, 13 Mar 2019 10:45:16 -0400
+Received: by mail-ua1-f68.google.com with SMTP id f88so745610uaf.2;
+        Wed, 13 Mar 2019 07:45:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+hrJbiRXmiXEOY4leyXpayOu7lKXT7DUlk7pP+Nq//s=;
-        b=hUPKJqVdOgieUmDaoWV3yZHFH8f5U3O1q9S8izyy3Y7Z3gyDBco6wusMhUF8QOxL/D
-         gdIBzNzeLaTVTSXd9Weck1FQ0JKuetkGKkdSp8knkcSI52hNZuJ7OFf0KBztF9yth7Np
-         WEdPxv4TV34aYayS3M8N5xAFlZ9mV6Z8mWADmg9UR5/w8QAucZFQDztUpMV9YAdbEwHs
-         bAOsKr2U3RElrtBOKxNP5M6Hyrc6/n96qEdxW51a5XhL5cVdhNjCGyDjVvChuPpmEwrk
-         XD0Pt134EiJ6WGUIsdFNAmhARxYpx2mFCLnc5Q+7enN6BN+YSIWnZtzWpCxrFJMwHQAq
-         x4sg==
-X-Gm-Message-State: APjAAAWteZkd+F/xesv2ZUbVMZQ747zJHrdPRuW+9HYs0AazClgb+tqL
-        C2qKPO6wn07CulwXRgZoVrhU5A==
-X-Google-Smtp-Source: APXvYqxsMxVGNocjToWpQhMhli9C8+wVZ8UrhOZb/xLYWh/GBcAYv32cd2+Whq48bAbUUFxb2Yooaw==
-X-Received: by 2002:a2e:9c42:: with SMTP id t2mr6100702ljj.149.1552484790344;
-        Wed, 13 Mar 2019 06:46:30 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id h137sm2065859lfg.74.2019.03.13.06.46.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Mar 2019 06:46:29 -0700 (PDT)
-Date:   Wed, 13 Mar 2019 14:46:28 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH] arm64: dts: renesas: draak: Remove unecessary index from
- vin4 port
-Message-ID: <20190313134628.GB24848@bigcity.dyn.berto.se>
-References: <20190313105118.23245-1-horms+renesas@verge.net.au>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=63dkDYz52se4E5080eXzCZ9vNZBXRS9vr4q0KCO8Cy4=;
+        b=kL5mCFyxSv2Idhf5IdagVjq6n03T/S2IQP03G1EYV/o7XBfBFPsMSvgMTiuhltYD2i
+         4JzGwlasIFJVW+u8jqFh5Gf1kAs7UrJtQSaXuyrGT7WesH8tRJOnhTb6xbE4C+lrDlXq
+         RRWYA1zME9HbdQprbbWRahjNPbK8M9/u+K9WeXLxxw/vz9N15CTUEqDWbTlohhyZKfS6
+         GxT2FENbOWkErV6MW3kLgByJq5r1Xe1fimv4HkEJpMJwo55SLuTsvuaJTvB/LV5e/FiO
+         xr6mKwcniqLZdi0rusU+Y7WA9lRJEYoO0wIDFKSWZuFwOkc0OQCfpan4c8T7qRGY5ub5
+         mEtQ==
+X-Gm-Message-State: APjAAAWdJwjfkAy9KC8rAFE1Qhq7Q+aGB5k/4S3COReh4aEY6nI6ZXEJ
+        4v47gPURftwJVIKqtKl0gtfuy9SRrMwKTgX0Tlk=
+X-Google-Smtp-Source: APXvYqyEfu3Iegnjt5eiK9aoYhPNx4ak8DInz6UPgEF0pcBCsIACErDiJ7EkuOwnf1l+FgvaGN7fQDytKUngxHrHcrE=
+X-Received: by 2002:ab0:6419:: with SMTP id x25mr22757596uao.20.1552488314929;
+ Wed, 13 Mar 2019 07:45:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190313105118.23245-1-horms+renesas@verge.net.au>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190312065128.24994-1-jiada_wang@mentor.com>
+In-Reply-To: <20190312065128.24994-1-jiada_wang@mentor.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 13 Mar 2019 15:45:03 +0100
+Message-ID: <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] PM / Domains: Avoid a potential deadlock
+To:     Jiada Wang <jiada_wang@mentor.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+Hi Jiada,
 
-Thanks for your patch.
+CC Marek, Jon, Mike, Stephen, linux-clk, linux-renesas-soc
 
-On 2019-03-13 11:51:18 +0100, Simon Horman wrote:
-> The ports node of vin4 only has one sub-node and thus does
-> not need #address-cells/#size-cells and the sub-node does
-> not need an exit.
+On Tue, Mar 12, 2019 at 7:51 AM Jiada Wang <jiada_wang@mentor.com> wrote:
+> Lockdep warns that prepare_lock and genpd->mlock can cause a deadlock
+> the deadlock scenario is like following:
+> First thread is probing cs2000
+> cs2000_probe()
+>   clk_register()
+>     __clk_core_init()
+>       clk_prepare_lock()                            ----> acquires prepare_lock
+>         cs2000_recalc_rate()
+>           i2c_smbus_read_byte_data()
+>             rcar_i2c_master_xfer()
+>               dma_request_chan()
+>                 rcar_dmac_of_xlate()
+>                   rcar_dmac_alloc_chan_resources()
+>                     pm_runtime_get_sync()
+>                       __pm_runtime_resume()
+>                         rpm_resume()
+>                           rpm_callback()
+>                             genpd_runtime_resume()   ----> acquires genpd->mlock
+>
+> Second thread is attaching any device to the same PM domain
+> genpd_add_device()
+>   genpd_lock()                                       ----> acquires genpd->mlock
+>     cpg_mssr_attach_dev()
+>       of_clk_get_from_provider()
+>         __of_clk_get_from_provider()
+>           __clk_create_clk()
+>             clk_prepare_lock()                       ----> acquires prepare_lock
+>
+> Since currently no PM provider access genpd's critical section
+> in .attach_dev, and .detach_dev callbacks, so there is no need to protect
+> these two callbacks with genpd->mlock.
+> This patch avoids a potential deadlock by moving out .attach_dev and .detach_dev
+> from genpd->mlock, so that genpd->mlock won't be held when prepare_lock is acquired
+> in .attach_dev and .detach_dev
+>
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 
-I agree that the warning should be silenced however I have a feeling 
-this might need to be tested. The VIN bindings assigns special meaning 
-to which port reg an endpoint is described in and handles each of them 
-differently, see the biding documentation.
+Thanks a lot for your perseverance!
+I had tried putting each PM Domain in its own lockdep class, but that
+didn't help.
 
-As the single port described here is port 0 I think removing the reg 
-property will probably work but is it correct? If someone with a Draak 
-board could test this patch it would be great!
+Your patch fixes the lockdep warnings on my Salvator-X(S) boards.
 
-> 
-> This addresses the following warning:
-> 
->  # make dtbs W=1
->  ...
->  arch/arm64/boot/dts/renesas/r8a77995-draak.dts:492.8-503.4: Warning (graph_child_address): /soc/video@e6ef4000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-> 
-> Fixes: 6a0942c20f5c ("arm64: dts: renesas: draak: Describe CVBS input")
-> Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
->  Developed on top of renesas-devel-20190308-v5.0
->  Compile tested only
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> index 244b0dda03ed..8fba6cde5905 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> @@ -490,12 +490,7 @@
->  	status = "okay";
->  
->  	ports {
-> -		#address-cells = <1>;
-> -		#size-cells = <0>;
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Your solution makes sense, as the .{at,de}tach_dev() callbacks are
+owned by the individual PM Domain drivers, and not by the genpd core.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+One thing I'm still wondering about: genpd_add_device() is always called
+with gpd_list_lock held.
+However, the same cannot be said about genpd_remove_device():
+  - pm_genpd_remove_device() does not take gpd_list_lock, unlike
+    pm_genpd_add_device(),
+  - genpd_dev_pm_detach() does not take gpd_list_lock, while
+    __genpd_dev_pm_attach() does take the lock for adding,
+    but not for removing (in the error patch)?
+
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1467,12 +1467,12 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+>         if (IS_ERR(gpd_data))
+>                 return PTR_ERR(gpd_data);
+>
+> -       genpd_lock(genpd);
 > -
-> -		port@0 {
-> -			reg = <0>;
+>         ret = genpd->attach_dev ? genpd->attach_dev(genpd, dev) : 0;
+>         if (ret)
+>                 goto out;
+>
+> +       genpd_lock(genpd);
+> +
+>         dev_pm_domain_set(dev, &genpd->domain);
+>
+>         genpd->device_count++;
+> @@ -1480,9 +1480,8 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+>
+>         list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+>
+> - out:
+>         genpd_unlock(genpd);
 > -
-> +		port {
->  			vin4_in: endpoint {
->  				remote-endpoint = <&adv7180_out>;
->  			};
-> -- 
-> 2.11.0
-> 
+> + out:
+>         if (ret)
+>                 genpd_free_dev_data(dev, gpd_data);
+>         else
+> @@ -1531,15 +1530,15 @@ static int genpd_remove_device(struct generic_pm_domain *genpd,
+>         genpd->device_count--;
+>         genpd->max_off_time_changed = true;
+>
+> -       if (genpd->detach_dev)
+> -               genpd->detach_dev(genpd, dev);
+> -
+>         dev_pm_domain_set(dev, NULL);
+>
+>         list_del_init(&pdd->list_node);
+>
+>         genpd_unlock(genpd);
+>
+> +       if (genpd->detach_dev)
+> +               genpd->detach_dev(genpd, dev);
+> +
+>         genpd_free_dev_data(dev, gpd_data);
+>
+>         return 0;
 
--- 
-Regards,
-Niklas Söderlund
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
