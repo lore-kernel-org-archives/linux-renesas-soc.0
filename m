@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49753C10F0C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C987C10F10
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7E8217F5
+	by mail.kernel.org (Postfix) with ESMTP id 4E5482183E
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:06:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eSTi5iob"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="klzlZvUt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfCMAGA (ORCPT
+        id S1727350AbfCMAF6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 20:06:00 -0400
+        Tue, 12 Mar 2019 20:05:58 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:42054 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbfCMAF6 (ORCPT
+        with ESMTP id S1727180AbfCMAF4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 20:05:58 -0400
+        Tue, 12 Mar 2019 20:05:56 -0400
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 252B59E5;
-        Wed, 13 Mar 2019 01:05:52 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B348E9BC;
+        Wed, 13 Mar 2019 01:05:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552435552;
-        bh=yfE2KNDjlDPMKSnmLmFhTXuTqMzrzTxl0sL5vZ/jyhY=;
+        s=mail; t=1552435551;
+        bh=ziMbw09nIephwcEu3LLkJpB7A9XamwtENtlFfhCVA94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eSTi5iobdBYXlQPvAzWvNNSDcHkYW+IVxssml9IXNqKfj8UGRY1N7FhNG4iPi9W/N
-         9DHxl9cgSCIrllyjXxgj4t1FlfXoQzXne9X97MdvNrjkEykiLjCEsUmZwA4/01hTGl
-         dNRrkNtFsMuMjc2Jw/QTLaGuwYdWtB4prGUoOpDA=
+        b=klzlZvUt1aCpt2O1JTk7NXjOeFVFq0VorYX0GEEnhIeMIq4fEtSpkZ6Liib6EvQar
+         WuWoUEM93NSF9F+o0mU8E/YFr2zo0rWmDZJ8G/aLhBeWr+j9KFch12b0gg57TdS9EW
+         +P7j6kaJLLEY+OppTdsuLISGffPGLq7Ku7tB37n4=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Liviu Dudau <Liviu.Dudau@arm.com>,
         Brian Starkey <brian.starkey@arm.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v6 13/18] drm: writeback: Fix leak of writeback job
-Date:   Wed, 13 Mar 2019 02:05:27 +0200
-Message-Id: <20190313000532.7087-14-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v6 11/18] media: vsp1: drm: Implement writeback support
+Date:   Wed, 13 Mar 2019 02:05:25 +0200
+Message-Id: <20190313000532.7087-12-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -52,89 +52,160 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Writeback jobs are allocated when the WRITEBACK_FB_ID is set, and
-deleted when the jobs complete. This results in both a memory leak of
-the job and a leak of the framebuffer if the atomic commit returns
-before the job is queued for processing, for instance if the atomic
-check fails or if the commit runs in test-only mode.
-
-Fix this by implementing the drm_writeback_cleanup_job() function and
-calling it from __drm_atomic_helper_connector_destroy_state(). As
-writeback jobs are removed from the state when they're queued for
-processing, any job left in the state when the state gets destroyed
-needs to be cleaned up.
-
-The existing declaration of the drm_writeback_cleanup_job() function
-without an implementation hints that this problem was considered, but
-never addressed.
+Extend the vsp1_du_atomic_flush() API with writeback support by adding
+format, pitch and memory addresses of the writeback framebuffer.
+Writeback completion is reported through the existing frame completion
+callback with a new VSP1_DU_STATUS_WRITEBACK status flag.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 ---
-Changes since v5:
+ drivers/media/platform/vsp1/vsp1_dl.c  | 14 ++++++++++++++
+ drivers/media/platform/vsp1/vsp1_dl.h  |  3 ++-
+ drivers/media/platform/vsp1/vsp1_drm.c | 25 ++++++++++++++++++++++++-
+ include/media/vsp1.h                   | 15 +++++++++++++++
+ 4 files changed, 55 insertions(+), 2 deletions(-)
 
-- Export drm_writeback_cleanup_job()
----
- drivers/gpu/drm/drm_atomic_state_helper.c |  4 ++++
- drivers/gpu/drm/drm_writeback.c           | 14 +++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
-index 4985384e51f6..59ffb6b9c745 100644
---- a/drivers/gpu/drm/drm_atomic_state_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_state_helper.c
-@@ -30,6 +30,7 @@
- #include <drm/drm_connector.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_device.h>
-+#include <drm/drm_writeback.h>
- 
- #include <linux/slab.h>
- #include <linux/dma-fence.h>
-@@ -412,6 +413,9 @@ __drm_atomic_helper_connector_destroy_state(struct drm_connector_state *state)
- 
- 	if (state->commit)
- 		drm_crtc_commit_put(state->commit);
-+
-+	if (state->writeback_job)
-+		drm_writeback_cleanup_job(state->writeback_job);
- }
- EXPORT_SYMBOL(__drm_atomic_helper_connector_destroy_state);
- 
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 338b993d7c9f..1b497d3530b5 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -273,6 +273,15 @@ void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
- }
- EXPORT_SYMBOL(drm_writeback_queue_job);
- 
-+void drm_writeback_cleanup_job(struct drm_writeback_job *job)
-+{
-+	if (job->fb)
-+		drm_framebuffer_put(job->fb);
-+
-+	kfree(job);
-+}
-+EXPORT_SYMBOL(drm_writeback_cleanup_job);
-+
- /*
-  * @cleanup_work: deferred cleanup of a writeback job
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+index ed7cda4130f2..104b6f514536 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.c
++++ b/drivers/media/platform/vsp1/vsp1_dl.c
+@@ -958,6 +958,9 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl, unsigned int dl_flags)
   *
-@@ -285,10 +294,9 @@ static void cleanup_work(struct work_struct *work)
- 	struct drm_writeback_job *job = container_of(work,
- 						     struct drm_writeback_job,
- 						     cleanup_work);
--	drm_framebuffer_put(job->fb);
--	kfree(job);
--}
+  * The VSP1_DL_FRAME_END_INTERNAL flag indicates that the display list that just
+  * became active had been queued with the internal notification flag.
++ *
++ * The VSP1_DL_FRAME_END_WRITEBACK flag indicates that the previously active
++ * display list had been queued with the writeback flag.
+  */
+ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ {
+@@ -995,6 +998,17 @@ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
+ 	if (status & VI6_STATUS_FLD_STD(dlm->index))
+ 		goto done;
  
-+	drm_writeback_cleanup_job(job);
-+}
++	/*
++	 * If the active display list has the writeback flag set, the frame
++	 * completion marks the end of the writeback capture. Return the
++	 * VSP1_DL_FRAME_END_WRITEBACK flag and reset the display list's
++	 * writeback flag.
++	 */
++	if (dlm->active && (dlm->active->flags & VSP1_DL_FRAME_END_WRITEBACK)) {
++		flags |= VSP1_DL_FRAME_END_WRITEBACK;
++		dlm->active->flags &= ~VSP1_DL_FRAME_END_WRITEBACK;
++	}
++
+ 	/*
+ 	 * The device starts processing the queued display list right after the
+ 	 * frame end interrupt. The display list thus becomes active.
+diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
+index e0fdb145e6ed..4d7bcfdc9bd9 100644
+--- a/drivers/media/platform/vsp1/vsp1_dl.h
++++ b/drivers/media/platform/vsp1/vsp1_dl.h
+@@ -18,7 +18,8 @@ struct vsp1_dl_list;
+ struct vsp1_dl_manager;
+ 
+ #define VSP1_DL_FRAME_END_COMPLETED		BIT(0)
+-#define VSP1_DL_FRAME_END_INTERNAL		BIT(1)
++#define VSP1_DL_FRAME_END_WRITEBACK		BIT(1)
++#define VSP1_DL_FRAME_END_INTERNAL		BIT(2)
  
  /**
-  * drm_writeback_signal_completion - Signal the completion of a writeback job
+  * struct vsp1_dl_ext_cmd - Extended Display command
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 0367f88135bf..16826bf184c7 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -37,7 +37,9 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
+ 
+ 	if (drm_pipe->du_complete) {
+ 		struct vsp1_entity *uif = drm_pipe->uif;
+-		unsigned int status = completion & VSP1_DU_STATUS_COMPLETE;
++		unsigned int status = completion
++				    & (VSP1_DU_STATUS_COMPLETE |
++				       VSP1_DU_STATUS_WRITEBACK);
+ 		u32 crc;
+ 
+ 		crc = uif ? vsp1_uif_get_crc(to_uif(&uif->subdev)) : 0;
+@@ -541,6 +543,8 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
+ 
+ 	if (drm_pipe->force_brx_release)
+ 		dl_flags |= VSP1_DL_FRAME_END_INTERNAL;
++	if (pipe->output->writeback)
++		dl_flags |= VSP1_DL_FRAME_END_WRITEBACK;
+ 
+ 	dl = vsp1_dl_list_get(pipe->output->dlm);
+ 	dlb = vsp1_dl_list_get_body0(dl);
+@@ -870,12 +874,31 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index,
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 	struct vsp1_pipeline *pipe = &drm_pipe->pipe;
++	int ret;
+ 
+ 	drm_pipe->crc = cfg->crc;
+ 
+ 	mutex_lock(&vsp1->drm->lock);
++
++	if (pipe->output->has_writeback && cfg->writeback.pixelformat) {
++		const struct vsp1_du_writeback_config *wb_cfg = &cfg->writeback;
++
++		ret = vsp1_du_pipeline_set_rwpf_format(vsp1, pipe->output,
++						       wb_cfg->pixelformat,
++						       wb_cfg->pitch);
++		if (WARN_ON(ret < 0))
++			goto done;
++
++		pipe->output->mem.addr[0] = wb_cfg->mem[0];
++		pipe->output->mem.addr[1] = wb_cfg->mem[1];
++		pipe->output->mem.addr[2] = wb_cfg->mem[2];
++		pipe->output->writeback = true;
++	}
++
+ 	vsp1_du_pipeline_setup_inputs(vsp1, pipe);
+ 	vsp1_du_pipeline_configure(pipe);
++
++done:
+ 	mutex_unlock(&vsp1->drm->lock);
+ }
+ EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
+diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+index 877496936487..cc1b0d42ce95 100644
+--- a/include/media/vsp1.h
++++ b/include/media/vsp1.h
+@@ -18,6 +18,7 @@ struct device;
+ int vsp1_du_init(struct device *dev);
+ 
+ #define VSP1_DU_STATUS_COMPLETE		BIT(0)
++#define VSP1_DU_STATUS_WRITEBACK	BIT(1)
+ 
+ /**
+  * struct vsp1_du_lif_config - VSP LIF configuration
+@@ -83,12 +84,26 @@ struct vsp1_du_crc_config {
+ 	unsigned int index;
+ };
+ 
++/**
++ * struct vsp1_du_writeback_config - VSP writeback configuration parameters
++ * @pixelformat: plane pixel format (V4L2 4CC)
++ * @pitch: line pitch in bytes for the first plane
++ * @mem: DMA memory address for each plane of the frame buffer
++ */
++struct vsp1_du_writeback_config {
++	u32 pixelformat;
++	unsigned int pitch;
++	dma_addr_t mem[3];
++};
++
+ /**
+  * struct vsp1_du_atomic_pipe_config - VSP atomic pipe configuration parameters
+  * @crc: CRC computation configuration
++ * @writeback: writeback configuration
+  */
+ struct vsp1_du_atomic_pipe_config {
+ 	struct vsp1_du_crc_config crc;
++	struct vsp1_du_writeback_config writeback;
+ };
+ 
+ void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index);
 -- 
 Regards,
 
