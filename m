@@ -2,140 +2,336 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F93EC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 07:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07EDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 08:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBF2B2171F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 07:01:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="lKQdJ4F4"
+	by mail.kernel.org (Postfix) with ESMTP id 749802171F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 08:29:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfCMHBw (ORCPT
+        id S1727218AbfCMI3v (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 03:01:52 -0400
-Received: from mail-eopbgr1310113.outbound.protection.outlook.com ([40.107.131.113]:51554
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725821AbfCMHBw (ORCPT
+        Wed, 13 Mar 2019 04:29:51 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:4334 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726630AbfCMI3u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 03:01:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NKKadEjdpB30kMAjvaERyBg6IxAL5ckfbYBxzrU8eLU=;
- b=lKQdJ4F4xoGqmo29zKtydowBIkl72WciDQ9uJPyhwG2WC5h26HGPAXwltd+1PjopF/mCISzzsZNPZX6xd+FWSERDJ83qpOLWQfGNIb26Zz0IaTTacJMubsk6oPOh5XD7mF48A1yOluysctqEh5jRO/L42bFFIU+AUkAhsi2U6Jo=
-Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com (20.179.170.147) by
- TY2PR01MB1932.jpnprd01.prod.outlook.com (52.133.181.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1686.20; Wed, 13 Mar 2019 07:01:46 +0000
-Received: from TY2PR01MB4812.jpnprd01.prod.outlook.com
- ([fe80::f423:2ed8:938:c28d]) by TY2PR01MB4812.jpnprd01.prod.outlook.com
- ([fe80::f423:2ed8:938:c28d%5]) with mapi id 15.20.1709.011; Wed, 13 Mar 2019
- 07:01:46 +0000
+        Wed, 13 Mar 2019 04:29:50 -0400
+X-IronPort-AV: E=Sophos;i="5.58,474,1544454000"; 
+   d="scan'208";a="10237802"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 13 Mar 2019 17:29:47 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B43BA4274BDF;
+        Wed, 13 Mar 2019 17:29:47 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Phong Hoang <phong.hoang.wz@renesas.com>
-Subject: RE: [PATCH] pwm: Avoid deadlock warning when removing PWM device
-Thread-Topic: [PATCH] pwm: Avoid deadlock warning when removing PWM device
-Thread-Index: AQHU2IH/+1LD433Vm0S5q4/R44BYkqYH8fEAgAExJkA=
-Date:   Wed, 13 Mar 2019 07:01:46 +0000
-Message-ID: <TY2PR01MB4812E6489E20BCE94AC29E38D84A0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
-References: <1552360594-21547-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20190312124532.GO31026@ulmo>
-In-Reply-To: <20190312124532.GO31026@ulmo>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [211.11.155.151]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 80e3b888-839f-4819-a0bb-08d6a781c1d8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB1932;
-x-ms-traffictypediagnostic: TY2PR01MB1932:
-x-microsoft-exchange-diagnostics: 1;TY2PR01MB1932;20:mLfmPAMwVvQCdwM/7/6A5/1d9FFr5wFIDGqYA/r26VfAFq8HAooME7zh3AR5Sqdjae5k8tNltkd8frTHdUh77AGImrojy2GGsxz3d6Bkwzp4cMQfk9XS4VvyWtMLjxf1ksMw2opgcXHNVrLzIq2SaxJ0/R2CqN24dyinVex/sJE=
-x-microsoft-antispam-prvs: <TY2PR01MB1932487C5E63F31CD0F484F4D84A0@TY2PR01MB1932.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 09752BC779
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(396003)(376002)(39860400002)(366004)(199004)(189003)(229853002)(476003)(11346002)(305945005)(74316002)(71200400001)(71190400001)(446003)(8936002)(486006)(6436002)(33656002)(478600001)(4326008)(81166006)(68736007)(106356001)(81156014)(316002)(105586002)(7736002)(25786009)(256004)(14444005)(6246003)(53936002)(6916009)(54906003)(102836004)(55016002)(2906002)(3846002)(14454004)(6116002)(9686003)(5660300002)(52536013)(66066001)(107886003)(6506007)(76176011)(99286004)(8676002)(7696005)(86362001)(97736004)(186003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB1932;H:TY2PR01MB4812.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tFDlUORrVBkpq2yaTahqq+FhriP3mBk53XQ1gbaMjU84Fcj1S7wSiSuMs7MYA/6ivy6vltVDTqy8P4/wj94IsECe0yH0XVXQuSnp/HqGXUdHZf0ovqaAklKilgY4iM3q5JL8Pd28aJINdL5NTjhPm1dJmgxGhFGJCNktbNQX1e9oihCITLDhI+p4a3gW5xgEzOxzDOhq5z9t+YcdQ1nhl6PK72w3IaBl59es1jhLVQHZ4uNZrAl2HkUoKLNtns8fn8Jglv6lc2j70NF4q+iDb+MMeAc2+4KwO+GJgmGtKi7ZgJfQNlb+lpNi9H0zfJGGMzL4lK/ax87SjaI9WBkiQJZTv0MhChoBJtRENCOGM0NAZntoGUavzzT4POBhIRZLh4bqpcx1bWj3JTa9gQ8BJUfEoOVj7UgOcICREKZ4KcI=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80e3b888-839f-4819-a0bb-08d6a781c1d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2019 07:01:46.2882
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB1932
+To:     thierry.reding@gmail.com
+Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Phong Hoang <phong.hoang.wz@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2] pwm: Fix deadlock warning when removing PWM device
+Date:   Wed, 13 Mar 2019 17:29:52 +0900
+Message-Id: <1552465792-25340-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Thierry,
+From: Phong Hoang <phong.hoang.wz@renesas.com>
 
-> From: Thierry Reding, Sent: Tuesday, March 12, 2019 9:46 PM
-> On Tue, Mar 12, 2019 at 12:16:34PM +0900, Yoshihiro Shimoda wrote:
-<snip>
-> > @@ -368,10 +370,12 @@ int pwmchip_remove(struct pwm_chip *chip)
-> >
-> >  	free_pwms(chip);
-> >
-> > -	pwmchip_sysfs_unexport(chip);
-> > -
-> >  out:
-> >  	mutex_unlock(&pwm_lock);
-> > +
-> > +	if (!ret)
-> > +		pwmchip_sysfs_unexport(chip);
-> > +
->=20
-> I don't exactly remember why he sysfs unexport happens this late. It's
-> completely asymmetric to what we do in pwmchip_add_with_polarity() and
-> commit 0733424c9ba9 ("pwm: Unexport children before chip removal") is
-> a strong indication that this was wrong to begin with. Maybe we should
-> just move pwmchip_sysfs_unexport() where it belongs, which is right
-> after pwmchip_sysfs_unexport_children(). In that case, we probably do
-> not need separate functions anymore either.
+This patch fixes deadlock warning if removing PWM device
+when CONFIG_PROVE_LOCKING is enabled.
 
-I think so. So, I'll merge them on v2 patch.
+This issue can be reproceduced by the following steps on
+the R-Car H3 Salvator-X board if the backlight is disabled:
 
-> We also really want to remove sysfs irrespective of whether or not the
-> chip will be removed as a result of pwmchip_remove(). We can only assume
-> that the driver will be gone after that, so we shouldn't leave any
-> dangling sysfs files around.
+ # cd /sys/class/pwm/pwmchip0
+ # echo 0 > export
+ # ls
+ device  export  npwm  power  pwm0  subsystem  uevent  unexport
+ # cd device/driver
+ # ls
+ bind  e6e31000.pwm  uevent  unbind
+ # echo e6e31000.pwm > unbind
 
-I think so.
+[   87.659974] ======================================================
+[   87.666149] WARNING: possible circular locking dependency detected
+[   87.672327] 5.0.0 #7 Not tainted
+[   87.675549] ------------------------------------------------------
+[   87.681723] bash/2986 is trying to acquire lock:
+[   87.686337] 000000005ea0e178 (kn->count#58){++++}, at: kernfs_remove_by_name_ns+0x50/0xa0
+[   87.694528]
+[   87.694528] but task is already holding lock:
+[   87.700353] 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
+[   87.707405]
+[   87.707405] which lock already depends on the new lock.
+[   87.707405]
+[   87.715574]
+[   87.715574] the existing dependency chain (in reverse order) is:
+[   87.723048]
+[   87.723048] -> #1 (pwm_lock){+.+.}:
+[   87.728017]        __mutex_lock+0x70/0x7e4
+[   87.732108]        mutex_lock_nested+0x1c/0x24
+[   87.736547]        pwm_request_from_chip.part.6+0x34/0x74
+[   87.741940]        pwm_request_from_chip+0x20/0x40
+[   87.746725]        export_store+0x6c/0x1f4
+[   87.750820]        dev_attr_store+0x18/0x28
+[   87.754998]        sysfs_kf_write+0x54/0x64
+[   87.759175]        kernfs_fop_write+0xe4/0x1e8
+[   87.763615]        __vfs_write+0x40/0x184
+[   87.767619]        vfs_write+0xa8/0x19c
+[   87.771448]        ksys_write+0x58/0xbc
+[   87.775278]        __arm64_sys_write+0x18/0x20
+[   87.779721]        el0_svc_common+0xd0/0x124
+[   87.783986]        el0_svc_compat_handler+0x1c/0x24
+[   87.788858]        el0_svc_compat+0x8/0x18
+[   87.792947]
+[   87.792947] -> #0 (kn->count#58){++++}:
+[   87.798260]        lock_acquire+0xc4/0x22c
+[   87.802353]        __kernfs_remove+0x258/0x2c4
+[   87.806790]        kernfs_remove_by_name_ns+0x50/0xa0
+[   87.811836]        remove_files.isra.1+0x38/0x78
+[   87.816447]        sysfs_remove_group+0x48/0x98
+[   87.820971]        sysfs_remove_groups+0x34/0x4c
+[   87.825583]        device_remove_attrs+0x6c/0x7c
+[   87.830197]        device_del+0x11c/0x33c
+[   87.834201]        device_unregister+0x14/0x2c
+[   87.838638]        pwmchip_sysfs_unexport+0x40/0x4c
+[   87.843509]        pwmchip_remove+0xf4/0x13c
+[   87.847773]        rcar_pwm_remove+0x28/0x34
+[   87.852039]        platform_drv_remove+0x24/0x64
+[   87.856651]        device_release_driver_internal+0x18c/0x21c
+[   87.862391]        device_release_driver+0x14/0x1c
+[   87.867175]        unbind_store+0xe0/0x124
+[   87.871265]        drv_attr_store+0x20/0x30
+[   87.875442]        sysfs_kf_write+0x54/0x64
+[   87.879618]        kernfs_fop_write+0xe4/0x1e8
+[   87.884055]        __vfs_write+0x40/0x184
+[   87.888057]        vfs_write+0xa8/0x19c
+[   87.891887]        ksys_write+0x58/0xbc
+[   87.895716]        __arm64_sys_write+0x18/0x20
+[   87.900154]        el0_svc_common+0xd0/0x124
+[   87.904417]        el0_svc_compat_handler+0x1c/0x24
+[   87.909289]        el0_svc_compat+0x8/0x18
+[   87.913378]
+[   87.913378] other info that might help us debug this:
+[   87.913378]
+[   87.921374]  Possible unsafe locking scenario:
+[   87.921374]
+[   87.927286]        CPU0                    CPU1
+[   87.931808]        ----                    ----
+[   87.936331]   lock(pwm_lock);
+[   87.939293]                                lock(kn->count#58);
+[   87.945120]                                lock(pwm_lock);
+[   87.950599]   lock(kn->count#58);
+[   87.953908]
+[   87.953908]  *** DEADLOCK ***
+[   87.953908]
+[   87.959821] 4 locks held by bash/2986:
+[   87.963563]  #0: 00000000ace7bc30 (sb_writers#6){.+.+}, at: vfs_write+0x188/0x19c
+[   87.971044]  #1: 00000000287991b2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xb4/0x1e8
+[   87.978872]  #2: 00000000f739d016 (&dev->mutex){....}, at: device_release_driver_internal+0x40/0x21c
+[   87.988001]  #3: 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
+[   87.995481]
+[   87.995481] stack backtrace:
+[   87.999836] CPU: 0 PID: 2986 Comm: bash Not tainted 5.0.0 #7
+[   88.005489] Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
+[   88.012791] Call trace:
+[   88.015235]  dump_backtrace+0x0/0x190
+[   88.018891]  show_stack+0x14/0x1c
+[   88.022204]  dump_stack+0xb0/0xec
+[   88.025514]  print_circular_bug.isra.32+0x1d0/0x2e0
+[   88.030385]  __lock_acquire+0x1318/0x1864
+[   88.034388]  lock_acquire+0xc4/0x22c
+[   88.037958]  __kernfs_remove+0x258/0x2c4
+[   88.041874]  kernfs_remove_by_name_ns+0x50/0xa0
+[   88.046398]  remove_files.isra.1+0x38/0x78
+[   88.050487]  sysfs_remove_group+0x48/0x98
+[   88.054490]  sysfs_remove_groups+0x34/0x4c
+[   88.058580]  device_remove_attrs+0x6c/0x7c
+[   88.062671]  device_del+0x11c/0x33c
+[   88.066154]  device_unregister+0x14/0x2c
+[   88.070070]  pwmchip_sysfs_unexport+0x40/0x4c
+[   88.074421]  pwmchip_remove+0xf4/0x13c
+[   88.078163]  rcar_pwm_remove+0x28/0x34
+[   88.081906]  platform_drv_remove+0x24/0x64
+[   88.085996]  device_release_driver_internal+0x18c/0x21c
+[   88.091215]  device_release_driver+0x14/0x1c
+[   88.095478]  unbind_store+0xe0/0x124
+[   88.099048]  drv_attr_store+0x20/0x30
+[   88.102704]  sysfs_kf_write+0x54/0x64
+[   88.106359]  kernfs_fop_write+0xe4/0x1e8
+[   88.110275]  __vfs_write+0x40/0x184
+[   88.113757]  vfs_write+0xa8/0x19c
+[   88.117065]  ksys_write+0x58/0xbc
+[   88.120374]  __arm64_sys_write+0x18/0x20
+[   88.124291]  el0_svc_common+0xd0/0x124
+[   88.128034]  el0_svc_compat_handler+0x1c/0x24
+[   88.132384]  el0_svc_compat+0x8/0x18
 
-> Yoshihiro, does it work if you move pwmchip_sysfs_unexport() to the top
-> of pwmchip_remove(), right below pwmchip_sysfs_unexport_children(),
-> instead? Does that get rid of the lockdep warning as well? That way it
-> is also outside of the pwm_lock section, which indeed doesn't seem to be
-> needed.
+The sysfs unexport in pwmchip_remove() is completely asymmetric
+to what we do in pwmchip_add_with_polarity() and commit 0733424c9ba9
+("pwm: Unexport children before chip removal") is a strong indication
+that this was wrong to begin with. We should just move
+pwmchip_sysfs_unexport() where it belongs, which is right after
+pwmchip_sysfs_unexport_children(). In that case, we do not need
+separate functions anymore either.
 
-It works. That gets rid of the lockdep warning as well. So, I'll submit v2
-patch later.
+We also really want to remove sysfs irrespective of whether or not
+the chip will be removed as a result of pwmchip_remove(). We can only
+assume that the driver will be gone after that, so we shouldn't leave
+any dangling sysfs files around.
 
-> Moving the pwmchip_sysfs_export() call outside of that section also
-> seems fine and it'd be perfectly symmetric with pwmchip_remove() again.
+This warning disappears if we move pwmchip_sysfs_unexport() to
+the top of pwmchip_remove(), right below pwmchip_sysfs_unexport_children().
+That way it is also outside of the pwm_lock section, which indeed
+doesn't seem to be needed.
 
-I think so.
+Moving the pwmchip_sysfs_export() call outside of that section also
+seems fine and it'd be perfectly symmetric with pwmchip_remove() again.
 
-Best regards,
-Yoshihiro Shimoda
+So, this patch fixes them.
 
-> Thierry
+Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
+[shimoda: revise the commit log and code]
+Fixes: 76abbdde2d95 ("pwm: Add sysfs interface")
+Fixes: 0733424c9ba9 ("pwm: Unexport children before chip removal")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+---
+ Changes from v1 (https://patchwork.kernel.org/patch/10848567/):
+ - Change the subject from "Avoid" to "Fix".
+ - Merge pwmchip_sysfs_unexport_children()'s code into
+   pwmchip_sysfs_unexport() and move pwmchip_sysfs_unexport() to
+   the top of pwmchip_remove().
+ - Revise the commit log that is reffered from Therry's comments [1]
+   because it seems very clear to me.
+ - Add Fixes tag about the commit 0733424c9ba9. 
+ - I got Geert's Reviewed-by on v1 patch, but I'm not sure
+   I can add the Reviewed-by because v2 patch changes a bit.
+   So, I didn't add the Reviewed-by tag.
+
+[1]
+https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg39167.html
+
+ drivers/pwm/core.c  | 10 +++++-----
+ drivers/pwm/sysfs.c | 28 ++++++++--------------------
+ include/linux/pwm.h |  5 -----
+ 3 files changed, 13 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 1581f6a..c45e571 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -311,10 +311,12 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
+ 	if (IS_ENABLED(CONFIG_OF))
+ 		of_pwmchip_add(chip);
+ 
+-	pwmchip_sysfs_export(chip);
+-
+ out:
+ 	mutex_unlock(&pwm_lock);
++
++	if (!ret)
++		pwmchip_sysfs_export(chip);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(pwmchip_add_with_polarity);
+@@ -348,7 +350,7 @@ int pwmchip_remove(struct pwm_chip *chip)
+ 	unsigned int i;
+ 	int ret = 0;
+ 
+-	pwmchip_sysfs_unexport_children(chip);
++	pwmchip_sysfs_unexport(chip);
+ 
+ 	mutex_lock(&pwm_lock);
+ 
+@@ -368,8 +370,6 @@ int pwmchip_remove(struct pwm_chip *chip)
+ 
+ 	free_pwms(chip);
+ 
+-	pwmchip_sysfs_unexport(chip);
+-
+ out:
+ 	mutex_unlock(&pwm_lock);
+ 	return ret;
+diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
+index ceb233d..a099066 100644
+--- a/drivers/pwm/sysfs.c
++++ b/drivers/pwm/sysfs.c
+@@ -411,36 +411,24 @@ void pwmchip_sysfs_export(struct pwm_chip *chip)
+ void pwmchip_sysfs_unexport(struct pwm_chip *chip)
+ {
+ 	struct device *parent;
++	unsigned int i;
+ 
+ 	parent = class_find_device(&pwm_class, NULL, chip,
+ 				   pwmchip_sysfs_match);
+ 	if (parent) {
++		for (i = 0; i < chip->npwm; i++) {
++			struct pwm_device *pwm = &chip->pwms[i];
++
++			if (test_bit(PWMF_EXPORTED, &pwm->flags))
++				pwm_unexport_child(parent, pwm);
++		}
++
+ 		/* for class_find_device() */
+ 		put_device(parent);
+ 		device_unregister(parent);
+ 	}
+ }
+ 
+-void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
+-{
+-	struct device *parent;
+-	unsigned int i;
+-
+-	parent = class_find_device(&pwm_class, NULL, chip,
+-				   pwmchip_sysfs_match);
+-	if (!parent)
+-		return;
+-
+-	for (i = 0; i < chip->npwm; i++) {
+-		struct pwm_device *pwm = &chip->pwms[i];
+-
+-		if (test_bit(PWMF_EXPORTED, &pwm->flags))
+-			pwm_unexport_child(parent, pwm);
+-	}
+-
+-	put_device(parent);
+-}
+-
+ static int __init pwm_sysfs_init(void)
+ {
+ 	return class_register(&pwm_class);
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index d5199b5..ea3939f 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -597,7 +597,6 @@ static inline void pwm_remove_table(struct pwm_lookup *table, size_t num)
+ #ifdef CONFIG_PWM_SYSFS
+ void pwmchip_sysfs_export(struct pwm_chip *chip);
+ void pwmchip_sysfs_unexport(struct pwm_chip *chip);
+-void pwmchip_sysfs_unexport_children(struct pwm_chip *chip);
+ #else
+ static inline void pwmchip_sysfs_export(struct pwm_chip *chip)
+ {
+@@ -606,10 +605,6 @@ static inline void pwmchip_sysfs_export(struct pwm_chip *chip)
+ static inline void pwmchip_sysfs_unexport(struct pwm_chip *chip)
+ {
+ }
+-
+-static inline void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
+-{
+-}
+ #endif /* CONFIG_PWM_SYSFS */
+ 
+ #endif /* __LINUX_PWM_H */
+-- 
+2.7.4
+
