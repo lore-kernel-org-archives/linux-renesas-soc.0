@@ -2,261 +2,134 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6B1C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75270C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0874C206DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:56:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Z+wMoUkv"
+	by mail.kernel.org (Postfix) with ESMTP id 471CF20643
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:59:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbfCMP4P (ORCPT
+        id S1725876AbfCMP7m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 11:56:15 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54608 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbfCMP4P (ORCPT
+        Wed, 13 Mar 2019 11:59:42 -0400
+Received: from mga12.intel.com ([192.55.52.136]:13196 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfCMP7l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 11:56:15 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CC1715AA;
-        Wed, 13 Mar 2019 16:56:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552492573;
-        bh=LDJGPkhP1UyT0m2rmzYmmM1bO2G4MbQjdphdcwC97LY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z+wMoUkvaQK8L2XMFUyN7B8HOJ7nW3Fr0xgVkLyZWp3la+aCgdoOVzdbbTlM/y+td
-         M7jknkYf7LAIiHghY18Pak0KCUvJt4TUkEhmfQ+LlDMVrkPfJiPkVKvJbY/3bzDsud
-         lS6+EBuDzMMDfCvXGsFkQbleVm5shzRoyckPiVdk=
-Date:   Wed, 13 Mar 2019 17:56:06 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Wed, 13 Mar 2019 11:59:41 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Mar 2019 08:59:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,474,1544515200"; 
+   d="scan'208";a="126623426"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga006.jf.intel.com with SMTP; 13 Mar 2019 08:59:36 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 13 Mar 2019 17:59:36 +0200
+Date:   Wed, 13 Mar 2019 17:59:36 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>
-Subject: Re: [PATCH v6 11/18] media: vsp1: drm: Implement writeback support
-Message-ID: <20190313155606.GF4722@pendragon.ideasonboard.com>
-References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190313000532.7087-12-laurent.pinchart+renesas@ideasonboard.com>
- <ab98c192-9615-809c-2bdd-c1a2d72cff5b@ideasonboard.com>
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2] gpu: drm: atomic_helper: Fix spelling errors
+Message-ID: <20190313155936.GM3888@intel.com>
+References: <20190312003307.14116-1-kieran.bingham+renesas@ideasonboard.com>
+ <20190312151443.GE3888@intel.com>
+ <7b0ff11c-68f3-4e2e-f969-27a14062158e@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ab98c192-9615-809c-2bdd-c1a2d72cff5b@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7b0ff11c-68f3-4e2e-f969-27a14062158e@ideasonboard.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
-
-On Wed, Mar 13, 2019 at 11:42:34AM +0000, Kieran Bingham wrote:
-> On 13/03/2019 00:05, Laurent Pinchart wrote:
-> > Extend the vsp1_du_atomic_flush() API with writeback support by adding
-> > format, pitch and memory addresses of the writeback framebuffer.
-> > Writeback completion is reported through the existing frame completion
-> > callback with a new VSP1_DU_STATUS_WRITEBACK status flag.
+On Tue, Mar 12, 2019 at 03:59:15PM +0000, Kieran Bingham wrote:
+> Hi Ville,
+> 
+> On 12/03/2019 15:14, Ville Syrjälä wrote:
+> > On Tue, Mar 12, 2019 at 12:33:07AM +0000, Kieran Bingham wrote:
+> >> Trivial fixes identified while working on the DRM code.
+> >>
+> >>   s/artifically/artificially/
+> >>   s/achive/achieve/
+> >>
+> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> >> ---
+> >>
+> >> v2: - Actually spell achieve correctly!
 > > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> >  drivers/media/platform/vsp1/vsp1_dl.c  | 14 ++++++++++++++
-> >  drivers/media/platform/vsp1/vsp1_dl.h  |  3 ++-
-> >  drivers/media/platform/vsp1/vsp1_drm.c | 25 ++++++++++++++++++++++++-
-> >  include/media/vsp1.h                   | 15 +++++++++++++++
-> >  4 files changed, 55 insertions(+), 2 deletions(-)
+> > drm convention is to put this above the --- so that it gets included in
+> > the commit msg.
+> 
+> Oh - in linux-media these are just dropped.
+> 
+> I'll try to remember this for my future work in DRM.
+> 
+> I don't have commit access anyway, so can I presume whomever will pick
+> this up will adjust if necessary?
+
+Ah. Yeah, it's fine. Now pushed with the adjustement. Thanks for the
+patch.
+
+> 
+> Or should I repost? (which might be a bit redundant just to move a patch
+> version comment which would then increase again :D )
+> 
+> 
+> > With that
+> > Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> 
+> Thanks,
+> --
+> Regards
+> 
+> Kieran
+> 
+> 
 > > 
-> > diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-> > index ed7cda4130f2..104b6f514536 100644
-> > --- a/drivers/media/platform/vsp1/vsp1_dl.c
-> > +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-> > @@ -958,6 +958,9 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl, unsigned int dl_flags)
-> >   *
-> >   * The VSP1_DL_FRAME_END_INTERNAL flag indicates that the display list that just
-> >   * became active had been queued with the internal notification flag.
-> > + *
-> > + * The VSP1_DL_FRAME_END_WRITEBACK flag indicates that the previously active
-> > + * display list had been queued with the writeback flag.
-> 
-> How does this interact with the possibility of the writeback being
-> disabled by the WPF in the event of it failing to get a DL.
-> 
-> It's only a small corner case, but will the 'writeback' report back as
-> though it succeeded? (without writing to memory, and thus giving an
-> unmodified buffer back?)
-
-Wrteback completion will never be reported in that case. This shouldn't
-happen as we should never fail to get a display list. Do you think it
-would be better to fake completion ?
-
-> >   */
-> >  unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
-> >  {
-> > @@ -995,6 +998,17 @@ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
-> >  	if (status & VI6_STATUS_FLD_STD(dlm->index))
-> >  		goto done;
-> >  
-> > +	/*
-> > +	 * If the active display list has the writeback flag set, the frame
-> > +	 * completion marks the end of the writeback capture. Return the
-> > +	 * VSP1_DL_FRAME_END_WRITEBACK flag and reset the display list's
-> > +	 * writeback flag.
-> > +	 */
-> > +	if (dlm->active && (dlm->active->flags & VSP1_DL_FRAME_END_WRITEBACK)) {
-> > +		flags |= VSP1_DL_FRAME_END_WRITEBACK;
-> > +		dlm->active->flags &= ~VSP1_DL_FRAME_END_WRITEBACK;
-> > +	}
-> > +
-> >  	/*
-> >  	 * The device starts processing the queued display list right after the
-> >  	 * frame end interrupt. The display list thus becomes active.
-> > diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-> > index e0fdb145e6ed..4d7bcfdc9bd9 100644
-> > --- a/drivers/media/platform/vsp1/vsp1_dl.h
-> > +++ b/drivers/media/platform/vsp1/vsp1_dl.h
-> > @@ -18,7 +18,8 @@ struct vsp1_dl_list;
-> >  struct vsp1_dl_manager;
-> >  
-> >  #define VSP1_DL_FRAME_END_COMPLETED		BIT(0)
-> > -#define VSP1_DL_FRAME_END_INTERNAL		BIT(1)
-> > +#define VSP1_DL_FRAME_END_WRITEBACK		BIT(1)
-> 
-> So below BIT(2) (code above) the flags match the externally exposed
-> bitfield for the VSP1_DU_STATUS_
-> 
-> While above (code below), are 'private' bitfields.
-> 
-> Should this requirement be documented here somehow? especially the
-> mapping of FRAME_END_{COMPLETED,WRITEBACK} to
-> DU_STATUS_{COMPLETED,WRITEBACK}.
-
-I've added a comment here, as explained in my reply to your review of
-10/18, to document this.
-
-> > +#define VSP1_DL_FRAME_END_INTERNAL		BIT(2)
-> >  
-> >  /**
-> >   * struct vsp1_dl_ext_cmd - Extended Display command
-> > diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-> > index 0367f88135bf..16826bf184c7 100644
-> > --- a/drivers/media/platform/vsp1/vsp1_drm.c
-> > +++ b/drivers/media/platform/vsp1/vsp1_drm.c
-> > @@ -37,7 +37,9 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
-> >  
-> >  	if (drm_pipe->du_complete) {
-> >  		struct vsp1_entity *uif = drm_pipe->uif;
-> > -		unsigned int status = completion & VSP1_DU_STATUS_COMPLETE;
-> > +		unsigned int status = completion
-> > +				    & (VSP1_DU_STATUS_COMPLETE |
-> > +				       VSP1_DU_STATUS_WRITEBACK);
-> >  		u32 crc;
-> >  
-> >  		crc = uif ? vsp1_uif_get_crc(to_uif(&uif->subdev)) : 0;
-> > @@ -541,6 +543,8 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
-> >  
-> >  	if (drm_pipe->force_brx_release)
-> >  		dl_flags |= VSP1_DL_FRAME_END_INTERNAL;
-> > +	if (pipe->output->writeback)
-> > +		dl_flags |= VSP1_DL_FRAME_END_WRITEBACK;
-> >  
-> >  	dl = vsp1_dl_list_get(pipe->output->dlm);
-> >  	dlb = vsp1_dl_list_get_body0(dl);
-> > @@ -870,12 +874,31 @@ void vsp1_du_atomic_flush(struct device *dev, unsigned int pipe_index,
-> >  	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
-> >  	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
-> >  	struct vsp1_pipeline *pipe = &drm_pipe->pipe;
-> > +	int ret;
-> >  
-> >  	drm_pipe->crc = cfg->crc;
-> >  
-> >  	mutex_lock(&vsp1->drm->lock);
-> > +
-> > +	if (pipe->output->has_writeback && cfg->writeback.pixelformat) {
-> 
-> Is pipe->output->has_writeback necessary here? Can
-> cfg->writeback.pixelformat be set if pipe->output->has_writeback is false?
-> 
-> Hrm ... actually - Perhaps it is useful. It validates both sides of the
-> system.
-> 
-> pipe->output->has_writeback is a capability of the VSP, where as
-> cfg->writeback.pixelformat is a 'request' from the DU.
-
-Correct, I think it's best to check both, to ensure we don't try to
-queue a writeback request on a system that doesn't support writeback. On
-the other hand this shouldn't happen as the DU driver shouldn't expose
-writeback to userspace in that case, so if you don't think the check is
-worth it I can remove the has_writeback field completely.
-
-> > +		const struct vsp1_du_writeback_config *wb_cfg = &cfg->writeback;
-> > +
-> > +		ret = vsp1_du_pipeline_set_rwpf_format(vsp1, pipe->output,
-> > +						       wb_cfg->pixelformat,
-> > +						       wb_cfg->pitch);
-> > +		if (WARN_ON(ret < 0))
-> > +			goto done;
-> > +
-> > +		pipe->output->mem.addr[0] = wb_cfg->mem[0];
-> > +		pipe->output->mem.addr[1] = wb_cfg->mem[1];
-> > +		pipe->output->mem.addr[2] = wb_cfg->mem[2];
-> > +		pipe->output->writeback = true;
-> > +	}
-> > +
-> >  	vsp1_du_pipeline_setup_inputs(vsp1, pipe);
-> >  	vsp1_du_pipeline_configure(pipe);
-> > +
-> > +done:
-> >  	mutex_unlock(&vsp1->drm->lock);
-> >  }
-> >  EXPORT_SYMBOL_GPL(vsp1_du_atomic_flush);
-> > diff --git a/include/media/vsp1.h b/include/media/vsp1.h
-> > index 877496936487..cc1b0d42ce95 100644
-> > --- a/include/media/vsp1.h
-> > +++ b/include/media/vsp1.h
-> > @@ -18,6 +18,7 @@ struct device;
-> >  int vsp1_du_init(struct device *dev);
-> >  
-> >  #define VSP1_DU_STATUS_COMPLETE		BIT(0)
-> > +#define VSP1_DU_STATUS_WRITEBACK	BIT(1)
-> >  
-> >  /**
-> >   * struct vsp1_du_lif_config - VSP LIF configuration
-> > @@ -83,12 +84,26 @@ struct vsp1_du_crc_config {
-> >  	unsigned int index;
-> >  };
-> >  
-> > +/**
-> > + * struct vsp1_du_writeback_config - VSP writeback configuration parameters
-> > + * @pixelformat: plane pixel format (V4L2 4CC)
-> > + * @pitch: line pitch in bytes for the first plane
-> > + * @mem: DMA memory address for each plane of the frame buffer
-> > + */
-> > +struct vsp1_du_writeback_config {
-> > +	u32 pixelformat;
-> > +	unsigned int pitch;
-> > +	dma_addr_t mem[3];
-> > +};
-> > +
-> >  /**
-> >   * struct vsp1_du_atomic_pipe_config - VSP atomic pipe configuration parameters
-> >   * @crc: CRC computation configuration
-> > + * @writeback: writeback configuration
-> >   */
-> >  struct vsp1_du_atomic_pipe_config {
-> >  	struct vsp1_du_crc_config crc;
-> > +	struct vsp1_du_writeback_config writeback;
-> >  };
-> >  
-> >  void vsp1_du_atomic_begin(struct device *dev, unsigned int pipe_index);
+> >>
+> >>  drivers/gpu/drm/drm_atomic_helper.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> >> index 540a77a2ade9..2453678d1186 100644
+> >> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> >> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> >> @@ -1752,7 +1752,7 @@ int drm_atomic_helper_commit(struct drm_device *dev,
+> >>  	 *
+> >>  	 * NOTE: Commit work has multiple phases, first hardware commit, then
+> >>  	 * cleanup. We want them to overlap, hence need system_unbound_wq to
+> >> -	 * make sure work items don't artifically stall on each another.
+> >> +	 * make sure work items don't artificially stall on each another.
+> >>  	 */
+> >>  
+> >>  	drm_atomic_state_get(state);
+> >> @@ -1786,7 +1786,7 @@ EXPORT_SYMBOL(drm_atomic_helper_commit);
+> >>   *
+> >>   * Asynchronous workers need to have sufficient parallelism to be able to run
+> >>   * different atomic commits on different CRTCs in parallel. The simplest way to
+> >> - * achive this is by running them on the &system_unbound_wq work queue. Note
+> >> + * achieve this is by running them on the &system_unbound_wq work queue. Note
+> >>   * that drivers are not required to split up atomic commits and run an
+> >>   * individual commit in parallel - userspace is supposed to do that if it cares.
+> >>   * But it might be beneficial to do that for modesets, since those necessarily
+> >> -- 
+> >> 2.19.1
+> > 
 
 -- 
-Regards,
-
-Laurent Pinchart
+Ville Syrjälä
+Intel
