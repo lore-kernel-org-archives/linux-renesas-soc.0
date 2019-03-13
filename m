@@ -2,145 +2,89 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0BCC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 16:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E55BEC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 16:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899D420643
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 16:08:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bgj+5BUD"
+	by mail.kernel.org (Postfix) with ESMTP id B190A2147C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 16:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726033AbfCMQIe (ORCPT
+        id S1726880AbfCMQ4P (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 12:08:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56070 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfCMQId (ORCPT
+        Wed, 13 Mar 2019 12:56:15 -0400
+Received: from sauhun.de ([88.99.104.3]:49240 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbfCMQ4O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 12:08:33 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5F85F5AA;
-        Wed, 13 Mar 2019 17:08:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552493311;
-        bh=ODSUg5zqu3rNwpMkV16HNS3Ziqe8c//LRwI/ItxvdJM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bgj+5BUDGP3nJ8PvbaPj8K3etCLEIjatRIqbU/B/99dGCtK64g9ujPiLQEk9zjkgW
-         Succ7z6dviImaZejq7NYe8rvgWLch5KeWHyycz9v3hodERGcIOsuSDXjb9RcwmQlII
-         jeJEeV0ZiSKUmZ7J4HxT/9kC92NxQw6OL/dmVg3Q=
-Date:   Wed, 13 Mar 2019 18:08:24 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>
-Subject: Re: [PATCH v6 18/18] drm: rcar-du: Add writeback support for R-Car
- Gen3
-Message-ID: <20190313160824.GG4722@pendragon.ideasonboard.com>
-References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190313000532.7087-19-laurent.pinchart+renesas@ideasonboard.com>
- <b2c70be1-f423-e3ad-9ad8-ef7a074f10a0@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b2c70be1-f423-e3ad-9ad8-ef7a074f10a0@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 13 Mar 2019 12:56:14 -0400
+Received: from localhost (p54B33543.dip0.t-ipconnect.de [84.179.53.67])
+        by pokefinder.org (Postfix) with ESMTPSA id 35B9E3E4304;
+        Wed, 13 Mar 2019 17:56:12 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v7 0/3] i2c: improve i2c_new_{device|dummy}
+Date:   Wed, 13 Mar 2019 17:55:23 +0100
+Message-Id: <20190313165526.28588-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+I recently remembered this old series because I needed to add a dummy to the
+DA9063 driver, so I had a look at it. I am somewhat sorry for the long delay,
+yet the overload of patches is something I am not really responsible for :/
 
-On Wed, Mar 13, 2019 at 12:06:40PM +0000, Kieran Bingham wrote:
-> On 13/03/2019 00:05, Laurent Pinchart wrote:
-> > Implement writeback support for R-Car Gen3 by exposing writeback
-> > connectors. Behind the scene the calls are forwarded to the VSP
-> > backend.
-> > 
-> > Using writeback connectors will allow implemented writeback support for
-> > R-Car Gen2 with a consistent API if desired.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> An extra blank line, and I was a bit concerned about a function naming
-> below - but other than that:
-> 
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> > ---
-> > Changes since v5:
-> > 
-> > - Skip writeback connector when configuring output routing
-> > - Implement writeback connector atomic state operations
-> > ---
-> >  drivers/gpu/drm/rcar-du/Kconfig             |   4 +
-> >  drivers/gpu/drm/rcar-du/Makefile            |   3 +-
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c      |   7 +-
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.h      |   7 +-
-> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c       |  12 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_vsp.c       |   5 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_writeback.c | 243 ++++++++++++++++++++
-> >  drivers/gpu/drm/rcar-du/rcar_du_writeback.h |  39 ++++
-> >  8 files changed, 317 insertions(+), 3 deletions(-)
-> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_writeback.c
-> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_writeback.h
+However, the series v6 from December 2017 was mostly OK. I decided to fix the
+things I noticed right away, only minor stuff:
 
-[snip]
+* instead of '__' prefix for the new functions, I added an 'errptr' suffix.
+  '__' indicates internal use, mostly unlocked flavors. However, these functions
+  could be exported somewhen and then it makes sense to have a more descriptive
+  name. This also removes the inconsistency that the devm_* variant returned an
+  errptr while the non-devm variant returned NULL. Now, the name makes it clear.
 
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> > index 0806a69c4679..99ae03a1713a 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> > @@ -25,6 +25,7 @@
-> >  #include "rcar_du_drv.h"
-> >  #include "rcar_du_kms.h"
-> >  #include "rcar_du_vsp.h"
-> > +#include "rcar_du_writeback.h"
-> >  
-> >  static void rcar_du_vsp_complete(void *private, unsigned int status, u32 crc)
-> >  {
-> > @@ -35,6 +36,8 @@ static void rcar_du_vsp_complete(void *private, unsigned int status, u32 crc)
-> >  
-> >  	if (status & VSP1_DU_STATUS_COMPLETE)
-> >  		rcar_du_crtc_finish_page_flip(crtc);
-> > +	if (status & VSP1_DU_STATUS_WRITEBACK)
-> > +		rcar_du_writeback_complete(crtc);
-> >  
-> >  	drm_crtc_add_crc_entry(&crtc->crtc, false, 0, &crc);
-> >  }
-> > @@ -106,6 +109,8 @@ void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc)
-> >  	state = to_rcar_crtc_state(crtc->crtc.state);
-> >  	cfg.crc = state->crc;
-> >  
-> > +	rcar_du_writeback_atomic_flush(crtc, &cfg.writeback);
-> 
-> Hrm ...the naming here worries me a bit. This doesn't do the actual
-> flushing (execution?) of the writeback operation, it just configures the
-> writeback into the VSP cfg structure. The 'flush' to hardware takes
-> place in vsp1_du_atomic_flush().
-> 
-> Or maybe it is ok becuase it calls drm_writeback_queue_job() as well as
-> setting up the cfg...
+* some minor issues/typos in the kernel doc sections
 
-You've got a point. I've renamed the function to
-rcar_du_writeback_setup().
+This series does not include converting 'i2c_new_secondary_device' which I plan
+to convert (including all users) to use errptr only. And maybe the same for
+'i2c_new_probed_device', I am not sure about it yet.
 
-> > +
-> >  	vsp1_du_atomic_flush(crtc->vsp->vsp, crtc->vsp_pipe, &cfg);
-> >  }
-> >  
+I added a new user of this series, since at24 has changed a bit since back then.
+Patch 3 is only for testing. First, this series needs to be applied.
 
-[snip]
+Tested on a Renesas Lager board (R-Car Gen2).
+
+If the feedback is positive, then I plan to create an immutable branch for the
+at24- and MFD-trees after next rc1, so stuff can be based on top of it.
+
+Looking forward to comments,
+
+   Wolfram
+
+
+Heiner Kallweit (2):
+  i2c: core: improve return value handling of i2c_new_device and
+    i2c_new_dummy
+  i2c: core: add device-managed version of i2c_new_dummy
+
+Wolfram Sang (1):
+  mfd: da9063: occupy second I2C address, too
+
+ Documentation/driver-model/devres.txt |   3 +
+ drivers/i2c/i2c-core-base.c           | 114 ++++++++++++++++++++++++++++++----
+ drivers/mfd/da9063-i2c.c              |   2 +
+ include/linux/i2c.h                   |   3 +
+ 4 files changed, 109 insertions(+), 13 deletions(-)
 
 -- 
-Regards,
+2.11.0
 
-Laurent Pinchart
