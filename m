@@ -2,157 +2,191 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B4DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 08:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CFBC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 09:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2182173C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 08:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB902147C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 09:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfCMIwU (ORCPT
+        id S1726998AbfCMJEq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 04:52:20 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:42121 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfCMIwT (ORCPT
+        Wed, 13 Mar 2019 05:04:46 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39534 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfCMJEp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 04:52:19 -0400
-Received: by mail-vs1-f68.google.com with SMTP id c189so516126vsd.9;
-        Wed, 13 Mar 2019 01:52:18 -0700 (PDT)
+        Wed, 13 Mar 2019 05:04:45 -0400
+Received: by mail-ua1-f67.google.com with SMTP id s15so398357uap.6;
+        Wed, 13 Mar 2019 02:04:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qiMg1VvLpqVsNdpd6Xt7q0MYS+Qj6wp7WZRzv2NfT0A=;
-        b=kESuNiTQtGIg76qlUxUw2oTdn1C9KDUNFlp6uogRmfwWUXda8OP2fshgIP66oABn5F
-         tRwaMqCMc+lupie1Ar98Cptuijh9s/YS8R8yNxSGLQfHrGnPlaMXnzEKwBDPGVOU/tLO
-         bt3yKLx+0u/s2hrEWWObOEE2TPCgyxFGYeKKQmXZ37ce6WQz/GaVI1FJgmf6Mx1BFHH8
-         A4O6IUwO2Hw6Y22470rQdZpm/RLm6sDQYalVemMPGNlopl04i1rTi8b/3WRc+cKrdMRl
-         FQHMl/ltfSp8949Esm2OelGdXz8ZsgnKWnXE7LeawcONlz04xyPPY0km+6/DCH+jBOon
-         lJaQ==
-X-Gm-Message-State: APjAAAUsCCadq2n6VRos3hNwH1phALTxh/OGxDF48CDs0KxjN1K1VvT0
-        I+4jpxqV4QqWN1W+GEopC0sI5qKOwuV4sJDAcWI=
-X-Google-Smtp-Source: APXvYqytxuYiJXerYYiYLa+MlZkNBjMOj+NuUxcJpFktvp0JJlwnYhoLhIRtQzp4Yfq9JLSmte5sToLeUWrbWNJBch4=
-X-Received: by 2002:a67:7dd1:: with SMTP id y200mr19918381vsc.96.1552467138098;
- Wed, 13 Mar 2019 01:52:18 -0700 (PDT)
+        bh=7D1QIs/drZljiuuQZ448yoCpDz05SXnYJEt0Txgo8Mk=;
+        b=JPCl4KWMORPi+ZE+gs3CXAdvnHugln0Bzu5zFM8XKxvII3RzwjBdF+F9Piijl+hS02
+         BLcVEY1SNOqPpYBR3XGwDgznXbPlsnZJYpXsRlMFFU1YfnC8KIpaIXr+0fZ3RZe59S35
+         XbydPkwzys8yBHuLN13UeOFu953/yBEE8tbc5jljst+Ex2CJ+8PN8Mzxcd/30lKsc6g9
+         w+RGgNK0GA3m0Xnfj0QontWo5o0E/KTYqu2ZEx0xkeir6ZirphmiE2On1MpqLCOnXJw8
+         v+qQm/0yszYN/nQI+qbb4iK4nHkTYpX4RlwAIQygnB+FV6A5cqy0VI4JxqBMNI8KLSFB
+         EzyQ==
+X-Gm-Message-State: APjAAAWA9bKNCVZ5AysLLl0G0Wafwo9Md034RMI33CGxBZaLr5HaYYYV
+        jST9F1KTlbACH+TeQOdF4zFT1K561vf8JbQ+dFk=
+X-Google-Smtp-Source: APXvYqzabyyk4cG1l2NXbHd7qtptf08rEr+Z8jXpcgeIk51a9JrZOBrtsZPbxk1NbaTZZ5nPkVYX6WbtvSG6xHT4i3o=
+X-Received: by 2002:a9f:2f0b:: with SMTP id x11mr21153193uaj.78.1552467884165;
+ Wed, 13 Mar 2019 02:04:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190313055811.26135-1-jiada_wang@mentor.com> <87h8c7gv73.wl-kuninori.morimoto.gx@renesas.com>
- <eb7ac3a6-e386-09e8-54b0-2e0eda90ad66@mentor.com> <87d0mvgtnc.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87d0mvgtnc.wl-kuninori.morimoto.gx@renesas.com>
+References: <1552465792-25340-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1552465792-25340-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Mar 2019 09:52:06 +0100
-Message-ID: <CAMuHMdUHeh6YDY1gTkSgnJm1xG0XtyaQ-zs_3bvFx1+mz6LHTg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] ASoC: rsnd: dma: use extended audio dmac registers
- when available
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Jiada Wang <jiada_wang@mentor.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
+Date:   Wed, 13 Mar 2019 10:04:32 +0100
+Message-ID: <CAMuHMdUZ9eSifsaV9ohpcy-a8cknbGRrBriFWF+Rcv6gmCOdcw@mail.gmail.com>
+Subject: Re: [PATCH v2] pwm: Fix deadlock warning when removing PWM device
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+        Phong Hoang <phong.hoang.wz@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Morimoto-san,
+Hi Shimoda-san,
 
-On Wed, Mar 13, 2019 at 7:57 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
-> > > 2nd, in my understanding, our conclusion at Renesas-ML
-> > > is that we don't need to think about basic/extend DMAC register.
-> > > Because extend area is 100% covering basic area.
-> > > In other words, it is compatible.
-> > > Driver side don't need to think about it.
-> > >
-> > I am a little confused,
-> > because latest comment received from simon, suggests to let driver to
-> > decide which register set to use.
-> >
-> > for me, I think it's not necessary, if extended register set is available,
-> > driver shall always use it.
+On Wed, Mar 13, 2019 at 9:30 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> From: Phong Hoang <phong.hoang.wz@renesas.com>
 >
-> I can agree to have both basic/extend register
-> if driver need to switch its behavior.
-> But this case, there is nothing to do on driver side.
-> In other words, SoC always need to use extend
-> register if it has.
-> I don't know why datasheet is indicating both area.
-> Maybe it is because for Gen3 all-in ? I'm not sure.
+> This patch fixes deadlock warning if removing PWM device
+> when CONFIG_PROVE_LOCKING is enabled.
 >
-> Anyway, Simon, can you agree about it ?
-> Having both basic/extend register is just noise for driver.
+> This issue can be reproceduced by the following steps on
+> the R-Car H3 Salvator-X board if the backlight is disabled:
+>
+>  # cd /sys/class/pwm/pwmchip0
+>  # echo 0 > export
+>  # ls
+>  device  export  npwm  power  pwm0  subsystem  uevent  unexport
+>  # cd device/driver
+>  # ls
+>  bind  e6e31000.pwm  uevent  unbind
+>  # echo e6e31000.pwm > unbind
 
-I can follow your rationale of only describing the extended register set,
-if available.
+[...]
 
-However:
-  1) The DT bindings should state clearly that the AUDMAPP register
-     block should point to the extended register set, if available,
-  2) Can the driver distinguish between an old DTB describing the basic
-     register set, and a new DTB describing the extended register set?
-     I.e. will the driver avoid using busif4-7 when using an old DTB
-     describing the basic register set, to maintain backwards compatibility?
+> The sysfs unexport in pwmchip_remove() is completely asymmetric
+> to what we do in pwmchip_add_with_polarity() and commit 0733424c9ba9
+> ("pwm: Unexport children before chip removal") is a strong indication
+> that this was wrong to begin with. We should just move
+> pwmchip_sysfs_unexport() where it belongs, which is right after
+> pwmchip_sysfs_unexport_children(). In that case, we do not need
+> separate functions anymore either.
+>
+> We also really want to remove sysfs irrespective of whether or not
+> the chip will be removed as a result of pwmchip_remove(). We can only
+> assume that the driver will be gone after that, so we shouldn't leave
+> any dangling sysfs files around.
+>
+> This warning disappears if we move pwmchip_sysfs_unexport() to
+> the top of pwmchip_remove(), right below pwmchip_sysfs_unexport_children().
 
-Thanks!
+Drop the "right below..." part, as pwmchip_sysfs_unexport_children() is gone?
 
-P.S. The binding doc seems to need some love.
-     I came up with the following a while ago, but got interrupted.
-     Feel free to steal ;-)
+> That way it is also outside of the pwm_lock section, which indeed
+> doesn't seem to be needed.
+>
+> Moving the pwmchip_sysfs_export() call outside of that section also
+> seems fine and it'd be perfectly symmetric with pwmchip_remove() again.
+>
+> So, this patch fixes them.
+>
+> Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
+> [shimoda: revise the commit log and code]
+> Fixes: 76abbdde2d95 ("pwm: Add sysfs interface")
+> Fixes: 0733424c9ba9 ("pwm: Unexport children before chip removal")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> ---
+>  Changes from v1 (https://patchwork.kernel.org/patch/10848567/):
+>  - Change the subject from "Avoid" to "Fix".
+>  - Merge pwmchip_sysfs_unexport_children()'s code into
+>    pwmchip_sysfs_unexport() and move pwmchip_sysfs_unexport() to
+>    the top of pwmchip_remove().
+>  - Revise the commit log that is reffered from Therry's comments [1]
+>    because it seems very clear to me.
+>  - Add Fixes tag about the commit 0733424c9ba9.
+>  - I got Geert's Reviewed-by on v1 patch, but I'm not sure
+>    I can add the Reviewed-by because v2 patch changes a bit.
+>    So, I didn't add the Reviewed-by tag.
 
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -338,9 +338,9 @@ Required properties:
- =============================================
+Thanks for the update!
 
- - compatible                   : "renesas,rcar_sound-<soctype>", fallbacks
--                                 "renesas,rcar_sound-gen1" if generation1, and
--                                 "renesas,rcar_sound-gen2" if
-generation2 (or RZ/G1)
--                                 "renesas,rcar_sound-gen3" if
-generation3 (or RZ/G2)
-+                                 "renesas,rcar_sound-gen1" if R-Car Gen1, and
-+                                 "renesas,rcar_sound-gen2" if R-Car
-Gen2 or RZ/G1
-+                                 "renesas,rcar_sound-gen3" if R-Car
-Gen3 or RZ/G2
-                                  Examples with soctypes are:
-                                    - "renesas,rcar_sound-r8a7743" (RZ/G1M)
-                                    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
-@@ -357,8 +357,10 @@ Required properties:
-                                    - "renesas,rcar_sound-r8a77990" (R-Car E3)
- - reg                          : Should contain the register physical address.
-                                  required register is
--                                  SRU/ADG/SSI      if generation1
--                                  SRU/ADG/SSIU/SSI if generation2
-+                                  SRU/ADG/SSI      if R-Car Gen1
-+                                  SCU/ADG/SSIU/SSI/AUDMAPP if R-Car Gen2,
-+                                                   R-Car Gen3, RZ/G1, or RZ/G2.
-+- reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
- - rcar_sound,ssi               : Should contain SSI feature.
-                                  The number of SSI subnode should be
-same as HW.
-                                  see below for detail.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/pwm/core.c
+> +++ b/drivers/pwm/core.c
+
+> --- a/drivers/pwm/sysfs.c
+> +++ b/drivers/pwm/sysfs.c
+> @@ -411,36 +411,24 @@ void pwmchip_sysfs_export(struct pwm_chip *chip)
+>  void pwmchip_sysfs_unexport(struct pwm_chip *chip)
+>  {
+>         struct device *parent;
+> +       unsigned int i;
+>
+>         parent = class_find_device(&pwm_class, NULL, chip,
+>                                    pwmchip_sysfs_match);
+>         if (parent) {
+
+Perhaps "if (!parent) return", like pwmchip_sysfs_unexport_children()
+used to do?
+
+That way the reviewer has less context to store, indentation is
+decreased, and the resulting diff may be smaller.
+
+> +               for (i = 0; i < chip->npwm; i++) {
+> +                       struct pwm_device *pwm = &chip->pwms[i];
+> +
+> +                       if (test_bit(PWMF_EXPORTED, &pwm->flags))
+> +                               pwm_unexport_child(parent, pwm);
+> +               }
+> +
+>                 /* for class_find_device() */
+>                 put_device(parent);
+>                 device_unregister(parent);
+>         }
+>  }
+>
+> -void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
+> -{
+> -       struct device *parent;
+> -       unsigned int i;
+> -
+> -       parent = class_find_device(&pwm_class, NULL, chip,
+> -                                  pwmchip_sysfs_match);
+> -       if (!parent)
+> -               return;
+> -
+> -       for (i = 0; i < chip->npwm; i++) {
+> -               struct pwm_device *pwm = &chip->pwms[i];
+> -
+> -               if (test_bit(PWMF_EXPORTED, &pwm->flags))
+> -                       pwm_unexport_child(parent, pwm);
+> -       }
+> -
+> -       put_device(parent);
+> -}
 
 Gr{oetje,eeting}s,
 
                         Geert
 
-
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
