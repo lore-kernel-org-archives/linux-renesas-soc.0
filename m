@@ -2,162 +2,141 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A883C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 19:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B052FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 20:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 198642146E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 19:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A1A32077B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 20:55:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vlXhpm74"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="TXR94QO/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfCMTww (ORCPT
+        id S1727058AbfCMUzo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 15:52:52 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:46777 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbfCMTww (ORCPT
+        Wed, 13 Mar 2019 16:55:44 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37903 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfCMUzn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 15:52:52 -0400
-Received: by mail-vs1-f67.google.com with SMTP id b17so1768163vsr.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Mar 2019 12:52:51 -0700 (PDT)
+        Wed, 13 Mar 2019 16:55:43 -0400
+Received: by mail-it1-f195.google.com with SMTP id k193so1116266ita.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Mar 2019 13:55:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cjdeQoiG1CNqxDr3JRQdESRZNgyXUbmkKypj0mAhhmU=;
-        b=vlXhpm74SJXur6SrLE48nJ6+mfVl9SDyFvy0gYifys0dVKBh1a6vAYTa0HH3LNCT9T
-         ogOf9/IClNoYF+1sAShrEgsksL6UpQBj6U+Wd0XZh8+hBT9v1nrCQTiN4Adme141ZDfQ
-         1L7h2ugFFyDqvhYj+Gfiu8KzJewb9VpYRGN7b+oIm9Qxa5tBhXNcfQr4SOsvP3c0LdR1
-         9HraVKYsazq1QpAvqCms8Pk5ybzgs0qDKmdnJiadl/SH/nlfubtR/ru8ORph0lIKZIGQ
-         ikXygKns8wJUPCSqenfcxlK9rBVjIJPqP249sg0A/72DYiXaGxOcIx2XMAGrv8Q7TDnh
-         +nlQ==
+         :cc:content-transfer-encoding;
+        bh=7cJ5llZ/ZxQTG2j/waKtscSFfR05d74LG7ggmAGx9XI=;
+        b=TXR94QO/fOLYS3PdfkJ3K29qiVkvi9aMwECkH/8j+hJ+4tpIqn5Q+HSCqPJUKwCYZb
+         wPpPUtsLOkCMQRVNUQe36K7glQLpCt6aIVqmF7aZU6VpWMhHJubo2pQAFJKPZa9OP8Om
+         xAi6a0h9d/BBr/8NFNXscPz7h9aCtihncmPgJWOdbtI98v52FVKodb2KMGpBFgparlk1
+         mjO5uvKp2rGcdZjkcNVsET2wwbVfvlBK3YwK+57GvgG8jZ25WCbbhRcB7ocM8B2ZNU6w
+         YaDjBdLZL4xo9DpyZskGT7nwQNEEPzZlOvaeumiW2f0bPVPYx9i5gkaC/ggup78BtbnT
+         OWdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cjdeQoiG1CNqxDr3JRQdESRZNgyXUbmkKypj0mAhhmU=;
-        b=tliw59+CCx44qLPwCo19pAUCb6zCv6PkP88F35lnG4zsacI8ocrPPOzFU5z0tzxLyv
-         NsQNhvkK42oRnPvdEwz+UKYT8icmzttYYVQWjh8YwWP1xGGDKcP6U+yWj9l1niEhuwMq
-         Y4sIw1LMB4to4yummlOVl6TuKeURSKyeIb9QR4UJt2+bwSHlFAKa7B2LVDNpM/+ZYTCe
-         uu2mIZvA7bfV8sAwKF2XxcFMiOGrOgVrOEUX5g8g7XW26b6GhfeIUX7C4FqaIe3HjZIr
-         h4znoELjsgG59MXc9Ged23AnO0OnENd5cXq0swnC/Ea/p7eq+a2XrD6k8S8syNQSC5DI
-         Jr1A==
-X-Gm-Message-State: APjAAAUKz5DSeCBtg1ZgCRz1jZ0YaLbhC0G2qfdkDrLuHtxgh06DrCHw
-        7Aij542Sy4zUPR1jyRt8NAcZDBdjKmYDPqvV/oRing==
-X-Google-Smtp-Source: APXvYqyy6VfIy5GhgM6JCvhHivvrjUdIsOIGIpnjpbo1kO4TEY492dPrJ8asN+wprEt5Ev8O4VE6A3e0GjF2r2dnxQY=
-X-Received: by 2002:a67:fe51:: with SMTP id m17mr6089630vsr.35.1552506770869;
- Wed, 13 Mar 2019 12:52:50 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7cJ5llZ/ZxQTG2j/waKtscSFfR05d74LG7ggmAGx9XI=;
+        b=VRt8bLIY3B7p7thPyTu3u3kwlq4/qpiGU6+X4ezL7dTgwhfRZVE3ZIoTP6GwO0ToCx
+         Mjlgll+5jmzCoskGy+vs8JBrmbyQsEyruaFngC231jpiq08M2/idiM0jIJStG+5pfhYM
+         4C/OqHUCjusn74w8BNhsPjZmCGk/SbZ5T7sLFlKv53XxwgzQmBO3IDOZeagmfbPSYELM
+         G6l9n+ZiETNcyC+GnucfeYoAzQs8slJxYb6ZF1wHvYwV1C+iGERfRBGzTOLxXv/uV3I7
+         VMAkRgAvmnd4QY7512mdwW+iS4DdxIwdiXXY5f/6FQZ9f7f8kTVyBAJjc6pp+CkRTz0N
+         IdfA==
+X-Gm-Message-State: APjAAAUEaSO1z5VJP7f7WaB1koGOSeXug3C76Fi3y6qW78gWdIWUT8sK
+        c1tqIyg/9mBvxy3uLFOs4SM74OcXZbl+tLsQygRVQR6v
+X-Google-Smtp-Source: APXvYqyYi6jPalsXaz7NPUR0CIaSnh1N0IRyNzQI9RWFNjWMM6Wddwv/nEZlGPfkG6QnCIdk9M+tYctx2dKaiNVODLA=
+X-Received: by 2002:a24:418c:: with SMTP id b12mr104336itd.74.1552510542546;
+ Wed, 13 Mar 2019 13:55:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190312065128.24994-1-jiada_wang@mentor.com> <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
-In-Reply-To: <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 13 Mar 2019 20:52:14 +0100
-Message-ID: <CAPDyKFpCOfAURN0=ZfS5yXH-ZrCfpfH+iNUwh=fZZ-wViKYQqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] PM / Domains: Avoid a potential deadlock
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jiada Wang <jiada_wang@mentor.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20190313165526.28588-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190313165526.28588-1-wsa+renesas@sang-engineering.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 13 Mar 2019 21:55:31 +0100
+Message-ID: <CAMRc=Mc85U_WmY1RCNMCwMPJoO2jwYxvOaNiBNbuBaigJnoaqg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] i2c: improve i2c_new_{device|dummy}
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Kieran Bingham <kieran@ksquared.org.uk>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 13 Mar 2019 at 15:45, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+=C5=9Br., 13 mar 2019 o 17:56 Wolfram Sang
+<wsa+renesas@sang-engineering.com> napisa=C5=82(a):
 >
-> Hi Jiada,
+> I recently remembered this old series because I needed to add a dummy to =
+the
+> DA9063 driver, so I had a look at it. I am somewhat sorry for the long de=
+lay,
+> yet the overload of patches is something I am not really responsible for =
+:/
 >
-> CC Marek, Jon, Mike, Stephen, linux-clk, linux-renesas-soc
+> However, the series v6 from December 2017 was mostly OK. I decided to fix=
+ the
+> things I noticed right away, only minor stuff:
 >
-> On Tue, Mar 12, 2019 at 7:51 AM Jiada Wang <jiada_wang@mentor.com> wrote:
-> > Lockdep warns that prepare_lock and genpd->mlock can cause a deadlock
-> > the deadlock scenario is like following:
-> > First thread is probing cs2000
-> > cs2000_probe()
-> >   clk_register()
-> >     __clk_core_init()
-> >       clk_prepare_lock()                            ----> acquires prepare_lock
-> >         cs2000_recalc_rate()
-> >           i2c_smbus_read_byte_data()
-> >             rcar_i2c_master_xfer()
-> >               dma_request_chan()
-> >                 rcar_dmac_of_xlate()
-> >                   rcar_dmac_alloc_chan_resources()
-> >                     pm_runtime_get_sync()
-> >                       __pm_runtime_resume()
-> >                         rpm_resume()
-> >                           rpm_callback()
-> >                             genpd_runtime_resume()   ----> acquires genpd->mlock
-> >
-> > Second thread is attaching any device to the same PM domain
-> > genpd_add_device()
-> >   genpd_lock()                                       ----> acquires genpd->mlock
-> >     cpg_mssr_attach_dev()
-> >       of_clk_get_from_provider()
-> >         __of_clk_get_from_provider()
-> >           __clk_create_clk()
-> >             clk_prepare_lock()                       ----> acquires prepare_lock
-> >
-> > Since currently no PM provider access genpd's critical section
-> > in .attach_dev, and .detach_dev callbacks, so there is no need to protect
-> > these two callbacks with genpd->mlock.
-> > This patch avoids a potential deadlock by moving out .attach_dev and .detach_dev
-> > from genpd->mlock, so that genpd->mlock won't be held when prepare_lock is acquired
-> > in .attach_dev and .detach_dev
-> >
-> > Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> * instead of '__' prefix for the new functions, I added an 'errptr' suffi=
+x.
+>   '__' indicates internal use, mostly unlocked flavors. However, these fu=
+nctions
+>   could be exported somewhen and then it makes sense to have a more descr=
+iptive
+>   name. This also removes the inconsistency that the devm_* variant retur=
+ned an
+>   errptr while the non-devm variant returned NULL. Now, the name makes it=
+ clear.
 >
-> Thanks a lot for your perseverance!
-> I had tried putting each PM Domain in its own lockdep class, but that
-> didn't help.
+> * some minor issues/typos in the kernel doc sections
 >
-> Your patch fixes the lockdep warnings on my Salvator-X(S) boards.
+> This series does not include converting 'i2c_new_secondary_device' which =
+I plan
+> to convert (including all users) to use errptr only. And maybe the same f=
+or
+> 'i2c_new_probed_device', I am not sure about it yet.
 >
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> I added a new user of this series, since at24 has changed a bit since bac=
+k then.
+> Patch 3 is only for testing. First, this series needs to be applied.
 >
-> Your solution makes sense, as the .{at,de}tach_dev() callbacks are
-> owned by the individual PM Domain drivers, and not by the genpd core.
+> Tested on a Renesas Lager board (R-Car Gen2).
 >
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> If the feedback is positive, then I plan to create an immutable branch fo=
+r the
+> at24- and MFD-trees after next rc1, so stuff can be based on top of it.
 >
-> One thing I'm still wondering about: genpd_add_device() is always called
-> with gpd_list_lock held.
-> However, the same cannot be said about genpd_remove_device():
->   - pm_genpd_remove_device() does not take gpd_list_lock, unlike
->     pm_genpd_add_device(),
->   - genpd_dev_pm_detach() does not take gpd_list_lock, while
->     __genpd_dev_pm_attach() does take the lock for adding,
->     but not for removing (in the error patch)?
+> Looking forward to comments,
+>
+>    Wolfram
+>
+>
+> Heiner Kallweit (2):
+>   i2c: core: improve return value handling of i2c_new_device and
+>     i2c_new_dummy
+>   i2c: core: add device-managed version of i2c_new_dummy
+>
+> Wolfram Sang (1):
+>   mfd: da9063: occupy second I2C address, too
+>
+>  Documentation/driver-model/devres.txt |   3 +
+>  drivers/i2c/i2c-core-base.c           | 114 ++++++++++++++++++++++++++++=
+++----
+>  drivers/mfd/da9063-i2c.c              |   2 +
+>  include/linux/i2c.h                   |   3 +
+>  4 files changed, 109 insertions(+), 13 deletions(-)
+>
+> --
+> 2.11.0
+>
 
-That's correctly observed and it's something that needs to be fixed in
-the long run. Although I am not sure that we should use the
-gpd_list_lock...
+Wasn't there a patch using this new managed variant in at24 as well?
 
-There are race conditions while removing a device at the same time as
-the genpd is removed. As a matter of fact, even the debugfs isn't
-correctly dropped, when a genpd is removed. However, because almost
-none it ever removing a genpd, this isn't a problem in practice.
-
-Anyway, I have a TODO list for genpd (starting to be quite longe) and
-this one is already on it, whatever that means. :-)
-
-[...]
-
-Kind regards
-Uffe
+Bart
