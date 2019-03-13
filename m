@@ -2,83 +2,69 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B31B8C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 17:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297E7C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 18:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 845942077B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 17:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB7C20643
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 18:31:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725876AbfCMREu (ORCPT
+        id S1726328AbfCMSbD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 13:04:50 -0400
-Received: from sauhun.de ([88.99.104.3]:49354 "EHLO pokefinder.org"
+        Wed, 13 Mar 2019 14:31:03 -0400
+Received: from verein.lst.de ([213.95.11.211]:53249 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfCMREu (ORCPT
+        id S1726033AbfCMSbD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 13:04:50 -0400
-Received: from localhost (p54B33543.dip0.t-ipconnect.de [84.179.53.67])
-        by pokefinder.org (Postfix) with ESMTPSA id 53A4D3E4304;
-        Wed, 13 Mar 2019 18:04:48 +0100 (CET)
-Date:   Wed, 13 Mar 2019 18:04:48 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v2] i2c: add extra check to safe DMA buffer helper
-Message-ID: <20190313170437.hicxk4opwq4vgbjt@ninjato>
-References: <20190312124442.10098-1-wsa+renesas@sang-engineering.com>
+        Wed, 13 Mar 2019 14:31:03 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id C8AAE68B05; Wed, 13 Mar 2019 19:30:56 +0100 (CET)
+Date:   Wed, 13 Mar 2019 19:30:56 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>, linux-ide@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jens Axboe <axboe@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] [RFC] ata: ahci: Respect bus DMA constraints
+Message-ID: <20190313183056.GB4926@lst.de>
+References: <20190307000440.8708-1-marek.vasut@gmail.com> <7c051bbd-7835-9cab-30b2-0acde1364781@arm.com> <356f3ee8-407f-f865-e5cc-333695d4f857@gmail.com> <79e44e90-b16a-5315-e02f-101a2ebbb6a0@arm.com> <a8b5b75f-2660-e216-033a-77808e2afb76@gmail.com> <20190308071810.GA11959@lst.de> <a6b34982-9100-0e60-c3eb-6ed8fcbe9e93@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="67wjmazvqdgvoai5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190312124442.10098-1-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <a6b34982-9100-0e60-c3eb-6ed8fcbe9e93@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Sat, Mar 09, 2019 at 12:23:15AM +0100, Marek Vasut wrote:
+> On 3/8/19 8:18 AM, Christoph Hellwig wrote:
+> > On Thu, Mar 07, 2019 at 12:14:06PM +0100, Marek Vasut wrote:
+> >>> Right, but whoever *interprets* the device masks after the driver has
+> >>> overridden them should be taking the (smaller) bus mask into account as
+> >>> well, so the question is where is *that* not being done correctly?
+> >>
+> >> Do you have a hint where I should look for that ?
+> > 
+> > If this a 32-bit ARM platform it might the complete lack of support
+> > for bus_dma_mask in arch/arm/mm/dma-mapping.c..
+> 
+> It's an ARM 64bit platform, just the PCIe controller is limited to 32bit
+> address range, so the devices on the PCIe bus cannot read the host's
+> DRAM above the 32bit limit.
 
---67wjmazvqdgvoai5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 12, 2019 at 01:44:42PM +0100, Wolfram Sang wrote:
-> Make sure we report 'no buffer' for 0-length messages. This can only
-> happen if threshold is set to 0 which is kind of bogus but we should
-> still handle this situation. Update the docs and add a debug message
-> to educate callers of this function.
->=20
-> Reported-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> Fixes: e94bc5d18be0 ("i2c: add helpers to ease DMA handling")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Fixed a whitespace issue and applied to for-current, thanks!
-
-
---67wjmazvqdgvoai5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyJOC8ACgkQFA3kzBSg
-KbbGEQ//dPzvfgEGU3UoguBNSIuHyBSTgkWuM83FlvdPH/Bh5LqFey2Wwg2cZ06y
-5zZxuCKiNTNyEQMN1Ph+uQ02kjuw0dY+PitIK//V2mxWdcu3tecQ6wbGge9+dPwK
-kVf/x9IHxBvU9beI1l+kxBJNzxuiCRzE7XzObFlyZqcLUmDhQGYSSfRNQuK/TbRV
-lhgJpCRqMa6bh6vWLsgQvQ/5TEweF054y7OjzyWmXfl6XD29a13SnkJRKFMCGn8s
-e4AeG661YrJQUZfdAOi4LeBJvGaDbgtM2ygCJzBy9yFuLrW54dxcjhg25qRm9V4H
-yjLpsu9+Bfj0KkM9fn3K/6C1cM1CCcfgVhq6wKbNWiw+kd9xHJ0ZTCsrCrZpcm5j
-ngtqH8/2sXVYwAtVZklWOtuPsEIP7PM8Nt2I1vRMfdhEItNzDEgHTs/4C0Ci5RQ/
-eLGoedBejnqq96u8IIbSk882jOmwRJypKQ7Zxxxzem6XxjdF5Ej8HMUEqfCC6D0f
-U7tfeEV9NgyyXhl/hhArJd3l7e0QxvRqmd92AuayhdHAVhL7L0WpxcVDeb6faVNR
-+Kobv8qittiqU9jQgx+P4wyeAsw8O+WPUCEeWJ5RSosH5YsthPjqE49l3OpxGuwY
-uFOllLfAiB/0npwLeehX7Ta3/2atH/7D6bZBBTPKyOvQDUUuwDM=
-=UTCV
------END PGP SIGNATURE-----
-
---67wjmazvqdgvoai5--
+arm64 should take the mask into account both for the swiotlb and
+iommu case.  What are the exact symptoms you see?  Does it involve
+swiotlb not kicking in, or iommu issues?  What is the exact kernel
+version?
