@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18228C10F0B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE399C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6B03214AE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79FE12177E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:05:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aLC/uqoN"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="P4SUvEUk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfCMAFz (ORCPT
+        id S1727327AbfCMAF5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 20:05:55 -0400
+        Tue, 12 Mar 2019 20:05:57 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:42062 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbfCMAFx (ORCPT
+        with ESMTP id S1727308AbfCMAF5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 20:05:53 -0400
+        Tue, 12 Mar 2019 20:05:57 -0400
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7060297F;
-        Wed, 13 Mar 2019 01:05:48 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6CACC2DF;
+        Wed, 13 Mar 2019 01:05:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552435548;
-        bh=1mNvDw6C9ubiIrKUcYBKO0aCvMX2gtD9ckCJOfWuzc0=;
+        s=mail; t=1552435551;
+        bh=P+o7SSgDmsfLyf3j3mF4m5gXu7U7r/xmo3CjhgJMII4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aLC/uqoNGZnvGBAJa69AvhewpKB1P19OoB2mcAYZCPJvy39ER2acJ9MeQPIZrXx5q
-         bCL8axz3+cm1Pkj1gAgu1nCn0XsjTubCsF2eYNpy/C4zovG4k+bk/73zN8IXqsfa7C
-         yEzGjLsjD/raH5niRAqbqA57ZtkgxYairN1t3fBw=
+        b=P4SUvEUk/hFD1Ldzv16ex1rbL3KAntYGJhqWlIZTfouFAHjblXR0NlkakmmgMZw/w
+         vsr7DfWO0DV+EHnHf0st5icZ5PygSiBnpAm4nKckD5sZyQoQGE4VROniS5J29yHXGQ
+         8i/gPOLGHDI83JUbTeMBb5fE6eGHZBEm5IEqHLao=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Liviu Dudau <Liviu.Dudau@arm.com>,
         Brian Starkey <brian.starkey@arm.com>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v6 08/18] media: vsp1: wpf: Add writeback support
-Date:   Wed, 13 Mar 2019 02:05:22 +0200
-Message-Id: <20190313000532.7087-9-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v6 12/18] drm: writeback: Cleanup job ownership handling when queuing job
+Date:   Wed, 13 Mar 2019 02:05:26 +0200
+Message-Id: <20190313000532.7087-13-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -52,187 +52,101 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the writeback feature of the WPF, to enable capturing
-frames at the WPF output for display pipelines. To enable writeback the
-vsp1_rwpf structure mem field must be set to the address of the
-writeback buffer and the writeback field set to true before the WPF
-.configure_stream() and .configure_partition() are called. The WPF will
-enable writeback in the display list for a single frame, and writeback
-will then be automatically disabled.
+The drm_writeback_queue_job() function takes ownership of the passed job
+and requires the caller to manually set the connector state
+writeback_job pointer to NULL. To simplify drivers and avoid errors
+(such as the missing NULL set in the vc4 driver), pass the connector
+state pointer to the function instead of the job pointer, and set the
+writeback_job pointer to NULL internally.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Brian Starkey <brian.starkey@arm.com>
+Acked-by: Eric Anholt <eric@anholt.net>
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 ---
- drivers/media/platform/vsp1/vsp1_rwpf.h |  2 +
- drivers/media/platform/vsp1/vsp1_wpf.c  | 73 ++++++++++++++++++++++---
- 2 files changed, 66 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/arm/malidp_mw.c |  3 +--
+ drivers/gpu/drm/drm_writeback.c | 15 ++++++++++-----
+ drivers/gpu/drm/vc4/vc4_txp.c   |  2 +-
+ include/drm/drm_writeback.h     |  2 +-
+ 4 files changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_rwpf.h b/drivers/media/platform/vsp1/vsp1_rwpf.h
-index 70742ecf766f..910990b27617 100644
---- a/drivers/media/platform/vsp1/vsp1_rwpf.h
-+++ b/drivers/media/platform/vsp1/vsp1_rwpf.h
-@@ -35,6 +35,7 @@ struct vsp1_rwpf {
- 	struct v4l2_ctrl_handler ctrls;
+diff --git a/drivers/gpu/drm/arm/malidp_mw.c b/drivers/gpu/drm/arm/malidp_mw.c
+index 041a64dc7167..87627219ce3b 100644
+--- a/drivers/gpu/drm/arm/malidp_mw.c
++++ b/drivers/gpu/drm/arm/malidp_mw.c
+@@ -252,8 +252,7 @@ void malidp_mw_atomic_commit(struct drm_device *drm,
+ 				     &mw_state->addrs[0],
+ 				     mw_state->format);
  
- 	struct vsp1_video *video;
-+	bool has_writeback;
+-		drm_writeback_queue_job(mw_conn, conn_state->writeback_job);
+-		conn_state->writeback_job = NULL;
++		drm_writeback_queue_job(mw_conn, conn_state);
+ 		hwdev->hw->enable_memwrite(hwdev, mw_state->addrs,
+ 					   mw_state->pitches, mw_state->n_planes,
+ 					   fb->width, fb->height, mw_state->format,
+diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+index c20e6fe00cb3..338b993d7c9f 100644
+--- a/drivers/gpu/drm/drm_writeback.c
++++ b/drivers/gpu/drm/drm_writeback.c
+@@ -242,11 +242,12 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
+ /**
+  * drm_writeback_queue_job - Queue a writeback job for later signalling
+  * @wb_connector: The writeback connector to queue a job on
+- * @job: The job to queue
++ * @conn_state: The connector state containing the job to queue
+  *
+- * This function adds a job to the job_queue for a writeback connector. It
+- * should be considered to take ownership of the writeback job, and so any other
+- * references to the job must be cleared after calling this function.
++ * This function adds the job contained in @conn_state to the job_queue for a
++ * writeback connector. It takes ownership of the writeback job and sets the
++ * @conn_state->writeback_job to NULL, and so no access to the job may be
++ * performed by the caller after this function returns.
+  *
+  * Drivers must ensure that for a given writeback connector, jobs are queued in
+  * exactly the same order as they will be completed by the hardware (and
+@@ -258,10 +259,14 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
+  * See also: drm_writeback_signal_completion()
+  */
+ void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
+-			     struct drm_writeback_job *job)
++			     struct drm_connector_state *conn_state)
+ {
++	struct drm_writeback_job *job;
+ 	unsigned long flags;
  
- 	unsigned int max_width;
- 	unsigned int max_height;
-@@ -61,6 +62,7 @@ struct vsp1_rwpf {
- 	} flip;
++	job = conn_state->writeback_job;
++	conn_state->writeback_job = NULL;
++
+ 	spin_lock_irqsave(&wb_connector->job_lock, flags);
+ 	list_add_tail(&job->list_entry, &wb_connector->job_queue);
+ 	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
+diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
+index aa279b5b0de7..5dabd91f2d7e 100644
+--- a/drivers/gpu/drm/vc4/vc4_txp.c
++++ b/drivers/gpu/drm/vc4/vc4_txp.c
+@@ -327,7 +327,7 @@ static void vc4_txp_connector_atomic_commit(struct drm_connector *conn,
  
- 	struct vsp1_rwpf_memory mem;
-+	bool writeback;
+ 	TXP_WRITE(TXP_DST_CTRL, ctrl);
  
- 	struct vsp1_dl_manager *dlm;
- };
-diff --git a/drivers/media/platform/vsp1/vsp1_wpf.c b/drivers/media/platform/vsp1/vsp1_wpf.c
-index fc5c1b0f6633..390ac478336d 100644
---- a/drivers/media/platform/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/vsp1/vsp1_wpf.c
-@@ -232,6 +232,27 @@ static void vsp1_wpf_destroy(struct vsp1_entity *entity)
- 	vsp1_dlm_destroy(wpf->dlm);
+-	drm_writeback_queue_job(&txp->connector, conn_state->writeback_job);
++	drm_writeback_queue_job(&txp->connector, conn_state);
  }
  
-+static int wpf_configure_writeback_chain(struct vsp1_rwpf *wpf,
-+					 struct vsp1_dl_list *dl)
-+{
-+	unsigned int index = wpf->entity.index;
-+	struct vsp1_dl_list *dl_next;
-+	struct vsp1_dl_body *dlb;
-+
-+	dl_next = vsp1_dl_list_get(wpf->dlm);
-+	if (!dl_next) {
-+		dev_err(wpf->entity.vsp1->dev,
-+			"Failed to obtain a dl list, disabling writeback\n");
-+		return -ENOMEM;
-+	}
-+
-+	dlb = vsp1_dl_list_get_body0(dl_next);
-+	vsp1_dl_body_write(dlb, VI6_WPF_WRBCK_CTRL(index), 0);
-+	vsp1_dl_list_add_chain(dl, dl_next);
-+
-+	return 0;
-+}
-+
- static void wpf_configure_stream(struct vsp1_entity *entity,
- 				 struct vsp1_pipeline *pipe,
- 				 struct vsp1_dl_list *dl,
-@@ -241,9 +262,11 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 	struct vsp1_device *vsp1 = wpf->entity.vsp1;
- 	const struct v4l2_mbus_framefmt *source_format;
- 	const struct v4l2_mbus_framefmt *sink_format;
-+	unsigned int index = wpf->entity.index;
- 	unsigned int i;
- 	u32 outfmt = 0;
- 	u32 srcrpf = 0;
-+	int ret;
+ static const struct drm_connector_helper_funcs vc4_txp_connector_helper_funcs = {
+diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+index 23df9d463003..47662c362743 100644
+--- a/include/drm/drm_writeback.h
++++ b/include/drm/drm_writeback.h
+@@ -123,7 +123,7 @@ int drm_writeback_connector_init(struct drm_device *dev,
+ 				 const u32 *formats, int n_formats);
  
- 	sink_format = vsp1_entity_get_pad_format(&wpf->entity,
- 						 wpf->entity.config,
-@@ -251,8 +274,9 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 	source_format = vsp1_entity_get_pad_format(&wpf->entity,
- 						   wpf->entity.config,
- 						   RWPF_PAD_SOURCE);
-+
- 	/* Format */
--	if (!pipe->lif) {
-+	if (!pipe->lif || wpf->writeback) {
- 		const struct v4l2_pix_format_mplane *format = &wpf->format;
- 		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
+ void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
+-			     struct drm_writeback_job *job);
++			     struct drm_connector_state *conn_state);
  
-@@ -277,8 +301,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
+ void drm_writeback_cleanup_job(struct drm_writeback_job *job);
  
- 		vsp1_wpf_write(wpf, dlb, VI6_WPF_DSWAP, fmtinfo->swap);
- 
--		if (vsp1_feature(vsp1, VSP1_HAS_WPF_HFLIP) &&
--		    wpf->entity.index == 0)
-+		if (vsp1_feature(vsp1, VSP1_HAS_WPF_HFLIP) && index == 0)
- 			vsp1_wpf_write(wpf, dlb, VI6_WPF_ROT_CTRL,
- 				       VI6_WPF_ROT_CTRL_LN16 |
- 				       (256 << VI6_WPF_ROT_CTRL_LMEM_WD_SHIFT));
-@@ -289,11 +312,9 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 
- 	wpf->outfmt = outfmt;
- 
--	vsp1_dl_body_write(dlb, VI6_DPR_WPF_FPORCH(wpf->entity.index),
-+	vsp1_dl_body_write(dlb, VI6_DPR_WPF_FPORCH(index),
- 			   VI6_DPR_WPF_FPORCH_FP_WPFN);
- 
--	vsp1_dl_body_write(dlb, VI6_WPF_WRBCK_CTRL(wpf->entity.index), 0);
--
- 	/*
- 	 * Sources. If the pipeline has a single input and BRx is not used,
- 	 * configure it as the master layer. Otherwise configure all
-@@ -319,9 +340,26 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 	vsp1_wpf_write(wpf, dlb, VI6_WPF_SRCRPF, srcrpf);
- 
- 	/* Enable interrupts. */
--	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_STA(wpf->entity.index), 0);
--	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_ENB(wpf->entity.index),
-+	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_STA(index), 0);
-+	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_ENB(index),
- 			   VI6_WFP_IRQ_ENB_DFEE);
-+
-+	/*
-+	 * Configure writeback for display pipelines (the wpf writeback flag is
-+	 * never set for memory-to-memory pipelines). Start by adding a chained
-+	 * display list to disable writeback after a single frame, and process
-+	 * to enable writeback. If the display list allocation fails don't
-+	 * enable writeback as we wouldn't be able to safely disable it,
-+	 * resulting in possible memory corruption.
-+	 */
-+	if (wpf->writeback) {
-+		ret = wpf_configure_writeback_chain(wpf, dl);
-+		if (ret < 0)
-+			wpf->writeback = false;
-+	}
-+
-+	vsp1_dl_body_write(dlb, VI6_WPF_WRBCK_CTRL(index),
-+			   wpf->writeback ? VI6_WPF_WRBCK_CTRL_WBMD : 0);
- }
- 
- static void wpf_configure_frame(struct vsp1_entity *entity,
-@@ -391,7 +429,11 @@ static void wpf_configure_partition(struct vsp1_entity *entity,
- 		       (0 << VI6_WPF_SZCLIP_OFST_SHIFT) |
- 		       (height << VI6_WPF_SZCLIP_SIZE_SHIFT));
- 
--	if (pipe->lif)
-+	/*
-+	 * For display pipelines without writeback enabled there's no memory
-+	 * address to configure, return now.
-+	 */
-+	if (pipe->lif && !wpf->writeback)
- 		return;
- 
- 	/*
-@@ -480,6 +522,12 @@ static void wpf_configure_partition(struct vsp1_entity *entity,
- 	vsp1_wpf_write(wpf, dlb, VI6_WPF_DSTM_ADDR_Y, mem.addr[0]);
- 	vsp1_wpf_write(wpf, dlb, VI6_WPF_DSTM_ADDR_C0, mem.addr[1]);
- 	vsp1_wpf_write(wpf, dlb, VI6_WPF_DSTM_ADDR_C1, mem.addr[2]);
-+
-+	/*
-+	 * Writeback operates in single-shot mode and lasts for a single frame,
-+	 * reset the writeback flag to false for the next frame.
-+	 */
-+	wpf->writeback = false;
- }
- 
- static unsigned int wpf_max_width(struct vsp1_entity *entity,
-@@ -530,6 +578,13 @@ struct vsp1_rwpf *vsp1_wpf_create(struct vsp1_device *vsp1, unsigned int index)
- 		wpf->max_height = WPF_GEN3_MAX_HEIGHT;
- 	}
- 
-+	/*
-+	 * On Gen3 WPFs with a LIF output can also write to memory for display
-+	 * writeback.
-+	 */
-+	if (vsp1->info->gen > 2 && index < vsp1->info->lif_count)
-+		wpf->has_writeback = true;
-+
- 	wpf->entity.ops = &wpf_entity_ops;
- 	wpf->entity.type = VSP1_ENTITY_WPF;
- 	wpf->entity.index = index;
 -- 
 Regards,
 
