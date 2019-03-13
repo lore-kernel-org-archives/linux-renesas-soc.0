@@ -2,189 +2,182 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD95C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEB9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7853C214AE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 14:45:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 213BC206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 15:50:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VEyJcMhb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725895AbfCMOpQ (ORCPT
+        id S1725883AbfCMPub (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Mar 2019 10:45:16 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:35266 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfCMOpQ (ORCPT
+        Wed, 13 Mar 2019 11:50:31 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:53958 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725868AbfCMPub (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Mar 2019 10:45:16 -0400
-Received: by mail-ua1-f68.google.com with SMTP id f88so745610uaf.2;
-        Wed, 13 Mar 2019 07:45:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=63dkDYz52se4E5080eXzCZ9vNZBXRS9vr4q0KCO8Cy4=;
-        b=kL5mCFyxSv2Idhf5IdagVjq6n03T/S2IQP03G1EYV/o7XBfBFPsMSvgMTiuhltYD2i
-         4JzGwlasIFJVW+u8jqFh5Gf1kAs7UrJtQSaXuyrGT7WesH8tRJOnhTb6xbE4C+lrDlXq
-         RRWYA1zME9HbdQprbbWRahjNPbK8M9/u+K9WeXLxxw/vz9N15CTUEqDWbTlohhyZKfS6
-         GxT2FENbOWkErV6MW3kLgByJq5r1Xe1fimv4HkEJpMJwo55SLuTsvuaJTvB/LV5e/FiO
-         xr6mKwcniqLZdi0rusU+Y7WA9lRJEYoO0wIDFKSWZuFwOkc0OQCfpan4c8T7qRGY5ub5
-         mEtQ==
-X-Gm-Message-State: APjAAAWdJwjfkAy9KC8rAFE1Qhq7Q+aGB5k/4S3COReh4aEY6nI6ZXEJ
-        4v47gPURftwJVIKqtKl0gtfuy9SRrMwKTgX0Tlk=
-X-Google-Smtp-Source: APXvYqyEfu3Iegnjt5eiK9aoYhPNx4ak8DInz6UPgEF0pcBCsIACErDiJ7EkuOwnf1l+FgvaGN7fQDytKUngxHrHcrE=
-X-Received: by 2002:ab0:6419:: with SMTP id x25mr22757596uao.20.1552488314929;
- Wed, 13 Mar 2019 07:45:14 -0700 (PDT)
+        Wed, 13 Mar 2019 11:50:31 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4269C5AA;
+        Wed, 13 Mar 2019 16:50:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552492229;
+        bh=wzf2sEsZPvRsi/aRVxoSiXfcETr8OC35CZEYVSFcgqM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VEyJcMhbqVDUlndpgvS2XVidBg2LPlMtjYCaPkZIp2bKK8fbQNZjApF6+lvkCYrt+
+         3Td8GwxZr1I+i7yv+yuxBGkIHf+dWTYJGhoAGGE+9C2UiD4fu2Nhww1oPXhBzJz0ea
+         dnOcapq7ibnIEZzfEPFtWU0tBxQ7l9HHdqkZbwOU=
+Date:   Wed, 13 Mar 2019 17:50:22 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>
+Subject: Re: [PATCH v6 10/18] media: vsp1: drm: Extend frame completion API
+ to the DU driver
+Message-ID: <20190313155022.GE4722@pendragon.ideasonboard.com>
+References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20190313000532.7087-11-laurent.pinchart+renesas@ideasonboard.com>
+ <481d3ccd-ad52-9998-2edf-e7774f03145d@ideasonboard.com>
 MIME-Version: 1.0
-References: <20190312065128.24994-1-jiada_wang@mentor.com>
-In-Reply-To: <20190312065128.24994-1-jiada_wang@mentor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Mar 2019 15:45:03 +0100
-Message-ID: <CAMuHMdUEnzgwAqBC=vTYWnrzC5HrqC5f5gDLWJFSJRYAu+DD1g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] PM / Domains: Avoid a potential deadlock
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <481d3ccd-ad52-9998-2edf-e7774f03145d@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jiada,
+Hi Kieran,
 
-CC Marek, Jon, Mike, Stephen, linux-clk, linux-renesas-soc
+On Wed, Mar 13, 2019 at 11:26:14AM +0000, Kieran Bingham wrote:
+> On 13/03/2019 00:05, Laurent Pinchart wrote:
+> > The VSP1 driver will need to pass extra flags to the DU through the
+> > frame completion API. Replace the completed bool flag by a bitmask to
+> > support this.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  drivers/gpu/drm/rcar-du/rcar_du_vsp.c  | 4 ++--
+> >  drivers/media/platform/vsp1/vsp1_drm.c | 4 ++--
+> >  drivers/media/platform/vsp1/vsp1_drm.h | 2 +-
+> >  include/media/vsp1.h                   | 4 +++-
+> >  4 files changed, 8 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > index 76a39eee7c9c..28bfeb8c24fb 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> > @@ -26,14 +26,14 @@
+> >  #include "rcar_du_kms.h"
+> >  #include "rcar_du_vsp.h"
+> >  
+> > -static void rcar_du_vsp_complete(void *private, bool completed, u32 crc)
+> > +static void rcar_du_vsp_complete(void *private, unsigned int status, u32 crc)
+> >  {
+> >  	struct rcar_du_crtc *crtc = private;
+> >  
+> >  	if (crtc->vblank_enable)
+> >  		drm_crtc_handle_vblank(&crtc->crtc);
+> >  
+> > -	if (completed)
+> > +	if (status & VSP1_DU_STATUS_COMPLETE)
+> >  		rcar_du_crtc_finish_page_flip(crtc);
+> >  
+> >  	drm_crtc_add_crc_entry(&crtc->crtc, false, 0, &crc);
+> > diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+> > index 5601a787688b..0367f88135bf 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_drm.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_drm.c
+> > @@ -34,14 +34,14 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
+> >  				       unsigned int completion)
+> >  {
+> >  	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
+> > -	bool complete = completion & VSP1_DL_FRAME_END_COMPLETED;
+> >  
+> >  	if (drm_pipe->du_complete) {
+> >  		struct vsp1_entity *uif = drm_pipe->uif;
+> > +		unsigned int status = completion & VSP1_DU_STATUS_COMPLETE;
+> 
+> 
+> Why do you mask the bit(s) here?
+> 
+> Can't we just pass completion into
+>   drm_pipe->du_complete(p, completion, c); ?
+> 
+> [(edit: no, because completion contains things such as
+> VSP1_DL_FRAME_END_INTERNAL)]
+> 
+> Or are you relying on the fact that,
+>  VSP1_DL_FRAME_END_COMPLETED == VSP1_DU_STATUS_COMPLETE
+> 
+> in which case perhaps we should be more explicit somehow, either in code
+> or with a comment that this section is converting between the two
+> bitfield types.
 
-On Tue, Mar 12, 2019 at 7:51 AM Jiada Wang <jiada_wang@mentor.com> wrote:
-> Lockdep warns that prepare_lock and genpd->mlock can cause a deadlock
-> the deadlock scenario is like following:
-> First thread is probing cs2000
-> cs2000_probe()
->   clk_register()
->     __clk_core_init()
->       clk_prepare_lock()                            ----> acquires prepare_lock
->         cs2000_recalc_rate()
->           i2c_smbus_read_byte_data()
->             rcar_i2c_master_xfer()
->               dma_request_chan()
->                 rcar_dmac_of_xlate()
->                   rcar_dmac_alloc_chan_resources()
->                     pm_runtime_get_sync()
->                       __pm_runtime_resume()
->                         rpm_resume()
->                           rpm_callback()
->                             genpd_runtime_resume()   ----> acquires genpd->mlock
->
-> Second thread is attaching any device to the same PM domain
-> genpd_add_device()
->   genpd_lock()                                       ----> acquires genpd->mlock
->     cpg_mssr_attach_dev()
->       of_clk_get_from_provider()
->         __of_clk_get_from_provider()
->           __clk_create_clk()
->             clk_prepare_lock()                       ----> acquires prepare_lock
->
-> Since currently no PM provider access genpd's critical section
-> in .attach_dev, and .detach_dev callbacks, so there is no need to protect
-> these two callbacks with genpd->mlock.
-> This patch avoids a potential deadlock by moving out .attach_dev and .detach_dev
-> from genpd->mlock, so that genpd->mlock won't be held when prepare_lock is acquired
-> in .attach_dev and .detach_dev
->
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Good point. I'll add the following comment above the definition of
+VSP1_DL_FRAME_END_COMPLETED:
 
-Thanks a lot for your perseverance!
-I had tried putting each PM Domain in its own lockdep class, but that
-didn't help.
+/* Keep these flags in sync with VSP1_DU_STATUS_* in include/media/vsp1.h. */
 
-Your patch fixes the lockdep warnings on my Salvator-X(S) boards.
+> However you resolve, the rest looks fine:
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> >  		u32 crc;
+> >  
+> >  		crc = uif ? vsp1_uif_get_crc(to_uif(&uif->subdev)) : 0;
+> > -		drm_pipe->du_complete(drm_pipe->du_private, complete, crc);
+> > +		drm_pipe->du_complete(drm_pipe->du_private, status, crc);
+> >  	}
+> >  
+> >  	if (completion & VSP1_DL_FRAME_END_INTERNAL) {
+> > diff --git a/drivers/media/platform/vsp1/vsp1_drm.h b/drivers/media/platform/vsp1/vsp1_drm.h
+> > index 8dfd274a59e2..e85ad4366fbb 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_drm.h
+> > +++ b/drivers/media/platform/vsp1/vsp1_drm.h
+> > @@ -42,7 +42,7 @@ struct vsp1_drm_pipeline {
+> >  	struct vsp1_du_crc_config crc;
+> >  
+> >  	/* Frame synchronisation */
+> > -	void (*du_complete)(void *data, bool completed, u32 crc);
+> > +	void (*du_complete)(void *data, unsigned int status, u32 crc);
+> >  	void *du_private;
+> >  };
+> >  
+> > diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+> > index 1cf868360701..877496936487 100644
+> > --- a/include/media/vsp1.h
+> > +++ b/include/media/vsp1.h
+> > @@ -17,6 +17,8 @@ struct device;
+> >  
+> >  int vsp1_du_init(struct device *dev);
+> >  
+> > +#define VSP1_DU_STATUS_COMPLETE		BIT(0)
+> > +
+> >  /**
+> >   * struct vsp1_du_lif_config - VSP LIF configuration
+> >   * @width: output frame width
+> > @@ -32,7 +34,7 @@ struct vsp1_du_lif_config {
+> >  	unsigned int height;
+> >  	bool interlaced;
+> >  
+> > -	void (*callback)(void *data, bool completed, u32 crc);
+> > +	void (*callback)(void *data, unsigned int status, u32 crc);
+> >  	void *callback_data;
+> >  };
+> >  
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+-- 
+Regards,
 
-Your solution makes sense, as the .{at,de}tach_dev() callbacks are
-owned by the individual PM Domain drivers, and not by the genpd core.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-One thing I'm still wondering about: genpd_add_device() is always called
-with gpd_list_lock held.
-However, the same cannot be said about genpd_remove_device():
-  - pm_genpd_remove_device() does not take gpd_list_lock, unlike
-    pm_genpd_add_device(),
-  - genpd_dev_pm_detach() does not take gpd_list_lock, while
-    __genpd_dev_pm_attach() does take the lock for adding,
-    but not for removing (in the error patch)?
-
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1467,12 +1467,12 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->         if (IS_ERR(gpd_data))
->                 return PTR_ERR(gpd_data);
->
-> -       genpd_lock(genpd);
-> -
->         ret = genpd->attach_dev ? genpd->attach_dev(genpd, dev) : 0;
->         if (ret)
->                 goto out;
->
-> +       genpd_lock(genpd);
-> +
->         dev_pm_domain_set(dev, &genpd->domain);
->
->         genpd->device_count++;
-> @@ -1480,9 +1480,8 @@ static int genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->
->         list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
->
-> - out:
->         genpd_unlock(genpd);
-> -
-> + out:
->         if (ret)
->                 genpd_free_dev_data(dev, gpd_data);
->         else
-> @@ -1531,15 +1530,15 @@ static int genpd_remove_device(struct generic_pm_domain *genpd,
->         genpd->device_count--;
->         genpd->max_off_time_changed = true;
->
-> -       if (genpd->detach_dev)
-> -               genpd->detach_dev(genpd, dev);
-> -
->         dev_pm_domain_set(dev, NULL);
->
->         list_del_init(&pdd->list_node);
->
->         genpd_unlock(genpd);
->
-> +       if (genpd->detach_dev)
-> +               genpd->detach_dev(genpd, dev);
-> +
->         genpd_free_dev_data(dev, gpd_data);
->
->         return 0;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
