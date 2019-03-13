@@ -2,237 +2,82 @@ Return-Path: <SRS0=0QpP=RQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A08AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A577CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 05:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DFA12173C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 00:18:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CrN/lc/i"
+	by mail.kernel.org (Postfix) with ESMTP id 76EDE20693
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Mar 2019 05:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfCMASu (ORCPT
+        id S1726490AbfCMF5W (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Mar 2019 20:18:50 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42440 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfCMASu (ORCPT
+        Wed, 13 Mar 2019 01:57:22 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:47202 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726326AbfCMF5V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Mar 2019 20:18:50 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EBB1E49;
-        Wed, 13 Mar 2019 01:18:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552436328;
-        bh=WLJ/A3KoCEhH6K1C84kH3ARY3GITuovSpl0s/gwcKrs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CrN/lc/iN8/aZfrhDc7+Hq3GzRHkpfg7LpKNnwkWPRljpvvoJBPgUEMIVUsnh+ZpC
-         SQME6A3IHABIKvq8yG97EEfGEB3EQ1FSSAQCvRVO94ELI6sdZoPWZEbLiCdiqMjMw3
-         jZHeb9VF3qcgv1kUpjVURXuzbHxXMW4bCVpi+pPY=
-Date:   Wed, 13 Mar 2019 02:18:41 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rcar-csi2: Use standby mode instead of resetting
-Message-ID: <20190313001841.GH891@pendragon.ideasonboard.com>
-References: <20190312234930.23193-1-niklas.soderlund+renesas@ragnatech.se>
- <20190312234930.23193-3-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 13 Mar 2019 01:57:21 -0400
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1h3wtB-0001nc-7k from Jiada_Wang@mentor.com ; Tue, 12 Mar 2019 22:57:17 -0700
+Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Tue, 12 Mar 2019 22:57:13 -0700
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <horms@verge.net.au>, <magnus.damm@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>,
+        <geert@linux-m68k.org>
+CC:     <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <jiada_wang@mentor.com>
+Subject: [PATCH v2 1/5] arm64: dts: renesas: r8a7795: add extended audio dmac register
+Date:   Wed, 13 Mar 2019 14:57:16 +0900
+Message-ID: <20190313055720.26082-2-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190313055720.26082-1-jiada_wang@mentor.com>
+References: <20190313055720.26082-1-jiada_wang@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190312234930.23193-3-niklas.soderlund+renesas@ragnatech.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+Basic audio dmac register only supports busif from 0 to 3,
+in order to use busif4 ~ busif7, extended audio dmac register
+need to be used.
 
-Thank you for the patch.
+This patch adds extended audio dmac register with name "extaudmapp".
 
-On Wed, Mar 13, 2019 at 12:49:30AM +0100, Niklas Söderlund wrote:
-> Later versions of the datasheet updates the reset procedure to more
-> closely resemble the standby mode. Update the driver to enter and exit
-> the standby mode instead of resetting the hardware before and after
-> streaming is started and stopped. This replaces the software reset
-> (SRST.SRST) control.
-> 
-> While at it break out the full start and stop procedures from
-> rcsi2_s_stream() into the existing helper functions.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/platform/rcar-vin/Kconfig     |  1 +
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 69 +++++++++++++--------
->  2 files changed, 43 insertions(+), 27 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/Kconfig b/drivers/media/platform/rcar-vin/Kconfig
-> index e3eb8fee253658da..f26f47e3bcf44825 100644
-> --- a/drivers/media/platform/rcar-vin/Kconfig
-> +++ b/drivers/media/platform/rcar-vin/Kconfig
-> @@ -3,6 +3,7 @@ config VIDEO_RCAR_CSI2
->  	tristate "R-Car MIPI CSI-2 Receiver"
->  	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF
->  	depends on ARCH_RENESAS || COMPILE_TEST
-> +	select RESET_CONTROLLER
->  	select V4L2_FWNODE
->  	help
->  	  Support for Renesas R-Car MIPI CSI-2 receiver.
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index f64528d2be3c95dd..10f1b4978ed7dcc6 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -14,6 +14,7 @@
->  #include <linux/of_graph.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
->  #include <linux/sys_soc.h>
->  
->  #include <media/v4l2-ctrls.h>
-> @@ -350,6 +351,7 @@ struct rcar_csi2 {
->  	struct device *dev;
->  	void __iomem *base;
->  	const struct rcar_csi2_info *info;
-> +	struct reset_control *rstc;
->  
->  	struct v4l2_subdev subdev;
->  	struct media_pad pads[NR_OF_RCAR_CSI2_PAD];
-> @@ -387,11 +389,19 @@ static void rcsi2_write(struct rcar_csi2 *priv, unsigned int reg, u32 data)
->  	iowrite32(data, priv->base + reg);
->  }
->  
-> -static void rcsi2_reset(struct rcar_csi2 *priv)
-> +static void rcsi2_enter_standby(struct rcar_csi2 *priv)
->  {
-> -	rcsi2_write(priv, SRST_REG, SRST_SRST);
-> +	rcsi2_write(priv, PHYCNT_REG, 0);
-> +	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
-> +	reset_control_assert(priv->rstc);
->  	usleep_range(100, 150);
-> -	rcsi2_write(priv, SRST_REG, 0);
-> +	pm_runtime_put(priv->dev);
-> +}
-> +
-> +static void rcsi2_exit_standby(struct rcar_csi2 *priv)
-> +{
-> +	pm_runtime_get_sync(priv->dev);
-> +	reset_control_deassert(priv->rstc);
->  }
->  
->  static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
-> @@ -462,7 +472,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
->  	return mbps;
->  }
->  
-> -static int rcsi2_start(struct rcar_csi2 *priv)
-> +static int rcsi2_start_receiver(struct rcar_csi2 *priv)
->  {
->  	const struct rcar_csi2_format *format;
->  	u32 phycnt, vcdt = 0, vcdt2 = 0;
-> @@ -506,7 +516,6 @@ static int rcsi2_start(struct rcar_csi2 *priv)
->  
->  	/* Init */
->  	rcsi2_write(priv, TREF_REG, TREF_TREF);
-> -	rcsi2_reset(priv);
->  	rcsi2_write(priv, PHTC_REG, 0);
->  
->  	/* Configure */
-> @@ -564,19 +573,36 @@ static int rcsi2_start(struct rcar_csi2 *priv)
->  	return 0;
->  }
->  
-> +static int rcsi2_start(struct rcar_csi2 *priv)
-> +{
-> +	int ret;
-> +
-> +	rcsi2_exit_standby(priv);
-> +
-> +	ret = rcsi2_start_receiver(priv);
-> +	if (ret) {
-> +		rcsi2_enter_standby(priv);
-> +		return ret;
-> +	}
-> +
-> +	ret = v4l2_subdev_call(priv->remote, video, s_stream, 1);
-> +	if (ret) {
-> +		rcsi2_enter_standby(priv);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void rcsi2_stop(struct rcar_csi2 *priv)
->  {
-> -	rcsi2_write(priv, PHYCNT_REG, 0);
-> -
-> -	rcsi2_reset(priv);
-> -
-> -	rcsi2_write(priv, PHTC_REG, PHTC_TESTCLR);
-> +	rcsi2_enter_standby(priv);
-> +	v4l2_subdev_call(priv->remote, video, s_stream, 0);
->  }
->  
->  static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
->  {
->  	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> -	struct v4l2_subdev *nextsd;
->  	int ret = 0;
->  
->  	mutex_lock(&priv->lock);
-> @@ -586,27 +612,12 @@ static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
->  		goto out;
->  	}
->  
-> -	nextsd = priv->remote;
-> -
->  	if (enable && priv->stream_count == 0) {
-> -		pm_runtime_get_sync(priv->dev);
-> -
->  		ret = rcsi2_start(priv);
-> -		if (ret) {
-> -			pm_runtime_put(priv->dev);
-> +		if (ret)
->  			goto out;
-> -		}
-> -
-> -		ret = v4l2_subdev_call(nextsd, video, s_stream, 1);
-> -		if (ret) {
-> -			rcsi2_stop(priv);
-> -			pm_runtime_put(priv->dev);
-> -			goto out;
-> -		}
->  	} else if (!enable && priv->stream_count == 1) {
->  		rcsi2_stop(priv);
-> -		v4l2_subdev_call(nextsd, video, s_stream, 0);
-> -		pm_runtime_put(priv->dev);
->  	}
->  
->  	priv->stream_count += enable ? 1 : -1;
-> @@ -936,6 +947,10 @@ static int rcsi2_probe_resources(struct rcar_csi2 *priv,
->  	if (irq < 0)
->  		return irq;
->  
-> +	priv->rstc = devm_reset_control_get(&pdev->dev, NULL);
-> +	if (IS_ERR(priv->rstc))
-> +		return PTR_ERR(priv->rstc);
-> +
->  	return 0;
->  }
->  
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index abeac3059383..28d6b73428b1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1836,8 +1836,9 @@
+ 				<0 0xec5a0000 0 0x100>,  /* ADG */
+ 				<0 0xec540000 0 0x1000>, /* SSIU */
+ 				<0 0xec541000 0 0x280>,  /* SSI */
+-				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
+-			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
++				<0 0xec740000 0 0x200>,  /* Audio DMAC peri peri*/
++				<0 0xec760000 0 0x200>;  /* Extended Audio DMAC peri peri */
++			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp", "extaudmapp";
+ 
+ 			clocks = <&cpg CPG_MOD 1005>,
+ 				 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
 -- 
-Regards,
+2.19.2
 
-Laurent Pinchart
