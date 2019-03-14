@@ -2,57 +2,54 @@ Return-Path: <SRS0=FDtJ=RR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4D7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Mar 2019 15:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124F7C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Mar 2019 15:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3648A2184C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Mar 2019 15:13:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC19B2184C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Mar 2019 15:13:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lucaceresoli.net header.i=@lucaceresoli.net header.b="LhJ2de9Z"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lucaceresoli.net header.i=@lucaceresoli.net header.b="KBlR6Dct"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbfCNPNX (ORCPT
+        id S1726612AbfCNPNY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Mar 2019 11:13:23 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:46029 "EHLO
+        Thu, 14 Mar 2019 11:13:24 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:44541 "EHLO
         hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726360AbfCNPNW (ORCPT
+        by vger.kernel.org with ESMTP id S1726360AbfCNPNY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Mar 2019 11:13:22 -0400
+        Thu, 14 Mar 2019 11:13:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lucaceresoli.net; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=VC4EcTFcaJQ3IXGkzjyI+XA40vEY1qxWM8wK0CWjXt8=; b=LhJ2de9Za0sJUrak6zaHSUzx5Z
-        /8Qky9+ZlBJXZQMbM1fJD9PuX9b0XmXB0ENZ0FdJJgxVcebNJcjmTxNG6WIrX8izDdkQZthg5zXib
-        j1QF1uaGKq1GsbUf0ZGdyEehaQ2pCPAeRPXV45zL4J9SW5VItYPpHvZ8AXcajQJTZ1HU=;
-Received: from [109.168.11.45] (port=50892 helo=[192.168.101.76])
+        bh=egcEANuDr6b7DVEgL+kjKkBINA4M++PlfprPG6r6tXA=; b=KBlR6Dctq3VB/DvLN+3m9saIiq
+        kd3i+wfrrJesheHUH6z/or7UrrTqFqcYqDO4pP7A2PILPryhiveLYTnF4JgCf9kbS45FEl8kBFHEV
+        rrH9WKiiqXe8KEcS/OiHDp03+PYpN93F7SnGRbOlzAuLSYPiwY9CdOEfw/4Hd2aU47RQ=;
+Received: from [109.168.11.45] (port=50896 helo=[192.168.101.76])
         by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <luca@lucaceresoli.net>)
-        id 1h4Rap-00HGsb-CS; Thu, 14 Mar 2019 15:44:23 +0100
-Subject: Re: [PATCH v3 19/31] media: Documentation: Add GS_ROUTING
- documentation
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
+        id 1h4Rbj-00HHDE-0H; Thu, 14 Mar 2019 15:45:19 +0100
+Subject: Re: [PATCH v3 28/31] adv748x: afe: Implement has_route()
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
- <20190305185150.20776-20-jacopo+renesas@jmondi.org>
- <20190307151928.dogdsks22acqawc3@paasikivi.fi.intel.com>
+ <20190305185150.20776-29-jacopo+renesas@jmondi.org>
 From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <c89691d5-2983-eb81-7c5c-9c56135e8852@lucaceresoli.net>
-Date:   Thu, 14 Mar 2019 15:44:23 +0100
+Message-ID: <62dc5251-01d7-4d6c-7bc8-83e29cb710f0@lucaceresoli.net>
+Date:   Thu, 14 Mar 2019 15:45:19 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <20190307151928.dogdsks22acqawc3@paasikivi.fi.intel.com>
+In-Reply-To: <20190305185150.20776-29-jacopo+renesas@jmondi.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -73,28 +70,53 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi,
 
-On 07/03/19 16:19, Sakari Ailus wrote:
+On 05/03/19 19:51, Jacopo Mondi wrote:
+> Now that the adv748x subdevice supports internal routing, add an
+> has_route() operation used during media graph traversal.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/i2c/adv748x/adv748x-afe.c | 26 +++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
+> index 3f770f71413f..39ac55f0adbb 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-afe.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+> @@ -463,6 +463,30 @@ static const struct v4l2_subdev_ops adv748x_afe_ops = {
+>  	.pad = &adv748x_afe_pad_ops,
+>  };
+>  
+> +/* -----------------------------------------------------------------------------
+> + * media_entity_operations
+> + */
+> +
+> +static bool adv748x_afe_has_route(struct media_entity *entity,
+> +				  unsigned int pad0, unsigned int pad1)
+> +{
+> +	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
+> +	struct adv748x_afe *afe = adv748x_sd_to_afe(sd);
+> +
+> +	/* Only consider direct sink->source routes. */
+> +	if (pad0 > ADV748X_AFE_SINK_AIN7 ||
+> +	    pad1 != ADV748X_AFE_SOURCE)
+> +		return false;
+> +
+> +	if (pad0 != afe->input)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static const struct media_entity_operations adv748x_afe_entity_ops = {
+> +	.has_route = adv748x_afe_has_route,
+> +};
 
-...
+Missing empty line.
 
->> +Description
->> +===========
->> +
->> +These ioctls are used to get and set the routing informations associated to
->> +media pads in a media entity. Routing informations are used to enable or disable
-> 
-> The routing is a property of an entity. How about
-> 
-> s/the routing informations associated to media pads in/routing/
-> 
-> s/R[^\.]+(?=\.)/The routing configuration determines the flows of data
-> inside an entity/
-> 
->> +data connections between stream endpoints of multiplexed media pads.
-
-In the original wording, mentioning "multiplexed" is incorrect. Routing
-can happen even between non-multiplexed streams, as e.g. in the AFE
-driver in patch 27. Sakari's rewording is OK in this respect.
+>  /* -----------------------------------------------------------------------------
+>   * Controls
+>   */
 
 -- 
 Luca
