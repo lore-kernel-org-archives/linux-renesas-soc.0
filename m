@@ -2,110 +2,118 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7E1C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 07:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82839C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 08:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4458721872
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 07:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A64F20693
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 08:29:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbfCOHqz (ORCPT
+        id S1726766AbfCOI3U (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 03:46:55 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42596 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbfCOHqz (ORCPT
+        Fri, 15 Mar 2019 04:29:20 -0400
+Received: from sauhun.de ([88.99.104.3]:35830 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfCOI3T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 03:46:55 -0400
-Received: by mail-vs1-f66.google.com with SMTP id c189so4837082vsd.9;
-        Fri, 15 Mar 2019 00:46:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MJfhxcgkuZ68J6FXsZ+9iQnXNOo0Mv5y6Fb3rh3YHVI=;
-        b=Nr81ip8inx+8SACq1s8kTPe/v15lrxiGTC9o5Qv/MbxYWwSTjIu2rdFX8z4fOBw/lG
-         AwDWO0JcE/WR0bogM/CKTKbGbS3zzyd6D1hZztmFtovajnpjonSO3WnfwGRUD6Xvmk1K
-         owuhkqB0R+KfQxDiMpjuZDYElIPzNqK/N2ftaywX5Wb2qmuZwMvLJTSzpX85FmdCwgMP
-         +C2pqZkXgxKyhGqbHeUiKdJzyDYCMPYik0lajc1ctmcWvHJ7JSpL/SU7GJI3KEUI1XUl
-         enXFOG8jWLX1bnjKZZvCIdmzPwPL9ZKnCZoqaD1HIe1ycTjKcUtV95uvBhxsWk5374VP
-         UjjA==
-X-Gm-Message-State: APjAAAWUsjMes8Ko+olOd5dyy8GjZTqSUZwEnD+MIZGEJWmU2BlBJR3L
-        NEaEhxu6wBSjb3NR0NczI2lHKSZiL0uGRBYxkrk=
-X-Google-Smtp-Source: APXvYqzORX7ZwQB6Fi/24dF/qtLqygBRgGUwAoatoqn6S5ll5MQCUsOKOsVe4EyeKuoNHMwHCvXfMLdSANFU+4JEGks=
-X-Received: by 2002:a67:f2d0:: with SMTP id a16mr1120124vsn.96.1552636014152;
- Fri, 15 Mar 2019 00:46:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com> <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 15 Mar 2019 08:46:41 +0100
-Message-ID: <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for max_req_size
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
+        Fri, 15 Mar 2019 04:29:19 -0400
+Received: from localhost (p54B336D9.dip0.t-ipconnect.de [84.179.54.217])
+        by pokefinder.org (Postfix) with ESMTPSA id A64E72C3637;
+        Fri, 15 Mar 2019 09:29:17 +0100 (CET)
+Date:   Fri, 15 Mar 2019 09:29:17 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Content-Type: text/plain; charset="UTF-8"
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for
+ max_req_size
+Message-ID: <20190315082917.GA1176@kunai>
+References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com>
+ <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
 
-On Thu, Mar 14, 2019 at 11:35 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> max_req_size is calculated by 'max_blk_size * max_blk_count' in the TMIO
-> core. So, specifying U32_MAX as max_blk_count will overflow this
-> calculation. It will cause no harm in practice because the immense high
-> number will overflow into another immense high number. However, it is
-> not good coding practice, so calculate max_blk_count so that
-> max_req_size will fit into unsigned int on ARM32/64.
->
-> Thanks to the Renesas BSP team for the bug report!
->
-> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+--YiEDa0DAkWCtVeE4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
+Hi Geert,
 
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -95,8 +95,8 @@ static const struct renesas_sdhi_of_data of_rza2_compatible = {
->         .scc_offset     = 0 - 0x1000,
->         .taps           = rcar_gen3_scc_taps,
->         .taps_num       = ARRAY_SIZE(rcar_gen3_scc_taps),
-> -       /* DMAC can handle 0xffffffff blk count but only 1 segment */
-> -       .max_blk_count  = 0xffffffff,
-> +       /* DMAC can handle 32bit blk count but only 1 segment */
-> +       .max_blk_count  = UINT_MAX / TMIO_MAX_BLK_SIZE,
+> > -       /* DMAC can handle 0xffffffff blk count but only 1 segment */
+> > -       .max_blk_count  =3D 0xffffffff,
+> > +       /* DMAC can handle 32bit blk count but only 1 segment */
+> > +       .max_blk_count  =3D UINT_MAX / TMIO_MAX_BLK_SIZE,
+>=20
+> I have mixed feelings about this change:
+>   1. You're lying about the actual maximum (yes, there's a comment that
+>      mentions the real limit),
 
-I have mixed feelings about this change:
-  1. You're lying about the actual maximum (yes, there's a comment that
-     mentions the real limit),
-  2. This fixes the problem in this single (set of) drivers only, while about
-     every other driver (not the mmc core) calculates
-     "max_blk_size * max_blk_count", too.
-  3. Some drivers use different limits (e.g. 2048, 4095, or 4096), so
-     eventually having a common upper limit is not easy.
+We can't utilize the actual maximum without converting the MMC core to
+u64. Given that the above max_blk_count is still way beyond any
+practical value, I am OK with the above.
 
-BTW, drivers/mmc/host/usdhi6rol0.c does it the other way around:
+>   2. This fixes the problem in this single (set of) drivers only, while a=
+bout
+>      every other driver (not the mmc core) calculates
+>      "max_blk_size * max_blk_count", too.
 
-    mmc->max_blk_count = mmc->max_req_size / mmc->max_blk_size;
+I glimpsed, too, and found various patterns. We could maybe add a
+warning to the MMC core, but other than that I fail to see a way to
+handle it in a generic way. I'll think about it some more. Or do you
+have an idea already?
 
-Gr{oetje,eeting}s,
+>   3. Some drivers use different limits (e.g. 2048, 4095, or 4096), so
+>      eventually having a common upper limit is not easy.
 
-                        Geert
+I don't understand this one. Which limit do you mean here? blk_size?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> BTW, drivers/mmc/host/usdhi6rol0.c does it the other way around:
+>=20
+>     mmc->max_blk_count =3D mmc->max_req_size / mmc->max_blk_size;
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I think we can't do this because of older SDHI instances. max_req_size
+is still 32 bit for them, but their blk_count register is only 16 bit.
+
+Thanks,
+
+   Wolfram
+
+--YiEDa0DAkWCtVeE4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyLYlkACgkQFA3kzBSg
+KbbnnBAAghtnZmeSGcjXVJmnp2IgEQqLDf+yDeiU2ykqOc6r+ul1BLaf5IkUb5eV
+ruAnwif+x8eeu+/witivr3eCh/9h1HdyU7xeXq1fAZms7bQhw6dBmhIvmGW3xvYu
+1tTEJ8bjBHfZjjd4L8JFQa07SBBsPwa4TbRF+J6yU88/8jTv3bctxMFesuMwE1CW
+wUXsP+saq5NgfG5cRwlaWF2BNpbTwuIUwc0pOMaPksjl1doT3dDjbanZ1d5zP0Mr
+UKvIMG+PItPQ7Qnctj5gdfvBQS9sS6UA3vDBfr5dtNwna3PEF8dNZKrxBY4NcQB6
+vn4JAPgMVpa72IBl0fewUngt/Wi7LJ9yg4GzHXm8/wiJ76YcH1zVvsr0Xhe/QusK
+6CwRQcBF1leW4tRiaAiDSz9s3gz+WPwGvegv4a3AN5ymaSfZv5DoOSuPQ2JnYVth
+FoktYgVVLI9yKwHFZtnZasgkDRRSUJxpPaEALwDX0Gye4tUxx8+PRy0yg8GAIEhv
+YK1jyWFTdeLi2t4Iq1evNsdvKvVey/XJYR8KqaBtJkSlg14GFsG7YVJiyjk37VFm
+58X5P7CPrtQE5pHhIxZWeP7vu7V19byR79nNRjwGIGsH1jf9BCymv1WvgVS1NupN
+x5ilD88Qbx6hJ2Ktuip1Xf9daB0dT02XcJK+FNzWMwYdncnPVXc=
+=6CTz
+-----END PGP SIGNATURE-----
+
+--YiEDa0DAkWCtVeE4--
