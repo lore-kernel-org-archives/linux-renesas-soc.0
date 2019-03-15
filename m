@@ -2,190 +2,91 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F1EC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3A4C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4235F2184C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A19221872
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfCOJWA (ORCPT
+        id S1727282AbfCOJ24 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 05:22:00 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:60553 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfCOJWA (ORCPT
+        Fri, 15 Mar 2019 05:28:56 -0400
+Received: from sauhun.de ([88.99.104.3]:36184 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726886AbfCOJ24 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 05:22:00 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 3F9F1240006;
-        Fri, 15 Mar 2019 09:21:38 +0000 (UTC)
-Date:   Fri, 15 Mar 2019 10:22:15 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>
-Subject: Re: [PATCH v3 09/31] media: entity: Add media_has_route() function
-Message-ID: <20190315092215.5mhrqnz5oqa4j2iu@uno.localdomain>
-References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
- <20190305185150.20776-10-jacopo+renesas@jmondi.org>
- <d297c850-8af5-f435-861a-644fb64933e3@lucaceresoli.net>
+        Fri, 15 Mar 2019 05:28:56 -0400
+Received: from localhost (p54B336D9.dip0.t-ipconnect.de [84.179.54.217])
+        by pokefinder.org (Postfix) with ESMTPSA id 9A8CF2C3637;
+        Fri, 15 Mar 2019 10:28:54 +0100 (CET)
+Date:   Fri, 15 Mar 2019 10:28:54 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for
+ max_req_size
+Message-ID: <20190315092854.GB1176@kunai>
+References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com>
+ <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
+ <20190315082917.GA1176@kunai>
+ <CAMuHMdUbzp4qMbJ-ci4k0fMOwOoYSY_JBZ_tWThZUjcJEd48eA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qbkhm5bsxkyai4pk"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
 Content-Disposition: inline
-In-Reply-To: <d297c850-8af5-f435-861a-644fb64933e3@lucaceresoli.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAMuHMdUbzp4qMbJ-ci4k0fMOwOoYSY_JBZ_tWThZUjcJEd48eA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---qbkhm5bsxkyai4pk
-Content-Type: text/plain; charset=utf-8
+--tjCHc7DPkfUGtrlw
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Luca,
-   thanks for the comments
 
-On Thu, Mar 14, 2019 at 03:45:00PM +0100, Luca Ceresoli wrote:
-> Hi,
->
-> in the Subject line:
-> s/media_has_route/media_entity_has_route/
-
-Ah! Thanks for noticing this.
-
->
-> On 05/03/19 19:51, Jacopo Mondi wrote:
-> > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > >   3. Some drivers use different limits (e.g. 2048, 4095, or 4096), so
+> > >      eventually having a common upper limit is not easy.
 > >
-> > This is a wrapper around the media entity has_route operation.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/media-entity.c | 19 +++++++++++++++++++
-> >  include/media/media-entity.h | 17 +++++++++++++++++
-> >  2 files changed, 36 insertions(+)
-> >
-> > diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
-> > index 6f5196d05894..8e0ca8b1cfa2 100644
-> > --- a/drivers/media/media-entity.c
-> > +++ b/drivers/media/media-entity.c
-> > @@ -238,6 +238,25 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
-> >   * Graph traversal
-> >   */
-> >
-> > +bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-> > +			    unsigned int pad1)
-> > +{
-> > +	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
-> > +		return false;
-> > +
-> > +	if (pad0 == pad1)
-> > +		return true;
-> > +
-> > +	if (!entity->ops || !entity->ops->has_route)
-> > +		return true;
->
-> Entities that implement has_route in following patches return false if
-> called with two sink pads or two source pads. This code behaves
-> differently. Which behavior is correct? IOW, how do you define "two
-> entity pads are connected internally"?
+> > I don't understand this one. Which limit do you mean here? blk_size?
+>=20
+> Yes, blk_size.
 
-The handling of "indirect routes" (aka routes that connects two
-sources or two sinks) is totally up to the device driver and we
-decided not to make any assumption (nor introduce helpers, as it was
-in v2) to support that in the framework.
+I am still confused. Which upper limit do you mean then? Because for
+blk_size and blk_count, they are both driver specific, or?
 
-Have a look at:
-[PATCH v2 15/30] media: entity: Look for indirect routes
-where Sakari implemented an helper to support the most common use case
-of two source pads connected to the same sink pad. In this case the
-two sources are reported as connected, but we decided for now to let
-the drivers handle this, and more complex indirect routes, internaly.
 
-The devices for which "has_route" has been implemented in this series
-do not support indirect routes, for now, but the framework does not
-make assumptions on this.
-
-Thanks
-   j
-
->
-> > +	if (entity->pads[pad1].index < entity->pads[pad0].index)
-> > +		swap(pad0, pad1);
-> > +
-> > +	return entity->ops->has_route(entity, pad0, pad1);
-> > +}
-> > +EXPORT_SYMBOL_GPL(media_entity_has_route);
-> > +
-> >  static struct media_pad *
-> >  media_pad_other(struct media_pad *pad, struct media_link *link)
-> >  {
-> > diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-> > index 675bc27b8b3c..205561545d7e 100644
-> > --- a/include/media/media-entity.h
-> > +++ b/include/media/media-entity.h
-> > @@ -919,6 +919,23 @@ int media_entity_get_fwnode_pad(struct media_entity *entity,
-> >  __must_check int media_graph_walk_init(
-> >  	struct media_graph *graph, struct media_device *mdev);
-> >
-> > +/**
-> > + * media_entity_has_route - Check if two entity pads are connected internally
-> > + *
-> > + * @entity: The entity
-> > + * @pad0: The first pad index
-> > + * @pad1: The second pad index
-> > + *
-> > + * This function can be used to check whether two pads of an entity are
-> > + * connected internally in the entity.
-> > + *
-> > + * The caller must hold entity->graph_obj.mdev->mutex.
-> > + *
-> > + * Return: true if the pads are connected internally and false otherwise.
-> > + */
-> > +bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
-> > +			    unsigned int pad1);
-> > +
-> >  /**
-> >   * media_graph_walk_cleanup - Release resources used by graph walk.
-> >   *
-> >
->
-> --
-> Luca
-
---qbkhm5bsxkyai4pk
+--tjCHc7DPkfUGtrlw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyLbscACgkQcjQGjxah
-Vjzwlw//b5zNTHPcyUdtJpElwYFpRWcYFvvx/L/2YuKWXlzVyNMPy+vU6dWfifUa
-lPKkkQGDFG5TGBNUE+KhPL6ecS9jore+Fr76uXcPKx5bMMG22oB2OXeDBusyY60r
-MTpyG+fCLPOYIpr9wLSl3Jge+s63o9btmD0F9Q97lb5IooYh79rUhLJDZ2BBNxol
-CeHsDla3uQKqj5AIDOrAcAeUKHyoY/h2njVjt+ApBAVDB0SRWUBj5rFPjNnAW2dy
-kHbTDvGOMHTY+LCk7kcsgCnz1d80ZAy/OVDcxXyLAgHxoIPWxK9m792rj+b25sof
-NRJrUInApupVS6jB+5a5hNCHXkZwJ6GCSbulEjXd9CyEOVlOthzEtL6y2G2ZU4l5
-Dx1Z2jH/cVjFcbZ0B+8WncJJBJGK0U+oxfcQxkpTnGwx5JKJWqTy1WjZpzBbtJNZ
-MEfOEXq7/TUIA2aKhiWTpQ0/N0/WoBkanQ3WBeTcop00wRFf6HWpXUanfUMWrCv/
-fqYGO5EY0bm+v9GyhCbgvZ6aiIPiK0GFBzuLCm/kPSpVCPn6NNTlBjKvFvKGT8C3
-TT3kJP33sMNgLRl6nC+hjJzYjFBD8U+fFRtdchlYtimFkYybKZE26nBM1IQ60Ewa
-/HAC7VUFbW07vbmZNvsUnrXz4blYZ33w1zLd/VSM4xA3wv71q3s=
-=Mcxh
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyLcFIACgkQFA3kzBSg
+KbYIog//Ulp19gEn3w4s8AZZQfQvpzpsIx+4V605NfLlxgfvL4u6iLG2BRqtv/8p
+l7ZBuIgcAAcf8IIuzPJstvr8zNQq4RzS5hTRJsYc1ME29I3khUKoj5x6bo2DoHhb
+a/2GRm59yCPMqKEOSSqLYHJxLti0gvvpxm4jfsEVhZ4rg1E7k/TQD+9vfnsjIovK
+dMoyD/BwzHzH0HJWqYIiw2/9mMFJ79MMNQ+M0cnAEGrjvf9FSw71jlG9xuaX5l0b
+zyAr3Re49MdI8mP8s0aqv19o1qANuJOzHvAnWPMaxV+tF/fZPFpFZfoxB+xW9Mn3
+I1iFoJeDUMjun2sS7rcar77Pk+RO0M9iz9w17mn5LeEaIE+j1CQzva5SIp3WF063
+kqxjBbp0+VpiArdsAXItaRSwXQbg5I91kzrgSsrAQXBMrZZhxuj+TCl9m5Q5EDgb
+M+PtjjSQd2ehJd304of6MVUSm/icCZg+BhPchbDoFYlGrc6VJPR2uHJrctCN++oV
+2wExiC+rpzKjvxeszuywV/JCcqgPj9Kx2GWn7M9Lhlh+K/ybomzUQdllmqIGaPBS
+f6nmpp+IL7mZVKJ0P0jQtNUvp5TjZiXdMlezJGLmNAP3CjzVD9iDT+kTMiuaVuWJ
+xJNYkY2TbnHGvqsLiPuQn5Ng9YqEUq5SOBGhGRzKn+9MnRIb4ao=
+=VWMD
 -----END PGP SIGNATURE-----
 
---qbkhm5bsxkyai4pk--
+--tjCHc7DPkfUGtrlw--
