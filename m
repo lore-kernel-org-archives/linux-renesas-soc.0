@@ -2,119 +2,110 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD05C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 07:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7E1C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 07:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6875E21871
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 07:30:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="pGkKxMMc"
+	by mail.kernel.org (Postfix) with ESMTP id 4458721872
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 07:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfCOH3z (ORCPT
+        id S1728362AbfCOHqz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 03:29:55 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:59734 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728265AbfCOH3z (ORCPT
+        Fri, 15 Mar 2019 03:46:55 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42596 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728314AbfCOHqz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 03:29:55 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 9AC8FCA9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Mar 2019 07:29:53 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Tk-MN4vheIU3 for <linux-renesas-soc@vger.kernel.org>;
-        Fri, 15 Mar 2019 02:29:53 -0500 (CDT)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 669F9C99
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Mar 2019 02:29:53 -0500 (CDT)
-Received: by mail-io1-f70.google.com with SMTP id r21so6255118iod.12
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Mar 2019 00:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Xy7x4Tgo9JSLzKOlvBWwqGv6Hh3KCpHu92BvLfEbekw=;
-        b=pGkKxMMcYTA+4ibgxCnLx3W8wdAHRV1er6127G3dsauH1uTrUPmdElNm/U53Xnv/m9
-         Aq6H5VTWKKJFBNG05qI2/i6KKs6BAwAFH5Qp+X9VtQX1owC2SK8uPjwnIa3bU/VK5xF7
-         03lqNgaMOhQlz1cb13nPWbEmpDWQaP055L86zCHVecQsInq20oGNIW1ZPzHrHqAEobGo
-         UbGToY6JbdKUTz65+GwN27aFmDtJhwtUudKTuWijC20r0FJw9tYgf/RQCHSqmGcVENLK
-         Ns7GRgEjs6sRuZNMTemG8WuvD/Ew78cnEJClbmhC0ampct/hWFxS1qQqtQeZIEqeCITG
-         PvkQ==
+        Fri, 15 Mar 2019 03:46:55 -0400
+Received: by mail-vs1-f66.google.com with SMTP id c189so4837082vsd.9;
+        Fri, 15 Mar 2019 00:46:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Xy7x4Tgo9JSLzKOlvBWwqGv6Hh3KCpHu92BvLfEbekw=;
-        b=d5j6IVyx5W8ialAu85bTmeKP+iMgEV2AeUYsvBXpRiixxXh2I291OK2AMR5Wf2TOup
-         R0Mbm6S3yxiov/QRl4Kpc6dheRCmqcbIzwfOGXP8Xx6a9U8OaVh2hyPK9nMDTwLRdUui
-         +2oX+FDxpad3n8APvaTVG94rcu5A/je8sW/+jDySwks/3FX7rcafvtWycUejlpwEVrI3
-         hpBZvAjjBY/Q5GFoEshIICLu6TDx6bTTlqDgTUQlyAgBGoLwPqnPCT3joUDtOmG429i5
-         3FqNRF5f3xNQ9pt8QIjMBA05136trtE/ZZdt0fcOlY0URtobLh8TaxvAvlClHTfCA8O8
-         L7Ug==
-X-Gm-Message-State: APjAAAVxqbheS7aPujYhU8IfEfBvK1xwQBSF8suSH8zApr10A1d60MN7
-        zEjYigvceAo1KUD1zC9yQ8v+nyyyavBaSzpqiWPA7yOnKgqCtVUCAe/cqDllc+X9nKmBOpPc0aE
-        vkR5dI8GbneFmNJtFpwqjpKuJenDfc8hWlsQ=
-X-Received: by 2002:a5e:dc0a:: with SMTP id b10mr1444089iok.34.1552634992979;
-        Fri, 15 Mar 2019 00:29:52 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzl50u4ZAT7SceUFXRHgS2olfobWPi+m3ACkND+tAi5+oYptGH2ujwQCrlgZG3TMPNPwtsNjw==
-X-Received: by 2002:a5e:dc0a:: with SMTP id b10mr1444077iok.34.1552634992742;
-        Fri, 15 Mar 2019 00:29:52 -0700 (PDT)
-Received: from bee.dtc.umn.edu (cs-bee-u.cs.umn.edu. [128.101.106.63])
-        by smtp.gmail.com with ESMTPSA id o141sm707418ito.14.2019.03.15.00.29.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Mar 2019 00:29:52 -0700 (PDT)
-From:   Kangjie Lu <kjlu@umn.edu>
-To:     kjlu@umn.edu
-Cc:     Simon Horman <horms@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pci: pcie-rcar: fix a potential NULL pointer dereference
-Date:   Fri, 15 Mar 2019 02:29:43 -0500
-Message-Id: <20190315072943.22923-1-kjlu@umn.edu>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAMuHMdX=XwxVFb1eLupmyHBOMBGzB+=RXxcUCH9D-J1+YKiq5w@mail.gmail.com>
-References: <CAMuHMdX=XwxVFb1eLupmyHBOMBGzB+=RXxcUCH9D-J1+YKiq5w@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MJfhxcgkuZ68J6FXsZ+9iQnXNOo0Mv5y6Fb3rh3YHVI=;
+        b=Nr81ip8inx+8SACq1s8kTPe/v15lrxiGTC9o5Qv/MbxYWwSTjIu2rdFX8z4fOBw/lG
+         AwDWO0JcE/WR0bogM/CKTKbGbS3zzyd6D1hZztmFtovajnpjonSO3WnfwGRUD6Xvmk1K
+         owuhkqB0R+KfQxDiMpjuZDYElIPzNqK/N2ftaywX5Wb2qmuZwMvLJTSzpX85FmdCwgMP
+         +C2pqZkXgxKyhGqbHeUiKdJzyDYCMPYik0lajc1ctmcWvHJ7JSpL/SU7GJI3KEUI1XUl
+         enXFOG8jWLX1bnjKZZvCIdmzPwPL9ZKnCZoqaD1HIe1ycTjKcUtV95uvBhxsWk5374VP
+         UjjA==
+X-Gm-Message-State: APjAAAWUsjMes8Ko+olOd5dyy8GjZTqSUZwEnD+MIZGEJWmU2BlBJR3L
+        NEaEhxu6wBSjb3NR0NczI2lHKSZiL0uGRBYxkrk=
+X-Google-Smtp-Source: APXvYqzORX7ZwQB6Fi/24dF/qtLqygBRgGUwAoatoqn6S5ll5MQCUsOKOsVe4EyeKuoNHMwHCvXfMLdSANFU+4JEGks=
+X-Received: by 2002:a67:f2d0:: with SMTP id a16mr1120124vsn.96.1552636014152;
+ Fri, 15 Mar 2019 00:46:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com> <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 15 Mar 2019 08:46:41 +0100
+Message-ID: <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for max_req_size
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In case __get_free_pages fails and returns NULL, the fix returns
--ENOMEM and releases resources to avoid NULL pointer dereference.
+Hi Wolfram,
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Thu, Mar 14, 2019 at 11:35 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> max_req_size is calculated by 'max_blk_size * max_blk_count' in the TMIO
+> core. So, specifying U32_MAX as max_blk_count will overflow this
+> calculation. It will cause no harm in practice because the immense high
+> number will overflow into another immense high number. However, it is
+> not good coding practice, so calculate max_blk_count so that
+> max_req_size will fit into unsigned int on ARM32/64.
+>
+> Thanks to the Renesas BSP team for the bug report!
+>
+> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
----
-V2 removes the error message.
----
- drivers/pci/controller/pcie-rcar.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks for your patch!
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index c8febb009454..71e55995c058 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -929,6 +929,10 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- 
- 	/* setup MSI data target */
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-+	if (!msi->pages) {
-+		err = -ENOMEM;
-+		goto err;
-+	}
- 	base = virt_to_phys((void *)msi->pages);
- 
- 	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -95,8 +95,8 @@ static const struct renesas_sdhi_of_data of_rza2_compatible = {
+>         .scc_offset     = 0 - 0x1000,
+>         .taps           = rcar_gen3_scc_taps,
+>         .taps_num       = ARRAY_SIZE(rcar_gen3_scc_taps),
+> -       /* DMAC can handle 0xffffffff blk count but only 1 segment */
+> -       .max_blk_count  = 0xffffffff,
+> +       /* DMAC can handle 32bit blk count but only 1 segment */
+> +       .max_blk_count  = UINT_MAX / TMIO_MAX_BLK_SIZE,
+
+I have mixed feelings about this change:
+  1. You're lying about the actual maximum (yes, there's a comment that
+     mentions the real limit),
+  2. This fixes the problem in this single (set of) drivers only, while about
+     every other driver (not the mmc core) calculates
+     "max_blk_size * max_blk_count", too.
+  3. Some drivers use different limits (e.g. 2048, 4095, or 4096), so
+     eventually having a common upper limit is not easy.
+
+BTW, drivers/mmc/host/usdhi6rol0.c does it the other way around:
+
+    mmc->max_blk_count = mmc->max_req_size / mmc->max_blk_size;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
