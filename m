@@ -2,118 +2,105 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82839C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 08:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64714C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 08:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A64F20693
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 08:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33F9121872
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 08:49:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfCOI3U (ORCPT
+        id S1727282AbfCOItb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 04:29:20 -0400
-Received: from sauhun.de ([88.99.104.3]:35830 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbfCOI3T (ORCPT
+        Fri, 15 Mar 2019 04:49:31 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:38718 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbfCOIta (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 04:29:19 -0400
-Received: from localhost (p54B336D9.dip0.t-ipconnect.de [84.179.54.217])
-        by pokefinder.org (Postfix) with ESMTPSA id A64E72C3637;
-        Fri, 15 Mar 2019 09:29:17 +0100 (CET)
-Date:   Fri, 15 Mar 2019 09:29:17 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+        Fri, 15 Mar 2019 04:49:30 -0400
+Received: by mail-ua1-f65.google.com with SMTP id d4so2857186uap.5;
+        Fri, 15 Mar 2019 01:49:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D+nyOthGDZ5EZ5HFOz9WBkgDq3yQMzw9BDvNf8WnQuM=;
+        b=Vtn/Epb2Ejdm3Nh9CqGz5oPugb36IyIDqIhO8Ec379MT+rjWO3LtFNUdHwjOlLXqTT
+         NwLyOQMYaBuu9+rkit0NKceugea5szO56gs39ldbvL6K9q52E/hjqiBxFCA1ZI0YsVoK
+         NpDqB2ZQC7lRgUDZscqRJXGtiZxs3WmPlZ4Y5B3HaPardVAH+0MkjoK5Ny6DJqUu9g5w
+         eF53gUgZ3FEd8xc+jEJjGfNWF3SXnKXyk3bGk3GEBPxSQwfB9623r+0nH6bhgINQv8ER
+         EJLiDryVSc6/k6NvcFWnTANM3bNhrjyQiWb6F3JrtwykEuftvI7qUJ+XEJcWRQXXfoqU
+         LroA==
+X-Gm-Message-State: APjAAAUQcxpcUPNPUKBBcxO0T7b2OW+j8UKR1R7ggXRtCRepQXvykMjS
+        FuqpDKiMkvTnuRame5Kh7vPf+r4WDFc+82DqZiI=
+X-Google-Smtp-Source: APXvYqwYpXqBQF84QksHwVnXIu9UxJim3RCQk+JoE9MIZLRNPMowE8wJ6Pjaah7f6JnP/Cu7NDYPM+5DSGjuN7deBx4=
+X-Received: by 2002:ab0:6419:: with SMTP id x25mr27895844uao.20.1552639769564;
+ Fri, 15 Mar 2019 01:49:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com>
+ <20190314223130.31802-3-wsa+renesas@sang-engineering.com> <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
+ <20190315082917.GA1176@kunai>
+In-Reply-To: <20190315082917.GA1176@kunai>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 15 Mar 2019 09:49:17 +0100
+Message-ID: <CAMuHMdUbzp4qMbJ-ci4k0fMOwOoYSY_JBZ_tWThZUjcJEd48eA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for max_req_size
+To:     Wolfram Sang <wsa@the-dreams.de>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux MMC List <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for
- max_req_size
-Message-ID: <20190315082917.GA1176@kunai>
-References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com>
- <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
- <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Wolfram,
 
---YiEDa0DAkWCtVeE4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 15, 2019 at 9:29 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > > -       /* DMAC can handle 0xffffffff blk count but only 1 segment */
+> > > -       .max_blk_count  = 0xffffffff,
+> > > +       /* DMAC can handle 32bit blk count but only 1 segment */
+> > > +       .max_blk_count  = UINT_MAX / TMIO_MAX_BLK_SIZE,
+> >
+> > I have mixed feelings about this change:
+> >   1. You're lying about the actual maximum (yes, there's a comment that
+> >      mentions the real limit),
+>
+> We can't utilize the actual maximum without converting the MMC core to
+> u64. Given that the above max_blk_count is still way beyond any
+> practical value, I am OK with the above.
+>
+> >   2. This fixes the problem in this single (set of) drivers only, while about
+> >      every other driver (not the mmc core) calculates
+> >      "max_blk_size * max_blk_count", too.
+>
+> I glimpsed, too, and found various patterns. We could maybe add a
+> warning to the MMC core, but other than that I fail to see a way to
+> handle it in a generic way. I'll think about it some more. Or do you
+> have an idea already?
 
-Hi Geert,
+No idea, else I would have told you ;-)
 
-> > -       /* DMAC can handle 0xffffffff blk count but only 1 segment */
-> > -       .max_blk_count  =3D 0xffffffff,
-> > +       /* DMAC can handle 32bit blk count but only 1 segment */
-> > +       .max_blk_count  =3D UINT_MAX / TMIO_MAX_BLK_SIZE,
->=20
-> I have mixed feelings about this change:
->   1. You're lying about the actual maximum (yes, there's a comment that
->      mentions the real limit),
+> >   3. Some drivers use different limits (e.g. 2048, 4095, or 4096), so
+> >      eventually having a common upper limit is not easy.
+>
+> I don't understand this one. Which limit do you mean here? blk_size?
 
-We can't utilize the actual maximum without converting the MMC core to
-u64. Given that the above max_blk_count is still way beyond any
-practical value, I am OK with the above.
+Yes, blk_size.
 
->   2. This fixes the problem in this single (set of) drivers only, while a=
-bout
->      every other driver (not the mmc core) calculates
->      "max_blk_size * max_blk_count", too.
+Gr{oetje,eeting}s,
 
-I glimpsed, too, and found various patterns. We could maybe add a
-warning to the MMC core, but other than that I fail to see a way to
-handle it in a generic way. I'll think about it some more. Or do you
-have an idea already?
+                        Geert
 
->   3. Some drivers use different limits (e.g. 2048, 4095, or 4096), so
->      eventually having a common upper limit is not easy.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I don't understand this one. Which limit do you mean here? blk_size?
-
-> BTW, drivers/mmc/host/usdhi6rol0.c does it the other way around:
->=20
->     mmc->max_blk_count =3D mmc->max_req_size / mmc->max_blk_size;
-
-I think we can't do this because of older SDHI instances. max_req_size
-is still 32 bit for them, but their blk_count register is only 16 bit.
-
-Thanks,
-
-   Wolfram
-
---YiEDa0DAkWCtVeE4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyLYlkACgkQFA3kzBSg
-KbbnnBAAghtnZmeSGcjXVJmnp2IgEQqLDf+yDeiU2ykqOc6r+ul1BLaf5IkUb5eV
-ruAnwif+x8eeu+/witivr3eCh/9h1HdyU7xeXq1fAZms7bQhw6dBmhIvmGW3xvYu
-1tTEJ8bjBHfZjjd4L8JFQa07SBBsPwa4TbRF+J6yU88/8jTv3bctxMFesuMwE1CW
-wUXsP+saq5NgfG5cRwlaWF2BNpbTwuIUwc0pOMaPksjl1doT3dDjbanZ1d5zP0Mr
-UKvIMG+PItPQ7Qnctj5gdfvBQS9sS6UA3vDBfr5dtNwna3PEF8dNZKrxBY4NcQB6
-vn4JAPgMVpa72IBl0fewUngt/Wi7LJ9yg4GzHXm8/wiJ76YcH1zVvsr0Xhe/QusK
-6CwRQcBF1leW4tRiaAiDSz9s3gz+WPwGvegv4a3AN5ymaSfZv5DoOSuPQ2JnYVth
-FoktYgVVLI9yKwHFZtnZasgkDRRSUJxpPaEALwDX0Gye4tUxx8+PRy0yg8GAIEhv
-YK1jyWFTdeLi2t4Iq1evNsdvKvVey/XJYR8KqaBtJkSlg14GFsG7YVJiyjk37VFm
-58X5P7CPrtQE5pHhIxZWeP7vu7V19byR79nNRjwGIGsH1jf9BCymv1WvgVS1NupN
-x5ilD88Qbx6hJ2Ktuip1Xf9daB0dT02XcJK+FNzWMwYdncnPVXc=
-=6CTz
------END PGP SIGNATURE-----
-
---YiEDa0DAkWCtVeE4--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
