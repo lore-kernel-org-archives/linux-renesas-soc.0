@@ -2,231 +2,98 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD98BC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17605C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF1321872
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E407521872
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbfCOJpH (ORCPT
+        id S1728652AbfCOJrJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 05:45:07 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:41507 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbfCOJpG (ORCPT
+        Fri, 15 Mar 2019 05:47:09 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:37490 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbfCOJrJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 05:45:06 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 9E9F540013;
-        Fri, 15 Mar 2019 09:45:02 +0000 (UTC)
-Date:   Fri, 15 Mar 2019 10:45:38 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 26/31] adv748x: csi2: add internal routing
- configuration
-Message-ID: <20190315094538.bs5ecsdzndrxjdbb@uno.localdomain>
-References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
- <20190305185150.20776-27-jacopo+renesas@jmondi.org>
- <4f5b5763-be90-4040-7d55-986471168de1@lucaceresoli.net>
+        Fri, 15 Mar 2019 05:47:09 -0400
+Received: by mail-vk1-f194.google.com with SMTP id p190so2053944vke.4;
+        Fri, 15 Mar 2019 02:47:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E1Aril1O4Q+XAKi0pRN2+iYOJ4/xIWCuC63YIIeiHIM=;
+        b=PJlZQ/H0Bfq5/z7OPwbyFx2c1+sJiP2nR5KhaP8fg9pVX+D5aMYmK42LyZxriU/U3t
+         QnO8g8B5l8ZuBsKLaRPWvY3tAHeFlIRk6AJC6JEJMtNh3y/GUk5DhJD0Tw1ntkIeWGDv
+         rW52JH8ennIOVPOIb3adCIv+sjUwpPj8z8avoZHQaVngWicNMRQ2jLM25RXm4/thpCmt
+         Du38tM7y28pF6ban9XwRgUePcbN9HasjCMgZCNc+3KGslwjircV6bbZAQ4CE1B5+Ksdg
+         Ns+RZEUMw0on+M/CPs2PGXnrxpYZX8K5g104aAWMcLdJJDOIs7yiWfEeS5QDLhhRw+VD
+         muXQ==
+X-Gm-Message-State: APjAAAXUyIyolhUl/Lbr/a0XMbf0KP6moJX1+5UWqIrSQrO9SFygXrKd
+        EfAwF7qZNZeSobI1tUn8u82f9yFVIW9d9W9HiGU=
+X-Google-Smtp-Source: APXvYqz4+T+TMqTHrM06z1I3C4Xi1KcLwpqN/kGiGbb3097Rfit2n6Fy6oFC+Vt7dkdItufxvWAd0uYE74wMC8VF6WQ=
+X-Received: by 2002:a1f:ae07:: with SMTP id x7mr1573098vke.74.1552643228275;
+ Fri, 15 Mar 2019 02:47:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bqma2ubyzmeircxs"
-Content-Disposition: inline
-In-Reply-To: <4f5b5763-be90-4040-7d55-986471168de1@lucaceresoli.net>
-User-Agent: NeoMutt/20180716
+References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com>
+ <20190314223130.31802-3-wsa+renesas@sang-engineering.com> <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
+ <20190315082917.GA1176@kunai> <CAMuHMdUbzp4qMbJ-ci4k0fMOwOoYSY_JBZ_tWThZUjcJEd48eA@mail.gmail.com>
+ <20190315092854.GB1176@kunai> <CAMuHMdVEdU9CLSMzJWiDn5brc8bXNBemma=Zk4XtF4wsXHeb7Q@mail.gmail.com>
+ <20190315093941.GC1176@kunai>
+In-Reply-To: <20190315093941.GC1176@kunai>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 15 Mar 2019 10:46:55 +0100
+Message-ID: <CAMuHMdUmNSk3n1EEaYQpXV-Pwa3d9O8UDARx+zF5c_BYqrR5rg@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for max_req_size
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Wolfram,
 
---bqma2ubyzmeircxs
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Luca,
-
-On Thu, Mar 14, 2019 at 03:45:27PM +0100, Luca Ceresoli wrote:
-> Hi,
->
-> begging your pardon for the noob question below...
->
-
-Let a noob help another noob then
-
-> On 05/03/19 19:51, Jacopo Mondi wrote:
-> > From: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+On Fri, Mar 15, 2019 at 10:39 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > > I am still confused. Which upper limit do you mean then? Because for
 > >
-> > Add support to get and set the internal routing between the adv748x
-> > CSI-2 transmitters sink pad and its multiplexed source pad. This routing
-> > includes which stream of the multiplexed pad to use, allowing the user
-> > to select which CSI-2 virtual channel to use when transmitting the
-> > stream.
+> > TMIO_MAX_BLK_SIZE
 > >
-> > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
-h.se>
-> > Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/i2c/adv748x/adv748x-csi2.c | 65 ++++++++++++++++++++++++
-> >  1 file changed, 65 insertions(+)
+> > > blk_size and blk_count, they are both driver specific, or?
 > >
-> > diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i=
-2c/adv748x/adv748x-csi2.c
-> > index d8f7cbee86e7..13454af72c6e 100644
-> > --- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > +++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-> > @@ -14,6 +14,8 @@
-> >
-> >  #include "adv748x.h"
-> >
-> > +#define ADV748X_CSI2_ROUTES_MAX 4
-> > +
-> >  struct adv748x_csi2_format {
-> >  	unsigned int code;
-> >  	unsigned int datatype;
-> > @@ -253,10 +255,73 @@ static int adv748x_csi2_get_frame_desc(struct v4l=
-2_subdev *sd, unsigned int pad,
-> >  	return 0;
-> >  }
-> >
-> > +static int adv748x_csi2_get_routing(struct v4l2_subdev *sd,
-> > +				    struct v4l2_subdev_krouting *routing)
-> > +{
-> > +	struct adv748x_csi2 *tx =3D adv748x_sd_to_csi2(sd);
-> > +	struct v4l2_subdev_route *r =3D routing->routes;
-> > +	unsigned int vc;
-> > +
-> > +	if (routing->num_routes < ADV748X_CSI2_ROUTES_MAX) {
-> > +		routing->num_routes =3D ADV748X_CSI2_ROUTES_MAX;
-> > +		return -ENOSPC;
-> > +	}
-> > +
-> > +	routing->num_routes =3D ADV748X_CSI2_ROUTES_MAX;
-> > +
-> > +	for (vc =3D 0; vc < ADV748X_CSI2_ROUTES_MAX; vc++) {
-> > +		r->sink_pad =3D ADV748X_CSI2_SINK;
-> > +		r->sink_stream =3D 0;
-> > +		r->source_pad =3D ADV748X_CSI2_SOURCE;
-> > +		r->source_stream =3D vc;
-> > +		r->flags =3D vc =3D=3D tx->vc ? V4L2_SUBDEV_ROUTE_FL_ACTIVE : 0;
-> > +		r++;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int adv748x_csi2_set_routing(struct v4l2_subdev *sd,
-> > +				    struct v4l2_subdev_krouting *routing)
-> > +{
-> > +	struct adv748x_csi2 *tx =3D adv748x_sd_to_csi2(sd);
-> > +	struct v4l2_subdev_route *r =3D routing->routes;
-> > +	unsigned int i;
-> > +	int vc =3D -1;
-> > +
-> > +	if (routing->num_routes > ADV748X_CSI2_ROUTES_MAX)
-> > +		return -ENOSPC;
-> > +
-> > +	for (i =3D 0; i < routing->num_routes; i++) {
-> > +		if (r->sink_pad !=3D ADV748X_CSI2_SINK ||
-> > +		    r->sink_stream !=3D 0 ||
-> > +		    r->source_pad !=3D ADV748X_CSI2_SOURCE ||
-> > +		    r->source_stream >=3D ADV748X_CSI2_ROUTES_MAX)
-> > +			return -EINVAL;
-> > +
-> > +		if (r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE) {
-> > +			if (vc !=3D -1)
-> > +				return -EMLINK;
-> > +
-> > +			vc =3D r->source_stream;
-> > +		}
-> > +		r++;
-> > +	}
-> > +
-> > +	if (vc !=3D -1)
-> > +		tx->vc =3D vc;
-> > +
-> > +	adv748x_csi2_set_virtual_channel(tx, tx->vc);
-> > +
-> > +	return 0;
-> > +}
+> > Yes, they are driver-specific.  So you cannot use a common upper limit.
 >
-> Not specific to this patch but rather to the set_routing idea as a
-> whole: can the set_routing ioctl be called while the stream is running?
->
-> If it cannot, I find it a limiting factor for nowadays use cases. I also
-> didn't find where the ioctl is rejected.
->
+> And this is why I think my patch has a valid approach. But I am still
+> not sure I am getting your point.
 
-The framework does not make assumptions about that at the moment.
+My worry here is that if several drivers would do
 
-> If it can, then shouldn't this function call s_stream(stop) through the
-> sink pad whose route becomes disabled, and a s_stream(start) through the
-> one that gets enabled?
->
+       .max_blk_count  = UINT_MAX / DRIVER_SPECIFIC_MAX_BLK_SIZE,
 
-If I got this right, you're here rightfully pointing out that changing
-the routing between pads in an entity migh impact the pipeline as a
-whole, and this would require, to activate/deactivate devices that
-where not part of the pipeline.
+Those drivers can safely calculate "max_blk_size * max_blk_count".
+People may start assuming this is always safe. while the core cannot do
+"GLOBAL_MAX_BLK_SIZE * max_blk_count" using 32-bit arithmetic, as the
+latter may still overflow, depending on the driver.
 
-This is probably the wrong patch to use an example, as this one is for
-a multiplexed interface, where there is no need to go through an
-s_stream() for the two CSI-2 endpoints, but as you pointed out in our
-brief offline chat, the AFE->TX routing example for this very device
-is a good one: if we change the analogue source that is internally
-routed to the CSI-2 output of the adv748x, do we need to s_stream(1)
-the now routed entity and s_stream(0) on the not not-anymore-routed
-one?
+But perhaps I'm just too overcautious...
 
-My gut feeling is that this is up to userspace, as it should know
-what are the requirements of the devices in the system, but this mean
-going through an s_stream(0)/s_stream(1) sequence on the video device,
-and that would interrupt the streaming for sure.
+Gr{oetje,eeting}s,
 
-At the same time, I don't feel too much at ease with the idea of
-s_routing calling s_stream on the entity' remote subdevices, as this
-would skip the link format validation that media_pipeline_start()
-performs.
+                        Geert
 
-So yeah, I understand your point, but I don't have a real answer,
-maybe someone else does and want to share his mind?
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks
-   j
-
-> Thanks,
-> --
-> Luca
-
---bqma2ubyzmeircxs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyLdEIACgkQcjQGjxah
-VjwZMQ//X3ZnsEhNWzcjk8Zf/KbWJSqbnkviLbHbAMkw11P1JH4ZNiDp7z5WCevO
-lbb5mawwYynNKumWOsEVkzvvAnMTyO9rnkaqG6N4unwXM9rw8JABR1aOIdhwF88I
-16Uj+4PITwk8wdRMfu1whk8F/4o3gn8sSiRUcs2ZmjHQf5T1xqcI8/9Wp7J38RlE
-94RfbBuPGXRBL1Wz88S+sAB5ot9xpuPX3wnnpft5rn6ky6p28zogl5/+aV3rUH/d
-Qafr4OBES2IWr033TEGx7Uift4MRHBCes0VFcS8IdZL16lb7MAQ0lPQBKa1XpxLY
-3tSKT+98Y+0RpN1FuO0m4Fbj5TAxP0MnQmHtGwMK64WBkJ1l2d/9syhJOUJ5JFkj
-lKz/FoPEYRbvJDLbsaKV0TcsdOhE/RSVX9JDmzK3oIHH4/TUMQqDp0iV8AC8msNX
-BhxRBZdGchve2Fb1NIov2OQxkBjx8GgX2yse+5q+jAvuQ6dqVQ3SCJ2O8G40g9N2
-yMjV3fcgp98mz98pQjkgufNneRNmmefBiY4czXRrXCxswxGtbSM3bjv6eDkLej1y
-q5cykdRAgJkDizvusTjMPRJLlXCiPqs+bIdbfTM2FfgqU17xqWhj7zJ66vTwkpQg
-A9zkeAdLa+s+FaKApacrxATFMEIodSJni0iBHZ7TXtk2WcSDkv8=
-=3r0R
------END PGP SIGNATURE-----
-
---bqma2ubyzmeircxs--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
