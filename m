@@ -2,174 +2,190 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFC7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F1EC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8BFC218AC
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:08:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="iIMFWVj3"
+	by mail.kernel.org (Postfix) with ESMTP id 4235F2184C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 09:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728642AbfCOJI0 (ORCPT
+        id S1728616AbfCOJWA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 05:08:26 -0400
-Received: from mail-eopbgr1400093.outbound.protection.outlook.com ([40.107.140.93]:34114
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728569AbfCOJI0 (ORCPT
+        Fri, 15 Mar 2019 05:22:00 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:60553 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbfCOJWA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 05:08:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aVpXGCgdBMFWie0bQan6AjwlJKG7+pW/LQ5aeOLvzq8=;
- b=iIMFWVj30VKLAGiyrL7m2aQlLlpSKH1WayA9DmQxszyjCkADFRaTIcxC/yzZJNMT9gDfrWQ2UrJLQFGmS7S6vMUHQjaTqKkZ+eualyYBzEK4eTNaY5VKVXiZ/fmDz3EDLBUJBejciuWB+ZWRvdJn+T7+66pZGFMtitcwAwyPQq0=
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.242.17) by
- TY1SPR01MB1.jpnprd01.prod.outlook.com (52.133.164.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1709.13; Fri, 15 Mar 2019 09:08:19 +0000
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::9c06:60ec:8c9a:2888]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::9c06:60ec:8c9a:2888%3]) with mapi id 15.20.1709.011; Fri, 15 Mar 2019
- 09:08:19 +0000
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-CC:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add
- usb-role-switch property
-Thread-Topic: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add
- usb-role-switch property
-Thread-Index: AQHU2kJR8if/PuLc00mcHJXM7PQH56YK2MEAgAAGcKCAABSwgIABaRHQ
-Date:   Fri, 15 Mar 2019 09:08:19 +0000
-Message-ID: <OSBPR01MB2103DDDD7A426E79259723FEB8440@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1552552775-51667-1-git-send-email-biju.das@bp.renesas.com>
- <1552552775-51667-3-git-send-email-biju.das@bp.renesas.com>
- <TY2PR01MB4812BACA4673786E867C253FD84B0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
- <OSBPR01MB21039B4241097B8EE8C73A85B84B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20190314105347.GC7752@kuha.fi.intel.com>
-In-Reply-To: <20190314105347.GC7752@kuha.fi.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=biju.das@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: aeac9cd7-0559-4a85-81e5-08d6a925c49e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1SPR01MB1;
-x-ms-traffictypediagnostic: TY1SPR01MB1:
-x-microsoft-antispam-prvs: <TY1SPR01MB1C4BE7411C6EA68A8011CB8440@TY1SPR01MB1.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 09778E995A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(39860400002)(396003)(346002)(366004)(189003)(51914003)(199004)(2906002)(229853002)(86362001)(9686003)(68736007)(5660300002)(99286004)(8676002)(55016002)(25786009)(93886005)(7416002)(33656002)(6916009)(52536014)(186003)(71200400001)(26005)(8936002)(71190400001)(102836004)(14454004)(6506007)(105586002)(76176011)(6116002)(486006)(3846002)(478600001)(7696005)(6436002)(476003)(446003)(7736002)(106356001)(54906003)(14444005)(11346002)(316002)(44832011)(305945005)(74316002)(81166006)(81156014)(53936002)(4326008)(256004)(66066001)(6246003)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1SPR01MB1;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SzrlU2EQnlALipEATFC58T3ZXjtC9iUb0QMIgRSJppuReQrT6MrYkk/vhjCUI8axczE1phovGLEI0PTWSAXXBAO12/JWC/NZElMXLGNj5c8wiC7Q9lsPaSotAznSXblTKrUQKq4fJKaWdpPHhG6MLQp3KZZQNk+CBW0s4aqXZS0ZY5Up7sNxY1Ikr7wvDoEXwcU6vz2kND43FPuap75t0+FOXmXJLYLtVtM+apNu0KJLSGEoXMRTFTg1kGI98yaiv3YjrHuiovkX27o2z0r5SqHluC/0Kv2qVmVIeoIWNFxsX1dVaRiWkC8Uh3X/ncraIz9HEHWHGdBzoKUXZpNLsX5eaOhJQKjk2ZqsXxpS8uUGWVgNaZnt0lOIJKle2iMCdhXuLs1rf2ASR3Z4hJw02SQLddjNicJaCkSLydmD6Hk=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 Mar 2019 05:22:00 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 3F9F1240006;
+        Fri, 15 Mar 2019 09:21:38 +0000 (UTC)
+Date:   Fri, 15 Mar 2019 10:22:15 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH v3 09/31] media: entity: Add media_has_route() function
+Message-ID: <20190315092215.5mhrqnz5oqa4j2iu@uno.localdomain>
+References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
+ <20190305185150.20776-10-jacopo+renesas@jmondi.org>
+ <d297c850-8af5-f435-861a-644fb64933e3@lucaceresoli.net>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aeac9cd7-0559-4a85-81e5-08d6a925c49e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Mar 2019 09:08:19.5018
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1SPR01MB1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qbkhm5bsxkyai4pk"
+Content-Disposition: inline
+In-Reply-To: <d297c850-8af5-f435-861a-644fb64933e3@lucaceresoli.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Heikki,
 
-Thanks for the feedback.
+--qbkhm5bsxkyai4pk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add usb-role-
-> switch property
->=20
-> On Thu, Mar 14, 2019 at 10:14:12AM +0000, Biju Das wrote:
-> > Hi Shimoda-San,
+Hi Luca,
+   thanks for the comments
+
+On Thu, Mar 14, 2019 at 03:45:00PM +0100, Luca Ceresoli wrote:
+> Hi,
+>
+> in the Subject line:
+> s/media_has_route/media_entity_has_route/
+
+Ah! Thanks for noticing this.
+
+>
+> On 05/03/19 19:51, Jacopo Mondi wrote:
+> > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > >
-> > Thanks for the feedback.
+> > This is a wrapper around the media entity has_route operation.
 > >
-> > > Subject: RE: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add
-> > > usb-role- switch property
-> > >
-> > > Hi Biju-san,
-> > >
-> > > > From: Biju Das, Sent: Thursday, March 14, 2019 5:40 PM
-> > > >
-> > > > Add support for renesas_usb3 to support dual role switch using usb
-> > > > role switch class framework.
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > > > ---
-> > > >  V1-->V2
-> > > >   * Added usb-role-switch-property
-> > > >   * Updated the example with usb-role-switch property.
-> > > > ---
-> > > >  .../devicetree/bindings/usb/renesas_usb3.txt       | 22
-> > > ++++++++++++++++++++++
-> > > >  1 file changed, 22 insertions(+)
-> > > >
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > index 35039e7..eecaf4c 100644
-> > > > --- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > +++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > @@ -22,6 +22,7 @@ Required properties:
-> > > >  Optional properties:
-> > > >    - phys: phandle + phy specifier pair
-> > > >    - phy-names: must be "usb"
-> > > > +  - usb-role-switch: use USB role switch to support dual-role
-> > > > + switch
-> > >
-> > > I don't think we can add such a property. At least, we have to add
-> "renesas,"
-> > > prefix.
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  drivers/media/media-entity.c | 19 +++++++++++++++++++
+> >  include/media/media-entity.h | 17 +++++++++++++++++
+> >  2 files changed, 36 insertions(+)
 > >
-> > usb_role_switch_get   api uses  "usb-role-switch"  property to get role
-> switch linked with the device.
+> > diff --git a/drivers/media/media-entity.c b/drivers/media/media-entity.c
+> > index 6f5196d05894..8e0ca8b1cfa2 100644
+> > --- a/drivers/media/media-entity.c
+> > +++ b/drivers/media/media-entity.c
+> > @@ -238,6 +238,25 @@ EXPORT_SYMBOL_GPL(media_entity_pads_init);
+> >   * Graph traversal
+> >   */
 > >
-> > HD3SS3220 port controller driver gets role switch handle linked with th=
-e
-> device using usb_role_switch_get  api.
-> > That is the reason, I have added " usb-role-switch" property here.
+> > +bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+> > +			    unsigned int pad1)
+> > +{
+> > +	if (pad0 >= entity->num_pads || pad1 >= entity->num_pads)
+> > +		return false;
+> > +
+> > +	if (pad0 == pad1)
+> > +		return true;
+> > +
+> > +	if (!entity->ops || !entity->ops->has_route)
+> > +		return true;
+>
+> Entities that implement has_route in following patches return false if
+> called with two sink pads or two source pads. This code behaves
+> differently. Which behavior is correct? IOW, how do you define "two
+> entity pads are connected internally"?
+
+The handling of "indirect routes" (aka routes that connects two
+sources or two sinks) is totally up to the device driver and we
+decided not to make any assumption (nor introduce helpers, as it was
+in v2) to support that in the framework.
+
+Have a look at:
+[PATCH v2 15/30] media: entity: Look for indirect routes
+where Sakari implemented an helper to support the most common use case
+of two source pads connected to the same sink pad. In this case the
+two sources are reported as connected, but we decided for now to let
+the drivers handle this, and more complex indirect routes, internaly.
+
+The devices for which "has_route" has been implemented in this series
+do not support indirect routes, for now, but the framework does not
+make assumptions on this.
+
+Thanks
+   j
+
+>
+> > +	if (entity->pads[pad1].index < entity->pads[pad0].index)
+> > +		swap(pad0, pad1);
+> > +
+> > +	return entity->ops->has_route(entity, pad0, pad1);
+> > +}
+> > +EXPORT_SYMBOL_GPL(media_entity_has_route);
+> > +
+> >  static struct media_pad *
+> >  media_pad_other(struct media_pad *pad, struct media_link *link)
+> >  {
+> > diff --git a/include/media/media-entity.h b/include/media/media-entity.h
+> > index 675bc27b8b3c..205561545d7e 100644
+> > --- a/include/media/media-entity.h
+> > +++ b/include/media/media-entity.h
+> > @@ -919,6 +919,23 @@ int media_entity_get_fwnode_pad(struct media_entity *entity,
+> >  __must_check int media_graph_walk_init(
+> >  	struct media_graph *graph, struct media_device *mdev);
 > >
-> > Do you have any other suggestion to get usb role switch handle?
->=20
-> We can still change the API. Can we use the compatible for this?
+> > +/**
+> > + * media_entity_has_route - Check if two entity pads are connected internally
+> > + *
+> > + * @entity: The entity
+> > + * @pad0: The first pad index
+> > + * @pad1: The second pad index
+> > + *
+> > + * This function can be used to check whether two pads of an entity are
+> > + * connected internally in the entity.
+> > + *
+> > + * The caller must hold entity->graph_obj.mdev->mutex.
+> > + *
+> > + * Return: true if the pads are connected internally and false otherwise.
+> > + */
+> > +bool media_entity_has_route(struct media_entity *entity, unsigned int pad0,
+> > +			    unsigned int pad1);
+> > +
+> >  /**
+> >   * media_graph_walk_cleanup - Release resources used by graph walk.
+> >   *
+> >
+>
+> --
+> Luca
 
-Do you mean usb_role_switch_get  API needs  to handle compatible "usb-x-con=
-nector"  wherex=3D a,b ,c ?
-Then it uses the graphs api to get the device linked with it and return the=
- usb role switch handle.
-In that case, no need to add  generic "usb-role-switch"  property here.
+--qbkhm5bsxkyai4pk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Can you please confirm my understanding is correct?
+-----BEGIN PGP SIGNATURE-----
 
-Regards,
-Biju
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyLbscACgkQcjQGjxah
+Vjzwlw//b5zNTHPcyUdtJpElwYFpRWcYFvvx/L/2YuKWXlzVyNMPy+vU6dWfifUa
+lPKkkQGDFG5TGBNUE+KhPL6ecS9jore+Fr76uXcPKx5bMMG22oB2OXeDBusyY60r
+MTpyG+fCLPOYIpr9wLSl3Jge+s63o9btmD0F9Q97lb5IooYh79rUhLJDZ2BBNxol
+CeHsDla3uQKqj5AIDOrAcAeUKHyoY/h2njVjt+ApBAVDB0SRWUBj5rFPjNnAW2dy
+kHbTDvGOMHTY+LCk7kcsgCnz1d80ZAy/OVDcxXyLAgHxoIPWxK9m792rj+b25sof
+NRJrUInApupVS6jB+5a5hNCHXkZwJ6GCSbulEjXd9CyEOVlOthzEtL6y2G2ZU4l5
+Dx1Z2jH/cVjFcbZ0B+8WncJJBJGK0U+oxfcQxkpTnGwx5JKJWqTy1WjZpzBbtJNZ
+MEfOEXq7/TUIA2aKhiWTpQ0/N0/WoBkanQ3WBeTcop00wRFf6HWpXUanfUMWrCv/
+fqYGO5EY0bm+v9GyhCbgvZ6aiIPiK0GFBzuLCm/kPSpVCPn6NNTlBjKvFvKGT8C3
+TT3kJP33sMNgLRl6nC+hjJzYjFBD8U+fFRtdchlYtimFkYybKZE26nBM1IQ60Ewa
+/HAC7VUFbW07vbmZNvsUnrXz4blYZ33w1zLd/VSM4xA3wv71q3s=
+=Mcxh
+-----END PGP SIGNATURE-----
 
-
-
+--qbkhm5bsxkyai4pk--
