@@ -2,358 +2,97 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A58C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0F9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 21:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE82218A1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:55:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 512F621871
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 21:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfCORzA (ORCPT
+        id S1726880AbfCOVIJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 13:55:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34422 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726466AbfCORzA (ORCPT
+        Fri, 15 Mar 2019 17:08:09 -0400
+Received: from sauhun.de ([88.99.104.3]:40388 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726078AbfCOVIJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 13:55:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B09AA78;
-        Fri, 15 Mar 2019 10:54:59 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 082E73F71D;
-        Fri, 15 Mar 2019 10:54:59 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 60EB2680208; Fri, 15 Mar 2019 17:54:57 +0000 (GMT)
-Date:   Fri, 15 Mar 2019 17:54:57 +0000
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Brian Starkey <brian.starkey@arm.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: Re: [PATCH v6 14/18] drm: writeback: Add job prepare and cleanup
- operations
-Message-ID: <20190315175457.GG26454@e110455-lin.cambridge.arm.com>
-References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190313000532.7087-15-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 15 Mar 2019 17:08:09 -0400
+Received: from localhost (ip-109-41-130-2.web.vodafone.de [109.41.130.2])
+        by pokefinder.org (Postfix) with ESMTPSA id 9DE102C3637;
+        Fri, 15 Mar 2019 22:08:07 +0100 (CET)
+Date:   Fri, 15 Mar 2019 22:08:06 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kieran Bingham <kieran@ksquared.org.uk>
+Subject: Re: [PATCH v7 2/3] i2c: core: add device-managed version of
+ i2c_new_dummy
+Message-ID: <20190315210806.GA1749@kunai>
+References: <20190313165526.28588-1-wsa+renesas@sang-engineering.com>
+ <20190313165526.28588-3-wsa+renesas@sang-engineering.com>
+ <a3fd63fb-0eec-78f3-992f-84194bf571dd@axentia.se>
+ <7a48e707-bf06-6a95-e1ba-08e45481715c@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2oS5YaxWCcQjTEyO"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190313000532.7087-15-laurent.pinchart+renesas@ideasonboard.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <7a48e707-bf06-6a95-e1ba-08e45481715c@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 13, 2019 at 02:05:28AM +0200, Laurent Pinchart wrote:
-> As writeback jobs contain a framebuffer, drivers may need to prepare and
-> cleanup them the same way they can prepare and cleanup framebuffers for
-> planes. Add two new optional connector helper operations,
-> .prepare_writeback_job() and .cleanup_writeback_job() to support this.
-> 
-> The job prepare operation is called from
-> drm_atomic_helper_prepare_planes() to avoid a new atomic commit helper
-> that would need to be called by all drivers not using
-> drm_atomic_helper_commit(). The job cleanup operation is called from the
-> existing drm_writeback_cleanup_job() function, invoked both when
-> destroying the job as part of a aborted commit, or when the job
-> completes.
-> 
-> The drm_writeback_job structure is extended with a priv field to let
-> drivers store per-job data, such as mappings related to the writeback
-> framebuffer.
-> 
-> For internal plumbing reasons the drm_writeback_job structure needs to
-> store a back-pointer to the drm_writeback_connector. To avoid pushing
-> too much writeback-specific knowledge to drm_atomic_uapi.c, create a
-> drm_writeback_set_fb() function, move the writeback job setup code
-> there, and set the connector backpointer. The prepare_signaling()
-> function doesn't need to allocate writeback jobs and can ignore
-> connectors without a job, as it is called after the writeback jobs are
-> allocated to store framebuffers, and a writeback fence with a
-> framebuffer is an invalid configuration that gets rejected by the commit
-> check.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+--2oS5YaxWCcQjTEyO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Liviu
 
-> ---
-> Changes since v5:
-> 
-> - Export drm_writeback_prepare_job()
-> - Check for .prepare_writeback_job() in drm_writeback_prepare_job()
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c      | 11 ++++++
->  drivers/gpu/drm/drm_atomic_uapi.c        | 31 +++++------------
->  drivers/gpu/drm/drm_writeback.c          | 44 ++++++++++++++++++++++++
->  include/drm/drm_modeset_helper_vtables.h |  7 ++++
->  include/drm/drm_writeback.h              | 28 ++++++++++++++-
->  5 files changed, 97 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 6fe2303fccd9..70a4886c6e65 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -2245,10 +2245,21 @@ EXPORT_SYMBOL(drm_atomic_helper_commit_cleanup_done);
->  int drm_atomic_helper_prepare_planes(struct drm_device *dev,
->  				     struct drm_atomic_state *state)
->  {
-> +	struct drm_connector *connector;
-> +	struct drm_connector_state *new_conn_state;
->  	struct drm_plane *plane;
->  	struct drm_plane_state *new_plane_state;
->  	int ret, i, j;
->  
-> +	for_each_new_connector_in_state(state, connector, new_conn_state, i) {
-> +		if (!new_conn_state->writeback_job)
-> +			continue;
-> +
-> +		ret = drm_writeback_prepare_job(new_conn_state->writeback_job);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->  	for_each_new_plane_in_state(state, plane, new_plane_state, i) {
->  		const struct drm_plane_helper_funcs *funcs;
->  
-> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-> index c40889888a16..e802152a01ad 100644
-> --- a/drivers/gpu/drm/drm_atomic_uapi.c
-> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
-> @@ -647,28 +647,15 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
->  	return 0;
->  }
->  
-> -static struct drm_writeback_job *
-> -drm_atomic_get_writeback_job(struct drm_connector_state *conn_state)
-> -{
-> -	WARN_ON(conn_state->connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
-> -
-> -	if (!conn_state->writeback_job)
-> -		conn_state->writeback_job =
-> -			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
-> -
-> -	return conn_state->writeback_job;
-> -}
-> -
->  static int drm_atomic_set_writeback_fb_for_connector(
->  		struct drm_connector_state *conn_state,
->  		struct drm_framebuffer *fb)
->  {
-> -	struct drm_writeback_job *job =
-> -		drm_atomic_get_writeback_job(conn_state);
-> -	if (!job)
-> -		return -ENOMEM;
-> +	int ret;
->  
-> -	drm_framebuffer_assign(&job->fb, fb);
-> +	ret = drm_writeback_set_fb(conn_state, fb);
-> +	if (ret < 0)
-> +		return ret;
->  
->  	if (fb)
->  		DRM_DEBUG_ATOMIC("Set [FB:%d] for connector state %p\n",
-> @@ -1158,19 +1145,17 @@ static int prepare_signaling(struct drm_device *dev,
->  
->  	for_each_new_connector_in_state(state, conn, conn_state, i) {
->  		struct drm_writeback_connector *wb_conn;
-> -		struct drm_writeback_job *job;
->  		struct drm_out_fence_state *f;
->  		struct dma_fence *fence;
->  		s32 __user *fence_ptr;
->  
-> +		if (!conn_state->writeback_job)
-> +			continue;
-> +
->  		fence_ptr = get_out_fence_for_connector(state, conn);
->  		if (!fence_ptr)
->  			continue;
->  
-> -		job = drm_atomic_get_writeback_job(conn_state);
-> -		if (!job)
-> -			return -ENOMEM;
-> -
->  		f = krealloc(*fence_state, sizeof(**fence_state) *
->  			     (*num_fences + 1), GFP_KERNEL);
->  		if (!f)
-> @@ -1192,7 +1177,7 @@ static int prepare_signaling(struct drm_device *dev,
->  			return ret;
->  		}
->  
-> -		job->out_fence = fence;
-> +		conn_state->writeback_job->out_fence = fence;
->  	}
->  
->  	/*
-> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-> index 1b497d3530b5..79ac014701c8 100644
-> --- a/drivers/gpu/drm/drm_writeback.c
-> +++ b/drivers/gpu/drm/drm_writeback.c
-> @@ -239,6 +239,43 @@ int drm_writeback_connector_init(struct drm_device *dev,
->  }
->  EXPORT_SYMBOL(drm_writeback_connector_init);
->  
-> +int drm_writeback_set_fb(struct drm_connector_state *conn_state,
-> +			 struct drm_framebuffer *fb)
-> +{
-> +	WARN_ON(conn_state->connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
-> +
-> +	if (!conn_state->writeback_job) {
-> +		conn_state->writeback_job =
-> +			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
-> +		if (!conn_state->writeback_job)
-> +			return -ENOMEM;
-> +
-> +		conn_state->writeback_job->connector =
-> +			drm_connector_to_writeback(conn_state->connector);
-> +	}
-> +
-> +	drm_framebuffer_assign(&conn_state->writeback_job->fb, fb);
-> +	return 0;
-> +}
-> +
-> +int drm_writeback_prepare_job(struct drm_writeback_job *job)
-> +{
-> +	struct drm_writeback_connector *connector = job->connector;
-> +	const struct drm_connector_helper_funcs *funcs =
-> +		connector->base.helper_private;
-> +	int ret;
-> +
-> +	if (funcs->prepare_writeback_job) {
-> +		ret = funcs->prepare_writeback_job(connector, job);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	job->prepared = true;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(drm_writeback_prepare_job);
-> +
->  /**
->   * drm_writeback_queue_job - Queue a writeback job for later signalling
->   * @wb_connector: The writeback connector to queue a job on
-> @@ -275,6 +312,13 @@ EXPORT_SYMBOL(drm_writeback_queue_job);
->  
->  void drm_writeback_cleanup_job(struct drm_writeback_job *job)
->  {
-> +	struct drm_writeback_connector *connector = job->connector;
-> +	const struct drm_connector_helper_funcs *funcs =
-> +		connector->base.helper_private;
-> +
-> +	if (job->prepared && funcs->cleanup_writeback_job)
-> +		funcs->cleanup_writeback_job(connector, job);
-> +
->  	if (job->fb)
->  		drm_framebuffer_put(job->fb);
->  
-> diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
-> index 61142aa0ab23..73d03fe66799 100644
-> --- a/include/drm/drm_modeset_helper_vtables.h
-> +++ b/include/drm/drm_modeset_helper_vtables.h
-> @@ -49,6 +49,8 @@
->   */
->  
->  enum mode_set_atomic;
-> +struct drm_writeback_connector;
-> +struct drm_writeback_job;
->  
->  /**
->   * struct drm_crtc_helper_funcs - helper operations for CRTCs
-> @@ -989,6 +991,11 @@ struct drm_connector_helper_funcs {
->  	 */
->  	void (*atomic_commit)(struct drm_connector *connector,
->  			      struct drm_connector_state *state);
-> +
-> +	int (*prepare_writeback_job)(struct drm_writeback_connector *connector,
-> +				     struct drm_writeback_job *job);
-> +	void (*cleanup_writeback_job)(struct drm_writeback_connector *connector,
-> +				      struct drm_writeback_job *job);
->  };
->  
->  /**
-> diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-> index 47662c362743..777c14c847f0 100644
-> --- a/include/drm/drm_writeback.h
-> +++ b/include/drm/drm_writeback.h
-> @@ -79,6 +79,20 @@ struct drm_writeback_connector {
->  };
->  
->  struct drm_writeback_job {
-> +	/**
-> +	 * @connector:
-> +	 *
-> +	 * Back-pointer to the writeback connector associated with the job
-> +	 */
-> +	struct drm_writeback_connector *connector;
-> +
-> +	/**
-> +	 * @prepared:
-> +	 *
-> +	 * Set when the job has been prepared with drm_writeback_prepare_job()
-> +	 */
-> +	bool prepared;
-> +
->  	/**
->  	 * @cleanup_work:
->  	 *
-> @@ -98,7 +112,7 @@ struct drm_writeback_job {
->  	 * @fb:
->  	 *
->  	 * Framebuffer to be written to by the writeback connector. Do not set
-> -	 * directly, use drm_atomic_set_writeback_fb_for_connector()
-> +	 * directly, use drm_writeback_set_fb()
->  	 */
->  	struct drm_framebuffer *fb;
->  
-> @@ -108,6 +122,13 @@ struct drm_writeback_job {
->  	 * Fence which will signal once the writeback has completed
->  	 */
->  	struct dma_fence *out_fence;
-> +
-> +	/**
-> +	 * @priv:
-> +	 *
-> +	 * Driver-private data
-> +	 */
-> +	void *priv;
->  };
->  
->  static inline struct drm_writeback_connector *
-> @@ -122,6 +143,11 @@ int drm_writeback_connector_init(struct drm_device *dev,
->  				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
->  				 const u32 *formats, int n_formats);
->  
-> +int drm_writeback_set_fb(struct drm_connector_state *conn_state,
-> +			 struct drm_framebuffer *fb);
-> +
-> +int drm_writeback_prepare_job(struct drm_writeback_job *job);
-> +
->  void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
->  			     struct drm_connector_state *conn_state);
->  
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
+> > I personally really dislike the proposed name. It is akin to the abomin=
+ation
+> > where some sort of abbreviation of the types of variables are included =
+also
+> > in the variable names. It's useless clutter, at least to me.
+>=20
+>=20
+> I hate to be jumping in with just a 'me-too' - but I also had a similar
+> disliking to the _errptr suffix on the function name here.
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+As I said to Peter, I am not exactly happy with the naming. I just
+couldn't come up with something better. I am totally open for
+suggestions here. Let's give ourselves a few days. Maybe inspiration
+will hit one of us somehow somewhen.
+
+
+--2oS5YaxWCcQjTEyO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyMFDIACgkQFA3kzBSg
+KbY1Cg//WHkpDV2xYsMAm4vCA+53CFV8aI0vZh+7rQOQhwqYPRJxyRCRZr6FbP+Y
+DDbzEVtXCKOpIwioPD7d8YzMW4J0S1EcbkjO+pyNQ88M3TaCAdx9ODxf0jZLYBcS
+I5QyeKFXlz3Z3l6+tN8rc89e6ryk4Rh/p9mIvLYPUKg0fB3um3iqDmY84S3U5lvb
+t2AW6Mk54k7vko2yf0L5+2iyyhN8IWhX0QeYkNYaeekyosZRUs2LL6yjCFG7rpNM
+p8LTP52m2+Y7Y/NscSFd1PVZIRdXvimQ0oMjWThZhlhVb3RR4mRXW94g6RS0ffkR
+TbuEYf/4s+WUuZKepxLI7mpC38pCC0AYqgyplPjcFmym4giUAyLHrE+hYYiBL8mb
+qbv4W03yOxVDz2yXNgkeE1F6rIfua+xbXV84AvZRd+bwg2DZHXGScCeC+tGFE3Ch
+0YrWSZ3ZI/yWhXgk4tnIWbHpqEwSbD/7Y5qEoiAXpO113cSBcm0kt5vahtZwsNoJ
+IXV9NG2GfBMbFlP7lS6ErzlcL8pIeukGMo3bf9QEPY1oshewn7jXpp21hMhxcoJ2
+AWXi/v0yOtMFk+/vs1nOxL1Bv6qJZycRooGj9G+hpEbh9MNNVOZxcGTwbbRr8bUv
+xlHIOuuuu43vHg32WnDquRAWnsDS/BRzXakYOeiFil+NkS+C6/A=
+=X04I
+-----END PGP SIGNATURE-----
+
+--2oS5YaxWCcQjTEyO--
