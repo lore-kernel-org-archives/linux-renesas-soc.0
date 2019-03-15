@@ -2,198 +2,358 @@ Return-Path: <SRS0=0QnK=RS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3ED1C10F0B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A58C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8735B218D0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552670392;
-	bh=HtZPSUfHnssGc4G/XODYjY2zGDkRI4rXOYtoFbfl/80=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=VOeihZmSSsw4v28wrHflbCQDLn81h4GSSZSzxPG3W6QVAyR0ds1JFVgjBsEKjExfo
-	 ZHEDAXs0bcUUrz2W1fZFzZy6lXE+VIwqyBTPAfXHEMHdHa7iImYLVpdJ5onQ1VOTTy
-	 raXGokmbc4/OBsuF8FW8F3jkQyqDYC6wKXITg+pI=
+	by mail.kernel.org (Postfix) with ESMTP id 9AE82218A1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729904AbfCORTq (ORCPT
+        id S1726618AbfCORzA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 13:19:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54712 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729588AbfCORTp (ORCPT
+        Fri, 15 Mar 2019 13:55:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34422 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726466AbfCORzA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 13:19:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QAVoVYDuouSKxMFsDDiwqfSduskgs5SMg4RA3V2jBCU=; b=qyfPqQ8iH7Lr
-        U+ksrLtuf+N2F+Lq78K3BxxvYjum9KdIgFmgxTy77jcsjKfqqsubhBDqvOLh+YOV9Lr2nhMVGH8Bm
-        6VjxHNXCELxd0XOyEq50Ly4TKlyE1KIteZzw38Df4pzGNtSKzMFz+wjxFWoZMIqxlpvO9e0jSagRI
-        yNFJs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1h4qUf-0002fR-Fu; Fri, 15 Mar 2019 17:19:41 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 13BA01128AF5; Fri, 15 Mar 2019 17:19:41 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: rspi: Fix register initialization while runtime-suspended" to the spi tree
-In-Reply-To:  <20190312184331.13755-1-geert+renesas@glider.be>
-X-Patchwork-Hint: ignore
-Message-Id: <20190315171941.13BA01128AF5@debutante.sirena.org.uk>
-Date:   Fri, 15 Mar 2019 17:19:41 +0000 (GMT)
+        Fri, 15 Mar 2019 13:55:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B09AA78;
+        Fri, 15 Mar 2019 10:54:59 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 082E73F71D;
+        Fri, 15 Mar 2019 10:54:59 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 60EB2680208; Fri, 15 Mar 2019 17:54:57 +0000 (GMT)
+Date:   Fri, 15 Mar 2019 17:54:57 +0000
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Brian Starkey <brian.starkey@arm.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v6 14/18] drm: writeback: Add job prepare and cleanup
+ operations
+Message-ID: <20190315175457.GG26454@e110455-lin.cambridge.arm.com>
+References: <20190313000532.7087-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20190313000532.7087-15-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190313000532.7087-15-laurent.pinchart+renesas@ideasonboard.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The patch
+On Wed, Mar 13, 2019 at 02:05:28AM +0200, Laurent Pinchart wrote:
+> As writeback jobs contain a framebuffer, drivers may need to prepare and
+> cleanup them the same way they can prepare and cleanup framebuffers for
+> planes. Add two new optional connector helper operations,
+> .prepare_writeback_job() and .cleanup_writeback_job() to support this.
+> 
+> The job prepare operation is called from
+> drm_atomic_helper_prepare_planes() to avoid a new atomic commit helper
+> that would need to be called by all drivers not using
+> drm_atomic_helper_commit(). The job cleanup operation is called from the
+> existing drm_writeback_cleanup_job() function, invoked both when
+> destroying the job as part of a aborted commit, or when the job
+> completes.
+> 
+> The drm_writeback_job structure is extended with a priv field to let
+> drivers store per-job data, such as mappings related to the writeback
+> framebuffer.
+> 
+> For internal plumbing reasons the drm_writeback_job structure needs to
+> store a back-pointer to the drm_writeback_connector. To avoid pushing
+> too much writeback-specific knowledge to drm_atomic_uapi.c, create a
+> drm_writeback_set_fb() function, move the writeback job setup code
+> there, and set the connector backpointer. The prepare_signaling()
+> function doesn't need to allocate writeback jobs and can ignore
+> connectors without a job, as it is called after the writeback jobs are
+> allocated to store framebuffers, and a writeback fence with a
+> framebuffer is an invalid configuration that gets rejected by the commit
+> check.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-   spi: rspi: Fix register initialization while runtime-suspended
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-has been applied to the spi tree at
+Best regards,
+Liviu
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+> ---
+> Changes since v5:
+> 
+> - Export drm_writeback_prepare_job()
+> - Check for .prepare_writeback_job() in drm_writeback_prepare_job()
+> ---
+>  drivers/gpu/drm/drm_atomic_helper.c      | 11 ++++++
+>  drivers/gpu/drm/drm_atomic_uapi.c        | 31 +++++------------
+>  drivers/gpu/drm/drm_writeback.c          | 44 ++++++++++++++++++++++++
+>  include/drm/drm_modeset_helper_vtables.h |  7 ++++
+>  include/drm/drm_writeback.h              | 28 ++++++++++++++-
+>  5 files changed, 97 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 6fe2303fccd9..70a4886c6e65 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -2245,10 +2245,21 @@ EXPORT_SYMBOL(drm_atomic_helper_commit_cleanup_done);
+>  int drm_atomic_helper_prepare_planes(struct drm_device *dev,
+>  				     struct drm_atomic_state *state)
+>  {
+> +	struct drm_connector *connector;
+> +	struct drm_connector_state *new_conn_state;
+>  	struct drm_plane *plane;
+>  	struct drm_plane_state *new_plane_state;
+>  	int ret, i, j;
+>  
+> +	for_each_new_connector_in_state(state, connector, new_conn_state, i) {
+> +		if (!new_conn_state->writeback_job)
+> +			continue;
+> +
+> +		ret = drm_writeback_prepare_job(new_conn_state->writeback_job);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>  	for_each_new_plane_in_state(state, plane, new_plane_state, i) {
+>  		const struct drm_plane_helper_funcs *funcs;
+>  
+> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
+> index c40889888a16..e802152a01ad 100644
+> --- a/drivers/gpu/drm/drm_atomic_uapi.c
+> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
+> @@ -647,28 +647,15 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
+>  	return 0;
+>  }
+>  
+> -static struct drm_writeback_job *
+> -drm_atomic_get_writeback_job(struct drm_connector_state *conn_state)
+> -{
+> -	WARN_ON(conn_state->connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
+> -
+> -	if (!conn_state->writeback_job)
+> -		conn_state->writeback_job =
+> -			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
+> -
+> -	return conn_state->writeback_job;
+> -}
+> -
+>  static int drm_atomic_set_writeback_fb_for_connector(
+>  		struct drm_connector_state *conn_state,
+>  		struct drm_framebuffer *fb)
+>  {
+> -	struct drm_writeback_job *job =
+> -		drm_atomic_get_writeback_job(conn_state);
+> -	if (!job)
+> -		return -ENOMEM;
+> +	int ret;
+>  
+> -	drm_framebuffer_assign(&job->fb, fb);
+> +	ret = drm_writeback_set_fb(conn_state, fb);
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	if (fb)
+>  		DRM_DEBUG_ATOMIC("Set [FB:%d] for connector state %p\n",
+> @@ -1158,19 +1145,17 @@ static int prepare_signaling(struct drm_device *dev,
+>  
+>  	for_each_new_connector_in_state(state, conn, conn_state, i) {
+>  		struct drm_writeback_connector *wb_conn;
+> -		struct drm_writeback_job *job;
+>  		struct drm_out_fence_state *f;
+>  		struct dma_fence *fence;
+>  		s32 __user *fence_ptr;
+>  
+> +		if (!conn_state->writeback_job)
+> +			continue;
+> +
+>  		fence_ptr = get_out_fence_for_connector(state, conn);
+>  		if (!fence_ptr)
+>  			continue;
+>  
+> -		job = drm_atomic_get_writeback_job(conn_state);
+> -		if (!job)
+> -			return -ENOMEM;
+> -
+>  		f = krealloc(*fence_state, sizeof(**fence_state) *
+>  			     (*num_fences + 1), GFP_KERNEL);
+>  		if (!f)
+> @@ -1192,7 +1177,7 @@ static int prepare_signaling(struct drm_device *dev,
+>  			return ret;
+>  		}
+>  
+> -		job->out_fence = fence;
+> +		conn_state->writeback_job->out_fence = fence;
+>  	}
+>  
+>  	/*
+> diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+> index 1b497d3530b5..79ac014701c8 100644
+> --- a/drivers/gpu/drm/drm_writeback.c
+> +++ b/drivers/gpu/drm/drm_writeback.c
+> @@ -239,6 +239,43 @@ int drm_writeback_connector_init(struct drm_device *dev,
+>  }
+>  EXPORT_SYMBOL(drm_writeback_connector_init);
+>  
+> +int drm_writeback_set_fb(struct drm_connector_state *conn_state,
+> +			 struct drm_framebuffer *fb)
+> +{
+> +	WARN_ON(conn_state->connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
+> +
+> +	if (!conn_state->writeback_job) {
+> +		conn_state->writeback_job =
+> +			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
+> +		if (!conn_state->writeback_job)
+> +			return -ENOMEM;
+> +
+> +		conn_state->writeback_job->connector =
+> +			drm_connector_to_writeback(conn_state->connector);
+> +	}
+> +
+> +	drm_framebuffer_assign(&conn_state->writeback_job->fb, fb);
+> +	return 0;
+> +}
+> +
+> +int drm_writeback_prepare_job(struct drm_writeback_job *job)
+> +{
+> +	struct drm_writeback_connector *connector = job->connector;
+> +	const struct drm_connector_helper_funcs *funcs =
+> +		connector->base.helper_private;
+> +	int ret;
+> +
+> +	if (funcs->prepare_writeback_job) {
+> +		ret = funcs->prepare_writeback_job(connector, job);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	job->prepared = true;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(drm_writeback_prepare_job);
+> +
+>  /**
+>   * drm_writeback_queue_job - Queue a writeback job for later signalling
+>   * @wb_connector: The writeback connector to queue a job on
+> @@ -275,6 +312,13 @@ EXPORT_SYMBOL(drm_writeback_queue_job);
+>  
+>  void drm_writeback_cleanup_job(struct drm_writeback_job *job)
+>  {
+> +	struct drm_writeback_connector *connector = job->connector;
+> +	const struct drm_connector_helper_funcs *funcs =
+> +		connector->base.helper_private;
+> +
+> +	if (job->prepared && funcs->cleanup_writeback_job)
+> +		funcs->cleanup_writeback_job(connector, job);
+> +
+>  	if (job->fb)
+>  		drm_framebuffer_put(job->fb);
+>  
+> diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
+> index 61142aa0ab23..73d03fe66799 100644
+> --- a/include/drm/drm_modeset_helper_vtables.h
+> +++ b/include/drm/drm_modeset_helper_vtables.h
+> @@ -49,6 +49,8 @@
+>   */
+>  
+>  enum mode_set_atomic;
+> +struct drm_writeback_connector;
+> +struct drm_writeback_job;
+>  
+>  /**
+>   * struct drm_crtc_helper_funcs - helper operations for CRTCs
+> @@ -989,6 +991,11 @@ struct drm_connector_helper_funcs {
+>  	 */
+>  	void (*atomic_commit)(struct drm_connector *connector,
+>  			      struct drm_connector_state *state);
+> +
+> +	int (*prepare_writeback_job)(struct drm_writeback_connector *connector,
+> +				     struct drm_writeback_job *job);
+> +	void (*cleanup_writeback_job)(struct drm_writeback_connector *connector,
+> +				      struct drm_writeback_job *job);
+>  };
+>  
+>  /**
+> diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+> index 47662c362743..777c14c847f0 100644
+> --- a/include/drm/drm_writeback.h
+> +++ b/include/drm/drm_writeback.h
+> @@ -79,6 +79,20 @@ struct drm_writeback_connector {
+>  };
+>  
+>  struct drm_writeback_job {
+> +	/**
+> +	 * @connector:
+> +	 *
+> +	 * Back-pointer to the writeback connector associated with the job
+> +	 */
+> +	struct drm_writeback_connector *connector;
+> +
+> +	/**
+> +	 * @prepared:
+> +	 *
+> +	 * Set when the job has been prepared with drm_writeback_prepare_job()
+> +	 */
+> +	bool prepared;
+> +
+>  	/**
+>  	 * @cleanup_work:
+>  	 *
+> @@ -98,7 +112,7 @@ struct drm_writeback_job {
+>  	 * @fb:
+>  	 *
+>  	 * Framebuffer to be written to by the writeback connector. Do not set
+> -	 * directly, use drm_atomic_set_writeback_fb_for_connector()
+> +	 * directly, use drm_writeback_set_fb()
+>  	 */
+>  	struct drm_framebuffer *fb;
+>  
+> @@ -108,6 +122,13 @@ struct drm_writeback_job {
+>  	 * Fence which will signal once the writeback has completed
+>  	 */
+>  	struct dma_fence *out_fence;
+> +
+> +	/**
+> +	 * @priv:
+> +	 *
+> +	 * Driver-private data
+> +	 */
+> +	void *priv;
+>  };
+>  
+>  static inline struct drm_writeback_connector *
+> @@ -122,6 +143,11 @@ int drm_writeback_connector_init(struct drm_device *dev,
+>  				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
+>  				 const u32 *formats, int n_formats);
+>  
+> +int drm_writeback_set_fb(struct drm_connector_state *conn_state,
+> +			 struct drm_framebuffer *fb);
+> +
+> +int drm_writeback_prepare_job(struct drm_writeback_job *job);
+> +
+>  void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
+>  			     struct drm_connector_state *conn_state);
+>  
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 42bdaaece121b3bb50fd4d1203d6d0170279f9fa Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Tue, 12 Mar 2019 19:43:31 +0100
-Subject: [PATCH] spi: rspi: Fix register initialization while
- runtime-suspended
-
-The Renesas RSPI/QSPI driver performs SPI controller register
-initialization in its spi_operations.setup() callback, without calling
-pm_runtime_get_sync() first, which may cause spurious failures.
-
-So far this went unnoticed, as this SPI controller is typically used
-with a single SPI NOR FLASH containing the boot loader:
-  1. If the device's module clock is still enabled (left enabled by the
-     bootloader, and not yet disabled by the clk_disable_unused() late
-     initcall), register initialization succeeds,
-  2. If the device's module clock is disabled, register writes don't
-     seem to cause lock-ups or crashes.
-     Data received in the first SPI message may be corrupted, though.
-     Subsequent SPI messages seem to be OK.
-     E.g. on r8a7791/koelsch, one bit is lost while receiving the 6th
-     byte of the JEDEC ID for the s25fl512s FLASH, corrupting that byte
-     and all later bytes.  But until commit a2126b0a010905e5 ("mtd:
-     spi-nor: refine Spansion S25FL512S ID"), the 6th byte was not
-     considered for FLASH identification.
-
-Fix this by moving all initialization from the .setup() to the
-.prepare_message() callback.  The latter is always called after the
-device has been runtime-resumed by the SPI core.
-
-This also makes the driver follow the rule that .setup() must not change
-global driver state or register values, as that might break a transfer
-in progress.
-
-Fixes: 490c97747d5dc77d ("spi: rspi: Add runtime PM support, using spi core auto_runtime_pm")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-rspi.c | 39 ++++++++++++++++-----------------------
- 1 file changed, 16 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 556870dcdf79..b30fed824e66 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -868,28 +868,6 @@ static int qspi_transfer_one(struct spi_controller *ctlr,
- 	}
- }
- 
--static int rspi_setup(struct spi_device *spi)
--{
--	struct rspi_data *rspi = spi_controller_get_devdata(spi->controller);
--
--	rspi->max_speed_hz = spi->max_speed_hz;
--
--	rspi->spcmd = SPCMD_SSLKP;
--	if (spi->mode & SPI_CPOL)
--		rspi->spcmd |= SPCMD_CPOL;
--	if (spi->mode & SPI_CPHA)
--		rspi->spcmd |= SPCMD_CPHA;
--
--	/* CMOS output mode and MOSI signal from previous transfer */
--	rspi->sppcr = 0;
--	if (spi->mode & SPI_LOOP)
--		rspi->sppcr |= SPPCR_SPLP;
--
--	set_config_register(rspi, 8);
--
--	return 0;
--}
--
- static u16 qspi_transfer_mode(const struct spi_transfer *xfer)
- {
- 	if (xfer->tx_buf)
-@@ -959,8 +937,24 @@ static int rspi_prepare_message(struct spi_controller *ctlr,
- 				struct spi_message *msg)
- {
- 	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
-+	struct spi_device *spi = msg->spi;
- 	int ret;
- 
-+	rspi->max_speed_hz = spi->max_speed_hz;
-+
-+	rspi->spcmd = SPCMD_SSLKP;
-+	if (spi->mode & SPI_CPOL)
-+		rspi->spcmd |= SPCMD_CPOL;
-+	if (spi->mode & SPI_CPHA)
-+		rspi->spcmd |= SPCMD_CPHA;
-+
-+	/* CMOS output mode and MOSI signal from previous transfer */
-+	rspi->sppcr = 0;
-+	if (spi->mode & SPI_LOOP)
-+		rspi->sppcr |= SPPCR_SPLP;
-+
-+	set_config_register(rspi, 8);
-+
- 	if (msg->spi->mode &
- 	    (SPI_TX_DUAL | SPI_TX_QUAD | SPI_RX_DUAL | SPI_RX_QUAD)) {
- 		/* Setup sequencer for messages with multiple transfer modes */
-@@ -1267,7 +1261,6 @@ static int rspi_probe(struct platform_device *pdev)
- 	init_waitqueue_head(&rspi->wait);
- 
- 	ctlr->bus_num = pdev->id;
--	ctlr->setup = rspi_setup;
- 	ctlr->auto_runtime_pm = true;
- 	ctlr->transfer_one = ops->transfer_one;
- 	ctlr->prepare_message = rspi_prepare_message;
 -- 
-2.20.1
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
