@@ -6,118 +6,69 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21135C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 10:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D574C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 11:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB43021871
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 10:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA0B9218A5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 11:01:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbfCOKyy (ORCPT
+        id S1728963AbfCOLBd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 06:54:54 -0400
-Received: from mga03.intel.com ([134.134.136.65]:26416 "EHLO mga03.intel.com"
+        Fri, 15 Mar 2019 07:01:33 -0400
+Received: from sauhun.de ([88.99.104.3]:36816 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728879AbfCOKyy (ORCPT
+        id S1727059AbfCOLBd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 06:54:54 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Mar 2019 03:51:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,481,1544515200"; 
-   d="scan'208";a="155313633"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 15 Mar 2019 03:51:47 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 15 Mar 2019 12:51:46 +0200
-Date:   Fri, 15 Mar 2019 12:51:46 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add
- usb-role-switch property
-Message-ID: <20190315105146.GI7752@kuha.fi.intel.com>
-References: <1552552775-51667-1-git-send-email-biju.das@bp.renesas.com>
- <1552552775-51667-3-git-send-email-biju.das@bp.renesas.com>
- <TY2PR01MB4812BACA4673786E867C253FD84B0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
- <OSBPR01MB21039B4241097B8EE8C73A85B84B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20190314105347.GC7752@kuha.fi.intel.com>
- <OSBPR01MB2103DDDD7A426E79259723FEB8440@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+        Fri, 15 Mar 2019 07:01:33 -0400
+Received: from localhost (unknown [81.92.17.130])
+        by pokefinder.org (Postfix) with ESMTPSA id 7C7812C3637;
+        Fri, 15 Mar 2019 12:01:31 +0100 (CET)
+Date:   Fri, 15 Mar 2019 12:01:31 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Subject: Re: [RFC PATCH 2/2] mmc: renesas_sdhi: prevent overflow for
+ max_req_size
+Message-ID: <20190315110130.GA2148@kunai>
+References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com>
+ <20190314223130.31802-3-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWvCUJ4S1U-jR2fG=JSXO3KMbbO2=hWPOxqQDXzGMXi0g@mail.gmail.com>
+ <20190315082917.GA1176@kunai>
+ <CAMuHMdUbzp4qMbJ-ci4k0fMOwOoYSY_JBZ_tWThZUjcJEd48eA@mail.gmail.com>
+ <20190315092854.GB1176@kunai>
+ <CAMuHMdVEdU9CLSMzJWiDn5brc8bXNBemma=Zk4XtF4wsXHeb7Q@mail.gmail.com>
+ <20190315093941.GC1176@kunai>
+ <CAMuHMdUmNSk3n1EEaYQpXV-Pwa3d9O8UDARx+zF5c_BYqrR5rg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <OSBPR01MB2103DDDD7A426E79259723FEB8440@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAMuHMdUmNSk3n1EEaYQpXV-Pwa3d9O8UDARx+zF5c_BYqrR5rg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Thanks,
 
-On Fri, Mar 15, 2019 at 09:08:19AM +0000, Biju Das wrote:
-> > Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add usb-role-
-> > > > > a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > index 35039e7..eecaf4c 100644
-> > > > > --- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > +++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > @@ -22,6 +22,7 @@ Required properties:
-> > > > >  Optional properties:
-> > > > >    - phys: phandle + phy specifier pair
-> > > > >    - phy-names: must be "usb"
-> > > > > +  - usb-role-switch: use USB role switch to support dual-role
-> > > > > + switch
-> > > >
-> > > > I don't think we can add such a property. At least, we have to add
-> > "renesas,"
-> > > > prefix.
-> > >
-> > > usb_role_switch_get   api uses  "usb-role-switch"  property to get role
-> > switch linked with the device.
-> > >
-> > > HD3SS3220 port controller driver gets role switch handle linked with the
-> > device using usb_role_switch_get  api.
-> > > That is the reason, I have added " usb-role-switch" property here.
-> > >
-> > > Do you have any other suggestion to get usb role switch handle?
-> > 
-> > We can still change the API. Can we use the compatible for this?
+> My worry here is that if several drivers would do
 > 
-> Do you mean usb_role_switch_get  API needs  to handle compatible "usb-x-connector"  wherex= a,b ,c ?
-> Then it uses the graphs api to get the device linked with it and return the usb role switch handle.
-> In that case, no need to add  generic "usb-role-switch"  property here.
+>        .max_blk_count  = UINT_MAX / DRIVER_SPECIFIC_MAX_BLK_SIZE,
 > 
-> Can you please confirm my understanding is correct?
+> Those drivers can safely calculate "max_blk_size * max_blk_count".
+> People may start assuming this is always safe. while the core cannot do
+> "GLOBAL_MAX_BLK_SIZE * max_blk_count" using 32-bit arithmetic, as the
+> latter may still overflow, depending on the driver.
 
-No, I meant the compatible property would have the value
-"usb-role-switch". Your compatible would probable look something
-like this:
+The core will not do this calculation. This is why the variable
+max_req_size exists. It will just use this variable which shall be setup
+by the driver which may impose other restrictions, too (And there can't
+be a GLOBAL_MAX_BLK_SIZE anyhow)
 
-        compatible = "renesas,r8a774c0-usb3-peri",
-                     "usb-role-switch";
+So, when calculating max_req_size, it is the duty of the driver not to
+overflow. Or?
 
-So the idea would be that the device supplying USB role switch
-functionality, in your case the USB controller, would need to have the
-compatible property containing "usb-role-switch".
-
-I'm really not an expert in DT, so I don't know if that is acceptable.
-Rob can you comment on this?
-
-
-thanks,
-
--- 
-heikki
