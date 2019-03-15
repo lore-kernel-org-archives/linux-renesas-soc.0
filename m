@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC1DC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BB3C10F0B
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 11:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A3C421871
+	by mail.kernel.org (Postfix) with ESMTP id B613321871
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 11:34:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EEJNSgMj"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hmlWXr/z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfCOLe0 (ORCPT
+        id S1727390AbfCOLe1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 07:34:26 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49002 "EHLO
+        Fri, 15 Mar 2019 07:34:27 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49012 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727344AbfCOLe0 (ORCPT
+        with ESMTP id S1727378AbfCOLe1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 07:34:26 -0400
+        Fri, 15 Mar 2019 07:34:27 -0400
 Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0B0DE552;
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 65D06998;
         Fri, 15 Mar 2019 12:34:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1552649664;
-        bh=8mVzMctWJqfOGtpidbOlJE4JArFGgOv6LCRMZdEPSDQ=;
+        bh=djbLH8v9nmVeaTMz7NyXv3M5tZULCCHQRLtiRn9SAKc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EEJNSgMjmyz1BSQyHYcDCxQ9qgjWG0lhLwxFYE0+svRcdKJiU/sCNyfZ0b0PAackw
-         bnlakSxftk3jnHdYzadQiziV+ESNCFBDLoHlMnKeDHLvmdprNy/Be/2sHqDiEn7p+0
-         sZ6IHwx857KJb7sUrrDDKTds1AG19kPsqJi+7JYk=
+        b=hmlWXr/z4kW4aupu1qcMBzlR+W30515x+noCQ+mQ3BvjAhZsHhPbMWCXrPTx693o1
+         626GzZl/JY7P/NcxqsbkNzwtvJm8AirQwjlF6O+5xlfemX85VmprkbU8GLwy8PlF6O
+         2slbQLdtK2gLrLDPuzPsiX29VYdBn/kNw2DQCNLs=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [RFC PATCH 2/5] drm: rcar-du: Provide for_each_group helper
-Date:   Fri, 15 Mar 2019 11:34:15 +0000
-Message-Id: <20190315113418.24452-3-kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC PATCH 3/5] drm: rcar-du: Create a group state object
+Date:   Fri, 15 Mar 2019 11:34:16 +0000
+Message-Id: <20190315113418.24452-4-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190315113418.24452-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20190315113418.24452-1-kieran.bingham+renesas@ideasonboard.com>
@@ -50,76 +50,227 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Refactoring of the group control code will soon require more iteration
-over the available groups. Simplify this process by introducing a group
-iteration helper.
+Create a new private state object for the DU groups, and move the
+initialisation of a group object to a new function rcar_du_group_init().
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
 
-I'm not yet sure if the second patch which utilises this helper will make it to
-the final cut.
+I'll be extending the data that goes into this private structure.
+Have I got the creation and handling of the private object correct?
 
-Will this change still be warrented on it's own, if there is only a solitary
-user of for_each_rcdu_group?
 
- drivers/gpu/drm/rcar-du/rcar_du_drv.h |  5 +++++
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 10 ++--------
- 2 files changed, 7 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_group.c | 81 +++++++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_group.h | 22 +++++++
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 27 ++-------
+ 3 files changed, 107 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 1327cd0df90a..1e9dd494e8ac 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -96,6 +96,11 @@ struct rcar_du_device {
- 	unsigned int vspd1_sink;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index 9eee47969e77..9c82d666f170 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -26,6 +26,10 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ 
++#include <drm/drm_atomic.h>
++#include <drm/drm_atomic_state_helper.h>
++#include <drm/drm_device.h>
++
+ #include "rcar_du_drv.h"
+ #include "rcar_du_group.h"
+ #include "rcar_du_regs.h"
+@@ -351,3 +355,80 @@ int rcar_du_group_set_routing(struct rcar_du_group *rgrp)
+ 
+ 	return rcar_du_set_dpad0_vsp1_routing(rgrp->dev);
+ }
++
++static struct drm_private_state *
++rcar_du_group_atomic_duplicate_state(struct drm_private_obj *obj)
++{
++	struct rcar_du_group_state *state;
++
++	if (WARN_ON(!obj->state))
++		return NULL;
++
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
++	if (state == NULL)
++		return NULL;
++
++	__drm_atomic_helper_private_obj_duplicate_state(obj, &state->state);
++
++	return &state->state;
++}
++
++static void rcar_du_group_atomic_destroy_state(struct drm_private_obj *obj,
++					       struct drm_private_state *state)
++{
++	kfree(to_rcar_group_state(state));
++}
++
++static const struct drm_private_state_funcs rcar_du_group_state_funcs = {
++	.atomic_duplicate_state = rcar_du_group_atomic_duplicate_state,
++	.atomic_destroy_state = rcar_du_group_atomic_destroy_state,
++};
++
++/*
++ * rcar_du_group_init - Initialise and reset a group object
++ *
++ * Return 0 in case of success or a negative error code otherwise.
++ */
++int rcar_du_group_init(struct rcar_du_device *rcdu, struct rcar_du_group *rgrp,
++		       unsigned int index)
++{
++	static const unsigned int mmio_offsets[] = {
++		DU0_REG_OFFSET, DU2_REG_OFFSET
++	};
++
++	struct rcar_du_group_state *state;
++
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
++	if (!state)
++		return -ENOMEM;
++
++	drm_atomic_private_obj_init(rcdu->ddev, &rgrp->private, &state->state,
++				    &rcar_du_group_state_funcs);
++
++	mutex_init(&rgrp->lock);
++
++	rgrp->dev = rcdu;
++	rgrp->mmio_offset = mmio_offsets[index];
++	rgrp->index = index;
++	/* Extract the channel mask for this group only. */
++	rgrp->channels_mask = (rcdu->info->channels_mask >> (2 * index))
++			    & GENMASK(1, 0);
++	rgrp->num_crtcs = hweight8(rgrp->channels_mask);
++
++	/*
++	 * If we have more than one CRTC in this group pre-associate
++	 * the low-order planes with CRTC 0 and the high-order planes
++	 * with CRTC 1 to minimize flicker occurring when the
++	 * association is changed.
++	 */
++	rgrp->dptsr_planes = rgrp->num_crtcs > 1
++			   ? (rcdu->info->gen >= 3 ? 0x04 : 0xf0)
++			   : 0;
++
++	return 0;
++}
++
++void rcar_du_group_cleanup(struct rcar_du_group *rgrp)
++{
++	drm_atomic_private_obj_fini(&rgrp->private);
++}
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.h b/drivers/gpu/drm/rcar-du/rcar_du_group.h
+index 87950c1f6a52..4b812e167987 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.h
+@@ -12,12 +12,15 @@
+ 
+ #include <linux/mutex.h>
+ 
++#include <drm/drm_atomic.h>
++
+ #include "rcar_du_plane.h"
+ 
+ struct rcar_du_device;
+ 
+ /*
+  * struct rcar_du_group - CRTCs and planes group
++ * @private: The base drm private object
+  * @dev: the DU device
+  * @mmio_offset: registers offset in the device memory map
+  * @index: group index
+@@ -32,6 +35,8 @@ struct rcar_du_device;
+  * @need_restart: the group needs to be restarted due to a configuration change
+  */
+ struct rcar_du_group {
++	struct drm_private_obj private;
++
+ 	struct rcar_du_device *dev;
+ 	unsigned int mmio_offset;
+ 	unsigned int index;
+@@ -49,6 +54,19 @@ struct rcar_du_group {
+ 	bool need_restart;
  };
  
-+#define for_each_rcdu_group(__rcdu, __group, __i) \
-+	for ((__i) = 0; (__group = &(rcdu)->groups[__i]), \
-+	     (__i) < DIV_ROUND_UP((rcdu)->num_crtcs, 2); \
-+	     __i++)
++#define to_rcar_group(s) container_of(s, struct rcar_du_group, private)
 +
- static inline bool rcar_du_has(struct rcar_du_device *rcdu,
- 			       unsigned int feature)
- {
++/**
++ * struct rcar_du_group_state - Driver-specific group state
++ * @state: base DRM private state
++ */
++struct rcar_du_group_state {
++	struct drm_private_state state;
++};
++
++#define to_rcar_group_state(s) \
++	container_of(s, struct rcar_du_group_state, state)
++
+ u32 rcar_du_group_read(struct rcar_du_group *rgrp, u32 reg);
+ void rcar_du_group_write(struct rcar_du_group *rgrp, u32 reg, u32 data);
+ 
+@@ -60,4 +78,8 @@ int rcar_du_group_set_routing(struct rcar_du_group *rgrp);
+ 
+ int rcar_du_set_dpad0_vsp1_routing(struct rcar_du_device *rcdu);
+ 
++int rcar_du_group_init(struct rcar_du_device *rcdu, struct rcar_du_group *rgrp,
++		       unsigned int index);
++void rcar_du_group_cleanup(struct rcar_du_group *rgrp);
++
+ #endif /* __RCAR_DU_GROUP_H__ */
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 3b7d50a8fb9b..83cd07a404eb 100644
+index 83cd07a404eb..6066e10e80ff 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -516,9 +516,9 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+@@ -23,6 +23,7 @@
+ #include "rcar_du_crtc.h"
+ #include "rcar_du_drv.h"
+ #include "rcar_du_encoder.h"
++#include "rcar_du_group.h"
+ #include "rcar_du_kms.h"
+ #include "rcar_du_regs.h"
+ #include "rcar_du_vsp.h"
+@@ -510,10 +511,6 @@ static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
  
+ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ {
+-	static const unsigned int mmio_offsets[] = {
+-		DU0_REG_OFFSET, DU2_REG_OFFSET
+-	};
+-
  	struct drm_device *dev = rcdu->ddev;
  	struct drm_encoder *encoder;
-+	struct rcar_du_group *rgrp;
- 	unsigned int dpad0_sources;
- 	unsigned int num_encoders;
--	unsigned int num_groups;
- 	unsigned int swindex;
- 	unsigned int hwindex;
- 	unsigned int i;
-@@ -559,11 +559,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 		return ret;
+ 	struct rcar_du_group *rgrp;
+@@ -560,25 +557,9 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
  
  	/* Initialize the groups. */
--	num_groups = DIV_ROUND_UP(rcdu->num_crtcs, 2);
+ 	for_each_rcdu_group(rcdu, rgrp, i) {
+-		mutex_init(&rgrp->lock);
 -
--	for (i = 0; i < num_groups; ++i) {
--		struct rcar_du_group *rgrp = &rcdu->groups[i];
+-		rgrp->dev = rcdu;
+-		rgrp->mmio_offset = mmio_offsets[i];
+-		rgrp->index = i;
+-		/* Extract the channel mask for this group only. */
+-		rgrp->channels_mask = (rcdu->info->channels_mask >> (2 * i))
+-				   & GENMASK(1, 0);
+-		rgrp->num_crtcs = hweight8(rgrp->channels_mask);
 -
-+	for_each_rcdu_group(rcdu, rgrp, i) {
- 		mutex_init(&rgrp->lock);
+-		/*
+-		 * If we have more than one CRTCs in this group pre-associate
+-		 * the low-order planes with CRTC 0 and the high-order planes
+-		 * with CRTC 1 to minimize flicker occurring when the
+-		 * association is changed.
+-		 */
+-		rgrp->dptsr_planes = rgrp->num_crtcs > 1
+-				   ? (rcdu->info->gen >= 3 ? 0x04 : 0xf0)
+-				   : 0;
++		ret = rcar_du_group_init(rcdu, rgrp, i);
++		if (ret < 0)
++			return ret;
  
- 		rgrp->dev = rcdu;
-@@ -600,8 +596,6 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 
- 	/* Create the CRTCs. */
- 	for (swindex = 0, hwindex = 0; swindex < rcdu->num_crtcs; ++hwindex) {
--		struct rcar_du_group *rgrp;
--
- 		/* Skip unpopulated DU channels. */
- 		if (!(rcdu->info->channels_mask & BIT(hwindex)))
- 			continue;
+ 		if (!rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE)) {
+ 			ret = rcar_du_planes_init(rgrp);
 -- 
 2.19.1
 
