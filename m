@@ -4,56 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBD6C10F00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3ED1C10F0B
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04602218D3
+	by mail.kernel.org (Postfix) with ESMTP id 8735B218D0
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Mar 2019 17:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1552670392;
-	bh=laG6CXyTNG0tnPJMtzhr0B3lA0ZgI8QIc/gYsi4OwUI=;
+	bh=HtZPSUfHnssGc4G/XODYjY2zGDkRI4rXOYtoFbfl/80=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=pUpit9z8bj6rSHeWJKHVVlhNkBMvUdJvOOMN8K/TEd1esYlDI/4jMQTznhbcNOY3F
-	 0Xhx6WShzZlYi9NybUeVpjk8AtH8C/6+cl7M/OJ3EWiPTu/FWliIhbrOC+0KzmEfap
-	 XJghpvlRTyP9ZyfGa9y+WPHAA8Sz9x+CcFMGRVzY=
+	b=VOeihZmSSsw4v28wrHflbCQDLn81h4GSSZSzxPG3W6QVAyR0ds1JFVgjBsEKjExfo
+	 ZHEDAXs0bcUUrz2W1fZFzZy6lXE+VIwqyBTPAfXHEMHdHa7iImYLVpdJ5onQ1VOTTy
+	 raXGokmbc4/OBsuF8FW8F3jkQyqDYC6wKXITg+pI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbfCORTv (ORCPT
+        id S1729904AbfCORTq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Mar 2019 13:19:51 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54746 "EHLO
+        Fri, 15 Mar 2019 13:19:46 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54712 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729665AbfCORTr (ORCPT
+        with ESMTP id S1729588AbfCORTp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Mar 2019 13:19:47 -0400
+        Fri, 15 Mar 2019 13:19:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=U2qBZC5rQ8tf5xPOGleu5HGdvr3/H1L8bA9dKDxD/mM=; b=jcuIwkliMe7X
-        rEaEaDdXIp6Nbj+/jpkJY/lch/x5YemlclBrBI10f979AB6k8ZRp3K4kxlz8Y9Ua7iTXVDDx4Xwf/
-        wjaP2a6cFngAXbO/wzn28I08fgwiP6UVkhKzBoMUn792YX6zt2uM6p8Iu4KguzSA+/As/DAp8zWHR
-        QVIxk=;
+        List-Archive; bh=QAVoVYDuouSKxMFsDDiwqfSduskgs5SMg4RA3V2jBCU=; b=qyfPqQ8iH7Lr
+        U+ksrLtuf+N2F+Lq78K3BxxvYjum9KdIgFmgxTy77jcsjKfqqsubhBDqvOLh+YOV9Lr2nhMVGH8Bm
+        6VjxHNXCELxd0XOyEq50Ly4TKlyE1KIteZzw38Df4pzGNtSKzMFz+wjxFWoZMIqxlpvO9e0jSagRI
+        yNFJs=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1h4qUi-0002fJ-I8; Fri, 15 Mar 2019 17:19:44 +0000
+        id 1h4qUf-0002fR-Fu; Fri, 15 Mar 2019 17:19:41 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id E59201126E81; Fri, 15 Mar 2019 17:19:38 +0000 (GMT)
+        id 13BA01128AF5; Fri, 15 Mar 2019 17:19:41 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: rspi: Fix sequencer reset during initialization" to the spi tree
-In-Reply-To:  <20190312184513.13885-1-geert+renesas@glider.be>
+Subject: Applied "spi: rspi: Fix register initialization while runtime-suspended" to the spi tree
+In-Reply-To:  <20190312184331.13755-1-geert+renesas@glider.be>
 X-Patchwork-Hint: ignore
-Message-Id: <20190315171938.E59201126E81@debutante.sirena.org.uk>
-Date:   Fri, 15 Mar 2019 17:19:38 +0000 (GMT)
+Message-Id: <20190315171941.13BA01128AF5@debutante.sirena.org.uk>
+Date:   Fri, 15 Mar 2019 17:19:41 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -61,7 +63,7 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 The patch
 
-   spi: rspi: Fix sequencer reset during initialization
+   spi: rspi: Fix register initialization while runtime-suspended
 
 has been applied to the spi tree at
 
@@ -86,59 +88,112 @@ to this mail.
 Thanks,
 Mark
 
-From 26843bb128590edd7eba1ad7ce22e4b9f1066ce3 Mon Sep 17 00:00:00 2001
+From 42bdaaece121b3bb50fd4d1203d6d0170279f9fa Mon Sep 17 00:00:00 2001
 From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Tue, 12 Mar 2019 19:45:13 +0100
-Subject: [PATCH] spi: rspi: Fix sequencer reset during initialization
+Date: Tue, 12 Mar 2019 19:43:31 +0100
+Subject: [PATCH] spi: rspi: Fix register initialization while
+ runtime-suspended
 
-While the sequencer is reset after each SPI message since commit
-880c6d114fd79a69 ("spi: rspi: Add support for Quad and Dual SPI
-Transfers on QSPI"), it was never reset for the first message, thus
-relying on reset state or bootloader settings.
+The Renesas RSPI/QSPI driver performs SPI controller register
+initialization in its spi_operations.setup() callback, without calling
+pm_runtime_get_sync() first, which may cause spurious failures.
 
-Fix this by initializing it explicitly during configuration.
+So far this went unnoticed, as this SPI controller is typically used
+with a single SPI NOR FLASH containing the boot loader:
+  1. If the device's module clock is still enabled (left enabled by the
+     bootloader, and not yet disabled by the clk_disable_unused() late
+     initcall), register initialization succeeds,
+  2. If the device's module clock is disabled, register writes don't
+     seem to cause lock-ups or crashes.
+     Data received in the first SPI message may be corrupted, though.
+     Subsequent SPI messages seem to be OK.
+     E.g. on r8a7791/koelsch, one bit is lost while receiving the 6th
+     byte of the JEDEC ID for the s25fl512s FLASH, corrupting that byte
+     and all later bytes.  But until commit a2126b0a010905e5 ("mtd:
+     spi-nor: refine Spansion S25FL512S ID"), the 6th byte was not
+     considered for FLASH identification.
 
-Fixes: 0b2182ddac4b8837 ("spi: add support for Renesas RSPI")
+Fix this by moving all initialization from the .setup() to the
+.prepare_message() callback.  The latter is always called after the
+device has been runtime-resumed by the SPI core.
+
+This also makes the driver follow the rule that .setup() must not change
+global driver state or register values, as that might break a transfer
+in progress.
+
+Fixes: 490c97747d5dc77d ("spi: rspi: Add runtime PM support, using spi core auto_runtime_pm")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-rspi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/spi/spi-rspi.c | 39 ++++++++++++++++-----------------------
+ 1 file changed, 16 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index b30fed824e66..3be8fbe80b08 100644
+index 556870dcdf79..b30fed824e66 100644
 --- a/drivers/spi/spi-rspi.c
 +++ b/drivers/spi/spi-rspi.c
-@@ -271,7 +271,8 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets parity, interrupt mask */
- 	rspi_write8(rspi, 0x00, RSPI_SPCR2);
+@@ -868,28 +868,6 @@ static int qspi_transfer_one(struct spi_controller *ctlr,
+ 	}
+ }
  
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
+-static int rspi_setup(struct spi_device *spi)
+-{
+-	struct rspi_data *rspi = spi_controller_get_devdata(spi->controller);
+-
+-	rspi->max_speed_hz = spi->max_speed_hz;
+-
+-	rspi->spcmd = SPCMD_SSLKP;
+-	if (spi->mode & SPI_CPOL)
+-		rspi->spcmd |= SPCMD_CPOL;
+-	if (spi->mode & SPI_CPHA)
+-		rspi->spcmd |= SPCMD_CPHA;
+-
+-	/* CMOS output mode and MOSI signal from previous transfer */
+-	rspi->sppcr = 0;
+-	if (spi->mode & SPI_LOOP)
+-		rspi->sppcr |= SPPCR_SPLP;
+-
+-	set_config_register(rspi, 8);
+-
+-	return 0;
+-}
+-
+ static u16 qspi_transfer_mode(const struct spi_transfer *xfer)
+ {
+ 	if (xfer->tx_buf)
+@@ -959,8 +937,24 @@ static int rspi_prepare_message(struct spi_controller *ctlr,
+ 				struct spi_message *msg)
+ {
+ 	struct rspi_data *rspi = spi_controller_get_devdata(ctlr);
++	struct spi_device *spi = msg->spi;
+ 	int ret;
  
-@@ -315,7 +316,8 @@ static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
- 	rspi_write8(rspi, 0x00, RSPI_SSLND);
- 	rspi_write8(rspi, 0x00, RSPI_SPND);
++	rspi->max_speed_hz = spi->max_speed_hz;
++
++	rspi->spcmd = SPCMD_SSLKP;
++	if (spi->mode & SPI_CPOL)
++		rspi->spcmd |= SPCMD_CPOL;
++	if (spi->mode & SPI_CPHA)
++		rspi->spcmd |= SPCMD_CPHA;
++
++	/* CMOS output mode and MOSI signal from previous transfer */
++	rspi->sppcr = 0;
++	if (spi->mode & SPI_LOOP)
++		rspi->sppcr |= SPPCR_SPLP;
++
++	set_config_register(rspi, 8);
++
+ 	if (msg->spi->mode &
+ 	    (SPI_TX_DUAL | SPI_TX_QUAD | SPI_RX_DUAL | SPI_RX_QUAD)) {
+ 		/* Setup sequencer for messages with multiple transfer modes */
+@@ -1267,7 +1261,6 @@ static int rspi_probe(struct platform_device *pdev)
+ 	init_waitqueue_head(&rspi->wait);
  
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi->spcmd |= SPCMD_SPB_8_TO_16(access_size);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
-@@ -366,7 +368,8 @@ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
- 	/* Sets buffer to allow normal operation */
- 	rspi_write8(rspi, 0x00, QSPI_SPBFCR);
- 
--	/* Sets SPCMD */
-+	/* Resets sequencer */
-+	rspi_write8(rspi, 0, RSPI_SPSCR);
- 	rspi_write16(rspi, rspi->spcmd, RSPI_SPCMD0);
- 
- 	/* Sets RSPI mode */
+ 	ctlr->bus_num = pdev->id;
+-	ctlr->setup = rspi_setup;
+ 	ctlr->auto_runtime_pm = true;
+ 	ctlr->transfer_one = ops->transfer_one;
+ 	ctlr->prepare_message = rspi_prepare_message;
 -- 
 2.20.1
 
