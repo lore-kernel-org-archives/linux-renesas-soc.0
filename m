@@ -2,120 +2,131 @@ Return-Path: <SRS0=pEya=RU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D978FC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 00:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ACAC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 00:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A79FF21871
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 00:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2AD321871
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 00:06:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUAzU+S/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csfuSrxz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfCQAGZ (ORCPT
+        id S1726842AbfCQAGk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Mar 2019 20:06:25 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38487 "EHLO
+        Sat, 16 Mar 2019 20:06:40 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39999 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfCQAGZ (ORCPT
+        with ESMTP id S1726828AbfCQAGk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Mar 2019 20:06:25 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g12so13199741wrm.5;
-        Sat, 16 Mar 2019 17:06:23 -0700 (PDT)
+        Sat, 16 Mar 2019 20:06:40 -0400
+Received: by mail-wr1-f67.google.com with SMTP id t5so13205492wri.7;
+        Sat, 16 Mar 2019 17:06:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UzQAOaNFJl4O9dGDd5nLwwB9pTU2KwSKAP9fzeea2dg=;
-        b=lUAzU+S/K+fXxz9SYbMFmpddHWyGf2a23IzexYfBWDkeFW6aOIqSledY9N4c1AMNGC
-         j0Oa3Rd4vjSuNYvCkQWYFUEORz/ABYlfyrXQ6f5LmMaB6yAO5QbmzfBpPJaHC9gNoX2J
-         JzhTAnjM+JtLMkB/MQ2ju50mXExrjNLOOPtm+/Fe8OQHkh7CqtrXslZwYJ5vD8jBfnIX
-         /NABwOLu5YNctmVRhLW5e9UHVlmZStesqsOMTan66W2Yr59eGUSSai8meIW0c70Cn0Pw
-         ahLM2PHZQpDWoUHPEAyC88hxJ4nFAkRDhfzdgo4xiQXHICwmgExf05iUiy1biERG22Dp
-         0oZw==
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FiEiMwhVyHOx5HVB+onPD8sXRF3yP6ld81UFhnLGG4w=;
+        b=csfuSrxz5MMa8B7LpBp6eTZIvcvwLhhIXsA61nUQDPkydYXEFsju4QPbNEKaSjRG8P
+         9C5t33GwzlxfymRZKf0pOJ2gZHWf8Ty8DxxW87K1FeS11k/p7za2lfPnMsZgGLsGHPwY
+         1R+HtIuE3ZUlW4N++s0z7fKmIswM1gebuGqBYsowzL2hoycGR2VtEBkODRYvle2asBak
+         NdQS0XzNwqfI1dlNZwcOjXcf4rDVOdUSL8j87TPB6+GLivrlNpRDLOTd/wGa2Z2JV3C5
+         HfcZ2P/Eit7rfd2lcLNZvWr3FBz9ACsvO+4okomgHMUS+1RekmBq42fVOIRpMZYF5aTL
+         uiFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UzQAOaNFJl4O9dGDd5nLwwB9pTU2KwSKAP9fzeea2dg=;
-        b=RPf64ssE6abyoC/NADO/GCAmNqGEoR+mXves3zj/C5WipELik5mvKYv/yXcij0WQxU
-         Yl7ww9zREGXuz0/nXgD6vrmBWTLTmz1y9DTuUnNglmMKSgLhZkg5l+0ts6NzrlkKmeYZ
-         CmyJm0/lpmZYJSo4yheJPHjcJ4va4ekahKPPqT6LDkn4ygPl1IfFeULEelkadgfoRTMc
-         LmTOSYNCOvPwCXWeiVTNUXfYZ8PgDtVQmZtnfmioi38VikIk5+2GPVtnE8B1p78NU19F
-         U2WLxXNwOp4OBsFi8kbqHmKrxIlW46u+VanEqsG5+0rTfHCNhIB55IBvzTswIJcVt3WC
-         Olbw==
-X-Gm-Message-State: APjAAAV/+X+y+0aoHIp7fZcDlzK3F4WshP7bLY0LHlWLtJgjhq/FLC5W
-        FpM+5n1pEnjZgRs/i0JcwBPzputV
-X-Google-Smtp-Source: APXvYqxfNcCo+Lsepr3q0rBg/OzVqXyCsgbUV0vvc5ayQhxT8j/TSKvh6O7evCi+mNZW7F04/b8cxw==
-X-Received: by 2002:a5d:4a4d:: with SMTP id v13mr6837365wrs.169.1552781182649;
-        Sat, 16 Mar 2019 17:06:22 -0700 (PDT)
-Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id b3sm6759016wrx.57.2019.03.16.17.06.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Mar 2019 17:06:21 -0700 (PDT)
-From:   marek.vasut@gmail.com
-To:     linux-pci@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FiEiMwhVyHOx5HVB+onPD8sXRF3yP6ld81UFhnLGG4w=;
+        b=WZmcOEY93mMWEdqZahNN7MEt753vya8AoEDkN7svZeypUE6Eo6iZRwxJ+Vym0ewg++
+         5Rya2D2/qJfcbJtob0e0+9k0krpi5/9zLyY7tSAK8z5KYNTr686YlcKPFBXs4ULfTB+y
+         RzBPgbfBqID4P5t8UKldKEy7xJUwmct+ttbtymXQSxr2JxVIew01lWKuPKzK/n8guykE
+         5d403VTfjb8vOOsR3MTtOvmiLk4p+NOtfpbSWST0eUffFLsDZE5Lck5cDjpWnPrmSwq/
+         XxDK+H6w5GCebJvuXyKjj8AUxx0CscTykJQPOUHoBmGZqra0fbtZS5dL1T/h+IZ0E3qV
+         9E+w==
+X-Gm-Message-State: APjAAAUvZ5jpRgI7mDfQgoGGHX1nLA1Vrd5uBveyTKTRAFCybWC5gIW3
+        UEW+GYjWBgub3Ifh+g6KM854T303
+X-Google-Smtp-Source: APXvYqx6go4G2DvrDhQjZ4jkoNRG3yNvSVy5I40LYJST/5yb8eZOKixZQLsHVdfYg6rsmep9P5hW6A==
+X-Received: by 2002:adf:eb8f:: with SMTP id t15mr138018wrn.119.1552781198082;
+        Sat, 16 Mar 2019 17:06:38 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id h1sm3158294wmb.5.2019.03.16.17.06.36
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Mar 2019 17:06:37 -0700 (PDT)
+Subject: Re: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in register
+ accessors
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/3] PCI: rcar: Allow 64bit MSI addresses
-Date:   Sun, 17 Mar 2019 01:06:07 +0100
-Message-Id: <20190317000608.24881-2-marek.vasut@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190317000608.24881-1-marek.vasut@gmail.com>
-References: <20190317000608.24881-1-marek.vasut@gmail.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20190309005613.1493-1-marek.vasut@gmail.com>
+ <20190309005613.1493-2-marek.vasut@gmail.com>
+ <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <d49be905-2e59-e65f-cf3b-191eb972ec45@gmail.com>
+Date:   Sun, 17 Mar 2019 00:59:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+On 3/11/19 10:41 AM, Geert Uytterhoeven wrote:
+> Hi Marek,
+> 
+> On Sat, Mar 9, 2019 at 1:56 AM <marek.vasut@gmail.com> wrote:
+>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>
+>> Replace unsigned long with u32 in register accessor functions,
+>> since they access 32bit registers.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Thanks for your patch!
+> 
+> Minor nit below.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> BTW, there are a few more suspicious/incorrect uses of unsigned long:
+>   - incorrect debug prints on arm64,
+>   - more unsigned long register values,
+>   - phys_addr_t
+> Care to fix these as well?
 
-The MSI address can be 64bit. Switch the data type used to hold the
-result of virt_to_phys() to phys_addr_t to reflect it's properties
-correctly and program the top 32bits of PA into PCIEMSIAUR.
+I'll send those shortly, as a separate series since they don't conflict
+with each other.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
-To: linux-pci@vger.kernel.org
----
- drivers/pci/controller/pcie-rcar.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Thanks!
+> 
+>> --- a/drivers/pci/controller/pcie-rcar.c
+>> +++ b/drivers/pci/controller/pcie-rcar.c
+>> @@ -152,14 +152,12 @@ struct rcar_pcie {
+>>         struct                  rcar_msi msi;
+>>  };
+>>
+>> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+>> -                              unsigned long reg)
+>> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
+> 
+> Doesn't unsigned int make more sense for reg?
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 857d88fd03d5..801925a136ae 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -888,7 +888,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct rcar_msi *msi = &pcie->msi;
--	unsigned long base;
-+	phys_addr_t base;
- 	int err, i;
- 
- 	mutex_init(&msi->lock);
-@@ -930,7 +930,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- 	base = virt_to_phys((void *)msi->pages);
- 
- 	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
--	rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
-+	rcar_pci_write_reg(pcie, base >> 32, PCIEMSIAUR);
- 
- 	/* enable all MSI interrupts */
- 	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
+Isn't u32 more explicit ?
+
 -- 
-2.20.1
-
+Best regards,
+Marek Vasut
