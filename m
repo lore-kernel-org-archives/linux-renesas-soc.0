@@ -2,157 +2,208 @@ Return-Path: <SRS0=P06h=RT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D982C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Mar 2019 20:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26179C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Mar 2019 20:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D06218A1
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Mar 2019 20:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E341D218A1
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 16 Mar 2019 20:26:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5Bj5ROj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyMDhyr1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfCPUZ5 (ORCPT
+        id S1726703AbfCPU0r (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Mar 2019 16:25:57 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34842 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726493AbfCPUZ5 (ORCPT
+        Sat, 16 Mar 2019 16:26:47 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50235 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfCPU0r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Mar 2019 16:25:57 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w1so7005643wrp.2;
-        Sat, 16 Mar 2019 13:25:55 -0700 (PDT)
+        Sat, 16 Mar 2019 16:26:47 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z11so968947wmi.0;
+        Sat, 16 Mar 2019 13:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Xe/fcITd+BQNeYoornI6kfJWpJdYApjGR9t6pBM9LXg=;
-        b=I5Bj5ROjXZTv1EIB4TaOzpeRPFGxwl9X1F7vkqx0dTQ8wLIvvdZ51TvytTH1pIV/zH
-         HGYHTCgtPD5XSx2HEGVpnA2xFBMJ6r/FmVETIXUCrtZkcvlqKBKU9t8uHAwXdI3fagYB
-         +EVOAxpJjY83kF2aod2tCZ5Ka3ER1mJsLC+r6PvZFkoitbrCcGLg5WDNQF/psdUx+RU0
-         VVAegfyghUZqU1KQo72ckKJRJmS6CWjdHl4Furw+2/F3m53kUddc133VYxziZ5uKv9iQ
-         lHn0yRM3NKG0cp6s1CAaQCdWkrIg9e7SEq/VSg1/ebENtHMPbKLvaHgYKLeQqaVj7KVr
-         vB/g==
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6P44eFEAA39mwtHWY55Z63Sa/pg3tmZ9icFkTrlYD+w=;
+        b=TyMDhyr19yDxu7E7pWW9iiVpnnQMe77Si19oUwQOTIGm7iO893iPO2xXOTyrMZBjAh
+         2FvPgekTaV1GbagK5pL2KjfnaoR8jNmnd3lcjrDfVHZr+SXnUyIRBGtf/KGG2rYo6rp4
+         YimkcI37xm1+zJQKjccOMQw27ZMwua0LJittBBjplmtrvgvvKQnp3Pi6KAEQFo7wWG0s
+         zwZmvLElhLOT+48QDDdLKwGlGJhmy+TqBoyi+iCLnby9U9Hd5TZbXht/bZjg479qX507
+         5XOBLBVGMsmS8jPt/HAr9MOwpyFPtowDKa6dADr3M2T/hhwOCcz3WiHOJiXgrPX2u7BL
+         N/bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Xe/fcITd+BQNeYoornI6kfJWpJdYApjGR9t6pBM9LXg=;
-        b=EZwYDcsdvX32CHfcRLXQ0WGhQy7pqw+MjQQG7ocQ4od8Nt2ZiqTIz5hryjHD+u+65S
-         iZsl32Qkrp2F2OAyf8nPrKaTOT2KRzfEEm/Y7do0ExvWla1NtX5ZfT2lBJJNhQ2gf3Sp
-         vdtD51MVLQoV+d7vWE/EispAk/z8X2LIIi4CXg2GbWVBaMgF7gVgL3HZW772EjL1B4vf
-         kyIj7HznF6wnnZP7nDOwqLlCkHE+94KJxbgzMfHUKxePP+pp81+i5MA8wkruEl/g2O0u
-         r606MQTXaO10uXK2Mn51lMYDIiBjRCy+E0hsm6TGdt7Q8+1Ki3ZL96QCKN6oVv1urQYo
-         Fqgg==
-X-Gm-Message-State: APjAAAV4mgDb+IPYv3EdxKm7Q0wcuxQl12QBKZmgaGZK0B9YxyOqszl/
-        5Tl6l88jmZ1E07oh+buNdU6Ni4vI
-X-Google-Smtp-Source: APXvYqy+4WHGt9f4G+kySK6B5XdRhP8rTcqbklT8N4W3ZlxAEb+H+DyNW/bxMIHjqA5vwhXqsFbPAA==
-X-Received: by 2002:a05:6000:1291:: with SMTP id f17mr1947315wrx.201.1552767954878;
-        Sat, 16 Mar 2019 13:25:54 -0700 (PDT)
-Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id a20sm5635412wmb.17.2019.03.16.13.25.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Mar 2019 13:25:53 -0700 (PDT)
-From:   marek.vasut@gmail.com
-To:     devicetree@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
+        bh=6P44eFEAA39mwtHWY55Z63Sa/pg3tmZ9icFkTrlYD+w=;
+        b=kQPsg77WWXQn/PZIXVD3A7htWmUcAvnOmy94P3qKuQmuL2IUOkfJS4BATGaNTCwWN5
+         DbBLGkL18DKDT5mCO0jgJ0DvLlEwFJm7XNlx1wt4VfkAqlroykCniUQB6IW2q9ntJznm
+         5du/8pUrKrS2Nn5yc+j7x1yMkpdfP/T5XfBukxOLYUJQ3heYRxzjgKD3NDR8XuCug7wW
+         ahKQf70kO9SM+wO58SQ1O4NYhV+uCuu+w50MxbwT8LoncdyqdDvHtuS3Wtm3lIcn1w48
+         AGcAvgRSaydlSDknb+ghKYXX3DbUtUYkG6TiMiI17Lo7814mAlc2ABULrZs6VcDkQpGi
+         b7oA==
+X-Gm-Message-State: APjAAAVlAvweWcfnA0zaTM1di7jbNAPYjmAnn5Cc+ZrwIrqCXHAmvIBf
+        /vojENp6gDTjuISBhiPsu8IdsmGj
+X-Google-Smtp-Source: APXvYqyhC0B2IWavpJo80U/rycLII4L3oO+JGkWIwZ8aehKQH62mVLF1Eokvqw5DEV75k/FVpuoN9A==
+X-Received: by 2002:a1c:9c0e:: with SMTP id f14mr6400253wme.78.1552768004571;
+        Sat, 16 Mar 2019 13:26:44 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id o127sm5975795wmo.20.2019.03.16.13.26.42
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Mar 2019 13:26:43 -0700 (PDT)
+Subject: Re: [PATCH V2] regulator: gpio: Reword the binding document
+To:     Harald Geyer <harald@ccbib.org>
+Cc:     devicetree@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3] regulator: gpio: Reword the binding document
-Date:   Sat, 16 Mar 2019 21:25:51 +0100
-Message-Id: <20190316202552.21525-1-marek.vasut@gmail.com>
-X-Mailer: git-send-email 2.20.1
+References: <20190304194023.10926-1-marek.vasut@gmail.com>
+ <E1h16yh-0000OM-5J@stardust.g4.wien.funkfeuer.at>
+ <834f8576-73a4-be0f-e322-91601bed5388@gmail.com>
+ <E1h1Ce9-0000JA-Rs@stardust.g4.wien.funkfeuer.at>
+ <4d1cd905-c322-78e5-cb9c-dadba01b0324@gmail.com>
+ <E1h1Hjl-0000Nv-Ri@stardust.g4.wien.funkfeuer.at>
+ <89743562-bb2a-de3f-a57b-331f43bf8982@gmail.com>
+ <E1h1Rk2-0000NG-Jp@stardust.g4.wien.funkfeuer.at>
+ <96fe2cd4-c680-31c9-98f2-31a400e6c44b@gmail.com>
+ <c01246ccde58c23ad03b869cedc98f41@ccbib.org>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <48f64264-92a8-0e46-9b8e-8c8d7a945147@gmail.com>
+Date:   Sat, 16 Mar 2019 21:26:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <c01246ccde58c23ad03b869cedc98f41@ccbib.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+On 3/7/19 10:12 AM, Harald Geyer wrote:
+> On 06.03.2019 22:56, Marek Vasut wrote:
+>> On 3/6/19 9:17 AM, Harald Geyer wrote:
+>>> Marek Vasut writes:
+>>>> On 3/5/19 10:36 PM, Harald Geyer wrote:
+>>>>> Marek Vasut writes:
+>>>>>> On 3/5/19 5:10 PM, Harald Geyer wrote:
+>>>>>>> Marek Vasut writes:
+>>>>>>>> On 3/5/19 11:07 AM, Harald Geyer wrote:
+>>>>>>>>> marek.vasut@gmail.com writes:
+>>>>>>>>>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>>>>>>
+>>>>>>>>>> Reword the binding document to make it clear how the propeties
+>>>>>>>>>> work
+>>>>>>>>>> and which properties affect which other properties.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>>>>>>>>> Cc: Harald Geyer <harald@ccbib.org>
+>>>>>>>>>> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>>>>>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>>>>>>>>> Cc: Mark Brown <broonie@kernel.org>
+>>>>>>>>>> Cc: Rob Herring <robh@kernel.org>
+>>>>>>>>>> Cc: linux-renesas-soc@vger.kernel.org
+>>>>>>>>>> To: devicetree@vger.kernel.org
+>>>>>>>>>> ---
+>>>>>>>>>> V2: - Make "gpios" a mandatory property
+>>>>>>>>>>     - Reword "gpio-states" property description
+>>>>>>>>>>     - Change "enable-gpio" to "enable-gpios" to match modern
+>>>>>>>>>> DT rules
+>>>>>>>>>> Note: The recent gpio-regulator rework caused breakage. While the
+>>>>>>>>>>       changes in the gpio-regulator code were according to the DT
+>>>>>>>>>>       binding document, they stopped working with older DTs. Make
+>>>>>>>>>>       the binding document clearer to prevent such breakage in
+>>>>>>>>>> the
+>>>>>>>>>>       future.
+>>>>>>>>>
+>>>>>>>>> Thanks for the update. I think it addresses all my concerns
+>>>>>>>>> except for
+>>>>>>>>> one:
+>>>>>>>>>
+>>>>>>>>>> +- gpios-states    : State of GPIO pins in "gpios" array that
+>>>>>>>>>> is set until
+>>>>>>>>>> +              changed by the first consumer. 0: LOW, 1: HIGH.
+>>>>>>>>>> +              Default is LOW if nothing else is specified.
+>>>>>>>>>
+>>>>>>>>> I still believe this not true: There is no guarantee that the
+>>>>>>>>> regulator
+>>>>>>>>> core won't change the state of GPIO pins before the first
+>>>>>>>>> consumer comes
+>>>>>>>>> up.
+>>>>>>>>
+>>>>>>>> Why would it do that ?
+>>>>>>>
+>>>>>>> Because the regulator core doesn't know about this driver specific
+>>>>>>> property at all. And without any constraints placed by consumers,
+>>>>>>> the
+>>>>>>> core is free to choose any state whatsoever at any point in time.
+>>>>>>
+>>>>>> But git grep seems to disagree, see
+>>>>>> drivers/regulator/gpio-regulator.c:
+>>>>>>                     ret = of_property_read_u32_index(np,
+>>>>>> "gpios-states", i,
+>>>>>>
+>>>>>> The core sets the pins to such a value until the consumer takes over.
+>>>>>
+>>>>> I think we have a misunderstanding of terminology. When I write
+>>>>> "regulator
+>>>>> core", I mean the driver independent regulator code. The line you
+>>>>> quote
+>>>>> above is part of the gpio-regulator driver and thus not part of what
+>>>>> I call the "regulator core".
+>>>>>
+>>>>> AFAICS the data from the property is only stored in a driver specific
+>>>>> data structure (and not used at all outside of probe) but never passed
+>>>>> to what I call the regulator core.
+>>>>>
+>>>>> Why do you believe there is a guarantee that the value set during
+>>>>> probeing is preserved until a consumer takes over?
+>>>>
+>>>> It is the only sensible behavior and the behavior I see people expect
+>>>> from this property. I presume it solidified in this sort of
+>>>> semi-defined
+>>>> state, so we're stuck with assuming it behaves this way to maintain
+>>>> compatibility.
+>>>
+>>> Maybe the behaviour you want would be more sensible, but AFAIK it just
+>>> isn't true in general (it might work that way by chance in many cases).
+>>> If people expect this behaviour, it is a misunderstanding of the old
+>>> wording.
+>>> I'd prefer we don't have to add a quirk to the regulator subsystem to
+>>> cater for a misunderstanding.
+>>>
+>>> I think, if you really want to go forward with making this behaviour
+>>> officially maintained, then we should first add the code to linux and
+>>> only then add the promise to the binding document. This isn't the scope
+>>> of this patch, so I guess we would need to keep the ambiguous wording as
+>>> it is for now. I believe it is more important for a binding document
+>>> to be correct than to be sensible.
+>>>
+>>> However I don't think we actually need to go to such extremes: In linux
+>>> we currently have (arm/boot/dts and arm64/boot/dts) 38 uses of this
+>>> property in 29 DTs. All the examples, that I studied in some detail,
+>>> seem to either don't need this property at all or have a usecase that is
+>>> supported by my proposed wording. I don't expect any problems if we just
+>>> document the status quo clearly.
+>>
+>> In that case, provide a suggestion how to document this property better?
+> 
+> I did: https://www.spinics.net/lists/devicetree/msg275050.html
 
-Reword the binding document to make it clear how the propeties work
-and which properties affect which other properties.
+I don't like it, but I added it there and sent V3, let's see what others
+think.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Harald Geyer <harald@ccbib.org>
-Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
----
-V2: - Make "gpios" a mandatory property
-    - Reword "gpio-states" property description
-    - Change "enable-gpio" to "enable-gpios" to match modern DT rules
-V3: - Use gpio-states description from Harald
-Note: The recent gpio-regulator rework caused breakage. While the
-      changes in the gpio-regulator code were according to the DT
-      binding document, they stopped working with older DTs. Make
-      the binding document clearer to prevent such breakage in the
-      future.
----
- .../bindings/regulator/gpio-regulator.txt     | 30 ++++++++++++++-----
- 1 file changed, 22 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-index 1f496159e2bb..dd25e73b5d79 100644
---- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-@@ -4,16 +4,30 @@ Required properties:
- - compatible		: Must be "regulator-gpio".
- - regulator-name	: Defined in regulator.txt as optional, but required
- 			  here.
--- states		: Selection of available voltages and GPIO configs.
--                          if there are no states, then use a fixed regulator
-+- gpios			: Array of one or more GPIO pins used to select the
-+			  regulator voltage/current listed in "states".
-+- states		: Selection of available voltages/currents provided by
-+			  this regulator and matching GPIO configurations to
-+			  achieve them. If there are no states in the "states"
-+			  array, use a fixed regulator instead.
- 
- Optional properties:
--- enable-gpio		: GPIO to use to enable/disable the regulator.
--- gpios			: GPIO group used to control voltage.
--- gpios-states		: gpios pin's initial states array. 0: LOW, 1: HIGH.
--			  defualt is LOW if nothing is specified.
-+- enable-gpios		: GPIO used to enable/disable the regulator.
-+			  Warning, the GPIO phandle flags are ignored and the
-+			  GPIO polarity is controlled solely by the presence
-+			  of "enable-active-high" DT property. This is due to
-+			  compatibility with old DTs.
-+- enable-active-high	: Polarity of "enable-gpio" GPIO is active HIGH.
-+			  Default is active LOW.
-+- gpios-states		: On operating systems, that don't support reading back
-+			  gpio values in output mode (most notably linux), this
-+			  array provides the state of GPIO pins set when
-+			  requesting them from the gpio controller. Systems,
-+			  that are capable of preserving state when requesting
-+			  the lines, are free to ignore this property.
-+			  0: LOW, 1: HIGH. Default is LOW if nothing else
-+			  is specified.
- - startup-delay-us	: Startup time in microseconds.
--- enable-active-high	: Polarity of GPIO is active high (default is low).
- - regulator-type	: Specifies what is being regulated, must be either
- 			  "voltage" or "current", defaults to voltage.
- 
-@@ -30,7 +44,7 @@ Example:
- 		regulator-max-microvolt = <2600000>;
- 		regulator-boot-on;
- 
--		enable-gpio = <&gpio0 23 0x4>;
-+		enable-gpios = <&gpio0 23 0x4>;
- 		gpios = <&gpio0 24 0x4
- 			 &gpio0 25 0x4>;
- 		states = <1800000 0x3
 -- 
-2.20.1
-
+Best regards,
+Marek Vasut
