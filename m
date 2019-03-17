@@ -2,117 +2,331 @@ Return-Path: <SRS0=pEya=RU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DCAC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 21:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DE8C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 22:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0472320835
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 21:36:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5A252086A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 22:55:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vmZ7yYk5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbfCQVgG (ORCPT
+        id S1727506AbfCQWzh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Mar 2019 17:36:06 -0400
-Received: from sauhun.de ([88.99.104.3]:58170 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726229AbfCQVgG (ORCPT
+        Sun, 17 Mar 2019 18:55:37 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:43952 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbfCQWzg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Mar 2019 17:36:06 -0400
-Received: from localhost (unknown [81.92.17.147])
-        by pokefinder.org (Postfix) with ESMTPSA id 1F2912C27DA;
-        Sun, 17 Mar 2019 22:36:04 +0100 (CET)
-Date:   Sun, 17 Mar 2019 22:36:03 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Jean Delvare <jdelvare@suse.de>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH i2c-tools 2/2] tools: restrict all addresses defined by
- the standard
-Message-ID: <20190317213602.GB1471@kunai>
-References: <20190311223335.18586-1-wsa+renesas@sang-engineering.com>
- <20190311223335.18586-3-wsa+renesas@sang-engineering.com>
- <20190315142446.5571d5aa@endymion>
+        Sun, 17 Mar 2019 18:55:36 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 66CA423A;
+        Sun, 17 Mar 2019 23:55:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552863333;
+        bh=U/sw6zlRJ9dAk/4PRtbudOCv30wRobn1dk49Peyjupo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vmZ7yYk5DnLbi/miuoH8CSz8NjwnDTpg47X+bRCtjFKl3mSyVe7zXHDL3yRtW2sQ+
+         SYW0hoLBgTKlHUyruCDUvxw+MHdmf1ZF8vxfeCKsE9P4JXkzYfPVDCGsJ0EWSn8F7b
+         Ppjh4MNxQK/bxZvXRuMIaoaeU6deopUCpGeVaJRY=
+Date:   Mon, 18 Mar 2019 00:55:25 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] drm: rcar-du: Link CRTCs to the DU device
+Message-ID: <20190317225525.GC12636@pendragon.ideasonboard.com>
+References: <20190315170110.23280-1-kieran.bingham+renesas@ideasonboard.com>
+ <20190315170110.23280-2-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190315142446.5571d5aa@endymion>
+In-Reply-To: <20190315170110.23280-2-kieran.bingham+renesas@ideasonboard.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Kieran,
 
---/NkBOFFp2J2Af1nK
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
-Hi Jean,
+On Fri, Mar 15, 2019 at 05:01:05PM +0000, Kieran Bingham wrote:
+> The rcar_du_crtc functions have a heavy reliance on the rcar_du_group
+> structure, in many cases just to access the DU device context.
+> 
+> To better separate the groups out of the CRTC handling code, give the
+> rcar_du_crtc its own pointer to the device and remove the indirection
+> through the group pointers.
 
-> > The I2C standard reserves addresses 0x03-0x07. Adapt our tools to that.
->=20
-> I have a different interpretation of the specification. Addresses
-> 0x04-0x07 are marked as "Hs-mode master code". They are not explicitly
-> marked as "reserved" (although admittedly the table is named "Reserved
-> addresses"). My understanding is that HS-mode will "use" these
+I've thought about doing this so many times, every time I had to access
+the device from the crtc.
 
-Yes, my understanding is that the table lists all reserved addresses.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> addresses, which means that you can't use HS-mode _and_ slaves at
-> addresses 0x04-0x07 on the same I=C2=B2C bus segment. I do not read this =
-as
-> "non-HS-mode slaves can't use these addresses". But maybe this is just
-> me, and also I don't know that much about HS-mode really.
+And taken in my tree.
 
-=46rom the spec, section 5.3.2: "Hs-mode master codes are reserved 8-bit
-codes, which are not used for slave addressing or other purposes."
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 48 +++++++++++++-------------
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  2 ++
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c  |  2 +-
+>  3 files changed, 27 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> index 57fd5c00494b..471ce464654a 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+> @@ -32,21 +32,21 @@
+>  
+>  static u32 rcar_du_crtc_read(struct rcar_du_crtc *rcrtc, u32 reg)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	return rcar_du_read(rcdu, rcrtc->mmio_offset + reg);
+>  }
+>  
+>  static void rcar_du_crtc_write(struct rcar_du_crtc *rcrtc, u32 reg, u32 data)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	rcar_du_write(rcdu, rcrtc->mmio_offset + reg, data);
+>  }
+>  
+>  static void rcar_du_crtc_clr(struct rcar_du_crtc *rcrtc, u32 reg, u32 clr)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	rcar_du_write(rcdu, rcrtc->mmio_offset + reg,
+>  		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) & ~clr);
+> @@ -54,7 +54,7 @@ static void rcar_du_crtc_clr(struct rcar_du_crtc *rcrtc, u32 reg, u32 clr)
+>  
+>  static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	rcar_du_write(rcdu, rcrtc->mmio_offset + reg,
+>  		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) | set);
+> @@ -62,7 +62,7 @@ static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
+>  
+>  void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	rcrtc->dsysr = (rcrtc->dsysr & ~clr) | set;
+>  	rcar_du_write(rcdu, rcrtc->mmio_offset + DSYSR, rcrtc->dsysr);
+> @@ -157,10 +157,9 @@ static void rcar_du_dpll_divider(struct rcar_du_crtc *rcrtc,
+>  	}
+>  
+>  done:
+> -	dev_dbg(rcrtc->group->dev->dev,
+> +	dev_dbg(rcrtc->dev->dev,
+>  		"output:%u, fdpll:%u, n:%u, m:%u, diff:%lu\n",
+> -		 dpll->output, dpll->fdpll, dpll->n, dpll->m,
+> -		 best_diff);
+> +		 dpll->output, dpll->fdpll, dpll->n, dpll->m, best_diff);
+>  }
+>  
+>  struct du_clk_params {
+> @@ -212,7 +211,7 @@ static const struct soc_device_attribute rcar_du_r8a7795_es1[] = {
+>  static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  {
+>  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  	unsigned long mode_clock = mode->clock * 1000;
+>  	u32 dsmr;
+>  	u32 escr;
+> @@ -277,7 +276,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  			rcar_du_escr_divider(rcrtc->extclock, mode_clock,
+>  					     ESCR_DCLKSEL_DCLKIN, &params);
+>  
+> -		dev_dbg(rcrtc->group->dev->dev,	"mode clock %lu %s rate %lu\n",
+> +		dev_dbg(rcrtc->dev->dev, "mode clock %lu %s rate %lu\n",
+>  			mode_clock, params.clk == rcrtc->clock ? "cpg" : "ext",
+>  			params.rate);
+>  
+> @@ -285,7 +284,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+>  		escr = params.escr;
+>  	}
+>  
+> -	dev_dbg(rcrtc->group->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
+> +	dev_dbg(rcrtc->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
+>  
+>  	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? ESCR13 : ESCR02, escr);
+>  	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? OTAR13 : OTAR02, 0);
+> @@ -333,7 +332,7 @@ plane_format(struct rcar_du_plane *plane)
+>  static void rcar_du_crtc_update_planes(struct rcar_du_crtc *rcrtc)
+>  {
+>  	struct rcar_du_plane *planes[RCAR_DU_NUM_HW_PLANES];
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  	unsigned int num_planes = 0;
+>  	unsigned int dptsr_planes;
+>  	unsigned int hwplanes = 0;
+> @@ -463,7 +462,7 @@ static bool rcar_du_crtc_page_flip_pending(struct rcar_du_crtc *rcrtc)
+>  
+>  static void rcar_du_crtc_wait_page_flip(struct rcar_du_crtc *rcrtc)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	if (wait_event_timeout(rcrtc->flip_wait,
+>  			       !rcar_du_crtc_page_flip_pending(rcrtc),
+> @@ -493,7 +492,7 @@ static void rcar_du_crtc_setup(struct rcar_du_crtc *rcrtc)
+>  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? DS2PR : DS1PR, 0);
+>  
+>  	/* Enable the VSP compositor. */
+> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+>  		rcar_du_vsp_enable(rcrtc);
+>  
+>  	/* Turn vertical blanking interrupt reporting on. */
+> @@ -564,7 +563,7 @@ static void rcar_du_crtc_start(struct rcar_du_crtc *rcrtc)
+>  
+>  static void rcar_du_crtc_disable_planes(struct rcar_du_crtc *rcrtc)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  	struct drm_crtc *crtc = &rcrtc->crtc;
+>  	u32 status;
+>  
+> @@ -617,7 +616,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+>  	drm_crtc_vblank_off(crtc);
+>  
+>  	/* Disable the VSP compositor. */
+> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+>  		rcar_du_vsp_disable(rcrtc);
+>  
+>  	/*
+> @@ -627,7 +626,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+>  	 * TODO: Find another way to stop the display for DUs that don't support
+>  	 * TVM sync.
+>  	 */
+> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_TVM_SYNC))
+> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_TVM_SYNC))
+>  		rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK,
+>  					   DSYSR_TVM_SWITCH);
+>  
+> @@ -661,7 +660,7 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
+>  {
+>  	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+>  	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(crtc->state);
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	rcar_du_crtc_get(rcrtc);
+>  
+> @@ -689,7 +688,7 @@ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
+>  {
+>  	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+>  	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(old_state);
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  
+>  	rcar_du_crtc_stop(rcrtc);
+>  	rcar_du_crtc_put(rcrtc);
+> @@ -735,7 +734,7 @@ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
+>  	 */
+>  	rcar_du_crtc_get(rcrtc);
+>  
+> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+>  		rcar_du_vsp_atomic_begin(rcrtc);
+>  }
+>  
+> @@ -757,7 +756,7 @@ static void rcar_du_crtc_atomic_flush(struct drm_crtc *crtc,
+>  		spin_unlock_irqrestore(&dev->event_lock, flags);
+>  	}
+>  
+> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+>  		rcar_du_vsp_atomic_flush(rcrtc);
+>  }
+>  
+> @@ -766,7 +765,7 @@ rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
+>  			const struct drm_display_mode *mode)
+>  {
+>  	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
+>  	unsigned int vbp;
+>  
+> @@ -798,7 +797,7 @@ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+>  
+>  static void rcar_du_crtc_crc_init(struct rcar_du_crtc *rcrtc)
+>  {
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  	const char **sources;
+>  	unsigned int count;
+>  	int i = -1;
+> @@ -1080,7 +1079,7 @@ static const struct drm_crtc_funcs crtc_funcs_gen3 = {
+>  static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
+>  {
+>  	struct rcar_du_crtc *rcrtc = arg;
+> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
+> +	struct rcar_du_device *rcdu = rcrtc->dev;
+>  	irqreturn_t ret = IRQ_NONE;
+>  	u32 status;
+>  
+> @@ -1172,6 +1171,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+>  	init_waitqueue_head(&rcrtc->vblank_wait);
+>  	spin_lock_init(&rcrtc->vblank_lock);
+>  
+> +	rcrtc->dev = rcdu;
+>  	rcrtc->group = rgrp;
+>  	rcrtc->mmio_offset = mmio_offsets[hwindex];
+>  	rcrtc->index = hwindex;
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> index 3f339a7e8d14..11814eafef77 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+> @@ -24,6 +24,7 @@ struct rcar_du_vsp;
+>  /**
+>   * struct rcar_du_crtc - the CRTC, representing a DU superposition processor
+>   * @crtc: base DRM CRTC
+> + * @dev: the DU device
+>   * @clock: the CRTC functional clock
+>   * @extclock: external pixel dot clock (optional)
+>   * @mmio_offset: offset of the CRTC registers in the DU MMIO block
+> @@ -43,6 +44,7 @@ struct rcar_du_vsp;
+>  struct rcar_du_crtc {
+>  	struct drm_crtc crtc;
+>  
+> +	struct rcar_du_device *dev;
+>  	struct clk *clock;
+>  	struct clk *extclock;
+>  	unsigned int mmio_offset;
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> index 0878accbd134..f6deea90dcce 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -43,7 +43,7 @@ static void rcar_du_vsp_complete(void *private, bool completed, u32 crc)
+>  void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
+>  {
+>  	const struct drm_display_mode *mode = &crtc->crtc.state->adjusted_mode;
+> -	struct rcar_du_device *rcdu = crtc->group->dev;
+> +	struct rcar_du_device *rcdu = crtc->dev;
+>  	struct vsp1_du_lif_config cfg = {
+>  		.width = mode->hdisplay,
+>  		.height = mode->vdisplay,
 
-> Address 0x03 is indeed reserved, so obviously that this really makes me
-> wonder how the original range of 0x03-0x77 was decided. Unfortunately
-> the git history doesn't go that far (this range was already used in
-> i2cget and i2cdetect at the time i2c-tools was split to its own
-> repository).
+-- 
+Regards,
 
-My theory (only guessing, I didn't check): When introducing Hs-mode, the
-I2C designers wanted to have the possibility for 8 Hs-masters. So, they
-took addresses 0x04-0x07 (and the R/W bit) which allows for easy logic
-in HW. And 0x03 was marked "reserved for future use" because it was in
-the middle of those two reserved blocks. That would mean that before
-Hs-mode, addresses 0x03-0x77 was in deed possible.
-
-> That being said... In the end it doesn't really matter if addresses
-> 0x03-0x07 are considered reserved but "should not", as long as the user
-> has an option to override that limitation. Now that such an option is
-> consistently available for all i2c tools, I have no objection to being
-> more conservative by default.
-
-Cool, I read this as an ack. Thanks!
-
-   Wolfram
-
-
---/NkBOFFp2J2Af1nK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyOvcIACgkQFA3kzBSg
-KbZT3xAAmpogBg/iMEOQ+qNqTrW/pUTCM7Aim/BCsMdjr1huOV+S5Qgiyz2Xxn+V
-UvPTOx9F5xGKrYmY9FC9wU1xl7EZDX5T8YDH6gKD3uwC5V9XzlXTaJ94h6ELYCUL
-mRPTLHcPAEBIJrChhgiA/HkTPjgJV3zGgWQdFslzaXMtfnLv8GZih0WaHbM8JH1s
-Se+nJ9o1+Vsf0mbO3hXrK8gD1XegZ1k9zfhi2mx+sUbrGQnCWeJdWRl/5RzxqTmg
-HhrHAbb56434gSjc/ZiLLJyIF08DR0VWHW2CZiwlvnDaJAlRCwOcVoVXbXLkFkxr
-+622n7sTiRNhwuTVSw2vL4aySLAzbHuRO4KTY+C6DlollhySTcZw3KD90fRZ8UvG
-PcpQgJAtI8yZL9JChJUXppOARmGw1d0ZT1XNcM0pSFfjVHIQYKSLVEKosM7I4VbF
-+biCgjHUmGL1pEbmdVxABRXoQWlgkKIF4bqkQBlc278DALdyzWDdZ2xCJVnjlO2V
-HN3wclsbScakCHgCK1mYD4uhE1bxyOAs32qDa1EPLZMxZtLwZO5n0zcIgWE6nVqS
-7EQMOMHHFpBzZJq9FIkEggm6unN+XO7ws0pXsVHwbESxGD3qZoCD9KIlMhmoHIke
-MdJ9NFuQ2yBUiZF3fPhlPG1ABpgFkx6CN6yhIG8Vnbp33NNgZQs=
-=kZKV
------END PGP SIGNATURE-----
-
---/NkBOFFp2J2Af1nK--
+Laurent Pinchart
