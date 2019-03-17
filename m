@@ -2,130 +2,105 @@ Return-Path: <SRS0=pEya=RU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C79C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 02:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB04C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 08:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 695B9218D0
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 02:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E76621019
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 08:04:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iFE+4TrX"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="p/DsFWIG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfCQCUE (ORCPT
+        id S1726122AbfCQIEK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Mar 2019 22:20:04 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49038 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbfCQCUE (ORCPT
+        Sun, 17 Mar 2019 04:04:10 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33719 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfCQIEJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Mar 2019 22:20:04 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CEEA3255;
-        Sun, 17 Mar 2019 03:20:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552789202;
-        bh=mwg+/h/LoUeTzOw1fP4RdzRM8Eksn9Tq5YgjnwRul9Q=;
-        h=Date:From:To:Cc:Subject:From;
-        b=iFE+4TrX0DiYWz4kZTa/xDZ2fO/GzMgR7hZB9R4FUFX/nY43uznka8Ufyl3cgLx3B
-         +N5EJdSeAnwg2DlH0xpTrR8JrwcxoeV1MA3TCSn61es7je0PTYfcb5KLfgr4Hy2x/Z
-         J4Tz+9FW4B0yWZL4WOgUfuqOoTj9jZPzRGe2NNR8=
-Date:   Sun, 17 Mar 2019 04:19:54 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [GIT PULL FOR renesas-drivers] DU LVDS dual-link mode support
-Message-ID: <20190317021954.GA4912@pendragon.ideasonboard.com>
+        Sun, 17 Mar 2019 04:04:09 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v14so9040004lfi.0
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 17 Mar 2019 01:04:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Z+Lfqgd/bBmOpo8j6K1V2cUM9xDec2zJ+xMbUMDIPPo=;
+        b=p/DsFWIGxAWS2wI0dJoQjUATDc2hG5B5toLc4awjFDaIAfCOFX9gFNHqSCXiEcvraM
+         kO2v6AXJyauPl3kZxlmrHl/yHh6XDIAwLR95DNi2Khc/GxNNESSctphPxDj0ZlkK2rwe
+         3QvfCvUo6Yg76KfnkCOJ6m1yh/JHW+frBeC0ITKpZT2KF0GT55qAYlZ3E6o/zBpHTvz2
+         7VyTZxv6TxENqMDb+xfWY+izHOCVBmHIlFJ1QoNBVAChf69JhR9P+ZaY/YFl8BBaSt0g
+         VfQXN8wWk5+Yigd/PwLLWQF1oF1MoK/50FwGSGVigPVlYxC8s82uH1LOz4Ml+44HM4Xg
+         4fWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Z+Lfqgd/bBmOpo8j6K1V2cUM9xDec2zJ+xMbUMDIPPo=;
+        b=H+j+Ka+qGpDjwJ0OcT+GHd8dQtpxpHjPDzb19mcD2llPj3HTrfCcBrlRxvtTZopl3/
+         nw0hr5QQHLOdt5/iHq3E9HTMWD+xFPRP88bVI+vg7cUkc1tz17OyqVwIZXI1nWj7+yYF
+         +jdsZv1Q8hoJ8+UXQ/jXrJ5TP9hf5/Ag++ljVym/NALtLcBpLQGnGG5JPaduKavZlUXP
+         B99440WOHy7j6XtgZy8dKq5kL8/riG4dCgCuAhqzxfQk7bVVLZJmSq9y/SNEmHDQlBi9
+         XVp7HoDlrT5dlPA9adLZBonng1drsmZrXKFDqZg7d7D/wVgdMcLIho7G/5nndBEam8kH
+         Z5Aw==
+X-Gm-Message-State: APjAAAVtzM76/UBgYZlhtYu59z9z7KQPjv8/rI6Ir/+OYeLCpXefkl0I
+        eSOa/OkzE42qGERZB7X3zaBFO1OKLtg=
+X-Google-Smtp-Source: APXvYqxwgZozuGfyd5RSdBI2su0I+Ncb0VcAn+Wu3SBBit3vMxuW64dDgpajF3ZCXlzkQBgddYvOiw==
+X-Received: by 2002:a19:c314:: with SMTP id t20mr6712534lff.114.1552809847887;
+        Sun, 17 Mar 2019 01:04:07 -0700 (PDT)
+Received: from [192.168.0.199] ([31.173.85.73])
+        by smtp.gmail.com with ESMTPSA id y25sm1331424lja.61.2019.03.17.01.04.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Mar 2019 01:04:07 -0700 (PDT)
+Subject: Re: [PATCH 2/3] PCI: rcar: Allow 64bit MSI addresses
+To:     marek.vasut@gmail.com, linux-pci@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+References: <20190317000608.24881-1-marek.vasut@gmail.com>
+ <20190317000608.24881-2-marek.vasut@gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <8c60a8c1-76ba-02c5-5306-1122eca2bcbf@cogentembedded.com>
+Date:   Sun, 17 Mar 2019 11:03:50 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190317000608.24881-2-marek.vasut@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hello!
 
-The following changes since commit 3a7d2f4f4427f4b241f8240e370099e2ec1fd307:
+On 17.03.2019 3:06, marek.vasut@gmail.com wrote:
 
-  Merge branch 'etnaviv/next' of https://git.pengutronix.de/git/lst/linux into drm-next (2019-03-12 15:20:57 +1000)
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> The MSI address can be 64bit. Switch the data type used to hold the
+> result of virt_to_phys() to phys_addr_t to reflect it's properties
 
-are available in the Git repository at:
+    Its.
 
-  git://linuxtv.org/pinchartl/media.git b3ddd36a2b05
+> correctly and program the top 32bits of PA into PCIEMSIAUR.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
+[...]
 
-for you to fetch changes up to b3ddd36a2b05074db0810a0f6508562f80045323:
-
-  arm64: dts: renesas: r8a7799[05]: Point LVDS0 to its companion LVDS1 (2019-03-13 03:42:41 +0200)
-
-The above commit is part of a branch name drm/du/lvds/dual-link in the
-same tree. The two top-most commits of the branch are hacks meant for
-testing only, so I didn't want to include them in this pull request.
-
-Please note that this pull request refers to prototype RFC code, I'll
-let you decide if you want to include it in renesas-drivers.
-
-----------------------------------------------------------------
-Laurent Pinchart (13):
-      drm: rcar-du: Support panels connected directly to the DPAD outputs
-      drm: Clarify definition of the DRM_BUS_FLAG_(PIXDATA|SYNC)_* macros
-      drm: Use new DRM_BUS_FLAG_*_(DRIVE|SAMPLE)_(POS|NEG)EDGE flags
-      drm: bridge: Add dual_link field to the drm_bridge_timings structure
-      dt-bindings: display: bridge: thc63lvd1024: Document dual-link operation
-      drm: bridge: thc63: Report input bus mode through bridge timings
-      dt-bindings: display: renesas: lvds: Add renesas,companion property
-      drm: rcar-du: lvds: Remove LVDS double-enable checks
-      drm: rcar-du: lvds: Adjust operating frequency for D3 and E3
-      drm: rcar-du: lvds: Set LVEN and LVRES bits together on D3
-      drm: rcar-du: lvds: Add support for dual-link mode
-      drm: rcar-du: Skip LVDS1 output on Gen3 when using dual-link LVDS mode
-      arm64: dts: renesas: r8a7799[05]: Point LVDS0 to its companion LVDS1
-
-Stefan Agner (1):
-      drm/bridge: use bus flags in bridge timings
-
- .../bindings/display/bridge/renesas,lvds.txt       |   6 +
- .../bindings/display/bridge/thine,thc63lvd1024.txt |   6 +
- arch/arm64/boot/dts/renesas/r8a77990.dtsi          |   2 +
- arch/arm64/boot/dts/renesas/r8a77995.dtsi          |   2 +
- drivers/gpu/drm/bridge/dumb-vga-dac.c              |   6 +-
- drivers/gpu/drm/bridge/tc358767.c                  |   4 +-
- drivers/gpu/drm/bridge/thc63lvd1024.c              |  54 ++++++--
- drivers/gpu/drm/drm_modes.c                        |  12 +-
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c         |   2 +-
- drivers/gpu/drm/imx/ipuv3-crtc.c                   |   2 +-
- drivers/gpu/drm/mxsfb/mxsfb_crtc.c                 |   6 +-
- drivers/gpu/drm/omapdrm/displays/encoder-tfp410.c  |   5 +-
- .../omapdrm/displays/panel-lgphilips-lb035q02.c    |   5 +-
- .../drm/omapdrm/displays/panel-nec-nl8048hl11.c    |   5 +-
- .../drm/omapdrm/displays/panel-sharp-ls037v7dw01.c |   5 +-
- .../drm/omapdrm/displays/panel-sony-acx565akm.c    |   5 +-
- .../drm/omapdrm/displays/panel-tpo-td028ttec1.c    |   5 +-
- .../drm/omapdrm/displays/panel-tpo-td043mtea1.c    |   5 +-
- drivers/gpu/drm/omapdrm/dss/dsi.c                  |   4 +-
- drivers/gpu/drm/omapdrm/dss/sdi.c                  |   4 +-
- drivers/gpu/drm/omapdrm/omap_encoder.c             |   8 +-
- drivers/gpu/drm/panel/panel-arm-versatile.c        |   4 +-
- drivers/gpu/drm/panel/panel-ilitek-ili9322.c       |   4 +-
- drivers/gpu/drm/panel/panel-seiko-43wvf1g.c        |   2 +-
- drivers/gpu/drm/panel/panel-simple.c               |  24 ++--
- drivers/gpu/drm/panel/panel-tpo-tpg110.c           |  10 +-
- drivers/gpu/drm/pl111/pl111_display.c              |   2 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |  66 +++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c              |   2 +-
- drivers/gpu/drm/rcar-du/rcar_lvds.c                | 140 +++++++++++++++------
- drivers/gpu/drm/rcar-du/rcar_lvds.h                |   5 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   4 +-
- drivers/gpu/drm/tve200/tve200_display.c            |   3 +-
- include/drm/drm_bridge.h                           |  19 ++-
- include/drm/drm_connector.h                        |  36 +++++-
- 35 files changed, 346 insertions(+), 128 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
+MBR, Sergei
