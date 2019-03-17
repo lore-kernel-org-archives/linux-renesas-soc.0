@@ -2,331 +2,119 @@ Return-Path: <SRS0=pEya=RU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DE8C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 22:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A23C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 23:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A252086A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 22:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41B912085A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 23:39:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vmZ7yYk5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1rV8nmj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbfCQWzh (ORCPT
+        id S1726446AbfCQXjp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Mar 2019 18:55:37 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:43952 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbfCQWzg (ORCPT
+        Sun, 17 Mar 2019 19:39:45 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34840 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfCQXjp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Mar 2019 18:55:36 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 66CA423A;
-        Sun, 17 Mar 2019 23:55:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552863333;
-        bh=U/sw6zlRJ9dAk/4PRtbudOCv30wRobn1dk49Peyjupo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vmZ7yYk5DnLbi/miuoH8CSz8NjwnDTpg47X+bRCtjFKl3mSyVe7zXHDL3yRtW2sQ+
-         SYW0hoLBgTKlHUyruCDUvxw+MHdmf1ZF8vxfeCKsE9P4JXkzYfPVDCGsJ0EWSn8F7b
-         Ppjh4MNxQK/bxZvXRuMIaoaeU6deopUCpGeVaJRY=
-Date:   Mon, 18 Mar 2019 00:55:25 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] drm: rcar-du: Link CRTCs to the DU device
-Message-ID: <20190317225525.GC12636@pendragon.ideasonboard.com>
-References: <20190315170110.23280-1-kieran.bingham+renesas@ideasonboard.com>
- <20190315170110.23280-2-kieran.bingham+renesas@ideasonboard.com>
+        Sun, 17 Mar 2019 19:39:45 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 81so3630464wme.0;
+        Sun, 17 Mar 2019 16:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=W0AGrUQU4RQ1Rh8lzIta0OsLxz/E85KjXJvIpuaCh8c=;
+        b=W1rV8nmj+umBdL19Lg+e/+kW8qz4Lm22Mx17qKXOCpnNuv7pxv8DL75wMoUic9jCEO
+         N1+wYp7Orc7LsvtkUqLy9VZyp6Z3uBFqnSD0cGu8jI3DvKqOX4aPhXStQgyGKHgXmf7S
+         XdSudlpqFPRVhomzl7o/W9rpC1u5nnPmk8fjbnABo8PjEKnMLDwDXM0L19rYF53M3zAv
+         xYaI/yULaei1DtyJfEff3YEPEmBsP1Eqn1nxaxePLEDrt7B5EsHJADRMR+xcKovJicwH
+         dUsJzYnBPrxN2L9gUZBoUVsWC7WvTmK0Vn9ynXIX7UYS+mH+X3XH3H40fe1VZ8+cqbUr
+         kMhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=W0AGrUQU4RQ1Rh8lzIta0OsLxz/E85KjXJvIpuaCh8c=;
+        b=nULmMukU7/cVug/rm1Xc7rKw6Dm4tqraTIKCjlLQg9rRxX74oHPK4zdNIiHu//8MLc
+         QhMAg4NTnqwb1dn2hjfxwhatsNS3M1vSoX9Y0xXPzGacNFRKr/9xwLbZoQfmpP1jd5Sa
+         XJbpBUlM5cyvLa2RqAcYRmlx378dlneGE57LSVy5zFrBz/7TVK/AmUq8Z9vySXCqbVSB
+         Qu1bwLOoeHInCbIoPXzG3U4/bzUiOg1wy6qx5nIgSBAwaPSMIJFA1KH+mqudvuRjX22q
+         fMPBgdcL9AwxvUAFg74xTPmT/QzsbRsM9wk/UPr3X6tgLWPXglK5YiwFWCOp0TXrJOG3
+         0BtQ==
+X-Gm-Message-State: APjAAAWPUUKDnYZ49PR8BFSADRD+Imhdssx4eW+uJSu2wSmkSyt0JZ5C
+        L2zPn3ycBM/tdJDjKPjcMzKJARGA
+X-Google-Smtp-Source: APXvYqwdQFf8LaHA2AKorflKwj32R7yPtGxnUI9NOxd8MhpsfaYkkymgnxnEBOmjqEOLIhiGX6ztBw==
+X-Received: by 2002:a7b:cf03:: with SMTP id l3mr8975733wmg.14.1552865983348;
+        Sun, 17 Mar 2019 16:39:43 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id y192sm7732148wmc.6.2019.03.17.16.39.41
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Mar 2019 16:39:42 -0700 (PDT)
+Subject: Re: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in register
+ accessors
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+References: <20190309005613.1493-1-marek.vasut@gmail.com>
+ <20190309005613.1493-2-marek.vasut@gmail.com>
+ <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
+ <d49be905-2e59-e65f-cf3b-191eb972ec45@gmail.com>
+ <CAMuHMdXWKWtzmm=MiSxmBk-C0Y2QSGVQNNYstJidSOp637f3+g@mail.gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <e3dc95ed-c331-2b92-8e3f-8e69937c8d66@gmail.com>
+Date:   Sun, 17 Mar 2019 23:50:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <CAMuHMdXWKWtzmm=MiSxmBk-C0Y2QSGVQNNYstJidSOp637f3+g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190315170110.23280-2-kieran.bingham+renesas@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+On 3/17/19 11:22 AM, Geert Uytterhoeven wrote:
+> Hi Marek,
 
-Thank you for the patch.
+Hi,
 
-On Fri, Mar 15, 2019 at 05:01:05PM +0000, Kieran Bingham wrote:
-> The rcar_du_crtc functions have a heavy reliance on the rcar_du_group
-> structure, in many cases just to access the DU device context.
+> On Sun, Mar 17, 2019 at 1:06 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+>> On 3/11/19 10:41 AM, Geert Uytterhoeven wrote:
+>>> On Sat, Mar 9, 2019 at 1:56 AM <marek.vasut@gmail.com> wrote:
+>>>> --- a/drivers/pci/controller/pcie-rcar.c
+>>>> +++ b/drivers/pci/controller/pcie-rcar.c
+>>>> @@ -152,14 +152,12 @@ struct rcar_pcie {
+>>>>         struct                  rcar_msi msi;
+>>>>  };
+>>>>
+>>>> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+>>>> -                              unsigned long reg)
+>>>> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
+>>>
+>>> Doesn't unsigned int make more sense for reg?
+>>
+>> Isn't u32 more explicit ?
 > 
-> To better separate the groups out of the CRTC handling code, give the
-> rcar_du_crtc its own pointer to the device and remove the indirection
-> through the group pointers.
+> It's just an offset in the register block, with a range much smaller than u32.
 
-I've thought about doing this so many times, every time I had to access
-the device from the crtc.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-And taken in my tree.
-
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 48 +++++++++++++-------------
->  drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  2 ++
->  drivers/gpu/drm/rcar-du/rcar_du_vsp.c  |  2 +-
->  3 files changed, 27 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> index 57fd5c00494b..471ce464654a 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> @@ -32,21 +32,21 @@
->  
->  static u32 rcar_du_crtc_read(struct rcar_du_crtc *rcrtc, u32 reg)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	return rcar_du_read(rcdu, rcrtc->mmio_offset + reg);
->  }
->  
->  static void rcar_du_crtc_write(struct rcar_du_crtc *rcrtc, u32 reg, u32 data)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	rcar_du_write(rcdu, rcrtc->mmio_offset + reg, data);
->  }
->  
->  static void rcar_du_crtc_clr(struct rcar_du_crtc *rcrtc, u32 reg, u32 clr)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	rcar_du_write(rcdu, rcrtc->mmio_offset + reg,
->  		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) & ~clr);
-> @@ -54,7 +54,7 @@ static void rcar_du_crtc_clr(struct rcar_du_crtc *rcrtc, u32 reg, u32 clr)
->  
->  static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	rcar_du_write(rcdu, rcrtc->mmio_offset + reg,
->  		      rcar_du_read(rcdu, rcrtc->mmio_offset + reg) | set);
-> @@ -62,7 +62,7 @@ static void rcar_du_crtc_set(struct rcar_du_crtc *rcrtc, u32 reg, u32 set)
->  
->  void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	rcrtc->dsysr = (rcrtc->dsysr & ~clr) | set;
->  	rcar_du_write(rcdu, rcrtc->mmio_offset + DSYSR, rcrtc->dsysr);
-> @@ -157,10 +157,9 @@ static void rcar_du_dpll_divider(struct rcar_du_crtc *rcrtc,
->  	}
->  
->  done:
-> -	dev_dbg(rcrtc->group->dev->dev,
-> +	dev_dbg(rcrtc->dev->dev,
->  		"output:%u, fdpll:%u, n:%u, m:%u, diff:%lu\n",
-> -		 dpll->output, dpll->fdpll, dpll->n, dpll->m,
-> -		 best_diff);
-> +		 dpll->output, dpll->fdpll, dpll->n, dpll->m, best_diff);
->  }
->  
->  struct du_clk_params {
-> @@ -212,7 +211,7 @@ static const struct soc_device_attribute rcar_du_r8a7795_es1[] = {
->  static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
->  {
->  	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  	unsigned long mode_clock = mode->clock * 1000;
->  	u32 dsmr;
->  	u32 escr;
-> @@ -277,7 +276,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
->  			rcar_du_escr_divider(rcrtc->extclock, mode_clock,
->  					     ESCR_DCLKSEL_DCLKIN, &params);
->  
-> -		dev_dbg(rcrtc->group->dev->dev,	"mode clock %lu %s rate %lu\n",
-> +		dev_dbg(rcrtc->dev->dev, "mode clock %lu %s rate %lu\n",
->  			mode_clock, params.clk == rcrtc->clock ? "cpg" : "ext",
->  			params.rate);
->  
-> @@ -285,7 +284,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
->  		escr = params.escr;
->  	}
->  
-> -	dev_dbg(rcrtc->group->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
-> +	dev_dbg(rcrtc->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
->  
->  	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? ESCR13 : ESCR02, escr);
->  	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? OTAR13 : OTAR02, 0);
-> @@ -333,7 +332,7 @@ plane_format(struct rcar_du_plane *plane)
->  static void rcar_du_crtc_update_planes(struct rcar_du_crtc *rcrtc)
->  {
->  	struct rcar_du_plane *planes[RCAR_DU_NUM_HW_PLANES];
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  	unsigned int num_planes = 0;
->  	unsigned int dptsr_planes;
->  	unsigned int hwplanes = 0;
-> @@ -463,7 +462,7 @@ static bool rcar_du_crtc_page_flip_pending(struct rcar_du_crtc *rcrtc)
->  
->  static void rcar_du_crtc_wait_page_flip(struct rcar_du_crtc *rcrtc)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	if (wait_event_timeout(rcrtc->flip_wait,
->  			       !rcar_du_crtc_page_flip_pending(rcrtc),
-> @@ -493,7 +492,7 @@ static void rcar_du_crtc_setup(struct rcar_du_crtc *rcrtc)
->  	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? DS2PR : DS1PR, 0);
->  
->  	/* Enable the VSP compositor. */
-> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
-> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
->  		rcar_du_vsp_enable(rcrtc);
->  
->  	/* Turn vertical blanking interrupt reporting on. */
-> @@ -564,7 +563,7 @@ static void rcar_du_crtc_start(struct rcar_du_crtc *rcrtc)
->  
->  static void rcar_du_crtc_disable_planes(struct rcar_du_crtc *rcrtc)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  	struct drm_crtc *crtc = &rcrtc->crtc;
->  	u32 status;
->  
-> @@ -617,7 +616,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
->  	drm_crtc_vblank_off(crtc);
->  
->  	/* Disable the VSP compositor. */
-> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
-> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
->  		rcar_du_vsp_disable(rcrtc);
->  
->  	/*
-> @@ -627,7 +626,7 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
->  	 * TODO: Find another way to stop the display for DUs that don't support
->  	 * TVM sync.
->  	 */
-> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_TVM_SYNC))
-> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_TVM_SYNC))
->  		rcar_du_crtc_dsysr_clr_set(rcrtc, DSYSR_TVM_MASK,
->  					   DSYSR_TVM_SWITCH);
->  
-> @@ -661,7 +660,7 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
->  {
->  	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
->  	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(crtc->state);
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	rcar_du_crtc_get(rcrtc);
->  
-> @@ -689,7 +688,7 @@ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
->  {
->  	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
->  	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(old_state);
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  
->  	rcar_du_crtc_stop(rcrtc);
->  	rcar_du_crtc_put(rcrtc);
-> @@ -735,7 +734,7 @@ static void rcar_du_crtc_atomic_begin(struct drm_crtc *crtc,
->  	 */
->  	rcar_du_crtc_get(rcrtc);
->  
-> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
-> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
->  		rcar_du_vsp_atomic_begin(rcrtc);
->  }
->  
-> @@ -757,7 +756,7 @@ static void rcar_du_crtc_atomic_flush(struct drm_crtc *crtc,
->  		spin_unlock_irqrestore(&dev->event_lock, flags);
->  	}
->  
-> -	if (rcar_du_has(rcrtc->group->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
-> +	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
->  		rcar_du_vsp_atomic_flush(rcrtc);
->  }
->  
-> @@ -766,7 +765,7 @@ rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
->  			const struct drm_display_mode *mode)
->  {
->  	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
->  	unsigned int vbp;
->  
-> @@ -798,7 +797,7 @@ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
->  
->  static void rcar_du_crtc_crc_init(struct rcar_du_crtc *rcrtc)
->  {
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  	const char **sources;
->  	unsigned int count;
->  	int i = -1;
-> @@ -1080,7 +1079,7 @@ static const struct drm_crtc_funcs crtc_funcs_gen3 = {
->  static irqreturn_t rcar_du_crtc_irq(int irq, void *arg)
->  {
->  	struct rcar_du_crtc *rcrtc = arg;
-> -	struct rcar_du_device *rcdu = rcrtc->group->dev;
-> +	struct rcar_du_device *rcdu = rcrtc->dev;
->  	irqreturn_t ret = IRQ_NONE;
->  	u32 status;
->  
-> @@ -1172,6 +1171,7 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
->  	init_waitqueue_head(&rcrtc->vblank_wait);
->  	spin_lock_init(&rcrtc->vblank_lock);
->  
-> +	rcrtc->dev = rcdu;
->  	rcrtc->group = rgrp;
->  	rcrtc->mmio_offset = mmio_offsets[hwindex];
->  	rcrtc->index = hwindex;
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-> index 3f339a7e8d14..11814eafef77 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-> @@ -24,6 +24,7 @@ struct rcar_du_vsp;
->  /**
->   * struct rcar_du_crtc - the CRTC, representing a DU superposition processor
->   * @crtc: base DRM CRTC
-> + * @dev: the DU device
->   * @clock: the CRTC functional clock
->   * @extclock: external pixel dot clock (optional)
->   * @mmio_offset: offset of the CRTC registers in the DU MMIO block
-> @@ -43,6 +44,7 @@ struct rcar_du_vsp;
->  struct rcar_du_crtc {
->  	struct drm_crtc crtc;
->  
-> +	struct rcar_du_device *dev;
->  	struct clk *clock;
->  	struct clk *extclock;
->  	unsigned int mmio_offset;
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> index 0878accbd134..f6deea90dcce 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> @@ -43,7 +43,7 @@ static void rcar_du_vsp_complete(void *private, bool completed, u32 crc)
->  void rcar_du_vsp_enable(struct rcar_du_crtc *crtc)
->  {
->  	const struct drm_display_mode *mode = &crtc->crtc.state->adjusted_mode;
-> -	struct rcar_du_device *rcdu = crtc->group->dev;
-> +	struct rcar_du_device *rcdu = crtc->dev;
->  	struct vsp1_du_lif_config cfg = {
->  		.width = mode->hdisplay,
->  		.height = mode->vdisplay,
+We could use u16 ? However, Bjorn's concern was that using unsigned long
+for registers was not recommended ; how's unsigned int better ?
 
 -- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Marek Vasut
