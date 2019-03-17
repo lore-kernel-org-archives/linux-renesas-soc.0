@@ -2,131 +2,130 @@ Return-Path: <SRS0=pEya=RU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9ACAC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 00:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C79C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 02:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2AD321871
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 00:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 695B9218D0
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 02:20:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csfuSrxz"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iFE+4TrX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfCQAGk (ORCPT
+        id S1726776AbfCQCUE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 16 Mar 2019 20:06:40 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39999 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfCQAGk (ORCPT
+        Sat, 16 Mar 2019 22:20:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49038 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbfCQCUE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 16 Mar 2019 20:06:40 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t5so13205492wri.7;
-        Sat, 16 Mar 2019 17:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FiEiMwhVyHOx5HVB+onPD8sXRF3yP6ld81UFhnLGG4w=;
-        b=csfuSrxz5MMa8B7LpBp6eTZIvcvwLhhIXsA61nUQDPkydYXEFsju4QPbNEKaSjRG8P
-         9C5t33GwzlxfymRZKf0pOJ2gZHWf8Ty8DxxW87K1FeS11k/p7za2lfPnMsZgGLsGHPwY
-         1R+HtIuE3ZUlW4N++s0z7fKmIswM1gebuGqBYsowzL2hoycGR2VtEBkODRYvle2asBak
-         NdQS0XzNwqfI1dlNZwcOjXcf4rDVOdUSL8j87TPB6+GLivrlNpRDLOTd/wGa2Z2JV3C5
-         HfcZ2P/Eit7rfd2lcLNZvWr3FBz9ACsvO+4okomgHMUS+1RekmBq42fVOIRpMZYF5aTL
-         uiFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FiEiMwhVyHOx5HVB+onPD8sXRF3yP6ld81UFhnLGG4w=;
-        b=WZmcOEY93mMWEdqZahNN7MEt753vya8AoEDkN7svZeypUE6Eo6iZRwxJ+Vym0ewg++
-         5Rya2D2/qJfcbJtob0e0+9k0krpi5/9zLyY7tSAK8z5KYNTr686YlcKPFBXs4ULfTB+y
-         RzBPgbfBqID4P5t8UKldKEy7xJUwmct+ttbtymXQSxr2JxVIew01lWKuPKzK/n8guykE
-         5d403VTfjb8vOOsR3MTtOvmiLk4p+NOtfpbSWST0eUffFLsDZE5Lck5cDjpWnPrmSwq/
-         XxDK+H6w5GCebJvuXyKjj8AUxx0CscTykJQPOUHoBmGZqra0fbtZS5dL1T/h+IZ0E3qV
-         9E+w==
-X-Gm-Message-State: APjAAAUvZ5jpRgI7mDfQgoGGHX1nLA1Vrd5uBveyTKTRAFCybWC5gIW3
-        UEW+GYjWBgub3Ifh+g6KM854T303
-X-Google-Smtp-Source: APXvYqx6go4G2DvrDhQjZ4jkoNRG3yNvSVy5I40LYJST/5yb8eZOKixZQLsHVdfYg6rsmep9P5hW6A==
-X-Received: by 2002:adf:eb8f:: with SMTP id t15mr138018wrn.119.1552781198082;
-        Sat, 16 Mar 2019 17:06:38 -0700 (PDT)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id h1sm3158294wmb.5.2019.03.16.17.06.36
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Mar 2019 17:06:37 -0700 (PDT)
-Subject: Re: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in register
- accessors
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20190309005613.1493-1-marek.vasut@gmail.com>
- <20190309005613.1493-2-marek.vasut@gmail.com>
- <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <d49be905-2e59-e65f-cf3b-191eb972ec45@gmail.com>
-Date:   Sun, 17 Mar 2019 00:59:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 16 Mar 2019 22:20:04 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id CEEA3255;
+        Sun, 17 Mar 2019 03:20:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552789202;
+        bh=mwg+/h/LoUeTzOw1fP4RdzRM8Eksn9Tq5YgjnwRul9Q=;
+        h=Date:From:To:Cc:Subject:From;
+        b=iFE+4TrX0DiYWz4kZTa/xDZ2fO/GzMgR7hZB9R4FUFX/nY43uznka8Ufyl3cgLx3B
+         +N5EJdSeAnwg2DlH0xpTrR8JrwcxoeV1MA3TCSn61es7je0PTYfcb5KLfgr4Hy2x/Z
+         J4Tz+9FW4B0yWZL4WOgUfuqOoTj9jZPzRGe2NNR8=
+Date:   Sun, 17 Mar 2019 04:19:54 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [GIT PULL FOR renesas-drivers] DU LVDS dual-link mode support
+Message-ID: <20190317021954.GA4912@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 3/11/19 10:41 AM, Geert Uytterhoeven wrote:
-> Hi Marek,
-> 
-> On Sat, Mar 9, 2019 at 1:56 AM <marek.vasut@gmail.com> wrote:
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>
->> Replace unsigned long with u32 in register accessor functions,
->> since they access 32bit registers.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> 
-> Thanks for your patch!
-> 
-> Minor nit below.
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> BTW, there are a few more suspicious/incorrect uses of unsigned long:
->   - incorrect debug prints on arm64,
->   - more unsigned long register values,
->   - phys_addr_t
-> Care to fix these as well?
+Hi Geert,
 
-I'll send those shortly, as a separate series since they don't conflict
-with each other.
+The following changes since commit 3a7d2f4f4427f4b241f8240e370099e2ec1fd307:
 
-> Thanks!
-> 
->> --- a/drivers/pci/controller/pcie-rcar.c
->> +++ b/drivers/pci/controller/pcie-rcar.c
->> @@ -152,14 +152,12 @@ struct rcar_pcie {
->>         struct                  rcar_msi msi;
->>  };
->>
->> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
->> -                              unsigned long reg)
->> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
-> 
-> Doesn't unsigned int make more sense for reg?
+  Merge branch 'etnaviv/next' of https://git.pengutronix.de/git/lst/linux into drm-next (2019-03-12 15:20:57 +1000)
 
-Isn't u32 more explicit ?
+are available in the Git repository at:
+
+  git://linuxtv.org/pinchartl/media.git b3ddd36a2b05
+
+for you to fetch changes up to b3ddd36a2b05074db0810a0f6508562f80045323:
+
+  arm64: dts: renesas: r8a7799[05]: Point LVDS0 to its companion LVDS1 (2019-03-13 03:42:41 +0200)
+
+The above commit is part of a branch name drm/du/lvds/dual-link in the
+same tree. The two top-most commits of the branch are hacks meant for
+testing only, so I didn't want to include them in this pull request.
+
+Please note that this pull request refers to prototype RFC code, I'll
+let you decide if you want to include it in renesas-drivers.
+
+----------------------------------------------------------------
+Laurent Pinchart (13):
+      drm: rcar-du: Support panels connected directly to the DPAD outputs
+      drm: Clarify definition of the DRM_BUS_FLAG_(PIXDATA|SYNC)_* macros
+      drm: Use new DRM_BUS_FLAG_*_(DRIVE|SAMPLE)_(POS|NEG)EDGE flags
+      drm: bridge: Add dual_link field to the drm_bridge_timings structure
+      dt-bindings: display: bridge: thc63lvd1024: Document dual-link operation
+      drm: bridge: thc63: Report input bus mode through bridge timings
+      dt-bindings: display: renesas: lvds: Add renesas,companion property
+      drm: rcar-du: lvds: Remove LVDS double-enable checks
+      drm: rcar-du: lvds: Adjust operating frequency for D3 and E3
+      drm: rcar-du: lvds: Set LVEN and LVRES bits together on D3
+      drm: rcar-du: lvds: Add support for dual-link mode
+      drm: rcar-du: Skip LVDS1 output on Gen3 when using dual-link LVDS mode
+      arm64: dts: renesas: r8a7799[05]: Point LVDS0 to its companion LVDS1
+
+Stefan Agner (1):
+      drm/bridge: use bus flags in bridge timings
+
+ .../bindings/display/bridge/renesas,lvds.txt       |   6 +
+ .../bindings/display/bridge/thine,thc63lvd1024.txt |   6 +
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi          |   2 +
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi          |   2 +
+ drivers/gpu/drm/bridge/dumb-vga-dac.c              |   6 +-
+ drivers/gpu/drm/bridge/tc358767.c                  |   4 +-
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |  54 ++++++--
+ drivers/gpu/drm/drm_modes.c                        |  12 +-
+ drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c         |   2 +-
+ drivers/gpu/drm/imx/ipuv3-crtc.c                   |   2 +-
+ drivers/gpu/drm/mxsfb/mxsfb_crtc.c                 |   6 +-
+ drivers/gpu/drm/omapdrm/displays/encoder-tfp410.c  |   5 +-
+ .../omapdrm/displays/panel-lgphilips-lb035q02.c    |   5 +-
+ .../drm/omapdrm/displays/panel-nec-nl8048hl11.c    |   5 +-
+ .../drm/omapdrm/displays/panel-sharp-ls037v7dw01.c |   5 +-
+ .../drm/omapdrm/displays/panel-sony-acx565akm.c    |   5 +-
+ .../drm/omapdrm/displays/panel-tpo-td028ttec1.c    |   5 +-
+ .../drm/omapdrm/displays/panel-tpo-td043mtea1.c    |   5 +-
+ drivers/gpu/drm/omapdrm/dss/dsi.c                  |   4 +-
+ drivers/gpu/drm/omapdrm/dss/sdi.c                  |   4 +-
+ drivers/gpu/drm/omapdrm/omap_encoder.c             |   8 +-
+ drivers/gpu/drm/panel/panel-arm-versatile.c        |   4 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9322.c       |   4 +-
+ drivers/gpu/drm/panel/panel-seiko-43wvf1g.c        |   2 +-
+ drivers/gpu/drm/panel/panel-simple.c               |  24 ++--
+ drivers/gpu/drm/panel/panel-tpo-tpg110.c           |  10 +-
+ drivers/gpu/drm/pl111/pl111_display.c              |   2 +-
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |  66 +++++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c              |   2 +-
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                | 140 +++++++++++++++------
+ drivers/gpu/drm/rcar-du/rcar_lvds.h                |   5 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   4 +-
+ drivers/gpu/drm/tve200/tve200_display.c            |   3 +-
+ include/drm/drm_bridge.h                           |  19 ++-
+ include/drm/drm_connector.h                        |  36 +++++-
+ 35 files changed, 346 insertions(+), 128 deletions(-)
 
 -- 
-Best regards,
-Marek Vasut
+Regards,
+
+Laurent Pinchart
