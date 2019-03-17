@@ -2,93 +2,80 @@ Return-Path: <SRS0=pEya=RU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D04C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 23:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A83BDC10F05
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 23:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C482085A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 23:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76BA72085A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 23:39:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e9gr7hHa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LriUeb19"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfCQXjx (ORCPT
+        id S1726229AbfCQXjy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Mar 2019 19:39:53 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43694 "EHLO
+        Sun, 17 Mar 2019 19:39:54 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40408 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfCQXjw (ORCPT
+        with ESMTP id S1727426AbfCQXjx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Mar 2019 19:39:52 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d17so15051125wre.10;
-        Sun, 17 Mar 2019 16:39:50 -0700 (PDT)
+        Sun, 17 Mar 2019 19:39:53 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t5so15069363wri.7;
+        Sun, 17 Mar 2019 16:39:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+        h=from:subject:to:cc:references:openpgp:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Klz6fsM7pWH2lfAGiDQQEG42ngIYcp6Ymi1ce0uY+BA=;
-        b=e9gr7hHafA7skz1EFtMfjL1deyzRBe+RVfyhdZ8UkXt/DsSBCBTygvFsNK/gB6UfQX
-         fasKq+B4wXJYwoFeCrLZyj1le1K1u9X1VeABEn/YooTk1u4UuhrgxJy5fjaf2ZglHO4o
-         QX097DTiV4gdAp4iSvQqkgq0gikaBpu2ohbPpvCIjqAEogrN10+0AtCGaMAcAR+V5feW
-         cdfYw0tij2kDFatG/JGBkeTgfmHahxn0Ef32eiXNFPpk+jeXWWwG1UcRUNj3kZq8U8RH
-         4N75jgkBigLNgFXFUSPgEKTmZwmZk/rtjBbvCFjWOWfef6JQtQUwvBzyxx3J0muEKmzm
-         Qaqg==
+        bh=BkyFX2YMIYf0fmTEP85BnFQvg3moQrQUpPFR1cnvTAg=;
+        b=LriUeb19+2OamfT1oF6pjAjuU0SE8PRnUL8mrcBZNuVnNmcgHQFV3xL7MbbMIEev6C
+         a/QZBroYHqNpMiwtiw3dY9WcKWy/dEPZPcSI/WrnIzGU0d1Zjt9N7M8cB1zu69JgaiLa
+         zDupdS2wAqhOLeT2l192yzlS93yaY8kj0yc9k1xjH5BkAd/EiCN7EEh98kR/QR5rfDdE
+         SDk9030N2DEGuWufROJvEQc//WDxsL1LhIHsI0XMUHfiBl3Ri1rIXUMN073vfGGRgHqG
+         imzhQa/r+kwj2pk82IO9AsogDF0qKgnG3t8b/87GfbnHiOMe7D3bE0wOjmvWWROcAl7p
+         OBew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+        h=x-gm-message-state:from:subject:to:cc:references:openpgp:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Klz6fsM7pWH2lfAGiDQQEG42ngIYcp6Ymi1ce0uY+BA=;
-        b=rLfFlZzPH2tQZTVedjJS0p9nRPmbQyWsC43EhcfKULcVR4Zx4XLFNM9YQYsKzjpegw
-         jJl2gWGZSYRkbI95MqJEfQxa+XdBSfeerTJnhQlE81KY80qXRZFuuQdwCRyxjUbzq253
-         /XXHcbxOjXj03XiO2R6YdYFtI5h1Hzd57aUcVMlkkzL5J2LAnRxCbGvLxsao05Oo3qQ6
-         6vl4+kkJ2flzrIdyu7Vxa8cn6HpUU0zrrrxQuQUpkze/r+kDc+I3WcK/LZXchgLrNcTr
-         GuXZzA+Rs8Zla8ZziVA3+AnA9p1/uqJHrhLlew2g3aEDYZ0VLtTF78VvFh3h58sFQknc
-         Auwg==
-X-Gm-Message-State: APjAAAXFhCjpJZSE30azqFeeBPbo1KVblDXXgsM2YGxkwyaSrfKAWNIt
-        lkc6dSqWluoxaqzngg8xjIMgfhEL
-X-Google-Smtp-Source: APXvYqzmkK5vLMVoVAQQ7O6k/z4h9whGxdU4eKgL4fmjDjp2hhOwLe7+BiKZpbuHQ/BUA44J0YPevg==
-X-Received: by 2002:a05:6000:128f:: with SMTP id f15mr9518808wrx.74.1552865989688;
-        Sun, 17 Mar 2019 16:39:49 -0700 (PDT)
+        bh=BkyFX2YMIYf0fmTEP85BnFQvg3moQrQUpPFR1cnvTAg=;
+        b=GY2mSPtaMclWwSTX0zep6RA0fDRpsYCT5B7NvhE9p0wp6tBlvd+NJGadxYLoJBmYMt
+         xoeHaA4C9Uec4iji7/t0eEgWHG3g1dbHBiS+2Esws07DEo7C/CuGz/pvgr4WdTLTaV8T
+         hK1tHe5Gn/Qjt9OcriQGnM9w+1sPofl34JVqBb37Be0+H3E37H9kAjfU/rMSnTi0Z7of
+         AJ2z6kvbD0LcDrcyusDUyPYXSuILV1oalFL7rp7ffXwo75P4dx+xSeIUBOP4Y/vDQ1iO
+         jlbg0/ia3v3AZtTsniAyLDFGQrziLHoqgfjOJkpMEPTqOn5oG5mcQSeXGCrHPUGmIY3m
+         SGeg==
+X-Gm-Message-State: APjAAAUqrxH8etkXggOo1h8WKkYbTr7iq7Db1tCiZEKtDc8lMRt3AjmX
+        lKzUXmZZ85KEZMlEpIBYxKlE9WTA
+X-Google-Smtp-Source: APXvYqzEzKGZuneuQ571IkpyENnrb0ngk72NbW6ZfbVCIs5kp1RsqMVtAUUlHhrq0uL4849q1YzILw==
+X-Received: by 2002:adf:da45:: with SMTP id r5mr9680900wrl.84.1552865991273;
+        Sun, 17 Mar 2019 16:39:51 -0700 (PDT)
 Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id p6sm11151339wre.63.2019.03.17.16.39.47
+        by smtp.gmail.com with ESMTPSA id q2sm19528453wrd.46.2019.03.17.16.39.50
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Mar 2019 16:39:48 -0700 (PDT)
-Subject: Re: [PATCH 1/2] [RFC] ata: ahci: Respect bus DMA constraints
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>, linux-ide@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
+        Sun, 17 Mar 2019 16:39:50 -0700 (PDT)
+From:   Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH 2/3] PCI: rcar: Allow 64bit MSI addresses
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-pci@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jens Axboe <axboe@fb.com>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20190307000440.8708-1-marek.vasut@gmail.com>
- <7c051bbd-7835-9cab-30b2-0acde1364781@arm.com>
- <356f3ee8-407f-f865-e5cc-333695d4f857@gmail.com>
- <79e44e90-b16a-5315-e02f-101a2ebbb6a0@arm.com>
- <a8b5b75f-2660-e216-033a-77808e2afb76@gmail.com>
- <20190308071810.GA11959@lst.de>
- <a6b34982-9100-0e60-c3eb-6ed8fcbe9e93@gmail.com>
- <20190313183056.GB4926@lst.de>
- <3b665597-a616-70fc-8cd0-dfde236fe669@gmail.com>
- <e2322e9d-46a1-c588-85ea-f56e3846996d@gmail.com>
- <CAMuHMdWiBh0JMKhXPpZh_PqvUGELN9PbgbZttTgKuzXZ3da5DA@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+References: <20190317000608.24881-1-marek.vasut@gmail.com>
+ <20190317000608.24881-2-marek.vasut@gmail.com> <20190317091228.GB2268@kunai>
 Openpgp: preference=signencrypt
-Message-ID: <6eb8eb87-f4c0-a1be-7585-cdc10f620899@gmail.com>
-Date:   Mon, 18 Mar 2019 00:36:01 +0100
+Message-ID: <940fd646-0049-890a-ac00-8bc9361b2431@gmail.com>
+Date:   Mon, 18 Mar 2019 00:37:07 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWiBh0JMKhXPpZh_PqvUGELN9PbgbZttTgKuzXZ3da5DA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190317091228.GB2268@kunai>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -96,89 +83,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 3/17/19 11:29 AM, Geert Uytterhoeven wrote:
-> Hi Marek,
-
-Hi,
-
-> On Sun, Mar 17, 2019 at 12:04 AM Marek Vasut <marek.vasut@gmail.com> wrote:
->> On 3/16/19 10:25 PM, Marek Vasut wrote:
->>> On 3/13/19 7:30 PM, Christoph Hellwig wrote:
->>>> On Sat, Mar 09, 2019 at 12:23:15AM +0100, Marek Vasut wrote:
->>>>> On 3/8/19 8:18 AM, Christoph Hellwig wrote:
->>>>>> On Thu, Mar 07, 2019 at 12:14:06PM +0100, Marek Vasut wrote:
->>>>>>>> Right, but whoever *interprets* the device masks after the driver has
->>>>>>>> overridden them should be taking the (smaller) bus mask into account as
->>>>>>>> well, so the question is where is *that* not being done correctly?
->>>>>>>
->>>>>>> Do you have a hint where I should look for that ?
->>>>>>
->>>>>> If this a 32-bit ARM platform it might the complete lack of support
->>>>>> for bus_dma_mask in arch/arm/mm/dma-mapping.c..
->>>>>
->>>>> It's an ARM 64bit platform, just the PCIe controller is limited to 32bit
->>>>> address range, so the devices on the PCIe bus cannot read the host's
->>>>> DRAM above the 32bit limit.
->>>>
->>>> arm64 should take the mask into account both for the swiotlb and
->>>> iommu case.  What are the exact symptoms you see?
->>>
->>> With the nvme, the device is recognized, but cannot be used.
->>> It boils down to PCI BAR access being possible, since that's all below
->>> the 32bit boundary, but when the device tries to do any sort of DMA,
->>> that transfer returns nonsense data.
->>>
->>> But when I call dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(32) in
->>> the affected driver (thus far I tried this nvme, xhci-pci and ahci-pci
->>> drivers), it all starts to work fine.
->>>
->>> Could it be that the driver overwrites the (coherent_)dma_mask and
->>> that's why the swiotlb/iommu code cannot take this into account ?
->>>
->>>> Does it involve
->>>> swiotlb not kicking in, or iommu issues?
->>>
->>> How can I check ? I added printks into arch/arm64/mm/dma-mapping.c and
->>> drivers/iommu/dma-iommu.c , but I suspect I need to look elsewhere.
+On 3/17/19 10:12 AM, Wolfram Sang wrote:
+> On Sun, Mar 17, 2019 at 01:06:07AM +0100, marek.vasut@gmail.com wrote:
+>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
 >>
->> Digging further ...
+>> The MSI address can be 64bit. Switch the data type used to hold the
+>> result of virt_to_phys() to phys_addr_t to reflect it's properties
+>> correctly and program the top 32bits of PA into PCIEMSIAUR.
 >>
->> drivers/nvme/host/pci.c nvme_map_data() calls dma_map_sg_attrs() and the
->> resulting sglist contains entry with >32bit PA. This is because
->> dma_map_sg_attrs() calls dma_direct_map_sg(), which in turn calls
->> dma_direct_map_sg(), then dma_direct_map_page() and that's where it goes
->> weird.
->>
->> dma_direct_map_page() does a dma_direct_possible() check before
->> triggering swiotlb_map(). The check succeeds, so the later isn't executed.
->>
->> dma_direct_possible() calls dma_capable() with dev->dma_mask =
->> DMA_BIT_MASK(64) and dev->dma_bus_mask = 0, so
->> min_not_zero(*dev->dma_mask, dev->bus_dma_mask) returns DMA_BIT_MASK(64).
->>
->> Surely enough, if I hack dma_direct_possible() to return 0,
->> swiotlb_map() kicks in and the nvme driver starts working fine.
->>
->> I presume the question here is, why is dev->bus_dma_mask = 0 ?
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > 
-> Because that's the default, and almost no code overrides that?
+> Looks sane. Not being a PCI expert, I wonder: Were we just lucky to not
+> hit a 64-bit MSI address before?
 
-But shouldn't drivers/of/device.c set that for the PCIe controller ?
+I wonder about that, virt_to_phys(__get_free_pages(GFP_KERNEL, 0)) would
+happily return 64bit address, but with the cards I tested (a few intel
+NICs [igb, e1000e], PCIe NVME SSDs and xHCI HCD), I am getting the MSIs
+either way.
 
-> $ git grep "\<bus_dma_mask ="
-> arch/mips/pci/fixup-sb1250.c:           dev->dev.bus_dma_mask =
-> DMA_BIT_MASK(32);
-> arch/x86/kernel/pci-dma.c:      pdev->dev.bus_dma_mask = DMA_BIT_MASK(32);
-> drivers/acpi/arm64/iort.c:              dev->bus_dma_mask = mask;
-> drivers/of/device.c:            dev->bus_dma_mask = mask;
-> 
-> dev is the nvme PCI device, I assume? So you can ignore the last match.
-> 
-> The first two seem to be related to platforms that cannot do >32 bit DMA
-> on PCI. So that's a hint on how to fix this...
+> Is this tied to our 32-bit limitation?
 
-That doesn't feel right, it's not a platform limitation, but a PCIe IP
-limitation, so this fix should live somewhere in drivers/ I think ?
+This might be a question for the HW team. I would be tempted to
+cautiously say yes.
 
 -- 
 Best regards,
