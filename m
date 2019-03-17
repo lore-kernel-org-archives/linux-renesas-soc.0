@@ -2,96 +2,88 @@ Return-Path: <SRS0=pEya=RU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFAFC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 20:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CB8C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 21:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEDFA20896
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 20:09:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JJfu2KC6"
+	by mail.kernel.org (Postfix) with ESMTP id 919632082F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 17 Mar 2019 21:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbfCQUJ7 (ORCPT
+        id S1726702AbfCQVXK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 17 Mar 2019 16:09:59 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41064 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbfCQUJ7 (ORCPT
+        Sun, 17 Mar 2019 17:23:10 -0400
+Received: from sauhun.de ([88.99.104.3]:58056 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726333AbfCQVXK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 17 Mar 2019 16:09:59 -0400
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 00E8823A;
-        Sun, 17 Mar 2019 21:09:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552853397;
-        bh=aJwCyVjzSQW+OrxnEPFY7fh0jJd5NQJ35HeTl2ngyUw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JJfu2KC6FWlaIr/r58vgGdfnqfgdhEhaKJh+3Sa0+aCFnpOyA0t/je4KJPrK/4hby
-         srg/FoH/eamhm9fPvsEiqD0uBsgqUAa8PO0SP+XbA4mS+tFb914QvYvDbwveoY8kYH
-         PSXMw+DhLkDf+dkojS1VO2JofnwYMbCAnXpWdCsM=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [GIT PULL FOR renesas-drivers] du/for-renesas-drivers
-Date:   Sun, 17 Mar 2019 20:09:53 +0000
-Message-Id: <20190317200953.16323-1-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.19.1
+        Sun, 17 Mar 2019 17:23:10 -0400
+Received: from localhost (unknown [81.92.17.147])
+        by pokefinder.org (Postfix) with ESMTPSA id C36C12C27DA;
+        Sun, 17 Mar 2019 22:23:07 +0100 (CET)
+Date:   Sun, 17 Mar 2019 22:23:07 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Jean Delvare <jdelvare@suse.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH i2c-tools 1/2] tools: i2ctransfer: consequently document
+ -a
+Message-ID: <20190317212307.GA1471@kunai>
+References: <20190311223335.18586-1-wsa+renesas@sang-engineering.com>
+ <20190311223335.18586-2-wsa+renesas@sang-engineering.com>
+ <20190315134345.333416b2@endymion>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
+Content-Disposition: inline
+In-Reply-To: <20190315134345.333416b2@endymion>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
 
-Please consider including this release in renesas-drivers.
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-Regards
 
-Kieran
+> > +  i2ctransfer: Mention '-a' everywhere in the manpage
+>=20
+> Not sure how "once" qualifies as "everywhere" ;-)
 
-The following changes since commit 0f1d37e65a59e9db33ab85f6e2c9784768ef80f4:
+Yes, this patch changes it only once but after that it is everywhere :)
+(It was mentioned in another place already)
 
-  Merge branch 'drm-next-5.1' of git://people.freedesktop.org/~agd5f/linux into drm-next (2019-03-14 12:15:02 +1000)
+> Looks good to me.
+>=20
+> Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
-are available in the Git repository at:
+Thanks!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git du/for-renesas-drivers
 
-for you to fetch changes up to 99deb47fa63bb9fc7bd691e358fea1c5bccc1da2:
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  drm: rcar-du: Add group hooks for atomic-commit (2019-03-17 19:29:37 +0000)
+-----BEGIN PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Kieran Bingham (9):
-      drm: Fix subtle spelling error in drm_crtc_state
-      drm: rcar-du: crtc: Make local functions static
-      drm: rcar-du: Remove unused prototypes
-      drm: rcar-du: Link CRTCs to the DU device
-      drm: rcar-du: Add CRTC standby helpers
-      drm: rcar-du: Add pre/post commit CRTC helpers
-      drm: rcar-du: Provide for_each_group helper
-      drm: rcar-du: Create a group state object
-      drm: rcar-du: Add group hooks for atomic-commit
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyOurYACgkQFA3kzBSg
+Kba6IQ//RW5H4Uuw+Wfen0e9iazWFhgJlsQOTDlit1TBq6ZN8BoNNkNcmTweG0Xq
+Muu4mDxYCHbCHSHvbpf1cQ3cZuDIXp2XBaoN0AfuZXJ/1apo5szs+T4Zuw0J0KjY
+DO22dejjKccAFP6fgx319H5DRInqx/6KsRaUkwVwcgPon01uJ/wHn00iWXN1DN+o
+2f1y/mvyXSRyBkaIA0UOQJY5zwB87a6GsPg/IhmJfzwXGLzrBIjEW7G+mL9K1Zwl
+3ADyBLvLxmjH5Dby7ndeg5D+f8KWmHEWhGv1Owg0oEiNZVE4PEbC9Rx2OXlx1gHl
+oUHkNqvdO7Wpu53jtEiRpDGXfCff/5qICaODtfu0dk2OqjWEtStNi6tAHcQVFh0J
+M7KiAhi8Gk4wZ2Lmdh8SVUb8fYxVKhTPBNfXApTvHq4GK4SgfECm9kAkFwK92MDd
+fWo214hact+plnTBtRgxgNsjMCtKj7tiM3DNHzRk9Ce6oxEFajdDZkcnYkUtKO31
+SL9ljSDfU780ASdyV5uejyWz4G+9/oU58k/uEfWeq1kYCO4dpwhCIULGI+B3vsBT
+80ZXxJuwl1t84+xXv254De0IuudLVsC9V/HnV0YI6KRLfz+eCbSMrCnktp1aqBpo
+4sqCyZBxB+YanbId7Kszanxx11LWsIUNvU82BEwG4VuJdNcX6U4=
+=1ePF
+-----END PGP SIGNATURE-----
 
-Laurent Pinchart (1):
-      drm: rcar-du: Support panels connected directly to the DPAD outputs
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 159 +++++++++++++++-----------
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h    |  16 ++-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h     |   5 +
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  54 ++++++++-
- drivers/gpu/drm/rcar-du/rcar_du_group.c   | 182 ++++++++++++++++++++++++------
- drivers/gpu/drm/rcar-du/rcar_du_group.h   |  36 +++++-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c     |  49 +++-----
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c     |   2 +-
- include/drm/drm_crtc.h                    |   2 +-
- 9 files changed, 359 insertions(+), 146 deletions(-)
+--qMm9M+Fa2AknHoGS--
