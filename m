@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC2FC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C46C10F10
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D81A20880
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2923A20872
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qw9XYHjh"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="V6NLIDff"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbfCRObs (ORCPT
+        id S1727859AbfCRObu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 10:31:48 -0400
+        Mon, 18 Mar 2019 10:31:50 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:59242 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbfCRObs (ORCPT
+        with ESMTP id S1727854AbfCRObt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 10:31:48 -0400
+        Mon, 18 Mar 2019 10:31:49 -0400
 Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D2A51AAC;
-        Mon, 18 Mar 2019 15:31:39 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 81B961AA6;
+        Mon, 18 Mar 2019 15:31:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552919499;
-        bh=o3u3eSCf3ji+U5B23jXSmj7kAC5UmwM1WJWCC+52i3k=;
+        s=mail; t=1552919500;
+        bh=rpLinvgwPr2/ewb0WIu3TadMwtSdEkUY5fxl2AVhxxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qw9XYHjhm6MLKWIpT+9CIhGcEJxJtEa3rC6ug6A5UueOR/ZBF6ILSolmR4oOuNtFo
-         h+rjzj6GH2VFydjxyNUupcgwvRvBQZUqpdS9iONV/q8Ebp7HA6mjmRyPlXwcqIOTWU
-         5SCgGz3nw5zeFmJ6qIttiQum3H4uJjiQltxdPOs0=
+        b=V6NLIDffSRE8TMtOwfzfl7a/CiFwyp2CoFi193zVDvsJ9pe7D2nq5id2/wYKaAw1x
+         zPQ+AWasyp9Ky0OIIabXWTawbbqrW1y0ifvw4VMx/E1Nxi/QXygrEXfHikiekK/zsf
+         zGOgxJX96om1GEAU7Am4picLa6KkgB/skWCWdxjw=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH v7 14/18] drm: writeback: Add job prepare and cleanup operations
-Date:   Mon, 18 Mar 2019 16:31:17 +0200
-Message-Id: <20190318143121.29561-15-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v7 16/18] drm: rcar-du: Store V4L2 fourcc in rcar_du_format_info structure
+Date:   Mon, 18 Mar 2019 16:31:19 +0200
+Message-Id: <20190318143121.29561-17-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -51,291 +51,265 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As writeback jobs contain a framebuffer, drivers may need to prepare and
-cleanup them the same way they can prepare and cleanup framebuffers for
-planes. Add two new optional connector helper operations,
-.prepare_writeback_job() and .cleanup_writeback_job() to support this.
-
-The job prepare operation is called from
-drm_atomic_helper_prepare_planes() to avoid a new atomic commit helper
-that would need to be called by all drivers not using
-drm_atomic_helper_commit(). The job cleanup operation is called from the
-existing drm_writeback_cleanup_job() function, invoked both when
-destroying the job as part of a aborted commit, or when the job
-completes.
-
-The drm_writeback_job structure is extended with a priv field to let
-drivers store per-job data, such as mappings related to the writeback
-framebuffer.
-
-For internal plumbing reasons the drm_writeback_job structure needs to
-store a back-pointer to the drm_writeback_connector. To avoid pushing
-too much writeback-specific knowledge to drm_atomic_uapi.c, create a
-drm_writeback_set_fb() function, move the writeback job setup code
-there, and set the connector backpointer. The prepare_signaling()
-function doesn't need to allocate writeback jobs and can ignore
-connectors without a job, as it is called after the writeback jobs are
-allocated to store framebuffers, and a writeback fence with a
-framebuffer is an invalid configuration that gets rejected by the commit
-check.
+The mapping between DRM and V4L2 fourcc's is stored in two separate
+tables in rcar_du_vsp.c. In order to make it reusable to implement
+writeback support, move it to the rcar_du_format_info structure.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-Changes since v5:
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 25 +++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_kms.h |  1 +
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 44 ++++-----------------------
+ 3 files changed, 32 insertions(+), 38 deletions(-)
 
-- Export drm_writeback_prepare_job()
-- Check for .prepare_writeback_job() in drm_writeback_prepare_job()
----
- drivers/gpu/drm/drm_atomic_helper.c      | 11 ++++++
- drivers/gpu/drm/drm_atomic_uapi.c        | 31 +++++------------
- drivers/gpu/drm/drm_writeback.c          | 44 ++++++++++++++++++++++++
- include/drm/drm_modeset_helper_vtables.h |  7 ++++
- include/drm/drm_writeback.h              | 28 ++++++++++++++-
- 5 files changed, 97 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 40ac19848034..f89641216a44 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -2261,10 +2261,21 @@ EXPORT_SYMBOL(drm_atomic_helper_commit_cleanup_done);
- int drm_atomic_helper_prepare_planes(struct drm_device *dev,
- 				     struct drm_atomic_state *state)
- {
-+	struct drm_connector *connector;
-+	struct drm_connector_state *new_conn_state;
- 	struct drm_plane *plane;
- 	struct drm_plane_state *new_plane_state;
- 	int ret, i, j;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 3b7d50a8fb9b..3a5e719a6b66 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -34,60 +34,70 @@
+ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+ 	{
+ 		.fourcc = DRM_FORMAT_RGB565,
++		.v4l2 = V4L2_PIX_FMT_RGB565,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_ARGB1555,
++		.v4l2 = V4L2_PIX_FMT_ARGB555,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_ARGB,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_XRGB1555,
++		.v4l2 = V4L2_PIX_FMT_XRGB555,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_ARGB,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_XRGB8888,
++		.v4l2 = V4L2_PIX_FMT_XBGR32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
+ 		.edf = PnDDCR4_EDF_RGB888,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_ARGB8888,
++		.v4l2 = V4L2_PIX_FMT_ABGR32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_16BPP,
+ 		.edf = PnDDCR4_EDF_ARGB8888,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_UYVY,
++		.v4l2 = V4L2_PIX_FMT_UYVY,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUYV,
++		.v4l2 = V4L2_PIX_FMT_YUYV,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV12,
++		.v4l2 = V4L2_PIX_FMT_NV12M,
+ 		.bpp = 12,
+ 		.planes = 2,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV21,
++		.v4l2 = V4L2_PIX_FMT_NV21M,
+ 		.bpp = 12,
+ 		.planes = 2,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+ 		.edf = PnDDCR4_EDF_NONE,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV16,
++		.v4l2 = V4L2_PIX_FMT_NV16M,
+ 		.bpp = 16,
+ 		.planes = 2,
+ 		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+@@ -99,62 +109,77 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+ 	 */
+ 	{
+ 		.fourcc = DRM_FORMAT_RGB332,
++		.v4l2 = V4L2_PIX_FMT_RGB332,
+ 		.bpp = 8,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_ARGB4444,
++		.v4l2 = V4L2_PIX_FMT_ARGB444,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_XRGB4444,
++		.v4l2 = V4L2_PIX_FMT_XRGB444,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_BGR888,
++		.v4l2 = V4L2_PIX_FMT_RGB24,
+ 		.bpp = 24,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_RGB888,
++		.v4l2 = V4L2_PIX_FMT_BGR24,
+ 		.bpp = 24,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_BGRA8888,
++		.v4l2 = V4L2_PIX_FMT_ARGB32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_BGRX8888,
++		.v4l2 = V4L2_PIX_FMT_XRGB32,
+ 		.bpp = 32,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVYU,
++		.v4l2 = V4L2_PIX_FMT_YVYU,
+ 		.bpp = 16,
+ 		.planes = 1,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_NV61,
++		.v4l2 = V4L2_PIX_FMT_NV61M,
+ 		.bpp = 16,
+ 		.planes = 2,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUV420,
++		.v4l2 = V4L2_PIX_FMT_YUV420M,
+ 		.bpp = 12,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVU420,
++		.v4l2 = V4L2_PIX_FMT_YVU420M,
+ 		.bpp = 12,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUV422,
++		.v4l2 = V4L2_PIX_FMT_YUV422M,
+ 		.bpp = 16,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVU422,
++		.v4l2 = V4L2_PIX_FMT_YVU422M,
+ 		.bpp = 16,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YUV444,
++		.v4l2 = V4L2_PIX_FMT_YUV444M,
+ 		.bpp = 24,
+ 		.planes = 3,
+ 	}, {
+ 		.fourcc = DRM_FORMAT_YVU444,
++		.v4l2 = V4L2_PIX_FMT_YVU444M,
+ 		.bpp = 24,
+ 		.planes = 3,
+ 	},
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.h b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+index e171527abdaa..0346504d8c59 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+@@ -19,6 +19,7 @@ struct rcar_du_device;
  
-+	for_each_new_connector_in_state(state, connector, new_conn_state, i) {
-+		if (!new_conn_state->writeback_job)
-+			continue;
-+
-+		ret = drm_writeback_prepare_job(new_conn_state->writeback_job);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	for_each_new_plane_in_state(state, plane, new_plane_state, i) {
- 		const struct drm_plane_helper_funcs *funcs;
- 
-diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-index 0aabd401d3ca..8fa77def577f 100644
---- a/drivers/gpu/drm/drm_atomic_uapi.c
-+++ b/drivers/gpu/drm/drm_atomic_uapi.c
-@@ -647,28 +647,15 @@ drm_atomic_plane_get_property(struct drm_plane *plane,
- 	return 0;
+ struct rcar_du_format_info {
+ 	u32 fourcc;
++	u32 v4l2;
+ 	unsigned int bpp;
+ 	unsigned int planes;
+ 	unsigned int pnmr;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index 520929389666..ddfe4de64915 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -110,8 +110,7 @@ void rcar_du_vsp_atomic_flush(struct rcar_du_crtc *crtc)
+ 	vsp1_du_atomic_flush(crtc->vsp->vsp, crtc->vsp_pipe, &cfg);
  }
  
--static struct drm_writeback_job *
--drm_atomic_get_writeback_job(struct drm_connector_state *conn_state)
--{
--	WARN_ON(conn_state->connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
+-/* Keep the two tables in sync. */
+-static const u32 formats_kms[] = {
++static const u32 rcar_du_vsp_formats[] = {
+ 	DRM_FORMAT_RGB332,
+ 	DRM_FORMAT_ARGB4444,
+ 	DRM_FORMAT_XRGB4444,
+@@ -139,40 +138,13 @@ static const u32 formats_kms[] = {
+ 	DRM_FORMAT_YVU444,
+ };
+ 
+-static const u32 formats_v4l2[] = {
+-	V4L2_PIX_FMT_RGB332,
+-	V4L2_PIX_FMT_ARGB444,
+-	V4L2_PIX_FMT_XRGB444,
+-	V4L2_PIX_FMT_ARGB555,
+-	V4L2_PIX_FMT_XRGB555,
+-	V4L2_PIX_FMT_RGB565,
+-	V4L2_PIX_FMT_RGB24,
+-	V4L2_PIX_FMT_BGR24,
+-	V4L2_PIX_FMT_ARGB32,
+-	V4L2_PIX_FMT_XRGB32,
+-	V4L2_PIX_FMT_ABGR32,
+-	V4L2_PIX_FMT_XBGR32,
+-	V4L2_PIX_FMT_UYVY,
+-	V4L2_PIX_FMT_YUYV,
+-	V4L2_PIX_FMT_YVYU,
+-	V4L2_PIX_FMT_NV12M,
+-	V4L2_PIX_FMT_NV21M,
+-	V4L2_PIX_FMT_NV16M,
+-	V4L2_PIX_FMT_NV61M,
+-	V4L2_PIX_FMT_YUV420M,
+-	V4L2_PIX_FMT_YVU420M,
+-	V4L2_PIX_FMT_YUV422M,
+-	V4L2_PIX_FMT_YVU422M,
+-	V4L2_PIX_FMT_YUV444M,
+-	V4L2_PIX_FMT_YVU444M,
+-};
 -
--	if (!conn_state->writeback_job)
--		conn_state->writeback_job =
--			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
--
--	return conn_state->writeback_job;
--}
--
- static int drm_atomic_set_writeback_fb_for_connector(
- 		struct drm_connector_state *conn_state,
- 		struct drm_framebuffer *fb)
+ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
  {
--	struct drm_writeback_job *job =
--		drm_atomic_get_writeback_job(conn_state);
--	if (!job)
--		return -ENOMEM;
-+	int ret;
+ 	struct rcar_du_vsp_plane_state *state =
+ 		to_rcar_vsp_plane_state(plane->plane.state);
+ 	struct rcar_du_crtc *crtc = to_rcar_crtc(state->state.crtc);
+ 	struct drm_framebuffer *fb = plane->plane.state->fb;
++	const struct rcar_du_format_info *format;
+ 	struct vsp1_du_atomic_config cfg = {
+ 		.pixelformat = 0,
+ 		.pitch = fb->pitches[0],
+@@ -195,12 +167,8 @@ static void rcar_du_vsp_plane_setup(struct rcar_du_vsp_plane *plane)
+ 		cfg.mem[i] = sg_dma_address(state->sg_tables[i].sgl)
+ 			   + fb->offsets[i];
  
--	drm_framebuffer_assign(&job->fb, fb);
-+	ret = drm_writeback_set_fb(conn_state, fb);
-+	if (ret < 0)
-+		return ret;
+-	for (i = 0; i < ARRAY_SIZE(formats_kms); ++i) {
+-		if (formats_kms[i] == state->format->fourcc) {
+-			cfg.pixelformat = formats_v4l2[i];
+-			break;
+-		}
+-	}
++	format = rcar_du_format_info(state->format->fourcc);
++	cfg.pixelformat = format->v4l2;
  
- 	if (fb)
- 		DRM_DEBUG_ATOMIC("Set [FB:%d] for connector state %p\n",
-@@ -1158,19 +1145,17 @@ static int prepare_signaling(struct drm_device *dev,
+ 	vsp1_du_atomic_update(plane->vsp->vsp, crtc->vsp_pipe,
+ 			      plane->index, &cfg);
+@@ -395,8 +363,8 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
  
- 	for_each_new_connector_in_state(state, conn, conn_state, i) {
- 		struct drm_writeback_connector *wb_conn;
--		struct drm_writeback_job *job;
- 		struct drm_out_fence_state *f;
- 		struct dma_fence *fence;
- 		s32 __user *fence_ptr;
- 
-+		if (!conn_state->writeback_job)
-+			continue;
-+
- 		fence_ptr = get_out_fence_for_connector(state, conn);
- 		if (!fence_ptr)
- 			continue;
- 
--		job = drm_atomic_get_writeback_job(conn_state);
--		if (!job)
--			return -ENOMEM;
--
- 		f = krealloc(*fence_state, sizeof(**fence_state) *
- 			     (*num_fences + 1), GFP_KERNEL);
- 		if (!f)
-@@ -1192,7 +1177,7 @@ static int prepare_signaling(struct drm_device *dev,
+ 		ret = drm_universal_plane_init(rcdu->ddev, &plane->plane, crtcs,
+ 					       &rcar_du_vsp_plane_funcs,
+-					       formats_kms,
+-					       ARRAY_SIZE(formats_kms),
++					       rcar_du_vsp_formats,
++					       ARRAY_SIZE(rcar_du_vsp_formats),
+ 					       NULL, type, NULL);
+ 		if (ret < 0)
  			return ret;
- 		}
- 
--		job->out_fence = fence;
-+		conn_state->writeback_job->out_fence = fence;
- 	}
- 
- 	/*
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 1b497d3530b5..79ac014701c8 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -239,6 +239,43 @@ int drm_writeback_connector_init(struct drm_device *dev,
- }
- EXPORT_SYMBOL(drm_writeback_connector_init);
- 
-+int drm_writeback_set_fb(struct drm_connector_state *conn_state,
-+			 struct drm_framebuffer *fb)
-+{
-+	WARN_ON(conn_state->connector->connector_type != DRM_MODE_CONNECTOR_WRITEBACK);
-+
-+	if (!conn_state->writeback_job) {
-+		conn_state->writeback_job =
-+			kzalloc(sizeof(*conn_state->writeback_job), GFP_KERNEL);
-+		if (!conn_state->writeback_job)
-+			return -ENOMEM;
-+
-+		conn_state->writeback_job->connector =
-+			drm_connector_to_writeback(conn_state->connector);
-+	}
-+
-+	drm_framebuffer_assign(&conn_state->writeback_job->fb, fb);
-+	return 0;
-+}
-+
-+int drm_writeback_prepare_job(struct drm_writeback_job *job)
-+{
-+	struct drm_writeback_connector *connector = job->connector;
-+	const struct drm_connector_helper_funcs *funcs =
-+		connector->base.helper_private;
-+	int ret;
-+
-+	if (funcs->prepare_writeback_job) {
-+		ret = funcs->prepare_writeback_job(connector, job);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	job->prepared = true;
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_writeback_prepare_job);
-+
- /**
-  * drm_writeback_queue_job - Queue a writeback job for later signalling
-  * @wb_connector: The writeback connector to queue a job on
-@@ -275,6 +312,13 @@ EXPORT_SYMBOL(drm_writeback_queue_job);
- 
- void drm_writeback_cleanup_job(struct drm_writeback_job *job)
- {
-+	struct drm_writeback_connector *connector = job->connector;
-+	const struct drm_connector_helper_funcs *funcs =
-+		connector->base.helper_private;
-+
-+	if (job->prepared && funcs->cleanup_writeback_job)
-+		funcs->cleanup_writeback_job(connector, job);
-+
- 	if (job->fb)
- 		drm_framebuffer_put(job->fb);
- 
-diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
-index cfb7be40bed7..8f3602811eb5 100644
---- a/include/drm/drm_modeset_helper_vtables.h
-+++ b/include/drm/drm_modeset_helper_vtables.h
-@@ -49,6 +49,8 @@
-  */
- 
- enum mode_set_atomic;
-+struct drm_writeback_connector;
-+struct drm_writeback_job;
- 
- /**
-  * struct drm_crtc_helper_funcs - helper operations for CRTCs
-@@ -989,6 +991,11 @@ struct drm_connector_helper_funcs {
- 	 */
- 	void (*atomic_commit)(struct drm_connector *connector,
- 			      struct drm_connector_state *state);
-+
-+	int (*prepare_writeback_job)(struct drm_writeback_connector *connector,
-+				     struct drm_writeback_job *job);
-+	void (*cleanup_writeback_job)(struct drm_writeback_connector *connector,
-+				      struct drm_writeback_job *job);
- };
- 
- /**
-diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-index 47662c362743..777c14c847f0 100644
---- a/include/drm/drm_writeback.h
-+++ b/include/drm/drm_writeback.h
-@@ -79,6 +79,20 @@ struct drm_writeback_connector {
- };
- 
- struct drm_writeback_job {
-+	/**
-+	 * @connector:
-+	 *
-+	 * Back-pointer to the writeback connector associated with the job
-+	 */
-+	struct drm_writeback_connector *connector;
-+
-+	/**
-+	 * @prepared:
-+	 *
-+	 * Set when the job has been prepared with drm_writeback_prepare_job()
-+	 */
-+	bool prepared;
-+
- 	/**
- 	 * @cleanup_work:
- 	 *
-@@ -98,7 +112,7 @@ struct drm_writeback_job {
- 	 * @fb:
- 	 *
- 	 * Framebuffer to be written to by the writeback connector. Do not set
--	 * directly, use drm_atomic_set_writeback_fb_for_connector()
-+	 * directly, use drm_writeback_set_fb()
- 	 */
- 	struct drm_framebuffer *fb;
- 
-@@ -108,6 +122,13 @@ struct drm_writeback_job {
- 	 * Fence which will signal once the writeback has completed
- 	 */
- 	struct dma_fence *out_fence;
-+
-+	/**
-+	 * @priv:
-+	 *
-+	 * Driver-private data
-+	 */
-+	void *priv;
- };
- 
- static inline struct drm_writeback_connector *
-@@ -122,6 +143,11 @@ int drm_writeback_connector_init(struct drm_device *dev,
- 				 const struct drm_encoder_helper_funcs *enc_helper_funcs,
- 				 const u32 *formats, int n_formats);
- 
-+int drm_writeback_set_fb(struct drm_connector_state *conn_state,
-+			 struct drm_framebuffer *fb);
-+
-+int drm_writeback_prepare_job(struct drm_writeback_job *job);
-+
- void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
- 			     struct drm_connector_state *conn_state);
- 
 -- 
 Regards,
 
