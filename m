@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA323C10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65C7C10F00
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB44C20879
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A914C20880
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FBhtTOTP"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QTGaQktt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfCRObr (ORCPT
+        id S1727856AbfCRObs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 10:31:47 -0400
+        Mon, 18 Mar 2019 10:31:48 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:59216 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbfCRObp (ORCPT
+        with ESMTP id S1727810AbfCRObr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 10:31:45 -0400
+        Mon, 18 Mar 2019 10:31:47 -0400
 Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7A88C5A9;
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F05CD1A9A;
         Mon, 18 Mar 2019 15:31:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552919498;
-        bh=KYFqLCoBV87QsWlf8/O+Goq0GXUlm9HFS15opqTs87c=;
+        s=mail; t=1552919499;
+        bh=yfE2KNDjlDPMKSnmLmFhTXuTqMzrzTxl0sL5vZ/jyhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FBhtTOTPjYHBghuRz+mRCAfbh6Nyr7YsJlFcSjuMPDLtrUEYLQBECLUULRE2GujMP
-         1Zh5jTZGwWUbEB12z3G2hIAJZomj9qkF7KRsD5hhOVqu7PhKP6xvFMA3Z7Af74A/QH
-         TTcAc244PskINI79g1FJuBvG85iVZCqWDerH+7Hg=
+        b=QTGaQkttGhhVTl26TzRIQplUAa0BnvPxqFvD+aloU1V48rsLu0kJKsdq3+YqYkdAS
+         QqM+60c4o3Uo1Nr/pfO/NdI6RfjM94oAjK+dxFr+EIqOFpztaY0dxglk7x9uvDV7/5
+         /uIdvjD0SbKVj9Wqbc57bh9JljcvwXZ6lRzR9ZVk=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH v7 12/18] drm: writeback: Cleanup job ownership handling when queuing job
-Date:   Mon, 18 Mar 2019 16:31:15 +0200
-Message-Id: <20190318143121.29561-13-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v7 13/18] drm: writeback: Fix leak of writeback job
+Date:   Mon, 18 Mar 2019 16:31:16 +0200
+Message-Id: <20190318143121.29561-14-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -51,102 +51,89 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The drm_writeback_queue_job() function takes ownership of the passed job
-and requires the caller to manually set the connector state
-writeback_job pointer to NULL. To simplify drivers and avoid errors
-(such as the missing NULL set in the vc4 driver), pass the connector
-state pointer to the function instead of the job pointer, and set the
-writeback_job pointer to NULL internally.
+Writeback jobs are allocated when the WRITEBACK_FB_ID is set, and
+deleted when the jobs complete. This results in both a memory leak of
+the job and a leak of the framebuffer if the atomic commit returns
+before the job is queued for processing, for instance if the atomic
+check fails or if the commit runs in test-only mode.
+
+Fix this by implementing the drm_writeback_cleanup_job() function and
+calling it from __drm_atomic_helper_connector_destroy_state(). As
+writeback jobs are removed from the state when they're queued for
+processing, any job left in the state when the state gets destroyed
+needs to be cleaned up.
+
+The existing declaration of the drm_writeback_cleanup_job() function
+without an implementation hints that this problem was considered, but
+never addressed.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-Acked-by: Eric Anholt <eric@anholt.net>
 Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/arm/malidp_mw.c |  3 +--
- drivers/gpu/drm/drm_writeback.c | 15 ++++++++++-----
- drivers/gpu/drm/vc4/vc4_txp.c   |  2 +-
- include/drm/drm_writeback.h     |  2 +-
- 4 files changed, 13 insertions(+), 9 deletions(-)
+Changes since v5:
 
-diff --git a/drivers/gpu/drm/arm/malidp_mw.c b/drivers/gpu/drm/arm/malidp_mw.c
-index 041a64dc7167..87627219ce3b 100644
---- a/drivers/gpu/drm/arm/malidp_mw.c
-+++ b/drivers/gpu/drm/arm/malidp_mw.c
-@@ -252,8 +252,7 @@ void malidp_mw_atomic_commit(struct drm_device *drm,
- 				     &mw_state->addrs[0],
- 				     mw_state->format);
+- Export drm_writeback_cleanup_job()
+---
+ drivers/gpu/drm/drm_atomic_state_helper.c |  4 ++++
+ drivers/gpu/drm/drm_writeback.c           | 14 +++++++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
+index 4985384e51f6..59ffb6b9c745 100644
+--- a/drivers/gpu/drm/drm_atomic_state_helper.c
++++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+@@ -30,6 +30,7 @@
+ #include <drm/drm_connector.h>
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_device.h>
++#include <drm/drm_writeback.h>
  
--		drm_writeback_queue_job(mw_conn, conn_state->writeback_job);
--		conn_state->writeback_job = NULL;
-+		drm_writeback_queue_job(mw_conn, conn_state);
- 		hwdev->hw->enable_memwrite(hwdev, mw_state->addrs,
- 					   mw_state->pitches, mw_state->n_planes,
- 					   fb->width, fb->height, mw_state->format,
+ #include <linux/slab.h>
+ #include <linux/dma-fence.h>
+@@ -412,6 +413,9 @@ __drm_atomic_helper_connector_destroy_state(struct drm_connector_state *state)
+ 
+ 	if (state->commit)
+ 		drm_crtc_commit_put(state->commit);
++
++	if (state->writeback_job)
++		drm_writeback_cleanup_job(state->writeback_job);
+ }
+ EXPORT_SYMBOL(__drm_atomic_helper_connector_destroy_state);
+ 
 diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index c20e6fe00cb3..338b993d7c9f 100644
+index 338b993d7c9f..1b497d3530b5 100644
 --- a/drivers/gpu/drm/drm_writeback.c
 +++ b/drivers/gpu/drm/drm_writeback.c
-@@ -242,11 +242,12 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
- /**
-  * drm_writeback_queue_job - Queue a writeback job for later signalling
-  * @wb_connector: The writeback connector to queue a job on
-- * @job: The job to queue
-+ * @conn_state: The connector state containing the job to queue
-  *
-- * This function adds a job to the job_queue for a writeback connector. It
-- * should be considered to take ownership of the writeback job, and so any other
-- * references to the job must be cleared after calling this function.
-+ * This function adds the job contained in @conn_state to the job_queue for a
-+ * writeback connector. It takes ownership of the writeback job and sets the
-+ * @conn_state->writeback_job to NULL, and so no access to the job may be
-+ * performed by the caller after this function returns.
-  *
-  * Drivers must ensure that for a given writeback connector, jobs are queued in
-  * exactly the same order as they will be completed by the hardware (and
-@@ -258,10 +259,14 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
-  * See also: drm_writeback_signal_completion()
-  */
- void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
--			     struct drm_writeback_job *job)
-+			     struct drm_connector_state *conn_state)
- {
-+	struct drm_writeback_job *job;
- 	unsigned long flags;
- 
-+	job = conn_state->writeback_job;
-+	conn_state->writeback_job = NULL;
-+
- 	spin_lock_irqsave(&wb_connector->job_lock, flags);
- 	list_add_tail(&job->list_entry, &wb_connector->job_queue);
- 	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
-diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
-index aa279b5b0de7..5dabd91f2d7e 100644
---- a/drivers/gpu/drm/vc4/vc4_txp.c
-+++ b/drivers/gpu/drm/vc4/vc4_txp.c
-@@ -327,7 +327,7 @@ static void vc4_txp_connector_atomic_commit(struct drm_connector *conn,
- 
- 	TXP_WRITE(TXP_DST_CTRL, ctrl);
- 
--	drm_writeback_queue_job(&txp->connector, conn_state->writeback_job);
-+	drm_writeback_queue_job(&txp->connector, conn_state);
+@@ -273,6 +273,15 @@ void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
  }
+ EXPORT_SYMBOL(drm_writeback_queue_job);
  
- static const struct drm_connector_helper_funcs vc4_txp_connector_helper_funcs = {
-diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-index 23df9d463003..47662c362743 100644
---- a/include/drm/drm_writeback.h
-+++ b/include/drm/drm_writeback.h
-@@ -123,7 +123,7 @@ int drm_writeback_connector_init(struct drm_device *dev,
- 				 const u32 *formats, int n_formats);
++void drm_writeback_cleanup_job(struct drm_writeback_job *job)
++{
++	if (job->fb)
++		drm_framebuffer_put(job->fb);
++
++	kfree(job);
++}
++EXPORT_SYMBOL(drm_writeback_cleanup_job);
++
+ /*
+  * @cleanup_work: deferred cleanup of a writeback job
+  *
+@@ -285,10 +294,9 @@ static void cleanup_work(struct work_struct *work)
+ 	struct drm_writeback_job *job = container_of(work,
+ 						     struct drm_writeback_job,
+ 						     cleanup_work);
+-	drm_framebuffer_put(job->fb);
+-	kfree(job);
+-}
  
- void drm_writeback_queue_job(struct drm_writeback_connector *wb_connector,
--			     struct drm_writeback_job *job);
-+			     struct drm_connector_state *conn_state);
++	drm_writeback_cleanup_job(job);
++}
  
- void drm_writeback_cleanup_job(struct drm_writeback_job *job);
- 
+ /**
+  * drm_writeback_signal_completion - Signal the completion of a writeback job
 -- 
 Regards,
 
