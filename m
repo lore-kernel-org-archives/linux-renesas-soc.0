@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8615AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EBAC10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C048213F2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7E0220880
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="muFqssqr"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="apOVxiU4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfCRObl (ORCPT
+        id S1727550AbfCRObm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 10:31:41 -0400
+        Mon, 18 Mar 2019 10:31:42 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:59242 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727843AbfCRObk (ORCPT
+        with ESMTP id S1727673AbfCRObm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 10:31:40 -0400
+        Mon, 18 Mar 2019 10:31:42 -0400
 Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 096DB993;
-        Mon, 18 Mar 2019 15:31:34 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0854F1235;
+        Mon, 18 Mar 2019 15:31:35 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552919495;
-        bh=+UI21FzAL/kvawRCxTIEHyBx2s0r99neevvXyfR+1Iw=;
+        s=mail; t=1552919496;
+        bh=LTxeJ5gTHWF8ouf3E3iF1z31XC4fKp9g0/CV3ti2uWs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=muFqssqrWF5bfXcDFUNv7cCLS/5Ux3aXQo00n3U+uIYH/gPu7tzfWyTnw0iP8dOh/
-         xihQUKW6U4BBMR45qWrQ2eCmD6GleIzY+hNAYkjgj8HwcM9yU680cbx/dW1dJmROAi
-         vdwgXu1bjDDdGLvYTOodWMdn3RamcLQV4XlGUbho=
+        b=apOVxiU4XRyASFV6bdNni8YKRAQ3l5nbuy3ZskAfeTtF5Gh0UCFZrGvJBSjRZj9pv
+         8klJdnxMdoNBCjNIKmohvpCYRvc7YCCfVf7z1IwfPsQ+aKQlVLARi1ZPUEFAUqsVNL
+         JsLooRyx2U4nlc+Taj3XOTBeMKCWm9n6W3h4P4dQ=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH v7 05/18] media: vsp1: Replace the display list internal flag with a flags field
-Date:   Mon, 18 Mar 2019 16:31:08 +0200
-Message-Id: <20190318143121.29561-6-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v7 07/18] media: vsp1: dl: Allow chained display lists for display pipelines
+Date:   Mon, 18 Mar 2019 16:31:10 +0200
+Message-Id: <20190318143121.29561-8-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -51,168 +51,79 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To prepare for addition of more flags to the display list, replace the
-'internal' flag field by a bitmask 'flags' field.
+Refactor the display list header setup to allow chained display lists
+with display pipelines. Chain the display lists as for mem-to-mem
+pipelines, but enable the frame end interrupt for every list as display
+pipelines have a single list per frame.
+
+This feature will be used to disable writeback exactly one frame after
+enabling it by chaining a writeback disable display list.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-Changes since v4:
-
-- Fix check for the completed flag in vsp1_du_pipeline_frame_end()
----
- drivers/media/platform/vsp1/vsp1_dl.c    | 31 +++++++++++++-----------
- drivers/media/platform/vsp1/vsp1_dl.h    |  2 +-
- drivers/media/platform/vsp1/vsp1_drm.c   |  8 ++++--
- drivers/media/platform/vsp1/vsp1_video.c |  2 +-
- 4 files changed, 25 insertions(+), 18 deletions(-)
+ drivers/media/platform/vsp1/vsp1_dl.c | 35 ++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 64af449791b0..886b3a69d329 100644
+index 886b3a69d329..ed7cda4130f2 100644
 --- a/drivers/media/platform/vsp1/vsp1_dl.c
 +++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -178,7 +178,7 @@ struct vsp1_dl_cmd_pool {
-  * @post_cmd: post command to be issued through extended dl header
-  * @has_chain: if true, indicates that there's a partition chain
-  * @chain: entry in the display list partition chain
-- * @internal: whether the display list is used for internal purpose
-+ * @flags: display list flags, a combination of VSP1_DL_FRAME_END_*
-  */
- struct vsp1_dl_list {
- 	struct list_head list;
-@@ -197,7 +197,7 @@ struct vsp1_dl_list {
- 	bool has_chain;
- 	struct list_head chain;
- 
--	bool internal;
-+	unsigned int flags;
- };
- 
- /**
-@@ -861,13 +861,15 @@ static void vsp1_dl_list_commit_continuous(struct vsp1_dl_list *dl)
- 	 *
- 	 * If a display list is already pending we simply drop it as the new
- 	 * display list is assumed to contain a more recent configuration. It is
--	 * an error if the already pending list has the internal flag set, as
--	 * there is then a process waiting for that list to complete. This
--	 * shouldn't happen as the waiting process should perform proper
--	 * locking, but warn just in case.
-+	 * an error if the already pending list has the
-+	 * VSP1_DL_FRAME_END_INTERNAL flag set, as there is then a process
-+	 * waiting for that list to complete. This shouldn't happen as the
-+	 * waiting process should perform proper locking, but warn just in
-+	 * case.
- 	 */
- 	if (vsp1_dl_list_hw_update_pending(dlm)) {
--		WARN_ON(dlm->pending && dlm->pending->internal);
-+		WARN_ON(dlm->pending &&
-+			(dlm->pending->flags & VSP1_DL_FRAME_END_INTERNAL));
- 		__vsp1_dl_list_put(dlm->pending);
- 		dlm->pending = dl;
- 		return;
-@@ -897,7 +899,7 @@ static void vsp1_dl_list_commit_singleshot(struct vsp1_dl_list *dl)
- 	dlm->active = dl;
- }
- 
--void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
-+void vsp1_dl_list_commit(struct vsp1_dl_list *dl, unsigned int dl_flags)
- {
- 	struct vsp1_dl_manager *dlm = dl->dlm;
- 	struct vsp1_dl_list *dl_next;
-@@ -912,7 +914,7 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
- 		vsp1_dl_list_fill_header(dl_next, last);
+@@ -770,17 +770,35 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
  	}
  
--	dl->internal = internal;
-+	dl->flags = dl_flags & ~VSP1_DL_FRAME_END_COMPLETED;
+ 	dl->header->num_lists = num_lists;
++	dl->header->flags = 0;
  
- 	spin_lock_irqsave(&dlm->lock, flags);
- 
-@@ -941,9 +943,10 @@ void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal)
-  * set in single-shot mode as display list processing is then not continuous and
-  * races never occur.
-  *
-- * The VSP1_DL_FRAME_END_INTERNAL flag indicates that the previous display list
-- * has completed and had been queued with the internal notification flag.
-- * Internal notification is only supported for continuous mode.
-+ * The following flags are only supported for continuous mode.
-+ *
-+ * The VSP1_DL_FRAME_END_INTERNAL flag indicates that the display list that just
-+ * became active had been queued with the internal notification flag.
-  */
- unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- {
-@@ -986,9 +989,9 @@ unsigned int vsp1_dlm_irq_frame_end(struct vsp1_dl_manager *dlm)
- 	 * frame end interrupt. The display list thus becomes active.
- 	 */
- 	if (dlm->queued) {
--		if (dlm->queued->internal)
-+		if (dlm->queued->flags & VSP1_DL_FRAME_END_INTERNAL)
- 			flags |= VSP1_DL_FRAME_END_INTERNAL;
--		dlm->queued->internal = false;
-+		dlm->queued->flags &= ~VSP1_DL_FRAME_END_INTERNAL;
- 
- 		__vsp1_dl_list_put(dlm->active);
- 		dlm->active = dlm->queued;
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.h b/drivers/media/platform/vsp1/vsp1_dl.h
-index 125750dc8b5c..e0fdb145e6ed 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.h
-+++ b/drivers/media/platform/vsp1/vsp1_dl.h
-@@ -61,7 +61,7 @@ struct vsp1_dl_list *vsp1_dl_list_get(struct vsp1_dl_manager *dlm);
- void vsp1_dl_list_put(struct vsp1_dl_list *dl);
- struct vsp1_dl_body *vsp1_dl_list_get_body0(struct vsp1_dl_list *dl);
- struct vsp1_dl_ext_cmd *vsp1_dl_get_pre_cmd(struct vsp1_dl_list *dl);
--void vsp1_dl_list_commit(struct vsp1_dl_list *dl, bool internal);
-+void vsp1_dl_list_commit(struct vsp1_dl_list *dl, unsigned int dl_flags);
- 
- struct vsp1_dl_body_pool *
- vsp1_dl_body_pool_create(struct vsp1_device *vsp1, unsigned int num_bodies,
-diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
-index f5e810ca1f13..e8f83d4b7a39 100644
---- a/drivers/media/platform/vsp1/vsp1_drm.c
-+++ b/drivers/media/platform/vsp1/vsp1_drm.c
-@@ -34,7 +34,7 @@ static void vsp1_du_pipeline_frame_end(struct vsp1_pipeline *pipe,
- 				       unsigned int completion)
- {
- 	struct vsp1_drm_pipeline *drm_pipe = to_vsp1_drm_pipeline(pipe);
--	bool complete = completion == VSP1_DL_FRAME_END_COMPLETED;
-+	bool complete = completion & VSP1_DL_FRAME_END_COMPLETED;
- 
- 	if (drm_pipe->du_complete) {
- 		struct vsp1_entity *uif = drm_pipe->uif;
-@@ -537,6 +537,10 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
- 	struct vsp1_entity *next;
- 	struct vsp1_dl_list *dl;
- 	struct vsp1_dl_body *dlb;
-+	unsigned int dl_flags = 0;
+-	if (!list_empty(&dl->chain) && !is_last) {
++	/*
++	 * Enable the interrupt for the end of each frame. In continuous mode
++	 * chained lists are used with one list per frame, so enable the
++	 * interrupt for each list. In singleshot mode chained lists are used
++	 * to partition a single frame, so enable the interrupt for the last
++	 * list only.
++	 */
++	if (!dlm->singleshot || is_last)
++		dl->header->flags |= VSP1_DLH_INT_ENABLE;
 +
-+	if (drm_pipe->force_brx_release)
-+		dl_flags |= VSP1_DL_FRAME_END_INTERNAL;
++	/*
++	 * In continuous mode enable auto-start for all lists, as the VSP must
++	 * loop on the same list until a new one is queued. In singleshot mode
++	 * enable auto-start for all lists but the last to chain processing of
++	 * partitions without software intervention.
++	 */
++	if (!dlm->singleshot || !is_last)
++		dl->header->flags |= VSP1_DLH_AUTO_START;
++
++	if (!is_last) {
+ 		/*
+-		 * If this display list's chain is not empty, we are on a list,
+-		 * and the next item is the display list that we must queue for
+-		 * automatic processing by the hardware.
++		 * If this is not the last display list in the chain, queue the
++		 * next item for automatic processing by the hardware.
+ 		 */
+ 		struct vsp1_dl_list *next = list_next_entry(dl, chain);
  
- 	dl = vsp1_dl_list_get(pipe->output->dlm);
- 	dlb = vsp1_dl_list_get_body0(dl);
-@@ -559,7 +563,7 @@ static void vsp1_du_pipeline_configure(struct vsp1_pipeline *pipe)
- 		vsp1_entity_configure_partition(entity, pipe, dl, dlb);
+ 		dl->header->next_header = next->dma;
+-		dl->header->flags = VSP1_DLH_AUTO_START;
+ 	} else if (!dlm->singleshot) {
+ 		/*
+ 		 * if the display list manager works in continuous mode, the VSP
+@@ -788,13 +806,6 @@ static void vsp1_dl_list_fill_header(struct vsp1_dl_list *dl, bool is_last)
+ 		 * instructed to do otherwise.
+ 		 */
+ 		dl->header->next_header = dl->dma;
+-		dl->header->flags = VSP1_DLH_INT_ENABLE | VSP1_DLH_AUTO_START;
+-	} else {
+-		/*
+-		 * Otherwise, in mem-to-mem mode, we work in single-shot mode
+-		 * and the next display list must not be started automatically.
+-		 */
+-		dl->header->flags = VSP1_DLH_INT_ENABLE;
  	}
  
--	vsp1_dl_list_commit(dl, drm_pipe->force_brx_release);
-+	vsp1_dl_list_commit(dl, dl_flags);
- }
- 
- /* -----------------------------------------------------------------------------
-diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
-index 328d686189be..9ae20982604a 100644
---- a/drivers/media/platform/vsp1/vsp1_video.c
-+++ b/drivers/media/platform/vsp1/vsp1_video.c
-@@ -421,7 +421,7 @@ static void vsp1_video_pipeline_run(struct vsp1_pipeline *pipe)
- 	}
- 
- 	/* Complete, and commit the head display list. */
--	vsp1_dl_list_commit(dl, false);
-+	vsp1_dl_list_commit(dl, 0);
- 	pipe->configured = true;
- 
- 	vsp1_pipeline_run(pipe);
+ 	if (!dl->extension)
 -- 
 Regards,
 
