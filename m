@@ -2,128 +2,203 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3A1C10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D29EC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5F22087E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 109AA20850
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:03:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552920692;
-	bh=mh5si4O5M5KR+PTUkbxV7OsKJELMgUsV5mSHh6CBdeI=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=sQotCIQld8nbEmakZo46j9Wcerap/9J+9igw1FNjS0j6rCXsmRY8qJEkX/LOt/95L
-	 Isiq6ezSDbn2bKGu1BPbJBzy7MGn55F8ZQ1gpLui/d81yxjMGnjinGIKdHCOt/kisQ
-	 625i+1YrdcUXOYF0M8h+myO2UKQb7YxrYwPGqmK0=
+	s=default; t=1552921431;
+	bh=VXk8044aIkjiTgThvreUga7BIzyES16fRQvBqz8niiw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=mCqrJltJMwKPgfR2fCZSpq6tmFMAi9aqMSseLWo/C9t6M0jgLuFXCL0SR1QsJcZ4G
+	 bQN8pHmZCgBVgbxaPq92+9ontHSH4W/8n5XEPb5hK44Pn13KF172iYY4CHplBV3veV
+	 ABRZmkgj51Kvgs8QjeFbrk/UNKLFHX4ydcXnmMlE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfCROvc (ORCPT
+        id S1726677AbfCRPDu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 10:51:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54864 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfCROvb (ORCPT
+        Mon, 18 Mar 2019 11:03:50 -0400
+Received: from casper.infradead.org ([85.118.1.10]:33082 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfCRPDu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 10:51:31 -0400
+        Mon, 18 Mar 2019 11:03:50 -0400
+X-Greylist: delayed 1059 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Mar 2019 11:03:50 EDT
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=APhePSYQz5ApHbjaYRpvaLV1e49Ksq0y9R1K7FLx9AA=; b=ETtXQEwmmH6c
-        xYlWRXqw+mVAldGCqMDE+uCgY3T0cdlgktXLWGPDjOK7Z35HOA1L40bU2HKUHyDJl4Mt5eok7vmvN
-        allPUjs35fCUrzy+/xqlvUdqDbLHnXEe95AXj9fVhVJH9G0Ca5bXNWimui3eWEIEjgvOCduLaPa+L
-        JNwbE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1h5tbn-0005nd-9a; Mon, 18 Mar 2019 14:51:23 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 858061128874; Mon, 18 Mar 2019 14:51:22 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Jiada Wang <jiada_wang@mentor.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert.uytterhoeven@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jiada Wang <jiada_wang@mentor.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rsnd: explain extended Audio DMAC peri peri address" to the asoc tree
-In-Reply-To:  <87ftrkye0f.wl-kuninori.morimoto.gx@renesas.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190318145122.858061128874@debutante.sirena.org.uk>
-Date:   Mon, 18 Mar 2019 14:51:22 +0000 (GMT)
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=H6KQyXCX2TKmJEsScIsdqKMxRrKJbYRNrXBwGwNR+R0=; b=Nat3z8TBeg+cwkbtMhqxIT/sLC
+        XyqkeLzeOzlHdodhCQ0C+gq2jc01QAa7qCZ5XcThsBf1E12Ex4+3g7zLt9pXbT9WexMctdpA2CE/8
+        LzDhgl1ibzIOQSS773YPmbnHMl9iPjO8W69bm+vauNU+/5tmhUe61YE1phKUCLT/JSrkwIwzDnqaa
+        7UpTPlQ/yDJneXAnxIVca9N40oOMm6CH9wYOSTXyO6OLaYiFq3RLVsujNfHluzEVqyTkWt3LAiPxy
+        KN9/YvoFzjHiUT41MVtu6uHcUpPwU7CqB5IRHsMgsO26avf6uFkSOjuEptFjLtXo8rZ294rVhqxLp
+        A/Zfmvhw==;
+Received: from [191.250.43.186] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1h5tWg-0006K6-DN; Mon, 18 Mar 2019 14:46:07 +0000
+Date:   Mon, 18 Mar 2019 11:46:01 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v7 00/18] R-Car DU display writeback support
+Message-ID: <20190318114601.455984b2@coco.lan>
+In-Reply-To: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The patch
+Em Mon, 18 Mar 2019 16:31:03 +0200
+Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> escreveu:
 
-   ASoC: rsnd: explain extended Audio DMAC peri peri address
+> Hello everybody,
+> 
+> This is the latest and greatest version of the patch series that
+> implements display writeback support for the R-Car Gen3 platforms in the
+> VSP1 and DU drivers. All patches have been reviewed, all comments
+> incorporated, and the result rebased on top ov v5.1-rc1.
+> 
+> Patches 01/18 to 11/18 prepare the VSP1 driver for writeback support
+> with all the necessary plumbing, including extensions of the API between
+> the VSP1 and DU drivers.
+> 
+> The most significant change compared to v6 is the rebase on top of
+> v5.1-rc1. This was done to ease merging, as the VSP and DU parts would
+> normally go through different trees. I usually ask Mauro or Dave their
+> permission to merge the whole series through a single tree, and doing
+> the same this time I would select the DRM tree given that I hope to get
+> more DU patches merged in this development cycle. There is no foreseen
+> conflicting patch for the VSP in v5.2, but if a need arises, I will
+> them on top of the 11 first patches of this series and send a pull
+> request to Mauro to avoid conflicts.
+> 
+> Mauro, I plan to send a pull request to Dave by the end of this week, so
+> if you'd like to have a look at the VSP patches, now would be a good
+> time :-) It's only driver changes, and they have been reviewed already,
+> so I don't expect any problem.
+> 
+> Compared to v5 the major change is the usage of chained display lists in
+> the VSP to disable writeback after one frame, instead of patching the
+> active display list in memory. This should solve the potential DMA to
+> released buffer issue that could occur when the frame start interrupt
+> was delayed after frame end. Patch 06/18 and 07/18 are new in this
+> version to support usage of chained display pipelines.
+> 
+> Compared to v4 the major change is the move from V4L2 to DRM writeback
+> connectors for the userspace API. This has caused a few issues with
+> writeback support to be uncovered, and they are addressed by patches
+> 12/18 to 14/18.
+> 
+> Patches 15/18 to 17/18 then perform refactoring of the DU driver, to
+> finally add writeback support in patch 18/18.
+> 
+> The writeback pixel format is restricted to RGB, due to the VSP1
+> outputting RGB to the display and lacking a separate colour space
+> conversion unit for writeback. The writeback framebuffer size must match
+> the active mode, writeback scaling is not supported by the hardware.
+> 
+> Writeback requests being part of atomic commits, they're queued to the
+> hardware when they are received, become active at the next vblank, and
+> complete on the following vblank. The display list chaining mechanism
+> ensures that writeback will be enabled for a single frame only, unless
+> the next atomic commit contains a separate writeback request.
+> 
+> For convenience patches can be found at
+> 
+> 	git://linuxtv.org/pinchartl/media.git drm/du/writeback
+> 
+> Kieran Bingham (1):
+>   Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
+> 
+> Laurent Pinchart (17):
+>   media: vsp1: wpf: Fix partition configuration for display pipelines
+>   media: vsp1: Replace leftover occurrence of fragment with body
+>   media: vsp1: Fix addresses of display-related registers for VSP-DL
+>   media: vsp1: Replace the display list internal flag with a flags field
+>   media: vsp1: Add vsp1_dl_list argument to .configure_stream()
+>     operation
+>   media: vsp1: dl: Allow chained display lists for display pipelines
+>   media: vsp1: wpf: Add writeback support
+>   media: vsp1: drm: Split RPF format setting to separate function
+>   media: vsp1: drm: Extend frame completion API to the DU driver
+>   media: vsp1: drm: Implement writeback support
 
-has been applied to the asoc tree at
+For the media patches:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+If those are the only changes at media side, feel free to push it
+via DRM tree.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+>   drm: writeback: Cleanup job ownership handling when queuing job
+>   drm: writeback: Fix leak of writeback job
+>   drm: writeback: Add job prepare and cleanup operations
+>   drm: rcar-du: Fix rcar_du_crtc structure documentation
+>   drm: rcar-du: Store V4L2 fourcc in rcar_du_format_info structure
+>   drm: rcar-du: vsp: Extract framebuffer (un)mapping to separate
+>     functions
+>   drm: rcar-du: Add writeback support for R-Car Gen3
+> 
+>  drivers/gpu/drm/arm/malidp_mw.c             |   3 +-
+>  drivers/gpu/drm/drm_atomic_helper.c         |  11 +
+>  drivers/gpu/drm/drm_atomic_state_helper.c   |   4 +
+>  drivers/gpu/drm/drm_atomic_uapi.c           |  31 +--
+>  drivers/gpu/drm/drm_writeback.c             |  73 +++++-
+>  drivers/gpu/drm/rcar-du/Kconfig             |   4 +
+>  drivers/gpu/drm/rcar-du/Makefile            |   3 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c      |   7 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_crtc.h      |   9 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c       |  37 +++
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.h       |   1 +
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c       | 122 +++++-----
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.h       |  17 ++
+>  drivers/gpu/drm/rcar-du/rcar_du_writeback.c | 243 ++++++++++++++++++++
+>  drivers/gpu/drm/rcar-du/rcar_du_writeback.h |  39 ++++
+>  drivers/gpu/drm/vc4/vc4_txp.c               |   2 +-
+>  drivers/media/platform/vsp1/vsp1_brx.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_clu.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_dl.c       |  84 ++++---
+>  drivers/media/platform/vsp1/vsp1_dl.h       |   6 +-
+>  drivers/media/platform/vsp1/vsp1_drm.c      |  94 +++++---
+>  drivers/media/platform/vsp1/vsp1_drm.h      |   2 +-
+>  drivers/media/platform/vsp1/vsp1_entity.c   |   3 +-
+>  drivers/media/platform/vsp1/vsp1_entity.h   |   7 +-
+>  drivers/media/platform/vsp1/vsp1_hgo.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_hgt.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_hsit.c     |   1 +
+>  drivers/media/platform/vsp1/vsp1_lif.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_lut.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_regs.h     |   6 +-
+>  drivers/media/platform/vsp1/vsp1_rpf.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_rwpf.h     |   1 +
+>  drivers/media/platform/vsp1/vsp1_sru.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_uds.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_uif.c      |   1 +
+>  drivers/media/platform/vsp1/vsp1_video.c    |  16 +-
+>  drivers/media/platform/vsp1/vsp1_wpf.c      |  83 +++++--
+>  include/drm/drm_modeset_helper_vtables.h    |   7 +
+>  include/drm/drm_writeback.h                 |  30 ++-
+>  include/media/vsp1.h                        |  19 +-
+>  40 files changed, 775 insertions(+), 200 deletions(-)
+>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_writeback.c
+>  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_writeback.h
+> 
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
 
 Thanks,
-Mark
-
-From c4bce31c4982ddb866b6b6d0f7ca1cf039a3aded Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 18 Mar 2019 14:11:34 +0900
-Subject: [PATCH] ASoC: rsnd: explain extended Audio DMAC peri peri address
-
-If SoC has extended Audio DMAC peri peri address,
-DT needs to select it.
-Otherwise, it can select normal Audio DMAC peri peri address.
-Extended Audio DMAC peri peri address can use BUSIF4-7,
-normal address can't.
-
-Reported-by: Jiada Wang <jiada_wang@mentor.com>
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index c58af457a831..b34afa66fb00 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -283,6 +283,8 @@ Required properties:
- 				  required register is
- 				   SRU/ADG/SSI      if generation1
- 				   SRU/ADG/SSIU/SSI/AUDIO-DMAC-periperi if generation2/generation3
-+				   Select extended AUDIO-DMAC-periperi address if SoC has it,
-+				   otherwise select normal AUDIO-DMAC-periperi address.
- - reg-names			: Should contain the register names.
- 				   scu/adg/ssi	if generation1
- 				   scu/adg/ssiu/ssi/audmapp if generation2/generation3
--- 
-2.20.1
-
+Mauro
