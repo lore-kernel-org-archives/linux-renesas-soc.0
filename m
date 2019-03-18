@@ -3,95 +3,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30560C10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 09:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8CCC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B0F621738
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 09:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5536F2082F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbfCRJaZ (ORCPT
+        id S1727113AbfCRKQ2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 05:30:25 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33319 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728384AbfCRJaY (ORCPT
+        Mon, 18 Mar 2019 06:16:28 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41041 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726771AbfCRKQ2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 05:30:24 -0400
-Received: by mail-vs1-f65.google.com with SMTP id z6so9035108vsc.0;
-        Mon, 18 Mar 2019 02:30:23 -0700 (PDT)
+        Mon, 18 Mar 2019 06:16:28 -0400
+Received: by mail-vs1-f68.google.com with SMTP id z25so7780411vsk.8;
+        Mon, 18 Mar 2019 03:16:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rm6HunDBCexM9lkrAqlgwd9JUVztU8ygpQr9qORf+X4=;
-        b=IvPQyMj3J0z7GGgn9NNNJKaFHOwEHmM/WFBq62gyEvZ32jop0FL4lS5yL90ZvkfW2b
-         HqtsG5N9m7Bg8/b5J7/YTOgxeOgUWDntbXqg7VPEpzJpe+KnlQA0s3Pbk/68dOCtULFt
-         KIzO/DYYaqgTtA5ps/GW46BfwhEcjrIiW3o5SDxEcsZilBXSZjNi3bG3BhFJpUPVpHxg
-         nVeKclavz/xhzz/l2x5iSlXrOmpbN9eMyDjF+bFGGn7gHMJC3NHnRxCKJLzB+ZmDbarN
-         qAnd3Dmh6WWDO3BEmsg+vQRm+oVWbjnieUFgUUyoiZsc4vyvjH57kW8z7WEZfyqeGH34
-         Ydsw==
-X-Gm-Message-State: APjAAAXUl/KM+8AJw6OZYSGkSTxI31GIZOUybUVJDsF7pqZsjl/O5NBm
-        Ml2KZLlP9Pu9GXEvHr8Yo8ZikpGRhqCZgYZSU6I=
-X-Google-Smtp-Source: APXvYqyJ2F2MHpeULHeWy1C0A2wvW7rnNspeqqaV0Rq9HHo6LKDn5zHgJnophUSVxMtJNNA0ZKAbRCmwM+38jyW7Xkg=
-X-Received: by 2002:a67:f2d0:: with SMTP id a16mr7709289vsn.96.1552901421965;
- Mon, 18 Mar 2019 02:30:21 -0700 (PDT)
+        bh=+GPMeQ9UAfGF4IUSaZ55d3QSxRjOD1KKb+FTRyi+/Mc=;
+        b=fSpGvw5xICHKqwY3p+gxYKGE170zSWNkl7/P7B9rXmNDfbfrFw+a+akW/2Bqr5PWGK
+         NZyKF7rempQHEW6Q5Ri8vDwXYaPuL93QcRcs7fovgiXXoonUKkjQl/m1abzGH+zo4H8T
+         diGXtcsruoIttTswDQkIIge1TD/FTJr+Gx9PpaA1q1xFZyttVi2hPP7DaPRfLucJFVmf
+         iqX5mtDpGb35zG0aLG2yoBYmR6LiqDH3bN9PAngXJ5dFqNQwPNlvOtiMGYK0FfYTq+Xs
+         D9240Ul9ofDCy0ksKV07huJ+nqNoBs6GWhCILBDSharnrby8RwGTAf3eev+Iel4Dv2nT
+         cJEQ==
+X-Gm-Message-State: APjAAAULDvi4/9hvTuLsNOyr4+eZSZibWEG4fxa0N7YJlg6V0mjVjPaK
+        AU4Y93EfA6vfWtqjKVCSba8BUvU0v+FIzoqcljQ=
+X-Google-Smtp-Source: APXvYqxIvDukWwM9nxnvly3WzBgl6iZ0o+tt0e1uRYRWmV0zN+ujcm5caSIRoENJxU50f3ZTyQZQkhpVnceoHo7lT5g=
+X-Received: by 2002:a67:fc9a:: with SMTP id x26mr8756498vsp.166.1552904187890;
+ Mon, 18 Mar 2019 03:16:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190317000608.24881-1-marek.vasut@gmail.com> <20190317000608.24881-2-marek.vasut@gmail.com>
- <20190317091228.GB2268@kunai> <940fd646-0049-890a-ac00-8bc9361b2431@gmail.com>
- <CAMuHMdVXEqqRjkXR-9WPVVpNXu_C3Xg6yeZ0Nrhr1KbmHPuouw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVXEqqRjkXR-9WPVVpNXu_C3Xg6yeZ0Nrhr1KbmHPuouw@mail.gmail.com>
+References: <20190317093445.7746-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190317093445.7746-1-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Mar 2019 10:30:10 +0100
-Message-ID: <CAMuHMdWOL33eTMOWaHmxXpZoLmvMOtrcZN6Mi0REMbJvKwp+XQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] PCI: rcar: Allow 64bit MSI addresses
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Mon, 18 Mar 2019 11:16:16 +0100
+Message-ID: <CAMuHMdUwH1kLr_n1fCDwAQdP+yBqH++LOasx6FxOr_Z+CDNfNg@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rcar: don't shadow the 'irq' variable
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
+On Sun, Mar 17, 2019 at 10:35 AM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> sparse rightfully says:
+> drivers/pci/controller/pcie-rcar.c:741:30: warning: symbol 'irq' shadows an earlier one
+>
+> It doesn't affect the current code. But fix it now to avoid future
+> surprises and for good coding style.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-On Mon, Mar 18, 2019 at 9:39 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, Mar 18, 2019 at 12:39 AM Marek Vasut <marek.vasut@gmail.com> wrote:
-> > On 3/17/19 10:12 AM, Wolfram Sang wrote:
-> > > On Sun, Mar 17, 2019 at 01:06:07AM +0100, marek.vasut@gmail.com wrote:
-> > >> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > >>
-> > >> The MSI address can be 64bit. Switch the data type used to hold the
-> > >> result of virt_to_phys() to phys_addr_t to reflect it's properties
-> > >> correctly and program the top 32bits of PA into PCIEMSIAUR.
-> > >>
-> > >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > >
-> > > Looks sane. Not being a PCI expert, I wonder: Were we just lucky to not
-> > > hit a 64-bit MSI address before?
-> >
-> > I wonder about that, virt_to_phys(__get_free_pages(GFP_KERNEL, 0)) would
-> > happily return 64bit address, but with the cards I tested (a few intel
-> > NICs [igb, e1000e], PCIe NVME SSDs and xHCI HCD), I am getting the MSIs
-> > either way.
->
-> No doubt you would be receiving the MSIs, if you have RAM at the truncated
-> address, but wouldn't that cause memory corruption?
->
-> Fixes: 290c1fb358605402 ("PCI: rcar: Add MSI support for PCIe")
->
-> When MSI support was added, only R-Car H1 and Gen2 were supported.
-> H1 doesn't have LPAE. Gen2 has, but it might have been disabled.
-
-Correction: as this is always mapped kernel memory, LPAE doesn't matter.
-So the bug matters for arm64 only.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
