@@ -2,94 +2,110 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E2DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C64C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACEAC2082F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:20:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A7202070D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbfCRKUH (ORCPT
+        id S1727194AbfCRKV2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 06:20:07 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:13752 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727470AbfCRKUG (ORCPT
+        Mon, 18 Mar 2019 06:21:28 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46792 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbfCRKV2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 06:20:06 -0400
-X-Greylist: delayed 3193 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Mar 2019 06:20:04 EDT
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2I9QbCV000983;
-        Mon, 18 Mar 2019 18:26:37 +0900 (JST)
-        (envelope-from na-hoan@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Mon, 18 Mar 2019 18:26:37 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2I9QW9d000938
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 18 Mar 2019 18:26:36 +0900 (JST)
-        (envelope-from na-hoan@jinso.co.jp)
-From:   Nguyen An Hoan <na-hoan@jinso.co.jp>
-To:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        ulrich.hecht+renesas@gmail.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
-        magnus.damm@gmail.com, yoshihiro.shimoda.uh@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
-        cv-dong@jinso.co.jp
-Subject: [PATCH] serial: sh-sci: Fix setting SCSCR_TIE while transferring data
-Date:   Mon, 18 Mar 2019 18:26:32 +0900
-Message-Id: <1552901192-29748-1-git-send-email-na-hoan@jinso.co.jp>
-X-Mailer: git-send-email 2.7.4
+        Mon, 18 Mar 2019 06:21:28 -0400
+Received: by mail-vs1-f65.google.com with SMTP id w26so6620986vsk.13;
+        Mon, 18 Mar 2019 03:21:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2P0rWQawJDdw/uZMNrXzxuvkuUs88hIWKi3LqK8fSi0=;
+        b=WHHCpJY1vJKBH2+C9JsqHWVJSTuNsNnKo7Pjf0LXdp5jj8KE8r5vwv9wMPSQ7viKkg
+         yZA0poPX9gQSCbpKeIzkbVW4/idynDJRq4FElqVivXoK8KdTNkl2OcmCw+MvVBN6cQy3
+         bVwhjTk2/o/bahOYEFp4MgAv7teSkosUV0WqRrnu4fSXzEYcHnoMYC7gGH5TN72EzQhN
+         tZqVndTNUVnTMbYLOp1znjITDec4YpHjATvP9TwROzUwvON0LHAkko0hRneBYbO6Wen7
+         A1khPx/K87p4WGs7ieTFgpPqcRKUnxDWfvw6rWvVUSdGnbrmfBppskdN/IaUmdQ3g+Du
+         V4Dg==
+X-Gm-Message-State: APjAAAUkTdzGbKuV5jjn9KaydFcHbcFfvIkLtf+HjK4lI/8NTocr8CK8
+        MvxBmSQVL0xOLRMoXXKOME6h2OtleOpeT+wpsFgz2As9
+X-Google-Smtp-Source: APXvYqwq5idNFgPMy69YraOuq260rOAHSzdE4Qz2itGW/QVD8r5LuPEqKrAid587//95oGtCwGnMpPOlyzqqBYjZPQk=
+X-Received: by 2002:a67:f843:: with SMTP id b3mr3103825vsp.152.1552904487196;
+ Mon, 18 Mar 2019 03:21:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com> <20190306232345.23052-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20190306232345.23052-8-laurent.pinchart+renesas@ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 18 Mar 2019 11:21:15 +0100
+Message-ID: <CAMuHMdWfNk+v9PTMpE43DD8DvrmhZDeAocDReVNOsE=oh4P6uw@mail.gmail.com>
+Subject: Re: [PATCH/RFC 07/15] dt-bindings: display: renesas: lvds: Add
+ renesas,companion property
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Hi Laurent,
 
-We disable transmission interrupt (clear SCSCR_TIE) after all data has been transmitted
-(if uart_circ_empty(xmit)). While transmitting, if the data is still in the tty buffer,
-re-enable the SCSCR_TIE bit, which was done at sci_start_tx().
-This is unnecessary processing, wasting CPU operation if the data transmission length is large.
-And further, transmit end, FIFO empty bits disabling have also been performed in the step above.
+On Thu, Mar 7, 2019 at 12:24 AM Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+> Add a new optional renesas,companion property to point to the companion
+> LVDS encoder. This is used to support dual-link operation where the main
+> LVDS encoder splits even-numbered and odd-numbered pixels between the
+> two LVDS encoders.
 
-Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
----
- drivers/tty/serial/sh-sci.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+Note that Documentation/devicetree/bindings/usb/generic.txt already
+describes a "companion" property without vendor prefix.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 64bbeb7..93bd90f 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -838,19 +838,9 @@ static void sci_transmit_chars(struct uart_port *port)
- 
- 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
- 		uart_write_wakeup(port);
--	if (uart_circ_empty(xmit)) {
-+	if (uart_circ_empty(xmit))
- 		sci_stop_tx(port);
--	} else {
--		ctrl = serial_port_in(port, SCSCR);
--
--		if (port->type != PORT_SCI) {
--			serial_port_in(port, SCxSR); /* Dummy read */
--			sci_clear_SCxSR(port, SCxSR_TDxE_CLEAR(port));
--		}
- 
--		ctrl |= SCSCR_TIE;
--		serial_port_out(port, SCSCR, ctrl);
--	}
- }
- 
- /* On SH3, SCIF may read end-of-break as a space->mark char */
+> The new property doesn't control the mode of operation, it only
+> describes the relationship between the master and companion LVDS
+> encoders.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  .../devicetree/bindings/display/bridge/renesas,lvds.txt     | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> index 900a884ad9f5..a720dbb5de69 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> @@ -45,6 +45,12 @@ OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
+>
+>  Each port shall have a single endpoint.
+>
+> +Optional properties:
+> +
+> +- renesas,companion : phandle to the companion LVDS encoder. This property is
+> +  valid for the first LVDS encoder D3 and E3 SoCs only, and points to the
+
+... on D3 ...
+
+> +  second encoder to be used as a companion in dual-link mode.
+
+Why restrict this to the first LVDS decoder, and not have a backlink in the
+other node, like for USB?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
