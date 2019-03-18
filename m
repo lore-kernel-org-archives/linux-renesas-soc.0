@@ -2,113 +2,103 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 521CDC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4033CC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA3B920872
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F55020879
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:31:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hGjwSgdW"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="W2K/DQl+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfCROWv (ORCPT
+        id S1727764AbfCRObe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 10:22:51 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59154 "EHLO
+        Mon, 18 Mar 2019 10:31:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59210 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726959AbfCROWv (ORCPT
+        with ESMTP id S1727757AbfCRObe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 10:22:51 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0788033A;
-        Mon, 18 Mar 2019 15:22:47 +0100 (CET)
+        Mon, 18 Mar 2019 10:31:34 -0400
+Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0028F547;
+        Mon, 18 Mar 2019 15:31:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552918968;
-        bh=JU5XYNmSJXqtsMlL99UuDFi5EjjE/2aA95WzBwG5Ak0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hGjwSgdWOKjVX6VAwMILPazrWyhqoreMkaXijFka+KwD/5AI0SrzzAVa3jhlPSj42
-         ijjiDMDYhHV35sVG7PzaeaiiOS0FxSlKqvGNK7g1fCT7XB2MP/CimJ4KaSq2aK0kIl
-         XK7K5urJMl5f7U6O3MjS9O2Bt2tv6PtMssNdgCq8=
-Date:   Mon, 18 Mar 2019 16:22:40 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        s=mail; t=1552919493;
+        bh=K3r1wGRCh3bd5e+FnMgwCsu0+3QdMT9xH+Cykav81xo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=W2K/DQl+ObXzhuJ5CO1JgALT+l0ZUgGlCaPsrlxHP8Ll+u2GGvuRYR6PXrBXYN27l
+         Ql3PMjTk/EfX8k8XC5qKYoDJgfhmq+d0QXDxWm0sD/EfUUpLiha7omv/wm5gUnz/6a
+         tLc/frD8fnesUowjBGcHH/32Kdb7T9KqGO0+STCE=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH/RFC 07/15] dt-bindings: display: renesas: lvds: Add
- renesas,companion property
-Message-ID: <20190318142240.GC12707@pendragon.ideasonboard.com>
-References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190306232345.23052-8-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdWfNk+v9PTMpE43DD8DvrmhZDeAocDReVNOsE=oh4P6uw@mail.gmail.com>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH v7 01/18] Revert "[media] v4l: vsp1: Supply frames to the DU continuously"
+Date:   Mon, 18 Mar 2019 16:31:04 +0200
+Message-Id: <20190318143121.29561-2-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20190318143121.29561-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWfNk+v9PTMpE43DD8DvrmhZDeAocDReVNOsE=oh4P6uw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-On Mon, Mar 18, 2019 at 11:21:15AM +0100, Geert Uytterhoeven wrote:
-> On Thu, Mar 7, 2019 at 12:24 AM Laurent Pinchart wrote:
-> > Add a new optional renesas,companion property to point to the companion
-> > LVDS encoder. This is used to support dual-link operation where the main
-> > LVDS encoder splits even-numbered and odd-numbered pixels between the
-> > two LVDS encoders.
-> 
-> Note that Documentation/devicetree/bindings/usb/generic.txt already
-> describes a "companion" property without vendor prefix.
-> 
-> > The new property doesn't control the mode of operation, it only
-> > describes the relationship between the master and companion LVDS
-> > encoders.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> >  .../devicetree/bindings/display/bridge/renesas,lvds.txt     | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> > index 900a884ad9f5..a720dbb5de69 100644
-> > --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> > @@ -45,6 +45,12 @@ OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-> >
-> >  Each port shall have a single endpoint.
-> >
-> > +Optional properties:
-> > +
-> > +- renesas,companion : phandle to the companion LVDS encoder. This property is
-> > +  valid for the first LVDS encoder D3 and E3 SoCs only, and points to the
-> 
-> ... on D3 ...
-> 
-> > +  second encoder to be used as a companion in dual-link mode.
-> 
-> Why restrict this to the first LVDS decoder, and not have a backlink in the
-> other node,
+This reverts commit 3299ba5c0b21 ("[media] v4l: vsp1: Supply frames to
+the DU continuously")
 
-Because there's no need to ? :-) Furthermore there's a need for the
-master to know its a master, so have a link in a single direction is
-pretty convenient. Otherwise I'd need an extra property to identify the
-master.
+The DU output mode does not rely on frames being supplied on the WPF as
+its pipeline is supplied from DRM. For the upcoming WPF writeback
+functionality, we will choose to enable writeback mode if there is an
+output buffer, or disable it (leaving the existing display pipeline
+unharmed) otherwise.
 
-> like for USB?
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/vsp1/vsp1_video.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-I'm not sure what USB does in that regard.
-
+diff --git a/drivers/media/platform/vsp1/vsp1_video.c b/drivers/media/platform/vsp1/vsp1_video.c
+index 7ceaf3222145..328d686189be 100644
+--- a/drivers/media/platform/vsp1/vsp1_video.c
++++ b/drivers/media/platform/vsp1/vsp1_video.c
+@@ -307,11 +307,6 @@ static int vsp1_video_pipeline_setup_partitions(struct vsp1_pipeline *pipe)
+  * This function completes the current buffer by filling its sequence number,
+  * time stamp and payload size, and hands it back to the videobuf core.
+  *
+- * When operating in DU output mode (deep pipeline to the DU through the LIF),
+- * the VSP1 needs to constantly supply frames to the display. In that case, if
+- * no other buffer is queued, reuse the one that has just been processed instead
+- * of handing it back to the videobuf core.
+- *
+  * Return the next queued buffer or NULL if the queue is empty.
+  */
+ static struct vsp1_vb2_buffer *
+@@ -333,12 +328,6 @@ vsp1_video_complete_buffer(struct vsp1_video *video)
+ 	done = list_first_entry(&video->irqqueue,
+ 				struct vsp1_vb2_buffer, queue);
+ 
+-	/* In DU output mode reuse the buffer if the list is singular. */
+-	if (pipe->lif && list_is_singular(&video->irqqueue)) {
+-		spin_unlock_irqrestore(&video->irqlock, flags);
+-		return done;
+-	}
+-
+ 	list_del(&done->queue);
+ 
+ 	if (!list_empty(&video->irqqueue))
 -- 
 Regards,
 
 Laurent Pinchart
+
