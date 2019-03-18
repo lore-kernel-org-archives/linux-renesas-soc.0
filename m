@@ -2,27 +2,27 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6188C10F00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C43BC43381
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FEA2133F
+	by mail.kernel.org (Postfix) with ESMTP id 5A61C2133D
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:48:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfCRPs6 (ORCPT
+        id S1727188AbfCRPs6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 18 Mar 2019 11:48:58 -0400
-Received: from sauhun.de ([88.99.104.3]:36808 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:36790 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727089AbfCRPs5 (ORCPT
+        id S1726808AbfCRPs6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 11:48:57 -0400
+        Mon, 18 Mar 2019 11:48:58 -0400
 Received: from localhost (p54B330C6.dip0.t-ipconnect.de [84.179.48.198])
-        by pokefinder.org (Postfix) with ESMTPSA id 22D224B20B8;
-        Mon, 18 Mar 2019 16:48:56 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 41E752C2817;
+        Mon, 18 Mar 2019 16:48:55 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -30,50 +30,51 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Support Opensource <support.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH 1/6] regulator: da9063: remove platform_data support
-Date:   Mon, 18 Mar 2019 16:47:53 +0100
-Message-Id: <20190318154759.21978-2-wsa+renesas@sang-engineering.com>
+        linux-input@vger.kernel.org
+Subject: [PATCH 0/6] mfd: da9063: remove platform_data
+Date:   Mon, 18 Mar 2019 16:47:52 +0100
+Message-Id: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
-References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There are no in-kernel users anymore, so remove this outdated interface.
+When working with this driver while debugging something else, I noticed that
+there are no in-kernel users of platform_data anymore. Removing the support
+simplifies the code and gets rid of quite some lines. The biggest refactoring
+went to the regulator driver which could maybe benefit from more
+refactorization. However, there is no in-kernel user of that driver, so no
+testing. I left it at this stage. I think the changes are still at a level
+where review and build-testing will give enough confidence.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/regulator/da9063-regulator.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Besides the regulator thing, it was tested on a Renesas Lager board (R-Car H2).
+No regressions encountered. buildbot was happy, too.
 
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 2b0c7a85306a..73c85039d0cf 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -730,7 +730,6 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
- static int da9063_regulator_probe(struct platform_device *pdev)
- {
- 	struct da9063 *da9063 = dev_get_drvdata(pdev->dev.parent);
--	struct da9063_pdata *da9063_pdata = dev_get_platdata(da9063->dev);
- 	struct of_regulator_match *da9063_reg_matches = NULL;
- 	struct da9063_regulators_pdata *regl_pdata;
- 	const struct da9063_dev_model *model;
-@@ -740,11 +739,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
- 	bool bcores_merged, bmem_bio_merged;
- 	int id, irq, n, n_regulators, ret, val;
- 
--	regl_pdata = da9063_pdata ? da9063_pdata->regulators_pdata : NULL;
--
--	if (!regl_pdata)
--		regl_pdata = da9063_parse_regulators_dt(pdev,
--							&da9063_reg_matches);
-+	regl_pdata = da9063_parse_regulators_dt(pdev, &da9063_reg_matches);
- 
- 	if (IS_ERR(regl_pdata) || regl_pdata->n_regulators == 0) {
- 		dev_err(&pdev->dev,
+The patches are based on v5.1-rc1. I'd vote for all of them going through the
+MFD tree. Looking forward to comments!
+
+   Wolfram
+
+
+Wolfram Sang (6):
+  regulator: da9063: remove platform_data support
+  input: da9063_onkey: remove platform_data support
+  mfd: da9063: remove platform_data support
+  regulator: da9063: move definitions out of a header into the driver
+  mfd: da9063: remove leftover platform_data definitions
+  regulator: da9063: platform_data is gone, depend on OF
+
+ drivers/input/misc/da9063_onkey.c    |  11 +---
+ drivers/mfd/da9063-core.c            |  20 +-----
+ drivers/mfd/da9063-i2c.c             |   1 -
+ drivers/mfd/da9063-irq.c             |   1 -
+ drivers/regulator/Kconfig            |   2 +-
+ drivers/regulator/da9063-regulator.c |  61 +++++++++++++------
+ include/linux/mfd/da9063/pdata.h     | 114 -----------------------------------
+ 7 files changed, 49 insertions(+), 161 deletions(-)
+ delete mode 100644 include/linux/mfd/da9063/pdata.h
+
 -- 
 2.11.0
 
