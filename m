@@ -2,110 +2,97 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=FAKE_REPLY_C,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C64C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA61C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A7202070D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8855C205C9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727194AbfCRKV2 (ORCPT
+        id S1726896AbfCRKf1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 06:21:28 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46792 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbfCRKV2 (ORCPT
+        Mon, 18 Mar 2019 06:35:27 -0400
+Received: from mga04.intel.com ([192.55.52.120]:14462 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726773AbfCRKf1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 06:21:28 -0400
-Received: by mail-vs1-f65.google.com with SMTP id w26so6620986vsk.13;
-        Mon, 18 Mar 2019 03:21:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2P0rWQawJDdw/uZMNrXzxuvkuUs88hIWKi3LqK8fSi0=;
-        b=WHHCpJY1vJKBH2+C9JsqHWVJSTuNsNnKo7Pjf0LXdp5jj8KE8r5vwv9wMPSQ7viKkg
-         yZA0poPX9gQSCbpKeIzkbVW4/idynDJRq4FElqVivXoK8KdTNkl2OcmCw+MvVBN6cQy3
-         bVwhjTk2/o/bahOYEFp4MgAv7teSkosUV0WqRrnu4fSXzEYcHnoMYC7gGH5TN72EzQhN
-         tZqVndTNUVnTMbYLOp1znjITDec4YpHjATvP9TwROzUwvON0LHAkko0hRneBYbO6Wen7
-         A1khPx/K87p4WGs7ieTFgpPqcRKUnxDWfvw6rWvVUSdGnbrmfBppskdN/IaUmdQ3g+Du
-         V4Dg==
-X-Gm-Message-State: APjAAAUkTdzGbKuV5jjn9KaydFcHbcFfvIkLtf+HjK4lI/8NTocr8CK8
-        MvxBmSQVL0xOLRMoXXKOME6h2OtleOpeT+wpsFgz2As9
-X-Google-Smtp-Source: APXvYqwq5idNFgPMy69YraOuq260rOAHSzdE4Qz2itGW/QVD8r5LuPEqKrAid587//95oGtCwGnMpPOlyzqqBYjZPQk=
-X-Received: by 2002:a67:f843:: with SMTP id b3mr3103825vsp.152.1552904487196;
- Mon, 18 Mar 2019 03:21:27 -0700 (PDT)
+        Mon, 18 Mar 2019 06:35:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Mar 2019 03:35:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,493,1544515200"; 
+   d="scan'208";a="328252416"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga006.fm.intel.com with ESMTP; 18 Mar 2019 03:35:24 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1h5pc3-00011y-NW; Mon, 18 Mar 2019 12:35:23 +0200
+Date:   Mon, 18 Mar 2019 12:35:23 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Subject: Re: [PATCH] i2c: document the SDA hold time binding
+Message-ID: <20190318103523.GQ9224@smile.fi.intel.com>
 MIME-Version: 1.0
-References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com> <20190306232345.23052-8-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20190306232345.23052-8-laurent.pinchart+renesas@ideasonboard.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Mar 2019 11:21:15 +0100
-Message-ID: <CAMuHMdWfNk+v9PTMpE43DD8DvrmhZDeAocDReVNOsE=oh4P6uw@mail.gmail.com>
-Subject: Re: [PATCH/RFC 07/15] dt-bindings: display: renesas: lvds: Add
- renesas,companion property
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211132515.24163-1-wsa+renesas@sang-engineering.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
-
-On Thu, Mar 7, 2019 at 12:24 AM Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
-> Add a new optional renesas,companion property to point to the companion
-> LVDS encoder. This is used to support dual-link operation where the main
-> LVDS encoder splits even-numbered and odd-numbered pixels between the
-> two LVDS encoders.
-
-Note that Documentation/devicetree/bindings/usb/generic.txt already
-describes a "companion" property without vendor prefix.
-
-> The new property doesn't control the mode of operation, it only
-> describes the relationship between the master and companion LVDS
-> encoders.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Mon, Feb 11, 2019 at 02:25:15PM +0100, Wolfram Sang wrote:
+> The documentation was forgotten when the feature was added.
+> 
+> Fixes: 4717be73c284 ("i2c: core: Parse SDA hold time from firmware")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  .../devicetree/bindings/display/bridge/renesas,lvds.txt     | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> index 900a884ad9f5..a720dbb5de69 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> @@ -45,6 +45,12 @@ OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
->
->  Each port shall have a single endpoint.
->
-> +Optional properties:
+> 
+> To everyone on CC: I want to confirm here that you use the value really for
+> t(hd:sta) and not t(hd:dat). I'd be a little confused otherwise...
+
+I guess in our case it's also t(hd:dat).
+
+Jarkko?
+
+> 
+>  Documentation/devicetree/bindings/i2c/i2c.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+> index 44efafdfd7f5..b7bc4c4cc2e6 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+> @@ -55,6 +55,10 @@ wants to support one of the below features, it should adapt the bindings below.
+>  	Number of nanoseconds the SDA signal takes to fall; t(f) in the I2C
+>  	specification.
+>  
+> +- i2c-sda-hold-time-ns
+> +	Number of nanoseconds the SDA signal needs to be held; t(hd:sta) in
+> +	the I2C specification.
 > +
-> +- renesas,companion : phandle to the companion LVDS encoder. This property is
-> +  valid for the first LVDS encoder D3 and E3 SoCs only, and points to the
-
-... on D3 ...
-
-> +  second encoder to be used as a companion in dual-link mode.
-
-Why restrict this to the first LVDS decoder, and not have a backlink in the
-other node, like for USB?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+>  - interrupts
+>  	interrupts used by the device.
+>  
+> -- 
+> 2.11.0
+> 
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
