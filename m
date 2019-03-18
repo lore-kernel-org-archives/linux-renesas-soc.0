@@ -2,63 +2,69 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B55C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842C1C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 11:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F8B20854
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:56:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="C9oaIzJ1"
+	by mail.kernel.org (Postfix) with ESMTP id 574A220857
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 11:22:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbfCRK4C (ORCPT
+        id S1726731AbfCRLWr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 06:56:02 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:53996 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726493AbfCRK4C (ORCPT
+        Mon, 18 Mar 2019 07:22:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:12796 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbfCRLWr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 06:56:02 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5ADD125B7A1;
-        Mon, 18 Mar 2019 21:56:00 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1552906560; bh=e0SconYsBgyFFPPVNrmxcdEFlfC/+3hD0ohZG4c/m2w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=C9oaIzJ1Tv8xFJzsqRGVLW9liHZOd5YOZvxlvAumoMHnjgSugF/dC3nW++ReorGDo
-         gqdu4L79DkbrC1rPGriN1lDz+j/UYbxw4S6/IQUr3DqmDV8Ya2z6uNqYk/0MQElfDT
-         sn7vUJDUwxIq+DM3RI9I2AAO64wcnkvL5uYxv7rI=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 9D9519406ED; Mon, 18 Mar 2019 11:55:58 +0100 (CET)
-Date:   Mon, 18 Mar 2019 11:55:58 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Frank Mehnert <frank.mehnert@kernkonzept.com>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: Re: Reference manual of Renesas SDHI controller
-Message-ID: <20190318105557.gud5wkfmcufhp3pw@verge.net.au>
-References: <7536072.idt63dpu4t@noys4>
+        Mon, 18 Mar 2019 07:22:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Mar 2019 04:22:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,493,1544515200"; 
+   d="scan'208";a="123597953"
+Received: from mylly.fi.intel.com (HELO [10.237.72.176]) ([10.237.72.176])
+  by orsmga007.jf.intel.com with ESMTP; 18 Mar 2019 04:22:40 -0700
+Subject: Re: [PATCH] i2c: document the SDA hold time binding
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>
+References: <20190318103523.GQ9224@smile.fi.intel.com>
+From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Message-ID: <9eb15177-ce2c-0082-5810-97e41e750bee@linux.intel.com>
+Date:   Mon, 18 Mar 2019 13:22:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7536072.idt63dpu4t@noys4>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190318103523.GQ9224@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 06, 2019 at 05:30:59PM +0100, Frank Mehnert wrote:
-> Hi all,
+On 3/18/19 12:35 PM, Andy Shevchenko wrote:
+> On Mon, Feb 11, 2019 at 02:25:15PM +0100, Wolfram Sang wrote:
+>> The documentation was forgotten when the feature was added.
+>>
+>> Fixes: 4717be73c284 ("i2c: core: Parse SDA hold time from firmware")
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
+>>
+>> To everyone on CC: I want to confirm here that you use the value really for
+>> t(hd:sta) and not t(hd:dat). I'd be a little confused otherwise...
 > 
-> could anybody provide me a link to a reference manual of the Renesas SDHI
-> controller which are used in the RCar3 SoC?
+> I guess in our case it's also t(hd:dat).
+> 
+The DesignWare specification I have mention only tHD;DAT.
 
-Hi Frank,
-
-my understanding is that this information is only available
-from Renesas under NDA. I would suggest contacting your local
-Renesas representative.
+-- 
+Jarkko
