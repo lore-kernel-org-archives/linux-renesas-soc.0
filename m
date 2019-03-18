@@ -2,27 +2,27 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F85C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0854DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E85420854
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:58:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEC5920854
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfCRP56 (ORCPT
+        id S1727529AbfCRP5j (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 11:57:58 -0400
-Received: from sauhun.de ([88.99.104.3]:36970 "EHLO pokefinder.org"
+        Mon, 18 Mar 2019 11:57:39 -0400
+Received: from sauhun.de ([88.99.104.3]:36946 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbfCRP5k (ORCPT
+        id S1726765AbfCRP5j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 11:57:40 -0400
+        Mon, 18 Mar 2019 11:57:39 -0400
 Received: from localhost (p54B330C6.dip0.t-ipconnect.de [84.179.48.198])
-        by pokefinder.org (Postfix) with ESMTPSA id EED474A1346;
-        Mon, 18 Mar 2019 16:57:38 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 5C49B2C2817;
+        Mon, 18 Mar 2019 16:57:37 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -30,48 +30,51 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Support Opensource <support.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: [PATCH 2/4] regulator: da9063: convert header to SPDX
-Date:   Mon, 18 Mar 2019 16:57:25 +0100
-Message-Id: <20190318155728.28365-3-wsa+renesas@sang-engineering.com>
+        linux-input@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH 0/4] da9063: convert to SPDX
+Date:   Mon, 18 Mar 2019 16:57:23 +0100
+Message-Id: <20190318155728.28365-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190318155728.28365-1-wsa+renesas@sang-engineering.com>
-References: <20190318155728.28365-1-wsa+renesas@sang-engineering.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Covnert the header of the source file to SPDX.
+When working with this driver while debugging something else, I noticed a typo
+in one of the file headers and decided that it could be converted to SPDX while
+I am at it anyhow.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/regulator/da9063-regulator.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+These patches were "tested" on a Renesas Lager board (R-Car H2). No regressions
+encountered. buildbot was happy, too.
 
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 2b0c7a85306a..42dca1cac077 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -1,4 +1,4 @@
--
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Regulator driver for DA9063 PMIC series
-  *
-@@ -6,12 +6,6 @@
-  * Copyright 2013 Philipp Zabel, Pengutronix
-  *
-  * Author: Krystian Garbaciak <krystian.garbaciak@diasemi.com>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
-  */
- #include <linux/kernel.h>
- #include <linux/module.h>
+The patches are based on v5.1-rc1. I'd think they can be picked up per
+subsystem but am also fine with everything going via MFD. There is no
+dependency or merge conflict with my platform_data removal series which I sent
+a few minutes ago.
+
+Looking forward to comments!
+
+   Wolfram
+
+
+
+
+Wolfram Sang (4):
+  mfd: da9063: convert headers to SPDX
+  regulator: da9063: convert header to SPDX
+  input: da9063_onkey: convert header to SPDX
+  rtc: da9063: convert header to SPDX
+
+ drivers/input/misc/da9063_onkey.c    | 11 +----------
+ drivers/mfd/da9063-core.c            |  8 ++------
+ drivers/mfd/da9063-i2c.c             |  9 ++-------
+ drivers/mfd/da9063-irq.c             |  9 ++-------
+ drivers/regulator/da9063-regulator.c |  8 +-------
+ drivers/rtc/rtc-da9063.c             | 14 +++-----------
+ include/linux/mfd/da9063/core.h      |  7 +------
+ include/linux/mfd/da9063/registers.h |  7 +------
+ 8 files changed, 13 insertions(+), 60 deletions(-)
+
 -- 
 2.11.0
 
