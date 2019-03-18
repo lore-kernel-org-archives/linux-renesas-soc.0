@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504E5C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 05:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9CEC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 05:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F05520857
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 05:11:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9A8E20857
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 05:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725915AbfCRFL3 (ORCPT
+        id S1725949AbfCRFLg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 01:11:29 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:44953 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725896AbfCRFL3 (ORCPT
+        Mon, 18 Mar 2019 01:11:36 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:23287 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725896AbfCRFLg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 01:11:29 -0400
-Date:   18 Mar 2019 14:11:27 +0900
+        Mon, 18 Mar 2019 01:11:36 -0400
+Date:   18 Mar 2019 14:11:34 +0900
 X-IronPort-AV: E=Sophos;i="5.58,492,1544454000"; 
-   d="scan'208";a="10635897"
+   d="scan'208";a="10427417"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Mar 2019 14:11:27 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 18 Mar 2019 14:11:34 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6611041EC416;
-        Mon, 18 Mar 2019 14:11:27 +0900 (JST)
-Message-ID: <87h8c0ye0n.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F256941EC417;
+        Mon, 18 Mar 2019 14:11:34 +0900 (JST)
+Message-ID: <87ftrkye0f.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 1/2] ASoC: rsnd: add missing reg/reg-name at Document
+Subject: [PATCH 2/2] ASoC: rsnd: explain extended Audio DMAC peri peri address
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -50,32 +50,31 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-reg is missing "Audio DMAC peri peri" part,
-and reg-name itself is missing at Document.
-This patch add these.
+If SoC has extended Audio DMAC peri peri address,
+DT needs to select it.
+Otherwise, it can select normal Audio DMAC peri peri address.
+Extended Audio DMAC peri peri address can use BUSIF4-7,
+normal address can't.
 
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Reported-by: Jiada Wang <jiada_wang@mentor.com>
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index 648d43e..c58af45 100644
+index c58af45..b34afa6 100644
 --- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
 +++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -282,7 +282,10 @@ Required properties:
- - reg				: Should contain the register physical address.
+@@ -283,6 +283,8 @@ Required properties:
  				  required register is
  				   SRU/ADG/SSI      if generation1
--				   SRU/ADG/SSIU/SSI if generation2
-+				   SRU/ADG/SSIU/SSI/AUDIO-DMAC-periperi if generation2/generation3
-+- reg-names			: Should contain the register names.
-+				   scu/adg/ssi	if generation1
-+				   scu/adg/ssiu/ssi/audmapp if generation2/generation3
- - rcar_sound,ssi		: Should contain SSI feature.
- 				  The number of SSI subnode should be same as HW.
- 				  see below for detail.
+ 				   SRU/ADG/SSIU/SSI/AUDIO-DMAC-periperi if generation2/generation3
++				   Select extended AUDIO-DMAC-periperi address if SoC has it,
++				   otherwise select normal AUDIO-DMAC-periperi address.
+ - reg-names			: Should contain the register names.
+ 				   scu/adg/ssi	if generation1
+ 				   scu/adg/ssiu/ssi/audmapp if generation2/generation3
 -- 
 2.7.4
 
