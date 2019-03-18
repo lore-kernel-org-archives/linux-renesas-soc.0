@@ -2,149 +2,310 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BAAC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 16:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D04C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 16:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4D02133D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 16:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A97EC20854
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 16:40:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=dialogsemiconductor.onmicrosoft.com header.i=@dialogsemiconductor.onmicrosoft.com header.b="sXS+4qgM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="NvgcGgT6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfCRQe6 (ORCPT
+        id S1727018AbfCRQkb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 12:34:58 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.132]:20581 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726808AbfCRQe6 (ORCPT
+        Mon, 18 Mar 2019 12:40:31 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:17698 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbfCRQkb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 12:34:58 -0400
-Received: from [46.226.53.56] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-c.eu-west-1.aws.symcld.net id 8C/97-22588-DA8CF8C5; Mon, 18 Mar 2019 16:34:53 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WSa0hTYRjH955zdjzZTrzOZE+SQoMgqq3NKFZ
-  GFHQZUVChCWHUUY9uMOfcmWkRYl/SLksjjFpepuUIywyjkjQ0a3nLFUplFwtpWWoXtTvEaGdn
-  lX37vc///9xeHoZU9tKxDF/g4O1WzqKmIynTEsUKTUNXaarO932BoXzYTxteffUiw9Opb3LDw
-  M0K2nBt9CNhOO7buIY2NtUfpo0vHrfSxpGaRsr4uSl+K7VTbram5RTskZuuVRUTtkmm4HDnzi
-  JUF3EERTIUbiQh4C0hxYcSlxFw0O8JKjOCj1cIKptzRaaxHqref0Iiz8bJ0HS/RC4mkLiWAHf
-  tKCkK0XglVBc9ISRTIvT72sOcAN6KoVAyhedDecmvELN4F3Q01xFSs/Vw6tG7UJ0ZeAMM9vlp
-  kRGOgy8HL4biJFbBM391yA8Yw/nWB6TEMTD6OiCX/LuhuO1DhBRfDH1P/EhiNXgGXXKJ46C/+
-  mg4vgUGbzwPfQXgZwh+FdeEGyyEyUMjYZMFvEP94WZzYaBL9IgJPXLoOFGPpA3SYaKyL9w5Hu
-  qdw5TED0lwfTNKGywGd8sULfEi8NSMk2VogWvacq5pNtc0myv0YVHQfcZPuRFVj5an2c1ZJkc
-  2Z7Zo9DqdRq9P0CTo9JqlWm6/Jl3L52nyecGh0Wu5fEEr7MtOt2RorbyjCQVPKsPWTTajkQtZ
-  HWgOQ6hj2GX3SlOVs9JyMvaZOMG0255n4YUONJdh1MDe6gxqUXY+iy/INFuCd/lHBkahns0mi
-  TIr2LhswZwlST1oKdNeO1xJMi9vv60klZQ1x8rHqthE0YpFqynP+rfQnxvvR3Gx0SySyWRKhY
-  23Z5sd/+tjSMUgdTR7V6yiMFsdf/uNBUchgqNcrgqN4uD+SbFFaG9uSkszqVq0o/DcscKisaS
-  fSllb9X2fuytlzPPjp8tZcfJUYLt9y9s0HBkT4e9OzXgwc9Mdyzr98iFsy3WvDgiTnivXkxs/
-  KiY2b4zp2bH2KvViXBZocLYTvdt6nIF5szJPsGtXOj+oNq0a8J2ldAHvm+2PV12aaDl9wKnw5
-  RSqKcHE6ReSdoH7DSuCfHDeAwAA
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-16.tower-308.messagelabs.com!1552926893!3791870!1
-X-Originating-IP: [104.47.12.57]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 21646 invoked from network); 18 Mar 2019 16:34:53 -0000
-Received: from mail-db3eur04lp2057.outbound.protection.outlook.com (HELO EUR04-DB3-obe.outbound.protection.outlook.com) (104.47.12.57)
-  by server-16.tower-308.messagelabs.com with AES256-SHA256 encrypted SMTP; 18 Mar 2019 16:34:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com; s=selector1-diasemi-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hs/YECII6fMB+DIwXJkEdxK/XyI6fmyjDVoyN0l0J/E=;
- b=sXS+4qgM+tx4POxUP1twF6nqjBzBbXlZUPzucxaDJOi6YgZb7blUeO7zHkcBs63+C4PlrVny2qrVrhwko3gv1pYdmO3n0WwShmaNxwShwdMfZkYrTvBPzMC8+s4KS5SDDVISS2+J+APgDX7normGssKjqAwU95EjgdJ/zwqYCCw=
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM (20.177.62.92) by
- VI1PR10MB1614.EURPRD10.PROD.OUTLOOK.COM (10.165.191.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1709.14; Mon, 18 Mar 2019 16:34:52 +0000
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e426:c8bc:d222:5cd7]) by VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e426:c8bc:d222:5cd7%4]) with mapi id 15.20.1709.015; Mon, 18 Mar 2019
- 16:34:52 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: RE: [PATCH 0/6] mfd: da9063: remove platform_data
-Thread-Topic: [PATCH 0/6] mfd: da9063: remove platform_data
-Thread-Index: AQHU3aIiRxuJGE6LNESZwBdNcQFfU6YRjIxg
-Date:   Mon, 18 Mar 2019 16:34:52 +0000
-Message-ID: <VI1PR10MB23522C4EA0F730414CD14B56FE470@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
-References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.240.73.196]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1a783dd0-3ddd-456b-4675-08d6abbfa583
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:VI1PR10MB1614;
-x-ms-traffictypediagnostic: VI1PR10MB1614:
-x-microsoft-antispam-prvs: <VI1PR10MB1614598D80130D8D1F1AD8F4F5470@VI1PR10MB1614.EURPRD10.PROD.OUTLOOK.COM>
-x-forefront-prvs: 098076C36C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39850400004)(136003)(396003)(376002)(189003)(199004)(14454004)(476003)(99286004)(6116002)(86362001)(6506007)(102836004)(7736002)(3846002)(26005)(7696005)(446003)(4326008)(76176011)(53546011)(305945005)(52536014)(11346002)(33656002)(186003)(25786009)(486006)(71190400001)(2906002)(110136005)(478600001)(8676002)(97736004)(81166006)(71200400001)(81156014)(5660300002)(53936002)(55016002)(316002)(105586002)(6246003)(54906003)(68736007)(229853002)(9686003)(106356001)(256004)(6436002)(66066001)(74316002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR10MB1614;H:VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 36oigYzDyClE692fplUzD8x7ynZT7RDCnSQx0a58DCUgnSZVUO7pFtTSLfDgFGgsGR9WmxPLO1AIm+DZKuMinY/vo488UgfFi2aW/sPOe60DbasXe6B99KknsGqSKPZwvKU26F8pSC8Ov3taPKpmDQsKlmq4yMtmeV3ItVxm/3+buZ0cd/r6K2gBAjb3HjBM85THBhojhb4cOwQHlKt8RMf0bu+05F83m3tXBp/vdv16c0c6gc0EabYZIKjUtn8VSUlPp0V2wwSCVDCSARQ6uKtKKQKlJSNqf8/koOqvVRLvVxCcf4DCl95ydNnFYEdqUS/NlD2j1GmkYXiP5QyM1TWdDLzG+LB8Nmocp2foZfZP5kZMhebiJCM0nIYUj/NxCi9llk2rvHbPfYDjmOTwKeDs6qrXWZ0kjMH1r9Zp0Rg=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a783dd0-3ddd-456b-4675-08d6abbfa583
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Mar 2019 16:34:52.2130
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB1614
+        Mon, 18 Mar 2019 12:40:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1552927226;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=+7CZFmUkrJZJSlsLHV+hqs8R02mJ/CcJfi9450arLho=;
+        b=NvgcGgT6oljF/OyXudnLLjbkQsJCKfTzdgG9CBhruIrk4WmuE5vtwu2NoLzTecqI40
+        jY8sm+rFAQpC97tgEgxnLJ1OAHcGU932Y5DQalRqEG1Tcwl2t2O3JRJsrmVmsNykjyPN
+        6ihvDdjmDl2o7W7j8pK7ipxQ8fLdXScC77HDsn3MTH3n50ebKpk9Pp20U2uoJ1dHErll
+        XBC7k+ZFLLjWmyhz0PfaQXEf6CrDAdPujWfcCbWK1OSSIbBOiJk/xP7lVDT33Hqp41mt
+        dc5NZBhcYjoeQInSqUlqpjkOD3Gpx0TnOTrHAS0WJGAhaMY2Xp4/Y1s69JmdTBwfEmY4
+        PN7A==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvJ5qUpzBvrMmfJWi4wQa8="
+X-RZG-CLASS-ID: mo00
+Received: from groucho.site
+        by smtp.strato.de (RZmta 44.16 DYNA|AUTH)
+        with ESMTPSA id R086cdv2IGeKC6d
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 18 Mar 2019 17:40:20 +0100 (CET)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        wsa@the-dreams.de
+Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH] pinctrl: sh-pfc: r8a77965: Add I2C{0,3,5} pins, groups and functions
+Date:   Mon, 18 Mar 2019 17:40:18 +0100
+Message-Id: <1552927218-22394-1-git-send-email-uli+renesas@fpond.eu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Mark,
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-On 18 March 2019 15:48, Wolfram Sang wrote:
+This patch adds I2C{0,3,5} pins, groups and functions to the R8A7796 SoC.
 
-> To: linux-kernel@vger.kernel.org
-> Subject: [PATCH 0/6] mfd: da9063: remove platform_data
->=20
-> When working with this driver while debugging something else, I noticed t=
-hat
-> there are no in-kernel users of platform_data anymore. Removing the suppo=
-rt
-> simplifies the code and gets rid of quite some lines. The biggest refacto=
-ring
-> went to the regulator driver which could maybe benefit from more
-> refactorization. However, there is no in-kernel user of that driver, so n=
-o
-> testing. I left it at this stage. I think the changes are still at a leve=
-l
-> where review and build-testing will give enough confidence.
->=20
-> Besides the regulator thing, it was tested on a Renesas Lager board (R-Ca=
-r H2).
-> No regressions encountered. buildbot was happy, too.
->=20
-> The patches are based on v5.1-rc1. I'd vote for all of them going through=
- the
-> MFD tree. Looking forward to comments!
->=20
->    Wolfram
+These pins are physically muxed with other pins. Therefore, setup of
+MOD_SEL is needed for exclusive control with other pins.
 
-My regulator tests are currently broken, so I'm looking into it.
-I'll read-through and test these patches as soon as I've solved the regress=
-ions.
+[takeshi.kihara.df: add blank lines after function declarations]
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[uli: use standard macros PINMUX_IPSR_PHYS and PINMUX_IPSR_PHYS_MSEL]
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 106 ++++++++++++++++++++++++++++------
+ 1 file changed, 87 insertions(+), 19 deletions(-)
 
-Regards,
-Steve
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index d2390e3..fd19993 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -558,6 +558,9 @@ MOD_SEL0_4_3		MOD_SEL1_4 \
+ 	FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN3) \
+ 	FM(TMS) FM(TDO) FM(ASEBRK) FM(MLB_REF) FM(TDI) FM(TCK) FM(TRST) FM(EXTALR)
+ 
++#define PINMUX_PHYS \
++	FM(SCL0) FM(SDA0) FM(SCL3) FM(SDA3) FM(SCL5) FM(SDA5)
++
+ enum {
+ 	PINMUX_RESERVED = 0,
+ 
+@@ -583,6 +586,7 @@ enum {
+ 	PINMUX_IPSR
+ 	PINMUX_MOD_SELS
+ 	PINMUX_STATIC
++	PINMUX_PHYS
+ 	PINMUX_MARK_END,
+ #undef F_
+ #undef FM
+@@ -620,13 +624,15 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP0_15_12,	TX4_A,			SEL_SCIF4_0),
+ 	PINMUX_IPSR_GPSR(IP0_19_16,	FSCLKST2_N_A),
+ 
+-	PINMUX_IPSR_MSEL(IP0_19_16,	AVB_AVTP_MATCH_A,	SEL_ETHERAVB_0),
+-	PINMUX_IPSR_MSEL(IP0_19_16,	MSIOF2_RXD_C,		SEL_MSIOF2_2),
+-	PINMUX_IPSR_MSEL(IP0_19_16,	CTS4_N_A,		SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_19_16,	AVB_AVTP_MATCH_A,	I2C_SEL_5_0, SEL_ETHERAVB_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_19_16,	MSIOF2_RXD_C,	I2C_SEL_5_0, SEL_MSIOF2_2),
++	PINMUX_IPSR_PHYS_MSEL(IP0_19_16,	CTS4_N_A,	I2C_SEL_5_0, SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS(IP0_19_16,	SCL5,			I2C_SEL_5_1),
+ 
+-	PINMUX_IPSR_MSEL(IP0_23_20,	AVB_AVTP_CAPTURE_A,	SEL_ETHERAVB_0),
+-	PINMUX_IPSR_MSEL(IP0_23_20,	MSIOF2_TXD_C,		SEL_MSIOF2_2),
+-	PINMUX_IPSR_MSEL(IP0_23_20,	RTS4_N_A,		SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_23_20,	AVB_AVTP_CAPTURE_A,	I2C_SEL_5_0, SEL_ETHERAVB_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_23_20,	MSIOF2_TXD_C,		I2C_SEL_5_0, SEL_MSIOF2_2),
++	PINMUX_IPSR_PHYS_MSEL(IP0_23_20,	RTS4_N_A,		I2C_SEL_5_0, SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS(IP0_23_20,	SDA5,			I2C_SEL_5_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP0_27_24,	IRQ0),
+ 	PINMUX_IPSR_GPSR(IP0_27_24,	QPOLB),
+@@ -679,14 +685,16 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP1_19_16,	VI4_DATA6_B,		SEL_VIN4_1),
+ 	PINMUX_IPSR_MSEL(IP1_19_16,	IECLK_B,		SEL_IEBUS_1),
+ 
+-	PINMUX_IPSR_MSEL(IP1_23_20,	PWM1_A,			SEL_PWM1_0),
+-	PINMUX_IPSR_MSEL(IP1_23_20,	HRX3_D,			SEL_HSCIF3_3),
+-	PINMUX_IPSR_MSEL(IP1_23_20,	VI4_DATA7_B,		SEL_VIN4_1),
+-	PINMUX_IPSR_MSEL(IP1_23_20,	IERX_B,			SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	PWM1_A,		I2C_SEL_3_0,	SEL_PWM1_0),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	HRX3_D,		I2C_SEL_3_0,	SEL_HSCIF3_3),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	VI4_DATA7_B,	I2C_SEL_3_0,	SEL_VIN4_1),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	IERX_B,		I2C_SEL_3_0,	SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS(IP0_23_20,	SCL3,		I2C_SEL_3_1),
+ 
+-	PINMUX_IPSR_MSEL(IP1_27_24,	PWM2_A,			SEL_PWM2_0),
+-	PINMUX_IPSR_MSEL(IP1_27_24,	HTX3_D,			SEL_HSCIF3_3),
+-	PINMUX_IPSR_MSEL(IP1_27_24,	IETX_B,			SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS_MSEL(IP1_27_24,	PWM2_A,		I2C_SEL_3_0,	SEL_PWM2_0),
++	PINMUX_IPSR_PHYS_MSEL(IP1_27_24,	HTX3_D,		I2C_SEL_3_0,	SEL_HSCIF3_3),
++	PINMUX_IPSR_PHYS_MSEL(IP1_27_24,	IETX_B,		I2C_SEL_3_0,	SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS(IP1_27_24,	SDA3,		I2C_SEL_3_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP1_31_28,	A0),
+ 	PINMUX_IPSR_GPSR(IP1_31_28,	LCDOUT16),
+@@ -1120,13 +1128,15 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP11_15_12,	NFDATA15_A,		SEL_NDFC_0),
+ 	PINMUX_IPSR_MSEL(IP11_15_12,	SDA2_B,			SEL_I2C2_1),
+ 
+-	PINMUX_IPSR_GPSR(IP11_19_16,	SD1_CD),
+-	PINMUX_IPSR_MSEL(IP11_19_16,	NFRB_N_A,		SEL_NDFC_0),
+-	PINMUX_IPSR_MSEL(IP11_19_16,	SIM0_CLK_B,		SEL_SIMCARD_1),
++	PINMUX_IPSR_MSEL(IP11_19_16,	SD1_CD,			I2C_SEL_0_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_19_16,	NFRB_N_A,	I2C_SEL_0_0, SEL_NDFC_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_19_16,	SIM0_CLK_B,	I2C_SEL_0_0, SEL_SIMCARD_1),
++	PINMUX_IPSR_PHYS(IP11_19_16,	SCL0,			I2C_SEL_0_1),
+ 
+-	PINMUX_IPSR_GPSR(IP11_23_20,	SD1_WP),
+-	PINMUX_IPSR_MSEL(IP11_23_20,	NFCE_N_A,		SEL_NDFC_0),
+-	PINMUX_IPSR_MSEL(IP11_23_20,	SIM0_D_B,		SEL_SIMCARD_1),
++	PINMUX_IPSR_MSEL(IP11_23_20,	SD1_WP,			I2C_SEL_0_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_23_20,	NFCE_N_A,	I2C_SEL_0_0, SEL_NDFC_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_23_20,	SIM0_D_B,	I2C_SEL_0_0, SEL_SIMCARD_1),
++	PINMUX_IPSR_PHYS(IP11_23_20,	SDA0,			I2C_SEL_0_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP11_27_24,	SCK0),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,	HSCK1_B,		SEL_HSCIF1_1),
+@@ -2479,52 +2489,92 @@ static const unsigned int hscif4_data_b_mux[] = {
+ };
+ 
+ /* - I2C -------------------------------------------------------------------- */
++static const unsigned int i2c0_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(3, 14), RCAR_GP_PIN(3, 15),
++};
++
++static const unsigned int i2c0_mux[] = {
++	SCL0_MARK, SDA0_MARK,
++};
++
+ static const unsigned int i2c1_a_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
+ };
++
+ static const unsigned int i2c1_a_mux[] = {
+ 	SDA1_A_MARK, SCL1_A_MARK,
+ };
++
+ static const unsigned int i2c1_b_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 23),
+ };
++
+ static const unsigned int i2c1_b_mux[] = {
+ 	SDA1_B_MARK, SCL1_B_MARK,
+ };
++
+ static const unsigned int i2c2_a_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
+ };
++
+ static const unsigned int i2c2_a_mux[] = {
+ 	SDA2_A_MARK, SCL2_A_MARK,
+ };
++
+ static const unsigned int i2c2_b_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 12),
+ };
++
+ static const unsigned int i2c2_b_mux[] = {
+ 	SDA2_B_MARK, SCL2_B_MARK,
+ };
++
++static const unsigned int i2c3_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 8),
++};
++
++static const unsigned int i2c3_mux[] = {
++	SCL3_MARK, SDA3_MARK,
++};
++
++static const unsigned int i2c5_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(2, 13), RCAR_GP_PIN(2, 14),
++};
++
++static const unsigned int i2c5_mux[] = {
++	SCL5_MARK, SDA5_MARK,
++};
++
+ static const unsigned int i2c6_a_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
+ };
++
+ static const unsigned int i2c6_a_mux[] = {
+ 	SDA6_A_MARK, SCL6_A_MARK,
+ };
++
+ static const unsigned int i2c6_b_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
+ };
++
+ static const unsigned int i2c6_b_mux[] = {
+ 	SDA6_B_MARK, SCL6_B_MARK,
+ };
++
+ static const unsigned int i2c6_c_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14),
+ };
++
+ static const unsigned int i2c6_c_mux[] = {
+ 	SDA6_C_MARK, SCL6_C_MARK,
+ };
+@@ -4414,10 +4464,13 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(hscif4_clk),
+ 	SH_PFC_PIN_GROUP(hscif4_ctrl),
+ 	SH_PFC_PIN_GROUP(hscif4_data_b),
++	SH_PFC_PIN_GROUP(i2c0),
+ 	SH_PFC_PIN_GROUP(i2c1_a),
+ 	SH_PFC_PIN_GROUP(i2c1_b),
+ 	SH_PFC_PIN_GROUP(i2c2_a),
+ 	SH_PFC_PIN_GROUP(i2c2_b),
++	SH_PFC_PIN_GROUP(i2c3),
++	SH_PFC_PIN_GROUP(i2c5),
+ 	SH_PFC_PIN_GROUP(i2c6_a),
+ 	SH_PFC_PIN_GROUP(i2c6_b),
+ 	SH_PFC_PIN_GROUP(i2c6_c),
+@@ -4808,6 +4861,10 @@ static const char * const hscif4_groups[] = {
+ 	"hscif4_data_b",
+ };
+ 
++static const char * const i2c0_groups[] = {
++	"i2c0",
++};
++
+ static const char * const i2c1_groups[] = {
+ 	"i2c1_a",
+ 	"i2c1_b",
+@@ -4818,6 +4875,14 @@ static const char * const i2c2_groups[] = {
+ 	"i2c2_b",
+ };
+ 
++static const char * const i2c3_groups[] = {
++	"i2c3",
++};
++
++static const char * const i2c5_groups[] = {
++	"i2c5",
++};
++
+ static const char * const i2c6_groups[] = {
+ 	"i2c6_a",
+ 	"i2c6_b",
+@@ -5167,8 +5232,11 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(hscif2),
+ 	SH_PFC_FUNCTION(hscif3),
+ 	SH_PFC_FUNCTION(hscif4),
++	SH_PFC_FUNCTION(i2c0),
+ 	SH_PFC_FUNCTION(i2c1),
+ 	SH_PFC_FUNCTION(i2c2),
++	SH_PFC_FUNCTION(i2c3),
++	SH_PFC_FUNCTION(i2c5),
+ 	SH_PFC_FUNCTION(i2c6),
+ 	SH_PFC_FUNCTION(intc_ex),
+ 	SH_PFC_FUNCTION(msiof0),
+-- 
+2.7.4
+
