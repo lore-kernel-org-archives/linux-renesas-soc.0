@@ -2,92 +2,101 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412FEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 08:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19254C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 08:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1905A20811
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 08:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7BD021738
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 08:19:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfCRIPI (ORCPT
+        id S1726944AbfCRITP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 04:15:08 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:45375 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbfCRIPI (ORCPT
+        Mon, 18 Mar 2019 04:19:15 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41939 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726564AbfCRITP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 04:15:08 -0400
-Received: by mail-vs1-f65.google.com with SMTP id n14so8881695vsp.12
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Mar 2019 01:15:08 -0700 (PDT)
+        Mon, 18 Mar 2019 04:19:15 -0400
+Received: by mail-vs1-f68.google.com with SMTP id z25so7607302vsk.8;
+        Mon, 18 Mar 2019 01:19:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AsPHwK+59+i93+v7IHAsObk/598lWTJuZi8x4cqDUXU=;
-        b=s/FCUmnKlmoIYFMCIUbMIvtVXi/+gc7/8KQ+dFX0Hu2U6iHSyiDbtlaGyMhm0xrEoY
-         6GVPm36gTn2SSRC1oJhfpVwMePV1sNAMWAx4Fei+liYmxBgi8d/jEhx65BxTJzdJRl+M
-         4bOf8AJaFk0WjjCsNpn+qNm2WqiYLQ2AZasPN0zZ1/CvYB3ePA/bisxY7hOtygad+AYF
-         dm//ZyhtoHMby4p88CJUwaM3wbmAoHo88cWSTby3Jx8CN2VI0a6emr60ePn1s47LaZYs
-         IOzep9rQU6+KHaC7SU94uGG8a46FrIX0RsrUpXhKo4R8dxR+2LtILBJbgt62dYJu+bX+
-         kCVQ==
-X-Gm-Message-State: APjAAAXON7tTr852uwj1WTQksOK585uJyMsWcSIV9vekQNWNy4s2k2eR
-        HldEZ7WEitTlcRQGQqdgvJTF4kReaksy7wzfZiunxK+8
-X-Google-Smtp-Source: APXvYqwEnZ9pa6HiUzWq+HtbmyxB34OMiMI0xKpFK7SkYqMz7U5Gb+E7Krlp32b9oDBVOb/OKLwxnDjyCwdWYvUq8eo=
-X-Received: by 2002:a67:fc9a:: with SMTP id x26mr8558268vsp.166.1552896907655;
- Mon, 18 Mar 2019 01:15:07 -0700 (PDT)
+        bh=vuoiFj8Beu8UvhC6V1qbCHl0K2yHsBl4TuxKWVXjmJ8=;
+        b=ExJJFKhxlJwOksL1Fss739JMJv3UIBYe2y1iAvP4s6dbVLEo6wcEE6duvCMxQlK2Ns
+         ewaNJyGWT5GmTY8t+64YGtyJwmwROIH1lKTtrwh1WT9v8HQmMeu2NY4ovWSAy3DNRCDS
+         xhPs/t6fz6HJ2JKVy/Nz5K852DxkswRuU2h1W/9/DQ8iL1uCkMvEtZg23k86d2hxx4/W
+         ifxH0fMj0y0tulSi6SroKmDya7os2834ziK2mGkZ5kWyZDN1Ec7RVP0ScTQoXPp8QzLU
+         /cdhQANx6Sujoca3qYy3m3JaeSiIR9bgepQDR7G/XgZh63ufWYfWCjP3fSuXb59z/SMD
+         OVrw==
+X-Gm-Message-State: APjAAAWXfTaexV76ADFJm9qF7IJXcw2NKG3yzG9iX3vl+6gyQ6Odd8AJ
+        Vt0EVSW32lZLpft9CAjKc+evJJm70GoBnoqJi2cqrK2E
+X-Google-Smtp-Source: APXvYqwQybXkHntYdEvgk0D8IvvhZhQIAQcJfpt4gQBEN0RjRhmF3jSEvShIHBMcqPYWg+V64p+R93/MYsYoOYTeQMk=
+X-Received: by 2002:a67:8588:: with SMTP id h130mr8139526vsd.11.1552897154301;
+ Mon, 18 Mar 2019 01:19:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190317200953.16323-1-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20190317200953.16323-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20190309005613.1493-1-marek.vasut@gmail.com> <20190309005613.1493-2-marek.vasut@gmail.com>
+ <CAMuHMdXGn50+hAoPBmnatf+onXezhNUwDWv+izj3j_QVMMFNGw@mail.gmail.com>
+ <d49be905-2e59-e65f-cf3b-191eb972ec45@gmail.com> <CAMuHMdXWKWtzmm=MiSxmBk-C0Y2QSGVQNNYstJidSOp637f3+g@mail.gmail.com>
+ <e3dc95ed-c331-2b92-8e3f-8e69937c8d66@gmail.com>
+In-Reply-To: <e3dc95ed-c331-2b92-8e3f-8e69937c8d66@gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Mar 2019 09:14:56 +0100
-Message-ID: <CAMuHMdUKk=kU-kGBPg6jHkgd2ba1tiCzVLjwvfxfhMWq8GqWWg@mail.gmail.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] du/for-renesas-drivers
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Date:   Mon, 18 Mar 2019 09:19:02 +0100
+Message-ID: <CAMuHMdWCY-QjnrG83MezY0Qq=h1nMqayYKantssSBxJrHJrAaw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: rcar: Replace unsigned long with u32 in register accessors
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran, Laurent,
+Hi Marek,
 
-On Sun, Mar 17, 2019 at 9:09 PM Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> Please consider including this release in renesas-drivers.
-
-Thanks for your pull request!
-
-> The following changes since commit 0f1d37e65a59e9db33ab85f6e2c9784768ef80f4:
+On Mon, Mar 18, 2019 at 12:39 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 3/17/19 11:22 AM, Geert Uytterhoeven wrote:
+> > On Sun, Mar 17, 2019 at 1:06 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+> >> On 3/11/19 10:41 AM, Geert Uytterhoeven wrote:
+> >>> On Sat, Mar 9, 2019 at 1:56 AM <marek.vasut@gmail.com> wrote:
+> >>>> --- a/drivers/pci/controller/pcie-rcar.c
+> >>>> +++ b/drivers/pci/controller/pcie-rcar.c
+> >>>> @@ -152,14 +152,12 @@ struct rcar_pcie {
+> >>>>         struct                  rcar_msi msi;
+> >>>>  };
+> >>>>
+> >>>> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+> >>>> -                              unsigned long reg)
+> >>>> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
+> >>>
+> >>> Doesn't unsigned int make more sense for reg?
+> >>
+> >> Isn't u32 more explicit ?
+> >
+> > It's just an offset in the register block, with a range much smaller than u32.
 >
->   Merge branch 'drm-next-5.1' of git://people.freedesktop.org/~agd5f/linux into drm-next (2019-03-14 12:15:02 +1000)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git du/for-renesas-drivers
->
-> for you to fetch changes up to 99deb47fa63bb9fc7bd691e358fea1c5bccc1da2:
->
->   drm: rcar-du: Add group hooks for atomic-commit (2019-03-17 19:29:37 +0000)
+> We could use u16 ?
 
-This has a merge conflict in drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-with Laurent's pull request for
-git://linuxtv.org/pinchartl/media.git drm/du/lvds/dual-link~2
+u16 may be more expensive on some processor architectures
+(MIPS comes too mind, don't know about ARM).
 
-> Laurent Pinchart (1):
->       drm: rcar-du: Support panels connected directly to the DPAD outputs
+> However, Bjorn's concern was that using unsigned long
+> for registers was not recommended ;
 
-Both branches contain the above commit, but with different commit IDs,
-and Laurent's "drm: rcar-du: Skip LVDS1 output on Gen3 when using
-dual-link LVDS mode" builds on top of that.
+Wasn't that comment meant for the size of the register values?
 
-Nothing I can't handle, though.
+> how's unsigned int better ?
+
+Basic rule "If you don't care about the size, use (unsigned) int"?
 
 Gr{oetje,eeting}s,
 
