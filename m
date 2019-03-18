@@ -2,165 +2,113 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF43AC10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 13:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521CDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF2B920850
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 13:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA3B920872
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 14:22:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hGjwSgdW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfCRNOe (ORCPT
+        id S1727764AbfCROWv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 09:14:34 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34100 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbfCRNOc (ORCPT
+        Mon, 18 Mar 2019 10:22:51 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59154 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbfCROWv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 09:14:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEB9AEBD;
-        Mon, 18 Mar 2019 06:14:31 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8F1B3F71A;
-        Mon, 18 Mar 2019 06:14:29 -0700 (PDT)
-Subject: Re: [PATCH 1/2] [RFC] ata: ahci: Respect bus DMA constraints
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-ide@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jens Axboe <axboe@fb.com>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20190307000440.8708-1-marek.vasut@gmail.com>
- <7c051bbd-7835-9cab-30b2-0acde1364781@arm.com>
- <356f3ee8-407f-f865-e5cc-333695d4f857@gmail.com>
- <79e44e90-b16a-5315-e02f-101a2ebbb6a0@arm.com>
- <a8b5b75f-2660-e216-033a-77808e2afb76@gmail.com>
- <20190308071810.GA11959@lst.de>
- <a6b34982-9100-0e60-c3eb-6ed8fcbe9e93@gmail.com>
- <20190313183056.GB4926@lst.de>
- <3b665597-a616-70fc-8cd0-dfde236fe669@gmail.com>
- <e2322e9d-46a1-c588-85ea-f56e3846996d@gmail.com>
- <CAMuHMdWiBh0JMKhXPpZh_PqvUGELN9PbgbZttTgKuzXZ3da5DA@mail.gmail.com>
- <6eb8eb87-f4c0-a1be-7585-cdc10f620899@gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <5fdb1775-5e44-ad25-62c9-52c247660062@arm.com>
-Date:   Mon, 18 Mar 2019 13:14:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 18 Mar 2019 10:22:51 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0788033A;
+        Mon, 18 Mar 2019 15:22:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1552918968;
+        bh=JU5XYNmSJXqtsMlL99UuDFi5EjjE/2aA95WzBwG5Ak0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hGjwSgdWOKjVX6VAwMILPazrWyhqoreMkaXijFka+KwD/5AI0SrzzAVa3jhlPSj42
+         ijjiDMDYhHV35sVG7PzaeaiiOS0FxSlKqvGNK7g1fCT7XB2MP/CimJ4KaSq2aK0kIl
+         XK7K5urJMl5f7U6O3MjS9O2Bt2tv6PtMssNdgCq8=
+Date:   Mon, 18 Mar 2019 16:22:40 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH/RFC 07/15] dt-bindings: display: renesas: lvds: Add
+ renesas,companion property
+Message-ID: <20190318142240.GC12707@pendragon.ideasonboard.com>
+References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20190306232345.23052-8-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdWfNk+v9PTMpE43DD8DvrmhZDeAocDReVNOsE=oh4P6uw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <6eb8eb87-f4c0-a1be-7585-cdc10f620899@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWfNk+v9PTMpE43DD8DvrmhZDeAocDReVNOsE=oh4P6uw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 17/03/2019 23:36, Marek Vasut wrote:
-> On 3/17/19 11:29 AM, Geert Uytterhoeven wrote:
->> Hi Marek,
-> 
-> Hi,
-> 
->> On Sun, Mar 17, 2019 at 12:04 AM Marek Vasut <marek.vasut@gmail.com> wrote:
->>> On 3/16/19 10:25 PM, Marek Vasut wrote:
->>>> On 3/13/19 7:30 PM, Christoph Hellwig wrote:
->>>>> On Sat, Mar 09, 2019 at 12:23:15AM +0100, Marek Vasut wrote:
->>>>>> On 3/8/19 8:18 AM, Christoph Hellwig wrote:
->>>>>>> On Thu, Mar 07, 2019 at 12:14:06PM +0100, Marek Vasut wrote:
->>>>>>>>> Right, but whoever *interprets* the device masks after the driver has
->>>>>>>>> overridden them should be taking the (smaller) bus mask into account as
->>>>>>>>> well, so the question is where is *that* not being done correctly?
->>>>>>>>
->>>>>>>> Do you have a hint where I should look for that ?
->>>>>>>
->>>>>>> If this a 32-bit ARM platform it might the complete lack of support
->>>>>>> for bus_dma_mask in arch/arm/mm/dma-mapping.c..
->>>>>>
->>>>>> It's an ARM 64bit platform, just the PCIe controller is limited to 32bit
->>>>>> address range, so the devices on the PCIe bus cannot read the host's
->>>>>> DRAM above the 32bit limit.
->>>>>
->>>>> arm64 should take the mask into account both for the swiotlb and
->>>>> iommu case.  What are the exact symptoms you see?
->>>>
->>>> With the nvme, the device is recognized, but cannot be used.
->>>> It boils down to PCI BAR access being possible, since that's all below
->>>> the 32bit boundary, but when the device tries to do any sort of DMA,
->>>> that transfer returns nonsense data.
->>>>
->>>> But when I call dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(32) in
->>>> the affected driver (thus far I tried this nvme, xhci-pci and ahci-pci
->>>> drivers), it all starts to work fine.
->>>>
->>>> Could it be that the driver overwrites the (coherent_)dma_mask and
->>>> that's why the swiotlb/iommu code cannot take this into account ?
->>>>
->>>>> Does it involve
->>>>> swiotlb not kicking in, or iommu issues?
->>>>
->>>> How can I check ? I added printks into arch/arm64/mm/dma-mapping.c and
->>>> drivers/iommu/dma-iommu.c , but I suspect I need to look elsewhere.
->>>
->>> Digging further ...
->>>
->>> drivers/nvme/host/pci.c nvme_map_data() calls dma_map_sg_attrs() and the
->>> resulting sglist contains entry with >32bit PA. This is because
->>> dma_map_sg_attrs() calls dma_direct_map_sg(), which in turn calls
->>> dma_direct_map_sg(), then dma_direct_map_page() and that's where it goes
->>> weird.
->>>
->>> dma_direct_map_page() does a dma_direct_possible() check before
->>> triggering swiotlb_map(). The check succeeds, so the later isn't executed.
->>>
->>> dma_direct_possible() calls dma_capable() with dev->dma_mask =
->>> DMA_BIT_MASK(64) and dev->dma_bus_mask = 0, so
->>> min_not_zero(*dev->dma_mask, dev->bus_dma_mask) returns DMA_BIT_MASK(64).
->>>
->>> Surely enough, if I hack dma_direct_possible() to return 0,
->>> swiotlb_map() kicks in and the nvme driver starts working fine.
->>>
->>> I presume the question here is, why is dev->bus_dma_mask = 0 ?
->>
->> Because that's the default, and almost no code overrides that?
-> 
-> But shouldn't drivers/of/device.c set that for the PCIe controller ?
+Hi Geert,
 
-Urgh, I really should have spotted the significance of "NVMe", but 
-somehow it failed to click :(
-
-Of course the existing code works fine for everything *except* PCI 
-devices on DT-based systems... That's because of_dma_get_range() has 
-never been made to work correctly with the trick we play of passing the 
-host bridge of_node through of_dma_configure(). I've got at least 2 or 3 
-half-finished attempts at improving that, but they keep getting 
-sidetracked into trying to clean up the various new of_dma_configure() 
-hacks I find in drivers and/or falling down the rabbit-hole of starting 
-to redesign the whole dma_pfn_offset machinery entirely. Let me dig one 
-up and try to constrain it to solve just this most common "one single 
-limited range" condition for the sake of making actual progress...
-
-Robin.
-
->> $ git grep "\<bus_dma_mask ="
->> arch/mips/pci/fixup-sb1250.c:           dev->dev.bus_dma_mask =
->> DMA_BIT_MASK(32);
->> arch/x86/kernel/pci-dma.c:      pdev->dev.bus_dma_mask = DMA_BIT_MASK(32);
->> drivers/acpi/arm64/iort.c:              dev->bus_dma_mask = mask;
->> drivers/of/device.c:            dev->bus_dma_mask = mask;
->>
->> dev is the nvme PCI device, I assume? So you can ignore the last match.
->>
->> The first two seem to be related to platforms that cannot do >32 bit DMA
->> on PCI. So that's a hint on how to fix this...
+On Mon, Mar 18, 2019 at 11:21:15AM +0100, Geert Uytterhoeven wrote:
+> On Thu, Mar 7, 2019 at 12:24 AM Laurent Pinchart wrote:
+> > Add a new optional renesas,companion property to point to the companion
+> > LVDS encoder. This is used to support dual-link operation where the main
+> > LVDS encoder splits even-numbered and odd-numbered pixels between the
+> > two LVDS encoders.
 > 
-> That doesn't feel right, it's not a platform limitation, but a PCIe IP
-> limitation, so this fix should live somewhere in drivers/ I think ? >
+> Note that Documentation/devicetree/bindings/usb/generic.txt already
+> describes a "companion" property without vendor prefix.
+> 
+> > The new property doesn't control the mode of operation, it only
+> > describes the relationship between the master and companion LVDS
+> > encoders.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  .../devicetree/bindings/display/bridge/renesas,lvds.txt     | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> > index 900a884ad9f5..a720dbb5de69 100644
+> > --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> > @@ -45,6 +45,12 @@ OF graph bindings specified in Documentation/devicetree/bindings/graph.txt.
+> >
+> >  Each port shall have a single endpoint.
+> >
+> > +Optional properties:
+> > +
+> > +- renesas,companion : phandle to the companion LVDS encoder. This property is
+> > +  valid for the first LVDS encoder D3 and E3 SoCs only, and points to the
+> 
+> ... on D3 ...
+> 
+> > +  second encoder to be used as a companion in dual-link mode.
+> 
+> Why restrict this to the first LVDS decoder, and not have a backlink in the
+> other node,
+
+Because there's no need to ? :-) Furthermore there's a need for the
+master to know its a master, so have a link in a single direction is
+pretty convenient. Otherwise I'd need an extra property to identify the
+master.
+
+> like for USB?
+
+I'm not sure what USB does in that regard.
+
+-- 
+Regards,
+
+Laurent Pinchart
