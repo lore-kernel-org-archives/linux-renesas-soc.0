@@ -2,79 +2,94 @@ Return-Path: <SRS0=zXAj=RV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8CCC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E2DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5536F2082F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:16:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACEAC2082F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 10:20:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfCRKQ2 (ORCPT
+        id S1727490AbfCRKUH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Mar 2019 06:16:28 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:41041 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbfCRKQ2 (ORCPT
+        Mon, 18 Mar 2019 06:20:07 -0400
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:13752 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727470AbfCRKUG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 06:16:28 -0400
-Received: by mail-vs1-f68.google.com with SMTP id z25so7780411vsk.8;
-        Mon, 18 Mar 2019 03:16:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+GPMeQ9UAfGF4IUSaZ55d3QSxRjOD1KKb+FTRyi+/Mc=;
-        b=fSpGvw5xICHKqwY3p+gxYKGE170zSWNkl7/P7B9rXmNDfbfrFw+a+akW/2Bqr5PWGK
-         NZyKF7rempQHEW6Q5Ri8vDwXYaPuL93QcRcs7fovgiXXoonUKkjQl/m1abzGH+zo4H8T
-         diGXtcsruoIttTswDQkIIge1TD/FTJr+Gx9PpaA1q1xFZyttVi2hPP7DaPRfLucJFVmf
-         iqX5mtDpGb35zG0aLG2yoBYmR6LiqDH3bN9PAngXJ5dFqNQwPNlvOtiMGYK0FfYTq+Xs
-         D9240Ul9ofDCy0ksKV07huJ+nqNoBs6GWhCILBDSharnrby8RwGTAf3eev+Iel4Dv2nT
-         cJEQ==
-X-Gm-Message-State: APjAAAULDvi4/9hvTuLsNOyr4+eZSZibWEG4fxa0N7YJlg6V0mjVjPaK
-        AU4Y93EfA6vfWtqjKVCSba8BUvU0v+FIzoqcljQ=
-X-Google-Smtp-Source: APXvYqxIvDukWwM9nxnvly3WzBgl6iZ0o+tt0e1uRYRWmV0zN+ujcm5caSIRoENJxU50f3ZTyQZQkhpVnceoHo7lT5g=
-X-Received: by 2002:a67:fc9a:: with SMTP id x26mr8756498vsp.166.1552904187890;
- Mon, 18 Mar 2019 03:16:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190317093445.7746-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190317093445.7746-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Mar 2019 11:16:16 +0100
-Message-ID: <CAMuHMdUwH1kLr_n1fCDwAQdP+yBqH++LOasx6FxOr_Z+CDNfNg@mail.gmail.com>
-Subject: Re: [PATCH] PCI: rcar: don't shadow the 'irq' variable
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 18 Mar 2019 06:20:06 -0400
+X-Greylist: delayed 3193 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Mar 2019 06:20:04 EDT
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2I9QbCV000983;
+        Mon, 18 Mar 2019 18:26:37 +0900 (JST)
+        (envelope-from na-hoan@jinso.co.jp)
+Received: from www3345.sakura.ne.jp (49.212.235.55)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Mon, 18 Mar 2019 18:26:37 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
+        (authenticated bits=0)
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2I9QW9d000938
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 18 Mar 2019 18:26:36 +0900 (JST)
+        (envelope-from na-hoan@jinso.co.jp)
+From:   Nguyen An Hoan <na-hoan@jinso.co.jp>
+To:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com,
+        ulrich.hecht+renesas@gmail.com, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com,
+        magnus.damm@gmail.com, yoshihiro.shimoda.uh@renesas.com,
+        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
+        cv-dong@jinso.co.jp
+Subject: [PATCH] serial: sh-sci: Fix setting SCSCR_TIE while transferring data
+Date:   Mon, 18 Mar 2019 18:26:32 +0900
+Message-Id: <1552901192-29748-1-git-send-email-na-hoan@jinso.co.jp>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Mar 17, 2019 at 10:35 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> sparse rightfully says:
-> drivers/pci/controller/pcie-rcar.c:741:30: warning: symbol 'irq' shadows an earlier one
->
-> It doesn't affect the current code. But fix it now to avoid future
-> surprises and for good coding style.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+We disable transmission interrupt (clear SCSCR_TIE) after all data has been transmitted
+(if uart_circ_empty(xmit)). While transmitting, if the data is still in the tty buffer,
+re-enable the SCSCR_TIE bit, which was done at sci_start_tx().
+This is unnecessary processing, wasting CPU operation if the data transmission length is large.
+And further, transmit end, FIFO empty bits disabling have also been performed in the step above.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+---
+ drivers/tty/serial/sh-sci.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-                        Geert
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 64bbeb7..93bd90f 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -838,19 +838,9 @@ static void sci_transmit_chars(struct uart_port *port)
+ 
+ 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+ 		uart_write_wakeup(port);
+-	if (uart_circ_empty(xmit)) {
++	if (uart_circ_empty(xmit))
+ 		sci_stop_tx(port);
+-	} else {
+-		ctrl = serial_port_in(port, SCSCR);
+-
+-		if (port->type != PORT_SCI) {
+-			serial_port_in(port, SCxSR); /* Dummy read */
+-			sci_clear_SCxSR(port, SCxSR_TDxE_CLEAR(port));
+-		}
+ 
+-		ctrl |= SCSCR_TIE;
+-		serial_port_out(port, SCSCR, ctrl);
+-	}
+ }
+ 
+ /* On SH3, SCIF may read end-of-break as a space->mark char */
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
