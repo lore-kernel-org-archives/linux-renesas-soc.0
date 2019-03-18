@@ -3,26 +3,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64225C10F00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38306C43381
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35ABF2133F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12B4B20989
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Mar 2019 15:57:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfCRP5m (ORCPT
+        id S1727397AbfCRP5m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 18 Mar 2019 11:57:42 -0400
-Received: from sauhun.de ([88.99.104.3]:36994 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:36980 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727620AbfCRP5m (ORCPT
+        id S1726765AbfCRP5l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Mar 2019 11:57:42 -0400
+        Mon, 18 Mar 2019 11:57:41 -0400
 Received: from localhost (p54B330C6.dip0.t-ipconnect.de [84.179.48.198])
-        by pokefinder.org (Postfix) with ESMTPSA id 4F1F84A1348;
-        Mon, 18 Mar 2019 16:57:40 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id A046E2C2817;
+        Mon, 18 Mar 2019 16:57:39 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -30,12 +30,11 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Mark Brown <broonie@kernel.org>,
         Support Opensource <support.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Subject: [PATCH 4/4] rtc: da9063: convert header to SPDX
-Date:   Mon, 18 Mar 2019 16:57:27 +0100
-Message-Id: <20190318155728.28365-5-wsa+renesas@sang-engineering.com>
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Subject: [PATCH 3/4] input: da9063_onkey: convert header to SPDX
+Date:   Mon, 18 Mar 2019 16:57:26 +0100
+Message-Id: <20190318155728.28365-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190318155728.28365-1-wsa+renesas@sang-engineering.com>
 References: <20190318155728.28365-1-wsa+renesas@sang-engineering.com>
@@ -48,19 +47,18 @@ Covnert the header of the source file to SPDX.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/rtc/rtc-da9063.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ drivers/input/misc/da9063_onkey.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/rtc/rtc-da9063.c b/drivers/rtc/rtc-da9063.c
-index b4e054c64bad..73b38d207d7e 100644
---- a/drivers/rtc/rtc-da9063.c
-+++ b/drivers/rtc/rtc-da9063.c
-@@ -1,15 +1,7 @@
--/* rtc-da9063.c - Real time clock device driver for DA9063
+diff --git a/drivers/input/misc/da9063_onkey.c b/drivers/input/misc/da9063_onkey.c
+index 3e9c353d82ef..7b8ae905a6fb 100644
+--- a/drivers/input/misc/da9063_onkey.c
++++ b/drivers/input/misc/da9063_onkey.c
+@@ -1,16 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Real time clock device driver for DA9063
-  * Copyright (C) 2013-2015  Dialog Semiconductor Ltd.
+ /*
+  * OnKey device driver for DA9063, DA9062 and DA9061 PMICs
+  * Copyright (C) 2015  Dialog Semiconductor Ltd.
 - *
 - * This program is free software; you can redistribute it and/or
 - * modify it under the terms of the GNU General Public License
@@ -73,7 +71,7 @@ index b4e054c64bad..73b38d207d7e 100644
 - * GNU General Public License for more details.
   */
  
- #include <linux/delay.h>
+ #include <linux/module.h>
 -- 
 2.11.0
 
