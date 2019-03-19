@@ -2,99 +2,93 @@ Return-Path: <SRS0=zxXW=RW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D663C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA9DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB80020828
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Z/psTm9Y"
+	by mail.kernel.org (Postfix) with ESMTP id 84D1420857
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:13:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbfCSKMq (ORCPT
+        id S1727358AbfCSKNL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 06:12:46 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47784 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727017AbfCSKMq (ORCPT
+        Tue, 19 Mar 2019 06:13:11 -0400
+Received: from sauhun.de ([88.99.104.3]:43528 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726896AbfCSKNL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 06:12:46 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BEAAF33A;
-        Tue, 19 Mar 2019 11:12:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1552990364;
-        bh=T110Kze3rVTxp1gnk7MkkWPVRtgeB6clY2uvfabqLns=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z/psTm9Y0rUPds/3DetpImYjzWzqW6nJw1AMtfnomjNRQ25dmEf7Yb7pNmtVFhjac
-         1c2gfBsbYs1kcYrBV5V8WAKrUkmJ5LxpbcuWFMcv3mfxui+pH8xg6WWVHYooT8aTGx
-         ViyhUp/xoMKdRan4uyQn00iqmcVL9uZfnqaG62Pk=
-Date:   Tue, 19 Mar 2019 12:12:37 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [GIT PULL FOR renesas-drivers] du/for-renesas-drivers
-Message-ID: <20190319101237.GD4765@pendragon.ideasonboard.com>
-References: <20190317200953.16323-1-kieran.bingham+renesas@ideasonboard.com>
- <CAMuHMdUKk=kU-kGBPg6jHkgd2ba1tiCzVLjwvfxfhMWq8GqWWg@mail.gmail.com>
- <CAMuHMdVFR3G394exJAgXmPxndsNNeRkfQF5GQdbwFMjk2Kbrfg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVFR3G394exJAgXmPxndsNNeRkfQF5GQdbwFMjk2Kbrfg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 19 Mar 2019 06:13:11 -0400
+Received: from localhost (p5486CE21.dip0.t-ipconnect.de [84.134.206.33])
+        by pokefinder.org (Postfix) with ESMTPSA id 180272C3F83;
+        Tue, 19 Mar 2019 11:13:07 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT] mmc: renesas_sdhi: limit block count to 16 bit for old revisions
+Date:   Tue, 19 Mar 2019 11:12:59 +0100
+Message-Id: <20190319101259.20078-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+R-Car Gen2 has two different SDHI incarnations in the same chip. The
+older one does not support the recently introduced 32 bit register
+access to the block count register. Make sure we use this feature only
+after the first known version.
 
-On Tue, Mar 19, 2019 at 10:04:02AM +0100, Geert Uytterhoeven wrote:
-> On Mon, Mar 18, 2019 at 9:14 AM Geert Uytterhoeven wrote:
-> > On Sun, Mar 17, 2019 at 9:09 PM Kieran Bingham wrote:
-> >> Please consider including this release in renesas-drivers.
-> >
-> > Thanks for your pull request!
-> >
-> >> The following changes since commit 0f1d37e65a59e9db33ab85f6e2c9784768ef80f4:
-> >>
-> >>   Merge branch 'drm-next-5.1' of git://people.freedesktop.org/~agd5f/linux into drm-next (2019-03-14 12:15:02 +1000)
-> >>
-> >> are available in the Git repository at:
-> >>
-> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git du/for-renesas-drivers
-> >>
-> >> for you to fetch changes up to 99deb47fa63bb9fc7bd691e358fea1c5bccc1da2:
-> >>
-> >>   drm: rcar-du: Add group hooks for atomic-commit (2019-03-17 19:29:37 +0000)
-> >
-> > This has a merge conflict in drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > with Laurent's pull request for
-> > git://linuxtv.org/pinchartl/media.git drm/du/lvds/dual-link~2
-> >
-> >> Laurent Pinchart (1):
-> >>       drm: rcar-du: Support panels connected directly to the DPAD outputs
-> >
-> > Both branches contain the above commit, but with different commit IDs,
-> > and Laurent's "drm: rcar-du: Skip LVDS1 output on Gen3 when using
-> > dual-link LVDS mode" builds on top of that.
-> 
-> JFYI, I found a third copy in Laurent's drm/du/next branch.
+Thanks to the Renesas Testing team for this bug report!
 
-It's all work in progress I'm afraid, so this doesn't surprise me. I'll
-send a pull request to Dave soon, all this will be fixed.
+Fixes:5603731a15ef ("mmc: tmio: fix access width of Block Count Register")
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-> > Nothing I can't handle, though.
-> 
-> Idem ditto.
+I could reproduce the issue on my Renesas Lager board (R-Car H2) and this patch
+fixes the issue for me. Still, if we could confirmation from the testing team,
+this would be awesome to have before applying, I think.
 
+ drivers/mmc/host/renesas_sdhi_core.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 71e13844df6c..8742e27e4e8b 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -641,6 +641,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	struct renesas_sdhi *priv;
+ 	struct resource *res;
+ 	int irq, ret, i;
++	u16 ver;
+ 
+ 	of_data = of_device_get_match_data(&pdev->dev);
+ 
+@@ -773,12 +774,17 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		goto efree;
+ 
++	ver = sd_ctrl_read16(host, CTL_VERSION);
++	/* GEN2_SDR104 is first known SDHI to use 32bit block count */
++	if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
++		mmc_data->max_blk_count = U16_MAX;
++
+ 	ret = tmio_mmc_host_probe(host);
+ 	if (ret < 0)
+ 		goto edisclk;
+ 
+ 	/* One Gen2 SDHI incarnation does NOT have a CBSY bit */
+-	if (sd_ctrl_read16(host, CTL_VERSION) == SDHI_VER_GEN2_SDR50)
++	if (ver == SDHI_VER_GEN2_SDR50)
+ 		mmc_data->flags &= ~TMIO_MMC_HAVE_CBSY;
+ 
+ 	/* Enable tuning iff we have an SCC and a supported mode */
 -- 
-Regards,
+2.11.0
 
-Laurent Pinchart
