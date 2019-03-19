@@ -4,49 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B99EDC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D40C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A87320857
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3C9220857
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:55:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="myrxaOMD"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="rtOVdzy/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbfCSLpX (ORCPT
+        id S1727367AbfCSLzB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 07:45:23 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:46324 "EHLO
+        Tue, 19 Mar 2019 07:55:01 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:46451 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfCSLpW (ORCPT
+        with ESMTP id S1726466AbfCSLzB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 07:45:22 -0400
+        Tue, 19 Mar 2019 07:55:01 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2FE3D25B7CA;
-        Tue, 19 Mar 2019 22:45:20 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 81A3925B7CA;
+        Tue, 19 Mar 2019 22:54:53 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1552995920; bh=biS2fmmUhVfmIGiwEIe6zGJg3LWVeC8nkbXIDd3Sjkc=;
+        t=1552996495; bh=UkdM7a+H29AQeAYLbvpF0HmoVlR9beKrf8Nz4fnUigw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=myrxaOMD54fW18tWP7uhICVuY5gQswBudaJfgRE0HivLKPOF70pxU2//JKh19dUPB
-         4CxRFS2hf8fSLeWdJjXnyNou/2F1NsheFDaoK+uBuAPbDDAf6DGvocMNYlBzzSNQT9
-         onq37mAb11h9p29HRGOeAN4YYnZB1hkC93QyjYSQ=
+        b=rtOVdzy/ysM3/6/ojf/XdtLCDh6sYkaWN4RTEO4nGnxiPpVPsGfJNsWzIBJ5c4Ruy
+         Ab8+0m6JN56gqVcOQmUP5ugMFf/GEpLVZ/59Ot43jxl8mLpVJhSblq/DbB4YuUDvBG
+         fmGhjUQf3rGPoJXmjdJrrwgg6qqtV5MHtiBfaykc=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 7C970940663; Tue, 19 Mar 2019 12:45:18 +0100 (CET)
-Date:   Tue, 19 Mar 2019 12:45:18 +0100
+        id 553CC940663; Tue, 19 Mar 2019 12:54:50 +0100 (CET)
+Date:   Tue, 19 Mar 2019 12:54:50 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: set CBSY flag before probing TMIO host
-Message-ID: <20190319114518.rv6qzbqyendz45hi@verge.net.au>
-References: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
+Subject: Re: [PATCH 10/11] arm64: dts: renesas: r8a774c0: Add clkp2 clock to
+ CAN nodes
+Message-ID: <20190319115450.4ez7e4sajzanszr6@verge.net.au>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-11-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190117120541.slymsz47fjkzz3kg@verge.net.au>
+ <20190128130238.gork4cep3qonghwz@verge.net.au>
+ <TY1PR01MB1770DDAB8A6FBC79DF91F600C0400@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <TY1PR01MB1770DDAB8A6FBC79DF91F600C0400@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -54,56 +84,84 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 19, 2019 at 11:34:17AM +0100, Wolfram Sang wrote:
-> The CBSY flag should be proper before calling tmio_mmc_host_probe()
-> because this function will already use write16 which checks this bit.
+On Tue, Mar 19, 2019 at 11:12:33AM +0000, Fabrizio Castro wrote:
+> Hello Simon,
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
+> > From: Simon Horman <horms@verge.net.au>
+> > Sent: 28 January 2019 13:03
+> > Subject: Re: [PATCH 10/11] arm64: dts: renesas: r8a774c0: Add clkp2 clock to CAN nodes
+> > 
+> > On Thu, Jan 17, 2019 at 01:05:42PM +0100, Simon Horman wrote:
+> > > On Wed, Jan 16, 2019 at 06:37:53PM +0000, Fabrizio Castro wrote:
+> > > > According to the latest information, clkp2 is available on RZ/G2.
+> > > > Modify CAN0 and CAN1 nodes accordingly.
+> > > >
+> > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> > >
+> > > Taking your word for the motivation for this change,
+> > > this patch seems fine to me but I would like to wait for review
+> > > from others.
+> > >
+> > > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> > 
+> > I am marking this as deferred until R8A774C0_CLK_CANFD
+> > shows up in an rc release.
+> > 
+> > Alternatively I'd be happy to take a version that uses
+> > numeric values, followed up by a patch to switching to R8A774C0_CLK_CANFD
+> > once it is available in an rc release.
+> > 
+> > Please repost or otherwise ping me as appropriate.
 > 
-> This patch depends on "[RFT] mmc: renesas_sdhi: limit block count to 16 bit for
-> old revisions" [1]. This one, however, is not backed by a bug report but just
-> found by code review. I wouldn't suggest stable here because the non-working
-> case is probably more on the academic side (unless I overlooked something).
-> Yet, the code becomes easier to read because it is the flow one would expect.
-> So, I post this already for discussion. We need to wait for the dependency
-> first, of course.
-> 
-> Tested on the SDR50 only SDHI of a Renesas Lager board (R-Car H2). No
-> regressions encountered: still probes fine and works at the same speed.
+> It seems like this patch still applies without conflicts, do you mind taking it now
+> as R8A774C0_CLK_CANFD is finally available?
 
-Do you have plans for further testing?
+Thanks, I agree this should be ready now.
+I've applied it for v5.2.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-> [1] https://patchwork.kernel.org/patch/10859279/
 > 
->  drivers/mmc/host/renesas_sdhi_core.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> Thanks,
+> Fab
 > 
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index 8742e27e4e8b..5885f3fb0b2f 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -779,14 +779,14 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->  	if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
->  		mmc_data->max_blk_count = U16_MAX;
->  
-> -	ret = tmio_mmc_host_probe(host);
-> -	if (ret < 0)
-> -		goto edisclk;
-> -
->  	/* One Gen2 SDHI incarnation does NOT have a CBSY bit */
->  	if (ver == SDHI_VER_GEN2_SDR50)
->  		mmc_data->flags &= ~TMIO_MMC_HAVE_CBSY;
->  
-> +	ret = tmio_mmc_host_probe(host);
-> +	if (ret < 0)
-> +		goto edisclk;
-> +
->  	/* Enable tuning iff we have an SCC and a supported mode */
->  	if (of_data && of_data->scc_offset &&
->  	    (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
-> -- 
-> 2.11.0
+> > 
+> > >
+> > > > ---
+> > > >  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 12 ++++++++----
+> > > >  1 file changed, 8 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> > > > index 3970aaf..326ab3a 100644
+> > > > --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> > > > +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> > > > @@ -809,8 +809,10 @@
+> > > >  				     "renesas,rcar-gen3-can";
+> > > >  			reg = <0 0xe6c30000 0 0x1000>;
+> > > >  			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+> > > > -			clocks = <&cpg CPG_MOD 916>, <&can_clk>;
+> > > > -			clock-names = "clkp1", "can_clk";
+> > > > +			clocks = <&cpg CPG_MOD 916>,
+> > > > +				 <&cpg CPG_CORE R8A774C0_CLK_CANFD>,
+> > > > +				 <&can_clk>;
+> > > > +			clock-names = "clkp1", "clkp2", "can_clk";
+> > > >  			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> > > >  			resets = <&cpg 916>;
+> > > >  			status = "disabled";
+> > > > @@ -821,8 +823,10 @@
+> > > >  				     "renesas,rcar-gen3-can";
+> > > >  			reg = <0 0xe6c38000 0 0x1000>;
+> > > >  			interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+> > > > -			clocks = <&cpg CPG_MOD 915>, <&can_clk>;
+> > > > -			clock-names = "clkp1", "can_clk";
+> > > > +			clocks = <&cpg CPG_MOD 915>,
+> > > > +				 <&cpg CPG_CORE R8A774C0_CLK_CANFD>,
+> > > > +				 <&can_clk>;
+> > > > +			clock-names = "clkp1", "clkp2", "can_clk";
+> > > >  			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
+> > > >  			resets = <&cpg 915>;
+> > > >  			status = "disabled";
+> > > > --
+> > > > 2.7.4
+> > > >
+> > >
 > 
