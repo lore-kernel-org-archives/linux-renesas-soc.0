@@ -2,121 +2,91 @@ Return-Path: <SRS0=zxXW=RW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B6DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 14:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82422C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 14:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A94B2173C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 14:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58E472075E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 14:08:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfCSOEz (ORCPT
+        id S1726703AbfCSOIH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 10:04:55 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:36180 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbfCSOEz (ORCPT
+        Tue, 19 Mar 2019 10:08:07 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36097 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726688AbfCSOIH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 10:04:55 -0400
-Received: from ramsan ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id pq4s1z00A3XaVaC06q4sCL; Tue, 19 Mar 2019 15:04:52 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1h6FMK-0008MH-7U
-        for linux-renesas-soc@vger.kernel.org; Tue, 19 Mar 2019 15:04:52 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1h6FMK-0006JC-5g
-        for linux-renesas-soc@vger.kernel.org; Tue, 19 Mar 2019 15:04:52 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2019-03-19-v5.1-rc1
-Date:   Tue, 19 Mar 2019 15:04:52 +0100
-Message-Id: <20190319140452.24203-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Tue, 19 Mar 2019 10:08:07 -0400
+Received: by mail-vs1-f65.google.com with SMTP id n4so2673237vsm.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Mar 2019 07:08:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qb8fS2luaBqI3y4wu5JjeCQCXzVJCUgRCzCxaI95jKM=;
+        b=RKdCEzfVAm8sRbeHNYuW240QYtKVxMDqc6Z9nb34Hhi9zzIv14FWxeBut2ia+BZWpQ
+         HZQXmcLf53jm1IpeJY51ub6nhYmNQLJrWdMKBvgcZxX0GexRU/MJ3UjaWMsmImxz5rji
+         PG2/qS/5JmGZSN0/w3B7rjbTqs7EO8LzcbtGULmnL0F8wTQQdRNeZwzJqy9i5S3+vbvO
+         wiuutARLrLKf2RnQCnFr7eTvNhWWgEbfSNbsUBK5WkBFC8T/82sahou7aPcFlIfRfS5R
+         8m5NmQL88yBb9ZtzoG3HEapFMm+wyxbAgRbxik0zWAmoeIdTbEa3V5rLBUdW3V4PYDqH
+         X5VQ==
+X-Gm-Message-State: APjAAAVYFsUga/uu2oZMxShB+kdNYtLq8BoXeBBsYJxJGL5bxwRjEPcK
+        OMF+Cz+htaU46fqpLIadjgEjJO03vgK1xzSERho=
+X-Google-Smtp-Source: APXvYqy/j80Mi5mDguaP7je//e514cMtHjjk0Xl5uWXRMHBs6LXctWc3wPGWAIm55Un1k+tdBZHMHkcGaeSafDz+Zy8=
+X-Received: by 2002:a67:8588:: with SMTP id h130mr1531873vsd.11.1553004486504;
+ Tue, 19 Mar 2019 07:08:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <155067454871.15971.12157033067057246708.sendpatchset@octo>
+ <155067455863.15971.400236990712480655.sendpatchset@octo> <CAMuHMdU0ncCg7MXS7XTmiDX42bXE0Wj6RLvd0GddNA3R+Bawaw@mail.gmail.com>
+ <CANqRtoST3OGJMuYfz5ox79eCtOnBgyXp=P6byGa4tx_aSjKDPA@mail.gmail.com>
+In-Reply-To: <CANqRtoST3OGJMuYfz5ox79eCtOnBgyXp=P6byGa4tx_aSjKDPA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Mar 2019 15:07:54 +0100
+Message-ID: <CAMuHMdVx2xHZd5HtZs_Xyy+w+_d4VFHdw6cRUX92yk7tv4EfPg@mail.gmail.com>
+Subject: Re: [PATCH/RFC 01/09] iommu/ipmmu-vmsa: Disable IPMMU when address
+ expansion is not needed
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I have pushed renesas-drivers-2019-03-19-v5.1-rc1 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi Magnus,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+On Tue, Mar 19, 2019 at 2:45 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> On Thu, Feb 21, 2019 at 1:10 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Wed, Feb 20, 2019 at 3:55 PM Magnus Damm <magnus.damm@gmail.com> wrote:
+> > > --- 0001/drivers/iommu/ipmmu-vmsa.c
+> > > +++ work/drivers/iommu/ipmmu-vmsa.c     2019-02-20 22:59:28.589893396 +0900
+> >
+> > > @@ -797,6 +798,12 @@ static bool ipmmu_slave_whitelist(struct
+> > >         if (!soc_device_match(soc_rcar_gen3_whitelist))
+> > >                 return false;
+> > >
+> > > +       /* In case all system memory fits within 32 bits of physical space
+> > > +        * then assume the IPMMU will not be needed for address expansion.
+> > > +        */
+> > > +       if (memblock_end_of_DRAM() <= SZ_4G)
+> >
+> > Can this give a compiler warning on arm32 when CONFIG_ARM_LPAE=n?
+>
+> Not sure how, can you elaborate?
 
-Today's version is based on renesas-devel-20190318-v5.1-rc1.
-
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - topic/clk-r8a77990-z2-v5
-  - topic/sh-pfc-validation-v3
-  - git://linuxtv.org/pinchartl/media.git#drm/du/next
-  - git://linuxtv.org/pinchartl/media.git#drm/du/lvds/dual-link~2
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#du/for-renesas-drivers
-
-Included fixes:
-  - [LOCAL] arm64: defconfig: Reduce NR_CPUS to 8
-  - ARM: shmobile: defconfig: Update shmobile_defconfig
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
-
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+SZ_4G is 0x100000000ULL, which is always 64-bit.
+memblock_end_of_DRAM() returns a physaddr_t, which is 32-bit if
+CONFIG_ARM_LPAE=n, in which case the comparison is always true.
 
 Gr{oetje,eeting}s,
 
-						Geert
+                        Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+                                -- Linus Torvalds
