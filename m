@@ -2,86 +2,108 @@ Return-Path: <SRS0=zxXW=RW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B75C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99EDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E81442085A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:29:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A87320857
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:45:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="myrxaOMD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfCSL3I (ORCPT
+        id S1727517AbfCSLpX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 07:29:08 -0400
-Received: from sauhun.de ([88.99.104.3]:44088 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbfCSL3I (ORCPT
+        Tue, 19 Mar 2019 07:45:23 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:46324 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfCSLpW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 07:29:08 -0400
-Received: from localhost (p5486CE21.dip0.t-ipconnect.de [84.134.206.33])
-        by pokefinder.org (Postfix) with ESMTPSA id 45E872C3F83;
-        Tue, 19 Mar 2019 12:29:06 +0100 (CET)
-Date:   Tue, 19 Mar 2019 12:29:05 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 19 Mar 2019 07:45:22 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2FE3D25B7CA;
+        Tue, 19 Mar 2019 22:45:20 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1552995920; bh=biS2fmmUhVfmIGiwEIe6zGJg3LWVeC8nkbXIDd3Sjkc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=myrxaOMD54fW18tWP7uhICVuY5gQswBudaJfgRE0HivLKPOF70pxU2//JKh19dUPB
+         4CxRFS2hf8fSLeWdJjXnyNou/2F1NsheFDaoK+uBuAPbDDAf6DGvocMNYlBzzSNQT9
+         onq37mAb11h9p29HRGOeAN4YYnZB1hkC93QyjYSQ=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 7C970940663; Tue, 19 Mar 2019 12:45:18 +0100 (CET)
+Date:   Tue, 19 Mar 2019 12:45:18 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Marek Vasut <marek.vasut@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Subject: Re: [PATCH] mmc: renesas_sdhi: set CBSY flag before probing TMIO host
-Message-ID: <20190319112905.GA3016@kunai>
+Message-ID: <20190319114518.rv6qzbqyendz45hi@verge.net.au>
 References: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdXSScr8q-pU-vtuZ81A9ZaObaLWX4awimsEgLVnxq=c_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXSScr8q-pU-vtuZ81A9ZaObaLWX4awimsEgLVnxq=c_A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Tue, Mar 19, 2019 at 11:34:17AM +0100, Wolfram Sang wrote:
+> The CBSY flag should be proper before calling tmio_mmc_host_probe()
+> because this function will already use write16 which checks this bit.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> This patch depends on "[RFT] mmc: renesas_sdhi: limit block count to 16 bit for
+> old revisions" [1]. This one, however, is not backed by a bug report but just
+> found by code review. I wouldn't suggest stable here because the non-working
+> case is probably more on the academic side (unless I overlooked something).
+> Yet, the code becomes easier to read because it is the flow one would expect.
+> So, I post this already for discussion. We need to wait for the dependency
+> first, of course.
+> 
+> Tested on the SDR50 only SDHI of a Renesas Lager board (R-Car H2). No
+> regressions encountered: still probes fine and works at the same speed.
 
---FCuugMFkClbJLl1L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do you have plans for further testing?
 
-On Tue, Mar 19, 2019 at 11:57:00AM +0100, Geert Uytterhoeven wrote:
-> On Tue, Mar 19, 2019 at 11:34 AM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > The CBSY flag should be proper before calling tmio_mmc_host_probe()
->=20
-> set?
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-No. The state should be proper. As you see in the code, it gets cleared
-for a certain type of SDHI.
-
-
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyQ0n0ACgkQFA3kzBSg
-KbbN3Q/+OuvFCN0wALV1QKZTuGEtNDadw25+M274/W4td8sF1J1/CLs+45SJZqdx
-YvQlvBvkKnY3vp15TjiCq7ZtHKAlCZ0pQzw7TsDNTnqDmnH66+lMGCohqzWU0sFy
-ErXhYbo3V7R7EJNnDlqmmCQqC/8QV0k/OmTrSNLE8F1oC24AUnXw4TnFvO6XEI41
-P936osogRLbV8DBiKT/bHV5ZILLJNKG23fK1c9c35Bx6BnTkHwsa8nJcQgfXJeh6
-8+Br+ANmv8FheJgL0WtaKVnMylaE6gfbEMXRgy0pvcQOp4RAkBw9VQ+7GcT5v8B3
-384CBr7EBLvniPBEnUdKIhFWmKQahDkmuxOgQ+NhZBpWnHlkAGy77z669ftbAos2
-n11u+I2FjS2bARFsPMEW1YBe3p86AYwdtDHu61TtxzY+F1e+u0Lt6BqgdbgDBnno
-MluGZOOogdy0hNf8lBNa7RCqW7gldGAL79D5Fz9kMjO2y1UJAXGqDtMk6jYl5rva
-2lJ1ol3aE4IfFPlv49qgumr6MlpcJYHY9e9swT1dhGPKVcn/D9FM0Ax1VI93bVP+
-pJTkCJSDrgpM6mFEsPcxd5ol/YdRKNg1JhJsCusvKOfyNnLsOFi92qLvNRNSWJMZ
-ULC/l3WgDDNf1LYFNTe8j08kt0vEk7bwO4gO5rl0iYJVtC0nVJw=
-=MifL
------END PGP SIGNATURE-----
-
---FCuugMFkClbJLl1L--
+> [1] https://patchwork.kernel.org/patch/10859279/
+> 
+>  drivers/mmc/host/renesas_sdhi_core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index 8742e27e4e8b..5885f3fb0b2f 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -779,14 +779,14 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+>  	if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
+>  		mmc_data->max_blk_count = U16_MAX;
+>  
+> -	ret = tmio_mmc_host_probe(host);
+> -	if (ret < 0)
+> -		goto edisclk;
+> -
+>  	/* One Gen2 SDHI incarnation does NOT have a CBSY bit */
+>  	if (ver == SDHI_VER_GEN2_SDR50)
+>  		mmc_data->flags &= ~TMIO_MMC_HAVE_CBSY;
+>  
+> +	ret = tmio_mmc_host_probe(host);
+> +	if (ret < 0)
+> +		goto edisclk;
+> +
+>  	/* Enable tuning iff we have an SCC and a supported mode */
+>  	if (of_data && of_data->scc_offset &&
+>  	    (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
+> -- 
+> 2.11.0
+> 
