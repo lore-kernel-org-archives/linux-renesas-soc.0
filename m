@@ -2,76 +2,82 @@ Return-Path: <SRS0=zxXW=RW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F64CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A291AC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F9120828
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:57:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72B1620828
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:02:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbfCSK5N (ORCPT
+        id S1727194AbfCSLCw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 06:57:13 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:40456 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbfCSK5N (ORCPT
+        Tue, 19 Mar 2019 07:02:52 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:39476 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726782AbfCSLCw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 06:57:13 -0400
-Received: by mail-vk1-f193.google.com with SMTP id l17so4517138vke.7;
-        Tue, 19 Mar 2019 03:57:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jAswVV/nrNFeW4Hp257FXnKUyhnLA8mD9wwrzBdVwIQ=;
-        b=Z0kj7yHi9l8VpZ5WMXxlcADzvs1fuSMdT1hIjYBP94VGxX35hvwRexlMcMF0xhYE5U
-         Y7CHW+boXwH5ZiV3GD7QhomnINXMta6eGrXhcFIF4CVtf9pZDoxDqvzvx+ZpT8lSWf2c
-         c6yCEHysjp5unxNjJlRVArsS4gIVvnX9A/vldsRGnv36MG/VNIiswTtwtrOv7U1ee44n
-         NyJCaLb2ji6cJstbGua54G6YXYIgD4tAFEFgSJA7gMoGkAiGKHzDul7p8+BbxfzXBaOe
-         ViOB2PlyRYwAXchiHMOeemDxe+TtxyohvP0kJvzd2sltbzAq4V3LJ97WHm+HSPLRMPAi
-         8RLA==
-X-Gm-Message-State: APjAAAU2EVCWfNWXDyEmfypoVrBccTOMvRTRFDsk37xMvfNfeG/Hf3ri
-        nXDQjTnaEJIbHzUjjUcXMSpIeGOKlkxSc63MuNQ=
-X-Google-Smtp-Source: APXvYqxA5j9tFmsh3ywdO10sFuAKWrDvV66jB4h/d+x77uAS3L/5+XUxEsYH4nJoq6kx+aSxfAbEklVAo92KfnHPibA=
-X-Received: by 2002:a1f:95d5:: with SMTP id x204mr844438vkd.72.1552993032334;
- Tue, 19 Mar 2019 03:57:12 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 19 Mar 2019 11:57:00 +0100
-Message-ID: <CAMuHMdXSScr8q-pU-vtuZ81A9ZaObaLWX4awimsEgLVnxq=c_A@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: set CBSY flag before probing TMIO host
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 19 Mar 2019 07:02:52 -0400
+X-IronPort-AV: E=Sophos;i="5.58,497,1544454000"; 
+   d="scan'208";a="10576447"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Mar 2019 20:02:50 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 87D4C4013EF3;
+        Tue, 19 Mar 2019 20:02:47 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH RESEND] dt-bindings: irqchip: renesas-irqc: Document r8a774c0 support
+Date:   Tue, 19 Mar 2019 11:02:01 +0000
+Message-Id: <1552993321-19646-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 19, 2019 at 11:34 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> The CBSY flag should be proper before calling tmio_mmc_host_probe()
+Document RZ/G2E (R8A774C0) SoC bindings.
 
-set?
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Hello Marc,
 
-> because this function will already use write16 which checks this bit.
+I am resending this patch as per our discussion on here:
+https://patchwork.kernel.org/patch/10729743/
 
-Gr{oetje,eeting}s,
+Thanks,
+Fab
 
-                        Geert
+ Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+index 8de96a4..f977ea7 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.txt
+@@ -16,6 +16,7 @@ Required properties:
+     - "renesas,irqc-r8a7793" (R-Car M2-N)
+     - "renesas,irqc-r8a7794" (R-Car E2)
+     - "renesas,intc-ex-r8a774a1" (RZ/G2M)
++    - "renesas,intc-ex-r8a774c0" (RZ/G2E)
+     - "renesas,intc-ex-r8a7795" (R-Car H3)
+     - "renesas,intc-ex-r8a7796" (R-Car M3-W)
+     - "renesas,intc-ex-r8a77965" (R-Car M3-N)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
