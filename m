@@ -6,58 +6,59 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D592AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 12:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709BEC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 13:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F2A4206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 12:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 345862146E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 13:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553000177;
-	bh=P6156dEmowZcJ/RinJKVjsPNACHK6/meCp3qLly6MAI=;
+	s=default; t=1553000500;
+	bh=lmqxsl1xin+NweTXv9eP9kV2rNfl3zewBxkHmoXQW7s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lEo3+mX03wAi7JgVnEvKAMl+h4Pz1RQeG4EDt8c2+GdKT3B8IyOBMq2JFPnhFkc/0
-	 2N2uUH+RH2IRWDy+wjJAqeMEUcDZXovIGTljuoadmIUXgxCOmOWipABnZLeKbavrCR
-	 ZPhZs83M01BLkvmUpyfVb0gnpaunnuVhvdNuYDDY=
+	b=N6Yq77s7RTAucUyu5OB0HOdMOfkYF5Cpn1BMmeAJqJdv01CHfCMt2D1ZmvpM1KreE
+	 i/nLMhnTa1EUEFFzyxE7z/gemG+5kWYG/a3VGmKqSnDHeWUytiQOggLGocGdrIqpqn
+	 EYF1aEBUq8W3N792lQJHpCfN87Nlu1ASNHAclNvk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfCSM4R (ORCPT
+        id S1726731AbfCSNBj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 08:56:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47634 "EHLO
+        Tue, 19 Mar 2019 09:01:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56676 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbfCSM4Q (ORCPT
+        with ESMTP id S1726002AbfCSNBj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 08:56:16 -0400
+        Tue, 19 Mar 2019 09:01:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=q26EjlD7Wy208S90jcgbS4ne2mCBxWg6maHCdNF8gTY=; b=j5oGCflQ+vqUU+DjY6odPSlaQ
-        3mFpC60EOZWR8sZcQzML6RnG3UtMbpETzHUxGzksuIoQokMl0Oupg9/bGvgTJJErnkcrhSfgLZYIq
-        Jwl3YztR0gwnPxgB6D48bTSGlp6GN4pGIbjiYl+9UV0GSsskR7UODzHK3vab9evP9r5h4=;
+         bh=lmqxsl1xin+NweTXv9eP9kV2rNfl3zewBxkHmoXQW7s=; b=EhJC47jA/ZDP0i4coV/EegiTp
+        LWEea6LixjttFOA4G0UTHNADDUNjMmwKEpKmvmJgUO2ZsyOca+ezdaQZcPtq2xliWJ19nytvrLciJ
+        0ZOb/XPpujNBeoQ/Y/lypNPL9+E5Qfrbkd2Ku5Rye8VaXdcu+/Pj64hDGKnGX0xHFCXwo=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1h6EHs-0002vY-VG; Tue, 19 Mar 2019 12:56:13 +0000
+        id 1h6EN5-00031P-6M; Tue, 19 Mar 2019 13:01:35 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4A74011288DF; Tue, 19 Mar 2019 12:56:12 +0000 (GMT)
-Date:   Tue, 19 Mar 2019 12:56:12 +0000
+        id 8E6B611288DF; Tue, 19 Mar 2019 13:01:34 +0000 (GMT)
+Date:   Tue, 19 Mar 2019 13:01:34 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Lee Jones <lee.jones@linaro.org>,
         Support Opensource <support.opensource@diasemi.com>,
         Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH 2/4] regulator: da9063: convert header to SPDX
-Message-ID: <20190319125612.GB5514@sirena.org.uk>
-References: <20190318155728.28365-1-wsa+renesas@sang-engineering.com>
- <20190318155728.28365-3-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 4/6] regulator: da9063: move definitions out of a header
+ into the driver
+Message-ID: <20190319130134.GD5514@sirena.org.uk>
+References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
+ <20190318154759.21978-5-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
+        protocol="application/pgp-signature"; boundary="vni90+aGYgRvsTuO"
 Content-Disposition: inline
-In-Reply-To: <20190318155728.28365-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190318154759.21978-5-wsa+renesas@sang-engineering.com>
 X-Cookie: PURGE COMPLETE.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -66,37 +67,29 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---XF85m9dhOBO43t/C
+--vni90+aGYgRvsTuO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Mar 18, 2019 at 04:57:25PM +0100, Wolfram Sang wrote:
+On Mon, Mar 18, 2019 at 04:47:56PM +0100, Wolfram Sang wrote:
+> Those definitions are only used within the driver meanwhile, so put them
+> there.
 
-> index 2b0c7a85306a..42dca1cac077 100644
-> --- a/drivers/regulator/da9063-regulator.c
-> +++ b/drivers/regulator/da9063-regulator.c
-> @@ -1,4 +1,4 @@
-> -
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * Regulator driver for DA9063 PMIC series
->   *
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Please make the entire comment block C++ so this looks more intentional.
-
---XF85m9dhOBO43t/C
+--vni90+aGYgRvsTuO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyQ5usACgkQJNaLcl1U
-h9CydQf/bssh015KU/rpuL/w3Lt88S7AU3JW8/haq6SjnAv5RfvJq+0+6trekuxr
-SqUvXyKcv2wdXyL1Gx/vWnA8M2x4laIIavo939IqhRy3lS6pa8Omz6JvdpLgaxBq
-rfH0U7D2fbT56mJpz6F6Q/OkEbCpyrXYSyYGLu5J6x9ueNHwvuUQ4e7bLj+i0aB8
-QA8f0Bw1309gVIZLHp9gzguSC2KSDYf9RYdpKKPcPg89FwBBvr4RN/J4OAOPkaHG
-QkMapP/KQQ6ggtN6bupiFd+IedvjXpKLWoFdr1Q7hb4Gaz1sdI4ZJQujIoS9djQK
-GV74kkDe+gZq5zzEcUSm/xXRvXiP5Q==
-=LKqb
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyQ6C0ACgkQJNaLcl1U
+h9AbAgf/dHp2suacInailmibsa6sHXFHFH3Y/YWTdj3VUHWgteCfmnSr9UpxV+Dw
+/lpC1r+hXzGjof9eoe4pJtHSan1GFAKz51ycikvKiAdBg4V39Rve7Rh63Yca5ks8
+CXhXhGS1nEWngr5ho/x7K89I21YNxVv1o0BCERmwHHKWiJGmIZ60nO8SwL7upJyd
+bOXOcI4cY48MhqJYoFfSZu2GDaX1s0jU0f40MHc8MhgobUUwAdK/5hWU0tsCVF5I
+91nL9iqfsgLRCRZD21xUzuvVR9mmME8NyBg5Q37PjKpA7SOUFJTlFPaIaqTdCHRS
+EZzMCJRxlNYoZkQQDZImZD73BlOZ2Q==
+=YkpE
 -----END PGP SIGNATURE-----
 
---XF85m9dhOBO43t/C--
+--vni90+aGYgRvsTuO--
