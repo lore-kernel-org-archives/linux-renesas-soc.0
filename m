@@ -2,94 +2,102 @@ Return-Path: <SRS0=zxXW=RW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709BEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 13:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8774AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 13:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 345862146E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 13:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553000500;
-	bh=lmqxsl1xin+NweTXv9eP9kV2rNfl3zewBxkHmoXQW7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=N6Yq77s7RTAucUyu5OB0HOdMOfkYF5Cpn1BMmeAJqJdv01CHfCMt2D1ZmvpM1KreE
-	 i/nLMhnTa1EUEFFzyxE7z/gemG+5kWYG/a3VGmKqSnDHeWUytiQOggLGocGdrIqpqn
-	 EYF1aEBUq8W3N792lQJHpCfN87Nlu1ASNHAclNvk=
+	by mail.kernel.org (Postfix) with ESMTP id 4B93420854
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 13:24:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bdUBWFrN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfCSNBj (ORCPT
+        id S1726703AbfCSNYJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 09:01:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56676 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbfCSNBj (ORCPT
+        Tue, 19 Mar 2019 09:24:09 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41235 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfCSNYJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 09:01:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lmqxsl1xin+NweTXv9eP9kV2rNfl3zewBxkHmoXQW7s=; b=EhJC47jA/ZDP0i4coV/EegiTp
-        LWEea6LixjttFOA4G0UTHNADDUNjMmwKEpKmvmJgUO2ZsyOca+ezdaQZcPtq2xliWJ19nytvrLciJ
-        0ZOb/XPpujNBeoQ/Y/lypNPL9+E5Qfrbkd2Ku5Rye8VaXdcu+/Pj64hDGKnGX0xHFCXwo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1h6EN5-00031P-6M; Tue, 19 Mar 2019 13:01:35 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 8E6B611288DF; Tue, 19 Mar 2019 13:01:34 +0000 (GMT)
-Date:   Tue, 19 Mar 2019 13:01:34 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Liam Girdwood <lgirdwood@gmail.com>
-Subject: Re: [PATCH 4/6] regulator: da9063: move definitions out of a header
- into the driver
-Message-ID: <20190319130134.GD5514@sirena.org.uk>
-References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
- <20190318154759.21978-5-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vni90+aGYgRvsTuO"
-Content-Disposition: inline
-In-Reply-To: <20190318154759.21978-5-wsa+renesas@sang-engineering.com>
-X-Cookie: PURGE COMPLETE.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 19 Mar 2019 09:24:09 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d25so13667402pfn.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Mar 2019 06:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:date:message-id:subject;
+        bh=wgE6POHDApIyk0+fujEYsA2TuoICXUlRWT+QmvrMjO4=;
+        b=bdUBWFrNsbDaGAKulzPKDowfgjDcjl14XJBDVGCKAcr4XyAYBJQG4xZ+7vAIroo4HB
+         DpDzQCPFCF6Rh2Jg70HWuaSKTGPgIbUnF93RHC5kfx9AXy/91+9PLSRNqN/QhUqhqihL
+         ZSjxqlFJU5KbUWnAoUN1UXEHKZX55HyXufQGqU5Gn3i2XItQOKJzgOh1XRmTYCY+YQw7
+         uRbGloEae37R5H05Ux0YaVSHi0qwOPzxptagSesUltON8gUGL9tuSi/UYStsTvttgvAX
+         PmiLj887y7FUiiN7617UHR16eZ7m7vGCWxXti6YT80NwMrLuqe7yZ0PzCgesH8GanTcM
+         lh2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:date:message-id:subject;
+        bh=wgE6POHDApIyk0+fujEYsA2TuoICXUlRWT+QmvrMjO4=;
+        b=S1prbIyW4++hIsaezpCsIBQ9NM0SJkDZiHbFXsoNUahH6yzZ5FF11AAHzyTxlEknZg
+         eKRzNYD113exiOJu4YLqVxjjHlm0NJAS4u/MZ3eK6Yiwd9tfeP+Pl1kyW+EjlmULLhxJ
+         XuyWZXNXBZTCSzpy5M79ovwN0x9BJczcrs0kOive7YzAFh4oPejjKeXJYLrrVWGo7r2u
+         O8Loz4qWSCbTJvmQw1wleMEX180XxmXOEcAng++ZYVnz9mkdCamS0sqa2ZvS1aDBeDro
+         lLuX76m151Y7mqQhKOjPx02d0j1mGaXKzxr3gxoutoiJ72g7CQ/DT7+tBeVVbVEvIX/9
+         otZw==
+X-Gm-Message-State: APjAAAVOLVKDL3Puv2D5iEgxd9Jq7auUXuqHOJdC3ZIB6vKQSzdIJ5EH
+        XnJjZeisK/Mql4rdpP5TbMzhNr6RsQE=
+X-Google-Smtp-Source: APXvYqxML7UDaKxivocXrEVMyYhs8LqUprzf/6pno5wNhIJUPWDWNHTq1dXNDeixw2/HwUJLCJFSxQ==
+X-Received: by 2002:a63:da43:: with SMTP id l3mr1858684pgj.164.1553001848635;
+        Tue, 19 Mar 2019 06:24:08 -0700 (PDT)
+Received: from [127.0.0.1] (s214090.ppp.asahi-net.or.jp. [220.157.214.90])
+        by smtp.gmail.com with ESMTPSA id x1sm21128528pge.73.2019.03.19.06.24.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 19 Mar 2019 06:24:07 -0700 (PDT)
+From:   Magnus Damm <magnus.damm@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Magnus Damm <magnus.damm@gmail.com>
+Date:   Tue, 19 Mar 2019 22:25:08 +0900
+Message-Id: <155300190865.2469.7364392263486575447.sendpatchset@octo>
+Subject: [PATCH/RFC V2] iommu/ipmmu-vmsa: Disable IPMMU when address expansion is not needed
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+From: Magnus Damm <damm+renesas@opensource.se>
 
---vni90+aGYgRvsTuO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Add a memory bank location check to the whitelist handling.
 
-On Mon, Mar 18, 2019 at 04:47:56PM +0100, Wolfram Sang wrote:
-> Those definitions are only used within the driver meanwhile, so put them
-> there.
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+---
 
-Acked-by: Mark Brown <broonie@kernel.org>
+ Changes since V1:
+ - None, simply broke out this patch from the rest of the series
 
---vni90+aGYgRvsTuO
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/iommu/ipmmu-vmsa.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlyQ6C0ACgkQJNaLcl1U
-h9AbAgf/dHp2suacInailmibsa6sHXFHFH3Y/YWTdj3VUHWgteCfmnSr9UpxV+Dw
-/lpC1r+hXzGjof9eoe4pJtHSan1GFAKz51ycikvKiAdBg4V39Rve7Rh63Yca5ks8
-CXhXhGS1nEWngr5ho/x7K89I21YNxVv1o0BCERmwHHKWiJGmIZ60nO8SwL7upJyd
-bOXOcI4cY48MhqJYoFfSZu2GDaX1s0jU0f40MHc8MhgobUUwAdK/5hWU0tsCVF5I
-91nL9iqfsgLRCRZD21xUzuvVR9mmME8NyBg5Q37PjKpA7SOUFJTlFPaIaqTdCHRS
-EZzMCJRxlNYoZkQQDZImZD73BlOZ2Q==
-=YkpE
------END PGP SIGNATURE-----
-
---vni90+aGYgRvsTuO--
+--- 0001/drivers/iommu/ipmmu-vmsa.c
++++ work/drivers/iommu/ipmmu-vmsa.c	2019-03-19 21:04:43.000000000 +0900
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/io-pgtable.h>
+ #include <linux/iommu.h>
++#include <linux/memblock.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_iommu.h>
+@@ -797,6 +798,12 @@ static bool ipmmu_slave_whitelist(struct
+ 	if (!soc_device_match(soc_rcar_gen3_whitelist))
+ 		return false;
+ 
++	/* In case all system memory fits within 32 bits of physical space
++	 * then assume the IPMMU will not be needed for address expansion.
++	 */
++	if (memblock_end_of_DRAM() <= SZ_4G)
++		return false;
++	
+ 	/* Check whether this slave device can work with the IPMMU */
+ 	for (i = 0; i < ARRAY_SIZE(rcar_gen3_slave_whitelist); i++) {
+ 		if (!strcmp(dev_name(dev), rcar_gen3_slave_whitelist[i]))
