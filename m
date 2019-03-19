@@ -2,119 +2,115 @@ Return-Path: <SRS0=zxXW=RW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFC9C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 14:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448BDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 16:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719DD2085A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 14:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CCA020854
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 16:18:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfCSObN (ORCPT
+        id S1727193AbfCSQSJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 10:31:13 -0400
-Received: from sauhun.de ([88.99.104.3]:45220 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726703AbfCSObM (ORCPT
+        Tue, 19 Mar 2019 12:18:09 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54782 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726612AbfCSQSJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 10:31:12 -0400
-Received: from localhost (p5486CE21.dip0.t-ipconnect.de [84.134.206.33])
-        by pokefinder.org (Postfix) with ESMTPSA id 911AD2C3F83;
-        Tue, 19 Mar 2019 15:31:09 +0100 (CET)
-Date:   Tue, 19 Mar 2019 15:31:09 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     Adam Ford <aford173@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org, Hoan Tran <hotran@apm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 10/61] gpio: simplify getting .drvdata
-Message-ID: <20190319143109.djd5z4pw5twom3og@ninjato>
-References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com>
- <20180419140641.27926-11-wsa+renesas@sang-engineering.com>
- <b0c1e303-ca95-8bc8-a5d4-65e75dc8398a@ti.com>
- <CACRpkday+d9iGeX+CRHTEyC=w+oNUK-8oTy0HqugO5PRhHn62w@mail.gmail.com>
- <20180430092947.GC2270@ulmo>
- <CAHCN7xLBa0JxcUs9i6Rr3hUNe5zymfb66icqNK0N3PMo51T-TA@mail.gmail.com>
- <20190307201807.GA950@kunai>
- <e7cadedc-b8ca-36d5-88dd-447fbeaac27a@metux.net>
- <20190307205814.GB950@kunai>
+        Tue, 19 Mar 2019 12:18:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D90D01650;
+        Tue, 19 Mar 2019 09:18:08 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1C4F3F614;
+        Tue, 19 Mar 2019 09:18:06 -0700 (PDT)
+Date:   Tue, 19 Mar 2019 16:18:03 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Marek Vasut <marek.vasut@gmail.com>, linux-pci@vger.kernel.org,
+        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in
+ resume_noirq
+Message-ID: <20190319161803.GB12647@e107981-ln.cambridge.arm.com>
+References: <20190217132441.15139-1-marek.vasut@gmail.com>
+ <20190307205013.GA208051@google.com>
+ <ae3659b1-5355-e6f3-16ef-7b458383a1f6@gmail.com>
+ <20190308171738.GB214730@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kg3zuuvvtizrfheo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190307205814.GB950@kunai>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190308171738.GB214730@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Fri, Mar 08, 2019 at 11:17:38AM -0600, Bjorn Helgaas wrote:
 
---kg3zuuvvtizrfheo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[...]
 
-On Thu, Mar 07, 2019 at 09:58:14PM +0100, Wolfram Sang wrote:
-> On Thu, Mar 07, 2019 at 09:53:50PM +0100, Enrico Weigelt, metux IT consul=
-t wrote:
-> > On 07.03.19 21:18, Wolfram Sang wrote:
-> > >=20
-> > >> It's been almost a year later, and several Linux revisions, and this
-> > >> still seems stuck somewhere/somehow.
-> > >=20
-> > > I wanted to respin this series once rc1 is released.
-> > >=20
-> > Maybe just rebase and repost ?
->=20
-> Then I'd miss all the new drivers which may need this fixed. Coccinelle
-> makes respinning a breeze, so no problem with that.
+> > >> +static int rcar_pcie_resume_noirq(struct device *dev)
+> > >> +{
+> > >> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
+> > >> +
+> > >> +	if (rcar_pci_read_reg(pcie, PMSR) &&
+> > >> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
+> > >> +		return 0;
+> > >> +
+> > >> +	/* Re-establish the PCIe link */
+> > >> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
+> > >> +	return rcar_pcie_wait_for_dl(pcie);
+> > >> +}
+> > >> +
+> > >> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
+> > >> +	.resume_noirq = rcar_pcie_resume_noirq,
+> > >> +};
+> > > 
+> > > I think there's the beginning of a convention to use #ifdef
+> > > CONFIG_PM_SLEEP around the ops themselves [1].  Otherwise I think
+> > > we'll get a warning about unused code when CONFIG_PM_SLEEP is unset.
+> > 
+> > Only if I used SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() , but I set the
+> > resume_noirq directly.
+> 
+> Fair enough.  I guess in this case if CONFIG_PM_SLEEP is unset, you
+> set the pointer, which avoids the "unused function" warning, but we
+> just never use that function pointer.
+> 
+> My intent is to avoid needless differences when possible, so when I
+> review things like this I look at how other drivers do things.  It
+> looks like all the other controllers use
+> SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() or similar:
+> 
+>   git grep -A3 "static.*dev_pm_ops" drivers/pci/controller
+> 
+> In the rcar case you only need the resume_fn, not the suspend_fn, so
+> SET_NOIRQ_SYSTEM_SLEEP_PM_OPS() does a little more than you need and
+> you'd have to pass NULL for suspend_fn.  I didn't check them all
+> (suspend_noirq, freeze_noirq, poweroff_noirq), but at least for
+> suspend_noirq, all users check for NULL before calling through the
+> .suspend_noirq() function pointer, so I think that should be safe.
 
-Because coccinelle didn't find anything in drivers/gpio, I wondered what
-case you are referring to? Invoking this (as of v5.1-rc1) gives:
+It is a matter of consistency across drivers, yes, but that's something
+I can easily solve with a clean-up patch on top of Marek's one.
 
-$ git log --oneline --grep "simplify getting" drivers/gpio
-7ddb7dce0ab6 gpio: gpio-tegra: simplify getting .driver_data
-38ccad0243f9 gpio: gpio-zynq: simplify getting .driver_data
-a3f4f728d3bb gpio: gpio-omap: simplify getting .driver_data
-11868645c5b5 gpio: gpio-mxc: simplify getting .driver_data
-ea5ec5e3aeab gpio: gpio-lynxpoint: simplify getting .driver_data
-deb19ac533ac gpio: gpio-dwapb: simplify getting .driver_data
+I would merge this patch as-is and convert all the drivers to a uniform
+convention (which one I shall see).
 
+On a side note, this patch looks like a fix to me (even though it is
+not trivial for me to add a sensible Fixes: tag) and should be treated
+as such, so it should go in one of the upcoming -rc* (and I float the
+idea of sending it to stable kernels on which S2R is basically broken).
 
---kg3zuuvvtizrfheo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyQ/SgACgkQFA3kzBSg
-Kbad6w/8DIvvd6HUXyP6xnHWqariF69h83z8gzbiUlkDkSFgIjTJ5f3SadnJfyOX
-6Q0F6rpp6rRSObAf5hkqej0mH5sAb9qynPGfnvmNr9bLQACtVv2CoKKncHR0BCGr
-6IMGySJSZjE3rgQVA1BB0Q4Dx+DJV4t2IRWEfOdSB75ZCbkSeoivaPpoHiiHEhMT
-DTJzP+qPF1hBE2vqjrjUrWCddubCd5S8iWOCSmdqz0OCKaChHvAlVzqWwjR0W4rF
-uk/cU0VKvgFJicf/kaWo1g20KQvmOAajfqKUYA3nhVBdON9JsqIB8lAGAG+rTeUV
-VaDNwUBMyTQYIGAO13dqGB9lGzs7Hm6lFJn/I9aT4Wt+Mdt25GflU02+oZzmA37m
-et1CARlq+dl9J7DV0iNTAdfqx6egH/pXSYoHDghGLNjbIaLLSQB8VBTnuUWee51/
-FmshV6qcg0qiM06+Q+CXvhvINzL/6YqCg73f3KKqtYYZ6MRL0h7sGguykbsTj3Z1
-bTgDsDe8EsjdigRUoY7PB1+db79MMDLP9TcnPx1s5WAZaQogOxWt3kxbUII2eqss
-ZfQL+of3tntrs2n/CGuN+ic9H+BRsavpr3oAsib2ZUZDNZlmTd0jgCG8mj1XXCmY
-+dUsy643lIPeKzgaYV+T3nLvHTv2oH3iMTpmBq994pM8Bysn6s4=
-=AXa/
------END PGP SIGNATURE-----
-
---kg3zuuvvtizrfheo--
+Lorenzo
