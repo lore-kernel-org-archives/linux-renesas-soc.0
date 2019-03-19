@@ -2,93 +2,98 @@ Return-Path: <SRS0=zxXW=RW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA9DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBF6C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D1420857
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05A8220828
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 10:27:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfCSKNL (ORCPT
+        id S1726661AbfCSK07 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 06:13:11 -0400
-Received: from sauhun.de ([88.99.104.3]:43528 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbfCSKNL (ORCPT
+        Tue, 19 Mar 2019 06:26:59 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41411 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfCSK07 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 06:13:11 -0400
-Received: from localhost (p5486CE21.dip0.t-ipconnect.de [84.134.206.33])
-        by pokefinder.org (Postfix) with ESMTPSA id 180272C3F83;
-        Tue, 19 Mar 2019 11:13:07 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT] mmc: renesas_sdhi: limit block count to 16 bit for old revisions
-Date:   Tue, 19 Mar 2019 11:12:59 +0100
-Message-Id: <20190319101259.20078-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
+        Tue, 19 Mar 2019 06:26:59 -0400
+Received: by mail-vs1-f66.google.com with SMTP id z25so10037635vsk.8
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Mar 2019 03:26:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GgMHmonpklsSY3Cbeg61RGRSWQulKrH22B3PVp9moQo=;
+        b=b7qDTETCYfvfukaZKArIs3jV2g9ViC8aIwC6Dt7+zT8Zixw+QLmHLW3zl9n5+mgUwo
+         bZECvyJB0mC73KFPLflGPDM+pL4ZXHPjtIVkhQK3QMqEYRInuuJldAJNRRkTXLw8JYTg
+         XiSRrgsiGc2T+DU930lrfWGHRp6t7BopuEwxqM9u6tl5YX7i+WPMj8fIP+TW/SMIerGs
+         Zq06kQsa9FhnqZJrBPInvYBTzqwA+4wqwNadkLMOPEwGuDxVXmOTcc6iihASnj/hLfl8
+         XIaD9TDLdfvrSXM2r0DD0C3ai4f7DoMANC0xYrORow+YpHxt3aRmUXyj2MELNHGwSDIe
+         koIg==
+X-Gm-Message-State: APjAAAXYH8H8FzlG1Dew9feYuqKA2geH5jjZai6RJzg9pQ0Hg4RqoZh1
+        TvYBEB9NTssM07D8dygEpELCzhU4CTQM8h027qE=
+X-Google-Smtp-Source: APXvYqz0ygHoRA/YwCKzRCowi/T3l9rOGGq1dDRI7Pt7MYUkdwvAodbpJEm56R4qHeDSeCj1zUrllIoar/09iRRLt1c=
+X-Received: by 2002:a67:d011:: with SMTP id r17mr78490vsi.96.1552991218196;
+ Tue, 19 Mar 2019 03:26:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190304195958.8383-1-marek.vasut@gmail.com>
+In-Reply-To: <20190304195958.8383-1-marek.vasut@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 19 Mar 2019 11:26:46 +0100
+Message-ID: <CAMuHMdV1K+0yCbdDD37oeOCQRs7n2-06SQi=6pX_NY0cVcPcWw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r8a7792: blanche: Add IIC3 and DA9063 PMIC node
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-R-Car Gen2 has two different SDHI incarnations in the same chip. The
-older one does not support the recently introduced 32 bit register
-access to the block count register. Make sure we use this feature only
-after the first known version.
+Hi Marek,
 
-Thanks to the Renesas Testing team for this bug report!
+On Mon, Mar 4, 2019 at 9:00 PM <marek.vasut@gmail.com> wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>
+> Add IIC3 node to R8A7792 SoC device tree and a DA9063 PMIC node
+> to V2H Blanche board device tree.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Fixes:5603731a15ef ("mmc: tmio: fix access width of Block Count Register")
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I could reproduce the issue on my Renesas Lager board (R-Car H2) and this patch
-fixes the issue for me. Still, if we could confirmation from the testing team,
-this would be awesome to have before applying, I think.
+> --- a/arch/arm/boot/dts/r8a7792-blanche.dts
+> +++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+> @@ -308,6 +308,26 @@
+>         };
+>  };
+>
+> +&iic3 {
+> +       status = "okay";
+> +
+> +       pmic@58 {
+> +               compatible = "dlg,da9063";
+> +               reg = <0x58>;
+> +               interrupt-parent = <&irqc>;
+> +               interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
 
- drivers/mmc/host/renesas_sdhi_core.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+I've just realized none of the R-Car Gen2 boards configure pinctrl for the
+IRQC2 line (intc_irq2/intc), so they all rely on the boot loader doing that.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 71e13844df6c..8742e27e4e8b 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -641,6 +641,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	struct renesas_sdhi *priv;
- 	struct resource *res;
- 	int irq, ret, i;
-+	u16 ver;
- 
- 	of_data = of_device_get_match_data(&pdev->dev);
- 
-@@ -773,12 +774,17 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	if (ret)
- 		goto efree;
- 
-+	ver = sd_ctrl_read16(host, CTL_VERSION);
-+	/* GEN2_SDR104 is first known SDHI to use 32bit block count */
-+	if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
-+		mmc_data->max_blk_count = U16_MAX;
-+
- 	ret = tmio_mmc_host_probe(host);
- 	if (ret < 0)
- 		goto edisclk;
- 
- 	/* One Gen2 SDHI incarnation does NOT have a CBSY bit */
--	if (sd_ctrl_read16(host, CTL_VERSION) == SDHI_VER_GEN2_SDR50)
-+	if (ver == SDHI_VER_GEN2_SDR50)
- 		mmc_data->flags &= ~TMIO_MMC_HAVE_CBSY;
- 
- 	/* Enable tuning iff we have an SCC and a supported mode */
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
