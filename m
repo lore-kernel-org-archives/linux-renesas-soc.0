@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E8DC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86414C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 12:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68DB92082F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 11:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5177D20854
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Mar 2019 12:02:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="eajImFKP"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="gPWy/hdO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726688AbfCSL7R (ORCPT
+        id S1726688AbfCSMCh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Mar 2019 07:59:17 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:46540 "EHLO
+        Tue, 19 Mar 2019 08:02:37 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:46585 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfCSL7Q (ORCPT
+        with ESMTP id S1725951AbfCSMCg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Mar 2019 07:59:16 -0400
+        Tue, 19 Mar 2019 08:02:36 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id B60C925B7B1;
-        Tue, 19 Mar 2019 22:59:11 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id F39F425B7B1;
+        Tue, 19 Mar 2019 23:02:33 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1552996752; bh=9zeMAmB+aUc/vZN0brxPBsgfG/n3tgCJSOjcieqxGAs=;
+        t=1552996954; bh=vnxNC51KaVufVFgb2BQFpFUm4aN3LCYDMZgGhDQh4BE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eajImFKPGYLsLuBbn7XeVM2Zfh3jnznTdLmN8iGIB3gsBOx3GG15SqlcvzTg3R3dD
-         jM/ABxrfdyCZlGCce1uY3Y3+f/DZyf1Jyw14tj4DSrZq1Bc0k/k/G3IsLVyM5TDfPR
-         aCFExpVUExMFfOPK1kOIfffLpOAu/1qBQ/cGjrV0=
+        b=gPWy/hdOzq4EuLhfPEAaJNqwNOR/uTuGfYHOOn0mFAJBCrSmaPqYZbA7TsOyy1fin
+         j/jg1/7rMHYxczLSZpwsItf6SYMePn8p0dlPB8iXy9ddbxRsIYUonZKtgiNjPB/p0o
+         ESRIxZ+A4ej3EnoAQaWF5W1e8bj/gaBMDWYyyqwY=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 18798940663; Tue, 19 Mar 2019 12:59:10 +0100 (CET)
-Date:   Tue, 19 Mar 2019 12:59:10 +0100
+        id 0C97E940663; Tue, 19 Mar 2019 13:02:31 +0100 (CET)
+Date:   Tue, 19 Mar 2019 13:02:30 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Phong Hoang <phong.hoang.wz@renesas.com>
-Subject: Re: [PATCH v3] pwm: Fix deadlock warning when removing PWM device
-Message-ID: <20190319115909.nxnbuzd4avkgtth4@verge.net.au>
-References: <1552992008-20218-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH RFT] mmc: renesas_sdhi: limit block count to 16 bit for
+ old revisions
+Message-ID: <20190319120230.mrdtvor235ic54uk@verge.net.au>
+References: <20190319101259.20078-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1552992008-20218-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20190319101259.20078-1-wsa+renesas@sang-engineering.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -53,292 +56,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 19, 2019 at 07:40:08PM +0900, Yoshihiro Shimoda wrote:
-> From: Phong Hoang <phong.hoang.wz@renesas.com>
+On Tue, Mar 19, 2019 at 11:12:59AM +0100, Wolfram Sang wrote:
+> R-Car Gen2 has two different SDHI incarnations in the same chip. The
+> older one does not support the recently introduced 32 bit register
+> access to the block count register. Make sure we use this feature only
+> after the first known version.
 > 
-> This patch fixes deadlock warning if removing PWM device
-> when CONFIG_PROVE_LOCKING is enabled.
+> Thanks to the Renesas Testing team for this bug report!
 > 
-> This issue can be reproceduced by the following steps on
-> the R-Car H3 Salvator-X board if the backlight is disabled:
-> 
->  # cd /sys/class/pwm/pwmchip0
->  # echo 0 > export
->  # ls
->  device  export  npwm  power  pwm0  subsystem  uevent  unexport
->  # cd device/driver
->  # ls
->  bind  e6e31000.pwm  uevent  unbind
->  # echo e6e31000.pwm > unbind
-> 
-> [   87.659974] ======================================================
-> [   87.666149] WARNING: possible circular locking dependency detected
-> [   87.672327] 5.0.0 #7 Not tainted
-> [   87.675549] ------------------------------------------------------
-> [   87.681723] bash/2986 is trying to acquire lock:
-> [   87.686337] 000000005ea0e178 (kn->count#58){++++}, at: kernfs_remove_by_name_ns+0x50/0xa0
-> [   87.694528]
-> [   87.694528] but task is already holding lock:
-> [   87.700353] 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
-> [   87.707405]
-> [   87.707405] which lock already depends on the new lock.
-> [   87.707405]
-> [   87.715574]
-> [   87.715574] the existing dependency chain (in reverse order) is:
-> [   87.723048]
-> [   87.723048] -> #1 (pwm_lock){+.+.}:
-> [   87.728017]        __mutex_lock+0x70/0x7e4
-> [   87.732108]        mutex_lock_nested+0x1c/0x24
-> [   87.736547]        pwm_request_from_chip.part.6+0x34/0x74
-> [   87.741940]        pwm_request_from_chip+0x20/0x40
-> [   87.746725]        export_store+0x6c/0x1f4
-> [   87.750820]        dev_attr_store+0x18/0x28
-> [   87.754998]        sysfs_kf_write+0x54/0x64
-> [   87.759175]        kernfs_fop_write+0xe4/0x1e8
-> [   87.763615]        __vfs_write+0x40/0x184
-> [   87.767619]        vfs_write+0xa8/0x19c
-> [   87.771448]        ksys_write+0x58/0xbc
-> [   87.775278]        __arm64_sys_write+0x18/0x20
-> [   87.779721]        el0_svc_common+0xd0/0x124
-> [   87.783986]        el0_svc_compat_handler+0x1c/0x24
-> [   87.788858]        el0_svc_compat+0x8/0x18
-> [   87.792947]
-> [   87.792947] -> #0 (kn->count#58){++++}:
-> [   87.798260]        lock_acquire+0xc4/0x22c
-> [   87.802353]        __kernfs_remove+0x258/0x2c4
-> [   87.806790]        kernfs_remove_by_name_ns+0x50/0xa0
-> [   87.811836]        remove_files.isra.1+0x38/0x78
-> [   87.816447]        sysfs_remove_group+0x48/0x98
-> [   87.820971]        sysfs_remove_groups+0x34/0x4c
-> [   87.825583]        device_remove_attrs+0x6c/0x7c
-> [   87.830197]        device_del+0x11c/0x33c
-> [   87.834201]        device_unregister+0x14/0x2c
-> [   87.838638]        pwmchip_sysfs_unexport+0x40/0x4c
-> [   87.843509]        pwmchip_remove+0xf4/0x13c
-> [   87.847773]        rcar_pwm_remove+0x28/0x34
-> [   87.852039]        platform_drv_remove+0x24/0x64
-> [   87.856651]        device_release_driver_internal+0x18c/0x21c
-> [   87.862391]        device_release_driver+0x14/0x1c
-> [   87.867175]        unbind_store+0xe0/0x124
-> [   87.871265]        drv_attr_store+0x20/0x30
-> [   87.875442]        sysfs_kf_write+0x54/0x64
-> [   87.879618]        kernfs_fop_write+0xe4/0x1e8
-> [   87.884055]        __vfs_write+0x40/0x184
-> [   87.888057]        vfs_write+0xa8/0x19c
-> [   87.891887]        ksys_write+0x58/0xbc
-> [   87.895716]        __arm64_sys_write+0x18/0x20
-> [   87.900154]        el0_svc_common+0xd0/0x124
-> [   87.904417]        el0_svc_compat_handler+0x1c/0x24
-> [   87.909289]        el0_svc_compat+0x8/0x18
-> [   87.913378]
-> [   87.913378] other info that might help us debug this:
-> [   87.913378]
-> [   87.921374]  Possible unsafe locking scenario:
-> [   87.921374]
-> [   87.927286]        CPU0                    CPU1
-> [   87.931808]        ----                    ----
-> [   87.936331]   lock(pwm_lock);
-> [   87.939293]                                lock(kn->count#58);
-> [   87.945120]                                lock(pwm_lock);
-> [   87.950599]   lock(kn->count#58);
-> [   87.953908]
-> [   87.953908]  *** DEADLOCK ***
-> [   87.953908]
-> [   87.959821] 4 locks held by bash/2986:
-> [   87.963563]  #0: 00000000ace7bc30 (sb_writers#6){.+.+}, at: vfs_write+0x188/0x19c
-> [   87.971044]  #1: 00000000287991b2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xb4/0x1e8
-> [   87.978872]  #2: 00000000f739d016 (&dev->mutex){....}, at: device_release_driver_internal+0x40/0x21c
-> [   87.988001]  #3: 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
-> [   87.995481]
-> [   87.995481] stack backtrace:
-> [   87.999836] CPU: 0 PID: 2986 Comm: bash Not tainted 5.0.0 #7
-> [   88.005489] Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
-> [   88.012791] Call trace:
-> [   88.015235]  dump_backtrace+0x0/0x190
-> [   88.018891]  show_stack+0x14/0x1c
-> [   88.022204]  dump_stack+0xb0/0xec
-> [   88.025514]  print_circular_bug.isra.32+0x1d0/0x2e0
-> [   88.030385]  __lock_acquire+0x1318/0x1864
-> [   88.034388]  lock_acquire+0xc4/0x22c
-> [   88.037958]  __kernfs_remove+0x258/0x2c4
-> [   88.041874]  kernfs_remove_by_name_ns+0x50/0xa0
-> [   88.046398]  remove_files.isra.1+0x38/0x78
-> [   88.050487]  sysfs_remove_group+0x48/0x98
-> [   88.054490]  sysfs_remove_groups+0x34/0x4c
-> [   88.058580]  device_remove_attrs+0x6c/0x7c
-> [   88.062671]  device_del+0x11c/0x33c
-> [   88.066154]  device_unregister+0x14/0x2c
-> [   88.070070]  pwmchip_sysfs_unexport+0x40/0x4c
-> [   88.074421]  pwmchip_remove+0xf4/0x13c
-> [   88.078163]  rcar_pwm_remove+0x28/0x34
-> [   88.081906]  platform_drv_remove+0x24/0x64
-> [   88.085996]  device_release_driver_internal+0x18c/0x21c
-> [   88.091215]  device_release_driver+0x14/0x1c
-> [   88.095478]  unbind_store+0xe0/0x124
-> [   88.099048]  drv_attr_store+0x20/0x30
-> [   88.102704]  sysfs_kf_write+0x54/0x64
-> [   88.106359]  kernfs_fop_write+0xe4/0x1e8
-> [   88.110275]  __vfs_write+0x40/0x184
-> [   88.113757]  vfs_write+0xa8/0x19c
-> [   88.117065]  ksys_write+0x58/0xbc
-> [   88.120374]  __arm64_sys_write+0x18/0x20
-> [   88.124291]  el0_svc_common+0xd0/0x124
-> [   88.128034]  el0_svc_compat_handler+0x1c/0x24
-> [   88.132384]  el0_svc_compat+0x8/0x18
-> 
-> The sysfs unexport in pwmchip_remove() is completely asymmetric
-> to what we do in pwmchip_add_with_polarity() and commit 0733424c9ba9
-> ("pwm: Unexport children before chip removal") is a strong indication
-> that this was wrong to begin with. We should just move
-> pwmchip_sysfs_unexport() where it belongs, which is right after
-> pwmchip_sysfs_unexport_children(). In that case, we do not need
-> separate functions anymore either.
-> 
-> We also really want to remove sysfs irrespective of whether or not
-> the chip will be removed as a result of pwmchip_remove(). We can only
-> assume that the driver will be gone after that, so we shouldn't leave
-> any dangling sysfs files around.
-> 
-> This warning disappears if we move pwmchip_sysfs_unexport() to
-> the top of pwmchip_remove(), pwmchip_sysfs_unexport_children().
-> That way it is also outside of the pwm_lock section, which indeed
-> doesn't seem to be needed.
-> 
-> Moving the pwmchip_sysfs_export() call outside of that section also
-> seems fine and it'd be perfectly symmetric with pwmchip_remove() again.
-> 
-> So, this patch fixes them.
-> 
-> Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
-> [shimoda: revise the commit log and code]
-> Fixes: 76abbdde2d95 ("pwm: Add sysfs interface")
-> Fixes: 0733424c9ba9 ("pwm: Unexport children before chip removal")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Tested-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Fixes:5603731a15ef ("mmc: tmio: fix access width of Block Count Register")
+> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
 > ---
->  Changes from v2 (https://patchwork.kernel.org/patch/10850711/)
->  - Revise the commit log.
->  - Reduce code diff lines by using if (!parent) condition.
->  - Add Reviewed-by Geert's tag.
 > 
->  Changes from v1 (https://patchwork.kernel.org/patch/10848567/):
->  - Change the subject from "Avoid" to "Fix".
->  - Merge pwmchip_sysfs_unexport_children()'s code into
->    pwmchip_sysfs_unexport() and move pwmchip_sysfs_unexport() to
->    the top of pwmchip_remove().
->  - Revise the commit log that is reffered from Therry's comments [1]
->    because it seems very clear to me.
->  - Add Fixes tag about the commit 0733424c9ba9. 
->  - I got Geert's Reviewed-by on v1 patch, but I'm not sure
->    I can add the Reviewed-by because v2 patch changes a bit.
->    So, I didn't add the Reviewed-by tag.
+> I could reproduce the issue on my Renesas Lager board (R-Car H2) and this patch
+> fixes the issue for me. Still, if we could confirmation from the testing team,
+> this would be awesome to have before applying, I think.
 > 
-> [1]
-> https://www.mail-archive.com/linux-renesas-soc@vger.kernel.org/msg39167.html
+>  drivers/mmc/host/renesas_sdhi_core.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> 
-> 
->  drivers/pwm/core.c  | 10 +++++-----
->  drivers/pwm/sysfs.c | 14 +-------------
->  include/linux/pwm.h |  5 -----
->  3 files changed, 6 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 1581f6a..c45e571 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -311,10 +311,12 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
->  	if (IS_ENABLED(CONFIG_OF))
->  		of_pwmchip_add(chip);
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index 71e13844df6c..8742e27e4e8b 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -641,6 +641,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+>  	struct renesas_sdhi *priv;
+>  	struct resource *res;
+>  	int irq, ret, i;
+> +	u16 ver;
 >  
-> -	pwmchip_sysfs_export(chip);
-> -
->  out:
->  	mutex_unlock(&pwm_lock);
+>  	of_data = of_device_get_match_data(&pdev->dev);
+>  
+> @@ -773,12 +774,17 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+>  	if (ret)
+>  		goto efree;
+>  
+> +	ver = sd_ctrl_read16(host, CTL_VERSION);
+> +	/* GEN2_SDR104 is first known SDHI to use 32bit block count */
+> +	if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
+> +		mmc_data->max_blk_count = U16_MAX;
 > +
-> +	if (!ret)
-> +		pwmchip_sysfs_export(chip);
-> +
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(pwmchip_add_with_polarity);
-> @@ -348,7 +350,7 @@ int pwmchip_remove(struct pwm_chip *chip)
->  	unsigned int i;
->  	int ret = 0;
+>  	ret = tmio_mmc_host_probe(host);
+>  	if (ret < 0)
+>  		goto edisclk;
 >  
-> -	pwmchip_sysfs_unexport_children(chip);
-> +	pwmchip_sysfs_unexport(chip);
+>  	/* One Gen2 SDHI incarnation does NOT have a CBSY bit */
+> -	if (sd_ctrl_read16(host, CTL_VERSION) == SDHI_VER_GEN2_SDR50)
+> +	if (ver == SDHI_VER_GEN2_SDR50)
+>  		mmc_data->flags &= ~TMIO_MMC_HAVE_CBSY;
 >  
->  	mutex_lock(&pwm_lock);
->  
-> @@ -368,8 +370,6 @@ int pwmchip_remove(struct pwm_chip *chip)
->  
->  	free_pwms(chip);
->  
-> -	pwmchip_sysfs_unexport(chip);
-> -
->  out:
->  	mutex_unlock(&pwm_lock);
->  	return ret;
-> diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-> index ceb233d..13d9bd5 100644
-> --- a/drivers/pwm/sysfs.c
-> +++ b/drivers/pwm/sysfs.c
-> @@ -411,19 +411,6 @@ void pwmchip_sysfs_export(struct pwm_chip *chip)
->  void pwmchip_sysfs_unexport(struct pwm_chip *chip)
->  {
->  	struct device *parent;
-> -
-> -	parent = class_find_device(&pwm_class, NULL, chip,
-> -				   pwmchip_sysfs_match);
-> -	if (parent) {
-> -		/* for class_find_device() */
-> -		put_device(parent);
-> -		device_unregister(parent);
-> -	}
-> -}
-> -
-> -void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
-> -{
-> -	struct device *parent;
->  	unsigned int i;
->  
->  	parent = class_find_device(&pwm_class, NULL, chip,
-> @@ -439,6 +426,7 @@ void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
->  	}
->  
->  	put_device(parent);
-> +	device_unregister(parent);
->  }
->  
->  static int __init pwm_sysfs_init(void)
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index d5199b5..ea3939f 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -597,7 +597,6 @@ static inline void pwm_remove_table(struct pwm_lookup *table, size_t num)
->  #ifdef CONFIG_PWM_SYSFS
->  void pwmchip_sysfs_export(struct pwm_chip *chip);
->  void pwmchip_sysfs_unexport(struct pwm_chip *chip);
-> -void pwmchip_sysfs_unexport_children(struct pwm_chip *chip);
->  #else
->  static inline void pwmchip_sysfs_export(struct pwm_chip *chip)
->  {
-> @@ -606,10 +605,6 @@ static inline void pwmchip_sysfs_export(struct pwm_chip *chip)
->  static inline void pwmchip_sysfs_unexport(struct pwm_chip *chip)
->  {
->  }
-> -
-> -static inline void pwmchip_sysfs_unexport_children(struct pwm_chip *chip)
-> -{
-> -}
->  #endif /* CONFIG_PWM_SYSFS */
->  
->  #endif /* __LINUX_PWM_H */
+>  	/* Enable tuning iff we have an SCC and a supported mode */
 > -- 
-> 2.7.4
+> 2.11.0
 > 
