@@ -4,56 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEA1C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA73C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D3821873
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:30:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1529121841
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553103017;
-	bh=BktbQdP6RHOucOhLGis5My9r8bRJIQglDRRPv5PxkeA=;
+	s=default; t=1553103064;
+	bh=fnYmP+5AVb9WuIxi1SpEgJcWN/lQ+7e/1IqnLBgAF+s=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=RNqGn5zgFN+Xbjt0QM3JnH0CmYObGMVMhw5rLYADZbcnCsPSkfckSVu1cez1uD+6T
-	 wDQ5YFs/r2XKAywLo5MpR51tXJEXSGE8yMYSYHZgvzhK0u3wc5qn/nbde604oxQ1ht
-	 T5xw0JflCYVcuspN2J3gYRrbG8/Diiu+n5fNExYc=
+	b=esABpuaoAQDNPPfkFD5gEsv5l0hsMR2wpXSagbB5BaVbsQ8fg+R1GJG00VCUJgzml
+	 43ocqQQQ0WDpXDSqnVC2G8viOAzzoKnCm2bbqqZvZKR50K2AZb9Eelc60b+tXDApEg
+	 KMJeHBvLgbH9Z5SL5oWgBSiQ6ragqwgGwGxYXOqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfCTRaQ (ORCPT
+        id S1727425AbfCTR34 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Mar 2019 13:30:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44856 "EHLO
+        Wed, 20 Mar 2019 13:29:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44210 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727536AbfCTRaQ (ORCPT
+        with ESMTP id S1727404AbfCTR3y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Mar 2019 13:30:16 -0400
+        Wed, 20 Mar 2019 13:29:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=mermph5pAyT0/OS7ZOwLxCzevxbph4wWI2JuW9V/HSs=; b=hJw/OWj9ehxh
-        7o1WJ7tkr0Xb4AhmhUvr1xDet0sHP7MJE+o5lhVsXpzUfnVjV+qVOcK5U/lnv4kqfi8F1ZDMdGne3
-        kBJWNCHe2ouoURGBbkSOgMrJc1HtIb/8XFTjN4RBheSE6pAXYL67eQp8txKxalDvgAgVJBTiXmg1N
-        PcRSs=;
+        List-Archive; bh=+OEx9YeAxPnGppiGBXPW7dN02Mh41WHNKlOf7E50Plw=; b=UXeo/8hxkZ2O
+        VjmHpWQxbsPDTRrQcNU/Ym31epBSUO8v4vcpTVZ2oRm3IQER/4ll6DrnPNJfEGdIxr3D2kDMQ+TNj
+        YKDVIXrsI7YkZ5odkA9vty3ocHFhfa6WoPYa1GrXILleCtvqMYqiFR7o1+TB7TtEegwgNSBjTH3os
+        1OTjU=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1h6f2a-0001AE-Jy; Wed, 20 Mar 2019 17:30:12 +0000
+        id 1h6f2C-00019D-Cd; Wed, 20 Mar 2019 17:29:48 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1F8EF1126E4C; Wed, 20 Mar 2019 17:30:12 +0000 (GMT)
+        id C6E0B1126E4C; Wed, 20 Mar 2019 17:29:47 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+To:     Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc:     Harald Geyer <harald@ccbib.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
         linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-spi@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Applied "spi: mxic: simplify getting .driver_data" to the spi tree
-In-Reply-To:  <20190319163637.30949-1-wsa+renesas@sang-engineering.com>
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: gpio: Reword the binding document" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190320173012.1F8EF1126E4C@debutante.sirena.org.uk>
-Date:   Wed, 20 Mar 2019 17:30:12 +0000 (GMT)
+Message-Id: <20190320172947.C6E0B1126E4C@debutante.sirena.org.uk>
+Date:   Wed, 20 Mar 2019 17:29:47 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -61,11 +64,11 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 The patch
 
-   spi: mxic: simplify getting .driver_data
+   regulator: gpio: Reword the binding document
 
-has been applied to the spi tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -86,44 +89,78 @@ to this mail.
 Thanks,
 Mark
 
-From f457cb707836e79a88b64ab22230edc2aa8ce0af Mon Sep 17 00:00:00 2001
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date: Tue, 19 Mar 2019 17:36:37 +0100
-Subject: [PATCH] spi: mxic: simplify getting .driver_data
+From 80c94557e94f25df5df00fd94e2a58bf31230fce Mon Sep 17 00:00:00 2001
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Date: Sat, 16 Mar 2019 21:25:51 +0100
+Subject: [PATCH] regulator: gpio: Reword the binding document
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
+Reword the binding document to make it clear how the propeties work
+and which properties affect which other properties.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Harald Geyer <harald@ccbib.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org
+To: devicetree@vger.kernel.org
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-mxic.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ .../bindings/regulator/gpio-regulator.txt     | 30 ++++++++++++++-----
+ 1 file changed, 22 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
-index e41ae6ef0f8a..f48563c09b97 100644
---- a/drivers/spi/spi-mxic.c
-+++ b/drivers/spi/spi-mxic.c
-@@ -492,8 +492,7 @@ static int mxic_spi_transfer_one(struct spi_master *master,
+diff --git a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
+index 1f496159e2bb..dd25e73b5d79 100644
+--- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
+@@ -4,16 +4,30 @@ Required properties:
+ - compatible		: Must be "regulator-gpio".
+ - regulator-name	: Defined in regulator.txt as optional, but required
+ 			  here.
+-- states		: Selection of available voltages and GPIO configs.
+-                          if there are no states, then use a fixed regulator
++- gpios			: Array of one or more GPIO pins used to select the
++			  regulator voltage/current listed in "states".
++- states		: Selection of available voltages/currents provided by
++			  this regulator and matching GPIO configurations to
++			  achieve them. If there are no states in the "states"
++			  array, use a fixed regulator instead.
  
- static int __maybe_unused mxic_spi_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct mxic_spi *mxic = spi_master_get_devdata(master);
+ Optional properties:
+-- enable-gpio		: GPIO to use to enable/disable the regulator.
+-- gpios			: GPIO group used to control voltage.
+-- gpios-states		: gpios pin's initial states array. 0: LOW, 1: HIGH.
+-			  defualt is LOW if nothing is specified.
++- enable-gpios		: GPIO used to enable/disable the regulator.
++			  Warning, the GPIO phandle flags are ignored and the
++			  GPIO polarity is controlled solely by the presence
++			  of "enable-active-high" DT property. This is due to
++			  compatibility with old DTs.
++- enable-active-high	: Polarity of "enable-gpio" GPIO is active HIGH.
++			  Default is active LOW.
++- gpios-states		: On operating systems, that don't support reading back
++			  gpio values in output mode (most notably linux), this
++			  array provides the state of GPIO pins set when
++			  requesting them from the gpio controller. Systems,
++			  that are capable of preserving state when requesting
++			  the lines, are free to ignore this property.
++			  0: LOW, 1: HIGH. Default is LOW if nothing else
++			  is specified.
+ - startup-delay-us	: Startup time in microseconds.
+-- enable-active-high	: Polarity of GPIO is active high (default is low).
+ - regulator-type	: Specifies what is being regulated, must be either
+ 			  "voltage" or "current", defaults to voltage.
  
- 	mxic_spi_clk_disable(mxic);
-@@ -504,8 +503,7 @@ static int __maybe_unused mxic_spi_runtime_suspend(struct device *dev)
+@@ -30,7 +44,7 @@ Example:
+ 		regulator-max-microvolt = <2600000>;
+ 		regulator-boot-on;
  
- static int __maybe_unused mxic_spi_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct spi_master *master = platform_get_drvdata(pdev);
-+	struct spi_master *master = dev_get_drvdata(dev);
- 	struct mxic_spi *mxic = spi_master_get_devdata(master);
- 	int ret;
- 
+-		enable-gpio = <&gpio0 23 0x4>;
++		enable-gpios = <&gpio0 23 0x4>;
+ 		gpios = <&gpio0 24 0x4
+ 			 &gpio0 25 0x4>;
+ 		states = <1800000 0x3
 -- 
 2.20.1
 
