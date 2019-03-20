@@ -2,98 +2,228 @@ Return-Path: <SRS0=0aVP=RX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F83BC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 09:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6C9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 09:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA722175B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 09:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1392175B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 09:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfCTJnE (ORCPT
+        id S1726907AbfCTJrS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Mar 2019 05:43:04 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:39386 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726595AbfCTJnE (ORCPT
+        Wed, 20 Mar 2019 05:47:18 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58235 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbfCTJrS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Mar 2019 05:43:04 -0400
-Received: by mail-vs1-f65.google.com with SMTP id g127so1074129vsd.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Mar 2019 02:43:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PrreKQVWQeJDwa1MfePktDIJuYTKCTjTJ01mYEDZNds=;
-        b=mdZg925UjLbFs7z5f7XN7VmbN/RqNz+bgOgwbUFjq0/WQnE9qM044fZvlG9+NYMGEo
-         Bq76Ojr9Id2vBko/jTE9qR3xnYz8BDMruxPKRWm1ChIWlPZCkxBR6yaT5LjrzhDKC3dT
-         sHnLwD28g+38gNYxlWn6wi3Jhg3cJF2Vea44F4Us6/r6e9/z5JK2QLIYN+B3YfWM+KQZ
-         OYHnSbhsGPVIwmEtBy8T79/lYleQzZZXAbLHGKs3aYbq0C2BVqz1v/jQrqFYyNC0HPm8
-         OQJnbjtwyH7FHdJ57/rvwYlsxQRgTL8oGtl6EIVqFKRRdSAkZ9SC9bXVN8T4yLu+yCyM
-         Qpww==
-X-Gm-Message-State: APjAAAUKK4UN1rXxbBVF4x6v1T14Gg4biKJQSpdG9JPNuJdmJMGJ5W3n
-        9AY7xOaQ6duV/hPIFibfpjrS8AuYakp0El60qJU=
-X-Google-Smtp-Source: APXvYqxFGhQo+nrjzmk9vIoJZqePYnMBR9Hp/egDyHKF0tzJFS7y+l3aUnYjWti8f4/erhaUYiDkymzjEbwOBPRJb8k=
-X-Received: by 2002:a67:f843:: with SMTP id b3mr4229974vsp.152.1553074983539;
- Wed, 20 Mar 2019 02:43:03 -0700 (PDT)
+        Wed, 20 Mar 2019 05:47:18 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1h6XoZ-0002HK-Sf; Wed, 20 Mar 2019 10:47:15 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1h6XoY-00060t-Ku; Wed, 20 Mar 2019 10:47:14 +0100
+Date:   Wed, 20 Mar 2019 10:47:14 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Phong Hoang <phong.hoang.wz@renesas.com>, kernel@pengutronix.de
+Subject: Re: [PATCH v3] pwm: Fix deadlock warning when removing PWM device
+Message-ID: <20190320094714.bwpc4a4q6ghu3rej@pengutronix.de>
+References: <1552992008-20218-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-References: <1552927218-22394-1-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1552927218-22394-1-git-send-email-uli+renesas@fpond.eu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 20 Mar 2019 10:42:51 +0100
-Message-ID: <CAMuHMdUOAHRiQ6b2R+yMet8Hf1ZpL=Q=5h=6mwg7YssU0JuowA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a77965: Add I2C{0,3,5} pins, groups
- and functions
-To:     Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1552992008-20218-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Uli,
+Hello,
 
-On Mon, Mar 18, 2019 at 5:40 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
->
-> This patch adds I2C{0,3,5} pins, groups and functions to the R8A7796 SoC.
->
-> These pins are physically muxed with other pins. Therefore, setup of
-> MOD_SEL is needed for exclusive control with other pins.
->
-> [takeshi.kihara.df: add blank lines after function declarations]
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> [uli: use standard macros PINMUX_IPSR_PHYS and PINMUX_IPSR_PHYS_MSEL]
-> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+On Tue, Mar 19, 2019 at 07:40:08PM +0900, Yoshihiro Shimoda wrote:
+> From: Phong Hoang <phong.hoang.wz@renesas.com>
+> 
+> This patch fixes deadlock warning if removing PWM device
+> when CONFIG_PROVE_LOCKING is enabled.
+> 
+> This issue can be reproceduced by the following steps on
+> the R-Car H3 Salvator-X board if the backlight is disabled:
+> 
+>  # cd /sys/class/pwm/pwmchip0
+>  # echo 0 > export
+>  # ls
+>  device  export  npwm  power  pwm0  subsystem  uevent  unexport
+>  # cd device/driver
+>  # ls
+>  bind  e6e31000.pwm  uevent  unbind
+>  # echo e6e31000.pwm > unbind
+> 
+> [   87.659974] ======================================================
+> [   87.666149] WARNING: possible circular locking dependency detected
+> [   87.672327] 5.0.0 #7 Not tainted
+> [   87.675549] ------------------------------------------------------
+> [   87.681723] bash/2986 is trying to acquire lock:
+> [   87.686337] 000000005ea0e178 (kn->count#58){++++}, at: kernfs_remove_by_name_ns+0x50/0xa0
+> [   87.694528]
+> [   87.694528] but task is already holding lock:
+> [   87.700353] 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
+> [   87.707405]
+> [   87.707405] which lock already depends on the new lock.
+> [   87.707405]
+> [   87.715574]
+> [   87.715574] the existing dependency chain (in reverse order) is:
+> [   87.723048]
+> [   87.723048] -> #1 (pwm_lock){+.+.}:
+> [   87.728017]        __mutex_lock+0x70/0x7e4
+> [   87.732108]        mutex_lock_nested+0x1c/0x24
+> [   87.736547]        pwm_request_from_chip.part.6+0x34/0x74
+> [   87.741940]        pwm_request_from_chip+0x20/0x40
+> [   87.746725]        export_store+0x6c/0x1f4
+> [   87.750820]        dev_attr_store+0x18/0x28
+> [   87.754998]        sysfs_kf_write+0x54/0x64
+> [   87.759175]        kernfs_fop_write+0xe4/0x1e8
+> [   87.763615]        __vfs_write+0x40/0x184
+> [   87.767619]        vfs_write+0xa8/0x19c
+> [   87.771448]        ksys_write+0x58/0xbc
+> [   87.775278]        __arm64_sys_write+0x18/0x20
+> [   87.779721]        el0_svc_common+0xd0/0x124
+> [   87.783986]        el0_svc_compat_handler+0x1c/0x24
+> [   87.788858]        el0_svc_compat+0x8/0x18
+> [   87.792947]
+> [   87.792947] -> #0 (kn->count#58){++++}:
+> [   87.798260]        lock_acquire+0xc4/0x22c
+> [   87.802353]        __kernfs_remove+0x258/0x2c4
+> [   87.806790]        kernfs_remove_by_name_ns+0x50/0xa0
+> [   87.811836]        remove_files.isra.1+0x38/0x78
+> [   87.816447]        sysfs_remove_group+0x48/0x98
+> [   87.820971]        sysfs_remove_groups+0x34/0x4c
+> [   87.825583]        device_remove_attrs+0x6c/0x7c
+> [   87.830197]        device_del+0x11c/0x33c
+> [   87.834201]        device_unregister+0x14/0x2c
+> [   87.838638]        pwmchip_sysfs_unexport+0x40/0x4c
+> [   87.843509]        pwmchip_remove+0xf4/0x13c
+> [   87.847773]        rcar_pwm_remove+0x28/0x34
+> [   87.852039]        platform_drv_remove+0x24/0x64
+> [   87.856651]        device_release_driver_internal+0x18c/0x21c
+> [   87.862391]        device_release_driver+0x14/0x1c
+> [   87.867175]        unbind_store+0xe0/0x124
+> [   87.871265]        drv_attr_store+0x20/0x30
+> [   87.875442]        sysfs_kf_write+0x54/0x64
+> [   87.879618]        kernfs_fop_write+0xe4/0x1e8
+> [   87.884055]        __vfs_write+0x40/0x184
+> [   87.888057]        vfs_write+0xa8/0x19c
+> [   87.891887]        ksys_write+0x58/0xbc
+> [   87.895716]        __arm64_sys_write+0x18/0x20
+> [   87.900154]        el0_svc_common+0xd0/0x124
+> [   87.904417]        el0_svc_compat_handler+0x1c/0x24
+> [   87.909289]        el0_svc_compat+0x8/0x18
+> [   87.913378]
+> [   87.913378] other info that might help us debug this:
+> [   87.913378]
+> [   87.921374]  Possible unsafe locking scenario:
+> [   87.921374]
+> [   87.927286]        CPU0                    CPU1
+> [   87.931808]        ----                    ----
+> [   87.936331]   lock(pwm_lock);
+> [   87.939293]                                lock(kn->count#58);
+> [   87.945120]                                lock(pwm_lock);
+> [   87.950599]   lock(kn->count#58);
+> [   87.953908]
+> [   87.953908]  *** DEADLOCK ***
+> [   87.953908]
+> [   87.959821] 4 locks held by bash/2986:
+> [   87.963563]  #0: 00000000ace7bc30 (sb_writers#6){.+.+}, at: vfs_write+0x188/0x19c
+> [   87.971044]  #1: 00000000287991b2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xb4/0x1e8
+> [   87.978872]  #2: 00000000f739d016 (&dev->mutex){....}, at: device_release_driver_internal+0x40/0x21c
+> [   87.988001]  #3: 000000006313b17c (pwm_lock){+.+.}, at: pwmchip_remove+0x28/0x13c
+> [   87.995481]
+> [   87.995481] stack backtrace:
+> [   87.999836] CPU: 0 PID: 2986 Comm: bash Not tainted 5.0.0 #7
+> [   88.005489] Hardware name: Renesas Salvator-X board based on r8a7795 ES1.x (DT)
+> [   88.012791] Call trace:
+> [   88.015235]  dump_backtrace+0x0/0x190
+> [   88.018891]  show_stack+0x14/0x1c
+> [   88.022204]  dump_stack+0xb0/0xec
+> [   88.025514]  print_circular_bug.isra.32+0x1d0/0x2e0
+> [   88.030385]  __lock_acquire+0x1318/0x1864
+> [   88.034388]  lock_acquire+0xc4/0x22c
+> [   88.037958]  __kernfs_remove+0x258/0x2c4
+> [   88.041874]  kernfs_remove_by_name_ns+0x50/0xa0
+> [   88.046398]  remove_files.isra.1+0x38/0x78
+> [   88.050487]  sysfs_remove_group+0x48/0x98
+> [   88.054490]  sysfs_remove_groups+0x34/0x4c
+> [   88.058580]  device_remove_attrs+0x6c/0x7c
+> [   88.062671]  device_del+0x11c/0x33c
+> [   88.066154]  device_unregister+0x14/0x2c
+> [   88.070070]  pwmchip_sysfs_unexport+0x40/0x4c
+> [   88.074421]  pwmchip_remove+0xf4/0x13c
+> [   88.078163]  rcar_pwm_remove+0x28/0x34
+> [   88.081906]  platform_drv_remove+0x24/0x64
+> [   88.085996]  device_release_driver_internal+0x18c/0x21c
+> [   88.091215]  device_release_driver+0x14/0x1c
+> [   88.095478]  unbind_store+0xe0/0x124
+> [   88.099048]  drv_attr_store+0x20/0x30
+> [   88.102704]  sysfs_kf_write+0x54/0x64
+> [   88.106359]  kernfs_fop_write+0xe4/0x1e8
+> [   88.110275]  __vfs_write+0x40/0x184
+> [   88.113757]  vfs_write+0xa8/0x19c
+> [   88.117065]  ksys_write+0x58/0xbc
+> [   88.120374]  __arm64_sys_write+0x18/0x20
+> [   88.124291]  el0_svc_common+0xd0/0x124
+> [   88.128034]  el0_svc_compat_handler+0x1c/0x24
+> [   88.132384]  el0_svc_compat+0x8/0x18
+> 
+> The sysfs unexport in pwmchip_remove() is completely asymmetric
+> to what we do in pwmchip_add_with_polarity() and commit 0733424c9ba9
+> ("pwm: Unexport children before chip removal") is a strong indication
+> that this was wrong to begin with. We should just move
+> pwmchip_sysfs_unexport() where it belongs, which is right after
+> pwmchip_sysfs_unexport_children(). In that case, we do not need
+> separate functions anymore either.
+> 
+> We also really want to remove sysfs irrespective of whether or not
+> the chip will be removed as a result of pwmchip_remove(). We can only
+> assume that the driver will be gone after that, so we shouldn't leave
+> any dangling sysfs files around.
+> 
+> This warning disappears if we move pwmchip_sysfs_unexport() to
+> the top of pwmchip_remove(), pwmchip_sysfs_unexport_children().
+> That way it is also outside of the pwm_lock section, which indeed
+> doesn't seem to be needed.
+> 
+> Moving the pwmchip_sysfs_export() call outside of that section also
+> seems fine and it'd be perfectly symmetric with pwmchip_remove() again.
+> 
+> So, this patch fixes them.
+> 
+> Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
+> [shimoda: revise the commit log and code]
+> Fixes: 76abbdde2d95 ("pwm: Add sysfs interface")
+> Fixes: 0733424c9ba9 ("pwm: Unexport children before chip removal")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Tested-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks for your patch!
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-> --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-> +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-
-Shouldn't the following be removed now?
-
-    PINMUX_IPSR_NOGP(0, I2C_SEL_0_1),
-    PINMUX_IPSR_NOGP(0, I2C_SEL_3_1),
-    PINMUX_IPSR_NOGP(0, I2C_SEL_5_1),
-
-Looks like we forgot to do that in pfc-r8a7796.c, too.
-
-In pfc-r8a7795.c, they were renamed to PINMUX_SINGLE(I2C_SEL_x_1),
-and removed when adding I2C[035] support.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Best regards
+Uwe
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
