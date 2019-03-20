@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565E8C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D679C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26D212175B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02CF02146E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:21:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfCTKVr (ORCPT
+        id S1727651AbfCTKVy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Mar 2019 06:21:47 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:50696 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbfCTKVr (ORCPT
+        Wed, 20 Mar 2019 06:21:54 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:55390 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727443AbfCTKVs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Mar 2019 06:21:47 -0400
+        Wed, 20 Mar 2019 06:21:48 -0400
 Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id qAMj1z00R3XaVaC01AMjiJ; Wed, 20 Mar 2019 11:21:44 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id qAMj1z00h3XaVaC01AMj7E; Wed, 20 Mar 2019 11:21:44 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1h6YLv-0005Fk-S5; Wed, 20 Mar 2019 11:21:43 +0100
+        id 1h6YLv-0005Fd-Py; Wed, 20 Mar 2019 11:21:43 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1h6YLv-00052q-Qx; Wed, 20 Mar 2019 11:21:43 +0100
+        id 1h6YLv-00052k-Ou; Wed, 20 Mar 2019 11:21:43 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 07/10 PARTIAL] pinctrl: sh-pfc: Absorb enum IDs in PINMUX_CFG_REG_VAR() macro
-Date:   Wed, 20 Mar 2019 11:21:38 +0100
-Message-Id: <20190320102141.19316-8-geert+renesas@glider.be>
+Subject: [PATCH v3 05/10] pinctrl: sh-pfc: Allow compile-testing of all drivers
+Date:   Wed, 20 Mar 2019 11:21:36 +0100
+Message-Id: <20190320102141.19316-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190320102141.19316-1-geert+renesas@glider.be>
 References: <20190320102141.19316-1-geert+renesas@glider.be>
@@ -46,421 +46,335 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently the PINMUX_CFG_REG_VAR() macro must be followed by
-initialization data, specifying all enum IDs.  Hence the macro itself
-does not know anything about the enum IDs, preventing the macro from
-performing any validation on it.
+Enable compile-testing of all Renesas SuperH and ARM pin control
+drivers, in a similar way as was done before for clock and SoC drivers
+in commits 371dd373c6edd557 ("clk: renesas: Allow compile-testing of all
+(sub)drivers") and 8be381a131c29c47 ("soc: renesas: Rework Kconfig and
+Makefile logic").
 
-Make the macro accept the enum IDs as a parameter, and update all users.
-Note that array data enclosed by curly braces cannot be passed to a
-macro as a parameter, hence both the register field widths and the enum
-IDs are wrapped using the GROUP() macro.
-
-No functional changes.
+The SuperH pin control drivers need specific include files, hence make
+sure they are always found when compile-testing.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-This patch is incomplete!
-It contains only the generic and r8a7791 parts.
-
 v3:
-  - Incorporate change that was accidentally part of the previous patch,
+  - No changes,
 
 v2:
-  - Improve comment.
+  - Add proper COMPILE_TEST support, instead of just enabling all
+    drivers unconditionally,
+  - Drop RFC state.
 ---
- drivers/pinctrl/sh-pfc/pfc-emev2.c       |  47 +++++----
- drivers/pinctrl/sh-pfc/pfc-r8a77470.c    | 111 +++++++++++---------
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c     |  81 +++++++++------
- drivers/pinctrl/sh-pfc/pfc-r8a7779.c     |  89 +++++++++-------
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c     | 107 ++++++++++++--------
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c     | 123 ++++++++++++++---------
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c     |  86 +++++++++-------
- drivers/pinctrl/sh-pfc/pfc-r8a7794.c     |  98 ++++++++++--------
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c |  20 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     |  21 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     |  21 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c    |  21 ++--
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c    |   7 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c    |   7 +-
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c    |  14 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c    |  13 +--
- drivers/pinctrl/sh-pfc/pfc-sh7734.c      |  83 ++++++++-------
- drivers/pinctrl/sh-pfc/sh_pfc.h          |  25 +++--
- 18 files changed, 572 insertions(+), 402 deletions(-)
+ drivers/pinctrl/sh-pfc/Kconfig  | 174 ++++++++++++++------------------
+ drivers/pinctrl/sh-pfc/Makefile |  15 +++
+ 2 files changed, 90 insertions(+), 99 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index b96c9a207cf8971d..1292ec8d268fc41f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -5701,8 +5701,9 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		GP_7_0_FN, FN_IP15_17_15 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR0", 0xE6060020, 32,
--			     1, 2, 2, 2, 2, 2, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1,
--			     1, 1, 1, 1, 1, 1, 1, 1) {
-+			     GROUP(1, 2, 2, 2, 2, 2, 2, 3, 1, 1, 1, 1,
-+				   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-+			     GROUP(
- 		/* IP0_31 [1] */
- 		0, 0,
- 		/* IP0_30_29 [2] */
-@@ -5757,10 +5758,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP0_1 [1] */
- 		FN_D1, 0,
- 		/* IP0_0 [1] */
--		FN_D0, 0, }
-+		FN_D0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR1", 0xE6060024, 32,
--			     3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2) {
-+			     GROUP(3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2),
-+			     GROUP(
- 		/* IP1_31_29 [3] */
- 		FN_A18, FN_DREQ1, FN_SCIFA1_RXD_C, 0, FN_SCIFB1_RXD_C,
- 		0, 0, 0,
-@@ -5793,10 +5795,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_A8, FN_MSIOF1_SS1, FN_I2C0_SCL, 0,
- 		/* IP1_1_0 [2] */
- 		FN_A7, FN_MSIOF1_SYNC,
--		0, 0, }
-+		0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR2", 0xE6060028, 32,
--			     2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 3) {
-+			     GROUP(2, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2, 3),
-+			     GROUP(
- 		/* IP2_31_30 [2] */
- 		0, 0, 0, 0,
- 		/* IP2_29_27 [3] */
-@@ -5829,10 +5832,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_A20, FN_SPCLK, 0, 0,
- 		/* IP2_2_0 [3] */
- 		FN_A19, FN_DACK1, FN_SCIFA1_TXD_C, 0,
--		FN_SCIFB1_TXD_C, 0, FN_SCIFB1_SCK_B, 0, }
-+		FN_SCIFB1_TXD_C, 0, FN_SCIFB1_SCK_B, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR3", 0xE606002C, 32,
--			     1, 3, 3, 3, 2, 2, 2, 2, 2, 3, 3, 3, 3) {
-+			     GROUP(1, 3, 3, 3, 2, 2, 2, 2, 2, 3, 3, 3, 3),
-+			     GROUP(
- 		/* IP3_31 [1] */
- 		0, 0,
- 		/* IP3_30_28 [3] */
-@@ -5867,10 +5871,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_SCIFB1_RXD_B, FN_PWM1, FN_TPU_TO1, 0,
- 		/* IP3_2_0 [3] */
- 		FN_EX_CS4_N, FN_ATARD0_N, FN_MSIOF2_RXD, 0, FN_EX_WAIT2,
--		0, 0, 0, }
-+		0, 0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR4", 0xE6060030, 32,
--			     1, 3, 2, 2, 2, 1, 1, 1, 3, 3, 3, 2, 3, 3, 2) {
-+			     GROUP(1, 3, 2, 2, 2, 1, 1, 1, 3, 3, 3, 2,
-+				   3, 3, 2),
-+			     GROUP(
- 		/* IP4_31 [1] */
- 		0, 0,
- 		/* IP4_30_28 [3] */
-@@ -5909,10 +5915,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_MSIOF2_SYNC_C, FN_GLO_I0_D,
- 		0, 0, 0,
- 		/* IP4_1_0 [2] */
--		FN_SSI_SDATA0, FN_I2C0_SCL_B, FN_IIC0_SCL_B, FN_MSIOF2_SCK_C, }
-+		FN_SSI_SDATA0, FN_I2C0_SCL_B, FN_IIC0_SCL_B, FN_MSIOF2_SCK_C,
-+		))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR5", 0xE6060034, 32,
--			     3, 3, 2, 2, 2, 3, 2, 3, 3, 3, 3, 3) {
-+			     GROUP(3, 3, 2, 2, 2, 3, 2, 3, 3, 3, 3, 3),
-+			     GROUP(
- 		/* IP5_31_29 [3] */
- 		FN_SSI_SDATA9, FN_RX3_D, FN_CAN0_RX_D,
- 		0, 0, 0, 0, 0,
-@@ -5947,10 +5955,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP5_2_0 [3] */
- 		FN_SSI_WS5, FN_MSIOF1_SYNC_C, FN_TS_SCK0, FN_GLO_I1,
- 		FN_MSIOF2_TXD_D, FN_VI1_R3_B,
--		0, 0, }
-+		0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR6", 0xE6060038, 32,
--			     2, 3, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 3) {
-+			     GROUP(2, 3, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 3),
-+			     GROUP(
- 		/* IP6_31_30 [2] */
- 		0, 0, 0, 0,
- 		/* IP6_29_27 [3] */
-@@ -5987,10 +5996,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP6_2_0 [3] */
- 		FN_AUDIO_CLKB, FN_STP_OPWM_0_B, FN_MSIOF1_SCK_B,
- 		FN_SCIF_CLK, FN_DVC_MUTE, FN_BPFCLK_E,
--		0, 0, }
-+		0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR7", 0xE606003C, 32,
--			     2, 3, 3, 3, 2, 2, 2, 2, 2, 2, 3, 3, 3) {
-+			     GROUP(2, 3, 3, 3, 2, 2, 2, 2, 2, 2, 3, 3, 3),
-+			     GROUP(
- 		/* IP7_31_30 [2] */
- 		0, 0, 0, 0,
- 		/* IP7_29_27 [3] */
-@@ -6028,10 +6038,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP7_2_0 [3] */
- 		FN_IRQ9, FN_DU1_DOTCLKIN_B, FN_CAN_CLK_D, FN_GPS_MAG_C,
- 		FN_SCIF_CLK_B, FN_GPS_MAG_D,
--		0, 0, }
-+		0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR8", 0xE6060040, 32,
--			     1, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3) {
-+			     GROUP(1, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3),
-+			     GROUP(
- 		/* IP8_31 [1] */
- 		0, 0,
- 		/* IP8_30_28 [3] */
-@@ -6071,10 +6082,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		0, 0,
- 		/* IP8_2_0 [3] */
- 		FN_DU1_DG3, FN_LCDOUT11, FN_VI1_DATA5_B, 0, FN_SSI_WS78_B,
--		0, 0, 0, }
-+		0, 0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR9", 0xE6060044, 32,
--			     3, 2, 2, 2, 2, 2, 2, 1, 3, 1, 1, 3, 1, 1, 3, 3) {
-+			     GROUP(3, 2, 2, 2, 2, 2, 2, 1, 3, 1, 1, 3,
-+				   1, 1, 3, 3),
-+			     GROUP(
- 		/* IP9_31_29 [3] */
- 		FN_VI0_G0, FN_IIC1_SCL, FN_STP_IVCXO27_0_C, FN_I2C4_SCL,
- 		FN_HCTS2_N, FN_SCIFB2_CTS_N, FN_ATAWR1_N, 0,
-@@ -6114,10 +6127,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		0, 0, 0,
- 		/* IP9_2_0 [3] */
- 		FN_DU1_DB6, FN_LCDOUT22, FN_I2C3_SCL_C, FN_RX3, FN_SCIFA3_RXD,
--		0, 0, 0, }
-+		0, 0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR10", 0xE6060048, 32,
--			     3, 2, 2, 3, 3, 2, 2, 3, 3, 3, 3, 3) {
-+			     GROUP(3, 2, 2, 3, 3, 2, 2, 3, 3, 3, 3, 3),
-+			     GROUP(
- 		/* IP10_31_29 [3] */
- 		FN_VI0_R4, FN_VI2_DATA5, FN_GLO_SCLK_B, FN_TX0_C, FN_I2C1_SCL_D,
- 		0, 0, 0,
-@@ -6151,11 +6165,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_HSCK2, FN_SCIFB2_SCK, FN_ATARD1_N, 0,
- 		/* IP10_2_0 [3] */
- 		FN_VI0_G1, FN_IIC1_SDA, FN_STP_ISCLK_0_C, FN_I2C4_SDA,
--		FN_HRTS2_N, FN_SCIFB2_RTS_N, FN_ATADIR1_N, 0, }
-+		FN_HRTS2_N, FN_SCIFB2_RTS_N, FN_ATADIR1_N, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR11", 0xE606004C, 32,
--			     2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2,
--			     3, 3, 3, 3, 3) {
-+			     GROUP(2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
-+				   2, 3, 3, 3, 3, 3),
-+			     GROUP(
- 		/* IP11_31_30 [2] */
- 		FN_ETH_CRS_DV, FN_AVB_LINK, FN_I2C2_SDA_C, 0,
- 		/* IP11_29_28 [2] */
-@@ -6198,10 +6213,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		0, 0, 0,
- 		/* IP11_2_0 [3] */
- 		FN_VI0_R5, FN_VI2_DATA6, FN_GLO_SDATA_B, FN_RX0_C,
--		FN_I2C1_SDA_D, 0, 0, 0, }
-+		FN_I2C1_SDA_D, 0, 0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR12", 0xE6060050, 32,
--			     2, 3, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2) {
-+			     GROUP(2, 3, 3, 2, 2, 2, 2, 3, 3, 3, 3, 2, 2),
-+			     GROUP(
- 		/* IP12_31_30 [2] */
- 		0, 0, 0, 0,
- 		/* IP12_29_27 [3] */
-@@ -6239,11 +6255,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP12_3_2 [2] */
- 		FN_ETH_RXD0, FN_AVB_PHY_INT, FN_I2C3_SDA, FN_IIC0_SDA,
- 		/* IP12_1_0 [2] */
--		FN_ETH_RX_ER, FN_AVB_CRS, FN_I2C3_SCL, FN_IIC0_SCL, }
-+		FN_ETH_RX_ER, FN_AVB_CRS, FN_I2C3_SCL, FN_IIC0_SCL, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR13", 0xE6060054, 32,
--			     1, 3, 1, 1, 1, 2, 1, 3, 3, 1, 1, 1, 1, 1, 1,
--			     3, 2, 2, 3) {
-+			     GROUP(1, 3, 1, 1, 1, 2, 1, 3, 3, 1, 1, 1,
-+				   1, 1, 1, 3, 2, 2, 3),
-+			     GROUP(
- 		/* IP13_31 [1] */
- 		0, 0,
- 		/* IP13_30_28 [3] */
-@@ -6290,10 +6307,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP13_2_0 [3] */
- 		FN_STP_ISD_0, FN_AVB_TX_ER, FN_SCIFB2_SCK_C,
- 		FN_ADICLK_B, FN_MSIOF0_SS1_C,
--		0, 0, 0, }
-+		0, 0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR14", 0xE6060058, 32,
--			     3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 2) {
-+			     GROUP(3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1,
-+				   1, 1, 2),
-+			     GROUP(
- 		/* IP14_31_29 [3] */
- 		FN_MSIOF0_SS2, FN_MMC_D7, FN_ADICHS2, FN_RX0_E,
- 		FN_VI1_VSYNC_N_C, FN_IIC0_SDA_C, FN_VI1_G5_B, 0,
-@@ -6333,10 +6352,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP14_2 [1] */
- 		FN_SD2_CLK, FN_MMC_CLK,
- 		/* IP14_1_0 [2] */
--		FN_SD1_WP, FN_PWM1_B, FN_I2C1_SDA_C, 0, }
-+		FN_SD1_WP, FN_PWM1_B, FN_I2C1_SDA_C, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR15", 0xE606005C, 32,
--			     2, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2) {
-+			     GROUP(2, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2),
-+			     GROUP(
- 		/* IP15_31_30 [2] */
- 		0, 0, 0, 0,
- 		/* IP15_29_27 [3] */
-@@ -6374,10 +6394,11 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP15_3_2 [2] */
- 		FN_SIM0_CLK, FN_IECLK, FN_CAN_CLK_C, 0,
- 		/* IP15_1_0 [2] */
--		FN_SIM0_RST, FN_IETX, FN_CAN1_TX_D, 0, }
-+		FN_SIM0_RST, FN_IETX, FN_CAN1_TX_D, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("IPSR16", 0xE6060160, 32,
--			     4, 4, 4, 4, 4, 2, 2, 2, 3, 3) {
-+			     GROUP(4, 4, 4, 4, 4, 2, 2, 2, 3, 3),
-+			     GROUP(
- 		/* IP16_31_28 [4] */
- 		0, 0, 0, 0, 0, 0, 0, 0,
- 		0, 0, 0, 0, 0, 0, 0, 0,
-@@ -6406,11 +6427,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* IP16_2_0 [3] */
- 		FN_HRX1, FN_SCIFB1_RXD, FN_VI1_R0_B,
- 		FN_GLO_SDATA_C, FN_VI1_DATA6_C,
--		0, 0, 0, }
-+		0, 0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL", 0xE6060090, 32,
--			     1, 2, 2, 2, 3, 2, 1, 1, 1, 1,
--			     3, 2, 2, 2, 1, 2, 2, 2) {
-+			     GROUP(1, 2, 2, 2, 3, 2, 1, 1, 1, 1, 3, 2,
-+				   2, 2, 1, 2, 2, 2),
-+			     GROUP(
- 		/* RESERVED [1] */
- 		0, 0,
- 		/* SEL_SCIF1 [2] */
-@@ -6451,11 +6473,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* SEL_TSIF0 [2] */
- 		FN_SEL_TSIF0_0, FN_SEL_TSIF0_1, FN_SEL_TSIF0_2, FN_SEL_TSIF0_3,
- 		/* SEL_SOF0 [2] */
--		FN_SEL_SOF0_0, FN_SEL_SOF0_1, FN_SEL_SOF0_2, 0, }
-+		FN_SEL_SOF0_0, FN_SEL_SOF0_1, FN_SEL_SOF0_2, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL2", 0xE6060094, 32,
--			     3, 1, 1, 3, 2, 1, 1, 2, 2,
--			     1, 3, 2, 1, 2, 2, 2, 1, 1, 1) {
-+			     GROUP(3, 1, 1, 3, 2, 1, 1, 2, 2, 1, 3, 2,
-+				   1, 2, 2, 2, 1, 1, 1),
-+			     GROUP(
- 		/* SEL_SCIF0 [3] */
- 		FN_SEL_SCIF0_0, FN_SEL_SCIF0_1, FN_SEL_SCIF0_2,
- 		FN_SEL_SCIF0_3, FN_SEL_SCIF0_4,
-@@ -6499,11 +6522,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* RESERVED [1] */
- 		0, 0,
- 		/* SEL_SSI8 [1] */
--		FN_SEL_SSI8_0, FN_SEL_SSI8_1, }
-+		FN_SEL_SSI8_0, FN_SEL_SSI8_1, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL3", 0xE6060098, 32,
--			     2, 2, 2, 2, 2, 2, 2, 2,
--			     1, 1, 2, 2, 3, 2, 2, 2, 1) {
-+			     GROUP(2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2,
-+				   3, 2, 2, 2, 1),
-+			     GROUP(
- 		/* SEL_HSCIF2 [2] */
- 		FN_SEL_HSCIF2_0, FN_SEL_HSCIF2_1,
- 		FN_SEL_HSCIF2_2, FN_SEL_HSCIF2_3,
-@@ -6541,11 +6565,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* RESERVED [2] */
- 		0, 0, 0, 0,
- 		/* RESERVED [1] */
--		0, 0, }
-+		0, 0, ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL4", 0xE606009C, 32,
--			     3, 2, 2, 1, 1, 1, 1, 3, 2,
--			     2, 3, 1, 1, 1, 2, 2, 2, 2) {
-+			     GROUP(3, 2, 2, 1, 1, 1, 1, 3, 2, 2, 3, 1,
-+				   1, 1, 2, 2, 2, 2),
-+			     GROUP(
- 		/* SEL_SOF1 [3] */
- 		FN_SEL_SOF1_0, FN_SEL_SOF1_1, FN_SEL_SOF1_2, FN_SEL_SOF1_3,
- 		FN_SEL_SOF1_4,
-@@ -6587,7 +6612,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		/* RESERVED [2] */
- 		0, 0, 0, 0,
- 		/* RESERVED [2] */
--		0, 0, 0, 0, }
-+		0, 0, 0, 0, ))
- 	},
- 	{ },
- };
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 3848c104543d383e..95eb51168ed83856 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -139,16 +139,17 @@ struct pinmux_cfg_reg {
-  *   - name: Register name (unused, for documentation purposes only)
-  *   - r: Physical register address
-  *   - r_width: Width of the register (in bits)
-- *   - var_fw0, var_fwn...: List of widths of the register fields (in bits),
-- *                          From left to right (i.e. MSB to LSB)
-- * This macro must be followed by initialization data: For each register field
-- * (from left to right, i.e. MSB to LSB), 2^var_fwi enum IDs must be specified,
-- * one for each possible combination of the register field bit values.
-+ *   - f_widths: List of widths of the register fields (in bits), from left
-+ *               to right (i.e. MSB to LSB), wrapped using the GROUP() macro.
-+ *   - ids: For each register field (from left to right, i.e. MSB to LSB),
-+ *          2^f_widths[i] enum IDs must be specified, one for each possible
-+ *          combination of the register field bit values, all wrapped using
-+ *          the GROUP() macro.
-  */
--#define PINMUX_CFG_REG_VAR(name, r, r_width, var_fw0, var_fwn...) \
--	.reg = r, .reg_width = r_width,	\
--	.var_field_width = (const u8 []) { var_fw0, var_fwn, 0 }, \
--	.enum_ids = (const u16 [])
-+#define PINMUX_CFG_REG_VAR(name, r, r_width, f_widths, ids)		\
-+	.reg = r, .reg_width = r_width,					\
-+	.var_field_width = (const u8 []) { f_widths, 0 },		\
-+	.enum_ids = (const u16 []) { ids }
+diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
+index 6a9e4334dbfa7ec0..2dd716b016a3f39b 100644
+--- a/drivers/pinctrl/sh-pfc/Kconfig
++++ b/drivers/pinctrl/sh-pfc/Kconfig
+@@ -3,19 +3,53 @@
+ # Renesas SH and SH Mobile PINCTRL drivers
+ #
  
- struct pinmux_drive_reg_field {
- 	u16 pin;
-@@ -667,7 +668,9 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
-  */
- #define PORTCR(nr, reg)							\
- 	{								\
--		PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8, 2, 2, 1, 3) {\
-+		PINMUX_CFG_REG_VAR("PORT" nr "CR", reg, 8,		\
-+				   GROUP(2, 2, 1, 3),			\
-+				   GROUP(				\
- 			/* PULMD[1:0], handled by .set_bias() */	\
- 			0, 0, 0, 0,					\
- 			/* IE and OE */					\
-@@ -679,7 +682,7 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 			PORT##nr##_FN2, PORT##nr##_FN3,			\
- 			PORT##nr##_FN4, PORT##nr##_FN5,			\
- 			PORT##nr##_FN6, PORT##nr##_FN7			\
--		}							\
-+		))							\
- 	}
+-if ARCH_RENESAS || SUPERH
+-
+ config PINCTRL_SH_PFC
++	bool "Renesas SoC pin control support" if COMPILE_TEST && !(ARCH_RENESAS || SUPERH)
++	default y if ARCH_RENESAS || SUPERH
+ 	select PINMUX
+ 	select PINCONF
+ 	select GENERIC_PINCONF
+-	def_bool y
++	select PINCTRL_PFC_EMEV2 if ARCH_EMEV2
++	select PINCTRL_PFC_R8A73A4 if ARCH_R8A73A4
++	select PINCTRL_PFC_R8A7740 if ARCH_R8A7740
++	select PINCTRL_PFC_R8A7743 if ARCH_R8A7743
++	select PINCTRL_PFC_R8A7744 if ARCH_R8A7744
++	select PINCTRL_PFC_R8A7745 if ARCH_R8A7745
++	select PINCTRL_PFC_R8A77470 if ARCH_R8A77470
++	select PINCTRL_PFC_R8A774A1 if ARCH_R8A774A1
++	select PINCTRL_PFC_R8A774C0 if ARCH_R8A774C0
++	select PINCTRL_PFC_R8A7778 if ARCH_R8A7778
++	select PINCTRL_PFC_R8A7779 if ARCH_R8A7779
++	select PINCTRL_PFC_R8A7790 if ARCH_R8A7790
++	select PINCTRL_PFC_R8A7791 if ARCH_R8A7791
++	select PINCTRL_PFC_R8A7792 if ARCH_R8A7792
++	select PINCTRL_PFC_R8A7793 if ARCH_R8A7793
++	select PINCTRL_PFC_R8A7794 if ARCH_R8A7794
++	select PINCTRL_PFC_R8A7795 if ARCH_R8A7795
++	select PINCTRL_PFC_R8A7796 if ARCH_R8A7796
++	select PINCTRL_PFC_R8A77965 if ARCH_R8A77965
++	select PINCTRL_PFC_R8A77970 if ARCH_R8A77970
++	select PINCTRL_PFC_R8A77980 if ARCH_R8A77980
++	select PINCTRL_PFC_R8A77990 if ARCH_R8A77990
++	select PINCTRL_PFC_R8A77995 if ARCH_R8A77995
++	select PINCTRL_PFC_SH7203 if CPU_SUBTYPE_SH7203
++	select PINCTRL_PFC_SH7264 if CPU_SUBTYPE_SH7264
++	select PINCTRL_PFC_SH7269 if CPU_SUBTYPE_SH7269
++	select PINCTRL_PFC_SH73A0 if ARCH_SH73A0
++	select PINCTRL_PFC_SH7720 if CPU_SUBTYPE_SH7720
++	select PINCTRL_PFC_SH7722 if CPU_SUBTYPE_SH7722
++	select PINCTRL_PFC_SH7723 if CPU_SUBTYPE_SH7723
++	select PINCTRL_PFC_SH7724 if CPU_SUBTYPE_SH7724
++	select PINCTRL_PFC_SH7734 if CPU_SUBTYPE_SH7734
++	select PINCTRL_PFC_SH7757 if CPU_SUBTYPE_SH7757
++	select PINCTRL_PFC_SH7785 if CPU_SUBTYPE_SH7785
++	select PINCTRL_PFC_SH7786 if CPU_SUBTYPE_SH7786
++	select PINCTRL_PFC_SHX3 if CPU_SUBTYPE_SHX3
+ 	help
+-	  This enables pin control drivers for SH and SH Mobile platforms
++	  This enables pin control drivers for Renesas SuperH and ARM platforms
  
- /*
+ config PINCTRL_SH_PFC_GPIO
+ 	select GPIOLIB
+-	select PINCTRL_SH_PFC
+ 	bool
+ 	help
+ 	  This enables pin control and GPIO drivers for SH/SH Mobile platforms
+@@ -27,183 +61,125 @@ config PINCTRL_SH_FUNC_GPIO
+ 	  This enables legacy function GPIOs for SH platforms
+ 
+ config PINCTRL_PFC_EMEV2
+-	def_bool y
+-	depends on ARCH_EMEV2
+-	select PINCTRL_SH_PFC
++	bool "Emma Mobile AV2 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A73A4
+-	def_bool y
+-	depends on ARCH_R8A73A4
++	bool "R-Mobile APE6 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_R8A7740
+-	def_bool y
+-	depends on ARCH_R8A7740
++	bool "R-Mobile A1 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_PFC_GPIO
+ 
+ config PINCTRL_PFC_R8A7743
+-	def_bool y
+-	depends on ARCH_R8A7743
+-	select PINCTRL_SH_PFC
++	bool "RZ/G1M pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7744
+-	def_bool y
+-	depends on ARCH_R8A7744
+-	select PINCTRL_SH_PFC
++	bool "RZ/G1N pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7745
+-        def_bool y
+-        depends on ARCH_R8A7745
+-        select PINCTRL_SH_PFC
++	bool "RZ/G1E pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A77470
+-        def_bool y
+-        depends on ARCH_R8A77470
+-        select PINCTRL_SH_PFC
++	bool "RZ/G1C pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A774A1
+-        def_bool y
+-        depends on ARCH_R8A774A1
+-        select PINCTRL_SH_PFC
++	bool "RZ/G2M pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A774C0
+-        def_bool y
+-        depends on ARCH_R8A774C0
+-        select PINCTRL_SH_PFC
++	bool "RZ/G2E pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7778
+-	def_bool y
+-	depends on ARCH_R8A7778
+-	select PINCTRL_SH_PFC
++	bool "R-Car M1A pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7779
+-	def_bool y
+-	depends on ARCH_R8A7779
+-	select PINCTRL_SH_PFC
++	bool "R-Car H1 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7790
+-	def_bool y
+-	depends on ARCH_R8A7790
+-	select PINCTRL_SH_PFC
++	bool "R-Car H2 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7791
+-	def_bool y
+-	depends on ARCH_R8A7791
+-	select PINCTRL_SH_PFC
++	bool "R-Car M2-W pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7792
+-	def_bool y
+-	depends on ARCH_R8A7792
+-	select PINCTRL_SH_PFC
++	bool "R-Car V2H pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7793
+-	def_bool y
+-	depends on ARCH_R8A7793
+-	select PINCTRL_SH_PFC
++	bool "R-Car M2-N pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7794
+-	def_bool y
+-	depends on ARCH_R8A7794
+-	select PINCTRL_SH_PFC
++	bool "R-Car E2 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7795
+-	def_bool y
+-	depends on ARCH_R8A7795
+-	select PINCTRL_SH_PFC
++	bool "R-Car H3 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A7796
+-        def_bool y
+-        depends on ARCH_R8A7796
+-        select PINCTRL_SH_PFC
++	bool "R-Car M3-W pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A77965
+-        def_bool y
+-        depends on ARCH_R8A77965
+-        select PINCTRL_SH_PFC
++	bool "R-Car M3-N pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A77970
+-	def_bool y
+-	depends on ARCH_R8A77970
+-	select PINCTRL_SH_PFC
++	bool "R-Car V3M pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A77980
+-	def_bool y
+-	depends on ARCH_R8A77980
+-	select PINCTRL_SH_PFC
++	bool "R-Car V3H pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A77990
+-        def_bool y
+-        depends on ARCH_R8A77990
+-        select PINCTRL_SH_PFC
++	bool "R-Car E3 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_R8A77995
+-        def_bool y
+-        depends on ARCH_R8A77995
+-        select PINCTRL_SH_PFC
++	bool "R-Car D3 pin control support" if COMPILE_TEST
+ 
+ config PINCTRL_PFC_SH7203
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7203
++	bool "SH7203 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7264
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7264
++	bool "SH7264 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7269
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7269
++	bool "SH7269 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH73A0
+-	def_bool y
+-	depends on ARCH_SH73A0
++	bool "SH-Mobile AG5 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_PFC_GPIO
+ 	select REGULATOR
+ 
+ config PINCTRL_PFC_SH7720
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7720
++	bool "SH7720 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7722
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7722
++	bool "SH7722 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7723
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7723
++	bool "SH-Mobile R2 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7724
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7724
++	bool "SH-Mobile R2R pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7734
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7734
++	bool "SH7734 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7757
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7757
++	bool "SH7757 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7785
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7785
++	bool "SH7785 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SH7786
+-	def_bool y
+-	depends on CPU_SUBTYPE_SH7786
++	bool "SH7786 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+ 
+ config PINCTRL_PFC_SHX3
+-	def_bool y
+-	depends on CPU_SUBTYPE_SHX3
++	bool "SH-X3 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_FUNC_GPIO
+-endif
+diff --git a/drivers/pinctrl/sh-pfc/Makefile b/drivers/pinctrl/sh-pfc/Makefile
+index 82ebb2a91ee0f998..8c95abcfcc006371 100644
+--- a/drivers/pinctrl/sh-pfc/Makefile
++++ b/drivers/pinctrl/sh-pfc/Makefile
+@@ -38,3 +38,18 @@ obj-$(CONFIG_PINCTRL_PFC_SH7757)	+= pfc-sh7757.o
+ obj-$(CONFIG_PINCTRL_PFC_SH7785)	+= pfc-sh7785.o
+ obj-$(CONFIG_PINCTRL_PFC_SH7786)	+= pfc-sh7786.o
+ obj-$(CONFIG_PINCTRL_PFC_SHX3)		+= pfc-shx3.o
++
++ifeq ($(CONFIG_COMPILE_TEST),y)
++CFLAGS_pfc-sh7203.o	+= -I$(srctree)/arch/sh/include/cpu-sh2a
++CFLAGS_pfc-sh7264.o	+= -I$(srctree)/arch/sh/include/cpu-sh2a
++CFLAGS_pfc-sh7269.o	+= -I$(srctree)/arch/sh/include/cpu-sh2a
++CFLAGS_pfc-sh7720.o	+= -I$(srctree)/arch/sh/include/cpu-sh3
++CFLAGS_pfc-sh7722.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++CFLAGS_pfc-sh7723.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++CFLAGS_pfc-sh7724.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++CFLAGS_pfc-sh7734.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++CFLAGS_pfc-sh7757.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++CFLAGS_pfc-sh7785.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++CFLAGS_pfc-sh7786.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++CFLAGS_pfc-shx3.o	+= -I$(srctree)/arch/sh/include/cpu-sh4
++endif
 -- 
 2.17.1
 
