@@ -2,80 +2,128 @@ Return-Path: <SRS0=0aVP=RX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F85C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEA1C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 693CB20850
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D3821873
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 17:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553103017;
+	bh=BktbQdP6RHOucOhLGis5My9r8bRJIQglDRRPv5PxkeA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=RNqGn5zgFN+Xbjt0QM3JnH0CmYObGMVMhw5rLYADZbcnCsPSkfckSVu1cez1uD+6T
+	 wDQ5YFs/r2XKAywLo5MpR51tXJEXSGE8yMYSYHZgvzhK0u3wc5qn/nbde604oxQ1ht
+	 T5xw0JflCYVcuspN2J3gYRrbG8/Diiu+n5fNExYc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbfCTRUH (ORCPT
+        id S1727542AbfCTRaQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Mar 2019 13:20:07 -0400
-Received: from sauhun.de ([88.99.104.3]:55166 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726123AbfCTRUH (ORCPT
+        Wed, 20 Mar 2019 13:30:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44856 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727536AbfCTRaQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Mar 2019 13:20:07 -0400
-Received: from localhost (p5486CF7E.dip0.t-ipconnect.de [84.134.207.126])
-        by pokefinder.org (Postfix) with ESMTPSA id 01E9E4A1348;
-        Wed, 20 Mar 2019 18:20:05 +0100 (CET)
-Date:   Wed, 20 Mar 2019 18:20:05 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
+        Wed, 20 Mar 2019 13:30:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=mermph5pAyT0/OS7ZOwLxCzevxbph4wWI2JuW9V/HSs=; b=hJw/OWj9ehxh
+        7o1WJ7tkr0Xb4AhmhUvr1xDet0sHP7MJE+o5lhVsXpzUfnVjV+qVOcK5U/lnv4kqfi8F1ZDMdGne3
+        kBJWNCHe2ouoURGBbkSOgMrJc1HtIb/8XFTjN4RBheSE6pAXYL67eQp8txKxalDvgAgVJBTiXmg1N
+        PcRSs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1h6f2a-0001AE-Jy; Wed, 20 Mar 2019 17:30:12 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 1F8EF1126E4C; Wed, 20 Mar 2019 17:30:12 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH 2/3] i2c: rcar: let DMA enable routine return success
- status
-Message-ID: <20190320172005.d2osn5eeo6gadxpv@ninjato>
-References: <20190305175434.13107-1-wsa+renesas@sang-engineering.com>
- <20190305175434.13107-3-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vc66x6n4zzyx3mz5"
-Content-Disposition: inline
-In-Reply-To: <20190305175434.13107-3-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: mxic: simplify getting .driver_data" to the spi tree
+In-Reply-To:  <20190319163637.30949-1-wsa+renesas@sang-engineering.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190320173012.1F8EF1126E4C@debutante.sirena.org.uk>
+Date:   Wed, 20 Mar 2019 17:30:12 +0000 (GMT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The patch
 
---vc66x6n4zzyx3mz5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   spi: mxic: simplify getting .driver_data
 
-On Tue, Mar 05, 2019 at 06:54:33PM +0100, Wolfram Sang wrote:
-> We will need to know if enabling DMA was successful in a later patch.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+has been applied to the spi tree at
 
-Applied to for-next, thanks!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---vc66x6n4zzyx3mz5
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlySdkUACgkQFA3kzBSg
-KbY60Q/+LPqLohcPpDyZqecs82glv6K/ie3CJ8cfusqFFW88NZInzrjJwEHlpr00
-Uo+AtbPPV00H+wVl5dGBCJIu95pvoxS2yPs06s98F15UfwvDWUYMB6fkEDvDEtkF
-3sWRZcfzvqnJZXtuHcug6JP15Y7ZM7OAKqz5Pe5R/AVlBpxKHr5ZFMT05zi1BTyE
-hFMsJbOzejJ/N4IcKBmCtsXwkl6JpKaUwO9RA+VeYeTkI+QZ4vRziYv5f72djubR
-0wJKNJ+KDv//GkQ3wBvVy9McP7IDsHRZL+A7X4/YA7IeXDn/ynsvfcbgJfF9hf3i
-F0o7ny8w3BAACo5SoEBOv4HPZ2ouiTO3ZUISIB4Nw2Q4WabJmMBNQ27dz6ZOxn63
-UZRg9/TITESoajUDlpPfd/gGk1H9qgwCfZr5esirvXotMclbvw94dEJkyHejE0l8
-ZrHhwsuvxUw6NPnP7/b5fAf9qat7iLre87I1y+O7k9UQnvJoXQ/CxeR6dXXXMQ/w
-cImQVj9cINzDmnCxFxMhvX/CHmQG080EYWEsibBO0wc9xaPV53zo0ZDSY96Ns7lm
-5/QJZqsYxBDe+hWMqd8KCeXQLmv6w/OXpACRzrVQxsBL8Og9eaP9sYyse27kcMxS
-Ww3yS2nhf/OZyGKLkBU94gi7Cbmkaf8PLnXIxUolCp4nd0I5qTg=
-=c17Z
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---vc66x6n4zzyx3mz5--
+Thanks,
+Mark
+
+From f457cb707836e79a88b64ab22230edc2aa8ce0af Mon Sep 17 00:00:00 2001
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Tue, 19 Mar 2019 17:36:37 +0100
+Subject: [PATCH] spi: mxic: simplify getting .driver_data
+
+We should get 'driver_data' from 'struct device' directly. Going via
+platform_device is an unneeded step back and forth.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-mxic.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-mxic.c b/drivers/spi/spi-mxic.c
+index e41ae6ef0f8a..f48563c09b97 100644
+--- a/drivers/spi/spi-mxic.c
++++ b/drivers/spi/spi-mxic.c
+@@ -492,8 +492,7 @@ static int mxic_spi_transfer_one(struct spi_master *master,
+ 
+ static int __maybe_unused mxic_spi_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct mxic_spi *mxic = spi_master_get_devdata(master);
+ 
+ 	mxic_spi_clk_disable(mxic);
+@@ -504,8 +503,7 @@ static int __maybe_unused mxic_spi_runtime_suspend(struct device *dev)
+ 
+ static int __maybe_unused mxic_spi_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct spi_master *master = platform_get_drvdata(pdev);
++	struct spi_master *master = dev_get_drvdata(dev);
+ 	struct mxic_spi *mxic = spi_master_get_devdata(master);
+ 	int ret;
+ 
+-- 
+2.20.1
+
