@@ -3,82 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535E9C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC99C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28CFD2184D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6158D2075C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Mar 2019 10:34:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfCTKcS (ORCPT
+        id S1726692AbfCTKd7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Mar 2019 06:32:18 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:47458 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbfCTKcS (ORCPT
+        Wed, 20 Mar 2019 06:33:59 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:53036 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727599AbfCTKd7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Mar 2019 06:32:18 -0400
+        Wed, 20 Mar 2019 06:33:59 -0400
 Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id qAYG1z00R3XaVaC01AYG5N; Wed, 20 Mar 2019 11:32:17 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id qAZx1z0063XaVaC06AZx2E; Wed, 20 Mar 2019 11:33:57 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1h6YW8-0005Io-S8; Wed, 20 Mar 2019 11:32:16 +0100
+        id 1h6YXl-0005JH-36; Wed, 20 Mar 2019 11:33:57 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1h6YW8-0005Jg-Qc; Wed, 20 Mar 2019 11:32:16 +0100
+        id 1h6YXl-0005N8-1y; Wed, 20 Mar 2019 11:33:57 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Cc:     linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Chris Brandt <chris.brandt@renesas.com>, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] rtc: sh: Fix invalid alarm warning for non-enabled alarm
-Date:   Wed, 20 Mar 2019 11:32:14 +0100
-Message-Id: <20190320103214.20394-1-geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: at24: add Renesas R1EX24016
+Date:   Wed, 20 Mar 2019 11:33:51 +0100
+Message-Id: <20190320103351.20609-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When no alarm has been programmed on RSK-RZA1, an error message is
-printed during boot:
+Document the compatible value for the Renesas R1EX24128ASAS0A two-wire
+serial interface EEPROM, so it can be used in DTS files without causing
+checkpatch warnings.
 
-    rtc rtc0: invalid alarm value: 2019-03-14T255:255:255
-
-sh_rtc_read_alarm_value() returns 0xff when querying a hardware alarm
-field that is not enabled.  __rtc_read_alarm() validates the received
-alarm values, and fills in missing fields when needed.
-While 0xff is handled fine for the year, month, and day fields, and
-corrected as considered being out-of-range, this is not the case for the
-hour, minute, and second fields, where -1 is expected for missing
-fields.
-
-Fix this by returning -1 instead, as this value is handled fine for all
-fields.
+This is a 2 KiB EEPROM.  The first 1 KiB can always be written, the
+second 1 KiB cannot be written if the write-protect line is asserted.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/rtc/rtc-sh.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/eeprom/at24.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rtc/rtc-sh.c b/drivers/rtc/rtc-sh.c
-index d417b203cbc553eb..1d3de2a3d1a4d7a0 100644
---- a/drivers/rtc/rtc-sh.c
-+++ b/drivers/rtc/rtc-sh.c
-@@ -374,7 +374,7 @@ static int sh_rtc_set_time(struct device *dev, struct rtc_time *tm)
- static inline int sh_rtc_read_alarm_value(struct sh_rtc *rtc, int reg_off)
- {
- 	unsigned int byte;
--	int value = 0xff;	/* return 0xff for ignored values */
-+	int value = -1;			/* return -1 for ignored values */
+diff --git a/Documentation/devicetree/bindings/eeprom/at24.txt b/Documentation/devicetree/bindings/eeprom/at24.txt
+index 0e456bbc121399b7..22aead844d0f58d6 100644
+--- a/Documentation/devicetree/bindings/eeprom/at24.txt
++++ b/Documentation/devicetree/bindings/eeprom/at24.txt
+@@ -50,6 +50,7 @@ Required properties:
  
- 	byte = readb(rtc->regbase + reg_off);
- 	if (byte & AR_ENB) {
+                 "nxp,se97b" - the fallback is "atmel,24c02",
+                 "renesas,r1ex24002" - the fallback is "atmel,24c02"
++                "renesas,r1ex24016" - the fallback is "atmel,24c16"
+                 "renesas,r1ex24128" - the fallback is "atmel,24c128"
+                 "rohm,br24t01" - the fallback is "atmel,24c01"
+ 
 -- 
 2.17.1
 
