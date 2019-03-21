@@ -2,88 +2,162 @@ Return-Path: <SRS0=/KHX=RY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADE9C10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Mar 2019 10:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B092C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Mar 2019 10:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A89C218D4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Mar 2019 10:22:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BE7121916
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Mar 2019 10:25:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="X4oF7pT9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbfCUKWj (ORCPT
+        id S1728070AbfCUKZv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Mar 2019 06:22:39 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:45910 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbfCUKWj (ORCPT
+        Thu, 21 Mar 2019 06:25:51 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47826 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727575AbfCUKZv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Mar 2019 06:22:39 -0400
-Received: by mail-vk1-f195.google.com with SMTP id v187so1224512vkf.12;
-        Thu, 21 Mar 2019 03:22:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AKUtZl8NClDnFzZw6+WVXCTH6fgoAAltG9cKzrnzI48=;
-        b=s095xYdyLTonfA116aUfV8l+eN/hSH+PVPvLrWEnkmmolaCarWAYG1VmQ03mHhljo8
-         nPdyYaNmTpv9k3m7jXh0WdYa7ZWpD97QpBWu2PQhfl7R0jn/YJEPaiJXyFMkto9WP7SI
-         pQ95nSC/UFX7gxhDLCeGgbZBKigCik0xQL+6BPR6xShvltDFVYABsnSDu3akYse5H7Ym
-         8k3+9PkeAD7XOBrKSG3g0coHTioSL4ZleYR54nO2i4OYwxN99l7GcR7NOiLApiwlF63Z
-         Hj6OH4s0CT+Q9da4+FZEI0HETrP80B3Yi6t5GnOJlDt6oa95aaBnyUQMcqNyBGRTreBW
-         QWyA==
-X-Gm-Message-State: APjAAAVg2y6iozaH8znehyUb1syTUATIKjCtP1em6IXAUBTJXqz/cCPZ
-        ee3AAh2nAYFaR4onps3y/sMvNg3utcs4dAjLdRM=
-X-Google-Smtp-Source: APXvYqwaDsIfq4yhjOdNyKnEaRzaDnH8hcckBy5D7u3ioRQEm0eBIMzckP9Ii3zC42dupaWs27NKuhx6HZFjqzaeEu8=
-X-Received: by 2002:a1f:95d5:: with SMTP id x204mr1631681vkd.72.1553163758177;
- Thu, 21 Mar 2019 03:22:38 -0700 (PDT)
+        Thu, 21 Mar 2019 06:25:51 -0400
+Received: from pendragon.ideasonboard.com (30.net042126252.t-com.ne.jp [42.126.252.30])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F08BF23A;
+        Thu, 21 Mar 2019 11:25:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1553163948;
+        bh=hortb+fLPxm48q4oN7adARz9wJcUzEYac3LLowmBhpY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=X4oF7pT9mGAzemS1c6b5XxA5CS7hSnRxS9etWNtB5QJn+9Xlz9NnBVIKAzWY4WKaY
+         Diif70Nv2U1xjgRopqug256O3SodUUDvGF0D3n4gulf5yQiykr8X2Hi+UqzXiYGA+Q
+         nOkri1XzI2ctJRUwzY922eOcAEb6+Qf6l8Tx/dpo=
+Date:   Thu, 21 Mar 2019 12:25:37 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up
+ is enabled
+Message-ID: <20190321102537.GR4615@pendragon.ideasonboard.com>
+References: <20190320103927.21227-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20190320113010.8955-1-alexandre.belloni@bootlin.com> <20190320113010.8955-3-alexandre.belloni@bootlin.com>
-In-Reply-To: <20190320113010.8955-3-alexandre.belloni@bootlin.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 21 Mar 2019 11:22:26 +0100
-Message-ID: <CAMuHMdUOigr35gDjDNACkk2L4Cq-HQ=TtBAKGLiAhsmcVPOhSQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] rtc: sh: set range
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-rtc@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190320103927.21227-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 20, 2019 at 12:30 PM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> The SH RTC is a BCD RTC with some version having 4 digits for the year.
->
-> The range for the RTCs with only 2 digits for the year was unfortunately
-> shifted to handle 1999 to 2098.
->
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Hi Geert,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thank you for the patch.
 
-> --- a/include/linux/rtc.h
-> +++ b/include/linux/rtc.h
-> @@ -165,6 +165,7 @@ struct rtc_device {
->  #define RTC_TIMESTAMP_BEGIN_1900       -2208989361LL /* 1900-01-01 00:00:00 */
+On Wed, Mar 20, 2019 at 11:39:27AM +0100, Geert Uytterhoeven wrote:
+> If a device is part of the wake-up path, it should indicate this by
+> setting its power.wakeup_path field.  This allows the genpd core code to
+> keep the device enabled during system suspend when needed.
+> 
+> As regulators powering devices are not handled by genpd, the driver
+> handles these itself, and thus must skip regulator control when the
+> device is part of the wake-up path.
 
-mktime64(1900, 1, 1, 0, 0, 0) = -2208988800 ??
+It would be nice for this to be handled automatically...
 
-Is this due to leap seconds, and mktime64() is valid for 1970 and later only?
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Note that I don't really need this on the Renesas Ebisu-4D board, as
+> there is no regulator or PM Domain controlling power to the GPIO
+> expander on that board.  I did want to have all wake-up path processing
+> implemented in the driver for completeness, and did test its behavior
+> with gpio-keys configured as a wake-up source.
+> 
+> However, while this approach is known to work fine on other boards, with
+> other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
+> irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
+> device suspend ordering.
+> 
+> The proper ordering is:
+>   1. When gpio-keys is suspended, its suspend handler calls
+>      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
+>      pca953x_chip.wakeup_path to be incremented,
+>   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
+>      and marks the device to be part of the wake-up path.
+> 
+> However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
+> scheme :-(
+> 
+> So depending on topology, this may work, or not...
 
-Gr{oetje,eeting}s,
+Could device links help there ?
 
-                        Geert
+> ---
+>  drivers/gpio/gpio-pca953x.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 88c94d155e218535..349d0ccb5285a6c4 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -153,6 +153,7 @@ struct pca953x_chip {
+>  	u8 irq_trig_fall[MAX_BANK];
+>  	struct irq_chip irq_chip;
+>  #endif
+> +	atomic_t wakeup_path;
+>  
+>  	struct i2c_client *client;
+>  	struct gpio_chip gpio_chip;
+> @@ -581,6 +582,11 @@ static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
+>  	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>  	struct pca953x_chip *chip = gpiochip_get_data(gc);
+>  
+> +	if (on)
+> +		atomic_inc(&chip->wakeup_path);
+> +	else
+> +		atomic_dec(&chip->wakeup_path);
+> +
+>  	return irq_set_irq_wake(chip->client->irq, on);
+>  }
+>  
+> @@ -1100,7 +1106,10 @@ static int pca953x_suspend(struct device *dev)
+>  
+>  	regcache_cache_only(chip->regmap, true);
+>  
+> -	regulator_disable(chip->regulator);
+> +	if (atomic_read(&chip->wakeup_path))
+> +		device_set_wakeup_path(dev);
+> +	else
+> +		regulator_disable(chip->regulator);
+>  
+>  	return 0;
+>  }
+> @@ -1110,10 +1119,12 @@ static int pca953x_resume(struct device *dev)
+>  	struct pca953x_chip *chip = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> -	ret = regulator_enable(chip->regulator);
+> -	if (ret != 0) {
+> -		dev_err(dev, "Failed to enable regulator: %d\n", ret);
+> -		return 0;
+> +	if (!atomic_read(&chip->wakeup_path)) {
+> +		ret = regulator_enable(chip->regulator);
+> +		if (ret != 0) {
+> +			dev_err(dev, "Failed to enable regulator: %d\n", ret);
+> +			return 0;
+> +		}
+>  	}
+>  
+>  	regcache_cache_only(chip->regmap, false);
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
