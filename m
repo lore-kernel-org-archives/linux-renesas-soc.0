@@ -2,45 +2,45 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4815C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46F7C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCBFE2083D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A5E62083D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfCVIcE (ORCPT
+        id S1727735AbfCVIc3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 04:32:04 -0400
-Received: from sauhun.de ([88.99.104.3]:48780 "EHLO pokefinder.org"
+        Fri, 22 Mar 2019 04:32:29 -0400
+Received: from sauhun.de ([88.99.104.3]:48804 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727739AbfCVIcE (ORCPT
+        id S1726667AbfCVIc3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 04:32:04 -0400
+        Fri, 22 Mar 2019 04:32:29 -0400
 Received: from localhost (p54B3303C.dip0.t-ipconnect.de [84.179.48.60])
-        by pokefinder.org (Postfix) with ESMTPSA id F3AA62C08C3;
-        Fri, 22 Mar 2019 09:32:01 +0100 (CET)
-Date:   Fri, 22 Mar 2019 09:32:01 +0100
+        by pokefinder.org (Postfix) with ESMTPSA id 527564A1346;
+        Fri, 22 Mar 2019 09:32:27 +0100 (CET)
+Date:   Fri, 22 Mar 2019 09:32:26 +0100
 From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH 1/2] drm/msm: simplify getting .driver_data
-Message-ID: <20190322083201.GE1005@kunai>
-References: <20190319163629.30660-1-wsa+renesas@sang-engineering.com>
- <7d66ed6f-1dc4-05ec-567e-939df7d8c94b@ideasonboard.com>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2 4/6] PCI: rcar: Replace (8 * n) with (n << 3)
+Message-ID: <20190322083226.GF1005@kunai>
+References: <20190322023844.18574-1-marek.vasut@gmail.com>
+ <20190322023844.18574-4-marek.vasut@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3XA6nns4nE4KvaS/"
+        protocol="application/pgp-signature"; boundary="6v9BRtpmy+umdQlo"
 Content-Disposition: inline
-In-Reply-To: <7d66ed6f-1dc4-05ec-567e-939df7d8c94b@ideasonboard.com>
+In-Reply-To: <20190322023844.18574-4-marek.vasut@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -48,43 +48,40 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---3XA6nns4nE4KvaS/
+--6v9BRtpmy+umdQlo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-
-> > -	struct platform_device *pdev =3D to_platform_device(dev);
-> > -	struct msm_gpu *gpu =3D platform_get_drvdata(pdev);
-> > +	struct msm_gpu *gpu =3D dev_get_drvdata(dev);
+On Fri, Mar 22, 2019 at 03:38:42AM +0100, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
 >=20
-> Nice simplification :-)
+> Replace (8 * n) with (n << 3) to make bit shift operations consistent.
+> No functional change.
 >=20
-> Do you catch these with Coccinelle?
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Yes, the previous series had the script in the cover letter, but for
-this small series, I thought it was too much. I haven't changed it since
-then.
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---3XA6nns4nE4KvaS/
+--6v9BRtpmy+umdQlo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyUnYEACgkQFA3kzBSg
-KbZH1Q/9GiumevdCXYDywxVkBEGKkHqsak/lfC0FCyk9nIbwTB5T9BygKpMo7Jjj
-7FqG71AeYTvtsVsoxkKt7vozKtkomgFStiXZC7a39y7cTWnY8ReadnucvY4xtN0Y
-ix1X8khP43em2g1PKHnZK+SseAgZPwzgkXpTw5yDl80mbsgYceleY1q6E6bMA4+f
-QDtl6jvbtmXVIpduMqv40fRISVN8bAuygtGLeTIIVpmC8QtmYc8kkQYU/gnjOCd8
-OC4VqZGNQ66qYib1rPntiK9pnZDXEJsNlfG7/O6GGFY4yGwGD06W89N2VFn1oEBj
-14hPPHUIo/ttsxmNMm9XmlZ9oHZL72WdxjztnDDROdxMAwSeKGwR3bL3wiplRLpk
-zEItq6iUfNiu7/m5wSjcwOum3bFgAUDIscu0ApntmSKNfpWie49K0GLocFvH9Fl3
-oG8BetU34UFB2D8oxYsS0kehcddNEg1O8a9b7MBtvdi048uFwpQLPDK2bpgN0WUR
-tfEJxcacj2WhZaafVN1xcKlq1riVj03JFW6P/IrB2w8JbqseGmWlHGh8nOM++NJd
-ksvRj6lEKn6UDBI7Ug+iC7QLBubO7WQMlnPW1pwEE2fIZTlLWqjriNvae3c3IPtc
-EH/8KJR6gpyJZIc3sBlQevF3Uh1Zcnma+vaTD3byuUvQuGPzUqw=
-=fJka
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyUnZoACgkQFA3kzBSg
+KbZpGxAAlRjiE6WrWnB4B1rGtOgbBlt0rTY4bBVVMernuEtZzgq2nn5VaF/4fsu/
+uuttZZnXtiPD5fN+32bmvyhXM23LKKtFID+gek4r+tDoglghbfsH6y4fIaF5XyRu
+3e0mQ5qvYNNhAEPTy92wXexcLy+ArQnZezA7eBGvKpCCMk/02fpV/6qTqP0ATn2v
+RXokBKXQwr1IPRQn4sjdhbNAoZCQZieGBZJZq5AmjOAgXBPlqUCz0rznFU6bhjJZ
+9YXkikJOTR2eWUNZFvp3pG7fNVq1LkKeF1NS01q9yYBAPSxfR7Cg7cyJF5A6pcWT
+8WP4wz2gksaEXP91CKuGqjDzn+LWVzq1/C4Sy+nkdPUTLFwqgAT1RW4eLS9/8LHJ
+lKTDCYSefJg16jfQqkWLEp9x6HAk4NjD2+6tkZ/sa3n6VYe0r+ILktjKemQYdotP
+w5ZTvXF35Bo/X/FL+otwMSswkQcAuCmLYj0t5gpxjHc+pErJI0plVQhfX1shkSR5
+Hr5R+drmyddt9MgfrMmPKEiZ8A85XxItRxDcpDvL80PFOcYjsa7HNkwTHz6qgSvD
+OedRIVN/vRA+ihgeK5tu63SUyKetQzvrdfN2Zk2FmrUuhOCciW/flhkGLmALvtSW
+to1kY278ShUF/uFDRvTWU6GaaGmTA27ORG/RnoWlPFa0Ro8vtJ0=
+=VW2d
 -----END PGP SIGNATURE-----
 
---3XA6nns4nE4KvaS/--
+--6v9BRtpmy+umdQlo--
