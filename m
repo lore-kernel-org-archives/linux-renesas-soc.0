@@ -2,149 +2,84 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635F5C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8ABC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C67C205F4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:19:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WzHuWEvG"
+	by mail.kernel.org (Postfix) with ESMTP id DA200205F4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfCVITz (ORCPT
+        id S1727590AbfCVIUQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 04:19:55 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37028 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbfCVITz (ORCPT
+        Fri, 22 Mar 2019 04:20:16 -0400
+Received: from sauhun.de ([88.99.104.3]:48670 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727545AbfCVIUQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 04:19:55 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6633F54A;
-        Fri, 22 Mar 2019 09:19:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1553242792;
-        bh=IGmNaFv/zdqBKoP5UGSjTxu4tPrnpkMcq1X/ILUw060=;
-        h=Subject:To:Cc:References:From:Reply-To:Date:In-Reply-To:From;
-        b=WzHuWEvGsj743TW8WvfyCiOSN/5NoMHSyNWhhRwg6syR3b+ArL+Qj++Qwl++kRDQZ
-         /feoEsi8c11ncAtuKFzoPFGWkESHYOPmyx+1J4LVO3yJU6LQLLZZBgxbWFkzdvVL4L
-         3mSpWdCJSPvJAt5tu55gXesQ2Muok1NPtAhHriFU=
-Subject: Re: [PATCH 2/2] drm/omap: simplify getting .driver_data
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-References: <20190319163629.30660-1-wsa+renesas@sang-engineering.com>
- <20190319163629.30660-2-wsa+renesas@sang-engineering.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Organization: Ideas on Board
-Message-ID: <4eadd46f-f436-6b81-5a84-df3428c7301e@ideasonboard.com>
-Date:   Fri, 22 Mar 2019 08:19:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Fri, 22 Mar 2019 04:20:16 -0400
+Received: from localhost (p54B3303C.dip0.t-ipconnect.de [84.179.48.60])
+        by pokefinder.org (Postfix) with ESMTPSA id 90FAE2C08C3;
+        Fri, 22 Mar 2019 09:20:14 +0100 (CET)
+Date:   Fri, 22 Mar 2019 09:20:14 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V2 1/6] PCI: rcar: Clean up remaining macros defining bits
+Message-ID: <20190322082014.GB1005@kunai>
+References: <20190322023844.18574-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190319163629.30660-2-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
+Content-Disposition: inline
+In-Reply-To: <20190322023844.18574-1-marek.vasut@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
 
-Thank you for the patch,
+--wq9mPyueHGvFACwf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Mar 22, 2019 at 03:38:39AM +0100, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>=20
+> Replace macros using constants with BIT()s instead, no functional change.
+>=20
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
-On 19/03/2019 16:36, Wolfram Sang wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+--wq9mPyueHGvFACwf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-As with the other in this series, looks good to me.
+-----BEGIN PGP SIGNATURE-----
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyUmr4ACgkQFA3kzBSg
+KbYmLw/9FHc40IS4NJ24rvmvAxyzg9i8URsZIeSU1qQxwTCJJVtRaO9We8oUCSDH
+huk7g5pkVi3/zvD3zMxbg5oq66Zsjo4vsx+u1ZchXjmYykvAYoVqPomQIAR5la/O
+JPgLUimCEhZRSnmZ/i6U6ZM1s1bNWSavOJxQOXAMfyvD4lZlehCrCbNExY2FGaMI
+dUbsMP82arDZg0A15qr/bjwJ0fjrb4ZF6IE6hIbd6Yaxn0RnAuieoaU0NxlSWhkd
+BwBBmK5N1Yyo6UIdtXE0Bnxbfe3WuTCNFWVjnmoBKKFmyPyiitsM1zyEZqKXSeq0
++osH+5kyESJsvzdRDXiyGay+LgFQMUbOqUbSFqdw13FYW/e8uMenqkck2Tfja3vY
+owuTb50v21Npi0Ql+hB0RWC9LgBvRnuoz6Uuip8egox/EQBqbej/yZgwSr+dkLZj
+MeHt8bljjWIjrI7eJMcWv6i5fsA5F4BwJQWnBmLYqyDrKyA2mPF0woNVhvqQng+W
+UEGW3V5jx1aI6Ec5ecLECZOsQLRScheUHxl5emhM9RDCMU/ljjc6Tjn3Bi+V88yC
+yFjkzctfnBQ32mRHbclkblB75TCqw21VFlEitzNX8gyttkOdLgZOpSTNGTQqZjPT
+knTdTboI27pb/splWrkMxLpCBOunNfsWJc9w+A7TdgQoN1gjd70=
+=WsLH
+-----END PGP SIGNATURE-----
 
-
-> ---
-> 
-> Build tested only. buildbot is happy.
-> 
->  drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c | 18 ++++++------------
->  1 file changed, 6 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> index 29692a5217c5..88d4b0c60689 100644
-> --- a/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> +++ b/drivers/gpu/drm/omapdrm/displays/panel-dsi-cm.c
-> @@ -412,8 +412,7 @@ static const struct backlight_ops dsicm_bl_ops = {
->  static ssize_t dsicm_num_errors_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *src = ddata->dssdev.src;
->  	u8 errors = 0;
->  	int r;
-> @@ -444,8 +443,7 @@ static ssize_t dsicm_num_errors_show(struct device *dev,
->  static ssize_t dsicm_hw_revision_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *src = ddata->dssdev.src;
->  	u8 id1, id2, id3;
->  	int r;
-> @@ -476,8 +474,7 @@ static ssize_t dsicm_store_ulps(struct device *dev,
->  		struct device_attribute *attr,
->  		const char *buf, size_t count)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *src = ddata->dssdev.src;
->  	unsigned long t;
->  	int r;
-> @@ -511,8 +508,7 @@ static ssize_t dsicm_show_ulps(struct device *dev,
->  		struct device_attribute *attr,
->  		char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	unsigned int t;
->  
->  	mutex_lock(&ddata->lock);
-> @@ -526,8 +522,7 @@ static ssize_t dsicm_store_ulps_timeout(struct device *dev,
->  		struct device_attribute *attr,
->  		const char *buf, size_t count)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	struct omap_dss_device *src = ddata->dssdev.src;
->  	unsigned long t;
->  	int r;
-> @@ -558,8 +553,7 @@ static ssize_t dsicm_show_ulps_timeout(struct device *dev,
->  		struct device_attribute *attr,
->  		char *buf)
->  {
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct panel_drv_data *ddata = platform_get_drvdata(pdev);
-> +	struct panel_drv_data *ddata = dev_get_drvdata(dev);
->  	unsigned int t;
->  
->  	mutex_lock(&ddata->lock);
-> 
-
+--wq9mPyueHGvFACwf--
