@@ -2,102 +2,224 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1684BC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 07:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A59C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D885D20700
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 07:26:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BA7A213F2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:18:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PLW0DGXN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726056AbfCVH0z (ORCPT
+        id S1727516AbfCVISN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 03:26:55 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:34273 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbfCVH0z (ORCPT
+        Fri, 22 Mar 2019 04:18:13 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36992 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727513AbfCVISN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 03:26:55 -0400
-Received: by mail-vs1-f66.google.com with SMTP id t78so832265vsc.1;
-        Fri, 22 Mar 2019 00:26:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U2MqBwNbXo7fUXIhYH4WOldqdsZmiVXbqfMjxPv2uWg=;
-        b=S0Wr0SwmUEabPJnSDhxmjnF/+x4Yji/abMhddAeX3wl6phi+8nVT2ynNYNshgP/9eX
-         JG/G6DCxPOLkYZpzlwVoX18et0OBlAh41T97PRHwolxDXvfsvvqvIDV/+spWerNxyvCR
-         /hKUIJ2e8GAkCUYTLn4AWnaCOCA3Milv8cfj4hHxHCCYq+DyXBPx4y/kCvX0m4nWKBpr
-         lZxV8D27jfR2S2Rp2orcySpjXHhNPPOi3FOeySxzsW8GgwJkxK9Dw8HlFb+T+S1TeXYd
-         zgK7rsDi9eKq6CgS/wMJI28+hTdfxSrdUfa69z+bQsYeToYveC14PDIZzvKebZ17Exr4
-         GSow==
-X-Gm-Message-State: APjAAAVSecNpnZeOM3dLBxnSUt8u8IrQGT4qtjbwq94NJvbTq2kUo/BY
-        Mnr5F2uLLDmUXvQdwTJASswAfifRCLcCRabzXMg=
-X-Google-Smtp-Source: APXvYqwTDGCNDQSA3J/wxgw1WEgwAufanVHnBujCtwdAew9Z9EPIfAnQ2sp9aFl43qMzOD+xJnLZrs6KMvjN/4x6l8k=
-X-Received: by 2002:a67:d011:: with SMTP id r17mr4540052vsi.96.1553239614205;
- Fri, 22 Mar 2019 00:26:54 -0700 (PDT)
+        Fri, 22 Mar 2019 04:18:13 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D135F2DE;
+        Fri, 22 Mar 2019 09:18:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1553242690;
+        bh=u1YD/ec9XrfsgarGSR88KutgfIZwVQ7Gs1zBie686KY=;
+        h=Subject:To:Cc:References:From:Reply-To:Date:In-Reply-To:From;
+        b=PLW0DGXNhw8/fgpEVPI9liYerUxb1qSSEr9X5DmAVltYwc3TYX2amI0hwQAFV1KMW
+         uy0WFGjewFcLtDZ2w0vGJevaAtuuh6c7UVMelA2emYSx3/r2cwGX0YaSCtXmW2n50K
+         CYqdEamG0tqeJEkjk8aZ8ZTCttA6mFM31eqBcB7I=
+Subject: Re: [PATCH 1/2] drm/msm: simplify getting .driver_data
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+References: <20190319163629.30660-1-wsa+renesas@sang-engineering.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Organization: Ideas on Board
+Message-ID: <7d66ed6f-1dc4-05ec-567e-939df7d8c94b@ideasonboard.com>
+Date:   Fri, 22 Mar 2019 08:18:06 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-References: <20190320113010.8955-1-alexandre.belloni@bootlin.com>
- <20190320113010.8955-3-alexandre.belloni@bootlin.com> <CAMuHMdUOigr35gDjDNACkk2L4Cq-HQ=TtBAKGLiAhsmcVPOhSQ@mail.gmail.com>
- <20190322061207.GV29054@piout.net>
-In-Reply-To: <20190322061207.GV29054@piout.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Mar 2019 08:26:42 +0100
-Message-ID: <CAMuHMdUPw3W6M68NOpuevum+zGrBOvsCF4zPH5KHq5sdpeaDcw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] rtc: sh: set range
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-rtc@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190319163629.30660-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Alexander,
+Hi Wolfram,
 
-On Fri, Mar 22, 2019 at 7:12 AM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 21/03/2019 11:22:26+0100, Geert Uytterhoeven wrote:
-> > On Wed, Mar 20, 2019 at 12:30 PM Alexandre Belloni
-> > <alexandre.belloni@bootlin.com> wrote:
-> > > The SH RTC is a BCD RTC with some version having 4 digits for the year.
-> > >
-> > > The range for the RTCs with only 2 digits for the year was unfortunately
-> > > shifted to handle 1999 to 2098.
-> > >
-> > > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > > --- a/include/linux/rtc.h
-> > > +++ b/include/linux/rtc.h
-> > > @@ -165,6 +165,7 @@ struct rtc_device {
-> > >  #define RTC_TIMESTAMP_BEGIN_1900       -2208989361LL /* 1900-01-01 00:00:00 */
-> >
-> > mktime64(1900, 1, 1, 0, 0, 0) = -2208988800 ??
-> >
-> > Is this due to leap seconds, and mktime64() is valid for 1970 and later only?
-> >
->
-> That's a bug, it seems I didn't use the correct timezone when doing the
-> calculation. Thanks for spotting that, you can send a patch to correct
-> it or I can do it.
+Thank you for the patch,
 
-Thanks for confirming, done.
+On 19/03/2019 16:36, Wolfram Sang wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Gr{oetje,eeting}s,
+This looks good to me.
 
-                        Geert
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> ---
+> 
+> Build tested only. buildbot is happy.
+> 
+>  drivers/gpu/drm/msm/adreno/adreno_device.c |  6 ++----
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 13 +++++--------
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c   |  6 ++----
+>  drivers/gpu/drm/msm/dsi/dsi_host.c         |  6 ++----
+>  drivers/gpu/drm/msm/msm_drv.c              |  3 +--
+>  5 files changed, 12 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> index 714ed6505e47..13802af8294c 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> @@ -412,16 +412,14 @@ static const struct of_device_id dt_match[] = {
+>  #ifdef CONFIG_PM
+>  static int adreno_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct msm_gpu *gpu = platform_get_drvdata(pdev);
+> +	struct msm_gpu *gpu = dev_get_drvdata(dev);
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Nice simplification :-)
+
+Do you catch these with Coccinelle?
+
+>  
+>  	return gpu->funcs->pm_resume(gpu);
+>  }
+>  
+>  static int adreno_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct msm_gpu *gpu = platform_get_drvdata(pdev);
+> +	struct msm_gpu *gpu = dev_get_drvdata(dev);
+>  
+>  	return gpu->funcs->pm_suspend(gpu);
+>  }
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> index 885bf88afa3e..0154eb9b343f 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> @@ -1036,16 +1036,15 @@ static int dpu_bind(struct device *dev, struct device *master, void *data)
+>  
+>  static void dpu_unbind(struct device *dev, struct device *master, void *data)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
+> +	struct dpu_kms *dpu_kms = dev_get_drvdata(dev);
+>  	struct dss_module_power *mp = &dpu_kms->mp;
+>  
+>  	msm_dss_put_clk(mp->clk_config, mp->num_clk);
+> -	devm_kfree(&pdev->dev, mp->clk_config);
+> +	devm_kfree(dev, mp->clk_config);
+
+
+Using the dev to get the pdev to get the dev :-D
+
+>  	mp->num_clk = 0;
+>  
+>  	if (dpu_kms->rpm_enabled)
+> -		pm_runtime_disable(&pdev->dev);
+> +		pm_runtime_disable(dev);
+>  }
+>  
+>  static const struct component_ops dpu_ops = {
+> @@ -1067,8 +1066,7 @@ static int dpu_dev_remove(struct platform_device *pdev)
+>  static int __maybe_unused dpu_runtime_suspend(struct device *dev)
+>  {
+>  	int rc = -1;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
+> +	struct dpu_kms *dpu_kms = dev_get_drvdata(dev);
+>  	struct drm_device *ddev;
+>  	struct dss_module_power *mp = &dpu_kms->mp;
+>  
+> @@ -1088,8 +1086,7 @@ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
+>  static int __maybe_unused dpu_runtime_resume(struct device *dev)
+>  {
+>  	int rc = -1;
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
+> +	struct dpu_kms *dpu_kms = dev_get_drvdata(dev);
+>  	struct drm_encoder *encoder;
+>  	struct drm_device *ddev;
+>  	struct dss_module_power *mp = &dpu_kms->mp;
+> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> index 97179bec8902..8f7a01d7a663 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c
+> @@ -1063,8 +1063,7 @@ static int mdp5_dev_remove(struct platform_device *pdev)
+>  
+>  static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
+> +	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
+>  
+>  	DBG("");
+>  
+> @@ -1073,8 +1072,7 @@ static __maybe_unused int mdp5_runtime_suspend(struct device *dev)
+>  
+>  static __maybe_unused int mdp5_runtime_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct mdp5_kms *mdp5_kms = platform_get_drvdata(pdev);
+> +	struct mdp5_kms *mdp5_kms = dev_get_drvdata(dev);
+>  
+>  	DBG("");
+>  
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> index 610183db1daf..4a158c41ef30 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
+> @@ -485,8 +485,7 @@ static void dsi_bus_clk_disable(struct msm_dsi_host *msm_host)
+>  
+>  int msm_dsi_runtime_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
+> +	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+>  	struct mipi_dsi_host *host = msm_dsi->host;
+>  	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+>  
+> @@ -500,8 +499,7 @@ int msm_dsi_runtime_suspend(struct device *dev)
+>  
+>  int msm_dsi_runtime_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct msm_dsi *msm_dsi = platform_get_drvdata(pdev);
+> +	struct msm_dsi *msm_dsi = dev_get_drvdata(dev);
+>  	struct mipi_dsi_host *host = msm_dsi->host;
+>  	struct msm_dsi_host *msm_host = to_msm_dsi_host(host);
+>  
+> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> index 0bdd93648761..071ad87ce44e 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.c
+> +++ b/drivers/gpu/drm/msm/msm_drv.c
+> @@ -251,8 +251,7 @@ static int vblank_ctrl_queue_work(struct msm_drm_private *priv,
+>  
+>  static int msm_drm_uninit(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct drm_device *ddev = platform_get_drvdata(pdev);
+> +	struct drm_device *ddev = dev_get_drvdata(dev);
+>  	struct msm_drm_private *priv = ddev->dev_private;
+>  	struct msm_kms *kms = priv->kms;
+>  	struct msm_mdss *mdss = priv->mdss;
+> 
+
