@@ -2,134 +2,109 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDA2C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 17:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DCEC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 19:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E3C2190A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 17:43:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="B/o/gfHZ"
+	by mail.kernel.org (Postfix) with ESMTP id 1B5622175B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 19:14:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfCVRnd (ORCPT
+        id S1727645AbfCVTOd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 13:43:33 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44554 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727844AbfCVRnc (ORCPT
+        Fri, 22 Mar 2019 15:14:33 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:44645 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727566AbfCVTOd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 13:43:32 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u9so1931817lfe.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Mar 2019 10:43:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IMZyRvjTUJeXcyRJIt9BLHdj0+q+YadZU/4CnekWVCQ=;
-        b=B/o/gfHZWjYbWJHqRjEbFyWu0kUzjrPb1foz3cnBpLuUV4kIaDcbO5xS5GqEKi/VOl
-         Uz8ITaf57VJsn16Fgs3mQePwmdBOzqg4gk4/lM96R0RMljGjDIXfxUXwV/EMijjorCyD
-         xdVTWG4ulpRgm9+tBE/8/F2Mk0fb2dFBLYSo45BViQTfWgfASEKiYtdaFgD7b2PfmRto
-         Kg0ZHoTBN5Lk7rN/VSIY6YlvHwvWblJ0X1afKiY4YW5paMY+j6H+NPMZSHx0Z3GHFMED
-         81y3yzJJhoTSkljy1EJUfaUzIv9G0oselYFTksBXuxKqjbAnZ9/ACD5LMSyHgE7eQZoF
-         jlDQ==
+        Fri, 22 Mar 2019 15:14:33 -0400
+Received: by mail-ua1-f68.google.com with SMTP id r21so1093378uan.11;
+        Fri, 22 Mar 2019 12:14:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=IMZyRvjTUJeXcyRJIt9BLHdj0+q+YadZU/4CnekWVCQ=;
-        b=ZFaD2a/qaGc3pDBamt1HKw/gtmthWHiRJGMZI/9jucmcQezrs6Du8LlHU8KdaMgA77
-         gpTwURbUWpJLG5FG/M6Y9CGWKDi2KuKR5Z9bIP+HNfowElrkW0QO7cX2uV3hnW2UHnI1
-         uBhYDekbKJO1KdnP3epZNVbQz0fuyEW17oU3p1PX10HKqfvR8xL9Vi0IrU9HQh2ny4qN
-         5KTmqV2AZLsMo2yw8OIW037Bh7+3EwIEh5unaHrKWfjsLe4SsXqN9IIxVobGjCSoU/Lp
-         2BzpBihoLA4jJJTzsSAjmfNX+aiPndzy+YKhEaWTpP7hDYTOh0D7C9AiELidUZlqfNJa
-         uH5Q==
-X-Gm-Message-State: APjAAAVx7heEsQNcT2Eu+oqwP2oYAD43GVfM4Vx0W+VqOsOQfSGlf4E3
-        u1KBm0jiDh19OOPI1zehwPl8WedR3Ks=
-X-Google-Smtp-Source: APXvYqwGlmAiwpa2Tm4ZwX4ZGEN3Y1vnHzePPZ+l3htJJ6q6Zx2yMn4/w7K5SCWXmi0/5KAihX3iwg==
-X-Received: by 2002:ac2:50d8:: with SMTP id h24mr5738535lfm.7.1553276610764;
-        Fri, 22 Mar 2019 10:43:30 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.86.92])
-        by smtp.gmail.com with ESMTPSA id l12sm1797539lfc.61.2019.03.22.10.43.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Mar 2019 10:43:29 -0700 (PDT)
-Subject: Re: [PATCH v8 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1548658158-5460-1-git-send-email-masonccyang@mxic.com.tw>
- <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <75c4642b-536e-f596-158d-387a63a5f6c5@cogentembedded.com>
-Date:   Fri, 22 Mar 2019 20:43:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hlNmTqE/DDz2Igp//Zff4mtIGRB67dc75NmSK2tdWkU=;
+        b=oR5ka3qgJwjLjRmcMcCzKcuuAj2BbzpX+dHPqWMZHEWgwwX4IUDQNveDuSWRfLXegR
+         fBIaZbIRpYNWReMqCjk+GzsbFvHGzX3MQUuzEuwZn5erJKZSy2RXvQu926/V+0zO2E02
+         ouNgCUY8iO4E92WBAWBRq7eJJ4cNSQHYXfck11PZU5GN9XMyqyELGyBBnc7DmqWINXNU
+         VQM9g7dZnJs8ihSu7zEuFxDNeMiqpSm5Tbea/srDH5krOwS4aMltrra3qMH5q+dbv/sX
+         q8RdwYoUQdVvVkYEw8JwGo9I5ZLYaVBp3yyjwgdOwdazOrmbBY+nr0Et9Rll9gIZBxc9
+         5qAA==
+X-Gm-Message-State: APjAAAUf5g7n/3URrKIOnuYxEaxqJiM2pjR07mAjJIufzn8DIVU1I4fC
+        FcnEPbVf0vgIqI4qmqWE61xCmKsR3/T9cB31mGE=
+X-Google-Smtp-Source: APXvYqwESRhPrReaJ+09dUA2ouFkEjYPCUkd7jz+WI80HA4oH0Km0a3pEhKvVHWLODrhL9qwx/jFzS99Chak0aQhiLA=
+X-Received: by 2002:ab0:6419:: with SMTP id x25mr2073034uao.86.1553282071917;
+ Fri, 22 Mar 2019 12:14:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <1553271070-7509-1-git-send-email-gareth.williams.jx@renesas.com>
+In-Reply-To: <1553271070-7509-1-git-send-email-gareth.williams.jx@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Mar 2019 20:14:20 +0100
+Message-ID: <CAMuHMdWoCdYYwVu6UsUxE2KNK3Qr52d7=0BemdOCvRNDy41FnA@mail.gmail.com>
+Subject: Re: [PATCH] PCI: rcar-gen2: Ensure the mandatory clock is enabled
+To:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+Hi Gareth, Phil,
 
-On 01/28/2019 09:49 AM, Mason Yang wrote:
+Thanks for your patch!
 
-> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
-> 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Mar 22, 2019 at 5:11 PM Gareth Williams
+<gareth.williams.jx@renesas.com> wrote:
+> From: Phil Edworthy <phil.edworthy@renesas.com>
+>
+> All SoC devices that use this driver have a module stop clock associated
+> with it that we must ensure is enabled. All SoCs enabled this clock
+> by default, so I guess no one noticed that the driver didn't enable it.
 
-   I've just found an error due to which my flash couldn't be read.
+This is not really correct: the module clock has always been controlled
+through the clock domain the device is part of, either through the
+"power-domains" property in DT, or through the legacy clock domain
+before that, combined with Runtime PM (see also commit fb178d8b2fab3f2a
+("PCI: rcar: Add runtime PM support")).
 
-[...]
-> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
-> new file mode 100644
-> index 0000000..ea12017
-> --- /dev/null
-> +++ b/drivers/spi/spi-renesas-rpc.c
-> @@ -0,0 +1,804 @@
-[...]
-> +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
-> +					const struct spi_mem_op *op,
-> +					u64 *offs, size_t *len)
-> +{
-> +	struct rpc_spi *rpc = spi_controller_get_devdata(spi->controller);
+Furthermore adding explicit clock management (with a mandatory clock)
+makes it harder to use the device with virtualization and VFIO, and to
+reuse the driver on other SoCs where no module clock may be present.
+Using Runtime PM allows to abstract the presence of the module clock,
+or whatever power saving feature that may be present (e.g. a power area),
+which is an integration feature, and not a feature of the actual device.
 
-> +	if (op->dummy.nbytes) {
-> +		rpc->smenr |= RPC_SMENR_DME;
-> +		rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
+So I don't think this change is needed or wanted.
 
-   SMDMCR.DMCYC is in bits -- you forgot to multiply by 8.
+NAKed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +		rpc->totalxferlen += op->dummy.nbytes;
-> +	}[...]
-> +static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
-> +				   struct spi_message *msg)
-> +{
-> +	struct spi_transfer *t, xfer[4] = { };
-> +	u32 i, xfercnt, xferpos = 0;
-[...]
-> +	if (xfercnt > 3 && xfer[2].len && xfer[2].tx_buf) {
-> +		rpc->smenr |= RPC_SMENR_DME;
-> +		rpc->dummy = RPC_SMDMCR_DMCYC(xfer[2].len);
+> Note: This change was tested on RZN1 and R-Car M2 hardware. NULL is
+> passed to devm_clk_get for backwards compatibility reasons with R-Car gen2
+> devices which do not name the clock.
+>
+> DTS files for Renesas devices that use this driver have been checked to
+> ensure they specify a clock and do not name that clock.
 
-    Here as well, I guess.
+I understand RZ/N1 has the same PCI controller, and you're trying to add
+support for it?  I think the solution there is to add clock domain support to
+drivers/clk/renesas/r9a06g032-clocks.c.
 
-[...]
+Gr{oetje,eeting}s,
 
-MBR, Sergei
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
