@@ -2,109 +2,154 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814FAC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 15:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4289C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F2BF2183E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 15:47:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="q/+UKf7u"
+	by mail.kernel.org (Postfix) with ESMTP id 9CAAE218A2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbfCVPrE (ORCPT
+        id S1728273AbfCVQLr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 11:47:04 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:39119 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727840AbfCVPrE (ORCPT
+        Fri, 22 Mar 2019 12:11:47 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:7466 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727169AbfCVQLr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 11:47:04 -0400
-Received: by mail-oi1-f196.google.com with SMTP id b4so2049536oif.6
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Mar 2019 08:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=oYDFxGodBAT+KeWMpstuaGtQJvbudSxPq7SilshI/zA=;
-        b=q/+UKf7uC2I1VaE9inDz9FVaU9VpJSn1Io8QsYk0YClcCCe2dVn61xzcB5yJhyLhY6
-         f/xYb0QvEl71LRhXPKha6XAgpWNvE2tJ8nomNW6cx8Wx8tXJlCW7KhbQjJZiE6P6mqCA
-         DKw8E4fLN1gkvC1exOD5gp+J9CcQPxRLmjIZ1QiVAxLmXfMXxumZBZQTI1EvywQrlOK3
-         4RbXexZ9ltNyR+5c4xev+sMs2Tz0Gk65dOklw+JX+3B3dcN7ZUwqydH559wiU+i9n7f5
-         gjLL4HkgPy+RqExOJ4Y09iqJe2i8XdC9/4YdrlKwiv5j2dfCN8hnC3JUWqmA+vHTXMMi
-         7YVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=oYDFxGodBAT+KeWMpstuaGtQJvbudSxPq7SilshI/zA=;
-        b=TQKP8ai7gUEqwI+pKNqplCYVQh9JEnj4h8rrWNdoESb66QO4F4J4UvOLQT4EEUePmp
-         ZrVLwfQM30IMhVcmfTby0HeIaV/xnqZPAmNkSK91edMlid3+sHmBSRogwhRTI4Qg75WB
-         2zAyPZMWi0z49HaJXywxmUgzEakPux5jKhAS8D0nVwvlKlMwdlS0hSRKtgjJ+JRlg2kn
-         yXdImEMFkXnY4s4iuYajxJAG+4mWxlFJWpYPBTDI+fP9NPV0RFxVm4+J1YYQggZR9Ej1
-         LQuC8banVm08tIEfUzZ6CMJnMsLK816j0Ozm9CQV79hoHUO5UJMCLz0ryEwqrYl3NQfY
-         AqFQ==
-X-Gm-Message-State: APjAAAUA8rppimhxYYvbvv2NL5nd1ozu7TwbUW2QttEO6y70fq+xhOpq
-        B541k6ewh2K94GXi1LF5QFRRsXR4GPCwxloN3L2VtA==
-X-Google-Smtp-Source: APXvYqy7qMEZoEFfFiE1qq4jB0Krvo/wFirbUHlnWwLtlhCcJvz7DJfqI/4S8hsxID72wEgpOhbpWVVXsCDIC2VzuvE=
-X-Received: by 2002:aca:4b03:: with SMTP id y3mr2329128oia.21.1553269623525;
- Fri, 22 Mar 2019 08:47:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190321092145.14896-1-geert+renesas@glider.be> <20190321092145.14896-2-geert+renesas@glider.be>
-In-Reply-To: <20190321092145.14896-2-geert+renesas@glider.be>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Fri, 22 Mar 2019 16:46:52 +0100
-Message-ID: <CAMpxmJU4ni8=P+BTH7YyX+p2xAc1+h3MA5wBqBpDHMCoSK8X7g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: pca953x: Document onnn,cat9554
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 22 Mar 2019 12:11:47 -0400
+X-IronPort-AV: E=Sophos;i="5.60,256,1549897200"; 
+   d="scan'208";a="11083843"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 23 Mar 2019 01:11:43 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 442A24046149;
+        Sat, 23 Mar 2019 01:11:42 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
+        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gareth Williams <gareth.williams.jx@renesas.com>
+Subject: [PATCH] PCI: rcar-gen2: Ensure the mandatory clock is enabled
+Date:   Fri, 22 Mar 2019 16:11:10 +0000
+Message-Id: <1553271070-7509-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-czw., 21 mar 2019 o 10:21 Geert Uytterhoeven <geert+renesas@glider.be>
-napisa=C5=82(a):
->
-> The ON Semiconductor CAT9554 is a variant of the PCA953x GPIO expander,
-> with 8 GPIOs and interrupt functionality.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Split DT binding doc and driver update in separate patches.
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-pca953x.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt b/Do=
-cumentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> index fb144e2b65226601..8678df2a5713a9af 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
-> @@ -30,6 +30,7 @@ Required properties:
->         ti,tca6424
->         ti,tca9539
->         ti,tca9554
-> +       onnn,cat9554
->         onnn,pca9654
->         exar,xra1202
->   - gpio-controller: if used as gpio expander.
-> --
-> 2.17.1
->
+From: Phil Edworthy <phil.edworthy@renesas.com>
 
-Both applied to for-next.
+All SoC devices that use this driver have a module stop clock associated
+with it that we must ensure is enabled. All SoCs enabled this clock
+by default, so I guess no one noticed that the driver didn't enable it.
 
-Thanks,
-Bart
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
+---
+Note: This change was tested on RZN1 and R-Car M2 hardware. NULL is
+passed to devm_clk_get for backwards compatibility reasons with R-Car gen2
+devices which do not name the clock.
+
+DTS files for Renesas devices that use this driver have been checked to
+ensure they specify a clock and do not name that clock.  
+---
+ drivers/pci/controller/pci-rcar-gen2.c | 35 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/controller/pci-rcar-gen2.c b/drivers/pci/controller/pci-rcar-gen2.c
+index 326171c..4c94860 100644
+--- a/drivers/pci/controller/pci-rcar-gen2.c
++++ b/drivers/pci/controller/pci-rcar-gen2.c
+@@ -8,6 +8,7 @@
+  * Author: Valentine Barshak <valentine.barshak@cogentembedded.com>
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+@@ -95,6 +96,7 @@
+ 
+ struct rcar_pci_priv {
+ 	struct device *dev;
++	struct clk *clk;
+ 	void __iomem *reg;
+ 	struct resource mem_res;
+ 	struct resource *cfg_res;
+@@ -340,6 +342,8 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	void __iomem *reg;
+ 	struct hw_pci hw;
+ 	void *hw_private[1];
++	struct clk *clk;
++	int ret;
+ 
+ 	cfg_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(dev, cfg_res);
+@@ -376,7 +380,6 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 
+ 	if (dev->of_node) {
+ 		struct resource busnr;
+-		int ret;
+ 
+ 		ret = of_pci_parse_bus_range(dev->of_node, &busnr);
+ 		if (ret < 0) {
+@@ -397,6 +400,14 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 		priv->busnr = pdev->id;
+ 	}
+ 
++	clk = devm_clk_get(dev, NULL);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++	ret = clk_prepare_enable(clk);
++	if (ret)
++		return ret;
++	priv->clk = clk;
++
+ 	hw_private[0] = priv;
+ 	memset(&hw, 0, sizeof(hw));
+ 	hw.nr_controllers = ARRAY_SIZE(hw_private);
+@@ -409,6 +420,27 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused pci_rcar_gen2_suspend_noirq(struct device *dev)
++{
++	struct rcar_pci_priv *priv = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(priv->clk);
++	return 0;
++}
++
++static int __maybe_unused pci_rcar_gen2_resume_noirq(struct device *dev)
++{
++	struct rcar_pci_priv *priv = dev_get_drvdata(dev);
++
++	clk_prepare_enable(priv->clk);
++	return 0;
++}
++
++static const struct dev_pm_ops pci_rcar_gen2_pm_ops = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pci_rcar_gen2_suspend_noirq,
++				      pci_rcar_gen2_resume_noirq)
++};
++
+ static const struct of_device_id rcar_pci_of_match[] = {
+ 	{ .compatible = "renesas,pci-r8a7790", },
+ 	{ .compatible = "renesas,pci-r8a7791", },
+@@ -422,6 +454,7 @@ static struct platform_driver rcar_pci_driver = {
+ 		.name = "pci-rcar-gen2",
+ 		.suppress_bind_attrs = true,
+ 		.of_match_table = rcar_pci_of_match,
++		.pm = &pci_rcar_gen2_pm_ops,
+ 	},
+ 	.probe = rcar_pci_probe,
+ };
+-- 
+2.7.4
+
