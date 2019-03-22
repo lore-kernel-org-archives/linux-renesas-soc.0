@@ -2,182 +2,134 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D34C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDA2C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 17:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0898820850
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52E3C2190A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 17:43:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lucaceresoli.net header.i=@lucaceresoli.net header.b="d+6QYSug"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="B/o/gfHZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbfCVQwU (ORCPT
+        id S1727894AbfCVRnd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 12:52:20 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:34912 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727443AbfCVQwU (ORCPT
+        Fri, 22 Mar 2019 13:43:33 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44554 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727844AbfCVRnc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 12:52:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lucaceresoli.net; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8mRcAS/YKHRam5XML9BHH6f9VZGDzct5Gcc49Hvu1rI=; b=d+6QYSugIBvjweAbN7I1pZj5uO
-        6eNehdIRltbG5qAKs4v36CyjreKxkK2uR6xcUaPhZwjcJbWYsnnTJpCp7C8UNTxk3HJBlqrzQNYzZ
-        j15FdrYaARtwjeSC30ryOmo0mR8xfQirUKPmSadolOLL+9LswKq9kx/nzv1AtWX9flGU=;
-Received: from [109.168.11.45] (port=47082 helo=[192.168.101.64])
-        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1h7NOx-006uF3-IF; Fri, 22 Mar 2019 17:52:15 +0100
-Subject: Re: [PATCH v3 26/31] adv748x: csi2: add internal routing
- configuration
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
- <20190305185150.20776-27-jacopo+renesas@jmondi.org>
- <4f5b5763-be90-4040-7d55-986471168de1@lucaceresoli.net>
- <20190315094538.bs5ecsdzndrxjdbb@uno.localdomain>
- <20190315100613.avmsmavdraxetkzl@kekkonen.localdomain>
- <28dbf2c7-2834-2bae-d56e-43e50d763c9f@lucaceresoli.net>
- <20190320171406.s462267lssaxkqo4@uno.localdomain>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <88863e6a-a09a-b3c7-7b00-da4fc823b55f@lucaceresoli.net>
-Date:   Fri, 22 Mar 2019 17:52:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Fri, 22 Mar 2019 13:43:32 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u9so1931817lfe.11
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Mar 2019 10:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IMZyRvjTUJeXcyRJIt9BLHdj0+q+YadZU/4CnekWVCQ=;
+        b=B/o/gfHZWjYbWJHqRjEbFyWu0kUzjrPb1foz3cnBpLuUV4kIaDcbO5xS5GqEKi/VOl
+         Uz8ITaf57VJsn16Fgs3mQePwmdBOzqg4gk4/lM96R0RMljGjDIXfxUXwV/EMijjorCyD
+         xdVTWG4ulpRgm9+tBE/8/F2Mk0fb2dFBLYSo45BViQTfWgfASEKiYtdaFgD7b2PfmRto
+         Kg0ZHoTBN5Lk7rN/VSIY6YlvHwvWblJ0X1afKiY4YW5paMY+j6H+NPMZSHx0Z3GHFMED
+         81y3yzJJhoTSkljy1EJUfaUzIv9G0oselYFTksBXuxKqjbAnZ9/ACD5LMSyHgE7eQZoF
+         jlDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=IMZyRvjTUJeXcyRJIt9BLHdj0+q+YadZU/4CnekWVCQ=;
+        b=ZFaD2a/qaGc3pDBamt1HKw/gtmthWHiRJGMZI/9jucmcQezrs6Du8LlHU8KdaMgA77
+         gpTwURbUWpJLG5FG/M6Y9CGWKDi2KuKR5Z9bIP+HNfowElrkW0QO7cX2uV3hnW2UHnI1
+         uBhYDekbKJO1KdnP3epZNVbQz0fuyEW17oU3p1PX10HKqfvR8xL9Vi0IrU9HQh2ny4qN
+         5KTmqV2AZLsMo2yw8OIW037Bh7+3EwIEh5unaHrKWfjsLe4SsXqN9IIxVobGjCSoU/Lp
+         2BzpBihoLA4jJJTzsSAjmfNX+aiPndzy+YKhEaWTpP7hDYTOh0D7C9AiELidUZlqfNJa
+         uH5Q==
+X-Gm-Message-State: APjAAAVx7heEsQNcT2Eu+oqwP2oYAD43GVfM4Vx0W+VqOsOQfSGlf4E3
+        u1KBm0jiDh19OOPI1zehwPl8WedR3Ks=
+X-Google-Smtp-Source: APXvYqwGlmAiwpa2Tm4ZwX4ZGEN3Y1vnHzePPZ+l3htJJ6q6Zx2yMn4/w7K5SCWXmi0/5KAihX3iwg==
+X-Received: by 2002:ac2:50d8:: with SMTP id h24mr5738535lfm.7.1553276610764;
+        Fri, 22 Mar 2019 10:43:30 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.86.92])
+        by smtp.gmail.com with ESMTPSA id l12sm1797539lfc.61.2019.03.22.10.43.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Mar 2019 10:43:29 -0700 (PDT)
+Subject: Re: [PATCH v8 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1548658158-5460-1-git-send-email-masonccyang@mxic.com.tw>
+ <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <75c4642b-536e-f596-158d-387a63a5f6c5@cogentembedded.com>
+Date:   Fri, 22 Mar 2019 20:43:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190320171406.s462267lssaxkqo4@uno.localdomain>
+In-Reply-To: <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+Hello!
 
-thanks for the follow-up.
+On 01/28/2019 09:49 AM, Mason Yang wrote:
 
-On 20/03/19 18:14, Jacopo Mondi wrote:
->>>> This is probably the wrong patch to use an example, as this one is for
->>>> a multiplexed interface, where there is no need to go through an
->>>> s_stream() for the two CSI-2 endpoints, but as you pointed out in our
->>>> brief offline chat, the AFE->TX routing example for this very device
->>>> is a good one: if we change the analogue source that is internally
->>>> routed to the CSI-2 output of the adv748x, do we need to s_stream(1)
->>>> the now routed entity and s_stream(0) on the not not-anymore-routed
->>>> one?
->>>>
->>>> My gut feeling is that this is up to userspace, as it should know
->>>> what are the requirements of the devices in the system, but this mean
->>>> going through an s_stream(0)/s_stream(1) sequence on the video device,
->>>> and that would interrupt the streaming for sure.
->>>>
->>>> At the same time, I don't feel too much at ease with the idea of
->>>> s_routing calling s_stream on the entity' remote subdevices, as this
->>>> would skip the link format validation that media_pipeline_start()
->>>> performs.
->>>
->>> The link validation must be done in this case as well, it may not be
->>> simply skipped.
->>
->> Agreed.
->>
->> The routing VS pipeline validation point is a very important one. The
->> current proposed workflow is:
->>
->>  1. the pipeline is validated as a whole, having knowledge of all the
->>     entities
+> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
 > 
-> let me specify this to avoid confusions:
->      "all the entities -with an active route in the pipeline-"
-> 
->>  2. streaming is started
->>  3. s_routing is called on an entity (not on the pipeline!)
->>
->> Now the s_routing function in the entity driver is not in a good
->> position to validate the candidate future pipeline as a whole.
->>
->> Naively I'd say there are two possible solutions:
->>
->>  1. the s_routing reaches the pipeline first, then the new pipeline is
->>     computed and verified, and if verification succeeds it is applied
->>  2. a partial pipeline verification mechanism is added, so the entity
->>     receiving a s_routing request to e.g. change the sink pad can invoke
->>     a verification on the part of pipeline that is about to be
->>     activated, and if verification succeeds it is applied
->>
->> Somehow I suspect neither is trivial...
-> 
-> I would say it is not, but if you have such a device that does not
-> require going through a s_stream(0)/s_stream(1) cycle and all the
-> associated re-negotiation and validations, it seems to me nothing
-> prevents you from handling this in the driver implementation. Maybe it
-> won't look that great, but this seems to be quite a custom design that
-> requires all input sources to be linked to your sink pads, their
-> format validated all at the same time, power, stream activation and
-> internal mux configuration controlled by s_routing. Am I wrong or
-> nothing in this series would prevent your from doing this?
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-You're right, nothing prevents me from doing a custom hack for my custom
-design. It's what I'm doing right now. My concern is whether the
-framework will evolve to allow modifying a running pipeline without
-custom hacks.
+   I've just found an error due to which my flash couldn't be read.
 
-> tl;dr: I would not make this something the framework should be
-> concerned about, as there's nothing preventing you from
-> implementing support for such a use case. But again, without a real
-> example we can only guess, and I might be overlooking the issue or
-> missing some relevant detail for sure.
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..ea12017
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,804 @@
+[...]
+> +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
+> +					const struct spi_mem_op *op,
+> +					u64 *offs, size_t *len)
+> +{
+> +	struct rpc_spi *rpc = spi_controller_get_devdata(spi->controller);
 
-I'm a bit surprised in observing that my use case looks so strange,
-perhaps yours is so different that we don't quite understand each other.
-So below is an example of what I have in mind. Can you explain your use
-case too?
+> +	if (op->dummy.nbytes) {
+> +		rpc->smenr |= RPC_SMENR_DME;
+> +		rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
 
+   SMDMCR.DMCYC is in bits -- you forgot to multiply by 8.
 
-Here's a use case. Consider a product that takes 3 camera inputs,
-selects one of them and produces a continuous video stream with the
-camera image and an OSD on top of it. The selected camera can be changed
-at any time (e.g. upon user selection).
+> +		rpc->totalxferlen += op->dummy.nbytes;
+> +	}[...]
+> +static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
+> +				   struct spi_message *msg)
+> +{
+> +	struct spi_transfer *t, xfer[4] = { };
+> +	u32 i, xfercnt, xferpos = 0;
+[...]
+> +	if (xfercnt > 3 && xfer[2].len && xfer[2].tx_buf) {
+> +		rpc->smenr |= RPC_SMENR_DME;
+> +		rpc->dummy = RPC_SMDMCR_DMCYC(xfer[2].len);
 
-                  OSD FB ---.
-                            |
-            .--------.      V
-Camera 0 -->|        |   .-----.
-Camera 1 -->|  MUX   |-->| OSD |--> DMA --> /dev/video0
-Camera 2 -->|        |   `-----'
-            `--------'
+    Here as well, I guess.
 
-A prerequisite is obviously that each piece of hardware and software
-involved is able to cope with a sudden stream change. Perhaps not that
-common, but no rocket science.
+[...]
 
-It looks to me that each of these pieces can be modeled as an entity and
-the s_routing API is a perfect fit for the mux block. Am I wrong?
-
-Thanks,
--- 
-Luca
+MBR, Sergei
