@@ -2,100 +2,108 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAC7C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 11:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2914FC10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 12:30:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8ED52075C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 11:04:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="KVQLpoHn"
+	by mail.kernel.org (Postfix) with ESMTP id 024A22070D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 12:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727925AbfCVLEj (ORCPT
+        id S2390982AbfCVM3s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 07:04:39 -0400
-Received: from mail-eopbgr1410099.outbound.protection.outlook.com ([40.107.141.99]:25409
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727713AbfCVLEj (ORCPT
+        Fri, 22 Mar 2019 08:29:48 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:43094 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390816AbfCVM3q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 07:04:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fKQBdSeu5x/TsiG/L4WJMtC+ObXzpr79l0uyNpxvEJY=;
- b=KVQLpoHn7P5MEW2CpocJeVEYxOg91um2lX9Ri/otZT8C/njw/7o3Tw/hY5/teL+y5OhHkSvT9EBek9W0MrTfm830mnBG4qKvRT8KlVgC2BuTGvlF1ykLVfJTvFmnVmPVmNbtYJ9yK9RRjSvxyHPqINd1HfTRRitSk6mX9pZ+bTI=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.162.18) by
- TY1PR01MB1772.jpnprd01.prod.outlook.com (52.133.163.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1730.17; Fri, 22 Mar 2019 11:04:35 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::195b:1385:70ae:194c]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::195b:1385:70ae:194c%2]) with mapi id 15.20.1709.015; Fri, 22 Mar 2019
- 11:04:35 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 0/2] ARM: dts: rskrza1: Add I2C and remaining LEDs
-Thread-Topic: [PATCH 0/2] ARM: dts: rskrza1: Add I2C and remaining LEDs
-Thread-Index: AQHU31VQE49rVXGiT0GAAZ+LlWgMvaYU+PoggADi4YCAAXZxgIAAKsxA
-Date:   Fri, 22 Mar 2019 11:04:35 +0000
-Message-ID: <TY1PR01MB156259D3A98DC7A29890B02C8A430@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20190320194410.14870-1-geert+renesas@glider.be>
- <TY1PR01MB15627B138E7BE709BC483E2A8A410@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdXG2wD9sbZY-1LY3d+AVA3BBjpjsn3zd3dJEi2r2BVEfg@mail.gmail.com>
- <CAMuHMdUSxx94+-M6OR+2BOO0NgAdP27o1Af7c_xeufv1b1Hp5A@mail.gmail.com>
-In-Reply-To: <CAMuHMdUSxx94+-M6OR+2BOO0NgAdP27o1Af7c_xeufv1b1Hp5A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f1682383-af71-4f39-67aa-08d6aeb62b5f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600127)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1772;
-x-ms-traffictypediagnostic: TY1PR01MB1772:
-x-microsoft-antispam-prvs: <TY1PR01MB1772BAF851BF3A6A332E4B788A430@TY1PR01MB1772.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 09840A4839
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(396003)(346002)(366004)(199004)(189003)(6246003)(478600001)(186003)(105586002)(26005)(446003)(11346002)(52536014)(5660300002)(486006)(476003)(8936002)(14454004)(72206003)(71200400001)(81166006)(4744005)(81156014)(8676002)(106356001)(86362001)(6506007)(102836004)(71190400001)(25786009)(256004)(68736007)(54906003)(316002)(99286004)(76176011)(93886005)(7696005)(97736004)(6916009)(55016002)(66066001)(229853002)(6116002)(53936002)(3846002)(9686003)(6436002)(2906002)(7736002)(305945005)(4326008)(74316002)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1772;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uzZ90EQ05ty8UEh37HS9Nd1gcsmozR9blwz9uo9ICT7V27r1VPiYmpvzirXw5Ulm9W5KOZgxjQqqGqv3xIctMEvzzBda5sWmhzT/nmUYD3iHecSkmOmEzkxrMyG5H0dRLRXukFqxmQxfwc02dVrmW46Wub6CAdwnfJ7hIwiCuC5dwuSvvaQ7qEJbEHf/b409eyi+7uGG54nltvULK5exn6L7Gx1qBOK0B9N+1Vq7DryBEA1RzjDogyYPbcFjGdOIQJtggNEYH9OVe8f/Zlya4k4RilNx+O+aq9hiSt1Jjks1TmFRHRmiB9s6YXqbJufksvMViylGSBZABhAmG2R1/qK+lS5uqZJmxVWkW9kyKg2rejzHwj1JXIBZfuRt1Vm9dGRT31ypCClDEvr/mDf2s5/ZHw3Mb9yoMVW0kHZbDJE=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 22 Mar 2019 08:29:46 -0400
+Received: by mail-vs1-f66.google.com with SMTP id i207so1234772vsd.10;
+        Fri, 22 Mar 2019 05:29:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u95oa377k1b3PA5wrjxR0goiknXMa0KRr9sfArFdG4M=;
+        b=DyjTu0gozUmcIUuHsMPkMfAGSai2eJw1COnlzlkQjP8huon4c6fInwXXKy4VgG2PFI
+         MqkJ1dmdbKhHkhxvuWiigPfcTU7Wq6RS1VP0fvBaFlSFv+c8Vjf9QzfTedyY4OEyMO6f
+         NaKWJKezTEf71VXQSZRpUj4iqBK1dS5EGnJg2rV+sxW3Mp/woy9WnaISY0dkLBJ7EE3w
+         Qp1eN4BscNbAqhObYGZ3L2UV0rwqZKYHbd6gXW6OUcd1mO3FNAjdR/6DkP4jKCatws8Q
+         gExAjmzunpHm9uXtNwMmg5EVaI17/LnD5rH6mcC6aLooei80ATkfeEwYgip4ypiEY2Hb
+         Rn1A==
+X-Gm-Message-State: APjAAAWtTk3Rd0qeBFQC4Um4/DneksKGIRrFK8JcgcjBPLGyfDzbp+Fq
+        rBWgtBWaR0580LsHa5Ub6y39+CNUN/i9GQ2L8042VL3F
+X-Google-Smtp-Source: APXvYqywg/+XVmRsSeS7kWLXLBEX4Orxlc3VLLe5WVqQ0Lr9T9pMgIU/TRgvPXgnV0wgyB2mj0GNK24mqWr7cBv//d0=
+X-Received: by 2002:a67:d011:: with SMTP id r17mr5179813vsi.96.1553257785506;
+ Fri, 22 Mar 2019 05:29:45 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1682383-af71-4f39-67aa-08d6aeb62b5f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2019 11:04:35.3837
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1772
+References: <20190217132441.15139-1-marek.vasut@gmail.com> <20190322113133.GB24257@e107981-ln.cambridge.arm.com>
+ <95d1076c-5490-3803-f394-9a0928c2cccb@gmail.com> <20190322121822.GA26257@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20190322121822.GA26257@e107981-ln.cambridge.arm.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 22 Mar 2019 13:29:33 +0100
+Message-ID: <CAMuHMdVt9S8ECq=FFHHLRDF4ozQc5E-kEHLZsCZaWTTi2TeC=g@mail.gmail.com>
+Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in resume_noirq
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIEZyaSwgTWFyIDIyLCAyMDE5LCBHZWVydCBVeXR0ZXJob2V2ZW4gd3Jv
-dGU6DQo+ID4gWWVhaCwgSSd2ZSBzZWVuIHRoYXQgY29kZS4gTm90IGZpdCBmb3IgdXBzdHJlYW0g
-Oy0pDQo+IA0KPiBUaGUgcHJvcGVyIHdheSBpcyB0byB1c2UgdGhhdCBzdGFuZGFyZCBoZWFydGJl
-YXQgTEVEIHRyaWdnZXINCj4gQ09ORklHX0xFRFNfVFJJR0dFUl9IRUFSVEJFQVQ9eSwgY29uZmln
-dXJhYmxlIGZyb20NCj4gc3lzZnMuDQo+IA0KPiBGb3IgeW91ciBzYW1wbGUgRFRTOiB5b3UgY2Fu
-IGV2ZW4gc3BlY2lmeSBhbiBMRUQgdHJpZ2dlciBmcm9tIERULCBjZnIuDQo+IERvY3VtZW50YXRp
-b24vZGV2aWNldHJlZS9iaW5kaW5ncy9sZWRzL2NvbW1vbi50eHQ6DQo+IA0KPiAgICAgbGludXgs
-ZGVmYXVsdC10cmlnZ2VyID0gImhlYXJ0YmVhdCINCg0KDQpXb3csIEkgYW0gc3VjaCBhIGhhY2sg
-d2hlbiBpdCBjb21lcyB0byBMaW51eCENCg0KSSdtIGdvaW5nIHRvIGFkZCB0aGlzIHRvIG15IFRP
-RE8gbGlzdCBhbG9uZyB3aXRoIHlvdXIgb3RoZXIgc3VnZ2VzdGlvbiANCm9mIHRoZSBpcnFjaGlw
-IGRyaXZlciBmb3IgdGhlIGludGVycnVwdCBwaW5zLg0KDQoNClRoYW5rcywNCkNocmlzDQo=
+Hi Lorenzo, Marek,
+
+On Fri, Mar 22, 2019 at 1:18 PM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Fri, Mar 22, 2019 at 01:09:13PM +0100, Marek Vasut wrote:
+> > On 3/22/19 12:31 PM, Lorenzo Pieralisi wrote:
+> > > On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
+> > >> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> > >>
+> > >> Reestablish the PCIe link very early in the resume process in case it
+> > >> went down to prevent PCI accesses from hanging the bus. Such accesses
+> > >> can happen early in the PCI resume process, in the resume_noirq, thus
+> > >> the link must be reestablished in the resume_noirq callback of the
+> > >> driver.
+> > >
+> > > This looks like a fix (most likely fixing initial S2R support, please
+> > > help me chase the commit ID), should we consider it for stable kernels ?
+> > >
+> > > Without it I understand S2R is actually broken on platforms with this
+> > > host bridge.
+> > I don't think this ever worked, so it's hard to find a Fixes: commit for
+> > this.
+>
+> If we want to send it to stable kernels we have to select which versions
+> we are covering. I think the only options for a Fixes: tag are either
+> the initial S2R support commit for the platforms this driver runs on
+> or the initial driver commit that harks back to v3.16 AFAICS.
+
+This only started to become an issue when support for arm64 platforms
+was added, where PSCI may power down the SoC, right?
+
+Hence:
+Fixes: e015f88c368da1e6 ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
