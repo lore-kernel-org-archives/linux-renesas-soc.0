@@ -2,148 +2,68 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF822C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 12:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 202A2C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 13:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F9DE218E2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 12:50:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLVhrpxi"
+	by mail.kernel.org (Postfix) with ESMTP id DFA9321873
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 13:08:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733256AbfCVMuD (ORCPT
+        id S1730536AbfCVLfR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 08:50:03 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50519 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387426AbfCVMuB (ORCPT
+        Fri, 22 Mar 2019 07:35:17 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:34232 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730131AbfCVLfQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 08:50:01 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z11so2073877wmi.0;
-        Fri, 22 Mar 2019 05:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=68RL712ll0+fURRKI/qkdALrin3TuAjab9Zvxjv238E=;
-        b=RLVhrpxi728ZP6P+D3h9jClg42ZPgtzdS3f/Ep9iXVzEIH0Ipbk7L0FyS0C2YPqNMP
-         BhuP9BGsjkpdUFaX6CiH3nRXU1xnzpcujV39zHKvy9lWFPP6NEJVnhEO1PohEas/ym2s
-         pkKfzY/mD4QFZBIFV62/7ulDWzS9Vuk1wvNUERGWdIO87usAHGVsH4FjglrXDQHSD44n
-         d7Zpqb+yvn1TQR6tPBf1UmG9ZM6GCyNGCWua4JECvuTSH+K5cSYRUzehbhRSjCHnXcfg
-         YYFIT7aLfgrDWLdDi32fJMjAYb7CyCJZVKoOgmKuU/10+gzPizxuDfWorVKIsMHwOzP3
-         gb0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=68RL712ll0+fURRKI/qkdALrin3TuAjab9Zvxjv238E=;
-        b=jFqzeCzSbV0dvRCGI8GsXRH0ACIuEFqBHHDznjybwthU+GLsNI+eDBlDIlv+5S3PRU
-         AGBMmVvu3EkJRtW+B2VktIRqwBWiBh1jfqJY8/DeY4QwH7z3xunL5yWFouZoQH5FBkyi
-         OF2R9oWWFTDSy6stU1dBAngrVodQjEhzQxYbSEV6UBcBE8Sy9Q1XroR+bpyLcFpTpJGn
-         8JpIb1FkgC4nrKtFRICOgrSCHXQ+e3SpkYzUJozJ0jYnMkHfeWizB8fjl7UB8afcAPW3
-         m1sDZe8schvNUYHAlOOJDhyy2TrhBLTynmmhZAM0fkaAc0a9H3q7dpwsZAfmzvdCPrsj
-         k/Xg==
-X-Gm-Message-State: APjAAAWJIRJ0FYW5iK1WnTGZ2Ybe5mmGpNQ5vbgN1+r0ByKRFH/6FUZl
-        Xz0gPiVkakZ+Pafjd/4SvCe/qed5
-X-Google-Smtp-Source: APXvYqwQaJbyo4wD7zIxxcTaLclWY+vf8SNLguhaypMXST3tKVdxoa2PbtZ12EuCx4rlZ9o7MNCeJg==
-X-Received: by 2002:a1c:4d12:: with SMTP id o18mr3198437wmh.74.1553258998823;
-        Fri, 22 Mar 2019 05:49:58 -0700 (PDT)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id e16sm18679590wrs.0.2019.03.22.05.49.57
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 22 Mar 2019 05:49:58 -0700 (PDT)
-Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in
- resume_noirq
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 22 Mar 2019 07:35:16 -0400
+X-IronPort-AV: E=Sophos;i="5.60,256,1549897200"; 
+   d="scan'208";a="11072370"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Mar 2019 20:35:13 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CAD3E439DB6D;
+        Fri, 22 Mar 2019 20:35:11 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
         Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20190217132441.15139-1-marek.vasut@gmail.com>
- <20190322113133.GB24257@e107981-ln.cambridge.arm.com>
- <95d1076c-5490-3803-f394-9a0928c2cccb@gmail.com>
- <20190322121822.GA26257@e107981-ln.cambridge.arm.com>
- <CAMuHMdVt9S8ECq=FFHHLRDF4ozQc5E-kEHLZsCZaWTTi2TeC=g@mail.gmail.com>
- <9b432b16-35a1-c4ec-df97-8f6f854ab8b4@gmail.com>
- <CAMuHMdWPZdD3Kat_XJ33ubiiXr4CE_zP7crqrAcbzqOB58V-PQ@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <f491ae44-37dd-89fa-b4eb-c57715cfbe14@gmail.com>
-Date:   Fri, 22 Mar 2019 13:49:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWPZdD3Kat_XJ33ubiiXr4CE_zP7crqrAcbzqOB58V-PQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: renesas: r9a06g032: Add missing PCI USB clock
+Date:   Fri, 22 Mar 2019 11:33:04 +0000
+Message-Id: <1553254384-8196-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 3/22/19 1:42 PM, Geert Uytterhoeven wrote:
-> Hi Marek,
+The clock driver is missing support for the clk_pci_usb clock that is
+present on the SoC. This is added to allow the clock to be supported.
 
-Hi,
+Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
+---
+ drivers/clk/renesas/r9a06g032-clocks.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> On Fri, Mar 22, 2019 at 1:33 PM Marek Vasut <marek.vasut@gmail.com> wrote:
->> On 3/22/19 1:29 PM, Geert Uytterhoeven wrote:
->>> On Fri, Mar 22, 2019 at 1:18 PM Lorenzo Pieralisi
->>> <lorenzo.pieralisi@arm.com> wrote:
->>>> On Fri, Mar 22, 2019 at 01:09:13PM +0100, Marek Vasut wrote:
->>>>> On 3/22/19 12:31 PM, Lorenzo Pieralisi wrote:
->>>>>> On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
->>>>>>> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
->>>>>>>
->>>>>>> Reestablish the PCIe link very early in the resume process in case it
->>>>>>> went down to prevent PCI accesses from hanging the bus. Such accesses
->>>>>>> can happen early in the PCI resume process, in the resume_noirq, thus
->>>>>>> the link must be reestablished in the resume_noirq callback of the
->>>>>>> driver.
->>>>>>
->>>>>> This looks like a fix (most likely fixing initial S2R support, please
->>>>>> help me chase the commit ID), should we consider it for stable kernels ?
->>>>>>
->>>>>> Without it I understand S2R is actually broken on platforms with this
->>>>>> host bridge.
->>>>> I don't think this ever worked, so it's hard to find a Fixes: commit for
->>>>> this.
->>>>
->>>> If we want to send it to stable kernels we have to select which versions
->>>> we are covering. I think the only options for a Fixes: tag are either
->>>> the initial S2R support commit for the platforms this driver runs on
->>>> or the initial driver commit that harks back to v3.16 AFAICS.
->>>
->>> This only started to become an issue when support for arm64 platforms
->>> was added, where PSCI may power down the SoC, right?
->>
->> Wouldn't you also hit this on ARM32 LPAE ones ?
-> 
-> This is about the PCI link issue on system resume, right?
-
-Forget what I said, yes, I mixed this with the MSI 64bit patch.
-
->>> Hence:
->>> Fixes: e015f88c368da1e6 ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-
-
+diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
+index 5d7f77b1..0b492b5 100644
+--- a/drivers/clk/renesas/r9a06g032-clocks.c
++++ b/drivers/clk/renesas/r9a06g032-clocks.c
+@@ -198,6 +198,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
+ 	D_GATE(CLK_P6_PG2, "clk_p6_pg2", DIV_P6_PG, 0x8a3, 0x8a4, 0x8a5, 0, 0xb61, 0, 0),
+ 	D_GATE(CLK_P6_PG3, "clk_p6_pg3", DIV_P6_PG, 0x8a6, 0x8a7, 0x8a8, 0, 0xb62, 0, 0),
+ 	D_GATE(CLK_P6_PG4, "clk_p6_pg4", DIV_P6_PG, 0x8a9, 0x8aa, 0x8ab, 0, 0xb63, 0, 0),
++	D_GATE(CLK_PCI_USB, "clk_pci_usb", CLKOUT_D40, 0xe6, 0, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_QSPI0, "clk_qspi0", DIV_QSPI0, 0x2a4, 0x2a5, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_QSPI1, "clk_qspi1", DIV_QSPI1, 0x484, 0x485, 0, 0, 0, 0, 0),
+ 	D_GATE(CLK_RGMII_REF, "clk_rgmii_ref", CLKOUT_D8, 0x340, 0, 0, 0, 0, 0, 0),
 -- 
-Best regards,
-Marek Vasut
+2.7.4
+
