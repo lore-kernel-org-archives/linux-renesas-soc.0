@@ -2,84 +2,91 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF105C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4923AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 09:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BCD5218D3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 08:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E730206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 09:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfCVIlW (ORCPT
+        id S1727685AbfCVJZH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 04:41:22 -0400
-Received: from sauhun.de ([88.99.104.3]:48906 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbfCVIlV (ORCPT
+        Fri, 22 Mar 2019 05:25:07 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:57472 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbfCVJZH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 04:41:21 -0400
-Received: from localhost (p54B3303C.dip0.t-ipconnect.de [84.179.48.60])
-        by pokefinder.org (Postfix) with ESMTPSA id 493ED2C08C3;
-        Fri, 22 Mar 2019 09:41:20 +0100 (CET)
-Date:   Fri, 22 Mar 2019 09:41:19 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     marek.vasut@gmail.com
-Cc:     linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V2 3/6] PCI: rcar: Replace various variable types with
- unsigned ones for register values
-Message-ID: <20190322084119.GI1005@kunai>
-References: <20190322023844.18574-1-marek.vasut@gmail.com>
- <20190322023844.18574-3-marek.vasut@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nO3oAMapP4dBpMZi"
-Content-Disposition: inline
-In-Reply-To: <20190322023844.18574-3-marek.vasut@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 22 Mar 2019 05:25:07 -0400
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id qxR31z00h3XaVaC01xR3Ks; Fri, 22 Mar 2019 10:25:04 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1h7GQB-0007h7-QX; Fri, 22 Mar 2019 10:25:03 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1h7GQB-0004KX-Ol; Fri, 22 Mar 2019 10:25:03 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: salvator-common: Sort node label
+Date:   Fri, 22 Mar 2019 10:25:02 +0100
+Message-Id: <20190322092502.16604-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
---nO3oAMapP4dBpMZi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch sorts the node label to improve maintainability.
+The sort has been done alphabetically with the node label name as the
+key.
 
+This patch does not include functional changes.
 
-> @@ -508,7 +509,7 @@ static void phy_write_reg(struct rcar_pcie *pcie,
->  				 unsigned int rate, unsigned int addr,
->  				 unsigned int lane, unsigned int data)
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-What about converting 'addr' and 'data' here? Other than those, I didn't
-find other candidates in this driver.
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index a225c2457274763f..0e5a76fee5fc9c79 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -719,6 +719,11 @@
+ 	};
+ };
+ 
++&rwdt {
++	timeout-sec = <60>;
++	status = "okay";
++};
++
+ &scif1 {
+ 	pinctrl-0 = <&scif1_pins>;
+ 	pinctrl-names = "default";
+@@ -857,11 +862,6 @@
+ 	status = "okay";
+ };
+ 
+-&rwdt {
+-	timeout-sec = <60>;
+-	status = "okay";
+-};
+-
+ &xhci0 {
+ 	pinctrl-0 = <&usb30_pins>;
+ 	pinctrl-names = "default";
+-- 
+2.17.1
 
-
---nO3oAMapP4dBpMZi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyUn68ACgkQFA3kzBSg
-KbaJ5RAApLWo+u9WHBNvCJDDs7FxNwFVaTsP0jlD/epD4D+nl+jhSWhQ/Zv5NDlK
-/JyR42nkovmsOyJoVV9EfIRIyGUnftQTelp1ZJrR/hUqzC71zxYopT3Zk2B+VWDU
-tCSETdtpIVBQG2kLw6IgoHxsueLSjn3c3nmU0JSKJHbrI2RtiCBlXhMTverBU+hP
-D17qArnx8p/7fdtnuVbbAvJUZ6vW2CcV2zCd8D2SG0AdVozvBynTOLVwxcc+MWJx
-n6YUJNInFn9Oede0yGMktQmO1FdPsKtf9juYSZiUpfWlChL6WwWJZ5NT9oJCEIOj
-316Qcz9N2pJ1TtZESi9QaAXe+qUxgiR0q07Mf0xY0ltP//+Gg3L0xNnEj8Z4qBzu
-aHi6nlEmq8k5WCoBkkywWuYuf7aMuGXfB+R3+x3JWDXyVDVPKaiKF1wd4yeJPRQ6
-9C1xOP6zef6Xkt7KTaPWJdv+TRd6kWLVgt/Dg9RBhdNH4rlZp5Q5GD3l2Uf+bPiz
-ijriXK91b+Zdyzz3h4q04IHJ6Z0phE8hnKc37PzTYA0qYkUICzHIoTGpXNC9XvKI
-EH3RL1SOCSuAvIxcSAkqWKyNyB7tSyOAX7fIiGPbjbyCv4wSJ5QqebUdWEMoCvpN
-nj7lVKFgHXohzhImNmdeY36e68U3bQu5vM4CH0tg1n/ChdYpg+4=
-=1zbw
------END PGP SIGNATURE-----
-
---nO3oAMapP4dBpMZi--
