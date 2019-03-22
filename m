@@ -2,154 +2,182 @@ Return-Path: <SRS0=lsYt=RZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4289C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D34C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CAAE218A2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0898820850
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Mar 2019 16:52:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lucaceresoli.net header.i=@lucaceresoli.net header.b="d+6QYSug"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbfCVQLr (ORCPT
+        id S1727790AbfCVQwU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Mar 2019 12:11:47 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:7466 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727169AbfCVQLr (ORCPT
+        Fri, 22 Mar 2019 12:52:20 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:34912 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727443AbfCVQwU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Mar 2019 12:11:47 -0400
-X-IronPort-AV: E=Sophos;i="5.60,256,1549897200"; 
-   d="scan'208";a="11083843"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 23 Mar 2019 01:11:43 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 442A24046149;
-        Sat, 23 Mar 2019 01:11:42 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: [PATCH] PCI: rcar-gen2: Ensure the mandatory clock is enabled
-Date:   Fri, 22 Mar 2019 16:11:10 +0000
-Message-Id: <1553271070-7509-1-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 22 Mar 2019 12:52:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lucaceresoli.net; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8mRcAS/YKHRam5XML9BHH6f9VZGDzct5Gcc49Hvu1rI=; b=d+6QYSugIBvjweAbN7I1pZj5uO
+        6eNehdIRltbG5qAKs4v36CyjreKxkK2uR6xcUaPhZwjcJbWYsnnTJpCp7C8UNTxk3HJBlqrzQNYzZ
+        j15FdrYaARtwjeSC30ryOmo0mR8xfQirUKPmSadolOLL+9LswKq9kx/nzv1AtWX9flGU=;
+Received: from [109.168.11.45] (port=47082 helo=[192.168.101.64])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1h7NOx-006uF3-IF; Fri, 22 Mar 2019 17:52:15 +0100
+Subject: Re: [PATCH v3 26/31] adv748x: csi2: add internal routing
+ configuration
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
+ <20190305185150.20776-27-jacopo+renesas@jmondi.org>
+ <4f5b5763-be90-4040-7d55-986471168de1@lucaceresoli.net>
+ <20190315094538.bs5ecsdzndrxjdbb@uno.localdomain>
+ <20190315100613.avmsmavdraxetkzl@kekkonen.localdomain>
+ <28dbf2c7-2834-2bae-d56e-43e50d763c9f@lucaceresoli.net>
+ <20190320171406.s462267lssaxkqo4@uno.localdomain>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <88863e6a-a09a-b3c7-7b00-da4fc823b55f@lucaceresoli.net>
+Date:   Fri, 22 Mar 2019 17:52:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190320171406.s462267lssaxkqo4@uno.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+Hi,
 
-All SoC devices that use this driver have a module stop clock associated
-with it that we must ensure is enabled. All SoCs enabled this clock
-by default, so I guess no one noticed that the driver didn't enable it.
+thanks for the follow-up.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
----
-Note: This change was tested on RZN1 and R-Car M2 hardware. NULL is
-passed to devm_clk_get for backwards compatibility reasons with R-Car gen2
-devices which do not name the clock.
+On 20/03/19 18:14, Jacopo Mondi wrote:
+>>>> This is probably the wrong patch to use an example, as this one is for
+>>>> a multiplexed interface, where there is no need to go through an
+>>>> s_stream() for the two CSI-2 endpoints, but as you pointed out in our
+>>>> brief offline chat, the AFE->TX routing example for this very device
+>>>> is a good one: if we change the analogue source that is internally
+>>>> routed to the CSI-2 output of the adv748x, do we need to s_stream(1)
+>>>> the now routed entity and s_stream(0) on the not not-anymore-routed
+>>>> one?
+>>>>
+>>>> My gut feeling is that this is up to userspace, as it should know
+>>>> what are the requirements of the devices in the system, but this mean
+>>>> going through an s_stream(0)/s_stream(1) sequence on the video device,
+>>>> and that would interrupt the streaming for sure.
+>>>>
+>>>> At the same time, I don't feel too much at ease with the idea of
+>>>> s_routing calling s_stream on the entity' remote subdevices, as this
+>>>> would skip the link format validation that media_pipeline_start()
+>>>> performs.
+>>>
+>>> The link validation must be done in this case as well, it may not be
+>>> simply skipped.
+>>
+>> Agreed.
+>>
+>> The routing VS pipeline validation point is a very important one. The
+>> current proposed workflow is:
+>>
+>>  1. the pipeline is validated as a whole, having knowledge of all the
+>>     entities
+> 
+> let me specify this to avoid confusions:
+>      "all the entities -with an active route in the pipeline-"
+> 
+>>  2. streaming is started
+>>  3. s_routing is called on an entity (not on the pipeline!)
+>>
+>> Now the s_routing function in the entity driver is not in a good
+>> position to validate the candidate future pipeline as a whole.
+>>
+>> Naively I'd say there are two possible solutions:
+>>
+>>  1. the s_routing reaches the pipeline first, then the new pipeline is
+>>     computed and verified, and if verification succeeds it is applied
+>>  2. a partial pipeline verification mechanism is added, so the entity
+>>     receiving a s_routing request to e.g. change the sink pad can invoke
+>>     a verification on the part of pipeline that is about to be
+>>     activated, and if verification succeeds it is applied
+>>
+>> Somehow I suspect neither is trivial...
+> 
+> I would say it is not, but if you have such a device that does not
+> require going through a s_stream(0)/s_stream(1) cycle and all the
+> associated re-negotiation and validations, it seems to me nothing
+> prevents you from handling this in the driver implementation. Maybe it
+> won't look that great, but this seems to be quite a custom design that
+> requires all input sources to be linked to your sink pads, their
+> format validated all at the same time, power, stream activation and
+> internal mux configuration controlled by s_routing. Am I wrong or
+> nothing in this series would prevent your from doing this?
 
-DTS files for Renesas devices that use this driver have been checked to
-ensure they specify a clock and do not name that clock.  
----
- drivers/pci/controller/pci-rcar-gen2.c | 35 +++++++++++++++++++++++++++++++++-
- 1 file changed, 34 insertions(+), 1 deletion(-)
+You're right, nothing prevents me from doing a custom hack for my custom
+design. It's what I'm doing right now. My concern is whether the
+framework will evolve to allow modifying a running pipeline without
+custom hacks.
 
-diff --git a/drivers/pci/controller/pci-rcar-gen2.c b/drivers/pci/controller/pci-rcar-gen2.c
-index 326171c..4c94860 100644
---- a/drivers/pci/controller/pci-rcar-gen2.c
-+++ b/drivers/pci/controller/pci-rcar-gen2.c
-@@ -8,6 +8,7 @@
-  * Author: Valentine Barshak <valentine.barshak@cogentembedded.com>
-  */
- 
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-@@ -95,6 +96,7 @@
- 
- struct rcar_pci_priv {
- 	struct device *dev;
-+	struct clk *clk;
- 	void __iomem *reg;
- 	struct resource mem_res;
- 	struct resource *cfg_res;
-@@ -340,6 +342,8 @@ static int rcar_pci_probe(struct platform_device *pdev)
- 	void __iomem *reg;
- 	struct hw_pci hw;
- 	void *hw_private[1];
-+	struct clk *clk;
-+	int ret;
- 
- 	cfg_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg = devm_ioremap_resource(dev, cfg_res);
-@@ -376,7 +380,6 @@ static int rcar_pci_probe(struct platform_device *pdev)
- 
- 	if (dev->of_node) {
- 		struct resource busnr;
--		int ret;
- 
- 		ret = of_pci_parse_bus_range(dev->of_node, &busnr);
- 		if (ret < 0) {
-@@ -397,6 +400,14 @@ static int rcar_pci_probe(struct platform_device *pdev)
- 		priv->busnr = pdev->id;
- 	}
- 
-+	clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+	ret = clk_prepare_enable(clk);
-+	if (ret)
-+		return ret;
-+	priv->clk = clk;
-+
- 	hw_private[0] = priv;
- 	memset(&hw, 0, sizeof(hw));
- 	hw.nr_controllers = ARRAY_SIZE(hw_private);
-@@ -409,6 +420,27 @@ static int rcar_pci_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused pci_rcar_gen2_suspend_noirq(struct device *dev)
-+{
-+	struct rcar_pci_priv *priv = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(priv->clk);
-+	return 0;
-+}
-+
-+static int __maybe_unused pci_rcar_gen2_resume_noirq(struct device *dev)
-+{
-+	struct rcar_pci_priv *priv = dev_get_drvdata(dev);
-+
-+	clk_prepare_enable(priv->clk);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops pci_rcar_gen2_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pci_rcar_gen2_suspend_noirq,
-+				      pci_rcar_gen2_resume_noirq)
-+};
-+
- static const struct of_device_id rcar_pci_of_match[] = {
- 	{ .compatible = "renesas,pci-r8a7790", },
- 	{ .compatible = "renesas,pci-r8a7791", },
-@@ -422,6 +454,7 @@ static struct platform_driver rcar_pci_driver = {
- 		.name = "pci-rcar-gen2",
- 		.suppress_bind_attrs = true,
- 		.of_match_table = rcar_pci_of_match,
-+		.pm = &pci_rcar_gen2_pm_ops,
- 	},
- 	.probe = rcar_pci_probe,
- };
+> tl;dr: I would not make this something the framework should be
+> concerned about, as there's nothing preventing you from
+> implementing support for such a use case. But again, without a real
+> example we can only guess, and I might be overlooking the issue or
+> missing some relevant detail for sure.
+
+I'm a bit surprised in observing that my use case looks so strange,
+perhaps yours is so different that we don't quite understand each other.
+So below is an example of what I have in mind. Can you explain your use
+case too?
+
+
+Here's a use case. Consider a product that takes 3 camera inputs,
+selects one of them and produces a continuous video stream with the
+camera image and an OSD on top of it. The selected camera can be changed
+at any time (e.g. upon user selection).
+
+                  OSD FB ---.
+                            |
+            .--------.      V
+Camera 0 -->|        |   .-----.
+Camera 1 -->|  MUX   |-->| OSD |--> DMA --> /dev/video0
+Camera 2 -->|        |   `-----'
+            `--------'
+
+A prerequisite is obviously that each piece of hardware and software
+involved is able to cope with a sudden stream change. Perhaps not that
+common, but no rocket science.
+
+It looks to me that each of these pieces can be modeled as an entity and
+the s_routing API is a perfect fit for the mux block. Am I wrong?
+
+Thanks,
 -- 
-2.7.4
-
+Luca
