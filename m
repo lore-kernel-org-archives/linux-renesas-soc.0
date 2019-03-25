@@ -3,49 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2A2C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 08:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1FDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 08:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0190920879
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 08:14:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E1A420879
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 08:26:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbfCYION (ORCPT
+        id S1729920AbfCYI0q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Mar 2019 04:14:13 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:35089 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729874AbfCYION (ORCPT
+        Mon, 25 Mar 2019 04:26:46 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:46631 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbfCYI0p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Mar 2019 04:14:13 -0400
-Received: by mail-vs1-f66.google.com with SMTP id e1so4853867vsp.2;
-        Mon, 25 Mar 2019 01:14:12 -0700 (PDT)
+        Mon, 25 Mar 2019 04:26:45 -0400
+Received: by mail-vk1-f194.google.com with SMTP id x2so1743961vkx.13;
+        Mon, 25 Mar 2019 01:26:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5zqcd0Im10pWvz52VTtyD3jJpSVuSEo8x/E7QlBOXTo=;
-        b=QTRplgXVO4irr3CUTfYRJjvAS0r0olMcKGsMSzEJHzW9LCVYkLPAAAMDbxDDhdjgBk
-         Su5cCu5y2DDShoNeR4CY4IWs/LHYNrvYl4AfFWUqGhHhooGsAjF4hdnIkPQI9LELJJ0q
-         dWiefnGvoE1fysctHyUgu6tVHWUvo8z0rtvd9ijoR//FwGOA0i4OldFt24v2HmTXdjiJ
-         oy/Xrb2apVteBul8PxjUJdBgXnFRuyIlL0fDgJloKOMyhxIbyMMmh/08TvAfZEJmAdZO
-         UsSX8tDoaiiSx5eCVonmhmZCQN3N4fbF7Mk7TlzO5vFU/KHV15qPQpCQ+7zaHKrQNSeP
-         92RA==
-X-Gm-Message-State: APjAAAX7zaeEBufek0USNdirulVyZVb00JRiwu+G4pt1KVwkYswD5iKV
-        CdHmPtkwkWLyJzjZ/uMKfSVhZEf0c3agO1vDbes=
-X-Google-Smtp-Source: APXvYqz5m5jaqesix16W4MHeAoiP4kHyV4w6/PmivMHGA06sg/v3RmqYL7ypo33QklTifXXBzmGGpKQhCMOI+NOzW8c=
-X-Received: by 2002:a67:8588:: with SMTP id h130mr13365623vsd.11.1553501652362;
- Mon, 25 Mar 2019 01:14:12 -0700 (PDT)
+        bh=CF52NXG1CmchWvZhtvZcWfYgwWDdC9bm2MOfHmM3XTI=;
+        b=UsEFOgfMqw8YYDE2a5xRIZL37UDZZbpXFLQG4dlwNe9BaXWgWgEVVT2AbKFZ+kmpuM
+         hAw2+uPPanD8zDGOGzNAbLSPWTph/vfoEJOwQ1GB2p3lTVJvXrWPkS5pQl/KsDbvomdc
+         t+r1hIPrQGd8hhDqWiEub2XeGD7chZXteSj2eS9OqOuqd4O98Xj79AZfBqbp+r2dfeDi
+         LMPnz/2RlSOpz4io+aOkK0lgBsVEDPv0JSn3dngn4BU4uj0tlFJAAod650PuWltJCFou
+         F4jnwac2iDf26m/ihB0IqboNEkMZmDtu9j7LFszxXdqzQKGP2oHgglaM8iauu/dHOm1y
+         9oIQ==
+X-Gm-Message-State: APjAAAWX+VAJKJkp38eh1mjlj8eIUE6R9Imtf6tPjyDPO4xW7LewP/FR
+        uQ9MrXrIv3w3DxZSkpWfYZrmwFRddJGJ9JJFhxs=
+X-Google-Smtp-Source: APXvYqyVhftD2WIclxPvZsnWyhBMGDHnom2eoaNlMrpvpLwbi+6CcI1D8alw9eNbNQkIJzBwEUpPlP0DQz10bQn3s4k=
+X-Received: by 2002:a1f:95d0:: with SMTP id x199mr341311vkd.83.1553502404558;
+ Mon, 25 Mar 2019 01:26:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190323015359.7231-1-marek.vasut@gmail.com> <20190323015359.7231-3-marek.vasut@gmail.com>
-In-Reply-To: <20190323015359.7231-3-marek.vasut@gmail.com>
+References: <20190323015359.7231-1-marek.vasut@gmail.com> <20190323015359.7231-4-marek.vasut@gmail.com>
+In-Reply-To: <20190323015359.7231-4-marek.vasut@gmail.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 25 Mar 2019 09:14:00 +0100
-Message-ID: <CAMuHMdWUv4-T4n_7Cft83-HEUEz4oSFmeAP5k50=41vemmxsAg@mail.gmail.com>
-Subject: Re: [PATCH V3 3/6] PCI: rcar: Replace various variable types with
- unsigned ones for register values
+Date:   Mon, 25 Mar 2019 09:26:32 +0100
+Message-ID: <CAMuHMdUCWHR9zLz0Ru41860UhpUdjRvDBxDFoA5CdaAFrONJmQ@mail.gmail.com>
+Subject: Re: [PATCH V3 4/6] PCI: rcar: Replace (8 * n) with (n << 3)
 To:     Marek Vasut <marek.vasut@gmail.com>
 Cc:     linux-pci <linux-pci@vger.kernel.org>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -53,7 +52,8 @@ Cc:     linux-pci <linux-pci@vger.kernel.org>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -65,32 +65,21 @@ Hi Marek,
 On Sat, Mar 23, 2019 at 2:54 AM <marek.vasut@gmail.com> wrote:
 > From: Marek Vasut <marek.vasut+renesas@gmail.com>
 >
-> Replace various variable types with u32 or unsigned int type for
-> variables holding register values, since the registers are 32bit.
-> Note that rcar_pcie_msi_irq() still uses various variable types
-> because both find_first_bit() and __fls() require various variable
-> types as an argument.
+> Replace (8 * n) with (n << 3) to make bit shift operations consistent.
+> No functional change.
 >
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 
 Thanks for your patch!
 
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
+Where is the inconsistency? The driver consistently uses
+  1. multiplications for bit offset calculations,
+  2. shifts for bit field extraction or insertion.
 
-> @@ -190,7 +190,8 @@ static int rcar_pcie_config_access(struct rcar_pcie *pcie,
->                 unsigned char access_type, struct pci_bus *bus,
->                 unsigned int devfn, int where, u32 *data)
->  {
-> -       int dev, func, reg, index;
-> +       unsigned int dev, func, index;
-> +       u32 reg;
-
-"reg" is not a register value, but an (unsigned) register offset, so IMHO
-"unsigned int" is the right type.
-
-With that fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+While technically equivalent, I think your change makes the code harder
+to read: the values are multiplied by eight to convert from number of
+bytes to number of bits, so IMHO "BITS_PER_BYTE * n" would be more
+readable.
 
 Gr{oetje,eeting}s,
 
