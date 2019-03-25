@@ -2,115 +2,139 @@ Return-Path: <SRS0=tR/q=R4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEFEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 11:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7635DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 11:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05C27206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 11:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 390B42085A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 11:36:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="MOZVQpYm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uxmL0m6S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730721AbfCYLED (ORCPT
+        id S1729831AbfCYLgs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Mar 2019 07:04:03 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:36602 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730519AbfCYLED (ORCPT
+        Mon, 25 Mar 2019 07:36:48 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54830 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728563AbfCYLgr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Mar 2019 07:04:03 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 26D9B25BEFA;
-        Mon, 25 Mar 2019 22:04:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1553511841; bh=qvNu80PL+fShax4+VCaaFS8CuVFNI6R8i+EKOPuWxOU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MOZVQpYm85V7EPB5vjVQUERE5AqDOHbhOpJqBo7Y/AQTOyS4k8dk6YGHRbtlJuVsa
-         NyIHwCnw2+lO2Rba5J1I/P4OJVE8X55J3zX8tY9TZEHLEi87+B3Q4LksInmwy1PL2I
-         Kl7BAkBEQMSnZQuFCMCEImQ52oTyE4bkOUy7wdGw=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 67EAA940563; Mon, 25 Mar 2019 12:03:59 +0100 (CET)
-Date:   Mon, 25 Mar 2019 12:03:59 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mon, 25 Mar 2019 07:36:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f3so8545744wmj.4;
+        Mon, 25 Mar 2019 04:36:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZFoRSHzL1wo422cW5POlbNg9ry25LefJ/bduAAp8fWs=;
+        b=uxmL0m6SuXHalWPP+GtO2i+m+Hcxt1CZZI76BJSYwr6jFp/Mb90K7FJ/0k6Ag/+Wdm
+         n+TyZpUfjBUG1iUWUwaj2Qcq8RF4Rv1Y+nUoGWvuZwPDwo/hI9fACEWpZkxpELv9Uljs
+         aPLYCHhw2zzukv0hCkWm//lZ1rIj3Va2AobokWujTmYhQashwsK2Q1id4O7U23yswAxj
+         RePPgFsZa/fxJ7+kQCNqZGMk/E7vYWt+O7gQDcu/OOgAuIdUIWW9cNCCsXt0Nqt0iNBH
+         ZfZCLSe8MC2YX8+zethVvt1rvAG3GfvSllg/w3V+VPayMK9fagVKgrYnk9wgkCJy9WJY
+         4MaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZFoRSHzL1wo422cW5POlbNg9ry25LefJ/bduAAp8fWs=;
+        b=RODMfl0h7ypKCffmJJluZzKBCroBMhcE2N5frwJX7NlkPk+IPvJTNMIglLAtKmkM7w
+         CizoReZEsR/GwrMZDpGES/gHnn69PeHQvED1MiedAlFwca5wgXYJDV98HULGLfkIQ48K
+         kKRHeot8MSn2ew9lzi5CrEWIJW5d2+17hjNzH7cNuPOvKr0kXx7Fw5P+mDcQJYMowIWY
+         RlZK//cn5CMnwfDhaixeYRFMAXArRUO4kQS+ubZQV/D3bSsxOVLz6ag/sBo5osyU1YOq
+         trk9VHseFB1cI4BmtXL4fy7k9R0Jp+q/41QBRvHK2Ps1lfiMB6/H3y+HZNLy5mzi2LSa
+         uJQg==
+X-Gm-Message-State: APjAAAWJf1ObgIWrMPVLGkxooMh8ispZz5NO/DhBsIvKWs1q0UTeUF1p
+        0L0MiLwCjZt4+hwWjIMEfB6UwFQc
+X-Google-Smtp-Source: APXvYqxd6LQSDuyzi4n3mdvTZ8MxANY62cE8WX7VR5YbRtPPAYxWRd9rkB4K7Lt0S35wSmeHKjIm0g==
+X-Received: by 2002:a1c:c4c3:: with SMTP id u186mr1678139wmf.138.1553513805323;
+        Mon, 25 Mar 2019 04:36:45 -0700 (PDT)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id u19sm18101506wmc.7.2019.03.25.04.36.44
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 25 Mar 2019 04:36:44 -0700 (PDT)
+Subject: Re: [PATCH V3 2/6] PCI: rcar: Replace unsigned long with u32 in
+ register accessors
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Konstantin Kozhevnikov 
-        <Konstantin.Kozhevnikov@cogentembedded.com>
-Subject: Re: [PATCH/RFC 00/02] Remove undocumented IMR-LX4 device nodes
-Message-ID: <20190325110358.tpn6phh45dbyv52k@verge.net.au>
-References: <154807139502.25511.1919986589060151108.sendpatchset@octo>
- <CAMuHMdUe+Hjn7cJB19OpEt7=Stcj-=gvA1TxH-fEjDpTx1PG1g@mail.gmail.com>
- <CANqRtoTNk7MQuXmoEZ6aTbEbEEOg7t-B63USvjcxKs-7LWggSA@mail.gmail.com>
- <d9f6abfa-e480-cd85-a1a4-0c2ad219200f@cogentembedded.com>
- <20190128125806.s3kjyjejwmtk6zqj@verge.net.au>
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20190323015359.7231-1-marek.vasut@gmail.com>
+ <20190323015359.7231-2-marek.vasut@gmail.com>
+ <CAMuHMdVad84pxwQHP4kQTUxabKbNyD9nURpYkoJnZrQULN1sbA@mail.gmail.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <f01b1c52-6548-c7d1-4866-bbd62dd83543@gmail.com>
+Date:   Mon, 25 Mar 2019 12:24:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128125806.s3kjyjejwmtk6zqj@verge.net.au>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMuHMdVad84pxwQHP4kQTUxabKbNyD9nURpYkoJnZrQULN1sbA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 01:58:11PM +0100, Simon Horman wrote:
-> On Wed, Jan 23, 2019 at 09:19:59PM +0300, Sergei Shtylyov wrote:
-> > Hello!
-> > 
-> > On 01/21/2019 03:01 PM, Magnus Damm wrote:
-> > 
-> > >> On Mon, Jan 21, 2019 at 12:49 PM Magnus Damm <magnus.damm@gmail.com> wrote:
-> > >>> Remove undocumented IMR-LX4 device nodes
-> > >>>
-> > >>> [PATCH/RFC 01/02] arm64: dts: renesas: r8a7795: Remove IMR-LX4 device nodes
-> > >>> [PATCH/RFC 02/02] arm64: dts: renesas: r8a7796: Remove IMR-LX4 device nodes
-> > >>>
-> > >>> These patches take the easy way out and simply remove the undocumented
-> > >>> IMR-LX4 device nodes from the upstream tree. Good or bad, let me know!
-> > >>>
-> > >>> So perhaps this is a bit overly aggressive but since the DT bindings seem
-> > >>> undocumented and no driver exists in upstream my gut feeling says these DT
-> > >>> nodes were part of an upstreaming attempt that got suspended half-way through.
-> > >>>
-> > >>> In case DT binding documentation is in-flight and queued up somewhere
-> > >>> (ideally together with a driver) then feel free to ignore this series.
-> > >>>
-> > >>> Instead of removing nodes we could also document the DT bindings for the
-> > >>> IMR-LX4 devices. It would also make sense to add device nodes to other
-> > >>> more recent SoCs than just H3 and M3-W. But blindly adding more DT nodes
-> > >>> with a DT binding but without a driver seems a bit suboptimal compared to
-> > >>> testing against an actual driver.
-> > >>
-> > >> [PATCH v5] media: platform: Renesas IMR driver
-> > >> https://lore.kernel.org/linux-renesas-soc/20170309200818.786255823@cogentembedded.com/
-> > > 
-> > > Thanks, but that seems to be from 2017! =)
-> > 
-> >    I dropped the ball there, as I was tasked with upstreaming V3x support...
-> > The last thing done about the IMR driver was talking to Hans in Prague in
-> > 2017.  I'm planning to return to the driver after I'm done with the
-> > HyperFlash driver.
+On 3/25/19 9:07 AM, Geert Uytterhoeven wrote:
+> Hi Marek,
 > 
-> Hi Sergei,
+> On Sat, Mar 23, 2019 at 2:54 AM <marek.vasut@gmail.com> wrote:
+>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>
+>> Replace unsigned long with u32 in register accessor functions,
+>> since they access 32bit registers.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: Wolfram Sang <wsa@the-dreams.de>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> To: linux-pci@vger.kernel.org
+>> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> ---
+>> V2: Bundle this patch with other cleanups before resending
+>> V3: Add Wolfram's R-B
 > 
-> I appreciate that we are not always in control of our own priorities,
-> indeed I sympathise with that predicament. However, we shouldn't really
-> be in a situation where DT is making use of undocumented bindings.
+> Forgot mine?
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> I would like to ask for the bindings to be documented in the upstream
-> kernel in the near future. And if that is not possible I believe we
-> should consider temporarily removing their use in DT in the upstream kernel.
+>> --- a/drivers/pci/controller/pcie-rcar.c
+>> +++ b/drivers/pci/controller/pcie-rcar.c
+>> @@ -152,14 +152,12 @@ struct rcar_pcie {
+>>         struct                  rcar_msi msi;
+>>  };
+>>
+>> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+>> -                              unsigned long reg)
+>> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val, u32 reg)
+> 
+> reg is is not a register value, but a simple integer offset.
+> 
+>>  {
+>>         writel(val, pcie->base + reg);
+>>  }
+>>
+>> -static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
+>> -                                      unsigned long reg)
+>> +static u32 rcar_pci_read_reg(struct rcar_pcie *pcie, u32 reg)
+> 
+> Likewise.
 
-Hi Sergei,
+Sure
 
-about two months have passed since Magnus posted this series.
-Do you have a timeline to address the problems? If so I believe
-that the way forward should be to apply this series. The topic
-can always be readdressed in future.
+-- 
+Best regards,
+Marek Vasut
