@@ -2,137 +2,80 @@ Return-Path: <SRS0=tR/q=R4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70200C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 16:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62135C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 17:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4521E20863
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 16:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3823220823
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 17:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbfCYQys (ORCPT
+        id S1729322AbfCYRt0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Mar 2019 12:54:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51636 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725788AbfCYQys (ORCPT
+        Mon, 25 Mar 2019 13:49:26 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:33465 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726024AbfCYRt0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Mar 2019 12:54:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A81380D;
-        Mon, 25 Mar 2019 09:54:48 -0700 (PDT)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D29193F575;
-        Mon, 25 Mar 2019 09:54:45 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 16:54:39 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     marek.vasut@gmail.com
-Cc:     linux-pci@vger.kernel.org,
-        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V2] PCI: rcar: Add the initialization of PCIe link in
- resume_noirq
-Message-ID: <20190325165439.GA19135@e107981-ln.cambridge.arm.com>
-References: <20190217132441.15139-1-marek.vasut@gmail.com>
+        Mon, 25 Mar 2019 13:49:26 -0400
+Received: by mail-vk1-f193.google.com with SMTP id r189so2164280vkb.0;
+        Mon, 25 Mar 2019 10:49:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g8poUT5jrgrFbGbozVkeY1e12rLHI1zhr/ehr01/n9I=;
+        b=DWqjxtHQY6kOnCusXSOqu48dQPCzfdD0iMJ/Pf7zgyzI4klcH47FIk+SbAHqKmCXZh
+         gyO2tiJbRkDr3y5rbSFIk497Ud51Bp135HvmpYmyS8btmU3VKvgNk4H+TG3tZOGj45z1
+         DL8QgRCVry6mJxTaGk0ZFP57uzY5l3/j19OHOBp2k7KjdatEIYNKQQ4zjDFr9vT7a2R0
+         h3ubTfaaISt1F3Rf4Cskue2TsctRgiBCe7N4MQRwAFoIUMCzp9/jcOVDWO31K7RnINfN
+         /79RdENQ7uGx7QhCvEFWJoowm6o7qJcU5mcy1tY3vZFFJhWxwY1I+FGFkmCoIBnBcnH3
+         HiBA==
+X-Gm-Message-State: APjAAAUo6J8tyIoTEc5crWajt2up+TxtDfXZG1CWjPNAappEZmD4qKxz
+        NsCVy3wGHkerK/1InO0LlIU35h/f7ksPrKeiUok=
+X-Google-Smtp-Source: APXvYqwP5wQ5oCopjcjeIjjTTFYTralEFvYqCEKlrMuns1qZc9YKl12uS7KnXXcFf9q3kg6aYVL6AzJ+7xYRUjjEp+s=
+X-Received: by 2002:a1f:1284:: with SMTP id 126mr2443159vks.72.1553536165382;
+ Mon, 25 Mar 2019 10:49:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190217132441.15139-1-marek.vasut@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190325163556.22025-1-horms+renesas@verge.net.au> <20190325163556.22025-4-horms+renesas@verge.net.au>
+In-Reply-To: <20190325163556.22025-4-horms+renesas@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 25 Mar 2019 18:49:13 +0100
+Message-ID: <CAMuHMdWFZTq3TyTOROpYmVvso_6Buc1tha-PUfTs3cqNreZHow@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] clk: renesas: rcar-gen3: Remove CLK_TYPE_GEN3_Z2
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 02:24:41PM +0100, marek.vasut@gmail.com wrote:
-> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> 
-> Reestablish the PCIe link very early in the resume process in case it
-> went down to prevent PCI accesses from hanging the bus. Such accesses
-> can happen early in the PCI resume process, in the resume_noirq, thus
-> the link must be reestablished in the resume_noirq callback of the
-> driver.
-> 
-> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Use BIT() macro for (1 << n)
->     - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
->       add extra changes to this function anymore
->     - Make resume_noirq return early and clean up parenthesis therein
-> ---
->  drivers/pci/controller/pcie-rcar.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+On Mon, Mar 25, 2019 at 5:36 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+> After recent reworking of Z and Z2 clk handling
+> CLK_TYPE_GEN3_Z and CLK_TYPE_GEN3_Z2 have come to have precisely
+> the same meaning. Remove this redundancy by eliminating the latter.
+>
+> This is not expected to have any run-time effect.
+>
+> As suggested by Geert Uytterhoeven.
+>
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 
-I applied it to pci/controller-fixes but the kbot barfed at it so we
-need to rework it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
-Lorenzo
+Gr{oetje,eeting}s,
 
-> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> index c8febb009454..b8f8fb3bc640 100644
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -46,6 +46,7 @@
->  
->  /* Transfer control */
->  #define PCIETCTLR		0x02000
-> +#define  DL_DOWN		BIT(3)
->  #define  CFINIT			1
->  #define PCIETSTR		0x02004
->  #define  DATA_LINK_ACTIVE	1
-> @@ -1130,6 +1131,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	pcie = pci_host_bridge_priv(bridge);
->  
->  	pcie->dev = dev;
-> +	platform_set_drvdata(pdev, pcie);
->  
->  	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
->  	if (err)
-> @@ -1221,10 +1223,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	return err;
->  }
->  
-> +static int rcar_pcie_resume_noirq(struct device *dev)
-> +{
-> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-> +
-> +	if (rcar_pci_read_reg(pcie, PMSR) &&
-> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
-> +		return 0;
-> +
-> +	/* Re-establish the PCIe link */
-> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
-> +	return rcar_pcie_wait_for_dl(pcie);
-> +}
-> +
-> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
-> +	.resume_noirq = rcar_pcie_resume_noirq,
-> +};
-> +
->  static struct platform_driver rcar_pcie_driver = {
->  	.driver = {
->  		.name = "rcar-pcie",
->  		.of_match_table = rcar_pcie_of_match,
-> +		.pm = &rcar_pcie_pm_ops,
->  		.suppress_bind_attrs = true,
->  	},
->  	.probe = rcar_pcie_probe,
-> -- 
-> 2.19.2
-> 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
