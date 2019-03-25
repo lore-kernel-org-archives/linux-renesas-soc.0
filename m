@@ -6,74 +6,75 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CB3C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 13:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F72C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 13:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628842070D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 13:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 372E62070D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 13:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fJDMvsn7"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rW2PsJox"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725747AbfCYN1B (ORCPT
+        id S1725788AbfCYN1G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Mar 2019 09:27:01 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:32961 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbfCYN1A (ORCPT
+        Mon, 25 Mar 2019 09:27:06 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:39917 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbfCYN1G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Mar 2019 09:27:00 -0400
-Received: by mail-ua1-f66.google.com with SMTP id g8so2983028uaj.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Mar 2019 06:27:00 -0700 (PDT)
+        Mon, 25 Mar 2019 09:27:06 -0400
+Received: by mail-ua1-f65.google.com with SMTP id m11so2965628uad.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Mar 2019 06:27:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=18wFd/vr6Xt6YoqrAZO7DMzeJLi+2Zcl2o4TWCLxaAE=;
-        b=fJDMvsn7QWvt4ncEd0KlSkwzkbvX10PDQBBuVzymoa3j6StVVCw5rLEidzvaoCxZIi
-         plpdhGrUSEInijg3dXSigW9GTRyIYxPUD20YiD4wsPcwAVdVdkNthVR6N8u7/cLY7ONy
-         LYS/j7MKugIY4zdVkZmXKxbuslzV4+41GpwQY3BXVvxc497mMjV7UaZTcJ70jadEDInf
-         hQocumdL4AmIM1LUgflYQx8gJ0Jg96flJTYYRhY1APgTK6DedQOdjIuERLAbWbsp7Nu2
-         ibIyWgsiFyEE9z74QMzOQvC4biLiJ/P7uH+Rw40zbLaLT7XxlowIHo5qDjZ/ZfiA2kGw
-         B3zw==
+        bh=O6pQLZfUNHgUzWwnSv9gKmNK9WPnn5Ru2ze68uuU/DU=;
+        b=rW2PsJoxEX3Rygejrbo2gLc0QMVLUFXI4n+XrfS0h/mDlcRtyOzepqc6gxVA1D8Rj+
+         8FTKMPz+n/fLvXejDcI8ykUcoR7tvCXMMC4iQD6wQvl94t6lJGkT37dcZP4ViH9yJDfU
+         5yWh/MTdcUCXnjnWjW3KqpZIe7Qf4sfc9XPNrke40yEO2jaUDFLzS//EgZKAGFGdRICH
+         rekFgvYIRivOrTMHXJwcfxDLRDvsmiZVToz60IN/0d8n6Sl4Cm7aY4hnTtCUR/cJC7Sh
+         /2WtmQ+EJcuRem7ELO/+WB85aDjrY6ABEqA1Ej5OqXNjveCk7/TnxgzPUj0xbP4V0WU8
+         9Obg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=18wFd/vr6Xt6YoqrAZO7DMzeJLi+2Zcl2o4TWCLxaAE=;
-        b=p2WqiDV4+Uh7bwUw+NBEMZpOP/JW/SUpQT3/zLP2WB695fHsy8S892MMVwNzFPf6RH
-         Sx4Parqv4bKdEXzLkKV3lRevu6/ReiL92q6PnZ0Fu7LYXtjl7K3XFlclufEgOj4cV7E5
-         glOF1jiJbnTrUZZZD2CCJ9iAteKwyTFOU6mBaak4xTBDuuAL3KxIAEg9/+fMKEAl2VdK
-         QgTI5yocXdFrcG8eIiwpYU9BcfJ3fZ3P1PIMNfpxckKTh3/erZ6d6zP/ZuTGn31ECYQ5
-         47fkOKReqfo8qGiacLBsbnACd0M00x4zvgajkeoIgvZh0bXo4SZbBq0TuFbYDBSYXqxC
-         AiKg==
-X-Gm-Message-State: APjAAAXlz/2I5RlcoF6vMgfQEG2BImQydWAZ9gn8leWtqUlZUbcPuOCy
-        A4P1cIZ+Ecb1iTyozm0rBSg8kg9NF/NZshz9Gn2L8w==
-X-Google-Smtp-Source: APXvYqw/KrN4wqTePgb5FDRcCiVTLb/qnyxuRzxQLtnRjtLWg0txXiUjS2XPwgn9FbvUhi6Q+/1EhJP6LBwYfhk1gU0=
-X-Received: by 2002:ab0:2c0f:: with SMTP id l15mr13995623uar.100.1553520419581;
- Mon, 25 Mar 2019 06:26:59 -0700 (PDT)
+        bh=O6pQLZfUNHgUzWwnSv9gKmNK9WPnn5Ru2ze68uuU/DU=;
+        b=eJikOW6nEIL+eqeTY8P51KChlKJpwuem4Q6lP3XRibZEi3ZfLUgGHcGWF87mf9tHzN
+         YpSksQWfTN0f0dQYiVBq//r8J4xNJIOtiWEc8suEG7JHhOahmR6XaLVu0C7e4XzBW/Jc
+         fB9FIL0YzSdPrw49tzPPMI8pqbGff5oqi5mugtLxPHCbZiVQKrYRHHRlBdgDVhHzsmmP
+         oX4S3/yPpj8nOiUoylj+ElZKQ7vmp9T+SrkCylo1vvHYBEfbTD3/DxRLn3qWf+5P4ytt
+         lBsNvXJ8ZbTidfa7Tf8gs8zyhyKGhEsD487CvulC0KGldO1jDw3ybRI6r68c13e8uaUb
+         4Ltw==
+X-Gm-Message-State: APjAAAVWISCNnesx9qfmRggKPYPoHSrV1Te2mZVSajXc4f2F0m2ZY/sh
+        kFt6eOYtAN+k/5o6Xv+HRI4o9lbM3fjQq57hGQtKLA==
+X-Google-Smtp-Source: APXvYqxWYepJXjWd8fEln6m4SA1SjmH3Xx/pAr86yr9ZxboIcpAuJxLEGrcuUS5IgwKRyjYjvgCUCwYVjbbA9siTdDA=
+X-Received: by 2002:ab0:24d:: with SMTP id 71mr13985396uas.15.1553520425026;
+ Mon, 25 Mar 2019 06:27:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190314223130.31802-1-wsa+renesas@sang-engineering.com> <20190314223130.31802-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190314223130.31802-2-wsa+renesas@sang-engineering.com>
+References: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190319103417.28407-1-wsa+renesas@sang-engineering.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 25 Mar 2019 14:26:23 +0100
-Message-ID: <CAPDyKFpnHOP-q-w0NFQrgNiv8DmC0hyR8gYy0JXMRj8trFdZ=A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] mmc: tmio: introduce macro for max block size
+Date:   Mon, 25 Mar 2019 14:26:29 +0100
+Message-ID: <CAPDyKFrMqwSqyTUG=_qq9FkpZwx+iPNcBzS_o9HHEG2cuwcKGQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: set CBSY flag before probing TMIO host
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 14 Mar 2019 at 23:32, Wolfram Sang
+On Tue, 19 Mar 2019 at 11:34, Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
 >
-> We will need it later for other calculations.
+> The CBSY flag should be proper before calling tmio_mmc_host_probe()
+> because this function will already use write16 which checks this bit.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
@@ -84,36 +85,46 @@ Uffe
 
 
 > ---
->  drivers/mmc/host/tmio_mmc.h      | 2 ++
->  drivers/mmc/host/tmio_mmc_core.c | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-> index 2adb0d24360f..64e00d8f3a88 100644
-> --- a/drivers/mmc/host/tmio_mmc.h
-> +++ b/drivers/mmc/host/tmio_mmc.h
-> @@ -105,6 +105,8 @@
->                 TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT)
->  #define TMIO_MASK_IRQ     (TMIO_MASK_READOP | TMIO_MASK_WRITEOP | TMIO_MASK_CMD)
+> This patch depends on "[RFT] mmc: renesas_sdhi: limit block count to 16 bit for
+> old revisions" [1]. This one, however, is not backed by a bug report but just
+> found by code review. I wouldn't suggest stable here because the non-working
+> case is probably more on the academic side (unless I overlooked something).
+> Yet, the code becomes easier to read because it is the flow one would expect.
+> So, I post this already for discussion. We need to wait for the dependency
+> first, of course.
 >
-> +#define TMIO_MAX_BLK_SIZE 512
+> Tested on the SDR50 only SDHI of a Renesas Lager board (R-Car H2). No
+> regressions encountered: still probes fine and works at the same speed.
+>
+> [1] https://patchwork.kernel.org/patch/10859279/
+>
+>  drivers/mmc/host/renesas_sdhi_core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+> index 8742e27e4e8b..5885f3fb0b2f 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -779,14 +779,14 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+>         if (ver < SDHI_VER_GEN2_SDR104 && mmc_data->max_blk_count > U16_MAX)
+>                 mmc_data->max_blk_count = U16_MAX;
+>
+> -       ret = tmio_mmc_host_probe(host);
+> -       if (ret < 0)
+> -               goto edisclk;
+> -
+>         /* One Gen2 SDHI incarnation does NOT have a CBSY bit */
+>         if (ver == SDHI_VER_GEN2_SDR50)
+>                 mmc_data->flags &= ~TMIO_MMC_HAVE_CBSY;
+>
+> +       ret = tmio_mmc_host_probe(host);
+> +       if (ret < 0)
+> +               goto edisclk;
 > +
->  struct tmio_mmc_data;
->  struct tmio_mmc_host;
->
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-> index 595949f1f001..dfc15ce41191 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -1186,7 +1186,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
->         mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
->         mmc->caps2 |= pdata->capabilities2;
->         mmc->max_segs = pdata->max_segs ? : 32;
-> -       mmc->max_blk_size = 512;
-> +       mmc->max_blk_size = TMIO_MAX_BLK_SIZE;
->         mmc->max_blk_count = pdata->max_blk_count ? :
->                 (PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
->         mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+>         /* Enable tuning iff we have an SCC and a supported mode */
+>         if (of_data && of_data->scc_offset &&
+>             (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
 > --
 > 2.11.0
 >
