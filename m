@@ -2,117 +2,173 @@ Return-Path: <SRS0=tR/q=R4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414BFC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 19:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2D9C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 19:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0658420854
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 19:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1266D206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Mar 2019 19:43:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="PJ0j7D3I"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RY+gyM81"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbfCYTMO (ORCPT
+        id S1728912AbfCYTn2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Mar 2019 15:12:14 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44643 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728912AbfCYTMO (ORCPT
+        Mon, 25 Mar 2019 15:43:28 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33549 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729473AbfCYTn2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Mar 2019 15:12:14 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u9so6790674lfe.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Mar 2019 12:12:13 -0700 (PDT)
+        Mon, 25 Mar 2019 15:43:28 -0400
+Received: by mail-wr1-f66.google.com with SMTP id q1so11644609wrp.0;
+        Mon, 25 Mar 2019 12:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=nxeN+I2Sn1SQmMtA5hqUZfutWoWefVTjxJdbXNva3OE=;
-        b=PJ0j7D3IJUdSdydPjcL9OYtBRN7cuROwz4geph+U5FEqwskK5sGVGKGGepmTdMkUNi
-         PDirk/z0slq55/eCXOe9bb+0j//BuMcIPqOaM4cd5rrETvq1tDIDy9+/rhxMMHOIRa8P
-         uBMgJT3luUsZ+cM2tAloOCqyMgo/XGDeG1eczVO2cbUdk8d9o8yvJD5wX/OCSz3rlIKu
-         4tieTAOsD7QOYkw9WAKzCPcPdtgEheZyuvShqQWLq7OYJ89dx/PtotSiveihQf2WwoqZ
-         s8yXnw98e9VtsG+VXXNwydKZaSTHuVp28imhmhLaRdoei89cnVtrMviZfIfy1F5q6n5h
-         pTbQ==
+        bh=ny1t7OGqucBlo7Q0ki5k+tXOguaIOGyRCIFCjCLJcHM=;
+        b=RY+gyM81s2dCcrwljn7UAyRvn9IY1KIGuRoV3fp0xrGoAMTaQcJOZZqQTAsSiAdD0R
+         05UYZQYpX1S/oFrT23Y7zBy3bwzvi4YpApvheKI+q0vuSQW5MSpoSA5nNN2S27Eueui2
+         J0Uk3LmWjIl0doHmyFokX511+qlA43XgRk5aA4Uvo3xesKYdogoIKLLLWfDMpKh4zj0X
+         wpQbRiVzFAdzO0pTBUSZyt/l/PpaVM7TblBjMy5OKGJ0ZCjK5gdZWxKHt/ByQa+oKSkA
+         9XDt4LguSCPvYmHaoSLayctQHzlST0/90Eg1o4wTS+iMv4GdKkgl99J8uUVURYXlR2yX
+         cpvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=nxeN+I2Sn1SQmMtA5hqUZfutWoWefVTjxJdbXNva3OE=;
-        b=Lpe93RDxJ0jeHJT0O2H+ZNNmyl1tA7LPeiN18+o2MMCA/Mx96Ge9fxxqKXSqvK7iVF
-         ydTJzdZdASAPj5tXY+f2dAJUZuQtmfEfGgSzK6w6HpxjC7BLoNKkKAMHmbkAjzphzO2H
-         s0KR1qYKyGAu3ObFiAbSlxSF4+Kv54n0F0Lxbon9RBOahaOlnmbTRQ4dDe788nXrlfxQ
-         cJ+RJMUD6csc/JFVR2PUDT5ooiGfiDLoaXqHm0xYcb7elX20pFfSgjg+7ibL5Na53cXf
-         k9PmW57W85vKMdfi6l1Lr9oZQKc4ErQZo8OmCo5zeJuqQ3KhGpU5W0sMJwfqh9MTirt7
-         kjyw==
-X-Gm-Message-State: APjAAAVgluF/qWLQK1dLN7NAviq6JpIJLipZr7QhrfvN08FrxLMdMQeo
-        YEUH+2C1fqXFzXcOws55ZcMpDQ==
-X-Google-Smtp-Source: APXvYqyraT7vThji+MH6t3/LlK40iaDRDRiVDQv29arIypo8rbZePyPuLE5x9wUmiyUu73694XYarQ==
-X-Received: by 2002:a19:4283:: with SMTP id p125mr13421842lfa.3.1553541132291;
-        Mon, 25 Mar 2019 12:12:12 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.83.129])
-        by smtp.gmail.com with ESMTPSA id t81sm3467841lff.21.2019.03.25.12.12.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ny1t7OGqucBlo7Q0ki5k+tXOguaIOGyRCIFCjCLJcHM=;
+        b=Fdw3kat4XUKF9hlGgyLK7euZXdfWHkDCsMvxbxZpZKNr2eTyvX4QkYiFTxi9m1sw56
+         EFJXL8CP7Ap3kU3oK/xy5aOd5eyaJNcWzsGcxGwMjza3LBnKnPXm/ReR5H0qjXUYcDbU
+         uhbL5XeJxGLoI58iwdqSG2F3hbQzYaKuxQVw5tNYTjpCMjzz7kdxhsLIYBdB8jDSjMPE
+         qPiZnNL9WIbXqgt8MilqlfxhBgZKwYHGZ1RjK36QX5enJCeTTzNeszMLtCXToxhnlBv0
+         /VueDW1QsQODAJfPVbpBHqSbYd5dT9NEID3eQSJn/sH0noHyJIiIz4J0ONgZPHntyOY8
+         1HfQ==
+X-Gm-Message-State: APjAAAXrRqXeaTmhcg03F3c+5+KOtwSNJb1Wv4cGaWBV/8GQBKBxdbXG
+        71o4dMDDQ65oLVwwDv543yWPnLHW
+X-Google-Smtp-Source: APXvYqzL6FbXaICpvtT/j+rkPeV5MuBuGyMdTOrDldg9vQvloHEmBXbNBzVKSzuxuFJ8+hLVNzE9Ug==
+X-Received: by 2002:adf:b60a:: with SMTP id f10mr16269551wre.116.1553543005675;
+        Mon, 25 Mar 2019 12:43:25 -0700 (PDT)
+Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id b9sm24090631wmc.9.2019.03.25.12.43.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Mar 2019 12:12:11 -0700 (PDT)
-Subject: Re: [PATCH v8 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        Mon, 25 Mar 2019 12:43:24 -0700 (PDT)
+From:   marek.vasut@gmail.com
+To:     linux-pci@vger.kernel.org
+Cc:     Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        stable@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1548658158-5460-1-git-send-email-masonccyang@mxic.com.tw>
- <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
- <75c4642b-536e-f596-158d-387a63a5f6c5@cogentembedded.com>
- <OF7C1EB3FC.1ABCD2C2-ON482583C8.002D7A69-482583C8.002E899C@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <2fa6af66-de08-be37-7cdf-ccbf1e50ceb0@cogentembedded.com>
-Date:   Mon, 25 Mar 2019 22:12:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V3] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
+Date:   Mon, 25 Mar 2019 20:43:19 +0100
+Message-Id: <20190325194319.12850-1-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <OF7C1EB3FC.1ABCD2C2-ON482583C8.002D7A69-482583C8.002E899C@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
 
-On 03/25/2019 11:28 AM, masonccyang@mxic.com.tw wrote:
+Reestablish the PCIe link very early in the resume process in case it
+went down to prevent PCI accesses from hanging the bus. Such accesses
+can happen early in the PCI resume process, as early as the
+SUSPEND_RESUME_NOIRQ step, thus the link must be reestablished in the
+driver resume_noirq() callback.
 
->> > +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
->> > +               const struct spi_mem_op *op,
->> > +               u64 *offs, size_t *len)
->> > +{
->> > +   struct rpc_spi *rpc = spi_controller_get_devdata(spi->controller);
->>
->> > +   if (op->dummy.nbytes) {
->> > +      rpc->smenr |= RPC_SMENR_DME;
->> > +      rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
->>
->>    SMDMCR.DMCYC is in bits -- you forgot to multiply by 8.
-> 
-> ?
-> 
-> It's dummy cycles setting, i.e,. 0 is 1 cycle dummy and
+Fixes: e015f88c368d ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
+Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+[lorenzo.pieralisi@arm.com: reformatted commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: stable@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: - Use BIT() macro for (1 << n)
+    - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
+      add extra changes to this function anymore
+    - Make resume_noirq return early and clean up parenthesis therein
+V3: - Add missing PMSR register definition, dropped due to patch reshuffling
+---
+ drivers/pci/controller/pcie-rcar.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-   Yeah, I should've written "cycles", sorry about that.
+diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+index c8febb009454..6a4e435bd35f 100644
+--- a/drivers/pci/controller/pcie-rcar.c
++++ b/drivers/pci/controller/pcie-rcar.c
+@@ -46,6 +46,7 @@
+ 
+ /* Transfer control */
+ #define PCIETCTLR		0x02000
++#define  DL_DOWN		BIT(3)
+ #define  CFINIT			1
+ #define PCIETSTR		0x02004
+ #define  DATA_LINK_ACTIVE	1
+@@ -94,6 +95,7 @@
+ #define MACCTLR			0x011058
+ #define  SPEED_CHANGE		BIT(24)
+ #define  SCRAMBLE_DISABLE	BIT(27)
++#define PMSR			0x01105c
+ #define MACS2R			0x011078
+ #define MACCGSPSETR		0x011084
+ #define  SPCNGRSN		BIT(31)
+@@ -1130,6 +1132,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	pcie = pci_host_bridge_priv(bridge);
+ 
+ 	pcie->dev = dev;
++	platform_set_drvdata(pdev, pcie);
+ 
+ 	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
+ 	if (err)
+@@ -1221,10 +1224,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
++static int rcar_pcie_resume_noirq(struct device *dev)
++{
++	struct rcar_pcie *pcie = dev_get_drvdata(dev);
++
++	if (rcar_pci_read_reg(pcie, PMSR) &&
++	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
++		return 0;
++
++	/* Re-establish the PCIe link */
++	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
++	return rcar_pcie_wait_for_dl(pcie);
++}
++
++static const struct dev_pm_ops rcar_pcie_pm_ops = {
++	.resume_noirq = rcar_pcie_resume_noirq,
++};
++
+ static struct platform_driver rcar_pcie_driver = {
+ 	.driver = {
+ 		.name = "rcar-pcie",
+ 		.of_match_table = rcar_pcie_of_match,
++		.pm = &rcar_pcie_pm_ops,
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = rcar_pcie_probe,
+-- 
+2.20.1
 
-> max is 0x13 for 20 cycle dummy, depends on transfer bit size setting = 1, 4 or 8.
-> right ?
-
-   Probably...
-
-[...]
-
-MBR, Sergei
