@@ -2,114 +2,128 @@ Return-Path: <SRS0=hpus=R5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F64C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 16:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E42B3C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C270F2075D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 16:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B817620823
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:24:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="J/PzijmW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltHuqhiO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731548AbfCZQmW (ORCPT
+        id S1732206AbfCZRY3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Mar 2019 12:42:22 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33374 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728963AbfCZQmW (ORCPT
+        Tue, 26 Mar 2019 13:24:29 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40204 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbfCZRY3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Mar 2019 12:42:22 -0400
-Received: by mail-lf1-f68.google.com with SMTP id v14so9294925lfi.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Mar 2019 09:42:20 -0700 (PDT)
+        Tue, 26 Mar 2019 13:24:29 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z24so10600443wmi.5;
+        Tue, 26 Mar 2019 10:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fQqDceRSF84Gr4469DOlDRRMz3eSXeQewVj2Ep3MhjA=;
-        b=J/PzijmWjYNpaGS9kac+B5xSWUcXaQMJ5hTQhiRkfcXT7+UKa/tbKbtghtNyDgR1yy
-         ic+VvlbeTlhP9tY7zv676KUiLKd8fDG1NANhl33vRfcR2Niccl7nvW08Lg+Ltd64GNxD
-         FTWgsHhyWJG0QRt0ABaVf1ZJPxPpNKbWoH0Mt1+FtFYPt8GJc92FLx3MpRbXWyvt3cQF
-         5Y1QZuVf+sJD4EX0E83GS11vdwejFjrIDHNVHJttMs4gcmYeMLE8aPXxBhTxsxhEOXsf
-         9v6vYmjhnMfeymfooid4uepcavAXIDFHZucIuWpRQuPmzrpMG9gEMHqZ1VODSZ10XZiv
-         IOhw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gVLN1pxg7UWkSp/Tcnurq+jyhk0N/Fd73p7EHEMDktE=;
+        b=ltHuqhiOqZdrqskHj1/s6i0VconGX5YrSU5Kg84y25FYuyN5DQczh83kUQVyUQUwTV
+         Tph61+L/ZUjUJqCssgaHOZYgw4tGnTwJqIFivYL5+QFV8viPeWkKTtnqyunc8WgTZHM6
+         fN1BA4HPD5vUyCUz4V+Wl01gRHaP9xEV6Hcq+5C/P0nMEqRXO2GIGmQQDicZhIrxL+rE
+         lHxnM/cw9xnFtXkLpLq5nXOGcI06HqP0+6r2nGzi+7vXRdXFkN/79p8lC5MT3z13XgUJ
+         cQ1lMkNLr2oFGAfV8gHS67hdn1eOucMW1111EybMa2//H5O7XZLpjtUBjKC9utkUq4l7
+         PLBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=fQqDceRSF84Gr4469DOlDRRMz3eSXeQewVj2Ep3MhjA=;
-        b=Nu6ciGsTmbwjz/kl0uWY+T44sBfog5cWhtx9bueTu420lS4xbsX5hc6U2Ya7kNJP2V
-         zLKrB3+4z1Z+Mmv1RtZJ+UZ3Lv6fMOQaPMgOSVbODr5IG1lIi6Ipvar7pSvG+zFkKCpK
-         iBMgrfc0o0FvSO4wi4RcvZ84y6DbH3JEjmMUPtIGVYsG0vk6ecUHsoVADE6hvpYNNuDh
-         4U1mdXeynuTS6Tw/YAWNPPuFny6SdKQBE+QjmoebdYFJq4LhSzZNNmuQGgfeLRJFQA4c
-         yZV3XGJNKnZtp8e3B0SzDnWVdvhityRRTOaeOzTMP2wXRVklOF673FnGSpFzHAH2RdHU
-         2wqQ==
-X-Gm-Message-State: APjAAAWG+km3eH55Y+q0f7NhGslnnY56FwAuZYyF0CZz0b/NEIqfqlWR
-        tVLBXbmMRkTH+PhPKjn1MSyEag==
-X-Google-Smtp-Source: APXvYqwbLJxpJ63gBUx/ndvtbVp+N0jZ0XtQb5QpnCds9r5Yl2pSdOXIU0LI82XusfN2VrWTxDFTfQ==
-X-Received: by 2002:a19:f50f:: with SMTP id j15mr16826974lfb.126.1553618540256;
-        Tue, 26 Mar 2019 09:42:20 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.80.251])
-        by smtp.gmail.com with ESMTPSA id x20sm3749393lfc.94.2019.03.26.09.42.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Mar 2019 09:42:19 -0700 (PDT)
-Subject: Re: [PATCH v8 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gVLN1pxg7UWkSp/Tcnurq+jyhk0N/Fd73p7EHEMDktE=;
+        b=KglS8hdLfYNe+iFDZ+gBzZ027r2LeQwYcVywnogWjS/XtXpNSCQYrJkFYGiMoZrrMQ
+         A9+iU8Dv16tURUpcfdu+0yYsxs4aJN+JkmGoHNRghGvqjlm0JY/UnGlJYldI5NQtvzkt
+         4alKpPUXTImRFdp6wujoPO2e7LQCPgKqyokBcaN31jqFheEIvaWnsJRHXxtYhBWrtRTc
+         OnwdOIlqbp2PUVottUVb5DhfYBV77y/ipOA5oGu88SDEW1ZQWPgRbQ0/TqzPHfrLeQGB
+         1le+LgR1y6oD8Sx29MVCAOOohQrj64rRZ7Kn3U3iBCU7hvwQTVL6UL7zP288GsZaanjc
+         N8yQ==
+X-Gm-Message-State: APjAAAXwMrojIBPQKs5zMlRSdxEN71pz0A810uXAv9KDGazt/mY0UD2h
+        DCg/7xJbhvir4Z6vgHWuP9c=
+X-Google-Smtp-Source: APXvYqzK7s6WOqstHGLvVku/AUziJjRnSoyxz0oLpGqu14ls9rCRb4mnLvBXIGX9m87UJZAANlkiTQ==
+X-Received: by 2002:a1c:7706:: with SMTP id t6mr9953652wmi.141.1553621067096;
+        Tue, 26 Mar 2019 10:24:27 -0700 (PDT)
+Received: from [192.168.42.184] (cst-prg-31-181.cust.vodafone.cz. [46.135.31.181])
+        by smtp.gmail.com with ESMTPSA id r63sm31255253wmr.32.2019.03.26.10.24.25
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Mar 2019 10:24:26 -0700 (PDT)
+Subject: Re: [PATCH V4 1/6] PCI: rcar: Clean up remaining macros defining bits
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        zhengxunli@mxic.com.tw
-References: <1548658158-5460-1-git-send-email-masonccyang@mxic.com.tw>
- <1548658158-5460-2-git-send-email-masonccyang@mxic.com.tw>
- <75c4642b-536e-f596-158d-387a63a5f6c5@cogentembedded.com>
- <OF7C1EB3FC.1ABCD2C2-ON482583C8.002D7A69-482583C8.002E899C@mxic.com.tw>
- <2fa6af66-de08-be37-7cdf-ccbf1e50ceb0@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <86e65614-814a-e8b8-fdbe-4b7b033e4938@cogentembedded.com>
-Date:   Tue, 26 Mar 2019 19:42:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20190325114101.10198-1-marek.vasut@gmail.com>
+ <20190326130444.GA5466@e107981-ln.cambridge.arm.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <515ae430-edf3-b895-cd3a-5cdc830ecd35@gmail.com>
+Date:   Tue, 26 Mar 2019 17:48:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <2fa6af66-de08-be37-7cdf-ccbf1e50ceb0@cogentembedded.com>
+In-Reply-To: <20190326130444.GA5466@e107981-ln.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 03/25/2019 10:12 PM, Sergei Shtylyov wrote:
-
->>>> +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
->>>> +               const struct spi_mem_op *op,
->>>> +               u64 *offs, size_t *len)
->>>> +{
->>>> +   struct rpc_spi *rpc = spi_controller_get_devdata(spi->controller);
->>>
->>>> +   if (op->dummy.nbytes) {
->>>> +      rpc->smenr |= RPC_SMENR_DME;
->>>> +      rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
->>>
->>>    SMDMCR.DMCYC is in bits -- you forgot to multiply by 8.
+On 3/26/19 2:04 PM, Lorenzo Pieralisi wrote:
+> On Mon, Mar 25, 2019 at 12:40:56PM +0100, marek.vasut@gmail.com wrote:
+>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
 >>
->> ?
+>> Replace macros using constants with BIT()s instead, no functional change.
 >>
->> It's dummy cycles setting, i.e,. 0 is 1 cycle dummy and
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: Wolfram Sang <wsa@the-dreams.de>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> To: linux-pci@vger.kernel.org
+>> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> V2: Bundle this patch with other cleanups before resending
+>> V3: Add Wolfram's R-B
+>> V4: Add Geert's R-B
+>> ---
+>>  drivers/pci/controller/pcie-rcar.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
->    Yeah, I should've written "cycles", sorry about that.
+> Hi Marek,
 
-   I also should've mentioned that w/o this change the "read SFDP" command
-returns garbage and the flash doesn't work.
+Hi,
 
-[...]
+> I assume this series makes:
+> 
+> https://patchwork.ozlabs.org/patch/1053779/
+> https://patchwork.ozlabs.org/patch/1057454/
+> 
+> obsolete, please let me know and I will drop
+> them from the PCI patches queue, I will get to
+> this series later for v5.2.
+Yes, I decided to merge the two series together to make it easier to pick.
 
-MBR, Sergei
+Thanks
+
+-- 
+Best regards,
+Marek Vasut
