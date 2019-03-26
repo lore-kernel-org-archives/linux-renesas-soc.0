@@ -2,95 +2,117 @@ Return-Path: <SRS0=hpus=R5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6686C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 07:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3499CC10F05
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 08:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0ACB20870
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 07:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F305F2086C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 08:55:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="DMg2Qg2j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730569AbfCZH5R (ORCPT
+        id S1726285AbfCZIza (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Mar 2019 03:57:17 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:37114 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730362AbfCZH5R (ORCPT
+        Tue, 26 Mar 2019 04:55:30 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38859 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbfCZIz3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Mar 2019 03:57:17 -0400
-Received: by mail-ua1-f68.google.com with SMTP id x1so3972223uaj.4;
-        Tue, 26 Mar 2019 00:57:16 -0700 (PDT)
+        Tue, 26 Mar 2019 04:55:29 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p14so9383259ljg.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Mar 2019 01:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CSqLyd1qqQ5g5t6R5OSPrsrB0O28htgLwCty7rfYmg8=;
+        b=DMg2Qg2jP45Ru10WFKCRk4IkmDE4254N9ibTa9SQ9B/aDhRb1Y3VjGtkJ1NniP2lLH
+         cfyIp0yibf3EG1olrOPM10ynsHBp7lK44lJXo2rAjOrZgreXJGnRc4yiyjP01OewNx/z
+         aKhAczwifK4MO0//6GkRZjN1cvsRVIzw3OCDlhnwwMbp/itVF0FyGEE+4t3ExN/W4LmF
+         UyVLC9bjsnHWy3QJmoatHGLE64s/h1mIN8sLZp1REBYkUVJa2UnHtOm1u1eDWRtO7qHp
+         uYBQFyaoaZ9Aa63hwoLsJN0wVMYFX0cA+idSrPN0MSEmCYMsCazkjI0HTv/ziqiIQ1gg
+         DpOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gPRH9eDWNbvi0uKMMUGGF77TbpzvUgjjZNft9wRxCXk=;
-        b=IP71/0bM3SEuqcYcGntNLAyNC9/l2LvfCMxfLrdE1CzFENTtpFhhCiSJaitzqqXnXK
-         +6gGOKDRIX7QzdELPOJDL1UYSJX6ylSv157kLDzWtpZ9qo6k/13KthUVPrLY65Yeb9PU
-         H/13Zajxe5yGmpHFiKSyiNILZuwUfHBF17qITUkF3dcvfYiYJUDRcDSAmfi/FFooJ/JA
-         /jOdpWEcgnn3y0GJrR0b82lPZbu/+ymXrmzcw88lNsh3TT4TEGF86co+pLdd5010B/f0
-         vN19U/7gd2bBx6RG3xOPnU7EqBkX82m75as06ld9RZqkLDZdcPivpU59dAbhYag8OAnr
-         XLQg==
-X-Gm-Message-State: APjAAAX1il7UUlQ37MEdJbebaMYwSRmNjprrVtW2DGUE8xTltwj9rO/u
-        e5gCFQ3MvDZRmPy4bOzDvqiXBX6zsM4GJcKUkH0=
-X-Google-Smtp-Source: APXvYqwweeNSasS0o6gp8vd9G/wC1k9f8+TiBpQkU5Wf0UPgUmJPN5Qng3BHgyIR0H+PUGksJkp9jjN2X6CyPIP8NVE=
-X-Received: by 2002:ab0:6419:: with SMTP id x25mr12261359uao.86.1553587036431;
- Tue, 26 Mar 2019 00:57:16 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CSqLyd1qqQ5g5t6R5OSPrsrB0O28htgLwCty7rfYmg8=;
+        b=HWOEfv9CP/Qon7FTILHwYbV8pGe7Whk8z3IpiPnaGqmTXzwsg+VCngsKUwQrsPt0bg
+         PblZq4ofD9Fl6W6Hoji5y7bJxnw+6W1MzA+A3A/eAvT0I6pGb6G4fGXMkD9v39y/kSSP
+         ALu45VV7nLV1i7j6gfoRBrbJqVu1yyYw7i6yALHZVR0p8A5XrmtD6uUem32FLtJwg80e
+         ehmG+Vf3fvcVHULcoZk1DN/AU1Sl1t00WLoItqBtWQkvCAHe3tkzQwrxGgorAtZRk57w
+         9gj1jV0XZx0HkZHx3zKqO5PTbQkJDR7EcT4GiyG5jqjAanrZ0DiUCkwYwyjd9N7ss5WE
+         iVdQ==
+X-Gm-Message-State: APjAAAWjgs5Tkn1Ef6EZ3XWs5QzaxKFGu46XsRmy1l3XuDT1yUTfvmwE
+        H8WbXY/yZoFrBhMLs1NhokR7lGk3K5s=
+X-Google-Smtp-Source: APXvYqyrM0Ju/1HQuizG2QXMKnicgl9K3SVPu+Q8s/5EgKGFzvxDhDIbZOhcvFqc8J8rIJnOvzutSw==
+X-Received: by 2002:a2e:9010:: with SMTP id h16mr7067101ljg.16.1553590527703;
+        Tue, 26 Mar 2019 01:55:27 -0700 (PDT)
+Received: from [192.168.0.199] ([31.173.80.243])
+        by smtp.gmail.com with ESMTPSA id q5sm3908370lfm.16.2019.03.26.01.55.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 26 Mar 2019 01:55:26 -0700 (PDT)
+Subject: Re: [PATCH 4/5] media: rcar-dma: p_set can't be NULL
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1553551369.git.mchehab+samsung@kernel.org>
+ <bf78f23acf023d5bc9d31bab2918a3092dc821f0.1553551369.git.mchehab+samsung@kernel.org>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <bd186557-8027-a221-bdaf-1653659193a5@cogentembedded.com>
+Date:   Tue, 26 Mar 2019 11:55:08 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-References: <20190325194319.12850-1-marek.vasut@gmail.com>
-In-Reply-To: <20190325194319.12850-1-marek.vasut@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Mar 2019 08:57:04 +0100
-Message-ID: <CAMuHMdW3tQHUXuXGQT5xf-Cpbsqwiz0bo=sy4ZK-6O2uMHg7AQ@mail.gmail.com>
-Subject: Re: [PATCH V3] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        stable <stable@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <bf78f23acf023d5bc9d31bab2918a3092dc821f0.1553551369.git.mchehab+samsung@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 8:43 PM <marek.vasut@gmail.com> wrote:
-> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
->
-> Reestablish the PCIe link very early in the resume process in case it
-> went down to prevent PCI accesses from hanging the bus. Such accesses
-> can happen early in the PCI resume process, as early as the
-> SUSPEND_RESUME_NOIRQ step, thus the link must be reestablished in the
-> driver resume_noirq() callback.
->
-> Fixes: e015f88c368d ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
-> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> [lorenzo.pieralisi@arm.com: reformatted commit log]
-> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hello!
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    I'd have used instead (or at least mentioned) the driver's name (rcar-vin) 
+in the subject.
 
-Gr{oetje,eeting}s,
+On 26.03.2019 1:03, Mauro Carvalho Chehab wrote:
+> The only way for p_set to be NULL would be if vin_coef_set would be an
+> empty array.
+> 
+> On such case, the driver will OOPS, as it would try to de-reference a
+> NULL value. So, the check if p_set is not NULL doesn't make any sense.
+> 
+> Solves those two smatch warnings:
+> 
+> 	drivers/media/platform/rcar-vin/rcar-dma.c:489 rvin_set_coeff() warn: variable dereferenced before check 'p_set' (see line 484)
+> 	drivers/media/platform/rcar-vin/rcar-dma.c:494 rvin_set_coeff() error: we previously assumed 'p_set' could be null (see line 489)
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>   drivers/media/platform/rcar-vin/rcar-dma.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 2207a31d355e..91ab064404a1 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -486,7 +486,7 @@ static void rvin_set_coeff(struct rvin_dev *vin, unsigned short xs)
+>   	}
+>   
+>   	/* Use previous value if its XS value is closer */
+> -	if (p_prev_set && p_set &&
+> +	if (p_prev_set &&
+>   	    xs - p_prev_set->xs_value < p_set->xs_value - xs)
+>   		p_set = p_prev_set;
+>   
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+MBR, Sergei
