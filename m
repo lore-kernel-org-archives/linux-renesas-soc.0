@@ -6,178 +6,137 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8209FC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 11:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE32C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 12:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E7242070D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 11:41:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E896E2075E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 12:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbfCZLl5 (ORCPT
+        id S1726241AbfCZMbi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Mar 2019 07:41:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40102 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726175AbfCZLl5 (ORCPT
+        Tue, 26 Mar 2019 08:31:38 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:35502 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbfCZMbi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Mar 2019 07:41:57 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5BD96F0087E8B8AC2549;
-        Tue, 26 Mar 2019 19:41:55 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Tue, 26 Mar 2019
- 19:41:46 +0800
-From:   John Garry <john.garry@huawei.com>
+        Tue, 26 Mar 2019 08:31:38 -0400
+Received: by mail-vs1-f65.google.com with SMTP id e1so7497138vsp.2;
+        Tue, 26 Mar 2019 05:31:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Og7vdbY8Zlxbz+OaNnaaLhysuvTuuNBMaupoXTYuY/A=;
+        b=nkLxY5iylbXqm46nUJReFrUzIWPpwqB+PCO4bTB4ZZ9GDxcoiI94kPe4NRN3dCR4+A
+         Dywyvce54WqMbxp+k/zcA9QDYe9e1GAHze5q3CdiBDqQife6qpBFuVfni4KGEAvwOzTd
+         +MHjI2bUurZ3H9QeKjSIVponLb04CUkkSirHL2E8p8tswxuAJGRTGerLtXfdYB03rWsp
+         XpuIVzXIODNwRGlZe1Ge+bVB8Ac729nhchIuRiN/NtPOKZ/l9bD2sejmWW3t8oExqXeG
+         ywrM9WHSr6/q6lByd3RRDUxtfB/d0gLvTR1lyVrgSh+TVczyu0YD8KEkGSTXkgOqu2B7
+         Ot7g==
+X-Gm-Message-State: APjAAAVcuGS1BVCJ/KE9XkH/HtXu8DQCGZirJ4W7xhnszOllMgyNgcNf
+        FVhYbT30GvcEYRRuIjRHCmiu3gsCHRmbdhLhZ/Q=
+X-Google-Smtp-Source: APXvYqwQWvs/2oJLyylBiJvkDb0StrAwTuDYnxz0QPtx4fYTYIAonMQsBKYzQv5EJPPyOO7VaaUbwOYcOoI5ndWJ8ac=
+X-Received: by 2002:a67:f843:: with SMTP id b3mr18270214vsp.152.1553603496656;
+ Tue, 26 Mar 2019 05:31:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190207193653.18221-1-geert+renesas@glider.be> <9966a420-b081-a8ed-7f7b-20d97c9f7996@huawei.com>
+In-Reply-To: <9966a420-b081-a8ed-7f7b-20d97c9f7996@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 26 Mar 2019 13:31:23 +0100
+Message-ID: <CAMuHMdUTkPoCoL7jRz2MRRSjLVSrzE4kPx2uMKCKMGfmVayT6A@mail.gmail.com>
 Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
  devres release
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+To:     John Garry <john.garry@huawei.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Robin Murphy <robin.murphy@arm.com>,
-        "Christoph Hellwig" <hch@lst.de>,
+        Christoph Hellwig <hch@lst.de>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>
-References: <20190207193653.18221-1-geert+renesas@glider.be>
-CC:     <linux-renesas-soc@vger.kernel.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         chenxiang <chenxiang66@hisilicon.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>
-Message-ID: <9966a420-b081-a8ed-7f7b-20d97c9f7996@huawei.com>
-Date:   Tue, 26 Mar 2019 11:41:38 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190207193653.18221-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        Xiaofei Tan <tanxiaofei@huawei.com>,
+        Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi John,
+
+CC robh
+
+On Tue, Mar 26, 2019 at 12:42 PM John Garry <john.garry@huawei.com> wrote:
+> > Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
+> > Oops...
+> >
+> > After reversing the order of the calls to arch_teardown_dma_ops() and
+> > devres_release_all(), dma_map_ops is still valid, and the DMA memory is
+> > now released using __iommu_free_attrs():
+> >
+> >     +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
+> >     +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
+> >     +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
+> > ---
+> >  drivers/base/dd.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> > index 8ac10af17c0043a3..d62487d024559620 100644
+> > --- a/drivers/base/dd.c
+> > +++ b/drivers/base/dd.c
+> > @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+> >                       drv->remove(dev);
+> >
+> >               device_links_driver_cleanup(dev);
+> > -             arch_teardown_dma_ops(dev);
+> >
+> >               devres_release_all(dev);
+> > +             arch_teardown_dma_ops(dev);
+> >               dev->driver = NULL;
 >
-> Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
-> Oops...
+> Hi guys,
 >
-> After reversing the order of the calls to arch_teardown_dma_ops() and
-> devres_release_all(), dma_map_ops is still valid, and the DMA memory is
-> now released using __iommu_free_attrs():
+> Could there still be the same problem in the error path of really_probe():
 >
->     +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
->     +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
->     +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
-> ---
->  drivers/base/dd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> static int really_probe(struct device *dev, struct device_driver *drv)
+> {
 >
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 8ac10af17c0043a3..d62487d024559620 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
->  			drv->remove(dev);
+>         [...]
 >
->  		device_links_driver_cleanup(dev);
-> -		arch_teardown_dma_ops(dev);
+>         goto done;
 >
->  		devres_release_all(dev);
-> +		arch_teardown_dma_ops(dev);
->  		dev->driver = NULL;
-
-Hi guys,
-
-Could there still be the same problem in the error path of really_probe():
-
-static int really_probe(struct device *dev, struct device_driver *drv)
-{
-
-	[...]
-
-	goto done;
-
-probe_failed:
-	arch_teardown_dma_ops(dev);
-dma_failed:
-	if (dev->bus)
-		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
-				     BUS_NOTIFY_DRIVER_NOT_BOUND, dev);
-pinctrl_bind_failed:
-	device_links_no_driver(dev);
-	devres_release_all(dev);
-	driver_sysfs_remove(dev);
-	dev->driver = NULL;
-	dev_set_drvdata(dev, NULL);
-
-We seem to be able to call arch_teardown_dma_ops() prior to 
-devres_release_all() if we reach probe_failed label.
-
-We have seen this crash when our driver probe fails on a dev branch 
-based on v5.1-rc1:
-
-[   87.896707] hisi_sas_v3_hw 0000:74:02.0: Adding to iommu group 2
-[   87.909765] scsi host1: hisi_sas_v3_hw
-[   89.127958] hisi_sas_v3_hw 0000:74:02.0: evaluate _DSM failed
-[   89.134043] BUG: Bad page state in process swapper/0  pfn:313f5
-[   89.139965] page:ffff7e0000c4fd40 count:1 mapcount:0 
-mapping:0000000000000000 index:0x0
-[   89.147960] flags: 0xfffe00000001000(reserved)
-[   89.152398] raw: 0fffe00000001000 ffff7e0000c4fd48 ffff7e0000c4fd48 
-0000000000000000
-[   89.160130] raw: 0000000000000000 0000000000000000 00000001ffffffff 
-0000000000000000
-[   89.167861] page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-[   89.174290] bad because of flags: 0x1000(reserved)
-[   89.179070] Modules linked in:
-[   89.182117] CPU: 49 PID: 1 Comm: swapper/0 Not tainted 
-5.1.0-rc1-43081-g22d97fd-dirty #1433
-[   89.190453] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 UEFI 
-RC0 - V1.12.01 01/29/2019
-[   89.198876] Call trace:
-[   89.201316]  dump_backtrace+0x0/0x118
-[   89.204965]  show_stack+0x14/0x1c
-[   89.208272]  dump_stack+0xa4/0xc8
-[   89.211576]  bad_page+0xe4/0x13c
-[   89.214791]  free_pages_check_bad+0x4c/0xc0
-[   89.218961]  __free_pages_ok+0x30c/0x340
-[   89.222871]  __free_pages+0x30/0x44
-[   89.226347]  __dma_direct_free_pages+0x30/0x38
-[   89.230777]  dma_direct_free+0x24/0x38
-[   89.234513]  dma_free_attrs+0x9c/0xd8
-[   89.238161]  dmam_release+0x20/0x28
-[   89.241640]  release_nodes+0x17c/0x220
-[   89.245375]  devres_release_all+0x34/0x54
-[   89.249371]  really_probe+0xc4/0x2c8
-[   89.252933]  driver_probe_device+0x58/0xfc
-[   89.257016]  device_driver_attach+0x68/0x70
-[   89.261185]  __driver_attach+0x94/0xdc
-[   89.264921]  bus_for_each_dev+0x5c/0xb4
-[   89.268744]  driver_attach+0x20/0x28
-[   89.272306]  bus_add_driver+0x14c/0x200
-[   89.276128]  driver_register+0x6c/0x124
-[   89.279953]  __pci_register_driver+0x48/0x50
-[   89.284213]  sas_v3_pci_driver_init+0x20/0x28
-[   89.288557]  do_one_initcall+0x40/0x25c
-[   89.292381]  kernel_init_freeable+0x2b8/0x3c0
-[   89.296727]  kernel_init+0x10/0x100
-[   89.300202]  ret_from_fork+0x10/0x18
-[   89.303773] Disabling lock debugging due to kernel taint
-[   89.309076] BUG: Bad page state in process swapper/0  pfn:313f6
-[   89.314988] page:ffff7e0000c4fd80 count:1 mapcount:0 
-mapping:0000000000000000 index:0x0
-[   89.322983] flags: 0xfffe00000001000(reserved)
-[   89.327417] raw: 0fffe00000001000 ffff7e0000c4fd88 ffff7e0000c4fd88 
-0000000000000000
-[   89.335149] raw: 0000000000000000 0000000000000000 00000001ffffffff 
-0000000000000000
-
-Thanks,
-John
-
-
->  		dev_set_drvdata(dev, NULL);
->  		if (dev->pm_domain && dev->pm_domain->dismiss)
+> probe_failed:
+>         arch_teardown_dma_ops(dev);
+> dma_failed:
+>         if (dev->bus)
+>                 blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+>                                      BUS_NOTIFY_DRIVER_NOT_BOUND, dev);
+> pinctrl_bind_failed:
+>         device_links_no_driver(dev);
+>         devres_release_all(dev);
+>         driver_sysfs_remove(dev);
+>         dev->driver = NULL;
+>         dev_set_drvdata(dev, NULL);
 >
+> We seem to be able to call arch_teardown_dma_ops() prior to
+> devres_release_all() if we reach probe_failed label.
 
+Yes, this looks like another instance of the same problem.
+And test_remove doesn't expose this, as it doesn't exercise the full cycle.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
