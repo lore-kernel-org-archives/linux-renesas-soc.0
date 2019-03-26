@@ -2,128 +2,146 @@ Return-Path: <SRS0=hpus=R5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E42B3C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB9FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B817620823
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:24:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltHuqhiO"
+	by mail.kernel.org (Postfix) with ESMTP id DAEA52082F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732206AbfCZRY3 (ORCPT
+        id S1726258AbfCZRhF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Mar 2019 13:24:29 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40204 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbfCZRY3 (ORCPT
+        Tue, 26 Mar 2019 13:37:05 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5754 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726207AbfCZRhF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Mar 2019 13:24:29 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z24so10600443wmi.5;
-        Tue, 26 Mar 2019 10:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gVLN1pxg7UWkSp/Tcnurq+jyhk0N/Fd73p7EHEMDktE=;
-        b=ltHuqhiOqZdrqskHj1/s6i0VconGX5YrSU5Kg84y25FYuyN5DQczh83kUQVyUQUwTV
-         Tph61+L/ZUjUJqCssgaHOZYgw4tGnTwJqIFivYL5+QFV8viPeWkKTtnqyunc8WgTZHM6
-         fN1BA4HPD5vUyCUz4V+Wl01gRHaP9xEV6Hcq+5C/P0nMEqRXO2GIGmQQDicZhIrxL+rE
-         lHxnM/cw9xnFtXkLpLq5nXOGcI06HqP0+6r2nGzi+7vXRdXFkN/79p8lC5MT3z13XgUJ
-         cQ1lMkNLr2oFGAfV8gHS67hdn1eOucMW1111EybMa2//H5O7XZLpjtUBjKC9utkUq4l7
-         PLBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gVLN1pxg7UWkSp/Tcnurq+jyhk0N/Fd73p7EHEMDktE=;
-        b=KglS8hdLfYNe+iFDZ+gBzZ027r2LeQwYcVywnogWjS/XtXpNSCQYrJkFYGiMoZrrMQ
-         A9+iU8Dv16tURUpcfdu+0yYsxs4aJN+JkmGoHNRghGvqjlm0JY/UnGlJYldI5NQtvzkt
-         4alKpPUXTImRFdp6wujoPO2e7LQCPgKqyokBcaN31jqFheEIvaWnsJRHXxtYhBWrtRTc
-         OnwdOIlqbp2PUVottUVb5DhfYBV77y/ipOA5oGu88SDEW1ZQWPgRbQ0/TqzPHfrLeQGB
-         1le+LgR1y6oD8Sx29MVCAOOohQrj64rRZ7Kn3U3iBCU7hvwQTVL6UL7zP288GsZaanjc
-         N8yQ==
-X-Gm-Message-State: APjAAAXwMrojIBPQKs5zMlRSdxEN71pz0A810uXAv9KDGazt/mY0UD2h
-        DCg/7xJbhvir4Z6vgHWuP9c=
-X-Google-Smtp-Source: APXvYqzK7s6WOqstHGLvVku/AUziJjRnSoyxz0oLpGqu14ls9rCRb4mnLvBXIGX9m87UJZAANlkiTQ==
-X-Received: by 2002:a1c:7706:: with SMTP id t6mr9953652wmi.141.1553621067096;
-        Tue, 26 Mar 2019 10:24:27 -0700 (PDT)
-Received: from [192.168.42.184] (cst-prg-31-181.cust.vodafone.cz. [46.135.31.181])
-        by smtp.gmail.com with ESMTPSA id r63sm31255253wmr.32.2019.03.26.10.24.25
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 26 Mar 2019 10:24:26 -0700 (PDT)
-Subject: Re: [PATCH V4 1/6] PCI: rcar: Clean up remaining macros defining bits
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20190325114101.10198-1-marek.vasut@gmail.com>
- <20190326130444.GA5466@e107981-ln.cambridge.arm.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <515ae430-edf3-b895-cd3a-5cdc830ecd35@gmail.com>
-Date:   Tue, 26 Mar 2019 17:48:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Tue, 26 Mar 2019 13:37:05 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6DBC2A5CFFC6013A8D75;
+        Wed, 27 Mar 2019 01:37:01 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Mar 2019
+ 01:36:50 +0800
+Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
+ devres release
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20190207193653.18221-1-geert+renesas@glider.be>
+ <9966a420-b081-a8ed-7f7b-20d97c9f7996@huawei.com>
+ <CAMuHMdUTkPoCoL7jRz2MRRSjLVSrzE4kPx2uMKCKMGfmVayT6A@mail.gmail.com>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Christoph Hellwig" <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Joerg Roedel" <joro@8bytes.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        chenxiang <chenxiang66@hisilicon.com>,
+        Xiaofei Tan <tanxiaofei@huawei.com>,
+        Rob Herring <robh@kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <28a3473d-7f80-8b2e-5560-5890359d4b4c@huawei.com>
+Date:   Tue, 26 Mar 2019 17:36:42 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190326130444.GA5466@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <CAMuHMdUTkPoCoL7jRz2MRRSjLVSrzE4kPx2uMKCKMGfmVayT6A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 3/26/19 2:04 PM, Lorenzo Pieralisi wrote:
-> On Mon, Mar 25, 2019 at 12:40:56PM +0100, marek.vasut@gmail.com wrote:
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+On 26/03/2019 12:31, Geert Uytterhoeven wrote:
+> Hi John,
+>
+> CC robh
+>
+> On Tue, Mar 26, 2019 at 12:42 PM John Garry <john.garry@huawei.com> wrote:
+>>> Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
+>>> Oops...
+>>>
+>>> After reversing the order of the calls to arch_teardown_dma_ops() and
+>>> devres_release_all(), dma_map_ops is still valid, and the DMA memory is
+>>> now released using __iommu_free_attrs():
+>>>
+>>>     +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
+>>>     +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
+>>>     +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
+>>> ---
+>>>  drivers/base/dd.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+>>> index 8ac10af17c0043a3..d62487d024559620 100644
+>>> --- a/drivers/base/dd.c
+>>> +++ b/drivers/base/dd.c
+>>> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+>>>                       drv->remove(dev);
+>>>
+>>>               device_links_driver_cleanup(dev);
+>>> -             arch_teardown_dma_ops(dev);
+>>>
+>>>               devres_release_all(dev);
+>>> +             arch_teardown_dma_ops(dev);
+>>>               dev->driver = NULL;
 >>
->> Replace macros using constants with BIT()s instead, no functional change.
+>> Hi guys,
 >>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Phil Edworthy <phil.edworthy@renesas.com>
->> Cc: Simon Horman <horms+renesas@verge.net.au>
->> Cc: Wolfram Sang <wsa@the-dreams.de>
->> Cc: linux-renesas-soc@vger.kernel.org
->> To: linux-pci@vger.kernel.org
->> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> V2: Bundle this patch with other cleanups before resending
->> V3: Add Wolfram's R-B
->> V4: Add Geert's R-B
->> ---
->>  drivers/pci/controller/pcie-rcar.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> Hi Marek,
+>> Could there still be the same problem in the error path of really_probe():
+>>
+>> static int really_probe(struct device *dev, struct device_driver *drv)
+>> {
+>>
+>>         [...]
+>>
+>>         goto done;
+>>
+>> probe_failed:
+>>         arch_teardown_dma_ops(dev);
+>> dma_failed:
+>>         if (dev->bus)
+>>                 blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
+>>                                      BUS_NOTIFY_DRIVER_NOT_BOUND, dev);
+>> pinctrl_bind_failed:
+>>         device_links_no_driver(dev);
+>>         devres_release_all(dev);
+>>         driver_sysfs_remove(dev);
+>>         dev->driver = NULL;
+>>         dev_set_drvdata(dev, NULL);
+>>
+>> We seem to be able to call arch_teardown_dma_ops() prior to
+>> devres_release_all() if we reach probe_failed label.
+>
+> Yes, this looks like another instance of the same problem.
+> And test_remove doesn't expose this, as it doesn't exercise the full cycle.
+>
 
-Hi,
+Hi Geert,
 
-> I assume this series makes:
-> 
-> https://patchwork.ozlabs.org/patch/1053779/
-> https://patchwork.ozlabs.org/patch/1057454/
-> 
-> obsolete, please let me know and I will drop
-> them from the PCI patches queue, I will get to
-> this series later for v5.2.
-Yes, I decided to merge the two series together to make it easier to pick.
+OK, thanks.
 
-Thanks
+There is another devres_release_all() call in device_release(). Not sure 
+if there is another potential problem there also...
 
--- 
-Best regards,
-Marek Vasut
+As for this issue, I'll look to fix unless anyone else doing it.
+
+Cheers,
+John
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+
+
