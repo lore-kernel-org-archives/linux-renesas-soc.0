@@ -2,146 +2,109 @@ Return-Path: <SRS0=hpus=R5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB9FC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0455C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 20:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAEA52082F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 17:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A80032087C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 20:49:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbfCZRhF (ORCPT
+        id S1732742AbfCZUte (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Mar 2019 13:37:05 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5754 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726207AbfCZRhF (ORCPT
+        Tue, 26 Mar 2019 16:49:34 -0400
+Received: from stcim.de ([78.46.90.227]:36266 "EHLO stcim.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731736AbfCZUte (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Mar 2019 13:37:05 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6DBC2A5CFFC6013A8D75;
-        Wed, 27 Mar 2019 01:37:01 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Wed, 27 Mar 2019
- 01:36:50 +0800
-Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
- devres release
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20190207193653.18221-1-geert+renesas@glider.be>
- <9966a420-b081-a8ed-7f7b-20d97c9f7996@huawei.com>
- <CAMuHMdUTkPoCoL7jRz2MRRSjLVSrzE4kPx2uMKCKMGfmVayT6A@mail.gmail.com>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Christoph Hellwig" <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        chenxiang <chenxiang66@hisilicon.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        Rob Herring <robh@kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <28a3473d-7f80-8b2e-5560-5890359d4b4c@huawei.com>
-Date:   Tue, 26 Mar 2019 17:36:42 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 26 Mar 2019 16:49:34 -0400
+X-Greylist: delayed 1740 seconds by postgrey-1.27 at vger.kernel.org; Tue, 26 Mar 2019 16:49:32 EDT
+Received: from xdsl-89-0-91-101.nc.de ([89.0.91.101] helo=porty)
+        by stcim with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <contact@stefanchrist.eu>)
+        id 1h8sYH-0005lq-Qn; Tue, 26 Mar 2019 21:20:06 +0100
+Date:   Tue, 26 Mar 2019 21:20:05 +0100
+From:   Stefan Lengfeld <contact@stefanchrist.eu>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Keerthy <j-keerthy@ti.com>, Peter Rosin <peda@axentia.se>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [RFC PATCH v2 6/7] i2c: tegra-bpmp: convert to use new atomic
+ callbacks
+Message-ID: <20190326202005.s3ktyth42lfjirx2@porty>
+References: <20190302134735.4393-1-wsa+renesas@sang-engineering.com>
+ <20190302134735.4393-7-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUTkPoCoL7jRz2MRRSjLVSrzE4kPx2uMKCKMGfmVayT6A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190302134735.4393-7-wsa+renesas@sang-engineering.com>
+X-PGP-Key: https://stefanchrist.eu/personal/Stefan_Lengfeld_0xE44A23B289092311.asc
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 26/03/2019 12:31, Geert Uytterhoeven wrote:
-> Hi John,
->
-> CC robh
->
-> On Tue, Mar 26, 2019 at 12:42 PM John Garry <john.garry@huawei.com> wrote:
->>> Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
->>> Oops...
->>>
->>> After reversing the order of the calls to arch_teardown_dma_ops() and
->>> devres_release_all(), dma_map_ops is still valid, and the DMA memory is
->>> now released using __iommu_free_attrs():
->>>
->>>     +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
->>>     +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
->>>     +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
->>> ---
->>>  drivers/base/dd.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->>> index 8ac10af17c0043a3..d62487d024559620 100644
->>> --- a/drivers/base/dd.c
->>> +++ b/drivers/base/dd.c
->>> @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
->>>                       drv->remove(dev);
->>>
->>>               device_links_driver_cleanup(dev);
->>> -             arch_teardown_dma_ops(dev);
->>>
->>>               devres_release_all(dev);
->>> +             arch_teardown_dma_ops(dev);
->>>               dev->driver = NULL;
->>
->> Hi guys,
->>
->> Could there still be the same problem in the error path of really_probe():
->>
->> static int really_probe(struct device *dev, struct device_driver *drv)
->> {
->>
->>         [...]
->>
->>         goto done;
->>
->> probe_failed:
->>         arch_teardown_dma_ops(dev);
->> dma_failed:
->>         if (dev->bus)
->>                 blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->>                                      BUS_NOTIFY_DRIVER_NOT_BOUND, dev);
->> pinctrl_bind_failed:
->>         device_links_no_driver(dev);
->>         devres_release_all(dev);
->>         driver_sysfs_remove(dev);
->>         dev->driver = NULL;
->>         dev_set_drvdata(dev, NULL);
->>
->> We seem to be able to call arch_teardown_dma_ops() prior to
->> devres_release_all() if we reach probe_failed label.
->
-> Yes, this looks like another instance of the same problem.
-> And test_remove doesn't expose this, as it doesn't exercise the full cycle.
->
+Hi Wolfram,
 
-Hi Geert,
+On Sat, Mar 02, 2019 at 02:47:34PM +0100, Wolfram Sang wrote:
+> The driver did handle this internally, convert it to use the new
+> callbacks.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra-bpmp.c | 27 ++++++++++++++++++++++-----
+>  1 file changed, 22 insertions(+), 5 deletions(-)
+> 
 
-OK, thanks.
+[...]
 
-There is another devres_release_all() call in device_release(). Not sure 
-if there is another potential problem there also...
+> @@ -268,6 +270,20 @@ static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
+>  	return num;
+>  }
+>  
+> +static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
+> +			       struct i2c_msg *msgs, int num)
+> +
+> +{
+> +	return tegra_bpmp_i2c_xfer_common(adapter, msgs, num, false);
+> +}
+> +
+> +static int tegra_bpmp_i2c_xfer_atomic(struct i2c_adapter *adapter,
+> +				      struct i2c_msg *msgs, int num)
+> +
 
-As for this issue, I'll look to fix unless anyone else doing it.
+Here and between the function prototype of 'tegra_bpmp_i2c_xfer' and
+it's function body is a unneeded blank line. Nitpick.
 
-Cheers,
-John
+Kind regards,
+    Stefan
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-
-
+> +{
+> +	return tegra_bpmp_i2c_xfer_common(adapter, msgs, num, true);
+> +}
+> +
+>  static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
+>  {
+>  	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR |
+> @@ -276,6 +292,7 @@ static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
+>  
+>  static const struct i2c_algorithm tegra_bpmp_i2c_algo = {
+>  	.master_xfer = tegra_bpmp_i2c_xfer,
+> +	.master_xfer_atomic = tegra_bpmp_i2c_xfer_atomic,
+>  	.functionality = tegra_bpmp_i2c_func,
+>  };
+>  
+> -- 
+> 2.11.0
+> 
+> 
