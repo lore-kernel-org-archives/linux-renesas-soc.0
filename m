@@ -2,141 +2,113 @@ Return-Path: <SRS0=hpus=R5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE32C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 12:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E33FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 13:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E896E2075E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 12:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0671E2070B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Mar 2019 13:04:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbfCZMbi (ORCPT
+        id S1726278AbfCZNEw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Mar 2019 08:31:38 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:35502 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbfCZMbi (ORCPT
+        Tue, 26 Mar 2019 09:04:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36070 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbfCZNEw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Mar 2019 08:31:38 -0400
-Received: by mail-vs1-f65.google.com with SMTP id e1so7497138vsp.2;
-        Tue, 26 Mar 2019 05:31:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Og7vdbY8Zlxbz+OaNnaaLhysuvTuuNBMaupoXTYuY/A=;
-        b=nkLxY5iylbXqm46nUJReFrUzIWPpwqB+PCO4bTB4ZZ9GDxcoiI94kPe4NRN3dCR4+A
-         Dywyvce54WqMbxp+k/zcA9QDYe9e1GAHze5q3CdiBDqQife6qpBFuVfni4KGEAvwOzTd
-         +MHjI2bUurZ3H9QeKjSIVponLb04CUkkSirHL2E8p8tswxuAJGRTGerLtXfdYB03rWsp
-         XpuIVzXIODNwRGlZe1Ge+bVB8Ac729nhchIuRiN/NtPOKZ/l9bD2sejmWW3t8oExqXeG
-         ywrM9WHSr6/q6lByd3RRDUxtfB/d0gLvTR1lyVrgSh+TVczyu0YD8KEkGSTXkgOqu2B7
-         Ot7g==
-X-Gm-Message-State: APjAAAVcuGS1BVCJ/KE9XkH/HtXu8DQCGZirJ4W7xhnszOllMgyNgcNf
-        FVhYbT30GvcEYRRuIjRHCmiu3gsCHRmbdhLhZ/Q=
-X-Google-Smtp-Source: APXvYqwQWvs/2oJLyylBiJvkDb0StrAwTuDYnxz0QPtx4fYTYIAonMQsBKYzQv5EJPPyOO7VaaUbwOYcOoI5ndWJ8ac=
-X-Received: by 2002:a67:f843:: with SMTP id b3mr18270214vsp.152.1553603496656;
- Tue, 26 Mar 2019 05:31:36 -0700 (PDT)
+        Tue, 26 Mar 2019 09:04:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E27041596;
+        Tue, 26 Mar 2019 06:04:51 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 43C4F3F59C;
+        Tue, 26 Mar 2019 06:04:50 -0700 (PDT)
+Date:   Tue, 26 Mar 2019 13:04:45 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH V4 1/6] PCI: rcar: Clean up remaining macros defining bits
+Message-ID: <20190326130444.GA5466@e107981-ln.cambridge.arm.com>
+References: <20190325114101.10198-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-References: <20190207193653.18221-1-geert+renesas@glider.be> <9966a420-b081-a8ed-7f7b-20d97c9f7996@huawei.com>
-In-Reply-To: <9966a420-b081-a8ed-7f7b-20d97c9f7996@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Mar 2019 13:31:23 +0100
-Message-ID: <CAMuHMdUTkPoCoL7jRz2MRRSjLVSrzE4kPx2uMKCKMGfmVayT6A@mail.gmail.com>
-Subject: Re: [PATCH/RFC] driver core: Postpone DMA tear-down until after
- devres release
-To:     John Garry <john.garry@huawei.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        chenxiang <chenxiang66@hisilicon.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190325114101.10198-1-marek.vasut@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi John,
+On Mon, Mar 25, 2019 at 12:40:56PM +0100, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Replace macros using constants with BIT()s instead, no functional change.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> V2: Bundle this patch with other cleanups before resending
+> V3: Add Wolfram's R-B
+> V4: Add Geert's R-B
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-CC robh
+Hi Marek,
 
-On Tue, Mar 26, 2019 at 12:42 PM John Garry <john.garry@huawei.com> wrote:
-> > Memory is incorrectly freed using the direct ops, as dma_map_ops = NULL.
-> > Oops...
-> >
-> > After reversing the order of the calls to arch_teardown_dma_ops() and
-> > devres_release_all(), dma_map_ops is still valid, and the DMA memory is
-> > now released using __iommu_free_attrs():
-> >
-> >     +sata_rcar ee300000.sata: dmam_release:32: size 2048 vaddr ffffff8012145000 dma_handle 0x0x00000000fffff000 attrs 0x0
-> >     +sata_rcar ee300000.sata: dma_free_attrs:289: size 2048, ops = iommu_dma_ops
-> >     +sata_rcar ee300000.sata: dma_free_attrs:311: calling __iommu_free_attrs()
-> > ---
-> >  drivers/base/dd.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> > index 8ac10af17c0043a3..d62487d024559620 100644
-> > --- a/drivers/base/dd.c
-> > +++ b/drivers/base/dd.c
-> > @@ -968,9 +968,9 @@ static void __device_release_driver(struct device *dev, struct device *parent)
-> >                       drv->remove(dev);
-> >
-> >               device_links_driver_cleanup(dev);
-> > -             arch_teardown_dma_ops(dev);
-> >
-> >               devres_release_all(dev);
-> > +             arch_teardown_dma_ops(dev);
-> >               dev->driver = NULL;
->
-> Hi guys,
->
-> Could there still be the same problem in the error path of really_probe():
->
-> static int really_probe(struct device *dev, struct device_driver *drv)
-> {
->
->         [...]
->
->         goto done;
->
-> probe_failed:
->         arch_teardown_dma_ops(dev);
-> dma_failed:
->         if (dev->bus)
->                 blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->                                      BUS_NOTIFY_DRIVER_NOT_BOUND, dev);
-> pinctrl_bind_failed:
->         device_links_no_driver(dev);
->         devres_release_all(dev);
->         driver_sysfs_remove(dev);
->         dev->driver = NULL;
->         dev_set_drvdata(dev, NULL);
->
-> We seem to be able to call arch_teardown_dma_ops() prior to
-> devres_release_all() if we reach probe_failed label.
+I assume this series makes:
 
-Yes, this looks like another instance of the same problem.
-And test_remove doesn't expose this, as it doesn't exercise the full cycle.
+https://patchwork.ozlabs.org/patch/1053779/
+https://patchwork.ozlabs.org/patch/1057454/
 
-Gr{oetje,eeting}s,
+obsolete, please let me know and I will drop
+them from the PCI patches queue, I will get to
+this series later for v5.2.
 
-                        Geert
+Thanks,
+Lorenzo
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index c8febb009454..5b8736f0cd6b 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -46,14 +46,14 @@
+>  
+>  /* Transfer control */
+>  #define PCIETCTLR		0x02000
+> -#define  CFINIT			1
+> +#define  CFINIT			BIT(0)
+>  #define PCIETSTR		0x02004
+> -#define  DATA_LINK_ACTIVE	1
+> +#define  DATA_LINK_ACTIVE	BIT(0)
+>  #define PCIEERRFR		0x02020
+>  #define  UNSUPPORTED_REQUEST	BIT(4)
+>  #define PCIEMSIFR		0x02044
+>  #define PCIEMSIALR		0x02048
+> -#define  MSIFE			1
+> +#define  MSIFE			BIT(0)
+>  #define PCIEMSIAUR		0x0204c
+>  #define PCIEMSIIER		0x02050
+>  
+> -- 
+> 2.20.1
+> 
