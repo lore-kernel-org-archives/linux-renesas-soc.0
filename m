@@ -7,54 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3BBC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED675C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD2B2082F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B966E206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553714088;
-	bh=e45cM2WgidIGs7IgVAuofmMVPFcRQacvL4u/PQRtuRI=;
+	s=default; t=1553714128;
+	bh=cIpuZnpyq/TmAYcpoMyCiTg7Gr/A4hgnYe6oTwNUWjo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KbLB6309Ib54OQONlE+T9fMjvdYu2XM+1BJjptIbnfEAsx1HUHtUrbPis8Hlm7Iud
-	 Tf2G4hx7ANcP2XZJRnfB+gTGhRKjwBcHVa+KI8bw9nr5kWAMUUmK2RmCmZ/PnxZl6i
-	 OXYQFsewgMlWi1c1EGBIvFukSiKsga3VQ0b72yxo=
+	b=fjgyPLnoej5JHPB+PpxiPUT73DsAqsAhCfJ9qliTHUYIzEUCjT4TeJ/yPDb9m27wV
+	 DXYrQ1EyDit0WfEcYBj6ZgVfwiGdntxljUepFTr2y2LlqSefUXKFD+xHbz9wCFQ+hh
+	 XCxyl5UZ2M5uxrmBKgSf/MRNaWm9rNQofLOgvskA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388989AbfC0TOn (ORCPT
+        id S2387964AbfC0TPU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 15:14:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51448 "EHLO mail.kernel.org"
+        Wed, 27 Mar 2019 15:15:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388580AbfC0SJi (ORCPT
+        id S2388554AbfC0SJX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:09:38 -0400
+        Wed, 27 Mar 2019 14:09:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E79D42147C;
-        Wed, 27 Mar 2019 18:09:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDC782183F;
+        Wed, 27 Mar 2019 18:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553710176;
-        bh=e45cM2WgidIGs7IgVAuofmMVPFcRQacvL4u/PQRtuRI=;
+        s=default; t=1553710161;
+        bh=cIpuZnpyq/TmAYcpoMyCiTg7Gr/A4hgnYe6oTwNUWjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cZsIKk4D9H0UNxuNTx5YN8Puyt/OfEBul2akGSPJB53tutFvvBs/5DBIffICuEy/g
-         qmb8WdOVs8q4wvidSP8NPPc/XugXmOUxmMuvvfuu69WdsUX6vbG9X7NBBL9E20iUwD
-         vHvxN5wqkUDGDTWiOxTifBBXJ1iNP7JoWuvWM/JM=
+        b=JZMjpd3IU3LkNux5wLAe5kkAhW2fJYYYzPc0JkHoiVlddX+fKLv8PRV8pwXI6jevx
+         5nplDOBxJIb3Hr5NkoiEft6pTghifRRV3uyTxpzYF79EBUjDq9wyVN7ehEO7KjirNI
+         iAsKrvW55BsHLD4cULzmCKPgfMjW5sMamA0Qrzi4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 235/262] media: rcar-vin: Allow independent VIN link enablement
-Date:   Wed, 27 Mar 2019 14:01:30 -0400
-Message-Id: <20190327180158.10245-235-sashal@kernel.org>
+Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 228/262] pinctrl: sh-pfc: r8a77995: Fix MOD_SEL bit numbering
+Date:   Wed, 27 Mar 2019 14:01:23 -0400
+Message-Id: <20190327180158.10245-228-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -62,67 +61,79 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-[ Upstream commit c5ff0edb8e2270a75935c73217fb0de1abd2d910 ]
+[ Upstream commit 5219aa33caec2f7b68eda2b7e4ab8e276f323254 ]
 
-There is a block of code in rvin_group_link_notify() that prevents
-enabling a link to a VIN node if any entity in the media graph is
-in use. This prevents enabling a VIN link even if there is an in-use
-entity somewhere in the graph that is independent of the link's
-pipeline.
+MOD_SEL register bit numbering was different from R-Car D3 SoC and
+R-Car H3/M3-[WN] SoCs.
 
-For example, the code block will prevent enabling a link from
-the first rcar-csi2 receiver to a VIN node even if there is an
-enabled link somewhere far upstream on the second independent
-rcar-csi2 receiver pipeline.
+MOD_SEL 1-bit      H3/M3-[WN]  D3
+===============    ==========  =====
+Set Value = H'0    b'0         b'0
+Set Value = H'1    b'1         b'1
 
-If this code block is meant to prevent modifying a link if any entity
-in the graph is actively involved in streaming (because modifying
-the CHSEL register fields can disrupt any/all running streams), then
-the entities stream counts should be checked rather than the use counts.
+MOD_SEL 2-bits     H3/M3-[WN]  D3
+===============    ==========  =====
+Set Value = H'0    b'00        b'00
+Set Value = H'1    b'01        b'10
+Set Value = H'2    b'10        b'01
+Set Value = H'3    b'11        b'11
 
-(There is already such a check in __media_entity_setup_link() that verifies
-the stream_count of the link's source and sink entities are both zero,
-but that is insufficient, since there should be no running streams in
-the entire graph).
+MOD_SEL 3-bits     H3/M3-[WN]  D3
+===============    ==========  =====
+Set Value = H'0    b'000       b'000
+Set Value = H'1    b'001       b'100
+Set Value = H'2    b'010       b'010
+Set Value = H'3    b'011       b'110
+Set Value = H'4    b'100       b'001
+Set Value = H'5    b'101       b'101
+Set Value = H'6    b'110       b'011
+Set Value = H'7    b'111       b'111
 
-Modify the code block to check the entity stream_count instead of the
-use_count (and elaborate on the comment). VIN node links can now be
-enabled even if there are other independent in-use entities that are
-not streaming.
+This patch replaces the #define name and value of MOD_SEL.
 
-Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
-
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: 794a67117646 ("pinctrl: sh-pfc: Initial R8A77995 PFC support")
+[shimoda: split a patch per SoC and revise the commit log]
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[geert: Use a macro to do the actual reordering]
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index f0719ce24b97..aef8d8dab6ab 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
- 	    !is_media_entity_v4l2_video_device(link->sink->entity))
- 		return 0;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+index 84d78db381e3..9e377e3b9cb3 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
+@@ -381,6 +381,9 @@ FM(IP12_23_20)	IP12_23_20 \
+ FM(IP12_27_24)	IP12_27_24 \
+ FM(IP12_31_28)	IP12_31_28 \
  
--	/* If any entity is in use don't allow link changes. */
-+	/*
-+	 * Don't allow link changes if any entity in the graph is
-+	 * streaming, modifying the CHSEL register fields can disrupt
-+	 * running streams.
-+	 */
- 	media_device_for_each_entity(entity, &group->mdev)
--		if (entity->use_count)
-+		if (entity->stream_count)
- 			return -EBUSY;
- 
- 	mutex_lock(&group->lock);
++/* The bit numbering in MOD_SEL fields is reversed */
++#define REV4(f0, f1, f2, f3)			f0 f2 f1 f3
++
+ /* MOD_SEL0 */			/* 0 */			/* 1 */			/* 2 */			/* 3 */
+ #define MOD_SEL0_30		FM(SEL_MSIOF2_0)	FM(SEL_MSIOF2_1)
+ #define MOD_SEL0_29		FM(SEL_I2C3_0)		FM(SEL_I2C3_1)
+@@ -388,10 +391,10 @@ FM(IP12_31_28)	IP12_31_28 \
+ #define MOD_SEL0_27		FM(SEL_MSIOF3_0)	FM(SEL_MSIOF3_1)
+ #define MOD_SEL0_26		FM(SEL_HSCIF3_0)	FM(SEL_HSCIF3_1)
+ #define MOD_SEL0_25		FM(SEL_SCIF4_0)		FM(SEL_SCIF4_1)
+-#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		F_(0, 0)
+-#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		F_(0, 0)
+-#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		F_(0, 0)
+-#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		F_(0, 0)
++#define MOD_SEL0_24_23	   REV4(FM(SEL_PWM0_0),		FM(SEL_PWM0_1),		FM(SEL_PWM0_2),		F_(0, 0))
++#define MOD_SEL0_22_21	   REV4(FM(SEL_PWM1_0),		FM(SEL_PWM1_1),		FM(SEL_PWM1_2),		F_(0, 0))
++#define MOD_SEL0_20_19	   REV4(FM(SEL_PWM2_0),		FM(SEL_PWM2_1),		FM(SEL_PWM2_2),		F_(0, 0))
++#define MOD_SEL0_18_17	   REV4(FM(SEL_PWM3_0),		FM(SEL_PWM3_1),		FM(SEL_PWM3_2),		F_(0, 0))
+ #define MOD_SEL0_15		FM(SEL_IRQ_0_0)		FM(SEL_IRQ_0_1)
+ #define MOD_SEL0_14		FM(SEL_IRQ_1_0)		FM(SEL_IRQ_1_1)
+ #define MOD_SEL0_13		FM(SEL_IRQ_2_0)		FM(SEL_IRQ_2_1)
 -- 
 2.19.1
 
