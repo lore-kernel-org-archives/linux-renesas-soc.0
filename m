@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7ABC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2227C10F06
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9061B204EC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A27582146E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:24:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="UxnTelYa"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="XafF8aHe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732026AbfC0LYH (ORCPT
+        id S1726262AbfC0LYx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 07:24:07 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:55518 "EHLO
+        Wed, 27 Mar 2019 07:24:53 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:55540 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbfC0LYH (ORCPT
+        with ESMTP id S1726359AbfC0LYx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 07:24:07 -0400
+        Wed, 27 Mar 2019 07:24:53 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id F166A25B7E4;
-        Wed, 27 Mar 2019 22:24:04 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E280D25B7E4;
+        Wed, 27 Mar 2019 22:24:50 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1553685845; bh=932QkVaLNaVlIPi4qUY+BMaW97wSOdu+snEDjCL9SOg=;
+        t=1553685891; bh=pc+lpVcP9grwOXLYVjmFPsR2MiOYhLLFhrJ1F8GnlLA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UxnTelYa5j6xofr0Ksn2eufDHyZ92Q71rWndsxOvFJKYutln9g92nRb2mRTck+c1k
-         UgCtIHGLwOJ/odNIuSMN55r1XmLPEFtfOvJRZSNs2MRhHM+mPBdlaLSMJUSWaOS4Eu
-         GVqV1DdxOc/BfML3RliHKkAqpHZssELf20RH1aG4=
+        b=XafF8aHeGAlatrDeFCWV/WfQncTxVhLIgEasLtKcO78NIdfZ1/h3aZ/WvHLJUyCu+
+         qmiUhVmhwQE3fqqYhYKPL/HCmGSQ/bpg4ugtqSS5noy9PbMSXXMA6/92RhWSTjof2x
+         sJ1PbvleZmiDBxAWth/rxN5hCExBuc3k99//43tI=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 2EB4E940376; Wed, 27 Mar 2019 12:24:03 +0100 (CET)
-Date:   Wed, 27 Mar 2019 12:24:03 +0100
+        id 33A1D940376; Wed, 27 Mar 2019 12:24:49 +0100 (CET)
+Date:   Wed, 27 Mar 2019 12:24:49 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     marek.vasut@gmail.com
 Cc:     linux-pci@vger.kernel.org,
@@ -44,13 +44,15 @@ Cc:     linux-pci@vger.kernel.org,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH V4 1/6] PCI: rcar: Clean up remaining macros defining bits
-Message-ID: <20190327112402.36uky2gvbx5l4upd@verge.net.au>
+Subject: Re: [PATCH V4 2/6] PCI: rcar: Replace unsigned long with
+ u32/unsigned int in register accessors
+Message-ID: <20190327112448.fo7nmvbc3xrl3tjd@verge.net.au>
 References: <20190325114101.10198-1-marek.vasut@gmail.com>
+ <20190325114101.10198-2-marek.vasut@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190325114101.10198-1-marek.vasut@gmail.com>
+In-Reply-To: <20190325114101.10198-2-marek.vasut@gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -58,10 +60,11 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 12:40:56PM +0100, marek.vasut@gmail.com wrote:
+On Mon, Mar 25, 2019 at 12:40:57PM +0100, marek.vasut@gmail.com wrote:
 > From: Marek Vasut <marek.vasut+renesas@gmail.com>
 > 
-> Replace macros using constants with BIT()s instead, no functional change.
+> Replace unsigned long with u32 and unsigned int in register accessor
+> functions, since they access 32bit registers.
 > 
 > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
 > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
@@ -78,33 +81,33 @@ Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 > ---
 > V2: Bundle this patch with other cleanups before resending
 > V3: Add Wolfram's R-B
-> V4: Add Geert's R-B
+> V4: Change reg to unsigned int
 > ---
->  drivers/pci/controller/pcie-rcar.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/pci/controller/pcie-rcar.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 > 
 > diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> index c8febb009454..5b8736f0cd6b 100644
+> index 5b8736f0cd6b..3db693b4410e 100644
 > --- a/drivers/pci/controller/pcie-rcar.c
 > +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -46,14 +46,14 @@
+> @@ -152,14 +152,13 @@ struct rcar_pcie {
+>  	struct			rcar_msi msi;
+>  };
 >  
->  /* Transfer control */
->  #define PCIETCTLR		0x02000
-> -#define  CFINIT			1
-> +#define  CFINIT			BIT(0)
->  #define PCIETSTR		0x02004
-> -#define  DATA_LINK_ACTIVE	1
-> +#define  DATA_LINK_ACTIVE	BIT(0)
->  #define PCIEERRFR		0x02020
->  #define  UNSUPPORTED_REQUEST	BIT(4)
->  #define PCIEMSIFR		0x02044
->  #define PCIEMSIALR		0x02048
-> -#define  MSIFE			1
-> +#define  MSIFE			BIT(0)
->  #define PCIEMSIAUR		0x0204c
->  #define PCIEMSIIER		0x02050
+> -static void rcar_pci_write_reg(struct rcar_pcie *pcie, unsigned long val,
+> -			       unsigned long reg)
+> +static void rcar_pci_write_reg(struct rcar_pcie *pcie, u32 val,
+> +			       unsigned int reg)
+>  {
+>  	writel(val, pcie->base + reg);
+>  }
 >  
+> -static unsigned long rcar_pci_read_reg(struct rcar_pcie *pcie,
+> -				       unsigned long reg)
+> +static u32 rcar_pci_read_reg(struct rcar_pcie *pcie, unsigned int reg)
+>  {
+>  	return readl(pcie->base + reg);
+>  }
 > -- 
 > 2.20.1
 > 
