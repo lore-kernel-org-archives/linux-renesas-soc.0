@@ -2,115 +2,133 @@ Return-Path: <SRS0=rp0x=R6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E143C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A6CC10F00
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90BC2147C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FCA02087C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbfC0MWT (ORCPT
+        id S1728213AbfC0Mbh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 08:22:19 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:43813 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbfC0MWT (ORCPT
+        Wed, 27 Mar 2019 08:31:37 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:49536 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfC0Mbh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 08:22:19 -0400
-Received: by mail-vs1-f65.google.com with SMTP id i207so9736735vsd.10;
-        Wed, 27 Mar 2019 05:22:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rGrNea8lqZcnie44+KuMcw930p3XxUZwDotVRxbGavE=;
-        b=UpmJcQu2xneByxfS+k/sFGDTBtqwHjBEge0TLcXVFmmbA+4MVPB1lcbVfXE4nVSQqS
-         gZE6OhfN8Ig1ajyGS0fPptx8mO3S4h3E+TmUVjqHRZFrQcrV4oqBxz+K9WaN/9SDfIfo
-         564Na8T03+TlHeQI6KtO4JVV/YN/T5iJA8y5XQCbVtCiYrFgCGGRbM3v/COGdQk5B4iY
-         I043twsrTzfCGr+vWsnpH41qDac/M+pRtK1oFRohl8/1cljdDeNPvfRoBnxsEDXOM5bB
-         CdnkKra77okb8CGANcKBTxiqrSDcFrzPg+Vyh4qbIDLeD5boIhZ430WVbwj+dP3Actok
-         tSzQ==
-X-Gm-Message-State: APjAAAU/J4nRJ4eiELuF5tLNJY/ANBf6sKj5OANYmLEc4oAaWDNTTHN1
-        OCgB5Zhc/+ciyPE+EAxg9NYmgWphPAu/YMWFjHA=
-X-Google-Smtp-Source: APXvYqxW/qFQkhMbO6V8P8LqHQaZR7FyclyAPTV3eJwc22Y2D7153JyMf85sdXuwnx2/HXliYj7UZNFtVAZkvUGdydk=
-X-Received: by 2002:a05:6102:199:: with SMTP id r25mr687288vsq.166.1553689337935;
- Wed, 27 Mar 2019 05:22:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190325114101.10198-1-marek.vasut@gmail.com> <20190325114101.10198-6-marek.vasut@gmail.com>
- <20190327113023.zhnx5v5spcx7uoqj@verge.net.au>
-In-Reply-To: <20190327113023.zhnx5v5spcx7uoqj@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 Mar 2019 13:22:05 +0100
-Message-ID: <CAMuHMdW_6hutek-vk+mwDHJ1kBUytLvtkgLKb2mkSEFFasJ_0g@mail.gmail.com>
-Subject: Re: [PATCH V4 6/6] PCI: rcar: Fix 64bit MSI message address handling
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 27 Mar 2019 08:31:37 -0400
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id t0Xa1z00T3XaVaC010Xaud; Wed, 27 Mar 2019 13:31:35 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1h97iQ-0000vC-Ml; Wed, 27 Mar 2019 13:31:34 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1h97iQ-00024y-Kh; Wed, 27 Mar 2019 13:31:34 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value
+Date:   Wed, 27 Mar 2019 13:31:33 +0100
+Message-Id: <20190327123133.7949-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 12:30 PM Simon Horman <horms@verge.net.au> wrote:
-> On Mon, Mar 25, 2019 at 12:41:01PM +0100, marek.vasut@gmail.com wrote:
-> > From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > The MSI message address in the RC address space can be 64 bit. The
-> > R-Car PCIe RC supports such a 64bit MSI message address as well.
-> > The code currently uses virt_to_phys(__get_free_pages()) to obtain
-> > a reserved page for the MSI message address, and the return value
-> > of which can be a 64 bit physical address on 64 bit system.
-> >
-> > However, the driver only programs PCIEMSIALR register with the bottom
-> > 32 bits of the virt_to_phys(__get_free_pages()) return value and does
-> > not program the top 32 bits into PCIEMSIAUR, but rather programs the
-> > PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
-> > SoCs, however may fail on new 64 bit R-Car SoCs.
-> >
-> > Since from a PCIe controller perspective, an inbound MSI is a memory
-> > write to a special address (in case of this controller, defined by
-> > the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
-> > never hits the DRAM _and_ because allocation of an MSI by a PCIe card
-> > driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
-> > in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
-> > cause memory corruption or other issues.
-> >
-> > There is however the possibility that if virt_to_phys(__get_free_pages())
-> > returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
-> > to 0x0 _and_ if the system had physical RAM at the address matching the
-> > value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
-> > physical address matching the value of PCIEMSIALR and a remote write to
-> > such a buffer by a PCIe card would trigger a spurious MSI.
-> >
-> > Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> > Cc: Simon Horman <horms+renesas@verge.net.au>
-> > Cc: Wolfram Sang <wsa@the-dreams.de>
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > To: linux-pci@vger.kernel.org
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Does this warrant a Fixes tag?
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-(digging in old sent email)
-Fixes: 290c1fb358605402 ("PCI: rcar: Add MSI support for PCIe")
+cpg_sd_clock_round_rate() may return an unsupported clock rate for the
+requested clock rate. Therefore, when cpg_sd_clock_set_rate() sets the
+clock rate acquired by cpg_sd_clock_round_rate(), an error may occur.
 
-Gr{oetje,eeting}s,
+This is not conform the clk API design.
 
-                        Geert
+This patch fixes that by making sure cpg_sd_clock_calc_div() considers
+only the division values defined in cpg_sd_div_table[].
+With this fix, the cpg_sd_clock_round_rate() always return a support
+clock rate.
 
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v5.2.
+
+ drivers/clk/renesas/rcar-gen3-cpg.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index d5fb768b089ff1c1..d2745c57207efc01 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -3,6 +3,7 @@
+  * R-Car Gen3 Clock Pulse Generator
+  *
+  * Copyright (C) 2015-2018 Glider bvba
++ * Copyright (C) 2019 Renesas Electronics Corp.
+  *
+  * Based on clk-rcar-gen3.c
+  *
+@@ -236,8 +237,6 @@ struct sd_clock {
+ 	const struct sd_div_table *div_table;
+ 	struct cpg_simple_notifier csn;
+ 	unsigned int div_num;
+-	unsigned int div_min;
+-	unsigned int div_max;
+ 	unsigned int cur_div_idx;
+ };
+ 
+@@ -314,14 +313,20 @@ static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
+ 					  unsigned long rate,
+ 					  unsigned long parent_rate)
+ {
+-	unsigned int div;
+-
+-	if (!rate)
+-		rate = 1;
++	unsigned long calc_rate, best_rate = 0, diff, diff_min = ULONG_MAX;
++	unsigned int i;
+ 
+-	div = DIV_ROUND_CLOSEST(parent_rate, rate);
++	for (i = 0; i < clock->div_num; i++) {
++		calc_rate = DIV_ROUND_CLOSEST(parent_rate,
++					      clock->div_table[i].div);
++		diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
++		if (diff <= diff_min) {
++			best_rate = calc_rate;
++			diff_min = diff;
++		}
++	}
+ 
+-	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
++	return DIV_ROUND_CLOSEST(parent_rate, best_rate);
+ }
+ 
+ static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -405,13 +410,6 @@ static struct clk * __init cpg_sd_clk_register(const char *name,
+ 	val |= CPG_SD_STP_MASK | (clock->div_table[0].val & CPG_SD_FC_MASK);
+ 	writel(val, clock->csn.reg);
+ 
+-	clock->div_max = clock->div_table[0].div;
+-	clock->div_min = clock->div_max;
+-	for (i = 1; i < clock->div_num; i++) {
+-		clock->div_max = max(clock->div_max, clock->div_table[i].div);
+-		clock->div_min = min(clock->div_min, clock->div_table[i].div);
+-	}
+-
+ 	clk = clk_register(NULL, &clock->hw);
+ 	if (IS_ERR(clk))
+ 		goto free_clock;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
