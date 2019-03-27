@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BE2C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61104C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0F08206C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 285AA2075C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553714137;
-	bh=+jRmlI9jydengIYYee9lkuKne34KR/MTF4Wa1DnWYyU=;
+	s=default; t=1553714419;
+	bh=xqc6ISLkolKtaTmo5FoEEfKK/L9IDmdMKsnen2DqFkg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wGq1FPxLQNimfCMNxbUFvX6LJW/Ue/6s39q6lGAhABlWMv8Nfv76YmhEMnHfjTKO7
-	 5ut/2foOAmomd3lX5ZqCylVphWW3G65kyMe90AqwtwrJyzEZFFcqC/Gijfnvoqud8L
-	 7SKcZn0RaOuCCXrfqo/CQl0ggO1ahOZhUsZSCGJc=
+	b=fZL9luwx54ljpvpDClgJVn8IdXRokC2wKRz6xFxD1qHti3wzgdcCqyMjsjlz0q8sl
+	 aDjngRaV85caNiGTMEfcifK8N1AMXCTew22djQX5T7YZ9Q+IA7nyjzI1CkxD2sJKwm
+	 7tqj7i5NUAwDE2WDR7/x28gW2o4OSRKiV1XnCumM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388725AbfC0TPa (ORCPT
+        id S1733088AbfC0SHX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 15:15:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51178 "EHLO mail.kernel.org"
+        Wed, 27 Mar 2019 14:07:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388546AbfC0SJV (ORCPT
+        id S2388160AbfC0SHV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:09:21 -0400
+        Wed, 27 Mar 2019 14:07:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77551217F9;
-        Wed, 27 Mar 2019 18:09:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4232A21738;
+        Wed, 27 Mar 2019 18:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553710160;
-        bh=+jRmlI9jydengIYYee9lkuKne34KR/MTF4Wa1DnWYyU=;
+        s=default; t=1553710041;
+        bh=xqc6ISLkolKtaTmo5FoEEfKK/L9IDmdMKsnen2DqFkg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OP1xxOrRb/ihKb0pAHIusXdm+f8jJbXIXeAAZurGkzQNapcwzj93JhWP9WpgiP50s
-         jE4cNINOnUpMmKoLVgS/xpttl6TuqWtHY3FsxrFhsAtGP5jqESGfUAls4At/3K7mcY
-         mjoQqfJq0ET/plPBUWI/Tz2H/Es+l0cS7qoIxQW0=
+        b=k2Or5qKNN/12ORTT3bMIeyRdmrhF9GyjLsZDvCw4WLtmKUmGbawpRyWrsnmfgUSA/
+         3e9GAoHeEMUj2SV6auY8jPi8zHwSWAfwJJoRX86bEgCq9WTcTOYna8VIRnH/Ca8cie
+         AuSwaiiELgz7scl0bfKIvkgLonyUTqtr7kQv9N6k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 227/262] pinctrl: sh-pfc: r8a77990: Fix MOD_SEL bit numbering
-Date:   Wed, 27 Mar 2019 14:01:22 -0400
-Message-Id: <20190327180158.10245-227-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 170/262] drm: rcar-du: add missing of_node_put
+Date:   Wed, 27 Mar 2019 14:00:25 -0400
+Message-Id: <20190327180158.10245-170-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
@@ -61,121 +61,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-[ Upstream commit 3e3eebeacad79bda8a9664c86c04f5201e86fece ]
+[ Upstream commit 4c6d8fc20b09f9684743afd72e4dbc3f15524479 ]
 
-MOD_SEL register bit numbering was different from R-Car E3 SoC and
-R-Car H3/M3-[WN] SoCs.
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-MOD_SEL 1-bit      H3/M3-[WN]  E3
-===============    ==========  =====
-Set Value = H'0    b'0         b'0
-Set Value = H'1    b'1         b'1
+Add a second of_node_put if no encoder is selected (encoder remains NULL).
 
-MOD_SEL 2-bits     H3/M3-[WN]  E3
-===============    ==========  =====
-Set Value = H'0    b'00        b'00
-Set Value = H'1    b'01        b'10
-Set Value = H'2    b'10        b'01
-Set Value = H'3    b'11        b'11
+The semantic match that finds the first problem is as follows
+(http://coccinelle.lip6.fr):
 
-MOD_SEL 3-bits     H3/M3-[WN]  E3
-===============    ==========  =====
-Set Value = H'0    b'000       b'000
-Set Value = H'1    b'001       b'100
-Set Value = H'2    b'010       b'010
-Set Value = H'3    b'011       b'110
-Set Value = H'4    b'100       b'001
-Set Value = H'5    b'101       b'101
-Set Value = H'6    b'110       b'011
-Set Value = H'7    b'111       b'111
+// <smpl>
+@r exists@
+local idexpression e;
+expression x;
+@@
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e == NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
+// </smpl>
 
-This patch replaces the #define name and value of MOD_SEL.
-
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Fixes: 6d4036a1e3b3 ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
-[shimoda: Split a patch per SoC and revise the commit log]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-[geert: Use macros to do the actual reordering]
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 32 +++++++++++++++------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index e40908dc37e0..1ce286f7b286 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -391,29 +391,33 @@ FM(IP12_23_20)	IP12_23_20	FM(IP13_23_20)	IP13_23_20	FM(IP14_23_20)	IP14_23_20	FM
- FM(IP12_27_24)	IP12_27_24	FM(IP13_27_24)	IP13_27_24	FM(IP14_27_24)	IP14_27_24	FM(IP15_27_24)	IP15_27_24 \
- FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM(IP15_31_28)	IP15_31_28
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 9c7007d45408..f9a90ff24e6d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		dev_dbg(rcdu->dev,
+ 			"connected entity %pOF is disabled, skipping\n",
+ 			entity);
++		of_node_put(entity);
+ 		return -ENODEV;
+ 	}
  
-+/* The bit numbering in MOD_SEL fields is reversed */
-+#define REV4(f0, f1, f2, f3)			f0 f2 f1 f3
-+#define REV8(f0, f1, f2, f3, f4, f5, f6, f7)	f0 f4 f2 f6 f1 f5 f3 f7
-+
- /* MOD_SEL0 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
--#define MOD_SEL0_30_29		FM(SEL_ADGB_0)			FM(SEL_ADGB_1)			FM(SEL_ADGB_2)			F_(0, 0)
-+#define MOD_SEL0_30_29	   REV4(FM(SEL_ADGB_0),			FM(SEL_ADGB_1),			FM(SEL_ADGB_2),			F_(0, 0))
- #define MOD_SEL0_28		FM(SEL_DRIF0_0)			FM(SEL_DRIF0_1)
--#define MOD_SEL0_27_26		FM(SEL_FM_0)			FM(SEL_FM_1)			FM(SEL_FM_2)			F_(0, 0)
-+#define MOD_SEL0_27_26	   REV4(FM(SEL_FM_0),			FM(SEL_FM_1),			FM(SEL_FM_2),			F_(0, 0))
- #define MOD_SEL0_25		FM(SEL_FSO_0)			FM(SEL_FSO_1)
- #define MOD_SEL0_24		FM(SEL_HSCIF0_0)		FM(SEL_HSCIF0_1)
- #define MOD_SEL0_23		FM(SEL_HSCIF1_0)		FM(SEL_HSCIF1_1)
- #define MOD_SEL0_22		FM(SEL_HSCIF2_0)		FM(SEL_HSCIF2_1)
--#define MOD_SEL0_21_20		FM(SEL_I2C1_0)			FM(SEL_I2C1_1)			FM(SEL_I2C1_2)			FM(SEL_I2C1_3)
--#define MOD_SEL0_19_18_17	FM(SEL_I2C2_0)			FM(SEL_I2C2_1)			FM(SEL_I2C2_2)			FM(SEL_I2C2_3)		FM(SEL_I2C2_4)		F_(0, 0)	F_(0, 0)	F_(0, 0)
-+#define MOD_SEL0_21_20	   REV4(FM(SEL_I2C1_0),			FM(SEL_I2C1_1),			FM(SEL_I2C1_2),			FM(SEL_I2C1_3))
-+#define MOD_SEL0_19_18_17  REV8(FM(SEL_I2C2_0),			FM(SEL_I2C2_1),			FM(SEL_I2C2_2),			FM(SEL_I2C2_3),		FM(SEL_I2C2_4),		F_(0, 0),	F_(0, 0),	F_(0, 0))
- #define MOD_SEL0_16		FM(SEL_NDFC_0)			FM(SEL_NDFC_1)
- #define MOD_SEL0_15		FM(SEL_PWM0_0)			FM(SEL_PWM0_1)
- #define MOD_SEL0_14		FM(SEL_PWM1_0)			FM(SEL_PWM1_1)
--#define MOD_SEL0_13_12		FM(SEL_PWM2_0)			FM(SEL_PWM2_1)			FM(SEL_PWM2_2)			F_(0, 0)
--#define MOD_SEL0_11_10		FM(SEL_PWM3_0)			FM(SEL_PWM3_1)			FM(SEL_PWM3_2)			F_(0, 0)
-+#define MOD_SEL0_13_12	   REV4(FM(SEL_PWM2_0),			FM(SEL_PWM2_1),			FM(SEL_PWM2_2),			F_(0, 0))
-+#define MOD_SEL0_11_10	   REV4(FM(SEL_PWM3_0),			FM(SEL_PWM3_1),			FM(SEL_PWM3_2),			F_(0, 0))
- #define MOD_SEL0_9		FM(SEL_PWM4_0)			FM(SEL_PWM4_1)
- #define MOD_SEL0_8		FM(SEL_PWM5_0)			FM(SEL_PWM5_1)
- #define MOD_SEL0_7		FM(SEL_PWM6_0)			FM(SEL_PWM6_1)
--#define MOD_SEL0_6_5		FM(SEL_REMOCON_0)		FM(SEL_REMOCON_1)		FM(SEL_REMOCON_2)		F_(0, 0)
-+#define MOD_SEL0_6_5	   REV4(FM(SEL_REMOCON_0),		FM(SEL_REMOCON_1),		FM(SEL_REMOCON_2),		F_(0, 0))
- #define MOD_SEL0_4		FM(SEL_SCIF_0)			FM(SEL_SCIF_1)
- #define MOD_SEL0_3		FM(SEL_SCIF0_0)			FM(SEL_SCIF0_1)
- #define MOD_SEL0_2		FM(SEL_SCIF2_0)			FM(SEL_SCIF2_1)
--#define MOD_SEL0_1_0		FM(SEL_SPEED_PULSE_IF_0)	FM(SEL_SPEED_PULSE_IF_1)	FM(SEL_SPEED_PULSE_IF_2)	F_(0, 0)
-+#define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
+@@ -366,6 +367,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		dev_warn(rcdu->dev,
+ 			 "no encoder found for endpoint %pOF, skipping\n",
+ 			 ep->local_node);
++		of_node_put(entity);
+ 		return -ENODEV;
+ 	}
  
- /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
- #define MOD_SEL1_31		FM(SEL_SIMCARD_0)		FM(SEL_SIMCARD_1)
-@@ -422,18 +426,18 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
- #define MOD_SEL1_26		FM(SEL_DRIF2_0)			FM(SEL_DRIF2_1)
- #define MOD_SEL1_25		FM(SEL_DRIF3_0)			FM(SEL_DRIF3_1)
--#define MOD_SEL1_24_23_22	FM(SEL_HSCIF3_0)		FM(SEL_HSCIF3_1)		FM(SEL_HSCIF3_2)		FM(SEL_HSCIF3_3)	FM(SEL_HSCIF3_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
--#define MOD_SEL1_21_20_19	FM(SEL_HSCIF4_0)		FM(SEL_HSCIF4_1)		FM(SEL_HSCIF4_2)		FM(SEL_HSCIF4_3)	FM(SEL_HSCIF4_4)	F_(0, 0)	F_(0, 0)	F_(0, 0)
-+#define MOD_SEL1_24_23_22  REV8(FM(SEL_HSCIF3_0),		FM(SEL_HSCIF3_1),		FM(SEL_HSCIF3_2),		FM(SEL_HSCIF3_3),	FM(SEL_HSCIF3_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
-+#define MOD_SEL1_21_20_19  REV8(FM(SEL_HSCIF4_0),		FM(SEL_HSCIF4_1),		FM(SEL_HSCIF4_2),		FM(SEL_HSCIF4_3),	FM(SEL_HSCIF4_4),	F_(0, 0),	F_(0, 0),	F_(0, 0))
- #define MOD_SEL1_18		FM(SEL_I2C6_0)			FM(SEL_I2C6_1)
- #define MOD_SEL1_17		FM(SEL_I2C7_0)			FM(SEL_I2C7_1)
- #define MOD_SEL1_16		FM(SEL_MSIOF2_0)		FM(SEL_MSIOF2_1)
- #define MOD_SEL1_15		FM(SEL_MSIOF3_0)		FM(SEL_MSIOF3_1)
--#define MOD_SEL1_14_13		FM(SEL_SCIF3_0)			FM(SEL_SCIF3_1)			FM(SEL_SCIF3_2)			F_(0, 0)
--#define MOD_SEL1_12_11		FM(SEL_SCIF4_0)			FM(SEL_SCIF4_1)			FM(SEL_SCIF4_2)			F_(0, 0)
--#define MOD_SEL1_10_9		FM(SEL_SCIF5_0)			FM(SEL_SCIF5_1)			FM(SEL_SCIF5_2)			F_(0, 0)
-+#define MOD_SEL1_14_13	   REV4(FM(SEL_SCIF3_0),		FM(SEL_SCIF3_1),		FM(SEL_SCIF3_2),		F_(0, 0))
-+#define MOD_SEL1_12_11	   REV4(FM(SEL_SCIF4_0),		FM(SEL_SCIF4_1),		FM(SEL_SCIF4_2),		F_(0, 0))
-+#define MOD_SEL1_10_9	   REV4(FM(SEL_SCIF5_0),		FM(SEL_SCIF5_1),		FM(SEL_SCIF5_2),		F_(0, 0))
- #define MOD_SEL1_8		FM(SEL_VIN4_0)			FM(SEL_VIN4_1)
- #define MOD_SEL1_7		FM(SEL_VIN5_0)			FM(SEL_VIN5_1)
--#define MOD_SEL1_6_5		FM(SEL_ADGC_0)			FM(SEL_ADGC_1)			FM(SEL_ADGC_2)			F_(0, 0)
-+#define MOD_SEL1_6_5	   REV4(FM(SEL_ADGC_0),			FM(SEL_ADGC_1),			FM(SEL_ADGC_2),			F_(0, 0))
- #define MOD_SEL1_4		FM(SEL_SSI9_0)			FM(SEL_SSI9_1)
- 
- #define PINMUX_MOD_SELS	\
 -- 
 2.19.1
 
