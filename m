@@ -2,60 +2,55 @@ Return-Path: <SRS0=rp0x=R6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0C8C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7ABC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC80A2087C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9061B204EC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:24:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="QV/2Pmhv"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="UxnTelYa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733091AbfC0LQI (ORCPT
+        id S1732026AbfC0LYH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 07:16:08 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:55421 "EHLO
+        Wed, 27 Mar 2019 07:24:07 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:55518 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729489AbfC0LQI (ORCPT
+        with ESMTP id S1726262AbfC0LYH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 07:16:08 -0400
+        Wed, 27 Mar 2019 07:24:07 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 6363425B7CA;
-        Wed, 27 Mar 2019 22:16:05 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id F166A25B7E4;
+        Wed, 27 Mar 2019 22:24:04 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1553685365; bh=YEf9iuhsd9FhVN4Y71nWMlElZGV2CziDAyr5R7q705U=;
+        t=1553685845; bh=932QkVaLNaVlIPi4qUY+BMaW97wSOdu+snEDjCL9SOg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QV/2Pmhv7Xajt/n7P88mBaZ9lx1Dv5eIRPG7rr67wn+ArC07JB6PfV0CgKWbeLIMl
-         aMtCpUksUWc0DjIfRyvVuiQcmMmSwKl4/c/WoUlEH0drh4+xkf62Af4s3dkCOiZ0tH
-         brY9frr92X4BMb7a43XNrl2ctr5MwcnLWgRNPAKc=
+        b=UxnTelYa5j6xofr0Ksn2eufDHyZ92Q71rWndsxOvFJKYutln9g92nRb2mRTck+c1k
+         UgCtIHGLwOJ/odNIuSMN55r1XmLPEFtfOvJRZSNs2MRhHM+mPBdlaLSMJUSWaOS4Eu
+         GVqV1DdxOc/BfML3RliHKkAqpHZssELf20RH1aG4=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 91146940376; Wed, 27 Mar 2019 12:16:03 +0100 (CET)
-Date:   Wed, 27 Mar 2019 12:16:03 +0100
+        id 2EB4E940376; Wed, 27 Mar 2019 12:24:03 +0100 (CET)
+Date:   Wed, 27 Mar 2019 12:24:03 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jiada Wang <jiada_wang@mentor.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/1] arm64: dts: renesas: use extended audio dmac
- register
-Message-ID: <20190327111558.yw2wld4oivcw5x7a@verge.net.au>
-References: <20190326095826.4987-1-jiada_wang@mentor.com>
- <20190326095826.4987-2-jiada_wang@mentor.com>
- <CAMuHMdUOcPhy5D-RagprwZkqOOgNt+4bGfSLQzydydHBOt76kQ@mail.gmail.com>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH V4 1/6] PCI: rcar: Clean up remaining macros defining bits
+Message-ID: <20190327112402.36uky2gvbx5l4upd@verge.net.au>
+References: <20190325114101.10198-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUOcPhy5D-RagprwZkqOOgNt+4bGfSLQzydydHBOt76kQ@mail.gmail.com>
+In-Reply-To: <20190325114101.10198-1-marek.vasut@gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -63,19 +58,53 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 26, 2019 at 11:09:45AM +0100, Geert Uytterhoeven wrote:
-> On Tue, Mar 26, 2019 at 10:59 AM Jiada Wang <jiada_wang@mentor.com> wrote:
-> > Basic audio dmac register only supports busif from 0 to 3,
-> > in order to use busif4 ~ busif7, extended audio dmac register
-> > need to be used.
-> >
-> > This patch updates H3 (= r8a7795), M3-W (= r8a7796) and
-> > M3-N (=r8a77965) to use extended audio dmac register set.
-> >
-> > Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+On Mon, Mar 25, 2019 at 12:40:56PM +0100, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
 > 
+> Replace macros using constants with BIT()s instead, no functional change.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks Jiada,
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-applied for v5.2 with Morimoto-san's Ack from v3.
+> ---
+> V2: Bundle this patch with other cleanups before resending
+> V3: Add Wolfram's R-B
+> V4: Add Geert's R-B
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index c8febb009454..5b8736f0cd6b 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -46,14 +46,14 @@
+>  
+>  /* Transfer control */
+>  #define PCIETCTLR		0x02000
+> -#define  CFINIT			1
+> +#define  CFINIT			BIT(0)
+>  #define PCIETSTR		0x02004
+> -#define  DATA_LINK_ACTIVE	1
+> +#define  DATA_LINK_ACTIVE	BIT(0)
+>  #define PCIEERRFR		0x02020
+>  #define  UNSUPPORTED_REQUEST	BIT(4)
+>  #define PCIEMSIFR		0x02044
+>  #define PCIEMSIALR		0x02048
+> -#define  MSIFE			1
+> +#define  MSIFE			BIT(0)
+>  #define PCIEMSIAUR		0x0204c
+>  #define PCIEMSIIER		0x02050
+>  
+> -- 
+> 2.20.1
+> 
