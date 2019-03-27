@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C010C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EACD1C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD3582070D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B17322087C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 11:53:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="r87Njkzt"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="W6M8ycUy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfC0Lue (ORCPT
+        id S1727557AbfC0LxT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 07:50:34 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:55995 "EHLO
+        Wed, 27 Mar 2019 07:53:19 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:56042 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbfC0Lue (ORCPT
+        with ESMTP id S1726262AbfC0LxS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 07:50:34 -0400
+        Wed, 27 Mar 2019 07:53:18 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 6222825B78D;
-        Wed, 27 Mar 2019 22:50:31 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 3D28025B78D;
+        Wed, 27 Mar 2019 22:53:16 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1553687431; bh=ETPJ5UIdjOtw2iua9jrr9YV/XMMHFgVCnvvu19pPER0=;
+        t=1553687596; bh=kyzriu/maV8aDVjgCM5xM51v55JKMzgspv5c7AiQdYM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r87Njkzto2Q9bVkuL7vJOoykSJ90xnj+PedUMdCx55lq77iXe6BsThlEckuigxH3X
-         HvE53yNxRNp/Sqc5ymJ0pf19dJ28Yw6REwOolw8mDFT0IRUcGJPf5HlLvZih503X8q
-         jv87shl/5DgDlUbvoB7jvrd3pXAveVNRMJ4tjZ4Q=
+        b=W6M8ycUycBVMyK4e4GgunO1Ezp8kgAd7s9c554FNFGE6NifJA7VYaM/d8OgbzW0c+
+         /xamNSgkz/LeB39ud0UKwxzhbHsx25ee4VWo+pA+5PgZHuBklBVvBF9Ymuvan/k78+
+         9H2IBSZ0tA2Ch2Q7HiNMotcT2Go0IGLTQwC8A6D8=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id A006B940376; Wed, 27 Mar 2019 12:50:29 +0100 (CET)
-Date:   Wed, 27 Mar 2019 12:50:29 +0100
+        id 78BCD940376; Wed, 27 Mar 2019 12:53:14 +0100 (CET)
+Date:   Wed, 27 Mar 2019 12:53:14 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] pinctrl: sh-pfc: Introduce PINCTRL_SH_FUNC_GPIO
- helper symbol
-Message-ID: <20190327115029.ppu4myurn3p6m3kq@verge.net.au>
-References: <20190320102141.19316-1-geert+renesas@glider.be>
- <20190320102141.19316-3-geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: r7s9210: Always use readl()
+Message-ID: <20190327115314.7lkw5pv5y43uixfd@verge.net.au>
+References: <20190320102512.19677-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190320102141.19316-3-geert+renesas@glider.be>
+In-Reply-To: <20190320102512.19677-1-geert+renesas@glider.be>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -55,178 +55,41 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 20, 2019 at 11:21:33AM +0100, Geert Uytterhoeven wrote:
-> Pinctrl drivers for SuperH platforms use legacy function GPIOs.
-> Currently this support is compiled in based on the SUPERH platform
-> dependency, which hinders the introduction of compile-testing support
-> for the affected pinctrl drivers.
-> 
-> Introduce a new Kconfig symbol PINCTRL_SH_FUNC_GPIO, which is
-> auto-selected when needed.  This symbol in turn selects
-> PINCTRL_SH_PFC_GPIO, to reduce the number of per-driver selects.
+On Wed, Mar 20, 2019 at 11:25:12AM +0100, Geert Uytterhoeven wrote:
+> On arm32, there is no reason to use the (soon deprecated) clk_readl().
+> Hence use the generic readl() instead.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v5.2.
 
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-> ---
-> v3:
->   - No changes,
 > 
-> v2:
->   - New.
-> ---
->  drivers/pinctrl/sh-pfc/Kconfig  | 30 ++++++++++++++++++------------
->  drivers/pinctrl/sh-pfc/gpio.c   |  8 ++++----
->  drivers/pinctrl/sh-pfc/sh_pfc.h |  2 +-
->  3 files changed, 23 insertions(+), 17 deletions(-)
+>  drivers/clk/renesas/r7s9210-cpg-mssr.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
-> index e941ba60d4b7c775..6a9e4334dbfa7ec0 100644
-> --- a/drivers/pinctrl/sh-pfc/Kconfig
-> +++ b/drivers/pinctrl/sh-pfc/Kconfig
-> @@ -20,6 +20,12 @@ config PINCTRL_SH_PFC_GPIO
->  	help
->  	  This enables pin control and GPIO drivers for SH/SH Mobile platforms
+> diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> index 57c49fe8829567e1..cf65d4e0e1166647 100644
+> --- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> @@ -11,6 +11,7 @@
 >  
-> +config PINCTRL_SH_FUNC_GPIO
-> +	select PINCTRL_SH_PFC_GPIO
-> +	bool
-> +	help
-> +	  This enables legacy function GPIOs for SH platforms
-> +
->  config PINCTRL_PFC_EMEV2
->  	def_bool y
->  	depends on ARCH_EMEV2
-> @@ -138,17 +144,17 @@ config PINCTRL_PFC_R8A77995
->  config PINCTRL_PFC_SH7203
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7203
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/io.h>
+>  #include <dt-bindings/clock/r7s9210-cpg-mssr.h>
+>  #include "renesas-cpg-mssr.h"
 >  
->  config PINCTRL_PFC_SH7264
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7264
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
+> @@ -119,7 +120,7 @@ static void __init r7s9210_update_clk_table(struct clk *extal_clk,
+>  	if (clk_get_rate(extal_clk) > 12000000)
+>  		cpg_mode = 1;
 >  
->  config PINCTRL_PFC_SH7269
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7269
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH73A0
->  	def_bool y
-> @@ -159,45 +165,45 @@ config PINCTRL_PFC_SH73A0
->  config PINCTRL_PFC_SH7720
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7720
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH7722
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7722
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH7723
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7723
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH7724
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7724
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH7734
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7734
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH7757
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7757
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH7785
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7785
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SH7786
->  	def_bool y
->  	depends on CPU_SUBTYPE_SH7786
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  
->  config PINCTRL_PFC_SHX3
->  	def_bool y
->  	depends on CPU_SUBTYPE_SHX3
-> -	select PINCTRL_SH_PFC_GPIO
-> +	select PINCTRL_SH_FUNC_GPIO
->  endif
-> diff --git a/drivers/pinctrl/sh-pfc/gpio.c b/drivers/pinctrl/sh-pfc/gpio.c
-> index 4f3a34ee1cd454b8..97c1332c1045739a 100644
-> --- a/drivers/pinctrl/sh-pfc/gpio.c
-> +++ b/drivers/pinctrl/sh-pfc/gpio.c
-> @@ -252,7 +252,7 @@ static int gpio_pin_setup(struct sh_pfc_chip *chip)
->   * Function GPIOs
->   */
->  
-> -#ifdef CONFIG_SUPERH
-> +#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
->  static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
->  {
->  	static bool __print_once;
-> @@ -292,7 +292,7 @@ static int gpio_function_setup(struct sh_pfc_chip *chip)
->  
->  	return 0;
->  }
-> -#endif
-> +#endif /* CONFIG_PINCTRL_SH_FUNC_GPIO */
->  
->  /* -----------------------------------------------------------------------------
->   * Register/unregister
-> @@ -369,7 +369,7 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
->  	if (IS_ENABLED(CONFIG_OF) && pfc->dev->of_node)
->  		return 0;
->  
-> -#ifdef CONFIG_SUPERH
-> +#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
->  	/*
->  	 * Register the GPIO to pin mappings. As pins with GPIO ports
->  	 * must come first in the ranges, skip the pins without GPIO
-> @@ -397,7 +397,7 @@ int sh_pfc_register_gpiochip(struct sh_pfc *pfc)
->  	chip = sh_pfc_add_gpiochip(pfc, gpio_function_setup, NULL);
->  	if (IS_ERR(chip))
->  		return PTR_ERR(chip);
-> -#endif /* CONFIG_SUPERH */
-> +#endif /* CONFIG_PINCTRL_SH_FUNC_GPIO */
->  
->  	return 0;
->  }
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> index 56016cb76769c97b..754e325d0bdbb48d 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -261,7 +261,7 @@ struct sh_pfc_soc_info {
->  	const struct sh_pfc_function *functions;
->  	unsigned int nr_functions;
->  
-> -#ifdef CONFIG_SUPERH
-> +#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
->  	const struct pinmux_func *func_gpios;
->  	unsigned int nr_func_gpios;
->  #endif
+> -	frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
+> +	frqcr = readl(base + CPG_FRQCR) & 0xFFF;
+>  	if (frqcr == 0x012)
+>  		index = 0;
+>  	else if (frqcr == 0x112)
 > -- 
 > 2.17.1
 > 
