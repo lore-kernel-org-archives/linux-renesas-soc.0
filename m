@@ -2,91 +2,127 @@ Return-Path: <SRS0=rp0x=R6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7645C10F00
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 18:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3548C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 18:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7C6420657
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 18:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6D16205C9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 18:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553713056;
+	bh=SeuXXXEJshdCjxNBfiXdPj39+UBW8JBgmx3N6Jlwr0I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=OpbXTj9jWBxD0IuV6ubV60ClTTf9/exdfn2lUoV0D1EIqZwhVjlVQddIaV6DWLu2v
+	 yySHX2fOl694pH8jMFfmXJrtT4x9usKLCRfZqG9gDs7fQTC7Zu0byee8+JK75giptA
+	 LzObrP9CwwbZy+a9NqRK0hjBBm6oGM1dhjqre8nk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390491AbfC0SgI (ORCPT
+        id S2389914AbfC0SPw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 14:36:08 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:33196 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388266AbfC0SgH (ORCPT
+        Wed, 27 Mar 2019 14:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388942AbfC0SPw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:36:07 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 3D7603C00DD;
-        Wed, 27 Mar 2019 19:36:05 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id QCEFbpOapV3K; Wed, 27 Mar 2019 19:35:58 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        Wed, 27 Mar 2019 14:15:52 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 334513C00C4;
-        Wed, 27 Mar 2019 19:35:58 +0100 (CET)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.435.0; Wed, 27 Mar
- 2019 19:35:57 +0100
-Date:   Wed, 27 Mar 2019 19:35:55 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, <wsa@the-dreams.de>,
-        <geert@linux-m68k.org>, <linux-renesas-soc@vger.kernel.org>
-CC:     <linux-serial@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "George G. Davis" <george_davis@mentor.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Tobias Franzen <tfranzen@de.adit-jv.com>,
-        <magnus.damm@gmail.com>, <greg@kroah.com>
-Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point
- adjustment
-Message-ID: <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id EEA9A217D9;
+        Wed, 27 Mar 2019 18:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553710550;
+        bh=SeuXXXEJshdCjxNBfiXdPj39+UBW8JBgmx3N6Jlwr0I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hFXHPKK+2c9xJA+7+8PB2R4GjtTCGWrMxh7iFVclwSVNKvD5WadNTcooNTRqwamcU
+         jC5yo48kCJP3O5+jb6d8A9umyQ4A+51yzsjj997JJH3ZvLWzLrvUf6PiwxEPjz6IID
+         k29BybciNqkcLKfM3l0ik82X4FxtEezUOBTRSn+M=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 172/192] media: rcar-vin: Allow independent VIN link enablement
+Date:   Wed, 27 Mar 2019 14:10:04 -0400
+Message-Id: <20190327181025.13507-172-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
+References: <20190327181025.13507-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear Renesas Open Source team,
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-We've recently switched from rcar-3.7.x to rcar-3.9.x [1] kernel and the
-latter contains this patch [2] by virtue of rcar-3.9.0 commit [3], which
-mirrors v4.18-rc1 commit [4] in mainline.
+[ Upstream commit c5ff0edb8e2270a75935c73217fb0de1abd2d910 ]
 
-JFYI, quite far away in the delivery chain, we've received below report:
+There is a block of code in rvin_group_link_notify() that prevents
+enabling a link to a VIN node if any entity in the media graph is
+in use. This prevents enabling a VIN link even if there is an in-use
+entity somewhere in the graph that is independent of the link's
+pipeline.
 
-> With this patch [2-4] there are reports about broken data
-> communication with 115200 baud with SXM module. Reverting
-> this patch results in successful communication, again.
+For example, the code block will prevent enabling a link from
+the first rcar-csi2 receiver to a VIN node even if there is an
+enabled link somewhere far upstream on the second independent
+rcar-csi2 receiver pipeline.
 
-While this scarce information barely helps anybody, I thought that
-sharing it with you might be beneficial in case you collect several
-reports linked to this specific commit in future, meaning it potentially
-adds a regression.
+If this code block is meant to prevent modifying a link if any entity
+in the graph is actively involved in streaming (because modifying
+the CHSEL register fields can disrupt any/all running streams), then
+the entities stream counts should be checked rather than the use counts.
 
-Also, if you are aware of any userland changes that might be
-required/assumed by this patch or in case you have any alternative
-ideas how to avoid reverting this patch, your feedback would be very
-appreciated.
+(There is already such a check in __media_entity_setup_link() that verifies
+the stream_count of the link's source and sink entities are both zero,
+but that is insufficient, since there should be no running streams in
+the entire graph).
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/tag/?h=rcar-3.9.3
-[2] https://patchwork.kernel.org/patch/10322809/
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/commit/?id=e395fc813539
-[4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=63ba1e00f178
+Modify the code block to check the entity stream_count instead of the
+use_count (and elaborate on the comment). VIN node links can now be
+enabled even if there are other independent in-use entities that are
+not streaming.
 
-Best regards,
-Eugeniu.
+Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
+
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index ce09799976ef..e1085e3ab3cc 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+ 	    !is_media_entity_v4l2_video_device(link->sink->entity))
+ 		return 0;
+ 
+-	/* If any entity is in use don't allow link changes. */
++	/*
++	 * Don't allow link changes if any entity in the graph is
++	 * streaming, modifying the CHSEL register fields can disrupt
++	 * running streams.
++	 */
+ 	media_device_for_each_entity(entity, &group->mdev)
+-		if (entity->use_count)
++		if (entity->stream_count)
+ 			return -EBUSY;
+ 
+ 	mutex_lock(&group->lock);
+-- 
+2.19.1
+
