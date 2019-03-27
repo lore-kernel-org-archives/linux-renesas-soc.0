@@ -2,146 +2,97 @@ Return-Path: <SRS0=rp0x=R6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3D1C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D693C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 21:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C61D2075C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:23:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553714628;
-	bh=YwqxMsNUsCI5zqPkmbPECmgbv7W5UwBh0BcdPZFv+S4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LF1HjGpINtJDV88mSF+VceyC1Y5KPE27JBKduLaBXCEHi4CmjSnYxIW9LxiV9JEhj
-	 koBHwYLFMCekSHZZ5O/Etuen47Jt91y0uSPIIaSYI5ItyjAJaAeAJhMjGJ6FLuCGo+
-	 JHCGzCoSZGWmD996VjL2BZYwk5PfYmK9krVkDpLc=
+	by mail.kernel.org (Postfix) with ESMTP id DB6AC20700
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 21:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387814AbfC0SF4 (ORCPT
+        id S1726100AbfC0VNV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 14:05:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47238 "EHLO mail.kernel.org"
+        Wed, 27 Mar 2019 17:13:21 -0400
+Received: from sauhun.de ([88.99.104.3]:38958 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387801AbfC0SFz (ORCPT
+        id S1726059AbfC0VNV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:05:55 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 120622075C;
-        Wed, 27 Mar 2019 18:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553709954;
-        bh=YwqxMsNUsCI5zqPkmbPECmgbv7W5UwBh0BcdPZFv+S4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0R6NUSEHArzqM7A5iBadthDRTJWx2bIc523juxEf+IBjf5og0HZ82DlH+Y9dKBJIC
-         fG6B8N76Qd6VndSqZz7GeAmDT/w67awCAAtXLQf9gcyGLhYfTVgN+SIP0HMgjVuzeo
-         xVC7OMbTkG0LiNoz9hVQJAGZiudV+KGMsoXtu2JE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 129/262] gpio: of: Apply regulator-gpio quirk only to enable-gpios
-Date:   Wed, 27 Mar 2019 13:59:44 -0400
-Message-Id: <20190327180158.10245-129-sashal@kernel.org>
+        Wed, 27 Mar 2019 17:13:21 -0400
+Received: from localhost (p5486CE6B.dip0.t-ipconnect.de [84.134.206.107])
+        by pokefinder.org (Postfix) with ESMTPSA id E72342E35A2;
+        Wed, 27 Mar 2019 22:13:18 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH] i2c: remove use of in_atomic()
+Date:   Wed, 27 Mar 2019 22:12:56 +0100
+Message-Id: <20190327211256.17232-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
-References: <20190327180158.10245-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Commit cea443a81c9c ("i2c: Support i2c_transfer in atomic contexts")
+added in_atomic() to the I2C core. However, the use of in_atomic()
+outside of core kernel code is discouraged and was already[1] when this
+code was added in early 2008. The above commit was a preparation for
+b7a3670131c7 ("i2c-pxa: Add polling transfer"). Its commit message says
+explicitly it was added "for cases where I2C transactions have to occur
+at times interrups are disabled". So, the intention was 'disabled
+interrupts'. This matches the use cases for atomic I2C transfers I have
+seen so far: very late communication (mostly to a PMIC) to powerdown or
+reboot the system. For those cases, interrupts are disabled then. It
+doesn't seem that in_atomic() adds value.
 
-[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
+Note that only ~10 out of ~120 bus master drivers support atomic
+transfers, mostly by polling always when no irq is supplied. A generic
+I2C client driver cannot assume support for atomic transfers. This is
+currently a platform-dependent corner case.
 
-Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
-the GPIO regulator had inverted the polarity of the control GPIO. This
-problem manifested itself on systems with DT containing the following
-description (snippet from salvator-common.dtsi):
+The I2C core will soon gain an extra callback into bus drivers
+especially for atomic transfers to make them more generic. The code
+deciding which transfer to use (atomic/non-atomic) should mimic the
+behaviour which locking to use (trylock/lock). Because I don't want to
+add more in_atomic() to the I2C core, this patch simply removes it.
 
-	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-	gpios-states = <1>;
-	states = <3300000 1
-		  1800000 0>;
+[1] https://lwn.net/Articles/274695/
 
-Prior to the aforementioned commit, the gpio-regulator code used
-gpio_request_array() to claim the GPIO(s) specified in the "gpios"
-DT node, while the commit changed that to devm_gpiod_get_index().
-
-The legacy gpio_request_array() calls gpio_request_one() and then
-gpiod_request(), which parses the DT flags of the "gpios" node and
-populates the GPIO descriptor flags field accordingly.
-
-The new devm_gpiod_get_index() calls gpiod_get_index(), then
-of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
-and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
-("gpio: of: Add special quirk to parse regulator flags"),
-of_gpio_flags_quirks() contains a quirk for regulator-gpio
-which was never triggered by the legacy gpio_request_array()
-code path, but is triggered by devm_gpiod_get_index() code
-path.
-
-This quirk checks whether a GPIO is associated with a fixed
-or gpio-regulator and if so, checks two additional conditions.
-First, whether such GPIO is active-low, and if so, ignores the
-active-low flag. Second, whether the regulator DT node does
-have an "enable-active-high" property and if the property is
-NOT present, sets the GPIO flags as active-low.
-
-The second check triggers a problem, since it is applied to all
-GPIOs associated with a gpio-regulator, rather than only on the
-"enable" GPIOs, as the old code did. This changes the way the
-gpio-regulator interprets the DT description of the control
-GPIOs.
-
-The old code using gpio_request_array() explicitly parsed the
-"enable-active-high" DT property and only applied it to the
-GPIOs described in the "enable-gpios" DT node, and only if
-those were present.
-
-This patch fixes the quirk code by only applying the quirk
-to "enable-gpios", thus restoring the old behavior.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jan Kotas <jank@cadence.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/gpio/gpiolib-of.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a6e1891217e2..30542a10014f 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 	 * Note that active low is the default.
+So, I had to dive into this in_atomic() topic and this is what I
+concluded. I don't see any reasonable constellation where this could
+cause a regression, but I am all open for missing something and being
+pointed to it. This is why the patch is RFC. I'd really welcome
+comments. Thanks!
+
+
+ drivers/i2c/i2c-core-base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 38af18645133..943bebeec3ed 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1946,7 +1946,7 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	 *    one (discarding status on the second message) or errno
+ 	 *    (discarding status on the first one).
  	 */
- 	if (IS_ENABLED(CONFIG_REGULATOR) &&
-+	    !strcmp(propname, "enable-gpio") &&
- 	    (of_device_is_compatible(np, "regulator-fixed") ||
- 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
- 	     of_device_is_compatible(np, "regulator-gpio"))) {
+-	if (in_atomic() || irqs_disabled()) {
++	if (irqs_disabled()) {
+ 		ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT);
+ 		if (!ret)
+ 			/* I2C activity is ongoing. */
 -- 
 2.19.1
 
