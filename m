@@ -7,54 +7,52 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9B3C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D5AC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAD992087C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:02:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B21AC2087C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 12:08:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Ug4kiel5"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="X6Oxmexc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727488AbfC0MCo (ORCPT
+        id S1726598AbfC0MIG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 08:02:44 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:56208 "EHLO
+        Wed, 27 Mar 2019 08:08:06 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:56273 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfC0MCo (ORCPT
+        with ESMTP id S1726233AbfC0MIF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 08:02:44 -0400
+        Wed, 27 Mar 2019 08:08:05 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id B246625B7E0;
-        Wed, 27 Mar 2019 23:02:42 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id A0ABD25B7E0;
+        Wed, 27 Mar 2019 23:08:03 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1553688163; bh=vqu4vwJ2giiSYHBQ79FMxgWmNlhb5Mh0DrXhS7QI614=;
+        t=1553688483; bh=VoyXsmxWIE5AzfzkK+ebdFAoD2/OAfhr1fD/cGtX8Go=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ug4kiel59KZ+HjLqQaKzRCM39EHaOP8V/JvqMuTuiTbXLktrO4xYwdTS+j7Qanwno
-         2dV86ef4/WhtRsxCA0WbF43zgLCaxspyKY7SaxvLeU7dKI1aU6VGv4+HsaKwAgwRGI
-         rj2wD9SQc1Cg4ADYjeyfszzTPuFTi6WeT0gdlgxU=
+        b=X6Oxmexcno067zoHPdDw1gILfPNSu4uet33pt9VwuARxoBLCjC8ypUn//YWv/SWLK
+         XG7CZuIQuw5erFAsp1CBvz7nawTJU6H+Ecn8V3uoQbldKmO8RIkcXOYKwi4sOdzLcq
+         pSDMFYytNJif6eM29/T7UHQuXqdMuY5CreEAmfks=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id F0A19940376; Wed, 27 Mar 2019 13:02:40 +0100 (CET)
-Date:   Wed, 27 Mar 2019 13:02:40 +0100
+        id DA9C3940376; Wed, 27 Mar 2019 13:08:01 +0100 (CET)
+Date:   Wed, 27 Mar 2019 13:08:01 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] arm64: dts: renesas: salvator-common: Add GPIO keys
- support
-Message-ID: <20190327120239.kjmhbw62vm6hxxve@verge.net.au>
-References: <20180819194455.25096-1-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdW4ium4s97+1iOHkhBGw3LdfPyfxXq4_7ic+VtXzRpE2g@mail.gmail.com>
- <20180906094231.eccvg2asl7kgotu2@verge.net.au>
- <2032675.nQfVxexfDx@avalon>
- <20180912102534.vrocfv2mdrjuk2ev@verge.net.au>
- <CAMuHMdU0NqdN7efjDMcabXuWAFJy3eQSFHWxcjYaRMjz=+vKJQ@mail.gmail.com>
- <20180917071041.jobxfznnla3mnuga@verge.net.au>
- <20190325023029.GB12029@pendragon.ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/2] ARM: dts: rskrza1: Add I2C support
+Message-ID: <20190327120801.2klhf4wzob57kuik@verge.net.au>
+References: <20190320194410.14870-1-geert+renesas@glider.be>
+ <20190320194410.14870-2-geert+renesas@glider.be>
+ <20190322102324.yxnrwnkyhxrzqdg4@verge.net.au>
+ <CAMuHMdWngVfAUZoF7nsZUbZdZYj1zoCNPQoS_eoVh46UzM7OUA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190325023029.GB12029@pendragon.ideasonboard.com>
+In-Reply-To: <CAMuHMdWngVfAUZoF7nsZUbZdZYj1zoCNPQoS_eoVh46UzM7OUA@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -62,46 +60,36 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 25, 2019 at 04:30:29AM +0200, Laurent Pinchart wrote:
+On Mon, Mar 25, 2019 at 11:55:50AM +0100, Geert Uytterhoeven wrote:
 > Hi Simon,
 > 
-> On Mon, Sep 17, 2018 at 09:10:42AM +0200, Simon Horman wrote:
-> > On Wed, Sep 12, 2018 at 01:59:53PM +0200, Geert Uytterhoeven wrote:
-> > > On Wed, Sep 12, 2018 at 12:25 PM Simon Horman <horms@verge.net.au> wrote:
-> > >> On Thu, Sep 06, 2018 at 12:59:20PM +0300, Laurent Pinchart wrote:
-> > >>> On Thursday, 6 September 2018 12:42:32 EEST Simon Horman wrote:
-> > >>>> On Thu, Aug 23, 2018 at 11:58:54AM +0200, Geert Uytterhoeven wrote:
-> > >>>>> On Sun, Aug 19, 2018 at 9:44 PM Laurent Pinchart wrote:
-> > >>>>>> The Salvator-X and XS boards have a 4 lines DIP switch and 3 push
-> > >>>>>> buttons connected to SoC GPIOs, meant to be used as general-purpose test
-> > >>>>>> keys. Add a corresponding node in DT, mapping (semi-randomly) the DIP
-> > >>>>>> switch to keys 1-4 and the push buttons to keys A-C.
-> > >>>>>>
-> > >>>>>> Signed-off-by: Laurent Pinchart
-> > >>>>>> <laurent.pinchart+renesas@ideasonboard.com>
-> > >>>>>
-> > >>>>> Given GP6_1[123] are not just wired to the 3 push buttons, but also to 3
-> > >>>>> LEDs, I wonder if we shouldn't postpone that part until Linux can handle
-> > >>>>> GPIOs connected to both?
-> > >>>>
-> > >>>> Laurent, any thoughts on that?
-> > >>>
-> > >>> Right now the GPIOs are not wired in DT, and we're thus without a way to
-> > >>> interface to both LEDs and push buttons. While I agree that an ideal
-> > >>> solution would be to support both, I think that moving from nothing to
-> > >>> support for push buttons would be a step forward already.
-> > >>
-> > >> I tend to agree. Geert, what are your thoughts?
-> > > 
-> > > Fine for me.
-> > > 
-> > > Just one more bikeshedding question: what's most useful, buttons or LEDs? ;-)
-> > 
-> > Lets go with the buttons.
-> > 
-> > Applied for v4.20.
+> On Fri, Mar 22, 2019 at 11:23 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Mar 20, 2019 at 08:44:09PM +0100, Geert Uytterhoeven wrote:
+> > > Enable the I2C bus, and add the following devices:
+> > >   - Two CAT9554 port expanders (8 GPIOs, interrupt not wired by
+> > >     default),
+> > >   - R1EX24016ASAS0A EEPROM.
+> > >
+> > > The bus also contains a MAX9856 Audio Codec, which is not yet supported.
+> > >
+> > > All devices (incl. the audio codec) are documented to support an I2C bus
+> > > running at 400 kHz.
+> > >
+> > > Pinctrl is based on the RZ/A BSP.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > Pending acceptance of the DT binding patches documenting the
+> > > "onnn,cat9554" and "renesas,r1ex24016" compatible values.
+> >
+> > Thanks.
+> >
+> > I'm marking this series as deferred pending acceptance of the bindings.
+> > Please repost or ping me once that has happened.
 > 
-> Shouldn't it have made it to Linus' tree then ? :-)
+> next-20190325 has:
+> 
+>     d333bad1f6f3e0df dt-bindings: at24: add Renesas R1EX24016
+>     5c9f8cfe3cb67dcb dt-bindings: gpio: pca953x: Document onnn,cat9554
 
-Sorry about that, it seems that I didn't apply it after all.
-I have done so now.
+Thanks, applied for v5.2.
