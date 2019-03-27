@@ -7,49 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61104C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3D1C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 285AA2075C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C61D2075C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553714419;
-	bh=xqc6ISLkolKtaTmo5FoEEfKK/L9IDmdMKsnen2DqFkg=;
+	s=default; t=1553714628;
+	bh=YwqxMsNUsCI5zqPkmbPECmgbv7W5UwBh0BcdPZFv+S4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fZL9luwx54ljpvpDClgJVn8IdXRokC2wKRz6xFxD1qHti3wzgdcCqyMjsjlz0q8sl
-	 aDjngRaV85caNiGTMEfcifK8N1AMXCTew22djQX5T7YZ9Q+IA7nyjzI1CkxD2sJKwm
-	 7tqj7i5NUAwDE2WDR7/x28gW2o4OSRKiV1XnCumM=
+	b=LF1HjGpINtJDV88mSF+VceyC1Y5KPE27JBKduLaBXCEHi4CmjSnYxIW9LxiV9JEhj
+	 koBHwYLFMCekSHZZ5O/Etuen47Jt91y0uSPIIaSYI5ItyjAJaAeAJhMjGJ6FLuCGo+
+	 JHCGzCoSZGWmD996VjL2BZYwk5PfYmK9krVkDpLc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733088AbfC0SHX (ORCPT
+        id S2387814AbfC0SF4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 14:07:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49190 "EHLO mail.kernel.org"
+        Wed, 27 Mar 2019 14:05:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388160AbfC0SHV (ORCPT
+        id S2387801AbfC0SFz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:07:21 -0400
+        Wed, 27 Mar 2019 14:05:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4232A21738;
-        Wed, 27 Mar 2019 18:07:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 120622075C;
+        Wed, 27 Mar 2019 18:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553710041;
-        bh=xqc6ISLkolKtaTmo5FoEEfKK/L9IDmdMKsnen2DqFkg=;
+        s=default; t=1553709954;
+        bh=YwqxMsNUsCI5zqPkmbPECmgbv7W5UwBh0BcdPZFv+S4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k2Or5qKNN/12ORTT3bMIeyRdmrhF9GyjLsZDvCw4WLtmKUmGbawpRyWrsnmfgUSA/
-         3e9GAoHeEMUj2SV6auY8jPi8zHwSWAfwJJoRX86bEgCq9WTcTOYna8VIRnH/Ca8cie
-         AuSwaiiELgz7scl0bfKIvkgLonyUTqtr7kQv9N6k=
+        b=0R6NUSEHArzqM7A5iBadthDRTJWx2bIc523juxEf+IBjf5og0HZ82DlH+Y9dKBJIC
+         fG6B8N76Qd6VndSqZz7GeAmDT/w67awCAAtXLQf9gcyGLhYfTVgN+SIP0HMgjVuzeo
+         xVC7OMbTkG0LiNoz9hVQJAGZiudV+KGMsoXtu2JE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Julia Lawall <julia.lawall@lip6.fr>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 170/262] drm: rcar-du: add missing of_node_put
-Date:   Wed, 27 Mar 2019 14:00:25 -0400
-Message-Id: <20190327180158.10245-170-sashal@kernel.org>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 129/262] gpio: of: Apply regulator-gpio quirk only to enable-gpios
+Date:   Wed, 27 Mar 2019 13:59:44 -0400
+Message-Id: <20190327180158.10245-129-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
 References: <20190327180158.10245-1-sashal@kernel.org>
@@ -61,64 +64,84 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Julia Lawall <julia.lawall@lip6.fr>
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-[ Upstream commit 4c6d8fc20b09f9684743afd72e4dbc3f15524479 ]
+[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
 
-Add an of_node_put when the result of of_graph_get_remote_port_parent is
-not available.
+Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
+the GPIO regulator had inverted the polarity of the control GPIO. This
+problem manifested itself on systems with DT containing the following
+description (snippet from salvator-common.dtsi):
 
-Add a second of_node_put if no encoder is selected (encoder remains NULL).
+	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+	gpios-states = <1>;
+	states = <3300000 1
+		  1800000 0>;
 
-The semantic match that finds the first problem is as follows
-(http://coccinelle.lip6.fr):
+Prior to the aforementioned commit, the gpio-regulator code used
+gpio_request_array() to claim the GPIO(s) specified in the "gpios"
+DT node, while the commit changed that to devm_gpiod_get_index().
 
-// <smpl>
-@r exists@
-local idexpression e;
-expression x;
-@@
-e = of_graph_get_remote_port_parent(...);
-... when != x = e
-    when != true e == NULL
-    when != of_node_put(e)
-    when != of_fwnode_handle(e)
-(
-return e;
-|
-*return ...;
-)
-// </smpl>
+The legacy gpio_request_array() calls gpio_request_one() and then
+gpiod_request(), which parses the DT flags of the "gpios" node and
+populates the GPIO descriptor flags field accordingly.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The new devm_gpiod_get_index() calls gpiod_get_index(), then
+of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
+and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
+("gpio: of: Add special quirk to parse regulator flags"),
+of_gpio_flags_quirks() contains a quirk for regulator-gpio
+which was never triggered by the legacy gpio_request_array()
+code path, but is triggered by devm_gpiod_get_index() code
+path.
+
+This quirk checks whether a GPIO is associated with a fixed
+or gpio-regulator and if so, checks two additional conditions.
+First, whether such GPIO is active-low, and if so, ignores the
+active-low flag. Second, whether the regulator DT node does
+have an "enable-active-high" property and if the property is
+NOT present, sets the GPIO flags as active-low.
+
+The second check triggers a problem, since it is applied to all
+GPIOs associated with a gpio-regulator, rather than only on the
+"enable" GPIOs, as the old code did. This changes the way the
+gpio-regulator interprets the DT description of the control
+GPIOs.
+
+The old code using gpio_request_array() explicitly parsed the
+"enable-active-high" DT property and only applied it to the
+GPIOs described in the "enable-gpios" DT node, and only if
+those were present.
+
+This patch fixes the quirk code by only applying the quirk
+to "enable-gpios", thus restoring the old behavior.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jan Kotas <jank@cadence.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpiolib-of.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 9c7007d45408..f9a90ff24e6d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		dev_dbg(rcdu->dev,
- 			"connected entity %pOF is disabled, skipping\n",
- 			entity);
-+		of_node_put(entity);
- 		return -ENODEV;
- 	}
- 
-@@ -366,6 +367,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		dev_warn(rcdu->dev,
- 			 "no encoder found for endpoint %pOF, skipping\n",
- 			 ep->local_node);
-+		of_node_put(entity);
- 		return -ENODEV;
- 	}
- 
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index a6e1891217e2..30542a10014f 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * Note that active low is the default.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_REGULATOR) &&
++	    !strcmp(propname, "enable-gpio") &&
+ 	    (of_device_is_compatible(np, "regulator-fixed") ||
+ 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+ 	     of_device_is_compatible(np, "regulator-gpio"))) {
 -- 
 2.19.1
 
