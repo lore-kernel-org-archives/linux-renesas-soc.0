@@ -7,54 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3548C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 18:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BEDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D16205C9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 18:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C84D4206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Mar 2019 19:01:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553713056;
-	bh=SeuXXXEJshdCjxNBfiXdPj39+UBW8JBgmx3N6Jlwr0I=;
+	s=default; t=1553713310;
+	bh=muq2VKf6O7YsjH3w9qb7tTBtwzD1JKs9NHjP5995QJk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OpbXTj9jWBxD0IuV6ubV60ClTTf9/exdfn2lUoV0D1EIqZwhVjlVQddIaV6DWLu2v
-	 yySHX2fOl694pH8jMFfmXJrtT4x9usKLCRfZqG9gDs7fQTC7Zu0byee8+JK75giptA
-	 LzObrP9CwwbZy+a9NqRK0hjBBm6oGM1dhjqre8nk=
+	b=A9yUnKUDOflO09F8FTHDky5E66aDprIpUcazIslPNPBKJUftYm1PIXm3LNfcApiII
+	 pnd3K3z9h3na5vlT5HuWIHOb9Ei/KCuxWz1oqTfOzbEdpoAetOfdkBIxKOBubeLYrS
+	 3tF1XCgqBh8xwblzRSMW4/qc/R5Ejr1YVFicCLFk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389914AbfC0SPw (ORCPT
+        id S2388922AbfC0TBo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Mar 2019 14:15:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59562 "EHLO mail.kernel.org"
+        Wed, 27 Mar 2019 15:01:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388942AbfC0SPw (ORCPT
+        id S2389273AbfC0SOF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Mar 2019 14:15:52 -0400
+        Wed, 27 Mar 2019 14:14:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEA9A217D9;
-        Wed, 27 Mar 2019 18:15:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8B522147C;
+        Wed, 27 Mar 2019 18:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553710550;
-        bh=SeuXXXEJshdCjxNBfiXdPj39+UBW8JBgmx3N6Jlwr0I=;
+        s=default; t=1553710444;
+        bh=muq2VKf6O7YsjH3w9qb7tTBtwzD1JKs9NHjP5995QJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hFXHPKK+2c9xJA+7+8PB2R4GjtTCGWrMxh7iFVclwSVNKvD5WadNTcooNTRqwamcU
-         jC5yo48kCJP3O5+jb6d8A9umyQ4A+51yzsjj997JJH3ZvLWzLrvUf6PiwxEPjz6IID
-         k29BybciNqkcLKfM3l0ik82X4FxtEezUOBTRSn+M=
+        b=kXbOPpFG+oIMxfsGDCcXga6V6+EpiN4IuKAVK0uKGEHLVAy7lY0ncqWcZT4Q6HcOg
+         oYe6zLPxw2cSihgdzsF0rloipQolOQlx3NJgmuiAoqVlj3dKUo/uqXEKfFLF3GLrcu
+         4ReQihyu832/sfnqzf3+yhVAo1nFVLA3w0q9Dveg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 172/192] media: rcar-vin: Allow independent VIN link enablement
-Date:   Wed, 27 Mar 2019 14:10:04 -0400
-Message-Id: <20190327181025.13507-172-sashal@kernel.org>
+Cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 123/192] drm: rcar-du: add missing of_node_put
+Date:   Wed, 27 Mar 2019 14:09:15 -0400
+Message-Id: <20190327181025.13507-123-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190327181025.13507-1-sashal@kernel.org>
 References: <20190327181025.13507-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -62,67 +61,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+From: Julia Lawall <julia.lawall@lip6.fr>
 
-[ Upstream commit c5ff0edb8e2270a75935c73217fb0de1abd2d910 ]
+[ Upstream commit 4c6d8fc20b09f9684743afd72e4dbc3f15524479 ]
 
-There is a block of code in rvin_group_link_notify() that prevents
-enabling a link to a VIN node if any entity in the media graph is
-in use. This prevents enabling a VIN link even if there is an in-use
-entity somewhere in the graph that is independent of the link's
-pipeline.
+Add an of_node_put when the result of of_graph_get_remote_port_parent is
+not available.
 
-For example, the code block will prevent enabling a link from
-the first rcar-csi2 receiver to a VIN node even if there is an
-enabled link somewhere far upstream on the second independent
-rcar-csi2 receiver pipeline.
+Add a second of_node_put if no encoder is selected (encoder remains NULL).
 
-If this code block is meant to prevent modifying a link if any entity
-in the graph is actively involved in streaming (because modifying
-the CHSEL register fields can disrupt any/all running streams), then
-the entities stream counts should be checked rather than the use counts.
+The semantic match that finds the first problem is as follows
+(http://coccinelle.lip6.fr):
 
-(There is already such a check in __media_entity_setup_link() that verifies
-the stream_count of the link's source and sink entities are both zero,
-but that is insufficient, since there should be no running streams in
-the entire graph).
+// <smpl>
+@r exists@
+local idexpression e;
+expression x;
+@@
+e = of_graph_get_remote_port_parent(...);
+... when != x = e
+    when != true e == NULL
+    when != of_node_put(e)
+    when != of_fwnode_handle(e)
+(
+return e;
+|
+*return ...;
+)
+// </smpl>
 
-Modify the code block to check the entity stream_count instead of the
-use_count (and elaborate on the comment). VIN node links can now be
-enabled even if there are other independent in-use entities that are
-not streaming.
-
-Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
-
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index ce09799976ef..e1085e3ab3cc 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
- 	    !is_media_entity_v4l2_video_device(link->sink->entity))
- 		return 0;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index fb46df56f0c4..0386b454e221 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -300,6 +300,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		dev_dbg(rcdu->dev,
+ 			"connected entity %pOF is disabled, skipping\n",
+ 			entity);
++		of_node_put(entity);
+ 		return -ENODEV;
+ 	}
  
--	/* If any entity is in use don't allow link changes. */
-+	/*
-+	 * Don't allow link changes if any entity in the graph is
-+	 * streaming, modifying the CHSEL register fields can disrupt
-+	 * running streams.
-+	 */
- 	media_device_for_each_entity(entity, &group->mdev)
--		if (entity->use_count)
-+		if (entity->stream_count)
- 			return -EBUSY;
+@@ -335,6 +336,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+ 		dev_warn(rcdu->dev,
+ 			 "no encoder found for endpoint %pOF, skipping\n",
+ 			 ep->local_node);
++		of_node_put(entity);
+ 		return -ENODEV;
+ 	}
  
- 	mutex_lock(&group->lock);
 -- 
 2.19.1
 
