@@ -3,79 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAEDC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F801C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B382420700
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1770D20700
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725875AbfC1IFk (ORCPT
+        id S1726611AbfC1IKR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 04:05:40 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:40119 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbfC1IFk (ORCPT
+        Thu, 28 Mar 2019 04:10:17 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:38251 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfC1IKR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 04:05:40 -0400
-Received: by mail-vk1-f193.google.com with SMTP id l17so4311667vke.7;
-        Thu, 28 Mar 2019 01:05:39 -0700 (PDT)
+        Thu, 28 Mar 2019 04:10:17 -0400
+Received: by mail-ua1-f68.google.com with SMTP id d4so6546446uap.5;
+        Thu, 28 Mar 2019 01:10:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=G1l+MpBVZScAXtCz01M3zXlY6CntX0jIq/2tr27fzXU=;
-        b=CtDW1LHiW+xmiizsqtqhgaXfKYA4MPO21KytyFjyugsrVsxzCdk2m9uQc91xpKpEvt
-         rfrZEo2STyHpv8DlLy+wXVcsEepwVvvn/qfvID/GWjumYxnEgCZgtGDhiGnuDDthEY7B
-         flhq/ltNWbDksj37TaZhkDW2h8v4r/hJiXZYCkgS5fVIwbEedwcoAuvlQ+Tk2oS8G/fz
-         +koN1dPRrEmJuenLXVIFI+UlmfAOo5XiV1DHenBjKn5vm3RcuB1xBuWFqRdsLvi3Pliy
-         n3MUZG9P+G/jpAnDIQM8M8IYU+tyWi22C11VUyw+ulmd3A7dEY8K8l7b+YcwcpCthMTF
-         qlfg==
-X-Gm-Message-State: APjAAAUiF6HVYTePQGB4hwT8Ym5hm2qAgE4e/ESUWS3bTlWsQxL1JW1j
-        qB3nHdo9bPVb/2D2ae1BSiJOKe3IvXexstu94v8=
-X-Google-Smtp-Source: APXvYqzw2g+z2LssFIUYHXCRFbJFf4F5u9id0znF+qlaGD+WVKQiojvPk7TH+CF0MsH26vGNIX23zLy+STyV+VvcScQ=
-X-Received: by 2002:a1f:b297:: with SMTP id b145mr2760855vkf.74.1553760339137;
- Thu, 28 Mar 2019 01:05:39 -0700 (PDT)
+        bh=jRUgvZGmNWliE3jaTuWfhB/x9qfmX7QfxZz8gk2Gg5I=;
+        b=OHSXR37qkJRRvoK1cd+hVvS9+6whNa+BDckwevJ3F940ceo0HK4zJiLa/obl/Knuz4
+         h2cVw/7qP3N82ZRa/DbSM4433Qzm/SBSBX/AW3mHAJmE5DSOXQSTv+otbnfBODabMIrw
+         qjsSfuhQ87wObrrvq++FnpIb1eBcBDuKVr/aKDCWZNMHJ6xi8i+P1UDWEOYYo6E0xB2X
+         sigMJnII25eE8BNDbIZFdarDWd8gJin15gw9fV4bc7JamzIda+hFlIu8N//ln1PDprSF
+         OaD9H8vVi6bZs6S+74TTW2v6YpCzp1/Gxv0n60FEdzwzwPqicVBvoXTVABy370kNO9tP
+         A9Wg==
+X-Gm-Message-State: APjAAAX2Z+TgTrggsCPiS9dh6l7dq6DQ5Q8RosXkGhdBfzTc7RnALbT0
+        QRxBFvgsr4Tz5ZgTVmF4BM7DBNICHS+wk7FDq3lRdVoH
+X-Google-Smtp-Source: APXvYqz9r3Gh7bqhhyIqSeKx56Zfi3q4bPl3CeVHfVgMQZ6Vvv4NssofolIX1PK2Zc+CffLJa89q5Snt+H7vqdnTQ7M=
+X-Received: by 2002:a9f:3fce:: with SMTP id m14mr24440126uaj.96.1553760615463;
+ Thu, 28 Mar 2019 01:10:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <1553677398-7896-1-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1553677398-7896-1-git-send-email-na-hoan@jinso.co.jp>
+References: <20190327211256.17232-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190327211256.17232-1-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Mar 2019 09:05:27 +0100
-Message-ID: <CAMuHMdW8cRARXmGbCeuAzuY4XPyqmrKTKO_NrRiWudK-kQ4M9A@mail.gmail.com>
-Subject: Re: [RESEND PATCH] thermal: rcar_gen3_thermal: Fix init value of
- IRQCTL register
-To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Zhang Rui <rui.zhang@intel.com>, Jiri Slaby <jslaby@suse.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+Date:   Thu, 28 Mar 2019 09:10:02 +0100
+Message-ID: <CAMuHMdVHWNcrjXGSPaK9XTTuGEaPPpwp6gzy8XD10_TYNF1PJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] i2c: remove use of in_atomic()
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
-        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= 
-        <cv-dong@jinso.co.jp>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 27, 2019 at 10:04 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->
-> Fix setting value for IRQCTL register. We are setting the last 6 bits
-> of (IRQCTL) to be 1 (0x3f), this is only suitable for H3ES1.*, according
-> to Hardware manual values 1 are "setting prohibited" for Gen3.
->
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Hi Wolfram,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Wed, Mar 27, 2019 at 10:13 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> Commit cea443a81c9c ("i2c: Support i2c_transfer in atomic contexts")
+> added in_atomic() to the I2C core. However, the use of in_atomic()
+> outside of core kernel code is discouraged and was already[1] when this
+> code was added in early 2008. The above commit was a preparation for
+> b7a3670131c7 ("i2c-pxa: Add polling transfer"). Its commit message says
+> explicitly it was added "for cases where I2C transactions have to occur
+> at times interrups are disabled". So, the intention was 'disabled
+> interrupts'. This matches the use cases for atomic I2C transfers I have
+> seen so far: very late communication (mostly to a PMIC) to powerdown or
+> reboot the system. For those cases, interrupts are disabled then. It
+> doesn't seem that in_atomic() adds value.
+>
+> Note that only ~10 out of ~120 bus master drivers support atomic
+> transfers, mostly by polling always when no irq is supplied. A generic
+> I2C client driver cannot assume support for atomic transfers. This is
+> currently a platform-dependent corner case.
+>
+> The I2C core will soon gain an extra callback into bus drivers
+> especially for atomic transfers to make them more generic. The code
+> deciding which transfer to use (atomic/non-atomic) should mimic the
+> behaviour which locking to use (trylock/lock). Because I don't want to
+> add more in_atomic() to the I2C core, this patch simply removes it.
+>
+> [1] https://lwn.net/Articles/274695/
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+LGTM, so:
+Ackeded-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+But please wait for Peter and/or Frederic to give their fiat, too.
 
 Gr{oetje,eeting}s,
 
