@@ -2,144 +2,140 @@ Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAE5C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 15:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4B8C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 16:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 562CA2183E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 15:35:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553787350;
-	bh=a/g/VYScVNYn2X2u3LhJghUOPr4oJjq5uMVncOPWdDs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sZnypUJaKbNchkRYi65qRVEO1/9b7Vmelc7RS5v4BCiS0mgVPC6ptimvPLj6suXGp
-	 pu/sjuBTRDZ0xX6VuPaRKbwVtVIwktc5juuNhHRkxEruTn6JAK1IoSUP4Llx8woM8q
-	 vHxcP6vsw7LK+dm2NRMiAVkhIg2UOQWDLsVWYTr0=
+	by mail.kernel.org (Postfix) with ESMTP id E97DE2054F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 16:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbfC1Pft (ORCPT
+        id S1726949AbfC1Q2W (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 11:35:49 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36897 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfC1Pft (ORCPT
+        Thu, 28 Mar 2019 12:28:22 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47946 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbfC1Q2W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 11:35:49 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v84so16115758oif.4;
-        Thu, 28 Mar 2019 08:35:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CUJVm6EVuy7yDOFxbk1DwgRak1DRjwAQ0UQn2Iy1xtY=;
-        b=LB4kfXZQJwIslXsiGWX+OWrE5b0cphIuzJeu75jOttJQRd3FUWkRdlqpfHhJu+5eks
-         OqlX2eqxvVpIw4ii/5oEVX9l+cs/wYodrfSg52RAnuRxX8h74DzFCPO1/WXmnmxZWC1Z
-         uNdCkfFisLU0dVjzX10bFgjEIh1OE+IWJykJpGexJMew4z57YhjKK7qOUx2U/M8pO7mE
-         wG4ZYTk7V5epxFdkyD5XkAKFtyJhJEdIH2cR3wXEEqhramzUn+y1QAhkNcQqbBZHatOw
-         EVr6b7OULCt6cZj95U55bGc5ktR2ASiU2gRXLZRZlPrfmfIXgsJtkypueI+eb6UcyWPJ
-         IOIg==
-X-Gm-Message-State: APjAAAWoKTnnobVsEIuUKHaT4rGqL8lCd6Dq9qA9W+HN9KICUeltq/Gp
-        s96vQ9R4wZzPm7S+WCkVqQ==
-X-Google-Smtp-Source: APXvYqwgtZPrZGBWaw972d0+cJvMav3pASTxGZ9xh++Bwo3Ng0TAuhcsn2pYXXfoK4gZPGKw/Gvv9w==
-X-Received: by 2002:aca:35d6:: with SMTP id c205mr435053oia.176.1553787348437;
-        Thu, 28 Mar 2019 08:35:48 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s23sm3436068otk.0.2019.03.28.08.35.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Mar 2019 08:35:47 -0700 (PDT)
-Date:   Thu, 28 Mar 2019 10:35:47 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Thu, 28 Mar 2019 12:28:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A80FD80D;
+        Thu, 28 Mar 2019 09:28:21 -0700 (PDT)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04D833F557;
+        Thu, 28 Mar 2019 09:28:19 -0700 (PDT)
+Date:   Thu, 28 Mar 2019 16:28:57 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: usb: hd3ss3220 device tree binding
- document
-Message-ID: <20190328153547.GA12413@bogus>
-References: <1552552775-51667-1-git-send-email-biju.das@bp.renesas.com>
- <1552552775-51667-2-git-send-email-biju.das@bp.renesas.com>
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH V4 6/6] PCI: rcar: Fix 64bit MSI message address handling
+Message-ID: <20190328162857.GB19825@red-moon>
+References: <20190325114101.10198-1-marek.vasut@gmail.com>
+ <20190325114101.10198-6-marek.vasut@gmail.com>
+ <20190327113023.zhnx5v5spcx7uoqj@verge.net.au>
+ <CAMuHMdW_6hutek-vk+mwDHJ1kBUytLvtkgLKb2mkSEFFasJ_0g@mail.gmail.com>
+ <efcf526b-cfbc-ea54-f97e-f280e1f672fa@gmail.com>
+ <CAMuHMdU7dQ=8UaSCoZ8TucMfaGyu38rxDYV=Tspw_UmCu5YVwQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1552552775-51667-2-git-send-email-biju.das@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMuHMdU7dQ=8UaSCoZ8TucMfaGyu38rxDYV=Tspw_UmCu5YVwQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Mar 14, 2019 at 08:39:29AM +0000, Biju Das wrote:
-> Add device tree binding document for TI HD3SS3220 Type-C DRP port
-> controller driver.
+On Thu, Mar 28, 2019 at 09:02:00AM +0100, Geert Uytterhoeven wrote:
+> Hi Marek,
 > 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> ---
-> V1-->V2
->   * Added connector node.
->   * updated the example with connector node.
-> ---
->  .../devicetree/bindings/usb/ti,hd3ss3220.txt       | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-> new file mode 100644
-> index 0000000..7f41400
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-> @@ -0,0 +1,37 @@
-> +TI HD3SS3220 TypeC DRP Port Controller.
-> +
-> +Required properties:
-> + - compatible: Must be "ti,hd3ss3220".
-> + - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
-> + - interrupts: <a b> where a is the interrupt number and b represents an
-> +   encoding of the sense and level information for the interrupt.
-> +
-> +Required sub-node:
-> + - connector : The "usb-c-connector" attached to the hd3ss3220 chip. The
-> +   bindings of the connector node are specified in:
-> +
-> +	Documentation/devicetree/bindings/connector/usb-connector.txt
-> +
-> +Example:
-> +hd3ss3220@47 {
-> +	compatible = "ti,hd3ss3220";
-> +	reg = <0x47>;
-> +	interrupt-parent = <&gpio6>;
-> +	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +	usb_con: connector {
-> +		compatible = "usb-c-connector";
-> +		label = "USB-C";
-
-Arguably, not that useful of a label as it doesn't describe which USB C 
-connector.
-
-> +		data-role = "dual";
-> +	};
-> +
-> +	port {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		hd3ss3220_ep: endpoint@0 {
-> +			reg = <0>;
-> +			remote-endpoint = <&usb3peri_role_switch>;
-> +		};
-> +	};
-> +};
-> -- 
-> 2.7.4
+> On Thu, Mar 28, 2019 at 4:19 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+> > On 3/27/19 1:22 PM, Geert Uytterhoeven wrote:
+> > > On Wed, Mar 27, 2019 at 12:30 PM Simon Horman <horms@verge.net.au> wrote:
+> > >> On Mon, Mar 25, 2019 at 12:41:01PM +0100, marek.vasut@gmail.com wrote:
+> > >>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > >>> The MSI message address in the RC address space can be 64 bit. The
+> > >>> R-Car PCIe RC supports such a 64bit MSI message address as well.
+> > >>> The code currently uses virt_to_phys(__get_free_pages()) to obtain
+> > >>> a reserved page for the MSI message address, and the return value
+> > >>> of which can be a 64 bit physical address on 64 bit system.
+> > >>>
+> > >>> However, the driver only programs PCIEMSIALR register with the bottom
+> > >>> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
+> > >>> not program the top 32 bits into PCIEMSIAUR, but rather programs the
+> > >>> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
+> > >>> SoCs, however may fail on new 64 bit R-Car SoCs.
+> > >>>
+> > >>> Since from a PCIe controller perspective, an inbound MSI is a memory
+> > >>> write to a special address (in case of this controller, defined by
+> > >>> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
+> > >>> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
+> > >>> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
+> > >>> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
+> > >>> cause memory corruption or other issues.
+> > >>>
+> > >>> There is however the possibility that if virt_to_phys(__get_free_pages())
+> > >>> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
+> > >>> to 0x0 _and_ if the system had physical RAM at the address matching the
+> > >>> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
+> > >>> physical address matching the value of PCIEMSIALR and a remote write to
+> > >>> such a buffer by a PCIe card would trigger a spurious MSI.
+> > >>>
+> > >>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> > >>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> > >>> Cc: Simon Horman <horms+renesas@verge.net.au>
+> > >>> Cc: Wolfram Sang <wsa@the-dreams.de>
+> > >>> Cc: linux-renesas-soc@vger.kernel.org
+> > >>> To: linux-pci@vger.kernel.org
+> > >>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >>
+> > >> Does this warrant a Fixes tag?
+> > >
+> > > (digging in old sent email)
+> > > Fixes: 290c1fb358605402 ("PCI: rcar: Add MSI support for PCIe")
+> >
+> > But does it really fix that commit, given that on Gen2 and earlier, it
+> > was not broken as those were 32bit platforms ?
 > 
+> It does not fix the bug on that commit, as the bug cannot happen on arm32.
+> It does fix that commit, in that that commit used "unsigned long" for a
+> physical address, which is wrong, even on arm32 (esp. with LPAE).
+> If you insist on having a Fixes tag for a commit where the bug could be
+> seen:
+> Fixes: e015f88c368da1e6 ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
+> 
+> Apart from that, drivers should use the DMA API instead of virt_to_phys().
+> However, now we have a better understanding of how MSI interrupts
+> work, we don't even need to allocate that page. All we need is the
+> physical address of a page that is guaranteed not to be backed by RAM
+> (i.e. not to be a valid target for a legitimate PCI bus mastering
+> transaction).
+
+Agreed but I would merge this patch first since it is a fix
+and update it later.
+
+Shall I go with the Fixes: tag above ?
+
+Thanks,
+Lorenzo
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
