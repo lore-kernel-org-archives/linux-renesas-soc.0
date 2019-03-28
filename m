@@ -2,106 +2,100 @@ Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F801C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B18C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1770D20700
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:10:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C42F2173C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbfC1IKR (ORCPT
+        id S1726252AbfC1IdF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 04:10:17 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:38251 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbfC1IKR (ORCPT
+        Thu, 28 Mar 2019 04:33:05 -0400
+Received: from sauhun.de ([88.99.104.3]:42842 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbfC1IdF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 04:10:17 -0400
-Received: by mail-ua1-f68.google.com with SMTP id d4so6546446uap.5;
-        Thu, 28 Mar 2019 01:10:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jRUgvZGmNWliE3jaTuWfhB/x9qfmX7QfxZz8gk2Gg5I=;
-        b=OHSXR37qkJRRvoK1cd+hVvS9+6whNa+BDckwevJ3F940ceo0HK4zJiLa/obl/Knuz4
-         h2cVw/7qP3N82ZRa/DbSM4433Qzm/SBSBX/AW3mHAJmE5DSOXQSTv+otbnfBODabMIrw
-         qjsSfuhQ87wObrrvq++FnpIb1eBcBDuKVr/aKDCWZNMHJ6xi8i+P1UDWEOYYo6E0xB2X
-         sigMJnII25eE8BNDbIZFdarDWd8gJin15gw9fV4bc7JamzIda+hFlIu8N//ln1PDprSF
-         OaD9H8vVi6bZs6S+74TTW2v6YpCzp1/Gxv0n60FEdzwzwPqicVBvoXTVABy370kNO9tP
-         A9Wg==
-X-Gm-Message-State: APjAAAX2Z+TgTrggsCPiS9dh6l7dq6DQ5Q8RosXkGhdBfzTc7RnALbT0
-        QRxBFvgsr4Tz5ZgTVmF4BM7DBNICHS+wk7FDq3lRdVoH
-X-Google-Smtp-Source: APXvYqz9r3Gh7bqhhyIqSeKx56Zfi3q4bPl3CeVHfVgMQZ6Vvv4NssofolIX1PK2Zc+CffLJa89q5Snt+H7vqdnTQ7M=
-X-Received: by 2002:a9f:3fce:: with SMTP id m14mr24440126uaj.96.1553760615463;
- Thu, 28 Mar 2019 01:10:15 -0700 (PDT)
+        Thu, 28 Mar 2019 04:33:05 -0400
+Received: from localhost (p54B33178.dip0.t-ipconnect.de [84.179.49.120])
+        by pokefinder.org (Postfix) with ESMTPSA id 8CA2F2C27DA;
+        Thu, 28 Mar 2019 09:33:03 +0100 (CET)
+Date:   Thu, 28 Mar 2019 09:33:03 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        geert@linux-m68k.org, linux-renesas-soc@vger.kernel.org,
+        linux-serial@vger.kernel.org, Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Tobias Franzen <tfranzen@de.adit-jv.com>,
+        magnus.damm@gmail.com, greg@kroah.com
+Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point
+ adjustment
+Message-ID: <20190328083303.GA3993@kunai>
+References: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
 MIME-Version: 1.0
-References: <20190327211256.17232-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190327211256.17232-1-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Mar 2019 09:10:02 +0100
-Message-ID: <CAMuHMdVHWNcrjXGSPaK9XTTuGEaPPpwp6gzy8XD10_TYNF1PJQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] i2c: remove use of in_atomic()
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Disposition: inline
+In-Reply-To: <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
 
-On Wed, Mar 27, 2019 at 10:13 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Commit cea443a81c9c ("i2c: Support i2c_transfer in atomic contexts")
-> added in_atomic() to the I2C core. However, the use of in_atomic()
-> outside of core kernel code is discouraged and was already[1] when this
-> code was added in early 2008. The above commit was a preparation for
-> b7a3670131c7 ("i2c-pxa: Add polling transfer"). Its commit message says
-> explicitly it was added "for cases where I2C transactions have to occur
-> at times interrups are disabled". So, the intention was 'disabled
-> interrupts'. This matches the use cases for atomic I2C transfers I have
-> seen so far: very late communication (mostly to a PMIC) to powerdown or
-> reboot the system. For those cases, interrupts are disabled then. It
-> doesn't seem that in_atomic() adds value.
->
-> Note that only ~10 out of ~120 bus master drivers support atomic
-> transfers, mostly by polling always when no irq is supplied. A generic
-> I2C client driver cannot assume support for atomic transfers. This is
-> currently a platform-dependent corner case.
->
-> The I2C core will soon gain an extra callback into bus drivers
-> especially for atomic transfers to make them more generic. The code
-> deciding which transfer to use (atomic/non-atomic) should mimic the
-> behaviour which locking to use (trylock/lock). Because I don't want to
-> add more in_atomic() to the I2C core, this patch simply removes it.
->
-> [1] https://lwn.net/Articles/274695/
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-LGTM, so:
-Ackeded-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Eugeniu,
 
-But please wait for Peter and/or Frederic to give their fiat, too.
+> JFYI, quite far away in the delivery chain, we've received below report:
+>=20
+> > With this patch [2-4] there are reports about broken data
+> > communication with 115200 baud with SXM module. Reverting
+> > this patch results in successful communication, again.
+>=20
+> While this scarce information barely helps anybody, I thought that
+> sharing it with you might be beneficial in case you collect several
+> reports linked to this specific commit in future, meaning it potentially
+> adds a regression.
 
-Gr{oetje,eeting}s,
+Thank you for this report! True, the information is scarce, but we will
+see what we can do with it. If we find something, I'll report back.
 
-                        Geert
+Kind regards,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+   Wolfram
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlychroACgkQFA3kzBSg
+Kbaaww/+LVuYiU+4atmFKVXLU1lKrSlxoG+su650qn2wiL/LRHBuvlzPzJqmje+q
+uL4Q+lOsc9VcFn12RxgedTrDgHJWTs9wqPxuXYKdhgkqbrF+VSmI8VtlljEEvRAl
+grzHVocYRWHKcL+LNca1Veodq97sf+ANLBaCKM483Loy2IkyBvwslBcXuir36Csl
+LI0Q/GjSB83IzYnhSpIJg+jkq8300ooTqnWIXc2lML43zyiw5btypeW4PRmKTMW2
+fvC3zJ0W+ytnCfpvsnF9kZpL7TvQzMhu9iOJ90O50XS/pwQ6MljrJOatETz+uhJh
+UkKckm6DPqTvUx0ye6h11CQcmf8FEl1WNSSGOnQA2c2jkwU8i4Dq1y1i/zVEBKqL
+oIaFDfYSN3cdhV23k3Ftl6Lh4sxPI95qAWblBBJUNp993iYWnRcQM2DCJnxDTx77
+hUNYKBDLK+oes1KBeu1XK0zVfgyM8pv1nfVN0eBQo1qs350zS3bngQVX+WwoRQBL
+fgqLWzAFMzy463Ap7Ka3BadfPZa3dxh3SIGLkDkXcYUbqwNzB9B58FiuROrs2pGW
+Nb2qh7eSPVC7QVz7ho8+YrHJU8GZDurIM+FUgdBajphvahQFYpQuGvn5AQcrZvMs
+4rfc2IaQYX66d7ZO0GuMJSCQ+u9utF1TVBpMssZtAZe/8lClH/0=
+=pona
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
