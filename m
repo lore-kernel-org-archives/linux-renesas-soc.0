@@ -2,151 +2,155 @@ Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94F4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 16:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E55AAC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 17:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2CA20693
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 16:32:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B931D20811
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 17:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbfC1QcG (ORCPT
+        id S1727572AbfC1Rxk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 12:32:06 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:35685 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfC1QcG (ORCPT
+        Thu, 28 Mar 2019 13:53:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:23178 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727565AbfC1Rxk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 12:32:06 -0400
-Received: by mail-vs1-f65.google.com with SMTP id e1so12493414vsp.2;
-        Thu, 28 Mar 2019 09:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NEjKnpBtYMgzuamyOdK751vAyLPO1HmSF4gNbz/laBA=;
-        b=cIV5arXlTN6wvrcuibLS8eOhV+roCjIhZJQr0svwX415yPdP8T0cwDOmmoYOGE7hXT
-         OT9ugL2NJH6LEAfJ8h5vkKjVmZw7yg8q//sSBlJGdtCzlSh2hOc7Z9iIE8RICed8VfyF
-         NXa+AfNveqCv+biwPAVeGbx6PzALWKsUt6OspZvUrMsNfiWAXqXIGFHuccwu2NfI99YN
-         MWypBelrvRYumLXIlqI67AWMxMcCZvzjqP3Fr46/zVLF0MD3NBeHLeqPYfuFk3IJpR8Z
-         qXXo+m/DCfCkh8gdP0fQAzS5CfoqJ1rrH3xT4Bzw9YNcGrCJ2gZ1FPwN5XwC2Po045mk
-         cHyA==
-X-Gm-Message-State: APjAAAVIK6lpMJGrCU8qbq+LUgHo4+XMJJ6kmtmb7XYJnY7kzqcV7HQ8
-        caHea5rTEKFqkGb3wByoYk0Flu/fcJyfF8UBvRc=
-X-Google-Smtp-Source: APXvYqx8yEp1Yu4tPDjEMUM55a/2qCHVUB8wEAxCVjhHr2FNJsmV01809Bf7ih4Mt6XF9bUkBTb/wUZ6jK5OzRSadOY=
-X-Received: by 2002:a67:f843:: with SMTP id b3mr26539050vsp.152.1553790724229;
- Thu, 28 Mar 2019 09:32:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190325114101.10198-1-marek.vasut@gmail.com> <20190325114101.10198-6-marek.vasut@gmail.com>
- <20190327113023.zhnx5v5spcx7uoqj@verge.net.au> <CAMuHMdW_6hutek-vk+mwDHJ1kBUytLvtkgLKb2mkSEFFasJ_0g@mail.gmail.com>
- <efcf526b-cfbc-ea54-f97e-f280e1f672fa@gmail.com> <CAMuHMdU7dQ=8UaSCoZ8TucMfaGyu38rxDYV=Tspw_UmCu5YVwQ@mail.gmail.com>
- <20190328162857.GB19825@red-moon>
-In-Reply-To: <20190328162857.GB19825@red-moon>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Mar 2019 17:31:52 +0100
-Message-ID: <CAMuHMdWuGx8wDmW7LZ3mbocieL1ZaKBvr=Um4XZ8FKdjiFqdzA@mail.gmail.com>
-Subject: Re: [PATCH V4 6/6] PCI: rcar: Fix 64bit MSI message address handling
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Thu, 28 Mar 2019 13:53:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Mar 2019 10:48:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,281,1549958400"; 
+   d="scan'208";a="159297587"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 28 Mar 2019 10:48:36 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 28 Mar 2019 19:48:35 +0200
+Date:   Thu, 28 Mar 2019 19:48:35 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add
+ usb-role-switch property
+Message-ID: <20190328174835.GD9993@kuha.fi.intel.com>
+References: <1552552775-51667-1-git-send-email-biju.das@bp.renesas.com>
+ <1552552775-51667-3-git-send-email-biju.das@bp.renesas.com>
+ <TY2PR01MB4812BACA4673786E867C253FD84B0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+ <OSBPR01MB21039B4241097B8EE8C73A85B84B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20190314105347.GC7752@kuha.fi.intel.com>
+ <OSBPR01MB2103DDDD7A426E79259723FEB8440@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20190315105146.GI7752@kuha.fi.intel.com>
+ <20190328153353.GA3070@bogus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190328153353.GA3070@bogus>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Lorenzo,
+On Thu, Mar 28, 2019 at 10:33:53AM -0500, Rob Herring wrote:
+> On Fri, Mar 15, 2019 at 12:51:46PM +0200, Heikki Krogerus wrote:
+> > Thanks,
+> > 
+> > On Fri, Mar 15, 2019 at 09:08:19AM +0000, Biju Das wrote:
+> > > > Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add usb-role-
+> > > > > > > a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > index 35039e7..eecaf4c 100644
+> > > > > > > --- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > +++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > @@ -22,6 +22,7 @@ Required properties:
+> > > > > > >  Optional properties:
+> > > > > > >    - phys: phandle + phy specifier pair
+> > > > > > >    - phy-names: must be "usb"
+> > > > > > > +  - usb-role-switch: use USB role switch to support dual-role
+> > > > > > > + switch
+> > > > > >
+> > > > > > I don't think we can add such a property. At least, we have to add
+> > > > "renesas,"
+> > > > > > prefix.
+> > > > >
+> > > > > usb_role_switch_get   api uses  "usb-role-switch"  property to get role
+> > > > switch linked with the device.
+> > > > >
+> > > > > HD3SS3220 port controller driver gets role switch handle linked with the
+> > > > device using usb_role_switch_get  api.
+> > > > > That is the reason, I have added " usb-role-switch" property here.
+> > > > >
+> > > > > Do you have any other suggestion to get usb role switch handle?
+> > > > 
+> > > > We can still change the API. Can we use the compatible for this?
+> > > 
+> > > Do you mean usb_role_switch_get  API needs  to handle compatible "usb-x-connector"  wherex= a,b ,c ?
+> > > Then it uses the graphs api to get the device linked with it and return the usb role switch handle.
+> > > In that case, no need to add  generic "usb-role-switch"  property here.
+> > > 
+> > > Can you please confirm my understanding is correct?
+> > 
+> > No, I meant the compatible property would have the value
+> > "usb-role-switch". Your compatible would probable look something
+> > like this:
+> > 
+> >         compatible = "renesas,r8a774c0-usb3-peri",
+> >                      "usb-role-switch";
+> > 
+> > So the idea would be that the device supplying USB role switch
+> > functionality, in your case the USB controller, would need to have the
+> > compatible property containing "usb-role-switch".
+> 
+> That's not really something a driver could bind to nor provides any info 
+> as to what the h/w is (and how to interact with it).
 
-On Thu, Mar 28, 2019 at 5:28 PM Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
-> On Thu, Mar 28, 2019 at 09:02:00AM +0100, Geert Uytterhoeven wrote:
-> > On Thu, Mar 28, 2019 at 4:19 AM Marek Vasut <marek.vasut@gmail.com> wrote:
-> > > On 3/27/19 1:22 PM, Geert Uytterhoeven wrote:
-> > > > On Wed, Mar 27, 2019 at 12:30 PM Simon Horman <horms@verge.net.au> wrote:
-> > > >> On Mon, Mar 25, 2019 at 12:41:01PM +0100, marek.vasut@gmail.com wrote:
-> > > >>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > > >>> The MSI message address in the RC address space can be 64 bit. The
-> > > >>> R-Car PCIe RC supports such a 64bit MSI message address as well.
-> > > >>> The code currently uses virt_to_phys(__get_free_pages()) to obtain
-> > > >>> a reserved page for the MSI message address, and the return value
-> > > >>> of which can be a 64 bit physical address on 64 bit system.
-> > > >>>
-> > > >>> However, the driver only programs PCIEMSIALR register with the bottom
-> > > >>> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
-> > > >>> not program the top 32 bits into PCIEMSIAUR, but rather programs the
-> > > >>> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
-> > > >>> SoCs, however may fail on new 64 bit R-Car SoCs.
-> > > >>>
-> > > >>> Since from a PCIe controller perspective, an inbound MSI is a memory
-> > > >>> write to a special address (in case of this controller, defined by
-> > > >>> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
-> > > >>> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
-> > > >>> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
-> > > >>> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
-> > > >>> cause memory corruption or other issues.
-> > > >>>
-> > > >>> There is however the possibility that if virt_to_phys(__get_free_pages())
-> > > >>> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
-> > > >>> to 0x0 _and_ if the system had physical RAM at the address matching the
-> > > >>> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
-> > > >>> physical address matching the value of PCIEMSIALR and a remote write to
-> > > >>> such a buffer by a PCIe card would trigger a spurious MSI.
-> > > >>>
-> > > >>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> > > >>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > >>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> > > >>> Cc: Simon Horman <horms+renesas@verge.net.au>
-> > > >>> Cc: Wolfram Sang <wsa@the-dreams.de>
-> > > >>> Cc: linux-renesas-soc@vger.kernel.org
-> > > >>> To: linux-pci@vger.kernel.org
-> > > >>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > >>
-> > > >> Does this warrant a Fixes tag?
-> > > >
-> > > > (digging in old sent email)
-> > > > Fixes: 290c1fb358605402 ("PCI: rcar: Add MSI support for PCIe")
-> > >
-> > > But does it really fix that commit, given that on Gen2 and earlier, it
-> > > was not broken as those were 32bit platforms ?
-> >
-> > It does not fix the bug on that commit, as the bug cannot happen on arm32.
-> > It does fix that commit, in that that commit used "unsigned long" for a
-> > physical address, which is wrong, even on arm32 (esp. with LPAE).
-> > If you insist on having a Fixes tag for a commit where the bug could be
-> > seen:
-> > Fixes: e015f88c368da1e6 ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
-> >
-> > Apart from that, drivers should use the DMA API instead of virt_to_phys().
-> > However, now we have a better understanding of how MSI interrupts
-> > work, we don't even need to allocate that page. All we need is the
-> > physical address of a page that is guaranteed not to be backed by RAM
-> > (i.e. not to be a valid target for a legitimate PCI bus mastering
-> > transaction).
->
-> Agreed but I would merge this patch first since it is a fix
-> and update it later.
+Fair enough. As I said, I don't know much about DT.
 
-Sure, definitely.
+The problem we are trying to solve here is, how to identify the USB
+role switch from graph. It's primarily the USB Type-C connector
+drivers that need to be able to get a handle to the role switch device
+so they can tell it what to do. Basically the caller of
+usb_role_switch_get() will have the compatible "usb-c-connector", so
+it's of no use to us. We need the other endpoint, the role switch.
 
-> Shall I go with the Fixes: tag above ?
+Note: The USB role switch device will be a discrete (or integrated)
+mux on platforms that have separate USB host and USB device
+controllers, and on platforms with dual-role capable USB controller
+(like this one) the USB controller will represent it.
 
-Fine for me, thanks!
+At the moment the function usb_role_switch_get() walks trough the
+graph of the caller (so the connector) and expects that the
+remote-endpoint representing the mux will have a boolean property
+"usb-role-switch".
 
-Gr{oetje,eeting}s,
+I do agree that Documentation/devicetree/bindings/usb/renesas_usb3.txt
+should not be the file describing that boolean property, but if we had
+a separate file describing the bindings for just the USB role switch
+devices, would using it still be OK?
 
-                        Geert
+If not, then can you propose something else? How do we identify the
+USB role switch endpoint from the graph? Would it be OK to expect the
+the endpoint subnode to have that boolean property instead?
+
+
+thanks,
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+heikki
