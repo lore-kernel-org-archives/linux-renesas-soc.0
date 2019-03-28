@@ -2,113 +2,211 @@ Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7BEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 14:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BDCC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 15:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3ECF2173C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 14:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 385E420823
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 15:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726238AbfC1O70 (ORCPT
+        id S1726185AbfC1PIJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 10:59:26 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:38724 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfC1O7Z (ORCPT
+        Thu, 28 Mar 2019 11:08:09 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:33879 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfC1PIJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 10:59:25 -0400
-Received: by mail-vs1-f66.google.com with SMTP id s2so10978259vsi.5;
-        Thu, 28 Mar 2019 07:59:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v4M4YDyunRsROoOZI3ZBVnoRZELo7poRl0NOZ0tJEWg=;
-        b=O5QLv/HII//7oWMcyDMKupZS0vYp38J0CRmCxxw3zqFrOqbg2Clw+fHHmeAYBEfL+A
-         V0mF8uWNWuEAUFBGlaBRpgHSaUjpCH9DIltMRuVbeftVwxfHOriBrcQ8VpSEPEKDuZXN
-         /irjqT7YfBjCC/isxlWnb86JP/MprxVpxAIl61EMGdXlQ0sSilQuiXpKTE4ehZISOg6S
-         KOnieO09eyJOzdJShVvltX8nK3AV33N6jQDHqk8kAoMiBcFfyA8R2QFhLk5xCQeI3a1Y
-         DQKTtxUaZ7YM3kMJSYod2LSn9k8bIWSchK3ojmnGkFVqL4XdGbydRxQ33idyLDrd/8Ji
-         7Ujg==
-X-Gm-Message-State: APjAAAUlkPfZApNah/ZkysQwVluvQ29PX0slM/jB8FO9bIicR+e8KVL/
-        OTH5U+YjkiRdSmN+uNewVNoBZagaB0r07JapT/o=
-X-Google-Smtp-Source: APXvYqwg/BQSQOJ3gtUqHvmV6vhSKVqMZL76AXxcp4PhbXub54WHNv6KEJArsIrLb147I8qzV9EsVOuS5wrbWwbUGKQ=
-X-Received: by 2002:a67:ba03:: with SMTP id l3mr18631268vsn.96.1553785164184;
- Thu, 28 Mar 2019 07:59:24 -0700 (PDT)
+        Thu, 28 Mar 2019 11:08:09 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 5AEA6C000E;
+        Thu, 28 Mar 2019 15:08:05 +0000 (UTC)
+Date:   Thu, 28 Mar 2019 16:08:47 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 26/31] adv748x: csi2: add internal routing
+ configuration
+Message-ID: <20190328150847.khb2spjt2jotisfx@uno.localdomain>
+References: <20190305185150.20776-1-jacopo+renesas@jmondi.org>
+ <20190305185150.20776-27-jacopo+renesas@jmondi.org>
+ <4f5b5763-be90-4040-7d55-986471168de1@lucaceresoli.net>
+ <20190315094538.bs5ecsdzndrxjdbb@uno.localdomain>
+ <20190315100613.avmsmavdraxetkzl@kekkonen.localdomain>
+ <28dbf2c7-2834-2bae-d56e-43e50d763c9f@lucaceresoli.net>
+ <20190320171406.s462267lssaxkqo4@uno.localdomain>
+ <88863e6a-a09a-b3c7-7b00-da4fc823b55f@lucaceresoli.net>
 MIME-Version: 1.0
-References: <20190325194319.12850-1-marek.vasut@gmail.com> <20190328141822.GA156243@google.com>
-In-Reply-To: <20190328141822.GA156243@google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Mar 2019 15:59:11 +0100
-Message-ID: <CAMuHMdVsJ1MW40ABuieLq7F6=zG_btAHZUr82Z4_pPVem3h=jA@mail.gmail.com>
-Subject: Re: [PATCH V3] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        stable <stable@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z6jnmsmbjgoscstr"
+Content-Disposition: inline
+In-Reply-To: <88863e6a-a09a-b3c7-7b00-da4fc823b55f@lucaceresoli.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Bjorn,
 
-On Thu, Mar 28, 2019 at 3:18 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Mon, Mar 25, 2019 at 08:43:19PM +0100, marek.vasut@gmail.com wrote:
-> > From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> >
-> > Reestablish the PCIe link very early in the resume process in case it
-> > went down to prevent PCI accesses from hanging the bus. Such accesses
-> > can happen early in the PCI resume process, as early as the
-> > SUSPEND_RESUME_NOIRQ step, thus the link must be reestablished in the
-> > driver resume_noirq() callback.
-> >
-> > Fixes: e015f88c368d ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
+--z6jnmsmbjgoscstr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Luca,
+
+On Fri, Mar 22, 2019 at 05:52:15PM +0100, Luca Ceresoli wrote:
+> Hi,
 >
-> I'm fine with the fix itself, but since e015f88c368d appeared more
-> than two years ago in v4.5, the justification for merging this after
-> the merge window is a little weak.
+> thanks for the follow-up.
+>
+> On 20/03/19 18:14, Jacopo Mondi wrote:
+> >>>> This is probably the wrong patch to use an example, as this one is for
+> >>>> a multiplexed interface, where there is no need to go through an
+> >>>> s_stream() for the two CSI-2 endpoints, but as you pointed out in our
+> >>>> brief offline chat, the AFE->TX routing example for this very device
+> >>>> is a good one: if we change the analogue source that is internally
+> >>>> routed to the CSI-2 output of the adv748x, do we need to s_stream(1)
+> >>>> the now routed entity and s_stream(0) on the not not-anymore-routed
+> >>>> one?
+> >>>>
+> >>>> My gut feeling is that this is up to userspace, as it should know
+> >>>> what are the requirements of the devices in the system, but this mean
+> >>>> going through an s_stream(0)/s_stream(1) sequence on the video device,
+> >>>> and that would interrupt the streaming for sure.
+> >>>>
+> >>>> At the same time, I don't feel too much at ease with the idea of
+> >>>> s_routing calling s_stream on the entity' remote subdevices, as this
+> >>>> would skip the link format validation that media_pipeline_start()
+> >>>> performs.
+> >>>
+> >>> The link validation must be done in this case as well, it may not be
+> >>> simply skipped.
+> >>
+> >> Agreed.
+> >>
+> >> The routing VS pipeline validation point is a very important one. The
+> >> current proposed workflow is:
+> >>
+> >>  1. the pipeline is validated as a whole, having knowledge of all the
+> >>     entities
+> >
+> > let me specify this to avoid confusions:
+> >      "all the entities -with an active route in the pipeline-"
+> >
+> >>  2. streaming is started
+> >>  3. s_routing is called on an entity (not on the pipeline!)
+> >>
+> >> Now the s_routing function in the entity driver is not in a good
+> >> position to validate the candidate future pipeline as a whole.
+> >>
+> >> Naively I'd say there are two possible solutions:
+> >>
+> >>  1. the s_routing reaches the pipeline first, then the new pipeline is
+> >>     computed and verified, and if verification succeeds it is applied
+> >>  2. a partial pipeline verification mechanism is added, so the entity
+> >>     receiving a s_routing request to e.g. change the sink pad can invoke
+> >>     a verification on the part of pipeline that is about to be
+> >>     activated, and if verification succeeds it is applied
+> >>
+> >> Somehow I suspect neither is trivial...
+> >
+> > I would say it is not, but if you have such a device that does not
+> > require going through a s_stream(0)/s_stream(1) cycle and all the
+> > associated re-negotiation and validations, it seems to me nothing
+> > prevents you from handling this in the driver implementation. Maybe it
+> > won't look that great, but this seems to be quite a custom design that
+> > requires all input sources to be linked to your sink pads, their
+> > format validated all at the same time, power, stream activation and
+> > internal mux configuration controlled by s_routing. Am I wrong or
+> > nothing in this series would prevent your from doing this?
+>
+> You're right, nothing prevents me from doing a custom hack for my custom
+> design. It's what I'm doing right now. My concern is whether the
+> framework will evolve to allow modifying a running pipeline without
+> custom hacks.
+>
+> > tl;dr: I would not make this something the framework should be
+> > concerned about, as there's nothing preventing you from
+> > implementing support for such a use case. But again, without a real
+> > example we can only guess, and I might be overlooking the issue or
+> > missing some relevant detail for sure.
+>
+> I'm a bit surprised in observing that my use case looks so strange,
+> perhaps yours is so different that we don't quite understand each other.
+> So below is an example of what I have in mind. Can you explain your use
+> case too?
 
-V1 of this fix was posted in November 2017, but IIRC, the series became
-the target of some bike-shedding...
+I'm mostly interested in this series as it allows me to add data lane
+negotiation at run time. In my case, there are no stream continuity
+constraints, but I get your point here.
+>
+>
+> Here's a use case. Consider a product that takes 3 camera inputs,
+> selects one of them and produces a continuous video stream with the
+> camera image and an OSD on top of it. The selected camera can be changed
+> at any time (e.g. upon user selection).
+>
+>                   OSD FB ---.
+>                             |
+>             .--------.      V
+> Camera 0 -->|        |   .-----.
+> Camera 1 -->|  MUX   |-->| OSD |--> DMA --> /dev/video0
+> Camera 2 -->|        |   `-----'
+>             `--------'
+>
+> A prerequisite is obviously that each piece of hardware and software
+> involved is able to cope with a sudden stream change. Perhaps not that
+> common, but no rocket science.
+>
+> It looks to me that each of these pieces can be modeled as an entity and
+> the s_routing API is a perfect fit for the mux block. Am I wrong?
+>
 
-> Is there a more recent change that exposed this problem?  The usual
-> situation is that we merged something during the v5.1 merge window
-> that caused a regression, and we're now fixing that before v5.1 final.
+Personally, I would say that your muxer driver, if able to switch
+source without requiring a pipeline restart, should handle it
+internally. There are specific details that the mux should be able to
+handle, and we're still pretty vague on the details. As a start, which
+is the bus type your sources connects to the muxer with? Parallel?
+CSI-2? How is the video stream multiplexed? with CSI-2 VC? Do you need
+to control your source power during inactive period? I'm sure there
+are more questions... I agree a partial pipeline restart might be
+something to consider, but at the same time I think this is not
+something strictly required to get this series merged, isn't it?
 
-There are several reasons most people couldn't even run suspend/resume
-cycles on their systems:
-  1. Early releases of the affected boards came with firmware revisions with
-     non-functional PSCI system suspend,
-  2. Preparing the PMIC for suspend required ugly assistance from i2cset
-     in userspace, until the Linux driver learned to take care of that itself
-     in v4.18/v4.19.
+Thanks
+  j
 
-I guess the fix can survive postponing to v5.2, though...
 
-Thanks!
+> Thanks,
+> --
+> Luca
 
-Gr{oetje,eeting}s,
+--z6jnmsmbjgoscstr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyc438ACgkQcjQGjxah
+VjzMnw/+MOokBuCYODokregv2u9qiiDCKeUY5e/bkZZmKvhQFqNEiLsSl7QjyFmw
+4OJzbmbgTC+mH3SomDnq3UwaD6mOpREoPb3tUtDAyt+SyU0W2INuliCGBpyQE6Eh
+tYqZqwJE0igA9t1ZQokCpkBCwYzQZiwHWxmWK1d5HkheGIx7cF5ntq67NsNAIDS0
+ays8SIxcVzzxQQbtWDYU09XN36L6E2lXGzFLqFCLONICfbXULdsnrXC+q7Jo9v6L
+VZuVZhVMXYasTxR0Ye9ftnm1BRkZkjDyMDzxXuKi5X099k5NG9W8Rrg4WaLlxxhq
+yvK04RZb1rjpL/6O2NDHPIafg1C6+nPtLCBI02hcoxzVX6w/EwWKiTv5fyPtFfNh
+Y/mD8WU92MIxONkLYBHHmvD4kNB9POUqh8Mr/+khR/8WRPPlNzF4dn+DqFzOPDvy
+MlBO/TUjSJyqGy4Z5iGJdODY5tr2xURGWuAdQGhuGI7j7j5hO0H7MKOsAnfBKhf2
+Z0IqHWttwsA4X79PW3M5A+S/kYXIVdeimv8NtSmdmmhkvEXw3gJv7VME2mdKCDtD
+Z5eKNqHeJCpgL/molA3R5D0mLHS6Ka40e4t9q6nSuUD+wvPvjfa/yotITFXIYsBN
+TlQJO7Wtv2f5AxTpwp8KvfwBNnueZyHOKkIOGmA6Et0QxwbgINE=
+=jA0j
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--z6jnmsmbjgoscstr--
