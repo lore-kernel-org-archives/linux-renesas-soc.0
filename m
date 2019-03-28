@@ -2,105 +2,133 @@ Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEADC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 09:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5663C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 09:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37B152173C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 09:24:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB532173C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 09:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfC1JYA (ORCPT
+        id S1726214AbfC1JYP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 05:24:00 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:33222 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726416AbfC1JYA (ORCPT
+        Thu, 28 Mar 2019 05:24:15 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:41922 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbfC1JYP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 05:24:00 -0400
-X-IronPort-AV: E=Sophos;i="5.60,280,1549897200"; 
-   d="scan'208";a="11595089"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Mar 2019 18:23:57 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CE54740138F4;
-        Thu, 28 Mar 2019 18:23:57 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] mmc: core: retry CMD1 in mmc_send_op_cond() even if the ocr = 0
-Date:   Thu, 28 Mar 2019 18:20:07 +0900
-Message-Id: <1553764807-5778-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 28 Mar 2019 05:24:15 -0400
+Received: by mail-vs1-f68.google.com with SMTP id g187so11691105vsc.8;
+        Thu, 28 Mar 2019 02:24:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e9d5vhUL6aKweUurzwNBc8A5dBUhld1kIxI1XXv1WOE=;
+        b=Ob+6Gb/+GnO456PY6Z3HcGu/2OzSo3+l1oH87IA0lyZDcIeA1O5pp6J/fPApXGy5Zw
+         AZ3sx+asXNjeiVS2WDc89PJSBy5t8EmS1g/BtM4RLxAk1sqKjACS5d4LojLbeSz3nM2Q
+         PndoNrqKtq1gg7PyZVIlWwhBexWNUrVhUxGgSD/Oo44p4cmLIGScb33GkQJe7HV12bud
+         NPK2daG6k6RimLhOUPsrKy9Q3cG8gbwGUyh3f+bGMiqx7/GvSE3UXm7daTgDRz68aOxI
+         H45wDA1gyh2/3Rt6c7E0H90loPVStuxMAY+Z3bj4D9v+vCxJeEwed3V/q6bBtpKrQK3h
+         PyDQ==
+X-Gm-Message-State: APjAAAXOu9xbmbDRqJLx/deqIXrEi7wWGRugh8+gA5t3TkbzdgRI91zu
+        9HlsnfgOQlzV8mrhILr4SvTr3kR0MhzE4dwlPX4=
+X-Google-Smtp-Source: APXvYqzuOxtaXZ2urceSTtXs899r85ls5RE7fZxSC0plQZfqeG3uvlVLFuidLifHRJfFmI59Wc/8WH6l0P229B2PUFI=
+X-Received: by 2002:a05:6102:199:: with SMTP id r25mr3909513vsq.166.1553765053805;
+ Thu, 28 Mar 2019 02:24:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com> <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
+In-Reply-To: <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Mar 2019 10:24:01 +0100
+Message-ID: <CAMuHMdXzspxfSTQSA980VcTusoXTWXDexJuKoOo5gaFGDypc1A@mail.gmail.com>
+Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point adjustment
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Tobias Franzen <tfranzen@de.adit-jv.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Greg KH <greg@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-According to eMMC specification, we should issue CMD1 repeatidly in
-the idle state until the eMMC is ready even if the mmc_attach_mmc()
-calls this function with ocr = 0. Otherwise some eMMC devices seems
-to enter the inactive mode after mmc_init_card() issued CMD0 when
-the eMMC device is busy.
+Hi Eugeniu,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- We can reproduce this issue if:
-  - we add no-sd and no-sdio property into sdhi2 node of salvator-common.dtsi,
-  - the renesas_sdhi driver is kernel module,
-  - Using a Salvator-XS board that has Samsung eMMC device,
-  - enter suspend and exit it,
-  - and then insmod renesas_sdhi_{core,internal_dmac}.ko.
+On Wed, Mar 27, 2019 at 7:36 PM Eugeniu Rosca <erosca@de.adit-jv.com> wrote:
+> We've recently switched from rcar-3.7.x to rcar-3.9.x [1] kernel and the
+> latter contains this patch [2] by virtue of rcar-3.9.0 commit [3], which
+> mirrors v4.18-rc1 commit [4] in mainline.
+>
+> JFYI, quite far away in the delivery chain, we've received below report:
+>
+> > With this patch [2-4] there are reports about broken data
+> > communication with 115200 baud with SXM module. Reverting
+> > this patch results in successful communication, again.
+>
+> While this scarce information barely helps anybody, I thought that
+> sharing it with you might be beneficial in case you collect several
+> reports linked to this specific commit in future, meaning it potentially
+> adds a regression.
+>
+> Also, if you are aware of any userland changes that might be
+> required/assumed by this patch or in case you have any alternative
+> ideas how to avoid reverting this patch, your feedback would be very
+> appreciated.
 
- After that, the following error happened and any partitions are not detected.
-  mmc1: error -110 whilst initialising MMC card
+Thanks for your report!
 
- I tested this patch on:
-  - M3-N Salvator-XS with a Samsung eMMC device,
-  - M3-W Salvator-X with SiliconMotion eMMC device,
-  - and M3-W Starter Kit with Micron eMMC device.
+[TLDR: skip to the suggested fix below; I only noticed the bug after
+       writing the below paragraphs, which are still useful questions to
+       let us reproduce the issue]
 
- drivers/mmc/core/mmc_ops.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+Which SoC are you using?
+I assume this is on a custom board, as Salvator-X(S) and ULCB have
+external SCIF clock crystals, which allow to use a perfect 115200 bps,
+hence the affected code path is not exercised:
 
-diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-index c5208fb..d068eed 100644
---- a/drivers/mmc/core/mmc_ops.c
-+++ b/drivers/mmc/core/mmc_ops.c
-@@ -184,11 +184,7 @@ int mmc_send_op_cond(struct mmc_host *host, u32 ocr, u32 *rocr)
- 		if (err)
- 			break;
- 
--		/* if we're just probing, do a single pass */
--		if (ocr == 0)
--			break;
--
--		/* otherwise wait until reset completes */
-+		/* wait until reset completes */
- 		if (mmc_host_is_spi(host)) {
- 			if (!(cmd.resp[0] & R1_SPI_IDLE))
- 				break;
-@@ -200,6 +196,17 @@ int mmc_send_op_cond(struct mmc_host *host, u32 ocr, u32 *rocr)
- 		err = -ETIMEDOUT;
- 
- 		mmc_delay(10);
-+
-+		/*
-+		 * According to eMMC specification, we should issue CMD1
-+		 * repeatidly in the idle state until the eMMC is ready even if
-+		 * the mmc_attach_mmc() calls this function with ocr = 0.
-+		 * Otherwise some eMMC devices seem to enter the inactive mode
-+		 * after mmc_init_card() issued CMD0 when the eMMC device is
-+		 * busy.
-+		 */
-+		if (!ocr && !mmc_host_is_spi(host))
-+			cmd.arg = cmd.resp[0] | BIT(30);
- 	}
- 
- 	if (rocr && !mmc_host_is_spi(host))
+    sh-sci e6550000.serial: BRG: 115200+0 bps using DL 4 SR 32
+    sh-sci e6550000.serial: Using clk scif for 115200+0 bps
+
+Does your board have an external SCIF clock? Which frequency?
+Can you check the clock values and deviation for your configuration, by
+changing the calls to print the above information from dev_dbg() to
+dev_info()?
+
+Does adding the DIV_ROUND_CLOSEST(), as suggested in my review
+of the posted patch, help?
+Perhaps the sampling point shift is inverted? Does -shift work better?
+
+[possible solution]
+
+> +                               int shift = min(-8, max(7, deviation / 2));
+
+Oops, min and max are exchanged!
+
+I guess using
+
+    int shift = clamp(deviation / 2, -8, 7)
+
+instead fixes the issue?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
