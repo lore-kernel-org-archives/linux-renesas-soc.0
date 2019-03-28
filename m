@@ -2,307 +2,174 @@ Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E40F3C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 13:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A93D2C10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 14:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA952173C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 13:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796D421773
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 14:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553782706;
+	bh=tQCGp2wAo5O5h2JoFX7D0l6D6ldwpImuPbCDO0cSRTY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gkSfbzdbIBHafQXH3E75YI4SXw7N7Maj5elAFs/AfdqF1F20gaGCZSZvtbm2WhI8y
+	 9hz+tvs+pXolNnlnqy/Cs06z3D0SkdREyA0jjADphiTJLM8phR+Nx2PpBzXqjh/UMQ
+	 Z1WMiZaXd1b5ZDjFFYq52iw+6n4t9ee2b/I+3wKk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfC1NPF (ORCPT
+        id S1726082AbfC1OSZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 09:15:05 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:36109 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfC1NPF (ORCPT
+        Thu, 28 Mar 2019 10:18:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726076AbfC1OSZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 09:15:05 -0400
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id E0D4B20000C;
-        Thu, 28 Mar 2019 13:15:00 +0000 (UTC)
-Date:   Thu, 28 Mar 2019 14:15:43 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 1/9] v4l: Add definitions for missing 32-bit RGB formats
-Message-ID: <20190328131543.zlito5lm3n7mjyls@uno.localdomain>
-References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190328070723.26553-2-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 28 Mar 2019 10:18:25 -0400
+Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A62C72075E;
+        Thu, 28 Mar 2019 14:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553782703;
+        bh=tQCGp2wAo5O5h2JoFX7D0l6D6ldwpImuPbCDO0cSRTY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rYRU141kixe1TjaGq332ay3WtbOJxKWSQeeyZfFmRFEMaAOT0/5oPs/uuQ5/9ylEl
+         H6W4S7/TAvfxGvNPsumTGlTItsPK5KrR6U8S2oMmlGxCHf3/U/IWHTU0jW8ArjcN3r
+         VCLBjVphHMzjzBRf2zUEXn7tIHl5iKrHTfXE64Wk=
+Date:   Thu, 28 Mar 2019 09:18:22 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V3] PCI: rcar: Add the initialization of PCIe link in
+ resume_noirq()
+Message-ID: <20190328141822.GA156243@google.com>
+References: <20190325194319.12850-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xqwfstqlwmdumfuz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190328070723.26553-2-laurent.pinchart+renesas@ideasonboard.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190325194319.12850-1-marek.vasut@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, Mar 25, 2019 at 08:43:19PM +0100, marek.vasut@gmail.com wrote:
+> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> 
+> Reestablish the PCIe link very early in the resume process in case it
+> went down to prevent PCI accesses from hanging the bus. Such accesses
+> can happen early in the PCI resume process, as early as the
+> SUSPEND_RESUME_NOIRQ step, thus the link must be reestablished in the
+> driver resume_noirq() callback.
+> 
+> Fixes: e015f88c368d ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
 
---xqwfstqlwmdumfuz
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+I'm fine with the fix itself, but since e015f88c368d appeared more
+than two years ago in v4.5, the justification for merging this after
+the merge window is a little weak.
 
-Hi Laurent,
+Is there a more recent change that exposed this problem?  The usual
+situation is that we merged something during the v5.1 merge window
+that caused a regression, and we're now fixing that before v5.1 final.
 
-On Thu, Mar 28, 2019 at 09:07:15AM +0200, Laurent Pinchart wrote:
-> The V4L2 API is missing the 32-bit RGB formats for the ABGR, XBGR, RGBA
-> and RGBX component orders. Add them, using the same 4CCs as DRM.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Bjorn
+
+> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> [lorenzo.pieralisi@arm.com: reformatted commit log]
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Cc: stable@vger.kernel.org
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
 > ---
->  .../media/uapi/v4l/pixfmt-packed-rgb.rst      | 160 ++++++++++++++++++
->  include/uapi/linux/videodev2.h                |   4 +
->  2 files changed, 164 insertions(+)
->
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst b/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> index 6b3781c04dd5..055f9c89e787 100644
-> --- a/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> +++ b/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> @@ -453,6 +453,166 @@ next to each other in memory.
->        - r\ :sub:`1`
->        - r\ :sub:`0`
->
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +    * .. _V4L2-PIX-FMT-BGRA32:
+> V2: - Use BIT() macro for (1 << n)
+>     - Since polling in rcar_pcie_wait_for_dl() uses udelay(), do not
+>       add extra changes to this function anymore
+>     - Make resume_noirq return early and clean up parenthesis therein
+> V3: - Add missing PMSR register definition, dropped due to patch reshuffling
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index c8febb009454..6a4e435bd35f 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -46,6 +46,7 @@
+>  
+>  /* Transfer control */
+>  #define PCIETCTLR		0x02000
+> +#define  DL_DOWN		BIT(3)
+>  #define  CFINIT			1
+>  #define PCIETSTR		0x02004
+>  #define  DATA_LINK_ACTIVE	1
+> @@ -94,6 +95,7 @@
+>  #define MACCTLR			0x011058
+>  #define  SPEED_CHANGE		BIT(24)
+>  #define  SCRAMBLE_DISABLE	BIT(27)
+> +#define PMSR			0x01105c
+>  #define MACS2R			0x011078
+>  #define MACCGSPSETR		0x011084
+>  #define  SPCNGRSN		BIT(31)
+> @@ -1130,6 +1132,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	pcie = pci_host_bridge_priv(bridge);
+>  
+>  	pcie->dev = dev;
+> +	platform_set_drvdata(pdev, pcie);
+>  
+>  	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
+>  	if (err)
+> @@ -1221,10 +1224,28 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+>  	return err;
+>  }
+>  
+> +static int rcar_pcie_resume_noirq(struct device *dev)
+> +{
+> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
 > +
-> +      - ``V4L2_PIX_FMT_BGRA32``
-> +      - 'RA24'
+> +	if (rcar_pci_read_reg(pcie, PMSR) &&
+> +	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
+> +		return 0;
 > +
-> +      - a\ :sub:`7`
-> +      - a\ :sub:`6`
-> +      - a\ :sub:`5`
-> +      - a\ :sub:`4`
-> +      - a\ :sub:`3`
-> +      - a\ :sub:`2`
-> +      - a\ :sub:`1`
-> +      - a\ :sub:`0`
+> +	/* Re-establish the PCIe link */
+> +	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
+> +	return rcar_pcie_wait_for_dl(pcie);
+> +}
 > +
-> +      - b\ :sub:`7`
-> +      - b\ :sub:`6`
-> +      - b\ :sub:`5`
-> +      - b\ :sub:`4`
-> +      - b\ :sub:`3`
-> +      - b\ :sub:`2`
-> +      - b\ :sub:`1`
-> +      - b\ :sub:`0`
+> +static const struct dev_pm_ops rcar_pcie_pm_ops = {
+> +	.resume_noirq = rcar_pcie_resume_noirq,
+> +};
 > +
-> +      - g\ :sub:`7`
-> +      - g\ :sub:`6`
-> +      - g\ :sub:`5`
-> +      - g\ :sub:`4`
-> +      - g\ :sub:`3`
-> +      - g\ :sub:`2`
-> +      - g\ :sub:`1`
-> +      - g\ :sub:`0`
-> +
-> +      - r\ :sub:`7`
-> +      - r\ :sub:`6`
-> +      - r\ :sub:`5`
-> +      - r\ :sub:`4`
-> +      - r\ :sub:`3`
-> +      - r\ :sub:`2`
-> +      - r\ :sub:`1`
-> +      - r\ :sub:`0`
-> +    * .. _V4L2-PIX-FMT-BGRX32:
-> +
-> +      - ``V4L2_PIX_FMT_BGRX32``
-> +      - 'RX24'
-> +
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +      -
-> +
-> +      - b\ :sub:`7`
-> +      - b\ :sub:`6`
-> +      - b\ :sub:`5`
-> +      - b\ :sub:`4`
-> +      - b\ :sub:`3`
-> +      - b\ :sub:`2`
-> +      - b\ :sub:`1`
-> +      - b\ :sub:`0`
-> +
-> +      - g\ :sub:`7`
-> +      - g\ :sub:`6`
-> +      - g\ :sub:`5`
-> +      - g\ :sub:`4`
-> +      - g\ :sub:`3`
-> +      - g\ :sub:`2`
-> +      - g\ :sub:`1`
-> +      - g\ :sub:`0`
-> +
-> +      - r\ :sub:`7`
-> +      - r\ :sub:`6`
-> +      - r\ :sub:`5`
-> +      - r\ :sub:`4`
-> +      - r\ :sub:`3`
-> +      - r\ :sub:`2`
-> +      - r\ :sub:`1`
-> +      - r\ :sub:`0`
-> +    * .. _V4L2-PIX-FMT-RGBA32:
-> +
-> +      - ``V4L2_PIX_FMT_RGBA32``
-> +      - 'AB24'
-> +
-> +      - r\ :sub:`7`
-> +      - r\ :sub:`6`
-> +      - r\ :sub:`5`
-> +      - r\ :sub:`4`
-> +      - r\ :sub:`3`
-> +      - r\ :sub:`2`
-> +      - r\ :sub:`1`
-> +      - r\ :sub:`0`
-> +
-> +      - g\ :sub:`7`
-> +      - g\ :sub:`6`
-> +      - g\ :sub:`5`
-> +      - g\ :sub:`4`
-> +      - g\ :sub:`3`
-> +      - g\ :sub:`2`
-> +      - g\ :sub:`1`
-> +      - g\ :sub:`0`
-> +
-> +      - b\ :sub:`7`
-> +      - b\ :sub:`6`
-> +      - b\ :sub:`5`
-> +      - b\ :sub:`4`
-> +      - b\ :sub:`3`
-> +      - b\ :sub:`2`
-> +      - b\ :sub:`1`
-> +      - b\ :sub:`0`
-> +
-> +      - a\ :sub:`7`
-> +      - a\ :sub:`6`
-> +      - a\ :sub:`5`
-> +      - a\ :sub:`4`
-> +      - a\ :sub:`3`
-> +      - a\ :sub:`2`
-> +      - a\ :sub:`1`
-> +      - a\ :sub:`0`
-> +    * .. _V4L2-PIX-FMT-RGBX32:
-> +
-> +      - ``V4L2_PIX_FMT_RGBX32``
-> +      - 'XB24'
-> +
-> +      - r\ :sub:`7`
-> +      - r\ :sub:`6`
-> +      - r\ :sub:`5`
-> +      - r\ :sub:`4`
-> +      - r\ :sub:`3`
-> +      - r\ :sub:`2`
-> +      - r\ :sub:`1`
-> +      - r\ :sub:`0`
-> +
-> +      - g\ :sub:`7`
-> +      - g\ :sub:`6`
-> +      - g\ :sub:`5`
-> +      - g\ :sub:`4`
-> +      - g\ :sub:`3`
-> +      - g\ :sub:`2`
-> +      - g\ :sub:`1`
-> +      - g\ :sub:`0`
-> +
-> +      - b\ :sub:`7`
-> +      - b\ :sub:`6`
-> +      - b\ :sub:`5`
-> +      - b\ :sub:`4`
-> +      - b\ :sub:`3`
-> +      - b\ :sub:`2`
-> +      - b\ :sub:`1`
-> +      - b\ :sub:`0`
-> +
-I'm trying to compare these with the existing 32-bit RGB formats in
-pixfmt-packed-rgb.rst and I can't get how the orderig of components is
-defined.
-
-Ie your definitions here:
-
-        bytes:  B0      B1      B2      B3
-BGRA32          A       B       G       R
-BGRX32          x       B       G       R
-RGBA32          R       G       B       A
-RGBX32          R       G       B       x
-
-In the existing documentation:
-ABGR32          B       G       R       A
-XBGR32          B       G       R       x
-ARGB32          A       R       G       B
-XRGB32          x       R       G       B
-
-So you're adding two BGR/RGB variations with 'X' or 'A' moved from the
-first (for RGB) or last (for BGR) bytes to the last (for RGB) or first
-(for BGR) bytes.
-
-I cannot see a clear pattern (it seems RGB is ordered as you read the
-components, while BGR is inverted?) so I assume the definition of the
-component ordering scheme comes from a standard, does it? A reference
-would help checking for errors :)
-
-Thanks
-   j
-
->        -
->        -
->        -
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 1db220da3bcc..4e5222726719 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -528,7 +528,11 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_BGR32   v4l2_fourcc('B', 'G', 'R', '4') /* 32  BGR-8-8-8-8   */
->  #define V4L2_PIX_FMT_ABGR32  v4l2_fourcc('A', 'R', '2', '4') /* 32  BGRA-8-8-8-8  */
->  #define V4L2_PIX_FMT_XBGR32  v4l2_fourcc('X', 'R', '2', '4') /* 32  BGRX-8-8-8-8  */
-> +#define V4L2_PIX_FMT_BGRA32  v4l2_fourcc('R', 'A', '2', '4') /* 32  ABGR-8-8-8-8  */
-> +#define V4L2_PIX_FMT_BGRX32  v4l2_fourcc('R', 'X', '2', '4') /* 32  XBGR-8-8-8-8  */
->  #define V4L2_PIX_FMT_RGB32   v4l2_fourcc('R', 'G', 'B', '4') /* 32  RGB-8-8-8-8   */
-> +#define V4L2_PIX_FMT_RGBA32  v4l2_fourcc('A', 'B', '2', '4') /* 32  RGBA-8-8-8-8  */
-> +#define V4L2_PIX_FMT_RGBX32  v4l2_fourcc('X', 'B', '2', '4') /* 32  RGBX-8-8-8-8  */
->  #define V4L2_PIX_FMT_ARGB32  v4l2_fourcc('B', 'A', '2', '4') /* 32  ARGB-8-8-8-8  */
->  #define V4L2_PIX_FMT_XRGB32  v4l2_fourcc('B', 'X', '2', '4') /* 32  XRGB-8-8-8-8  */
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
-
---xqwfstqlwmdumfuz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlycyP8ACgkQcjQGjxah
-VjyMdw/+No2e7HnP4Xc9CRlr0/8v5CT3zSDfrKiZnsqOcrzXDmoSyg4LDmMwzZSU
-cAOZUN+2/tQ9A4az3jkXizxcy9+8Oh18LpMkzr3yn48/vKnYmKqyExf0FcAlzbxg
-fB6lvwT2+Mp9x3GGjMcge85N9RfcVaaiLTXwbKlNfkBW5SDhY89B3PYTmMMhclt3
-bX235JE27MYUDYuENl7Ib57PwhzJK4gAdQXHOgXIs/oveuC6lPzxML6qGhIADrSl
-pmul8kdLDQDNhU4QWolwoGmYB/9wtWJ/zzLF9RYg+GxVfkL9JwoR7qU3PGt3ASzn
-4pa2gXd3MvP2/M4r5DjxjxRxx2/AodJAuqeD7h2XcqptWkfj/7x/u4Cw1aFhmy6g
-0Ef6UDRwTN2TUtd4R4d2KiYq7A3Z/ydDJYxq51mlLjoINzAkT5Pdbu/ZFFLKUGe/
-M5lYlJRxi2bExHeWbimbhYAHBMzzgWZX7YJqkYpQLwvMHodcGtpORMxtZQL/gAr6
-md3P3nF77kAzwPp9+2wPhr7+jn0Cd1aSxCueOtl7dKLAsFaCHjkBwiPZUDkEYDaX
-rWn/zZIPyrGAxDC2SwkcyWvXY1oTFl0pP4VebtJcun93VzQLXAYzSCGq3EiArGCR
-E6gUK1g3Y1WO3d0kEIxg2xKUN0iGHyWX2WxrxqoAdZn6r3FeyX4=
-=C2KS
------END PGP SIGNATURE-----
-
---xqwfstqlwmdumfuz--
+>  static struct platform_driver rcar_pcie_driver = {
+>  	.driver = {
+>  		.name = "rcar-pcie",
+>  		.of_match_table = rcar_pcie_of_match,
+> +		.pm = &rcar_pcie_pm_ops,
+>  		.suppress_bind_attrs = true,
+>  	},
+>  	.probe = rcar_pcie_probe,
+> -- 
+> 2.20.1
+> 
