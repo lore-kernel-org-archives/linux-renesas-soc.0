@@ -6,131 +6,82 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7975AC10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAEDC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525AD217F9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:02:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B382420700
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfC1ICT (ORCPT
+        id S1725875AbfC1IFk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 04:02:19 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:41185 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfC1ICN (ORCPT
+        Thu, 28 Mar 2019 04:05:40 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:40119 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbfC1IFk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 04:02:13 -0400
-Received: by mail-vk1-f196.google.com with SMTP id d15so4298625vka.8;
-        Thu, 28 Mar 2019 01:02:12 -0700 (PDT)
+        Thu, 28 Mar 2019 04:05:40 -0400
+Received: by mail-vk1-f193.google.com with SMTP id l17so4311667vke.7;
+        Thu, 28 Mar 2019 01:05:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8jIoQcDYSLd6STW28A60ELra91D1UTDe4qLqQRBF+Sc=;
-        b=DsK/OliMvncxvSdsKY6ULLYruAytEd9jPTbZwDyQWYqwctnIxZG3ubhuAOQYEjKY6M
-         N0qrQipBjo/5DEhZhXDQlTKddSYmN/sdZ8qhQ5mi3v8ktiDHLz0JdbCBy2FK2u9wNDhm
-         3HjS27xkmJeb8t56AgY9ycyqaHTYZ4lOQGHauiQ63nkUKS7q5haKO5UM6BLt/6E+UAJB
-         aIDyfGQCnjlT2o3DLso2HMC1HEY0qk4jUvNSDEQwPVn/xSvJwgrm1oHTuBdM0wvbnmK3
-         uPxSshhdpF2VCqJnb6Y39N+Ho20ZPDqQ2DBfPP33mQYsO8KTBZBMk+30+2NlJP6HFQLR
-         do2Q==
-X-Gm-Message-State: APjAAAWRM08/5qsjSgjLgxudp5DnSdHq9G3bzWe0E0yd1MwvxHticiWa
-        BvK2EhAzCRb6vkEwv5q+KEkuy/rl/XzlB+QcRRM=
-X-Google-Smtp-Source: APXvYqwS1G+4xy9oWE0x8xttkCEtdvItrBn3a4HSglWXw7aDQL7N5nQmJmDw0nFajdhforX+zg38rTx+OkR/78HfTnw=
-X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr24639518vke.40.1553760132077;
- Thu, 28 Mar 2019 01:02:12 -0700 (PDT)
+        bh=G1l+MpBVZScAXtCz01M3zXlY6CntX0jIq/2tr27fzXU=;
+        b=CtDW1LHiW+xmiizsqtqhgaXfKYA4MPO21KytyFjyugsrVsxzCdk2m9uQc91xpKpEvt
+         rfrZEo2STyHpv8DlLy+wXVcsEepwVvvn/qfvID/GWjumYxnEgCZgtGDhiGnuDDthEY7B
+         flhq/ltNWbDksj37TaZhkDW2h8v4r/hJiXZYCkgS5fVIwbEedwcoAuvlQ+Tk2oS8G/fz
+         +koN1dPRrEmJuenLXVIFI+UlmfAOo5XiV1DHenBjKn5vm3RcuB1xBuWFqRdsLvi3Pliy
+         n3MUZG9P+G/jpAnDIQM8M8IYU+tyWi22C11VUyw+ulmd3A7dEY8K8l7b+YcwcpCthMTF
+         qlfg==
+X-Gm-Message-State: APjAAAUiF6HVYTePQGB4hwT8Ym5hm2qAgE4e/ESUWS3bTlWsQxL1JW1j
+        qB3nHdo9bPVb/2D2ae1BSiJOKe3IvXexstu94v8=
+X-Google-Smtp-Source: APXvYqzw2g+z2LssFIUYHXCRFbJFf4F5u9id0znF+qlaGD+WVKQiojvPk7TH+CF0MsH26vGNIX23zLy+STyV+VvcScQ=
+X-Received: by 2002:a1f:b297:: with SMTP id b145mr2760855vkf.74.1553760339137;
+ Thu, 28 Mar 2019 01:05:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190325114101.10198-1-marek.vasut@gmail.com> <20190325114101.10198-6-marek.vasut@gmail.com>
- <20190327113023.zhnx5v5spcx7uoqj@verge.net.au> <CAMuHMdW_6hutek-vk+mwDHJ1kBUytLvtkgLKb2mkSEFFasJ_0g@mail.gmail.com>
- <efcf526b-cfbc-ea54-f97e-f280e1f672fa@gmail.com>
-In-Reply-To: <efcf526b-cfbc-ea54-f97e-f280e1f672fa@gmail.com>
+References: <1553677398-7896-1-git-send-email-na-hoan@jinso.co.jp>
+In-Reply-To: <1553677398-7896-1-git-send-email-na-hoan@jinso.co.jp>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 28 Mar 2019 09:02:00 +0100
-Message-ID: <CAMuHMdU7dQ=8UaSCoZ8TucMfaGyu38rxDYV=Tspw_UmCu5YVwQ@mail.gmail.com>
-Subject: Re: [PATCH V4 6/6] PCI: rcar: Fix 64bit MSI message address handling
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+Date:   Thu, 28 Mar 2019 09:05:27 +0100
+Message-ID: <CAMuHMdW8cRARXmGbCeuAzuY4XPyqmrKTKO_NrRiWudK-kQ4M9A@mail.gmail.com>
+Subject: Re: [RESEND PATCH] thermal: rcar_gen3_thermal: Fix init value of
+ IRQCTL register
+To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Zhang Rui <rui.zhang@intel.com>, Jiri Slaby <jslaby@suse.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
+        =?UTF-8?B?RHVuZ++8muS6uuOCvQ==?= <nv-dung@jinso.co.jp>,
+        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= 
+        <cv-dong@jinso.co.jp>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marek,
-
-On Thu, Mar 28, 2019 at 4:19 AM Marek Vasut <marek.vasut@gmail.com> wrote:
-> On 3/27/19 1:22 PM, Geert Uytterhoeven wrote:
-> > On Wed, Mar 27, 2019 at 12:30 PM Simon Horman <horms@verge.net.au> wrote:
-> >> On Mon, Mar 25, 2019 at 12:41:01PM +0100, marek.vasut@gmail.com wrote:
-> >>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>> The MSI message address in the RC address space can be 64 bit. The
-> >>> R-Car PCIe RC supports such a 64bit MSI message address as well.
-> >>> The code currently uses virt_to_phys(__get_free_pages()) to obtain
-> >>> a reserved page for the MSI message address, and the return value
-> >>> of which can be a 64 bit physical address on 64 bit system.
-> >>>
-> >>> However, the driver only programs PCIEMSIALR register with the bottom
-> >>> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
-> >>> not program the top 32 bits into PCIEMSIAUR, but rather programs the
-> >>> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
-> >>> SoCs, however may fail on new 64 bit R-Car SoCs.
-> >>>
-> >>> Since from a PCIe controller perspective, an inbound MSI is a memory
-> >>> write to a special address (in case of this controller, defined by
-> >>> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
-> >>> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
-> >>> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
-> >>> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
-> >>> cause memory corruption or other issues.
-> >>>
-> >>> There is however the possibility that if virt_to_phys(__get_free_pages())
-> >>> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
-> >>> to 0x0 _and_ if the system had physical RAM at the address matching the
-> >>> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
-> >>> physical address matching the value of PCIEMSIALR and a remote write to
-> >>> such a buffer by a PCIe card would trigger a spurious MSI.
-> >>>
-> >>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> >>> Cc: Simon Horman <horms+renesas@verge.net.au>
-> >>> Cc: Wolfram Sang <wsa@the-dreams.de>
-> >>> Cc: linux-renesas-soc@vger.kernel.org
-> >>> To: linux-pci@vger.kernel.org
-> >>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >>
-> >> Does this warrant a Fixes tag?
-> >
-> > (digging in old sent email)
-> > Fixes: 290c1fb358605402 ("PCI: rcar: Add MSI support for PCIe")
+On Wed, Mar 27, 2019 at 10:04 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
+> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
 >
-> But does it really fix that commit, given that on Gen2 and earlier, it
-> was not broken as those were 32bit platforms ?
+> Fix setting value for IRQCTL register. We are setting the last 6 bits
+> of (IRQCTL) to be 1 (0x3f), this is only suitable for H3ES1.*, according
+> to Hardware manual values 1 are "setting prohibited" for Gen3.
+>
+> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
 
-It does not fix the bug on that commit, as the bug cannot happen on arm32.
-It does fix that commit, in that that commit used "unsigned long" for a
-physical address, which is wrong, even on arm32 (esp. with LPAE).
-If you insist on having a Fixes tag for a commit where the bug could be
-seen:
-Fixes: e015f88c368da1e6 ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
-
-Apart from that, drivers should use the DMA API instead of virt_to_phys().
-However, now we have a better understanding of how MSI interrupts work,
-we don't even need to allocate that page. All we need is the physical
-address of a page that is guaranteed not to be backed by RAM
-(i.e. not to be a valid target for a legitimate PCI bus mastering transaction).
-
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
