@@ -2,107 +2,137 @@ Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A14CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 07:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7975AC10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC1572173C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 07:09:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VYVZtn7b"
+	by mail.kernel.org (Postfix) with ESMTP id 525AD217F9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 08:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfC1HJR (ORCPT
+        id S1726173AbfC1ICT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 03:09:17 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:43812 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbfC1HJR (ORCPT
+        Thu, 28 Mar 2019 04:02:19 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:41185 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbfC1ICN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 03:09:17 -0400
-Received: from pendragon.nordic-sky.finnair.com (unknown [38.98.37.142])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0EF08569;
-        Thu, 28 Mar 2019 08:09:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1553756956;
-        bh=THS3jz2O3r7VgCcRk8sC7X7s0XU8ooUa4QOGJUrwEiU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VYVZtn7b+qcEnO00kRU3a+dzUZMq7BRCElXgGxcpxJWTBqYpH9V/B5Whtu5z4KGQh
-         SxPM8xrF9d2bhfpqlvYp9CHjVKURSOXplUh8u3ZXza0xRUaS5iaeWreGuskWwQaMsk
-         mvK2D/agsxFnNxT9wvn4GIYRkxSDgJoNAQynm/N8=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 9/9] drm: rcar-du: Add support for missing 16-bit RGB1555 formats
-Date:   Thu, 28 Mar 2019 09:07:23 +0200
-Message-Id: <20190328070723.26553-10-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 28 Mar 2019 04:02:13 -0400
+Received: by mail-vk1-f196.google.com with SMTP id d15so4298625vka.8;
+        Thu, 28 Mar 2019 01:02:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8jIoQcDYSLd6STW28A60ELra91D1UTDe4qLqQRBF+Sc=;
+        b=DsK/OliMvncxvSdsKY6ULLYruAytEd9jPTbZwDyQWYqwctnIxZG3ubhuAOQYEjKY6M
+         N0qrQipBjo/5DEhZhXDQlTKddSYmN/sdZ8qhQ5mi3v8ktiDHLz0JdbCBy2FK2u9wNDhm
+         3HjS27xkmJeb8t56AgY9ycyqaHTYZ4lOQGHauiQ63nkUKS7q5haKO5UM6BLt/6E+UAJB
+         aIDyfGQCnjlT2o3DLso2HMC1HEY0qk4jUvNSDEQwPVn/xSvJwgrm1oHTuBdM0wvbnmK3
+         uPxSshhdpF2VCqJnb6Y39N+Ho20ZPDqQ2DBfPP33mQYsO8KTBZBMk+30+2NlJP6HFQLR
+         do2Q==
+X-Gm-Message-State: APjAAAWRM08/5qsjSgjLgxudp5DnSdHq9G3bzWe0E0yd1MwvxHticiWa
+        BvK2EhAzCRb6vkEwv5q+KEkuy/rl/XzlB+QcRRM=
+X-Google-Smtp-Source: APXvYqwS1G+4xy9oWE0x8xttkCEtdvItrBn3a4HSglWXw7aDQL7N5nQmJmDw0nFajdhforX+zg38rTx+OkR/78HfTnw=
+X-Received: by 2002:a1f:a5d3:: with SMTP id o202mr24639518vke.40.1553760132077;
+ Thu, 28 Mar 2019 01:02:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190325114101.10198-1-marek.vasut@gmail.com> <20190325114101.10198-6-marek.vasut@gmail.com>
+ <20190327113023.zhnx5v5spcx7uoqj@verge.net.au> <CAMuHMdW_6hutek-vk+mwDHJ1kBUytLvtkgLKb2mkSEFFasJ_0g@mail.gmail.com>
+ <efcf526b-cfbc-ea54-f97e-f280e1f672fa@gmail.com>
+In-Reply-To: <efcf526b-cfbc-ea54-f97e-f280e1f672fa@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 28 Mar 2019 09:02:00 +0100
+Message-ID: <CAMuHMdU7dQ=8UaSCoZ8TucMfaGyu38rxDYV=Tspw_UmCu5YVwQ@mail.gmail.com>
+Subject: Re: [PATCH V4 6/6] PCI: rcar: Fix 64bit MSI message address handling
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the DRM_FORMAT_RGBA5551, DRM_FORMAT_RGBX5551,
-DRM_FORMAT_ABGR1555, DRM_FORMAT_XBGR1555, DRM_FORMAT_BGRA5551 and
-DRM_FORMAT_BGRX5551 formats to the DU driver. Those formats are only
-available on Gen3.
+Hi Marek,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 30 +++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+On Thu, Mar 28, 2019 at 4:19 AM Marek Vasut <marek.vasut@gmail.com> wrote:
+> On 3/27/19 1:22 PM, Geert Uytterhoeven wrote:
+> > On Wed, Mar 27, 2019 at 12:30 PM Simon Horman <horms@verge.net.au> wrote:
+> >> On Mon, Mar 25, 2019 at 12:41:01PM +0100, marek.vasut@gmail.com wrote:
+> >>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >>> The MSI message address in the RC address space can be 64 bit. The
+> >>> R-Car PCIe RC supports such a 64bit MSI message address as well.
+> >>> The code currently uses virt_to_phys(__get_free_pages()) to obtain
+> >>> a reserved page for the MSI message address, and the return value
+> >>> of which can be a 64 bit physical address on 64 bit system.
+> >>>
+> >>> However, the driver only programs PCIEMSIALR register with the bottom
+> >>> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
+> >>> not program the top 32 bits into PCIEMSIAUR, but rather programs the
+> >>> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
+> >>> SoCs, however may fail on new 64 bit R-Car SoCs.
+> >>>
+> >>> Since from a PCIe controller perspective, an inbound MSI is a memory
+> >>> write to a special address (in case of this controller, defined by
+> >>> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
+> >>> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
+> >>> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
+> >>> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
+> >>> cause memory corruption or other issues.
+> >>>
+> >>> There is however the possibility that if virt_to_phys(__get_free_pages())
+> >>> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
+> >>> to 0x0 _and_ if the system had physical RAM at the address matching the
+> >>> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
+> >>> physical address matching the value of PCIEMSIALR and a remote write to
+> >>> such a buffer by a PCIe card would trigger a spurious MSI.
+> >>>
+> >>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> >>> Cc: Simon Horman <horms+renesas@verge.net.au>
+> >>> Cc: Wolfram Sang <wsa@the-dreams.de>
+> >>> Cc: linux-renesas-soc@vger.kernel.org
+> >>> To: linux-pci@vger.kernel.org
+> >>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >>
+> >> Does this warrant a Fixes tag?
+> >
+> > (digging in old sent email)
+> > Fixes: 290c1fb358605402 ("PCI: rcar: Add MSI support for PCIe")
+>
+> But does it really fix that commit, given that on Gen2 and earlier, it
+> was not broken as those were 32bit platforms ?
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 4aaf623cbcd1..adbc4f5d8fc5 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -153,6 +153,36 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
- 		.v4l2 = V4L2_PIX_FMT_BGRX444,
- 		.bpp = 16,
- 		.planes = 1,
-+	}, {
-+		.fourcc = DRM_FORMAT_RGBA5551,
-+		.v4l2 = V4L2_PIX_FMT_RGBA555,
-+		.bpp = 16,
-+		.planes = 1,
-+	}, {
-+		.fourcc = DRM_FORMAT_RGBX5551,
-+		.v4l2 = V4L2_PIX_FMT_RGBX555,
-+		.bpp = 16,
-+		.planes = 1,
-+	}, {
-+		.fourcc = DRM_FORMAT_ABGR1555,
-+		.v4l2 = V4L2_PIX_FMT_ABGR555,
-+		.bpp = 16,
-+		.planes = 1,
-+	}, {
-+		.fourcc = DRM_FORMAT_XBGR1555,
-+		.v4l2 = V4L2_PIX_FMT_XBGR555,
-+		.bpp = 16,
-+		.planes = 1,
-+	}, {
-+		.fourcc = DRM_FORMAT_BGRA5551,
-+		.v4l2 = V4L2_PIX_FMT_BGRA555,
-+		.bpp = 16,
-+		.planes = 1,
-+	}, {
-+		.fourcc = DRM_FORMAT_BGRX5551,
-+		.v4l2 = V4L2_PIX_FMT_BGRX555,
-+		.bpp = 16,
-+		.planes = 1,
- 	}, {
- 		.fourcc = DRM_FORMAT_BGR888,
- 		.v4l2 = V4L2_PIX_FMT_RGB24,
--- 
-Regards,
+It does not fix the bug on that commit, as the bug cannot happen on arm32.
+It does fix that commit, in that that commit used "unsigned long" for a
+physical address, which is wrong, even on arm32 (esp. with LPAE).
+If you insist on having a Fixes tag for a commit where the bug could be
+seen:
+Fixes: e015f88c368da1e6 ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
 
-Laurent Pinchart
+Apart from that, drivers should use the DMA API instead of virt_to_phys().
+However, now we have a better understanding of how MSI interrupts work,
+we don't even need to allocate that page. All we need is the physical
+address of a page that is guaranteed not to be backed by RAM
+(i.e. not to be a valid target for a legitimate PCI bus mastering transaction).
 
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
