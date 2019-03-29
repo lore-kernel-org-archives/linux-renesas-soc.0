@@ -2,120 +2,158 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B59C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 08:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5FEC10F05
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 08:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA7E2173C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 08:32:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE4D2183E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 08:45:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="pbDrN2zk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbfC2IcN (ORCPT
+        id S1729096AbfC2IpG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 04:32:13 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39917 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728992AbfC2IcN (ORCPT
+        Fri, 29 Mar 2019 04:45:06 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:46227 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729050AbfC2IpG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 04:32:13 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 793EF60011;
-        Fri, 29 Mar 2019 08:32:09 +0000 (UTC)
-Date:   Fri, 29 Mar 2019 09:32:51 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, luca@lucaceresoli.net,
-        ian.arkver.dev@gmail.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 00/31] v4l: add support for multiplexed streams
-Message-ID: <20190329083251.3otgywm573dd4lir@uno.localdomain>
-References: <20190328200608.9463-1-jacopo+renesas@jmondi.org>
- <20190329011707.2m2mgckmlxj3edby@kekkonen.localdomain>
+        Fri, 29 Mar 2019 04:45:06 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D70BB25BECC;
+        Fri, 29 Mar 2019 19:45:03 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1553849104; bh=nvOjSuN3Bf+3PwLBlvMHL5GwCovf2GdHWKFo4yha1+k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pbDrN2zk14LSmAWmeA80zT7gyotdPPEew8X1yhXQA8fxSWSaADbmdEoGRcWP3czZo
+         pF4/c7GZy1k6pXPKlFDfZpbJ2wtE7yLpvPlP1HfiLuKfczZwGjxIzrlTRQngH6orXw
+         70BVVcdPoK070mvRS94gVSoivvVDlsj25jj1hFEM=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id D20E5940381; Fri, 29 Mar 2019 09:45:01 +0100 (CET)
+Date:   Fri, 29 Mar 2019 09:45:01 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate()
+ return value
+Message-ID: <20190329084501.mbtss6szqpvbv5ce@verge.net.au>
+References: <20190327123133.7949-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="h2zfpth2sfa2szia"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190329011707.2m2mgckmlxj3edby@kekkonen.localdomain>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190327123133.7949-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Wed, Mar 27, 2019 at 01:31:33PM +0100, Geert Uytterhoeven wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> 
+> cpg_sd_clock_round_rate() may return an unsupported clock rate for the
+> requested clock rate. Therefore, when cpg_sd_clock_set_rate() sets the
+> clock rate acquired by cpg_sd_clock_round_rate(), an error may occur.
+> 
+> This is not conform the clk API design.
+> 
+> This patch fixes that by making sure cpg_sd_clock_calc_div() considers
+> only the division values defined in cpg_sd_div_table[].
+> With this fix, the cpg_sd_clock_round_rate() always return a support
+> clock rate.
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v5.2.
+> 
+>  drivers/clk/renesas/rcar-gen3-cpg.c | 28 +++++++++++++---------------
+>  1 file changed, 13 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+> index d5fb768b089ff1c1..d2745c57207efc01 100644
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -3,6 +3,7 @@
+>   * R-Car Gen3 Clock Pulse Generator
+>   *
+>   * Copyright (C) 2015-2018 Glider bvba
+> + * Copyright (C) 2019 Renesas Electronics Corp.
+>   *
+>   * Based on clk-rcar-gen3.c
+>   *
+> @@ -236,8 +237,6 @@ struct sd_clock {
+>  	const struct sd_div_table *div_table;
+>  	struct cpg_simple_notifier csn;
+>  	unsigned int div_num;
+> -	unsigned int div_min;
+> -	unsigned int div_max;
+>  	unsigned int cur_div_idx;
+>  };
+>  
+> @@ -314,14 +313,20 @@ static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
+>  					  unsigned long rate,
+>  					  unsigned long parent_rate)
+>  {
+> -	unsigned int div;
+> -
+> -	if (!rate)
+> -		rate = 1;
+> +	unsigned long calc_rate, best_rate = 0, diff, diff_min = ULONG_MAX;
+> +	unsigned int i;
+>  
+> -	div = DIV_ROUND_CLOSEST(parent_rate, rate);
+> +	for (i = 0; i < clock->div_num; i++) {
+> +		calc_rate = DIV_ROUND_CLOSEST(parent_rate,
+> +					      clock->div_table[i].div);
+> +		diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
+> +		if (diff <= diff_min) {
+> +			best_rate = calc_rate;
+> +			diff_min = diff;
+> +		}
+> +	}
 
---h2zfpth2sfa2szia
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+My reading is that.
+a) this algorithm picks a clock based on the div field of the
+   members of cpg_sd_div_table. and
+b) in the case of duplicate values of that field the first one is chosen; and
+c) such duplicates (of sd_div values) do exist in cpg_sd_div_table
 
-Hi Sakari,
+Is this the intended behaviour?
 
-On Fri, Mar 29, 2019 at 03:17:11AM +0200, Sakari Ailus wrote:
-> Hi Jacopo,
->
-> On Thu, Mar 28, 2019 at 09:05:37PM +0100, Jacopo Mondi wrote:
-> > Hello,
-> >    new iteration of multiplexed stream support patch series.
-> >
-> > V3 available at:
-> > https://patchwork.kernel.org/cover/10839889/
-> >
-> > V2 sent by Niklas is available at:
-> > https://patchwork.kernel.org/cover/10573817/
-> >
-> > Series available at:
-> > git://jmondi.org/linux v4l2-mux/media-master/v4
-> >
-> > Few changes compared to v3:
-> > - Rebased on latest media master
-> > - Include Sakari's and Luca's comments on documentation patch
-> > - Improve connected pad operator as suggested by Ian and Sakari
-> > - Fix a bogus -EINVAL return in 31/31 as suggested by Sakari
-> > - Improve adv748x afe has_route as suggested by Luca and Sakari
-> > - Closed some checkpatch warnings (there are still a few though)
->
-> Thank you for working on this.
->
-> I still need to read the documentation tomorrow, but this begins to look
-> like material for merging. Your SoB seems to be missing from the patches
-> you haven't written. Shouldn't it be there?
+>  
+> -	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
+> +	return DIV_ROUND_CLOSEST(parent_rate, best_rate);
 
-Should it? As "someone in the patch deliery path" (quoting
-submitting-patches.rst) I probably should. I didn't as Niklas didn't
-do that in v2, but I can add it to v5.
+Would it be better to return the value of clock->div_table[i].div
+that yielded best_rate?
 
-Thanks for pointing it out!
-
->
-> --
-> Kind regards,
->
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
-
---h2zfpth2sfa2szia
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlyd2DMACgkQcjQGjxah
-VjyjJxAAinXd+TSZaQldkklAXkixIvDdxVpQUE7nlWwPbD36tHE5I1e5b/ittdZH
-7Tf7nN96IxT/2/agFKFyGgxXtdm+1Na8ZqvRvNQQj8bHpzqPqjjCkM8XdiIZGfKA
-THfCGZ4b/n9VulbYh4dY1pQOnQD4j8NOTK4D6OLVtIbiGSj1g2OeFiW6AHSXheHU
-nR/70mwc/7bOE/rmRBFoM9oveoOT6BQ763pPvABF/w7ygLscZfkIplCh8ksEijXL
-geA7zoMot8J3IdrVa5I0gqW7pz74/YyUzC4m+FaQJGHBZinx3q5N5P/8/WoLDkv0
-zpjnYKxS49OgY2AYAo13YOO7cprzu6TEuAnvCKISIyx2LaRKp/vGeUawn2xW/pu4
-GkYbTBAiXzPdBgADIrjZAT74ltrEvvyXjWxGsT2XddfeWWchPkYH+U54RxFrIcst
-9ThFkQc/hIsyxM3oeW7Fzt6CK1a0YmVPhobNNEubG4/hnSAgpO47uab0T8eS4h/F
-6q1iwfZYe7elpTXClO5r9Jy+OVwMptDvGDkVlPCxlMSNulcMPL1hPkJq5Pc33vKy
-jtacKc71FfBscsfrcx344RMAAy2q0IQPVXE994FCQ9nMsqr/PUAIo857rptwfOhj
-oIGRlODPdrMbA1UU0r6B/fvAnyze55dVtX2F6oqFKBZIT4TZH80=
-=iV3f
------END PGP SIGNATURE-----
-
---h2zfpth2sfa2szia--
+>  }
+>  
+>  static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -405,13 +410,6 @@ static struct clk * __init cpg_sd_clk_register(const char *name,
+>  	val |= CPG_SD_STP_MASK | (clock->div_table[0].val & CPG_SD_FC_MASK);
+>  	writel(val, clock->csn.reg);
+>  
+> -	clock->div_max = clock->div_table[0].div;
+> -	clock->div_min = clock->div_max;
+> -	for (i = 1; i < clock->div_num; i++) {
+> -		clock->div_max = max(clock->div_max, clock->div_table[i].div);
+> -		clock->div_min = min(clock->div_min, clock->div_table[i].div);
+> -	}
+> -
+>  	clk = clk_register(NULL, &clock->hw);
+>  	if (IS_ERR(clk))
+>  		goto free_clock;
+> -- 
+> 2.17.1
+> 
