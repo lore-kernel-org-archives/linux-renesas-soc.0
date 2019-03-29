@@ -2,192 +2,102 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9FCC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 13:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64076C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 14:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA4B2183F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 13:58:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553867889;
-	bh=vnBbp/3TjjnLfZaPW04k9prubV3g1+VHuxXQaWKubBc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=vEbUO8KNqcAzoDuBBDhKoByHMMR68f4GeI6xxHmfNoZl1GX7649YPG7XxlPE7ntbT
-	 Oz+buU70uhMIp6bzeUZFS7GY59MDAyRTRZsdIdB3LEkP0St/GBqVjHoVzESO0lgweb
-	 NP53TGcaCmudJQYua609ra7rBBEZqDoYAPuurwek=
+	by mail.kernel.org (Postfix) with ESMTP id 3D34E217F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 14:09:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbfC2N6J (ORCPT
+        id S1728890AbfC2OJn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 09:58:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38580 "EHLO mail.kernel.org"
+        Fri, 29 Mar 2019 10:09:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:32872 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728683AbfC2N6I (ORCPT
+        id S1728652AbfC2OJn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 09:58:08 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3905A2183F;
-        Fri, 29 Mar 2019 13:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553867887;
-        bh=vnBbp/3TjjnLfZaPW04k9prubV3g1+VHuxXQaWKubBc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vthu4BVZlG0Rlvw7exjgvuOGciRW4VdcOGynAPjLPpgJExuFq8rILdbUHEQTWrru9
-         daTqDinOPjKQ3vS2X8Q3HHByIwCBTapaP8bhFePHcDKmiCpven9tOmT25dCnQShprV
-         bP1OZXgvYgP5MOdpngnXWRhrb4Brt9w66HR6V9bY=
-Received: by mail-qk1-f175.google.com with SMTP id w20so1375593qka.7;
-        Fri, 29 Mar 2019 06:58:07 -0700 (PDT)
-X-Gm-Message-State: APjAAAUzgmK29kHJCLFluPSo8+4OsG06cHPgQqJzAgkTNLaeKFiDc4lE
-        OaRowkR8ieHlOmTVLJhQFA02E339kKBe1XUunA==
-X-Google-Smtp-Source: APXvYqz5E/jEyh15w4kDMmA8HjQvgdH0EtWy6BlsVnQ8ScY3Z68IY6D0ivP90ApSLSrDk2P3cUveGybucD5iGbfcT8M=
-X-Received: by 2002:a37:9186:: with SMTP id t128mr10611327qkd.326.1553867886407;
- Fri, 29 Mar 2019 06:58:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <1552552775-51667-1-git-send-email-biju.das@bp.renesas.com>
- <1552552775-51667-3-git-send-email-biju.das@bp.renesas.com>
- <TY2PR01MB4812BACA4673786E867C253FD84B0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
- <OSBPR01MB21039B4241097B8EE8C73A85B84B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20190314105347.GC7752@kuha.fi.intel.com> <OSBPR01MB2103DDDD7A426E79259723FEB8440@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <20190315105146.GI7752@kuha.fi.intel.com> <20190328153353.GA3070@bogus> <20190328174835.GD9993@kuha.fi.intel.com>
-In-Reply-To: <20190328174835.GD9993@kuha.fi.intel.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 29 Mar 2019 08:57:53 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+95iiGh2AVP0v_Uy2cGFXGY5nB+bHJuTOsP-SSie=r_Q@mail.gmail.com>
-Message-ID: <CAL_Jsq+95iiGh2AVP0v_Uy2cGFXGY5nB+bHJuTOsP-SSie=r_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add
- usb-role-switch property
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Fri, 29 Mar 2019 10:09:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E258BA78;
+        Fri, 29 Mar 2019 07:09:42 -0700 (PDT)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E32343F59C;
+        Fri, 29 Mar 2019 07:09:40 -0700 (PDT)
+Date:   Fri, 29 Mar 2019 14:09:35 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH V4 1/6] PCI: rcar: Clean up remaining macros defining bits
+Message-ID: <20190329140842.GA535@e107981-ln.cambridge.arm.com>
+References: <20190325114101.10198-1-marek.vasut@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190325114101.10198-1-marek.vasut@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Mar 28, 2019 at 12:48 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> On Thu, Mar 28, 2019 at 10:33:53AM -0500, Rob Herring wrote:
-> > On Fri, Mar 15, 2019 at 12:51:46PM +0200, Heikki Krogerus wrote:
-> > > Thanks,
-> > >
-> > > On Fri, Mar 15, 2019 at 09:08:19AM +0000, Biju Das wrote:
-> > > > > Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add usb-role-
-> > > > > > > > a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > > > > b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > > > > index 35039e7..eecaf4c 100644
-> > > > > > > > --- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > > > > +++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> > > > > > > > @@ -22,6 +22,7 @@ Required properties:
-> > > > > > > >  Optional properties:
-> > > > > > > >    - phys: phandle + phy specifier pair
-> > > > > > > >    - phy-names: must be "usb"
-> > > > > > > > +  - usb-role-switch: use USB role switch to support dual-role
-> > > > > > > > + switch
-> > > > > > >
-> > > > > > > I don't think we can add such a property. At least, we have to add
-> > > > > "renesas,"
-> > > > > > > prefix.
-> > > > > >
-> > > > > > usb_role_switch_get   api uses  "usb-role-switch"  property to get role
-> > > > > switch linked with the device.
-> > > > > >
-> > > > > > HD3SS3220 port controller driver gets role switch handle linked with the
-> > > > > device using usb_role_switch_get  api.
-> > > > > > That is the reason, I have added " usb-role-switch" property here.
-> > > > > >
-> > > > > > Do you have any other suggestion to get usb role switch handle?
-> > > > >
-> > > > > We can still change the API. Can we use the compatible for this?
-> > > >
-> > > > Do you mean usb_role_switch_get  API needs  to handle compatible "usb-x-connector"  wherex= a,b ,c ?
-> > > > Then it uses the graphs api to get the device linked with it and return the usb role switch handle.
-> > > > In that case, no need to add  generic "usb-role-switch"  property here.
-> > > >
-> > > > Can you please confirm my understanding is correct?
-> > >
-> > > No, I meant the compatible property would have the value
-> > > "usb-role-switch". Your compatible would probable look something
-> > > like this:
-> > >
-> > >         compatible = "renesas,r8a774c0-usb3-peri",
-> > >                      "usb-role-switch";
-> > >
-> > > So the idea would be that the device supplying USB role switch
-> > > functionality, in your case the USB controller, would need to have the
-> > > compatible property containing "usb-role-switch".
-> >
-> > That's not really something a driver could bind to nor provides any info
-> > as to what the h/w is (and how to interact with it).
->
-> Fair enough. As I said, I don't know much about DT.
->
-> The problem we are trying to solve here is, how to identify the USB
-> role switch from graph. It's primarily the USB Type-C connector
-> drivers that need to be able to get a handle to the role switch device
-> so they can tell it what to do. Basically the caller of
-> usb_role_switch_get() will have the compatible "usb-c-connector", so
-> it's of no use to us. We need the other endpoint, the role switch.
->
-> Note: The USB role switch device will be a discrete (or integrated)
-> mux on platforms that have separate USB host and USB device
-> controllers, and on platforms with dual-role capable USB controller
-> (like this one) the USB controller will represent it.
+On Mon, Mar 25, 2019 at 12:40:56PM +0100, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Replace macros using constants with BIT()s instead, no functional change.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> V2: Bundle this patch with other cleanups before resending
+> V3: Add Wolfram's R-B
+> V4: Add Geert's R-B
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Either way, it should just be the device connected to the connector's
-USB data port in the graph. Though maybe if USB2 and USB3 are
-different controllers that would complicate things.
+Applied the series to pci/rcar for v5.2, thanks.
 
-> At the moment the function usb_role_switch_get() walks trough the
-> graph of the caller (so the connector) and expects that the
-> remote-endpoint representing the mux will have a boolean property
-> "usb-role-switch".
+Lorenzo
 
-Assuming we have that I think it should be in the device
-(controller/mux) node rather than the endpoint node itself.
-
-It could also be outside of DT in that the controller driver will know
-the h/w can support role switch and can register that capability. IOW,
-it can be implied by the compatible string.
-
->
-> I do agree that Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> should not be the file describing that boolean property, but if we had
-> a separate file describing the bindings for just the USB role switch
-> devices, would using it still be OK?
-
-It should be described somewhere common, yes, but the property itself
-belongs in controller nodes. Generally, we still document where common
-properties are used.
-
-Though, I prefer the implied by the compatible option. This should
-work unless there's a strong need to find the switch in DT without the
-switch driver being probed or if this is board specific (I wouldn't
-think so).
-
->
-> If not, then can you propose something else? How do we identify the
-> USB role switch endpoint from the graph? Would it be OK to expect the
-> the endpoint subnode to have that boolean property instead?
->
->
-> thanks,
->
-> --
-> heikki
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index c8febb009454..5b8736f0cd6b 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -46,14 +46,14 @@
+>  
+>  /* Transfer control */
+>  #define PCIETCTLR		0x02000
+> -#define  CFINIT			1
+> +#define  CFINIT			BIT(0)
+>  #define PCIETSTR		0x02004
+> -#define  DATA_LINK_ACTIVE	1
+> +#define  DATA_LINK_ACTIVE	BIT(0)
+>  #define PCIEERRFR		0x02020
+>  #define  UNSUPPORTED_REQUEST	BIT(4)
+>  #define PCIEMSIFR		0x02044
+>  #define PCIEMSIALR		0x02048
+> -#define  MSIFE			1
+> +#define  MSIFE			BIT(0)
+>  #define PCIEMSIAUR		0x0204c
+>  #define PCIEMSIIER		0x02050
+>  
+> -- 
+> 2.20.1
+> 
