@@ -2,150 +2,159 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 046DCC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 11:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1176C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 11:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF5EE217F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 11:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F65206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 11:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=dialogsemiconductor.onmicrosoft.com header.i=@dialogsemiconductor.onmicrosoft.com header.b="fkrdkBWb"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="Iqwrx4SZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbfC2LC3 (ORCPT
+        id S1728737AbfC2LRP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 07:02:29 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.114]:50458 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728545AbfC2LC3 (ORCPT
+        Fri, 29 Mar 2019 07:17:15 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:33448 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728711AbfC2LRP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 07:02:29 -0400
-Received: from [85.158.142.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-3.bemta.az-b.eu-central-1.aws.symcld.net id 32/BA-05904-34BFD9C5; Fri, 29 Mar 2019 11:02:27 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1VSa0hTYRjet3PxKE6O0/BNsx8LK8xNVySz/kR
-  qjaDoAhFll6OetsGctjNrBpEmJa6M7pfVXFmoGGUNii4DzTIzXZpWXirNHJpmmV0VK9rOmWb/
-  nvd5nu99n/fjpTDpMzKcYs0m1mhg9DIyANfGiuPlieO2lLhmu5/qZI+bVHV/r0Wqji8/CFXr3
-  fOk6ubAJ7Hq8NPlS0i1o6KQVL9+6STVfRcrcfVXx8zV+EZCZ0jNNG8jtNWPG4msX5S5vOwano
-  vK/SwogMLpSgwavzn5QkofEcOJMw5MKLoRDBQf8xT+FEkroXhoGHlxKM3B6ZITpNeE0fli6H/
-  zkPQKIfQisOe2iQXTYmh5Wu3D86Gh9w7fCKej4M3QKI8l9Gaoyh/h30rpZDj14j3P+9PLoN3l
-  5nlER8K3vCs8j9Fh0Om28z2BpuGyswkT8DQY6P1DCP6tUFD10U/gY8DV5kYClkFpu5UQcCS02
-  A/6+JVgv3SVXwboTgStt077hGhoLX3hG6YHS/sfH54B46/2EcKDVgLG2vJ8G6TBZ5vLN3kmVB
-  T14IKpGYMiSx0urBADF+59IQU8D0ovfsCOoLnWKdtZp9isU2xW/seCof6sG7+A8AqUkGrUabS
-  mDEanlyvj4uRK5QL5QrlyYbyC2S1PVbDZ8jTWYDIyHlXB7OIUXE5Gmj5dYWBNDuQ5rPQdxPnb
-  6J5FU4OmU2LZNMm7UVuKNCg1Mz1Hy3DarcZsPcvVoBkUJQNJyphHCzayGta8Xaf3XOeEDFSgL
-  FSyyitLuCwmg9NpBOkJWkBVl/TYMKrrfr8Nk+KGTAMbHiYp8lppr1WbbZhsNHHpLSgyPESCRC
-  KRNDCLNWboTP/rgyiMQrIQyU9v1kCdwTQ5b9ATReyJMrj3nDeKifknheci7Yipv2apZf/6ZP+
-  x5OdJh8w7njtXdPXHuhIi8lyJDR1BtwfmKxJOPQrZHNG0Jn+2qjioQz6njOnb8sr/elTJzsLC
-  4d9rqwqlORuqHfquWZX1s9NrHzw87ux+e8nZOGStXH5DqXayropc97pVSZuiBw8kHtWUy0TWg
-  quZe6JEdTE1MpzTMspozMgxfwEdLYil5AMAAA==
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-6.tower-239.messagelabs.com!1553857346!3376302!1
-X-Originating-IP: [104.47.2.54]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 25849 invoked from network); 29 Mar 2019 11:02:27 -0000
-Received: from mail-db5eur01lp2054.outbound.protection.outlook.com (HELO EUR01-DB5-obe.outbound.protection.outlook.com) (104.47.2.54)
-  by server-6.tower-239.messagelabs.com with AES256-GCM-SHA384 encrypted SMTP; 29 Mar 2019 11:02:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com; s=selector1-diasemi-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Gkx1szDbW1BV/WUQV/DwoYtTOoHnKiyQ9VUP7VnKC0=;
- b=fkrdkBWbgzKUOdEACZ9yl3zcAclNZ3qsg7lERkuYX7frQITU7o6tbE1T1GCr8/s8SLIKCT9KJh4hOFR8i5wF0iJ9ZQQ4n9JMMy7t7brzIGWNoSk03Xq4dpCaJcysnh5Eby7mOLJvizPxguf+XNJseWO3mdaUMgItIycYD3jrbDw=
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM (20.177.62.92) by
- VI1PR10MB0512.EURPRD10.PROD.OUTLOOK.COM (10.167.201.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1750.16; Fri, 29 Mar 2019 11:02:25 +0000
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e426:c8bc:d222:5cd7]) by VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e426:c8bc:d222:5cd7%4]) with mapi id 15.20.1730.019; Fri, 29 Mar 2019
- 11:02:25 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: RE: [PATCH 0/6] mfd: da9063: remove platform_data
-Thread-Topic: [PATCH 0/6] mfd: da9063: remove platform_data
-Thread-Index: AQHU3aIiRxuJGE6LNESZwBdNcQFfU6YigYOw
-Date:   Fri, 29 Mar 2019 11:02:25 +0000
-Message-ID: <VI1PR10MB235256E1840C1E594ECDC0A5FE5A0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
-References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.240.73.196]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dc746189-7b21-43c0-2e9d-08d6b43606ea
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600127)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR10MB0512;
-x-ms-traffictypediagnostic: VI1PR10MB0512:
-x-microsoft-antispam-prvs: <VI1PR10MB05127C1C9C9B74A326412BF9F55A0@VI1PR10MB0512.EURPRD10.PROD.OUTLOOK.COM>
-x-forefront-prvs: 0991CAB7B3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(136003)(376002)(396003)(199004)(189003)(8936002)(186003)(256004)(86362001)(2501003)(68736007)(71190400001)(52536014)(305945005)(3846002)(6116002)(71200400001)(66066001)(7736002)(53546011)(6506007)(55016002)(11346002)(229853002)(316002)(478600001)(486006)(476003)(14454004)(33656002)(76176011)(446003)(106356001)(7696005)(54906003)(53936002)(2906002)(110136005)(105586002)(8676002)(6436002)(4326008)(81166006)(97736004)(81156014)(26005)(5660300002)(99286004)(25786009)(6246003)(102836004)(9686003)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR10MB0512;H:VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: AxLJAZhJDqFANLcolnLuqT5RCIaZ9oV5BRkKt2SHy6p2CAQWWSfZkkpUbnwrVT/pqWLRFixmrWh5OQFOzDyZ2ZOKf08kolvhxseqLhZ9nNMZo/Xdnl7Il6fdCZkMu5JqyIpHioOQGjr+dvZv7VpM+u1q9RAet5Aicg34Pt1Ys8O4SY04KtNNkGjkQK+bmlzwIVO8nSct7dDVW8dOFOjGhsZLIOn9MG+EbOUGdAqUIlQ2xozurV5YS1EXtDih5PBNHE4swie+yeNmxlp9IrbUY5irOIAysiNunif+czXb4kxjbhKm/7Oye3h99YEHOuzMFbwXfwuo+XwRQEMrNpNK2sQl6X2CTNYXztr64wnWRnn3N6Ht7jWBOGhTyviXgXAOeeMkMXaLeZKk6XZNjgpmIuLAsmIpvCHkM3D831ZbO78=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 29 Mar 2019 07:17:15 -0400
+Received: from si0vm1948.rbesz01.com (unknown [139.15.230.188])
+        by fe0vms0187.rbdmz01.com (Postfix) with ESMTPS id 44Vzj45S1Sz1XLDQw;
+        Fri, 29 Mar 2019 12:17:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
+        s=2015-01-21; t=1553858232;
+        bh=y2b7Vc4S9Xj0saASRHX0tCniXUHjUyfcXNFDmB3dM3k=; l=10;
+        h=From:From:Reply-To:Sender;
+        b=Iqwrx4SZFBTY7i0clGRQlLnNCrkGeZt2jq0ffP4XIgQPGCSE6ZlDxbfbpS4pxx60g
+         A+6GdEshfpID6rNZzgbHMc7X4O1/VJWue256i1D3wXB2XiyDbhY031yiq5O3VCdvXv
+         HAUhqd9vvW4fZ1etsJsogu7GRiDVy9bm1ki44yWs=
+Received: from fe0vm02900.rbesz01.com (unknown [10.58.172.176])
+        by si0vm1948.rbesz01.com (Postfix) with ESMTPS id 44Vzj44yDbz1V9;
+        Fri, 29 Mar 2019 12:17:12 +0100 (CET)
+X-AuditID: 0a3aad0c-d19ff700000039d6-1a-5c9dfeb89913
+Received: from fe0vm1652.rbesz01.com ( [10.58.173.29])
+        (using TLS with cipher AES128-SHA (128/128 bits))
+        (Client did not present a certificate)
+        by fe0vm02900.rbesz01.com (SMG Outbound) with SMTP id 8E.59.14806.8BEFD9C5; Fri, 29 Mar 2019 12:17:12 +0100 (CET)
+Received: from FE-HUB2000.de.bosch.com (fe-hub2000.de.bosch.com [10.4.103.109])
+        by fe0vm1652.rbesz01.com (Postfix) with ESMTPS id 44Vzj41zQQzVv1;
+        Fri, 29 Mar 2019 12:17:12 +0100 (CET)
+Received: from [10.34.221.161] (10.34.221.161) by FE-HUB2000.de.bosch.com
+ (10.4.103.109) with Microsoft SMTP Server id 15.1.1713.5; Fri, 29 Mar 2019
+ 12:17:11 +0100
+Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point
+ adjustment
+To:     Ulrich Hecht <uli@fpond.eu>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+CC:     Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Tobias Franzen <tfranzen@de.adit-jv.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Greg KH <greg@kroah.com>
+References: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
+ <CAMuHMdXzspxfSTQSA980VcTusoXTWXDexJuKoOo5gaFGDypc1A@mail.gmail.com>
+ <d3746902-bc33-f5f2-660a-4bda583e77d4@de.bosch.com>
+ <a69eb7eb-451c-c32c-4772-798285f0cf9b@de.bosch.com>
+ <0f1048cb-ebca-2e66-9b77-70297be96054@de.bosch.com>
+ <1244832967.1529522.1553852778122@webmail.strato.com>
+From:   Dirk Behme <dirk.behme@de.bosch.com>
+Organization: Robert Bosch Car Multimedia GmbH
+Message-ID: <9622ca2c-434e-1ce4-4c34-6e6ad314687a@de.bosch.com>
+Date:   Fri, 29 Mar 2019 12:17:11 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dc746189-7b21-43c0-2e9d-08d6b43606ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Mar 2019 11:02:25.5427
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB0512
+In-Reply-To: <1244832967.1529522.1553852778122@webmail.strato.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.34.221.161]
+X-Brightmail-Tracker: H4sIAAAAAAAAA22Tf0wTZxjHeXvX3tH1ylF+PVa7SbeFjW1YKmWnEzHbTDr3x/hjJotrNg85
+        oVsppAdMWHRomEKVlSAs0oFANucASSaUUEaUrMACTNFEF0V+KKy6ilSTESIEC+tRkP6x/577
+        fp/P89z7ffOSmKKXVJJGcx5nMbMmtUSKS7e3qt5yLtUZNOWXNzA1U+dxpnm5RMQ8uHNJxLiX
+        n4qZ4YYziOlrv0EwHQ8fi5grP5YTzL0Wr4R5dqmUYK42VOPMkHtYwpRXJTNNA3Zsl1xvP9FC
+        6AeXzhD6Lvs4ofdOpuldvaVI3z13DOkHh9y4frbtxTRyn3RHBmcyFnCWLTv3S7PK/pkR5d4N
+        O3S8bwoVo1aZFYWSQCfBTGun2IqkpII+IQLb0U4kGAq6G8GELS1gnEcwXvWzRDAi6E/gaM0Q
+        bkUkGUnzYF0ihB6MHsGg89a3kgDQ4P84+3gFkNDx0FVRSgh1GJ0ADZevioWaolPhl+8qV3pw
+        +lWobBlf6YmiDTBQ7SACPeEwWOPGhTqUfhfavneu6BjNQE39NRSoY+COu14UqF+CTm8tFjha
+        LFSPnsQrUIQ9aJQ9CLcH4fYgvAHhzSj6IKcpyNZot2k0CZZ0ji/SJCYcyMluQ4FblTlR/0+Z
+        LkSTSC2jjvxdZ1CI2QK+MNuFdKRIHUVNzfsleXpORmEWy2d9bsk3cbxaSW26vsegiHgu8/np
+        2UaeN+aYXQhITB1JGWb9HJXBFhZxlpwA5kIbSVwdQ2WSHxkUdCabx33JcbmcZc19hyTVQOX7
+        /GC4hcvkDh00mvLWbLWKQiEhIYroYCd4rYgMdaGtpMy/e68wguJz2WzemLmKbwjgijV1HR1C
+        75FP5ibrMAVuzjFzyhiqSuBpoTMr3/z8D5SbKNMTu0ERFWSsT5lGI8ifYQRVKcAy/+NZ3w3U
+        RiGu8FVxHdKe8zO0MxRqqsYQeK77SPBMXAuFxRsnpVD5tPYFWO6dl8Ht4xflMODukcPZdkcY
+        VDc1RkJZ371oaLT5lOApsaqgZ/Z+LDgdLjX8eWzyZZhz2OJg9t9bcTDT7n0Nbg6feh3aRive
+        AM9YYwKUOX7VwM1zNi10N/dshdlyX5IwRQenO5w6qC3u1sHDZ6M6WLh/m4GehcXt0/5gRf5g
+        p7/5QQg2j837n2BX1fXTKYvRzuSi09q/+gnVqd2qt1k5nvIo6ciWV1Lik0qSD/gWlJvDplJH
+        tImHR8Ym/yjsyC3b6/jKOu/LKGBR9ZUvxO8bRifM28Sjcf37W/Z9nRztjX1ku9A0XfzmovlB
+        xO7fP/7Q1R11sT4ldeyuvuSwB/ssjpB+OtDRFSf6gMnYI9nx22bqghrns9jEeMzCs/8B5jwe
+        WNYEAAA=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+On 29.03.2019 10:46, Ulrich Hecht wrote:
+> 
+>> On March 29, 2019 at 8:05 AM Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>
+>>
+>> Hi Geert,
+>>
+>> On 28.03.2019 12:30, Dirk Behme wrote:
+>>> On 28.03.2019 11:16, Dirk Behme wrote:
+>> * Testing the patch [5]
+>>
+>> - int shift = min(-8, max(7, deviation / 2));
+>> + int shift = clamp(deviation / 2, -8, 7);
+>>
+>> does *not* fix our issue. Or in other words: Testing was *not* successful.
+>>
+>> * However, from review point of view we think that it fixes a serious
+>> bug. So maybe it should be applied, anyhow?
+> 
+> It should.
+> 
+>>
+>> * Using strace we managed to get some more information about the usage
+>> of the serial port [6]. With this, we are talking about 57600 and not 115200
+>>
+>> * Switching to dev_info() [7] as requested above we get
+>>
+>> [    0.553256] e6560000.serial: ttySC3 at MMIO 0xe6560000 (irq = 41,
+>> base_baud = 0) is a hscif
+>> [  161.418527] sh-sci e6560000.serial: BRG: 9600+0 bps using DL 1462 SR 19
+>> [  161.418543] sh-sci e6560000.serial: Using clk s3d1 for 9600+0 bps
+>> [  161.418813] sh-sci e6560000.serial: BRG: 57600-5 bps using DL 463 SR 10
+>> [  161.418824] sh-sci e6560000.serial: Using clk s3d1 for 57600-5 bps
+>>
+>> * We are talking about a custom r8a7796 board
+> 
+> Reviewing the code, I have found another potential issue: the SRR (sampling rate) value is not validated; only values from 7 to 31 are permissible, according to the datasheet. The values in the debug output above would be fine, though.
+> 
+> So, for clarification: Is there a problem at 9600/57600 bps, or does it only occur at 115200 bps?
 
-On 18 March 2019 15:48 Wolfram Sang wrote:
 
-> Subject: [PATCH 0/6] mfd: da9063: remove platform_data
->=20
-> When working with this driver while debugging something else, I noticed t=
-hat
-> there are no in-kernel users of platform_data anymore. Removing the suppo=
-rt
-> simplifies the code and gets rid of quite some lines. The biggest refacto=
-ring
-> went to the regulator driver which could maybe benefit from more
-> refactorization. However, there is no in-kernel user of that driver, so n=
-o
-> testing. I left it at this stage. I think the changes are still at a leve=
-l
-> where review and build-testing will give enough confidence.
->=20
-> Besides the regulator thing, it was tested on a Renesas Lager board (R-Ca=
-r H2).
-> No regressions encountered. buildbot was happy, too.
->=20
-> The patches are based on v5.1-rc1. I'd vote for all of them going through=
- the
-> MFD tree. Looking forward to comments!
->=20
->    Wolfram
+The 115200 bps in the initial report was wrong (sorry!). Looking at the 
+strace output provided to my understanding the issue happens with 57600 
+bps (it somehow starts with 9600 bps and switches to 57600 bps, then). I 
+have to think about 115200 bps as currently we have only a precompiled 
+binary to test with (the one the strace is from).
 
-I've acked-by and tested-by for all the patches now. Apologies because it t=
-ook
-such a long time to get around to looking at this.
+Best regards
 
-(For my benefit) I regression tested against v5.0 and v5.1-rc1, ok.
+Dirk
 
-Thanks,
-Steve
+
+
