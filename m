@@ -2,99 +2,213 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55574C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 14:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5051FC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 15:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68EFB217F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 14:11:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15C76206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 15:12:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="lFJfqY2O"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="W5y32Q8s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729272AbfC2OLs (ORCPT
+        id S1729097AbfC2PMs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 10:11:48 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:22815 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728839AbfC2OLr (ORCPT
+        Fri, 29 Mar 2019 11:12:48 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34974 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728848AbfC2PMs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 10:11:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1553868705;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=0Jc1+WjWHiBaNtpDggoIfLKDu0BE8mmX2fy8auhEw0g=;
-        b=lFJfqY2OYZu66achm3l0qfLBmPyyM4KDy6UIS0Q5SGpmb0lroQo402ZwiZdcrX24PQ
-        oFEWJgk4Rb86ZI5MY4WUJaIEhJUigPmwhR368UzZ91mriDnJWRJXXZPHYxvpWr0Upe4E
-        L00HHHFI91WoMYRGJJbaNCp1xskIktgTQ24ncLvX8lO6ieOa/fQMEeBjhmo8eeLFES1c
-        kQDvC6n+HE/QS5SAKlXfPh0O2Kkw7+DSQwva/Q6KE6XreSelISlSKRsI5m2zDeHCY6sj
-        D9ihHAlzrAHlQce/Vjvn3Y2JPly3yVu2/k4P/E0ExfMK4ZPREZiN1rZDp01vs+rtCdzg
-        fVrg==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp05-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.18 AUTH)
-        with ESMTPSA id L0be16v2TEBcGDo
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Fri, 29 Mar 2019 15:11:38 +0100 (CET)
-Date:   Fri, 29 Mar 2019 15:11:38 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>
-Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "George G. Davis" <george_davis@mentor.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Tobias Franzen <tfranzen@de.adit-jv.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Greg KH <greg@kroah.com>
-Message-ID: <383749640.1548509.1553868698508@webmail.strato.com>
-In-Reply-To: <CAMuHMdXKkjqNzoXVezO9Do-0y70-+71OkYuXC_FFz-7cFeNmjA@mail.gmail.com>
-References: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
- <CAMuHMdXzspxfSTQSA980VcTusoXTWXDexJuKoOo5gaFGDypc1A@mail.gmail.com>
- <d3746902-bc33-f5f2-660a-4bda583e77d4@de.bosch.com>
- <a69eb7eb-451c-c32c-4772-798285f0cf9b@de.bosch.com>
- <0f1048cb-ebca-2e66-9b77-70297be96054@de.bosch.com>
- <CAMuHMdUd+0wt=eZ+M8NOYZOTzLX2VH7hpzbMyZC3+fJEnXrUkA@mail.gmail.com>
- <3dc6a66a-c057-af29-2a2e-c526a4d2a30a@de.bosch.com>
- <CAMuHMdXKkjqNzoXVezO9Do-0y70-+71OkYuXC_FFz-7cFeNmjA@mail.gmail.com>
-Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point
- adjustment
+        Fri, 29 Mar 2019 11:12:48 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u21so1712865lfu.2
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Mar 2019 08:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mo0AFzPMoQ5Z8MnNCzngpyQdfNUsMqZK0C6acsupEhw=;
+        b=W5y32Q8si1p6YbI84orXK1a+mj6uHtD8xJNwH3FnKpoZLeRihDL6NQEwJxjG5qT3nJ
+         3tfi4g6v1KHJvZoOh+vN4ES1xKAoMhXkz6zFX1j4ClmP0N41wt15sCUUNTw0W3AIvebZ
+         N0Pk7y7Sp/tWZPNwfv13M70wuYBnK4M0NJHDdcj9KixQ7GEFcZNYs1dfZbh2RrWrbz6M
+         KXNZcS+4HQ0f8S/o7ueASid6fCrN+DloImxjMywprgGQZhvrHn0HesYq1fFBCRb+2vJY
+         hRdVhmF3sT5IQuaSMTYjMI3DK0sy075Bm7c7MUEjuiWQq11LkNZYr3SHOlwltq9mQgBx
+         YViw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mo0AFzPMoQ5Z8MnNCzngpyQdfNUsMqZK0C6acsupEhw=;
+        b=XAgKwmqxfh+OzbBUB7ObpTgaF4AWnKHgXTRSPcv6MI2TimrDANy2r1bNw4dHeT5m5K
+         5KjzQDL+WYmYnYCy/f7oM2Yq5WMrr1D7UnJrPT4qfcVaGLwxAENOoYsTHfU3QBJRS8DU
+         iqzLhNtRcMzaMm0anzqnuLLu72xDhdBTA5Y6tGekKoN4shV5EDQhqYUgcv8hZr0mIabL
+         Ytj3lFGxfdlrsqj+yWv/BtM5HEIg6Xm3Eok8aEE1wv7kaA5S+Gg7yW+zdxi3F0AMOvXY
+         4/vxNPFX99+SFeoMigpa6KDJcTCi0NbBYqlZu2hoNWKPumxgU/BuguonqHIpXZ/0gyIc
+         Z1bw==
+X-Gm-Message-State: APjAAAWZGnPNz6mfv4lqwD9C8QlQ5SzALhZll6cGbvMO2Dx3QH7bwcCh
+        GvY4ZmRO5M2rdKcYaX15RZvnxQ==
+X-Google-Smtp-Source: APXvYqz0iL1M61onR+P3JQw9irOexmkyFkP+w12l0qYx60mnZ+7lp5UMTEjlkGQRQZVodhTriQcQaw==
+X-Received: by 2002:ac2:50d8:: with SMTP id h24mr25292600lfm.7.1553872365417;
+        Fri, 29 Mar 2019 08:12:45 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.84.161])
+        by smtp.gmail.com with ESMTPSA id y25sm391724lja.61.2019.03.29.08.12.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Mar 2019 08:12:44 -0700 (PDT)
+Subject: Re: [PATCH v9 1/3] mfd: Add Renesas R-Car Gen3 RPC-IF MFD controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, lee.jones@linaro.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1553847606-18122-1-git-send-email-masonccyang@mxic.com.tw>
+ <1553847606-18122-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <5cf42c96-183c-1edd-8397-1de6e3033f33@cogentembedded.com>
+Date:   Fri, 29 Mar 2019 18:12:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1553847606-18122-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev51
-X-Originating-IP: 188.195.25.140
-X-Originating-Client: open-xchange-appsuite
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On 03/29/2019 11:20 AM, Mason Yang wrote:
 
-> On March 29, 2019 at 2:00 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Fixed by:
+> Add a driver for Renesas R-Car Gen3 RPC-IF MFD controller.
 > 
-> -                       int deviation = min_err * srr * last_stop / 2 / baud;
-> +                       int deviation = (int)(min_err * srr * last_stop) / 2 /
-> +                                       (int)baud;
-> 
-> Before I sent a patch: Uli, shouldn't the formula use "(srr + 1)"
-> instead of "srr", as the actual sampling rate factor is one more than
-> the value programmed in HSSRR.SRCYC?
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+[...]
+> diff --git a/drivers/mfd/renesas-rpc.c b/drivers/mfd/renesas-rpc.c
+> new file mode 100644
+> index 0000000..c92bb74
+> --- /dev/null
+> +++ b/drivers/mfd/renesas-rpc.c
+> @@ -0,0 +1,140 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
+> +// Copyright (C) 2019 Macronix International Co., Ltd.
+> +//
+> +// R-Car Gen3 RPC-IF MFD driver
+> +//
+> +// Author:
+> +//	Mason Yang <masonccyang@mxic.com.tw>
+> +//
+> +
+> +#include <linux/mfd/renesas-rpc.h>
+> +#include <linux/mfd/core.h>
+> +
+> +static const struct mfd_cell rpc_hf_ctlr = {
+> +	.name = "rpc-hf",
+> +	.of_compatible = "renesas,rcar-rpc-hf",
+> +};
+> +
+> +static const struct mfd_cell rpc_spi_ctlr = {
+> +	.name = "rpc-spi",
+> +	.of_compatible = "renesas,rcar-rpc-spi",
+> +};
+> +
+> +static const struct regmap_range rpc_mfd_volatile_ranges[] = {
+> +	regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),
 
-Yes, it should.
+   regmap_reg_range((RPC_SMRDR0, RPC_SMRDR1), like Marek noted?
 
-CU
-Uli
+> +	regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),
+
+   regmap_reg_range((RPC_SMWDR0, RPC_SMWDR1)?
+
+> +static int rpc_mfd_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *ctlr;
+> +	const struct mfd_cell *cell;
+> +	struct resource *res;
+> +	struct rpc_mfd *rpc;
+> +	int ret;
+> +
+> +	ctlr = of_get_next_child(pdev->dev.of_node, NULL);
+
+    The child should be a CFI or JEDEC flash device, no virtual devices,
+please.
+
+[...]
+> +	rpc->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> +	if (IS_ERR(rpc->rstc))
+> +		return PTR_ERR(rpc->rstc);
+> +
+> +	platform_set_drvdata(pdev, rpc);
+> +
+> +	ret = devm_mfd_add_devices(&pdev->dev, -1, cell, 1, NULL, 0, NULL);
+> +
+> +	return ret;
+
+	return devm_mfd_add_devices(&pdev->dev, -1, cell, 1, NULL, 0, NULL);
+
+> +}
+> +
+> +static int rpc_mfd_remove(struct platform_device *pdev)
+> +{
+> +	mfd_remove_devices(&pdev->dev);
+
+   Why, if you used devm_mfd_add_devices() in the probe method?
+
+> +	return 0;
+> +}
+[...]
+> diff --git a/include/linux/mfd/renesas-rpc.h b/include/linux/mfd/renesas-rpc.h
+> new file mode 100644
+> index 0000000..209e64f1
+> --- /dev/null
+> +++ b/include/linux/mfd/renesas-rpc.h
+> @@ -0,0 +1,154 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
+> +// Copyright (C) 2019 Macronix International Co., Ltd.
+> +//
+> +// R-Car Gen3 RPC-IF MFD driver
+> +//
+> +// Author:
+> +//	Mason Yang <masonccyang@mxic.com.tw>
+> +//
+> +
+> +#ifndef __MFD_RENESAS_RPC_H
+> +#define __MFD_RENESAS_RPC_H
+> +
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/log2.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/module.h>
+> +#include <linux/mtd/mtd.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset.h>
+
+  Is any of these #include's used by the header itself? I don't think so...
+
+> +
+> +#define RPC_CMNCR		0x0000	// R/W
+
+   Not sure we'd need the registers described in the public header after
+we place the common RPC-IF code into the MFD driver. We'll see though...
+
+[...]
+
+MBR, Sergei
