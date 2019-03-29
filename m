@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43580C10F0A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE11C3E8A3
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 15:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F5D7218A3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 15:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0819218A2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 15:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbfC2P3r (ORCPT
+        id S1729621AbfC2P3r (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 29 Mar 2019 11:29:47 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:40920 "EHLO
+Received: from xavier.telenet-ops.be ([195.130.132.52]:40908 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729608AbfC2P3r (ORCPT
+        with ESMTP id S1729577AbfC2P3r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 29 Mar 2019 11:29:47 -0400
 Received: from ramsan ([84.194.111.163])
         by xavier.telenet-ops.be with bizsmtp
-        id trVj1z00Y3XaVaC01rVjYa; Fri, 29 Mar 2019 16:29:44 +0100
+        id trVj1z00X3XaVaC01rVjYZ; Fri, 29 Mar 2019 16:29:44 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1h9tRw-0003Rr-6w; Fri, 29 Mar 2019 16:29:44 +0100
+        id 1h9tRw-0003Rp-6N; Fri, 29 Mar 2019 16:29:44 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1h9tRw-0003ep-69; Fri, 29 Mar 2019 16:29:44 +0100
+        id 1h9tRw-0003em-5P; Fri, 29 Mar 2019 16:29:44 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Takeshi Kihara <takeshi.kihara.df@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] pinctrl: sh-pfc: rcar-gen3: Remove CC5_OSCOUT pin
-Date:   Fri, 29 Mar 2019 16:29:39 +0100
-Message-Id: <20190329152942.13995-6-geert+renesas@glider.be>
+Subject: [PATCH 4/8] pinctrl: sh-pfc: rcar-gen3: Remove HDMI CEC pins, groups, and functions
+Date:   Fri, 29 Mar 2019 16:29:38 +0100
+Message-Id: <20190329152942.13995-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190329152942.13995-1-geert+renesas@glider.be>
 References: <20190329152942.13995-1-geert+renesas@glider.be>
@@ -48,148 +48,372 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
-Jun 4, 2018, the CC5_OSCOUT pin is removed.  Update the pin control
-drivers to reflect this.
+This reverts commit 7793ac664c5ebebdb021c4ec66ff9d174d58e98e.
+
+The HDMI CEC function is not supported by the R-Car Gen3 Hardware Manual
+Rev 1.00. Therefore, delete the corresponding pin groups and functions,
+and rename the HDMI[01]_CEC definitions to match their GPIO
+functionality.
 
 Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-[geert: Update R-Car V3M, V3H]
+[geert: Squashed several commits]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 3 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 3 +--
- drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 3 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 3 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c    | 3 +--
- drivers/pinctrl/sh-pfc/pfc-r8a77980.c    | 3 +--
- 6 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 44 +++++-------------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 44 +++++-------------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 27 ++++-----------
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    |  8 ++---
+ 4 files changed, 26 insertions(+), 97 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 95fa082ae4439f16..0d74b9c7e93e8ed8 100644
+index 50d82f0fa4260530..95fa082ae4439f16 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -340,7 +340,7 @@
- #define IP15_23_20	FM(SSI_SDATA7)		FM(HCTS2_N_B)	FM(MSIOF1_RXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SDEN1_A)	FM(STP_ISEN_1_A)	FM(RIF1_D0_A)	FM(RIF3_D0_A)		F_(0, 0)	FM(TCLK2_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP15_27_24	FM(SSI_SDATA8)		FM(HRTS2_N_B)	FM(MSIOF1_TXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SPSYNC1_A)FM(STP_ISSYNC_1_A)	FM(RIF1_D1_A)	FM(RIF3_D1_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP15_31_28	FM(SSI_SDATA9_A)	FM(HSCK2_B)	FM(MSIOF1_SS1_C)	FM(HSCK1_A)			FM(SSI_WS1_B)	FM(SCK1)	FM(STP_IVCXO27_1_A)	FM(SCK5)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP16_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	FM(CC5_OSCOUT)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP16_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_7_4	FM(AUDIO_CLKB_B)	FM(SCIF_CLK_A)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	FM(STP_IVCXO27_1_D)	FM(REMOCON_A)	F_(0, 0)		F_(0, 0)	FM(TCLK1_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_11_8	FM(USB0_PWEN)		F_(0, 0)	F_(0, 0)		FM(SIM0_RST_C)			F_(0, 0)	FM(TS_SCK1_D)	FM(STP_ISCLK_1_D)	FM(BPFCLK_B)	FM(RIF3_CLK_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_15_12	FM(USB0_OVC)		F_(0, 0)	F_(0, 0)		FM(SIM0_D_C)			F_(0, 0)	FM(TS_SDAT1_D)	FM(STP_ISD_1_D)		F_(0, 0)	FM(RIF3_SYNC_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-@@ -1359,7 +1359,6 @@ static const u16 pinmux_data[] = {
+@@ -199,8 +199,8 @@
+ #define GPSR6_0		F_(SSI_SCK01239,	IP13_23_20)
  
- 	/* IPSR16 */
- 	PINMUX_IPSR_MSEL(IP16_3_0,	AUDIO_CLKA_A,		SEL_ADG_0),
--	PINMUX_IPSR_GPSR(IP16_3_0,	CC5_OSCOUT),
+ /* GPSR7 */
+-#define GPSR7_3		FM(HDMI1_CEC)
+-#define GPSR7_2		FM(HDMI0_CEC)
++#define GPSR7_3		FM(GP7_03)
++#define GPSR7_2		FM(GP7_02)
+ #define GPSR7_1		FM(AVS2)
+ #define GPSR7_0		FM(AVS1)
  
- 	PINMUX_IPSR_MSEL(IP16_7_4,	AUDIO_CLKB_B,		SEL_ADG_1),
- 	PINMUX_IPSR_MSEL(IP16_7_4,	SCIF_CLK_A,		SEL_SCIF1_0),
+@@ -577,8 +577,8 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_SINGLE(AVS1),
+ 	PINMUX_SINGLE(AVS2),
+-	PINMUX_SINGLE(HDMI0_CEC),
+-	PINMUX_SINGLE(HDMI1_CEC),
++	PINMUX_SINGLE(GP7_02),
++	PINMUX_SINGLE(GP7_03),
+ 	PINMUX_SINGLE(MSIOF0_RXD),
+ 	PINMUX_SINGLE(MSIOF0_SCK),
+ 	PINMUX_SINGLE(MSIOF0_TXD),
+@@ -2072,22 +2072,6 @@ static const unsigned int du_disp_pins[] = {
+ static const unsigned int du_disp_mux[] = {
+ 	DU_DISP_MARK,
+ };
+-/* - HDMI ------------------------------------------------------------------- */
+-static const unsigned int hdmi0_cec_pins[] = {
+-	/* HDMI0_CEC */
+-	RCAR_GP_PIN(7, 2),
+-};
+-static const unsigned int hdmi0_cec_mux[] = {
+-	HDMI0_CEC_MARK,
+-};
+-static const unsigned int hdmi1_cec_pins[] = {
+-	/* HDMI1_CEC */
+-	RCAR_GP_PIN(7, 3),
+-};
+-static const unsigned int hdmi1_cec_mux[] = {
+-	HDMI1_CEC_MARK,
+-};
+-
+ /* - HSCIF0 ----------------------------------------------------------------- */
+ static const unsigned int hscif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -3945,8 +3929,6 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(du_oddf),
+ 	SH_PFC_PIN_GROUP(du_cde),
+ 	SH_PFC_PIN_GROUP(du_disp),
+-	SH_PFC_PIN_GROUP(hdmi0_cec),
+-	SH_PFC_PIN_GROUP(hdmi1_cec),
+ 	SH_PFC_PIN_GROUP(hscif0_data),
+ 	SH_PFC_PIN_GROUP(hscif0_clk),
+ 	SH_PFC_PIN_GROUP(hscif0_ctrl),
+@@ -4300,14 +4282,6 @@ static const char * const du_groups[] = {
+ 	"du_disp",
+ };
+ 
+-static const char * const hdmi0_groups[] = {
+-	"hdmi0_cec",
+-};
+-
+-static const char * const hdmi1_groups[] = {
+-	"hdmi1_cec",
+-};
+-
+ static const char * const hscif0_groups[] = {
+ 	"hscif0_data",
+ 	"hscif0_clk",
+@@ -4695,8 +4669,6 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(drif2),
+ 	SH_PFC_FUNCTION(drif3),
+ 	SH_PFC_FUNCTION(du),
+-	SH_PFC_FUNCTION(hdmi0),
+-	SH_PFC_FUNCTION(hdmi1),
+ 	SH_PFC_FUNCTION(hscif0),
+ 	SH_PFC_FUNCTION(hscif1),
+ 	SH_PFC_FUNCTION(hscif2),
+@@ -5415,8 +5387,8 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 		{ RCAR_GP_PIN(0, 15),   24, 3 },	/* D15 */
+ 		{ RCAR_GP_PIN(7,  0),   20, 3 },	/* AVS1 */
+ 		{ RCAR_GP_PIN(7,  1),   16, 3 },	/* AVS2 */
+-		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* HDMI0_CEC */
+-		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* HDMI1_CEC */
++		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* GP7_02 */
++		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* GP7_03 */
+ 		{ PIN_A_NUMBER('P', 7),  4, 2 },	/* DU_DOTCLKIN0 */
+ 		{ PIN_A_NUMBER('P', 8),  0, 2 },	/* DU_DOTCLKIN1 */
+ 	} },
+@@ -5673,8 +5645,8 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[25] = RCAR_GP_PIN(0, 15),	/* D15 */
+ 		[26] = RCAR_GP_PIN(7,  0),	/* AVS1 */
+ 		[27] = RCAR_GP_PIN(7,  1),	/* AVS2 */
+-		[28] = RCAR_GP_PIN(7,  2),	/* HDMI0_CEC */
+-		[29] = RCAR_GP_PIN(7,  3),	/* HDMI1_CEC */
++		[28] = RCAR_GP_PIN(7,  2),	/* GP7_02 */
++		[29] = RCAR_GP_PIN(7,  3),	/* GP7_03 */
+ 		[30] = PIN_A_NUMBER('P', 7),	/* DU_DOTCLKIN0 */
+ 		[31] = PIN_A_NUMBER('P', 8),	/* DU_DOTCLKIN1 */
+ 	} },
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 63d0eb2cd879a68f..44a0bdeaca443143 100644
+index 7c19dde43e35369b..63d0eb2cd879a68f 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -351,7 +351,7 @@
- #define IP16_23_20	FM(SSI_SDATA7)		FM(HCTS2_N_B)	FM(MSIOF1_RXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SDEN1_A)	FM(STP_ISEN_1_A)	FM(RIF1_D0_A)	FM(RIF3_D0_A)		F_(0, 0)	FM(TCLK2_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_27_24	FM(SSI_SDATA8)		FM(HRTS2_N_B)	FM(MSIOF1_TXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SPSYNC1_A)FM(STP_ISSYNC_1_A)	FM(RIF1_D1_A)	FM(RIF3_D1_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_31_28	FM(SSI_SDATA9_A)	FM(HSCK2_B)	FM(MSIOF1_SS1_C)	FM(HSCK1_A)			FM(SSI_WS1_B)	FM(SCK1)	FM(STP_IVCXO27_1_A)	FM(SCK5_A)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP17_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	FM(CC5_OSCOUT)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP17_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP17_7_4	FM(AUDIO_CLKB_B)	FM(SCIF_CLK_A)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	FM(STP_IVCXO27_1_D)	FM(REMOCON_A)	F_(0, 0)		F_(0, 0)	FM(TCLK1_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP17_11_8	FM(USB0_PWEN)		F_(0, 0)	F_(0, 0)		FM(SIM0_RST_C)			F_(0, 0)	FM(TS_SCK1_D)	FM(STP_ISCLK_1_D)	FM(BPFCLK_B)	FM(RIF3_CLK_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) FM(HSCK2_C) F_(0, 0) F_(0, 0)
- #define IP17_15_12	FM(USB0_OVC)		F_(0, 0)	F_(0, 0)		FM(SIM0_D_C)			F_(0, 0)	FM(TS_SDAT1_D)	FM(STP_ISD_1_D)		F_(0, 0)	FM(RIF3_SYNC_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) FM(HRX2_C) F_(0, 0) F_(0, 0)
-@@ -1410,7 +1410,6 @@ static const u16 pinmux_data[] = {
+@@ -201,8 +201,8 @@
+ #define GPSR6_0		F_(SSI_SCK01239,		IP14_23_20)
  
- 	/* IPSR17 */
- 	PINMUX_IPSR_MSEL(IP17_3_0,	AUDIO_CLKA_A,		SEL_ADG_A_0),
--	PINMUX_IPSR_GPSR(IP17_3_0,	CC5_OSCOUT),
+ /* GPSR7 */
+-#define GPSR7_3		FM(HDMI1_CEC)
+-#define GPSR7_2		FM(HDMI0_CEC)
++#define GPSR7_3		FM(GP7_03)
++#define GPSR7_2		FM(GP7_02)
+ #define GPSR7_1		FM(AVS2)
+ #define GPSR7_0		FM(AVS1)
  
- 	PINMUX_IPSR_MSEL(IP17_7_4,	AUDIO_CLKB_B,		SEL_ADG_B_1),
- 	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF_0),
+@@ -591,8 +591,8 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_SINGLE(AVS1),
+ 	PINMUX_SINGLE(AVS2),
+ 	PINMUX_SINGLE(CLKOUT),
+-	PINMUX_SINGLE(HDMI0_CEC),
+-	PINMUX_SINGLE(HDMI1_CEC),
++	PINMUX_SINGLE(GP7_02),
++	PINMUX_SINGLE(GP7_03),
+ 	PINMUX_SINGLE(MSIOF0_RXD),
+ 	PINMUX_SINGLE(MSIOF0_SCK),
+ 	PINMUX_SINGLE(MSIOF0_TXD),
+@@ -2132,22 +2132,6 @@ static const unsigned int du_disp_mux[] = {
+ 	DU_DISP_MARK,
+ };
+ 
+-/* - HDMI ------------------------------------------------------------------- */
+-static const unsigned int hdmi0_cec_pins[] = {
+-	/* HDMI0_CEC */
+-	RCAR_GP_PIN(7, 2),
+-};
+-static const unsigned int hdmi0_cec_mux[] = {
+-	HDMI0_CEC_MARK,
+-};
+-static const unsigned int hdmi1_cec_pins[] = {
+-	/* HDMI1_CEC */
+-	RCAR_GP_PIN(7, 3),
+-};
+-static const unsigned int hdmi1_cec_mux[] = {
+-	HDMI1_CEC_MARK,
+-};
+-
+ /* - HSCIF0 ----------------------------------------------------------------- */
+ static const unsigned int hscif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -4226,8 +4210,6 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(du_oddf),
+ 	SH_PFC_PIN_GROUP(du_cde),
+ 	SH_PFC_PIN_GROUP(du_disp),
+-	SH_PFC_PIN_GROUP(hdmi0_cec),
+-	SH_PFC_PIN_GROUP(hdmi1_cec),
+ 	SH_PFC_PIN_GROUP(hscif0_data),
+ 	SH_PFC_PIN_GROUP(hscif0_clk),
+ 	SH_PFC_PIN_GROUP(hscif0_ctrl),
+@@ -4612,14 +4594,6 @@ static const char * const du_groups[] = {
+ 	"du_disp",
+ };
+ 
+-static const char * const hdmi0_groups[] = {
+-	"hdmi0_cec",
+-};
+-
+-static const char * const hdmi1_groups[] = {
+-	"hdmi1_cec",
+-};
+-
+ static const char * const hscif0_groups[] = {
+ 	"hscif0_data",
+ 	"hscif0_clk",
+@@ -5038,8 +5012,6 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(drif2),
+ 	SH_PFC_FUNCTION(drif3),
+ 	SH_PFC_FUNCTION(du),
+-	SH_PFC_FUNCTION(hdmi0),
+-	SH_PFC_FUNCTION(hdmi1),
+ 	SH_PFC_FUNCTION(hscif0),
+ 	SH_PFC_FUNCTION(hscif1),
+ 	SH_PFC_FUNCTION(hscif2),
+@@ -5766,8 +5738,8 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 		{ RCAR_GP_PIN(0, 15),   24, 3 },	/* D15 */
+ 		{ RCAR_GP_PIN(7,  0),   20, 3 },	/* AVS1 */
+ 		{ RCAR_GP_PIN(7,  1),   16, 3 },	/* AVS2 */
+-		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* HDMI0_CEC */
+-		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* HDMI1_CEC */
++		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* GP7_02 */
++		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* GP7_03 */
+ 		{ PIN_A_NUMBER('P', 7),  4, 2 },	/* DU_DOTCLKIN0 */
+ 		{ PIN_A_NUMBER('P', 8),  0, 2 },	/* DU_DOTCLKIN1 */
+ 	} },
+@@ -6023,8 +5995,8 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[25] = RCAR_GP_PIN(0, 15),	/* D15 */
+ 		[26] = RCAR_GP_PIN(7,  0),	/* AVS1 */
+ 		[27] = RCAR_GP_PIN(7,  1),	/* AVS2 */
+-		[28] = RCAR_GP_PIN(7,  2),	/* HDMI0_CEC */
+-		[29] = RCAR_GP_PIN(7,  3),	/* HDMI1_CEC */
++		[28] = RCAR_GP_PIN(7,  2),	/* GP7_02 */
++		[29] = RCAR_GP_PIN(7,  3),	/* GP7_03 */
+ 		[30] = PIN_A_NUMBER('P', 7),	/* DU_DOTCLKIN0 */
+ 		[31] = PIN_A_NUMBER('P', 8),	/* DU_DOTCLKIN1 */
+ 	} },
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-index b463062b77fecbdb..08ee69e7baac913a 100644
+index 57faa52d06a70bcb..b463062b77fecbdb 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
-@@ -356,7 +356,7 @@
- #define IP16_23_20	FM(SSI_SDATA7)		FM(HCTS2_N_B)	FM(MSIOF1_RXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SDEN1_A)	FM(STP_ISEN_1_A)	FM(RIF1_D0_A)	FM(RIF3_D0_A)		F_(0, 0)	FM(TCLK2_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_27_24	FM(SSI_SDATA8)		FM(HRTS2_N_B)	FM(MSIOF1_TXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SPSYNC1_A)FM(STP_ISSYNC_1_A)	FM(RIF1_D1_A)	FM(RIF3_D1_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_31_28	FM(SSI_SDATA9_A)	FM(HSCK2_B)	FM(MSIOF1_SS1_C)	FM(HSCK1_A)			FM(SSI_WS1_B)	FM(SCK1)	FM(STP_IVCXO27_1_A)	FM(SCK5_A)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP17_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	FM(CC5_OSCOUT)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP17_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP17_7_4	FM(AUDIO_CLKB_B)	FM(SCIF_CLK_A)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	FM(STP_IVCXO27_1_D)	FM(REMOCON_A)	F_(0, 0)		F_(0, 0)	FM(TCLK1_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP17_11_8	FM(USB0_PWEN)		F_(0, 0)	F_(0, 0)		FM(SIM0_RST_C)			F_(0, 0)	FM(TS_SCK1_D)	FM(STP_ISCLK_1_D)	FM(BPFCLK_B)	FM(RIF3_CLK_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) FM(HSCK2_C) F_(0, 0) F_(0, 0)
- #define IP17_15_12	FM(USB0_OVC)		F_(0, 0)	F_(0, 0)		FM(SIM0_D_C)			F_(0, 0)	FM(TS_SDAT1_D)	FM(STP_ISD_1_D)		F_(0, 0)	FM(RIF3_SYNC_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) FM(HRX2_C) F_(0, 0) F_(0, 0)
-@@ -1414,7 +1414,6 @@ static const u16 pinmux_data[] = {
+@@ -207,7 +207,7 @@
  
- 	/* IPSR17 */
- 	PINMUX_IPSR_MSEL(IP17_3_0,	AUDIO_CLKA_A,		SEL_ADG_A_0),
--	PINMUX_IPSR_GPSR(IP17_3_0,	CC5_OSCOUT),
+ /* GPSR7 */
+ #define GPSR7_3		FM(GP7_03)
+-#define GPSR7_2		FM(HDMI0_CEC)
++#define GPSR7_2		FM(GP7_02)
+ #define GPSR7_1		FM(AVS2)
+ #define GPSR7_0		FM(AVS1)
  
- 	PINMUX_IPSR_MSEL(IP17_7_4,	AUDIO_CLKB_B,		SEL_ADG_B_1),
- 	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF_0),
+@@ -598,7 +598,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_SINGLE(AVS2),
+ 	PINMUX_SINGLE(CLKOUT),
+ 	PINMUX_SINGLE(GP7_03),
+-	PINMUX_SINGLE(HDMI0_CEC),
++	PINMUX_SINGLE(GP7_02),
+ 	PINMUX_SINGLE(MSIOF0_RXD),
+ 	PINMUX_SINGLE(MSIOF0_SCK),
+ 	PINMUX_SINGLE(MSIOF0_TXD),
+@@ -2141,15 +2141,6 @@ static const unsigned int du_disp_mux[] = {
+ 	DU_DISP_MARK,
+ };
+ 
+-/* - HDMI ------------------------------------------------------------------- */
+-static const unsigned int hdmi0_cec_pins[] = {
+-	/* HDMI0_CEC */
+-	RCAR_GP_PIN(7, 2),
+-};
+-static const unsigned int hdmi0_cec_mux[] = {
+-	HDMI0_CEC_MARK,
+-};
+-
+ /* - HSCIF0 ----------------------------------------------------------------- */
+ static const unsigned int hscif0_data_pins[] = {
+ 	/* RX, TX */
+@@ -4125,7 +4116,7 @@ static const unsigned int vin5_clk_mux[] = {
+ };
+ 
+ static const struct {
+-	struct sh_pfc_pin_group common[313];
++	struct sh_pfc_pin_group common[312];
+ 	struct sh_pfc_pin_group automotive[30];
+ } pinmux_groups = {
+ 	.common = {
+@@ -4172,7 +4163,6 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(du_oddf),
+ 		SH_PFC_PIN_GROUP(du_cde),
+ 		SH_PFC_PIN_GROUP(du_disp),
+-		SH_PFC_PIN_GROUP(hdmi0_cec),
+ 		SH_PFC_PIN_GROUP(hscif0_data),
+ 		SH_PFC_PIN_GROUP(hscif0_clk),
+ 		SH_PFC_PIN_GROUP(hscif0_ctrl),
+@@ -4586,10 +4576,6 @@ static const char * const du_groups[] = {
+ 	"du_disp",
+ };
+ 
+-static const char * const hdmi0_groups[] = {
+-	"hdmi0_cec",
+-};
+-
+ static const char * const hscif0_groups[] = {
+ 	"hscif0_data",
+ 	"hscif0_clk",
+@@ -4983,7 +4969,7 @@ static const char * const vin5_groups[] = {
+ };
+ 
+ static const struct {
+-	struct sh_pfc_function common[50];
++	struct sh_pfc_function common[49];
+ 	struct sh_pfc_function automotive[4];
+ } pinmux_functions = {
+ 	.common = {
+@@ -4995,7 +4981,6 @@ static const struct {
+ 		SH_PFC_FUNCTION(canfd0),
+ 		SH_PFC_FUNCTION(canfd1),
+ 		SH_PFC_FUNCTION(du),
+-		SH_PFC_FUNCTION(hdmi0),
+ 		SH_PFC_FUNCTION(hscif0),
+ 		SH_PFC_FUNCTION(hscif1),
+ 		SH_PFC_FUNCTION(hscif2),
+@@ -5725,7 +5710,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 		{ RCAR_GP_PIN(0, 15),   24, 3 },	/* D15 */
+ 		{ RCAR_GP_PIN(7,  0),   20, 3 },	/* AVS1 */
+ 		{ RCAR_GP_PIN(7,  1),   16, 3 },	/* AVS2 */
+-		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* HDMI0_CEC */
++		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* GP7_02 */
+ 		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* GP7_03 */
+ 		{ PIN_A_NUMBER('P', 7),  4, 2 },	/* DU_DOTCLKIN0 */
+ 		{ PIN_A_NUMBER('P', 8),  0, 2 },	/* DU_DOTCLKIN1 */
+@@ -5981,7 +5966,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[25] = RCAR_GP_PIN(0, 15),	/* D15 */
+ 		[26] = RCAR_GP_PIN(7,  0),	/* AVS1 */
+ 		[27] = RCAR_GP_PIN(7,  1),	/* AVS2 */
+-		[28] = RCAR_GP_PIN(7,  2),	/* HDMI0_CEC */
++		[28] = RCAR_GP_PIN(7,  2),	/* GP7_02 */
+ 		[29] = RCAR_GP_PIN(7,  3),	/* GP7_03 */
+ 		[30] = PIN_A_NUMBER('P', 7),	/* DU_DOTCLKIN0 */
+ 		[31] = PIN_A_NUMBER('P', 8),	/* DU_DOTCLKIN1 */
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-index 396ef8335bb8cfd8..af432fad37e8e131 100644
+index d2390e3bae6738b1..396ef8335bb8cfd8 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
-@@ -357,7 +357,7 @@
- #define IP16_23_20	FM(SSI_SDATA7)		FM(HCTS2_N_B)	FM(MSIOF1_RXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SDEN1_A)	FM(STP_ISEN_1_A)	FM(RIF1_D0_A)	FM(RIF3_D0_A)		F_(0, 0)	FM(TCLK2_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_27_24	FM(SSI_SDATA8)		FM(HRTS2_N_B)	FM(MSIOF1_TXD_C)	F_(0, 0)			F_(0, 0)	FM(TS_SPSYNC1_A)FM(STP_ISSYNC_1_A)	FM(RIF1_D1_A)	FM(RIF3_D1_A)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP16_31_28	FM(SSI_SDATA9_A)	FM(HSCK2_B)	FM(MSIOF1_SS1_C)	FM(HSCK1_A)			FM(SSI_WS1_B)	FM(SCK1)	FM(STP_IVCXO27_1_A)	FM(SCK5_A)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP17_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	FM(CC5_OSCOUT)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP17_3_0	FM(AUDIO_CLKA_A)	F_(0, 0)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP17_7_4	FM(AUDIO_CLKB_B)	FM(SCIF_CLK_A)	F_(0, 0)		F_(0, 0)			F_(0, 0)	F_(0, 0)	FM(STP_IVCXO27_1_D)	FM(REMOCON_A)	F_(0, 0)		F_(0, 0)	FM(TCLK1_A)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP17_11_8	FM(USB0_PWEN)		F_(0, 0)	F_(0, 0)		FM(SIM0_RST_C)			F_(0, 0)	FM(TS_SCK1_D)	FM(STP_ISCLK_1_D)	FM(BPFCLK_B)	FM(RIF3_CLK_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) FM(HSCK2_C) F_(0, 0) F_(0, 0)
- #define IP17_15_12	FM(USB0_OVC)		F_(0, 0)	F_(0, 0)		FM(SIM0_D_C)			F_(0, 0)	FM(TS_SDAT1_D)	FM(STP_ISD_1_D)		F_(0, 0)	FM(RIF3_SYNC_B)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) FM(HRX2_C) F_(0, 0) F_(0, 0)
-@@ -1409,7 +1409,6 @@ static const u16 pinmux_data[] = {
+@@ -208,7 +208,7 @@
  
- 	/* IPSR17 */
- 	PINMUX_IPSR_MSEL(IP17_3_0,	AUDIO_CLKA_A,		SEL_ADG_A_0),
--	PINMUX_IPSR_GPSR(IP17_3_0,	CC5_OSCOUT),
+ /* GPSR7 */
+ #define GPSR7_3		FM(GP7_03)
+-#define GPSR7_2		FM(HDMI0_CEC)
++#define GPSR7_2		FM(GP7_02)
+ #define GPSR7_1		FM(AVS2)
+ #define GPSR7_0		FM(AVS1)
  
- 	PINMUX_IPSR_MSEL(IP17_7_4,	AUDIO_CLKB_B,		SEL_ADG_B_1),
- 	PINMUX_IPSR_MSEL(IP17_7_4,	SCIF_CLK_A,		SEL_SCIF_0),
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-index b1135c0dd8801796..68c4db041ecb09f2 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-@@ -172,7 +172,7 @@
- #define IP2_15_12	FM(DU_EXHSYNC_DU_HSYNC)		FM(HRX0)		F_(0, 0)	FM(A19)		FM(IRQ3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_19_16	FM(DU_EXVSYNC_DU_VSYNC)		FM(MSIOF3_SCK)		F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_23_20	FM(DU_EXODDF_DU_ODDF_DISP_CDE)	FM(MSIOF3_SYNC)		F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP2_27_24	FM(IRQ0)			FM(CC5_OSCOUT)		F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP2_27_24	FM(IRQ0)			F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_31_28	FM(VI0_CLK)			FM(MSIOF2_SCK)		FM(SCK3)	F_(0, 0)	FM(HSCK3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP3_3_0		FM(VI0_CLKENB)			FM(MSIOF2_RXD)		FM(RX3)		FM(RD_WR_N)	FM(HCTS3_N)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP3_7_4		FM(VI0_HSYNC_N)			FM(MSIOF2_TXD)		FM(TX3)		F_(0, 0)	FM(HRTS3_N)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-@@ -471,7 +471,6 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP2_23_20,	MSIOF3_SYNC),
- 
- 	PINMUX_IPSR_GPSR(IP2_27_24,	IRQ0),
--	PINMUX_IPSR_GPSR(IP2_27_24,	CC5_OSCOUT),
- 
- 	PINMUX_IPSR_GPSR(IP2_31_28,	VI0_CLK),
- 	PINMUX_IPSR_GPSR(IP2_31_28,	MSIOF2_SCK),
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-index f68ae75ba550b562..fad8e864cd67acdd 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77980.c
-@@ -205,7 +205,7 @@
- #define IP2_15_12	FM(DU_EXHSYNC_DU_HSYNC)		FM(MSIOF3_SS2)		FM(GETHER_PHY_INT_B)	FM(A19)		FM(FXR_TXENA_N)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_19_16	FM(DU_EXVSYNC_DU_VSYNC)		FM(MSIOF3_SCK)		F_(0, 0)		F_(0, 0)	FM(FXR_TXENB_N)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_23_20	FM(DU_EXODDF_DU_ODDF_DISP_CDE)	FM(MSIOF3_SYNC)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP2_27_24	FM(IRQ0)			FM(CC5_OSCOUT)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP2_27_24	FM(IRQ0)			F_(0, 0)		F_(0, 0)		F_(0, 0)	F_(0, 0)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP2_31_28	FM(VI0_CLK)			FM(MSIOF2_SCK)		FM(SCK3)		F_(0, 0)	FM(HSCK3)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP3_3_0		FM(VI0_CLKENB)			FM(MSIOF2_RXD)		FM(RX3)			FM(RD_WR_N)	FM(HCTS3_N)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP3_7_4		FM(VI0_HSYNC_N)			FM(MSIOF2_TXD)		FM(TX3)			F_(0, 0)	FM(HRTS3_N)	F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-@@ -555,7 +555,6 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_GPSR(IP2_23_20,	MSIOF3_SYNC),
- 
- 	PINMUX_IPSR_GPSR(IP2_27_24,	IRQ0),
--	PINMUX_IPSR_GPSR(IP2_27_24,	CC5_OSCOUT),
- 
- 	PINMUX_IPSR_GPSR(IP2_31_28,	VI0_CLK),
- 	PINMUX_IPSR_GPSR(IP2_31_28,	MSIOF2_SCK),
+@@ -595,7 +595,7 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_SINGLE(AVS2),
+ 	PINMUX_SINGLE(CLKOUT),
+ 	PINMUX_SINGLE(GP7_03),
+-	PINMUX_SINGLE(HDMI0_CEC),
++	PINMUX_SINGLE(GP7_02),
+ 	PINMUX_SINGLE(MSIOF0_RXD),
+ 	PINMUX_SINGLE(MSIOF0_SCK),
+ 	PINMUX_SINGLE(MSIOF0_TXD),
+@@ -5882,7 +5882,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
+ 		{ RCAR_GP_PIN(0, 15),   24, 3 },	/* D15 */
+ 		{ RCAR_GP_PIN(7,  0),   20, 3 },	/* AVS1 */
+ 		{ RCAR_GP_PIN(7,  1),   16, 3 },	/* AVS2 */
+-		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* HDMI0_CEC */
++		{ RCAR_GP_PIN(7,  2),   12, 3 },	/* GP7_02 */
+ 		{ RCAR_GP_PIN(7,  3),    8, 3 },	/* GP7_03 */
+ 		{ PIN_A_NUMBER('P', 7),  4, 2 },	/* DU_DOTCLKIN0 */
+ 		{ PIN_A_NUMBER('P', 8),  0, 2 },	/* DU_DOTCLKIN1 */
+@@ -6138,7 +6138,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[25] = RCAR_GP_PIN(0, 15),	/* D15 */
+ 		[26] = RCAR_GP_PIN(7,  0),	/* AVS1 */
+ 		[27] = RCAR_GP_PIN(7,  1),	/* AVS2 */
+-		[28] = RCAR_GP_PIN(7,  2),	/* HDMI0_CEC */
++		[28] = RCAR_GP_PIN(7,  2),	/* GP7_02 */
+ 		[29] = RCAR_GP_PIN(7,  3),	/* GP7_03 */
+ 		[30] = PIN_A_NUMBER('P', 7),	/* DU_DOTCLKIN0 */
+ 		[31] = PIN_A_NUMBER('P', 8),	/* DU_DOTCLKIN1 */
 -- 
 2.17.1
 
