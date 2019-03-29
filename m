@@ -1,105 +1,87 @@
-Return-Path: <SRS0=Kbds=R7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB3BC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 20:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2396C10F06
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 01:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B715520811
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Mar 2019 20:06:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C6F2183E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 01:17:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfC1UGf (ORCPT
+        id S1728019AbfC2BR3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Mar 2019 16:06:35 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:42461 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727106AbfC1UGf (ORCPT
+        Thu, 28 Mar 2019 21:17:29 -0400
+Received: from mga06.intel.com ([134.134.136.31]:49764 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727815AbfC2BR3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Mar 2019 16:06:35 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 653BFE0020;
-        Thu, 28 Mar 2019 20:06:32 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, luca@lucaceresoli.net,
+        Thu, 28 Mar 2019 21:17:29 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Mar 2019 18:17:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,282,1549958400"; 
+   d="scan'208";a="144789748"
+Received: from mgherza1-mobl2.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.249.45.3])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Mar 2019 18:17:26 -0700
+Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
+        id 70BAC21E50; Fri, 29 Mar 2019 03:17:11 +0200 (EET)
+Date:   Fri, 29 Mar 2019 03:17:11 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     laurent.pinchart@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, luca@lucaceresoli.net,
         ian.arkver.dev@gmail.com, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 31/31] media: rcar-csi2: Implement has_route()
-Date:   Thu, 28 Mar 2019 21:06:08 +0100
-Message-Id: <20190328200608.9463-32-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190328200608.9463-1-jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v4 00/31] v4l: add support for multiplexed streams
+Message-ID: <20190329011707.2m2mgckmlxj3edby@kekkonen.localdomain>
 References: <20190328200608.9463-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190328200608.9463-1-jacopo+renesas@jmondi.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Now that the rcar-csi2 subdevice supports internal routing, add an
-has_route() operation used during graph traversal.
+Hi Jacopo,
 
-The internal routing between the sink and the source pads depends on the
-virtual channel used to transmit the video stream from the remote
-subdevice to the R-Car CSI-2 receiver.
+On Thu, Mar 28, 2019 at 09:05:37PM +0100, Jacopo Mondi wrote:
+> Hello,
+>    new iteration of multiplexed stream support patch series.
+> 
+> V3 available at:
+> https://patchwork.kernel.org/cover/10839889/
+> 
+> V2 sent by Niklas is available at:
+> https://patchwork.kernel.org/cover/10573817/
+> 
+> Series available at:
+> git://jmondi.org/linux v4l2-mux/media-master/v4
+> 
+> Few changes compared to v3:
+> - Rebased on latest media master
+> - Include Sakari's and Luca's comments on documentation patch
+> - Improve connected pad operator as suggested by Ian and Sakari
+> - Fix a bogus -EINVAL return in 31/31 as suggested by Sakari
+> - Improve adv748x afe has_route as suggested by Luca and Sakari
+> - Closed some checkpatch warnings (there are still a few though)
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 32 +++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Thank you for working on this.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 54713e9e5366..5ec2947a0732 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -1028,7 +1028,39 @@ static int rcsi2_confirm_start_v3m_e3(struct rcar_csi2 *priv)
-  * Platform Device Driver.
-  */
- 
-+static bool rcar_csi2_has_route(struct media_entity *entity,
-+				unsigned int pad0, unsigned int pad1)
-+{
-+	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(entity);
-+	struct rcar_csi2 *priv = sd_to_csi2(sd);
-+	struct v4l2_mbus_frame_desc fd;
-+	unsigned int i;
-+
-+	/* Support only direct sink->source routes. */
-+	if (pad0 != RCAR_CSI2_SINK)
-+		return false;
-+
-+	/* Get the frame description: already validate at 'bound' time. */
-+	rcsi2_get_remote_frame_desc(priv, &fd);
-+	for (i = 0; i < fd.num_entries; i++) {
-+		struct v4l2_mbus_frame_desc_entry *entry = &fd.entry[i];
-+		int source_pad = rcsi2_vc_to_pad(entry->bus.csi2.channel);
-+
-+		if (source_pad < 0) {
-+			dev_err(priv->dev, "Virtual Channel out of range: %u\n",
-+				entry->bus.csi2.channel);
-+			return false;
-+		}
-+
-+		if (source_pad == pad1)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static const struct media_entity_operations rcar_csi2_entity_ops = {
-+	.has_route = rcar_csi2_has_route,
- 	.link_validate = v4l2_subdev_link_validate,
- };
- 
+I still need to read the documentation tomorrow, but this begins to look
+like material for merging. Your SoB seems to be missing from the patches
+you haven't written. Shouldn't it be there?
+
 -- 
-2.21.0
+Kind regards,
 
+Sakari Ailus
+sakari.ailus@linux.intel.com
