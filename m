@@ -2,101 +2,157 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98427C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B293AC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9600206B8
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 834602082F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:37:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="F/gjgnlp"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="hgKVo70p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728398AbfC2KgD (ORCPT
+        id S1728709AbfC2Khd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 06:36:03 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:30978 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbfC2KgD (ORCPT
+        Fri, 29 Mar 2019 06:37:33 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:47946 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbfC2Khd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 06:36:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1553855761;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=+Yq1Io/9qdrJmIu9BwK7o3Pnj3y93+K3DtxXXJpYW+o=;
-        b=F/gjgnlp1DcfTHw1xxcnlsajEgs1kgqBie8xCGmHqTdjB3Bl5w7c4qSQgBUKUODvlY
-        c0uUMS2Fjg/8rH1TaGc/YRM45uBfBqxMYBjQgteJFifNrlk/cHcjt0Qrz1A4u3R7OsUd
-        1nVzQ9dFrqDe4N+dABiWmFdEC5CYDJSK6ut91lM3MlNX6afItKT6fYtJ5dSL/yldqb09
-        RWj67os+s3AQuJT6Q/kwSpV2hkttRoRCLjvrzg3Dt76qB+N4sMXayfbhxBwVdeNhp7J4
-        /7TSFIAPexyi/nOquedNwGeZ7y/TX5IdrJiw3DTWINSsou/5kV3oc5RDsxDpqCZ7T3bH
-        o+0w==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp05-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.18 AUTH)
-        with ESMTPSA id L0be16v2TAZtF1C
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Fri, 29 Mar 2019 11:35:55 +0100 (CET)
-Date:   Fri, 29 Mar 2019 11:35:55 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
+        Fri, 29 Mar 2019 06:37:33 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 7818125BECC;
+        Fri, 29 Mar 2019 21:37:29 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1553855849; bh=bjZaYc/S7nnckdBHIYMzaMmAlg6N6bMNFwMDiGLcUqU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hgKVo70pPznDEtE9TbCb6KgDGy/LQkovPhJGkHCuXtd2ly2S4jrRlt9K4cVeNym2b
+         2mkYZcIi/MfSJIAU0jfZ5Y2ra3liUiriAfZoxwn7WLDmjZo0AQRL4O/BUrr12aGGZM
+         sI+1M1FWZ+CiUXbQYxRhKuqGhHcFhx4WFpQjPnkw=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id A1773940381; Fri, 29 Mar 2019 11:37:27 +0100 (CET)
+Date:   Fri, 29 Mar 2019 11:37:27 +0100
+From:   Simon Horman <horms@verge.net.au>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "George G. Davis" <george_davis@mentor.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Tobias Franzen <tfranzen@de.adit-jv.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Greg KH <greg@kroah.com>
-Message-ID: <664574064.1533743.1553855755610@webmail.strato.com>
-In-Reply-To: <CAMuHMdUf6rKxUi14DyJ2kJOGoZA2T+ktTpusBpaJD3rRJ0ZZzg@mail.gmail.com>
-References: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
- <CAMuHMdXzspxfSTQSA980VcTusoXTWXDexJuKoOo5gaFGDypc1A@mail.gmail.com>
- <d3746902-bc33-f5f2-660a-4bda583e77d4@de.bosch.com>
- <a69eb7eb-451c-c32c-4772-798285f0cf9b@de.bosch.com>
- <0f1048cb-ebca-2e66-9b77-70297be96054@de.bosch.com>
- <1244832967.1529522.1553852778122@webmail.strato.com>
- <CAMuHMdUf6rKxUi14DyJ2kJOGoZA2T+ktTpusBpaJD3rRJ0ZZzg@mail.gmail.com>
-Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point
- adjustment
+        linux-clk <linux-clk@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate()
+ return value
+Message-ID: <20190329103725.y2kbdjsza5vytgen@verge.net.au>
+References: <20190327123133.7949-1-geert+renesas@glider.be>
+ <20190329084501.mbtss6szqpvbv5ce@verge.net.au>
+ <CAMuHMdXL1s3ZyaZnB2JJM=Dx23uAN_6Pz5_FmLP+WSSywH9FNg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev51
-X-Originating-IP: 188.195.25.140
-X-Originating-Client: open-xchange-appsuite
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXL1s3ZyaZnB2JJM=Dx23uAN_6Pz5_FmLP+WSSywH9FNg@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Fri, Mar 29, 2019 at 09:58:24AM +0100, Geert Uytterhoeven wrote:
+> Hi Simon,
+> 
+> On Fri, Mar 29, 2019 at 9:45 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Wed, Mar 27, 2019 at 01:31:33PM +0100, Geert Uytterhoeven wrote:
+> > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > >
+> > > cpg_sd_clock_round_rate() may return an unsupported clock rate for the
+> > > requested clock rate. Therefore, when cpg_sd_clock_set_rate() sets the
+> > > clock rate acquired by cpg_sd_clock_round_rate(), an error may occur.
+> > >
+> > > This is not conform the clk API design.
+> > >
+> > > This patch fixes that by making sure cpg_sd_clock_calc_div() considers
+> > > only the division values defined in cpg_sd_div_table[].
+> > > With this fix, the cpg_sd_clock_round_rate() always return a support
+> > > clock rate.
+> > >
+> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > To be queued in clk-renesas-for-v5.2.
+> > >
+> > >  drivers/clk/renesas/rcar-gen3-cpg.c | 28 +++++++++++++---------------
+> > >  1 file changed, 13 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+> > > index d5fb768b089ff1c1..d2745c57207efc01 100644
+> > > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> > > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> > > @@ -3,6 +3,7 @@
+> > >   * R-Car Gen3 Clock Pulse Generator
+> > >   *
+> > >   * Copyright (C) 2015-2018 Glider bvba
+> > > + * Copyright (C) 2019 Renesas Electronics Corp.
+> > >   *
+> > >   * Based on clk-rcar-gen3.c
+> > >   *
+> > > @@ -236,8 +237,6 @@ struct sd_clock {
+> > >       const struct sd_div_table *div_table;
+> > >       struct cpg_simple_notifier csn;
+> > >       unsigned int div_num;
+> > > -     unsigned int div_min;
+> > > -     unsigned int div_max;
+> > >       unsigned int cur_div_idx;
+> > >  };
+> > >
+> > > @@ -314,14 +313,20 @@ static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
+> > >                                         unsigned long rate,
+> > >                                         unsigned long parent_rate)
+> > >  {
+> > > -     unsigned int div;
+> > > -
+> > > -     if (!rate)
+> > > -             rate = 1;
+> > > +     unsigned long calc_rate, best_rate = 0, diff, diff_min = ULONG_MAX;
+> > > +     unsigned int i;
+> > >
+> > > -     div = DIV_ROUND_CLOSEST(parent_rate, rate);
+> > > +     for (i = 0; i < clock->div_num; i++) {
+> > > +             calc_rate = DIV_ROUND_CLOSEST(parent_rate,
+> > > +                                           clock->div_table[i].div);
+> > > +             diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
+> > > +             if (diff <= diff_min) {
+> > > +                     best_rate = calc_rate;
+> > > +                     diff_min = diff;
+> > > +             }
+> > > +     }
+> >
+> > My reading is that.
+> > a) this algorithm picks a clock based on the div field of the
+> >    members of cpg_sd_div_table. and
+> > b) in the case of duplicate values of that field the first one is chosen; and
+> > c) such duplicates (of sd_div values) do exist in cpg_sd_div_table
+> >
+> > Is this the intended behaviour?
+> 
+> Actually cpg_sd_clock_calc_div() picks the last one, due to the "<=" :-)
+> But that doesn't matter here, as both dividers are equal.
 
-> On March 29, 2019 at 10:56 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> 
-> 
-> Hi Uli,
-> 
-> On Fri, Mar 29, 2019 at 10:46 AM Ulrich Hecht <uli@fpond.eu> wrote:
-> > Reviewing the code, I have found another potential issue: the SRR (sampling rate) value is not validated; only values from 7 to 31 are permissible, according to the datasheet. The values in the debug output above would be fine, though.
-> 
-> Isn't that handled by
-> 
->                 .sampling_rate_mask = SCI_SR_RANGE(8, 32),
-> 
-> ?
+True :)
 
-Having crawled through the related macros, I can confirm that it is.
+> cpg_sd_clock_set_rate() will pick the first entry from the table with matching
+> div value later.
+> 
+> > > -     return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
+> > > +     return DIV_ROUND_CLOSEST(parent_rate, best_rate);
+> >
+> > Would it be better to return the value of clock->div_table[i].div
+> > that yielded best_rate?
+> 
+> True. The DIV_ROUND_CLOSEST() is not needed, as we could have
+> saved best_div instead of best_rate. Will fix.
 
-CU
-Uli
+Thanks!
