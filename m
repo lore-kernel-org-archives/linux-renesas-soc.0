@@ -2,226 +2,192 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E764C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 13:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9FCC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 13:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8959217F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 13:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA4B2183F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 13:58:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553867889;
+	bh=vnBbp/3TjjnLfZaPW04k9prubV3g1+VHuxXQaWKubBc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=vEbUO8KNqcAzoDuBBDhKoByHMMR68f4GeI6xxHmfNoZl1GX7649YPG7XxlPE7ntbT
+	 Oz+buU70uhMIp6bzeUZFS7GY59MDAyRTRZsdIdB3LEkP0St/GBqVjHoVzESO0lgweb
+	 NP53TGcaCmudJQYua609ra7rBBEZqDoYAPuurwek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfC2NBA (ORCPT
+        id S1728720AbfC2N6J (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 09:01:00 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:41221 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729477AbfC2NBA (ORCPT
+        Fri, 29 Mar 2019 09:58:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728683AbfC2N6I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 09:01:00 -0400
-Received: by mail-vs1-f67.google.com with SMTP id g187so1214720vsc.8;
-        Fri, 29 Mar 2019 06:00:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IkSahWOCQhPh8XGZtOo2bwWc6e6ElbysgHKC4mB3VI4=;
-        b=rWxtZXjALepfmeHoclTlo5UAyetaOp8YQFtcI4xNSnoc+JlAHm5gSYRt67dW19W3Lp
-         fgjdjOL7JMFuOXOxch94lPfIGNI8EGCZlSh+r468DTCFzaCv3HOQk46e5j+t7PcclH22
-         LmLF31DKp95ZReFsUq3svtm4F/xZ0OJDX0Iz+ln099+OYdxp0Q8hU7t+PP3Imh1ESD+W
-         7OMiHti7vuTsKPwhGUAFGIKTXITUz25z9JHXTSAvF1UMew9O6c4nrsekxa5LdAPXWHcp
-         aLbFIjDJtZCu4MsMkIfPlShn4CjJrObzOnfy22IN6aBUefOjsQjMgEcEEKL54IXEdFYF
-         rm8g==
-X-Gm-Message-State: APjAAAVpEyqut+MxmwmAStsMQKgjxOTmaY5Fv1U1dqNWNQtvG7kNnzIG
-        xhF4go3dEUr79odgRsxux0j+VOxqhv6zAYZVBPw=
-X-Google-Smtp-Source: APXvYqz7QazUNgMwCAKlqs5pRCcbCaF+L7nQgDotRM474Hgx3E3i7JXDSIJu8Z1XlRBqF9qHG5KXocBpnlsYmx/C4Vk=
-X-Received: by 2002:a67:ba03:: with SMTP id l3mr21646139vsn.96.1553864458715;
- Fri, 29 Mar 2019 06:00:58 -0700 (PDT)
+        Fri, 29 Mar 2019 09:58:08 -0400
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3905A2183F;
+        Fri, 29 Mar 2019 13:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553867887;
+        bh=vnBbp/3TjjnLfZaPW04k9prubV3g1+VHuxXQaWKubBc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vthu4BVZlG0Rlvw7exjgvuOGciRW4VdcOGynAPjLPpgJExuFq8rILdbUHEQTWrru9
+         daTqDinOPjKQ3vS2X8Q3HHByIwCBTapaP8bhFePHcDKmiCpven9tOmT25dCnQShprV
+         bP1OZXgvYgP5MOdpngnXWRhrb4Brt9w66HR6V9bY=
+Received: by mail-qk1-f175.google.com with SMTP id w20so1375593qka.7;
+        Fri, 29 Mar 2019 06:58:07 -0700 (PDT)
+X-Gm-Message-State: APjAAAUzgmK29kHJCLFluPSo8+4OsG06cHPgQqJzAgkTNLaeKFiDc4lE
+        OaRowkR8ieHlOmTVLJhQFA02E339kKBe1XUunA==
+X-Google-Smtp-Source: APXvYqz5E/jEyh15w4kDMmA8HjQvgdH0EtWy6BlsVnQ8ScY3Z68IY6D0ivP90ApSLSrDk2P3cUveGybucD5iGbfcT8M=
+X-Received: by 2002:a37:9186:: with SMTP id t128mr10611327qkd.326.1553867886407;
+ Fri, 29 Mar 2019 06:58:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com>
- <20190327183555.GA23991@vmlxhi-102.adit-jv.com> <CAMuHMdXzspxfSTQSA980VcTusoXTWXDexJuKoOo5gaFGDypc1A@mail.gmail.com>
- <d3746902-bc33-f5f2-660a-4bda583e77d4@de.bosch.com> <a69eb7eb-451c-c32c-4772-798285f0cf9b@de.bosch.com>
- <0f1048cb-ebca-2e66-9b77-70297be96054@de.bosch.com> <CAMuHMdUd+0wt=eZ+M8NOYZOTzLX2VH7hpzbMyZC3+fJEnXrUkA@mail.gmail.com>
- <3dc6a66a-c057-af29-2a2e-c526a4d2a30a@de.bosch.com>
-In-Reply-To: <3dc6a66a-c057-af29-2a2e-c526a4d2a30a@de.bosch.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 29 Mar 2019 14:00:46 +0100
-Message-ID: <CAMuHMdXKkjqNzoXVezO9Do-0y70-+71OkYuXC_FFz-7cFeNmjA@mail.gmail.com>
-Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point adjustment
-To:     Dirk Behme <dirk.behme@de.bosch.com>
-Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "George G. Davis" <george_davis@mentor.com>,
-        Andy Lowe <andy_lowe@mentor.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Tobias Franzen <tfranzen@de.adit-jv.com>,
-        Magnus Damm <magnus.damm@gmail.com>, Greg KH <greg@kroah.com>
+References: <1552552775-51667-1-git-send-email-biju.das@bp.renesas.com>
+ <1552552775-51667-3-git-send-email-biju.das@bp.renesas.com>
+ <TY2PR01MB4812BACA4673786E867C253FD84B0@TY2PR01MB4812.jpnprd01.prod.outlook.com>
+ <OSBPR01MB21039B4241097B8EE8C73A85B84B0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20190314105347.GC7752@kuha.fi.intel.com> <OSBPR01MB2103DDDD7A426E79259723FEB8440@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20190315105146.GI7752@kuha.fi.intel.com> <20190328153353.GA3070@bogus> <20190328174835.GD9993@kuha.fi.intel.com>
+In-Reply-To: <20190328174835.GD9993@kuha.fi.intel.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 29 Mar 2019 08:57:53 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+95iiGh2AVP0v_Uy2cGFXGY5nB+bHJuTOsP-SSie=r_Q@mail.gmail.com>
+Message-ID: <CAL_Jsq+95iiGh2AVP0v_Uy2cGFXGY5nB+bHJuTOsP-SSie=r_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add
+ usb-role-switch property
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Dirk,
-
-On Fri, Mar 29, 2019 at 1:13 PM Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> On 29.03.2019 10:46, Geert Uytterhoeven wrote:
-> > On Fri, Mar 29, 2019 at 8:05 AM Dirk Behme <dirk.behme@de.bosch.com> wrote:
-> >> On 28.03.2019 12:30, Dirk Behme wrote:
-> >>> On 28.03.2019 11:16, Dirk Behme wrote:
-> >>>> On 28.03.2019 10:24, Geert Uytterhoeven wrote:
-> >>>>> On Wed, Mar 27, 2019 at 7:36 PM Eugeniu Rosca <erosca@de.adit-jv.com>
-> >>>>> wrote:
-> >>>>>> We've recently switched from rcar-3.7.x to rcar-3.9.x [1] kernel and
-> >>>>>> the
-> >>>>>> latter contains this patch [2] by virtue of rcar-3.9.0 commit [3],
-> >>>>>> which
-> >>>>>> mirrors v4.18-rc1 commit [4] in mainline.
-> >>>>>>
-> >>>>>> JFYI, quite far away in the delivery chain, we've received below
-> >>>>>> report:
-> >>>>>>
-> >>>>>>> With this patch [2-4] there are reports about broken data
-> >>>>>>> communication with 115200 baud with SXM module. Reverting
-> >>>>>>> this patch results in successful communication, again.
-> >>>>>>
-> >>>>>> While this scarce information barely helps anybody, I thought that
-> >>>>>> sharing it with you might be beneficial in case you collect several
-> >>>>>> reports linked to this specific commit in future, meaning it
-> >>>>>> potentially
-> >>>>>> adds a regression.
-> >>>>>>
-> >>>>>> Also, if you are aware of any userland changes that might be
-> >>>>>> required/assumed by this patch or in case you have any alternative
-> >>>>>> ideas how to avoid reverting this patch, your feedback would be very
-> >>>>>> appreciated.
-> >>>>>
-> >>>>> Thanks for your report!
-> >>>>>
-> >>>>> [TLDR: skip to the suggested fix below; I only noticed the bug after
-> >>>>>          writing the below paragraphs, which are still useful
-> >>>>> questions to
-> >>>>>          let us reproduce the issue]
-> >>>>>
-> >>>>> Which SoC are you using?
-> >>>>> I assume this is on a custom board, as Salvator-X(S) and ULCB have
-> >>>>> external SCIF clock crystals, which allow to use a perfect 115200 bps,
-> >>>>> hence the affected code path is not exercised:
-> >>>>>
-> >>>>>       sh-sci e6550000.serial: BRG: 115200+0 bps using DL 4 SR 32
-> >>>>>       sh-sci e6550000.serial: Using clk scif for 115200+0 bps
-> >>>>>
-> >>>>> Does your board have an external SCIF clock? Which frequency?
-> >>>>> Can you check the clock values and deviation for your configuration, by
-> >>>>> changing the calls to print the above information from dev_dbg() to
-> >>>>> dev_info()?
-> >>>>>
-> >>>>> Does adding the DIV_ROUND_CLOSEST(), as suggested in my review
-> >>>>> of the posted patch, help?
-> >>>>> Perhaps the sampling point shift is inverted? Does -shift work better?
-> >>>>>
-> >>>>> [possible solution]
-> >>>>>
-> >>>>>> +                               int shift = min(-8, max(7, deviation
-> >>>>>> / 2));
-> >>>>>
-> >>>>> Oops, min and max are exchanged!
-> >>>>>
-> >>>>> I guess using
-> >>>>>
-> >>>>>       int shift = clamp(deviation / 2, -8, 7)
-> >>>>>
-> >>>>> instead fixes the issue?
-> >>>>
-> >>>>
-> >>>> Uh, that was fast :) Many thanks!
-> >>>>
-> >>>> We will test this as fast as possible! But due to the long delivery
-> >>>> chain Eugeniu mentioned this will take some time. I'll try my best to
-> >>>> come back to you as fast as possible.
-> >>>
-> >>>
-> >>> Just for the archives: We are testing the attached patch.
-> >>
-> >>
-> >> * Testing the patch [5]
-> >>
-> >> - int shift = min(-8, max(7, deviation / 2));
-> >> + int shift = clamp(deviation / 2, -8, 7);
-> >>
-> >> does *not* fix our issue. Or in other words: Testing was *not* successful.
+On Thu, Mar 28, 2019 at 12:48 PM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> On Thu, Mar 28, 2019 at 10:33:53AM -0500, Rob Herring wrote:
+> > On Fri, Mar 15, 2019 at 12:51:46PM +0200, Heikki Krogerus wrote:
+> > > Thanks,
+> > >
+> > > On Fri, Mar 15, 2019 at 09:08:19AM +0000, Biju Das wrote:
+> > > > > Subject: Re: [PATCH v2 2/7] dt-bindings: usb: renesas_usb3: add usb-role-
+> > > > > > > > a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > > b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > > index 35039e7..eecaf4c 100644
+> > > > > > > > --- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > > +++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> > > > > > > > @@ -22,6 +22,7 @@ Required properties:
+> > > > > > > >  Optional properties:
+> > > > > > > >    - phys: phandle + phy specifier pair
+> > > > > > > >    - phy-names: must be "usb"
+> > > > > > > > +  - usb-role-switch: use USB role switch to support dual-role
+> > > > > > > > + switch
+> > > > > > >
+> > > > > > > I don't think we can add such a property. At least, we have to add
+> > > > > "renesas,"
+> > > > > > > prefix.
+> > > > > >
+> > > > > > usb_role_switch_get   api uses  "usb-role-switch"  property to get role
+> > > > > switch linked with the device.
+> > > > > >
+> > > > > > HD3SS3220 port controller driver gets role switch handle linked with the
+> > > > > device using usb_role_switch_get  api.
+> > > > > > That is the reason, I have added " usb-role-switch" property here.
+> > > > > >
+> > > > > > Do you have any other suggestion to get usb role switch handle?
+> > > > >
+> > > > > We can still change the API. Can we use the compatible for this?
+> > > >
+> > > > Do you mean usb_role_switch_get  API needs  to handle compatible "usb-x-connector"  wherex= a,b ,c ?
+> > > > Then it uses the graphs api to get the device linked with it and return the usb role switch handle.
+> > > > In that case, no need to add  generic "usb-role-switch"  property here.
+> > > >
+> > > > Can you please confirm my understanding is correct?
+> > >
+> > > No, I meant the compatible property would have the value
+> > > "usb-role-switch". Your compatible would probable look something
+> > > like this:
+> > >
+> > >         compatible = "renesas,r8a774c0-usb3-peri",
+> > >                      "usb-role-switch";
+> > >
+> > > So the idea would be that the device supplying USB role switch
+> > > functionality, in your case the USB controller, would need to have the
+> > > compatible property containing "usb-role-switch".
 > >
-> > I'm sorry to hear that.
-> >
-> >> * However, from review point of view we think that it fixes a serious
-> >> bug. So maybe it should be applied, anyhow?
-> >
-> > Yes, submitted.
-> >
-> >> * Using strace we managed to get some more information about the usage
-> >> of the serial port [6]. With this, we are talking about 57600 and not 115200
-> >>
-> >> * Switching to dev_info() [7] as requested above we get
-> >>
-> >> [    0.553256] e6560000.serial: ttySC3 at MMIO 0xe6560000 (irq = 41,
-> >> base_baud = 0) is a hscif
-> >> [  161.418527] sh-sci e6560000.serial: BRG: 9600+0 bps using DL 1462 SR 19
-> >> [  161.418543] sh-sci e6560000.serial: Using clk s3d1 for 9600+0 bps
-> >> [  161.418813] sh-sci e6560000.serial: BRG: 57600-5 bps using DL 463 SR 10
-> >> [  161.418824] sh-sci e6560000.serial: Using clk s3d1 for 57600-5 bps
+> > That's not really something a driver could bind to nor provides any info
+> > as to what the h/w is (and how to interact with it).
+>
+> Fair enough. As I said, I don't know much about DT.
+>
+> The problem we are trying to solve here is, how to identify the USB
+> role switch from graph. It's primarily the USB Type-C connector
+> drivers that need to be able to get a handle to the role switch device
+> so they can tell it what to do. Basically the caller of
+> usb_role_switch_get() will have the compatible "usb-c-connector", so
+> it's of no use to us. We need the other endpoint, the role switch.
+>
+> Note: The USB role switch device will be a discrete (or integrated)
+> mux on platforms that have separate USB host and USB device
+> controllers, and on platforms with dual-role capable USB controller
+> (like this one) the USB controller will represent it.
 
-> Do you have any idea what might be the difference between reverting
-> "serial: sh-sci: Support for HSCIF RX sampling point adjustment" (works)
-> and not reverting that (doesn't work for us), then?
+Either way, it should just be the device connected to the connector's
+USB data port in the graph. Though maybe if USB2 and USB3 are
+different controllers that would complicate things.
 
-Before that commit, the RX sampling point was not shifted.
-After that commit, it was incorrectly shifted by -8[*].
-With my fix, it is shifted by 7[*], to compensate for a clock rate that
-is slightly off.
+> At the moment the function usb_role_switch_get() walks trough the
+> graph of the caller (so the connector) and expects that the
+> remote-endpoint representing the mux will have a boolean property
+> "usb-role-switch".
 
-[*] In units of cycles of the sampling clock, which runs at SR * 57595 =
-    575950 Hz.
+Assuming we have that I think it should be in the device
+(controller/mux) node rather than the endpoint node itself.
 
-However, doing the above calculation shows that's something wrong with
-the formula used by the driver: with SR = 10, the default sampling point
-at the center is at SR / 2 = 5, so the shift must be within [-4, +4], which
-is exceeded by using a  value of 7.
+It could also be outside of DT in that the controller driver will know
+the h/w can support role switch and can register that capability. IOW,
+it can be implied by the compatible string.
 
-    deviation = min_err * srr * last_stop / 2 / baud;
+>
+> I do agree that Documentation/devicetree/bindings/usb/renesas_usb3.txt
+> should not be the file describing that boolean property, but if we had
+> a separate file describing the bindings for just the USB role switch
+> devices, would using it still be OK?
 
-With:
+It should be described somewhere common, yes, but the property itself
+belongs in controller nodes. Generally, we still document where common
+properties are used.
 
-    min_err = -5
-    srr = 9
-    last_stop = 19
-    baud = 57600
+Though, I prefer the implied by the compatible option. This should
+work unless there's a strong need to find the switch in DT without the
+switch driver being probed or if this is board specific (I wouldn't
+think so).
 
-Note that srr and baud are unsigned.  Hence the multiplication and
-divisions are done in unsigned arithmetic, and we get deviation = 37282
-instead of 0. Oops...
-
-Fixed by:
-
--                       int deviation = min_err * srr * last_stop / 2 / baud;
-+                       int deviation = (int)(min_err * srr * last_stop) / 2 /
-+                                       (int)baud;
-
-Before I sent a patch: Uli, shouldn't the formula use "(srr + 1)"
-instead of "srr", as the actual sampling rate factor is one more than
-the value programmed in HSSRR.SRCYC?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> If not, then can you propose something else? How do we identify the
+> USB role switch endpoint from the graph? Would it be OK to expect the
+> the endpoint subnode to have that boolean property instead?
+>
+>
+> thanks,
+>
+> --
+> heikki
