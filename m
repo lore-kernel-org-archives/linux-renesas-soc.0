@@ -2,87 +2,173 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A03C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF128C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 026902075E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8797620811
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:46:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Ln4J+7MD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEE6eTla"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbfC2KmK (ORCPT
+        id S1728966AbfC2Kqi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 06:42:10 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:48163 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729217AbfC2KmI (ORCPT
+        Fri, 29 Mar 2019 06:46:38 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34232 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728711AbfC2Kqi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 06:42:08 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 8B4B025BF12;
-        Fri, 29 Mar 2019 21:42:06 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1553856126; bh=5fB/ROVv7w6dzl469Z26MR4zgjTiql+hLtnRUOapjtM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ln4J+7MDQ+6UQYaWyXSXDRYaodV6yVE2m1FSfbuj/rS3Zo7xfY43Ri5Tz5b2iLzqu
-         4KsSiRsU4jipNg3rlQ6afHj4OVWsD17Mu/ACASWCynxRrwmAjnB7LLByQcYikkZ7RM
-         tmf5vclZ7BnRW1L6VxxUT5fZawWBjYoz0B/XZBT0=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id B1716940381; Fri, 29 Mar 2019 11:42:04 +0100 (CET)
-Date:   Fri, 29 Mar 2019 11:42:04 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] serial: sh-sci: Fix HSCIF RX sampling point adjustment
-Message-ID: <20190329104204.vw72ltile6a725kn@verge.net.au>
-References: <20190329091026.18958-1-geert+renesas@glider.be>
+        Fri, 29 Mar 2019 06:46:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b3so889475pfd.1;
+        Fri, 29 Mar 2019 03:46:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KxdjQtH+CSNDToOBqGstYVSkNFoz0kMA1ZTZGOP2o4Q=;
+        b=UEE6eTlaCU0LVvOyxOMmFkBmj6scq0bda02J33mRawNsvxy2Qu6AzBvJqH/FfEkY0C
+         RjFxaSqQWUCtJgmWp2qg017peOshqb01m6Le0OOiUa1efw7Uk91drqm9z0tiixIhACOy
+         3ZGSkLKQDu0BzMIqGVvX7l4q1AOjI3LBf3PGdQV9epkgTXU/1oW7xv7U5KMkVUW1fiNL
+         /kteTBDVhPtBQ+sIOtUrAomcIRcww47ZlkqJ2O2cj+h0iGCU9l6/LeYVvGjBXf16xdqH
+         sltZ58rmBrpejDNHPe0ANocJd0gZvrg6RbB5jLZHDEkB3GdGcpDcV8U1FQyho5wqkZe1
+         SxYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KxdjQtH+CSNDToOBqGstYVSkNFoz0kMA1ZTZGOP2o4Q=;
+        b=uNJR54wrrZP34wY3dcGVTDHZp9zkTldg6iOAGjd5PZg+KkSAG4YqSDIMWvw0oFDo/x
+         FKoBkIvPOO46+Z0A8HCHeIkDK5WIGJAU4bwmXk5cAJtAMYg6zCDDq3TPliwvHSM8tqFM
+         HFFxnxvo96I+Vg2boTy06YHG0zys/aOr6URgwWfSiLWz8y38GUW2HD093vunUMneyqqE
+         K3QVfPliPwZDW3HJCFm0vekdgG0OPFEE2X/vqCLpOJV3xcrnpJw2gDi0hi9KB5T+Kn4u
+         tFSAKMqwWQdVJ2pAmqq9Ak30H99nc/ITXUDW0gXjXFK1kHveWSo1AqSm+JmbN4Ncz8xP
+         kEgg==
+X-Gm-Message-State: APjAAAXoZoJ2rVYQyQXnKvNiU4eTtyfBHy2lNXt8KfsT+QOuMeKQxZ45
+        34YbzOH2zNsSEYuqnsOpA6k=
+X-Google-Smtp-Source: APXvYqx/clEgEhlG6iOErX7uGJbNnjDiUl0/dgqxhM88uDTRzEdS348K9dX2ev3oVWSq+6/tgekV4Q==
+X-Received: by 2002:a63:1410:: with SMTP id u16mr43553340pgl.420.1553856397149;
+        Fri, 29 Mar 2019 03:46:37 -0700 (PDT)
+Received: from [192.168.42.180] (219x120x4x122.ap219.ftth.ucom.ne.jp. [219.120.4.122])
+        by smtp.gmail.com with ESMTPSA id 28sm2384360pgq.59.2019.03.29.03.46.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 29 Mar 2019 03:46:36 -0700 (PDT)
+Subject: Re: [PATCH v9 1/3] mfd: Add Renesas R-Car Gen3 RPC-IF MFD controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        sergei.shtylyov@cogentembedded.com, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, lee.jones@linaro.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1553847606-18122-1-git-send-email-masonccyang@mxic.com.tw>
+ <1553847606-18122-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <1e0107a8-164c-7978-f2d0-2dd3430cc2b9@gmail.com>
+Date:   Fri, 29 Mar 2019 11:43:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190329091026.18958-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1553847606-18122-2-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 29, 2019 at 10:10:26AM +0100, Geert Uytterhoeven wrote:
-> The calculation of the sampling point has min() and max() exchanged.
-> Fix this by using the clamp() helper instead.
+On 3/29/19 9:20 AM, Mason Yang wrote:
+> Add a driver for Renesas R-Car Gen3 RPC-IF MFD controller.
 > 
-> Fixes: 63ba1e00f178a448 ("serial: sh-sci: Support for HSCIF RX sampling point adjustment")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 > ---
->  drivers/tty/serial/sh-sci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/mfd/Kconfig             |   9 +++
+>  drivers/mfd/Makefile            |   1 +
+>  drivers/mfd/renesas-rpc.c       | 140 ++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/renesas-rpc.h | 154 ++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 304 insertions(+)
+>  create mode 100644 drivers/mfd/renesas-rpc.c
+>  create mode 100644 include/linux/mfd/renesas-rpc.h
 > 
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index 060fcd42b6d56010..2bdaeba5d527a6ce 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -2529,7 +2529,7 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
->  				 * last stop bit; we can increase the error
->  				 * margin by shifting the sampling point.
->  				 */
-> -				int shift = min(-8, max(7, deviation / 2));
-> +				int shift = clamp(deviation / 2, -8, 7);
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 0ce2d8d..a870e12 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -978,6 +978,15 @@ config MFD_RDC321X
+>  	  southbridge which provides access to GPIOs and Watchdog using the
+>  	  southbridge PCI device configuration space.
 >  
->  				hssrr |= (shift << HSCIF_SRHP_SHIFT) &
->  					 HSCIF_SRHP_MASK;
-> -- 
-> 2.17.1
-> 
+> +config MFD_RENESAS_RPC
+> +	tristate "Renesas R-Car Gen3 RPC-IF MFD driver"
+> +	select MFD_CORE
+> +	depends on ARCH_RENESAS
+> +	help
+> +	  This supports for Renesas R-Car Gen3 RPC-IF multifunction device
+> +	  controller which provides either SPI host controller or HyperFlash.
+> +	  You have to select individual components under the corresponding menu.
+> +
+>  config MFD_RT5033
+>  	tristate "Richtek RT5033 Power Management IC"
+>  	depends on I2C
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index b4569ed7..4a49699 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -183,6 +183,7 @@ obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
+>  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
+>  obj-$(CONFIG_LPC_ICH)		+= lpc_ich.o
+>  obj-$(CONFIG_MFD_RDC321X)	+= rdc321x-southbridge.o
+> +obj-$(CONFIG_MFD_RENESAS_RPC)	+= renesas-rpc.o
+>  obj-$(CONFIG_MFD_JANZ_CMODIO)	+= janz-cmodio.o
+>  obj-$(CONFIG_MFD_JZ4740_ADC)	+= jz4740-adc.o
+>  obj-$(CONFIG_MFD_TPS6586X)	+= tps6586x.o
+> diff --git a/drivers/mfd/renesas-rpc.c b/drivers/mfd/renesas-rpc.c
+> new file mode 100644
+> index 0000000..c92bb74
+> --- /dev/null
+> +++ b/drivers/mfd/renesas-rpc.c
+> @@ -0,0 +1,140 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
+> +// Copyright (C) 2019 Macronix International Co., Ltd.
+> +//
+> +// R-Car Gen3 RPC-IF MFD driver
+> +//
+> +// Author:
+> +//	Mason Yang <masonccyang@mxic.com.tw>
+> +//
+> +
+> +#include <linux/mfd/renesas-rpc.h>
+> +#include <linux/mfd/core.h>
+> +
+> +static const struct mfd_cell rpc_hf_ctlr = {
+> +	.name = "rpc-hf",
+> +	.of_compatible = "renesas,rcar-rpc-hf",
+> +};
+> +
+> +static const struct mfd_cell rpc_spi_ctlr = {
+> +	.name = "rpc-spi",
+> +	.of_compatible = "renesas,rcar-rpc-spi",
+> +};
+> +
+> +static const struct regmap_range rpc_mfd_volatile_ranges[] = {
+> +	regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),
+> +	regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),
+> +	regmap_reg_range(RPC_CMNSR, RPC_CMNSR),
+> +};
+
+Isn't SMWDR1 volatile too ? And SMRDR1 too ?
+
+[...]
+-- 
+Best regards,
+Marek Vasut
