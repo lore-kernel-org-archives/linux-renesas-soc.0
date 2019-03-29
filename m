@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B293AC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A03C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834602082F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 026902075E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 10:42:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="hgKVo70p"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Ln4J+7MD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728709AbfC2Khd (ORCPT
+        id S1729225AbfC2KmK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 06:37:33 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:47946 "EHLO
+        Fri, 29 Mar 2019 06:42:10 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:48163 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbfC2Khd (ORCPT
+        with ESMTP id S1729217AbfC2KmI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 06:37:33 -0400
+        Fri, 29 Mar 2019 06:42:08 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 7818125BECC;
-        Fri, 29 Mar 2019 21:37:29 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 8B4B025BF12;
+        Fri, 29 Mar 2019 21:42:06 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1553855849; bh=bjZaYc/S7nnckdBHIYMzaMmAlg6N6bMNFwMDiGLcUqU=;
+        t=1553856126; bh=5fB/ROVv7w6dzl469Z26MR4zgjTiql+hLtnRUOapjtM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hgKVo70pPznDEtE9TbCb6KgDGy/LQkovPhJGkHCuXtd2ly2S4jrRlt9K4cVeNym2b
-         2mkYZcIi/MfSJIAU0jfZ5Y2ra3liUiriAfZoxwn7WLDmjZo0AQRL4O/BUrr12aGGZM
-         sI+1M1FWZ+CiUXbQYxRhKuqGhHcFhx4WFpQjPnkw=
+        b=Ln4J+7MDQ+6UQYaWyXSXDRYaodV6yVE2m1FSfbuj/rS3Zo7xfY43Ri5Tz5b2iLzqu
+         4KsSiRsU4jipNg3rlQ6afHj4OVWsD17Mu/ACASWCynxRrwmAjnB7LLByQcYikkZ7RM
+         tmf5vclZ7BnRW1L6VxxUT5fZawWBjYoz0B/XZBT0=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id A1773940381; Fri, 29 Mar 2019 11:37:27 +0100 (CET)
-Date:   Fri, 29 Mar 2019 11:37:27 +0100
+        id B1716940381; Fri, 29 Mar 2019 11:42:04 +0100 (CET)
+Date:   Fri, 29 Mar 2019 11:42:04 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate()
- return value
-Message-ID: <20190329103725.y2kbdjsza5vytgen@verge.net.au>
-References: <20190327123133.7949-1-geert+renesas@glider.be>
- <20190329084501.mbtss6szqpvbv5ce@verge.net.au>
- <CAMuHMdXL1s3ZyaZnB2JJM=Dx23uAN_6Pz5_FmLP+WSSywH9FNg@mail.gmail.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] serial: sh-sci: Fix HSCIF RX sampling point adjustment
+Message-ID: <20190329104204.vw72ltile6a725kn@verge.net.au>
+References: <20190329091026.18958-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXL1s3ZyaZnB2JJM=Dx23uAN_6Pz5_FmLP+WSSywH9FNg@mail.gmail.com>
+In-Reply-To: <20190329091026.18958-1-geert+renesas@glider.be>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -60,99 +57,32 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Mar 29, 2019 at 09:58:24AM +0100, Geert Uytterhoeven wrote:
-> Hi Simon,
+On Fri, Mar 29, 2019 at 10:10:26AM +0100, Geert Uytterhoeven wrote:
+> The calculation of the sampling point has min() and max() exchanged.
+> Fix this by using the clamp() helper instead.
 > 
-> On Fri, Mar 29, 2019 at 9:45 AM Simon Horman <horms@verge.net.au> wrote:
-> > On Wed, Mar 27, 2019 at 01:31:33PM +0100, Geert Uytterhoeven wrote:
-> > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > >
-> > > cpg_sd_clock_round_rate() may return an unsupported clock rate for the
-> > > requested clock rate. Therefore, when cpg_sd_clock_set_rate() sets the
-> > > clock rate acquired by cpg_sd_clock_round_rate(), an error may occur.
-> > >
-> > > This is not conform the clk API design.
-> > >
-> > > This patch fixes that by making sure cpg_sd_clock_calc_div() considers
-> > > only the division values defined in cpg_sd_div_table[].
-> > > With this fix, the cpg_sd_clock_round_rate() always return a support
-> > > clock rate.
-> > >
-> > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > > Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > ---
-> > > To be queued in clk-renesas-for-v5.2.
-> > >
-> > >  drivers/clk/renesas/rcar-gen3-cpg.c | 28 +++++++++++++---------------
-> > >  1 file changed, 13 insertions(+), 15 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-> > > index d5fb768b089ff1c1..d2745c57207efc01 100644
-> > > --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> > > +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> > > @@ -3,6 +3,7 @@
-> > >   * R-Car Gen3 Clock Pulse Generator
-> > >   *
-> > >   * Copyright (C) 2015-2018 Glider bvba
-> > > + * Copyright (C) 2019 Renesas Electronics Corp.
-> > >   *
-> > >   * Based on clk-rcar-gen3.c
-> > >   *
-> > > @@ -236,8 +237,6 @@ struct sd_clock {
-> > >       const struct sd_div_table *div_table;
-> > >       struct cpg_simple_notifier csn;
-> > >       unsigned int div_num;
-> > > -     unsigned int div_min;
-> > > -     unsigned int div_max;
-> > >       unsigned int cur_div_idx;
-> > >  };
-> > >
-> > > @@ -314,14 +313,20 @@ static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
-> > >                                         unsigned long rate,
-> > >                                         unsigned long parent_rate)
-> > >  {
-> > > -     unsigned int div;
-> > > -
-> > > -     if (!rate)
-> > > -             rate = 1;
-> > > +     unsigned long calc_rate, best_rate = 0, diff, diff_min = ULONG_MAX;
-> > > +     unsigned int i;
-> > >
-> > > -     div = DIV_ROUND_CLOSEST(parent_rate, rate);
-> > > +     for (i = 0; i < clock->div_num; i++) {
-> > > +             calc_rate = DIV_ROUND_CLOSEST(parent_rate,
-> > > +                                           clock->div_table[i].div);
-> > > +             diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
-> > > +             if (diff <= diff_min) {
-> > > +                     best_rate = calc_rate;
-> > > +                     diff_min = diff;
-> > > +             }
-> > > +     }
-> >
-> > My reading is that.
-> > a) this algorithm picks a clock based on the div field of the
-> >    members of cpg_sd_div_table. and
-> > b) in the case of duplicate values of that field the first one is chosen; and
-> > c) such duplicates (of sd_div values) do exist in cpg_sd_div_table
-> >
-> > Is this the intended behaviour?
-> 
-> Actually cpg_sd_clock_calc_div() picks the last one, due to the "<=" :-)
-> But that doesn't matter here, as both dividers are equal.
+> Fixes: 63ba1e00f178a448 ("serial: sh-sci: Support for HSCIF RX sampling point adjustment")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-True :)
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-> cpg_sd_clock_set_rate() will pick the first entry from the table with matching
-> div value later.
+> ---
+>  drivers/tty/serial/sh-sci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > > -     return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
-> > > +     return DIV_ROUND_CLOSEST(parent_rate, best_rate);
-> >
-> > Would it be better to return the value of clock->div_table[i].div
-> > that yielded best_rate?
+> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> index 060fcd42b6d56010..2bdaeba5d527a6ce 100644
+> --- a/drivers/tty/serial/sh-sci.c
+> +++ b/drivers/tty/serial/sh-sci.c
+> @@ -2529,7 +2529,7 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+>  				 * last stop bit; we can increase the error
+>  				 * margin by shifting the sampling point.
+>  				 */
+> -				int shift = min(-8, max(7, deviation / 2));
+> +				int shift = clamp(deviation / 2, -8, 7);
+>  
+>  				hssrr |= (shift << HSCIF_SRHP_SHIFT) &
+>  					 HSCIF_SRHP_MASK;
+> -- 
+> 2.17.1
 > 
-> True. The DIV_ROUND_CLOSEST() is not needed, as we could have
-> saved best_div instead of best_rate. Will fix.
-
-Thanks!
