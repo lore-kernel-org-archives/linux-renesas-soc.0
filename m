@@ -2,98 +2,73 @@ Return-Path: <SRS0=TkaA=SA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D59C10F05
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 09:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF775C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 09:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEFEE21773
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 09:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA76A21773
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Mar 2019 09:10:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbfC2JH0 (ORCPT
+        id S1729173AbfC2JKb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Mar 2019 05:07:26 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:45840 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728717AbfC2JH0 (ORCPT
+        Fri, 29 Mar 2019 05:10:31 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:57764 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728700AbfC2JKb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Mar 2019 05:07:26 -0400
-Received: by mail-vk1-f195.google.com with SMTP id v187so321787vkf.12;
-        Fri, 29 Mar 2019 02:07:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0UizF5iDtsraqFT5+CrHrnmhGgWQh2i1/nqJzMFJdms=;
-        b=aBJSJXGD5Q0kfNmzvs5DmEJLbNUC4JjUoevU/RXMFKhBI0wgEaRhp5mLl4WSYPij1Q
-         MpMkk/VgpiMjgYpnN74AG7Nx6YhbD7tSILNLEWU2uWJnt7XJU0h5NYcuWMXtAwbZVK5K
-         JUnHgtLHHhurNDxRiBLsyIuLUAS+eDrDPmhMbF9ZcniBTEcoNGof7qlOdYofLV38onj5
-         XrPlNeLMUahmo/reZ21BhqIT8x3YXd2x+2cxCfcjv5INtSu8PSSMcvuqQmajYceXrfJ4
-         +P1c463UW09L2z61JG7ht3fqRw7C5wCPcWUWxAFzyBEP0jxClJD3v9k5+VTgAp7pkHLV
-         A48w==
-X-Gm-Message-State: APjAAAXO1CzxnJORc0VuE3GfVvMhBZrYZWWZHjXKTjvKr4BFY+WBjX4Y
-        cRBCHpUGgefh5xNw29C40fpBeT2POF/JPke0q6k=
-X-Google-Smtp-Source: APXvYqxMq6WAXfyK1VMxPCVkH+1g0DUIHUKnr4ryOD8sEuy0RlP3LBU58pH+aXENQc8kxkFQcrEFTYGrI7epm8upPJg=
-X-Received: by 2002:a1f:711:: with SMTP id 17mr29358527vkh.65.1553850445052;
- Fri, 29 Mar 2019 02:07:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190327124140.8800-1-geert+renesas@glider.be>
- <20190327124140.8800-2-geert+renesas@glider.be> <20190329090242.wzprrwttm77sgmtg@verge.net.au>
-In-Reply-To: <20190329090242.wzprrwttm77sgmtg@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 29 Mar 2019 10:07:13 +0100
-Message-ID: <CAMuHMdUgh1wcfM7AnzG8N+k57Eh688kisw6sCae-FNWVBXuL=w@mail.gmail.com>
-Subject: Re: [PATCH 1/5] clk: renesas: rcar-gen3: Correct parent clock of EHCI/OHCI
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 29 Mar 2019 05:10:31 -0400
+Received: from ramsan ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id tlAT1z00X3XaVaC06lATp7; Fri, 29 Mar 2019 10:10:28 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1h9nWt-0001Wz-Gn; Fri, 29 Mar 2019 10:10:27 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1h9nWt-0004wV-EV; Fri, 29 Mar 2019 10:10:27 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] serial: sh-sci: Fix HSCIF RX sampling point adjustment
+Date:   Fri, 29 Mar 2019 10:10:26 +0100
+Message-Id: <20190329091026.18958-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+The calculation of the sampling point has min() and max() exchanged.
+Fix this by using the clamp() helper instead.
 
-On Fri, Mar 29, 2019 at 10:03 AM Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Mar 27, 2019 at 01:41:36PM +0100, Geert Uytterhoeven wrote:
-> > From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> >
-> > According to the R-Car Gen3 Hardware Manual Rev. 1.00, and the RZ/G2
-> > Hardware Manual Rev. 0.61, the parent clock of the EHCI/OHCI module
-> > clocks on R-Car Gen3 and RZ/G2 SoCs is S3D2.
-> >
-> > Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-> > [takeshi: Update R-Car H3, M3-N, and E3]
-> > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> > [geert: Update RZ/G2M and RZ/G2E]
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> During my review I saw that R-Car E3 (r8a77990) is already using
+Fixes: 63ba1e00f178a448 ("serial: sh-sci: Support for HSCIF RX sampling point adjustment")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-D3 (r8a77995)?
-
-> the correct parent clock. And with this change all R-Car Gen3 and RZ/G2
-> SoCs do so.
->
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 060fcd42b6d56010..2bdaeba5d527a6ce 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2529,7 +2529,7 @@ static void sci_set_termios(struct uart_port *port, struct ktermios *termios,
+ 				 * last stop bit; we can increase the error
+ 				 * margin by shifting the sampling point.
+ 				 */
+-				int shift = min(-8, max(7, deviation / 2));
++				int shift = clamp(deviation / 2, -8, 7);
+ 
+ 				hssrr |= (shift << HSCIF_SRHP_SHIFT) &
+ 					 HSCIF_SRHP_MASK;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
