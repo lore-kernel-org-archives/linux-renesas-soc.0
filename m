@@ -1,171 +1,344 @@
-Return-Path: <SRS0=nD3B=SB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=l30p=SD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301AAC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 30 Mar 2019 07:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFE0C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 06:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D152184C
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 30 Mar 2019 07:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4372084B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 06:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDgKYI73"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="QP02+LaI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfC3HqF (ORCPT
+        id S1731582AbfDAGFQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 30 Mar 2019 03:46:05 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54773 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbfC3HqF (ORCPT
+        Mon, 1 Apr 2019 02:05:16 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:50816 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfDAGFQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 30 Mar 2019 03:46:05 -0400
-Received: by mail-it1-f196.google.com with SMTP id w18so7385543itj.4;
-        Sat, 30 Mar 2019 00:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=u1beSa5oIAQ7wGPU59jRJJBM8WCUP2Zz2XbEbrMl6pk=;
-        b=dDgKYI73kdqr6XaEA0yjNb5MdPPZ6Ah6PLE/TiEHLtQwi4sVeHEZVXIn9wja5DDKFi
-         5fNX9fXJUGEAIog79g+TdyMnL9ylxqwBGzM4Dw3y2/YPmvIeFhd0Ln1EJ1N3QbQKgB1h
-         sK0Q3p+p1v2XhqwQCasCIS75ni3eFBOWvSNS0zLhmFb9hQGWH8l5jxTXKicdb3VqrZef
-         el/0eXAjc3H81oyi58CCvG7KMAV3R/8bc2jk73cok40ERZUi0xz47O+EVxGlG8Ue1BDz
-         J3uUpYP6vBEl3VWmlLTrOaNG3teFoou/j65srVqtOUn71Ht69ThRaFXplOXbPoxw5LbQ
-         fDHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=u1beSa5oIAQ7wGPU59jRJJBM8WCUP2Zz2XbEbrMl6pk=;
-        b=Nzva0cOS7MQetc9gLbpWi1JVDb+r2NgEwNSFByjsdX8yaC55enJx8xGWY8DQB8UHIH
-         W1tNS8rsUkCJFMLDpAZr0fedQLxPdVoR+O3Z7DN7/zuYkdYWXHiriU5lPhO3e3jKO39L
-         M+gJZH+6J5YHrFu5AMUAsfwCqb+bnAqjg9ErZ9TWQ7sJDP273MyuDWhUdyTO6Kgf9W3w
-         70LVzlRxaGvP8Cgaow6tINZODY81OvPNfTr5DrVjaoI5qPsUVTu/vBF1F00jC2jGF1wz
-         5HEgN0VkmO+3kzGfocqxRNrRou4BG+CIRtqjakUlxAveT0MY2vtxDpPDDbtoTMUuvWJ8
-         D52g==
-X-Gm-Message-State: APjAAAVOeSKNKzj+q2C1lWlT1IgGuDUD0mZFDpYAFKOkUv4raHClyD8f
-        CnPBECq8SFnN6iUaDXw9Z9HAbsl3
-X-Google-Smtp-Source: APXvYqx8x5v/lz4zVwyjFYQCCZDLVscZVCZBI35DNLqleYiuZI3iq+OGzgW6v2lFmCI7D5Vtagy3IQ==
-X-Received: by 2002:a24:35c9:: with SMTP id k192mr6951720ita.156.1553931963622;
-        Sat, 30 Mar 2019 00:46:03 -0700 (PDT)
-Received: from [192.168.43.97] ([1.1.125.121])
-        by smtp.gmail.com with ESMTPSA id y2sm1817000iob.44.2019.03.30.00.45.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 30 Mar 2019 00:46:02 -0700 (PDT)
-Subject: Re: [PATCH V4 6/6] PCI: rcar: Fix 64bit MSI message address handling
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        Mon, 1 Apr 2019 02:05:16 -0400
+Received: from fe0vm1650.rbesz01.com (unknown [139.15.230.188])
+        by fe0vms0186.rbdmz01.com (Postfix) with ESMTPS id 44Xhdh1GXzz1XLFjJ;
+        Mon,  1 Apr 2019 08:05:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
+        s=2015-01-21; t=1554098712;
+        bh=WQzLc8ik3inJZMK5lCJ26mkvaboYo4pT75ge25HpFt4=; l=10;
+        h=From:From:Reply-To:Sender;
+        b=QP02+LaIe3EBpGGtaymifGjSfnAivgZ2tNvw6/mUj+urL7nR+KTGCDTcBZlkpy1pw
+         O39QsrR8lP0+3kPcOc+uIqfw90t+z9ts0nOXP8A8Og+eCdjh9FpuQ4SZTozJZSda/y
+         0OUSyMvcSN5sFTCE6JcwimhftkZgg1eqletuTZxE=
+Received: from fe0vm7918.rbesz01.com (unknown [10.58.172.176])
+        by fe0vm1650.rbesz01.com (Postfix) with ESMTPS id 44Xhdh0jypz1RX;
+        Mon,  1 Apr 2019 08:05:12 +0200 (CEST)
+X-AuditID: 0a3aad10-057ff70000007f88-38-5ca1aa172994
+Received: from si0vm1949.rbesz01.com ( [10.58.173.29])
+        (using TLS with cipher AES128-SHA (128/128 bits))
+        (Client did not present a certificate)
+        by fe0vm7918.rbesz01.com (SMG Outbound) with SMTP id 95.68.32648.71AA1AC5; Mon,  1 Apr 2019 08:05:11 +0200 (CEST)
+Received: from FE-HUB2000.de.bosch.com (unknown [10.4.103.109])
+        by si0vm1949.rbesz01.com (Postfix) with ESMTPS id 44Xhdg4LPPz6CjZqj;
+        Mon,  1 Apr 2019 08:05:11 +0200 (CEST)
+Received: from [10.34.221.161] (10.34.221.161) by FE-HUB2000.de.bosch.com
+ (10.4.103.109) with Microsoft SMTP Server id 15.1.1713.5; Mon, 1 Apr 2019
+ 08:05:10 +0200
+Subject: Re: [PATCH v2] serial: sh-sci: Support for HSCIF RX sampling point
+ adjustment
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
         Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20190325114101.10198-1-marek.vasut@gmail.com>
- <20190325114101.10198-6-marek.vasut@gmail.com>
- <CAMuHMdUEDR+oTAXeE+rjzHw5HzsjB_SerJZP4b8uDtfxTht-ew@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <56b074ef-cfcf-bcba-d332-c4f766c73402@gmail.com>
-Date:   Sat, 30 Mar 2019 08:45:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Tobias Franzen <tfranzen@de.adit-jv.com>,
+        Magnus Damm <magnus.damm@gmail.com>, Greg KH <greg@kroah.com>
+References: <1522856931-6225-1-git-send-email-ulrich.hecht+renesas@gmail.com>
+ <20190327183555.GA23991@vmlxhi-102.adit-jv.com>
+ <CAMuHMdXzspxfSTQSA980VcTusoXTWXDexJuKoOo5gaFGDypc1A@mail.gmail.com>
+ <d3746902-bc33-f5f2-660a-4bda583e77d4@de.bosch.com>
+ <a69eb7eb-451c-c32c-4772-798285f0cf9b@de.bosch.com>
+ <0f1048cb-ebca-2e66-9b77-70297be96054@de.bosch.com>
+ <CAMuHMdUd+0wt=eZ+M8NOYZOTzLX2VH7hpzbMyZC3+fJEnXrUkA@mail.gmail.com>
+ <3dc6a66a-c057-af29-2a2e-c526a4d2a30a@de.bosch.com>
+ <CAMuHMdXKkjqNzoXVezO9Do-0y70-+71OkYuXC_FFz-7cFeNmjA@mail.gmail.com>
+From:   Dirk Behme <dirk.behme@de.bosch.com>
+Organization: Robert Bosch Car Multimedia GmbH
+Message-ID: <84efbc4c-aadc-0476-d030-384f25f11acc@de.bosch.com>
+Date:   Mon, 1 Apr 2019 08:05:10 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdUEDR+oTAXeE+rjzHw5HzsjB_SerJZP4b8uDtfxTht-ew@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMuHMdXKkjqNzoXVezO9Do-0y70-+71OkYuXC_FFz-7cFeNmjA@mail.gmail.com>
+Content-Type: multipart/mixed;
+        boundary="------------9B89FBAD26E7CEB0F72C8DD9"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.34.221.161]
+X-Brightmail-Tracker: H4sIAAAAAAAAA21Tf1AUZRjm29vj9g72XBaRt0NML5tpKAi0cjXHanKcwxqCchrGOctDFu4K
+        7pi7gxHrDyDR48jABhjvAu7IH8hPEWiAHNQuUWAQMMZgiNAjIsCICBAbMdtlwWOa/nu+532f
+        532/Z76PENF5UgWh05tZo16TpPSW4bIdNcGhgZVl6vCckVDGNlKOM5WPj2LM2GArxow+XhAz
+        3c5TiLnW0Cdhvpn4A2O6Tp+QMHerpryZxVaLhLnpLMSZEwWvMBXtdtHrpMp+vEqiarH/LFFN
+        uaNVru8tSHVpPgupOjpHcdVs/YZoyX7Zzng2SZfGGl/cdVCmrfxzEE8pfP/wPzMteAb6bK8V
+        SQmgXgLHTKbYimQETR3H4NRf95BwuIDgbFGtt3A4h6CsrR3xEn8qFjJtnTiP11IfwMxC0ZJc
+        RN0SQUNtl4gv0FQ1Dl/UvMljbyoEWvItEh6vocLAefmmmMck9RpM9H+9xOPUZnAfy1oaEECp
+        ob2wUSL0+EGHbXRpmJSKgRtzzZgVEdywaDjT9wlPi6hAGBx1YMJ1NkHhT7l4PqLtq9R2j8K+
+        SiFgBmyOHiTgp6FpqlgkYAMMT3++3LMJCnLdEsFGBwu/+wm0CW6VdP2nhQ8iA0HbdDnmRD6V
+        KCCBDU9L3rY9ggkzxrGmI+ERYYcMyfVIeBFUM2rpTHAhikBKX5IqKVPTYk2aKT3ZhV4mMGUA
+        2RHHUfI4Q3y6VmPSfmhMTWJNSgW5vnevmvZ/QptS45J1JpPOoHehzdwCI3VVvUiB6w16VrmW
+        7MpzqmkyXpN+hDUaBAsXCiJwZSCZSLyjpqlEjZn9mGVTWONK9VWCUAIpL+eG+xnZRPZwgi7J
+        vFJWBpPIy8uLXre6snoFjJC60FbCl5u9j7cgTSmaZJMucVn+lCCnV1iPtBNFEtPz7hIRMfXd
+        byUieukGikDyLd6F4vu1qfoneyjWk16/lqrpgFUFj9ck6kdcqv7kRl7sy31FzwZABvEB+i2T
+        HtGW05yGyt8AOeN7oDTLCLaCIQSlzfMI7NNDGNTm/4LBwNgkBsNdf3O/5eQiBrfvOkWQ3Z+P
+        Q13THRwc1wvEUN1zXgyzE/fF8MO3dgks2i5JwOIalMB47yMCijOuSmF8uEcKD/tyZTB3sUjG
+        md6XQXfuUR+Ytzp84EHGHR+4UmElwTHwgIQL96rlMHDsohzaR6/IJ7lwMS5cJtXBh2vWmP8n
+        3GXWczdFBor6cnd2UPrlFx7WLZTNFruGnh/7sSYmJG13zK6q9wb903QNTdEBV88FvV2/w302
+        pjGGsY5brrel7z+w2HjgjZ2RW75i3MHdz2jN9aR861ysJXb8RuLG1kPafR8d3L5toKPk3aLQ
+        Z9dNfdopvR15Jir80exz17LXaBfO52VG0SetlRU5e5qVuEmriQgRGU2afwFny5s1IgUAAA==
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 3/29/19 8:32 PM, Geert Uytterhoeven wrote:
-> Hi Marek,
-> 
-> On Mon, Mar 25, 2019 at 12:41 PM <marek.vasut@gmail.com> wrote:
->> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->>
->> The MSI message address in the RC address space can be 64 bit. The
->> R-Car PCIe RC supports such a 64bit MSI message address as well.
->> The code currently uses virt_to_phys(__get_free_pages()) to obtain
->> a reserved page for the MSI message address, and the return value
->> of which can be a 64 bit physical address on 64 bit system.
->>
->> However, the driver only programs PCIEMSIALR register with the bottom
->> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
->> not program the top 32 bits into PCIEMSIAUR, but rather programs the
->> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
->> SoCs, however may fail on new 64 bit R-Car SoCs.
->>
->> Since from a PCIe controller perspective, an inbound MSI is a memory
->> write to a special address (in case of this controller, defined by
->> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
->> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
->> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
->> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
->> cause memory corruption or other issues.
->>
->> There is however the possibility that if virt_to_phys(__get_free_pages())
->> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
->> to 0x0 _and_ if the system had physical RAM at the address matching the
->> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
->> physical address matching the value of PCIEMSIALR and a remote write to
->> such a buffer by a PCIe card would trigger a spurious MSI.
->>
->> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
->> Cc: Phil Edworthy <phil.edworthy@renesas.com>
->> Cc: Simon Horman <horms+renesas@verge.net.au>
->> Cc: Wolfram Sang <wsa@the-dreams.de>
->> Cc: linux-renesas-soc@vger.kernel.org
->> To: linux-pci@vger.kernel.org
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> ---
->> V2: - s/it's/its/ in commit message
->>     - Add R-B from Geert
->> V3: - Reworded commit message and thus dropped Geerts R-B
->> V4: - Add Geert's R-B again
->> ---
->>  drivers/pci/controller/pcie-rcar.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
->> index c6013f95bdb2..62d2de9fbf1c 100644
->> --- a/drivers/pci/controller/pcie-rcar.c
->> +++ b/drivers/pci/controller/pcie-rcar.c
->> @@ -890,7 +890,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->>  {
->>         struct device *dev = pcie->dev;
->>         struct rcar_msi *msi = &pcie->msi;
->> -       unsigned long base;
->> +       phys_addr_t base;
->>         int err, i;
->>
->>         mutex_init(&msi->lock);
->> @@ -932,7 +932,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->>         base = virt_to_phys((void *)msi->pages);
->>
->>         rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
->> -       rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
->> +       rcar_pci_write_reg(pcie, base >> 32, PCIEMSIAUR);
-> 
-> As reported by 0day, this causes a warning on arm32 without LPAE:
-> 
->     drivers/pci/controller/pcie-rcar.c:935:32: warning: right shift
-> count >= width of type
-> 
-> Using upper_32_bits() instead of an explicit shift should fix that.
+--------------9B89FBAD26E7CEB0F72C8DD9
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I saw the report too.
+Hi Geert,
 
-Lorenzo, do you want a separate patch to squash with this or V5 ?
+On 29.03.2019 14:00, Geert Uytterhoeven wrote:
+> Hi Dirk,
+> 
+> On Fri, Mar 29, 2019 at 1:13 PM Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>> On 29.03.2019 10:46, Geert Uytterhoeven wrote:
+>>> On Fri, Mar 29, 2019 at 8:05 AM Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>>> On 28.03.2019 12:30, Dirk Behme wrote:
+>>>>> On 28.03.2019 11:16, Dirk Behme wrote:
+>>>>>> On 28.03.2019 10:24, Geert Uytterhoeven wrote:
+>>>>>>> On Wed, Mar 27, 2019 at 7:36 PM Eugeniu Rosca <erosca@de.adit-jv.com>
+>>>>>>> wrote:
+>>>>>>>> We've recently switched from rcar-3.7.x to rcar-3.9.x [1] kernel and
+>>>>>>>> the
+>>>>>>>> latter contains this patch [2] by virtue of rcar-3.9.0 commit [3],
+>>>>>>>> which
+>>>>>>>> mirrors v4.18-rc1 commit [4] in mainline.
+>>>>>>>>
+>>>>>>>> JFYI, quite far away in the delivery chain, we've received below
+>>>>>>>> report:
+>>>>>>>>
+>>>>>>>>> With this patch [2-4] there are reports about broken data
+>>>>>>>>> communication with 115200 baud with SXM module. Reverting
+>>>>>>>>> this patch results in successful communication, again.
+>>>>>>>>
+>>>>>>>> While this scarce information barely helps anybody, I thought that
+>>>>>>>> sharing it with you might be beneficial in case you collect several
+>>>>>>>> reports linked to this specific commit in future, meaning it
+>>>>>>>> potentially
+>>>>>>>> adds a regression.
+>>>>>>>>
+>>>>>>>> Also, if you are aware of any userland changes that might be
+>>>>>>>> required/assumed by this patch or in case you have any alternative
+>>>>>>>> ideas how to avoid reverting this patch, your feedback would be very
+>>>>>>>> appreciated.
+>>>>>>>
+>>>>>>> Thanks for your report!
+>>>>>>>
+>>>>>>> [TLDR: skip to the suggested fix below; I only noticed the bug after
+>>>>>>>           writing the below paragraphs, which are still useful
+>>>>>>> questions to
+>>>>>>>           let us reproduce the issue]
+>>>>>>>
+>>>>>>> Which SoC are you using?
+>>>>>>> I assume this is on a custom board, as Salvator-X(S) and ULCB have
+>>>>>>> external SCIF clock crystals, which allow to use a perfect 115200 bps,
+>>>>>>> hence the affected code path is not exercised:
+>>>>>>>
+>>>>>>>        sh-sci e6550000.serial: BRG: 115200+0 bps using DL 4 SR 32
+>>>>>>>        sh-sci e6550000.serial: Using clk scif for 115200+0 bps
+>>>>>>>
+>>>>>>> Does your board have an external SCIF clock? Which frequency?
+>>>>>>> Can you check the clock values and deviation for your configuration, by
+>>>>>>> changing the calls to print the above information from dev_dbg() to
+>>>>>>> dev_info()?
+>>>>>>>
+>>>>>>> Does adding the DIV_ROUND_CLOSEST(), as suggested in my review
+>>>>>>> of the posted patch, help?
+>>>>>>> Perhaps the sampling point shift is inverted? Does -shift work better?
+>>>>>>>
+>>>>>>> [possible solution]
+>>>>>>>
+>>>>>>>> +                               int shift = min(-8, max(7, deviation
+>>>>>>>> / 2));
+>>>>>>>
+>>>>>>> Oops, min and max are exchanged!
+>>>>>>>
+>>>>>>> I guess using
+>>>>>>>
+>>>>>>>        int shift = clamp(deviation / 2, -8, 7)
+>>>>>>>
+>>>>>>> instead fixes the issue?
+>>>>>>
+>>>>>>
+>>>>>> Uh, that was fast :) Many thanks!
+>>>>>>
+>>>>>> We will test this as fast as possible! But due to the long delivery
+>>>>>> chain Eugeniu mentioned this will take some time. I'll try my best to
+>>>>>> come back to you as fast as possible.
+>>>>>
+>>>>>
+>>>>> Just for the archives: We are testing the attached patch.
+>>>>
+>>>>
+>>>> * Testing the patch [5]
+>>>>
+>>>> - int shift = min(-8, max(7, deviation / 2));
+>>>> + int shift = clamp(deviation / 2, -8, 7);
+>>>>
+>>>> does *not* fix our issue. Or in other words: Testing was *not* successful.
+>>>
+>>> I'm sorry to hear that.
+>>>
+>>>> * However, from review point of view we think that it fixes a serious
+>>>> bug. So maybe it should be applied, anyhow?
+>>>
+>>> Yes, submitted.
+>>>
+>>>> * Using strace we managed to get some more information about the usage
+>>>> of the serial port [6]. With this, we are talking about 57600 and not 115200
+>>>>
+>>>> * Switching to dev_info() [7] as requested above we get
+>>>>
+>>>> [    0.553256] e6560000.serial: ttySC3 at MMIO 0xe6560000 (irq = 41,
+>>>> base_baud = 0) is a hscif
+>>>> [  161.418527] sh-sci e6560000.serial: BRG: 9600+0 bps using DL 1462 SR 19
+>>>> [  161.418543] sh-sci e6560000.serial: Using clk s3d1 for 9600+0 bps
+>>>> [  161.418813] sh-sci e6560000.serial: BRG: 57600-5 bps using DL 463 SR 10
+>>>> [  161.418824] sh-sci e6560000.serial: Using clk s3d1 for 57600-5 bps
+> 
+>> Do you have any idea what might be the difference between reverting
+>> "serial: sh-sci: Support for HSCIF RX sampling point adjustment" (works)
+>> and not reverting that (doesn't work for us), then?
+> 
+> Before that commit, the RX sampling point was not shifted.
+> After that commit, it was incorrectly shifted by -8[*].
+> With my fix, it is shifted by 7[*], to compensate for a clock rate that
+> is slightly off.
+> 
+> [*] In units of cycles of the sampling clock, which runs at SR * 57595 =
+>      575950 Hz.
+> 
+> However, doing the above calculation shows that's something wrong with
+> the formula used by the driver: with SR = 10, the default sampling point
+> at the center is at SR / 2 = 5, so the shift must be within [-4, +4], which
+> is exceeded by using a  value of 7.
+> 
+>      deviation = min_err * srr * last_stop / 2 / baud;
+> 
+> With:
+> 
+>      min_err = -5
+>      srr = 9
+>      last_stop = 19
+>      baud = 57600
+> 
+> Note that srr and baud are unsigned.  Hence the multiplication and
+> divisions are done in unsigned arithmetic, and we get deviation = 37282
+> instead of 0. Oops...
+> 
+> Fixed by:
+> 
+> -                       int deviation = min_err * srr * last_stop / 2 / baud;
+> +                       int deviation = (int)(min_err * srr * last_stop) / 2 /
+> +                                       (int)baud;
+> 
+> Before I sent a patch: Uli, shouldn't the formula use "(srr + 1)"
+> instead of "srr", as the actual sampling rate factor is one more than
+> the value programmed in HSSRR.SRCYC?
 
--- 
-Best regards,
-Marek Vasut
+
+Using both attached patches together our tests have been *successful*, 
+now. :)
+
+Many thanks!
+
+Best regards
+
+Dirk
+
+--------------9B89FBAD26E7CEB0F72C8DD9
+Content-Type: text/plain; charset="UTF-8";
+	name="0002-serial-sh-sci-Fix-HSCIF-RX-deviation-calculation.patch"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="0002-serial-sh-sci-Fix-HSCIF-RX-deviation-calculation.patch"
+
+RnJvbSBlYWM5OGEzMWMzZjY1NGFjMmU3ZDZkNzdkY2M2NDhkNGE1MDRjMWE1IE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVz
+YXNAZ2xpZGVyLmJlPgpEYXRlOiBNb24sIDEgQXByIDIwMTkgMDY6MzA6MDQgKzAyMDAKU3Vi
+amVjdDogW1BBVENIIDIvMl0gc2VyaWFsOiBzaC1zY2k6IEZpeCBIU0NJRiBSWCBkZXZpYXRp
+b24gY2FsY3VsYXRpb24KCkRvaW5nIHRoZSBkZXZpYXRpb24gY2FsY3VsYXRpb24gbWFudWFs
+bHkgc2hvd3MgdGhhdCdzIHNvbWV0aGluZyB3cm9uZyB3aXRoCnRoZSBmb3JtdWxhIHVzZWQg
+YnkgdGhlIGRyaXZlcjogd2l0aCBTUiA9IDEwLCB0aGUgZGVmYXVsdCBzYW1wbGluZyBwb2lu
+dAphdCB0aGUgY2VudGVyIGlzIGF0IFNSIC8gMiA9IDUsIHNvIHRoZSBzaGlmdCBtdXN0IGJl
+IHdpdGhpbiBbLTQsICs0XSwgd2hpY2gKaXMgZXhjZWVkZWQgYnkgdXNpbmcgYSB2YWx1ZSBv
+ZiA3LgoKICAgIGRldmlhdGlvbiA9IG1pbl9lcnIgKiBzcnIgKiBsYXN0X3N0b3AgLyAyIC8g
+YmF1ZDsKCldpdGg6CgogICAgbWluX2VyciA9IC01CiAgICBzcnIgPSA5CiAgICBsYXN0X3N0
+b3AgPSAxOQogICAgYmF1ZCA9IDU3NjAwCgpOb3RlIHRoYXQgc3JyIGFuZCBiYXVkIGFyZSB1
+bnNpZ25lZC4gIEhlbmNlIHRoZSBtdWx0aXBsaWNhdGlvbiBhbmQKZGl2aXNpb25zIGFyZSBk
+b25lIGluIHVuc2lnbmVkIGFyaXRobWV0aWMsIGFuZCB3ZSBnZXQgZGV2aWF0aW9uID0gMzcy
+ODIKaW5zdGVhZCBvZiAwLiBGaXggdGhpcy4KCkFkZGl0aW9uYWxseSwgdXNlICIoc3JyICsg
+MSkiIGluc3RlYWQgb2YgInNyciIsIGFzIHRoZSBhY3R1YWwgc2FtcGxpbmcKcmF0ZSBmYWN0
+b3IgaXMgb25lIG1vcmUgdGhhbiB0aGUgdmFsdWUgcHJvZ3JhbW1lZCBpbiBIU1NSUi5TUkNZ
+Qy4KCkZpeGVzOiA2M2JhMWUwMGYxNzhhNDQ4ICgic2VyaWFsOiBzaC1zY2k6IFN1cHBvcnQg
+Zm9yIEhTQ0lGIFJYIHNhbXBsaW5nIHBvaW50IGFkanVzdG1lbnQiKQpTaWduZWQtb2ZmLWJ5
+OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPgotLS0KIGRy
+aXZlcnMvdHR5L3NlcmlhbC9zaC1zY2kuYyB8IDMgKystCiAxIGZpbGUgY2hhbmdlZCwgMiBp
+bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy90dHkv
+c2VyaWFsL3NoLXNjaS5jIGIvZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5jCmluZGV4IDY5
+ODk2ZDU4NmEyOS4uOTcxYTJkZWU0ZDFlIDEwMDY0NAotLS0gYS9kcml2ZXJzL3R0eS9zZXJp
+YWwvc2gtc2NpLmMKKysrIGIvZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5jCkBAIC0yNDM5
+LDcgKzI0MzksOCBAQCBzdGF0aWMgdm9pZCBzY2lfc2V0X3Rlcm1pb3Moc3RydWN0IHVhcnRf
+cG9ydCAqcG9ydCwgc3RydWN0IGt0ZXJtaW9zICp0ZXJtaW9zLAogCQkJICogY2VudGVyIG9m
+IHRoZSBsYXN0IHN0b3AgYml0IGluIHNhbXBsaW5nIGNsb2Nrcy4KIAkJCSAqLwogCQkJaW50
+IGxhc3Rfc3RvcCA9IGJpdHMgKiAyIC0gMTsKLQkJCWludCBkZXZpYXRpb24gPSBtaW5fZXJy
+ICogc3JyICogbGFzdF9zdG9wIC8gMiAvIGJhdWQ7CisJCQlpbnQgZGV2aWF0aW9uID0gKGlu
+dCkobWluX2VyciAqIChzcnIgKyAxKSAqIGxhc3Rfc3RvcCkgLworCQkJCQkyIC8gKGludCli
+YXVkOwogCiAJCQlpZiAoYWJzKGRldmlhdGlvbikgPj0gMikgewogCQkJCS8qIEF0IGxlYXN0
+IHR3byBzYW1wbGluZyBjbG9ja3Mgb2ZmIGF0IHRoZQotLSAKMi4yMC4wCgo=
+--------------9B89FBAD26E7CEB0F72C8DD9
+Content-Type: text/plain; charset="UTF-8";
+	name="0001-serial-sh-sci-Fix-HSCIF-RX-sampling-point-adjustment.patch"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename*0="0001-serial-sh-sci-Fix-HSCIF-RX-sampling-point-adjustment.pa";
+	filename*1="tch"
+
+RnJvbSBhNmQ4YjM3ZGFlNmVlODYyMTAwMjgwNGNhNzg0MWM5MTNiNTQ0ODNiIE1vbiBTZXAg
+MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVz
+YXNAZ2xpZGVyLmJlPgpEYXRlOiBGcmksIDI5IE1hciAyMDE5IDEwOjEwOjI2ICswMTAwClN1
+YmplY3Q6IFtQQVRDSCAxLzJdIHNlcmlhbDogc2gtc2NpOiBGaXggSFNDSUYgUlggc2FtcGxp
+bmcgcG9pbnQgYWRqdXN0bWVudAoKVGhlIGNhbGN1bGF0aW9uIG9mIHRoZSBzYW1wbGluZyBw
+b2ludCBoYXMgbWluKCkgYW5kIG1heCgpIGV4Y2hhbmdlZC4KRml4IHRoaXMgYnkgdXNpbmcg
+dGhlIGNsYW1wKCkgaGVscGVyIGluc3RlYWQuCgpGaXhlczogNjNiYTFlMDBmMTc4YTQ0OCAo
+InNlcmlhbDogc2gtc2NpOiBTdXBwb3J0IGZvciBIU0NJRiBSWCBzYW1wbGluZyBwb2ludCBh
+ZGp1c3RtZW50IikKU2lnbmVkLW9mZi1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCty
+ZW5lc2FzQGdsaWRlci5iZT4KLS0tCiBkcml2ZXJzL3R0eS9zZXJpYWwvc2gtc2NpLmMgfCAy
+ICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL3R0eS9zZXJpYWwvc2gtc2NpLmMgYi9kcml2ZXJzL3R0eS9z
+ZXJpYWwvc2gtc2NpLmMKaW5kZXggZWJhMDhjZDg5MmU1Li42OTg5NmQ1ODZhMjkgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvdHR5L3NlcmlhbC9zaC1zY2kuYworKysgYi9kcml2ZXJzL3R0eS9z
+ZXJpYWwvc2gtc2NpLmMKQEAgLTI0NDYsNyArMjQ0Niw3IEBAIHN0YXRpYyB2b2lkIHNjaV9z
+ZXRfdGVybWlvcyhzdHJ1Y3QgdWFydF9wb3J0ICpwb3J0LCBzdHJ1Y3Qga3Rlcm1pb3MgKnRl
+cm1pb3MsCiAJCQkJICogbGFzdCBzdG9wIGJpdDsgd2UgY2FuIGluY3JlYXNlIHRoZSBlcnJv
+cgogCQkJCSAqIG1hcmdpbiBieSBzaGlmdGluZyB0aGUgc2FtcGxpbmcgcG9pbnQuCiAJCQkJ
+ICovCi0JCQkJaW50IHNoaWZ0ID0gbWluKC04LCBtYXgoNywgZGV2aWF0aW9uIC8gMikpOwor
+CQkJCWludCBzaGlmdCA9IGNsYW1wKGRldmlhdGlvbiAvIDIsIC04LCA3KTsKIAogCQkJCWhz
+c3JyIHw9IChzaGlmdCA8PCBIU0NJRl9TUkhQX1NISUZUKSAmCiAJCQkJCSBIU0NJRl9TUkhQ
+X01BU0s7Ci0tIAoyLjIwLjAKCg==
+--------------9B89FBAD26E7CEB0F72C8DD9--
