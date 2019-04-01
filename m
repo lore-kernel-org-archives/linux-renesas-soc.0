@@ -2,77 +2,113 @@ Return-Path: <SRS0=l30p=SD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F02C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81032C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDE02086C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AFDD20883
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:05:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbfDAMBz (ORCPT
+        id S1727038AbfDAMFV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 1 Apr 2019 08:01:55 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:47438 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbfDAMBz (ORCPT
+        Mon, 1 Apr 2019 08:05:21 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:43566 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726867AbfDAMFV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Apr 2019 08:01:55 -0400
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id v01s1z0013XaVaC0101s3v; Mon, 01 Apr 2019 14:01:52 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hAvdP-0003gq-U5; Mon, 01 Apr 2019 14:01:51 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hAvdP-0007zj-SJ; Mon, 01 Apr 2019 14:01:51 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] ARM: shmobile: defconfig: Enable support for CFI NOR FLASH
-Date:   Mon,  1 Apr 2019 14:01:48 +0200
-Message-Id: <20190401120150.30687-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 1 Apr 2019 08:05:21 -0400
+X-IronPort-AV: E=Sophos;i="5.60,296,1549897200"; 
+   d="scan'208";a="11718076"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Apr 2019 21:05:17 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B67C5401EA60;
+        Mon,  1 Apr 2019 21:05:17 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Use pdev's device pointer on dev_vdbg()
+Date:   Mon,  1 Apr 2019 21:01:22 +0900
+Message-Id: <1554120083-29990-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1554120083-29990-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1554120083-29990-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Simon, Magnus,
+To implement multiple phy instances in the future, this patch uses
+pdev's device pointer on dev_vdbg() instead of the phy's device
+pointer.
 
-Now the DTS for the r8a73a4-based APE6EVM development board describes
-its CFI NOR FLASH, this patch series enables support for that in
-shmobile_defconfig and multi_v7_defconfig.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Note that kernels built from these configs cannot be booted by stock
-APE6EVM U-Boot, due to kernel size.
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  ARM: shmobile: defconfig: Enable support for CFI NOR FLASH
-  ARM: multi_v7_defconfig: Enable support for CFI NOR FLASH
-
- arch/arm/configs/multi_v7_defconfig | 4 ++++
- arch/arm/configs/shmobile_defconfig | 4 ++++
- 2 files changed, 8 insertions(+)
-
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 0a34782..4bdb2ed 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -80,6 +80,7 @@
+ 
+ struct rcar_gen3_chan {
+ 	void __iomem *base;
++	struct device *dev;	/* platform_device's device */
+ 	struct extcon_dev *extcon;
+ 	struct phy *phy;
+ 	struct regulator *vbus;
+@@ -120,7 +121,7 @@ static void rcar_gen3_set_host_mode(struct rcar_gen3_chan *ch, int host)
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_COMMCTRL);
+ 
+-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, host);
++	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, host);
+ 	if (host)
+ 		val &= ~USB2_COMMCTRL_OTG_PERI;
+ 	else
+@@ -133,7 +134,7 @@ static void rcar_gen3_set_linectrl(struct rcar_gen3_chan *ch, int dp, int dm)
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_LINECTRL1);
+ 
+-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
++	dev_vdbg(ch->dev, "%s: %08x, %d, %d\n", __func__, val, dp, dm);
+ 	val &= ~(USB2_LINECTRL1_DP_RPD | USB2_LINECTRL1_DM_RPD);
+ 	if (dp)
+ 		val |= USB2_LINECTRL1_DP_RPD;
+@@ -147,7 +148,7 @@ static void rcar_gen3_enable_vbus_ctrl(struct rcar_gen3_chan *ch, int vbus)
+ 	void __iomem *usb2_base = ch->base;
+ 	u32 val = readl(usb2_base + USB2_ADPCTRL);
+ 
+-	dev_vdbg(&ch->phy->dev, "%s: %08x, %d\n", __func__, val, vbus);
++	dev_vdbg(ch->dev, "%s: %08x, %d\n", __func__, val, vbus);
+ 	if (vbus)
+ 		val |= USB2_ADPCTRL_DRVVBUS;
+ 	else
+@@ -401,7 +402,7 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+ 	irqreturn_t ret = IRQ_NONE;
+ 
+ 	if (status & USB2_OBINT_BITS) {
+-		dev_vdbg(&ch->phy->dev, "%s: %08x\n", __func__, status);
++		dev_vdbg(ch->dev, "%s: %08x\n", __func__, status);
+ 		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
+ 		rcar_gen3_device_recognition(ch);
+ 		ret = IRQ_HANDLED;
+@@ -499,6 +500,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, channel);
+ 	phy_set_drvdata(channel->phy, channel);
++	channel->dev = dev;
+ 
+ 	provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+ 	if (IS_ERR(provider)) {
 -- 
-2.17.1
+2.7.4
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
