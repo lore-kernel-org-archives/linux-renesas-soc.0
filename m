@@ -2,144 +2,186 @@ Return-Path: <SRS0=l30p=SD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA02C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 289C7C10F05
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF31520883
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDB6520896
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 12:47:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=dialogsemiconductor.onmicrosoft.com header.i=@dialogsemiconductor.onmicrosoft.com header.b="yWGuDTek"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="fpfPEs2l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfDAMmk (ORCPT
+        id S1726473AbfDAMrv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 1 Apr 2019 08:42:40 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.6]:47746 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725897AbfDAMmk (ORCPT
+        Mon, 1 Apr 2019 08:47:51 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:55200 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfDAMrv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Apr 2019 08:42:40 -0400
-Received: from [85.158.142.98] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-6.bemta.az-a.eu-central-1.aws.symcld.net id 87/60-30036-C3702AC5; Mon, 01 Apr 2019 12:42:36 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WSa0hTYRjHfc9lO6aL12ntUTJiBIW16bLmKYM
-  iCPclkOxDhaJHPXmG29F2Ia0vZpFSZEVWOPMyKyuTrKHRxUrsaqCVdnNSUa6RlmYlIVnRzo6V
-  ffs/7//3vv/neXkYUt2riGH4IgdvEzmLVjGDEuJpVrdS2ZCeMDKpZMtGG5Ws33udYPuuHlewb
-  UOjBHv33BMFW9GTwp697yJXK021zTtMnbfKkcnvbqFMXQ98lOmrZ24qvZk2i9kFRVm00HzrEi
-  o8RheNV6aWoGZqL5rBULiFhHsHa5RSocYVBLQfnURy8QpB9feLgSKUUWAD1H78FNRReCOMnb1
-  AShCJ+wn41DxASEYkXg8Dpa30XsQEoDQou6SR+RUwcmMieJfC8+FnxQmlpFU4A4ZqnxJy2CkE
-  Pe9205IRio0wWSkFhDIIx8L4znNBTWINeH11wSzAGE62PyRlPQuGBn/RMp8JZTdHlPL5Yuh+7
-  kOy1kLjCxct61jords3db4ObnfsCf4FYC+CM11tlGzEwds7/qkAC1z2XCGlwQDPgcfj62S+j4
-  Yeb3uQUeMcGKvpngqeC03730w9+oiEiQl5MjLQUf21LwpZL4JG9wfyIFromjacaxrmmoa5gj8
-  WAV1VPqoeUU1oebbNnCc4rJzZojMkJOgMhkTdEp0hyajntus4Pe/U5fCiw8YFXD23za63F1tz
-  LLl6kXd4UGC/crcSFy4jvzuvE0UzhHaWyu9xp6tnZhfkFgucXci0OS28vRPNYRgtqJCiIV0dY
-  ePz+KItZktgSf/YwIRro1SLJVtlL+SsdnOebD1AOqaj4U0NqabEApGP0ajiJAhLkOAU/z7xZ9
-  V7UWxMpAqFhISowwt5m9Xs+N8fRhoGaSNVeumVcLPo+Js0HGiCCDTBOuukJhzcPyumBKVUJF9
-  5ZtyZEX+7uu98RO9STWaPu7spq/Wwe9UhT9vojzFnaXz56ZZrd5MN7PNviErzFVzdU/nZWP1+
-  dsqOtNfzqqz3yPtrFlRpl23aJXLRgyvcTbYxTf9kYwmsz/+4dtnshRlHFELi1wOmuPyXC5Kti
-  UkzBzeEbQ7fFpokhHk7SrSUXeAMcaTNzv0GQ3crzeUDAAA=
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-8.tower-223.messagelabs.com!1554122555!3471564!1
-X-Originating-IP: [104.47.5.56]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 2960 invoked from network); 1 Apr 2019 12:42:36 -0000
-Received: from mail-he1eur02lp2056.outbound.protection.outlook.com (HELO EUR02-HE1-obe.outbound.protection.outlook.com) (104.47.5.56)
-  by server-8.tower-223.messagelabs.com with AES256-GCM-SHA384 encrypted SMTP; 1 Apr 2019 12:42:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com; s=selector1-diasemi-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+z7YCJpFKbQFJt5a+ddefK7Qz6mmrobiwdofdRTSLyc=;
- b=yWGuDTektLmMprgVLtBDIzxpGbRlADq7D8ZrePTlJgINKZAwG1X1RfVOg6eZwo+9QKvtqQWRVHgsUjppf6y9i/T9dPwJUkljKu1GFwIV0HqtOpT83UBFGHU/XLQXx3pnmRYOvmFV5y/2c/u9M1S/P2F7vgI2a6qiVCxT6pFzEMM=
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM (20.177.62.92) by
- VI1PR10MB2704.EURPRD10.PROD.OUTLOOK.COM (20.178.127.82) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1750.16; Mon, 1 Apr 2019 12:42:32 +0000
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e426:c8bc:d222:5cd7]) by VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::e426:c8bc:d222:5cd7%4]) with mapi id 15.20.1730.019; Mon, 1 Apr 2019
- 12:42:32 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: RE: [PATCH 2/2] rtc: da9063: switch to
- rtc_time64_to_tm/rtc_tm_to_time64
-Thread-Topic: [PATCH 2/2] rtc: da9063: switch to
- rtc_time64_to_tm/rtc_tm_to_time64
-Thread-Index: AQHU388zAHbhZUdtHEOPL3sVK9HfsqYnDjkAgABCYqA=
-Date:   Mon, 1 Apr 2019 12:42:32 +0000
-Message-ID: <VI1PR10MB23529E6E90A78F25A57EE5FFFE550@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
-References: <20190321101557.26857-1-alexandre.belloni@bootlin.com>
- <20190321101557.26857-2-alexandre.belloni@bootlin.com>
- <20190401084304.pt7psdvp5kupwpol@ninjato>
-In-Reply-To: <20190401084304.pt7psdvp5kupwpol@ninjato>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.240.73.196]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 891f0032-ed61-4bd6-92c5-08d6b69f82ba
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600139)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR10MB2704;
-x-ms-traffictypediagnostic: VI1PR10MB2704:
-x-microsoft-antispam-prvs: <VI1PR10MB27043F77EF8F798E15AE978CF5550@VI1PR10MB2704.EURPRD10.PROD.OUTLOOK.COM>
-x-forefront-prvs: 0994F5E0C5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39850400004)(396003)(346002)(376002)(136003)(199004)(189003)(7736002)(5660300002)(74316002)(8936002)(6246003)(14454004)(81156014)(54906003)(8676002)(2906002)(476003)(4744005)(110136005)(11346002)(76176011)(6116002)(3846002)(68736007)(52536014)(53936002)(7696005)(256004)(71200400001)(71190400001)(25786009)(86362001)(55016002)(99286004)(81166006)(66066001)(316002)(186003)(53546011)(305945005)(446003)(97736004)(106356001)(4326008)(229853002)(33656002)(9686003)(102836004)(105586002)(486006)(6436002)(26005)(478600001)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR10MB2704;H:VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PSi2ldwGIvlcbBSZJSOGQUlyKCSQo7sewcSHHli/IgFnFS7Uf0rghk8879+i7EtiBhUtl1gU2Z3RkwM3YcfxZEC3ySB9T0FjmloJkbiQRnsjUVsK2eXzGlY7g4njUc+vOgNOAu6s65Rrqm/F/suBYboAB2up8q+oPyHloiJ0xytUUAEfdkLi6rzUZGdIg7l/L49+OJbv37ZQct+4dJ8oXBQiqNx3ej6xXSlejNDT+a4QXsAlVPvjW8PpoQThUSwBzoHIGsKI3oq3nhyU7E5ycu5OsO6jl1VKxhB8PWEach96hVh2StounigZqaHGl0EwI1mWdjErVHP6NlFJBQ/L8SiOz3aFVippWW3ryApAS56ycpJXuDWVyFqBO/qNL0aWGKxqu8tg54Jz17tj7UDM4B2xrmrBwwA/O7Y2l0rpzTY=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 1 Apr 2019 08:47:51 -0400
+Received: from fe0vm1649.rbesz01.com (unknown [139.15.230.188])
+        by si0vms0216.rbdmz01.com (Postfix) with ESMTPS id 44XsZC14VRz1XLG6q;
+        Mon,  1 Apr 2019 14:47:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
+        s=2015-01-21; t=1554122867;
+        bh=9YKSWRBvFCIlOnUMDi7DUszAMDQfiRNj6JWqaE4WyWs=; l=10;
+        h=From:From:Reply-To:Sender;
+        b=fpfPEs2lm5gaoPd9FiW2nJHIT+jfxMDxgLnHhBYJ1K2WKcVVy+RyVP1MJv5uYsET+
+         7+B4CbNFxwVJNkl3el1hmTwnDSg4tTuzOahyMRMv5yfVokrHMR+yWNIReF2fb5YGgg
+         DI6mSjTkcyunkyi6qKXaqIXMMAddJSzMSzB7R4FY=
+Received: from fe0vm1741.rbesz01.com (unknown [10.58.172.176])
+        by fe0vm1649.rbesz01.com (Postfix) with ESMTPS id 44XsZC06Cjz1bw;
+        Mon,  1 Apr 2019 14:47:47 +0200 (CEST)
+X-AuditID: 0a3aad15-c59ff70000001b94-3d-5ca20872bbeb
+Received: from fe0vm1651.rbesz01.com ( [10.58.173.29])
+        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by fe0vm1741.rbesz01.com (SMG Outbound) with SMTP id CF.F1.07060.27802AC5; Mon,  1 Apr 2019 14:47:46 +0200 (CEST)
+Received: from SI-HUB2000.de.bosch.com (si-hub2000.de.bosch.com [10.4.103.108])
+        by fe0vm1651.rbesz01.com (Postfix) with ESMTPS id 44XsZB53cnzR6b;
+        Mon,  1 Apr 2019 14:47:46 +0200 (CEST)
+Received: from [10.34.221.161] (10.34.221.161) by SI-HUB2000.de.bosch.com
+ (10.4.103.108) with Microsoft SMTP Server id 15.1.1713.5; Mon, 1 Apr 2019
+ 14:47:46 +0200
+Subject: Re: [PATCH v2 2/2] dmaengine: sh: rcar-dmac: Fix glitch in
+ dmaengine_tx_status
+To:     <linux-renesas-soc@vger.kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <vkoul@kernel.org>,
+        <geert+renesas@glider.be>, <niklas.soderlund+renesas@ragnatech.se>,
+        <laurent.pinchart+renesas@ideasonboard.com>,
+        <Achim.Dahlhoff@de.bosch.com>, <stable@vger.kernel.org>
+References: <20190305055628.11826-1-dirk.behme@de.bosch.com>
+ <20190305055628.11826-2-dirk.behme@de.bosch.com>
+From:   Dirk Behme <dirk.behme@de.bosch.com>
+Organization: Robert Bosch Car Multimedia GmbH
+Message-ID: <2c8e48cf-5030-b1b7-79da-c7a17d0e3f11@de.bosch.com>
+Date:   Mon, 1 Apr 2019 14:47:45 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 891f0032-ed61-4bd6-92c5-08d6b69f82ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Apr 2019 12:42:32.7303
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB2704
+In-Reply-To: <20190305055628.11826-2-dirk.behme@de.bosch.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.34.221.161]
+X-Brightmail-Tracker: H4sIAAAAAAAAA22SbUxbVRzGOfe25bb2wuG2hb8tL/PGxQQZ0onSbL5syUwav2jcB6M2mZdx
+        oc1oS3oLDjSG4KYVRNlMM9qOwsimbmY6y8aATGYqc7CsQwcRGCCRoWNkL0qdOFmZvS2s/eC3
+        5zzP+Z1/znMORTLvUVrKYnPyDhtXycoUEsWm4zkbHFSnqahz79OGL90RqaHNtx8Z9jVMSQyn
+        rt8iDNNDBYaOb2aRoXdqkNySatwX2mD0uTxSY+DYhzLjtZElmTEcyH1Z+rrimTK+0lLDO554
+        7k2F2eP7QVbVpt39q2eArEcD6kZEUYCLoXle2YgUFINbCWg4MSqLL84gWFwZR/HFZwjalq8Q
+        jUhOqfBrMHDz25hW48cgMn2ZFDeR+CqCUFtEKgYMtkP3v6OxTTKcD70trlRRp+NC6OgPScXR
+        NH4ewmdjtgQ/CoHxJSRqDTbBoPtkzKdxBgx55iSiluNn4ernrpgmsQE87cMorrPgylw7Edd5
+        cPrmQVLUgB8B92STpAWpvElHeZNwbxLuTcI7kOQY0pTzRTVWfUmxvtBRygt1RfrCnXZrAMVf
+        SNOD/rheHkSYQqyS/nPxkImRcjVCrTWInqIIVkP/HohaaaX2slozJ5h3OKoreYHV0tk/vmhi
+        VA9sobrUahEEi90WRECRrJq++EmHiaHLuNo63mGPY0GkoyRsFl1BvWRicAXn5HfxfBXvWEs3
+        UxQLNJJ1mpgMB1/B7y63VDrXYjaHRikpKUxmcpI8lqDkQfQkpYzOLhCPoIUqzipYKlbxh+M4
+        s+Ym0AuoRJtFr4gMFlNzte3BVG02nfKb38RokoIEuYAmULQ3Fb1ZhJXRz5+YB7ROrChj1UxA
+        G49EGXxcCYebZxH4e+4gmDl1g4C9Yy0ScB/1SeHCnuZUuNznTYW7fh8FE/7bFMz/MiyHs6ER
+        OXT1Nz0EF7tCNNxxraTBfH9DOszcvYXh/vvuDPCvNDAwe/snFXznP6MG79dHNND71V8auDQW
+        yoSp8KgWwkNTWpgMfq+DwRtDOvhnMaKDhfvncmC062AufBE5nwf+vnPsQrRMIlqmobpdLNPJ
+        Of+nzFU3cTttPbINTGyqU6kKgtt3TJ+8Z17WnOhGO8eExm37u3ctC+uLiW3qjeSe9paPMrNb
+        A5Npky/MvNNzYGvf8Fs/56a/8WrZutbc7deO2nK4RemWNPfIgUD4Fe/6kizpOu7TEDdXn3+a
+        7dZvdRnHH1ccXrpHv33og3dLuODM3+jSx25h/HxTXhcrEcycPp90CNx/3utdOJYEAAA=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+Hi Renesas SoC team,
 
-On 01 April 2019 09:43, Wolfram Sang wrote:
+On 05.03.2019 06:56, Dirk Behme wrote:
+> From: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+> 
+> The tx_status poll in the rcar_dmac driver reads the status register
+> which indicates which chunk is busy (DMACHCRB). Afterwards the point
+> inside the chunk is read from DMATCRB. It is possible that the chunk
+> has changed between the two reads. The result is a non-monotonous
+> increase of the residue. Fix this by introducing a 'safe read' logic.
+> 
+> Fixes: 73a47bd0da66 ("dmaengine: rcar-dmac: use TCRB instead of TCR for residue")
+> Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Cc: <stable@vger.kernel.org> # v4.16+
+> ---
+> Note: Patch done against mainline v5.0
+> 
+> Changes in v2: Switch goto/retry to for loop
 
-> Subject: Re: [PATCH 2/2] rtc: da9063: switch to
-> rtc_time64_to_tm/rtc_tm_to_time64
->=20
-> On Thu, Mar 21, 2019 at 11:15:57AM +0100, Alexandre Belloni wrote:
-> > Call the 64bit versions of rtc_tm time conversion now that the range is
-> > enforced by the core.
-> >
-> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->=20
-> FWIW, RTC still works on my 32bit system:
 
-Thanks!
+Any status update on this and the first fix
 
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[PATCH v2 1/2] dmaengine: sh: rcar-dmac: With cyclic DMA residue 0 is valid
 
-I've also tested the RTC alarm with this patch.
-It seems okay to me, no regressions.
+?
 
-Tested-by: Steve Twiss <stwiss.opensource@diasemi.com>
+I still think they are required to fix the rcar-dmac driver.
 
-Regards,
-Steve
+Best regards
+
+Dirk
+
+
+>   drivers/dma/sh/rcar-dmac.c | 26 +++++++++++++++++++++++---
+>   1 file changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 2ea59229d7f5..cceddc7099b0 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -1282,6 +1282,9 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>   	enum dma_status status;
+>   	unsigned int residue = 0;
+>   	unsigned int dptr = 0;
+> +	unsigned int chcrb;
+> +	unsigned int tcrb;
+> +	unsigned int i;
+>   
+>   	if (!desc)
+>   		return 0;
+> @@ -1329,6 +1332,24 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>   		return 0;
+>   	}
+>   
+> +	/*
+> +	 * We need to read two registers.
+> +	 * Make sure the control register does not skip to next chunk
+> +	 * while reading the counter.
+> +	 * Trying it 3 times should be enough: Initial read, retry, retry
+> +	 * for the paranoid.
+> +	 */
+> +	for (i = 0; i < 3; i++) {
+> +		chcrb = rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
+> +					    RCAR_DMACHCRB_DPTR_MASK;
+> +		tcrb = rcar_dmac_chan_read(chan, RCAR_DMATCRB);
+> +		/* Still the same? */
+> +		if (chcrb == (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
+> +			      RCAR_DMACHCRB_DPTR_MASK))
+> +			break;
+> +	}
+> +	WARN_ONCE(i >= 3, "residue might be not continuous!");
+> +
+>   	/*
+>   	 * In descriptor mode the descriptor running pointer is not maintained
+>   	 * by the interrupt handler, find the running descriptor from the
+> @@ -1336,8 +1357,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>   	 * mode just use the running descriptor pointer.
+>   	 */
+>   	if (desc->hwdescs.use) {
+> -		dptr = (rcar_dmac_chan_read(chan, RCAR_DMACHCRB) &
+> -			RCAR_DMACHCRB_DPTR_MASK) >> RCAR_DMACHCRB_DPTR_SHIFT;
+> +		dptr = chcrb >> RCAR_DMACHCRB_DPTR_SHIFT;
+>   		if (dptr == 0)
+>   			dptr = desc->nchunks;
+>   		dptr--;
+> @@ -1355,7 +1375,7 @@ static unsigned int rcar_dmac_chan_get_residue(struct rcar_dmac_chan *chan,
+>   	}
+>   
+>   	/* Add the residue for the current chunk. */
+> -	residue += rcar_dmac_chan_read(chan, RCAR_DMATCRB) << desc->xfer_shift;
+> +	residue += tcrb << desc->xfer_shift;
+>   
+>   	return residue;
+>   }
