@@ -2,80 +2,104 @@ Return-Path: <SRS0=l30p=SD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1096CC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 11:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A164C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 11:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D79172084B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 11:29:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3580F206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Apr 2019 11:54:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbfDAL3m (ORCPT
+        id S1726764AbfDALyS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 1 Apr 2019 07:29:42 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:53342 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbfDAL3m (ORCPT
+        Mon, 1 Apr 2019 07:54:18 -0400
+Received: from sauhun.de ([88.99.104.3]:50782 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbfDALyR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Apr 2019 07:29:42 -0400
-Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id uzVe1z00F3XaVaC01zVeVj; Mon, 01 Apr 2019 13:29:38 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hAv8E-0003Zl-EU; Mon, 01 Apr 2019 13:29:38 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hAv8E-0006Bz-Cv; Mon, 01 Apr 2019 13:29:38 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: sh-pfc: r8a77970: Fix spacing
-Date:   Mon,  1 Apr 2019 13:29:37 +0200
-Message-Id: <20190401112937.23762-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 1 Apr 2019 07:54:17 -0400
+Received: from localhost (p54B331B1.dip0.t-ipconnect.de [84.179.49.177])
+        by pokefinder.org (Postfix) with ESMTPSA id 06A622C7BF4;
+        Mon,  1 Apr 2019 13:54:14 +0200 (CEST)
+Date:   Mon, 1 Apr 2019 13:54:14 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH] i2c: remove use of in_atomic()
+Message-ID: <20190401115414.hxrqqjujvwczdafz@ninjato>
+References: <20190327211256.17232-1-wsa+renesas@sang-engineering.com>
+ <20190401104756.GK11158@hirez.programming.kicks-ass.net>
+ <20190401111323.ajvo4drongc6dtel@ninjato>
+ <20190401112109.GB12232@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i6ygapewcnz2fobg"
+Content-Disposition: inline
+In-Reply-To: <20190401112109.GB12232@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace "F_(0,0)" by "F_(0, 0)".
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in sh-pfc-for-v5.2.
+--i6ygapewcnz2fobg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/pinctrl/sh-pfc/pfc-r8a77970.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-index 6aa8f321a4b648bd..2d76b548b9421378 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77970.c
-@@ -199,12 +199,12 @@
- #define IP5_27_24	FM(VI1_DATA2)			FM(CANFD0_TX_B)		F_(0, 0)	FM(D5)		FM(MMC_D0)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP5_31_28	FM(VI1_DATA3)			FM(CANFD0_RX_B)		F_(0, 0)	FM(D6)		FM(MMC_D1)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP6_3_0		FM(VI1_DATA4)			FM(CANFD_CLK_B)		F_(0, 0)	FM(D7)		FM(MMC_D2)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP6_7_4		FM(VI1_DATA5)			F_(0,0)			FM(SCK4)	FM(D8)		FM(MMC_D3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP6_11_8	FM(VI1_DATA6)			F_(0,0)			FM(RX4)		FM(D9)		FM(MMC_CLK)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP6_15_12	FM(VI1_DATA7)			F_(0,0)			FM(TX4)		FM(D10)		FM(MMC_D4)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP6_19_16	FM(VI1_DATA8)			F_(0,0)			FM(CTS4_N)	FM(D11)		FM(MMC_D5)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP6_23_20	FM(VI1_DATA9)			F_(0,0)			FM(RTS4_N)	FM(D12)		FM(MMC_D6)		FM(SCL3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--#define IP6_27_24	FM(VI1_DATA10)			F_(0,0)			F_(0, 0)	FM(D13)		FM(MMC_D7)		FM(SDA3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP6_7_4		FM(VI1_DATA5)			F_(0, 0)		FM(SCK4)	FM(D8)		FM(MMC_D3)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP6_11_8	FM(VI1_DATA6)			F_(0, 0)		FM(RX4)		FM(D9)		FM(MMC_CLK)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP6_15_12	FM(VI1_DATA7)			F_(0, 0)		FM(TX4)		FM(D10)		FM(MMC_D4)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP6_19_16	FM(VI1_DATA8)			F_(0, 0)		FM(CTS4_N)	FM(D11)		FM(MMC_D5)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP6_23_20	FM(VI1_DATA9)			F_(0, 0)		FM(RTS4_N)	FM(D12)		FM(MMC_D6)		FM(SCL3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
-+#define IP6_27_24	FM(VI1_DATA10)			F_(0, 0)		F_(0, 0)	FM(D13)		FM(MMC_D7)		FM(SDA3_B)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP6_31_28	FM(VI1_DATA11)			FM(SCL4)		FM(IRQ4)	FM(D14)		FM(MMC_WP)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP7_3_0		FM(VI1_FIELD)			FM(SDA4)		FM(IRQ5)	FM(D15)		FM(MMC_CD)		F_(0, 0)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
- #define IP7_7_4		FM(SCL0)			FM(DU_DR0)		FM(TPU0TO0)	FM(CLKOUT)	F_(0, 0)		FM(MSIOF0_RXD)	F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0) F_(0, 0)
--- 
-2.17.1
+> > "This matches the use cases for atomic I2C transfers I have seen so far:
+> > very late communication (mostly to a PMIC) to powerdown or reboot the
+> > system."
+>=20
+> Ah, sorry, I missed that.
+>=20
+> > And yes, I would never recommend a HW design to use I2C for shutting
+> > down/rebooting. But such HW is out there.
+>=20
+> Can we then make the whole thing conditional on:
+>=20
+>   system_state > SYSTEM_RUNNING
+>=20
+> Such that we're sure to never trigger this under any other conditions?
 
+Oh, we can for sure modify the code to something else. Actually, this is
+why I was calling out to you. I was never comfortable with the old
+'in_atomic() || irqs_disabled()' code, but wasn't sure what would be an
+adequate replacement which will not risk regressions.
+
+The above condition makes much more sense to me and is also much more
+readable. Can it simply replace irqs_disabled()? Are interrupts already
+disabled for system_state > SYSTEM_RUNNING? (I got a bit lost in the
+code paths when trying to figure it out)
+
+
+--i6ygapewcnz2fobg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyh++IACgkQFA3kzBSg
+KbZoahAAruazcsi+JSHoP4Pk52K5w1109bs+btGr6Ti6AqRIUsAQPlPuBHbmtrLW
+YbfICiy7sdtvDRPImwOVVrY88/TBPWb2QcW5HUNuf9ePLKY5zeqyQ52NQYvK5CMs
+TI2ywZRQ7E/ViwXI5gwFDD9jl3Ygn6ag8n3Y1elEYsqllbUYw5Zf6qUnWKY1YH12
+ogrdw4u23jmFiazbX1KZ1v0WwLxKl70JO3yVuJc/tAl4sncuZ4t1Cb1QYjngfYxv
+LDy80jsvp1B28JDeN/qEwrX5/Jx/9fPebKPhQzToPREUbj5+hT2fDu1loGOJkIsY
+dWuhme12B3nujnRsZzDR9YPpF32YNBa6JWwl/QxBNgJzBWSAI3zET8M6vIFSKkwo
+xjdeluZ5hGii+r34SG70HfM2p5zo/UgnkEHhnfgQkIOc6xlRlRdn9oDWTnCPXrjc
+HxodJyPWOi4wnuVdbvtBZsPmIXbj02azZfu4/61jGKij5NHQv+JFYGQdUaptCYZg
+B0QRusvI9v/gXc/ljz0h6JU5gp2QXGlWitw1wh03+dwvJvxGr6V9HbDdEM+8p17k
+vup4WcfWjUNzjeLhqeVHRvqo6frJAJ+/uJAJwe0CRec2hfcly2Zf8UNkgpk6/3jA
+fc8j09d5uCWf9kY2XD7i8y4ErOrYKrzKXI05Bq2uPFUXJdRSAss=
+=Gz1t
+-----END PGP SIGNATURE-----
+
+--i6ygapewcnz2fobg--
