@@ -2,120 +2,77 @@ Return-Path: <SRS0=Wh2G=SE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97615C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C473C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 13:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 710FE20883
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6046C20856
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 13:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfDBM4m (ORCPT
+        id S1730227AbfDBNGY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 2 Apr 2019 08:56:42 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37660 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbfDBM4m (ORCPT
+        Tue, 2 Apr 2019 09:06:24 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:41076 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfDBNGY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Apr 2019 08:56:42 -0400
+        Tue, 2 Apr 2019 09:06:24 -0400
 Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id vQwe1z00S3XaVaC01Qwew7; Tue, 02 Apr 2019 14:56:38 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id vR6L1z0063XaVaC01R6L0W; Tue, 02 Apr 2019 15:06:21 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hBIxy-00029Q-Dn
-        for linux-renesas-soc@vger.kernel.org; Tue, 02 Apr 2019 14:56:38 +0200
+        id 1hBJ7M-0002Du-2b; Tue, 02 Apr 2019 15:06:20 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hBIxy-0005th-CG
-        for linux-renesas-soc@vger.kernel.org; Tue, 02 Apr 2019 14:56:38 +0200
+        id 1hBJ7M-0003h5-0u; Tue, 02 Apr 2019 15:06:20 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2019-04-02-v5.1-rc3
-Date:   Tue,  2 Apr 2019 14:56:38 +0200
-Message-Id: <20190402125638.22627-1-geert+renesas@glider.be>
+To:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH LOCAL] arm64: renesas_defconfig: Reduce NR_CPUS to 8
+Date:   Tue,  2 Apr 2019 15:06:19 +0200
+Message-Id: <20190402130619.14145-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I have pushed renesas-drivers-2019-04-02-v5.1-rc3 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+The maximum number of arm64 CPU cores (excluding the real-time core) in
+Renesas ARM SoCs is 8.
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+The default value of NR_CPUS used to be 64, causing a negligible kernel
+size increase of ca. 16 KiB, compared to the minimum needed value of 8.
+As of commit 846a415bf4408ccd ("arm64: default NR_CPUS to
+256"), the default value of NR_CPUS was increased to 256, increasing the
+waste by another 78 KiB.
 
-Today's version is based on renesas-devel-20190401-v5.1-rc3.
+Reduce NR_CPUS to 8, reducing kernel size by ca. 94 KiB.
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - git://linuxtv.org/pinchartl/media.git#drm/du/lvds/dual-link~2
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#du/for-renesas-drivers
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/configs/renesas_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Included fixes:
-  - serial: sh-sci: Fix HSCIF RX sampling point adjustment
-  - serial: sh-sci: Fix HSCIF RX sampling point calculation
-  - [LOCAL] arm64: renesas_defconfig: Reduce NR_CPUS to 8
-  - ARM: shmobile: defconfig: Update shmobile_defconfig
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 5561d30a3f270e26..4480e7dc40180bcd 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -40,6 +40,7 @@ CONFIG_ARCH_RENESAS=y
+ # CONFIG_HISILICON_ERRATUM_161600802 is not set
+ CONFIG_ARM64_VA_BITS_48=y
+ CONFIG_SCHED_MC=y
++CONFIG_NR_CPUS=8
+ CONFIG_SECCOMP=y
+ CONFIG_KEXEC=y
+ CONFIG_CRASH_DUMP=y
+-- 
+2.17.1
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
