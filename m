@@ -2,140 +2,161 @@ Return-Path: <SRS0=Wh2G=SE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00216C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 07:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3CDC10F0B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 08:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC4CE20700
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 07:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0631220883
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 08:53:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbfDBHJB (ORCPT
+        id S1726790AbfDBIx3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 2 Apr 2019 03:09:01 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:33860 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfDBHJB (ORCPT
+        Tue, 2 Apr 2019 04:53:29 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:44423 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725863AbfDBIx3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Apr 2019 03:09:01 -0400
-Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id vK8x1z00F3XaVaC01K8xtl; Tue, 02 Apr 2019 09:08:58 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hBDXV-000065-8b; Tue, 02 Apr 2019 09:08:57 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hBDXV-0007JP-6A; Tue, 02 Apr 2019 09:08:57 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Simon Horman <horms@verge.net.au>,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value
-Date:   Tue,  2 Apr 2019 09:08:56 +0200
-Message-Id: <20190402070856.28066-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Tue, 2 Apr 2019 04:53:29 -0400
+X-Originating-IP: 109.213.83.19
+Received: from localhost (alyon-652-1-60-19.w109-213.abo.wanadoo.fr [109.213.83.19])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id C969520006;
+        Tue,  2 Apr 2019 08:53:25 +0000 (UTC)
+Date:   Tue, 2 Apr 2019 10:53:25 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] rtc: da9063: set range
+Message-ID: <20190402085325.GT3430@piout.net>
+References: <CAMuHMdW_Gz4qaRXFeW-h7vNxJ5RwjDXDP4oZZcUaYHcqEC75bA@mail.gmail.com>
+ <VI1PR10MB235254A7A95F4045A5410D1EFE550@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+ <CAMuHMdVsp86n_1+c6NZpCG1MwcAzEH7rgaESHfYESb5YcLk6zw@mail.gmail.com>
+ <20190401132109.GA4570@kunai>
+ <CAMuHMdV79HAn8jpodQcripAViCqBh3rFGZ39oEiSiP8nC+UyTA@mail.gmail.com>
+ <20190401150741.vwqzzngnma4jvkid@ninjato>
+ <20190401151628.GK3430@piout.net>
+ <20190401155204.GA5964@kunai>
+ <20190401185346.GP3430@piout.net>
+ <20190401193424.sqnapthocznhjqok@ninjato>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190401193424.sqnapthocznhjqok@ninjato>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+On 01/04/2019 21:34:25+0200, Wolfram Sang wrote:
+> 
+> > Well, seeing the code, I actually remembered that this test is still
+> > there to ensure the core will properly block. If you remove that test,
+> > the other ones should all timeout.
+> 
+> Thanks for your assistance! What I did just now was to make use of the
+> 'uie_unsupported' flag. This is the outcome:
+> 
+> 
+> [==========] Running 7 tests from 2 test cases.
+> [ RUN      ] rtc.date_read
+> rtctest.c:49:rtc.date_read:Current RTC date/time is 01/01/2000 00:13:23.
+> [       OK ] rtc.date_read
+> [ RUN      ] rtc.uie_read
+> [       OK ] rtc.uie_read
+> [ RUN      ] rtc.uie_select
+> [       OK ] rtc.uie_select
+> [ RUN      ] rtc.alarm_alm_set
+> rtctest.c:137:rtc.alarm_alm_set:Alarm time now set to 00:13:32.
+> rtctest.c:148:rtc.alarm_alm_set:Expected 0 (0) != rc (0)
+> rtc.alarm_alm_set: Test terminated by assertion
+> [     FAIL ] rtc.alarm_alm_set
+> [ RUN      ] rtc.alarm_wkalm_set
+> rtctest.c:195:rtc.alarm_wkalm_set:Alarm time now set to 01/01/2000
+> 00:13:37.
+> rtctest.c:202:rtc.alarm_wkalm_set:Expected 0 (0) != rc (0)
+> rtc.alarm_wkalm_set: Test terminated by assertion
+> [     FAIL ] rtc.alarm_wkalm_set
+> [ RUN      ] rtc.alarm_alm_set_minute
+> rtctest.c:239:rtc.alarm_alm_set_minute:Alarm time now set to 00:14:00.
+> rtctest.c:258:rtc.alarm_alm_set_minute:data: 1a0
+> [       OK ] rtc.alarm_alm_set_minute
+> [ RUN      ] rtc.alarm_wkalm_set_minute
+> rtctest.c:297:rtc.alarm_wkalm_set_minute:Alarm time now set to
+> 01/01/2000 00:15:00.
+> [       OK ] rtc.alarm_wkalm_set_minute
+> [==========] 5 / 7 tests passed.
+> [  FAILED  ]
+> 
+> I wonder why the_set_minute tests pass, but the other ones fail. I also
+> wonder why I need the uie_unsupported flag? It's been a while since I
+> dug into the RTC subsystem, I may be missing something. But I see the
+> UIE code finally calling into set_alarm for some codepath. We have that
+> for DA9063, but it is not executed for the UIE test of rtctest. However,
+> it seems the driver doesn't support this in an optimal way, because
+> there is a currently unused update interrupt which should be used for
+> UIE, or? I also wonder why all this works fine for Steve.
+> 
 
-cpg_sd_clock_round_rate() may return an unsupported clock rate for the
-requested clock rate. Therefore, when cpg_sd_clock_set_rate() sets the
-clock rate acquired by cpg_sd_clock_round_rate(), an error may occur.
+I had a look at the driver and I guess you have a 9063AD while Steve
+uses another model.
 
-This is not conform the clk API design.
+That explains why you need the uie_unsupported flag. The 9063AD can only
+do alarms on a minute boundary.
 
-This patch fixes that by making sure cpg_sd_clock_calc_div() considers
-only the division values defined in cpg_sd_div_table[].
-With this fix, the cpg_sd_clock_round_rate() always return a support
-clock rate.
+Since the move to hr_timer, the uie are done using the classic alarm or
+they are emulated by the core. This improved the situation for many RTCs
+that don't have a separate UIE but this made it worse for a few (and
+this is an example). I have plan to work on this but didn't have the
+time yet.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I suggest the following patch:
+
+===
+
+From 37b2ab7d537e76e42bde64cf4b57701b0ed8e8cd Mon Sep 17 00:00:00 2001
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Tue, 2 Apr 2019 10:06:46 +0200
+Subject: [PATCH] rtc: da9063: set uie_unsupported when relevant
+
+The DA9063AD doesn't support alarms on any seconds and its granularity is
+the minute. Set uie_unsupported in that case.
+
+Reported-by: Wolfram Sang <wsa@the-dreams.de>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
-v2:
-  - Use "<" instead of "<=" to use first match (doesn't matter, though,
-    but is more aligned with the behavior of cpg_sd_clock_calc_div()),
-  - Keep best_div instead of best_rate, to avoid extra
-    DIV_ROUND_CLOSEST().
----
-To be queued in clk-renesas-for-v5.2.
+ drivers/rtc/rtc-da9063.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/clk/renesas/rcar-gen3-cpg.c | 30 ++++++++++++++---------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index d5fb768b089ff1c1..dc62ed0dadc2b871 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -3,6 +3,7 @@
-  * R-Car Gen3 Clock Pulse Generator
-  *
-  * Copyright (C) 2015-2018 Glider bvba
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-  *
-  * Based on clk-rcar-gen3.c
-  *
-@@ -236,8 +237,6 @@ struct sd_clock {
- 	const struct sd_div_table *div_table;
- 	struct cpg_simple_notifier csn;
- 	unsigned int div_num;
--	unsigned int div_min;
--	unsigned int div_max;
- 	unsigned int cur_div_idx;
- };
+diff --git a/drivers/rtc/rtc-da9063.c b/drivers/rtc/rtc-da9063.c
+index 1b792bcea3c7..53e690b0f3a2 100644
+--- a/drivers/rtc/rtc-da9063.c
++++ b/drivers/rtc/rtc-da9063.c
+@@ -475,6 +475,9 @@ static int da9063_rtc_probe(struct platform_device *pdev)
+ 	da9063_data_to_tm(data, &rtc->alarm_time, rtc);
+ 	rtc->rtc_sync = false;
  
-@@ -314,14 +313,20 @@ static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
- 					  unsigned long rate,
- 					  unsigned long parent_rate)
- {
--	unsigned int div;
--
--	if (!rate)
--		rate = 1;
--
--	div = DIV_ROUND_CLOSEST(parent_rate, rate);
-+	unsigned long calc_rate, diff, diff_min = ULONG_MAX;
-+	unsigned int i, best_div = 0;
++	if (config->rtc_data_start != RTC_SEC)
++		rtc->rtc_dev->uie_unsupported = 1;
 +
-+	for (i = 0; i < clock->div_num; i++) {
-+		calc_rate = DIV_ROUND_CLOSEST(parent_rate,
-+					      clock->div_table[i].div);
-+		diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
-+		if (diff < diff_min) {
-+			best_div = clock->div_table[i].div;
-+			diff_min = diff;
-+		}
-+	}
- 
--	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
-+	return best_div;
- }
- 
- static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -405,13 +410,6 @@ static struct clk * __init cpg_sd_clk_register(const char *name,
- 	val |= CPG_SD_STP_MASK | (clock->div_table[0].val & CPG_SD_FC_MASK);
- 	writel(val, clock->csn.reg);
- 
--	clock->div_max = clock->div_table[0].div;
--	clock->div_min = clock->div_max;
--	for (i = 1; i < clock->div_num; i++) {
--		clock->div_max = max(clock->div_max, clock->div_table[i].div);
--		clock->div_min = min(clock->div_min, clock->div_table[i].div);
--	}
--
- 	clk = clk_register(NULL, &clock->hw);
- 	if (IS_ERR(clk))
- 		goto free_clock;
+ 	irq_alarm = platform_get_irq_byname(pdev, "ALARM");
+ 	ret = devm_request_threaded_irq(&pdev->dev, irq_alarm, NULL,
+ 					da9063_alarm_event,
 -- 
-2.17.1
+2.20.1
 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
