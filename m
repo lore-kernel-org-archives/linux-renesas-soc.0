@@ -2,126 +2,120 @@ Return-Path: <SRS0=Wh2G=SE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA75C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97615C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD7D20883
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:49:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="VCsX+vpi"
+	by mail.kernel.org (Postfix) with ESMTP id 710FE20883
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:56:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbfDBMtb (ORCPT
+        id S1729399AbfDBM4m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 2 Apr 2019 08:49:31 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34015 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729576AbfDBMta (ORCPT
+        Tue, 2 Apr 2019 08:56:42 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:37660 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfDBM4m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Apr 2019 08:49:30 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y18so8915767lfe.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Apr 2019 05:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rc9Nw3K8yky0b7HH2PEcKLi0yB1XScOG369kR1770m8=;
-        b=VCsX+vpiDsT3fELjo/7T6Qb/Fy6SOPhRcg+qPPXpHGVhX5O85Nr8SnrDsRIkL3om00
-         AQ4Af6cV/yO/grD0d/pmhPtvcHqllQBX3Qx4Bat/d8lxXvuCX53C53mi5qBMJeWA2IqP
-         ZgHV+ZSqW+sdgeLNZAxSss57TBzpu8R7dxaXUa6pqfwXxFqAWWWsQ5sSfQpLBMJsmV/M
-         B8SXO3drRXnwOwCpzWGVQtGJllPMMPoYzDU33Lz6QvEeGSbBuIjKiVXfx4OHilc7AhMU
-         4/Rb8Pn1939H+1ezCPJOCi+rky3+cqY5ic1bBOv8Mmp9NUrn1hBeAPuZ9SO74a2mbAnH
-         GMUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rc9Nw3K8yky0b7HH2PEcKLi0yB1XScOG369kR1770m8=;
-        b=Ik+u8bjzWMO8Mr7HB7xeNhQw1G2ZLhQpUIhaiLyk9ZyNkXZAtKeahV9CPCm7AEF3nV
-         +yFutT3/sCAR6aamgg/AUPbgHAp6YDVHnKXnlAh6OIfEzY9HkJMcHmXXOCqu/xYvuMs/
-         GZdvG6wyUTalpyaAhpLw1JIPdGiu5nfuEWa38EtD6752jbCgPQNGY/0v3NbOcFFbrJMj
-         PMKWk+fyF2WdNX2gsv09RHf7BxZOwtgL48Vi7w0+HbGTCnScT5smuw/O27Su8F+pKHrx
-         RgEx1jzBZF58WPq+Y4lTkvdyVVRxsdgtdFM9yq5cEV+n877KPwuFO2agAaHFbjUYzBN2
-         vs9g==
-X-Gm-Message-State: APjAAAXKH+ONDmPxk8HIkcjUNVqZa/qg73/H80PCYDdp6Q8rW+vM3zgO
-        eS+Qfcek+t26E7IjCrrW0+Z5/Q==
-X-Google-Smtp-Source: APXvYqxDaW0UbOyL/9aInZSxCWJh3z9yaQBHoUMEB9vH0W9WPCp2oWUqlTumJ0djgIfjHpOSuElyNw==
-X-Received: by 2002:ac2:5501:: with SMTP id j1mr32593693lfk.113.1554209368727;
-        Tue, 02 Apr 2019 05:49:28 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id k21sm2682503ljk.21.2019.04.02.05.49.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 02 Apr 2019 05:49:27 -0700 (PDT)
-Date:   Tue, 2 Apr 2019 14:49:27 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] ARM: shmobile: defconfig: Enable support for CFI NOR
- FLASH
-Message-ID: <20190402124927.GX23466@bigcity.dyn.berto.se>
-References: <20190401120150.30687-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190401120150.30687-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Tue, 2 Apr 2019 08:56:42 -0400
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id vQwe1z00S3XaVaC01Qwew7; Tue, 02 Apr 2019 14:56:38 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hBIxy-00029Q-Dn
+        for linux-renesas-soc@vger.kernel.org; Tue, 02 Apr 2019 14:56:38 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hBIxy-0005th-CG
+        for linux-renesas-soc@vger.kernel.org; Tue, 02 Apr 2019 14:56:38 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2019-04-02-v5.1-rc3
+Date:   Tue,  2 Apr 2019 14:56:38 +0200
+Message-Id: <20190402125638.22627-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+I have pushed renesas-drivers-2019-04-02-v5.1-rc3 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Thanks for your work.
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the development branch of
+Simon Horman's renesas.git tree.
 
-On 2019-04-01 14:01:48 +0200, Geert Uytterhoeven wrote:
-> 	Hi Simon, Magnus,
-> 
-> Now the DTS for the r8a73a4-based APE6EVM development board describes
-> its CFI NOR FLASH, this patch series enables support for that in
-> shmobile_defconfig and multi_v7_defconfig.
-> 
-> Note that kernels built from these configs cannot be booted by stock
-> APE6EVM U-Boot, due to kernel size.
+Today's version is based on renesas-devel-20190401-v5.1-rc3.
 
-For the whole series,
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - git://linuxtv.org/pinchartl/media.git#drm/du/lvds/dual-link~2
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#du/for-renesas-drivers
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+Included fixes:
+  - serial: sh-sci: Fix HSCIF RX sampling point adjustment
+  - serial: sh-sci: Fix HSCIF RX sampling point calculation
+  - [LOCAL] arm64: renesas_defconfig: Reduce NR_CPUS to 8
+  - ARM: shmobile: defconfig: Update shmobile_defconfig
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
-> 
-> Thanks!
-> 
-> Geert Uytterhoeven (2):
->   ARM: shmobile: defconfig: Enable support for CFI NOR FLASH
->   ARM: multi_v7_defconfig: Enable support for CFI NOR FLASH
-> 
->  arch/arm/configs/multi_v7_defconfig | 4 ++++
->  arch/arm/configs/shmobile_defconfig | 4 ++++
->  2 files changed, 8 insertions(+)
-> 
-> -- 
-> 2.17.1
-> 
-> Gr{oetje,eeting}s,
-> 
-> 						Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
-> 							    -- Linus Torvalds
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.infradead.org/users/dedekind/l2-mtd-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.infradead.org/users/jcooper/linux.git#irqchip/for-next
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
 
--- 
-Regards,
-Niklas Söderlund
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
