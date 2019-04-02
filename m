@@ -2,121 +2,140 @@ Return-Path: <SRS0=Wh2G=SE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9ADC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 06:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00216C43381
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 07:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22222084C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 06:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC4CE20700
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 07:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbfDBG2h (ORCPT
+        id S1725920AbfDBHJB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 2 Apr 2019 02:28:37 -0400
-Received: from sauhun.de ([88.99.104.3]:37334 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfDBG2h (ORCPT
+        Tue, 2 Apr 2019 03:09:01 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:33860 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725884AbfDBHJB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Apr 2019 02:28:37 -0400
-Received: from localhost (p5486CD10.dip0.t-ipconnect.de [84.134.205.16])
-        by pokefinder.org (Postfix) with ESMTPSA id 172032CF606;
-        Tue,  2 Apr 2019 08:28:34 +0200 (CEST)
-Date:   Tue, 2 Apr 2019 08:28:33 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     marek.vasut@gmail.com
-Cc:     linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V5 6/6] PCI: rcar: Fix 64bit MSI message address handling
-Message-ID: <20190402062833.GB998@kunai>
-References: <20190402013307.20912-1-marek.vasut@gmail.com>
- <20190402013307.20912-6-marek.vasut@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BwCQnh7xodEAoBMC"
-Content-Disposition: inline
-In-Reply-To: <20190402013307.20912-6-marek.vasut@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 2 Apr 2019 03:09:01 -0400
+Received: from ramsan ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id vK8x1z00F3XaVaC01K8xtl; Tue, 02 Apr 2019 09:08:58 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hBDXV-000065-8b; Tue, 02 Apr 2019 09:08:57 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hBDXV-0007JP-6A; Tue, 02 Apr 2019 09:08:57 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Simon Horman <horms@verge.net.au>,
+        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value
+Date:   Tue,  2 Apr 2019 09:08:56 +0200
+Message-Id: <20190402070856.28066-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
---BwCQnh7xodEAoBMC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+cpg_sd_clock_round_rate() may return an unsupported clock rate for the
+requested clock rate. Therefore, when cpg_sd_clock_set_rate() sets the
+clock rate acquired by cpg_sd_clock_round_rate(), an error may occur.
 
-On Tue, Apr 02, 2019 at 03:33:07AM +0200, marek.vasut@gmail.com wrote:
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
->=20
-> The MSI message address in the RC address space can be 64 bit. The
-> R-Car PCIe RC supports such a 64bit MSI message address as well.
-> The code currently uses virt_to_phys(__get_free_pages()) to obtain
-> a reserved page for the MSI message address, and the return value
-> of which can be a 64 bit physical address on 64 bit system.
->=20
-> However, the driver only programs PCIEMSIALR register with the bottom
-> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
-> not program the top 32 bits into PCIEMSIAUR, but rather programs the
-> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
-> SoCs, however may fail on new 64 bit R-Car SoCs.
->=20
-> Since from a PCIe controller perspective, an inbound MSI is a memory
-> write to a special address (in case of this controller, defined by
-> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
-> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
-> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
-> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
-> cause memory corruption or other issues.
->=20
-> There is however the possibility that if virt_to_phys(__get_free_pages())
-> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
-> to 0x0 _and_ if the system had physical RAM at the address matching the
-> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
-> physical address matching the value of PCIEMSIALR and a remote write to
-> such a buffer by a PCIe card would trigger a spurious MSI.
+This is not conform the clk API design.
 
-Very good descripion!
+This patch fixes that by making sure cpg_sd_clock_calc_div() considers
+only the division values defined in cpg_sd_div_table[].
+With this fix, the cpg_sd_clock_round_rate() always return a support
+clock rate.
 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> To: linux-pci@vger.kernel.org
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Fixes: 90c073e53909da85 ("clk: shmobile: r8a7795: Add SD divider support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Use "<" instead of "<=" to use first match (doesn't matter, though,
+    but is more aligned with the behavior of cpg_sd_clock_calc_div()),
+  - Keep best_div instead of best_rate, to avoid extra
+    DIV_ROUND_CLOSEST().
+---
+To be queued in clk-renesas-for-v5.2.
 
-I double-checked with the datasheets previously.
+ drivers/clk/renesas/rcar-gen3-cpg.c | 30 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index d5fb768b089ff1c1..dc62ed0dadc2b871 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -3,6 +3,7 @@
+  * R-Car Gen3 Clock Pulse Generator
+  *
+  * Copyright (C) 2015-2018 Glider bvba
++ * Copyright (C) 2019 Renesas Electronics Corp.
+  *
+  * Based on clk-rcar-gen3.c
+  *
+@@ -236,8 +237,6 @@ struct sd_clock {
+ 	const struct sd_div_table *div_table;
+ 	struct cpg_simple_notifier csn;
+ 	unsigned int div_num;
+-	unsigned int div_min;
+-	unsigned int div_max;
+ 	unsigned int cur_div_idx;
+ };
+ 
+@@ -314,14 +313,20 @@ static unsigned int cpg_sd_clock_calc_div(struct sd_clock *clock,
+ 					  unsigned long rate,
+ 					  unsigned long parent_rate)
+ {
+-	unsigned int div;
+-
+-	if (!rate)
+-		rate = 1;
+-
+-	div = DIV_ROUND_CLOSEST(parent_rate, rate);
++	unsigned long calc_rate, diff, diff_min = ULONG_MAX;
++	unsigned int i, best_div = 0;
++
++	for (i = 0; i < clock->div_num; i++) {
++		calc_rate = DIV_ROUND_CLOSEST(parent_rate,
++					      clock->div_table[i].div);
++		diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
++		if (diff < diff_min) {
++			best_div = clock->div_table[i].div;
++			diff_min = diff;
++		}
++	}
+ 
+-	return clamp_t(unsigned int, div, clock->div_min, clock->div_max);
++	return best_div;
+ }
+ 
+ static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -405,13 +410,6 @@ static struct clk * __init cpg_sd_clk_register(const char *name,
+ 	val |= CPG_SD_STP_MASK | (clock->div_table[0].val & CPG_SD_FC_MASK);
+ 	writel(val, clock->csn.reg);
+ 
+-	clock->div_max = clock->div_table[0].div;
+-	clock->div_min = clock->div_max;
+-	for (i = 1; i < clock->div_num; i++) {
+-		clock->div_max = max(clock->div_max, clock->div_table[i].div);
+-		clock->div_min = min(clock->div_min, clock->div_table[i].div);
+-	}
+-
+ 	clk = clk_register(NULL, &clock->hw);
+ 	if (IS_ERR(clk))
+ 		goto free_clock;
+-- 
+2.17.1
 
-
---BwCQnh7xodEAoBMC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyjAREACgkQFA3kzBSg
-KbbkPg//alydZyG1QPBATYVKTSW5uTpr63+7OpdNOEyDldk7hNwvR7kxRxbVhsoq
-fFVYWdv5+ygW9QKYoKxj8AyiDyA5kuJRtLHCd4AJml/2JzZLymqQU87TDf6MHHZF
-cQTY4yWzPmtDrCKTeo/sv+0RKPMURoJN1WRoIiNbT3q+MQylMMzlt8Emzom5ldIl
-OgdqNZocpdcJs6ZMDUZUsrRtO6RDjZM+rgcepJ9o8firHv9GYi04zPZWmfiI1aAW
-l7tqnaFrTD9IlmMvbY5DxOviYXW8AVsPivyHWdcxmqXnWNBUsOB4NIO0K2cP7DU0
-WqhqOk7ef4ZcA353zORdG4QQ/uodpkP/DQISKaKpyddx3eqyTJ9gww9jtcnB1vkF
-K/UbDzaq2fwG6d5U5YpsyPEM13h7qdmw10Wl4U+efSD0+4BB6EZfTk4SWXHvcRXa
-TzWX/SRZvN/4OiBIdr23Ut6ezmbCcAKU41v68ar4fHgevT/D61DyM1L4twjbwThx
-WcyOAxoU1z6ubpW6qXDSleTQOpyct20jVMF0HJXQX+Ed5J0GOyaQRwHRCSZq52Bu
-eckHR2pr92h26ntscVbmYL6ELaDN44Vq8+ett+01cuBikSI6bnw+6yz6pA+LLR33
-YGn8XC4c3Oyzeq7Sm/KSSS5dWl2qegh3UinHnM9M7ajifJCEpUI=
-=N7SP
------END PGP SIGNATURE-----
-
---BwCQnh7xodEAoBMC--
