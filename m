@@ -2,300 +2,126 @@ Return-Path: <SRS0=Wh2G=SE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3678C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA75C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89B2D20882
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AD7D20883
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Apr 2019 12:49:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZCuhpRTf"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="VCsX+vpi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbfDBMMO (ORCPT
+        id S1729625AbfDBMtb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 2 Apr 2019 08:12:14 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60656 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726337AbfDBMMN (ORCPT
+        Tue, 2 Apr 2019 08:49:31 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34015 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729576AbfDBMta (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Apr 2019 08:12:13 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C5CFD2F9;
-        Tue,  2 Apr 2019 14:12:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1554207130;
-        bh=pkpyD5lYRIxkxqxJmBI9ULU1MiB58uHAcPt1TEeNBGI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZCuhpRTf8XyHNMPqWQtmraOqHCriDPbqvCA9wWXaYSGCXBRxqB/zxeFRG3l42PAD0
-         vOIP8YV5SIYUZBz82t6ponp6+yJ4iT9tTnDnkbKXIlXqwUFX/pjQLIZTgfy3CygqYW
-         nM3L8iqd1yfH6CuVSNZrX2i0vKmZWv623Wu3Gsz8=
-Date:   Tue, 2 Apr 2019 15:12:00 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 1/9] v4l: Add definitions for missing 32-bit RGB formats
-Message-ID: <20190402121200.GX4805@pendragon.ideasonboard.com>
-References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190328070723.26553-2-laurent.pinchart+renesas@ideasonboard.com>
- <20190328131543.zlito5lm3n7mjyls@uno.localdomain>
+        Tue, 2 Apr 2019 08:49:30 -0400
+Received: by mail-lf1-f65.google.com with SMTP id y18so8915767lfe.1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 02 Apr 2019 05:49:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rc9Nw3K8yky0b7HH2PEcKLi0yB1XScOG369kR1770m8=;
+        b=VCsX+vpiDsT3fELjo/7T6Qb/Fy6SOPhRcg+qPPXpHGVhX5O85Nr8SnrDsRIkL3om00
+         AQ4Af6cV/yO/grD0d/pmhPtvcHqllQBX3Qx4Bat/d8lxXvuCX53C53mi5qBMJeWA2IqP
+         ZgHV+ZSqW+sdgeLNZAxSss57TBzpu8R7dxaXUa6pqfwXxFqAWWWsQ5sSfQpLBMJsmV/M
+         B8SXO3drRXnwOwCpzWGVQtGJllPMMPoYzDU33Lz6QvEeGSbBuIjKiVXfx4OHilc7AhMU
+         4/Rb8Pn1939H+1ezCPJOCi+rky3+cqY5ic1bBOv8Mmp9NUrn1hBeAPuZ9SO74a2mbAnH
+         GMUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rc9Nw3K8yky0b7HH2PEcKLi0yB1XScOG369kR1770m8=;
+        b=Ik+u8bjzWMO8Mr7HB7xeNhQw1G2ZLhQpUIhaiLyk9ZyNkXZAtKeahV9CPCm7AEF3nV
+         +yFutT3/sCAR6aamgg/AUPbgHAp6YDVHnKXnlAh6OIfEzY9HkJMcHmXXOCqu/xYvuMs/
+         GZdvG6wyUTalpyaAhpLw1JIPdGiu5nfuEWa38EtD6752jbCgPQNGY/0v3NbOcFFbrJMj
+         PMKWk+fyF2WdNX2gsv09RHf7BxZOwtgL48Vi7w0+HbGTCnScT5smuw/O27Su8F+pKHrx
+         RgEx1jzBZF58WPq+Y4lTkvdyVVRxsdgtdFM9yq5cEV+n877KPwuFO2agAaHFbjUYzBN2
+         vs9g==
+X-Gm-Message-State: APjAAAXKH+ONDmPxk8HIkcjUNVqZa/qg73/H80PCYDdp6Q8rW+vM3zgO
+        eS+Qfcek+t26E7IjCrrW0+Z5/Q==
+X-Google-Smtp-Source: APXvYqxDaW0UbOyL/9aInZSxCWJh3z9yaQBHoUMEB9vH0W9WPCp2oWUqlTumJ0djgIfjHpOSuElyNw==
+X-Received: by 2002:ac2:5501:: with SMTP id j1mr32593693lfk.113.1554209368727;
+        Tue, 02 Apr 2019 05:49:28 -0700 (PDT)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id k21sm2682503ljk.21.2019.04.02.05.49.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 02 Apr 2019 05:49:27 -0700 (PDT)
+Date:   Tue, 2 Apr 2019 14:49:27 +0200
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/2] ARM: shmobile: defconfig: Enable support for CFI NOR
+ FLASH
+Message-ID: <20190402124927.GX23466@bigcity.dyn.berto.se>
+References: <20190401120150.30687-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190328131543.zlito5lm3n7mjyls@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190401120150.30687-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+Hi Geert,
 
-On Thu, Mar 28, 2019 at 02:15:43PM +0100, Jacopo Mondi wrote:
-> On Thu, Mar 28, 2019 at 09:07:15AM +0200, Laurent Pinchart wrote:
-> > The V4L2 API is missing the 32-bit RGB formats for the ABGR, XBGR, RGBA
-> > and RGBX component orders. Add them, using the same 4CCs as DRM.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > ---
-> >  .../media/uapi/v4l/pixfmt-packed-rgb.rst      | 160 ++++++++++++++++++
-> >  include/uapi/linux/videodev2.h                |   4 +
-> >  2 files changed, 164 insertions(+)
-> >
-> > diff --git a/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst b/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> > index 6b3781c04dd5..055f9c89e787 100644
-> > --- a/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> > +++ b/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> > @@ -453,6 +453,166 @@ next to each other in memory.
-> >        - r\ :sub:`1`
-> >        - r\ :sub:`0`
-> >
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +    * .. _V4L2-PIX-FMT-BGRA32:
-> > +
-> > +      - ``V4L2_PIX_FMT_BGRA32``
-> > +      - 'RA24'
-> > +
-> > +      - a\ :sub:`7`
-> > +      - a\ :sub:`6`
-> > +      - a\ :sub:`5`
-> > +      - a\ :sub:`4`
-> > +      - a\ :sub:`3`
-> > +      - a\ :sub:`2`
-> > +      - a\ :sub:`1`
-> > +      - a\ :sub:`0`
-> > +
-> > +      - b\ :sub:`7`
-> > +      - b\ :sub:`6`
-> > +      - b\ :sub:`5`
-> > +      - b\ :sub:`4`
-> > +      - b\ :sub:`3`
-> > +      - b\ :sub:`2`
-> > +      - b\ :sub:`1`
-> > +      - b\ :sub:`0`
-> > +
-> > +      - g\ :sub:`7`
-> > +      - g\ :sub:`6`
-> > +      - g\ :sub:`5`
-> > +      - g\ :sub:`4`
-> > +      - g\ :sub:`3`
-> > +      - g\ :sub:`2`
-> > +      - g\ :sub:`1`
-> > +      - g\ :sub:`0`
-> > +
-> > +      - r\ :sub:`7`
-> > +      - r\ :sub:`6`
-> > +      - r\ :sub:`5`
-> > +      - r\ :sub:`4`
-> > +      - r\ :sub:`3`
-> > +      - r\ :sub:`2`
-> > +      - r\ :sub:`1`
-> > +      - r\ :sub:`0`
-> > +    * .. _V4L2-PIX-FMT-BGRX32:
-> > +
-> > +      - ``V4L2_PIX_FMT_BGRX32``
-> > +      - 'RX24'
-> > +
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +      -
-> > +
-> > +      - b\ :sub:`7`
-> > +      - b\ :sub:`6`
-> > +      - b\ :sub:`5`
-> > +      - b\ :sub:`4`
-> > +      - b\ :sub:`3`
-> > +      - b\ :sub:`2`
-> > +      - b\ :sub:`1`
-> > +      - b\ :sub:`0`
-> > +
-> > +      - g\ :sub:`7`
-> > +      - g\ :sub:`6`
-> > +      - g\ :sub:`5`
-> > +      - g\ :sub:`4`
-> > +      - g\ :sub:`3`
-> > +      - g\ :sub:`2`
-> > +      - g\ :sub:`1`
-> > +      - g\ :sub:`0`
-> > +
-> > +      - r\ :sub:`7`
-> > +      - r\ :sub:`6`
-> > +      - r\ :sub:`5`
-> > +      - r\ :sub:`4`
-> > +      - r\ :sub:`3`
-> > +      - r\ :sub:`2`
-> > +      - r\ :sub:`1`
-> > +      - r\ :sub:`0`
-> > +    * .. _V4L2-PIX-FMT-RGBA32:
-> > +
-> > +      - ``V4L2_PIX_FMT_RGBA32``
-> > +      - 'AB24'
-> > +
-> > +      - r\ :sub:`7`
-> > +      - r\ :sub:`6`
-> > +      - r\ :sub:`5`
-> > +      - r\ :sub:`4`
-> > +      - r\ :sub:`3`
-> > +      - r\ :sub:`2`
-> > +      - r\ :sub:`1`
-> > +      - r\ :sub:`0`
-> > +
-> > +      - g\ :sub:`7`
-> > +      - g\ :sub:`6`
-> > +      - g\ :sub:`5`
-> > +      - g\ :sub:`4`
-> > +      - g\ :sub:`3`
-> > +      - g\ :sub:`2`
-> > +      - g\ :sub:`1`
-> > +      - g\ :sub:`0`
-> > +
-> > +      - b\ :sub:`7`
-> > +      - b\ :sub:`6`
-> > +      - b\ :sub:`5`
-> > +      - b\ :sub:`4`
-> > +      - b\ :sub:`3`
-> > +      - b\ :sub:`2`
-> > +      - b\ :sub:`1`
-> > +      - b\ :sub:`0`
-> > +
-> > +      - a\ :sub:`7`
-> > +      - a\ :sub:`6`
-> > +      - a\ :sub:`5`
-> > +      - a\ :sub:`4`
-> > +      - a\ :sub:`3`
-> > +      - a\ :sub:`2`
-> > +      - a\ :sub:`1`
-> > +      - a\ :sub:`0`
-> > +    * .. _V4L2-PIX-FMT-RGBX32:
-> > +
-> > +      - ``V4L2_PIX_FMT_RGBX32``
-> > +      - 'XB24'
-> > +
-> > +      - r\ :sub:`7`
-> > +      - r\ :sub:`6`
-> > +      - r\ :sub:`5`
-> > +      - r\ :sub:`4`
-> > +      - r\ :sub:`3`
-> > +      - r\ :sub:`2`
-> > +      - r\ :sub:`1`
-> > +      - r\ :sub:`0`
-> > +
-> > +      - g\ :sub:`7`
-> > +      - g\ :sub:`6`
-> > +      - g\ :sub:`5`
-> > +      - g\ :sub:`4`
-> > +      - g\ :sub:`3`
-> > +      - g\ :sub:`2`
-> > +      - g\ :sub:`1`
-> > +      - g\ :sub:`0`
-> > +
-> > +      - b\ :sub:`7`
-> > +      - b\ :sub:`6`
-> > +      - b\ :sub:`5`
-> > +      - b\ :sub:`4`
-> > +      - b\ :sub:`3`
-> > +      - b\ :sub:`2`
-> > +      - b\ :sub:`1`
-> > +      - b\ :sub:`0`
-> > +
+Thanks for your work.
+
+On 2019-04-01 14:01:48 +0200, Geert Uytterhoeven wrote:
+> 	Hi Simon, Magnus,
 > 
-> I'm trying to compare these with the existing 32-bit RGB formats in
-> pixfmt-packed-rgb.rst and I can't get how the orderig of components is
-> defined.
-
-Pixel formats are all a big mess :-)
-
-> Ie your definitions here:
+> Now the DTS for the r8a73a4-based APE6EVM development board describes
+> its CFI NOR FLASH, this patch series enables support for that in
+> shmobile_defconfig and multi_v7_defconfig.
 > 
->         bytes:  B0      B1      B2      B3
-> BGRA32          A       B       G       R
-> BGRX32          x       B       G       R
-> RGBA32          R       G       B       A
-> RGBX32          R       G       B       x
+> Note that kernels built from these configs cannot be booted by stock
+> APE6EVM U-Boot, due to kernel size.
+
+For the whole series,
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
+
 > 
-> In the existing documentation:
-> ABGR32          B       G       R       A
-> XBGR32          B       G       R       x
-> ARGB32          A       R       G       B
-> XRGB32          x       R       G       B
-
-> So you're adding two BGR/RGB variations with 'X' or 'A' moved from the
-> first (for RGB) or last (for BGR) bytes to the last (for RGB) or first
-> (for BGR) bytes.
+> Thanks!
 > 
-> I cannot see a clear pattern (it seems RGB is ordered as you read the
-> components, while BGR is inverted?) so I assume the definition of the
-> component ordering scheme comes from a standard, does it? A reference
-> would help checking for errors :)
-
-The existing formats are pretty inconsistent. I suppose ARGB and XRGB
-were added first, with the format names corresponding to the pixel order
-in memory. Then a need to support BGRA and BGRX arose, and the format
-names were set to ABGR32 and XBGR32 instead of BGRA32 and BGRX32.
-Unfortuantely we can't fix this as it's an ABI, so I had to follow the
-same scheme for the new formats. RGBA and RGBX are fine as the RGBA31
-and RGBX32 names were free, but for ABGR and XBGR I had to use the
-BGRA32 and BGRX32 names.
-
-> >        -
-> >        -
-> >        -
-> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> > index 1db220da3bcc..4e5222726719 100644
-> > --- a/include/uapi/linux/videodev2.h
-> > +++ b/include/uapi/linux/videodev2.h
-> > @@ -528,7 +528,11 @@ struct v4l2_pix_format {
-> >  #define V4L2_PIX_FMT_BGR32   v4l2_fourcc('B', 'G', 'R', '4') /* 32  BGR-8-8-8-8   */
-> >  #define V4L2_PIX_FMT_ABGR32  v4l2_fourcc('A', 'R', '2', '4') /* 32  BGRA-8-8-8-8  */
-> >  #define V4L2_PIX_FMT_XBGR32  v4l2_fourcc('X', 'R', '2', '4') /* 32  BGRX-8-8-8-8  */
-> > +#define V4L2_PIX_FMT_BGRA32  v4l2_fourcc('R', 'A', '2', '4') /* 32  ABGR-8-8-8-8  */
-> > +#define V4L2_PIX_FMT_BGRX32  v4l2_fourcc('R', 'X', '2', '4') /* 32  XBGR-8-8-8-8  */
-> >  #define V4L2_PIX_FMT_RGB32   v4l2_fourcc('R', 'G', 'B', '4') /* 32  RGB-8-8-8-8   */
-> > +#define V4L2_PIX_FMT_RGBA32  v4l2_fourcc('A', 'B', '2', '4') /* 32  RGBA-8-8-8-8  */
-> > +#define V4L2_PIX_FMT_RGBX32  v4l2_fourcc('X', 'B', '2', '4') /* 32  RGBX-8-8-8-8  */
-> >  #define V4L2_PIX_FMT_ARGB32  v4l2_fourcc('B', 'A', '2', '4') /* 32  ARGB-8-8-8-8  */
-> >  #define V4L2_PIX_FMT_XRGB32  v4l2_fourcc('B', 'X', '2', '4') /* 32  XRGB-8-8-8-8  */
-> >
+> Geert Uytterhoeven (2):
+>   ARM: shmobile: defconfig: Enable support for CFI NOR FLASH
+>   ARM: multi_v7_defconfig: Enable support for CFI NOR FLASH
+> 
+>  arch/arm/configs/multi_v7_defconfig | 4 ++++
+>  arch/arm/configs/shmobile_defconfig | 4 ++++
+>  2 files changed, 8 insertions(+)
+> 
+> -- 
+> 2.17.1
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
 
 -- 
 Regards,
-
-Laurent Pinchart
+Niklas Söderlund
