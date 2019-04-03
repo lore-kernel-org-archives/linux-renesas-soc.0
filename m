@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A54EC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281DDC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A85120700
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC1DE20700
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="lnRGpc28"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="D3y/BgIj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbfDCKyr (ORCPT
+        id S1726548AbfDCKys (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 06:54:47 -0400
+        Wed, 3 Apr 2019 06:54:48 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:37176 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfDCKyq (ORCPT
+        with ESMTP id S1725940AbfDCKys (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 06:54:46 -0400
+        Wed, 3 Apr 2019 06:54:48 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id AB01B25BEE7;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id AD46E25BEE9;
         Wed,  3 Apr 2019 21:54:15 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1554288856; bh=pMpCAkryooWDP7su3DA6GK5gjSrVxr6FPAZfsVBK1Xk=;
+        t=1554288856; bh=JVjPc1P7a1LqK1+bSJfR9+I9hQuFnOG8UptFwNDpHPs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lnRGpc28KUVGGmN7d7e4j8sNhOb3qxqHUxwC5peAUX3/R0IUZvoczqp5qMBjvfEFv
-         zvmipO4LRDD3FuCql7EMW+LFsIoX0/e9taI1pg2YMwoixEbrpOstQhWM98DYrH6S0/
-         wKTgM4L/Hr07RF5aaJpul01wVFLQz38qERJxfSsc=
+        b=D3y/BgIjhe+gSJHwfqwXp+J7BJaU05RioBpD0BLooLsGGRlvBDXaJVe1eEWsD1CtM
+         fT0SiSCuD6Q6mMzu240LRosHreOHa4rBkqL8hohkIHdb23g/H1YvGPun4VHiDJ+82U
+         ruAYs9pNyjBaKzU/7Bsic0nt+PuMzQ1/0iNuduRg=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id E5FC2940A88; Wed,  3 Apr 2019 12:54:11 +0200 (CEST)
+        id 18F06940AF0; Wed,  3 Apr 2019 12:54:12 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jiada Wang <jiada_wang@mentor.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/26] arm64: dts: renesas: salvator-common: Sort node label
-Date:   Wed,  3 Apr 2019 12:54:06 +0200
-Message-Id: <de8e8daaf7190efd650bf9d6fed12927c660f235.1554281697.git.horms+renesas@verge.net.au>
+Subject: [PATCH 25/26] arm64: dts: renesas: use extended audio dmac register
+Date:   Wed,  3 Apr 2019 12:54:08 +0200
+Message-Id: <7a516e49d9753119e099fd924574a58e69c9ae84.1554281697.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1554281697.git.horms+renesas@verge.net.au>
 References: <cover.1554281697.git.horms+renesas@verge.net.au>
@@ -52,49 +51,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+From: Jiada Wang <jiada_wang@mentor.com>
 
-This patch sorts the node label to improve maintainability.
-The sort has been done alphabetically with the node label name as the
-key.
+Basic audio dmac register only supports busif from 0 to 3,
+in order to use busif4 ~ busif7, extended audio dmac register
+need to be used.
 
-This patch does not include functional changes.
+This patch updates H3 (= r8a7795), M3-W (= r8a7796) and
+M3-N (=r8a77965) to use extended audio dmac register set.
 
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index a225c2457274..0e5a76fee5fc 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -719,6 +719,11 @@
- 	};
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index abeac3059383..55472b2b013e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -1836,7 +1836,7 @@
+ 				<0 0xec5a0000 0 0x100>,  /* ADG */
+ 				<0 0xec540000 0 0x1000>, /* SSIU */
+ 				<0 0xec541000 0 0x280>,  /* SSI */
+-				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++				<0 0xec760000 0 0x200>;  /* Audio DMAC peri peri*/
+ 			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
  
-+&rwdt {
-+	timeout-sec = <60>;
-+	status = "okay";
-+};
-+
- &scif1 {
- 	pinctrl-0 = <&scif1_pins>;
- 	pinctrl-names = "default";
-@@ -857,11 +862,6 @@
- 	status = "okay";
- };
+ 			clocks = <&cpg CPG_MOD 1005>,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 111f462cd708..d5e2f4af83a4 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1775,7 +1775,7 @@
+ 				<0 0xec5a0000 0 0x100>,  /* ADG */
+ 				<0 0xec540000 0 0x1000>, /* SSIU */
+ 				<0 0xec541000 0 0x280>,  /* SSI */
+-				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++				<0 0xec760000 0 0x200>;  /* Audio DMAC peri peri*/
+ 			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
  
--&rwdt {
--	timeout-sec = <60>;
--	status = "okay";
--};
--
- &xhci0 {
- 	pinctrl-0 = <&usb30_pins>;
- 	pinctrl-names = "default";
+ 			clocks = <&cpg CPG_MOD 1005>,
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index f21e3a8bfbd8..d8b81721eb89 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -1461,7 +1461,7 @@
+ 				<0 0xec5a0000 0 0x100>,  /* ADG */
+ 				<0 0xec540000 0 0x1000>, /* SSIU */
+ 				<0 0xec541000 0 0x280>,  /* SSI */
+-				<0 0xec740000 0 0x200>;  /* Audio DMAC peri peri*/
++				<0 0xec760000 0 0x200>;  /* Audio DMAC peri peri*/
+ 			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+ 
+ 			clocks = <&cpg CPG_MOD 1005>,
 -- 
 2.11.0
 
