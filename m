@@ -2,97 +2,113 @@ Return-Path: <SRS0=jJK9=SF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C91BC10F06
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E467C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA26320830
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B9ED206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:27:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="cU2c0Gzj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbfDCJYf (ORCPT
+        id S1726477AbfDCJ1L (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 05:24:35 -0400
-Received: from sauhun.de ([88.99.104.3]:46958 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbfDCJYf (ORCPT
+        Wed, 3 Apr 2019 05:27:11 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:35824 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfDCJ1L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 05:24:35 -0400
-Received: from localhost (p54B3311F.dip0.t-ipconnect.de [84.179.49.31])
-        by pokefinder.org (Postfix) with ESMTPSA id 70C9D2C282F;
-        Wed,  3 Apr 2019 11:24:33 +0200 (CEST)
-Date:   Wed, 3 Apr 2019 11:24:33 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Steve Twiss <stwiss.opensource@diasemi.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH 2/6] input: da9063_onkey: remove platform_data support
-Message-ID: <20190403092432.qofl5szh5zpfhvlm@ninjato>
-References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
- <20190318154759.21978-3-wsa+renesas@sang-engineering.com>
- <VI1PR10MB2352701871983EF8677C5CB8FE5A0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+        Wed, 3 Apr 2019 05:27:11 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id B144525BDFF;
+        Wed,  3 Apr 2019 20:27:09 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554283630; bh=bGshz4cknrE21CA1w9W4cZ8MqHwSk4r3pYK0YffloZg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cU2c0GzjFJ2I2yvADXD4Gi1uFZXUw2vKzhgQct1j44NqYXKHp5jlbXiOTrZAa7OBa
+         VEFY7q1/1lsHkXXjpisCZzCWtp4TZzuKwc88tlGfiySH5soj7/+JbwjJgtHJP+Lw0w
+         K1XU8k1ONPmdFBSKzGWLaMLqZSHC7kJCQHAJWKLY=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id BD67C940361; Wed,  3 Apr 2019 11:27:07 +0200 (CEST)
+Date:   Wed, 3 Apr 2019 11:27:07 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH V5 1/6] PCI: rcar: Clean up remaining macros defining bits
+Message-ID: <20190403092707.x2skq65ll2q5m74p@verge.net.au>
+References: <20190402013307.20912-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xnv5sx6mtiqadw4j"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <VI1PR10MB2352701871983EF8677C5CB8FE5A0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190402013307.20912-1-marek.vasut@gmail.com>
+Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Tue, Apr 02, 2019 at 03:33:02AM +0200, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> Replace macros using constants with BIT()s instead, no functional change.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---xnv5sx6mtiqadw4j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I feel a sense of déjà vu when reading this.
 
-
-> > Subject: [PATCH 2/6] input: da9063_onkey: remove platform_data support
-> >=20
-> > There are no in-kernel users anymore, so remove this outdated interface.
-> >=20
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > ---
-> >  drivers/input/misc/da9063_onkey.c | 11 ++---------
-> >  1 file changed, 2 insertions(+), 9 deletions(-)
->=20
-> Thanks!
-> Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-> Tested-by: Steve Twiss <stwiss.opensource@diasemi.com>
-
-Dmitry, if you are OK with the series going in via MFD, could you ack
-this patch? As you see, Steve is fine with the patch and tested it, too.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
 
---xnv5sx6mtiqadw4j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyke9AACgkQFA3kzBSg
-KbamOw/+K6NXMZKR1ZgBFZvMQleB6Xj97G7Qk7mAdxbjTO3hXMUI1G1rHVqAjuy+
-Tp0G0nJvb/ZeuDxHSGckXcHQ2C4OJEq5mWyQI1ZOGmNOGPyuJ/r4JsutQLkWIi1y
-yfBMV+MXkx/sVPP2z4FTk2DEO2VTRMtyzRFd2zNV+yTcE8NpWmzW1TP7zlYy/eiK
-1Qa4yPZWXwiGhVrn5erZywkjxhAgfPuoGNOxodMLNpjmyELbA8eztvc/dHbBkjwj
-/2I2pLVUWAswS2iYc29re6YUtUMLlxatggHxYxLr/a8jMciAfvy3SmGtDZ2Uo+s9
-79D/wEjsPCBOwdV/KS9ZbGRw8DhaUwso7nNaYB//twjfQpqz0QrvEIDQXZ6sQF+P
-iKdg1gh+GkltCvg6Oas3HLBuXNFedebAjF5hcxEIYSpjCbmF/Pb+DTg2BIPb3fwz
-qVCZgAU7XZBR4HsEJIlCaYq2K2FC9RB1LUSQEuHmLJBLa7eGnu8I8GjKmW64vvKO
-JSHNxTnN8Ns00zWKlNpCH3g4GtynaFB70Iebyvd65wSgkH29Sky4MzocyuU5Yy67
-hcoOTz1CwNLYzw76ZrejEz6/AG9c7jD6hLTgluJVpEvxH26NcPFtn5A1P9v4IOUW
-IHztBBXwmDxlnE90Xnk467DCQ3jynzBOS3N91JdevyGYcPvP3Kc=
-=flns
------END PGP SIGNATURE-----
-
---xnv5sx6mtiqadw4j--
+> ---
+> V2: Bundle this patch with other cleanups before resending
+> V3: Add Wolfram's R-B
+> V4: Add Geert's R-B
+> V5: Rebase on next/master 20190401
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index 6a4e435bd35f..542b5bbf4bf1 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -47,14 +47,14 @@
+>  /* Transfer control */
+>  #define PCIETCTLR		0x02000
+>  #define  DL_DOWN		BIT(3)
+> -#define  CFINIT			1
+> +#define  CFINIT			BIT(0)
+>  #define PCIETSTR		0x02004
+> -#define  DATA_LINK_ACTIVE	1
+> +#define  DATA_LINK_ACTIVE	BIT(0)
+>  #define PCIEERRFR		0x02020
+>  #define  UNSUPPORTED_REQUEST	BIT(4)
+>  #define PCIEMSIFR		0x02044
+>  #define PCIEMSIALR		0x02048
+> -#define  MSIFE			1
+> +#define  MSIFE			BIT(0)
+>  #define PCIEMSIAUR		0x0204c
+>  #define PCIEMSIIER		0x02050
+>  
+> -- 
+> 2.20.1
+> 
