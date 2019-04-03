@@ -2,102 +2,106 @@ Return-Path: <SRS0=jJK9=SF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231C1C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 08:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7F4C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 08:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B2720830
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 08:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB8A206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 08:37:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="llVc+5yY"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="YHj9r/s4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfDCIIU (ORCPT
+        id S1726862AbfDCIhs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 04:08:20 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42489 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfDCIIU (ORCPT
+        Wed, 3 Apr 2019 04:37:48 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:34989 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfDCIhs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 04:08:20 -0400
-Received: by mail-pg1-f195.google.com with SMTP id p6so7900706pgh.9
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2019 01:08:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=WuEcbru8Ujw/2EXwYhzXjNVCHb6+XGxcyq6w9wzJens=;
-        b=llVc+5yY6Qk0fjBq5kzMZtUqhwMEMNdqv94+ac1szxMe2Y0g4Y26Mo0e0SvEK9S2qQ
-         s2LOERpvzUE15eXYgDQGHqVLKSRofnB0nW5vEikUXFO458kJCECqD7TDoRXm8tXrNON7
-         6DhW5m6GAJT1NNUYW4Yeo2JoODY5/ow2yOZbz8EBdzMqrtu6rP7E5a0hGdUIvQrj82uZ
-         695uVTn7/2odQmxYwKaEw3xGNB9mlZl4aYieHzo1xTmb0eu0tH930JgaB4XehBYd+48Z
-         SUTfo6Rmy8JVQsdJHKhpsKGzuhFEvrdkuSh7Kcwa7K7eX/vz9/SRFocLQIZr18H4haoV
-         hBqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=WuEcbru8Ujw/2EXwYhzXjNVCHb6+XGxcyq6w9wzJens=;
-        b=tqoDwLlgrS5Omso+b+TkiiOf1sw9eTMBjfOSJ41H343ZzogH1fMpUpXqLKiv4zJP5Z
-         43ukpbYF5G00Ti5Mecv/HNQa6U0VH6569ZWBr/Fkd1tSJFERw7Knez6qjKoSwZVL0yNV
-         Zod9T0SbKq9lg9LYYDKsBoM5PVarxpZ8Cz2o4OyQSc64h3fRv57+x/MuzfzVB4jNYZZc
-         dm8MhHi2rlq2A62//epQsrjPHubHD2/ggCRJQkIakUHTQv/eQ4XfjQDC8FRsnDDFbSlp
-         mllN9op0oCSPm7GD9RBRnHWz5DgR+Ydep9lOpT8FgowgZhrOD8qcfABJVunUTkeJ2b1/
-         edFw==
-X-Gm-Message-State: APjAAAXOtaU0eWZ3eJkCtknj3vpMZJTpCklsjGYBvPFYEv3KucJ1GIeZ
-        UDwqn/46Z3boxHFbDChqQfYz6Q==
-X-Google-Smtp-Source: APXvYqydr0lz5sS77mGjhI9FxNqHH9c2oZLm8SejMXuK3BscOWmBRUwEDKK6hpRZBDJyYgKzXhwOyQ==
-X-Received: by 2002:aa7:85cc:: with SMTP id z12mr73526059pfn.142.1554278899651;
-        Wed, 03 Apr 2019 01:08:19 -0700 (PDT)
-Received: from dell ([147.50.13.10])
-        by smtp.gmail.com with ESMTPSA id r145sm10507207pgr.84.2019.04.03.01.08.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 03 Apr 2019 01:08:18 -0700 (PDT)
-Date:   Wed, 3 Apr 2019 09:07:58 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
-Subject: Re: [PATCH 5/6] mfd: da9063: remove leftover platform_data
- definitions
-Message-ID: <20190403080758.GF11301@dell>
-References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
- <20190318154759.21978-6-wsa+renesas@sang-engineering.com>
+        Wed, 3 Apr 2019 04:37:48 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id ECF2825BDFF;
+        Wed,  3 Apr 2019 19:37:45 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554280666; bh=Y4ApBQzpPsbvZ6uAYQMeVyZB+td0r1wLd8zcHdrIAIg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YHj9r/s4QUvz+63J6HAzxEALqyGlA6SHZE2T/ddb+rjpv7bCEJlvdpi0tAAQ+dauw
+         HYOx3qnAzc6fKyFNEnEbx3Zf/egwrwIbS6t/y+m7j7yXv13T5SexKhnmE8CDAEnRTk
+         xI0nY6yX/tC/p+Um/miLV6lPz34KFXGPXwwknOfM=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id B4435940361; Wed,  3 Apr 2019 10:37:43 +0200 (CEST)
+Date:   Wed, 3 Apr 2019 10:37:43 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Subject: Re: [PATCH 4/8] pinctrl: sh-pfc: rcar-gen3: Remove HDMI CEC pins,
+ groups, and functions
+Message-ID: <20190403083743.pveg243luo7irdd2@verge.net.au>
+References: <20190329152942.13995-1-geert+renesas@glider.be>
+ <20190329152942.13995-5-geert+renesas@glider.be>
+ <20190401101425.5w7ueezlsat3fncz@verge.net.au>
+ <20190401102551.wwznt2qnnccsx2u6@verge.net.au>
+ <CAMuHMdV8h4pO7kLKnKnkGAZc_1GD1PVOEZk+bBqNA54GQGkwcA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190318154759.21978-6-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAMuHMdV8h4pO7kLKnKnkGAZc_1GD1PVOEZk+bBqNA54GQGkwcA@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 18 Mar 2019, Wolfram Sang wrote:
-
-> Not used, not needed, remove them.
+On Mon, Apr 01, 2019 at 12:58:13PM +0200, Geert Uytterhoeven wrote:
+> Hi Simon,
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  include/linux/mfd/da9063/pdata.h | 65 ----------------------------------------
->  1 file changed, 65 deletions(-)
->  delete mode 100644 include/linux/mfd/da9063/pdata.h
+> On Mon, Apr 1, 2019 at 12:25 PM Simon Horman <horms@verge.net.au> wrote:
+> > On Mon, Apr 01, 2019 at 12:14:26PM +0200, Simon Horman wrote:
+> > > On Fri, Mar 29, 2019 at 04:29:38PM +0100, Geert Uytterhoeven wrote:
+> > > > From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > >
+> > > > This reverts commit 7793ac664c5ebebdb021c4ec66ff9d174d58e98e.
+> > > >
+> > > > The HDMI CEC function is not supported by the R-Car Gen3 Hardware Manual
+> > > > Rev 1.00. Therefore, delete the corresponding pin groups and functions,
+> > > > and rename the HDMI[01]_CEC definitions to match their GPIO
+> > > > functionality.
+> > > >
+> > > > Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> > > > [geert: Squashed several commits]
+> > >
+> > > Ok, but it now does a lot more than revert
+> > > 7793ac664c5ebebdb021c4ec66ff9d174d58e98e.
+> > > That confused me a bit.
+> 
+> Sorry, I forgot to remove that line when squashing the commits.
+> Will fix when queuing.
 
-Can't take this until the last user has been removed.
+Great, thanks!
 
-But for now:
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> > That notwithstanding,
+> >
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> 
+> Thanks!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> 
