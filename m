@@ -3,72 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4094EC10F0B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 15:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADC0C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 16:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A34F2084C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 15:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 760962075E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 16:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbfDCPUB (ORCPT
+        id S1726099AbfDCQEA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 11:20:01 -0400
-Received: from sauhun.de ([88.99.104.3]:49514 "EHLO pokefinder.org"
+        Wed, 3 Apr 2019 12:04:00 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:47426 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbfDCPUB (ORCPT
+        id S1726825AbfDCQD5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 11:20:01 -0400
-Received: from localhost (p54B3311F.dip0.t-ipconnect.de [84.179.49.31])
-        by pokefinder.org (Postfix) with ESMTPSA id 857D52C282F;
-        Wed,  3 Apr 2019 17:19:59 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] rtc: don't reference bogus function pointer in kdoc
-Date:   Wed,  3 Apr 2019 17:19:52 +0200
-Message-Id: <20190403151952.8415-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 3 Apr 2019 12:03:57 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 1697DC3892314EF7F244;
+        Thu,  4 Apr 2019 00:03:55 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id x33G3ZUq028718;
+        Thu, 4 Apr 2019 00:03:35 +0800 (GMT-8)
+        (envelope-from wen.yang99@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019040400040138-7533735 ;
+          Thu, 4 Apr 2019 00:04:01 +0800 
+From:   Wen Yang <wen.yang99@zte.com.cn>
+To:     linux-kernel@vger.kernel.org
+Cc:     wang.yi59@zte.com.cn, Wen Yang <wen.yang99@zte.com.cn>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 6/7] drm: rcar-du: fix possible object reference leak
+Date:   Thu, 4 Apr 2019 00:04:14 +0800
+Message-Id: <1554307455-40361-7-git-send-email-wen.yang99@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1554307455-40361-1-git-send-email-wen.yang99@zte.com.cn>
+References: <1554307455-40361-1-git-send-email-wen.yang99@zte.com.cn>
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-04-04 00:04:01,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-04-04 00:03:27,
+        Serialize complete at 2019-04-04 00:03:27
+X-MAIL: mse01.zte.com.cn x33G3ZUq028718
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The mentioned function pointer is long gone since early 2011. Remove the
-reference in the comment and reword it slightly.
+The call to of_get_parent returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Fixes: 51ba60c5bb3b ("RTC: Cleanup rtc_class_ops->update_irq_enable()")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Detected by coccinelle with the following warnings:
+drivers/gpu/drm/rcar-du/rcar_du_of.c:235:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 216, but without a corresponding object release within this function.
+drivers/gpu/drm/rcar-du/rcar_du_of.c:236:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 209, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org (open list)
 ---
+ drivers/gpu/drm/rcar-du/rcar_du_of.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I stumbled over this when trying to understand UIE handling during my
-DA9063 debugging session.
-
- drivers/rtc/interface.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index 98d9c87b0d1b..4ac33b931f3d 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -571,10 +571,9 @@ int rtc_update_irq_enable(struct rtc_device *rtc, unsigned int enabled)
- 	mutex_unlock(&rtc->ops_lock);
- #ifdef CONFIG_RTC_INTF_DEV_UIE_EMUL
- 	/*
--	 * Enable emulation if the driver did not provide
--	 * the update_irq_enable function pointer or if returned
--	 * -EINVAL to signal that it has been configured without
--	 * interrupts or that are not available at the moment.
-+	 * Enable emulation if the driver returned -EINVAL to signal that it has
-+	 * been configured without interrupts or they are not available at the
-+	 * moment.
- 	 */
- 	if (err == -EINVAL)
- 		err = rtc_dev_update_irq_enable_emul(rtc, enabled);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+index afef696..30bceca 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_of.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+@@ -232,6 +232,8 @@ static void __init rcar_du_of_lvds_patch(const struct of_device_id *of_ids)
+ 	lvds_node = of_find_compatible_node(NULL, NULL, compatible);
+ 	if (lvds_node) {
+ 		of_node_put(lvds_node);
++		of_node_put(soc_node);
++		of_node_put(du_node);
+ 		return;
+ 	}
+ 
 -- 
-2.19.1
+2.9.5
 
