@@ -2,155 +2,197 @@ Return-Path: <SRS0=jJK9=SF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA40C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D293C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBD962147C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 100BD2084C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:25:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=in.bosch.com header.i=@in.bosch.com header.b="KsSr5mfZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbfDCNPP (ORCPT
+        id S1726188AbfDCNZl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 09:15:15 -0400
-Received: from mga05.intel.com ([192.55.52.43]:44506 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726097AbfDCNPP (ORCPT
+        Wed, 3 Apr 2019 09:25:41 -0400
+Received: from de-deferred2.bosch-org.com ([139.15.180.217]:46288 "EHLO
+        de-deferred2.bosch-org.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726099AbfDCNZl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 09:15:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Apr 2019 06:15:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,304,1549958400"; 
-   d="scan'208";a="334627151"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Apr 2019 06:15:11 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hBfjS-0002qL-IF; Wed, 03 Apr 2019 16:15:10 +0300
-Date:   Wed, 3 Apr 2019 16:15:10 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peter Rosin <peda@axentia.se>,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/12] i2c: core: introduce atomic transfers
-Message-ID: <20190403131510.GE9224@smile.fi.intel.com>
-References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+        Wed, 3 Apr 2019 09:25:41 -0400
+Received: from de-out1.bosch-org.com (unknown [139.15.180.215])
+        by fe0vms0193.rbdmz01.com (Postfix) with ESMTPS id 44Z65q10h0z2Zt;
+        Wed,  3 Apr 2019 15:15:59 +0200 (CEST)
+Received: from si0vm1947.rbesz01.com (unknown [139.15.230.188])
+        by fe0vms0187.rbdmz01.com (Postfix) with ESMTPS id 44Z65n3R47z1XLDQt;
+        Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=in.bosch.com;
+        s=2015-01-21; t=1554297357;
+        bh=5JmXTCA8402bhLcSZ4Bm03a+Df0e1eFcN7hmyjl8vSI=; l=10;
+        h=From:From:Reply-To:Sender;
+        b=KsSr5mfZkWC84xy343neKHvYjnHU2ZDc0SrPG3doa1ZabNcvuZ6zwN+afLtGaTfO0
+         HUCBcfrjmBLT+dMMaxG/+5u37sztMO4g5rJL0x0gT2H/UHLVwTol6W3apedsquw822
+         ZH05RnQPtngcH3/QeSgbm/Z/LsbpT3kjj2FElSwk=
+Received: from fe0vm7918.rbesz01.com (unknown [10.58.172.176])
+        by si0vm1947.rbesz01.com (Postfix) with ESMTPS id 44Z65n2q3fz6CjQSN;
+        Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
+X-AuditID: 0a3aad10-03fff70000007f88-86-5ca4b20d2a59
+Received: from fe0vm1652.rbesz01.com ( [10.58.173.29])
+        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by fe0vm7918.rbesz01.com (SMG Outbound) with SMTP id C1.BF.32648.D02B4AC5; Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
+Received: from SI-HUB2000.de.bosch.com (si-hub2000.de.bosch.com [10.4.103.108])
+        by fe0vm1652.rbesz01.com (Postfix) with ESMTPS id 44Z65n0R74zVv1;
+        Wed,  3 Apr 2019 15:15:57 +0200 (CEST)
+Received: from localhost.localdomain (10.47.103.88) by SI-HUB2000.de.bosch.com
+ (10.4.103.108) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Wed, 3 Apr 2019
+ 15:15:55 +0200
+From:   <VenkataRajesh.Kalakodima@in.bosch.com>
+To:     <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC:     kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>,
+        Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
+Subject: [PATCH 6/8] drm: rcar-du: Implement atomic_check to check for gamma and ctm properties
+Date:   Wed, 3 Apr 2019 18:44:42 +0530
+Message-ID: <1554297284-14009-7-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.47.103.88]
+X-Brightmail-Tracker: H4sIAAAAAAAAA22Sb0xTVxjGObf/bjuOOVwovBZqzA2OZBEHDMfdnyzbPqhZtmkyXRbThd3C
+        hXZSSnpbIsyYus2RYakuZkYqaYGx+ScYoHNCcYHQKU7sCKIfwCywISaFMdQBCS4Bd68F2w/7
+        9ub5ned9znlyaAXToTHQ1kqn4KjkK1i1Tql79aIxFwfbTHm9D3Vc4Oqwiruz9EDNPfJMqLjb
+        vU1q7qeZeepN1a7JY9epXQvBTXuo/brXS4UKa7XgePGNT3SWxSYvqvom82BPw4rKjfrT65GW
+        BlIIRwO/oHqkoxlymoL2kRWFDBjyM4I+z6cxMIcgWOdXykBNcqG/q0sjgzRyHsGx+W5KBgpy
+        CBpOtmnkOZUUQ4unRS3PSpINkbN3pK00jck+GDtSGEveBOPDXz8N05IPIfDrtDoWvA8Cy/+o
+        5BmTFLjROK2MrQcYiEafrgGyGUIt6hOI+BJO+RJONSPqAtKXCXnVtqJX8rltDrMg1ublbyux
+        24Io1ibpQaGhsjAiNGKT8URjm4lR8dVijS2MttMUq8cvH5akDWZ7aY2FFy3FDleFILIGnDXy
+        jolJfSaLLrPNKopWe2UYAa1g03DkeLOJwaV8Ta3gsMdsYZRJK9kMXE7vNjGknHcKBwShSnCs
+        09domgWc1iUFpjiEcuFgmbXCuY5ZI0ZJSUlMeiJJjKVobRi9RCdL2aEOaQUWq3ibaC1fs2+M
+        2Zl1NW4dQkWGDPxcp+QhMrW4Kp+lGrJw0n2/idEngLhzFo0jqbdUvCIHJksfNZ4HOFOuKGVN
+        jJsKvpc85LwWZurcCBY8Ywj8PUsIlqe+pGB1epYC/93PlTDa69PAwsUlDXhb/TRMjl/WwsNz
+        DRguzV7H0H92joHTS0/SoO+rBj0Ehx5nwfyNR0bw915j4Zb3NgvRPk829Ize3ALewboc6Dh5
+        LgciPw7mQHRxPgd+H/FvhcblK1sh9GQ0FyYenMmDK981F8DqqfZC6Qa+olmpTEoqk3MF5DKd
+        vPN/ylxT468zuNF2pTFzgGwuee/jel/y4cvRqx+8u3Pli8BMRmtZcMO/5v3dd4883/hXraeE
+        DhVX7XyMplbv2Rdr9kx1csY/WgcK718am9vtm/7MPKz3uE/s/XsyZUdJtDb6NlX354DG2546
+        Gck+dO/9Ld0fcQU/HP3t2qmbM+4db7k6jx/41tp0azCSvpFVihY+/wWFQ+T/A3Fq90ZCBAAA
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 02:40:07PM +0200, Wolfram Sang wrote:
-> This series adds support for very late atomic transfers to the I2C subsystem.
-> It finally reached a state which I think is ready-to-apply. This is mainly
-> because of two things:
-> 
-> a) we decided to respect the current locking scheme and to not give atomic
-> transfers a priority. The code needed for that would have been either
-> incomplete or very invasive. And we cannot guarantee successful transfers
-> anyhow. See [1] for the discussion and other write-ups for design choices.
-> 
-> b) thanks to a discussion with Peter Zijlstra[2], the conditions when to allow
-> atomic transfers became much clearer. The new helper i2c_in_atomic_xfer_mode()
-> adds readability, too.
-> 
-> In detail, changes since RFC v2:
-> 
-> * dropped coding style patch because already applied
-> * added new patch 1 to drop in_atomic() and have better conditions when
->   to enter the atomic path
-> * added support to the mux-core
-> * simplified omap conversion a little
-> * added new conversions for ocores, stu300, and algo-bit/gpio
-> * typo corrections found by Simon and Stefan
-> * added tags to drivers
-> * dropped tags from core patches because that part changed too much
-> 
-> All tested on a Renesas Lager board (R-Car H2). Sadly, the i2c-sh_mobile driver
-> cannot be converted now because of other work needed first. I tested with the
-> i2c-gpio driver, though. The other driver patches are build tested. A branch
-> can be found here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/atomic_xfer
-> 
-> I am happy for reviews and comments. Please note if you review (especially the
-> core parts), I'd like to have a short summary of your review even if there is
-> no proposed change. Like what you did, what you think about it, etc. Some stuff
-> in here is subtle, so if you went through the effort to double check my
-> assumptions you should name it :)
-> 
+From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
 
-Thank you!
+    Implement atomic helper check and allocate memory necessary for
+    lut and clu tables
 
-FWIW,
+Signed-off-by: Harsha M M <harsha.manjulamallikarjun@in.bosch.com>
 
-Reviewed-by Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+      - Resolved checkpatch errors
+      - Resolved merge conflicts according to latest version
+Signed-off-by: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 58 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  3 +-
+ 2 files changed, 60 insertions(+), 1 deletion(-)
 
-for patches 1-5,12.
-
-Indeed, atomic condition sounds clear now.
-
-> 
-> Finally, a big thank you and credit to Renesas for funding this work, of course!
-> 
-> Happy hacking,
-> 
->    Wolfram
-> 
-> [1] https://lkml.org/lkml/2019/3/2/76
-> [2] http://patchwork.ozlabs.org/patch/1067437/
-> 
-> Wolfram Sang (12):
->   i2c: remove use of in_atomic()
->   i2c: core: use I2C locking behaviour also for SMBUS
->   i2c: core: introduce callbacks for atomic transfers
->   i2c: mux: populate the new *_atomic callbacks
->   i2c: demux: handle the new atomic callbacks
->   i2c: omap: Add the master_xfer_irqless hook
->   i2c: tegra-bpmp: convert to use new atomic callbacks
->   i2c: ocores: refactor setup for polling
->   i2c: ocores: enable atomic xfers
->   i2c: stu300: use xfer_atomic callback to bail out early
->   i2c: algo: bit: add flag to whitelist atomic transfers
->   i2c: gpio: flag atomic capability if possible
-> 
->  drivers/i2c/algos/i2c-algo-bit.c      | 22 +++++++++-
->  drivers/i2c/busses/i2c-gpio.c         |  2 +
->  drivers/i2c/busses/i2c-ocores.c       | 16 +++-----
->  drivers/i2c/busses/i2c-omap.c         | 76 +++++++++++++++++++++++++++++------
->  drivers/i2c/busses/i2c-stu300.c       | 25 +++++-------
->  drivers/i2c/busses/i2c-tegra-bpmp.c   | 25 +++++++++---
->  drivers/i2c/i2c-core-base.c           | 17 ++++----
->  drivers/i2c/i2c-core-smbus.c          | 25 +++++++++---
->  drivers/i2c/i2c-core.h                | 25 ++++++++++++
->  drivers/i2c/i2c-mux.c                 |  6 +++
->  drivers/i2c/muxes/i2c-demux-pinctrl.c |  2 +
->  include/linux/i2c-algo-bit.h          |  1 +
->  include/linux/i2c.h                   | 15 +++++--
->  13 files changed, 194 insertions(+), 63 deletions(-)
-> 
-> -- 
-> 2.11.0
-> 
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 864fb94..a00b7a7 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -622,6 +622,63 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+  * CRTC Functions
+  */
+ 
++static bool rcar_du_crtc_is_ctm_updated(struct drm_crtc *crtc,
++					struct drm_crtc_state *state)
++{
++	return (state->color_mgmt_changed && state->ctm &&
++		crtc->state->ctm &&
++		(crtc->state->ctm->base.id != state->ctm->base.id));
++}
++
++static bool rcar_du_crtc_is_gamma_updated(struct drm_crtc *crtc,
++					  struct drm_crtc_state *state)
++{
++	return (state->color_mgmt_changed && state->gamma_lut &&
++		crtc->state->gamma_lut &&
++		(crtc->state->gamma_lut->base.id != state->gamma_lut->base.id));
++}
++
++static int rcar_du_crtc_cmm_atomic_check(struct drm_crtc *crtc,
++					 struct drm_crtc_state *state)
++{
++	int ret = 0;
++	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
++
++	/*Check gamma update and allocate memory*/
++	if (rcar_du_crtc_is_gamma_updated(crtc, state) &&
++	    !rcrtc->lut_handle) {
++		ret = rcar_du_cmm_lut_valid((crtc->state->gamma_lut->length /
++					     sizeof(struct drm_color_lut)));
++		if (ret >= 0) {
++			rcrtc->lut_handle =
++				rcar_du_cmm_alloc_lut(rcrtc->cmm_handle);
++			if (!rcrtc->lut_handle)
++				ret = -ENOMEM;
++		}
++	}
++
++	/*Check update of ctm and allocate memory*/
++	if (ret >= 0 && rcar_du_crtc_is_ctm_updated(crtc, state) &&
++	    !rcrtc->clu_handle) {
++		rcrtc->clu_handle = rcar_du_cmm_alloc_clu(rcrtc->cmm_handle);
++		if (!rcrtc->clu_handle) {
++			if (!rcrtc->lut_handle) {
++				rcar_du_cmm_free_lut(rcrtc->lut_handle);
++				rcrtc->lut_handle = NULL;
++			}
++			ret = -ENOMEM;
++		}
++	}
++
++	return ret;
++}
++
++static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
++				     struct drm_crtc_state *state)
++{
++	return rcar_du_crtc_cmm_atomic_check(crtc, state);
++}
++
+ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
+ 				       struct drm_crtc_state *old_state)
+ {
+@@ -708,6 +765,7 @@ static const struct drm_crtc_helper_funcs crtc_helper_funcs = {
+ 	.atomic_flush = rcar_du_crtc_atomic_flush,
+ 	.atomic_enable = rcar_du_crtc_atomic_enable,
+ 	.atomic_disable = rcar_du_crtc_atomic_disable,
++	.atomic_check = rcar_du_crtc_atomic_check,
+ };
+ 
+ static struct drm_crtc_state *
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index 5b85de4..b79080e 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -70,7 +70,8 @@ struct rcar_du_crtc {
+ 	int lvds_ch;
+ 
+ 	void *cmm_handle;
+-
++	void *lut_handle;
++	void *clu_handle;
+ };
+ 
+ #define to_rcar_crtc(c)	container_of(c, struct rcar_du_crtc, crtc)
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.7.4
 
