@@ -2,112 +2,110 @@ Return-Path: <SRS0=jJK9=SF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06196C10F0B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 12:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033F7C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BCD20830
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 12:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF3F02084C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:13:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbfDCMkg (ORCPT
+        id S1726155AbfDCNNM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 08:40:36 -0400
-Received: from sauhun.de ([88.99.104.3]:48284 "EHLO pokefinder.org"
+        Wed, 3 Apr 2019 09:13:12 -0400
+Received: from sauhun.de ([88.99.104.3]:48728 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbfDCMkg (ORCPT
+        id S1725959AbfDCNNM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 08:40:36 -0400
+        Wed, 3 Apr 2019 09:13:12 -0400
 Received: from localhost (p54B3311F.dip0.t-ipconnect.de [84.179.49.31])
-        by pokefinder.org (Postfix) with ESMTPSA id F11803E604C;
-        Wed,  3 Apr 2019 14:40:34 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Peter Rosin <peda@axentia.se>,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 01/12] i2c: remove use of in_atomic()
-Date:   Wed,  3 Apr 2019 14:40:08 +0200
-Message-Id: <20190403124019.8947-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
-References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+        by pokefinder.org (Postfix) with ESMTPSA id 5DAEB2C282F;
+        Wed,  3 Apr 2019 15:13:10 +0200 (CEST)
+Date:   Wed, 3 Apr 2019 15:13:09 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] mmc: core: retry CMD1 in mmc_send_op_cond() even if the
+ ocr = 0
+Message-ID: <20190403131309.mlj5twiymmjw24rr@ninjato>
+References: <1553764807-5778-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="khxhdzcp36osyund"
+Content-Disposition: inline
+In-Reply-To: <1553764807-5778-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Commit cea443a81c9c ("i2c: Support i2c_transfer in atomic contexts")
-added in_atomic() to the I2C core. However, the use of in_atomic()
-outside of core kernel code is discouraged and was already[1] when this
-code was added in early 2008. The above commit was a preparation for
-commit b7a3670131c7 ("i2c-pxa: Add polling transfer"). Its commit
-message says explicitly it was added "for cases where I2C transactions
-have to occur at times interrup[t]s are disabled". So, the intention was
-'disabled interrupts'. This matches the use cases for atomic I2C
-transfers I have seen so far: very late communication (mostly to a PMIC)
-to powerdown or reboot the system. For those cases, interrupts are
-disabled then. It doesn't seem that in_atomic() adds value.
 
-After a discussion with Peter Zijlstra[2], we came up with a better set
-of conditionals to match the use case.
+--khxhdzcp36osyund
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The I2C core will soon gain an extra callback into bus drivers
-especially for atomic transfers to make them more generic. The code
-deciding which transfer to use (atomic/non-atomic) should mimic the
-behaviour which locking to use (trylock/lock). This is why we add a
-helper for it.
+Hi Shimoda-san,
 
-[1] https://lwn.net/Articles/274695/
-[2] http://patchwork.ozlabs.org/patch/1067437/
+thank you for this bugfix! Looks like a nice catch.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c |  2 +-
- drivers/i2c/i2c-core.h      | 10 ++++++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+> +
+> +		/*
+> +		 * According to eMMC specification, we should issue CMD1
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 38af18645133..f8502064cd6b 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1946,7 +1946,7 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 	 *    one (discarding status on the second message) or errno
- 	 *    (discarding status on the first one).
- 	 */
--	if (in_atomic() || irqs_disabled()) {
-+	if (i2c_in_atomic_xfer_mode()) {
- 		ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT);
- 		if (!ret)
- 			/* I2C activity is ongoing. */
-diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
-index 37576f50fe20..9d8526415b26 100644
---- a/drivers/i2c/i2c-core.h
-+++ b/drivers/i2c/i2c-core.h
-@@ -29,6 +29,16 @@ extern int		__i2c_first_dynamic_bus_num;
- 
- int i2c_check_7bit_addr_validity_strict(unsigned short addr);
- 
-+/*
-+ * We only allow atomic transfers for very late communication, e.g. to send
-+ * the powerdown command to a PMIC. Atomic transfers are a corner case and not
-+ * for generic use!
-+ */
-+static inline bool i2c_in_atomic_xfer_mode(void)
-+{
-+	return system_state > SYSTEM_RUNNING && irqs_disabled();
-+}
-+
- #ifdef CONFIG_ACPI
- const struct acpi_device_id *
- i2c_acpi_match_device(const struct acpi_device_id *matches,
--- 
-2.11.0
+Maybe it is good to specify where? I found it in the standard v5.1,
+section 6.4.3.
 
+> +		 * repeatidly in the idle state until the eMMC is ready even if
+
+"repeatedly"
+
+> +		 * the mmc_attach_mmc() calls this function with ocr = 0.
+
+I would suggest to remove the "if ..." part from the comment. Because
+you remove the 'if (ocr == 0)' code, so it becomes less obvious what
+that part of the comment relates to.
+
+> +		 * Otherwise some eMMC devices seem to enter the inactive mode
+> +		 * after mmc_init_card() issued CMD0 when the eMMC device is
+> +		 * busy.
+> +		 */
+
+Other than that, good documentation!
+
+> +		if (!ocr && !mmc_host_is_spi(host))
+> +			cmd.arg = cmd.resp[0] | BIT(30);
+
+I think BIT(30) is okay for this bugfix. But as a follow up, we should
+turn this into a define. It could be used in mmc_init_card() as well and
+will make the code way more readable.
+
+All the best,
+
+   Wolfram
+
+
+--khxhdzcp36osyund
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyksWEACgkQFA3kzBSg
+KbYe8RAAsCgTMDo1DewOr7o3rVvBVJaXB6RKPYCMcqon3GpKVNcI215Uc9IPTyPz
+MHZGBXeKRVwVc2Ooz76MyfPVIzcEatUM9q4OJwHc4Kgj13W00MYQkxiydCutr1Nw
+J9oxVJrtBE1H+0qL1Hw/A6gYpufmReqw8tdzE3UbQaw9fV+lh0zbOO5q8XVaykwB
+rMkvSyqsRKnxNjyjMbkiP/qAftje9KrJwi4yqSEO0mdE5STICekSgoiVCQhS1mdX
+jYneUOlDOruHZw/Bmy0v/WwsGxSzFSib2C+QCMCcwOAfeFw+1Pv1SnFJ4c3DMbfW
+uxy9T/BksYhZzqR+9dIUWcAH/g6RrFzrXh/95NYI8A+FqyUaDPM3wTiJFr7NFOa4
+UHgBMRQp/tMH+FAfLs6hk7xyWzzLRNZ3RTciQHnS/0u77T4iwR4gzW8ksgoIOlUW
+T11xLiY7hePbCeZe72bzm2aR3tDOc0oAHxGwsBZceNo6MF2qqQyJewLx7+fmhzJZ
+7auoqPaHbPTib6LwAYZlvU6exftwpFZT8sPMND+9aQCNOs5353T2jiRL6dgXkyaB
+XpIvWW33sr2iS8VoPKZM7m5pV4+wQoCIMnjcPs5B1ldc2BI1I4rk4uRtCQu1bGXN
+TERat1WhLIp6Kc+qwChc63K2N/NPziL8YcOW0RN3y8d3tH3qsmc=
+=IONW
+-----END PGP SIGNATURE-----
+
+--khxhdzcp36osyund--
