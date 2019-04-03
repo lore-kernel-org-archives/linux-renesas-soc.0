@@ -2,331 +2,327 @@ Return-Path: <SRS0=jJK9=SF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0945C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B14C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 14:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A31620830
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 13:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB21E20830
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 14:45:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=in.bosch.com header.i=@in.bosch.com header.b="cDXEzRiX"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="cEYaEWgO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbfDCN1O (ORCPT
+        id S1726151AbfDCOph (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 09:27:14 -0400
-Received: from de-deferred2.bosch-org.com ([139.15.180.217]:46272 "EHLO
-        de-deferred2.bosch-org.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726064AbfDCNZn (ORCPT
+        Wed, 3 Apr 2019 10:45:37 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.24]:25553 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfDCOph (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 09:25:43 -0400
-Received: from de-out1.bosch-org.com (unknown [139.15.180.215])
-        by fe0vms0193.rbdmz01.com (Postfix) with ESMTPS id 44Z65v1f8dz2gZ;
-        Wed,  3 Apr 2019 15:16:03 +0200 (CEST)
-Received: from si0vm1947.rbesz01.com (unknown [139.15.230.188])
-        by fe0vms0186.rbdmz01.com (Postfix) with ESMTPS id 44Z65s43Qlz1XLFjh;
-        Wed,  3 Apr 2019 15:16:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=in.bosch.com;
-        s=2015-01-21; t=1554297361;
-        bh=5JmXTCA8402bhLcSZ4Bm03a+Df0e1eFcN7hmyjl8vSI=; l=10;
-        h=From:From:Reply-To:Sender;
-        b=cDXEzRiXZWXt4NEpGOX9n0UvvQ8r4Tcqe4wfAYX8cOsTzz7I4iGZGna4NBoAmobZf
-         aR4in5ZaqUBYPNJRXa+wHcQrZPiKUCPJfuIqoTBCbzioLW9p4qyII9QiEmHN3rt0n5
-         TQPflzTQcg6yWVg5P3pDR5jPnfGT/ZwyRGBR1UPY=
-Received: from fe0vm7918.rbesz01.com (unknown [10.58.172.176])
-        by si0vm1947.rbesz01.com (Postfix) with ESMTPS id 44Z65s3XX0z6CjQSh;
-        Wed,  3 Apr 2019 15:16:01 +0200 (CEST)
-X-AuditID: 0a3aad10-03fff70000007f88-c0-5ca4b210ba23
-Received: from fe0vm1651.rbesz01.com ( [10.58.173.29])
-        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by fe0vm7918.rbesz01.com (SMG Outbound) with SMTP id 19.BF.32648.012B4AC5; Wed,  3 Apr 2019 15:16:00 +0200 (CEST)
-Received: from SI-HUB2000.de.bosch.com (si-hub2000.de.bosch.com [10.4.103.108])
-        by fe0vm1651.rbesz01.com (Postfix) with ESMTPS id 44Z65r5c14zR6h;
-        Wed,  3 Apr 2019 15:16:00 +0200 (CEST)
-Received: from localhost.localdomain (10.47.103.88) by SI-HUB2000.de.bosch.com
- (10.4.103.108) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5; Wed, 3 Apr 2019
- 15:15:58 +0200
-From:   <VenkataRajesh.Kalakodima@in.bosch.com>
-To:     <linux-renesas-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC:     kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>
-Subject: [PATCH 8/8] drm: rcar-du: Add shutdown callback function in platform_driver
-Date:   Wed, 3 Apr 2019 18:44:44 +0530
-Message-ID: <1554297284-14009-9-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+        Wed, 3 Apr 2019 10:45:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1554302730;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=+6Try/srRuAJsuidGIGGFUFTyMMgq3EznxBU/zGlTVo=;
+        b=cEYaEWgOT1WyrZMd6EiHp5QzKp6xCrhP9ffO211FT6dd7u5uRaqh1IMbnALf8AY+Y2
+        eIClg8L7F2X2dHoyiklpm1jVTTm/S2ProryytseLJFlH299ym0W6HgW5hXKZJfdvPPzN
+        jbDXoh51aLNXN+Xe2NM12LUrDFb856q50aZhZW1i53uAzYKU0WS9jg77YM2567hD4FFI
+        ZvRBZWaHO3AzxGzcTLNbrzPlaqtFlo4XSbXMSmRUm/0AZHsSkMNkESUgDwLe6tm+j0QG
+        t7rNyzwSDQcBdK7tmAkHGHj98cMhnYwA4kRb0UTR/VpAGkKVMjp6CDM+lbVO4AUgBDdm
+        otBA==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82dZd67HY0g="
+X-RZG-CLASS-ID: mo00
+Received: from groucho.site
+        by smtp.strato.de (RZmta 44.18 DYNA|AUTH)
+        with ESMTPSA id L0be16v33EjNXzF
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 3 Apr 2019 16:45:23 +0200 (CEST)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org
+Cc:     wsa@the-dreams.de, Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH v2] pinctrl: sh-pfc: r8a77965: Add I2C{0,3,5} pins, groups and functions
+Date:   Wed,  3 Apr 2019 16:45:15 +0200
+Message-Id: <1554302716-14750-1-git-send-email-uli+renesas@fpond.eu>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
-References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.47.103.88]
-X-Brightmail-Tracker: H4sIAAAAAAAAA21Sf0wbZRjud9derx1nr1dgr223mMb4B8kmqHOnEreQmHRG4zLHNKSZFjja
-        xv7AXsvGEifBLZMf0m0KCtvoVsHJJhktbtChQ5sllAUJbGSGGYFtaGi30QnDweLUOwtr//Cf
-        y/c97/Pj/Z4ciTNX5VrS5vRwbqfZbiCUUuWLnWvWqUNtptxwDLGNRwYQ6784LGPHFhIEu3i0
-        H2P/qJ+QsVfOHyXYs7FZjD3ZGcA3k8bJugHM2LdQjYx/Dh2SGudDa7dKi5T5pZzdVsG5n375
-        XaU1MXSYKO/etDsa/rAKndhQixQk0M/BV4NHiFqkJBn6CwxuLfrw5OU7BPM3euUii6FvC5e7
-        evFM0OugPxiUi6RMugNB3WwPJg5w+g6C+HVdLSJJDb0dDoaLRFhKPwmNiTP/+VB0IVz+aRxL
-        Jq+F8eEaXDwr6B3gj04TyaxC8C/OyZJ8NQw2T0uT9gA/zszgoj3QT0D4BHEQ0S1prJY01nGE
-        nUJZZVxuhWPjC3nsencxx+/JzVtf4nKEULJluheFL5VFEE0iQwY10dxmYmTmCr7SEUEbSMyQ
-        RT2/V4AeK3aVVlrNvPUdt9fO8QYtpR951cRoHsG8t9hh43mbyxlBQOKGTGrId9zEUKXmyj2c
-        25WURZCOlBpWUxbyDRNDW8we7j2OK+fcK9OXSNIAVGZQCFS7OQu3u8xm96yMDWsoJJFImOz0
-        SXosRioi6FkyQ8gOnxEsKL7c7OBtlmX540k5s4KmpJfQFrIh+PsxnOy+LnwZqdPl5LSrqVVd
-        ggst8q1e56M9tHpK8luriclKG6S84ugqEprUUA/FFTKEXzq1AVA6sTT1MpgSPRMQNPRf2TCR
-        0EH02mvQ12qC2IEqBK29Cwii82EcGgKzUrh3rFEGF5oSMlhsuknAD/duERDoXiLg8vkWOcx3
-        LsgF7DQJk+PnFDB2JaKA0Y8TCojVdCvhcN2UEu5+/QkFn/5SpYK+fSEVjMf7VLD0/agKvhm7
-        oYL+9hY1NMycZODQSFQDbQ/uZEPHtwNaWPL7dHGhW0zolvX6xW49Zs//dLuMpp6mrULtu/zB
-        9z8vqb6ZNafcvyr0wcMaryd/OOOC0fJlbdAzSk7JewpuP6Wpe/ufkoIuf/62qZGeV3wXmYm5
-        2Eebx/IKTr1lP7dJf99Zv9H368436z/L2b+3K6g3xaerD/zdvD3SuWtf+4OBjsEcV9fpudeb
-        t2y7X3it6OfhnQFJeHIm5+yOgiaDlLea83JwN2/+F4/5t6FpBAAA
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-When rebooting, the Display driver is accessing H/W (reading DDR).
-Therefore, there is a problem of hanging when setting DDR to self
-refresh mode.
+This patch adds I2C{0,3,5} pins, groups and functions to the R8A7796 SoC.
 
-This patch implement the shutdown function and solve this problem
-by stopping H/W access.
+These pins are physically muxed with other pins. Therefore, setup of
+MOD_SEL is needed for exclusive control with other pins.
 
-In addtion, on the ulcb board, since initial values of versaclock
-are used as they are, signals are not output when initializing to
-0 with shutdown, so this patch excludes processing to initialize
-versaclock to 0.
-drm: rcar-du: Add HDMI control clock when S2RAM
-
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-
-(cherry picked from horms/renesas-bsp commit 3cfda6331c4069800dd4434427284aba8e6f1ed6)
-[slongerbeam: keep integer i in rcar_du_pm_shutdown(), needed because of
- 050e54d87f ("drm: rcar-du: drm: rcar-du: Add DU CMM support")]
-
-Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
-
-drm: rcar-du: cmm: lut and clu backup not required during
- shutdown
-rcar_du_cmm_pm_suspend function copies LUT and CLU hardare
-register values to memory. In the patch which adds DU CMM
-support (https://github.com/renesas-rcar/du_cmm/commit/
-9a65d02119e4ae405a89a850463a6a0d0f2c1ecb), the intention of
-the author was to backup the registers during suspend and
-restore it on resume. But rcar_du_cmm_pm_suspend was also
-called on system shutdown. Though it does not cause any harm,
-it is not required during shutdown as it does not make sense
-to backup. This patch ensures that rcar_du_cmm_pm_suspend is
-called only during suspend
-
-Fixes: https://github.com/renesas-rcar/du_cmm/commit/9a65d02119e4ae405a89a850463a6a0d0f2c1ecb
-
-Signed-off-by: Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>
-
-      - Resolved checkpatch errors
-      - Resolved merge conflicts according to latest version
-
-Signed-off-by: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+[takeshi.kihara.df: add blank lines after function declarations]
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+[uli: use standard macros PINMUX_IPSR_PHYS and PINMUX_IPSR_PHYS_MSEL]
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 35 ++++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 54 +++++++++++++++++++++++++------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  2 +-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  1 +
- include/drm/bridge/dw_hdmi.h              |  1 +
- 5 files changed, 83 insertions(+), 10 deletions(-)
+This revision has been rebased and removes the placeholder pin data.
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 5971976..aa257d7 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2033,6 +2033,41 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
- 	mutex_unlock(&hdmi->mutex);
- }
+CU
+Uli
+
+
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 111 ++++++++++++++++++++++++++--------
+ 1 file changed, 87 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index 00baeb1..0900243 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -558,6 +558,9 @@ MOD_SEL0_4_3		MOD_SEL1_4 \
+ 	FM(DU_DOTCLKIN0) FM(DU_DOTCLKIN1) FM(DU_DOTCLKIN3) \
+ 	FM(TMS) FM(TDO) FM(ASEBRK) FM(MLB_REF) FM(TDI) FM(TCK) FM(TRST) FM(EXTALR)
  
-+/*
-+ * This function controls clocks of dw_hdmi through drm_bridge
-+ * at system suspend/resume.
-+ * Arguments:
-+ *  bridge: drm_bridge that contains dw_hdmi.
-+ *  flag: controlled flag.
-+ *		false: is used when suspend.
-+ *		true: is used when resume.
-+ */
-+void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
++#define PINMUX_PHYS \
++	FM(SCL0) FM(SDA0) FM(SCL3) FM(SDA3) FM(SCL5) FM(SDA5)
 +
-+	if (!hdmi)
-+		return;
-+
-+	if (flag) { /* enable clk */
-+		if (hdmi->isfr_clk)
-+			clk_prepare_enable(hdmi->isfr_clk);
-+		if (hdmi->iahb_clk)
-+			clk_prepare_enable(hdmi->iahb_clk);
-+
-+		initialize_hdmi_ih_mutes(hdmi);
-+		dw_hdmi_setup_i2c(hdmi);
-+		dw_hdmi_i2c_init(hdmi);
-+		dw_hdmi_phy_setup_hpd(hdmi, NULL);
-+	} else { /* disable clk */
-+		if (hdmi->isfr_clk)
-+			clk_disable_unprepare(hdmi->isfr_clk);
-+		if (hdmi->iahb_clk)
-+			clk_disable_unprepare(hdmi->iahb_clk);
-+	}
-+}
-+EXPORT_SYMBOL_GPL(dw_hdmi_s2r_ctrl);
-+
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
- 	.attach = dw_hdmi_bridge_attach,
- 	.enable = dw_hdmi_bridge_enable,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 838b7c9..9eb63b0 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -21,6 +21,7 @@
- #include <linux/slab.h>
- #include <linux/wait.h>
+ enum {
+ 	PINMUX_RESERVED = 0,
  
-+#include <drm/bridge/dw_hdmi.h>
- #include <drm/drmP.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
-@@ -368,18 +369,14 @@ static struct drm_driver rcar_du_driver = {
-  */
+@@ -583,6 +586,7 @@ enum {
+ 	PINMUX_IPSR
+ 	PINMUX_MOD_SELS
+ 	PINMUX_STATIC
++	PINMUX_PHYS
+ 	PINMUX_MARK_END,
+ #undef F_
+ #undef FM
+@@ -620,13 +624,15 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP0_15_12,	TX4_A,			SEL_SCIF4_0),
+ 	PINMUX_IPSR_GPSR(IP0_19_16,	FSCLKST2_N_A),
  
- #ifdef CONFIG_PM_SLEEP
--static int rcar_du_pm_suspend(struct device *dev)
-+static int rcar_du_pm_shutdown(struct device *dev)
- {
- 	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
- 	struct drm_atomic_state *state;
--	int i;
+-	PINMUX_IPSR_MSEL(IP0_19_16,	AVB_AVTP_MATCH_A,	SEL_ETHERAVB_0),
+-	PINMUX_IPSR_MSEL(IP0_19_16,	MSIOF2_RXD_C,		SEL_MSIOF2_2),
+-	PINMUX_IPSR_MSEL(IP0_19_16,	CTS4_N_A,		SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_19_16,	AVB_AVTP_MATCH_A,	I2C_SEL_5_0, SEL_ETHERAVB_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_19_16,	MSIOF2_RXD_C,	I2C_SEL_5_0, SEL_MSIOF2_2),
++	PINMUX_IPSR_PHYS_MSEL(IP0_19_16,	CTS4_N_A,	I2C_SEL_5_0, SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS(IP0_19_16,	SCL5,			I2C_SEL_5_1),
+ 
+-	PINMUX_IPSR_MSEL(IP0_23_20,	AVB_AVTP_CAPTURE_A,	SEL_ETHERAVB_0),
+-	PINMUX_IPSR_MSEL(IP0_23_20,	MSIOF2_TXD_C,		SEL_MSIOF2_2),
+-	PINMUX_IPSR_MSEL(IP0_23_20,	RTS4_N_A,		SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_23_20,	AVB_AVTP_CAPTURE_A,	I2C_SEL_5_0, SEL_ETHERAVB_0),
++	PINMUX_IPSR_PHYS_MSEL(IP0_23_20,	MSIOF2_TXD_C,		I2C_SEL_5_0, SEL_MSIOF2_2),
++	PINMUX_IPSR_PHYS_MSEL(IP0_23_20,	RTS4_N_A,		I2C_SEL_5_0, SEL_SCIF4_0),
++	PINMUX_IPSR_PHYS(IP0_23_20,	SDA5,			I2C_SEL_5_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP0_27_24,	IRQ0),
+ 	PINMUX_IPSR_GPSR(IP0_27_24,	QPOLB),
+@@ -679,14 +685,16 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP1_19_16,	VI4_DATA6_B,		SEL_VIN4_1),
+ 	PINMUX_IPSR_MSEL(IP1_19_16,	IECLK_B,		SEL_IEBUS_1),
+ 
+-	PINMUX_IPSR_MSEL(IP1_23_20,	PWM1_A,			SEL_PWM1_0),
+-	PINMUX_IPSR_MSEL(IP1_23_20,	HRX3_D,			SEL_HSCIF3_3),
+-	PINMUX_IPSR_MSEL(IP1_23_20,	VI4_DATA7_B,		SEL_VIN4_1),
+-	PINMUX_IPSR_MSEL(IP1_23_20,	IERX_B,			SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	PWM1_A,		I2C_SEL_3_0,	SEL_PWM1_0),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	HRX3_D,		I2C_SEL_3_0,	SEL_HSCIF3_3),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	VI4_DATA7_B,	I2C_SEL_3_0,	SEL_VIN4_1),
++	PINMUX_IPSR_PHYS_MSEL(IP1_23_20,	IERX_B,		I2C_SEL_3_0,	SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS(IP0_23_20,	SCL3,		I2C_SEL_3_1),
+ 
+-	PINMUX_IPSR_MSEL(IP1_27_24,	PWM2_A,			SEL_PWM2_0),
+-	PINMUX_IPSR_MSEL(IP1_27_24,	HTX3_D,			SEL_HSCIF3_3),
+-	PINMUX_IPSR_MSEL(IP1_27_24,	IETX_B,			SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS_MSEL(IP1_27_24,	PWM2_A,		I2C_SEL_3_0,	SEL_PWM2_0),
++	PINMUX_IPSR_PHYS_MSEL(IP1_27_24,	HTX3_D,		I2C_SEL_3_0,	SEL_HSCIF3_3),
++	PINMUX_IPSR_PHYS_MSEL(IP1_27_24,	IETX_B,		I2C_SEL_3_0,	SEL_IEBUS_1),
++	PINMUX_IPSR_PHYS(IP1_27_24,	SDA3,		I2C_SEL_3_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP1_31_28,	A0),
+ 	PINMUX_IPSR_GPSR(IP1_31_28,	LCDOUT16),
+@@ -1120,13 +1128,15 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP11_15_12,	NFDATA15_A,		SEL_NDF_0),
+ 	PINMUX_IPSR_MSEL(IP11_15_12,	SDA2_B,			SEL_I2C2_1),
+ 
+-	PINMUX_IPSR_GPSR(IP11_19_16,	SD1_CD),
+-	PINMUX_IPSR_MSEL(IP11_19_16,	NFRB_N_A,		SEL_NDF_0),
+-	PINMUX_IPSR_MSEL(IP11_19_16,	SIM0_CLK_B,		SEL_SIMCARD_1),
++	PINMUX_IPSR_MSEL(IP11_19_16,	SD1_CD,			I2C_SEL_0_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_19_16,	NFRB_N_A,	I2C_SEL_0_0, SEL_NDF_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_19_16,	SIM0_CLK_B,	I2C_SEL_0_0, SEL_SIMCARD_1),
++	PINMUX_IPSR_PHYS(IP11_19_16,	SCL0,			I2C_SEL_0_1),
+ 
+-	PINMUX_IPSR_GPSR(IP11_23_20,	SD1_WP),
+-	PINMUX_IPSR_MSEL(IP11_23_20,	NFCE_N_A,		SEL_NDF_0),
+-	PINMUX_IPSR_MSEL(IP11_23_20,	SIM0_D_B,		SEL_SIMCARD_1),
++	PINMUX_IPSR_MSEL(IP11_23_20,	SD1_WP,			I2C_SEL_0_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_23_20,	NFCE_N_A,	I2C_SEL_0_0, SEL_NDF_0),
++	PINMUX_IPSR_PHYS_MSEL(IP11_23_20,	SIM0_D_B,	I2C_SEL_0_0, SEL_SIMCARD_1),
++	PINMUX_IPSR_PHYS(IP11_23_20,	SDA0,			I2C_SEL_0_1),
+ 
+ 	PINMUX_IPSR_GPSR(IP11_27_24,	SCK0),
+ 	PINMUX_IPSR_MSEL(IP11_27_24,	HSCK1_B,		SEL_HSCIF1_1),
+@@ -1494,11 +1504,6 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP18_7_4,	FMIN_C,			SEL_FM_2),
+ 	PINMUX_IPSR_MSEL(IP18_7_4,	FMIN_D,			SEL_FM_3),
+ 
+-	/* I2C */
+-	PINMUX_IPSR_NOGP(0,		I2C_SEL_0_1),
+-	PINMUX_IPSR_NOGP(0,		I2C_SEL_3_1),
+-	PINMUX_IPSR_NOGP(0,		I2C_SEL_5_1),
 -
--	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
--		for (i = 0; i < rcdu->num_crtcs; ++i)
--			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
--	}
--
--	drm_kms_helper_poll_disable(rcdu->ddev);
-+#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
-+	struct drm_encoder *encoder;
-+#endif
-+		drm_kms_helper_poll_disable(rcdu->ddev);
- 	drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
- 
- 	state = drm_atomic_helper_suspend(rcdu->ddev);
-@@ -389,11 +386,43 @@ static int rcar_du_pm_suspend(struct device *dev)
- 		return PTR_ERR(state);
- 	}
- 
-+#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
-+	list_for_each_entry(encoder,
-+			    &rcdu->ddev->mode_config.encoder_list,
-+			    head) {
-+		struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
-+
-+		if (renc->bridge && (renc->output == RCAR_DU_OUTPUT_HDMI0 ||
-+				     renc->output == RCAR_DU_OUTPUT_HDMI1))
-+			dw_hdmi_s2r_ctrl(encoder->bridge, false);
-+	}
-+#endif
- 	rcdu->suspend_state = state;
- 
- 	return 0;
- }
- 
-+static int rcar_du_pm_suspend(struct device *dev)
-+{
-+	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-+
-+	int i, ret;
-+
-+	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
-+		for (i = 0; i < rcdu->num_crtcs; ++i)
-+			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
-+	}
-+
-+	ret = rcar_du_pm_shutdown(dev);
-+
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < rcdu->num_crtcs; ++i)
-+		clk_set_rate(rcdu->crtcs[i].extclock, 0);
-+	return 0;
-+}
-+
- static int rcar_du_pm_resume(struct device *dev)
- {
- 	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-@@ -504,6 +533,12 @@ static int rcar_du_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static void rcar_du_shutdown(struct platform_device *pdev)
-+{
-+#ifdef CONFIG_PM_SLEEP
-+	rcar_du_pm_shutdown(&pdev->dev);
-+#endif
-+}
- static struct platform_driver rcar_du_platform_driver = {
- 	.probe		= rcar_du_probe,
- 	.remove		= rcar_du_remove,
-@@ -512,6 +547,7 @@ static struct platform_driver rcar_du_platform_driver = {
- 		.pm	= &rcar_du_pm_ops,
- 		.of_match_table = rcar_du_of_table,
- 	},
-+	.shutdown       = rcar_du_shutdown,
+ /*
+  * Static pins can not be muxed between different functions but
+  * still need mark entries in the pinmux list. Add each static
+@@ -2478,52 +2483,92 @@ static const unsigned int hscif4_data_b_mux[] = {
  };
  
- static int __init rcar_du_init(void)
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index f9c933d..98df8a2 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -62,7 +62,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 
- 	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
- 		enc_node, output);
--
-+	renc->bridge = bridge;
- 	/* Locate the DRM bridge from the encoder DT node. */
- 	bridge = of_drm_find_bridge(enc_node);
- 	if (!bridge) {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-index 2d2abca..cc5bfcb 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-@@ -23,6 +23,7 @@ struct rcar_du_device;
- struct rcar_du_encoder {
- 	struct drm_encoder base;
- 	enum rcar_du_output output;
-+	struct drm_bridge *bridge;
+ /* - I2C -------------------------------------------------------------------- */
++static const unsigned int i2c0_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(3, 14), RCAR_GP_PIN(3, 15),
++};
++
++static const unsigned int i2c0_mux[] = {
++	SCL0_MARK, SDA0_MARK,
++};
++
+ static const unsigned int i2c1_a_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(5, 11), RCAR_GP_PIN(5, 10),
+ };
++
+ static const unsigned int i2c1_a_mux[] = {
+ 	SDA1_A_MARK, SCL1_A_MARK,
+ };
++
+ static const unsigned int i2c1_b_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(5, 24), RCAR_GP_PIN(5, 23),
+ };
++
+ static const unsigned int i2c1_b_mux[] = {
+ 	SDA1_B_MARK, SCL1_B_MARK,
+ };
++
+ static const unsigned int i2c2_a_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 4),
+ };
++
+ static const unsigned int i2c2_a_mux[] = {
+ 	SDA2_A_MARK, SCL2_A_MARK,
+ };
++
+ static const unsigned int i2c2_b_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 12),
+ };
++
+ static const unsigned int i2c2_b_mux[] = {
+ 	SDA2_B_MARK, SCL2_B_MARK,
+ };
++
++static const unsigned int i2c3_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 8),
++};
++
++static const unsigned int i2c3_mux[] = {
++	SCL3_MARK, SDA3_MARK,
++};
++
++static const unsigned int i2c5_pins[] = {
++	/* SCL, SDA */
++	RCAR_GP_PIN(2, 13), RCAR_GP_PIN(2, 14),
++};
++
++static const unsigned int i2c5_mux[] = {
++	SCL5_MARK, SDA5_MARK,
++};
++
+ static const unsigned int i2c6_a_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 11),
+ };
++
+ static const unsigned int i2c6_a_mux[] = {
+ 	SDA6_A_MARK, SCL6_A_MARK,
+ };
++
+ static const unsigned int i2c6_b_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(1, 26), RCAR_GP_PIN(1, 25),
+ };
++
+ static const unsigned int i2c6_b_mux[] = {
+ 	SDA6_B_MARK, SCL6_B_MARK,
+ };
++
+ static const unsigned int i2c6_c_pins[] = {
+ 	/* SDA, SCL */
+ 	RCAR_GP_PIN(0, 15), RCAR_GP_PIN(0, 14),
+ };
++
+ static const unsigned int i2c6_c_mux[] = {
+ 	SDA6_C_MARK, SCL6_C_MARK,
+ };
+@@ -4413,10 +4458,13 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(hscif4_clk),
+ 	SH_PFC_PIN_GROUP(hscif4_ctrl),
+ 	SH_PFC_PIN_GROUP(hscif4_data_b),
++	SH_PFC_PIN_GROUP(i2c0),
+ 	SH_PFC_PIN_GROUP(i2c1_a),
+ 	SH_PFC_PIN_GROUP(i2c1_b),
+ 	SH_PFC_PIN_GROUP(i2c2_a),
+ 	SH_PFC_PIN_GROUP(i2c2_b),
++	SH_PFC_PIN_GROUP(i2c3),
++	SH_PFC_PIN_GROUP(i2c5),
+ 	SH_PFC_PIN_GROUP(i2c6_a),
+ 	SH_PFC_PIN_GROUP(i2c6_b),
+ 	SH_PFC_PIN_GROUP(i2c6_c),
+@@ -4807,6 +4855,10 @@ static const char * const hscif4_groups[] = {
+ 	"hscif4_data_b",
  };
  
- #define to_rcar_encoder(e) \
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index ccb5aa8..36383cf4 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -171,5 +171,6 @@ enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
- void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
- 			    bool force, bool disabled, bool rxsense);
- void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
-+void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag);
++static const char * const i2c0_groups[] = {
++	"i2c0",
++};
++
+ static const char * const i2c1_groups[] = {
+ 	"i2c1_a",
+ 	"i2c1_b",
+@@ -4817,6 +4869,14 @@ static const char * const i2c2_groups[] = {
+ 	"i2c2_b",
+ };
  
- #endif /* __IMX_HDMI_H__ */
++static const char * const i2c3_groups[] = {
++	"i2c3",
++};
++
++static const char * const i2c5_groups[] = {
++	"i2c5",
++};
++
+ static const char * const i2c6_groups[] = {
+ 	"i2c6_a",
+ 	"i2c6_b",
+@@ -5166,8 +5226,11 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(hscif2),
+ 	SH_PFC_FUNCTION(hscif3),
+ 	SH_PFC_FUNCTION(hscif4),
++	SH_PFC_FUNCTION(i2c0),
+ 	SH_PFC_FUNCTION(i2c1),
+ 	SH_PFC_FUNCTION(i2c2),
++	SH_PFC_FUNCTION(i2c3),
++	SH_PFC_FUNCTION(i2c5),
+ 	SH_PFC_FUNCTION(i2c6),
+ 	SH_PFC_FUNCTION(intc_ex),
+ 	SH_PFC_FUNCTION(msiof0),
 -- 
 2.7.4
 
