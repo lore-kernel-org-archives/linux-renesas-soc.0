@@ -2,127 +2,97 @@ Return-Path: <SRS0=jJK9=SF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850AFC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C91BC10F06
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C9121473
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA26320830
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 09:24:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbfDCJY3 (ORCPT
+        id S1726499AbfDCJYf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 05:24:29 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37268 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfDCJY2 (ORCPT
+        Wed, 3 Apr 2019 05:24:35 -0400
+Received: from sauhun.de ([88.99.104.3]:46958 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725954AbfDCJYf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 05:24:28 -0400
-Received: by mail-vs1-f68.google.com with SMTP id w13so8511139vsc.4;
-        Wed, 03 Apr 2019 02:24:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QhT6czOoaob1yfInNC1AWI3HeE3Sz+1vz4h21O0FSok=;
-        b=fWwgUo/q5wNUXAA13UmM+IMZI2rGRXMmsa+i7lurHv4jUazF+IZbUtYvG9yJgtXoH+
-         KORMZf124+mMPXTGTrDQKK9aGnVCL/lBNrJx9jJ3r9QuBcOX7wjpQ1iZmuYYToxhB9R+
-         ZsEEMbDVEqrdIQVioGN0P+Ik4d27Fyd/R+odApK+AGdHk++qPXplyFFZ9q0fnK1S7s0r
-         5ROWiERnPgrOXvIkon3GAcCHOLl8FezRQmS5r8jthhLXiHkMfsGaZlz6hroDJ4Esslrj
-         rKA49zihk0FGGaipnnwyQo3sLCe07JsYULLLBo9hxymAymXL5vGrvM1x8rWpCGgaLInD
-         +zjQ==
-X-Gm-Message-State: APjAAAW8WQtN2of61UkOC6vQ6HXma9hCH8aHVcNHgYVMi8JdVQZibtN+
-        aSS1NkqCfEz2Onu4wOk6eGhOyx9ZXwkjSpYQV8M=
-X-Google-Smtp-Source: APXvYqxCWhwGxA40tqg6aGIVCzFOnjF4yx9gwHN919P1+eS3wTyxQPiB0pzuapGRXLvEDJoTXkOAPiNW+hRsmAU7lds=
-X-Received: by 2002:a67:7cd1:: with SMTP id x200mr18343905vsc.32.1554283467799;
- Wed, 03 Apr 2019 02:24:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <1554283043-9206-1-git-send-email-na-hoan@jinso.co.jp>
-In-Reply-To: <1554283043-9206-1-git-send-email-na-hoan@jinso.co.jp>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 3 Apr 2019 11:24:15 +0200
-Message-ID: <CAMuHMdX6XJitza1J3TRs_YBHCQp_yvXyZVZErE6v4OtoSwQ1RQ@mail.gmail.com>
-Subject: Re: [PATCH] spi: sh-msiof: Fix the limit of data length when
- calculating the length of words
-To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 3 Apr 2019 05:24:35 -0400
+Received: from localhost (p54B3311F.dip0.t-ipconnect.de [84.179.49.31])
+        by pokefinder.org (Postfix) with ESMTPSA id 70C9D2C282F;
+        Wed,  3 Apr 2019 11:24:33 +0200 (CEST)
+Date:   Wed, 3 Apr 2019 11:24:33 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Steve Twiss <stwiss.opensource@diasemi.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= 
-        <cv-dong@jinso.co.jp>
-Content-Type: text/plain; charset="UTF-8"
+        Support Opensource <Support.Opensource@diasemi.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH 2/6] input: da9063_onkey: remove platform_data support
+Message-ID: <20190403092432.qofl5szh5zpfhvlm@ninjato>
+References: <20190318154759.21978-1-wsa+renesas@sang-engineering.com>
+ <20190318154759.21978-3-wsa+renesas@sang-engineering.com>
+ <VI1PR10MB2352701871983EF8677C5CB8FE5A0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xnv5sx6mtiqadw4j"
+Content-Disposition: inline
+In-Reply-To: <VI1PR10MB2352701871983EF8677C5CB8FE5A0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hoan,
 
-On Wed, Apr 3, 2019 at 11:17 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->
-> We can use each word (data length) of 32bits (4 bytes),
-> so that if the length is greater than 3bytes, we can
-> align it with 4bytes of words.
->
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+--xnv5sx6mtiqadw4j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your patch!
 
-> ---
->  drivers/spi/spi-sh-msiof.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-> index e2eb466..1552c14 100644
-> --- a/drivers/spi/spi-sh-msiof.c
-> +++ b/drivers/spi/spi-sh-msiof.c
-> @@ -930,7 +930,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
->         if (!spi_controller_is_slave(p->ctlr))
->                 sh_msiof_spi_set_clk_regs(p, clk_get_rate(p->clk), t->speed_hz);
->
-> -       while (ctlr->dma_tx && len > 15) {
-> +       while (ctlr->dma_tx && len > 3) {
+> > Subject: [PATCH 2/6] input: da9063_onkey: remove platform_data support
+> >=20
+> > There are no in-kernel users anymore, so remove this outdated interface.
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > ---
+> >  drivers/input/misc/da9063_onkey.c | 11 ++---------
+> >  1 file changed, 2 insertions(+), 9 deletions(-)
+>=20
+> Thanks!
+> Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
+> Tested-by: Steve Twiss <stwiss.opensource@diasemi.com>
 
-This check is here to avoid using DMA (which incurs DMA setup overhead)
-for short transfers.
-Have you measured the performance impact of your change?
+Dmitry, if you are OK with the series going in via MFD, could you ack
+this patch? As you see, Steve is fine with the patch and tested it, too.
 
-Perhaps the code should be changed to:
 
-    #define DMA_MIN_LEN     16
+--xnv5sx6mtiqadw4j
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    while (ctlr->dma_tx && len >= DMA_MIN_LEN) {
+-----BEGIN PGP SIGNATURE-----
 
->                 /*
->                  *  DMA supports 32-bit words only, hence pack 8-bit and 16-bit
->                  *  words, with byte resp. word swapping.
-> @@ -974,7 +974,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
->                         return 0;
->         }
->
-> -       if (bits <= 8 && len > 15) {
-> +       if (bits <= 8 && len > 3) {
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyke9AACgkQFA3kzBSg
+KbamOw/+K6NXMZKR1ZgBFZvMQleB6Xj97G7Qk7mAdxbjTO3hXMUI1G1rHVqAjuy+
+Tp0G0nJvb/ZeuDxHSGckXcHQ2C4OJEq5mWyQI1ZOGmNOGPyuJ/r4JsutQLkWIi1y
+yfBMV+MXkx/sVPP2z4FTk2DEO2VTRMtyzRFd2zNV+yTcE8NpWmzW1TP7zlYy/eiK
+1Qa4yPZWXwiGhVrn5erZywkjxhAgfPuoGNOxodMLNpjmyELbA8eztvc/dHbBkjwj
+/2I2pLVUWAswS2iYc29re6YUtUMLlxatggHxYxLr/a8jMciAfvy3SmGtDZ2Uo+s9
+79D/wEjsPCBOwdV/KS9ZbGRw8DhaUwso7nNaYB//twjfQpqz0QrvEIDQXZ6sQF+P
+iKdg1gh+GkltCvg6Oas3HLBuXNFedebAjF5hcxEIYSpjCbmF/Pb+DTg2BIPb3fwz
+qVCZgAU7XZBR4HsEJIlCaYq2K2FC9RB1LUSQEuHmLJBLa7eGnu8I8GjKmW64vvKO
+JSHNxTnN8Ns00zWKlNpCH3g4GtynaFB70Iebyvd65wSgkH29Sky4MzocyuU5Yy67
+hcoOTz1CwNLYzw76ZrejEz6/AG9c7jD6hLTgluJVpEvxH26NcPFtn5A1P9v4IOUW
+IHztBBXwmDxlnE90Xnk467DCQ3jynzBOS3N91JdevyGYcPvP3Kc=
+=flns
+-----END PGP SIGNATURE-----
 
-Likewise.
-
->                 bits = 32;
->                 swab = true;
->         } else {
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--xnv5sx6mtiqadw4j--
