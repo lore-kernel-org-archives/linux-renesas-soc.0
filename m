@@ -2,112 +2,63 @@ Return-Path: <SRS0=jJK9=SF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7F3C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 18:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5991AC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 21:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BB420700
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 18:22:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D6EF2082C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 21:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfDCSWS (ORCPT
+        id S1726436AbfDCVAu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 14:22:18 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:59760 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfDCSVx (ORCPT
+        Wed, 3 Apr 2019 17:00:50 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:59751 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbfDCVAt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 14:21:53 -0400
-Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id vuMq1z00q3XaVaC01uMqjd; Wed, 03 Apr 2019 20:21:51 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hBkWE-000580-Ks; Wed, 03 Apr 2019 20:21:50 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hBkWE-0004iU-JE; Wed, 03 Apr 2019 20:21:50 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/6] iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific features
-Date:   Wed,  3 Apr 2019 20:21:46 +0200
-Message-Id: <20190403182148.18058-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190403182148.18058-1-geert+renesas@glider.be>
-References: <20190403182148.18058-1-geert+renesas@glider.be>
+        Wed, 3 Apr 2019 17:00:49 -0400
+X-Originating-IP: 86.202.231.219
+Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E01C424000C;
+        Wed,  3 Apr 2019 21:00:46 +0000 (UTC)
+Date:   Wed, 3 Apr 2019 23:00:46 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] rtc: don't reference bogus function pointer in kdoc
+Message-ID: <20190403210046.GU22216@piout.net>
+References: <20190403151952.8415-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190403151952.8415-1-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The maximum number of micro-TLBs per IPMMU instance is not fixed, but
-depends on the SoC type.  Hence move it from struct ipmmu_vmsa_device to
-struct ipmmu_features, and set up the correct value for both R-Car Gen2
-and Gen3 SoCs.
+On 03/04/2019 17:19:52+0200, Wolfram Sang wrote:
+> The mentioned function pointer is long gone since early 2011. Remove the
+> reference in the comment and reword it slightly.
+> 
+> Fixes: 51ba60c5bb3b ("RTC: Cleanup rtc_class_ops->update_irq_enable()")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> I stumbled over this when trying to understand UIE handling during my
+> DA9063 debugging session.
+> 
+>  drivers/rtc/interface.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+Applied, thanks.
 
-Note that currently no code uses this value.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-v2:
-  - Add Reviewed-by.
----
- drivers/iommu/ipmmu-vmsa.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 87acf86f295fac0d..3fa57627b1e35562 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -42,6 +42,7 @@ struct ipmmu_features {
- 	bool use_ns_alias_offset;
- 	bool has_cache_leaf_nodes;
- 	unsigned int number_of_contexts;
-+	unsigned int num_utlbs;
- 	bool setup_imbuscr;
- 	bool twobit_imttbcr_sl0;
- 	bool reserved_context;
-@@ -53,7 +54,6 @@ struct ipmmu_vmsa_device {
- 	struct iommu_device iommu;
- 	struct ipmmu_vmsa_device *root;
- 	const struct ipmmu_features *features;
--	unsigned int num_utlbs;
- 	unsigned int num_ctx;
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
-@@ -972,6 +972,7 @@ static const struct ipmmu_features ipmmu_features_default = {
- 	.use_ns_alias_offset = true,
- 	.has_cache_leaf_nodes = false,
- 	.number_of_contexts = 1, /* software only tested with one context */
-+	.num_utlbs = 32,
- 	.setup_imbuscr = true,
- 	.twobit_imttbcr_sl0 = false,
- 	.reserved_context = false,
-@@ -981,6 +982,7 @@ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.use_ns_alias_offset = false,
- 	.has_cache_leaf_nodes = true,
- 	.number_of_contexts = 8,
-+	.num_utlbs = 48,
- 	.setup_imbuscr = false,
- 	.twobit_imttbcr_sl0 = true,
- 	.reserved_context = true,
-@@ -1033,7 +1035,6 @@ static int ipmmu_probe(struct platform_device *pdev)
- 	}
- 
- 	mmu->dev = &pdev->dev;
--	mmu->num_utlbs = 48;
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 	mmu->features = of_device_get_match_data(&pdev->dev);
 -- 
-2.17.1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
