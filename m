@@ -3,26 +3,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A97C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 12:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BB3C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 12:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9182084C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 12:41:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D342084C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 12:41:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfDCMkk (ORCPT
+        id S1727354AbfDCMld (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 08:40:40 -0400
-Received: from sauhun.de ([88.99.104.3]:48350 "EHLO pokefinder.org"
+        Wed, 3 Apr 2019 08:41:33 -0400
+Received: from sauhun.de ([88.99.104.3]:48322 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726606AbfDCMkj (ORCPT
+        id S1726245AbfDCMki (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 08:40:39 -0400
+        Wed, 3 Apr 2019 08:40:38 -0400
 Received: from localhost (p54B3311F.dip0.t-ipconnect.de [84.179.49.31])
-        by pokefinder.org (Postfix) with ESMTPSA id 385293E43CC;
-        Wed,  3 Apr 2019 14:40:37 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 1A1293E43CA;
+        Wed,  3 Apr 2019 14:40:36 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -33,9 +33,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 05/12] i2c: demux: handle the new atomic callbacks
-Date:   Wed,  3 Apr 2019 14:40:12 +0200
-Message-Id: <20190403124019.8947-6-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 03/12] i2c: core: introduce callbacks for atomic transfers
+Date:   Wed,  3 Apr 2019 14:40:10 +0200
+Message-Id: <20190403124019.8947-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
 References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
@@ -44,27 +44,144 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-If the parent has an atomic callback, we need to translate it the same
-way as the non-atomic callback.
+We had the request to access devices very late when interrupts are not
+available anymore multiple times now. Mostly to prepare shutdown or
+reboot. Allow adapters to specify a specific callback for this case.
+Note that we fall back to the generic {master|smbus}_xfer callback if
+this new atomic one is not present. This is intentional to preserve the
+previous behaviour and avoid regressions. Because there are drivers not
+using interrupts or because it might have worked "accidently" before.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/muxes/i2c-demux-pinctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/i2c/i2c-core-base.c  |  6 +++++-
+ drivers/i2c/i2c-core-smbus.c | 18 ++++++++++++++----
+ drivers/i2c/i2c-core.h       |  7 +++++--
+ include/linux/i2c.h          | 15 ++++++++++++---
+ 4 files changed, 36 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-index 035032e20327..d50454c565ee 100644
---- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-+++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-@@ -99,6 +99,8 @@ static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 ne
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index ad14f38a67e4..4e6300dc2c4e 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1890,7 +1890,11 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 	/* Retry automatically on arbitration loss */
+ 	orig_jiffies = jiffies;
+ 	for (ret = 0, try = 0; try <= adap->retries; try++) {
+-		ret = adap->algo->master_xfer(adap, msgs, num);
++		if (i2c_in_atomic_xfer_mode() && adap->algo->master_xfer_atomic)
++			ret = adap->algo->master_xfer_atomic(adap, msgs, num);
++		else
++			ret = adap->algo->master_xfer(adap, msgs, num);
++
+ 		if (ret != -EAGAIN)
+ 			break;
+ 		if (time_after(jiffies, orig_jiffies + adap->timeout))
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index 357e083e8f45..fdb0fb9fb9aa 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -548,6 +548,9 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
+ 		     unsigned short flags, char read_write,
+ 		     u8 command, int protocol, union i2c_smbus_data *data)
+ {
++	int (*xfer_func)(struct i2c_adapter *adap, u16 addr,
++			 unsigned short flags, char read_write,
++			 u8 command, int size, union i2c_smbus_data *data);
+ 	unsigned long orig_jiffies;
+ 	int try;
+ 	s32 res;
+@@ -562,13 +565,20 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
  
- 	/* Now fill out current adapter structure. cur_chan must be up to date */
- 	priv->algo.master_xfer = i2c_demux_master_xfer;
-+	if (adap->algo->master_xfer_atomic)
-+		priv->algo.master_xfer_atomic = i2c_demux_master_xfer;
- 	priv->algo.functionality = i2c_demux_functionality;
+ 	flags &= I2C_M_TEN | I2C_CLIENT_PEC | I2C_CLIENT_SCCB;
  
- 	snprintf(priv->cur_adap.name, sizeof(priv->cur_adap.name),
+-	if (adapter->algo->smbus_xfer) {
++	xfer_func = adapter->algo->smbus_xfer;
++	if (i2c_in_atomic_xfer_mode()) {
++		if (adapter->algo->smbus_xfer_atomic)
++			xfer_func = adapter->algo->smbus_xfer_atomic;
++		else if (adapter->algo->master_xfer_atomic)
++			xfer_func = NULL; /* fallback to I2C emulation */
++	}
++
++	if (xfer_func) {
+ 		/* Retry automatically on arbitration loss */
+ 		orig_jiffies = jiffies;
+ 		for (res = 0, try = 0; try <= adapter->retries; try++) {
+-			res = adapter->algo->smbus_xfer(adapter, addr, flags,
+-							read_write, command,
+-							protocol, data);
++			res = xfer_func(adapter, addr, flags, read_write,
++					command, protocol, data);
+ 			if (res != -EAGAIN)
+ 				break;
+ 			if (time_after(jiffies,
+diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
+index deea47c576e5..f9d0c417b5a5 100644
+--- a/drivers/i2c/i2c-core.h
++++ b/drivers/i2c/i2c-core.h
+@@ -43,10 +43,13 @@ static inline int __i2c_lock_bus_helper(struct i2c_adapter *adap)
+ {
+ 	int ret = 0;
+ 
+-	if (i2c_in_atomic_xfer_mode())
++	if (i2c_in_atomic_xfer_mode()) {
++		WARN(!adap->algo->master_xfer_atomic && !adap->algo->smbus_xfer_atomic,
++		     "No atomic I2C transfer handler for '%s'\n", dev_name(&adap->dev));
+ 		ret = i2c_trylock_bus(adap, I2C_LOCK_SEGMENT) ? 0 : -EAGAIN;
+-	else
++	} else {
+ 		i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 758a6db864c9..03755d4c9229 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -499,9 +499,13 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * @master_xfer: Issue a set of i2c transactions to the given I2C adapter
+  *   defined by the msgs array, with num messages available to transfer via
+  *   the adapter specified by adap.
++ * @master_xfer_atomic: same as @master_xfer. Yet, only using atomic context
++ *   so e.g. PMICs can be accessed very late before shutdown. Optional.
+  * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If this
+  *   is not present, then the bus layer will try and convert the SMBus calls
+  *   into I2C transfers instead.
++ * @smbus_xfer_atomic: same as @smbus_xfer. Yet, only using atomic context
++ *   so e.g. PMICs can be accessed very late before shutdown. Optional.
+  * @functionality: Return the flags that this algorithm/adapter pair supports
+  *   from the I2C_FUNC_* flags.
+  * @reg_slave: Register given client to I2C slave mode of this adapter
+@@ -512,9 +516,9 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
+  * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
+  * to name two of the most common.
+  *
+- * The return codes from the @master_xfer field should indicate the type of
+- * error code that occurred during the transfer, as documented in the kernel
+- * Documentation file Documentation/i2c/fault-codes.
++ * The return codes from the @master_xfer{_atomic} fields should indicate the
++ * type of error code that occurred during the transfer, as documented in the
++ * Kernel Documentation file Documentation/i2c/fault-codes.
+  */
+ struct i2c_algorithm {
+ 	/*
+@@ -528,9 +532,14 @@ struct i2c_algorithm {
+ 	 */
+ 	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+ 			   int num);
++	int (*master_xfer_atomic)(struct i2c_adapter *adap,
++				   struct i2c_msg *msgs, int num);
+ 	int (*smbus_xfer)(struct i2c_adapter *adap, u16 addr,
+ 			  unsigned short flags, char read_write,
+ 			  u8 command, int size, union i2c_smbus_data *data);
++	int (*smbus_xfer_atomic)(struct i2c_adapter *adap, u16 addr,
++				 unsigned short flags, char read_write,
++				 u8 command, int size, union i2c_smbus_data *data);
+ 
+ 	/* To determine what the adapter supports */
+ 	u32 (*functionality)(struct i2c_adapter *adap);
 -- 
 2.11.0
 
