@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8F6C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECA0C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C3FA20700
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A9ED20700
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="U0bQHZdi"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ZD48hqCv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726471AbfDCKyf (ORCPT
+        id S1726495AbfDCKyh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 06:54:35 -0400
+        Wed, 3 Apr 2019 06:54:37 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:37176 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfDCKyf (ORCPT
+        with ESMTP id S1725940AbfDCKyh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 06:54:35 -0400
+        Wed, 3 Apr 2019 06:54:37 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id DDB6825BEDD;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E1E4D25BEDE;
         Wed,  3 Apr 2019 21:54:14 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1554288855; bh=B1K8lBf4eDnZjn6vjSGyf16mESmOXBO9Ig6vuWvnxs8=;
+        t=1554288855; bh=+s6jnvhT9FfYPo8CyC2N10SgdEJ4b6l1g/xTtmUzLxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U0bQHZdiXc0ch9pVPzAFhxueZQTGjOjq26pI2LRG7KziL7Ee67xQIIVbreCj5Pv0t
-         ED4G3IQ0TIeJgGJvoHkC4A/7CUjVIChMkaCewcHd5H9tr6wGcy4341Vl3Mu946sCj/
-         IhXQj7J9eyOwQIfBrF425k9WoHqjFldWcDK+mCcI=
+        b=ZD48hqCvlRt8yZjLMhDIbYSSnRFcT0D0ghtKBdzeySP7GZOSvZMox5wKvhDR3QIvT
+         MddF7qme+0I0mE+UIHZIL4k4w0yunm6GthLgXrgl+8W+SJMPJUSgSq820tcnia2zYE
+         hVO3Q+smFcQMSSb7HjFhX4DCej6UH+EQDwYpqubI=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 481B79405F1; Wed,  3 Apr 2019 12:54:11 +0200 (CEST)
+        id 0E754940483; Wed,  3 Apr 2019 12:54:11 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 14/26] arm64: dts: renesas: r8a77995: draak: Enable CAN0, CAN1
-Date:   Wed,  3 Apr 2019 12:53:57 +0200
-Message-Id: <4162aa9db3d44691c6ca67eacfe0099723684506.1554281697.git.horms+renesas@verge.net.au>
+Subject: [PATCH 11/26] arm64: dts: renesas: r8a774c0-cat874: Add LEDs support
+Date:   Wed,  3 Apr 2019 12:53:54 +0200
+Message-Id: <dc0b439471323521a20314934080f51e8589fd19.1554281697.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1554281697.git.horms+renesas@verge.net.au>
 References: <cover.1554281697.git.horms+renesas@verge.net.au>
@@ -51,58 +51,53 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Enable both CAN0 and CAN1 controllers on R8A77995 Draak board,
-since they are available on connectors CN43, CN44 respectively.
+This patch adds LEDs support to the CAT874 board specific
+device tree.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index 244b0dda03ed..babca7cf23b9 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -179,6 +179,18 @@
- 	};
- };
- 
-+&can0 {
-+	pinctrl-0 = <&can0_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&can1 {
-+	pinctrl-0 = <&can1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
-@@ -382,6 +394,16 @@
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index 18ff79c37561..959919af5628 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -22,6 +22,30 @@
+ 		stdout-path = "serial0:115200n8";
  	};
  
-+	can0_pins: can0 {
-+		groups = "can0_data_a";
-+		function = "can0";
++	leds {
++		compatible = "gpio-leds";
++
++		led0 {
++			gpios = <&gpio5 19 GPIO_ACTIVE_HIGH>;
++			label = "LED0";
++		};
++
++		led1 {
++			gpios = <&gpio3 14 GPIO_ACTIVE_HIGH>;
++			label = "LED1";
++		};
++
++		led2 {
++			gpios = <&gpio4 10 GPIO_ACTIVE_HIGH>;
++			label = "LED2";
++		};
++
++		led3 {
++			gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
++			label = "LED3";
++		};
 +	};
 +
-+	can1_pins: can1 {
-+		groups = "can1_data_a";
-+		function = "can1";
-+	};
-+
- 	du_pins: du {
- 		groups = "du_rgb888", "du_sync", "du_disp", "du_clk_out_0";
- 		function = "du";
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
 -- 
 2.11.0
 
