@@ -7,81 +7,108 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD6EC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B90C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4361320700
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDBA820700
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Apr 2019 10:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="CQsQAc6I"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="N5ifOvml"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbfDCKyZ (ORCPT
+        id S1726372AbfDCKy0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 06:54:25 -0400
+        Wed, 3 Apr 2019 06:54:26 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:37176 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfDCKyY (ORCPT
+        with ESMTP id S1725940AbfDCKy0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 06:54:24 -0400
+        Wed, 3 Apr 2019 06:54:26 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2CF7325BECE;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 31A7625BED0;
         Wed,  3 Apr 2019 21:54:14 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1554288854; bh=GFl+KXBc65rmy1w1QAegGqD/Ug0f7s9zz85r5ZF4Zlw=;
+        t=1554288854; bh=IOuw3FzXQWl5LzZxsxTfcqtp8mDRWgsE/dho6X8wX6w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQsQAc6InOUTnb0AUe0xiu+IVPn6XOk+hsMR+FjIszYKCD75qrhNHLJcomKHDNidX
-         rKaiEbRMz1oHz50N9+K7YTDduw6Z5CaakqkBmSawlsKuW9Y036PFJhUA7WO0v/WGpS
-         XYQdCiRIInwAjG3TReS4CiP8AM0sXbhd2BIpuNs0=
+        b=N5ifOvmlS5TQ5OrtBRZf3VgpelOC9ko2WpHuiQtq1tC/nL1R/ZS5ceXnd15U3fpow
+         CBpaKoayZiN6NkJrfDk5HeHFcwg5/n2nZF1p27YX/sJzuuQnE8Lm8aKzJXGYSCPz5k
+         rI1MO0mBFUoHh1gA/ouZI3TvZDsLD/h9G8usLy84=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 58F03940600; Wed,  3 Apr 2019 12:54:11 +0200 (CEST)
+        id 800CE940361; Wed,  3 Apr 2019 12:54:11 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 15/26] arm64: dts: renesas: r8a774c0: Remove invalid compatible value for CSI40
-Date:   Wed,  3 Apr 2019 12:53:58 +0200
-Message-Id: <82ec009297bc573e6aace629181d13ed6ce3772f.1554281697.git.horms+renesas@verge.net.au>
+Subject: [PATCH 17/26] arm64: dts: renesas: r8a77990-ebisu: Add BD9571 PMIC
+Date:   Wed,  3 Apr 2019 12:54:00 +0200
+Message-Id: <1f4c123a98098cce0c172264de7da4fab1ff71b9.1554281697.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1554281697.git.horms+renesas@verge.net.au>
 References: <cover.1554281697.git.horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-The compatible value renesas,rcar-gen3-csi2 was used while prototyping
-the R-Car CSI-2 driver but was removed before the driver was merged.
+This patch adds the regulator definition required for operation of
+S2RAM.
 
-Fixes: e961ab42e034d469 ("arm64: dts: renesas: r8a774c0: Add VIN and CSI-2 device nodes")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 0bbcaf181262..ebe69dcfa3ca 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1741,8 +1741,7 @@
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index fb50f4fa8b9d..18a99d2e1ea5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -449,6 +449,26 @@
+ 	};
+ };
  
- 		csi40: csi2@feaa0000 {
--			compatible = "renesas,r8a774c0-csi2",
--				     "renesas,rcar-gen3-csi2";
-+			compatible = "renesas,r8a774c0-csi2";
- 			reg = <0 0xfeaa0000 0 0x10000>;
- 			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 716>;
++&i2c_dvfs {
++	status = "okay";
++
++	clock-frequency = <400000>;
++
++	pmic: pmic@30 {
++		pinctrl-0 = <&irq0_pins>;
++		pinctrl-names = "default";
++
++		compatible = "rohm,bd9571mwv";
++		reg = <0x30>;
++		interrupt-parent = <&intc_ex>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
+ &lvds0 {
+ 	status = "okay";
+ 
+@@ -511,6 +531,11 @@
+ 		function = "du";
+ 	};
+ 
++	irq0_pins: irq0 {
++		groups = "intc_ex_irq0";
++		function = "intc_ex";
++	};
++
+ 	pwm3_pins: pwm3 {
+ 		groups = "pwm3_b";
+ 		function = "pwm3";
 -- 
 2.11.0
 
