@@ -6,58 +6,74 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65044C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2D5C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350FE20820
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17AFB206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730819AbfDDJog (ORCPT
+        id S1731520AbfDDJpv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 05:44:36 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:38878 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730482AbfDDJof (ORCPT
+        Thu, 4 Apr 2019 05:45:51 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:38520 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731119AbfDDJpv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 05:44:35 -0400
-Received: by mail-vs1-f67.google.com with SMTP id s2so967950vsi.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 02:44:35 -0700 (PDT)
+        Thu, 4 Apr 2019 05:45:51 -0400
+Received: by mail-ua1-f66.google.com with SMTP id t15so674518uao.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 02:45:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hy8/xRxZJ1ei/wffY6G0H/arsnesF1k/OfBCvbpkrWI=;
-        b=qVBFhCttP9QJkL1h3WF2M36pnHVqvBKI1VHG7Hc/3Mboz3PQ93yg2p5Z9YZQ0iBizN
-         U2H54oqnKQE1PRhF3SmAQZYl0X489+avCiIGkJyE9235mf1gjLg/y8+1OkW++6uDDKaC
-         7i/tM4j7H8h5na3zaGKjwfpN+0iS6KuPshLYk5ylJv8Y4aRdr7LIpiEz33pxSf7GcvKr
-         XVoQTTaXxjPx3civVYn9WFvVaRpKieMGgkaTGCSIVvWfrZI0J0XKQSnY87hQnLHXwP7P
-         A2dHzjq7nX9aj4W3qJC2mt+FITzggbMrbHtXD35MUH+lvxE1ly6qxnH45lS6lJe70WV7
-         1MVw==
-X-Gm-Message-State: APjAAAVr0N1nBjnsJ3Cnw6Osb5PeKvDiTSguUd9OSD3xcDZTIw31EwuY
-        pQqE8Zbm9affGdu5sceAQWrJGFVpqCf3qLOIuwQnR51s
-X-Google-Smtp-Source: APXvYqwTVmBekEQgHS/s8APXajcgQ8l6HblyEwqX6qZAxA9rW2+ob4sznWtNsJO3c7qePOCy5Lvy4QIpTSYSIqsC5ds=
-X-Received: by 2002:a67:fbcc:: with SMTP id o12mr3560031vsr.60.1554371074810;
- Thu, 04 Apr 2019 02:44:34 -0700 (PDT)
+        bh=5B6AziMe15QouknPhYxKYiK4mUYb2LkgICfHIK9OrWg=;
+        b=is8NgNQgXdZ68JpgmLKLbw2cgFmLhRfIeDRV0uZs+6h/Tp6I8kHf9pgTbiWIdYn3u7
+         Ywq+N+qZZdsfeXObKHoayAlam/njCnyVYRiXqW4CgQhEBTq2fWKQgUO3RoGhRlb48vHW
+         mVU0nJR+u19iotXcjPb5HjEKAhwDDokTZTNYiKs/OVDK+BjZXY0tJP5Az2oy5skdiT8F
+         ayRB4GpyAZAURI2ZVBNdvHSQQxq9lYfmR/l5XoYCUyeD67GuhrLR9XHPbjF6S8Cc7qsp
+         clOWT3/zZVJ9S5Q7AK8V+rJGASseG8cwQfECHIWAa3BBN8nLXsAZbaP3qfkoWma9iLvF
+         ucFA==
+X-Gm-Message-State: APjAAAWKYYrZ7NmJcXGbhvEc7UNQNrfGkk8c20qb2NRBUN/meO+3EcDf
+        KV5qcXpn9nk4lJS4seqtpGETottkJrEjJgnv+k/E1N3v
+X-Google-Smtp-Source: APXvYqzZj6s9ipf3j72LDO8lwhlHYTR4gY9dq0ecNrca4Gm8OV5sYzAISQrKfMsEX33RRmjnmD8E/7sutdrKqryvDME=
+X-Received: by 2002:ab0:2341:: with SMTP id h1mr3067446uao.127.1554371149783;
+ Thu, 04 Apr 2019 02:45:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <1554302716-14750-1-git-send-email-uli+renesas@fpond.eu> <1554302716-14750-2-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1554302716-14750-2-git-send-email-uli+renesas@fpond.eu>
+References: <1554302716-14750-1-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1554302716-14750-1-git-send-email-uli+renesas@fpond.eu>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 4 Apr 2019 11:44:23 +0200
-Message-ID: <CAMuHMdWL+0UYJzpqN84VXWDuFwY+pPRHjHd5Saq-2hvBeqngAQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Remove placeholder I2C pin data
+Date:   Thu, 4 Apr 2019 11:45:37 +0200
+Message-ID: <CAMuHMdW=LtfPuBP-frp5LcP0rjBDzxE8H7eE18uOzEn3xc-h5w@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: sh-pfc: r8a77965: Add I2C{0,3,5} pins, groups
+ and functions
 To:     Ulrich Hecht <uli+renesas@fpond.eu>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
+        Wolfram Sang <wsa@the-dreams.de>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Uli,
+
 On Wed, Apr 3, 2019 at 4:45 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> Pin data for I2C controllers 0, 3 and 5 is properly defined already.
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 >
+> This patch adds I2C{0,3,5} pins, groups and functions to the R8A7796 SoC.
+>
+> These pins are physically muxed with other pins. Therefore, setup of
+> MOD_SEL is needed for exclusive control with other pins.
+>
+> [takeshi.kihara.df: add blank lines after function declarations]
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [uli: use standard macros PINMUX_IPSR_PHYS and PINMUX_IPSR_PHYS_MSEL]
 > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> ---
+> This revision has been rebased and removes the placeholder pin data.
+
+Thanks for the update!
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. queuing in sh-pfc-for-v5.2.
