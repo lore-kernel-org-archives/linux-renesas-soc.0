@@ -2,154 +2,138 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0801C10F05
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3068BC10F05
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6362075E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:27:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554370038;
-	bh=jzwxOIilBKvMgAjiB1It+h+Ly36AJM6c80AUIaHtotQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jAhHcD4swJZzHNEIHOccMkM7ZJhxtGB1X4CJkArAwoc2fuXksaMEecXsfNW8wVps0
-	 buaRlWtlx3YoMmduD6TddSiRYw9MNfTpYNtj1ORs61xAtmZGNCYU471jmZ/CKI2nD+
-	 wkGVhvnbzcDrEF5n/PsnfxveUUGxX+PCpa/P3tLY=
+	by mail.kernel.org (Postfix) with ESMTP id 00653206B6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:28:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733161AbfDDJMq (ORCPT
+        id S1732774AbfDDJ2l (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 05:12:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52920 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733062AbfDDJMq (ORCPT
+        Thu, 4 Apr 2019 05:28:41 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55936 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733193AbfDDJ2l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 05:12:46 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 573182075E;
-        Thu,  4 Apr 2019 09:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554369164;
-        bh=jzwxOIilBKvMgAjiB1It+h+Ly36AJM6c80AUIaHtotQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k42QrAstdU5jWbrie2eXuzd0hC3S5O9bJ08hDSpXRmef+LaIWHNF+o8rRL3xaNT5Z
-         13qCX92wyGDc+oCS5uG8F9OdFf7h0XuU6b8U2lMORoa/1uR9aiRtGOJds1wozFSeGo
-         +WokRPPr1sRFtwRkkEn/Zzb5R5XuHIESWeIUIy8w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        Thu, 4 Apr 2019 05:28:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D8BB169E;
+        Thu,  4 Apr 2019 02:28:40 -0700 (PDT)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00D423F557;
+        Thu,  4 Apr 2019 02:28:38 -0700 (PDT)
+Date:   Thu, 4 Apr 2019 10:28:33 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     marek.vasut@gmail.com
+Cc:     linux-pci@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 121/246] gpio: of: Apply regulator-gpio quirk only to enable-gpios
-Date:   Thu,  4 Apr 2019 10:47:01 +0200
-Message-Id: <20190404084623.392174120@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190404084619.236418459@linuxfoundation.org>
-References: <20190404084619.236418459@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V5 6/6] PCI: rcar: Fix 64bit MSI message address handling
+Message-ID: <20190404092833.GA13236@red-moon>
+References: <20190402013307.20912-1-marek.vasut@gmail.com>
+ <20190402013307.20912-6-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190402013307.20912-6-marek.vasut@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-5.0-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Apr 02, 2019 at 03:33:07AM +0200, marek.vasut@gmail.com wrote:
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> 
+> The MSI message address in the RC address space can be 64 bit. The
+> R-Car PCIe RC supports such a 64bit MSI message address as well.
+> The code currently uses virt_to_phys(__get_free_pages()) to obtain
+> a reserved page for the MSI message address, and the return value
+> of which can be a 64 bit physical address on 64 bit system.
+> 
+> However, the driver only programs PCIEMSIALR register with the bottom
+> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
+> not program the top 32 bits into PCIEMSIAUR, but rather programs the
+> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
+> SoCs, however may fail on new 64 bit R-Car SoCs.
+> 
+> Since from a PCIe controller perspective, an inbound MSI is a memory
+> write to a special address (in case of this controller, defined by
+> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
+> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
+> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
+> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
+> cause memory corruption or other issues.
+> 
+> There is however the possibility that if virt_to_phys(__get_free_pages())
+> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
+> to 0x0 _and_ if the system had physical RAM at the address matching the
+> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
+> physical address matching the value of PCIEMSIALR and a remote write to
+> such a buffer by a PCIe card would trigger a spurious MSI.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: linux-pci@vger.kernel.org
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> V2: - s/it's/its/ in commit message
+>     - Add R-B from Geert
+> V3: - Reworded commit message and thus dropped Geerts R-B
+> V4: - Add Geert's R-B again
+> V5: - Rebase on next/master 20190401
+>     - Use {lower,upper}_32_bits() instead of >> 32
 
-------------------
+If that's the only reason you resent this series I will add the
+lower_32_bits() code myself.
 
-[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
+Please do not rebase on top of next, apply code on top of a fixed -rc1
+(we are currently using v5.1-rc1) and if there are dependencies on code
+already queued do let us know, we will handle conflicts in next
+ourselves.
 
-Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
-the GPIO regulator had inverted the polarity of the control GPIO. This
-problem manifested itself on systems with DT containing the following
-description (snippet from salvator-common.dtsi):
+Lorenzo
 
-	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-	gpios-states = <1>;
-	states = <3300000 1
-		  1800000 0>;
-
-Prior to the aforementioned commit, the gpio-regulator code used
-gpio_request_array() to claim the GPIO(s) specified in the "gpios"
-DT node, while the commit changed that to devm_gpiod_get_index().
-
-The legacy gpio_request_array() calls gpio_request_one() and then
-gpiod_request(), which parses the DT flags of the "gpios" node and
-populates the GPIO descriptor flags field accordingly.
-
-The new devm_gpiod_get_index() calls gpiod_get_index(), then
-of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
-and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
-("gpio: of: Add special quirk to parse regulator flags"),
-of_gpio_flags_quirks() contains a quirk for regulator-gpio
-which was never triggered by the legacy gpio_request_array()
-code path, but is triggered by devm_gpiod_get_index() code
-path.
-
-This quirk checks whether a GPIO is associated with a fixed
-or gpio-regulator and if so, checks two additional conditions.
-First, whether such GPIO is active-low, and if so, ignores the
-active-low flag. Second, whether the regulator DT node does
-have an "enable-active-high" property and if the property is
-NOT present, sets the GPIO flags as active-low.
-
-The second check triggers a problem, since it is applied to all
-GPIOs associated with a gpio-regulator, rather than only on the
-"enable" GPIOs, as the old code did. This changes the way the
-gpio-regulator interprets the DT description of the control
-GPIOs.
-
-The old code using gpio_request_array() explicitly parsed the
-"enable-active-high" DT property and only applied it to the
-GPIOs described in the "enable-gpios" DT node, and only if
-those were present.
-
-This patch fixes the quirk code by only applying the quirk
-to "enable-gpios", thus restoring the old behavior.
-
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Jan Kotas <jank@cadence.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org
-To: linux-gpio@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpiolib-of.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index a6e1891217e2..30542a10014f 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
- 	 * Note that active low is the default.
- 	 */
- 	if (IS_ENABLED(CONFIG_REGULATOR) &&
-+	    !strcmp(propname, "enable-gpio") &&
- 	    (of_device_is_compatible(np, "regulator-fixed") ||
- 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
- 	     of_device_is_compatible(np, "regulator-gpio"))) {
--- 
-2.19.1
-
-
-
+> ---
+>  drivers/pci/controller/pcie-rcar.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+> index 168bc6b9bb93..5e0102796345 100644
+> --- a/drivers/pci/controller/pcie-rcar.c
+> +++ b/drivers/pci/controller/pcie-rcar.c
+> @@ -892,7 +892,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+>  {
+>  	struct device *dev = pcie->dev;
+>  	struct rcar_msi *msi = &pcie->msi;
+> -	unsigned long base;
+> +	phys_addr_t base;
+>  	int err, i;
+>  
+>  	mutex_init(&msi->lock);
+> @@ -933,8 +933,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+>  	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+>  	base = virt_to_phys((void *)msi->pages);
+>  
+> -	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
+> -	rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
+> +	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
+> +	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
+>  
+>  	/* enable all MSI interrupts */
+>  	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
+> -- 
+> 2.20.1
+> 
