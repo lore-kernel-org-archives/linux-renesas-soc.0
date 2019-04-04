@@ -2,333 +2,148 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC76C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22299C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B91C2082E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2D50206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:20:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZG8UEEqn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbfDDQBY (ORCPT
+        id S1727347AbfDDQUe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 12:01:24 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:53473 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbfDDQBX (ORCPT
+        Thu, 4 Apr 2019 12:20:34 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46373 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbfDDQUe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 12:01:23 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id E10771BF205;
-        Thu,  4 Apr 2019 16:01:19 +0000 (UTC)
-Date:   Thu, 4 Apr 2019 18:02:05 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 1/9] v4l: Add definitions for missing 32-bit RGB formats
-Message-ID: <20190404160205.abekrybup23fo7ad@uno.localdomain>
-References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190328070723.26553-2-laurent.pinchart+renesas@ideasonboard.com>
- <20190328131543.zlito5lm3n7mjyls@uno.localdomain>
- <20190402121200.GX4805@pendragon.ideasonboard.com>
+        Thu, 4 Apr 2019 12:20:34 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y6so1399363pll.13;
+        Thu, 04 Apr 2019 09:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2SEusfEFXsiILNdaOyq8RGU5v/5vptx1DUIt4v74SOE=;
+        b=ZG8UEEqnYmwA+v7DAMPYEpJY0D6ZOVQVjnSJ4jT8Uyq1pZhlGrZcoIh77ZpKMTLkL9
+         NqX7xI9+howvnDrxgC4IrhDJW0q7t8KK4NP3zroPqNHW4ERyzqB/6aTONhuTaN9M9fwe
+         w8VknQRLjQh/DI3PVPgeHUjSYWIWoqvzN7NXMcfglxgtu4F1Pugue5IsaPVACjEPmH9b
+         2bz4/UduOoDSRHGI6rU1LLSrzrOyiLYKHHd8sa58+qkC5M759e8br2ZDZ4dnqeeV7Bxb
+         1VgN+DdqEqnJAM21Bi0ZyEXA+cNxTVX01a4uLaga4FJl4+WZqD1SYsNPac20p1GhG83F
+         6znA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2SEusfEFXsiILNdaOyq8RGU5v/5vptx1DUIt4v74SOE=;
+        b=LY56H+VDH2CDIh3yujV/B0HJITOTXZdTO/fTpPm9wesp89dvqPRGXKU6wGRZz6lIDb
+         uF1kwhhF5XzOohOUmb6gyvtkiu87a9hzPtdUTQMMrQL4belVF5JUi6IfbnFGtmnX6U3Z
+         O+SAXNIPfWURHJjw5I3EzRHz32LS/lceq2zuJTHbrelBiHWAB7V0WRq8sXr2+nztaasx
+         VrFx0wdqBynY+yNloG9xEMp7T4H1meT/ef0QR2BPmX4Zl6LLq1Hd74HDX9ruUx6tdtLO
+         10ebAHZPcNT65sTvNpb+NQsHdFrfgKbtAyaPEk6HkbzvBGqNLAt24GVBbcD8bKlloqUL
+         V8pg==
+X-Gm-Message-State: APjAAAUVa2Q9Hw4puAjiEpUs3yank8qN4JGF4VLZQj9ibcly8EUsc4oA
+        zf1UkyJhWIrAw3/kqZ9aVACFYVdU
+X-Google-Smtp-Source: APXvYqxFaiURWOnArfwq2OvSdhklthSldRb2fTIzjkp+1GAKNJkDTFeABq4lbb3PuluVyCUZKoVQnQ==
+X-Received: by 2002:a17:902:2888:: with SMTP id f8mr7426327plb.244.1554394833169;
+        Thu, 04 Apr 2019 09:20:33 -0700 (PDT)
+Received: from [192.168.42.180] (219x120x4x122.ap219.ftth.ucom.ne.jp. [219.120.4.122])
+        by smtp.gmail.com with ESMTPSA id y37sm29705052pgk.78.2019.04.04.09.20.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Apr 2019 09:20:32 -0700 (PDT)
+Subject: Re: [PATCH V5 6/6] PCI: rcar: Fix 64bit MSI message address handling
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+References: <20190402013307.20912-1-marek.vasut@gmail.com>
+ <20190402013307.20912-6-marek.vasut@gmail.com>
+ <20190404092833.GA13236@red-moon>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <267aa1b1-9761-aff7-8462-8efc644083bd@gmail.com>
+Date:   Thu, 4 Apr 2019 17:48:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kcph5s4d5x473cw2"
-Content-Disposition: inline
-In-Reply-To: <20190402121200.GX4805@pendragon.ideasonboard.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190404092833.GA13236@red-moon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On 4/4/19 11:28 AM, Lorenzo Pieralisi wrote:
+> On Tue, Apr 02, 2019 at 03:33:07AM +0200, marek.vasut@gmail.com wrote:
+>> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>>
+>> The MSI message address in the RC address space can be 64 bit. The
+>> R-Car PCIe RC supports such a 64bit MSI message address as well.
+>> The code currently uses virt_to_phys(__get_free_pages()) to obtain
+>> a reserved page for the MSI message address, and the return value
+>> of which can be a 64 bit physical address on 64 bit system.
+>>
+>> However, the driver only programs PCIEMSIALR register with the bottom
+>> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
+>> not program the top 32 bits into PCIEMSIAUR, but rather programs the
+>> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
+>> SoCs, however may fail on new 64 bit R-Car SoCs.
+>>
+>> Since from a PCIe controller perspective, an inbound MSI is a memory
+>> write to a special address (in case of this controller, defined by
+>> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
+>> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
+>> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
+>> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
+>> cause memory corruption or other issues.
+>>
+>> There is however the possibility that if virt_to_phys(__get_free_pages())
+>> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
+>> to 0x0 _and_ if the system had physical RAM at the address matching the
+>> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
+>> physical address matching the value of PCIEMSIALR and a remote write to
+>> such a buffer by a PCIe card would trigger a spurious MSI.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+>> Cc: Simon Horman <horms+renesas@verge.net.au>
+>> Cc: Wolfram Sang <wsa@the-dreams.de>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> To: linux-pci@vger.kernel.org
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> V2: - s/it's/its/ in commit message
+>>     - Add R-B from Geert
+>> V3: - Reworded commit message and thus dropped Geerts R-B
+>> V4: - Add Geert's R-B again
+>> V5: - Rebase on next/master 20190401
+>>     - Use {lower,upper}_32_bits() instead of >> 32
+> 
+> If that's the only reason you resent this series I will add the
+> lower_32_bits() code myself.
 
---kcph5s4d5x473cw2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Yes, you asked me to resend the whole series after the bot complained.
 
-Hi Laurent,
-   thanks for explaining.
+> Please do not rebase on top of next, apply code on top of a fixed -rc1
+> (we are currently using v5.1-rc1) and if there are dependencies on code
+> already queued do let us know, we will handle conflicts in next
+> ourselves.
 
-On Tue, Apr 02, 2019 at 03:12:00PM +0300, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> On Thu, Mar 28, 2019 at 02:15:43PM +0100, Jacopo Mondi wrote:
-> > On Thu, Mar 28, 2019 at 09:07:15AM +0200, Laurent Pinchart wrote:
-> > > The V4L2 API is missing the 32-bit RGB formats for the ABGR, XBGR, RGBA
-> > > and RGBX component orders. Add them, using the same 4CCs as DRM.
-> > >
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > ---
-> > >  .../media/uapi/v4l/pixfmt-packed-rgb.rst      | 160 ++++++++++++++++++
-> > >  include/uapi/linux/videodev2.h                |   4 +
-> > >  2 files changed, 164 insertions(+)
-> > >
-> > > diff --git a/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst b/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> > > index 6b3781c04dd5..055f9c89e787 100644
-> > > --- a/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> > > +++ b/Documentation/media/uapi/v4l/pixfmt-packed-rgb.rst
-> > > @@ -453,6 +453,166 @@ next to each other in memory.
-> > >        - r\ :sub:`1`
-> > >        - r\ :sub:`0`
-> > >
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +    * .. _V4L2-PIX-FMT-BGRA32:
-> > > +
-> > > +      - ``V4L2_PIX_FMT_BGRA32``
-> > > +      - 'RA24'
-> > > +
-> > > +      - a\ :sub:`7`
-> > > +      - a\ :sub:`6`
-> > > +      - a\ :sub:`5`
-> > > +      - a\ :sub:`4`
-> > > +      - a\ :sub:`3`
-> > > +      - a\ :sub:`2`
-> > > +      - a\ :sub:`1`
-> > > +      - a\ :sub:`0`
-> > > +
-> > > +      - b\ :sub:`7`
-> > > +      - b\ :sub:`6`
-> > > +      - b\ :sub:`5`
-> > > +      - b\ :sub:`4`
-> > > +      - b\ :sub:`3`
-> > > +      - b\ :sub:`2`
-> > > +      - b\ :sub:`1`
-> > > +      - b\ :sub:`0`
-> > > +
-> > > +      - g\ :sub:`7`
-> > > +      - g\ :sub:`6`
-> > > +      - g\ :sub:`5`
-> > > +      - g\ :sub:`4`
-> > > +      - g\ :sub:`3`
-> > > +      - g\ :sub:`2`
-> > > +      - g\ :sub:`1`
-> > > +      - g\ :sub:`0`
-> > > +
-> > > +      - r\ :sub:`7`
-> > > +      - r\ :sub:`6`
-> > > +      - r\ :sub:`5`
-> > > +      - r\ :sub:`4`
-> > > +      - r\ :sub:`3`
-> > > +      - r\ :sub:`2`
-> > > +      - r\ :sub:`1`
-> > > +      - r\ :sub:`0`
-> > > +    * .. _V4L2-PIX-FMT-BGRX32:
-> > > +
-> > > +      - ``V4L2_PIX_FMT_BGRX32``
-> > > +      - 'RX24'
-> > > +
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +      -
-> > > +
-> > > +      - b\ :sub:`7`
-> > > +      - b\ :sub:`6`
-> > > +      - b\ :sub:`5`
-> > > +      - b\ :sub:`4`
-> > > +      - b\ :sub:`3`
-> > > +      - b\ :sub:`2`
-> > > +      - b\ :sub:`1`
-> > > +      - b\ :sub:`0`
-> > > +
-> > > +      - g\ :sub:`7`
-> > > +      - g\ :sub:`6`
-> > > +      - g\ :sub:`5`
-> > > +      - g\ :sub:`4`
-> > > +      - g\ :sub:`3`
-> > > +      - g\ :sub:`2`
-> > > +      - g\ :sub:`1`
-> > > +      - g\ :sub:`0`
-> > > +
-> > > +      - r\ :sub:`7`
-> > > +      - r\ :sub:`6`
-> > > +      - r\ :sub:`5`
-> > > +      - r\ :sub:`4`
-> > > +      - r\ :sub:`3`
-> > > +      - r\ :sub:`2`
-> > > +      - r\ :sub:`1`
-> > > +      - r\ :sub:`0`
-> > > +    * .. _V4L2-PIX-FMT-RGBA32:
-> > > +
-> > > +      - ``V4L2_PIX_FMT_RGBA32``
-> > > +      - 'AB24'
-> > > +
-> > > +      - r\ :sub:`7`
-> > > +      - r\ :sub:`6`
-> > > +      - r\ :sub:`5`
-> > > +      - r\ :sub:`4`
-> > > +      - r\ :sub:`3`
-> > > +      - r\ :sub:`2`
-> > > +      - r\ :sub:`1`
-> > > +      - r\ :sub:`0`
-> > > +
-> > > +      - g\ :sub:`7`
-> > > +      - g\ :sub:`6`
-> > > +      - g\ :sub:`5`
-> > > +      - g\ :sub:`4`
-> > > +      - g\ :sub:`3`
-> > > +      - g\ :sub:`2`
-> > > +      - g\ :sub:`1`
-> > > +      - g\ :sub:`0`
-> > > +
-> > > +      - b\ :sub:`7`
-> > > +      - b\ :sub:`6`
-> > > +      - b\ :sub:`5`
-> > > +      - b\ :sub:`4`
-> > > +      - b\ :sub:`3`
-> > > +      - b\ :sub:`2`
-> > > +      - b\ :sub:`1`
-> > > +      - b\ :sub:`0`
-> > > +
-> > > +      - a\ :sub:`7`
-> > > +      - a\ :sub:`6`
-> > > +      - a\ :sub:`5`
-> > > +      - a\ :sub:`4`
-> > > +      - a\ :sub:`3`
-> > > +      - a\ :sub:`2`
-> > > +      - a\ :sub:`1`
-> > > +      - a\ :sub:`0`
-> > > +    * .. _V4L2-PIX-FMT-RGBX32:
-> > > +
-> > > +      - ``V4L2_PIX_FMT_RGBX32``
-> > > +      - 'XB24'
-> > > +
-> > > +      - r\ :sub:`7`
-> > > +      - r\ :sub:`6`
-> > > +      - r\ :sub:`5`
-> > > +      - r\ :sub:`4`
-> > > +      - r\ :sub:`3`
-> > > +      - r\ :sub:`2`
-> > > +      - r\ :sub:`1`
-> > > +      - r\ :sub:`0`
-> > > +
-> > > +      - g\ :sub:`7`
-> > > +      - g\ :sub:`6`
-> > > +      - g\ :sub:`5`
-> > > +      - g\ :sub:`4`
-> > > +      - g\ :sub:`3`
-> > > +      - g\ :sub:`2`
-> > > +      - g\ :sub:`1`
-> > > +      - g\ :sub:`0`
-> > > +
-> > > +      - b\ :sub:`7`
-> > > +      - b\ :sub:`6`
-> > > +      - b\ :sub:`5`
-> > > +      - b\ :sub:`4`
-> > > +      - b\ :sub:`3`
-> > > +      - b\ :sub:`2`
-> > > +      - b\ :sub:`1`
-> > > +      - b\ :sub:`0`
-> > > +
-> >
-> > I'm trying to compare these with the existing 32-bit RGB formats in
-> > pixfmt-packed-rgb.rst and I can't get how the orderig of components is
-> > defined.
->
-> Pixel formats are all a big mess :-)
->
-> > Ie your definitions here:
-> >
-> >         bytes:  B0      B1      B2      B3
-> > BGRA32          A       B       G       R
-> > BGRX32          x       B       G       R
-> > RGBA32          R       G       B       A
-> > RGBX32          R       G       B       x
-> >
-> > In the existing documentation:
-> > ABGR32          B       G       R       A
-> > XBGR32          B       G       R       x
-> > ARGB32          A       R       G       B
-> > XRGB32          x       R       G       B
->
-> > So you're adding two BGR/RGB variations with 'X' or 'A' moved from the
-> > first (for RGB) or last (for BGR) bytes to the last (for RGB) or first
-> > (for BGR) bytes.
-> >
-> > I cannot see a clear pattern (it seems RGB is ordered as you read the
-> > components, while BGR is inverted?) so I assume the definition of the
-> > component ordering scheme comes from a standard, does it? A reference
-> > would help checking for errors :)
->
-> The existing formats are pretty inconsistent. I suppose ARGB and XRGB
-> were added first, with the format names corresponding to the pixel order
-> in memory. Then a need to support BGRA and BGRX arose, and the format
-> names were set to ABGR32 and XBGR32 instead of BGRA32 and BGRX32.
-> Unfortuantely we can't fix this as it's an ABI, so I had to follow the
-> same scheme for the new formats. RGBA and RGBX are fine as the RGBA31
-> and RGBX32 names were free, but for ABGR and XBGR I had to use the
-> BGRA32 and BGRX32 names.
->
+So do you want me to resend this one more time ?
 
-The generated documentation seems good to me.
-
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-  j
-
-> > >        -
-> > >        -
-> > >        -
-> > > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> > > index 1db220da3bcc..4e5222726719 100644
-> > > --- a/include/uapi/linux/videodev2.h
-> > > +++ b/include/uapi/linux/videodev2.h
-> > > @@ -528,7 +528,11 @@ struct v4l2_pix_format {
-> > >  #define V4L2_PIX_FMT_BGR32   v4l2_fourcc('B', 'G', 'R', '4') /* 32  BGR-8-8-8-8   */
-> > >  #define V4L2_PIX_FMT_ABGR32  v4l2_fourcc('A', 'R', '2', '4') /* 32  BGRA-8-8-8-8  */
-> > >  #define V4L2_PIX_FMT_XBGR32  v4l2_fourcc('X', 'R', '2', '4') /* 32  BGRX-8-8-8-8  */
-> > > +#define V4L2_PIX_FMT_BGRA32  v4l2_fourcc('R', 'A', '2', '4') /* 32  ABGR-8-8-8-8  */
-> > > +#define V4L2_PIX_FMT_BGRX32  v4l2_fourcc('R', 'X', '2', '4') /* 32  XBGR-8-8-8-8  */
-> > >  #define V4L2_PIX_FMT_RGB32   v4l2_fourcc('R', 'G', 'B', '4') /* 32  RGB-8-8-8-8   */
-> > > +#define V4L2_PIX_FMT_RGBA32  v4l2_fourcc('A', 'B', '2', '4') /* 32  RGBA-8-8-8-8  */
-> > > +#define V4L2_PIX_FMT_RGBX32  v4l2_fourcc('X', 'B', '2', '4') /* 32  RGBX-8-8-8-8  */
-> > >  #define V4L2_PIX_FMT_ARGB32  v4l2_fourcc('B', 'A', '2', '4') /* 32  ARGB-8-8-8-8  */
-> > >  #define V4L2_PIX_FMT_XRGB32  v4l2_fourcc('B', 'X', '2', '4') /* 32  XRGB-8-8-8-8  */
-> > >
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
---kcph5s4d5x473cw2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlymKn0ACgkQcjQGjxah
-VjwOmg//eTZVvHRpyn5I+zODzxs9T7YA5ypGoraIQwsmKqhhisldssm3TRuf1xpg
-aOE89YzbhvCrBKfYQdHHgHgPvcqUR34RLe380rYDnj/W/ar+hKCKEAy4QSyI/KJk
-hBP6V8Sou4jpoBWze84J4KlB5OqbCrcEt5uaEXhUoVWD5CyTTyV34/EsQBJgfr03
-ZBf1gO7+2yUI1rgkw9d4mR9ZSGVfyiBOXkefd23EcS7sGkepXyybqnB/yT+3FAOr
-ftg0TF3qV/+IE/+cpvmziVn3MK7BQPU1h0jCU5/e96RfGIiAEp5MweKeS1rbzh2j
-j8or3cfgFPx+aurmE7orBtZcff3G6UhsdYHb1IvYWRj8JGpVoXlfr8mhT/BvFZun
-4RCuuv+tDKEoln1HASVxT1vWB40xKBrmFGjc/5Pz2bHwCTkYVJejCEstTM9lsFeU
-+Oje73NY+Fwuj64cRFzBgDNJARQeeC0BRTx1l2Y/vlro3RcsDZr8PcBiJD9tW8Zw
-RyqNU86s6dRJOhboQv7bdO7Tl1dhbVySB2fiLtJEKCeziWW8tpr2uTX/vxx4eFM1
-aPfZlgA4Q3bZCH/spinbCujJacoFkAN0JGksPlLZMuauHIbLHM5PMW7m9McOJqzT
-QJ0fEfPfkPvNzJe2weCk5bzcmaPCTgtsCjPRHxXM6Bv+EiJQ2Uk=
-=k8Wb
------END PGP SIGNATURE-----
-
---kcph5s4d5x473cw2--
+-- 
+Best regards,
+Marek Vasut
