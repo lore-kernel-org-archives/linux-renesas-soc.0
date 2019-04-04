@@ -6,111 +6,61 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B41C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65044C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB894205F4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350FE20820
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:44:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbfDDJe6 (ORCPT
+        id S1730819AbfDDJog (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 05:34:58 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44308 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731940AbfDDJGs (ORCPT
+        Thu, 4 Apr 2019 05:44:36 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38878 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730482AbfDDJof (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 05:06:48 -0400
-Received: by mail-vs1-f68.google.com with SMTP id j184so890198vsd.11;
-        Thu, 04 Apr 2019 02:06:47 -0700 (PDT)
+        Thu, 4 Apr 2019 05:44:35 -0400
+Received: by mail-vs1-f67.google.com with SMTP id s2so967950vsi.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 02:44:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4+XzHk+jpTGxDGVqwa4dg4gvQjQHJPUEUNt3UVVTA0M=;
-        b=TIxcxsAHP0ztxYQnoDKdJhgktWvXsEVcp7F4z5b40lX0LVZTavA1jqtUNAjkTchRk+
-         oEK5pwm0IYdoWuFqXSSOjBsquK87AW8I9aMRiL7tT1zTU9HsBeSE8ktlPvFIma5JKuue
-         0WynQMnh4mfkYDJ37Q3qvKW/zLlavfBNSr+iPfLE4P+INXt2itXDiPdkWq2i8ZYZaHbo
-         D8WRaAGsMe7DjrE8e8qVrZUIuc0MyJeQKadWhhELgWSxmZSo+Imf/z4jhl80ZzRtGGG+
-         yhJo1kwUqhBuQk5pz8LtnYmxmFQE6YsGc8cVkfy+mnII7ZbNQtlqIFLJyULQDkrELT3Z
-         W+Yw==
-X-Gm-Message-State: APjAAAXfmUcAAo5whrs4v2VLCxpzpN/qxlYupOlfcd1PzxX2RrfawxeN
-        EBTu8M35TyNlfjupYjYe3a0McSyLqusNsisZ8m0=
-X-Google-Smtp-Source: APXvYqyQVT+lQa4Dnf7R6t91gYRQ+JEWFwqrjQtb6c1FMR+gD5nZYaA9ZPLXA91ckUsikJjFPiyeIHEPUp5cB0tIzfY=
-X-Received: by 2002:a67:fbcc:: with SMTP id o12mr3473975vsr.60.1554368807334;
- Thu, 04 Apr 2019 02:06:47 -0700 (PDT)
+        bh=hy8/xRxZJ1ei/wffY6G0H/arsnesF1k/OfBCvbpkrWI=;
+        b=qVBFhCttP9QJkL1h3WF2M36pnHVqvBKI1VHG7Hc/3Mboz3PQ93yg2p5Z9YZQ0iBizN
+         U2H54oqnKQE1PRhF3SmAQZYl0X489+avCiIGkJyE9235mf1gjLg/y8+1OkW++6uDDKaC
+         7i/tM4j7H8h5na3zaGKjwfpN+0iS6KuPshLYk5ylJv8Y4aRdr7LIpiEz33pxSf7GcvKr
+         XVoQTTaXxjPx3civVYn9WFvVaRpKieMGgkaTGCSIVvWfrZI0J0XKQSnY87hQnLHXwP7P
+         A2dHzjq7nX9aj4W3qJC2mt+FITzggbMrbHtXD35MUH+lvxE1ly6qxnH45lS6lJe70WV7
+         1MVw==
+X-Gm-Message-State: APjAAAVr0N1nBjnsJ3Cnw6Osb5PeKvDiTSguUd9OSD3xcDZTIw31EwuY
+        pQqE8Zbm9affGdu5sceAQWrJGFVpqCf3qLOIuwQnR51s
+X-Google-Smtp-Source: APXvYqwTVmBekEQgHS/s8APXajcgQ8l6HblyEwqX6qZAxA9rW2+ob4sznWtNsJO3c7qePOCy5Lvy4QIpTSYSIqsC5ds=
+X-Received: by 2002:a67:fbcc:: with SMTP id o12mr3560031vsr.60.1554371074810;
+ Thu, 04 Apr 2019 02:44:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190320103927.21227-1-geert+renesas@glider.be> <CAPDyKFpecPdcqagc567kZJeWbe6y_0j9JAVKcE6c9Ltv+OG-Yw@mail.gmail.com>
-In-Reply-To: <CAPDyKFpecPdcqagc567kZJeWbe6y_0j9JAVKcE6c9Ltv+OG-Yw@mail.gmail.com>
+References: <1554302716-14750-1-git-send-email-uli+renesas@fpond.eu> <1554302716-14750-2-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1554302716-14750-2-git-send-email-uli+renesas@fpond.eu>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 4 Apr 2019 11:06:35 +0200
-Message-ID: <CAMuHMdVMOo2R2ehuU9XiVy0NS9J=mJkx0Mo-rsT=OBs-1kvH=Q@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up is enabled
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Thu, 4 Apr 2019 11:44:23 +0200
+Message-ID: <CAMuHMdWL+0UYJzpqN84VXWDuFwY+pPRHjHd5Saq-2hvBeqngAQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sh-pfc: r8a7796: Remove placeholder I2C pin data
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Ulf,
-
-On Thu, Apr 4, 2019 at 10:55 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Wed, 20 Mar 2019 at 11:39, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > If a device is part of the wake-up path, it should indicate this by
-> > setting its power.wakeup_path field.  This allows the genpd core code to
-> > keep the device enabled during system suspend when needed.
-> >
-> > As regulators powering devices are not handled by genpd, the driver
-> > handles these itself, and thus must skip regulator control when the
-> > device is part of the wake-up path.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > Note that I don't really need this on the Renesas Ebisu-4D board, as
-> > there is no regulator or PM Domain controlling power to the GPIO
-> > expander on that board.  I did want to have all wake-up path processing
-> > implemented in the driver for completeness, and did test its behavior
-> > with gpio-keys configured as a wake-up source.
+On Wed, Apr 3, 2019 at 4:45 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> Pin data for I2C controllers 0, 3 and 5 is properly defined already.
 >
-> All above makes perfect sense to me.
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Thanks!
-
-> > However, while this approach is known to work fine on other boards, with
-> > other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
-> > irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
-> > device suspend ordering.
-> >
-> > The proper ordering is:
-> >   1. When gpio-keys is suspended, its suspend handler calls
-> >      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
-> >      pca953x_chip.wakeup_path to be incremented,
-> >   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
-> >      and marks the device to be part of the wake-up path.
->
-> Right.
->
-> >
-> > However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
-> > scheme :-(
->
-> Would it make sense to fixup the ordering issue via creating a
-> parent/child relationship or setting up a device link?
-
-Could that be due to gpio_keys not having rudimentary Runtime PM support?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. queuing in sh-pfc-for-v5.2.
 
 Gr{oetje,eeting}s,
 
