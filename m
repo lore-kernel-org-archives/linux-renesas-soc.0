@@ -6,65 +6,66 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404F7C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 877EEC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 093D920663
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A57D206DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:19:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvEEgSxD"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zgjgfCc+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbfDDFNg (ORCPT
+        id S1725946AbfDDFTW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 01:13:36 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45278 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfDDFNg (ORCPT
+        Thu, 4 Apr 2019 01:19:22 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41246 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfDDFTW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 01:13:36 -0400
-Received: by mail-lj1-f193.google.com with SMTP id y6so839149ljd.12
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2019 22:13:35 -0700 (PDT)
+        Thu, 4 Apr 2019 01:19:22 -0400
+Received: by mail-lj1-f196.google.com with SMTP id k8so865101lja.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2019 22:19:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=114mMmi6oRIm17SohPdIpHZBA2UhUSX3l3ksXmWxFUA=;
-        b=dvEEgSxDFN/xgM7eBCS46yunDaRqZg7glZsDX0ZLSnUo9UpZ4X/83sCKFCqCKw1htj
-         CCUoV7N8QYXnyRZgg/T3g28WcHBMxYbaUdmA29UfmCiR1p8e9/Bpd3N6+jUaZhoVRhOd
-         EWz7PASMATMh1AssjI3xy99+GcrmBQoiENt04eZKaIkuyUdlrS9Aejw2GSuOwce6H1CC
-         r5i/6hjp+0LUfjU6J6C234cjYtutIrJyhp0PFEEScipnLc0XAT0uO7xbfV6LWFvzPGxG
-         rHukg0r+HMSWwbbs5j89ppJRTNyEmZjwTkyzCln6EszKoZHKS3skwfXCUUF8OrYNSKBq
-         +2fQ==
+        bh=JBGOdPN2LVXGkXx2fWXDTd/okGlgSja0i0BaGGFRf3I=;
+        b=zgjgfCc+c8PtGpFDpvtTq7Vhsu+fLYEZg3/6fBS8ATtgBPIeoCacg6noNCfeNQCXs+
+         P3WAJhPnUpRA0MCrv5DJ1Ciy+mtR09I2m8wT4h8NkgPoJ6vwjD7lnTkSu9zf8OtPwQPX
+         fYpaIsCs4MYgtIFbmeZ61u7nMGZtAZ7ahqDXFOl6Y8cgk6qfW6S491Xxl7MH4YyxkJSE
+         TyVvAiroon7RfuPBSthzxWTLWSMxkxp4HV8Xn4Yp1IBmaI6CpKS8a3lgxlArdh5p5Wc4
+         xk4IZcb9lQ0Bi/iNVKVgZZ3V89RYwxgVjG43iwIqR+VcMd0ZSugM3WYAB26xQ3GroniH
+         0OlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=114mMmi6oRIm17SohPdIpHZBA2UhUSX3l3ksXmWxFUA=;
-        b=IqKDbNfeqo5TIEqdKTq/IkzsVvi1MP+UtcquEkngyNdkb0hI6Atlv/EX1xBCKB6XGW
-         0Q4F4ihgo+84xW0f++rmWa5uTDMW/MAstyXh8Z2d5wXAjvW9//a5d5L3YBAj2KELwy9s
-         KifVA8O7ykXp0Kj5JHRgUot/o5PBGl/SgBq/o1ZkodcjGL/jzlU55GPEcWRQC7bBAuZ5
-         km7ORSE/FBCvEiRhraQzPCK8yRY4mTYl5jNlpyPl4iBUXqmT5E/WZ4umTcQP5ZpqP9Iq
-         9inY96Vu0mBNtq24DqGvb7cp6f4e8VgWp0ZpcXaGqU1+E9l/QkGVz0i+G7OgzILWrZDq
-         onAw==
-X-Gm-Message-State: APjAAAW5r1IAYYTsVkRehNd4RvGvaWoVUruNRbuQgXKw8/gf6S5KX1Zi
-        VUgVfDb6q+kpx4Ly7kfxzuRqpb/bOOPQ19buUMwejQ==
-X-Google-Smtp-Source: APXvYqwoLgdl6oPM+zYkCeAEvjSKJANijJk8PAGhSD/Hp31aLChfcUmQvKWovYi+tJW8s4hCn9tp6/O6JUGuQRr6LW8=
-X-Received: by 2002:a2e:5d94:: with SMTP id v20mr2021805lje.138.1554354814433;
- Wed, 03 Apr 2019 22:13:34 -0700 (PDT)
+        bh=JBGOdPN2LVXGkXx2fWXDTd/okGlgSja0i0BaGGFRf3I=;
+        b=HN52Wat6/nb/9Q9mbfnviPRa2lhZFZwc2qDVCruV+FnWULGNmUOgAU+qzcCLZpeSSy
+         ce+v7IG4OJ6Ua+l6O4zrc2bvgYbvzPIA6z9vfTVOxm6WQJf56WaeJMAQkZBz5wL5J/5c
+         jocUYtwmJPVVVn2T9uHpXY9dr5gM79+9J2/XbtUDDdAPgPcsVR9Hc8N1jV+og1/t8gJt
+         nMCiAnFWIeMCrleXhtZFmYmz/c6Xf39udqc6sas4gVUmAVFlRTsHP7Q1ulMQS2Tnzjic
+         qxc4irea0Hzg5iMIZePSxg7+psGNix3bJHA91PRLqPqHwKbIPx6tAw0bZXgBgVAmw3qH
+         Ilow==
+X-Gm-Message-State: APjAAAUH1Zavh9k+lHnJRwdgwsJzuzzjg29mRv4Ev/uUAeEUPf7fprXH
+        +fXC6iCVt7EjWtKY13dCoFehk6/ojdab/zYADDnuiA==
+X-Google-Smtp-Source: APXvYqx+MsqJ1o2vOZIOqRu682T3xnmJeICFRugvDWjTyzlN3wfIR4g0g2ZYl4ntMDTjaIsIr6KNRQ4UC/qJh3gfJss=
+X-Received: by 2002:a2e:9a46:: with SMTP id k6mr2019114ljj.119.1554355160613;
+ Wed, 03 Apr 2019 22:19:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190316202552.21525-1-marek.vasut@gmail.com>
-In-Reply-To: <20190316202552.21525-1-marek.vasut@gmail.com>
+References: <20190321092145.14896-1-geert+renesas@glider.be> <20190321092145.14896-3-geert+renesas@glider.be>
+In-Reply-To: <20190321092145.14896-3-geert+renesas@glider.be>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Apr 2019 12:13:22 +0700
-Message-ID: <CACRpkdZNfNOhR=H5=ECVfsc-mDhk1RkovV56p3bUp2-KY0oWWQ@mail.gmail.com>
-Subject: Re: [PATCH V3] regulator: gpio: Reword the binding document
-To:     Mark Vasut <marek.vasut@gmail.com>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+Date:   Thu, 4 Apr 2019 12:19:09 +0700
+Message-ID: <CACRpkdaY1yodQWtN2saeWV8HqfZ6RZ83JfTF+14vaS0yrR2Yrw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] gpio: pca953x: Add support for CAT9554
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -72,35 +73,18 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Mar 17, 2019 at 3:25 AM <marek.vasut@gmail.com> wrote:
+On Thu, Mar 21, 2019 at 4:21 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> The ON Semiconductor CAT9554 is a variant of the PCA953x GPIO expander,
+> with 8 GPIOs and interrupt functionality.
 >
-> Reword the binding document to make it clear how the propeties work
-> and which properties affect which other properties.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Harald Geyer <harald@ccbib.org>
-> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: linux-renesas-soc@vger.kernel.org
-> To: devicetree@vger.kernel.org
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
-> V2: - Make "gpios" a mandatory property
->     - Reword "gpio-states" property description
->     - Change "enable-gpio" to "enable-gpios" to match modern DT rules
-> V3: - Use gpio-states description from Harald
-> Note: The recent gpio-regulator rework caused breakage. While the
->       changes in the gpio-regulator code were according to the DT
->       binding document, they stopped working with older DTs. Make
->       the binding document clearer to prevent such breakage in the
->       future.
+> v2:
+>   - Split DT binding doc and driver update in separate patches.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Thanks for fixing this!
+Patch applied.
 
 Yours,
 Linus Walleij
