@@ -2,144 +2,234 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF458C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 17:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A2AC10F0C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 18:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC2D2206DD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 17:38:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F4620882
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 18:56:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Oj6L+RzS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfDDRiX (ORCPT
+        id S1730021AbfDDS4Y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 13:38:23 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:51249 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbfDDRiX (ORCPT
+        Thu, 4 Apr 2019 14:56:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42254 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729831AbfDDS4Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 13:38:23 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id CAFDDFF803;
-        Thu,  4 Apr 2019 17:38:19 +0000 (UTC)
-Date:   Thu, 4 Apr 2019 19:39:05 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 4/9] media: vsp1: Add support for missing 32-bit RGB
- formats
-Message-ID: <20190404173905.n6mupqzvcr5vwhwu@uno.localdomain>
-References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190328070723.26553-5-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 4 Apr 2019 14:56:24 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v22so3027006lje.9
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 11:56:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IGdEIicP+8t1C6mcNdRJsCFZdpqVhcHRqcsl11vseHI=;
+        b=Oj6L+RzS4yQZiEvlfHOGLxrCEft8Qj6IEYeLHaobP9ePYwpuVmTK95BgUcBamXeY1o
+         U8Sv+a8CtA37aWDGXV5PX5gcX7wWHdOxBK+xPSngdcwhbF/iOy0En9eCevpdIGl2ccml
+         iEcxmx78XvZAL1Wg866gUqVKfFDFLsgIX/uIWD7dHXSf736LoDlf0jyCjMBpcVqSmDHd
+         rRo7tH+cQGGpVwzqAyAbHx7OkIDnVGwyDd/hBRAAZu1R3+6n38qgcK/WJztNB7wLGYor
+         covhvKrqPgci+YZ8j1Hy6YPT/mHFW3IzOLSgKgocUTGnQZHQuWqJqrQ7Quq2V/4mfjyg
+         cSSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=IGdEIicP+8t1C6mcNdRJsCFZdpqVhcHRqcsl11vseHI=;
+        b=eyBxBEleWxpa/q6H3a04JqHev2SMpiStUjTFEcBW7TsuB0WJd3+XLgXeD2UKXSx2In
+         hYbblm5fXQ54SPG1+3I6CwfOfkHYNDRw7KEvLjaVwwwdnh7DNog/D0gQp5QmnUtMKbxR
+         20ncxukmNDY067HPUnMqO1n/hf/wJ38FwlN1crfEjBq9SsdW96/U5t62feW/L27RfmPI
+         ITPjSBChvLkrIXLaongvEOyfRK4SqgdNuV+fiELd5QUDo9GUMxupNfLWzel5iAye4GfE
+         qmO03KSExXSd1hbZ+e409DWKKKYyi6/K7tdAi8M2NEcujKblmQSFzJp9JdnEG2/0u8Q9
+         I7/w==
+X-Gm-Message-State: APjAAAVNBHhYTUzbd00UfMKt+mfXaOcLoNu6vvl1VqXeTgV09URjMexg
+        mNoDcZtie8cUoKd0sAnFQtXwng==
+X-Google-Smtp-Source: APXvYqwy7XHAlYWcABaU/Uq7GC2g/PEW3KnxIc/VcIeseMD+v3OprtWGNpFuebdscCm8J8T+eWB7xQ==
+X-Received: by 2002:a2e:5518:: with SMTP id j24mr4251148ljb.167.1554404182072;
+        Thu, 04 Apr 2019 11:56:22 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.80.163])
+        by smtp.gmail.com with ESMTPSA id k10sm4223792ljh.86.2019.04.04.11.56.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 04 Apr 2019 11:56:21 -0700 (PDT)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v9 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     masonccyang@mxic.com.tw
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        lee.jones@linaro.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+        marek.vasut@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        zhengxunli@mxic.com.tw
+References: <1553847606-18122-1-git-send-email-masonccyang@mxic.com.tw>
+ <1553847606-18122-3-git-send-email-masonccyang@mxic.com.tw>
+ <231f7423-bf13-99f8-427b-530f5446348b@cogentembedded.com>
+ <OF7F1B534F.B934A9FE-ON482583D0.001DC618-482583D0.001FE84B@mxic.com.tw>
+ <6d60bbef-a8ef-849e-33f3-3db35cefc09f@cogentembedded.com>
+ <OFAEA16021.C7F7B095-ON482583D1.0031A13D-482583D1.00335085@mxic.com.tw>
+Organization: Cogent Embedded
+Message-ID: <7467d695-8922-16b2-03d4-fb4bbdda125a@cogentembedded.com>
+Date:   Thu, 4 Apr 2019 21:56:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ph2kwcpq6b2xo5tk"
-Content-Disposition: inline
-In-Reply-To: <20190328070723.26553-5-laurent.pinchart+renesas@ideasonboard.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <OFAEA16021.C7F7B095-ON482583D1.0031A13D-482583D1.00335085@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hello!
 
---ph2kwcpq6b2xo5tk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On 04/03/2019 12:20 PM, masonccyang@mxic.com.tw wrote:
 
-HI Laurent,
-  if you help me out understanding the bit swapping procedure in VSP
-I would be more confident in saying I actually reviewed the series.
+>> >> > +static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
+>> >> > +               const struct spi_mem_op *op,
+>> >> > +               u64 *offs, size_t *len)
+>> >> > +{
+>> >> > +   struct rpc_spi *rpc = spi_controller_get_devdata(spi->controller);
+>> >> > +
+>> >> > +   rpc->cmd = RPC_SMCMR_CMD(op->cmd.opcode);
+>> >> > +   rpc->smenr = RPC_SMENR_CDE |
+>> >> > +           RPC_SMENR_CDB(ilog2(op->cmd.buswidth));
+>> >> > +   rpc->totalxferlen = 1;
+>> >> > +   rpc->xfer_dir = SPI_MEM_NO_DATA;
+>> >> > +   rpc->xferlen = 0;
+>> >> > +   rpc->addr = 0;
+>> >> > +
+>> >> > +   if (op->addr.nbytes) {
+>> >> > +      rpc->smenr |= RPC_SMENR_ADB(ilog2(op->addr.buswidth));
+>> >> > +      if (op->addr.nbytes == 4)
+>> >> > +         rpc->smenr |= RPC_SMENR_ADE(0xf);
+>> >> > +      else
+>> >> > +         rpc->smenr |= RPC_SMENR_ADE(0x7);
+>> >> > +
+>> >> > +      if (offs && len)
+>> >> > +         rpc->addr = *offs;
+>> >> > +      else
+>> >> > +         rpc->addr = op->addr.val;
+>> >> > +      rpc->totalxferlen += op->addr.nbytes;
+>> >> > +   }
+>> >> > +
+>> >> > +   if (op->dummy.nbytes) {
+>> >> > +      rpc->smenr |= RPC_SMENR_DME;
+>> >> > +      rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
+>> >>
+>> >>    So you haven't fixed this bug? I repeat, the driver doesn't work right
+>> >> w/o this fixed!
+>> >
+>> > Do you mean
+>> >
+>> > rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes) * 8;   ?
+>>
+>>    Yes. Or some other code that amounts to it.
 
-On Thu, Mar 28, 2019 at 09:07:18AM +0200, Laurent Pinchart wrote:
-> Add support for the V4L2_PIX_FMT_BGRA32, V4L2_PIX_FMT_BGRX32,
-> V4L2_PIX_FMT_RGBA32 and V4L2_PIX_FMT_RGBX32 formats to the VSP driver.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/vsp1/vsp1_pipe.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-> index 54ff539ffea0..9f08d85e89d7 100644
-> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
-> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-> @@ -68,6 +68,20 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
->  	{ V4L2_PIX_FMT_XBGR32, MEDIA_BUS_FMT_ARGB8888_1X32,
->  	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
->  	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_BGRA32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
-> +	  1, { 32, 0, 0 }, false, false, 1, 1, true },
-> +	{ V4L2_PIX_FMT_BGRX32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
-> +	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-> +	{ V4L2_PIX_FMT_RGBA32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> +	  1, { 32, 0, 0 }, false, false, 1, 1, true },
-> +	{ V4L2_PIX_FMT_RGBX32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> +	  1, { 32, 0, 0 }, false, false, 1, 1, false },
+   Oops, I wasn't attentive enough, I was proposing:
 
+	rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes * 8);
 
-So, this is how I interpret the above lines for format BGRA32 (the
-same applies to RGBA32 fwiw)
+> why not setting "op->dummy.nbytes = 7" from spi-nor.c protocol layer ?
 
-        Bytes:          B3      B2      B1      B0
-Input: ARGB8888_1X32:   A       R       G       B
-Out:   BGRA32           R       G       B       A
+   We want 8 dummy clocks, not 8 dummy bytes. And if you'd looked into
+spi_nor_read_sfdp(), you'd have seen that it requests 8 dummy clocks already.
 
-If I apply LLS and LWS on the "Input Row", according to the table I get
+> driver may check device ID or something else to setup op->dummy.nbytes.
 
- Position in Table 32.10:    0  1  2  3
- IN Components ordering:     A  R  G  B  (ARGB8888_1X32
- Position in Table 32.10:    3  2  1  0  (with LLS and LWS applied)
- OUT Components ordering:    B  G  R  A
+   The RDSFDP command is not chip specific.
 
-Which to me is the ordering of components of the format named
-V4L2_PIX_FMT_ARGB32 and not BGRA32 which is instead, as reported RGBA
-(GREAT naming here!)
+> I think it is not a good idea to *8 in spi host driver.
 
-What am I doing wrong?
+>> > What is your flash part number?
+>>
+>>    Spansion/Cypress S25FS512S. The datasheet says there must be 8 dummy cycles
+>> for the RSFDP command...
+>>
+>> > The problem you found is in 1 bit or 4 bits width ?
+>>
+>>    1-bit, I think.
+>>
+>> >>
+>> >> [...]
+>> >> > +static ssize_t rpc_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
+>> >> > +                   u64 offs, size_t len, void *buf)
+>> >> > +{
+>> >> > +   struct rpc_spi *rpc =
+>> >> > +         spi_controller_get_devdata(desc->mem->spi->controller);
+>> >> > +   int ret;
+>> >> > +
+>> >> > +   if (offs + desc->info.offset + len > U32_MAX)
+>> >> > +      return -EINVAL;
+>> >> > +
+>> >> > +   if (len > 0x4000000)
+>> >> > +      len = 0x4000000;
+>> >>
+>> >>    Ugh...
+>> >
+>> > by mtd->size ?
+>>
+>>   That'd be better, yes.
+>>
+> 
+> Oops, it seems hard to get mtd->size info. from spi_mem_dirmap,
 
-Thanks
-  j
+   It's in desc->info.length, no?
 
+> I would like to keep 0x4000000.
 
->  	{ V4L2_PIX_FMT_ARGB32, MEDIA_BUS_FMT_ARGB8888_1X32,
->  	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
->  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> --
-> Regards,
->
-> Laurent Pinchart
->
+   I'm seeing Boris in the CC's... Boris, is it legitimate to limit
+a single dirmap read by the memory "window" size? Or should we try to 
+serve any valid transfer length?
 
---ph2kwcpq6b2xo5tk
-Content-Type: application/pgp-signature; name="signature.asc"
+>> >> > +
+>> >> > +   ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
+>> >> > +   if (ret)
+>> >> > +      return ret;
+>> >> > +
+>> >> > +   rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
+>> >> > +                &desc->info.op_tmpl, &offs, &len);
+>> >> > +
+>> >> > +   regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, 0);
+>> >> > +   regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RBURST(32) |
+>> >> > +           RPC_DRCR_RBE);
+>> >> > +
+>> >> > +   regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
+>> >> > +   regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
+>> >>
+>> >>    So you're not even trying to support flashes larger than the
+>> read dirmap?
+>> >> Now I don't think it's acceptable (and I have rewritten this code
+>> internally).
+>> >
+>> > what about the size comes form mtd->size ?
+>>
+>>    I'm not talking about size here; we should use the full address.
+>> I'm attaching
+>> my patch...
+> 
+> okay,got it!
+> what about just
+> -      regmap_write(rpc->mfd->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
+> +      regmap_write(rpc->mfd->regmap, RPC_DREAR,
+> +                   RPC_DREAR_EAV(offs >> 25) | RPC_DREAR_EAC(1));
+> 
+> because only > 64MByte size make RPC_DREAR_EAV() work.
 
------BEGIN PGP SIGNATURE-----
+   Boris, what's your opinion on this?
+   Note that for the write dirmap we have just 256-byte buffer (reusing
+the read cache). Is it legitimate to limit the served length to 256 bytes?
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlymQTkACgkQcjQGjxah
-VjwEbA//TRLRwLPmB90lhpfgSKZ95gr4q92lZZ83XieSO4WJCPmMa0lUZXx8zIk2
-6Jh8mRuvgtQWbvZeT6YA2E1e5L5w4B2/oaxgYCuYI8r8QJSrZPNhjbsRAMbhDp1S
-Y3QzPCMXmmLY1Culb1gC4dRFZdSPjIPxQOyzA21TxaKELgI+UJohgnEEH1uZUHCQ
-1i3SYbTIlbbfLmThek/xwIvVZHep4nuZJyG7HOVBhktl+PP6Why5BRyqiPI2JXmV
-ysV91XD3EeC10DzZWO8EClct4mhHx5oD890YzxRCQrBWRa65sGNrVahcAaEHaEEg
-DvTRrAtPob/NULvYxFg+J8nx0iA1VyLLGpTAYoPbx+rF9ao08AcNlEdqtt9dxzKW
-Zal0SoL1DosOGOoptco+V6ULGKufYcZFyRGPkkIcfMliGcMTGtMzEyq1AVH46GUz
-WPcjUVDipckl7BgpCcBbDK8uc+WDdPu73hqDYWfDoBhSfvyTjXrWba0Yxh7p55hA
-bt5/6QVF70pfTDtHXEXoQJYjPPAKMezceAxvxLS3IyEvy5FThChuMwSt2agQpwdA
-/ocyZYH+LGJkoCQWhXCvITJPtpRXycxS5P3GJx3zmIgIq/vnWUikao53bqUhVxOC
-eDVQmHeVv6waUVyIa8XDNRcx9JZvv3uQ6swPNXsRLVa7vevMyd4=
-=H3mP
------END PGP SIGNATURE-----
+> thanks & best regards,
+> Mason
 
---ph2kwcpq6b2xo5tk--
+MBR, Sergei
