@@ -2,138 +2,123 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3068BC10F05
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B41C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00653206B6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB894205F4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:34:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732774AbfDDJ2l (ORCPT
+        id S1730405AbfDDJe6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 05:28:41 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55936 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733193AbfDDJ2l (ORCPT
+        Thu, 4 Apr 2019 05:34:58 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44308 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731940AbfDDJGs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 05:28:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D8BB169E;
-        Thu,  4 Apr 2019 02:28:40 -0700 (PDT)
-Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00D423F557;
-        Thu,  4 Apr 2019 02:28:38 -0700 (PDT)
-Date:   Thu, 4 Apr 2019 10:28:33 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     marek.vasut@gmail.com
-Cc:     linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V5 6/6] PCI: rcar: Fix 64bit MSI message address handling
-Message-ID: <20190404092833.GA13236@red-moon>
-References: <20190402013307.20912-1-marek.vasut@gmail.com>
- <20190402013307.20912-6-marek.vasut@gmail.com>
+        Thu, 4 Apr 2019 05:06:48 -0400
+Received: by mail-vs1-f68.google.com with SMTP id j184so890198vsd.11;
+        Thu, 04 Apr 2019 02:06:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4+XzHk+jpTGxDGVqwa4dg4gvQjQHJPUEUNt3UVVTA0M=;
+        b=TIxcxsAHP0ztxYQnoDKdJhgktWvXsEVcp7F4z5b40lX0LVZTavA1jqtUNAjkTchRk+
+         oEK5pwm0IYdoWuFqXSSOjBsquK87AW8I9aMRiL7tT1zTU9HsBeSE8ktlPvFIma5JKuue
+         0WynQMnh4mfkYDJ37Q3qvKW/zLlavfBNSr+iPfLE4P+INXt2itXDiPdkWq2i8ZYZaHbo
+         D8WRaAGsMe7DjrE8e8qVrZUIuc0MyJeQKadWhhELgWSxmZSo+Imf/z4jhl80ZzRtGGG+
+         yhJo1kwUqhBuQk5pz8LtnYmxmFQE6YsGc8cVkfy+mnII7ZbNQtlqIFLJyULQDkrELT3Z
+         W+Yw==
+X-Gm-Message-State: APjAAAXfmUcAAo5whrs4v2VLCxpzpN/qxlYupOlfcd1PzxX2RrfawxeN
+        EBTu8M35TyNlfjupYjYe3a0McSyLqusNsisZ8m0=
+X-Google-Smtp-Source: APXvYqyQVT+lQa4Dnf7R6t91gYRQ+JEWFwqrjQtb6c1FMR+gD5nZYaA9ZPLXA91ckUsikJjFPiyeIHEPUp5cB0tIzfY=
+X-Received: by 2002:a67:fbcc:: with SMTP id o12mr3473975vsr.60.1554368807334;
+ Thu, 04 Apr 2019 02:06:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190402013307.20912-6-marek.vasut@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190320103927.21227-1-geert+renesas@glider.be> <CAPDyKFpecPdcqagc567kZJeWbe6y_0j9JAVKcE6c9Ltv+OG-Yw@mail.gmail.com>
+In-Reply-To: <CAPDyKFpecPdcqagc567kZJeWbe6y_0j9JAVKcE6c9Ltv+OG-Yw@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 4 Apr 2019 11:06:35 +0200
+Message-ID: <CAMuHMdVMOo2R2ehuU9XiVy0NS9J=mJkx0Mo-rsT=OBs-1kvH=Q@mail.gmail.com>
+Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up is enabled
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Apr 02, 2019 at 03:33:07AM +0200, marek.vasut@gmail.com wrote:
-> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> 
-> The MSI message address in the RC address space can be 64 bit. The
-> R-Car PCIe RC supports such a 64bit MSI message address as well.
-> The code currently uses virt_to_phys(__get_free_pages()) to obtain
-> a reserved page for the MSI message address, and the return value
-> of which can be a 64 bit physical address on 64 bit system.
-> 
-> However, the driver only programs PCIEMSIALR register with the bottom
-> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
-> not program the top 32 bits into PCIEMSIAUR, but rather programs the
-> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
-> SoCs, however may fail on new 64 bit R-Car SoCs.
-> 
-> Since from a PCIe controller perspective, an inbound MSI is a memory
-> write to a special address (in case of this controller, defined by
-> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
-> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
-> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
-> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
-> cause memory corruption or other issues.
-> 
-> There is however the possibility that if virt_to_phys(__get_free_pages())
-> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
-> to 0x0 _and_ if the system had physical RAM at the address matching the
-> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
-> physical address matching the value of PCIEMSIALR and a remote write to
-> such a buffer by a PCIe card would trigger a spurious MSI.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> To: linux-pci@vger.kernel.org
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> V2: - s/it's/its/ in commit message
->     - Add R-B from Geert
-> V3: - Reworded commit message and thus dropped Geerts R-B
-> V4: - Add Geert's R-B again
-> V5: - Rebase on next/master 20190401
->     - Use {lower,upper}_32_bits() instead of >> 32
+Hi Ulf,
 
-If that's the only reason you resent this series I will add the
-lower_32_bits() code myself.
+On Thu, Apr 4, 2019 at 10:55 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On Wed, 20 Mar 2019 at 11:39, Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > If a device is part of the wake-up path, it should indicate this by
+> > setting its power.wakeup_path field.  This allows the genpd core code to
+> > keep the device enabled during system suspend when needed.
+> >
+> > As regulators powering devices are not handled by genpd, the driver
+> > handles these itself, and thus must skip regulator control when the
+> > device is part of the wake-up path.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Note that I don't really need this on the Renesas Ebisu-4D board, as
+> > there is no regulator or PM Domain controlling power to the GPIO
+> > expander on that board.  I did want to have all wake-up path processing
+> > implemented in the driver for completeness, and did test its behavior
+> > with gpio-keys configured as a wake-up source.
+>
+> All above makes perfect sense to me.
 
-Please do not rebase on top of next, apply code on top of a fixed -rc1
-(we are currently using v5.1-rc1) and if there are dependencies on code
-already queued do let us know, we will handle conflicts in next
-ourselves.
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Lorenzo
+Thanks!
 
-> ---
->  drivers/pci/controller/pcie-rcar.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> index 168bc6b9bb93..5e0102796345 100644
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -892,7 +892,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->  {
->  	struct device *dev = pcie->dev;
->  	struct rcar_msi *msi = &pcie->msi;
-> -	unsigned long base;
-> +	phys_addr_t base;
->  	int err, i;
->  
->  	mutex_init(&msi->lock);
-> @@ -933,8 +933,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->  	msi->pages = __get_free_pages(GFP_KERNEL, 0);
->  	base = virt_to_phys((void *)msi->pages);
->  
-> -	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
-> -	rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
-> +	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
-> +	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
->  
->  	/* enable all MSI interrupts */
->  	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-> -- 
-> 2.20.1
-> 
+> > However, while this approach is known to work fine on other boards, with
+> > other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
+> > irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
+> > device suspend ordering.
+> >
+> > The proper ordering is:
+> >   1. When gpio-keys is suspended, its suspend handler calls
+> >      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
+> >      pca953x_chip.wakeup_path to be incremented,
+> >   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
+> >      and marks the device to be part of the wake-up path.
+>
+> Right.
+>
+> >
+> > However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
+> > scheme :-(
+>
+> Would it make sense to fixup the ordering issue via creating a
+> parent/child relationship or setting up a device link?
+
+Could that be due to gpio_keys not having rudimentary Runtime PM support?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
