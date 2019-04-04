@@ -2,119 +2,215 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EACC10F05
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDC0C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 06:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 230C1206DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:25:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nOPdseXM"
+	by mail.kernel.org (Postfix) with ESMTP id 44113206DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 06:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554357900;
+	bh=2OaI/mvznX5XrgTqNab4eNPo/Uu4D9oFbMPpzlEjgpU=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=ReM1It6HIWjInFZbdBa5Tl8xHlLHT2O5H/elevvMmtsbPrtoyvHaz5h13iI2c9xbM
+	 g3PzNBUIaNN+12pRyreRogSE3jn8oZtPJSVM4Kq0stE7OTLRAoXzJzNrCLjTztsryh
+	 zBw49tGG6esAYoXakcn8gmylg4ZTB8hwIYg9x16E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfDDFZN (ORCPT
+        id S1726785AbfDDGE4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 01:25:13 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35191 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726058AbfDDFZN (ORCPT
+        Thu, 4 Apr 2019 02:04:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54942 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfDDGE4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 01:25:13 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t4so909240ljc.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2019 22:25:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZBfACO2yvbKXYcntcMy9iuJl3GZkSswa+DWpJE7auzA=;
-        b=nOPdseXMFBCJp1tkbrp9k6j7T/+kehHRD681BNID3DofIJupuh7h4v75uO1jIzwfO1
-         Fh+/3wvjyAY0veeY18fkfcWY46cKwUPlLMPVtD991jxKp2/sY4YibI5dF2zuwa4/S1e5
-         +0dL0JZDZ7Dqww3Hobum4MFiOgu6+zhkzGkgYJns1koPSgBNQwoP39YD6TiYkT63QP8R
-         fj8UQL7Ladk4Px6E5kkuNFZImVpJZv3D2Fgf7du5DevyZnCcB3ndBLd0qPQf47ajXe/+
-         QK/e9uQnyeuAFzzhW4RWCSGDGGp/Zf//eGA8F3r78EtsvAnoUAaQYabOrVHNTQIO9po4
-         /GoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZBfACO2yvbKXYcntcMy9iuJl3GZkSswa+DWpJE7auzA=;
-        b=WDL/B6YLPFgmhp9u2jLr/hCwtYGsy4tpykW8gQ51f50tM3e4Bk38Hgoz6NhmZuUkVA
-         WrkGanCexuj7grFJoY92Fd6L6HVjJExo/btlQefB1FquZJpoC0ZuK8dNHjxlopH1exVO
-         OKUwxa2kIz0WR0kdmG2Q0EARkGg2KrmAlKsO6rjGidCC+TG4+w6dHdjP1stajskuF2Bt
-         HTYHJ80xUaQ/YMI8y1jsIUf81EGSGpXMofZKNlROncwT/nirVq5we5tkwqWvdJwL3cSk
-         kMJtEBCHwx0j8EcEUH9/HzAeQfJiwIqhk/MqUpy609qya+ui7czopxLoDI7R8YBnexTb
-         vFkw==
-X-Gm-Message-State: APjAAAX/v2NyPgnOkQ//DxVp9IPxYf3gZ5Un/9u8m/tApkbwyh9Vlw+e
-        VZljGKvGUcNBTg+BpQW5CzW/gOG7JvnVPMhWcrbfkDq1
-X-Google-Smtp-Source: APXvYqz9cg+EebYhtvLmiqsGuBbLrmNw/sOp/Q5ZBGRXTDkbBIRfdJDD4/BLBtjXpvNllmQ2e0Ia04TKDNK8g4FNDRw=
-X-Received: by 2002:a2e:4a1a:: with SMTP id x26mr2023102lja.49.1554355511291;
- Wed, 03 Apr 2019 22:25:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190320103927.21227-1-geert+renesas@glider.be>
-In-Reply-To: <20190320103927.21227-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Apr 2019 12:24:59 +0700
-Message-ID: <CACRpkdbqfJj37vHh3twpojHLoEnmcWqymbD8CYSi4PGPawP1Eg@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up is enabled
+        Thu, 4 Apr 2019 02:04:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=biysjBUvGzOcOL9WsezaDpwxW6Bl7uC8jWupqfaq3a8=; b=W14lQFv1sCqZ
+        pK62L6qfVDN4FYEil0WLmtSHmBcjZLBppOjAL/lo9oEegoWhfVHd1HEQPBWJ/oGmUAeI1j9VUTXyy
+        UqE5GCa6TcEtUWeL11pymxpydzyxsS/4nuyLJzOIltdnNhVtn2bDznlvPVx0/vg91OdDf9y4t3Yrk
+        Qi+no=;
+Received: from [147.50.13.10] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hBvUX-0004MY-QY; Thu, 04 Apr 2019 06:04:50 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id C5AE9441D3C; Thu,  4 Apr 2019 13:04:41 +0700 (+07)
+From:   Mark Brown <broonie@kernel.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: sh-msiof: Convert to use GPIO descriptors" to the spi tree
+In-Reply-To:  <20190403150852.8002-1-geert+renesas@glider.be>
+X-Patchwork-Hint: ignore
+Message-Id: <20190404060441.C5AE9441D3C@finisterre.ee.mobilebroadband>
+Date:   Thu,  4 Apr 2019 13:04:41 +0700 (+07)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 20, 2019 at 5:39 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+The patch
 
-> If a device is part of the wake-up path, it should indicate this by
-> setting its power.wakeup_path field.  This allows the genpd core code to
-> keep the device enabled during system suspend when needed.
->
-> As regulators powering devices are not handled by genpd, the driver
-> handles these itself, and thus must skip regulator control when the
-> device is part of the wake-up path.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Note that I don't really need this on the Renesas Ebisu-4D board, as
-> there is no regulator or PM Domain controlling power to the GPIO
-> expander on that board.  I did want to have all wake-up path processing
-> implemented in the driver for completeness, and did test its behavior
-> with gpio-keys configured as a wake-up source.
->
-> However, while this approach is known to work fine on other boards, with
-> other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
-> irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
-> device suspend ordering.
->
-> The proper ordering is:
->   1. When gpio-keys is suspended, its suspend handler calls
->      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
->      pca953x_chip.wakeup_path to be incremented,
->   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
->      and marks the device to be part of the wake-up path.
->
-> However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
-> scheme :-(
->
-> So depending on topology, this may work, or not...
+   spi: sh-msiof: Convert to use GPIO descriptors
 
-This looks like the right way to do it to me.
+has been applied to the spi tree at
 
-Ulf/Rafael: could either of you confirm that this is the right way
-to handle it when we have an optional external regulator cutting
-power to the chip providing the wakeup like this?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-Yours,
-Linus Walleij
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9fda6693335cd51b0a74cffaac266c83439f7efe Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Wed, 3 Apr 2019 17:08:52 +0200
+Subject: [PATCH] spi: sh-msiof: Convert to use GPIO descriptors
+
+Convert GPIO chip selects in the Renesas MSIOF SPI driver from legacy
+GPIO numbers to GPIO descriptors.
+
+Notes:
+  - The board file for the SH7724-based Ecovec24 development board now
+    registers a GPIO descriptor lookup, instead of passing a GPIO number
+    through controller_data,
+  - sh_msiof_get_cs_gpios() must release all GPIOs, else
+    spi_get_gpio_descs() cannot claim them during SPI controller
+    registration.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ arch/sh/boards/mach-ecovec24/setup.c | 12 +++++++++---
+ drivers/spi/spi-sh-msiof.c           | 20 ++++----------------
+ 2 files changed, 13 insertions(+), 19 deletions(-)
+
+diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
+index 34e5414c5563..f402aa741bf3 100644
+--- a/arch/sh/boards/mach-ecovec24/setup.c
++++ b/arch/sh/boards/mach-ecovec24/setup.c
+@@ -806,7 +806,6 @@ static struct spi_board_info spi_bus[] = {
+ 		.platform_data	= &mmc_spi_info,
+ 		.max_speed_hz	= 5000000,
+ 		.mode		= SPI_MODE_0,
+-		.controller_data = (void *) GPIO_PTM4,
+ 	},
+ };
+ 
+@@ -838,6 +837,14 @@ static struct platform_device msiof0_device = {
+ 	.resource	= msiof0_resources,
+ };
+ 
++static struct gpiod_lookup_table msiof_gpio_table = {
++	.dev_id = "spi_sh_msiof.0",
++	.table = {
++		GPIO_LOOKUP("sh7724_pfc", GPIO_PTM4, "cs", GPIO_ACTIVE_HIGH),
++		{ },
++	},
++};
++
+ #endif
+ 
+ /* FSI */
+@@ -1296,12 +1303,11 @@ static int __init arch_setup(void)
+ 	gpio_request(GPIO_FN_MSIOF0_TXD, NULL);
+ 	gpio_request(GPIO_FN_MSIOF0_RXD, NULL);
+ 	gpio_request(GPIO_FN_MSIOF0_TSCK, NULL);
+-	gpio_request(GPIO_PTM4, NULL); /* software CS control of TSYNC pin */
+-	gpio_direction_output(GPIO_PTM4, 1); /* active low CS */
+ 	gpio_request(GPIO_PTB6, NULL); /* 3.3V power control */
+ 	gpio_direction_output(GPIO_PTB6, 0); /* disable power by default */
+ 
+ 	gpiod_add_lookup_table(&mmc_spi_gpio_table);
++	gpiod_add_lookup_table(&msiof_gpio_table);
+ 	spi_register_board_info(spi_bus, ARRAY_SIZE(spi_bus));
+ #endif
+ 
+diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
+index d3794499915c..6aab7b2136db 100644
+--- a/drivers/spi/spi-sh-msiof.c
++++ b/drivers/spi/spi-sh-msiof.c
+@@ -549,25 +549,11 @@ static void sh_msiof_spi_read_fifo_s32u(struct sh_msiof_spi_priv *p,
+ 
+ static int sh_msiof_spi_setup(struct spi_device *spi)
+ {
+-	struct device_node *np = spi->controller->dev.of_node;
+ 	struct sh_msiof_spi_priv *p =
+ 		spi_controller_get_devdata(spi->controller);
+ 	u32 clr, set, tmp;
+ 
+-	if (!np) {
+-		/*
+-		 * Use spi->controller_data for CS (same strategy as spi_gpio),
+-		 * if any. otherwise let HW control CS
+-		 */
+-		spi->cs_gpio = (uintptr_t)spi->controller_data;
+-	}
+-
+-	if (gpio_is_valid(spi->cs_gpio)) {
+-		gpio_direction_output(spi->cs_gpio, !(spi->mode & SPI_CS_HIGH));
+-		return 0;
+-	}
+-
+-	if (spi_controller_is_slave(p->ctlr))
++	if (spi->cs_gpiod || spi_controller_is_slave(p->ctlr))
+ 		return 0;
+ 
+ 	if (p->native_cs_inited &&
+@@ -600,7 +586,7 @@ static int sh_msiof_prepare_message(struct spi_controller *ctlr,
+ 	u32 ss, cs_high;
+ 
+ 	/* Configure pins before asserting CS */
+-	if (gpio_is_valid(spi->cs_gpio)) {
++	if (spi->cs_gpiod) {
+ 		ss = p->unused_ss;
+ 		cs_high = p->native_cs_high;
+ 	} else {
+@@ -1156,6 +1142,7 @@ static int sh_msiof_get_cs_gpios(struct sh_msiof_spi_priv *p)
+ 
+ 		gpiod = devm_gpiod_get_index(dev, "cs", i, GPIOD_ASIS);
+ 		if (!IS_ERR(gpiod)) {
++			devm_gpiod_put(dev, gpiod);
+ 			cs_gpios++;
+ 			continue;
+ 		}
+@@ -1407,6 +1394,7 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
+ 	ctlr->bits_per_word_mask = chipdata->bits_per_word_mask;
+ 	ctlr->auto_runtime_pm = true;
+ 	ctlr->transfer_one = sh_msiof_transfer_one;
++	ctlr->use_gpio_descriptors = true;
+ 
+ 	ret = sh_msiof_request_dma(p);
+ 	if (ret < 0)
+-- 
+2.20.1
+
