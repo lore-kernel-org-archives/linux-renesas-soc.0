@@ -2,123 +2,216 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAFBC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E94C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA619206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA582206DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 16:37:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="c4SSG2R3";
+	dkim=pass (2048-bit key) header.d=raspberrypi.org header.i=@raspberrypi.org header.b="MX8MEQ8j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfDDQ1c (ORCPT
+        id S1727339AbfDDQhR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 12:27:32 -0400
-Received: from foss.arm.com ([217.140.101.70]:35178 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726698AbfDDQ1c (ORCPT
+        Thu, 4 Apr 2019 12:37:17 -0400
+Received: from mx07-00252a01.pphosted.com ([62.209.51.214]:60754 "EHLO
+        mx07-00252a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727051AbfDDQhR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 12:27:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0CD5169E;
-        Thu,  4 Apr 2019 09:27:31 -0700 (PDT)
-Received: from red-moon (unknown [10.1.197.39])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45C483F557;
-        Thu,  4 Apr 2019 09:27:30 -0700 (PDT)
-Date:   Thu, 4 Apr 2019 17:27:20 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V5 6/6] PCI: rcar: Fix 64bit MSI message address handling
-Message-ID: <20190404162720.GA17233@red-moon>
-References: <20190402013307.20912-1-marek.vasut@gmail.com>
- <20190402013307.20912-6-marek.vasut@gmail.com>
- <20190404092833.GA13236@red-moon>
- <267aa1b1-9761-aff7-8462-8efc644083bd@gmail.com>
+        Thu, 4 Apr 2019 12:37:17 -0400
+Received: from pps.filterd (m0102628.ppops.net [127.0.0.1])
+        by mx07-00252a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x34GY1Gm005317
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 4 Apr 2019 17:37:15 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=raspberrypi.org; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=pp; bh=5uK7/9EYY08o8S1HCnCPvLwxOXk8QMP8uFKTk1ab91U=;
+ b=c4SSG2R3XFlH6If6gPktNNtIt+xyloB4CsN2azLAj656TSeuuFf6hel92Eb/zB0F3870
+ 0mBtBhE8wvGX1dxS6CoNo5GZzCj6RXGYBb5YPSwn6EOOr0dVv2YWHv4g29aPhw3YTuHo
+ tAwDbRSRTyXXwt/+PoZlORxpVjyOxjJyAM0QSbB/LHuEvoswIuvv6FkobEMDZ04yde6r
+ XZeVVwKFzFznzq3rc25CLjC7iFuI/Ui8lWqHa512WqOngcO51kvpGBpVItSuoC3FJV4O
+ cMi/EJAO9J53POxMxUNo2egtRtMw/jlkx40f0ij1WEBLlz+/gwkw4McHwgdA/dclcaFY 5A== 
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+        by mx07-00252a01.pphosted.com with ESMTP id 2rhxr5jw1y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK)
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 17:37:15 +0100
+Received: by mail-pl1-f197.google.com with SMTP id x9so2129715pln.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 09:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5uK7/9EYY08o8S1HCnCPvLwxOXk8QMP8uFKTk1ab91U=;
+        b=MX8MEQ8jOrxgdA0Mx7LcW2AAx+Q5uvBh2S2k/vxj9E8NfR8XTQiTO+YbtxvSQ8Bp8E
+         Q9fiVBvobhmMlPntrPtNdxArjj4fKxckjUB8WZFRRMJ2vXvAJ++fX3ZcIB1Fa5x5wrdX
+         UAXmHhwGTnvPDAN/Mcp+3GtsXI2H1Rhho8xt+47KIKHlMEleUBz8zbrL+a7gBGeFejc6
+         9OLJfs2llawAOeqklK8pxlNWRZDzMHOvLTv/D4FEC52V1fFZty7fG/sTW482goDK0mB4
+         0GFIX4vKr0MXQO8xuaUYtzpKJmCEngC+/+i4kOVEYNLkLkUCjNOS55CTpXgDEm23yxqG
+         VPNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5uK7/9EYY08o8S1HCnCPvLwxOXk8QMP8uFKTk1ab91U=;
+        b=F77ov5TurAS8tF2N+Ay/CJpQH6PTOCrbFZMQew9Aa2sU3xqQLRgPutrtlbgdDu/+Em
+         WHcZRdt2fYGIKQWT8oZAJB/9z7vsI+tlDFUp0sVhgAKBd5G4RDb0Fes3LBgMzQ1HAsKq
+         76utBcrDODcYGIPI56vO0ALbo47DpE7TVhV/zrMf34DNffpCYhWnkXA7sock0NIsASdh
+         Tg+1xUMG6ZfX+Bt5c2nLrjozo2McQqZZ/spe+8scNdN7tTqLpBN5yypXBBVXfDN9g/2i
+         fs9Z0/hLappFNOjTFp7sxk3TvKgP3FRn5NsTfPHCpN/VHJUfKuXnkLSIGwVm1jFNdmOA
+         HV5w==
+X-Gm-Message-State: APjAAAVW9KRaC3NXd2TT3AVa4rQtHvzUAo7Ko0ccpUsSUXHl1vmmoGZv
+        XUcfxV39pGfRVPTERVwRGNVojgYAz/clMvXECAIbZdrr7tuLXyhIInZHbzZ6Nlez7sP/eXBXhyU
+        v6oDcTe76ZUECXEB/ItTHhdVeSV8ozPiO+ARkXUa68p6K2Q==
+X-Received: by 2002:a63:d709:: with SMTP id d9mr6598375pgg.38.1554395832704;
+        Thu, 04 Apr 2019 09:37:12 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyC3/JxCqNbiCEl3omwVBvKvSqwQnyZE0QVBdZQi3sHBLI+353epcd/+g4rlL4PTlS7zC9tzP9ZzkvXWqC8hLQ=
+X-Received: by 2002:a63:d709:: with SMTP id d9mr6598355pgg.38.1554395832406;
+ Thu, 04 Apr 2019 09:37:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <267aa1b1-9761-aff7-8462-8efc644083bd@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190316154801.20460-1-jacopo+renesas@jmondi.org>
+ <20190316154801.20460-2-jacopo+renesas@jmondi.org> <20190316175121.wdek74c7tfpmrhde@kekkonen.localdomain>
+ <20190318083113.evrnuibomrsumne3@uno.localdomain> <CAAoAYcOL-7PFhbN6zEpheH794-jUPbU1R2c1ERbouhtQODyjYg@mail.gmail.com>
+ <20190404084922.bskyos5zn7gtzsgr@paasikivi.fi.intel.com>
+In-Reply-To: <20190404084922.bskyos5zn7gtzsgr@paasikivi.fi.intel.com>
+From:   Dave Stevenson <dave.stevenson@raspberrypi.org>
+Date:   Thu, 4 Apr 2019 17:36:59 +0100
+Message-ID: <CAAoAYcO35jUi9H5F5CgmsH=Nc4-MoJtJ2dAR7jvRxs7_=iEQ8w@mail.gmail.com>
+Subject: Re: [RFC 1/5] v4l: subdev: Add MIPI CSI-2 PHY to frame desc
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        niklas.soderlund+renesas@ragnatech.se,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        LMML <linux-media@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-04_08:,,
+ signatures=0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 04, 2019 at 05:48:36PM +0200, Marek Vasut wrote:
-> On 4/4/19 11:28 AM, Lorenzo Pieralisi wrote:
-> > On Tue, Apr 02, 2019 at 03:33:07AM +0200, marek.vasut@gmail.com wrote:
-> >> From: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >>
-> >> The MSI message address in the RC address space can be 64 bit. The
-> >> R-Car PCIe RC supports such a 64bit MSI message address as well.
-> >> The code currently uses virt_to_phys(__get_free_pages()) to obtain
-> >> a reserved page for the MSI message address, and the return value
-> >> of which can be a 64 bit physical address on 64 bit system.
-> >>
-> >> However, the driver only programs PCIEMSIALR register with the bottom
-> >> 32 bits of the virt_to_phys(__get_free_pages()) return value and does
-> >> not program the top 32 bits into PCIEMSIAUR, but rather programs the
-> >> PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
-> >> SoCs, however may fail on new 64 bit R-Car SoCs.
-> >>
-> >> Since from a PCIe controller perspective, an inbound MSI is a memory
-> >> write to a special address (in case of this controller, defined by
-> >> the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
-> >> never hits the DRAM _and_ because allocation of an MSI by a PCIe card
-> >> driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
-> >> in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
-> >> cause memory corruption or other issues.
-> >>
-> >> There is however the possibility that if virt_to_phys(__get_free_pages())
-> >> returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
-> >> to 0x0 _and_ if the system had physical RAM at the address matching the
-> >> value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
-> >> physical address matching the value of PCIEMSIALR and a remote write to
-> >> such a buffer by a PCIe card would trigger a spurious MSI.
-> >>
-> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> >> Cc: Simon Horman <horms+renesas@verge.net.au>
-> >> Cc: Wolfram Sang <wsa@the-dreams.de>
-> >> Cc: linux-renesas-soc@vger.kernel.org
-> >> To: linux-pci@vger.kernel.org
-> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> ---
-> >> V2: - s/it's/its/ in commit message
-> >>     - Add R-B from Geert
-> >> V3: - Reworded commit message and thus dropped Geerts R-B
-> >> V4: - Add Geert's R-B again
-> >> V5: - Rebase on next/master 20190401
-> >>     - Use {lower,upper}_32_bits() instead of >> 32
-> > 
-> > If that's the only reason you resent this series I will add the
-> > lower_32_bits() code myself.
-> 
-> Yes, you asked me to resend the whole series after the bot complained.
+Hi Sakari
 
-https://lists.01.org/pipermail/kbuild-all/2019-April/059428.html
+On Thu, 4 Apr 2019 at 09:49, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Dave,
+>
+> On Mon, Mar 18, 2019 at 03:29:55PM +0000, Dave Stevenson wrote:
+> > Hi Jacopo.
+> >
+> > Sorry, for some reason linux-media messages aren't coming through to
+> > me at the moment.
+> >
+> > I'm interested mainly for tc358743 rather than adv748x, but they want
+> > the very similar functionality.
+> > I'll try to create patches for that source as well.
+> >
+> > On Mon, 18 Mar 2019 at 08:30, Jacopo Mondi <jacopo@jmondi.org> wrote:
+> > >
+> > > Hi Sakari,
+> > > +Maxime because of it's D-PHY work in the phy framework.
+> > >
+> > > On Sat, Mar 16, 2019 at 07:51:21PM +0200, Sakari Ailus wrote:
+> > > > Hi Jacopo,
+> > > >
+> > > > On Sat, Mar 16, 2019 at 04:47:57PM +0100, Jacopo Mondi wrote:
+> > > > > Add PHY-specific parameters to MIPI CSI-2 frame descriptor.
+> > > > >
+> > > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > > > ---
+> > > > >  include/media/v4l2-subdev.h | 42 +++++++++++++++++++++++++++++++------
+> > > > >  1 file changed, 36 insertions(+), 6 deletions(-)
+> > > > >
+> > > > > diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+> > > > > index 6311f670de3c..eca9633c83bf 100644
+> > > > > --- a/include/media/v4l2-subdev.h
+> > > > > +++ b/include/media/v4l2-subdev.h
+> > > > > @@ -317,11 +317,33 @@ struct v4l2_subdev_audio_ops {
+> > > > >     int (*s_stream)(struct v4l2_subdev *sd, int enable);
+> > > > >  };
+> > > > >
+> > > > > +#define V4L2_FRAME_DESC_ENTRY_DPHY_DATA_LANES      4
+> > > > > +
+> > > > > +/**
+> > > > > + * struct v4l2_mbus_frame_desc_entry_csi2_dphy - MIPI D-PHY bus configuration
+> > > > > + *
+> > > > > + * @clock_lane:            physical lane index of the clock lane
+> > > > > + * @data_lanes:            an array of physical data lane indexes
+> > > > > + * @num_data_lanes:        number of data lanes
+> > > > > + */
+> > > > > +struct v4l2_mbus_frame_desc_entry_csi2_dphy {
+> > > > > +   u8 clock_lane;
+> > > > > +   u8 data_lanes[V4L2_FRAME_DESC_ENTRY_DPHY_DATA_LANES];
+> > > > > +   u8 num_data_lanes;
+> > > >
+> > > > Do you need more than the number of the data lanes? I'd expect few devices
+> > > > to be able to do more than that. The PHY type comes already from the
+> > > > firmware but I guess it's good to do the separation here as well.
+> > >
+> > > Indeed lane reordering at run time seems like a quite unusual
+> > > operation. I would say I could drop that, but then, a structure and a
+> > > new field in v4l2_mbus_frame_desc for just an u8, isn't it an
+> > > overkill (unless we know it could be expanded, with say, D-PHY timings
+> > > as in Maxime's D-PHY phy support implementation. Again, not sure they
+> > > should be run-time negotiated, but...)
+> >
+> > If we're adding extra information, then can I suggest that the
+> > clock-noncontinuous flag is also added?
+> > If you've got muxed CSI2 buses (eg via the FSA642 [1] as a trivial
+> > CSI2 switch), then there is nothing stopping one source wanting
+> > continuous clocks, and one not. Encoding it in the receiver's DT node
+> > therefore doesn't work for one of the sources. Duplication of that
+> > definition between source and receiver has always seemed a likely
+> > source of errors to me, but I'm the relative newcomer here.
+>
+> Do you have such a case somewhere?
 
-> > Please do not rebase on top of next, apply code on top of a fixed -rc1
-> > (we are currently using v5.1-rc1) and if there are dependencies on code
-> > already queued do let us know, we will handle conflicts in next
-> > ourselves.
-> 
-> So do you want me to resend this one more time ?
+There are boards available for the Pi that use the FSA642 to switch
+between multiple camera modules [1].
+They haven't written any clever drivers as their intended use is
+against the (closed) firmware, therefore they currently have to be
+identical sensors on each input.
+The use of those boards seems to fit pretty cleanly into this
+multiplexed CSI bus framework, and there needn't be the limitation of
+them being the same sensor.
 
-No, in the message above I wanted to say I would make the update
-myself.
+I acknowledge that the Pi CSI2 receiver driver isn't upstream yet. I
+put that on hold as the TC358743 was one of the main devices to be
+supported, and without the rest of this patch set passing the number
+of lanes in use through then that was pretty dead in the water. It was
+less effort to keep the driver in the Pi vendor tree using the
+g_mbus_config mechanism that was rejected, rather than holding patches
+on an upstreamed driver. Once this set is merged and I can therefore
+support TC358743 cleanly I'll be looking again at upstreaming it.
 
-Regardless, please never send patches aimed at the PCI tree
-on top on -next.
+[1] http://www.ivmech.com/magaza/en/development-modules-c-4/ivport-dual-raspberry-pi-camera-module-multiplexer-p-104
 
-Thanks,
-Lorenzo
+> As this is typically up to a device configuration (for those that support
+> it), it should be possible to use the same setting for both the sensors.
+
+Are you meaning CSI transmitter or receiver for device configuration?
+Most receivers support either, but often have to be told which mode to expect.
+TC358743 seems to be one of the few CSI drivers that actually supports
+both. None of the others appear to quote the use of
+clock-noncontinuous in their DT bindings, but that doesn't guarantee
+that that is the actual truth.
+
+So there's no issue at the moment, but there will be issues when you
+get the first driver that only supports clock-noncontinuous and
+someone wants to mux it.
+
+As I said, having the potential for the two ends to be set differently
+in device tree and no way to check at runtime seems like an
+unnecessary trap for the unwary. You're now adding a config path from
+source to receiver, therefore adding that information removes that
+confusion. Just a suggestion.
+
+  Dave
