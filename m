@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD6DC10F0F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 11:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CD4C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 11:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371EE20855
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 11:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B518206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 11:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbfDDLh3 (ORCPT
+        id S1728905AbfDDLl7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 07:37:29 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:49380 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728884AbfDDLh2 (ORCPT
+        Thu, 4 Apr 2019 07:41:59 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:57392 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbfDDLl7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 07:37:28 -0400
+        Thu, 4 Apr 2019 07:41:59 -0400
 Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id wBdS1z0083XaVaC01BdSdA; Thu, 04 Apr 2019 13:37:26 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id wBhw1z00E3XaVaC01Bhw4j; Thu, 04 Apr 2019 13:41:56 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hC0gQ-0008Mj-3K; Thu, 04 Apr 2019 13:37:26 +0200
+        id 1hC0km-0008OP-7V; Thu, 04 Apr 2019 13:41:56 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hC0gQ-0005No-1H; Thu, 04 Apr 2019 13:37:26 +0200
+        id 1hC0km-0005XL-6E; Thu, 04 Apr 2019 13:41:56 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v5.2
-Date:   Thu,  4 Apr 2019 13:37:22 +0200
-Message-Id: <20190404113722.20634-1-geert+renesas@glider.be>
+Subject: [git pull] pinctrl: sh-pfc: Updates for v5.2
+Date:   Thu,  4 Apr 2019 13:41:54 +0200
+Message-Id: <20190404114154.21242-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Mike, Stephen,
+	Hi Linus,
 
 The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
@@ -53,66 +52,106 @@ The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa231b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.2-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v5.2-tag1
 
-for you to fetch changes up to b953eaaeb58efc944f51cffd3f6838657958f0f8:
+for you to fetch changes up to 0a042b355e60269ad30725b5b5ca68fc5371a8df:
 
-  clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value (2019-04-04 11:54:46 +0200)
+  pinctrl: sh-pfc: r8a77965: Add I2C{0,3,5} pins, groups and functions (2019-04-04 12:02:50 +0200)
 
 ----------------------------------------------------------------
-clk: renesas: Updates for v5.2
+pinctrl: sh-pfc: Updates for v5.2
 
-  - Add missing PCI USB clock on RZ/N1,
-  - Add Z2 (Cortex-A53) clocks on R-Car E3 and RZ/G2E, incl. a new
-    helper in <linux/math64.h>,
-  - Small fixes and cleanups.
+  - Add HSCIF (serial) pin groups on R-Car H1,
+  - Add I2C[035] pin groups on R-Car M3-N,
+  - Add CANFD pin groups on RZ/G2M and RZ/G2E,
+  - Retain SDHI/MMC clock return path delay configuration across
+    suspend/resume on R-Car Gen3,
+  - More validation of pinmux tables at build and runtime, including
+    compile-test coverage of all drivers,
+  - Small fixes, improvements, and cleanups.
 
 Thanks for pulling!
 
 ----------------------------------------------------------------
-Gareth Williams (1):
-      clk: renesas: r9a06g032: Add missing PCI USB clock
+Fabrizio Castro (2):
+      pinctrl: sh-pfc: r8a7796: Move CANFD pin groups and functions
+      pinctrl: sh-pfc: r8a77990: Move CANFD pin groups and functions
 
-Geert Uytterhoeven (2):
-      clk: renesas: rcar-gen3: Pass name/offset to cpg_sd_clk_register()
-      clk: renesas: r7s9210: Always use readl()
+Geert Uytterhoeven (16):
+      pinctrl: sh-pfc: r8a77970: Rename IOCTRLx registers
+      pinctrl: sh-pfc: r8a77980: Rename IOCTRLx registers
+      pinctrl: sh-pfc: r8a77990: Rename IOCTRLx registers
+      pinctrl: sh-pfc: Validate pinmux tables at runtime when debugging
+      pinctrl: sh-pfc: Introduce PINCTRL_SH_FUNC_GPIO helper symbol
+      pinctrl: sh-pfc: Add missing #include <linux/errno.h>
+      sh: sh7786: Add explicit I/O cast to sh7786_mm_sel()
+      pinctrl: sh-pfc: Allow compile-testing of all drivers
+      pinctrl: sh-pfc: Absorb enum IDs in PINMUX_CFG_REG() macro
+      pinctrl: sh-pfc: Absorb enum IDs in PINMUX_CFG_REG_VAR() macro
+      pinctrl: sh-pfc: Absorb enum IDs in PINMUX_DATA_REG() macro
+      pinctrl: sh-pfc: Validate enum IDs for regs with fixed-width fields
+      pinctrl: sh-pfc: Validate enum IDs for regs with variable-width fields
+      pinctrl: rza1: Remove unneeded spinlock acquisitions
+      pinctrl: sh-pfc: Improve PINMUX_IPSR_PHYS() documentation
+      pinctrl: sh-pfc: r8a77970: Fix spacing
 
-Kazuya Mizuguchi (2):
-      clk: renesas: rcar-gen3: Correct parent clock of EHCI/OHCI
-      clk: renesas: rcar-gen3: Correct parent clock of HS-USB
+Marek Vasut (1):
+      pinctrl: sh-pfc: rcar-gen3: Retain TDSELCTRL register across suspend/resume
 
-Sergei Shtylyov (1):
-      clk: renesas: r8a77980: Fix RPC-IF module clock's parent
+Takeshi Kihara (9):
+      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 bit16 when using NFALE and NFRB_N
+      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit31 when using SIM0_D
+      pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit30 when using SSI_SCK2 and SSI_WS2
+      pinctrl: sh-pfc: rcar-gen3: Remove HDMI CEC pins, groups, and functions
+      pinctrl: sh-pfc: rcar-gen3: Remove CC5_OSCOUT pin
+      pinctrl: sh-pfc: rcar-gen3: Rename RTS{0,1,3,4}# pin function definitions
+      pinctrl: sh-pfc: rcar-gen3: Rename SEL_ADG_{A,B,C} to SEL_ADG{A,B,C}
+      pinctrl: sh-pfc: rcar-gen3: Rename SEL_NDFC to SEL_NDF
+      pinctrl: sh-pfc: r8a77965: Add I2C{0,3,5} pins, groups and functions
 
-Simon Horman (5):
-      clk: renesas: rcar-gen3: Parameterise Z and Z2 clock offset
-      clk: renesas: rcar-gen3: Remove CLK_TYPE_GEN3_Z2
-      math64: New DIV64_U64_ROUND_CLOSEST helper
-      clk: renesas: rcar-gen3: Support Z and Z2 clocks with high frequency parents
-      clk: renesas: r8a774c0: Add Z2 clock
+Ulrich Hecht (2):
+      pinctrl: sh-pfc: r8a7779: Add HSCIF0/1 pins
+      pinctrl: sh-pfc: r8a7796: Remove placeholder I2C pin data
 
-Takeshi Kihara (6):
-      clk: renesas: rcar-gen3: Parameterise Z and Z2 clock fixed divisor
-      clk: renesas: r8a77990: Add Z2 clock
-      clk: renesas: rcar-gen3: Correct parent clock of SYS-DMAC
-      clk: renesas: rcar-gen3: Correct parent clock of Audio-DMAC
-      clk: renesas: rcar-gen3: Rename DRIF clocks
-      clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value
-
- drivers/clk/renesas/r7s9210-cpg-mssr.c  |  3 +-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c | 18 ++++-----
- drivers/clk/renesas/r8a774c0-cpg-mssr.c |  7 ++--
- drivers/clk/renesas/r8a7795-cpg-mssr.c  | 41 +++++++++----------
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 35 +++++++++--------
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 33 ++++++++--------
- drivers/clk/renesas/r8a77980-cpg-mssr.c |  2 +-
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 25 ++++++------
- drivers/clk/renesas/r8a77995-cpg-mssr.c |  2 +-
- drivers/clk/renesas/r9a06g032-clocks.c  |  1 +
- drivers/clk/renesas/rcar-gen3-cpg.c     | 70 ++++++++++++++++-----------------
- drivers/clk/renesas/rcar-gen3-cpg.h     |  5 ++-
- include/linux/math64.h                  | 13 ++++++
- 13 files changed, 137 insertions(+), 118 deletions(-)
+ arch/sh/include/cpu-sh4/cpu/sh7786.h     |   2 +-
+ drivers/pinctrl/pinctrl-rza1.c           |  18 +-
+ drivers/pinctrl/sh-pfc/Kconfig           | 204 ++++++++++-----------
+ drivers/pinctrl/sh-pfc/Makefile          |  15 ++
+ drivers/pinctrl/sh-pfc/core.c            | 130 ++++++++++++++
+ drivers/pinctrl/sh-pfc/gpio.c            |   8 +-
+ drivers/pinctrl/sh-pfc/pfc-emev2.c       |  67 ++++---
+ drivers/pinctrl/sh-pfc/pfc-r8a73a4.c     |  64 +++----
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c     |  56 +++---
+ drivers/pinctrl/sh-pfc/pfc-r8a77470.c    | 136 ++++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c     | 101 ++++++-----
+ drivers/pinctrl/sh-pfc/pfc-r8a7779.c     | 235 ++++++++++++++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c     | 132 ++++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c     | 156 +++++++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a7792.c     | 134 +++++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a7794.c     | 127 +++++++------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 222 +++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 201 ++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 225 +++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 294 +++++++++++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-r8a77970.c    | 123 ++++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a77980.c    | 135 +++++++-------
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c    | 214 +++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-r8a77995.c    | 120 +++++++------
+ drivers/pinctrl/sh-pfc/pfc-sh7203.c      | 152 ++++++++--------
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c      | 232 ++++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-sh7269.c      | 252 +++++++++++++-------------
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c      |  52 +++---
+ drivers/pinctrl/sh-pfc/pfc-sh7720.c      | 144 +++++++--------
+ drivers/pinctrl/sh-pfc/pfc-sh7722.c      | 220 +++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-sh7723.c      | 200 ++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-sh7724.c      | 204 ++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c      | 140 ++++++++-------
+ drivers/pinctrl/sh-pfc/pfc-sh7757.c      | 244 ++++++++++++-------------
+ drivers/pinctrl/sh-pfc/pfc-sh7785.c      | 136 +++++++-------
+ drivers/pinctrl/sh-pfc/pfc-sh7786.c      |  80 ++++-----
+ drivers/pinctrl/sh-pfc/pfc-shx3.c        |  32 ++--
+ drivers/pinctrl/sh-pfc/sh_pfc.h          |  68 ++++---
+ 38 files changed, 2855 insertions(+), 2420 deletions(-)
 
 Gr{oetje,eeting}s,
 
