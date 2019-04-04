@@ -2,152 +2,187 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0019C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D79F1C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DC42075E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E97206DD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:50:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hJKKYtgk"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hiuN158Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730698AbfDDJqt (ORCPT
+        id S1729660AbfDDJun (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 05:46:49 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48460 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730439AbfDDJqs (ORCPT
+        Thu, 4 Apr 2019 05:50:43 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:46614 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730284AbfDDIzZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 05:46:48 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 42C5654B;
-        Thu,  4 Apr 2019 11:46:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1554371205;
-        bh=tQm3Pm2enJpmrKHwh038Jug61ni/to8BeKEEq91bHis=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hJKKYtgkzZuQ2mvkdpTfLHYBZeq4OPB6TR6Qc1hM/rcFm+LXDh00J7CRWy0+ra8xp
-         VOAKuseHavmDTkaLYFBQoYiBZtRxnWc0yR6KWubtdXXvG+D35spbeW/tNr6kYBGzR0
-         rJLO1WIr9aNRN4IqvyQHsgDx6qyimeoCn8RyXWI0=
-Date:   Thu, 4 Apr 2019 12:46:34 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     VenkataRajesh.Kalakodima@in.bosch.com
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 0/8] v4.19.0 Added Color Management Module
-Message-ID: <20190404094634.GC5800@pendragon.ideasonboard.com>
-References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
- <20190404094531.GB5800@pendragon.ideasonboard.com>
+        Thu, 4 Apr 2019 04:55:25 -0400
+Received: by mail-vs1-f66.google.com with SMTP id e2so864606vsc.13
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 01:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QaRqkLICECpnp6i7UhmqnYU8106nFA+94RKUdLSMYIU=;
+        b=hiuN158ZtbTKG6FJjHSanlt2JCh63XHx+7nxoiHVWXIJ+EXSAeWjiXvDXj+vjJ2tJL
+         Bo4xt5+1SyGvGJpBpLgfP/I80TNyucVzb+9+v78/g/EQSwDrFDQaj6n61glP/cM2MBrP
+         YsZJjUpSNWklqeRqmhFBNAmRv2n0vyFVPT8ClDMAU20ozf2Hc/5KGTRtFQuK+glbV4c7
+         +0cnokwxUhrSYpptRuAivx5FXkxIrDakPOf9xwmGAk5geeEC/NzhcpPK7ZAKdBsx3H71
+         KzT2wCQg+fMkynJEHYwaHmDinwg7ZmB0C9TUUbeKC6aBZrM7kSwQsO4VCBgQCJfXj4h6
+         MrJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QaRqkLICECpnp6i7UhmqnYU8106nFA+94RKUdLSMYIU=;
+        b=cRqfQXeFQ9HIn2M88vZloyGUckkRqmqUGnd0E/BAg/U7iH8n6yCYyYCkrBNZOBN38s
+         kCwQPmnVZHbrUiaoYDEwVrBi5JZqjcB3LhAvClrzx9/X0DD0K+xlhujkcHHoQ2VJcz6o
+         OY/ovhqXpxNRlZyV4UCftfs30IneNgCzNvBP9OkKzSYG6HI9H2hMx0A6nv894nROh2Iy
+         xvAXLZT3fP9ru7XgwmLkyK743b+sOCD45rA492f3z/Q9drReEppDL0psE862lBLPvqDW
+         PyGV2D4SIG7lafVlSYfdNNVBMIb8qZHcZaOTAiY60D+nBzmWQC49ASzmmDOGvWz7ok9L
+         PCmA==
+X-Gm-Message-State: APjAAAV29270DrlbijTR9VHRYcmGmKzhjtVoOd1vZOaTOpbGPppKvI2O
+        f6KzjbgCNschoZUu5qhvbikDIokSE+XbPM6TKcOH1A==
+X-Google-Smtp-Source: APXvYqwbiaLKa3Km0LdGtv2PGPvX3mvN6OdoCTCdnBPesX3xd78BXnBnNqyR3pF4MqdPgRqs/IX0+PZG7T4Tj/eH2X0=
+X-Received: by 2002:a67:fa04:: with SMTP id i4mr3319732vsq.18.1554368123396;
+ Thu, 04 Apr 2019 01:55:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190404094531.GB5800@pendragon.ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190320103927.21227-1-geert+renesas@glider.be>
+In-Reply-To: <20190320103927.21227-1-geert+renesas@glider.be>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 4 Apr 2019 10:54:45 +0200
+Message-ID: <CAPDyKFpecPdcqagc567kZJeWbe6y_0j9JAVKcE6c9Ltv+OG-Yw@mail.gmail.com>
+Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up is enabled
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-gpio@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 04, 2019 at 12:45:31PM +0300, Laurent Pinchart wrote:
-> Hi Kalakodima,
-> 
-> Thank you for the patch.
+On Wed, 20 Mar 2019 at 11:39, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> If a device is part of the wake-up path, it should indicate this by
+> setting its power.wakeup_path field.  This allows the genpd core code to
+> keep the device enabled during system suspend when needed.
+>
+> As regulators powering devices are not handled by genpd, the driver
+> handles these itself, and thus must skip regulator control when the
+> device is part of the wake-up path.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Note that I don't really need this on the Renesas Ebisu-4D board, as
+> there is no regulator or PM Domain controlling power to the GPIO
+> expander on that board.  I did want to have all wake-up path processing
+> implemented in the driver for completeness, and did test its behavior
+> with gpio-keys configured as a wake-up source.
 
-And I forgot to mention, please CC me on all patches to the DU driver.
-The script/get_maintainer.pl script should have told you about that.
-> 
-> On Wed, Apr 03, 2019 at 06:44:36PM +0530, VenkataRajesh.Kalakodima@in.bosch.com wrote:
-> > From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
-> > 
-> > This patchset adds rcar- display unit color management module (CMM)
-> > function feature, Which allows correction and adjustment of the
-> > display data, through updating Look up table (gamma) and  Cubic look
-> > up table (CTM)  property values 
-> > 
-> > Base color management module reference code taken from below link,
-> > https://github.com/renesas-rcar/du_cmm .
-> > - In above code, modified variable namingâ€™s and removed un used
-> >   functionalities.
-> > - Introduce new functions for queueing cubic look up table and look up
-> >   table events.
-> > 
-> > - Implemented interfaces in color management module to set CLU /LUT
-> >   table using standard DRM data structures as input.
-> >   Look up table is a 1D-LUT that converts each of three-color
-> >   components by using a lookup table. LUT is used for gamma
-> >   correction.							
-> >   Cubic look up table is a three-dimensional LUT (3D-LUT) that
-> >   converts the input three-color-component data into desired three
-> >   color Components by using a lookup table
-> > 
-> > - Implemented atomic check helper functions for enable/disable LUT and
-> >   CLU (Gamma and Color Transformation Matrix properties).
-> > - Allocated memory necessary for cubic look up table and look up table
-> >   and added mode fix up callback function
-> > - Added update gamma and color transformation matrix properties in
-> >   commit tail function, If any change in property values.
-> > 
-> > kalakodima venkata rajesh (8):
-> >   drm: Add DU CMM support functions
-> >   drm: Add DU CMM support boot and clk changes
-> >   drm: rcar-du: Give a name to clu table samples
-> >   drm: rcar-du: Refactor the code with new functions
-> >   drm: rcar-du: Implement interfaces to set clu and lut using drm data
-> >     structures
-> >   drm: rcar-du: Implement atomic_check to check for gamma and ctm
-> >     properties
-> >   drm: rcar-du: update gamma and ctm properties in commit tail
-> >   drm: rcar-du: Add shutdown callback function in platform_driver
-> > 
-> >  .../boot/dts/renesas/r8a7795-es1-salvator-x.dts    |    5 +
-> >  arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dts |    5 +
-> >  .../arm64/boot/dts/renesas/r8a7795-salvator-xs.dts |    5 +
-> >  arch/arm64/boot/dts/renesas/r8a7795.dtsi           |   29 +-
-> >  arch/arm64/boot/dts/renesas/r8a7796-salvator-x.dts |    6 +-
-> >  .../arm64/boot/dts/renesas/r8a7796-salvator-xs.dts |    4 +
-> >  arch/arm64/boot/dts/renesas/r8a7796.dtsi           |   25 +-
-> >  .../arm64/boot/dts/renesas/r8a77965-salvator-x.dts |    7 +-
-> >  .../boot/dts/renesas/r8a77965-salvator-xs.dts      |    7 +-
-> >  arch/arm64/boot/dts/renesas/r8a77965.dtsi          |   27 +-
-> >  drivers/clk/renesas/r8a7795-cpg-mssr.c             |    4 +
-> >  drivers/clk/renesas/r8a7796-cpg-mssr.c             |    3 +
-> >  drivers/clk/renesas/r8a77965-cpg-mssr.c            |  106 +-
-> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |   35 +
-> >  drivers/gpu/drm/rcar-du/Makefile                   |    2 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_cmm.c              | 1470 ++++++++++++++++++++
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.c             |   82 ++
-> >  drivers/gpu/drm/rcar-du/rcar_du_crtc.h             |   28 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_drv.c              |   85 +-
-> >  drivers/gpu/drm/rcar-du/rcar_du_drv.h              |   16 +-
-> >  drivers/gpu/drm/rcar-du/rcar_du_encoder.c          |    2 +-
-> >  drivers/gpu/drm/rcar-du/rcar_du_encoder.h          |    1 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_group.c            |    5 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c              |   25 +
-> >  drivers/gpu/drm/rcar-du/rcar_du_regs.h             |   92 ++
-> >  include/drm/bridge/dw_hdmi.h                       |    1 +
-> >  include/drm/drm_atomic.h                           |   25 +
-> >  include/drm/drm_ioctl.h                            |    7 +
-> >  28 files changed, 2082 insertions(+), 27 deletions(-)
-> >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_du_cmm.c
-> 
-> First of all, please split changes to DT, to the clock drivers, to the
-> dw-hdmi driver, to the DRM core and to the R-Car DU driver in separate
-> patches, with appropriate subject lines prefixes for each of them. As
-> you're modifying DT bindngs, you also need to update the bindings
-> documentation, which should go to a patch of its own.
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+All above makes perfect sense to me.
 
--- 
-Regards,
+>
+> However, while this approach is known to work fine on other boards, with
+> other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
+> irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
+> device suspend ordering.
+>
+> The proper ordering is:
+>   1. When gpio-keys is suspended, its suspend handler calls
+>      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
+>      pca953x_chip.wakeup_path to be incremented,
+>   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
+>      and marks the device to be part of the wake-up path.
 
-Laurent Pinchart
+Right.
+
+>
+> However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
+> scheme :-(
+
+Would it make sense to fixup the ordering issue via creating a
+parent/child relationship or setting up a device link?
+
+>
+> So depending on topology, this may work, or not...
+> ---
+>  drivers/gpio/gpio-pca953x.c | 21 ++++++++++++++++-----
+>  1 file changed, 16 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+> index 88c94d155e218535..349d0ccb5285a6c4 100644
+> --- a/drivers/gpio/gpio-pca953x.c
+> +++ b/drivers/gpio/gpio-pca953x.c
+> @@ -153,6 +153,7 @@ struct pca953x_chip {
+>         u8 irq_trig_fall[MAX_BANK];
+>         struct irq_chip irq_chip;
+>  #endif
+> +       atomic_t wakeup_path;
+>
+>         struct i2c_client *client;
+>         struct gpio_chip gpio_chip;
+> @@ -581,6 +582,11 @@ static int pca953x_irq_set_wake(struct irq_data *d, unsigned int on)
+>         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>         struct pca953x_chip *chip = gpiochip_get_data(gc);
+>
+> +       if (on)
+> +               atomic_inc(&chip->wakeup_path);
+> +       else
+> +               atomic_dec(&chip->wakeup_path);
+> +
+>         return irq_set_irq_wake(chip->client->irq, on);
+>  }
+>
+> @@ -1100,7 +1106,10 @@ static int pca953x_suspend(struct device *dev)
+>
+>         regcache_cache_only(chip->regmap, true);
+>
+> -       regulator_disable(chip->regulator);
+> +       if (atomic_read(&chip->wakeup_path))
+> +               device_set_wakeup_path(dev);
+> +       else
+> +               regulator_disable(chip->regulator);
+>
+>         return 0;
+>  }
+> @@ -1110,10 +1119,12 @@ static int pca953x_resume(struct device *dev)
+>         struct pca953x_chip *chip = dev_get_drvdata(dev);
+>         int ret;
+>
+> -       ret = regulator_enable(chip->regulator);
+> -       if (ret != 0) {
+> -               dev_err(dev, "Failed to enable regulator: %d\n", ret);
+> -               return 0;
+> +       if (!atomic_read(&chip->wakeup_path)) {
+> +               ret = regulator_enable(chip->regulator);
+> +               if (ret != 0) {
+> +                       dev_err(dev, "Failed to enable regulator: %d\n", ret);
+> +                       return 0;
+> +               }
+>         }
+>
+>         regcache_cache_only(chip->regmap, false);
+> --
+> 2.17.1
+>
+
+Looks good to me!
+
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
