@@ -2,143 +2,105 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9C7C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 00:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404F7C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56D512133D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 00:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 093D920663
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:13:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvEEgSxD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbfDDAsx (ORCPT
+        id S1726204AbfDDFNg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Apr 2019 20:48:53 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:32640 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726099AbfDDAsx (ORCPT
+        Thu, 4 Apr 2019 01:13:36 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45278 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbfDDFNg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Apr 2019 20:48:53 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x340mceo071000;
-        Thu, 4 Apr 2019 09:48:38 +0900 (JST)
-        (envelope-from na-hoan@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Thu, 04 Apr 2019 09:48:38 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x340mb4A070997
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 4 Apr 2019 09:48:37 +0900 (JST)
-        (envelope-from na-hoan@jinso.co.jp)
-Subject: Re: [PATCH] spi: sh-msiof: Fix the limit of data length when
- calculating the length of words
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= 
-        <cv-dong@jinso.co.jp>
-References: <1554283043-9206-1-git-send-email-na-hoan@jinso.co.jp>
- <CAMuHMdX6XJitza1J3TRs_YBHCQp_yvXyZVZErE6v4OtoSwQ1RQ@mail.gmail.com>
-From:   Hoan <na-hoan@jinso.co.jp>
-Message-ID: <18f28cec-7804-c27a-b461-8f0c694f97a5@jinso.co.jp>
-Date:   Thu, 4 Apr 2019 09:48:37 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 4 Apr 2019 01:13:36 -0400
+Received: by mail-lj1-f193.google.com with SMTP id y6so839149ljd.12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2019 22:13:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=114mMmi6oRIm17SohPdIpHZBA2UhUSX3l3ksXmWxFUA=;
+        b=dvEEgSxDFN/xgM7eBCS46yunDaRqZg7glZsDX0ZLSnUo9UpZ4X/83sCKFCqCKw1htj
+         CCUoV7N8QYXnyRZgg/T3g28WcHBMxYbaUdmA29UfmCiR1p8e9/Bpd3N6+jUaZhoVRhOd
+         EWz7PASMATMh1AssjI3xy99+GcrmBQoiENt04eZKaIkuyUdlrS9Aejw2GSuOwce6H1CC
+         r5i/6hjp+0LUfjU6J6C234cjYtutIrJyhp0PFEEScipnLc0XAT0uO7xbfV6LWFvzPGxG
+         rHukg0r+HMSWwbbs5j89ppJRTNyEmZjwTkyzCln6EszKoZHKS3skwfXCUUF8OrYNSKBq
+         +2fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=114mMmi6oRIm17SohPdIpHZBA2UhUSX3l3ksXmWxFUA=;
+        b=IqKDbNfeqo5TIEqdKTq/IkzsVvi1MP+UtcquEkngyNdkb0hI6Atlv/EX1xBCKB6XGW
+         0Q4F4ihgo+84xW0f++rmWa5uTDMW/MAstyXh8Z2d5wXAjvW9//a5d5L3YBAj2KELwy9s
+         KifVA8O7ykXp0Kj5JHRgUot/o5PBGl/SgBq/o1ZkodcjGL/jzlU55GPEcWRQC7bBAuZ5
+         km7ORSE/FBCvEiRhraQzPCK8yRY4mTYl5jNlpyPl4iBUXqmT5E/WZ4umTcQP5ZpqP9Iq
+         9inY96Vu0mBNtq24DqGvb7cp6f4e8VgWp0ZpcXaGqU1+E9l/QkGVz0i+G7OgzILWrZDq
+         onAw==
+X-Gm-Message-State: APjAAAW5r1IAYYTsVkRehNd4RvGvaWoVUruNRbuQgXKw8/gf6S5KX1Zi
+        VUgVfDb6q+kpx4Ly7kfxzuRqpb/bOOPQ19buUMwejQ==
+X-Google-Smtp-Source: APXvYqwoLgdl6oPM+zYkCeAEvjSKJANijJk8PAGhSD/Hp31aLChfcUmQvKWovYi+tJW8s4hCn9tp6/O6JUGuQRr6LW8=
+X-Received: by 2002:a2e:5d94:: with SMTP id v20mr2021805lje.138.1554354814433;
+ Wed, 03 Apr 2019 22:13:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdX6XJitza1J3TRs_YBHCQp_yvXyZVZErE6v4OtoSwQ1RQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190316202552.21525-1-marek.vasut@gmail.com>
+In-Reply-To: <20190316202552.21525-1-marek.vasut@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 4 Apr 2019 12:13:22 +0700
+Message-ID: <CACRpkdZNfNOhR=H5=ECVfsc-mDhk1RkovV56p3bUp2-KY0oWWQ@mail.gmail.com>
+Subject: Re: [PATCH V3] regulator: gpio: Reword the binding document
+To:     Mark Vasut <marek.vasut@gmail.com>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear Geert-san,
+On Sun, Mar 17, 2019 at 3:25 AM <marek.vasut@gmail.com> wrote:
 
-Always thanks for your replies!
+> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+>
+> Reword the binding document to make it clear how the propeties work
+> and which properties affect which other properties.
+>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Harald Geyer <harald@ccbib.org>
+> Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> To: devicetree@vger.kernel.org
+> ---
+> V2: - Make "gpios" a mandatory property
+>     - Reword "gpio-states" property description
+>     - Change "enable-gpio" to "enable-gpios" to match modern DT rules
+> V3: - Use gpio-states description from Harald
+> Note: The recent gpio-regulator rework caused breakage. While the
+>       changes in the gpio-regulator code were according to the DT
+>       binding document, they stopped working with older DTs. Make
+>       the binding document clearer to prevent such breakage in the
+>       future.
 
-On 2019/04/03 18:24, Geert Uytterhoeven wrote:
-> Hi Hoan,
->
-> On Wed, Apr 3, 2019 at 11:17 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
->> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
->>
->> We can use each word (data length) of 32bits (4 bytes),
->> so that if the length is greater than 3bytes, we can
->> align it with 4bytes of words.
->>
->> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> Thanks for your patch!
->
->> ---
->>   drivers/spi/spi-sh-msiof.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
->> index e2eb466..1552c14 100644
->> --- a/drivers/spi/spi-sh-msiof.c
->> +++ b/drivers/spi/spi-sh-msiof.c
->> @@ -930,7 +930,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
->>          if (!spi_controller_is_slave(p->ctlr))
->>                  sh_msiof_spi_set_clk_regs(p, clk_get_rate(p->clk), t->speed_hz);
->>
->> -       while (ctlr->dma_tx && len > 15) {
->> +       while (ctlr->dma_tx && len > 3) {
-> This check is here to avoid using DMA (which incurs DMA setup overhead)
-> for short transfers.
-> Have you measured the performance impact of your change?
->
-> Perhaps the code should be changed to:
->
->      #define DMA_MIN_LEN     16
->
->      while (ctlr->dma_tx && len >= DMA_MIN_LEN) {
->
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Here the DMA feature for this driver has been initialized with the 
-probe() function,
-which means that DMA will, if possible, use default.
-But when you add a patch to support DMA, You said DMA is only effective
-with 32 bits, so that DMA here serves data as multiples of 32 bits.
-I don't think the data length causes a cost for DMA when it's always 
-used by default
-if possible (was initialized with the probe () function) and if the data 
-is a 32bits
-multiple. In the opposite direction, have you measured the performance 
-of using DMA
-if the data is greater than or equal to 16 bytes instead of 4 bytes?
+Thanks for fixing this!
 
-
-Thank You!
-
-Hoan.
-
-
->>                  /*
->>                   *  DMA supports 32-bit words only, hence pack 8-bit and 16-bit
->>                   *  words, with byte resp. word swapping.
->> @@ -974,7 +974,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
->>                          return 0;
->>          }
->>
->> -       if (bits <= 8 && len > 15) {
->> +       if (bits <= 8 && len > 3) {
-> Likewise.
->
->>                  bits = 32;
->>                  swab = true;
->>          } else {
-> Gr{oetje,eeting}s,
->
->                          Geert
->
+Yours,
+Linus Walleij
