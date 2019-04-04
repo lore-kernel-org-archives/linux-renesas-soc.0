@@ -2,140 +2,154 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D814C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 08:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0801C10F05
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76FD220855
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 08:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E6362075E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 09:27:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554370038;
+	bh=jzwxOIilBKvMgAjiB1It+h+Ly36AJM6c80AUIaHtotQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=jAhHcD4swJZzHNEIHOccMkM7ZJhxtGB1X4CJkArAwoc2fuXksaMEecXsfNW8wVps0
+	 buaRlWtlx3YoMmduD6TddSiRYw9MNfTpYNtj1ORs61xAtmZGNCYU471jmZ/CKI2nD+
+	 wkGVhvnbzcDrEF5n/PsnfxveUUGxX+PCpa/P3tLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfDDIt1 (ORCPT
+        id S1733161AbfDDJMq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 04:49:27 -0400
-Received: from mga09.intel.com ([134.134.136.24]:12418 "EHLO mga09.intel.com"
+        Thu, 4 Apr 2019 05:12:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbfDDIt1 (ORCPT
+        id S1733062AbfDDJMq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 04:49:27 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Apr 2019 01:49:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,306,1549958400"; 
-   d="scan'208";a="132882542"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga006.jf.intel.com with ESMTP; 04 Apr 2019 01:49:23 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 1267C205BD; Thu,  4 Apr 2019 11:49:23 +0300 (EEST)
-Date:   Thu, 4 Apr 2019 11:49:22 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Dave Stevenson <dave.stevenson@raspberrypi.org>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com,
-        LMML <linux-media@vger.kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [RFC 1/5] v4l: subdev: Add MIPI CSI-2 PHY to frame desc
-Message-ID: <20190404084922.bskyos5zn7gtzsgr@paasikivi.fi.intel.com>
-References: <20190316154801.20460-1-jacopo+renesas@jmondi.org>
- <20190316154801.20460-2-jacopo+renesas@jmondi.org>
- <20190316175121.wdek74c7tfpmrhde@kekkonen.localdomain>
- <20190318083113.evrnuibomrsumne3@uno.localdomain>
- <CAAoAYcOL-7PFhbN6zEpheH794-jUPbU1R2c1ERbouhtQODyjYg@mail.gmail.com>
+        Thu, 4 Apr 2019 05:12:46 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 573182075E;
+        Thu,  4 Apr 2019 09:12:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554369164;
+        bh=jzwxOIilBKvMgAjiB1It+h+Ly36AJM6c80AUIaHtotQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=k42QrAstdU5jWbrie2eXuzd0hC3S5O9bJ08hDSpXRmef+LaIWHNF+o8rRL3xaNT5Z
+         13qCX92wyGDc+oCS5uG8F9OdFf7h0XuU6b8U2lMORoa/1uR9aiRtGOJds1wozFSeGo
+         +WokRPPr1sRFtwRkkEn/Zzb5R5XuHIESWeIUIy8w=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jan Kotas <jank@cadence.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 121/246] gpio: of: Apply regulator-gpio quirk only to enable-gpios
+Date:   Thu,  4 Apr 2019 10:47:01 +0200
+Message-Id: <20190404084623.392174120@linuxfoundation.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190404084619.236418459@linuxfoundation.org>
+References: <20190404084619.236418459@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAoAYcOL-7PFhbN6zEpheH794-jUPbU1R2c1ERbouhtQODyjYg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Dave,
+5.0-stable review patch.  If anyone has any objections, please let me know.
 
-On Mon, Mar 18, 2019 at 03:29:55PM +0000, Dave Stevenson wrote:
-> Hi Jacopo.
-> 
-> Sorry, for some reason linux-media messages aren't coming through to
-> me at the moment.
-> 
-> I'm interested mainly for tc358743 rather than adv748x, but they want
-> the very similar functionality.
-> I'll try to create patches for that source as well.
-> 
-> On Mon, 18 Mar 2019 at 08:30, Jacopo Mondi <jacopo@jmondi.org> wrote:
-> >
-> > Hi Sakari,
-> > +Maxime because of it's D-PHY work in the phy framework.
-> >
-> > On Sat, Mar 16, 2019 at 07:51:21PM +0200, Sakari Ailus wrote:
-> > > Hi Jacopo,
-> > >
-> > > On Sat, Mar 16, 2019 at 04:47:57PM +0100, Jacopo Mondi wrote:
-> > > > Add PHY-specific parameters to MIPI CSI-2 frame descriptor.
-> > > >
-> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > > ---
-> > > >  include/media/v4l2-subdev.h | 42 +++++++++++++++++++++++++++++++------
-> > > >  1 file changed, 36 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-> > > > index 6311f670de3c..eca9633c83bf 100644
-> > > > --- a/include/media/v4l2-subdev.h
-> > > > +++ b/include/media/v4l2-subdev.h
-> > > > @@ -317,11 +317,33 @@ struct v4l2_subdev_audio_ops {
-> > > >     int (*s_stream)(struct v4l2_subdev *sd, int enable);
-> > > >  };
-> > > >
-> > > > +#define V4L2_FRAME_DESC_ENTRY_DPHY_DATA_LANES      4
-> > > > +
-> > > > +/**
-> > > > + * struct v4l2_mbus_frame_desc_entry_csi2_dphy - MIPI D-PHY bus configuration
-> > > > + *
-> > > > + * @clock_lane:            physical lane index of the clock lane
-> > > > + * @data_lanes:            an array of physical data lane indexes
-> > > > + * @num_data_lanes:        number of data lanes
-> > > > + */
-> > > > +struct v4l2_mbus_frame_desc_entry_csi2_dphy {
-> > > > +   u8 clock_lane;
-> > > > +   u8 data_lanes[V4L2_FRAME_DESC_ENTRY_DPHY_DATA_LANES];
-> > > > +   u8 num_data_lanes;
-> > >
-> > > Do you need more than the number of the data lanes? I'd expect few devices
-> > > to be able to do more than that. The PHY type comes already from the
-> > > firmware but I guess it's good to do the separation here as well.
-> >
-> > Indeed lane reordering at run time seems like a quite unusual
-> > operation. I would say I could drop that, but then, a structure and a
-> > new field in v4l2_mbus_frame_desc for just an u8, isn't it an
-> > overkill (unless we know it could be expanded, with say, D-PHY timings
-> > as in Maxime's D-PHY phy support implementation. Again, not sure they
-> > should be run-time negotiated, but...)
-> 
-> If we're adding extra information, then can I suggest that the
-> clock-noncontinuous flag is also added?
-> If you've got muxed CSI2 buses (eg via the FSA642 [1] as a trivial
-> CSI2 switch), then there is nothing stopping one source wanting
-> continuous clocks, and one not. Encoding it in the receiver's DT node
-> therefore doesn't work for one of the sources. Duplication of that
-> definition between source and receiver has always seemed a likely
-> source of errors to me, but I'm the relative newcomer here.
+------------------
 
-Do you have such a case somewhere?
+[ Upstream commit 0e7d6f94016407fd7e1ae472e254d64d4454e9c8 ]
 
-As this is typically up to a device configuration (for those that support
-it), it should be possible to use the same setting for both the sensors.
+Since commit d6cd33ad7102 ("regulator: gpio: Convert to use descriptors")
+the GPIO regulator had inverted the polarity of the control GPIO. This
+problem manifested itself on systems with DT containing the following
+description (snippet from salvator-common.dtsi):
 
+	gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
+	gpios-states = <1>;
+	states = <3300000 1
+		  1800000 0>;
+
+Prior to the aforementioned commit, the gpio-regulator code used
+gpio_request_array() to claim the GPIO(s) specified in the "gpios"
+DT node, while the commit changed that to devm_gpiod_get_index().
+
+The legacy gpio_request_array() calls gpio_request_one() and then
+gpiod_request(), which parses the DT flags of the "gpios" node and
+populates the GPIO descriptor flags field accordingly.
+
+The new devm_gpiod_get_index() calls gpiod_get_index(), then
+of_find_gpio(), of_get_named_gpiod_flags() with flags != NULL,
+and then of_gpio_flags_quirks(). Since commit a603a2b8d86e
+("gpio: of: Add special quirk to parse regulator flags"),
+of_gpio_flags_quirks() contains a quirk for regulator-gpio
+which was never triggered by the legacy gpio_request_array()
+code path, but is triggered by devm_gpiod_get_index() code
+path.
+
+This quirk checks whether a GPIO is associated with a fixed
+or gpio-regulator and if so, checks two additional conditions.
+First, whether such GPIO is active-low, and if so, ignores the
+active-low flag. Second, whether the regulator DT node does
+have an "enable-active-high" property and if the property is
+NOT present, sets the GPIO flags as active-low.
+
+The second check triggers a problem, since it is applied to all
+GPIOs associated with a gpio-regulator, rather than only on the
+"enable" GPIOs, as the old code did. This changes the way the
+gpio-regulator interprets the DT description of the control
+GPIOs.
+
+The old code using gpio_request_array() explicitly parsed the
+"enable-active-high" DT property and only applied it to the
+GPIOs described in the "enable-gpios" DT node, and only if
+those were present.
+
+This patch fixes the quirk code by only applying the quirk
+to "enable-gpios", thus restoring the old behavior.
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Jan Kotas <jank@cadence.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org
+To: linux-gpio@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpio/gpiolib-of.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index a6e1891217e2..30542a10014f 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -84,6 +84,7 @@ static void of_gpio_flags_quirks(struct device_node *np,
+ 	 * Note that active low is the default.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_REGULATOR) &&
++	    !strcmp(propname, "enable-gpio") &&
+ 	    (of_device_is_compatible(np, "regulator-fixed") ||
+ 	     of_device_is_compatible(np, "reg-fixed-voltage") ||
+ 	     of_device_is_compatible(np, "regulator-gpio"))) {
 -- 
-Regards,
+2.19.1
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+
+
