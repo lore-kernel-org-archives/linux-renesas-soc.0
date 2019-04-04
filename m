@@ -4,92 +4,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5032C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EACC10F05
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB270206DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 230C1206DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 05:25:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rb2eam4j"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nOPdseXM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbfDDFUI (ORCPT
+        id S1726167AbfDDFZN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 01:20:08 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46979 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbfDDFUI (ORCPT
+        Thu, 4 Apr 2019 01:25:13 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35191 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726058AbfDDFZN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 01:20:08 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r25so753642lfn.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2019 22:20:07 -0700 (PDT)
+        Thu, 4 Apr 2019 01:25:13 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t4so909240ljc.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 03 Apr 2019 22:25:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yoqfvFTWTAFDDbj03ZN9hGGuAp6DvtFr6/ovnCtHXsk=;
-        b=rb2eam4jEpdPqYJ+FxvdcYgy4B0jsNriqcn5ZO2AHKUXF4R/43esUjVWiaPmMIQrMs
-         BUaz9qEyrGiK3Ejt7hmvF0CCefZ0BN0bdMHrpaV82WroY4l23H9Dd5WoKPQ/NMMIqBYI
-         r07OBw9abWNvp7Z/hWDdqWbWE3muSDBrk+xmCDRujDELP+qT4428GLRenAhLmcpnE+9/
-         s2CpWzW8ghTv+n9KaHfCfQiHIfirLczByrhdedAvJgwWZQRcNoDSaTCju5R3hvZn67A3
-         BEQ0yhD9OOvRhZrNUGeVh4+k94+BeETzvug0hw5Vl/019Ayj9OchjvfYXjoVYeIIsGe/
-         IQig==
+        bh=ZBfACO2yvbKXYcntcMy9iuJl3GZkSswa+DWpJE7auzA=;
+        b=nOPdseXMFBCJp1tkbrp9k6j7T/+kehHRD681BNID3DofIJupuh7h4v75uO1jIzwfO1
+         Fh+/3wvjyAY0veeY18fkfcWY46cKwUPlLMPVtD991jxKp2/sY4YibI5dF2zuwa4/S1e5
+         +0dL0JZDZ7Dqww3Hobum4MFiOgu6+zhkzGkgYJns1koPSgBNQwoP39YD6TiYkT63QP8R
+         fj8UQL7Ladk4Px6E5kkuNFZImVpJZv3D2Fgf7du5DevyZnCcB3ndBLd0qPQf47ajXe/+
+         QK/e9uQnyeuAFzzhW4RWCSGDGGp/Zf//eGA8F3r78EtsvAnoUAaQYabOrVHNTQIO9po4
+         /GoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yoqfvFTWTAFDDbj03ZN9hGGuAp6DvtFr6/ovnCtHXsk=;
-        b=N/rda6+7zMNIEGb0sRDPcezkZuytBFoENPjEF/dGNSsUoAbfmivHprWoTEPKcNAGuc
-         Qg2PRFTDjNnrdzQYrarDC6eyPu7jeL+Ja7Alr7v2wk3ewWTyQEJkygbYzY5gte3/eCO+
-         fo7OSE9LlMrzR9zOJDYO1HfWPPQr1+4zgImte9etxAG0ilMi98TgbBMsK7CvJBeUVB2I
-         N3Ogf2Z8hfeVnKdtLPSuVronLJBiJN1mbnOyljqHl+tIjKLiMs+5t0d6V1tJU7Za5t6k
-         pXKEOPCfihdF4pRbS/SBUizEh83ofHq5u41JpuLBzehERPfLqWIUq9hkjsg8sfABCTr2
-         aCBg==
-X-Gm-Message-State: APjAAAWvx6Xp+7M7FvfSkR+LTw2lVnWhPoyWcjTPYAEVdpIXf1cP0It0
-        cLFWGitkm31V2m6fiNRHTYD6cjMf2LLL5/B9EiadLQ==
-X-Google-Smtp-Source: APXvYqwuzVCKDSzcs1tKbd2mecUDd3njyKw/j+P+5+mZNl0/mZLFXev1X4CWpAsP97ToITVZCQCKE+au8A4/EvbCR84=
-X-Received: by 2002:ac2:4285:: with SMTP id m5mr1920981lfh.103.1554355206633;
- Wed, 03 Apr 2019 22:20:06 -0700 (PDT)
+        bh=ZBfACO2yvbKXYcntcMy9iuJl3GZkSswa+DWpJE7auzA=;
+        b=WDL/B6YLPFgmhp9u2jLr/hCwtYGsy4tpykW8gQ51f50tM3e4Bk38Hgoz6NhmZuUkVA
+         WrkGanCexuj7grFJoY92Fd6L6HVjJExo/btlQefB1FquZJpoC0ZuK8dNHjxlopH1exVO
+         OKUwxa2kIz0WR0kdmG2Q0EARkGg2KrmAlKsO6rjGidCC+TG4+w6dHdjP1stajskuF2Bt
+         HTYHJ80xUaQ/YMI8y1jsIUf81EGSGpXMofZKNlROncwT/nirVq5we5tkwqWvdJwL3cSk
+         kMJtEBCHwx0j8EcEUH9/HzAeQfJiwIqhk/MqUpy609qya+ui7czopxLoDI7R8YBnexTb
+         vFkw==
+X-Gm-Message-State: APjAAAX/v2NyPgnOkQ//DxVp9IPxYf3gZ5Un/9u8m/tApkbwyh9Vlw+e
+        VZljGKvGUcNBTg+BpQW5CzW/gOG7JvnVPMhWcrbfkDq1
+X-Google-Smtp-Source: APXvYqz9cg+EebYhtvLmiqsGuBbLrmNw/sOp/Q5ZBGRXTDkbBIRfdJDD4/BLBtjXpvNllmQ2e0Ia04TKDNK8g4FNDRw=
+X-Received: by 2002:a2e:4a1a:: with SMTP id x26mr2023102lja.49.1554355511291;
+ Wed, 03 Apr 2019 22:25:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190321092145.14896-1-geert+renesas@glider.be>
- <20190321092145.14896-3-geert+renesas@glider.be> <CACRpkdaY1yodQWtN2saeWV8HqfZ6RZ83JfTF+14vaS0yrR2Yrw@mail.gmail.com>
-In-Reply-To: <CACRpkdaY1yodQWtN2saeWV8HqfZ6RZ83JfTF+14vaS0yrR2Yrw@mail.gmail.com>
+References: <20190320103927.21227-1-geert+renesas@glider.be>
+In-Reply-To: <20190320103927.21227-1-geert+renesas@glider.be>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 4 Apr 2019 12:19:55 +0700
-Message-ID: <CACRpkdbYD7UAY+sMOOi0kvKmkRzYUHHudBLy19aLsJsgsXpEBA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] gpio: pca953x: Add support for CAT9554
+Date:   Thu, 4 Apr 2019 12:24:59 +0700
+Message-ID: <CACRpkdbqfJj37vHh3twpojHLoEnmcWqymbD8CYSi4PGPawP1Eg@mail.gmail.com>
+Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up is enabled
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 4, 2019 at 12:19 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Thu, Mar 21, 2019 at 4:21 PM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->
-> > The ON Semiconductor CAT9554 is a variant of the PCA953x GPIO expander,
-> > with 8 GPIOs and interrupt functionality.
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > v2:
-> >   - Split DT binding doc and driver update in separate patches.
->
-> Patch applied.
+On Wed, Mar 20, 2019 at 5:39 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-Ooops sorry I see Bartosz applied it, backed this out.
+> If a device is part of the wake-up path, it should indicate this by
+> setting its power.wakeup_path field.  This allows the genpd core code to
+> keep the device enabled during system suspend when needed.
+>
+> As regulators powering devices are not handled by genpd, the driver
+> handles these itself, and thus must skip regulator control when the
+> device is part of the wake-up path.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Note that I don't really need this on the Renesas Ebisu-4D board, as
+> there is no regulator or PM Domain controlling power to the GPIO
+> expander on that board.  I did want to have all wake-up path processing
+> implemented in the driver for completeness, and did test its behavior
+> with gpio-keys configured as a wake-up source.
+>
+> However, while this approach is known to work fine on other boards, with
+> other GPIO and interrupt controllers (gpio-rcar, irq-renesas-irqc,
+> irq-renesas-intc-irqpin), it wouldn't work on Ebisu-4D, due to different
+> device suspend ordering.
+>
+> The proper ordering is:
+>   1. When gpio-keys is suspended, its suspend handler calls
+>      enable_irq_wake(), invoking pca953x_irq_set_wake(), and causing
+>      pca953x_chip.wakeup_path to be incremented,
+>   2. When gpio-pca953x is suspended, it checks pca953x_chip.wakeup_path,
+>      and marks the device to be part of the wake-up path.
+>
+> However, gpio-keys is suspended _after_ gpio-pca953x, breaking the
+> scheme :-(
+>
+> So depending on topology, this may work, or not...
+
+This looks like the right way to do it to me.
+
+Ulf/Rafael: could either of you confirm that this is the right way
+to handle it when we have an optional external regulator cutting
+power to the chip providing the wakeup like this?
 
 Yours,
 Linus Walleij
