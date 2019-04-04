@@ -2,159 +2,341 @@ Return-Path: <SRS0=kNGB=SG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F81C4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 07:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F03C4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 07:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67E51206DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 07:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1662B20882
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Apr 2019 07:47:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Bx7jRVNr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbfDDH3r (ORCPT
+        id S1727253AbfDDHrM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Apr 2019 03:29:47 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:34921 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfDDH3r (ORCPT
+        Thu, 4 Apr 2019 03:47:12 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35988 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfDDHrM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Apr 2019 03:29:47 -0400
-Received: by mail-ua1-f66.google.com with SMTP id a46so575173uae.2;
-        Thu, 04 Apr 2019 00:29:47 -0700 (PDT)
+        Thu, 4 Apr 2019 03:47:12 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s16so1285336edr.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 04 Apr 2019 00:47:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gdxfcS2kGRaSjIP/SHS0OUrImmhlg820vTEjIpjlgm8=;
+        b=Bx7jRVNrM8BhvRmgbsK7uJMmhRZAjomw7B6mcbPSfYkr7al86sQ9Wjqy+SAYIs7E6f
+         SkJNR11Vf6vW3KlCBj61pj9YnxgGwtO2dNVSmItxiM3AHXFKmBzKEG2/1cL8k6XYmL6f
+         kQ2qTyIJI1HHrZWGyrzS9tW80T+xlOvhRKGyA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uaKTrJ7NOkjBDOSQAIcNmYaVDtXu9/sTG0E7c+dYUU4=;
-        b=gvHH5WNcybjAUnKuC97sNp7+bueti5D1vNPwTeavEPWbxkq6HwYy14lQHVBzc0DLLh
-         f+QnEfEsYfKKCKif0aIRSlVIsV1mFC+X0QfE4Kvp5Zjic9+WKVjl10FytArx3EumwGZ5
-         5POUpfNYTNLBS6aBR7AanvOe63b/EF1iJ6HWb6KhJeNxAjLtNyQmuLo9LFOvtMYkOJDI
-         g2GQ/idqycgfUMSuE3i4lBxaTtJr8ADK4kEWAUCjMX85oiAT+7WYKfCN/CiqnYqp/lJv
-         V9vqJWLCFQS98d0K/9uG1VYAgsh4dJTubc3XkJfi+u9b73v0XwD05eJC2CdQnn8pPOdj
-         wirQ==
-X-Gm-Message-State: APjAAAUV8sxYJfKhW2rVV8Mq/6/jJeIA+zwni9ecc9J2OXnFpy4/Mk75
-        gmJuIk6GWUtocEZCpZiHpCX7kzFfjBbqbL3anqiJoBOv
-X-Google-Smtp-Source: APXvYqwZFF8nnpOmWLc76Pi5pCFrjbUUemfg+Xwjhe4VtHlydnZxKNnoXLnNzYoUKBPVYWBXSe+9D1/yfi3QEYXTzUE=
-X-Received: by 2002:ab0:2341:: with SMTP id h1mr2812315uao.127.1554362986435;
- Thu, 04 Apr 2019 00:29:46 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=gdxfcS2kGRaSjIP/SHS0OUrImmhlg820vTEjIpjlgm8=;
+        b=gPAdE1aWMBCDNrs2w5DBweu6BEDh1YMM5CHRVngN/G2a95jKlqhkKgN4UNtm1f4g5u
+         IiLJz1lhtbGPDNpbRxfIuLm3LK5+Vzn6F0GohcOMsXuqNiyfOn3Pgp8KGKcvWe4W6dja
+         x6nTbodack0fagX/gQO+Y1dgHzI4A4zWHhyNLuv5dAXr4i6+2YsL4Ui7hs97XPs1WtCO
+         nQ74IjHL2hRkZnYZHKUYfh63dGIP6m6EuD2uJS3MqKxU41kjviqdKohhJvhwdcVz/XPW
+         M6euwG061qL4fyR1oDGDMDn787POszQG7SmYLK8hsrWF8DbQg+xBu7B04hcTT2EFEeu1
+         8hFg==
+X-Gm-Message-State: APjAAAU7MEVcEb5k8ONy2EHoOEA0t4r93rK5MkBQVCcGNj5JAGKXvxSX
+        6CEuAPAc0cbwDh0G61HML4Qk8g==
+X-Google-Smtp-Source: APXvYqyEevlJP1y8O/0u7aebO0Xw7LQgK7jGWZEgLNnpcmmGmacfu3kc83nQNRxKE0fkir4s0S3oPw==
+X-Received: by 2002:a17:906:3db1:: with SMTP id y17mr2667080ejh.90.1554364029551;
+        Thu, 04 Apr 2019 00:47:09 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id ga13sm3444192ejb.9.2019.04.04.00.47.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 04 Apr 2019 00:47:08 -0700 (PDT)
+Date:   Thu, 4 Apr 2019 09:47:06 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     VenkataRajesh.Kalakodima@in.bosch.com
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Balasubramani Vivekanandan 
+        <balasubramani_vivekanandan@mentor.com>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Subject: Re: [PATCH 8/8] drm: rcar-du: Add shutdown callback function in
+ platform_driver
+Message-ID: <20190404074706.GO2665@phenom.ffwll.local>
+Mail-Followup-To: VenkataRajesh.Kalakodima@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+References: <1554297284-14009-1-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+ <1554297284-14009-9-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
 MIME-Version: 1.0
-References: <1554283043-9206-1-git-send-email-na-hoan@jinso.co.jp>
- <CAMuHMdX6XJitza1J3TRs_YBHCQp_yvXyZVZErE6v4OtoSwQ1RQ@mail.gmail.com> <18f28cec-7804-c27a-b461-8f0c694f97a5@jinso.co.jp>
-In-Reply-To: <18f28cec-7804-c27a-b461-8f0c694f97a5@jinso.co.jp>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 4 Apr 2019 09:29:35 +0200
-Message-ID: <CAMuHMdXjBVZ+Rjs78wO3KNpba9_BVL+wuGk-2FjOG3_3eGP=NA@mail.gmail.com>
-Subject: Re: [PATCH] spi: sh-msiof: Fix the limit of data length when
- calculating the length of words
-To:     Hoan <na-hoan@jinso.co.jp>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        =?UTF-8?B?44Kr44Kq44O744O044Kh44Oz44O744OJ44Oz?= 
-        <cv-dong@jinso.co.jp>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1554297284-14009-9-git-send-email-VenkataRajesh.Kalakodima@in.bosch.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hoan,
+On Wed, Apr 03, 2019 at 06:44:44PM +0530, VenkataRajesh.Kalakodima@in.bosch.com wrote:
+> From: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+> 
+> When rebooting, the Display driver is accessing H/W (reading DDR).
+> Therefore, there is a problem of hanging when setting DDR to self
+> refresh mode.
+> 
+> This patch implement the shutdown function and solve this problem
+> by stopping H/W access.
+> 
+> In addtion, on the ulcb board, since initial values of versaclock
+> are used as they are, signals are not output when initializing to
+> 0 with shutdown, so this patch excludes processing to initialize
+> versaclock to 0.
+> drm: rcar-du: Add HDMI control clock when S2RAM
+> 
+> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> 
+> (cherry picked from horms/renesas-bsp commit 3cfda6331c4069800dd4434427284aba8e6f1ed6)
+> [slongerbeam: keep integer i in rcar_du_pm_shutdown(), needed because of
+>  050e54d87f ("drm: rcar-du: drm: rcar-du: Add DU CMM support")]
+> 
+> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 
-On Thu, Apr 4, 2019 at 2:48 AM Hoan <na-hoan@jinso.co.jp> wrote:
-> On 2019/04/03 18:24, Geert Uytterhoeven wrote:
-> > On Wed, Apr 3, 2019 at 11:17 AM Nguyen An Hoan <na-hoan@jinso.co.jp> wrote:
-> >> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> >>
-> >> We can use each word (data length) of 32bits (4 bytes),
-> >> so that if the length is greater than 3bytes, we can
-> >> align it with 4bytes of words.
-> >>
-> >> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> > Thanks for your patch!
-> >
-> >> ---
-> >>   drivers/spi/spi-sh-msiof.c | 4 ++--
-> >>   1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-> >> index e2eb466..1552c14 100644
-> >> --- a/drivers/spi/spi-sh-msiof.c
-> >> +++ b/drivers/spi/spi-sh-msiof.c
-> >> @@ -930,7 +930,7 @@ static int sh_msiof_transfer_one(struct spi_controller *ctlr,
-> >>          if (!spi_controller_is_slave(p->ctlr))
-> >>                  sh_msiof_spi_set_clk_regs(p, clk_get_rate(p->clk), t->speed_hz);
-> >>
-> >> -       while (ctlr->dma_tx && len > 15) {
-> >> +       while (ctlr->dma_tx && len > 3) {
-> > This check is here to avoid using DMA (which incurs DMA setup overhead)
-> > for short transfers.
-> > Have you measured the performance impact of your change?
-> >
-> > Perhaps the code should be changed to:
-> >
-> >      #define DMA_MIN_LEN     16
-> >
-> >      while (ctlr->dma_tx && len >= DMA_MIN_LEN) {
-> >
->
-> Here the DMA feature for this driver has been initialized with the
-> probe() function,
-> which means that DMA will, if possible, use default.
-> But when you add a patch to support DMA, You said DMA is only effective
-> with 32 bits, so that DMA here serves data as multiples of 32 bits.
-> I don't think the data length causes a cost for DMA when it's always
-> used by default
-> if possible (was initialized with the probe () function) and if the data
-> is a 32bits
-> multiple. In the opposite direction, have you measured the performance
-> of using DMA
-> if the data is greater than or equal to 16 bytes instead of 4 bytes?
+Maybe look into drm_atomic_helper_shutdown instead of hand-rolling? That
+should disable all display related stuff for you.
+-Daniel
 
-commit b0d0ce8b6b91a0f6f99045b6019fc4c824634fb4
-Author: Geert Uytterhoeven <geert+renesas@glider.be>
-Date:   Mon Jun 30 12:10:24 2014 +0200
-
-    spi: sh-msiof: Add DMA support
-
-    Add DMA support to the MSIOF driver using platform data.
-
-    As MSIOF DMA is limited to 32-bit words (requiring byte/wordswapping for
-    smaller wordsizes), and the group length is limited to 256 words, DMA is
-    performed on two fixed pages, allocated and mapped at driver initialization
-    time.
-
-    Performance figures (in Mbps) on r8a7791/koelsch at different SPI clock
-    frequencies for 1024-byte and 4096-byte transfers:
-
-                       1024 bytes           4096 bytes
-      -  3.25 MHz: PIO  2.1, DMA  2.6 | PIO  2.8, DMA  3.1
-      -  6.5  MHz: PIO  3.2, DMA  4.4 | PIO  5.0, DMA  5.9
-      - 13    MHz: PIO  4.2, DMA  6.6 | PIO  8.2, DMA 10.7
-      - 26    MHz: PIO  5.9, DMA 10.4 | PIO 12.4, DMA 18.4
-
-    Note that DMA is only faster than PIO for transfers that exceed the FIFO
-    size (typically 64 words / 256 bytes).
-
-    Also note that large transfers (larger than the group length for DMA, or
-    larger than the FIFO size for PIO), should use cs-gpio (with the
-    appropriate pinmux setup), as the hardware chipselect will be deasserted in
-    between chunks.
-
-    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-    Signed-off-by: Mark Brown <broonie@linaro.org>
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> 
+> drm: rcar-du: cmm: lut and clu backup not required during
+>  shutdown
+> rcar_du_cmm_pm_suspend function copies LUT and CLU hardare
+> register values to memory. In the patch which adds DU CMM
+> support (https://github.com/renesas-rcar/du_cmm/commit/
+> 9a65d02119e4ae405a89a850463a6a0d0f2c1ecb), the intention of
+> the author was to backup the registers during suspend and
+> restore it on resume. But rcar_du_cmm_pm_suspend was also
+> called on system shutdown. Though it does not cause any harm,
+> it is not required during shutdown as it does not make sense
+> to backup. This patch ensures that rcar_du_cmm_pm_suspend is
+> called only during suspend
+> 
+> Fixes: https://github.com/renesas-rcar/du_cmm/commit/9a65d02119e4ae405a89a850463a6a0d0f2c1ecb
+> 
+> Signed-off-by: Balasubramani Vivekanandan <balasubramani_vivekanandan@mentor.com>
+> 
+>       - Resolved checkpatch errors
+>       - Resolved merge conflicts according to latest version
+> 
+> Signed-off-by: kalakodima venkata rajesh <venkatarajesh.kalakodima@in.bosch.com>
+> ---
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 35 ++++++++++++++++++++
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c     | 54 +++++++++++++++++++++++++------
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  2 +-
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  1 +
+>  include/drm/bridge/dw_hdmi.h              |  1 +
+>  5 files changed, 83 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> index 5971976..aa257d7 100644
+> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> @@ -2033,6 +2033,41 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+>  	mutex_unlock(&hdmi->mutex);
+>  }
+>  
+> +/*
+> + * This function controls clocks of dw_hdmi through drm_bridge
+> + * at system suspend/resume.
+> + * Arguments:
+> + *  bridge: drm_bridge that contains dw_hdmi.
+> + *  flag: controlled flag.
+> + *		false: is used when suspend.
+> + *		true: is used when resume.
+> + */
+> +void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag)
+> +{
+> +	struct dw_hdmi *hdmi = bridge->driver_private;
+> +
+> +	if (!hdmi)
+> +		return;
+> +
+> +	if (flag) { /* enable clk */
+> +		if (hdmi->isfr_clk)
+> +			clk_prepare_enable(hdmi->isfr_clk);
+> +		if (hdmi->iahb_clk)
+> +			clk_prepare_enable(hdmi->iahb_clk);
+> +
+> +		initialize_hdmi_ih_mutes(hdmi);
+> +		dw_hdmi_setup_i2c(hdmi);
+> +		dw_hdmi_i2c_init(hdmi);
+> +		dw_hdmi_phy_setup_hpd(hdmi, NULL);
+> +	} else { /* disable clk */
+> +		if (hdmi->isfr_clk)
+> +			clk_disable_unprepare(hdmi->isfr_clk);
+> +		if (hdmi->iahb_clk)
+> +			clk_disable_unprepare(hdmi->iahb_clk);
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(dw_hdmi_s2r_ctrl);
+> +
+>  static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+>  	.attach = dw_hdmi_bridge_attach,
+>  	.enable = dw_hdmi_bridge_enable,
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> index 838b7c9..9eb63b0 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/wait.h>
+>  
+> +#include <drm/bridge/dw_hdmi.h>
+>  #include <drm/drmP.h>
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_crtc_helper.h>
+> @@ -368,18 +369,14 @@ static struct drm_driver rcar_du_driver = {
+>   */
+>  
+>  #ifdef CONFIG_PM_SLEEP
+> -static int rcar_du_pm_suspend(struct device *dev)
+> +static int rcar_du_pm_shutdown(struct device *dev)
+>  {
+>  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+>  	struct drm_atomic_state *state;
+> -	int i;
+> -
+> -	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
+> -		for (i = 0; i < rcdu->num_crtcs; ++i)
+> -			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
+> -	}
+> -
+> -	drm_kms_helper_poll_disable(rcdu->ddev);
+> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
+> +	struct drm_encoder *encoder;
+> +#endif
+> +		drm_kms_helper_poll_disable(rcdu->ddev);
+>  	drm_fbdev_cma_set_suspend_unlocked(rcdu->fbdev, true);
+>  
+>  	state = drm_atomic_helper_suspend(rcdu->ddev);
+> @@ -389,11 +386,43 @@ static int rcar_du_pm_suspend(struct device *dev)
+>  		return PTR_ERR(state);
+>  	}
+>  
+> +#if IS_ENABLED(CONFIG_DRM_RCAR_DW_HDMI)
+> +	list_for_each_entry(encoder,
+> +			    &rcdu->ddev->mode_config.encoder_list,
+> +			    head) {
+> +		struct rcar_du_encoder *renc = to_rcar_encoder(encoder);
+> +
+> +		if (renc->bridge && (renc->output == RCAR_DU_OUTPUT_HDMI0 ||
+> +				     renc->output == RCAR_DU_OUTPUT_HDMI1))
+> +			dw_hdmi_s2r_ctrl(encoder->bridge, false);
+> +	}
+> +#endif
+>  	rcdu->suspend_state = state;
+>  
+>  	return 0;
+>  }
+>  
+> +static int rcar_du_pm_suspend(struct device *dev)
+> +{
+> +	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> +
+> +	int i, ret;
+> +
+> +	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
+> +		for (i = 0; i < rcdu->num_crtcs; ++i)
+> +			rcar_du_cmm_pm_suspend(&rcdu->crtcs[i]);
+> +	}
+> +
+> +	ret = rcar_du_pm_shutdown(dev);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (i = 0; i < rcdu->num_crtcs; ++i)
+> +		clk_set_rate(rcdu->crtcs[i].extclock, 0);
+> +	return 0;
+> +}
+> +
+>  static int rcar_du_pm_resume(struct device *dev)
+>  {
+>  	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
+> @@ -504,6 +533,12 @@ static int rcar_du_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>  
+> +static void rcar_du_shutdown(struct platform_device *pdev)
+> +{
+> +#ifdef CONFIG_PM_SLEEP
+> +	rcar_du_pm_shutdown(&pdev->dev);
+> +#endif
+> +}
+>  static struct platform_driver rcar_du_platform_driver = {
+>  	.probe		= rcar_du_probe,
+>  	.remove		= rcar_du_remove,
+> @@ -512,6 +547,7 @@ static struct platform_driver rcar_du_platform_driver = {
+>  		.pm	= &rcar_du_pm_ops,
+>  		.of_match_table = rcar_du_of_table,
+>  	},
+> +	.shutdown       = rcar_du_shutdown,
+>  };
+>  
+>  static int __init rcar_du_init(void)
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> index f9c933d..98df8a2 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> @@ -62,7 +62,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>  
+>  	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
+>  		enc_node, output);
+> -
+> +	renc->bridge = bridge;
+>  	/* Locate the DRM bridge from the encoder DT node. */
+>  	bridge = of_drm_find_bridge(enc_node);
+>  	if (!bridge) {
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> index 2d2abca..cc5bfcb 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> @@ -23,6 +23,7 @@ struct rcar_du_device;
+>  struct rcar_du_encoder {
+>  	struct drm_encoder base;
+>  	enum rcar_du_output output;
+> +	struct drm_bridge *bridge;
+>  };
+>  
+>  #define to_rcar_encoder(e) \
+> diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+> index ccb5aa8..36383cf4 100644
+> --- a/include/drm/bridge/dw_hdmi.h
+> +++ b/include/drm/bridge/dw_hdmi.h
+> @@ -171,5 +171,6 @@ enum drm_connector_status dw_hdmi_phy_read_hpd(struct dw_hdmi *hdmi,
+>  void dw_hdmi_phy_update_hpd(struct dw_hdmi *hdmi, void *data,
+>  			    bool force, bool disabled, bool rxsense);
+>  void dw_hdmi_phy_setup_hpd(struct dw_hdmi *hdmi, void *data);
+> +void dw_hdmi_s2r_ctrl(struct drm_bridge *bridge, int flag);
+>  
+>  #endif /* __IMX_HDMI_H__ */
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
