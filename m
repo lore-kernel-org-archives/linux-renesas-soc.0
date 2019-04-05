@@ -2,145 +2,67 @@ Return-Path: <SRS0=/r1Q=SH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5351CC4360F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Apr 2019 06:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9DAC4360F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Apr 2019 08:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF8B217D7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Apr 2019 06:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD721217D4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Apr 2019 08:03:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="c5Oh6Mee"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfDEGUY (ORCPT
+        id S1729896AbfDEIDs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 5 Apr 2019 02:20:24 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:45961 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbfDEGUY (ORCPT
+        Fri, 5 Apr 2019 04:03:48 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:52885 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbfDEIDr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Apr 2019 02:20:24 -0400
-X-Greylist: delayed 2152 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Apr 2019 02:20:15 EDT
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x355iRoJ074150;
-        Fri, 5 Apr 2019 14:44:27 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Fri, 05 Apr 2019 14:44:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
-Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x355iOxb074127
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 5 Apr 2019 14:44:27 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-From:   Cao Van Dong <cv-dong@jinso.co.jp>
-To:     broonie@kernel.org, geert+renesas@glider.be,
-        horms+renesas@verge.net.au, devicetree@vger.kernel.org
-Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
+        Fri, 5 Apr 2019 04:03:47 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 669B725B808;
+        Fri,  5 Apr 2019 19:03:45 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554451425; bh=39oN+S3qaeofkNvmwUFwF3V0CN+AIb13M+MXrLbBIAw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c5Oh6MeeQCSzouKlez5gdn9LwpCBBd4BLFlgjf7NdtOdVc2cl3Jrs/TgqwYRdDjyG
+         pyUuDHrwnhwLiHX37HLfr+omDx1HkJV/OmD+602Uc8R062BrR+pT9LOuc6eMDDEs0K
+         bwzjxc4T0APW3fEzbTWuyHOD6G9ThDvTyyMZJyXI=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 671E89402FD; Fri,  5 Apr 2019 10:03:43 +0200 (CEST)
+Date:   Fri, 5 Apr 2019 10:03:43 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Cao Van Dong <cv-dong@jinso.co.jp>
+Cc:     broonie@kernel.org, geert+renesas@glider.be,
+        devicetree@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com,
+        kuninori.morimoto.gx@renesas.com,
         linux-renesas-soc@vger.kernel.org, h-inayoshi@jinso.co.jp,
         nv-dung@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH 2/4] arm64: dts: renesas: r8a77965: Add CMT device nodes
-Date:   Fri,  5 Apr 2019 14:44:07 +0900
-Message-Id: <1554443049-25127-3-git-send-email-cv-dong@jinso.co.jp>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1554443049-25127-1-git-send-email-cv-dong@jinso.co.jp>
+Subject: Re: [PATCH 4/4] dt-bindings: timer: renesas, cmt: Document
+ r8a779{5|65|90} CMT support
+Message-ID: <20190405080343.74cclqyndkmrsrsg@verge.net.au>
 References: <1554443049-25127-1-git-send-email-cv-dong@jinso.co.jp>
+ <1554443049-25127-5-git-send-email-cv-dong@jinso.co.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1554443049-25127-5-git-send-email-cv-dong@jinso.co.jp>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds CMT{0|1|2|3} device nodes for r8a77965 SoC.
+On Fri, Apr 05, 2019 at 02:44:09PM +0900, Cao Van Dong wrote:
+> Document SoC specific bindings for R-Car H3/M3-N/E3 SoCs.
+> 
+> Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
 
-Tested-by: Cao Van Dong <cv-dong@jinso.co.jp>
-Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
----
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 70 +++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+Thanks,
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index d8b8172..4a64463 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -317,6 +317,76 @@
- 			reg = <0 0xe6060000 0 0x50c>;
- 		};
- 
-+		cmt0: timer@e60f0000 {
-+			compatible = "renesas,r8a77965-cmt0",
-+				     "renesas,rcar-gen3-cmt0";
-+			reg = <0 0xe60f0000 0 0x1004>;
-+			interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 303>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 303>;
-+			status = "disabled";
-+		};
-+
-+		cmt1: timer@e6130000 {
-+			compatible = "renesas,r8a77965-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6130000 0 0x1004>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 302>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 302>;
-+			status = "disabled";
-+		};
-+
-+		cmt2: timer@e6140000 {
-+			compatible = "renesas,r8a77965-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6140000 0 0x1004>;
-+			interrupts = <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 301>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 301>;
-+			status = "disabled";
-+		};
-+
-+		cmt3: timer@e6148000 {
-+			compatible = "renesas,r8a77965-cmt1",
-+				     "renesas,rcar-gen3-cmt1";
-+			reg = <0 0xe6148000 0 0x1004>;
-+			interrupts = <GIC_SPI 470 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 471 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 472 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 473 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 474 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 475 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 476 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 300>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			resets = <&cpg 300>;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@e6150000 {
- 			compatible = "renesas,r8a77965-cpg-mssr";
- 			reg = <0 0xe6150000 0 0x1000>;
--- 
-2.7.4
-
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
