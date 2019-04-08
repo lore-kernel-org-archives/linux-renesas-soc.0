@@ -2,169 +2,322 @@ Return-Path: <SRS0=yOlw=SK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B19FC282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 06:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1398C282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 07:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDC120883
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 06:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76D81213F2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 07:47:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="dmozvc4t"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="KssKc+J1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbfDHGWS (ORCPT
+        id S1726133AbfDHHrF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Apr 2019 02:22:18 -0400
-Received: from mail-eopbgr1400135.outbound.protection.outlook.com ([40.107.140.135]:31376
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726201AbfDHGWS (ORCPT
+        Mon, 8 Apr 2019 03:47:05 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:47858 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbfDHHrF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Apr 2019 02:22:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=39GXyv373cZ7Dh20VRWFqDlaORseL3MOJmQsM72by3w=;
- b=dmozvc4tuipxyTpYUR+GH+YSDCeUUEqAMOQlp1XOKPcfG2AOVDFG/t8FsOUhKW03zCpKu6u1B2Q5wbetUZ8C4/r2zelisJrZJdahmI26XA6c3zAnw7db0nZRxGI6jq5FFuTjUXbs6xH30WjbKkknw81HYeGmFhGUiJ7deioYzK4=
-Received: from TYAPR01MB4271.jpnprd01.prod.outlook.com (20.178.139.148) by
- TYAPR01MB2205.jpnprd01.prod.outlook.com (52.133.178.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1771.16; Mon, 8 Apr 2019 06:22:14 +0000
-Received: from TYAPR01MB4271.jpnprd01.prod.outlook.com
- ([fe80::cda2:4f20:84e4:de70]) by TYAPR01MB4271.jpnprd01.prod.outlook.com
- ([fe80::cda2:4f20:84e4:de70%4]) with mapi id 15.20.1771.016; Mon, 8 Apr 2019
- 06:22:14 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        "kishon@ti.com" <kishon@ti.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 1/3] dt-bindings: phy: rcar-gen3-phy-usb2: Revise
- #phy-cells property
-Thread-Topic: [PATCH 1/3] dt-bindings: phy: rcar-gen3-phy-usb2: Revise
- #phy-cells property
-Thread-Index: AQHU6IMsyywmg/TypEeOnT1pl/tOhqYqQOOAgAeS6/A=
-Date:   Mon, 8 Apr 2019 06:22:14 +0000
-Message-ID: <TYAPR01MB4271FBDF12890817243F3FABD82C0@TYAPR01MB4271.jpnprd01.prod.outlook.com>
-References: <1554120083-29990-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1554120083-29990-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <TY1PR01MB17708AF072E039D362FDE659C0570@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB17708AF072E039D362FDE659C0570@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [118.238.235.108]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 505e980b-5200-48e9-e944-08d6bbea8ac8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600139)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:TYAPR01MB2205;
-x-ms-traffictypediagnostic: TYAPR01MB2205:
-x-microsoft-antispam-prvs: <TYAPR01MB2205F8ED40880348BD8FCC41D82C0@TYAPR01MB2205.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 0001227049
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(346002)(396003)(376002)(39860400002)(189003)(199004)(55016002)(2906002)(53936002)(5660300002)(6436002)(446003)(476003)(486006)(52536014)(11346002)(9686003)(6246003)(229853002)(25786009)(2501003)(106356001)(14454004)(105586002)(33656002)(3846002)(97736004)(71190400001)(6116002)(66066001)(71200400001)(316002)(110136005)(7736002)(7696005)(53546011)(26005)(6506007)(4326008)(54906003)(305945005)(68736007)(256004)(14444005)(8936002)(86362001)(99286004)(478600001)(102836004)(8676002)(81156014)(81166006)(186003)(76176011)(74316002);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2205;H:TYAPR01MB4271.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UJqsQzDfCDwdnKLjHsOr111e/mVYZA+mEpBnrJ4CGMtWGD0Yt9wOifxsOrN2PYPCx0Rjzc5u+hKmYW1pwQV48Q0ev7qv3NreFkD28duTRtA1NpOUCMKsWTRiqybJ2uj3+9XXX6KnqqqbVdcjJMgGRE8IgFk88HxTjPby6n1UqO9IPMUH7xDyAdy6IwDcSzwYsoY6og1hksx1ypegahpNZnorwXcjoB9aazutBOafKQYz6fjoX8UvvnTNpVoMYPT7OEVrPSvKLBxs0D9STgzhTAJ4+TkuQP1Ujj/fvNgG0sMJ3AxGPxE4DLV3a4l89jP5yc/anaDJlYEv5DG1PgInFbN+rJNqbuoEHUf8g2f87xdzf9WJwXZSKFuYF1+aZQvJbajD4lI8+3U1lZrZ6MhfRL/81nC7hF3DGFR12dS/46Y=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 8 Apr 2019 03:47:05 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id C2BE725B766;
+        Mon,  8 Apr 2019 17:46:58 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554709619; bh=3DtCZATA4o3aQmMTDpyKElLqptrr/+Lp03UuCOAMPGo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KssKc+J1rK7xTketozZtwgEVkFY360/JyizmEQbTG/bjhrToR3z7nYhISLKzNPSbr
+         xkjRNYm362j2VqljHSoSeXSTzalySPKf/Z0PpYD1Uyqa2c5e5ATZl2fbhvTH9LeXMv
+         ulCqC8qIPHZXJyEGRwCigrNuOVz5GLmTbS/RiL0k=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 27DAD94069B; Mon,  8 Apr 2019 09:46:57 +0200 (CEST)
+Date:   Mon, 8 Apr 2019 09:46:56 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: fix autoneg mismatch case in
+ genphy_read_status
+Message-ID: <20190408074651.kgiqinjzk43bq6kr@verge.net.au>
+References: <ad288d85-ea57-82bc-5711-1a0fbaad2aa8@gmail.com>
+ <20190405161628.67z7acycfu7beqln@verge.net.au>
+ <c5421a7b-dcb5-cfb1-1123-90a785a951e6@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 505e980b-5200-48e9-e944-08d6bbea8ac8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Apr 2019 06:22:14.3647
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2205
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5421a7b-dcb5-cfb1-1123-90a785a951e6@gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Fabrizio-san,
+On Fri, Apr 05, 2019 at 07:40:51PM +0200, Heiner Kallweit wrote:
+> On 05.04.2019 18:16, Simon Horman wrote:
+> > On Tue, Apr 02, 2019 at 08:43:30PM +0200, Heiner Kallweit wrote:
+> >> The original patch didn't consider the case that autoneg process
+> >> finishes successfully but both link partners have no mode in common.
+> >> In this case there's no link, nevertheless we may be interested in
+> >> what the link partner advertised.
+> >>
+> >> Like phydev->link we set phydev->autoneg_complete in
+> >> genphy_update_link() and use the stored value in genphy_read_status().
+> >> This way we don't have to read register BMSR again.
+> >>
+> >> Fixes: b6163f194c69 ("net: phy: improve genphy_read_status")
+> >> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+> > 
+> > Hi,
+> > 
+> > I have observed a regression with this patch as present as
+> > 4950c2ba49cc ("net: phy: fix autoneg mismatch case in genphy_read_status")
+> > in net-next.
+> > 
+> > The platform is the Renesas R-Car E3 (r8a77990) based Ebisu-4D board.
+> > 
+> > 
+> > Without this patch (commit before 4950c2ba49cc) the link is negotiated
+> > as follows:
+> > 
+> > [    3.257699] libphy: ravb_mii: probed
+> > [    3.266498] ravb e6800000.ethernet eth0: Base address at 0xe6800000, 2e:09:0a:03:85:38, IRQ 104.
+> > [    3.537082] Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: attached PHY driver [Micrel KSZ9031 Gigabit PHY] (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=165)
+> > [    9.667161] ravb e6800000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+> > 
+> > # ethtool --version
+> > ethtool version 3.16
+> > # ethtool eth0
+> > Settings for eth0:
+> >         Supported ports: [ TP MII ]
+> >         Supported link modes:   100baseT/Full 
+> >                                 1000baseT/Full 
+> >         Supported pause frame use: No
+> >         Supports auto-negotiation: Yes
+> >         Advertised link modes:  100baseT/Full 
+> >                                 1000baseT/Full 
+> >         Advertised pause frame use: No
+> >         Advertised auto-negotiation: Yes
+> >         Link partner advertised link modes:  10baseT/Half 10baseT/Full 
+> >                                              100baseT/Half 100baseT/Full 
+> >                                              1000baseT/Full 
+> >         Link partner advertised pause frame use: No
+> >         Link partner advertised auto-negotiation: Yes
+> >         Speed: 1000Mb/s
+> >         Duplex: Full
+> >         Port: MII
+> >         PHYAD: 0
+> >         Transceiver: external
+> >         Auto-negotiation: on
+> >         Supports Wake-on: g
+> >         Wake-on: d
+> >         Current message level: 0x000000cc (204)
+> >                                link timer rx_err tx_err
+> >         Link detected: yes
+> > 
+> > 
+> > With this patch the link is negotiated as follows, note the "Unknown":
+> > 
+> > [    3.268609] libphy: ravb_mii: probed
+> > [    3.277402] ravb e6800000.ethernet eth0: Base address at 0xe6800000, 2e:09:0a:03:85:38, IRQ 104.
+> > [    3.565057] Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: attached PHY driver [Micrel KSZ9031 Gigabit PHY] (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=165)
+> > [    9.804423] ravb e6800000.ethernet eth0: Link is Up - Unknown/Unknown - flow control off
+> > 
+> Looks like the PHY doesn't set the "aneg complete" bit. But then, how
+> can the link be up? Could you please add a debug output in
+> genphy_update_link() printing the value of register BMSR?
 
-Thank you for your review!
+I added the following debug patch:
 
-> From: Fabrizio Castro, Sent: Wednesday, April 3, 2019 7:35 PM
->=20
-> Hello Yoshihiro-san,
->=20
-> Thank you for your patch!
->=20
-> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-owner@vger.kerne=
-l.org> On Behalf Of Yoshihiro Shimoda
-> > Sent: 01 April 2019 13:01
-> > Subject: [PATCH 1/3] dt-bindings: phy: rcar-gen3-phy-usb2: Revise #phy-=
-cells property
-> >
-> > To have the detailed property on each PHY specifier, this patch revices
->=20
-> s/revices/revises/g
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 72fc714c9427..88c6cf79c438 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1710,6 +1710,7 @@ int genphy_update_link(struct phy_device *phydev)
+ 	 */
+ 	if (!phy_polling_mode(phydev)) {
+ 		status = phy_read(phydev, MII_BMSR);
++		pr_err("1: MII_BMSR=0x%08x\n", status);
+ 		if (status < 0) {
+ 			return status;
+ 		} else if (status & BMSR_LSTATUS) {
+@@ -1720,6 +1721,7 @@ int genphy_update_link(struct phy_device *phydev)
+ 
+ 	/* Read link and autonegotiation status */
+ 	status = phy_read(phydev, MII_BMSR);
++	pr_err("2: MII_BMSR=0x%08x\n", status);
+ 	if (status < 0)
+ 		return status;
+ 
 
-Oops! I'll fix it in v2.
+And the out put is as follows:
 
-> > the #phy-cells property.
-> >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > ---
-> >  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 7 +++++=
-+-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.t=
-xt
-> b/Documentation/devicetree/bindings/phy/rcar-gen3-
-> > phy-usb2.txt
-> > index ad9c290..7f0d4bf 100644
-> > --- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-> > +++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
-> > @@ -27,7 +27,12 @@ Required properties:
-> >
-> >  - reg: offset and length of the partial USB 2.0 Host register block.
-> >  - clocks: clock phandle and specifier pair(s).
-> > -- #phy-cells: see phy-bindings.txt in the same directory, must be <0>.
-> > +- #phy-cells: see phy-bindings.txt in the same directory, must be <1>.
-> > +
-> > +The phandle's argument in the PHY specifier is the INT_STATUS bit of c=
-ontroller:
->=20
-> From the driver we are also looking for value 0, as in rcar_gen3_get_dr_m=
-ode we
-> have a for loop that starts from 0, and we call of_usb_get_dr_mode_by_phy=
- with
-> arg0 =3D=3D 0
+# dmesg | egrep '(ravb|libphy|Mic)'
+[    2.028963] libphy: Fixed MDIO Bus: probed
+[    3.244122] ravb e6800000.ethernet: ignoring dependency for device, assuming no driver
+[    3.256398] libphy: ravb_mii: probed
+[    3.264867] ravb e6800000.ethernet eth0: Base address at 0xe6800000, 2e:09:0a:03:85:38, IRQ 104.
+[    3.551385] Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: attached PHY driver [Micrel KSZ9031 Gigabit PHY] (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=165)
+[    3.569904] libphy: 1: MII_BMSR=0x00007949
+[    3.574397] libphy: 2: MII_BMSR=0x00007949
+[    9.899946] libphy: 1: MII_BMSR=0x0000796d
+[    9.904786] ravb e6800000.ethernet eth0: Link is Up - Unknown/Unknown - flow control off
 
-This is backward compatibility for old DTS file (phy-cells =3D 0).
+# ethtool eth0
+Settings for eth0:
+        Supported ports: [ TP MII ]
+        Supported link modes:   100baseT/Full 
+                                1000baseT/Full 
+        Supported pause frame use: No
+        Supports auto-negotiation: Yes
+        Advertised link modes:  100baseT/Full 
+                                1000baseT/Full 
+        Advertised pause frame use: No
+        Advertised auto-negotiation: Yes
+        Speed: Unknown!
+        Duplex: Unknown! (255)
+        Port: MII
+        PHYAD: 0
+        Transceiver: external
+        Auto-negotiation: on
+        Supports Wake-on: g
+        Wake-on: d
+        Current message level: 0x000000cc (204)
+                               link timer rx_err tx_err
+        Link detected: yes
 
-> why are we leaving this out from this list?
+> I wonder whether your case may be caused by a chip erratum. Item 5 in
+> the errata documentation
+> (http://ww1.microchip.com/downloads/en/DeviceDoc/80000692D.pdf)
+> may be a candidate. Could you please check (as explained in the
+> errata document) and report the exact PHY version?
+> 
+> Could you please also test with another link partner?
 
-This is because I don't assume any device nodes doesn't have such a propert=
-y
-(the bit 0 of INT_STATUS).
+With a different link partner it seems that the problem remains:
 
-Best regards,
-Yoshihiro Shimoda
+root@Debian:~# dmesg | egrep '(ravb|libphy|Mic)'
+[    2.023596] libphy: Fixed MDIO Bus: probed
+[    3.243061] ravb e6800000.ethernet: ignoring dependency for device, assuming no driver
+[    3.255157] libphy: ravb_mii: probed
+[    3.263732] ravb e6800000.ethernet eth0: Base address at 0xe6800000, 2e:09:0a:03:85:38, IRQ 104.
+[    3.543377] Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: attached PHY driver [Micrel KSZ9031 Gigabit PHY] (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=165)
+[    3.561950] libphy: 1: MII_BMSR=0x00007949
+[    3.566436] libphy: 2: MII_BMSR=0x00007949
+[   12.798173] libphy: 1: MII_BMSR=0x0000796d
+[   12.802974] ravb e6800000.ethernet eth0: Link is Up - Unknown/Unknown - flow control off
+root@Debian:~# ethtool eth0
+Settings for eth0:
+        Supported ports: [ TP MII ]
+        Supported link modes:   100baseT/Full 
+                                1000baseT/Full 
+        Supported pause frame use: No
+        Supports auto-negotiation: Yes
+        Advertised link modes:  100baseT/Full 
+                                1000baseT/Full 
+        Advertised pause frame use: No
+        Advertised auto-negotiation: Yes
+        Speed: Unknown!
+        Duplex: Unknown! (255)
+        Port: MII
+        PHYAD: 0
+        Transceiver: external
+        Auto-negotiation: on
+        Supports Wake-on: g
+        Wake-on: d
+        Current message level: 0x000000cc (204)
+                               link timer rx_err tx_err
+        Link detected: yes
 
-> Thanks,
-> Fab
->=20
-> > +- 1 =3D USBH_INTA (OHCI)
-> > +- 2 =3D USBH_INTB (EHCI)
-> > +- 3 =3D UCOM_INT (OTG and BC)
-> >
-> >  Optional properties:
-> >  To use a USB channel where USB 2.0 Host and HSUSB (USB 2.0 Peripheral)=
- are
-> > --
-> > 2.7.4
-
+> > And ethtool reports:
+> > 
+> > # ethtool eth0
+> > Settings for eth0:
+> >         Supported ports: [ TP MII ]
+> >         Supported link modes:   100baseT/Full 
+> >                                 1000baseT/Full 
+> >         Supported pause frame use: No
+> >         Supports auto-negotiation: Yes
+> >         Advertised link modes:  100baseT/Full 
+> >                                 1000baseT/Full 
+> >         Advertised pause frame use: No
+> >         Advertised auto-negotiation: Yes
+> >         Speed: Unknown!
+> >         Duplex: Unknown! (255)
+> >         Port: MII
+> >         PHYAD: 0
+> >         Transceiver: external
+> >         Auto-negotiation: on
+> >         Supports Wake-on: g
+> >         Wake-on: d
+> >         Current message level: 0x000000cc (204)
+> >                                link timer rx_err tx_err
+> >         Link detected: yes
+> > 
+> > 
+> > 
+> > I noticed this when preparing a patch limit the maximum speed the device to
+> > 100Mbit/s as follows:
+> > 
+> > --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+> > @@ -272,6 +272,7 @@
+> >                 interrupt-parent = <&gpio2>;
+> >                 interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
+> >                 reset-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
+> > +               max-speed = <100>;
+> >         };
+> >  };
+> >  
+> > While the 100Mbit/s limit applied on top of the commit before 4950c2ba49cc
+> > things work as expected:
+> > 
+> > [    3.258347] libphy: ravb_mii: probed
+> > [    3.266739] ravb e6800000.ethernet eth0: Base address at 0xe6800000, 2e:09:0a:03:85:38, IRQ 104.
+> > [    3.553642] Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: attached PHY driver [Micrel KSZ9031 Gigabit PHY] (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=165)
+> > [    5.585027] ravb e6800000.ethernet eth0: Link is Up - 100Mbps/Full - flow control off
+> > 
+> > # ethtool eth0
+> > Settings for eth0:
+> >         Supported ports: [ TP MII ]
+> >         Supported link modes:   100baseT/Full 
+> >         Supported pause frame use: No
+> >         Supports auto-negotiation: Yes
+> >         Advertised link modes:  100baseT/Full 
+> >         Advertised pause frame use: No
+> >         Advertised auto-negotiation: Yes
+> >         Link partner advertised link modes:  10baseT/Half 10baseT/Full 
+> >                                              100baseT/Half 100baseT/Full 
+> I wondered why the link partner suddenly doesn't report 1Gbps support.
+> Seems to be a small flaw in phylib, if locally 1Gbps isn't supported
+> (or support is disabled) then we don't check for the link partners
+> 1Gbps capability.
+> 
+> >         Link partner advertised pause frame use: No
+> >         Link partner advertised auto-negotiation: Yes
+> >         Speed: 100Mb/s
+> >         Duplex: Full
+> >         Port: MII
+> >         PHYAD: 0
+> >         Transceiver: external
+> >         Auto-negotiation: on
+> >         Supports Wake-on: g
+> >         Wake-on: d
+> >         Current message level: 0x000000cc (204)
+> >                                link timer rx_err tx_err
+> >         Link detected: yes
+> > 
+> > 
+> > However, with the 100Mbit/s limit applied on top of 4950c2ba49cc the boot hangs
+> > while (or just after?) negotiating the link:
+> > 
+> > [    3.541549] Micrel KSZ9031 Gigabit PHY e6800000.ethernet-ffffffff:00: attached PHY driver [Micrel KSZ9031 Gigabit PHY] (mii_bus:phy_addr=e6800000.ethernet-ffffffff:00, irq=165)
+> > [    5.536389] ravb e6800000.ethernet eth0: Link is Up - Unknown/Unknown - flow control off
+> > 
+> > 
+> 
