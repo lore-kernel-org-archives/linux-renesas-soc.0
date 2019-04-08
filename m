@@ -2,96 +2,87 @@ Return-Path: <SRS0=yOlw=SK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC377C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 12:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40600C10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 13:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC9C020883
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 12:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 106DD213F2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 13:02:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eosgU5hi"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="MTkHBjuR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfDHMuu (ORCPT
+        id S1726373AbfDHNCE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Apr 2019 08:50:50 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33958 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbfDHMut (ORCPT
+        Mon, 8 Apr 2019 09:02:04 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:52553 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbfDHNCE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Apr 2019 08:50:49 -0400
-Received: by mail-lf1-f68.google.com with SMTP id o199so2282435lfo.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Apr 2019 05:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kObOSXeLNarr4A7JyCeGDmf2Aqlc+AnUxoBbHSTRZHQ=;
-        b=eosgU5hidfriIgdzaffD+gEjxqfYzI3r3ZsjYh7VmHGSIrCKhE0HubpIvm4G6Q66JC
-         RmlZkX8thltFNhRW7qB2FRiv6rWE0gDjg9utnyKd97Nrj6YKU5tepS45ju+O4mnVeU5s
-         la/UeY1gCcgYSVlcA9mdEjGXHp42yRzQfi6eA5qUweC3RNJ8cBsI9uQLWnp0lEJEgKqi
-         /hYnBQmrRh3WqiIsdSSqkRy5/WCC7nM/M9OMMudpC0ndIklTQmbpRJVj4LSvmJ/638Mx
-         IIwgPo2M19TUfc0yd4ZllxLYHmUqp5oBXEjATgeE0LjILu/Y97JPmRGWjy6zhwWwaJqY
-         0HMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kObOSXeLNarr4A7JyCeGDmf2Aqlc+AnUxoBbHSTRZHQ=;
-        b=pZc6YIeG1RjveBhjfYg/DG1PpoAGlqI+wB17bDQBfFjktHcd/wg9JfXt2+s33Y9olz
-         EXFE1FCVHfeWQ+I1zm3LplFZIuSO5KGtWlyIvWTImD69ZhNLaDf7BfVq/N1knUWMQz3A
-         hrShnEp/wK9JRngRgHdPH+YRnjDtyknuEuCSKjqYk/j3IksBW1kEEHKecqD9KfKXIj2x
-         wJwxMtdRuoRFynzMXS3eueWRDY68jt2DXz6WbyGVDtliRELwwJ44LMJg9E+XesEdn+sW
-         VMNB+5l31PoSmg2No8BcPT4w9I70SZ0OpQby8ZuIQyHG3u9gIqqsgGrsgoDBmVWIRR+W
-         Qq/A==
-X-Gm-Message-State: APjAAAXhIgNTHnfH/6essu71nVgKRBzxdOQlG19iOSSihNO6/nLwNNss
-        lrdXsQ2dp3F1qQEtYYLueocXHH81ADdYYCkCFbmjNFqM
-X-Google-Smtp-Source: APXvYqxm6gQM5RizB+QB98o/vRKWl9Hck0t3rr9vH0/mChEJSdcx8mhIM4dkN1BSfuO67QpDJ3ehnEaYQ430riupIIk=
-X-Received: by 2002:ac2:54b0:: with SMTP id w16mr16050034lfk.138.1554727847932;
- Mon, 08 Apr 2019 05:50:47 -0700 (PDT)
+        Mon, 8 Apr 2019 09:02:04 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 333E025B80D;
+        Mon,  8 Apr 2019 23:02:02 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554728522; bh=Jq9WC78y7JQExyO2QDR6/NjGWNWUXF5nZ4tXicdmbAI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MTkHBjuRCopscrPYT1urTIKcCIUMYihykY+UreYbmOm0xga4x5OKd5jx9+RQqVQZ9
+         OeUUX+iJ8o90w3BlLOqpKV9ZpAU6QjWR6m0j2TFXAcTyRinPR7rjJkWq/cJRhtLqXP
+         01hZCBsf6fziLMy2dL4SJR7VpsdxBTSrWUkOJ4UE=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 6462E94069B; Mon,  8 Apr 2019 15:02:00 +0200 (CEST)
+Date:   Mon, 8 Apr 2019 15:02:00 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH/RFC net-next] ravb: Avoid unsupported internal delay mode
+ for R-Car E3/D3
+Message-ID: <20190408130159.qwqttnl747tyiqwz@verge.net.au>
+References: <20190408082928.22840-1-horms+renesas@verge.net.au>
+ <20190408090104.GB1615@kunai>
+ <20190408094823.24bbzfp63mhzdkaa@verge.net.au>
+ <20190408111252.GB4553@kunai>
 MIME-Version: 1.0
-References: <20190320103927.21227-1-geert+renesas@glider.be>
-In-Reply-To: <20190320103927.21227-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 8 Apr 2019 14:50:36 +0200
-Message-ID: <CACRpkdaAZ8C-kmhWRMqu3y6yVJ--6UFjnoRi_iRtogwzzyGseQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: pca953x: Configure wake-up path when wake-up is enabled
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190408111252.GB4553@kunai>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Mar 20, 2019 at 11:39 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Mon, Apr 08, 2019 at 01:12:52PM +0200, Wolfram Sang wrote:
+> ^
+> > > > +static const struct soc_device_attribute ravb_delay_mode_quirk_match[] = {
+> > > > +	{ .soc_id = "r8a77990", .revision = "ES1.*" },
+> > > > +	{ .soc_id = "r8a77995", .revision = "ES1.*" },
+> > > > +	{ /* sentinel */ }
+> > > > +};
+> > > 
+> > > I might have missed it but is there a plan to fix this in later
+> > > revisions of D3/E3? I was under the impression that it is not and then
+> > > we could base it on compatible rather than soc_device_match?
+> > 
+> > I am not aware of any such plan (or the absence of such a plan).
+> > 
+> > I was unsure weather to go with the compat approach of the quirk approach.
+> > In the end I went with the quirk approach as it seems simpler. But
+> > I'm happy to re-arrange things.
+> 
+> I see. Well, I don't care super much. The tiny drawback here is that we
+> will have a potentially broken D3/E3 ES2.0, if they have not fixed TXID
+> there. Then we need to update the above pattern. So, revision = "*" (or
+> the compatible approach) might be a tad better. Then we "only" have 1G
+> disabled for no reason until we whitelist it.
 
-> If a device is part of the wake-up path, it should indicate this by
-> setting its power.wakeup_path field.  This allows the genpd core code to
-> keep the device enabled during system suspend when needed.
->
-> As regulators powering devices are not handled by genpd, the driver
-> handles these itself, and thus must skip regulator control when the
-> device is part of the wake-up path.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Patch applied with Ulf's Review tag.
-
-If there are even better ways to do it I think we can fix that on top of
-this, it is best to start with something that obviously works and
-take it from there.
-
-Yours,
-Linus Walleij
+I do think that the quirk approach is cleaner, So all things being equal
+I'd slightly prefer to stick with that approach. Shall I drop
+the .revision portion?
