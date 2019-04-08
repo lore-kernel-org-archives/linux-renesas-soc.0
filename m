@@ -2,135 +2,78 @@ Return-Path: <SRS0=yOlw=SK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB39C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 17:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D22C10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 17:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D093D20879
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 17:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4274220855
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 17:49:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="a5r7RGGO"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dYsjwcIz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfDHRjV (ORCPT
+        id S1726489AbfDHRtK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Apr 2019 13:39:21 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34051 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726507AbfDHRjT (ORCPT
+        Mon, 8 Apr 2019 13:49:10 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:54036 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726373AbfDHRtJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Apr 2019 13:39:19 -0400
-Received: by mail-lf1-f66.google.com with SMTP id o199so3039763lfo.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Apr 2019 10:39:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9PQRSWpNhVaQ6UdJRNny5nsFt61xhtCAMsMxoXKZI2s=;
-        b=a5r7RGGOHEe38kml9YKAEQ+4ddVZLiyH+BrZ6CkVU2zrVW0V13cEXdcmAQJcQaxYFz
-         dOlKeaDUeJD1yUjc9oaZ4G+2j0zGrGoXyAEBDiTwT7W4AxTng/Q0xatxN55gzuN9aBxo
-         DJ/1NGyLXFrYw5ZP23uswySsWpDqQs59ZkXDtj0JQ/4+c4vQwKWl38YFPj+ZbiHfcTVy
-         vv1WqH0q+awZRTLInI2uB7iJ8t0tB+243/RtZSwZDaBKWqkPqKKAzsmbbEDRunV8vABS
-         FK9+2FVe+hMeyjTaO3Y8dx+HT1RUldeHKeqwWI9pSnDnwijqfyhBAAnVL7KfM9UlqCR+
-         6pMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9PQRSWpNhVaQ6UdJRNny5nsFt61xhtCAMsMxoXKZI2s=;
-        b=PIuZamLI9a84y1gyGnHc3nc1ZUDF2jw9F9oDpKKMUVHKlTkWykoBWfdhKybzVYzKIH
-         zBfqStzVm5qADIMZKLqeEHD0N46sRddz90SIt1dePT4HAHFKMS/IeXvvEZeQG8rXEUaB
-         EmgCGBbYyPe9OzLSQIt0l3PFM7pbCvUPZ7wNEDykPnifzs4WxtrZxQv9mjA74X0RXF7s
-         mW3z9ZzILEfIQPVxOeX5dz9OOFD7gEnSL2UdRSF2Q6yYtyHAA4G6ovoL/vYrqb6aR2BZ
-         jXcMHyMy0qgp0wav8ALCYWE2rjIcnScLXDfAfvQlLJHOi15GYz7XJ60+Fp/pl5HjmXVM
-         6zig==
-X-Gm-Message-State: APjAAAW8WdfG+SitTnk4ycsDkPAp+wylyiJ2lK2DMGGav53cbfUjZbs5
-        K+hs/8FCs3zixNdScXC78BjIvQ==
-X-Google-Smtp-Source: APXvYqyoAqDEEB29v36zaQJ32rs73uwQ2squNuCDh2NOOJGlyh4SWxxZgsl/BxtCCCvha/YtCvBOUQ==
-X-Received: by 2002:ac2:5bde:: with SMTP id u30mr4218642lfn.6.1554745156716;
-        Mon, 08 Apr 2019 10:39:16 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.87.219])
-        by smtp.gmail.com with ESMTPSA id x3sm6093764lfn.64.2019.04.08.10.39.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Apr 2019 10:39:15 -0700 (PDT)
-Subject: Re: [PATCH/RFC net-next] ravb: Avoid unsupported internal delay mode
- for R-Car E3/D3
-To:     Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 8 Apr 2019 13:49:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=uEGn/ZdphOKgfkBD1LC32HwzyYEwq2zXwxk9mLjh7PA=; b=dYsjwcIzGBXn46mi8NzYHG0HA9
+        kVxcG+tRUXNcjqs2bCOxiNGiqXnTKV880eiE4h2D9vkN5i+5OXHUw7SFTwH59YSaGKgPNmZJw6r+z
+        CBDcslCl6jGxcWuMm53rQEeiDu5t8qtQiibE4i+HCTt8OvcYrt7hUGLKEblts1Ndp6bg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hDYOF-0004oR-M6; Mon, 08 Apr 2019 19:49:03 +0200
+Date:   Mon, 8 Apr 2019 19:49:03 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Simon Horman <horms+renesas@verge.net.au>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH/RFC net-next] ravb: Avoid unsupported internal delay mode
+ for R-Car E3/D3
+Message-ID: <20190408174903.GD15267@lunn.ch>
 References: <20190408082928.22840-1-horms+renesas@verge.net.au>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <12616e19-9127-39db-4346-be642c87b596@cogentembedded.com>
-Date:   Mon, 8 Apr 2019 20:39:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ <12616e19-9127-39db-4346-be642c87b596@cogentembedded.com>
 MIME-Version: 1.0
-In-Reply-To: <20190408082928.22840-1-horms+renesas@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12616e19-9127-39db-4346-be642c87b596@cogentembedded.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 04/08/2019 11:29 AM, Simon Horman wrote:
-
-> According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
-> August 24, 2018,
-
-   Rummaged in Cogent's archives but was unable to find that errata...
-
-> the TX clock internal delay mode isn't supported
-> on R-Car E3 (r8a77990) and D3 (r8a77995).
+> > @@ -1979,8 +1985,9 @@ static void ravb_set_delay_mode(struct net_device *ndev)
+> >  	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
+> >  		set |= APSR_DM_RDM;
+> >  
+> > -	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
+> > -	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
+> > +	if ((priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
+> > +	     priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) &&
+> > +	    !soc_device_match(ravb_delay_mode_quirk_match))
 > 
-> Based on work by Kazuya Mizuguchi.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 4f648394e645..be8af4a382cf 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -1969,6 +1969,12 @@ static void ravb_set_config_mode(struct net_device *ndev)
->  	}
->  }
->  
-> +static const struct soc_device_attribute ravb_delay_mode_quirk_match[] = {
-> +	{ .soc_id = "r8a77990", .revision = "ES1.*" },
-> +	{ .soc_id = "r8a77995", .revision = "ES1.*" },
-> +	{ /* sentinel */ }
-> +};
+>    But don't we need to error out of the probing as we can't set the delay mode
+> requested?
 
-   I'm OK with this approach (modulo the revisions)...
+Yes, if we can, we should error out. It just depends on if there are
+broken DT blobs out there. We recently had a lot of pain from broken
+DT blobs using the at803x PHY and getting RGMII modes wrong. In the
+long run, it is best to if DT, but i've no idea how many boards are
+affected.
 
-[...]
-> @@ -1979,8 +1985,9 @@ static void ravb_set_delay_mode(struct net_device *ndev)
->  	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
->  		set |= APSR_DM_RDM;
->  
-> -	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-> -	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
-> +	if ((priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-> +	     priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) &&
-> +	    !soc_device_match(ravb_delay_mode_quirk_match))
-
-   But don't we need to error out of the probing as we can't set the delay mode
-requested?
-
->  		set |= APSR_DM_TDM;
->  
->  	ravb_modify(ndev, APSR, APSR_DM, set);
-
-MBR, Sergei
+	Andrew
