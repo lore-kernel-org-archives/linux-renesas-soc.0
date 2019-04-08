@@ -2,92 +2,90 @@ Return-Path: <SRS0=yOlw=SK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0481EC282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 09:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB57AC282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 09:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B2B208E3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 09:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8357920880
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 09:40:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="WWf31w5s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfDHJBH (ORCPT
+        id S1726415AbfDHJkA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Apr 2019 05:01:07 -0400
-Received: from sauhun.de ([88.99.104.3]:60406 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfDHJBH (ORCPT
+        Mon, 8 Apr 2019 05:40:00 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:49605 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726383AbfDHJkA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Apr 2019 05:01:07 -0400
-Received: from localhost (p54B335C3.dip0.t-ipconnect.de [84.179.53.195])
-        by pokefinder.org (Postfix) with ESMTPSA id F113A4A134D;
-        Mon,  8 Apr 2019 11:01:04 +0200 (CEST)
-Date:   Mon, 8 Apr 2019 11:01:04 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH/RFC net-next] ravb: Avoid unsupported internal delay mode
- for R-Car E3/D3
-Message-ID: <20190408090104.GB1615@kunai>
-References: <20190408082928.22840-1-horms+renesas@verge.net.au>
+        Mon, 8 Apr 2019 05:40:00 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D44A425B766;
+        Mon,  8 Apr 2019 19:39:57 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554716398; bh=37CgdXWXzi4pD9PqZ3OGQxM6CycefGVw081L+88Kw/o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WWf31w5sop5BBWQNJZ4DxAY2cyszY/5oHEPFhtvlQ0peeWOC/D8lB3yQYliubkxCX
+         8zOGk2QQ2+nAg91eEaov5X2J91I86DPE1HmOHI3LSv1SYxUJNDPALI2TB+puUsIrSO
+         5IcFVgBzVGnF3JlECXGnLrmXfoMpbolAAxnU4D04=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id DBA1494069B; Mon,  8 Apr 2019 11:39:55 +0200 (CEST)
+Date:   Mon, 8 Apr 2019 11:39:55 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] arm64: renesas_defconfig: Enable REALTEK_PHY config
+ option
+Message-ID: <20190408093955.6npyrltuqpuoo6bz@verge.net.au>
+References: <1554452086-51303-1-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190408082928.22840-1-horms+renesas@verge.net.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1554452086-51303-1-git-send-email-biju.das@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Fri, Apr 05, 2019 at 09:14:46AM +0100, Biju Das wrote:
+> Enable support for Realtek phy, which is used by RZ/G2E (r8a774c0) based
+> Silicon Linux CAT874 board.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
---v9Ux+11Zm5mwPlX6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks,
 
-On Mon, Apr 08, 2019 at 10:29:28AM +0200, Simon Horman wrote:
-> According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
-> August 24, 2018, the TX clock internal delay mode isn't supported
-> on R-Car E3 (r8a77990) and D3 (r8a77995).
+This looks fine to me but I will wait to see if there are other reviews
+before applying.
 
-Yes, it made it also into the revised documentation v1.50, see chapter
-50.2.7., bit 14.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-> +static const struct soc_device_attribute ravb_delay_mode_quirk_match[] = {
-> +	{ .soc_id = "r8a77990", .revision = "ES1.*" },
-> +	{ .soc_id = "r8a77995", .revision = "ES1.*" },
-> +	{ /* sentinel */ }
-> +};
-
-I might have missed it but is there a plan to fix this in later
-revisions of D3/E3? I was under the impression that it is not and then
-we could base it on compatible rather than soc_device_match?
-
-
---v9Ux+11Zm5mwPlX6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyrDdAACgkQFA3kzBSg
-KbZAhQ//TyBEa/VRyDK+lbouPbW7EXbtYeBq3zBINc8Ax/oQnBr4D56B4K3EkfRu
-+Jv4sc8H9bzbIxBi+QwPUFm810/r5/+CX0Z0qWz9CVeRRdfiBp8WGayt9W1m4HiZ
-eZejrdcPqdVwz3hZCqjhyKwOx4E0GjW+DeG39ITy2bPGq3JWnyxGo4hwa3IuJJIv
-PpReOHzE5jDs1oyJAQ+9daKWm3A55X52S9Dkx1insWFgx8Nxi46zqrOwcm3K/Kbb
-qoBlj4Y8At2nrBZTDdnRIhKWK10urF2Wniv6U/LGvg3gE6748n7B6FOIJfZZ5muJ
-nxpMXTizK1YEP48tOxWtlYJDftub8yL88JdlP+STuLEWVFfUfKnXwbC+dax7dBSC
-bV7IE7wbT7VJH0dQZEHM1GCDBoeuWmvNU78oIvEOXR8amPKytmnUZVqsC2uxbNyg
-zRqbNXj/DbUXSTH0/OkQVeSZHmDEu+m1iTIZqCLQ0NMrxfcdumZ7WpFxQ4RxCI7d
-79b+BfU3weBQiPtoup73znXQyuGuBxN6ETfvwKD/NrmDOgKG4MFN7e0DgKJy5Wg+
-cKvO8ZRI3vm6Pbroy6MnXaT3C3psJ24MHCbDDd0WyypFNiXMhyKd6aNEovrjYnyk
-OJYPIbwQYuPWyUm9vt1towpuAsCFQ7rHvaKslHVHSoAMjDXMy9k=
-=Eb3w
------END PGP SIGNATURE-----
-
---v9Ux+11Zm5mwPlX6--
+> ---
+>  arch/arm64/configs/renesas_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+> index 8a83012..0a17854 100644
+> --- a/arch/arm64/configs/renesas_defconfig
+> +++ b/arch/arm64/configs/renesas_defconfig
+> @@ -111,6 +111,7 @@ CONFIG_VIRTIO_NET=y
+>  CONFIG_RAVB=y
+>  CONFIG_MDIO_BUS_MUX_MMIOREG=y
+>  CONFIG_MICREL_PHY=y
+> +CONFIG_REALTEK_PHY=y
+>  # CONFIG_WLAN is not set
+>  CONFIG_INPUT_MATRIXKMAP=y
+>  CONFIG_INPUT_EVDEV=y
+> -- 
+> 2.7.4
+> 
