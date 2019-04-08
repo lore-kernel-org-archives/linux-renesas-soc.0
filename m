@@ -2,119 +2,121 @@ Return-Path: <SRS0=yOlw=SK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C63C282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 08:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAB3C282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 08:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA0D20880
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 08:41:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A0A20880
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Apr 2019 08:46:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aIcd4DoW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lx6EIUR2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfDHIlr (ORCPT
+        id S1726530AbfDHIqJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Apr 2019 04:41:47 -0400
-Received: from sauhun.de ([88.99.104.3]:60268 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbfDHIlq (ORCPT
+        Mon, 8 Apr 2019 04:46:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52138 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726133AbfDHIqJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Apr 2019 04:41:46 -0400
-Received: from localhost (p54B335C3.dip0.t-ipconnect.de [84.179.53.195])
-        by pokefinder.org (Postfix) with ESMTPSA id F1E654A134D;
-        Mon,  8 Apr 2019 10:41:43 +0200 (CEST)
-Date:   Mon, 8 Apr 2019 10:41:43 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH/RFC] arm64: dts: renesas: ebisu, draak: Limit EtherAVB to
- 100Mbps
-Message-ID: <20190408084143.GA1615@kunai>
-References: <20190408083148.23134-1-horms+renesas@verge.net.au>
+        Mon, 8 Apr 2019 04:46:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9934A60131; Mon,  8 Apr 2019 08:46:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1554713168;
+        bh=EMEIQEKJTNwNbWQeCZv3+1KkAY8TRGlmFR9uZ8/nMzo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aIcd4DoWc3PW0U6CWfT2viqDqRwj4t3HnQUeSouLuRcs+CmdZ2qcqpqfZHaqRH+yS
+         B3eHdFwnAXFAhYJX6U0XLFKmHtDNxIQ85H7HXIVh4cyBmOmhiVUwwp/fDtmwbjk9nD
+         TMMdk3XaosuEXqDuynK6YJwsPvuEEFE1KzclGw4E=
+Received: from [10.204.79.83] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE75A60FEA;
+        Mon,  8 Apr 2019 08:45:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1554713165;
+        bh=EMEIQEKJTNwNbWQeCZv3+1KkAY8TRGlmFR9uZ8/nMzo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=lx6EIUR2+ewPHs6CBWjVV82bigLoLtJDTImg6dGPOwW1CzjGO1tuYTznO6O7wJnjW
+         4oYxT9OcTlPEvJ0RikSgpB2wbtBm6fEpkxI7lG23WpzaJgb5czftojQu69UiN/4dT4
+         rozDIJ5yGyOFl2nyYn+Ir1U3FcHox5p+e0Z7ekCo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE75A60FEA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH v2] drm: rcar-du: fix possible object reference leak
+To:     Wen Yang <wen.yang99@zte.com.cn>, linux-kernel@vger.kernel.org
+Cc:     wang.yi59@zte.com.cn,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+References: <1554692313-28882-1-git-send-email-wen.yang99@zte.com.cn>
+ <1554692313-28882-3-git-send-email-wen.yang99@zte.com.cn>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <c794daff-aca2-b3e7-cf19-e79b1cae7a0e@codeaurora.org>
+Date:   Mon, 8 Apr 2019 14:15:54 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <20190408083148.23134-1-horms+renesas@verge.net.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1554692313-28882-3-git-send-email-wen.yang99@zte.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Simon,
-
-On Mon, Apr 08, 2019 at 10:31:48AM +0200, Simon Horman wrote:
-> * According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of
->   August 24, 2018, the TX clock internal delay mode isn't supported
->   on R-Car E3 (r8a77990) and D3 (r8a77995).
->=20
-> * TX clock internal delay mode is required for reliable 1Gbps communicati=
-on
->   using the KSZ9031RNX phy present on the Ebisu and Draak boards.
->=20
-> Thus, the E3 based Ebisu and D3 based Draak boards reliably use 1Gbps and
-> the speed should be limited to 100Mbps.
-
-"cannot" missing?
-
-> Based on work by Kazuya Mizuguchi.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+On 4/8/2019 8:28 AM, Wen Yang wrote:
+> The call to of_get_parent returns a node pointer with refcount
+> incremented thus it must be explicitly decremented after the last
+> usage.
+>
+> Detected by coccinelle with the following warnings:
+> drivers/gpu/drm/rcar-du/rcar_du_of.c:235:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 216, but without a corresponding object release within this function.
+> drivers/gpu/drm/rcar-du/rcar_du_of.c:236:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 209, but without a corresponding object release within this function.
+>
+> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org (open list)
 > ---
->  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 1 +
->  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 1 +
->  2 files changed, 2 insertions(+)
->=20
->  Based on renesas-devel-20190404-v5.1-rc3
->=20
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/=
-boot/dts/renesas/r8a77990-ebisu.dts
-> index c72772589953..05214b8dd2c5 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-> @@ -272,6 +272,7 @@
->  		interrupt-parent =3D <&gpio2>;
->  		interrupts =3D <21 IRQ_TYPE_LEVEL_LOW>;
->  		reset-gpios =3D <&gpio1 20 GPIO_ACTIVE_LOW>;
-> +		max-speed =3D <100>;
-
-What about adding a comment explaining this speed limit?
-
-Thanks,
-
-   Wolfram
+> v2->v1: turn the return into a goto done.
+>
+>   drivers/gpu/drm/rcar-du/rcar_du_of.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_of.c b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+> index afef696..782bfc7 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_of.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_of.c
+> @@ -232,7 +232,7 @@ static void __init rcar_du_of_lvds_patch(const struct of_device_id *of_ids)
+>   	lvds_node = of_find_compatible_node(NULL, NULL, compatible);
+>   	if (lvds_node) {
+>   		of_node_put(lvds_node);
+> -		return;
+> +		goto done;
+>   	}
+>   
 
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
+you might have to create multiple level to do handling it.. there are 
+unnecessary put being done on "done" which is not valid
 
------BEGIN PGP SIGNATURE-----
+for this case.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyrCUMACgkQFA3kzBSg
-KbbWDA//fLRfV7qk/zfY9LCpWoZmMA/QUAS7J7myt2N4ObHF1ktns05Ygbf7JD0Y
-A40y6KKPe0tCxXZgQMKLIvv3lyvayXcIDZFDVPJnGiBzhV6DRQSib5Y+CKZaADnm
-dcXy9uv6sx2sXDhjLcQOtBNflPmUdOa7FgOqoYucdkd3a+tOXyjZdhVnqiYxMfor
-ziivYmmHFfNCKFPb1uW4N6Ptkq57mAU+dNV3A174oKFrx4Libj0IaVVIObXExpfK
-vam1jpwHZZStQNXAWhbfmuaDUz6gco4GxKCHae/mGfjghHej+ymrFX09GuKPG/XR
-dmf8s1pNDprsenZ9jQ0uJDjEJuyiaIRQ8LByb0RDOUc0jvss0jgST8ZhsKCsnkcM
-gG2LAFhn1jogDZScb8VjpMmMNRHDw9QjKFldcr6lGv9ORp26KzjahchhaGKjqAWX
-/4flEUEZq++5LinfuTOQ5tAwnz0Yh5SgXYD00a304tCRTy6hx3p9yCkiF56GH3OE
-SzJInAvpj0PPghZRxQHg3FxpgIK0tPhjFXUvgqscpgmUp/2SYcJUSpjpj2bBg4ks
-NVJRyQifrRXQ03dlMJNGfY/r/6uDds43WRnfCBGO8qCiFSFRv3uuLjQy2RoPEfXt
-V4OrBWcPWn9sG212phy5Bttr6tKpW+OuJb0LwIYZCDxZkfBw8wk=
-=FbDl
------END PGP SIGNATURE-----
+-Mukesh
 
---a8Wt8u1KmwUX3Y2C--
+>   	/*
