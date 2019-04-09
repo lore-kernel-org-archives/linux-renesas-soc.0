@@ -2,107 +2,159 @@ Return-Path: <SRS0=/dFS=SL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72588C282DA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68571C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 400D4206C0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37C4C20883
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:10:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="jIMgXqvB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726066AbfDILJK (ORCPT
+        id S1726513AbfDILKV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Apr 2019 07:09:10 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:29290 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726387AbfDILJJ (ORCPT
+        Tue, 9 Apr 2019 07:10:21 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:41904 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbfDILKV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Apr 2019 07:09:09 -0400
-X-IronPort-AV: E=Sophos;i="5.60,329,1549897200"; 
-   d="scan'208";a="12738844"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Apr 2019 20:09:07 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A9E6740C2F8A;
-        Tue,  9 Apr 2019 20:09:07 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] mmc: core: retry CMD1 in mmc_send_op_cond() even if the ocr = 0
-Date:   Tue,  9 Apr 2019 20:05:06 +0900
-Message-Id: <1554807906-9704-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 9 Apr 2019 07:10:21 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 64D1525BDAE;
+        Tue,  9 Apr 2019 21:10:17 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1554808217; bh=bRl+Qg6grz+qnhhaNCk9OX90AgTm8B9PVBSsCvyDhew=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jIMgXqvBF0is6o69O8acZaeAR7JLW1DI53PAI625UMAmvJu9p6RUk8wWa63QDi6gS
+         cYxCqpLrae9vUf/+VwPFPPSIp+HhanPwywMtOyEfIxbAYXgQ9cRRXdiZc4uamoa8pr
+         2obWyfHi7SwknX7ZnqpU1IHwdElGowO+GrPd/VzI=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 8E6379402E1; Tue,  9 Apr 2019 13:10:15 +0200 (CEST)
+Date:   Tue, 9 Apr 2019 13:10:15 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH V3 08/13] ARM: dts: r8a77470: Add USB PHY DT support
+Message-ID: <20190409111015.x6t5h3jeslovrrho@verge.net.au>
+References: <1554287324-22312-1-git-send-email-biju.das@bp.renesas.com>
+ <1554287324-22312-9-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1554287324-22312-9-git-send-email-biju.das@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-According to eMMC specification v5.1 section 6.4.3, we should issue
-CMD1 repeatedly in the idle state until the eMMC is ready even if
-the mmc_attach_mmc() calls this function with ocr = 0. Otherwise
-some eMMC devices seems to enter the inactive mode after
-mmc_init_card() issued CMD0 when the eMMC device is busy.
+On Wed, Apr 03, 2019 at 11:28:39AM +0100, Biju Das wrote:
+> Define the r8a77470 generic part of the USB PHY device node.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Changes from v1 (https://patchwork.kernel.org/patch/10874619/):
- - Revise the comment on the source code.
+Thanks,
 
- We can reproduce this issue if:
-  - we add no-sd and no-sdio property into sdhi2 node of salvator-common.dtsi,
-  - the renesas_sdhi driver is kernel module,
-  - Using a Salvator-XS board that has Samsung eMMC device,
-  - enter suspend and exit it,
-  - and then insmod renesas_sdhi_{core,internal_dmac}.ko.
+This looks fine to me but I will wait to see if there are other reviews
+before applying.
 
- After that, the following error happened and any partitions are not detected.
-  mmc1: error -110 whilst initialising MMC card
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
- I tested this patch on:
-  - M3-N Salvator-XS with a Samsung eMMC device,
-  - M3-W Salvator-X with SiliconMotion eMMC device,
-  - and M3-W Starter Kit with Micron eMMC device.
-
- drivers/mmc/core/mmc_ops.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
-index c5208fb..a533cab 100644
---- a/drivers/mmc/core/mmc_ops.c
-+++ b/drivers/mmc/core/mmc_ops.c
-@@ -184,11 +184,7 @@ int mmc_send_op_cond(struct mmc_host *host, u32 ocr, u32 *rocr)
- 		if (err)
- 			break;
- 
--		/* if we're just probing, do a single pass */
--		if (ocr == 0)
--			break;
--
--		/* otherwise wait until reset completes */
-+		/* wait until reset completes */
- 		if (mmc_host_is_spi(host)) {
- 			if (!(cmd.resp[0] & R1_SPI_IDLE))
- 				break;
-@@ -200,6 +196,16 @@ int mmc_send_op_cond(struct mmc_host *host, u32 ocr, u32 *rocr)
- 		err = -ETIMEDOUT;
- 
- 		mmc_delay(10);
-+
-+		/*
-+		 * According to eMMC specification v5.1 section 6.4.3, we
-+		 * should issue CMD1 repeatedly in the idle state until
-+		 * the eMMC is ready. Otherwise some eMMC devices seem to enter
-+		 * the inactive mode after mmc_init_card() issued CMD0 when
-+		 * the eMMC device is busy.
-+		 */
-+		if (!ocr && !mmc_host_is_spi(host))
-+			cmd.arg = cmd.resp[0] | BIT(30);
- 	}
- 
- 	if (rocr && !mmc_host_is_spi(host))
--- 
-2.7.4
-
+> ---
+> V2-->V3
+>   * Added gen3 usb2 phy nodes
+> V1-->V2
+>  * New patch
+> ---
+>  arch/arm/boot/dts/r8a77470.dtsi | 56 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+> index 493cf2b..dcd2975 100644
+> --- a/arch/arm/boot/dts/r8a77470.dtsi
+> +++ b/arch/arm/boot/dts/r8a77470.dtsi
+> @@ -325,6 +325,42 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		usbphy0: usb-phy@e6590100 {
+> +			compatible = "renesas,usb-phy-r8a77470",
+> +				     "renesas,rcar-gen2-usb-phy";
+> +			reg = <0 0xe6590100 0 0x100>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			clocks = <&cpg CPG_MOD 704>;
+> +			clock-names = "usbhs";
+> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> +			resets = <&cpg 704>;
+> +			status = "disabled";
+> +
+> +			usb0: usb-channel@0 {
+> +				reg = <0>;
+> +				#phy-cells = <1>;
+> +			};
+> +		};
+> +
+> +		usbphy1: usb-phy@e6598100 {
+> +			compatible = "renesas,usb-phy-r8a77470",
+> +				     "renesas,rcar-gen2-usb-phy";
+> +			reg = <0 0xe6598100 0 0x100>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			clocks = <&cpg CPG_MOD 706>;
+> +			clock-names = "usbhs";
+> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> +			resets = <&cpg 706>;
+> +			status = "disabled";
+> +
+> +			usb1: usb-channel@0 {
+> +				reg = <0>;
+> +				#phy-cells = <1>;
+> +			};
+> +		};
+> +
+>  		usb_dmac00: dma-controller@e65a0000 {
+>  			compatible = "renesas,r8a77470-usb-dmac",
+>  				     "renesas,usb-dmac";
+> @@ -588,6 +624,26 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		usb2_phy0: usb-phy@ee080200 {
+> +			compatible = "renesas,usb2-phy-r8a77470";
+> +			reg = <0 0xee080200 0 0x700>;
+> +			clocks = <&cpg CPG_MOD 703>;
+> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> +			resets = <&cpg 703>;
+> +			#phy-cells = <0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		usb2_phy1: usb-phy@ee0c0200 {
+> +			compatible = "renesas,usb2-phy-r8a77470";
+> +			reg = <0 0xee0c0200 0 0x700>;
+> +			clocks = <&cpg CPG_MOD 705>;
+> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> +			resets = <&cpg 705>;
+> +			#phy-cells = <0>;
+> +			status = "disabled";
+> +		};
+> +
+>  		sdhi0: sd@ee100000 {
+>  			compatible = "renesas,sdhi-r8a77470",
+>  				     "renesas,rcar-gen2-sdhi";
+> -- 
+> 2.7.4
+> 
