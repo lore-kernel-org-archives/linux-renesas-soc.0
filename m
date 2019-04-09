@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922AEC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9298C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 520A320880
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFAE420880
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 11:15:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Y5cOk5hM"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="SRD6T+xN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbfDILPU (ORCPT
+        id S1726387AbfDILPd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Apr 2019 07:15:20 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:41976 "EHLO
+        Tue, 9 Apr 2019 07:15:33 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:41991 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfDILPT (ORCPT
+        with ESMTP id S1726062AbfDILPd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Apr 2019 07:15:19 -0400
+        Tue, 9 Apr 2019 07:15:33 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 66F9125BDAE;
-        Tue,  9 Apr 2019 21:15:17 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id DC93925BDAE;
+        Tue,  9 Apr 2019 21:15:30 +1000 (AEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1554808517; bh=y6uNdi1UXQXfcddMlOPVgQpidBzUcD3LgusCgMeThNg=;
+        t=1554808531; bh=vRYpogj3oFRu8dEVbMnozZCHSut4SFGfn56qiP9A3Es=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y5cOk5hMdsBK+eUyNPbbr9kV9CpPmiLaCGtwqvjS2ALsGx/ioyhQw5UJekR0WIbXu
-         WAmXcJEQ35CkbxvmkbxNmQi3kOMkwsnti3zma9zww3BknJR/+K2S5x1RwSYzSU1qrX
-         E43R17ZiK+CR1kaZdwfOipDDSS4AVKCyvF1I4fmI=
+        b=SRD6T+xN0urVBcns2mbSDCSaMa2igPMWUfewi8368zD8/mvefit2iE4jDc2HNgRko
+         d+57jq1d38TxZg9lK5eSTSoVBAnhVgmPVFWzXVLtMKa41BztrXTPw/YOEIXxkNhsuM
+         5Rn/x0i1R95dw1yh84Unuzo6atbfMTUQDOV6e1z0=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 92EE69402E1; Tue,  9 Apr 2019 13:15:15 +0200 (CEST)
-Date:   Tue, 9 Apr 2019 13:15:15 +0200
+        id 23A4A9402E1; Tue,  9 Apr 2019 13:15:29 +0200 (CEST)
+Date:   Tue, 9 Apr 2019 13:15:29 +0200
 From:   Simon Horman <horms@verge.net.au>
 To:     Biju Das <biju.das@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -45,15 +45,14 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH V3 10/13] ARM: dts: r8a77470: Add USB2.0 Host (EHCI/OHCI)
- device
-Message-ID: <20190409111515.g524ctvalqrnek5f@verge.net.au>
+Subject: Re: [PATCH V3 11/13] ARM: dts: iwg23s-sbc: Enable USB USB2.0 Host
+Message-ID: <20190409111528.34p7ms63pdwnsiou@verge.net.au>
 References: <1554287324-22312-1-git-send-email-biju.das@bp.renesas.com>
- <1554287324-22312-11-git-send-email-biju.das@bp.renesas.com>
+ <1554287324-22312-12-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1554287324-22312-11-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1554287324-22312-12-git-send-email-biju.das@bp.renesas.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -61,9 +60,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 03, 2019 at 11:28:41AM +0100, Biju Das wrote:
-> Define the r8a77470 generic part of the USB2.0 Host Controller device
-> nodes (ehci[01]/ohci[01]).
+On Wed, Apr 03, 2019 at 11:28:42AM +0100, Biju Das wrote:
+> Enable USB2.0 host on the iwg23s sbc.
 > 
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
