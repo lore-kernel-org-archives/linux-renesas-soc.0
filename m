@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD65C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 08:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCF3C282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 08:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A2F2070D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 08:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78E0D2070D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Apr 2019 08:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbfDIIwl (ORCPT
+        id S1726464AbfDIIwo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Apr 2019 04:52:41 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:29901 "EHLO
+        Tue, 9 Apr 2019 04:52:44 -0400
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:29921 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbfDIIwl (ORCPT
+        with ESMTP id S1726656AbfDIIwn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Apr 2019 04:52:41 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x398qXYi010556;
-        Tue, 9 Apr 2019 17:52:33 +0900 (JST)
+        Tue, 9 Apr 2019 04:52:43 -0400
+Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x398qajA010584;
+        Tue, 9 Apr 2019 17:52:36 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Tue, 09 Apr 2019 17:52:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+ by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
+ Tue, 09 Apr 2019 17:52:36 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
 Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
         (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x398qTdG010512
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x398qXaB010557
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 9 Apr 2019 17:52:32 +0900 (JST)
+        Tue, 9 Apr 2019 17:52:36 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 From:   Cao Van Dong <cv-dong@jinso.co.jp>
 To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
@@ -40,9 +40,9 @@ To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
         devicetree@vger.kernel.org
 Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
         h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: [PATCH 05/11] ARM: dts: r8a77470: Add VIN support
-Date:   Tue,  9 Apr 2019 17:51:46 +0900
-Message-Id: <1554799912-24764-6-git-send-email-cv-dong@jinso.co.jp>
+Subject: [PATCH 06/11] ARM: dts: r8a77470: Add Audio support
+Date:   Tue,  9 Apr 2019 17:51:47 +0900
+Message-Id: <1554799912-24764-7-git-send-email-cv-dong@jinso.co.jp>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1554799912-24764-1-git-send-email-cv-dong@jinso.co.jp>
 References: <1554799912-24764-1-git-send-email-cv-dong@jinso.co.jp>
@@ -51,41 +51,199 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add vin{0|1} nodes to dtsi for VIN support on the RZ/G1C (r8a77470) SoC.
+Add rcar_sound node to dtsi for Audio support on the RZ/G1C (r8a77470) SoC.
 
 Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 180 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 180 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 3940a0d..e89c72f 100644
+index e89c72f..2cea3e8 100644
 --- a/arch/arm/boot/dts/r8a77470.dtsi
 +++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -780,6 +780,28 @@
+@@ -802,6 +802,186 @@
  			status = "disabled";
  		};
  
-+		vin0: video@e6ef0000 {
-+			compatible = "renesas,vin-r8a77470",
-+				     "renesas,rcar-gen2-vin";
-+			reg = <0 0xe6ef0000 0 0x1000>;
-+			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 811>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 811>;
-+			status = "disabled";
-+		};
++		rcar_sound: sound@ec500000 {
++			/*
++			 * #sound-dai-cells is required
++			 *
++			 * Single DAI : #sound-dai-cells = <0>; <&rcar_sound>;
++			 * Multi  DAI : #sound-dai-cells = <1>; <&rcar_sound N>;
++			 */
++			compatible = "renesas,rcar_sound-r8a77470",
++				     "renesas,rcar_sound-gen2";
++			reg = <0 0xec500000 0 0x1000>, /* SCU */
++			      <0 0xec5a0000 0 0x100>,  /* ADG */
++			      <0 0xec540000 0 0x1000>, /* SSIU */
++			      <0 0xec541000 0 0x280>,  /* SSI */
++			      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri */
++			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
 +
-+		vin1: video@e6ef1000 {
-+			compatible = "renesas,vin-r8a77470",
-+				     "renesas,rcar-gen2-vin";
-+			reg = <0 0xe6ef1000 0 0x1000>;
-+			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 810>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 810>;
++			clocks = <&cpg CPG_MOD 1005>,
++				 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++				 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++				 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++				 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++				 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++				 <&cpg CPG_MOD 1025>, <&cpg CPG_MOD 1026>,
++				 <&cpg CPG_MOD 1027>, <&cpg CPG_MOD 1028>,
++				 <&cpg CPG_MOD 1029>, <&cpg CPG_MOD 1030>,
++				 <&cpg CPG_MOD 1021>, <&cpg CPG_MOD 1020>,
++				 <&cpg CPG_MOD 1021>, <&cpg CPG_MOD 1020>,
++				 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++				 <&audio_clka>, <&audio_clkb>, <&audio_clkc>,
++				 <&cpg CPG_CORE r8a77470_CLK_M2>;
++			clock-names = "ssi-all",
++				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
++				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
++				      "ssi.1", "ssi.0",
++				      "src.6", "src.5", "src.4", "src.3",
++				      "src.2", "src.1",
++				      "ctu.0", "ctu.1",
++				      "mix.0", "mix.1",
++				      "dvc.0", "dvc.1",
++				      "clk_a", "clk_b", "clk_c", "clk_i";
++			power-domains = <&sysc r8a77470_PD_ALWAYS_ON>;
++			resets = <&cpg 1005>,
++				 <&cpg 1006>, <&cpg 1007>, <&cpg 1008>,
++				 <&cpg 1009>, <&cpg 1010>, <&cpg 1011>,
++				 <&cpg 1012>, <&cpg 1013>, <&cpg 1014>,
++				 <&cpg 1015>;
++			reset-names = "ssi-all",
++				      "ssi.9", "ssi.8", "ssi.7", "ssi.6",
++				      "ssi.5", "ssi.4", "ssi.3", "ssi.2",
++				      "ssi.1", "ssi.0";
++
 +			status = "disabled";
++
++			rcar_sound,dvc {
++				dvc0: dvc-0 {
++					dmas = <&audma0 0xbc>;
++					dma-names = "tx";
++				};
++				dvc1: dvc-1 {
++					dmas = <&audma0 0xbe>;
++					dma-names = "tx";
++				};
++			};
++
++			rcar_sound,mix {
++				mix0: mix-0 { };
++				mix1: mix-1 { };
++			};
++
++			rcar_sound,ctu {
++				ctu00: ctu-0 { };
++				ctu01: ctu-1 { };
++				ctu02: ctu-2 { };
++				ctu03: ctu-3 { };
++				ctu10: ctu-4 { };
++				ctu11: ctu-5 { };
++				ctu12: ctu-6 { };
++				ctu13: ctu-7 { };
++			};
++
++			rcar_sound,src {
++				src-0 {
++					status = "disabled";
++				};
++				src1: src-1 {
++					interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x87>, <&audma0 0x9c>;
++					dma-names = "rx", "tx";
++				};
++				src2: src-2 {
++					interrupts = <GIC_SPI 354 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x89>, <&audma0 0x9e>;
++					dma-names = "rx", "tx";
++				};
++				src3: src-3 {
++					interrupts = <GIC_SPI 355 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x8b>, <&audma0 0xa0>;
++					dma-names = "rx", "tx";
++				};
++				src4: src-4 {
++					interrupts = <GIC_SPI 356 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x8d>, <&audma0 0xb0>;
++					dma-names = "rx", "tx";
++				};
++				src5: src-5 {
++					interrupts = <GIC_SPI 357 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x8f>, <&audma0 0xb2>;
++					dma-names = "rx", "tx";
++				};
++				src6: src-6 {
++					interrupts = <GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x91>, <&audma0 0xb4>;
++					dma-names = "rx", "tx";
++				};
++			};
++
++			rcar_sound,ssi {
++				ssi0: ssi-0 {
++					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x01>, <&audma0 0x02>,
++					       <&audma0 0x15>, <&audma0 0x16>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi1: ssi-1 {
++					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x03>, <&audma0 0x04>,
++					       <&audma0 0x49>, <&audma0 0x4a>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi2: ssi-2 {
++					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x05>, <&audma0 0x06>,
++					       <&audma0 0x63>, <&audma0 0x64>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi3: ssi-3 {
++					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x07>, <&audma0 0x08>,
++					       <&audma0 0x6f>, <&audma0 0x70>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi4: ssi-4 {
++					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x09>, <&audma0 0x0a>,
++					       <&audma0 0x71>, <&audma0 0x72>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi5: ssi-5 {
++					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x0b>, <&audma0 0x0c>,
++					       <&audma0 0x73>, <&audma0 0x74>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi6: ssi-6 {
++					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x0d>, <&audma0 0x0e>,
++					       <&audma0 0x75>, <&audma0 0x76>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi7: ssi-7 {
++					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x0f>, <&audma0 0x10>,
++					       <&audma0 0x79>, <&audma0 0x7a>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi8: ssi-8 {
++					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x11>, <&audma0 0x12>,
++					       <&audma0 0x7b>, <&audma0 0x7c>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++				ssi9: ssi-9 {
++					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
++					dmas = <&audma0 0x13>, <&audma0 0x14>,
++					       <&audma0 0x7d>, <&audma0 0x7e>;
++					dma-names = "rx", "tx", "rxu", "txu";
++				};
++			};
 +		};
 +
  		sdhi0: sd@ee100000 {
