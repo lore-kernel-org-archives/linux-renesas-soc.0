@@ -2,119 +2,100 @@ Return-Path: <SRS0=jOjt=SM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9A3C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 00:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26434C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 00:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A67520850
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 00:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8CB820857
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 00:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfDJAXs (ORCPT
+        id S1726858AbfDJAhy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Apr 2019 20:23:48 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:47433 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfDJAXr (ORCPT
+        Tue, 9 Apr 2019 20:37:54 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:10278 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726763AbfDJAhy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Apr 2019 20:23:47 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3A0Ncjb091622;
-        Wed, 10 Apr 2019 09:23:38 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Wed, 10 Apr 2019 09:23:38 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.225] (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3A0NbeP091618
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 10 Apr 2019 09:23:37 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-Subject: Re: [PATCH 05/11] ARM: dts: r8a77470: Add VIN support
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
-        geert+renesas@glider.be, horms+renesas@verge.net.au,
-        devicetree@vger.kernel.org, yoshihiro.shimoda.uh@renesas.com,
-        kuninori.morimoto.gx@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp
+        Tue, 9 Apr 2019 20:37:54 -0400
+Date:   10 Apr 2019 09:37:51 +0900
+X-IronPort-AV: E=Sophos;i="5.60,331,1549897200"; 
+   d="scan'208";a="12782137"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Apr 2019 09:37:51 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D209C413DFB4;
+        Wed, 10 Apr 2019 09:37:51 +0900 (JST)
+Message-ID: <87o95e7lmp.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Cao Van Dong <cv-dong@jinso.co.jp>
+Cc:     <linux-renesas-soc@vger.kernel.org>, <broonie@kernel.org>,
+        <geert+renesas@glider.be>, <horms+renesas@verge.net.au>,
+        <devicetree@vger.kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
+        <h-inayoshi@jinso.co.jp>, <nv-dung@jinso.co.jp>,
+        <na-hoan@jinso.co.jp>
+Subject: Re: [PATCH 06/11] ARM: dts: r8a77470: Add Audio support
+In-Reply-To: <1554799912-24764-7-git-send-email-cv-dong@jinso.co.jp>
 References: <1554799912-24764-1-git-send-email-cv-dong@jinso.co.jp>
- <1554799912-24764-6-git-send-email-cv-dong@jinso.co.jp>
- <20190409130138.GN15350@bigcity.dyn.berto.se>
-From:   Cao Van Dong <cv-dong@jinso.co.jp>
-Message-ID: <b528a6ef-def8-e0e2-2e1e-3cf2f2d163a6@jinso.co.jp>
-Date:   Wed, 10 Apr 2019 09:23:37 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190409130138.GN15350@bigcity.dyn.berto.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        <1554799912-24764-7-git-send-email-cv-dong@jinso.co.jp>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear Niklas-san,
 
-On 2019/04/09 22:01, Niklas Söderlund wrote:
-> Hi Cao,
->
-> On 2019-04-09 17:51:46 +0900, Cao Van Dong wrote:
->> Add vin{0|1} nodes to dtsi for VIN support on the RZ/G1C (r8a77470) SoC.
->>
->> Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
->> ---
->>   arch/arm/boot/dts/r8a77470.dtsi | 22 ++++++++++++++++++++++
->>   1 file changed, 22 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
->> index 3940a0d..e89c72f 100644
->> --- a/arch/arm/boot/dts/r8a77470.dtsi
->> +++ b/arch/arm/boot/dts/r8a77470.dtsi
->> @@ -780,6 +780,28 @@
->>   			status = "disabled";
->>   		};
->>   
->> +		vin0: video@e6ef0000 {
->> +			compatible = "renesas,vin-r8a77470",
->> +				     "renesas,rcar-gen2-vin";
-> This patch looks good but you should also add renesas,vin-r8a77470 to
-> Documentation/devicetree/bindings/media/rcar_vin.txt in a separate
-> patch.
->
-> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Thanks for your feedback!
-I will create a separate patch in version 2.
+Hi Dong-san
 
-Thank you,
-Dong
->> +			reg = <0 0xe6ef0000 0 0x1000>;
->> +			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&cpg CPG_MOD 811>;
->> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
->> +			resets = <&cpg 811>;
->> +			status = "disabled";
->> +		};
->> +
->> +		vin1: video@e6ef1000 {
->> +			compatible = "renesas,vin-r8a77470",
->> +				     "renesas,rcar-gen2-vin";
->> +			reg = <0 0xe6ef1000 0 0x1000>;
->> +			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&cpg CPG_MOD 810>;
->> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
->> +			resets = <&cpg 810>;
->> +			status = "disabled";
->> +		};
->> +
->>   		sdhi0: sd@ee100000 {
->>   			compatible = "renesas,sdhi-r8a77470",
->>   				     "renesas,rcar-gen2-sdhi";
->> -- 
->> 2.7.4
->>
+Thank you for your patch
+
+> +		rcar_sound: sound@ec500000 {
+> +			/*
+> +			 * #sound-dai-cells is required
+> +			 *
+> +			 * Single DAI : #sound-dai-cells = <0>; <&rcar_sound>;
+> +			 * Multi  DAI : #sound-dai-cells = <1>; <&rcar_sound N>;
+> +			 */
+> +			compatible = "renesas,rcar_sound-r8a77470",
+> +				     "renesas,rcar_sound-gen2";
+> +			reg = <0 0xec500000 0 0x1000>, /* SCU */
+> +			      <0 0xec5a0000 0 0x100>,  /* ADG */
+> +			      <0 0xec540000 0 0x1000>, /* SSIU */
+> +			      <0 0xec541000 0 0x280>,  /* SSI */
+> +			      <0 0xec740000 0 0x200>;  /* Audio DMAC peri peri */
+> +			reg-names = "scu", "adg", "ssiu", "ssi", "audmapp";
+
+I don't have r8a77470 datasheet, but does it have *extended* Audio DMAC peri peri
+address (= 0xec760000) ? If it has, please use it instead of normal address (= 0xec740000).
+
+> +			rcar_sound,ssi {
+> +				ssi0: ssi-0 {
+> +					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
+> +					dmas = <&audma0 0x01>, <&audma0 0x02>,
+> +					       <&audma0 0x15>, <&audma0 0x16>;
+> +					dma-names = "rx", "tx", "rxu", "txu";
+> +				};
+
+Please add ssiu.
+And then, ssi doesn't need "rxu" and "txu" anymore.
+These can be good help for you.
+
+	0ec8e0a879b8d7eacbfbed9a7face8f97f9493a8
+	("arm64: dts: renesas: r8a7795: remove BUSIF0 settings from rcar_sound,ssi")
+
+	da90dd849dc22e920388d18a0f877366bd4d2b7f
+	("arm64: dts: renesas: r8a7795: add SSIU support for sound")
+
+
+BTW, this patch-set is including SoC only.
+Do you have plan to post board support patch after this ?
+In other words, did you test these ?
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
