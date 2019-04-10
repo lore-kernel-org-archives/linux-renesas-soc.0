@@ -2,127 +2,112 @@ Return-Path: <SRS0=jOjt=SM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAE7C10F11
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 08:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAF8C10F11
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 08:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B11720818
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 08:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13D82204FD
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 08:15:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfDJILQ (ORCPT
+        id S1727042AbfDJIPM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Apr 2019 04:11:16 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53150 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727256AbfDJILQ (ORCPT
+        Wed, 10 Apr 2019 04:15:12 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:36407 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727281AbfDJIPM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Apr 2019 04:11:16 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id A92282817AB;
-        Wed, 10 Apr 2019 09:11:13 +0100 (BST)
-Date:   Wed, 10 Apr 2019 10:11:10 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     masonccyang@mxic.com.tw
-Cc:     "Marek Vasut" <marek.vasut@gmail.com>, bbrezillon@kernel.org,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        "Geert Uytterhoeven" <geert+renesas@glider.be>,
-        "Simon Horman" <horms@verge.net.au>, juliensu@mxic.com.tw,
-        lee.jones@linaro.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org,
-        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
-        zhengxunli@mxic.com.tw
-Subject: Re: [PATCH v9 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI
- controller driver
-Message-ID: <20190410101110.2224eb91@collabora.com>
-In-Reply-To: <OF75EDBF48.5C308F1B-ON482583D8.0027A537-482583D8.002C0A64@mxic.com.tw>
-References: <1553847606-18122-1-git-send-email-masonccyang@mxic.com.tw>
-        <1553847606-18122-3-git-send-email-masonccyang@mxic.com.tw>
-        <a2dc294f-f2a1-2469-1f44-db67f9b8cc10@cogentembedded.com>
-        <OFC7F0028A.CFF6BD04-ON482583D8.00084FA1-482583D8.0008985F@mxic.com.tw>
-        <2095d059-8276-a01a-7c3a-da4647f7b7df@gmail.com>
-        <OF75EDBF48.5C308F1B-ON482583D8.0027A537-482583D8.002C0A64@mxic.com.tw>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 10 Apr 2019 04:15:12 -0400
+X-IronPort-AV: E=Sophos;i="5.60,332,1549897200"; 
+   d="scan'208";a="12836943"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Apr 2019 17:15:10 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3C7BA426FF85;
+        Wed, 10 Apr 2019 17:15:07 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V4 00/13] Add USB2.0 support
+Date:   Wed, 10 Apr 2019 09:08:22 +0100
+Message-Id: <1554883715-41725-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 10 Apr 2019 16:01:02 +0800
-masonccyang@mxic.com.tw wrote:
+This series adds USB 2.0 support for the RZ/G1C SoC. RZ/G1C
+SoC is similar to R-Car Gen2 SoC, but there are some differences
 
-> Hi,
->  
-> > Re: [PATCH v9 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller   
-> driver
-> > 
-> > On 4/10/19 3:33 AM, masonccyang@mxic.com.tw wrote:  
-> > > Hi Sergei,
-> > >   
-> > >> > +static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc  
-> > > *desc,  
-> > >> > +               u64 offs, size_t len, const void *buf)
-> > >> > +{
-> > >> > +   struct rpc_spi *rpc =
-> > >> > +         spi_controller_get_devdata(desc->mem->spi->controller);
-> > >> > +   int ret;
-> > >> > +
-> > >> > +   if (offs + desc->info.offset + len > U32_MAX)
-> > >> > +      return -EINVAL;
-> > >> > +
-> > >> > +   if (len > RPC_WBUF_SIZE)
-> > >> > +      len = RPC_WBUF_SIZE;
-> > >> > +
-> > >> > +   ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
-> > >> > +   if (ret)
-> > >> > +      return ret;
-> > >> > +
-> > >> > +   rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
-> > >> > +                &desc->info.op_tmpl, &offs, &len);
-> > >> > +
-> > >> > +   regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD,  
-> > > RPC_CMNCR_MD);  
-> > >> > +
-> > >> > +   regmap_write(rpc->regmap, RPC_SMDRENR, 0);
-> > >> > +
-> > >> > +   regmap_update_bits(rpc->regmap, RPC_PHYCNT,   
-> RPC_PHYCNT_STRTIM(7) |
-> > >> > +            RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF,
-> > >> > +            RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
-> > >> > +
-> > >> > +   memcpy_toio(rpc->wbuf, buf, len);  
-> > >>
-> > >>    Wait, doesn't the manual say that the whole 256-byte buffer should   
-> be
-> > >> filled?   
-> 
-> it could be less than 256 bytes, i.e., 128 bytes to rpc->wbuf !
-> 
->  I think that short chunks have to be written w/o WBUF (done,
-> > > in fact,  
-> > >> by the HF driver).
-> > >>  
-> > > 
-> > > From spi-nor.c layer always transfer 256 bytes data with page program
-> > > command.  
-> > 
-> > Does that apply even for flashes with not-256-byte pages ?
-> >   
-> 
-> I think it needs to patch in case of nor->page_size = 512 bytes.
+- It has a shared pll reset register for hsusb0/hsusb1 and this register 
+  reside in hsusb0 block.
 
-I think the main problem here is that you assume the memory is a
-NOR :-). Just do what the spi-mem user asks: if he asks you to write
-X bytes, then write no more than X bytes. Use whatever trick you have
-to make sure this is always true, and if this requires using a slow
-path for non-aligned accesses, then do it, because it's better to have
-a slow+working memory than a fast+non-working one :P.
+- Each USB host needs to deassert the pll reset of hsusb block apart from
+  initializing interrupt enable,OVC detection timer and suspend/resume timer
+  register.
+
+To address the above scenarios, created a ehci-r8a77470 host controller
+driver.
+
+This patchset is based on linux_next next-20190410 branch.
+
+V3-->V4
+  * Incoporated Kishan and Shimoda-san's review comment
+    (https://patchwork.kernel.org/patch/10883265/)
+  * Added missing rcar-gen3-phy-usb2 phy in ohci1 node.
+
+V2-->V3
+ * Incorporated Alan's review comment for dropping ehci-r8a77470 host driver
+ * Incorporated shimoda-san's comments.
+   Ref: https://patchwork.kernel.org/patch/10879899/
+
+V1-->V2
+ * Incorporated Rob's review comment
+   Ref: https://patchwork.kernel.org/patch/10655853/
+ * Incorporated Shimoda-San's review comment
+   Ref: https://patchwork.kernel.org/patch/10655855/
+ * Created ehci-r8a77470 host driver.
+
+Biju Das (13):
+  dt-bindings: phy: rcar-gen2: Add r8a77470 support
+  phy: renesas: phy-rcar-gen2: Add support for r8a77470
+  dt-bindings: rcar-gen3-phy-usb2: Add r8a77470 support
+  phy: rcar-gen3-usb2: Add support for r8a77470
+  ARM: shmobile: Enable PHY_RCAR_GEN3_USB2 in shmobile_defconfig
+  dt-bindings: usb: renesas_usbhs: Add support for r8a77470
+  ARM: shmobile: Enable USB [EO]HCI HCD PLATFORM support in
+    shmobile_defconfig
+  ARM: dts: r8a77470: Add USB PHY DT support
+  ARM: dts: iwg23s-sbc: Enable USB Phy[01]
+  ARM: dts: r8a77470: Add USB2.0 Host (EHCI/OHCI) device
+  ARM: dts: iwg23s-sbc: Enable USB USB2.0 Host
+  ARM: dts: r8a77470: Add HSUSB device nodes
+  ARM: dts: iwg23s-sbc: Enable HS-USB
+
+ .../devicetree/bindings/phy/rcar-gen2-phy.txt      |  57 ++++++++-
+ .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |   6 +-
+ .../devicetree/bindings/usb/renesas_usbhs.txt      |   1 +
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts          |  44 +++++++
+ arch/arm/boot/dts/r8a77470.dtsi                    | 141 +++++++++++++++++++++
+ arch/arm/configs/shmobile_defconfig                |   3 +
+ drivers/phy/renesas/Kconfig                        |   2 +-
+ drivers/phy/renesas/phy-rcar-gen2.c                |  86 ++++++++++++-
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c           |  38 +++++-
+ 9 files changed, 363 insertions(+), 15 deletions(-)
+
+-- 
+2.7.4
+
