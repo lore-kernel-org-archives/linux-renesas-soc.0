@@ -2,62 +2,62 @@ Return-Path: <SRS0=jOjt=SM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 184E2C10F11
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 10:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307A8C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 10:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4A52133D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 10:08:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA39820830
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 10:30:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="BW6bcCnf"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="DqGh2ov2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfDJKIP (ORCPT
+        id S1729936AbfDJKaP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Apr 2019 06:08:15 -0400
-Received: from mail-eopbgr1410108.outbound.protection.outlook.com ([40.107.141.108]:26071
+        Wed, 10 Apr 2019 06:30:15 -0400
+Received: from mail-eopbgr1410091.outbound.protection.outlook.com ([40.107.141.91]:30976
         "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728543AbfDJKIP (ORCPT
+        id S1729696AbfDJKaP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Apr 2019 06:08:15 -0400
+        Wed, 10 Apr 2019 06:30:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GyGYKT2FpfIsdBXqcPEO5Em2w18bqez1UAbi2jg7Nuk=;
- b=BW6bcCnfYKHDdIvDka4WlaGtSOJtpwbyBQLoSPmUknSaf854FbphlUVDXYqNXaC5/TCWwzLsCIHI7hyTZGyxpn17D8F8/EtJVq2JB0rEsy4Us1ebEEWXz2kVNrr/nD38GI188G+WjtSUwyUS0NTJqs+mtRBqeVTFLKyJaFRNmA8=
+ bh=Og2mxXWmjuPGnG44WTQXMOwrPnJpve7kJwbfJ1GZjSs=;
+ b=DqGh2ov2msl+Jv33lBWdCvFurZEANG7rz+o8SvyQGIYyffFDLb60c3CXL4qimDd5FlznN7isCkeeJT9xbjGMPvo7eeIbbrDu3k7N0/aVCyM/Kg0MkewKzj/sSi02Kx1DUSlyVP/sL//gAdgzYZ4+sdO5+m4d/iZNSKoDmYvFOu4=
 Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.242.17) by
- OSBPR01MB3639.jpnprd01.prod.outlook.com (20.178.96.80) with Microsoft SMTP
+ OSBPR01MB3272.jpnprd01.prod.outlook.com (52.134.255.203) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1792.15; Wed, 10 Apr 2019 10:08:06 +0000
+ 15.20.1792.14; Wed, 10 Apr 2019 10:29:47 +0000
 Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
  ([fe80::6d2c:bd11:88b0:c53a]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
  ([fe80::6d2c:bd11:88b0:c53a%3]) with mapi id 15.20.1792.009; Wed, 10 Apr 2019
- 10:08:06 +0000
+ 10:29:47 +0000
 From:   Biju Das <biju.das@bp.renesas.com>
 To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alan Stern <stern@rowland.harvard.edu>
 CC:     Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         "linux-renesas-soc@vger.kernel.org" 
         <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH V4 02/13] phy: renesas: phy-rcar-gen2: Add support for
- r8a77470
-Thread-Topic: [PATCH V4 02/13] phy: renesas: phy-rcar-gen2: Add support for
- r8a77470
-Thread-Index: AQHU73WInteWCitmn0GPOslu0bKW6KY1Jn2A////1VA=
-Date:   Wed, 10 Apr 2019 10:08:05 +0000
-Message-ID: <OSBPR01MB210385B7A35C72E6C1A37EEDB82E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH V4 04/13] phy: rcar-gen3-usb2: Add support for r8a77470
+Thread-Topic: [PATCH V4 04/13] phy: rcar-gen3-usb2: Add support for r8a77470
+Thread-Index: AQHU73WLS4anPF2L4U2G2CGStJGYuaY1JIIAgAAHOmA=
+Date:   Wed, 10 Apr 2019 10:29:47 +0000
+Message-ID: <OSBPR01MB2103ED639533E2AA91AFF461B82E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 References: <1554883715-41725-1-git-send-email-biju.das@bp.renesas.com>
- <1554883715-41725-3-git-send-email-biju.das@bp.renesas.com>
- <TYAPR01MB427138C68589972EB9385E95D82E0@TYAPR01MB4271.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYAPR01MB427138C68589972EB9385E95D82E0@TYAPR01MB4271.jpnprd01.prod.outlook.com>
+ <1554883715-41725-5-git-send-email-biju.das@bp.renesas.com>
+ <TYAPR01MB4271CFF13C46EB75EB19A3EED82E0@TYAPR01MB4271.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYAPR01MB4271CFF13C46EB75EB19A3EED82E0@TYAPR01MB4271.jpnprd01.prod.outlook.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -66,28 +66,28 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=biju.das@bp.renesas.com; 
 x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0c3d2e16-3600-45dd-a679-08d6bd9c6d22
+x-ms-office365-filtering-correlation-id: a7cc17ef-210c-4fd3-de09-08d6bd9f74c0
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600139)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:OSBPR01MB3639;
-x-ms-traffictypediagnostic: OSBPR01MB3639:
-x-microsoft-antispam-prvs: <OSBPR01MB36392B8B697C901ECD96005CB82E0@OSBPR01MB3639.jpnprd01.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600139)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:OSBPR01MB3272;
+x-ms-traffictypediagnostic: OSBPR01MB3272:
+x-microsoft-antispam-prvs: <OSBPR01MB327207E1943BAC754BF0DC78B82E0@OSBPR01MB3272.jpnprd01.prod.outlook.com>
 x-forefront-prvs: 00032065B2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(51914003)(199004)(189003)(7736002)(6246003)(256004)(86362001)(74316002)(305945005)(11346002)(33656002)(186003)(99286004)(26005)(476003)(446003)(486006)(3846002)(66066001)(6116002)(52536014)(2906002)(9686003)(229853002)(7696005)(71190400001)(4326008)(102836004)(55016002)(71200400001)(5660300002)(6436002)(498600001)(561944003)(76176011)(6506007)(8676002)(8936002)(81166006)(81156014)(14454004)(53936002)(105586002)(54906003)(25786009)(110136005)(106356001)(44832011)(68736007)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB3639;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(376002)(366004)(39860400002)(396003)(51914003)(199004)(189003)(305945005)(7736002)(6506007)(14454004)(86362001)(11346002)(446003)(66066001)(68736007)(52536014)(74316002)(44832011)(5660300002)(476003)(478600001)(102836004)(97736004)(486006)(2906002)(105586002)(8676002)(81156014)(81166006)(76176011)(55016002)(8936002)(99286004)(316002)(110136005)(71190400001)(71200400001)(6116002)(3846002)(4326008)(6246003)(9686003)(53936002)(256004)(25786009)(2171002)(54906003)(229853002)(186003)(6436002)(26005)(33656002)(7696005)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB3272;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
 received-spf: None (protection.outlook.com: bp.renesas.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: lzMY1p4XanxX2sCrzZjtMcltTRxP89+uU9NvwpMoogOitKxc0H64GbkH8RcmP5hO8OnBViDgsDmqM5pUt2aDa94f5LyuWzw9jN8KUuB+Y+QpyzWSuZ/WUBnJo6HPnvO/PyBevkbloRm6SEMWGe4P8T8iSqmwFqCR6RnZsO1CwKfz7Jh0aUxgj+KnQejGEJeQu84KA81VR553As4oQzYn1HmdVOaAusFp77Ui947osaoHup9c0dQSUzVw2st4BcmQNePY9yRcZreKBPLm89WlxkpTnWakumeSQCvWc/FL3lyeY9Moe78Ic9oLHuBv8Ug2mKFsSbSP0IuSaV19mh9c3RbwJJB+OALgnmKoQ5FP3V4eZasgh9ErQKALC+DIn9eH2dMw4VmM+IA2s0YAC2NzydZI4ku1C1kUSyNVn+A8AYk=
+x-microsoft-antispam-message-info: 1v14hru2BrKOU7npe+SNlzLAbLq/o5/af8Rumd+SXhIF1wi1p78HPvd3slwx05fsCL2gvkmP1lgwSCL0+eHDqCSJ0PlxcaldPAwlGC6R+Me3i3ievq/sjylZtXOe+DgpAZRR6uIEzSs9owW0ZmGG3q45BUQWm9n5UcL2kMqRLdSoMf5FlRa6F3veX6Sukc0ihqiAdRODcvCdNbogK0UnCMiRzzAnnRzy/h220E5PSZRJEMtsRmtL88KGMSCSJWEm2yDIruOBdYPrNl/K9taXxUAATqzP7opmZXHloiZ0gHUP8Ga6uYd6qsck5f9qDmyPNypRWhAumTiC2RPdzk3kTsqtiICkaRjFXDv/COgDOn0gt/IaDtks5IP2fGAYEBNwHayRh2soy/HKtGS2ONGQc6K2svjWtoR127nGnxIZICs=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c3d2e16-3600-45dd-a679-08d6bd9c6d22
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2019 10:08:05.9886
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7cc17ef-210c-4fd3-de09-08d6bd9f74c0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Apr 2019 10:29:47.3368
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3639
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3272
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -97,57 +97,132 @@ Hi Shimoda-San,
 
 Thanks for the feedback.
 
-> Subject: RE: [PATCH V4 02/13] phy: renesas: phy-rcar-gen2: Add support fo=
-r
-> r8a77470
+> Subject: RE: [PATCH V4 04/13] phy: rcar-gen3-usb2: Add support for r8a774=
+70
 >=20
 > Hi Biju-san,
 >=20
 > Thank you for the patch!
 >=20
 > > From: Biju Das, Sent: Wednesday, April 10, 2019 5:08 PM
+> >
+> > This patch adds support for r8a77470 (RZ/G1C). We can reuse this
+> > driver for initializing timing/interrupt generation registers.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > ---
 > <snip>
-> >  static int rcar_gen2_phy_probe(struct platform_device *pdev)  {
-> >  	struct device *dev =3D &pdev->dev;
-> > @@ -238,6 +313,8 @@ static int rcar_gen2_phy_probe(struct
+> > diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> > b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> > index 0a34782..5a8e673 100644
+> > --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> > +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/regulator/consumer.h>  #include <linux/usb/of.h>
+> > #include <linux/workqueue.h>
+> > +#include <linux/sys_soc.h>
+>=20
+> We don't need it.
+
+OK . will take this out.
+
+> >  /******* USB2.0 Host registers (original offset is +0x200) *******/
+> >  #define USB2_INT_ENABLE		0x000
+> > @@ -393,6 +394,12 @@ static const struct phy_ops
+> rcar_gen3_phy_usb2_ops =3D {
+> >  	.owner		=3D THIS_MODULE,
+> >  };
+> >
+> > +static const struct phy_ops rz_g1c_phy_usb2_ops =3D {
+> > +	.init		=3D rcar_gen3_phy_usb2_init,
+> > +	.exit		=3D rcar_gen3_phy_usb2_exit,
+> > +	.owner		=3D THIS_MODULE,
+> > +};
+> > +
+> >  static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+> >  {
+> >  	struct rcar_gen3_chan *ch =3D _ch;
+> > @@ -411,11 +418,27 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq=
+,
+> void *_ch)
+> >  }
+> >
+> >  static const struct of_device_id rcar_gen3_phy_usb2_match_table[] =3D =
+{
+> > -	{ .compatible =3D "renesas,usb2-phy-r8a7795" },
+> > -	{ .compatible =3D "renesas,usb2-phy-r8a7796" },
+> > -	{ .compatible =3D "renesas,usb2-phy-r8a77965" },
+> > -	{ .compatible =3D "renesas,rcar-gen3-usb2-phy" },
+> > -	{ }
+> > +	{
+> > +		.compatible =3D "renesas,usb2-phy-r8a77470",
+> > +		.data =3D &rz_g1c_phy_usb2_ops,
+> > +	},
+> > +	{
+> > +		.compatible =3D "renesas,usb2-phy-r8a7795",
+> > +		.data =3D &rcar_gen3_phy_usb2_ops,
+> > +	},
+> > +	{
+> > +		.compatible =3D "renesas,usb2-phy-r8a7796",
+> > +		.data =3D &rcar_gen3_phy_usb2_ops,
+> > +	},
+> > +	{
+> > +		.compatible =3D "renesas,usb2-phy-r8a77965",
+> > +		.data =3D &rcar_gen3_phy_usb2_ops,
+> > +	},
+> > +	{
+> > +		.compatible =3D "renesas,rcar-gen3-usb2-phy",
+> > +		.data =3D &rcar_gen3_phy_usb2_ops,
+> > +	},
+> > +	{ /* sentinel */ },
+> >  };
+> >  MODULE_DEVICE_TABLE(of, rcar_gen3_phy_usb2_match_table);
+> >
+> > @@ -431,6 +454,7 @@ static int rcar_gen3_phy_usb2_probe(struct
 > platform_device *pdev)
+> >  	struct rcar_gen3_chan *channel;
+> >  	struct phy_provider *provider;
 > >  	struct resource *res;
-> >  	void __iomem *base;
-> >  	struct clk *clk;
-> > +	const struct phy_ops *gen2_phy_ops =3D &rcar_gen2_phy_ops;
-> > +	const u32 (*select_value)[PHYS_PER_CHANNEL]  =3D pci_select_value;
-> >  	int i =3D 0;
+> > +	const struct phy_ops *phy_usb2_ops;
+> >  	int irq, ret =3D 0;
 > >
 > >  	if (!dev->of_node) {
-> > @@ -266,6 +343,11 @@ static int rcar_gen2_phy_probe(struct
+> > @@ -481,7 +505,9 @@ static int rcar_gen3_phy_usb2_probe(struct
 > platform_device *pdev)
-> >  	drv->clk =3D clk;
-> >  	drv->base =3D base;
-> >
-> > +	if (soc_device_match(soc_r8a77470)) {
+> >  	 * And then, phy-core will manage runtime pm for this device.
+> >  	 */
+> >  	pm_runtime_enable(dev);
+> > -	channel->phy =3D devm_phy_create(dev, NULL,
+> &rcar_gen3_phy_usb2_ops);
+> > +	phy_usb2_ops =3D (const struct phy_ops *)
+> of_device_get_match_data(dev);
 >=20
-> I'm not sure, but this driver also should not use the soc_device_match() =
-like
-> phy-rcar-gen3-usb2 driver?
-> If we add a special data struct and has phy_ops and select_value members,
-> we can achieve not to use the soc_device_match().
+> We don't need the cast. Also, I think we have to check the phy_usb2_ops i=
+s
+> not NULL.
 
-There is a difference compared to phy-rcar-gen3-usb2 driver.
-Here we are using generic compatible string for RZ/G1C.=20
+OK. I have checked other rcar drivers and came to the conclusion that there=
+ is need for Null check(for eg:- renesas-cpg-mssr.c, gpio-rcar.c)
+Any way there is no harm in adding  this check, since the api can return nu=
+ll value.
 
-With the  new proposal, I need to make  following changes.
+I will send V5 As you suggested.  ie, will remove the cast and will add che=
+ck for not  NULL.
+if (!phy_usb2_ops)
+	return -EINVAL;
 
-1)  Add r8a77470 compatible in phy_match table, fill the driver_data struct=
-ure and remove soc_device_match
-2)  Modify the SoC dtsi to remove generic compatible string.
-
-I will send V5 based on  new proposal, if you are ok for removing generic c=
-ompatibility.
-Please let me know.
-
+> After they are fixed:
+>=20
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>=20
+> Best regards,
+> Yoshihiro Shimoda
+>=20
+> > +	channel->phy =3D devm_phy_create(dev, NULL, phy_usb2_ops);
+> >  	if (IS_ERR(channel->phy)) {
+> >  		dev_err(dev, "Failed to create USB2 PHY\n");
+> >  		ret =3D PTR_ERR(channel->phy);
+> > --
 Regards,
 Biju
-
-
-=20
 
