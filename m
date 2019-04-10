@@ -2,97 +2,96 @@ Return-Path: <SRS0=jOjt=SM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF658C282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 12:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201D7C10F11
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 13:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C862075B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 12:17:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E99B12070D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Apr 2019 13:59:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729037AbfDJMRx (ORCPT
+        id S1730167AbfDJN7w (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Apr 2019 08:17:53 -0400
-Received: from sauhun.de ([88.99.104.3]:51862 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727497AbfDJMRx (ORCPT
+        Wed, 10 Apr 2019 09:59:52 -0400
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:43292 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727171AbfDJN7w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Apr 2019 08:17:53 -0400
-Received: from localhost (p54B33309.dip0.t-ipconnect.de [84.179.51.9])
-        by pokefinder.org (Postfix) with ESMTPSA id 7EA482C3F83;
-        Wed, 10 Apr 2019 14:17:50 +0200 (CEST)
-Date:   Wed, 10 Apr 2019 14:17:50 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2 net-next] ravb: Avoid unsupported internal delay mode
- for R-Car E3/D3
-Message-ID: <20190410121749.GA9471@kunai>
-References: <20190410114502.30362-1-horms+renesas@verge.net.au>
+        Wed, 10 Apr 2019 09:59:52 -0400
+Received: from [IPv6:2001:983:e9a7:1:5c18:3544:e4bb:f52f] ([IPv6:2001:983:e9a7:1:5c18:3544:e4bb:f52f])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id EDlVhlDhrNG8zEDlWh1OLH; Wed, 10 Apr 2019 15:59:50 +0200
+Subject: Re: [PATCH v2 3/3] rcar-csi2: Move setting of Field Detection Control
+ Register
+To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+References: <20190308235702.27057-1-niklas.soderlund+renesas@ragnatech.se>
+ <20190308235702.27057-4-niklas.soderlund+renesas@ragnatech.se>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <93d816cd-5562-8eb9-8596-63097d329917@xs4all.nl>
+Date:   Wed, 10 Apr 2019 15:59:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-Content-Disposition: inline
-In-Reply-To: <20190410114502.30362-1-horms+renesas@verge.net.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190308235702.27057-4-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfNBe7YrM6+6a85F12duq3TJjY3tNLlyCM+VdTpSdPidYwnfM/wXq5IpcX2Z3rmOM+z30+m8965+bzYrQAfuPz4Maop7JB3D8M4QOJ0C88pBExn05kEry
+ bHhEFnRfqbJuxuqJ4VaQkI9cRgL1dxT2M1/IDTExAFQP2faWYX7yVf5ubnrH0L/CsAYdEKLLmITnWmF0I6TS1gdP3J6Au4GMnBVhR8aKBo/gfPvHviYSvo7A
+ ewxSjchcl8HEh7Rc0XXMaim9GI64eM13l3poPXgR1PwDE3ZKaoHlPcy79ZYfMnjsxwKwGvXgwM8UapuIR39lVviyqu11S/kHfwmdf6FD2khhFVoh5W/JsxNZ
+ dBYkVGdkhEIzhkwtQYaJidhFMBFpRAY1/ZahCQyRnSiERuNHEmU4esl8bMGhGC3zRWjC6XE7JtzdKvUWvuqIfjaKT/gkmbdgoM3aTV4aTwRFBuqWr5jaKxLN
+ ltLQ+0RHUqnZvSmyfv/BOfWUqJjKN2Sn5efUapNfyG3FnMqB+SSiyKHtt4k=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On 3/9/19 12:57 AM, Niklas Söderlund wrote:
+> Latest datasheet (rev 1.50) clarifies that the FLD register should be
+> set after LINKCNT.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> index 07d5c8c66b7cd382..077e0d344b395b54 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -529,7 +529,6 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+>  	rcsi2_write(priv, PHTC_REG, 0);
+>  
+>  	/* Configure */
+> -	rcsi2_write(priv, FLD_REG, fld);
+>  	rcsi2_write(priv, VCDT_REG, vcdt);
+>  	if (vcdt2)
+>  		rcsi2_write(priv, VCDT2_REG, vcdt2);
+> @@ -560,6 +559,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+>  	rcsi2_write(priv, PHYCNT_REG, phycnt);
+>  	rcsi2_write(priv, LINKCNT_REG, LINKCNT_MONITOR_EN |
+>  		    LINKCNT_REG_MONI_PACT_EN | LINKCNT_ICLK_NONSTOP);
+> +	rcsi2_write(priv, FLD_REG, fld);
+>  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
+>  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
+>  
+> 
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch doesn't apply because the fld variable no longer exists.
 
-On Wed, Apr 10, 2019 at 01:45:02PM +0200, Simon Horman wrote:
-> According to the R-Car Gen3 Hardware Manual Rev 1.50 of Nov 30, 2018, the
-> TX clock internal delay mode isn't supported on R-Car E3 (r8a77990) or D3
-> (r8a77995). And by extension it is also not supported by RZ/G2E (r9a774c0=
-).
->=20
-> This matches all ES versions of the affected SoCs as it is
-> not clear if this problem will be resolved in newer chips.
-> This can be revisited, as necessary.
->=20
-> This patch does not error-out if PHY_INTERFACE_MODE_RGMII_ID or
-> PHY_INTERFACE_MODE_RGMII_TXID are used on SoCs where TX clock delay
-> mode is not supported as there is a risk of introducing a regression
-> when used in conjunction with older DT blobs present in the field.
->=20
-> Based on work by Kazuya Mizuguchi.
->=20
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+I think the fix is easy, but I prefer it if you rebase and repost this patch.
+I've merged the others, so it's just this patch that's the problem.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Regards,
 
-
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyt3ukACgkQFA3kzBSg
-KbZjIQ/9HtujtK/pD6DQnL2LMK+Qe3KoJX4n7PbsuFdFv1u3JhnWBVBGh6DQUEsh
-Q1fKm0Pod2tofoAhOUIMXA87oeKTnfnsdXZW01nimcXodVwO6ReaqJdPgKS3xHW+
-8SZqHbHwQ2HZcqMjTg/Gr+pUjje/9IPZdipng4Mmq8KfhkKIxLY0xkztUEMGRh5D
-2jd/mmBd51Std8ZI37DAd+1YsWZkx/52d72cMX8GX4upa+UQw9LRMFPXGJD6rJII
-C1qhbD6QGC2o0MI3UZcF0lB5afb8TKGmoFshW9F26rfG2Bq2U0BOswO26VbI7Tco
-MGz2Mw3Y9gN+CGAjPetJzz9SB+gIvbli+Q0X6voFAcl5qdArOhHrZ9med75Fc8M9
-fYYnGl4OL+9/tZS3LSsu8rXG+2W3LETO4PpasTNqdunCaKfmID3W1iz3Vv+/8a1n
-jaCbiCMY0bTktRUViuG58ggWbjyQcAFqmh1jEe+8aMZMzOp4EFL+lx0Mu9wHfnhg
-TH+VPLCNQER5oU2UF0vq2PSDLzROlfhzen+2+/2+pl0zJ++rm1BDI1BxfE46EjKM
-Cm1QcCQozi3634yvVjlp1iOOQuZ0N8rhg7sFLPSrM5rarCi+PmFHZrLdmiloJimV
-zx929k/dcFinu4gu5C0wzblnly0nSeFfXlPx3M1YX6k0I83fFuk=
-=XoKP
------END PGP SIGNATURE-----
-
---C7zPtVaVf+AK4Oqc--
+	Hans
