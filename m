@@ -2,154 +2,83 @@ Return-Path: <SRS0=kcdn=SN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9930C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 19:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BA4C10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 20:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 867252070D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 19:45:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="TvCyXazw"
+	by mail.kernel.org (Postfix) with ESMTP id 9F33C2073F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 20:28:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbfDKTpF (ORCPT
+        id S1726797AbfDKU2c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 15:45:05 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46556 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbfDKTpE (ORCPT
+        Thu, 11 Apr 2019 16:28:32 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:60799 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbfDKU2c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 15:45:04 -0400
-Received: by mail-lj1-f196.google.com with SMTP id h21so6612636ljk.13
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Apr 2019 12:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=fqYotYfW1OFscv2kEeguZ0toHoRM4i7s3xPR45L6huY=;
-        b=TvCyXazwHcT/FveYpjlI7PtDJsaSznq3mdo6Yft5cnc7Ql1Zc3iLx2Rxq+4WFjZiru
-         frIsD0gmbrGQz4vrAG13T4eLriYrwBwsl/Y+SWC8UUcGZ/7Qe1hYcfH7m7i6dkAUTmx9
-         NIe5QVvn9K95+gw0t4hJZXxpR1STbRjSJLxF3frZfvIDt8S6uI9U99h4fm/B/QFLh+x1
-         +id3bZK82GvwZcU4Digzc09iDT+mkF6jJnglQqHX8t/t+rMU6xUOkeboiyOPkUgFlwba
-         +XSiDfAG9ZA9xwhN9dHi+p6+7ypKn1JBQnhdtnGZkT8inX/n2BMSZ6w1ca3evx+SSWh7
-         0zCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=fqYotYfW1OFscv2kEeguZ0toHoRM4i7s3xPR45L6huY=;
-        b=ncgtUbkdM2SygyQbNsVFuRtK66TkTVw6/n8jmENDnjYovcytxQGo+kr0PDKe39LqYR
-         3bThlr8x96g4xqTHcEi+HKa++i1zzR06GcwnJdgupbLYEV+Qrxi5xznZKAd8WQZrtoTM
-         wRGIrmyb0sMyypUE/jxkD0QkQm+c6DB69G77ExQ+CdsnKeiesLW4NT2aCiXUCy483dj1
-         Ha1NEfLJitGtnvbIcjAhBFJFp90ix6TydcZBQjkr/ss5EhsgsVTumKEpxaNS5LxoxacJ
-         HU8y9eIEsqX8fR8oLLzyq3cQx0QQOeDV+P3/y/IYynNTrw6j6Z7R9n0ipCl11T+67Zva
-         hHdA==
-X-Gm-Message-State: APjAAAXEBEeFnY/cg3in1UYIoljhO6uSJDPSO25omh9jP2i9d0tKWXuK
-        rDl0qzZCkTlpey5qtl2SVw1Lig==
-X-Google-Smtp-Source: APXvYqy+fvYUdRmNuDNj3QHiT7zwvnMDD92Ru7mpy1/xWwyYxCmKOUT0NARN+pt0zEspseq15jS/zg==
-X-Received: by 2002:a2e:219:: with SMTP id 25mr27298648ljc.34.1555011903069;
-        Thu, 11 Apr 2019 12:45:03 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id u2sm7900957lje.74.2019.04.11.12.45.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Apr 2019 12:45:01 -0700 (PDT)
-Date:   Thu, 11 Apr 2019 21:45:00 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Nguyen An Hoan <na-hoan@jinso.co.jp>
-Cc:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        wsa@sang-engineering.com, kuninori.morimoto.gx@renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, h-inayoshi@jinso.co.jp,
-        nv-dung@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: Re: [v2 PATCH] thermal: rcar_gen3_thermal: Add Standby/Reset Mode
- support
-Message-ID: <20190411194500.GG30887@bigcity.dyn.berto.se>
-References: <1541484506-30736-1-git-send-email-na-hoan@jinso.co.jp>
+        Thu, 11 Apr 2019 16:28:32 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 564B43C013A;
+        Thu, 11 Apr 2019 22:28:29 +0200 (CEST)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id txFhsb4d-9L1; Thu, 11 Apr 2019 22:28:22 +0200 (CEST)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id B50F43C00C6;
+        Thu, 11 Apr 2019 22:28:22 +0200 (CEST)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 11 Apr
+ 2019 22:28:22 +0200
+Date:   Thu, 11 Apr 2019 22:28:19 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+CC:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        <linux-media@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Michael Rodin <mrodin@de.adit-jv.com>,
+        Eugen Friedrich <efriedrich@de.adit-jv.com>,
+        <harsha.manjulamallikarjun@in.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>
+Subject: Re: [PATCH v3 3/9] media: rcar-vin: Create a group notifier
+Message-ID: <20190411202819.GA8006@vmlxhi-102.adit-jv.com>
+References: <20190405161639.GA10433@vmlxhi-102.adit-jv.com>
+ <25dc2668-d270-ebf8-b014-88bbb7a6f243@gmail.com>
+ <20190408111241.GF15350@bigcity.dyn.berto.se>
+ <df6fa3bf-bf21-50b0-2cad-a613e2a43ce0@gmail.com>
+ <20190409205745.GB9750@pendragon.ideasonboard.com>
+ <3c2c2d04-8028-3511-aba0-0ea6dd5bdc50@mentor.com>
+ <20190409225948.GD9750@pendragon.ideasonboard.com>
+ <69091709-a63f-6a11-4b4b-13fcf8d3e40a@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1541484506-30736-1-git-send-email-na-hoan@jinso.co.jp>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <69091709-a63f-6a11-4b4b-13fcf8d3e40a@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hoan,
+Hi Niklas,
 
-Thanks for your work.
+Two simple questions:
+ - I can only clone git://git.ragnatech.se/linux, but can't access it on
+   the web, does it have some web interface?
+ - Browsing through your v4l2/next/csi2/upport branch, it looks to be
+   targeted for upstream. Could we rely on those commits already or
+   they are still in development/testing?
 
-Sorry for very late review, somehow this got lost in my inbox.
-
-On 2018-11-06 15:08:26 +0900, Nguyen An Hoan wrote:
-> From: Hoan Nguyen An <na-hoan@jinso.co.jp>
-> 
-> According to the hardware manual, Gen3 supports Standby/Reset mode.
-> Add this function, and we should use this function while suspend
-> to reduce the energy consumption.
-> 
-> Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
-
-Nice clean commit and matches the datasheet,
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-Interrupts fire both before and after suspending as expected,
-
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  drivers/thermal/rcar_gen3_thermal.c | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-> index 7aed533..e654519 100644
-> --- a/drivers/thermal/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/rcar_gen3_thermal.c
-> @@ -447,11 +447,32 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> +static int rcar_gen3_thermal_reset(struct rcar_gen3_thermal_priv* priv)
-> +{
-> +	unsigned int i;
-> +	u32 reg_val;
-> +
-> +	for (i = 0; i < priv->num_tscs; i++) {
-> +		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
-> +
-> +		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN, 0);
-> +		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
-> +
-> +		reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
-> +		rcar_gen3_thermal_write(tsc, REG_GEN3_THCTR, reg_val & ~THCTR_THSST);
-> +	}
-> +
-> +	usleep_range(1000, 2000);
-> +
-> +	return 0;
-> +}
-> +
->  static int __maybe_unused rcar_gen3_thermal_suspend(struct device *dev)
->  {
->  	struct rcar_gen3_thermal_priv *priv = dev_get_drvdata(dev);
->  
-> -	rcar_thermal_irq_set(priv, false);
-> +	/* Reset to enter standby mode */
-> +	rcar_gen3_thermal_reset(priv);
->  
->  	return 0;
->  }
-> -- 
-> 2.7.4
-> 
-
--- 
-Regards,
-Niklas Söderlund
+TIA,
+Eugeniu.
