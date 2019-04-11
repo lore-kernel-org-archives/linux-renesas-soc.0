@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E386C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB37CC10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 725C821841
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81A15217D4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbfDKHzY (ORCPT
+        id S1726121AbfDKHz0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 03:55:24 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:50408 "EHLO
+        Thu, 11 Apr 2019 03:55:26 -0400
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:50481 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfDKHzY (ORCPT
+        with ESMTP id S1726970AbfDKHz0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 03:55:24 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3B7tDdB039672;
-        Thu, 11 Apr 2019 16:55:13 +0900 (JST)
+        Thu, 11 Apr 2019 03:55:26 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3B7tFRt039727;
+        Thu, 11 Apr 2019 16:55:15 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Thu, 11 Apr 2019 16:55:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Thu, 11 Apr 2019 16:55:15 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
 Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
         (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3B7tAG9039614
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3B7tDWR039694
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 11 Apr 2019 16:55:12 +0900 (JST)
+        Thu, 11 Apr 2019 16:55:15 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 From:   Cao Van Dong <cv-dong@jinso.co.jp>
 To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
@@ -41,9 +41,9 @@ To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
 Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
         h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
         cv-dong@jinso.co.jp
-Subject: [PATCH v2 17/20] dt-bindings: pwm: Document r8a77470 bindings
-Date:   Thu, 11 Apr 2019 16:54:19 +0900
-Message-Id: <1554969262-15028-18-git-send-email-cv-dong@jinso.co.jp>
+Subject: [PATCH v2 18/20] sh_eth: Document r8a77470 bindings
+Date:   Thu, 11 Apr 2019 16:54:20 +0900
+Message-Id: <1554969262-15028-19-git-send-email-cv-dong@jinso.co.jp>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
 References: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
@@ -56,21 +56,21 @@ Document SoC specific bindings for R-Car RZ/G1C(r8a77470) SoC.
 
 Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
 ---
- Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
+ Documentation/devicetree/bindings/net/sh_eth.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-index fbd6a4f..cba6ace 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-+++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
-@@ -5,6 +5,7 @@ Required Properties:
-  - "renesas,pwm-r8a7743": for RZ/G1M
-  - "renesas,pwm-r8a7744": for RZ/G1N
-  - "renesas,pwm-r8a7745": for RZ/G1E
-+ - "renesas,pwm-r8a77470": for RZ/G1C
-  - "renesas,pwm-r8a774a1": for RZ/G2M
-  - "renesas,pwm-r8a774c0": for RZ/G2E
-  - "renesas,pwm-r8a7778": for R-Car M1A
+diff --git a/Documentation/devicetree/bindings/net/sh_eth.txt b/Documentation/devicetree/bindings/net/sh_eth.txt
+index abc3627..b184b29 100644
+--- a/Documentation/devicetree/bindings/net/sh_eth.txt
++++ b/Documentation/devicetree/bindings/net/sh_eth.txt
+@@ -8,6 +8,7 @@ Required properties:
+ 	      "renesas,gether-r8a7740" if the device is a part of R8A7740 SoC.
+ 	      "renesas,ether-r8a7743"  if the device is a part of R8A7743 SoC.
+ 	      "renesas,ether-r8a7745"  if the device is a part of R8A7745 SoC.
++	      "renesas,ether-r8a77470"  if the device is a part of R8A77470 SoC.
+ 	      "renesas,ether-r8a7778"  if the device is a part of R8A7778 SoC.
+ 	      "renesas,ether-r8a7779"  if the device is a part of R8A7779 SoC.
+ 	      "renesas,ether-r8a7790"  if the device is a part of R8A7790 SoC.
 -- 
 2.7.4
 
