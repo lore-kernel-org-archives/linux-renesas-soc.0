@@ -3,74 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B93C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25707C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 08:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A1F217D4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3A3B217D4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 08:10:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfDKHzb (ORCPT
+        id S1726690AbfDKIKd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 03:55:31 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:50594 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbfDKHzb (ORCPT
+        Thu, 11 Apr 2019 04:10:33 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:42088 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbfDKIKd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 03:55:31 -0400
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3B7tKVT039782;
-        Thu, 11 Apr 2019 16:55:20 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
- Thu, 11 Apr 2019 16:55:20 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
-Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3B7tI3j039755
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 11 Apr 2019 16:55:19 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-From:   Cao Van Dong <cv-dong@jinso.co.jp>
-To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
-        geert+renesas@glider.be, horms+renesas@verge.net.au,
-        devicetree@vger.kernel.org, biju.das@bp.renesas.com
-Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
-        cv-dong@jinso.co.jp
-Subject: [PATCH v2 20/20] dt-bindings: can: rcar_can: Document r8a77470 bindings
-Date:   Thu, 11 Apr 2019 16:54:22 +0900
-Message-Id: <1554969262-15028-21-git-send-email-cv-dong@jinso.co.jp>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
-References: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
+        Thu, 11 Apr 2019 04:10:33 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6C63625AD6D;
+        Thu, 11 Apr 2019 18:10:31 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id ED1A2940356; Thu, 11 Apr 2019 10:10:28 +0200 (CEST)
+Date:   Thu, 11 Apr 2019 10:10:28 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] iommu/ipmmu-vmsa: Link IOMMUs and devices in sysfs
+Message-ID: <20190411081028.b2wf3nnzx4tw7xdr@verge.net.au>
+References: <20190403182148.18058-1-geert+renesas@glider.be>
+ <20190403182148.18058-2-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190403182148.18058-2-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document SoC specific bindings for R-Car RZ/G1C(r8a77470) SoC.
+On Wed, Apr 03, 2019 at 08:21:43PM +0200, Geert Uytterhoeven wrote:
+> As of commit 7af9a5fdb9e0ca33 ("iommu/ipmmu-vmsa: Use
+> iommu_device_sysfs_add()/remove()"), IOMMU devices show up under
+> /sys/class/iommus/, but their "devices" subdirectories are empty.
 
-Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
----
- Documentation/devicetree/bindings/net/can/rcar_can.txt | 1 +
- 1 file changed, 1 insertion(+)
+Hi Geert,
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-index 9936b9e..a5d57da 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
-@@ -5,6 +5,7 @@ Required properties:
- - compatible: "renesas,can-r8a7743" if CAN controller is a part of R8A7743 SoC.
- 	      "renesas,can-r8a7744" if CAN controller is a part of R8A7744 SoC.
- 	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
-+	      "renesas,can-r8a77470" if CAN controller is a part of R8A77470 SoC.
- 	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
- 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
- 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
--- 
-2.7.4
+Should the path be /sys/class/iommu/ (no trailing 's') ?
 
+> Likewise, devices tied to an IOMMU do not have an "iommu" backlink.
+> 
+> Make sure all links are created, on both arm32 and arm64.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+> v2:
+>   - Add Reviewed-by.
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 24 +++++++++++++++++-------
+>  1 file changed, 17 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 9a380c10655e182d..9f2b781e20a0eba6 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -885,27 +885,37 @@ static int ipmmu_init_arm_mapping(struct device *dev)
+>  
+>  static int ipmmu_add_device(struct device *dev)
+>  {
+> +	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+>  	struct iommu_group *group;
+> +	int ret;
+>  
+>  	/*
+>  	 * Only let through devices that have been verified in xlate()
+>  	 */
+> -	if (!to_ipmmu(dev))
+> +	if (!mmu)
+>  		return -ENODEV;
+>  
+> -	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA))
+> -		return ipmmu_init_arm_mapping(dev);
+> +	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA)) {
+> +		ret = ipmmu_init_arm_mapping(dev);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		group = iommu_group_get_for_dev(dev);
+> +		if (IS_ERR(group))
+> +			return PTR_ERR(group);
+>  
+> -	group = iommu_group_get_for_dev(dev);
+> -	if (IS_ERR(group))
+> -		return PTR_ERR(group);
+> +		iommu_group_put(group);
+> +	}
+>  
+> -	iommu_group_put(group);
+> +	iommu_device_link(&mmu->iommu, dev);
+>  	return 0;
+>  }
+>  
+>  static void ipmmu_remove_device(struct device *dev)
+>  {
+> +	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+> +
+> +	iommu_device_unlink(&mmu->iommu, dev);
+>  	arm_iommu_detach_device(dev);
+>  	iommu_group_remove_device(dev);
+>  }
+> -- 
+> 2.17.1
+> 
