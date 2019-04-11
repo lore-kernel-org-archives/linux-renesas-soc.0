@@ -2,114 +2,156 @@ Return-Path: <SRS0=kcdn=SN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994CAC10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAB4C10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 592272146F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28857217F4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:50:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Vnh7M0nM"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Ivy+8Uxi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbfDKQra (ORCPT
+        id S1726014AbfDKQui (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 12:47:30 -0400
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:43581 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbfDKQr3 (ORCPT
+        Thu, 11 Apr 2019 12:50:38 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33601 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfDKQuh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 12:47:29 -0400
-Received: by mail-lj1-f179.google.com with SMTP id f18so6142645lja.10
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Apr 2019 09:47:28 -0700 (PDT)
+        Thu, 11 Apr 2019 12:50:37 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j11so5264145lfm.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Apr 2019 09:50:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=7TOrm/pIUjywy+PcLxQavGH3pPV+PtonB7njN6vd3Vk=;
-        b=Vnh7M0nM7lWbgVm8irPx5LIVNe97+r/gl4keZFc+9YVrPBx0FufjXVvUQCET7Thyyw
-         tsljOfFLHNVZqbM3nlPfEEJpMYMO/61zmwdcqal2HOPCPWjmsx+Hb2+DQHY4pWhbrrRg
-         SrgR0AM3sGNUj+D/c6jDTe/hrdjP94YkBxIOVxsKPsFzQi+Tn9ghmZbz5IbrL29G6EfN
-         FFxekp41AhMIsg70/XHNnKiSdTrm3SRHmrAYHnQ+NLlK4o0pTeM56U+uG6Ab5L0WE7fe
-         5pCZOHzjufzYBFJ1z+qaJGQP8Ft+VSCjvzsaGb6qSR8mcbYJu1rB1pIp+b+Lw8NocFQV
-         pZJg==
+        bh=JR9KyhPs1D7QvJbJSDRs3JR6Aqd2+G4KHFK580FsT8w=;
+        b=Ivy+8UxigbSOkFRI6J2RhQLwN12FHBHo21KPFbyCSQd0PsEJ0ycW/a8iDOfR+e0Ol7
+         2jvRnz104+c8l1lwJGBO87L/HlsSiBPha0JFdlHNpb9TwJq6x73nq42yM7WunPOR3XXB
+         HHOLpFhfMIh5kjIY/vKST5bwaNPBUburehEG48CASlfE1ejMCzAmM6X2u/p4WqnCK7M2
+         uQ6GjA6w0DOqiQRMcJODOT0Jln42SPvNvXtgBgZMBP8nQnf/2L+p03GDMsv5krjcoHGA
+         1wvFyd/9jydAt/MZufbGPFV0cwe85ij9kLQZhL4SM3UspspIGYQcxIaTsPwqCkLVHiSb
+         nczg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=7TOrm/pIUjywy+PcLxQavGH3pPV+PtonB7njN6vd3Vk=;
-        b=Xp2QaCd9BFe3o8KV7CSUtzA1O87fpQzLb18hmYfccPqr4wCHMDwhhVcqibgpcgo716
-         PbFNUAZevNz370ZNNCX0f+ntLaYEUC5MZsURCqWA32ePdh+BnygRz01NXpsPs5fCLEIg
-         IiQ5gY/SalTfay9yflORJRjUDA/NJx04oukv3wK9+aTKd7NL9fNEgcOkuMxYRaG1mXQ3
-         OVYlW0SP2+ePR77P3riKngsQ3OAPNslo7NJSltASzXWS+mstultliKVydy7CXTWHqJmH
-         EFkbVRA1PuydgqOq+f/B/TDBOz7hwRqL96fT6OAMB0EQtLRkIXMEdpkDo79jYUsyBaQX
-         v8Sw==
-X-Gm-Message-State: APjAAAUFguzGsmKkwLh7pMcbZ58aLU8auBQ3DQzrFcdvNdktj/XJIzsJ
-        tpqa7ndDrsalsLVg7xu/GyBbfQ==
-X-Google-Smtp-Source: APXvYqyiUySD+Iexj0LgZ0MKP+TmhGxuIn8SCyQW6/VeGdC0Fx8RhazqSDDQf/mawoEXeCRLjORQ8Q==
-X-Received: by 2002:a2e:420c:: with SMTP id p12mr27591808lja.1.1555001247610;
-        Thu, 11 Apr 2019 09:47:27 -0700 (PDT)
+        bh=JR9KyhPs1D7QvJbJSDRs3JR6Aqd2+G4KHFK580FsT8w=;
+        b=O4GUxEBAj3BVIU8fg4OimGRuyjL8PORJQnd3X2Rxc5qqG2ORoXqXc4aUczXJ7VeUul
+         sgI6xGdawiHTtRdbf1pKxA8uviTk2t19g7nGdU18BGEieRV5mF6Vjpp7mEhM/s6Nzs7/
+         PC/gv89P2zww0eOUq4ain0GawMHSB+/hp8okv+gSV5c9Tk/AoMbCA7VYpvAZ+41j1c1p
+         ahL5wVbu37Cg4Zpl0ooUsZqMkDmC8OxNqEL59E2JCN9K04pEQuTtYnlpUUdvgDpPB/7t
+         fbToIkwvE+NZ+PaOaaeZj+gJEZ2e3BEK1V607IM1lCR2C1t16IdJLWSB3/Bd/ehRaKiu
+         shag==
+X-Gm-Message-State: APjAAAX4wC/AbFig1wPJX0YoTR/3LHZZVEhR3o9l01UGLT7KvY2YKI36
+        9NW46nYjtCQRZe1DdtQLMFTwNg==
+X-Google-Smtp-Source: APXvYqzDc280qeY2HpB1Evx/JKXHPkAVYYQeaR0uhqrH7eEl0YgU/q6dUWQrMnNtMLk/PcC8fky8Xg==
+X-Received: by 2002:ac2:4148:: with SMTP id c8mr27946483lfi.2.1555001435257;
+        Thu, 11 Apr 2019 09:50:35 -0700 (PDT)
 Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id s24sm7778325ljs.30.2019.04.11.09.47.26
+        by smtp.gmail.com with ESMTPSA id t21sm1576532lfk.5.2019.04.11.09.50.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Apr 2019 09:47:26 -0700 (PDT)
-Date:   Thu, 11 Apr 2019 18:47:25 +0200
+        Thu, 11 Apr 2019 09:50:34 -0700 (PDT)
+Date:   Thu, 11 Apr 2019 18:50:34 +0200
 From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund@ragnatech.se>
 To:     Simon Horman <horms@verge.net.au>
-Cc:     Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+Cc:     Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-pm@vger.kernel.org,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a7795: Create thermal zone to
- support IPA
-Message-ID: <20190411164725.GE30887@bigcity.dyn.berto.se>
-References: <1545338982-19466-1-git-send-email-ykaneko0929@gmail.com>
- <20190110163356.GF24252@bigcity.dyn.berto.se>
- <20190408122941.wziujh5ibgwy5cdp@verge.net.au>
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH/RFT] thermal: rcar_gen3_thermal: Update calculation
+ formula due to HW evaluation
+Message-ID: <20190411165034.GF30887@bigcity.dyn.berto.se>
+References: <1553201273-16757-1-git-send-email-ykaneko0929@gmail.com>
+ <20190401133753.5luent76gyzygtcb@verge.net.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190408122941.wziujh5ibgwy5cdp@verge.net.au>
+In-Reply-To: <20190401133753.5luent76gyzygtcb@verge.net.au>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+Hi Kaneko-san,
 
-On 2019-04-08 14:29:41 +0200, Simon Horman wrote:
-> > > @@ -3172,11 +3158,15 @@
-> > >  
-> > >  			cooling-maps {
-> > >  				map0 {
-> > > -					trip = <&sensor3_passive>;
-> > > -					cooling-device = <&a57_0 4 4>,
-> > > -							 <&a57_1 4 4>,
-> > > -							 <&a57_2 4 4>,
-> > > -							 <&a57_3 4 4>;
-> > > +					trip = <&target>;
-> > > +					cooling-device = <&a57_0 0 2>;
+Thanks for your work.
+
+On 2019-04-01 15:37:57 +0200, Simon Horman wrote:
+> On Fri, Mar 22, 2019 at 05:47:53AM +0900, Yoshihiro Kaneko wrote:
+> > From: Dien Pham <dien.pham.ry@renesas.com>
 > > 
-> > We have 5 (0-4) cooling states for the A57s on this SoC. Out of 
-> > curiosity why allow states 0-2 here and not force it do more cooling or 
-> > keep the to max cooling (4) as before this change as this is set to a 
-> > trip point with a rather large temperature? Not saying this is wrong 
-> > only curious :-)
+> > 1/ As evaluation of hardware team, temperature calculation formula
+> >  of M3-W is difference from all other SoCs as below:
+> >  - M3-W: Tj_1: 116 (so Tj_1 - Tj_3 = 157)
+> >  - Others: Tj_1: 126 (so Tj_1 - Tj_3 = 167)
+> > 
+> > 2/ Update the formula to calculate CTEMP:
+> >   Currently, the CTEMP is average of val1 (is calculated by
+> >   formula 1) and val2 (is calculated by formula 2). But,
+> >   as description in HWM (chapter 10A.3.1.1 Setting of Normal Mode)
+> > 
+> >   If (STEMP < Tj_T) CTEMP value should be val1.
+> >   If (STEMP > Tj_T) CTEMP value should be val2.
+> > 
+> > 3/ Update the formula to calculate temperature:
+> >   Currently, current TEMP is calculated as
+> >   average of val1 (is calculated by formula 1)
+> >   and val2 (is calculated by formula 2). But,
+> >   as description in HWM (chapter 10A.3.1.2 Normal Mode.)
+> > 
+> >   If (TEMP_CODE < THCODE2[11:0]) CTEMP value should be val1.
+> >   If (TEMP_CODE > THCODE2[11:0]) CTEMP value should be val2.
+> > 
+> > Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+> > [ykaneko0929@gmail.com: use the data field of the of_device_id for Tj_1]
+> > [ykaneko0929@gmail.com: revise a description of case 1 of the commit log]
+> > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 > 
-> This I do not know. Do you think it would be worth following-up on
-> internally?
+> I'm wondering if we could split this up into three patches,
+> one for each problem it solves? Partly because I think it is good to fix
+> one problem per patch. And partly because am having trouble
+> verifying this patch - the new if statement in rcar_gen3_thermal_get_temp()
+> seems to result in 0 temperature readings when the else case is used.
 
-I'm no expert on this but I think it could be educational to learn why 
-not the full range is used. Still this might be correct so I don't want 
-to block this patch based on my ignorance.
+I think the changes in this patch are good and correct but I agree with 
+Simon here, this patch should be split.
+
+> 
+> > ---
+> >  drivers/thermal/rcar_gen3_thermal.c | 86 +++++++++++++++++++++++++------------
+> >  1 file changed, 58 insertions(+), 28 deletions(-)
+> > 
+> > This patch is based on the master branch of Linus Torvalds's linux tree.
+> > 
+> > diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> > index 88fa41c..de6f244 100644
+> > --- a/drivers/thermal/rcar_gen3_thermal.c
+> > +++ b/drivers/thermal/rcar_gen3_thermal.c
+> > @@ -63,6 +63,15 @@
+> >  
+> >  #define TSC_MAX_NUM	3
+> >  
+> > +static int tj_2;
+> 
+> We need to avoid global variables. There can be multiple
+> instances of this driver. (Although they will all get the same
+> value for tj_2.
+> 
+> Perhaps it can be added to struct rcar_gen3_thermal_tsc?
+> 
+> ...
 
 -- 
 Regards,
