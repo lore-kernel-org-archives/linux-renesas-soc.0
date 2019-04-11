@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 143B7C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E68C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D67BC21841
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC346217D4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 07:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfDKHzD (ORCPT
+        id S1727006AbfDKHzE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 03:55:03 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:50003 "EHLO
+        Thu, 11 Apr 2019 03:55:04 -0400
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:50011 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfDKHzD (ORCPT
+        with ESMTP id S1726872AbfDKHzE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 03:55:03 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3B7sqr9037733;
-        Thu, 11 Apr 2019 16:54:52 +0900 (JST)
+        Thu, 11 Apr 2019 03:55:04 -0400
+Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3B7ssxO037754;
+        Thu, 11 Apr 2019 16:54:54 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Thu, 11 Apr 2019 16:54:52 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+ by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
+ Thu, 11 Apr 2019 16:54:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
 Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
         (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3B7snAD037678
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3B7sqQP037737
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 11 Apr 2019 16:54:52 +0900 (JST)
+        Thu, 11 Apr 2019 16:54:54 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 From:   Cao Van Dong <cv-dong@jinso.co.jp>
 To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
@@ -41,9 +41,9 @@ To:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
 Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
         h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp,
         cv-dong@jinso.co.jp
-Subject: [PATCH v2 09/20] ARM: dts: r8a77470: Add VSP support
-Date:   Thu, 11 Apr 2019 16:54:11 +0900
-Message-Id: <1554969262-15028-10-git-send-email-cv-dong@jinso.co.jp>
+Subject: [PATCH v2 10/20] ARM: dts: r8a77470: Add FDP1 support
+Date:   Thu, 11 Apr 2019 16:54:12 +0900
+Message-Id: <1554969262-15028-11-git-send-email-cv-dong@jinso.co.jp>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
 References: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
@@ -52,37 +52,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add vsp nodes to dtsi for VSP support on the RZ/G1C (r8a77470) SoC.
+Add fdp1 node to dtsi for FDP1 support on the RZ/G1C (r8a77470) SoC.
 
 Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm/boot/dts/r8a77470.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index ae1dba0..2540bca 100644
+index 2540bca..7881516 100644
 --- a/arch/arm/boot/dts/r8a77470.dtsi
 +++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -1113,6 +1113,24 @@
- 			status = "disabled";
+@@ -1131,6 +1131,15 @@
+ 			resets = <&cpg 128>;
  		};
  
-+		vsp@fe928000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe928000 0 0x8000>;
-+			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 131>;
++		fdp1@fe940000 {
++			compatible = "renesas,fdp1";
++			reg = <0 0xfe940000 0 0x2400>;
++			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 119>;
 +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 131>;
-+		};
-+
-+		vsp@fe930000 {
-+			compatible = "renesas,vsp1";
-+			reg = <0 0xfe930000 0 0x8000>;
-+			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 128>;
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 128>;
++			resets = <&cpg 119>;
 +		};
 +
  		sdhi0: sd@ee100000 {
