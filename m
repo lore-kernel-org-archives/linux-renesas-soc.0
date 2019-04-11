@@ -2,144 +2,86 @@ Return-Path: <SRS0=kcdn=SN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AB3C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 15:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26002C10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB6E2083E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 15:25:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD93F2083E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:13:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="AutrqMRl"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GSq2RutP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbfDKPZO (ORCPT
+        id S1726702AbfDKQNC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 11:25:14 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39207 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfDKPZN (ORCPT
+        Thu, 11 Apr 2019 12:13:02 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35622 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbfDKQNC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 11:25:13 -0400
-Received: by mail-lj1-f194.google.com with SMTP id l7so5912012ljg.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Apr 2019 08:25:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=wDDH2wEtncLLXPiUO3GB++3thmlGHU5jUj+dEC4OZoM=;
-        b=AutrqMRluE7eCxjBQpZoNd7VUrBE2ckNrdeZPR9MlkWKWoTykvNfhO1C2X4qluFn/I
-         c11lIITAcydZeb22Sy5zA2VYH/oB8t02RfB2r4FS6BC21ZfhFWIkuPSqFBKdlASc7vHX
-         ca7XJ6KAMuZTNH3xj0UeKQsXYUgSB74GczYrIaAcF2OIPXtn2xOY0LwLQghOknccwmvx
-         cI37EzEm4iwW7TPGwPks9z7OOefemCCAxsj3l02ZUcQe8p+yy3pQRG5t2t5DQD1P6KqS
-         tOj9Iq5JsonLNNA5NgDsedbEEwa3DsvPT7w7j/6Iv2GTDPX9BH+45sJnhSzfPzHkUOoQ
-         ymXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wDDH2wEtncLLXPiUO3GB++3thmlGHU5jUj+dEC4OZoM=;
-        b=L1RyYb2ERO8zejU6D2Lncq94tWIWx5kmzSNOSyblBZXYrb8M6SsHyaIuGgBTj4O+z7
-         cYhqlwr0+bIYanXxNvKuIT9rf2kDyXC6ZJERzm/++ysDG5cc4VFu0eTlI4ZZeiIiOXQK
-         MaTRkSluKzIR1zliQlNY1yD5Jp6qc5Obnk7yzrMCLb8sVtHMhFl3F9cPm9aryvvBITP9
-         nVW6KfgkXJhgCmLROyZVzWOoohzC3AVKU/poFqa8zCrnEsn2CauTsSkdf+6zQSKLVwPh
-         cT/ecCbOqBcy4WfW0r+WEOArg1sGOTpx7ME4xwnucSoFQsYXspLs4YSq0BazNUJN7cZU
-         UnAQ==
-X-Gm-Message-State: APjAAAWQfXFmaJj0SrZNo32SMSFEvhBjOnLo2tUqbmf/wbhPZz2UUKgu
-        IN8k6VxCrZV5WE5klLZ6uwnG2g==
-X-Google-Smtp-Source: APXvYqz0oxVt5MtSOtaDCAF6QHm9FVIQgAgi5CNjruUitBAdhoXe+FM/QJApBpL0oolJVgQCsMrDww==
-X-Received: by 2002:a2e:7215:: with SMTP id n21mr28469508ljc.105.1554996311965;
-        Thu, 11 Apr 2019 08:25:11 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id c5sm8545308ljd.18.2019.04.11.08.25.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Apr 2019 08:25:10 -0700 (PDT)
-Date:   Thu, 11 Apr 2019 17:25:10 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Cao Van Dong <cv-dong@jinso.co.jp>
-Cc:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
-        geert+renesas@glider.be, horms+renesas@verge.net.au,
-        devicetree@vger.kernel.org, biju.das@bp.renesas.com,
-        yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
-        h-inayoshi@jinso.co.jp, nv-dung@jinso.co.jp, na-hoan@jinso.co.jp
-Subject: Re: [PATCH v2 00/20] Add more support to the RZ/G1C (r8a77470) SoC
-Message-ID: <20190411152510.GD30887@bigcity.dyn.berto.se>
-References: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
+        Thu, 11 Apr 2019 12:13:02 -0400
+Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C41631972;
+        Thu, 11 Apr 2019 18:12:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1554999180;
+        bh=vKJNoAp3ytf9dXy/uv0AEcGUJ1uzTf1G4nx00woMROc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GSq2RutPKDpwE4x5i4hCnnmwpMeUEHzdltlGBLC0hrtf6vzuxeFf0TrM0bVi+/Ei/
+         J+F6Q23HslHjor8XtnntXACEw8zwqfRZJtkyK352kVxInuwyVTjNtMv5WKsEcBSw7D
+         f3093xVB7Y57kGdo4okfivb2vUYu9Wy76BNylDZM=
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v3 0/5] media: vsp1: Phased partition overlap support
+Date:   Thu, 11 Apr 2019 17:12:51 +0100
+Message-Id: <20190411161256.19607-1-kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
-User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Cao,
+The UDS and SRU (and SHP) require expanded partition windows to support
+overlapping partition windows as a means of discarding discontinous pixel data,
+due to repeated pixels in their input filters.
 
-On 2019-04-11 16:54:02 +0900, Cao Van Dong wrote:
-> Dear everyone,
-> 
-> This series adds HSCIF,MSIOF,PWM,CAN,VIN,Audio,Audio-DMAC,Ether,VSP,FDP1,LVDS support 
-> for the RZ/G1C (r8a77470) SoC. It is based on the renesas-drivers-2019-04-02-v5.1-rc3 tag 
-> of renesas-drivers tree. Currently, I only add patches to the tree and compiled. 
-> Unfortunately, RZ/G1C board is not available, so I have not tested these patches on this board yet.
-> 
-> cc Biju,
-> I know it is very difficult. however I still want to ask if you can help me test them?
-> If possible, I will send the .dts file separately to you.
-> Because I am known you can be available this board. Thanks!
-> 
-> Cao Van Dong (20):
->   ARM: dts: r8a77470: Add HSCIF support
->   ARM: dts: r8a77470: Add MSIOF support
->   ARM: dts: r8a77470: Add PWM support
->   ARM: dts: r8a77470: Add CAN support
->   ARM: dts: r8a77470: Add VIN support
+The first four patches are clean ups and helpers to facilitate the
+implementation of an updated procedure for calculating the partition windows.
 
-The changes for VIN looks OK but as Chris points out it would be nice if 
-they could be tested.
+The entities are iterated first backwards through the pipeline allowing them to
+request an expanded input window if needed to satisfy their required output.
 
->   ARM: dts: r8a77470: Add Audio support
->   ARM: dts: r8a77470: Add Audio-DMAC support
->   ARM: dts: r8a77470: Add Ether support
->   ARM: dts: r8a77470: Add VSP support
->   ARM: dts: r8a77470: Add FDP1 support
->   ARM: dts: r8a77470: Add LVDS support
->   ARM: dts: r8a77470: Add audio clocks
->   ARM: dts: r8a77470: Add can clocks
->   dt-bindings: display: renesas: lvds: Add r8a77470 support
->   media: dt-bindings: media: rcar_vin: Document r8a77470 bindings
->   ASoC: rsnd: Document r8a77470 bindings
->   dt-bindings: pwm: Document r8a77470 bindings
->   sh_eth: Document r8a77470 bindings
->   spi: sh-msiof: Document r8a77470 bindings
->   dt-bindings: can: rcar_can: Document r8a77470 bindings
+Then, as only the WPF can support clipping on the left edge, (though the UDS
+can clip on it's right edge) the partition window is then propagated forwards
+through the entity list allowing them to update any offset which will mark left
+pixels to be discarded by the WPF.
 
-Nit-pick: I would first add the bindings to the documentation and then 
-to the dts files.
+Any expanded pixels to the right edge will automatically be clipped by the WPF
+as it's partition window will remain fixed.
 
-> 
->  .../bindings/display/bridge/renesas,lvds.txt       |   1 +
->  .../devicetree/bindings/media/rcar_vin.txt         |   1 +
->  .../devicetree/bindings/net/can/rcar_can.txt       |   1 +
->  Documentation/devicetree/bindings/net/sh_eth.txt   |   1 +
->  .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |   1 +
->  .../devicetree/bindings/sound/renesas,rsnd.txt     |   1 +
->  Documentation/devicetree/bindings/spi/sh-msiof.txt |   1 +
->  arch/arm/boot/dts/r8a77470.dtsi                    | 608 +++++++++++++++++++++
->  drivers/gpu/drm/rcar-du/rcar_lvds.c                |   1 +
->  9 files changed, 616 insertions(+)
-> 
-> -- 
-> 2.7.4
-> 
+Kieran Bingham (5):
+  media: vsp1: Define partition algorithm helper
+  media: vsp1: Initialise partition windows
+  media: vsp1: Document partition algorithm in code header
+  media: vsp1: Split out pre-filter multiplier
+  media: vsp1: Provide partition overlap algorithm
+
+ drivers/media/platform/vsp1/vsp1_entity.h |   2 +-
+ drivers/media/platform/vsp1/vsp1_pipe.c   |  48 +++++++-
+ drivers/media/platform/vsp1/vsp1_pipe.h   |   7 ++
+ drivers/media/platform/vsp1/vsp1_rpf.c    |  10 +-
+ drivers/media/platform/vsp1/vsp1_sru.c    |  38 +++++-
+ drivers/media/platform/vsp1/vsp1_uds.c    | 137 +++++++++++++++++++---
+ drivers/media/platform/vsp1/vsp1_video.c  |  13 +-
+ drivers/media/platform/vsp1/vsp1_wpf.c    |  16 ++-
+ 8 files changed, 241 insertions(+), 30 deletions(-)
 
 -- 
-Regards,
-Niklas Söderlund
+2.19.1
+
