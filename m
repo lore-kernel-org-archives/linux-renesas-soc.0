@@ -2,177 +2,118 @@ Return-Path: <SRS0=kcdn=SN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AB8C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 08:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CFBC10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 08:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28F522083E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 08:31:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ALS8c1g3"
+	by mail.kernel.org (Postfix) with ESMTP id 8CE862083E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 08:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbfDKIbA (ORCPT
+        id S1726139AbfDKIcp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 04:31:00 -0400
-Received: from mail-eopbgr1410102.outbound.protection.outlook.com ([40.107.141.102]:17269
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726139AbfDKIbA (ORCPT
+        Thu, 11 Apr 2019 04:32:45 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:44280 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfDKIco (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 04:31:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=detYyWQlEJR33bbdpZQSE8MRVQZRdrTQR5qW1i39GVU=;
- b=ALS8c1g3Upd5rLaK7RKoZv5o7MsAHdP31f/JIgN63hLNA9KtUSqlHxtk10wimomom+e/Wj6NXxS/wpFdF45L7NZha8/h528rndC7KJyz4AQZx51lfGIVqp8iEeNYFZB/oAu1DDxxRbKnkPd3tTel2zwUgpQgTnsDggwmEP3vKzM=
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com (52.133.177.145) by
- TYAPR01MB2942.jpnprd01.prod.outlook.com (20.177.101.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1771.18; Thu, 11 Apr 2019 08:30:54 +0000
-Received: from TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::7d5b:d367:41c0:ae25]) by TYAPR01MB2285.jpnprd01.prod.outlook.com
- ([fe80::7d5b:d367:41c0:ae25%5]) with mapi id 15.20.1771.016; Thu, 11 Apr 2019
- 08:30:54 +0000
-From:   Chris Paterson <Chris.Paterson2@renesas.com>
-To:     Cao Van Dong <cv-dong@jinso.co.jp>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Biju Das <biju.das@bp.renesas.com>
-CC:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        hideo inayoshi <h-inayoshi@jinso.co.jp>,
-        "nv-dung@jinso.co.jp" <nv-dung@jinso.co.jp>,
-        "na-hoan@jinso.co.jp" <na-hoan@jinso.co.jp>
-Subject: RE: [PATCH v2 00/20] Add more support to the RZ/G1C (r8a77470) SoC
-Thread-Topic: [PATCH v2 00/20] Add more support to the RZ/G1C (r8a77470) SoC
-Thread-Index: AQHU8DvMVIyBgfind0KZ9DPJwiPSkqY2mifQ
-Date:   Thu, 11 Apr 2019 08:30:54 +0000
-Message-ID: <TYAPR01MB2285FDDBEC874A3A0621C3CEB72F0@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-References: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
-In-Reply-To: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Paterson2@renesas.com; 
-x-originating-ip: [90.253.71.74]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e764c99c-44e6-4f43-ab74-08d6be5803a5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600139)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:TYAPR01MB2942;
-x-ms-traffictypediagnostic: TYAPR01MB2942:
-x-ms-exchange-purlcount: 1
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-microsoft-antispam-prvs: <TYAPR01MB29424B0B2BDB63275105054BB72F0@TYAPR01MB2942.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 00046D390F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39860400002)(396003)(366004)(136003)(189003)(199004)(3846002)(8676002)(55016002)(478600001)(106356001)(66066001)(14454004)(105586002)(110136005)(8936002)(966005)(256004)(71200400001)(71190400001)(476003)(486006)(6116002)(102836004)(14444005)(54906003)(68736007)(316002)(26005)(6506007)(186003)(229853002)(74316002)(446003)(2201001)(7696005)(9686003)(72206003)(33656002)(6436002)(5660300002)(305945005)(2501003)(86362001)(76176011)(6306002)(97736004)(11346002)(2906002)(81156014)(4326008)(81166006)(53936002)(99286004)(6246003)(25786009)(7736002)(52536014);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2942;H:TYAPR01MB2285.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: tRFvLfG7edXBdsIQz9H8hXtQ6g8EfTEM0hp9v4TLZd141Ja3de29P+DTEi//ML5DyJpz6TC0REOuDXN+kWA5pCrhRQNSZJDSmYIYRi4zh/cg2ouEeiAep5yy9C3gIMhvdFZvJENBrVCEW+EHqQ+lQnIT+OS7DNi59TBczMdVtvpBNX7gHb1nlAWgdhigmMnUPMOvPJoA4GTzBf9aSNFSWfd4NyLMdgRcan0313t6Oztn14192aX6Er3bOGEfG6arDKyvQC3oTQEiLWFcnMabpraCsFPWF5TH2ZYVtf98/Qh+Ht+RPwckfawPrtu4mvaYoonDuINaVz6bbQm5xkOylszzZV63iu6laoK+dvbx5Giz7/tFTj1nlcO3YGVOUDVxQHt5vltD80Pe1I8xiI5qgpIOXAbIMtkVbULvpwM7ufg=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 11 Apr 2019 04:32:44 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0F07E25AD6D;
+        Thu, 11 Apr 2019 18:32:43 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 06D51940356; Thu, 11 Apr 2019 10:32:40 +0200 (CEST)
+Date:   Thu, 11 Apr 2019 10:32:40 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific
+ features
+Message-ID: <20190411083240.jxv3xoasrg3vx5zh@verge.net.au>
+References: <20190403182148.18058-1-geert+renesas@glider.be>
+ <20190403182148.18058-5-geert+renesas@glider.be>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e764c99c-44e6-4f43-ab74-08d6be5803a5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Apr 2019 08:30:54.5411
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2942
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190403182148.18058-5-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Cao,
+On Wed, Apr 03, 2019 at 08:21:46PM +0200, Geert Uytterhoeven wrote:
+> The maximum number of micro-TLBs per IPMMU instance is not fixed, but
+> depends on the SoC type.  Hence move it from struct ipmmu_vmsa_device to
+> struct ipmmu_features, and set up the correct value for both R-Car Gen2
+> and Gen3 SoCs.
+> 
+> Note that currently no code uses this value.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> From: devicetree-owner@vger.kernel.org <devicetree-owner@vger.kernel.org>
-> On Behalf Of Cao Van Dong
-> Sent: 11 April 2019 08:54
->=20
-> Dear everyone,
->=20
-> This series adds HSCIF,MSIOF,PWM,CAN,VIN,Audio,Audio-
-> DMAC,Ether,VSP,FDP1,LVDS support
-> for the RZ/G1C (r8a77470) SoC. It is based on the renesas-drivers-2019-04=
--02-
-> v5.1-rc3 tag
+Are there any plans to use num_utlbs in the driver or anywhere else in the
+kernel? If not, perhaps it should be removed?
 
-Thank you for your work to upstream more support for the RZ/G1C!
-
-> of renesas-drivers tree. Currently, I only add patches to the tree and co=
-mpiled.
-> Unfortunately, RZ/G1C board is not available, so I have not tested these =
-patches
-> on this board yet.
->=20
-> cc Biju,
-> I know it is very difficult. however I still want to ask if you can help =
-me test
-> them?
-The problem here is that Biju and the team only have iwg23s-sbc boards [1],=
- which only expose these interfaces on external headers, in many cases with=
-out the require transceivers etc., meaning that testing is difficult.
-
-This is why we omitted them from the initial RZ/G1C upstreaming.
-
-Some interfaces are pretty low risk, so the maintainers may well accept som=
-e of your patches without testing I guess?
-
-[1] https://www.iwavesystems.com/product/single-board-computer/rzg1c/rz-g1c=
--single-board-computer.html
-
-> If possible, I will send the .dts file separately to you.
-I think you'd also need PFC changes.
-
-Kind regards, Chris
-
-> Because I am known you can be available this board. Thanks!
->=20
-> Cao Van Dong (20):
->   ARM: dts: r8a77470: Add HSCIF support
->   ARM: dts: r8a77470: Add MSIOF support
->   ARM: dts: r8a77470: Add PWM support
->   ARM: dts: r8a77470: Add CAN support
->   ARM: dts: r8a77470: Add VIN support
->   ARM: dts: r8a77470: Add Audio support
->   ARM: dts: r8a77470: Add Audio-DMAC support
->   ARM: dts: r8a77470: Add Ether support
->   ARM: dts: r8a77470: Add VSP support
->   ARM: dts: r8a77470: Add FDP1 support
->   ARM: dts: r8a77470: Add LVDS support
->   ARM: dts: r8a77470: Add audio clocks
->   ARM: dts: r8a77470: Add can clocks
->   dt-bindings: display: renesas: lvds: Add r8a77470 support
->   media: dt-bindings: media: rcar_vin: Document r8a77470 bindings
->   ASoC: rsnd: Document r8a77470 bindings
->   dt-bindings: pwm: Document r8a77470 bindings
->   sh_eth: Document r8a77470 bindings
->   spi: sh-msiof: Document r8a77470 bindings
->   dt-bindings: can: rcar_can: Document r8a77470 bindings
->=20
->  .../bindings/display/bridge/renesas,lvds.txt       |   1 +
->  .../devicetree/bindings/media/rcar_vin.txt         |   1 +
->  .../devicetree/bindings/net/can/rcar_can.txt       |   1 +
->  Documentation/devicetree/bindings/net/sh_eth.txt   |   1 +
->  .../devicetree/bindings/pwm/renesas,pwm-rcar.txt   |   1 +
->  .../devicetree/bindings/sound/renesas,rsnd.txt     |   1 +
->  Documentation/devicetree/bindings/spi/sh-msiof.txt |   1 +
->  arch/arm/boot/dts/r8a77470.dtsi                    | 608 +++++++++++++++=
-++++++
->  drivers/gpu/drm/rcar-du/rcar_lvds.c                |   1 +
->  9 files changed, 616 insertions(+)
->=20
-> --
-> 2.7.4
-
+> ---
+> v2:
+>   - Add Reviewed-by.
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 87acf86f295fac0d..3fa57627b1e35562 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -42,6 +42,7 @@ struct ipmmu_features {
+>  	bool use_ns_alias_offset;
+>  	bool has_cache_leaf_nodes;
+>  	unsigned int number_of_contexts;
+> +	unsigned int num_utlbs;
+>  	bool setup_imbuscr;
+>  	bool twobit_imttbcr_sl0;
+>  	bool reserved_context;
+> @@ -53,7 +54,6 @@ struct ipmmu_vmsa_device {
+>  	struct iommu_device iommu;
+>  	struct ipmmu_vmsa_device *root;
+>  	const struct ipmmu_features *features;
+> -	unsigned int num_utlbs;
+>  	unsigned int num_ctx;
+>  	spinlock_t lock;			/* Protects ctx and domains[] */
+>  	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+> @@ -972,6 +972,7 @@ static const struct ipmmu_features ipmmu_features_default = {
+>  	.use_ns_alias_offset = true,
+>  	.has_cache_leaf_nodes = false,
+>  	.number_of_contexts = 1, /* software only tested with one context */
+> +	.num_utlbs = 32,
+>  	.setup_imbuscr = true,
+>  	.twobit_imttbcr_sl0 = false,
+>  	.reserved_context = false,
+> @@ -981,6 +982,7 @@ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
+>  	.use_ns_alias_offset = false,
+>  	.has_cache_leaf_nodes = true,
+>  	.number_of_contexts = 8,
+> +	.num_utlbs = 48,
+>  	.setup_imbuscr = false,
+>  	.twobit_imttbcr_sl0 = true,
+>  	.reserved_context = true,
+> @@ -1033,7 +1035,6 @@ static int ipmmu_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	mmu->dev = &pdev->dev;
+> -	mmu->num_utlbs = 48;
+>  	spin_lock_init(&mmu->lock);
+>  	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+>  	mmu->features = of_device_get_match_data(&pdev->dev);
+> -- 
+> 2.17.1
+> 
