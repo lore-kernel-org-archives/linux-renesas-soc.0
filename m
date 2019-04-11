@@ -2,157 +2,123 @@ Return-Path: <SRS0=kcdn=SN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-17.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAB4C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B68C10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 17:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28857217F4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 16:50:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Ivy+8Uxi"
+	by mail.kernel.org (Postfix) with ESMTP id 968CB2173C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Apr 2019 17:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555004190;
+	bh=IPvJyUmzXw+pk/vM6Yk8yoye59NBr3V8GrRyr4FsJ3E=;
+	h=In-Reply-To:References:From:Subject:Cc:To:Date:List-ID:From;
+	b=PM4I/zO4Zgdy3tn3ux3IAUx9oP0ykX9kBU5YkioEouDXrELhIqCZ5JfKIp2mCBDmC
+	 FzPea8F9a5BOc41PaDNjOyIVPAHoxol7A+lVPwHP12HOw3k2PH/o4POkUfnkdVO0iA
+	 YPO2oxuSndUPxvSzUKSVCHyDpRreVARo5syml7Jc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726014AbfDKQui (ORCPT
+        id S1726951AbfDKRga (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Apr 2019 12:50:38 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33601 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbfDKQuh (ORCPT
+        Thu, 11 Apr 2019 13:36:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45792 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726912AbfDKRg3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Apr 2019 12:50:37 -0400
-Received: by mail-lf1-f65.google.com with SMTP id j11so5264145lfm.0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 11 Apr 2019 09:50:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=JR9KyhPs1D7QvJbJSDRs3JR6Aqd2+G4KHFK580FsT8w=;
-        b=Ivy+8UxigbSOkFRI6J2RhQLwN12FHBHo21KPFbyCSQd0PsEJ0ycW/a8iDOfR+e0Ol7
-         2jvRnz104+c8l1lwJGBO87L/HlsSiBPha0JFdlHNpb9TwJq6x73nq42yM7WunPOR3XXB
-         HHOLpFhfMIh5kjIY/vKST5bwaNPBUburehEG48CASlfE1ejMCzAmM6X2u/p4WqnCK7M2
-         uQ6GjA6w0DOqiQRMcJODOT0Jln42SPvNvXtgBgZMBP8nQnf/2L+p03GDMsv5krjcoHGA
-         1wvFyd/9jydAt/MZufbGPFV0cwe85ij9kLQZhL4SM3UspspIGYQcxIaTsPwqCkLVHiSb
-         nczg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=JR9KyhPs1D7QvJbJSDRs3JR6Aqd2+G4KHFK580FsT8w=;
-        b=O4GUxEBAj3BVIU8fg4OimGRuyjL8PORJQnd3X2Rxc5qqG2ORoXqXc4aUczXJ7VeUul
-         sgI6xGdawiHTtRdbf1pKxA8uviTk2t19g7nGdU18BGEieRV5mF6Vjpp7mEhM/s6Nzs7/
-         PC/gv89P2zww0eOUq4ain0GawMHSB+/hp8okv+gSV5c9Tk/AoMbCA7VYpvAZ+41j1c1p
-         ahL5wVbu37Cg4Zpl0ooUsZqMkDmC8OxNqEL59E2JCN9K04pEQuTtYnlpUUdvgDpPB/7t
-         fbToIkwvE+NZ+PaOaaeZj+gJEZ2e3BEK1V607IM1lCR2C1t16IdJLWSB3/Bd/ehRaKiu
-         shag==
-X-Gm-Message-State: APjAAAX4wC/AbFig1wPJX0YoTR/3LHZZVEhR3o9l01UGLT7KvY2YKI36
-        9NW46nYjtCQRZe1DdtQLMFTwNg==
-X-Google-Smtp-Source: APXvYqzDc280qeY2HpB1Evx/JKXHPkAVYYQeaR0uhqrH7eEl0YgU/q6dUWQrMnNtMLk/PcC8fky8Xg==
-X-Received: by 2002:ac2:4148:: with SMTP id c8mr27946483lfi.2.1555001435257;
-        Thu, 11 Apr 2019 09:50:35 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id t21sm1576532lfk.5.2019.04.11.09.50.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Apr 2019 09:50:34 -0700 (PDT)
-Date:   Thu, 11 Apr 2019 18:50:34 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Yoshihiro Kaneko <ykaneko0929@gmail.com>, linux-pm@vger.kernel.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFT] thermal: rcar_gen3_thermal: Update calculation
- formula due to HW evaluation
-Message-ID: <20190411165034.GF30887@bigcity.dyn.berto.se>
-References: <1553201273-16757-1-git-send-email-ykaneko0929@gmail.com>
- <20190401133753.5luent76gyzygtcb@verge.net.au>
+        Thu, 11 Apr 2019 13:36:29 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE8112084D;
+        Thu, 11 Apr 2019 17:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1555004189;
+        bh=IPvJyUmzXw+pk/vM6Yk8yoye59NBr3V8GrRyr4FsJ3E=;
+        h=In-Reply-To:References:From:Subject:Cc:To:Date:From;
+        b=UzBCcvCmgXJH/xMVyPFtAAlTlmtPbDs4SjSuYuQ+Hyw2x344ZDRTNCDL48GheRaas
+         0Nafmk5WTBHmXZyn7RjKaUGLf0OHWTJaR3LvGrG8oGcg8TDQQOOOQUc5cs/P2b6zic
+         XnBLECfnywGM0TaOkMneplyfCIoS0Lbco1ijRlQI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190401133753.5luent76gyzygtcb@verge.net.au>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190404113722.20634-1-geert+renesas@glider.be>
+References: <20190404113722.20634-1-geert+renesas@glider.be>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [git pull] clk: renesas: Updates for v5.2
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <155500418814.20095.8564288702076959777@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.8
+Date:   Thu, 11 Apr 2019 10:36:28 -0700
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kaneko-san,
+Quoting Geert Uytterhoeven (2019-04-04 04:37:22)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit 9e98c678c2d6ae3a17cb2de55d17f69dddaa23=
+1b:
+>=20
+>   Linux 5.1-rc1 (2019-03-17 14:22:26 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v5.2-tag1
+>=20
+> for you to fetch changes up to b953eaaeb58efc944f51cffd3f6838657958f0f8:
+>=20
+>   clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate() return value (20=
+19-04-04 11:54:46 +0200)
+>=20
+> ----------------------------------------------------------------
+> clk: renesas: Updates for v5.2
+>=20
+>   - Add missing PCI USB clock on RZ/N1,
+>   - Add Z2 (Cortex-A53) clocks on R-Car E3 and RZ/G2E, incl. a new
+>     helper in <linux/math64.h>,
+>   - Small fixes and cleanups.
+>=20
 
-Thanks for your work.
+Thanks. Pulled into clk-next with the below fix squashed on top.
 
-On 2019-04-01 15:37:57 +0200, Simon Horman wrote:
-> On Fri, Mar 22, 2019 at 05:47:53AM +0900, Yoshihiro Kaneko wrote:
-> > From: Dien Pham <dien.pham.ry@renesas.com>
-> > 
-> > 1/ As evaluation of hardware team, temperature calculation formula
-> >  of M3-W is difference from all other SoCs as below:
-> >  - M3-W: Tj_1: 116 (so Tj_1 - Tj_3 = 157)
-> >  - Others: Tj_1: 126 (so Tj_1 - Tj_3 = 167)
-> > 
-> > 2/ Update the formula to calculate CTEMP:
-> >   Currently, the CTEMP is average of val1 (is calculated by
-> >   formula 1) and val2 (is calculated by formula 2). But,
-> >   as description in HWM (chapter 10A.3.1.1 Setting of Normal Mode)
-> > 
-> >   If (STEMP < Tj_T) CTEMP value should be val1.
-> >   If (STEMP > Tj_T) CTEMP value should be val2.
-> > 
-> > 3/ Update the formula to calculate temperature:
-> >   Currently, current TEMP is calculated as
-> >   average of val1 (is calculated by formula 1)
-> >   and val2 (is calculated by formula 2). But,
-> >   as description in HWM (chapter 10A.3.1.2 Normal Mode.)
-> > 
-> >   If (TEMP_CODE < THCODE2[11:0]) CTEMP value should be val1.
-> >   If (TEMP_CODE > THCODE2[11:0]) CTEMP value should be val2.
-> > 
-> > Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-> > [ykaneko0929@gmail.com: use the data field of the of_device_id for Tj_1]
-> > [ykaneko0929@gmail.com: revise a description of case 1 of the commit log]
-> > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> 
-> I'm wondering if we could split this up into three patches,
-> one for each problem it solves? Partly because I think it is good to fix
-> one problem per patch. And partly because am having trouble
-> verifying this patch - the new if statement in rcar_gen3_thermal_get_temp()
-> seems to result in 0 temperature readings when the else case is used.
+----8<----
+From: Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH] clk: renesas: rcar-gen3: Remove unused variable
 
-I think the changes in this patch are good and correct but I agree with 
-Simon here, this patch should be split.
+This variable is no longer used and the compiler rightly complains that
+it should be removed. Drop it to silence the following:
 
-> 
-> > ---
-> >  drivers/thermal/rcar_gen3_thermal.c | 86 +++++++++++++++++++++++++------------
-> >  1 file changed, 58 insertions(+), 28 deletions(-)
-> > 
-> > This patch is based on the master branch of Linus Torvalds's linux tree.
-> > 
-> > diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-> > index 88fa41c..de6f244 100644
-> > --- a/drivers/thermal/rcar_gen3_thermal.c
-> > +++ b/drivers/thermal/rcar_gen3_thermal.c
-> > @@ -63,6 +63,15 @@
-> >  
-> >  #define TSC_MAX_NUM	3
-> >  
-> > +static int tj_2;
-> 
-> We need to avoid global variables. There can be multiple
-> instances of this driver. (Although they will all get the same
-> value for tj_2.
-> 
-> Perhaps it can be added to struct rcar_gen3_thermal_tsc?
-> 
-> ...
+drivers/clk/renesas/rcar-gen3-cpg.c: In function 'cpg_sd_clk_register':
+drivers/clk/renesas/rcar-gen3-cpg.c:386:15: warning: unused variable 'i' [-=
+Wunused-variable]
+  unsigned int i;
 
--- 
-Regards,
-Niklas Söderlund
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: b953eaaeb58e ("clk: renesas: rcar-gen3: Fix cpg_sd_clock_round_rate(=
+) return value")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar=
+-gen3-cpg.c
+index dc62ed0dadc2..d25c8ba00a65 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -383,7 +383,6 @@ static struct clk * __init cpg_sd_clk_register(const ch=
+ar *name,
+ 	struct clk_init_data init;
+ 	struct sd_clock *clock;
+ 	struct clk *clk;
+-	unsigned int i;
+ 	u32 val;
+=20
+ 	clock =3D kzalloc(sizeof(*clock), GFP_KERNEL);
