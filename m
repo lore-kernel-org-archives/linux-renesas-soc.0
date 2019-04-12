@@ -4,148 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87823C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 09:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E8EC282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 09:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563FA2171F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 09:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0516218C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 09:54:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RGzYErwk"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PmKT+1RB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbfDLJre (ORCPT
+        id S1726736AbfDLJyM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Apr 2019 05:47:34 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38480 "EHLO
+        Fri, 12 Apr 2019 05:54:12 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38538 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfDLJre (ORCPT
+        with ESMTP id S1726711AbfDLJyL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Apr 2019 05:47:34 -0400
+        Fri, 12 Apr 2019 05:54:11 -0400
 Received: from pendragon.ideasonboard.com (unknown [IPv6:2a02:a03f:4440:2800:43de:b524:bf87:f821])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 217D6549;
-        Fri, 12 Apr 2019 11:47:32 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E8299549;
+        Fri, 12 Apr 2019 11:54:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1555062452;
-        bh=MRgQhkLtg36IymLqHzrhyiiG18DoIl+sOprZE+vrM1M=;
+        s=mail; t=1555062850;
+        bh=0YE7BeADDF/hw9Q//zKYfamrQgUHriRex7uQgTESQJ4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RGzYErwkFuLiewpPueGkahLEhog/ncfJ77MY/c+zg1/48F/uMT4C+5OKaG8WPtGHD
-         pXCBruVG1DXrUfx7DAzjmTvU0arDwsttLhvGpGQeK3O7do+pkJkqFH+0BMsSSYn2gb
-         HjXGuwFdjHA0P5ecl8dnJxB8k6n0hkfAR657ZHXg=
-Date:   Fri, 12 Apr 2019 12:47:22 +0300
+        b=PmKT+1RBLKROfPNYwK3QsKQbkLqJ5FQwGbnxKxaGixr44GdCMsu3cbofM3Gpv6knN
+         LuaJeRA+KgM3OaSK993kAl14cQ+jS/XnHIGF9cu4zPxai/HY9EsVMzXCVXsFwU9yAr
+         EEsmK0hUcvYV+dDtgGb6Ge6AWkcIIsHiErUjSLLk=
+Date:   Fri, 12 Apr 2019 12:54:00 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4] rcar-csi2: Propagate the FLD signal for NTSC and PAL
-Message-ID: <20190412094722.GA4897@pendragon.ideasonboard.com>
-References: <20190411203444.23515-1-niklas.soderlund+renesas@ragnatech.se>
- <20190412084346.6lreffkpuuj7slqb@uno.localdomain>
- <20190412091321.GI30887@bigcity.dyn.berto.se>
+To:     Dirk Behme <dirk.behme@de.bosch.com>
+Cc:     linux-renesas-soc@vger.kernel.org, dmaengine@vger.kernel.org,
+        vkoul@kernel.org, geert+renesas@glider.be,
+        niklas.soderlund+renesas@ragnatech.se,
+        laurent.pinchart+renesas@ideasonboard.com,
+        Achim.Dahlhoff@de.bosch.com, yoshihiro.shimoda.uh@renesas.com,
+        ylhuajnu@outlook.com, hiroyuki.yokoyama.vx@renesas.com,
+        kuninori.morimoto.gx@renesas.com, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dmaengine: sh: rcar-dmac: With cyclic DMA residue
+ 0 is valid
+Message-ID: <20190412095400.GB4897@pendragon.ideasonboard.com>
+References: <20190412052914.16006-1-dirk.behme@de.bosch.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190412091321.GI30887@bigcity.dyn.berto.se>
+In-Reply-To: <20190412052914.16006-1-dirk.behme@de.bosch.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+Hi Dirk,
 
-On Fri, Apr 12, 2019 at 11:13:21AM +0200, Niklas Söderlund wrote:
-> On 2019-04-12 10:43:46 +0200, Jacopo Mondi wrote:
-> > Hi Niklas,
-> >    I'm rebasing v4l2-mux series on top of your new VIN patches and
-> > on this on I'm not sure how to proceed. Please see below.
-> > 
-> > Please also note this comment is not strictly on this patch, and should not
-> > block its acceptance...
-> > 
-> > On Thu, Apr 11, 2019 at 10:34:44PM +0200, Niklas Söderlund wrote:
-> >> Depending on which video standard is used the driver needs to setup the
-> >> hardware to correctly handle fields. If stream is identified as NTSC
-> >> or PAL setup field detection and propagate the field detection signal.
-> >>
-> >> Later versions of the datasheet have been updated to make it clear
-> >> that FLD register should be set to 0 when dealing with non-interlaced
-> >> field formats.
-> >>
-> >> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> >> ---
-> >>  drivers/media/platform/rcar-vin/rcar-csi2.c | 16 +++++++++++++---
-> >>  1 file changed, 13 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> >> index 799e526fd3df5554..c1b38ebd061dbc35 100644
-> >> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> >> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> >> @@ -68,6 +68,7 @@ struct rcar_csi2;
-> >>  /* Field Detection Control */
-> >>  #define FLD_REG				0x1c
-> >>  #define FLD_FLD_NUM(n)			(((n) & 0xff) << 16)
-> >> +#define FLD_DET_SEL(n)			(((n) & 0x3) << 4)
-> >>  #define FLD_FLD_EN4			BIT(3)
-> >>  #define FLD_FLD_EN3			BIT(2)
-> >>  #define FLD_FLD_EN2			BIT(1)
-> >> @@ -475,7 +476,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-> >>  static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >>  {
-> >>  	const struct rcar_csi2_format *format;
-> >> -	u32 phycnt, vcdt = 0, vcdt2 = 0;
-> >> +	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
-> >>  	unsigned int i;
-> >>  	int mbps, ret;
-> >>
-> >> @@ -507,6 +508,16 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >>  			vcdt2 |= vcdt_part << ((i % 2) * 16);
-> >>  	}
-> >>
-> >> +	if (priv->mf.field == V4L2_FIELD_ALTERNATE) {
-> > 
-> > How would you handle this once priv->mf is expanded to become an array
-> > of 'struct v4l2_mbus_framefmt' entries [1] ? Which of them is relevant for
-> > field detection?
-> > 
-> > 
-> >> +		fld = FLD_DET_SEL(1) | FLD_FLD_EN4 | FLD_FLD_EN3 | FLD_FLD_EN2
-> >> +			| FLD_FLD_EN;
-> >> +
-> >> +		if (priv->mf.height == 240)
-> > 
-> > Same question here, even if I assume we could cycle on the entries and
-> > collect the maximum size.
+Thank you for the patch.
+
+On Fri, Apr 12, 2019 at 07:29:13AM +0200, Dirk Behme wrote:
+> Having a cyclic DMA, a residue 0 is not an indication of a completed
+> DMA. In case of cyclic DMA make sure that dma_set_residue() is called
+> and with this a residue of 0 is forwarded correctly to the caller.
 > 
-> Well as the hardware do not support field detection of PAL and NTSC at 
-> the same time one would need to either disallow that and fail stream on 
-> or pick one and move on. Not sure which one would be best.
+> Fixes: 3544d2878817 ("dmaengine: rcar-dmac: use result of updated get_residue in tx_status")
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> Signed-off-by: Yao Lihua <ylhuajnu@outlook.com>
+> Cc: <stable@vger.kernel.org> # v4.8+
 
-Can't you do this through the VnMC.FOC bit ? I wonder if we shouldn't
-hardcode FLD_NUM here and handle PAL vs. NTSC in the VIN.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-> > [1] Introduced by:
-> > "rcar-csi2: use frame description information to configure CSI-2 bus"
-> >> +			fld |= FLD_FLD_NUM(0);
-> >> +		else
-> >> +			fld |= FLD_FLD_NUM(1);
-> >> +	}
-> >> +
-> >>  	phycnt = PHYCNT_ENABLECLK;
-> >>  	phycnt |= (1 << priv->lanes) - 1;
-> >>
-> >> @@ -549,8 +560,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >>  	rcsi2_write(priv, PHYCNT_REG, phycnt);
-> >>  	rcsi2_write(priv, LINKCNT_REG, LINKCNT_MONITOR_EN |
-> >>  		    LINKCNT_REG_MONI_PACT_EN | LINKCNT_ICLK_NONSTOP);
-> >> -	rcsi2_write(priv, FLD_REG, FLD_FLD_NUM(2) | FLD_FLD_EN4 |
-> >> -		    FLD_FLD_EN3 | FLD_FLD_EN2 | FLD_FLD_EN);
-> >> +	rcsi2_write(priv, FLD_REG, fld);
-> >>  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
-> >>  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
-> >>
+> ---
+> Note: Patch done against mainline v5.0
+> 
+> Changes in v2: None
+> 
+> Changes in v3: Move reading rchan into the spin lock protection.
+> 
+>  drivers/dma/sh/rcar-dmac.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+> index 2b4f25698169..54810ffd95e2 100644
+> --- a/drivers/dma/sh/rcar-dmac.c
+> +++ b/drivers/dma/sh/rcar-dmac.c
+> @@ -1368,6 +1368,7 @@ static enum dma_status rcar_dmac_tx_status(struct dma_chan *chan,
+>  	enum dma_status status;
+>  	unsigned long flags;
+>  	unsigned int residue;
+> +	bool cyclic;
+>  
+>  	status = dma_cookie_status(chan, cookie, txstate);
+>  	if (status == DMA_COMPLETE || !txstate)
+> @@ -1375,10 +1376,11 @@ static enum dma_status rcar_dmac_tx_status(struct dma_chan *chan,
+>  
+>  	spin_lock_irqsave(&rchan->lock, flags);
+>  	residue = rcar_dmac_chan_get_residue(rchan, cookie);
+> +	cyclic = rchan->desc.running ? rchan->desc.running->cyclic : false;
+>  	spin_unlock_irqrestore(&rchan->lock, flags);
+>  
+>  	/* if there's no residue, the cookie is complete */
+> -	if (!residue)
+> +	if (!residue && !cyclic)
+>  		return DMA_COMPLETE;
+>  
+>  	dma_set_residue(txstate, residue);
 
 -- 
 Regards,
