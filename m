@@ -2,97 +2,91 @@ Return-Path: <SRS0=s8sg=SO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31335C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE29C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F124920675
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:34:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tL+1I8Nk"
+	by mail.kernel.org (Postfix) with ESMTP id 251D22084D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfDLKeD (ORCPT
+        id S1726730AbfDLKnM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Apr 2019 06:34:03 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39200 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbfDLKeC (ORCPT
+        Fri, 12 Apr 2019 06:43:12 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:51778 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfDLKnM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Apr 2019 06:34:02 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4569233C;
-        Fri, 12 Apr 2019 12:34:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1555065241;
-        bh=xBK2hlrYXI9cbsDa5KiUmcc6sDKEmzYjNlYVxekjU80=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=tL+1I8Nk+1OT0YVcNrcq9eNBL9lc2Ga0s52RzcSj2Y6VBAHOgmHYcTa16NqH0kBX0
-         E1vfz59FFGNvIWGmGuVL4kUsyGDPd6zAzBNvT5JOkxIcFDRWPaLXddrRN5MM2kXbB/
-         jKg59739eRWmAM6MPEOGVOOIjkvTpBuWRCDVepMI=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 2/4] dt-bindings: display: renesas: lvds: Document
- r8a774a1 bindings
-To:     Biju Das <biju.das@bp.renesas.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-References: <1554993271-29523-1-git-send-email-biju.das@bp.renesas.com>
- <1554993271-29523-3-git-send-email-biju.das@bp.renesas.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <809d6dc1-1095-1210-1761-e5de67031eb2@ideasonboard.com>
-Date:   Fri, 12 Apr 2019 11:33:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 12 Apr 2019 06:43:12 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 8261C25AD68;
+        Fri, 12 Apr 2019 20:43:10 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 78F539403FF; Fri, 12 Apr 2019 12:43:08 +0200 (CEST)
+Date:   Fri, 12 Apr 2019 12:43:08 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Cao Van Dong <cv-dong@jinso.co.jp>
+Cc:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
+        geert+renesas@glider.be, devicetree@vger.kernel.org,
+        biju.das@bp.renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        kuninori.morimoto.gx@renesas.com, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp
+Subject: Re: [PATCH v2 14/20] dt-bindings: display: renesas: lvds: Add
+ r8a77470 support
+Message-ID: <20190412104308.nozru2hcwmah53nx@verge.net.au>
+References: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
+ <1554969262-15028-15-git-send-email-cv-dong@jinso.co.jp>
 MIME-Version: 1.0
-In-Reply-To: <1554993271-29523-3-git-send-email-biju.das@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1554969262-15028-15-git-send-email-cv-dong@jinso.co.jp>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
-
-Thank you for the patch,
-
-On 11/04/2019 15:34, Biju Das wrote:
-> Document the RZ/G2M (R8A774A1) LVDS bindings.
+On Thu, Apr 11, 2019 at 04:54:16PM +0900, Cao Van Dong wrote:
+> Add lvds support and document SoC specific bindings for R-Car RZ/G1C(r8a77470) SoC.
 > 
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
 
-This looks good.
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+The register layout of the LVDS module on the RZ/G1C (r8a77470) seems
+different to that of, f.e. the R8A7791 (R-Car M2-W). Are you sure this
+is the right driver for this IP block?
 
 > ---
 >  Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/gpu/drm/rcar-du/rcar_lvds.c                               | 1 +
+>  2 files changed, 2 insertions(+)
 > 
 > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-> index 900a884..86a691a 100644
+> index a720dbb..f720883 100644
 > --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
 > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
 > @@ -9,6 +9,7 @@ Required properties:
 >  - compatible : Shall contain one of
 >    - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
 >    - "renesas,r8a7744-lvds" for R8A7744 (RZ/G1N) compatible LVDS encoders
-> +  - "renesas,r8a774a1-lvds" for R8A774A1 (RZ/G2M) compatible LVDS encoders
+> +  - "renesas,r8a77470-lvds" for R8A77470 (RZ/G1C) compatible LVDS encoders
 >    - "renesas,r8a774c0-lvds" for R8A774C0 (RZ/G2E) compatible LVDS encoders
 >    - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS encoders
 >    - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS encoders
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> index f7e4710..61a536f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> @@ -925,6 +925,7 @@ static const struct rcar_lvds_device_info rcar_lvds_r8a77995_info = {
+>  static const struct of_device_id rcar_lvds_of_table[] = {
+>  	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
+>  	{ .compatible = "renesas,r8a7744-lvds", .data = &rcar_lvds_gen2_info },
+> +	{ .compatible = "renesas,r8a77470-lvds", .data = &rcar_lvds_gen2_info },
+>  	{ .compatible = "renesas,r8a774c0-lvds", .data = &rcar_lvds_r8a77990_info },
+>  	{ .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info },
+>  	{ .compatible = "renesas,r8a7791-lvds", .data = &rcar_lvds_gen2_info },
+> -- 
+> 2.7.4
 > 
-
