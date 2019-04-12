@@ -4,200 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B05C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 11:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71264C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 11:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D21002186A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 11:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46214206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 11:41:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbfDLLh4 (ORCPT
+        id S1727015AbfDLLlV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Apr 2019 07:37:56 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:50945 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbfDLLh4 (ORCPT
+        Fri, 12 Apr 2019 07:41:21 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:57762 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726872AbfDLLlV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Apr 2019 07:37:56 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 2CB1AC0012;
-        Fri, 12 Apr 2019 11:37:52 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
-        horms@verge.net.au, sergei.shtylyov@cogentembedded.com,
-        geert+renesas@glider.be
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77980: Add "renesas,id" to VIN
-Date:   Fri, 12 Apr 2019 13:38:32 +0200
-Message-Id: <20190412113832.30075-3-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190412113832.30075-1-jacopo+renesas@jmondi.org>
-References: <20190412113832.30075-1-jacopo+renesas@jmondi.org>
+        Fri, 12 Apr 2019 07:41:21 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6F60625AD68;
+        Fri, 12 Apr 2019 21:41:19 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 088D19403FF; Fri, 12 Apr 2019 13:41:16 +0200 (CEST)
+Date:   Fri, 12 Apr 2019 13:41:16 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Cao Van Dong <cv-dong@jinso.co.jp>
+Cc:     linux-renesas-soc@vger.kernel.org, broonie@kernel.org,
+        geert+renesas@glider.be, devicetree@vger.kernel.org,
+        biju.das@bp.renesas.com, yoshihiro.shimoda.uh@renesas.com,
+        kuninori.morimoto.gx@renesas.com, h-inayoshi@jinso.co.jp,
+        nv-dung@jinso.co.jp, na-hoan@jinso.co.jp
+Subject: Re: [PATCH v2 09/20] ARM: dts: r8a77470: Add VSP support
+Message-ID: <20190412114116.xmjmi53k5lsfu3vq@verge.net.au>
+References: <1554969262-15028-1-git-send-email-cv-dong@jinso.co.jp>
+ <1554969262-15028-10-git-send-email-cv-dong@jinso.co.jp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1554969262-15028-10-git-send-email-cv-dong@jinso.co.jp>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the "renesas,id" property to VIN nodes in the R-Car V3H R8A77980
-device tree.
+On Thu, Apr 11, 2019 at 04:54:11PM +0900, Cao Van Dong wrote:
+> Add vsp nodes to dtsi for VSP support on the RZ/G1C (r8a77470) SoC.
+> 
+> Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
+> ---
+>  arch/arm/boot/dts/r8a77470.dtsi | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
+> index ae1dba0..2540bca 100644
+> --- a/arch/arm/boot/dts/r8a77470.dtsi
+> +++ b/arch/arm/boot/dts/r8a77470.dtsi
+> @@ -1113,6 +1113,24 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		vsp@fe928000 {
+> +			compatible = "renesas,vsp1";
+> +			reg = <0 0xfe928000 0 0x8000>;
+> +			interrupts = <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 131>;
+> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> +			resets = <&cpg 131>;
+> +		};
+> +
+> +		vsp@fe930000 {
+> +			compatible = "renesas,vsp1";
+> +			reg = <0 0xfe930000 0 0x8000>;
+> +			interrupts = <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 128>;
+> +			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
+> +			resets = <&cpg 128>;
+> +		};
+> +
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
+Nodes should be sorted by
+1. Bus address
+2. IP block tupe
 
-I do not have a V3H board to test on, but I suspect VIN failed to probe
-on V3H before these 2 patches.
+So the above vsp nodes should go after sd@ee100000.
 
-If that's the case, these patches would merit
-Fixes: 3182aa4e0bf4 ("arm64: dts: renesas: r8a77980: add CSI2/VIN support")
+Otherwise this patch looks good to me.
 
-Sergei, do you still have a V3H board around? Could I have your Tested-by
-tag if things are fine now?
-
-Thanks
-  j
----
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index 4081622d548a..a901a341dcf7 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -865,6 +865,7 @@
- 			clocks = <&cpg CPG_MOD 811>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 811>;
-+			renesas,id = <0>;
- 			status = "disabled";
-
- 			ports {
-@@ -892,6 +893,7 @@
- 			clocks = <&cpg CPG_MOD 810>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			status = "disabled";
-+			renesas,id = <1>;
- 			resets = <&cpg 810>;
-
- 			ports {
-@@ -919,6 +921,7 @@
- 			clocks = <&cpg CPG_MOD 809>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 809>;
-+			renesas,id = <2>;
- 			status = "disabled";
-
- 			ports {
-@@ -946,6 +949,7 @@
- 			clocks = <&cpg CPG_MOD 808>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 808>;
-+			renesas,id = <3>;
- 			status = "disabled";
-
- 			ports {
-@@ -973,6 +977,7 @@
- 			clocks = <&cpg CPG_MOD 807>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 807>;
-+			renesas,id = <4>;
- 			status = "disabled";
-
- 			ports {
-@@ -1000,6 +1005,7 @@
- 			clocks = <&cpg CPG_MOD 806>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 806>;
-+			renesas,id = <5>;
- 			status = "disabled";
-
- 			ports {
-@@ -1027,6 +1033,7 @@
- 			clocks = <&cpg CPG_MOD 805>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 805>;
-+			renesas,id = <6>;
- 			status = "disabled";
-
- 			ports {
-@@ -1054,6 +1061,7 @@
- 			clocks = <&cpg CPG_MOD 804>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 804>;
-+			renesas,id = <7>;
- 			status = "disabled";
-
- 			ports {
-@@ -1081,6 +1089,7 @@
- 			clocks = <&cpg CPG_MOD 628>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 628>;
-+			renesas,id = <8>;
- 			status = "disabled";
- 		};
-
-@@ -1091,6 +1100,7 @@
- 			clocks = <&cpg CPG_MOD 627>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 627>;
-+			renesas,id = <9>;
- 			status = "disabled";
- 		};
-
-@@ -1101,6 +1111,7 @@
- 			clocks = <&cpg CPG_MOD 625>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 625>;
-+			renesas,id = <10>;
- 			status = "disabled";
- 		};
-
-@@ -1111,6 +1122,7 @@
- 			clocks = <&cpg CPG_MOD 618>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 618>;
-+			renesas,id = <11>;
- 			status = "disabled";
- 		};
-
-@@ -1121,6 +1133,7 @@
- 			clocks = <&cpg CPG_MOD 612>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 612>;
-+			renesas,id = <12>;
- 			status = "disabled";
- 		};
-
-@@ -1131,6 +1144,7 @@
- 			clocks = <&cpg CPG_MOD 608>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 608>;
-+			renesas,id = <13>;
- 			status = "disabled";
- 		};
-
-@@ -1141,6 +1155,7 @@
- 			clocks = <&cpg CPG_MOD 605>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 605>;
-+			renesas,id = <14>;
- 			status = "disabled";
- 		};
-
-@@ -1151,6 +1166,7 @@
- 			clocks = <&cpg CPG_MOD 604>;
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 604>;
-+			renesas,id = <15>;
- 			status = "disabled";
- 		};
-
---
-2.21.0
-
+>  		sdhi0: sd@ee100000 {
+>  			compatible = "renesas,sdhi-r8a77470",
+>  				     "renesas,rcar-gen2-sdhi";
+> -- 
+> 2.7.4
+> 
