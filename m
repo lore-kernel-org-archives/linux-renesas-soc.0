@@ -3,126 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93701C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27795C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63EB22083E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5D0B20850
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:29:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfDLKXT (ORCPT
+        id S1726327AbfDLK3W (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Apr 2019 06:23:19 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:7316 "EHLO
+        Fri, 12 Apr 2019 06:29:22 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:43761 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726327AbfDLKXT (ORCPT
+        by vger.kernel.org with ESMTP id S1726114AbfDLK3W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Apr 2019 06:23:19 -0400
+        Fri, 12 Apr 2019 06:29:22 -0400
 X-IronPort-AV: E=Sophos;i="5.60,340,1549897200"; 
-   d="scan'208";a="13075848"
+   d="scan'208";a="13076615"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Apr 2019 19:23:17 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Apr 2019 19:29:20 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3775542F9419;
-        Fri, 12 Apr 2019 19:23:14 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 06C3142FE7BC;
+        Fri, 12 Apr 2019 19:29:16 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Biju Das <biju.das@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH V3 7/7] arm64: dts: renesas: r8a774c0-cat874: Enable usb role switch support
-Date:   Fri, 12 Apr 2019 11:16:19 +0100
-Message-Id: <1555064179-15626-8-git-send-email-biju.das@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V3 1/7] dt-bindings: usb: hd3ss3220 device tree binding document
+Date:   Fri, 12 Apr 2019 11:22:43 +0100
+Message-Id: <1555064563-22465-1-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1555064179-15626-1-git-send-email-biju.das@bp.renesas.com>
-References: <1555064179-15626-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch enables TI HD3SS3220 device and support usb role switch
-for the CAT 874 platform.
+Add device tree binding document for TI HD3SS3220 Type-C DRP port
+controller driver.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 V2-->V3
-  * Used "renesas,usb-role-switch" instead of generic "usb-role-switch"
-    property
+  * Added Rob's Reviewed by tag.
 V1-->V2
-  * New patch
+  * Added connector node.
+  * updated the example with connector node.
 ---
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 39 +++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ .../devicetree/bindings/usb/ti,hd3ss3220.txt       | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index b9ae7db..746826c 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -85,6 +85,34 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&i2c0 {
-+	status = "okay";
-+	clock-frequency = <100000>;
+diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+new file mode 100644
+index 0000000..7f41400
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+@@ -0,0 +1,37 @@
++TI HD3SS3220 TypeC DRP Port Controller.
 +
-+	hd3ss3220@47 {
-+		compatible = "ti,hd3ss3220";
-+		reg = <0x47>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
++Required properties:
++ - compatible: Must be "ti,hd3ss3220".
++ - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
++ - interrupts: <a b> where a is the interrupt number and b represents an
++   encoding of the sense and level information for the interrupt.
 +
-+		usb_con: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+		};
++Required sub-node:
++ - connector : The "usb-c-connector" attached to the hd3ss3220 chip. The
++   bindings of the connector node are specified in:
 +
-+		port {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++	Documentation/devicetree/bindings/connector/usb-connector.txt
 +
-+			hd3ss3220_ep: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&usb3peri_role_switch>;
-+			};
-+		};
++Example:
++hd3ss3220@47 {
++	compatible = "ti,hd3ss3220";
++	reg = <0x47>;
++	interrupt-parent = <&gpio6>;
++	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
++
++	usb_con: connector {
++		compatible = "usb-c-connector";
++		label = "USB-C";
++		data-role = "dual";
 +	};
-+};
-+
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
- 	pinctrl-names = "default";
-@@ -175,6 +203,17 @@
- &usb3_peri0 {
- 	companion = <&xhci0>;
- 	status = "okay";
-+	renesas,usb-role-switch;
 +
 +	port {
 +		#address-cells = <1>;
 +		#size-cells = <0>;
 +
-+		usb3peri_role_switch: endpoint@0 {
++		hd3ss3220_ep: endpoint@0 {
 +			reg = <0>;
-+			remote-endpoint = <&hd3ss3220_ep>;
++			remote-endpoint = <&usb3peri_role_switch>;
 +		};
 +	};
- };
- 
- &xhci0 {
++};
 -- 
 2.7.4
 
