@@ -2,128 +2,125 @@ Return-Path: <SRS0=s8sg=SO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA06CC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 07:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B8DC10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 08:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C52A520850
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 07:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0864E2084D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 08:34:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="VToswLyn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbfDLHGp (ORCPT
+        id S1727339AbfDLIeD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Apr 2019 03:06:45 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:33241 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfDLHGp (ORCPT
+        Fri, 12 Apr 2019 04:34:03 -0400
+Received: from mail-eopbgr1410124.outbound.protection.outlook.com ([40.107.141.124]:50336
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726884AbfDLIeC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Apr 2019 03:06:45 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 919F960009;
-        Fri, 12 Apr 2019 07:06:41 +0000 (UTC)
-Date:   Fri, 12 Apr 2019 09:07:31 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: rcar-csi2: List resets as a
- mandatory property
-Message-ID: <20190412070730.ley3qv3wotexktoq@uno.localdomain>
-References: <20190312234930.23193-1-niklas.soderlund+renesas@ragnatech.se>
- <20190312234930.23193-2-niklas.soderlund+renesas@ragnatech.se>
- <20190412070338.5n6cs55pkecwglnu@uno.localdomain>
+        Fri, 12 Apr 2019 04:34:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xhdstmL2lBVWKrxNJ/0O8GLZp2k6/8jDfKts7sfU5SI=;
+ b=VToswLynJDBX5ryST8p7Ltc3ZEYocBvLPLM8s6KHYHgRWAa2G0RDS+5kN9Fyjtan4We1IZOR52YpmtaXHjbPS+3m9SLVBhhUx7YyqwN42AH8wpgvklwjS4y9YtWTO1pMJErY43dhl3YgqY74DMLmxhFMSn3w/UGm0Y5ZYRDabt4=
+Received: from TYAPR01MB4271.jpnprd01.prod.outlook.com (20.178.139.148) by
+ TYAPR01MB3567.jpnprd01.prod.outlook.com (20.178.137.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1792.17; Fri, 12 Apr 2019 08:33:59 +0000
+Received: from TYAPR01MB4271.jpnprd01.prod.outlook.com
+ ([fe80::cda2:4f20:84e4:de70]) by TYAPR01MB4271.jpnprd01.prod.outlook.com
+ ([fe80::cda2:4f20:84e4:de70%4]) with mapi id 15.20.1771.016; Fri, 12 Apr 2019
+ 08:33:59 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     "REE dirk.behme@de.bosch.com" <dirk.behme@de.bosch.com>
+CC:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "vkoul@kernel.org" <vkoul@kernel.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "niklas.soderlund+renesas@ragnatech.se" 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        "laurent.pinchart+renesas@ideasonboard.com" 
+        <laurent.pinchart+renesas@ideasonboard.com>,
+        "Achim.Dahlhoff@de.bosch.com" <Achim.Dahlhoff@de.bosch.com>,
+        "REE dirk.behme@de.bosch.com" <dirk.behme@de.bosch.com>,
+        "ylhuajnu@outlook.com" <ylhuajnu@outlook.com>,
+        HIROYUKI YOKOYAMA <hiroyuki.yokoyama.vx@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 1/2] dmaengine: sh: rcar-dmac: With cyclic DMA residue
+ 0 is valid
+Thread-Topic: [PATCH v3 1/2] dmaengine: sh: rcar-dmac: With cyclic DMA residue
+ 0 is valid
+Thread-Index: AQHU8PCvoH1UX+nP30C3l4GRuvgK0qY4Mh9A
+Date:   Fri, 12 Apr 2019 08:33:58 +0000
+Message-ID: <TYAPR01MB427170110F8A8D6822D17F83D8280@TYAPR01MB4271.jpnprd01.prod.outlook.com>
+References: <20190412052914.16006-1-dirk.behme@de.bosch.com>
+In-Reply-To: <20190412052914.16006-1-dirk.behme@de.bosch.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [118.238.235.108]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ac89b144-3c92-4eb3-caf6-08d6bf219be9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600139)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:TYAPR01MB3567;
+x-ms-traffictypediagnostic: TYAPR01MB3567:
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-microsoft-antispam-prvs: <TYAPR01MB3567AF254BB92FFF70C4F39CD8280@TYAPR01MB3567.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 0005B05917
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(366004)(39860400002)(136003)(189003)(199004)(256004)(52536014)(86362001)(11346002)(33656002)(476003)(68736007)(446003)(97736004)(486006)(5660300002)(4326008)(25786009)(6862004)(53936002)(6246003)(55016002)(9686003)(4744005)(71200400001)(74316002)(71190400001)(305945005)(7736002)(316002)(478600001)(6116002)(81166006)(81156014)(54906003)(8936002)(14454004)(3846002)(102836004)(26005)(186003)(229853002)(66066001)(6436002)(8676002)(6506007)(76176011)(7696005)(106356001)(105586002)(2906002)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3567;H:TYAPR01MB4271.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: kBrIRYfzL67wYEhcR7+id3mTOHTKHBEsJWWROlbmc/TGxIB5qcX/0zBIZKR0XdjOAs7Befu96iBZZY8zkgLHGT1li4q78qmWNwbm5kic9qC7Om61nOc6zzqa2YZ0uXgw57mziX+hmIWwTY9B2NuIfom8M3h1djKpXAsKpHgr4qjfz1R+uUu7Q6p+jmvIhT2Y0Ipd6zejv2XPd+IduhO2m5kU8g0M7TWCyrxNu5b6SvU9nENnC8+E83NKyuaGj6h4dUsH3QPUylCl0UdZxH08nowqqc8ECrh0dXs65kFo04EqhzgUULQVEE2rLqigxnPz5qj6aX2Op0lYWwH8T3iBeelZ+M4wxS8tTecZ52ws8Fpjf1jgQwe0ttYpA47R+37WyGU99/npkcy3T3HhbeAx53Qpg2n1AR7YjgbqWzv+OmA=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yclc63psgmrmxktg"
-Content-Disposition: inline
-In-Reply-To: <20190412070338.5n6cs55pkecwglnu@uno.localdomain>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac89b144-3c92-4eb3-caf6-08d6bf219be9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Apr 2019 08:33:58.9099
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3567
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Dirk-san,
 
---yclc63psgmrmxktg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Dirk Behme, Sent: Friday, April 12, 2019 2:29 PM
+>=20
+> Having a cyclic DMA, a residue 0 is not an indication of a completed
+> DMA. In case of cyclic DMA make sure that dma_set_residue() is called
+> and with this a residue of 0 is forwarded correctly to the caller.
+>=20
+> Fixes: 3544d2878817 ("dmaengine: rcar-dmac: use result of updated get_res=
+idue in tx_status")
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Achim Dahlhoff <Achim.Dahlhoff@de.bosch.com>
+> Signed-off-by: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+> Signed-off-by: Yao Lihua <ylhuajnu@outlook.com>
+> Cc: <stable@vger.kernel.org> # v4.8+
+> ---
 
-Oh, I missed a pull request was sent already for this series :)
+Thank you for the patch! Since cyclic transfers will not stop even if
+the residue is 0, I agree this driver should not return DMA_COMPLETE
+(transaction completed). So,
 
-Even better!
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-On Fri, Apr 12, 2019 at 09:03:38AM +0200, Jacopo Mondi wrote:
-> Hi Niklas,
->
-> On Wed, Mar 13, 2019 at 12:49:29AM +0100, Niklas S=C3=B6derlund wrote:
-> > The resets property will become mandatory to operate the device, list it
-> > as such. All device tree source files have always included the reset
-> > property so making it mandatory will not introduce any regressions.
-> >
-> > While at it improve the description for the clocks property.
-> >
-> > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatec=
-h.se>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.=
-txt b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-> > index d63275e17afdd180..9a0d0531c67df48c 100644
-> > --- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-> > +++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-> > @@ -18,7 +18,8 @@ Mandatory properties
-> >
-> >   - reg: the register base and size for the device registers
-> >   - interrupts: the interrupt for the device
-> > - - clocks: reference to the parent clock
-> > + - clocks: A phandle + clock specifier for the module clock
-> > + - resets: A phandle + reset specifier for the module reset
-> >
->
-> Verified that all users in mainline of this bindings already contains
-> a 'reset' property:
-> Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
->
-> Thanks
->    j
->
-> >  The device node shall contain two 'port' child nodes according to the
-> >  bindings defined in Documentation/devicetree/bindings/media/
-> > --
-> > 2.21.0
-> >
+Best regards,
+Yoshihiro Shimoda
 
-
-
---yclc63psgmrmxktg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlywOTIACgkQcjQGjxah
-Vjy3ThAAiU2aRR84/SSVlNW1zKt/OFok17DzWczEyOmC+P0Pu923WfNv5LLW+IEu
-zdrnBU3bSxQq0PVZrbJ/XlisK+J3UUU7pMVDu34ED+9hwcIaeTyoXZeDmpCm3JKG
-4zm5z8h+U49ZqJDyvGfe8ydFLLs8kqoIJI+PqHN/EwP4JkyYho1L2f6xfXV3yaPA
-u36Tijx3TnRXm0c2Kb1GF9JYBohUi2XtfehhimscB0u701BCOvidXTN+dga17yW1
-GwLcZZ+wzkl7qyXLG0vCWAAloZBEOq15HxULePQ1nk4rv2lInBQlXox7Hcximwsq
-WY18ZlMmSoG5CHWX1qzZsiJef6xeonIr4QTqVN/jOgoQjXXsIpvrxjtVYiY9Ueau
-YSO5oQhSf5LgI/bqx4+4QrOhoKJqbWhvX1bLa9fml5FkpQiGCCZ0V2olLFY8Lydc
-nRQq2ULBj5vUEVYHhET0vErND6E2Tta+bgsw7W2eYRPbiFVk/RGN7Sicqyn+IAX0
-2beQXa3XLIx0oSKx3NIxY4kgVl5Su1mEX7gzLgQuX1nQ8dn97tbgAnaLng9NaqUo
-loG7k0dNZzgVSAyspVDEaYn5LvA2U0D6s4gEeCZOv0CIa12B0JJFeK0yL6L533rN
-3SAocxW/wfMcnVs642uaeKJmRBp3SbmRfVpR+Xn1zRDHn27frIM=
-=X9f5
------END PGP SIGNATURE-----
-
---yclc63psgmrmxktg--
