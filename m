@@ -2,112 +2,97 @@ Return-Path: <SRS0=s8sg=SO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27795C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31335C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:34:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5D0B20850
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F124920675
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:34:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tL+1I8Nk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfDLK3W (ORCPT
+        id S1728415AbfDLKeD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Apr 2019 06:29:22 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:43761 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726114AbfDLK3W (ORCPT
+        Fri, 12 Apr 2019 06:34:03 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39200 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfDLKeC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Apr 2019 06:29:22 -0400
-X-IronPort-AV: E=Sophos;i="5.60,340,1549897200"; 
-   d="scan'208";a="13076615"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Apr 2019 19:29:20 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 06C3142FE7BC;
-        Fri, 12 Apr 2019 19:29:16 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Fri, 12 Apr 2019 06:34:02 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4569233C;
+        Fri, 12 Apr 2019 12:34:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1555065241;
+        bh=xBK2hlrYXI9cbsDa5KiUmcc6sDKEmzYjNlYVxekjU80=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=tL+1I8Nk+1OT0YVcNrcq9eNBL9lc2Ga0s52RzcSj2Y6VBAHOgmHYcTa16NqH0kBX0
+         E1vfz59FFGNvIWGmGuVL4kUsyGDPd6zAzBNvT5JOkxIcFDRWPaLXddrRN5MM2kXbB/
+         jKg59739eRWmAM6MPEOGVOOIjkvTpBuWRCDVepMI=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/4] dt-bindings: display: renesas: lvds: Document
+ r8a774a1 bindings
+To:     Biju Das <biju.das@bp.renesas.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3 1/7] dt-bindings: usb: hd3ss3220 device tree binding document
-Date:   Fri, 12 Apr 2019 11:22:43 +0100
-Message-Id: <1555064563-22465-1-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+References: <1554993271-29523-1-git-send-email-biju.das@bp.renesas.com>
+ <1554993271-29523-3-git-send-email-biju.das@bp.renesas.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <809d6dc1-1095-1210-1761-e5de67031eb2@ideasonboard.com>
+Date:   Fri, 12 Apr 2019 11:33:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1554993271-29523-3-git-send-email-biju.das@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device tree binding document for TI HD3SS3220 Type-C DRP port
-controller driver.
+Hi Biju,
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-V2-->V3
-  * Added Rob's Reviewed by tag.
-V1-->V2
-  * Added connector node.
-  * updated the example with connector node.
----
- .../devicetree/bindings/usb/ti,hd3ss3220.txt       | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+Thank you for the patch,
 
-diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-new file mode 100644
-index 0000000..7f41400
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
-@@ -0,0 +1,37 @@
-+TI HD3SS3220 TypeC DRP Port Controller.
-+
-+Required properties:
-+ - compatible: Must be "ti,hd3ss3220".
-+ - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
-+ - interrupts: <a b> where a is the interrupt number and b represents an
-+   encoding of the sense and level information for the interrupt.
-+
-+Required sub-node:
-+ - connector : The "usb-c-connector" attached to the hd3ss3220 chip. The
-+   bindings of the connector node are specified in:
-+
-+	Documentation/devicetree/bindings/connector/usb-connector.txt
-+
-+Example:
-+hd3ss3220@47 {
-+	compatible = "ti,hd3ss3220";
-+	reg = <0x47>;
-+	interrupt-parent = <&gpio6>;
-+	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+
-+	usb_con: connector {
-+		compatible = "usb-c-connector";
-+		label = "USB-C";
-+		data-role = "dual";
-+	};
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		hd3ss3220_ep: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usb3peri_role_switch>;
-+		};
-+	};
-+};
--- 
-2.7.4
+On 11/04/2019 15:34, Biju Das wrote:
+> Document the RZ/G2M (R8A774A1) LVDS bindings.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+
+This looks good.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+
+> ---
+>  Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> index 900a884..86a691a 100644
+> --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>  - compatible : Shall contain one of
+>    - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
+>    - "renesas,r8a7744-lvds" for R8A7744 (RZ/G1N) compatible LVDS encoders
+> +  - "renesas,r8a774a1-lvds" for R8A774A1 (RZ/G2M) compatible LVDS encoders
+>    - "renesas,r8a774c0-lvds" for R8A774C0 (RZ/G2E) compatible LVDS encoders
+>    - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS encoders
+>    - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS encoders
+> 
 
