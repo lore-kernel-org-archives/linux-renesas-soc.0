@@ -2,196 +2,107 @@ Return-Path: <SRS0=s8sg=SO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BEDC10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBE7C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A8A2171F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:08:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CBF32082E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Apr 2019 10:12:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="isDaa61V"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="b3LdXfbP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726128AbfDLKIP (ORCPT
+        id S1726727AbfDLKMO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Apr 2019 06:08:15 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42738 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfDLKIP (ORCPT
+        Fri, 12 Apr 2019 06:12:14 -0400
+Received: from mail-eopbgr1410127.outbound.protection.outlook.com ([40.107.141.127]:63866
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726713AbfDLKMO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Apr 2019 06:08:15 -0400
-Received: by mail-lf1-f68.google.com with SMTP id w23so7035747lfc.9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Apr 2019 03:08:13 -0700 (PDT)
+        Fri, 12 Apr 2019 06:12:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=4dTYDIGFD8DnBTJGMrhpiGHbDmIv11aAajHEP51y5vs=;
-        b=isDaa61V7tooosFrdoKKwS7fPA5dU1FJ7GK8I7Ju/Fc4gxbzaJBLTVdYUXo+p2KRgY
-         NgjoNTEd/DuBUt7TyTeh054FfrBYUWRixJjt3w3zCibF5IHlkCd/orzg1SdSxnCazTeZ
-         rm5c74RDJ9QjiOoZCVHvI2yL5De58wi8UgTObWWdAPHmF5T2WTc8cy2kX5vqCek0p7I9
-         Fsr6om9PVFRm1uemBVQXwiVBJ3sGoylr6Uz0dF0yHUBzMxEvjDJ9gTCxWRL0bYy0+QP7
-         19jGIFFEDsqd3+1mv8eBWNqB1PFyGusHqW1tTf94VDcMYnkkow7WgImNfxLpcMciLXU+
-         kf3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=4dTYDIGFD8DnBTJGMrhpiGHbDmIv11aAajHEP51y5vs=;
-        b=W4TCbSInBI7rv8H20ie88Ae1q0WyrIhVxlAi9lKqbrp7jsapdIGFYch4ictxofnsw0
-         Rsx2U/UXe/897NAtVoUgHqmpo5zHZUVLdeBQbA/kgsPC6Y/+CSZJaY1jzwy9fzgLZlk+
-         dRWzM9cPsZpaY2M1zrt/wA3Q/phUWW+C5ClBsCPEnlC9SaQSnIhGoThXCl/08wROTllb
-         Dl+S//iiuIwczdKeBnF2uPopMB96USdKFAJ7FC+VNyaw6VRPd8QVpGAQTXkLZabqtgJE
-         XNVkrsUPERNbcR18DCfmJU5MN8Ls+A4vVdwWTCjgXQEsHftiLzPNOoCAd5m/b79i9+O4
-         B0SQ==
-X-Gm-Message-State: APjAAAXw5Dz19Li70bLwF6eCH6fnMs8NNFaZYm1FD9ozZ6X9i6kQttuG
-        3nzr27R3PKTk1M6Mz1Fa9uyHiQ==
-X-Google-Smtp-Source: APXvYqwJHyPP4AkDYtMqAHhAULcpjUZjkUyA4UdPasRTUcaSUi7aDyZryZ08R6YrBvWvmMfJ7yDNyg==
-X-Received: by 2002:ac2:420b:: with SMTP id y11mr30727566lfh.104.1555063692187;
-        Fri, 12 Apr 2019 03:08:12 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id d22sm1439324lfm.57.2019.04.12.03.08.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Apr 2019 03:08:11 -0700 (PDT)
-Date:   Fri, 12 Apr 2019 12:08:11 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4] rcar-csi2: Propagate the FLD signal for NTSC and PAL
-Message-ID: <20190412100810.GJ30887@bigcity.dyn.berto.se>
-References: <20190411203444.23515-1-niklas.soderlund+renesas@ragnatech.se>
- <20190412084346.6lreffkpuuj7slqb@uno.localdomain>
- <20190412091321.GI30887@bigcity.dyn.berto.se>
- <20190412094722.GA4897@pendragon.ideasonboard.com>
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YmqtqFBooT/R4AMExI1gEW6EG+p9S1+9sG4vXQIYC4A=;
+ b=b3LdXfbPkpqPzNXS3657UfkCDkhojen3PB52P4KJyKS511BjqLbSxiEnSATlppkaO5nI4v600QA/8uXmk1UC14VST2ucSt9lCU/HpV7ieldYX+uv1fazZ8yelUIrUokbuv00v6KDm/3qS2VIdFKEROTQDW5SC/clpLo2Q54A76I=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
+ TY1PR01MB1466.jpnprd01.prod.outlook.com (52.133.163.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1771.16; Fri, 12 Apr 2019 10:12:09 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::9b4:609a:1271:478f]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::9b4:609a:1271:478f%3]) with mapi id 15.20.1792.009; Fri, 12 Apr 2019
+ 10:12:09 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+CC:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Color Keying
+Thread-Topic: Color Keying
+Thread-Index: AdTxFsn9K2T76xs8STW7FzhVEIAvkQ==
+Date:   Fri, 12 Apr 2019 10:12:09 +0000
+Message-ID: <TY1PR01MB1770CA2D8AFEEAAF55045AD0C0280@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f08133df-60a1-4e2a-86ad-08d6bf2f532f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600139)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:TY1PR01MB1466;
+x-ms-traffictypediagnostic: TY1PR01MB1466:
+x-microsoft-antispam-prvs: <TY1PR01MB14663730CC4BB9AD6CFDA068C0280@TY1PR01MB1466.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 0005B05917
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39860400002)(136003)(346002)(366004)(199004)(189003)(68736007)(71200400001)(99286004)(2906002)(7696005)(3480700005)(4744005)(52536014)(4326008)(5660300002)(6436002)(478600001)(316002)(66066001)(71190400001)(3846002)(86362001)(74316002)(305945005)(8936002)(7736002)(486006)(54906003)(186003)(6116002)(44832011)(33656002)(97736004)(14454004)(256004)(53936002)(106356001)(102836004)(105586002)(9686003)(7116003)(8676002)(81166006)(26005)(55016002)(25786009)(6506007)(81156014)(107886003)(476003)(221733001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1466;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: SKN7T3ey2zT8WkRVr8ZWjg7OkuqGvfhiQ0zWBaUI5xtKpwphcEusr2S/L/o1It+R8Lm7jVQFtCmig7qQpTfbgWstSUH/DM8VviB5oY3XE+xT4MdPHBFXqyhTHJsxMDd0SHjR/K+OHzprX57jP5QBTpK+sPZiUHpQVsjSFJP6W2krkxyO96y0oY/bDI/jKuN2X6Y13BHVzk80w6GkCBifXeZAGeSkqrLzCYzaL/O1oY8qqcWFFZwm8o+ygD3BuSrGshbYgAzq5aee/DfH/mZoIHkQYxPGHrb7TwUp+1/zDdt5BkcK0rtvFdgvIC1l3yEX1K/ds0yNA3DjEmVlYerSf1c/458WdfMMNcob3u3w0yxqHvhnBMUF3PRNXJL7mZKfOKxf3eacv8g+Iqc00iiCrIWHeNexYflWwb5ylZUlQMk=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190412094722.GA4897@pendragon.ideasonboard.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f08133df-60a1-4e2a-86ad-08d6bf2f532f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Apr 2019 10:12:09.6623
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1466
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Hello Laurent,
 
-On 2019-04-12 12:47:22 +0300, Laurent Pinchart wrote:
-> Hi Niklas,
-> 
-> On Fri, Apr 12, 2019 at 11:13:21AM +0200, Niklas Söderlund wrote:
-> > On 2019-04-12 10:43:46 +0200, Jacopo Mondi wrote:
-> > > Hi Niklas,
-> > >    I'm rebasing v4l2-mux series on top of your new VIN patches and
-> > > on this on I'm not sure how to proceed. Please see below.
-> > > 
-> > > Please also note this comment is not strictly on this patch, and should not
-> > > block its acceptance...
-> > > 
-> > > On Thu, Apr 11, 2019 at 10:34:44PM +0200, Niklas Söderlund wrote:
-> > >> Depending on which video standard is used the driver needs to setup the
-> > >> hardware to correctly handle fields. If stream is identified as NTSC
-> > >> or PAL setup field detection and propagate the field detection signal.
-> > >>
-> > >> Later versions of the datasheet have been updated to make it clear
-> > >> that FLD register should be set to 0 when dealing with non-interlaced
-> > >> field formats.
-> > >>
-> > >> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > >> ---
-> > >>  drivers/media/platform/rcar-vin/rcar-csi2.c | 16 +++++++++++++---
-> > >>  1 file changed, 13 insertions(+), 3 deletions(-)
-> > >>
-> > >> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > >> index 799e526fd3df5554..c1b38ebd061dbc35 100644
-> > >> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > >> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > >> @@ -68,6 +68,7 @@ struct rcar_csi2;
-> > >>  /* Field Detection Control */
-> > >>  #define FLD_REG				0x1c
-> > >>  #define FLD_FLD_NUM(n)			(((n) & 0xff) << 16)
-> > >> +#define FLD_DET_SEL(n)			(((n) & 0x3) << 4)
-> > >>  #define FLD_FLD_EN4			BIT(3)
-> > >>  #define FLD_FLD_EN3			BIT(2)
-> > >>  #define FLD_FLD_EN2			BIT(1)
-> > >> @@ -475,7 +476,7 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-> > >>  static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> > >>  {
-> > >>  	const struct rcar_csi2_format *format;
-> > >> -	u32 phycnt, vcdt = 0, vcdt2 = 0;
-> > >> +	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
-> > >>  	unsigned int i;
-> > >>  	int mbps, ret;
-> > >>
-> > >> @@ -507,6 +508,16 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> > >>  			vcdt2 |= vcdt_part << ((i % 2) * 16);
-> > >>  	}
-> > >>
-> > >> +	if (priv->mf.field == V4L2_FIELD_ALTERNATE) {
-> > > 
-> > > How would you handle this once priv->mf is expanded to become an array
-> > > of 'struct v4l2_mbus_framefmt' entries [1] ? Which of them is relevant for
-> > > field detection?
-> > > 
-> > > 
-> > >> +		fld = FLD_DET_SEL(1) | FLD_FLD_EN4 | FLD_FLD_EN3 | FLD_FLD_EN2
-> > >> +			| FLD_FLD_EN;
-> > >> +
-> > >> +		if (priv->mf.height == 240)
-> > > 
-> > > Same question here, even if I assume we could cycle on the entries and
-> > > collect the maximum size.
-> > 
-> > Well as the hardware do not support field detection of PAL and NTSC at 
-> > the same time one would need to either disallow that and fail stream on 
-> > or pick one and move on. Not sure which one would be best.
-> 
-> Can't you do this through the VnMC.FOC bit ? I wonder if we shouldn't
-> hardcode FLD_NUM here and handle PAL vs. NTSC in the VIN.
+has colour keying ever been tested on R-Car Gen3?
+I am working on HDMI support for the RZ/G2E, and I wanted to test "colorkey=
+", but it
+looks like that once you have RCAR_DU_FEATURE_VSP1_SOURCE defined within th=
+e
+features member of the SoC specific rcar_du_device_info struct, rcar_du_mod=
+eset_init
+won't call rcar_du_planes_init.
 
-I don't think so. My interpretation is that VnMC.FOC controls how the 
-fields are combined when using the VIN mode of interlacing ALTERNETING 
-and providing a INTERLACED frame to user-space.
+Is my understanding correct?
+Is this behaviour desired?
+Is there anything I can do to quickly test it on my RZ/G2E?
 
-My interpretation is that the change in this patch is visible VnINTS.FIS 
-which can be used to finaly add support for delivering ALTERNATE 
-directly to user-space as well as doing the right thing when interlacing 
-with the VnMC.FOC setting.
+Thanks,
+Fab
 
-> 
-> > > [1] Introduced by:
-> > > "rcar-csi2: use frame description information to configure CSI-2 bus"
-> > >> +			fld |= FLD_FLD_NUM(0);
-> > >> +		else
-> > >> +			fld |= FLD_FLD_NUM(1);
-> > >> +	}
-> > >> +
-> > >>  	phycnt = PHYCNT_ENABLECLK;
-> > >>  	phycnt |= (1 << priv->lanes) - 1;
-> > >>
-> > >> @@ -549,8 +560,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> > >>  	rcsi2_write(priv, PHYCNT_REG, phycnt);
-> > >>  	rcsi2_write(priv, LINKCNT_REG, LINKCNT_MONITOR_EN |
-> > >>  		    LINKCNT_REG_MONI_PACT_EN | LINKCNT_ICLK_NONSTOP);
-> > >> -	rcsi2_write(priv, FLD_REG, FLD_FLD_NUM(2) | FLD_FLD_EN4 |
-> > >> -		    FLD_FLD_EN3 | FLD_FLD_EN2 | FLD_FLD_EN);
-> > >> +	rcsi2_write(priv, FLD_REG, fld);
-> > >>  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
-> > >>  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
-> > >>
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
 
--- 
-Regards,
-Niklas Söderlund
+
+
