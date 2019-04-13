@@ -2,83 +2,78 @@ Return-Path: <SRS0=U6l9=SP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD85EC10F11
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 13 Apr 2019 16:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2347FC10F11
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 13 Apr 2019 18:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4B4214D8
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 13 Apr 2019 16:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9CBA2084E
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 13 Apr 2019 18:25:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="XmxtZ/RJ"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="GvvkzFa1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfDMQjz (ORCPT
+        id S1726620AbfDMSZM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 13 Apr 2019 12:39:55 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43333 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbfDMQjt (ORCPT
+        Sat, 13 Apr 2019 14:25:12 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:46667 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727103AbfDMSZM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 13 Apr 2019 12:39:49 -0400
-Received: by mail-lf1-f67.google.com with SMTP id g7so9809612lfh.10
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 13 Apr 2019 09:39:47 -0700 (PDT)
+        Sat, 13 Apr 2019 14:25:12 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h21so11754654ljk.13
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 13 Apr 2019 11:25:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:organization:message-id:date
+        h=from:subject:to:cc:references:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=lqQQjxlwy5s4k0pOdM4r1SzrqLbFpvl1fvNdiYMAO2M=;
-        b=XmxtZ/RJ3uEon5LcxKWuTGNZqwGwW9JpyTqI3i2q4f5x8GA/gO9YWdpY8WKts5sd5j
-         q1lh3qzEZA1FqphCx8kXgG16NrGW9PK4UWQxzF6XhrtAYQZCqbeojXY2P3GkXgaatPlh
-         0hFNETg7LYtx6P97YMBc8hRjCx5etAfa4yRgg7Ekq2ZAfSrim64Qn2uhWug6AACRCBxR
-         ZwfloAgHzIbrven7C+C7jQcJ6pnyKwWEQ1K7NJPSJK9EIq2dsG19E0WJnEkz8xFdq+PQ
-         nVM6RJMIif9q9ZkiCF0gIMx00NPjoGBuQBlDHVawWL3zKspIcPWswF+3DtUgb4qtMnTZ
-         z+hA==
+        bh=bjIZTwZg8SXO39vuwb21QIdVckr/1sLw4gqIIi2Nzxw=;
+        b=GvvkzFa1QYGysxd5ruKdiYP0dJ8WzsyjTRI+96xCFH300hoU3KQr/q3zutrwcEcRR2
+         qBzZPQRB+Y2b+h8mlEUVpqoAzfRdcTyF41epkOe2x4YSb7nvvaAO1+sSWNLFMFMDeNQs
+         2U/pvjlqJaOR0ZAGoT/++b2kuXgiHZGNsV6G8jCpp2kBaL0gVFWWM7URMcI4tMLvy5FO
+         q+ZhlChUOaql73KHfctCytgzMLbSUjC5b5v8aV5sXDroTtplu4sB2CZonieK5cPpzoOO
+         /seDdKesQP17wiFCrVifUd9/sRhYjCOH76vm1o7gJWw1uED15nZs697bk9asbR6KS/ik
+         HQ0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:organization
+        h=x-gm-message-state:from:subject:to:cc:references:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=lqQQjxlwy5s4k0pOdM4r1SzrqLbFpvl1fvNdiYMAO2M=;
-        b=fUepBr+xnT0TJJRJvllDZyVRS7i4CQ+2JZSA3xYd+scAngXtE+2U73+gag3UCj50lX
-         /kg86lBGigfiMm+INPXWdekgpQwU3hDKckJQHlqwzkniWBw8X7HgWycmZgG45jkzq+2w
-         Re8LQ9UzjghgUl1HldE3w4qoB0aOmdMiuvozmWpH5M44OABZmBkN3RSgB/eYIFxoRPQR
-         B8BEAyBIPDzMQFokokEFAVdLYU4ixuwsWZn8mImMlnDSvV5qweH7iZMp18HGnbkR0jKk
-         p7QHlzgONVueWn2MkqUw0Lxlttmx1KTWDCYTFx2KFkQkFIyB9AqVS3geFDPPzwa2Pad6
-         6bcw==
-X-Gm-Message-State: APjAAAX6t99gUAXE47mSqbqa06xN7BElwPJx/6//9N0+ZNbpHKaxm4mH
-        eJmGvCPppQdA+sE28cTwYsXBBQ==
-X-Google-Smtp-Source: APXvYqyUCjC7TPk4faI89BkwaoYfCTZv+IVuLNIViSvu+F6qAAypK30dSWChJ5r09RoGJl48oObM5w==
-X-Received: by 2002:ac2:4a86:: with SMTP id l6mr24144454lfp.51.1555173587224;
-        Sat, 13 Apr 2019 09:39:47 -0700 (PDT)
+        bh=bjIZTwZg8SXO39vuwb21QIdVckr/1sLw4gqIIi2Nzxw=;
+        b=OEHAKVSTxklVlmtf8YwxN/264lASlqKoSHq1CH6jegKFIguwLaOPvu5Sw0Tandyp7/
+         NOq8/rGs0BdvXbseTcMg+otcrT3F6jou0bp9eqyLf/Pnig9SHZS7Q5xaj6jYL9TPU88T
+         HOeNDl+5Cbks/c5GK4luKTgA4PFS4wKuhOzWzMiL1sEqn/gZb8xtAU3WjewMhs4+SWW4
+         TyTO94EVefLdMSbVSgVrGt81gGS93uH4u/aa1r2jvYpLjHKUAkb1j2HeJUko+29tISWi
+         MDwp/VpSuZvNP+Y2GccWbJQhMXpa6R+WQjSZ2+1EfwqCu2qml7wG+YVMSQLWFlGyl//5
+         CKZQ==
+X-Gm-Message-State: APjAAAXfJ4gL93vCfgyOFQ5IpUZtjeyA1sBwz7lwY4Sv714AEc1W4fVd
+        l9ERIWurWMnPn7idQwukrU5Sbw==
+X-Google-Smtp-Source: APXvYqz+LKWYHcbco0HSwSjUYFCZRL7mpH9Bbfr0NnH+CTxcMCT1HddlIhManCY5PmIMnUCmHpih7w==
+X-Received: by 2002:a2e:8347:: with SMTP id l7mr33871847ljh.17.1555179909978;
+        Sat, 13 Apr 2019 11:25:09 -0700 (PDT)
 Received: from wasted.cogentembedded.com ([31.173.85.44])
-        by smtp.gmail.com with ESMTPSA id v21sm8843680lfg.26.2019.04.13.09.39.45
+        by smtp.gmail.com with ESMTPSA id q29sm8985499ljc.8.2019.04.13.11.25.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 13 Apr 2019 09:39:46 -0700 (PDT)
-Subject: Re: [PATCH v9 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
+        Sat, 13 Apr 2019 11:25:09 -0700 (PDT)
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, lee.jones@linaro.org
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1553847606-18122-1-git-send-email-masonccyang@mxic.com.tw>
- <1553847606-18122-3-git-send-email-masonccyang@mxic.com.tw>
- <1e2bf23d-db39-0d1d-0bcc-6d9cd2935a82@cogentembedded.com>
+Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77980: Add "renesas,id" to
+ VIN
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert+renesas@glider.be
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <20190412113832.30075-1-jacopo+renesas@jmondi.org>
+ <20190412113832.30075-3-jacopo+renesas@jmondi.org>
 Organization: Cogent Embedded
-Message-ID: <cdee3d53-6ee3-4435-117e-8ba4a58ca72b@cogentembedded.com>
-Date:   Sat, 13 Apr 2019 19:39:45 +0300
+Message-ID: <9797b2c6-58b0-954c-0d8d-f60c95ebc8e1@cogentembedded.com>
+Date:   Sat, 13 Apr 2019 21:25:08 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1e2bf23d-db39-0d1d-0bcc-6d9cd2935a82@cogentembedded.com>
+In-Reply-To: <20190412113832.30075-3-jacopo+renesas@jmondi.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
@@ -87,45 +82,32 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 04/13/2019 07:38 PM, Sergei Shtylyov wrote:
+On 04/12/2019 02:38 PM, Jacopo Mondi wrote:
 
->> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
->>
->> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> [...]
->> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
->> new file mode 100644
->> index 0000000..037f273
->> --- /dev/null
->> +++ b/drivers/spi/spi-renesas-rpc.c
-> [...]
->> +static int rpc_spi_probe(struct platform_device *pdev)
->> +{
->> +	struct spi_controller *ctlr;
->> +	struct rpc_mfd *rpc_mfd = dev_get_drvdata(pdev->dev.parent);
->> +	struct rpc_spi *rpc;
->> +	int ret;
->> +
->> +	ctlr = spi_alloc_master(&pdev->dev, sizeof(*rpc));
->> +	if (!ctlr)
->> +		return -ENOMEM;
->> +
->> +	platform_set_drvdata(pdev, ctlr);
->> +
->> +	rpc = spi_controller_get_devdata(ctlr);
->> +
->> +	ctlr->dev.of_node = pdev->dev.of_node;
-> [...]
->> +
->> +	pm_runtime_enable(&pdev->dev);
->> +	ctlr->auto_runtime_pm = true;
+> Add the "renesas,id" property to VIN nodes in the R-Car V3H R8A77980
+> device tree.
 > 
->    I think this line no longer works as expected with the new probing scheme.
-> Have you tested reading? v8 patch still works while v9 patches hang on doing:
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
 > 
-> $ cat /dev/mtd<n>...
+> I do not have a V3H board to test on, but I suspect VIN failed to probe
+> on V3H before these 2 patches.
 
-   Sorry, 'od -x', not 'cat'.
+   Yes, probably. The upstream patch wasn't ever runtime tested, so this
+went unnoticed. The BSPs use the old soc_camera driver.
 
-WBR, Sergei
+> If that's the case, these patches would merit
+> Fixes: 3182aa4e0bf4 ("arm64: dts: renesas: r8a77980: add CSI2/VIN support")
+
+   I'm OK with that.
+
+> Sergei, do you still have a V3H board around? Could I have your Tested-by
+> tag if things are fine now?
+
+   I have V3H Stater Kit on my desk but I don't think it has VINs wired to
+anything...
+
+> Thanks
+>   j
+
+MBR, Sergei
