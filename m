@@ -2,66 +2,82 @@ Return-Path: <SRS0=ZEG8=SQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B148C282EE
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E50AC10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00075206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27A332148E
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:31:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfDNK0k (ORCPT
+        id S1725829AbfDNKa7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 14 Apr 2019 06:26:40 -0400
-Received: from sauhun.de ([88.99.104.3]:32920 "EHLO pokefinder.org"
+        Sun, 14 Apr 2019 06:30:59 -0400
+Received: from sauhun.de ([88.99.104.3]:32954 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727099AbfDNK0k (ORCPT
+        id S1725807AbfDNKa7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 14 Apr 2019 06:26:40 -0400
+        Sun, 14 Apr 2019 06:30:59 -0400
 Received: from localhost (p5486CDCF.dip0.t-ipconnect.de [84.134.205.207])
-        by pokefinder.org (Postfix) with ESMTPSA id AD43D4A1353;
-        Sun, 14 Apr 2019 12:26:38 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-watchdog@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 16/16] watchdog: ziirave_wdt: drop warning after calling watchdog_init_timeout
-Date:   Sun, 14 Apr 2019 12:26:27 +0200
-Message-Id: <20190414102627.5564-17-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
+        by pokefinder.org (Postfix) with ESMTPSA id 5D9992CF687;
+        Sun, 14 Apr 2019 12:30:57 +0200 (CEST)
+Date:   Sun, 14 Apr 2019 12:30:57 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 00/16] watchdog: refactor init_timeout and update users
+Message-ID: <20190414103056.xp3fgj4at3ze656g@ninjato>
 References: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c4deemzkae32ddte"
+Content-Disposition: inline
+In-Reply-To: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The core will print out details now.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/watchdog/ziirave_wdt.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+--c4deemzkae32ddte
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/watchdog/ziirave_wdt.c b/drivers/watchdog/ziirave_wdt.c
-index d3594aa3a374..43e6b575c32c 100644
---- a/drivers/watchdog/ziirave_wdt.c
-+++ b/drivers/watchdog/ziirave_wdt.c
-@@ -658,11 +658,7 @@ static int ziirave_wdt_probe(struct i2c_client *client,
- 	w_priv->wdd.parent = &client->dev;
- 	w_priv->wdd.groups = ziirave_wdt_groups;
- 
--	ret = watchdog_init_timeout(&w_priv->wdd, wdt_timeout, &client->dev);
--	if (ret) {
--		dev_info(&client->dev,
--			 "Unable to select timeout value, using default\n");
--	}
-+	watchdog_init_timeout(&w_priv->wdd, wdt_timeout, &client->dev);
- 
- 	/*
- 	 * The default value set in the watchdog should be perfectly valid, so
--- 
-2.11.0
+On Sun, Apr 14, 2019 at 12:26:11PM +0200, Wolfram Sang wrote:
+> When trying to add DT support to the DA9063 WDT, I didn't want to add yet
+> another error message when watchdog_init_timeout fails. The core could do this
+> with more detail, and also much more consistent. So, I refactored this routine
+> and removed error strings from its callers. Note that DA9063 support is not
+> added here because I still need to think about another issue. But this series
+> has been tested using the renesas_wdt driver on a Renesas Salvator-XS board
+> (R-Car M3N) and build bot is happy, too.
 
+Sorry, I forgot to CC the (although few) driver maintainers. I suggest
+to wait for review comments about the general apprach and I will make
+sure to CC them for V2 then.
+
+
+--c4deemzkae32ddte
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlyzC9wACgkQFA3kzBSg
+KbadCw/9GWDoYHFqp2O279zpl5EdFlMK4s5e4S+G+pyujR2gQHmVrzR4erjEbO6f
+ECnuswKfxR5vvOaHUnZMiyDgOy2msuNceeCDuhAx7ihWfESZQ6Asq36zpP7kknvK
+xW7PqQFvWvRczhrjeZOswE+KLkx1xRvJ8OiT6rY7WHCY8JhA5XJHj26a8aIZq7pT
+iOlfzHy6TJj19tTzj/I8QQGOVPDPFBdOBBLXgYjSKuO9Nr8POC/sDsTOn9tuXoJT
+VLAyqIJPCkJ/A4Txaqp7ykeTbe+bhr0i4y9elNbnZHScjVHd7rJAOF93PfmK/+fT
+0X1IJcKG9xhoMZgb6EmsSdRVqfEGwfa5U3S8VmvEk6Tdq2zVu1fHPl3ZNYUCnvI6
+Lu5dkiBKKoZWRluH0AP3vnc6qIvggaLedVBpHIMSqRjX0ZkCLuXrPRmUf8XNnjf5
+hbEmkPmyFQfa2WrSR880i5bTLyUsh9z8HfOmXrasrnLR8Nt+qWeDeqYGgrkPLsYS
+LP4sfQYsZgawOS5VQM9WeimR2WWrTEV25Cw89SZPPaXjiGHolY1y3/0IikPWG3AA
+3CHx1uqfq+ipKb4W+c1NwmbKDp4WijqVnFfYV3puMWn8OH6fYyuBBMlTVPpOc/d5
+KGP1oMsAXjwzvwxjhEGTZ3wbzEwYLfuPyfRrRApttAlnkLR26Z4=
+=ji5Z
+-----END PGP SIGNATURE-----
+
+--c4deemzkae32ddte--
