@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98723C282CE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E19EAC282E4
 	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7385D20848
+	by mail.kernel.org (Postfix) with ESMTP id B82FA20848
 	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfDNK0h (ORCPT
+        id S1726500AbfDNK0h (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Sun, 14 Apr 2019 06:26:37 -0400
-Received: from sauhun.de ([88.99.104.3]:32912 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:32914 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726500AbfDNK0g (ORCPT
+        id S1726740AbfDNK0g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sun, 14 Apr 2019 06:26:36 -0400
 Received: from localhost (p5486CDCF.dip0.t-ipconnect.de [84.134.205.207])
-        by pokefinder.org (Postfix) with ESMTPSA id 9A4E74A135C;
+        by pokefinder.org (Postfix) with ESMTPSA id 005004A135E;
         Sun, 14 Apr 2019 12:26:34 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-watchdog@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 05/16] watchdog: ebc-c384_wdt: drop warning after calling watchdog_init_timeout
-Date:   Sun, 14 Apr 2019 12:26:16 +0200
-Message-Id: <20190414102627.5564-6-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 06/16] watchdog: hpwdt: drop warning after calling watchdog_init_timeout
+Date:   Sun, 14 Apr 2019 12:26:17 +0200
+Message-Id: <20190414102627.5564-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
 References: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
@@ -42,25 +42,23 @@ The core will print out details now.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/watchdog/ebc-c384_wdt.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/watchdog/hpwdt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/watchdog/ebc-c384_wdt.c b/drivers/watchdog/ebc-c384_wdt.c
-index 4c4c8ce78021..c176f59fea28 100644
---- a/drivers/watchdog/ebc-c384_wdt.c
-+++ b/drivers/watchdog/ebc-c384_wdt.c
-@@ -117,10 +117,7 @@ static int ebc_c384_wdt_probe(struct device *dev, unsigned int id)
- 	wdd->max_timeout = WATCHDOG_MAX_TIMEOUT;
+diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+index ef30c7e9728d..db1bf6f546ae 100644
+--- a/drivers/watchdog/hpwdt.c
++++ b/drivers/watchdog/hpwdt.c
+@@ -311,8 +311,7 @@ static int hpwdt_init_one(struct pci_dev *dev,
+ 		goto error_init_nmi_decoding;
  
- 	watchdog_set_nowayout(wdd, nowayout);
--
--	if (watchdog_init_timeout(wdd, timeout, dev))
--		dev_warn(dev, "Invalid timeout (%u seconds), using default (%u seconds)\n",
--			timeout, WATCHDOG_TIMEOUT);
-+	watchdog_init_timeout(wdd, timeout, dev);
+ 	watchdog_set_nowayout(&hpwdt_dev, nowayout);
+-	if (watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL))
+-		dev_warn(&dev->dev, "Invalid soft_margin: %d.\n", soft_margin);
++	watchdog_init_timeout(&hpwdt_dev, soft_margin, NULL);
  
- 	return devm_watchdog_register_device(dev, wdd);
- }
+ 	if (pretimeout && hpwdt_dev.timeout <= PRETIMEOUT_SEC) {
+ 		dev_warn(&dev->dev, "timeout <= pretimeout. Setting pretimeout to zero\n");
 -- 
 2.11.0
 
