@@ -3,33 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE638C282DA
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7ECC282EB
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97914206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8509D218D3
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Apr 2019 10:26:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfDNK0i (ORCPT
+        id S1727095AbfDNK0i (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Sun, 14 Apr 2019 06:26:38 -0400
-Received: from sauhun.de ([88.99.104.3]:32918 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:32924 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726533AbfDNK0h (ORCPT
+        id S1726740AbfDNK0i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 14 Apr 2019 06:26:37 -0400
+        Sun, 14 Apr 2019 06:26:38 -0400
 Received: from localhost (p5486CDCF.dip0.t-ipconnect.de [84.134.205.207])
-        by pokefinder.org (Postfix) with ESMTPSA id B5A4A2CF687;
-        Sun, 14 Apr 2019 12:26:35 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id D02A84A135A;
+        Sun, 14 Apr 2019 12:26:36 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-watchdog@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 08/16] watchdog: imx_sc_wdt: drop warning after calling watchdog_init_timeout
-Date:   Sun, 14 Apr 2019 12:26:19 +0200
-Message-Id: <20190414102627.5564-9-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 11/16] watchdog: renesas_wdt: drop warning after calling watchdog_init_timeout
+Date:   Sun, 14 Apr 2019 12:26:22 +0200
+Message-Id: <20190414102627.5564-12-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
 References: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
@@ -42,25 +42,24 @@ The core will print out details now.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/watchdog/imx_sc_wdt.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/watchdog/renesas_wdt.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/imx_sc_wdt.c b/drivers/watchdog/imx_sc_wdt.c
-index 86c2722f2a09..6dc24ceb1b2c 100644
---- a/drivers/watchdog/imx_sc_wdt.c
-+++ b/drivers/watchdog/imx_sc_wdt.c
-@@ -117,10 +117,7 @@ static int imx_sc_wdt_probe(struct platform_device *pdev)
- 	imx_sc_wdd->parent = &pdev->dev;
- 	imx_sc_wdd->timeout = DEFAULT_TIMEOUT;
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 5b3186492087..94cd8830ba9a 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -236,9 +236,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	watchdog_stop_on_unregister(&priv->wdev);
  
--	ret = watchdog_init_timeout(imx_sc_wdd, 0, &pdev->dev);
+ 	/* This overrides the default timeout only if DT configuration was found */
+-	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
 -	if (ret)
--		dev_warn(&pdev->dev, "Failed to set timeout value, using default\n");
--
-+	watchdog_init_timeout(imx_sc_wdd, 0, &pdev->dev);
- 	watchdog_stop_on_reboot(imx_sc_wdd);
- 	watchdog_stop_on_unregister(imx_sc_wdd);
+-		dev_warn(&pdev->dev, "Specified timeout value invalid, using default\n");
++	watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
  
+ 	ret = watchdog_register_device(&priv->wdev);
+ 	if (ret < 0)
 -- 
 2.11.0
 
