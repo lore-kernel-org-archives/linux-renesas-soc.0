@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98102C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267A9C10F12
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C7520693
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E91D620825
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:38:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVZN7S4Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rdlpL/P1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfDOMh5 (ORCPT
+        id S1727243AbfDOMix (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 08:37:57 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34447 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbfDOMh4 (ORCPT
+        Mon, 15 Apr 2019 08:38:53 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33026 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbfDOMix (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 08:37:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b3so8545996pfd.1;
-        Mon, 15 Apr 2019 05:37:56 -0700 (PDT)
+        Mon, 15 Apr 2019 08:38:53 -0400
+Received: by mail-pg1-f196.google.com with SMTP id k19so8538138pgh.0;
+        Mon, 15 Apr 2019 05:38:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xa6jjHflkzVp6geEZRvxsF3ygTrUd40lz1AHWCxLn4I=;
-        b=fVZN7S4YtVLZbyxoG1H9GJSQZuL4N7mEfXwrvivWdCOLCRgxA6O0nwkTIxh24bOsAK
-         y/bdk0j3kASrvsJwLJ6RFLE+AMB/gDDwExHanLTHUByGEmEXKDk8K9twpn10qadzTQSq
-         Aup9ppS5oySRQDMlhgBGHIc2uWHqHL1UGAukJFTBUEcAH6MQqR6ZPIyg8/optjr/5fQK
-         TqvoB0QwaCXqd7GI5gz+hRpBPYRdjb6pqbb8JSZKxvTaPqahenQXP8pKq11zrS9WplGE
-         IIz36n/tqZgzlXESZvuNFXT71tQ3YrTtf+dQFvdry4wcYoXVI0GQVmlu40o5FkAiShPY
-         0Sfg==
+        bh=u2LVb7yT1wSOGDuoxT6KUq9UtfEF1iBOjVOoHUZS5kE=;
+        b=rdlpL/P1fjH901/sBu8VQ/Ss2OGSB1r7vpTBPEDhlLUoqHv+VAf5p3MHwbrLJiS0vj
+         QSq4zoxO6axAD1OcKFOieO3yw1SEBPmq02Y2Zs1NlMq9iRQHG6XJULqFixihJ7tRoGeA
+         UIQwxSiSNZppYFDUoK9tj687SaFxh2l4tn3sP0+Ep//go4bjpgTQVmZnIdF1+jBUic6t
+         1uvO+XI6HRkOpH9fIOihnHDSs9fp4AJMiRk8srU8C+2U5LjMI+I5UYGQ71wCVREvcjya
+         zW0a1ZB04CHhphcwQmag6MbKQlR6Ff90re7BPAV2+5Chfb1KkgQCBv2yJ2b2AYsvAW3J
+         zdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xa6jjHflkzVp6geEZRvxsF3ygTrUd40lz1AHWCxLn4I=;
-        b=WAxe5uUccvwdqWOcgQIHJv9+0Ms4eEaLr6BWOy63LflQ0W56iuxMafAcfcRzOJJSg3
-         GbpBzrDcrUwyN6JBRtjIdjR6GZcZdqwtcpfOlRSpGo1wqI6fKzt54Xy7T1S0ZQzyQfGE
-         3vrRb+m1T2lJRBT24qU9s/1uOrHIUDObhErHrfcaEcMYQ81NoxQYBwNT7LkdPUc9LaG/
-         ux1/hKcRTX2NijbjI4sIuAQiC1JOXzKiL69erJ7VU27lqLvdvaXrY0zxKYlZs0WVNSEt
-         J4daftBht75by0NqlIFybXv5YeZNTmMYDK3uyRrVjkRtQ4j5/sr7KVcCe9EhqyEHM295
-         JRgw==
-X-Gm-Message-State: APjAAAXcsFkp0D6HjgcAleRUHRytp0WxO7ZDRl3qG2xdSvwhjnMTLesh
-        KMaHCVteJH9/yJXX9cIY7GX4r4DJcJrhLEA7ZImf6G2cC/oZYQ==
-X-Google-Smtp-Source: APXvYqytPIE790S7DxBuychfe3y9JmXIaVZf8d3f22yuqTqDPsS50+mmfsEgz7nIM3fWJPXlAtCwhN7FgFJvQh/mSVU=
-X-Received: by 2002:a62:6587:: with SMTP id z129mr75772062pfb.88.1555331875726;
- Mon, 15 Apr 2019 05:37:55 -0700 (PDT)
+        bh=u2LVb7yT1wSOGDuoxT6KUq9UtfEF1iBOjVOoHUZS5kE=;
+        b=lELWxdVi4dQwGauiRAJcomhQ0vopE+FHS9HoV3dLNWcO4jzTCd85hya0t838EU1YBB
+         k4wPYy+R9yDddFBdoymgcurcdPTWVANvXDPQIldj+9+GO9i6hHsaSX2yidbXWxe/0y3s
+         nUnpyjVtQrpGTy0uPtm12u5WTlaeSnbYj6U019/4sz2VovUurhMKZQVU8I81hjZ2pDSs
+         ia1HNT03lNz9Z+de7dV7nRNqdLy5obFm0WPBgU7diD/2VlPZ2PIcI0DVzRFMu5UE5i09
+         xnEJYYvyF87Lin3/0I5YfsuSyzZcfIESQ7gY5NquuTH4WPN/UbZthVZ27jfoB2JY+Z+g
+         kyxg==
+X-Gm-Message-State: APjAAAVnWn93e1XMd5gEXYqVRN71w8cCUL7mfl7aQAx2LuX4Abh2uf9l
+        ub+j3KQZKqyD3ptSJIzPyr/FUMxcn/vVFO9y1dY=
+X-Google-Smtp-Source: APXvYqwl90IRvvcYFnqEGB0t3IS3p4I5F3IDwV586IqSXuflvFDScbnWeExZkK+0qo+lMMbR93yD9fDHnk4pjtskXu8=
+X-Received: by 2002:a62:448d:: with SMTP id m13mr75712858pfi.182.1555331932449;
+ Mon, 15 Apr 2019 05:38:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com> <20190403124019.8947-6-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190403124019.8947-6-wsa+renesas@sang-engineering.com>
+References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com> <20190403124019.8947-13-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190403124019.8947-13-wsa+renesas@sang-engineering.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 15 Apr 2019 15:37:44 +0300
-Message-ID: <CAHp75VcnwMpWWDdg=y2z7N84kr8ZpUXW9un3UxB3uA__F56tGQ@mail.gmail.com>
-Subject: Re: [PATCH 05/12] i2c: demux: handle the new atomic callbacks
+Date:   Mon, 15 Apr 2019 15:38:41 +0300
+Message-ID: <CAHp75Vfh05KuXLrU+eVeBSFonBHQAemf8iyWFsRk4Oww-HbEvw@mail.gmail.com>
+Subject: Re: [PATCH 12/12] i2c: gpio: flag atomic capability if possible
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -79,30 +79,30 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 On Wed, Apr 3, 2019 at 3:42 PM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
 >
-> If the parent has an atomic callback, we need to translate it the same
-> way as the non-atomic callback.
+> If switching GPIOs does not sleep, then we can support atomic transfers.
 >
 
 Reviewed-by Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  drivers/i2c/muxes/i2c-demux-pinctrl.c | 2 ++
+>  drivers/i2c/busses/i2c-gpio.c | 2 ++
 >  1 file changed, 2 insertions(+)
 >
-> diff --git a/drivers/i2c/muxes/i2c-demux-pinctrl.c b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> index 035032e20327..d50454c565ee 100644
-> --- a/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> +++ b/drivers/i2c/muxes/i2c-demux-pinctrl.c
-> @@ -99,6 +99,8 @@ static int i2c_demux_activate_master(struct i2c_demux_pinctrl_priv *priv, u32 ne
+> diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+> index bba5c4627de3..9684a0ac2a6d 100644
+> --- a/drivers/i2c/busses/i2c-gpio.c
+> +++ b/drivers/i2c/busses/i2c-gpio.c
+> @@ -413,6 +413,8 @@ static int i2c_gpio_probe(struct platform_device *pdev)
 >
->         /* Now fill out current adapter structure. cur_chan must be up to date */
->         priv->algo.master_xfer = i2c_demux_master_xfer;
-> +       if (adap->algo->master_xfer_atomic)
-> +               priv->algo.master_xfer_atomic = i2c_demux_master_xfer;
->         priv->algo.functionality = i2c_demux_functionality;
+>         if (gpiod_cansleep(priv->sda) || gpiod_cansleep(priv->scl))
+>                 dev_warn(dev, "Slow GPIO pins might wreak havoc into I2C/SMBus bus timing");
+> +       else
+> +               bit_data->can_do_atomic = true;
 >
->         snprintf(priv->cur_adap.name, sizeof(priv->cur_adap.name),
+>         bit_data->setsda = i2c_gpio_setsda_val;
+>         bit_data->setscl = i2c_gpio_setscl_val;
 > --
 > 2.11.0
 >
