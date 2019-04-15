@@ -2,87 +2,80 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AADDC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E662C10F12
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B23520645
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3921D20693
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:36:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbfDOMRV (ORCPT
+        id S1727440AbfDOMf7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 08:17:21 -0400
-Received: from sauhun.de ([88.99.104.3]:41274 "EHLO pokefinder.org"
+        Mon, 15 Apr 2019 08:35:59 -0400
+Received: from mga06.intel.com ([134.134.136.31]:48525 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726785AbfDOMRU (ORCPT
+        id S1726298AbfDOMf7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 08:17:20 -0400
-Received: from localhost (p54B331F8.dip0.t-ipconnect.de [84.179.49.248])
-        by pokefinder.org (Postfix) with ESMTPSA id BDF582C0114;
-        Mon, 15 Apr 2019 14:17:18 +0200 (CEST)
-Date:   Mon, 15 Apr 2019 14:17:18 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Chris Brandt <chris.brandt@renesas.com>, linux-i2c@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: riic: Add Runtime PM support
-Message-ID: <20190415121718.gdowmtgwqi2aa4zp@ninjato>
-References: <20190320103003.20107-1-geert+renesas@glider.be>
+        Mon, 15 Apr 2019 08:35:59 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Apr 2019 05:35:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,353,1549958400"; 
+   d="scan'208";a="316095063"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga005.jf.intel.com with ESMTP; 15 Apr 2019 05:35:55 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hG0q2-0002mn-1M; Mon, 15 Apr 2019 15:35:54 +0300
+Date:   Mon, 15 Apr 2019 15:35:54 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Rosin <peda@axentia.se>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 00/12] i2c: core: introduce atomic transfers
+Message-ID: <20190415123554.GQ9224@smile.fi.intel.com>
+References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+ <20190403131510.GE9224@smile.fi.intel.com>
+ <20190415120611.euidifhshkf5yqns@ninjato>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bumn54iq4fpzj6q6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190320103003.20107-1-geert+renesas@glider.be>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190415120611.euidifhshkf5yqns@ninjato>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, Apr 15, 2019 at 02:06:11PM +0200, Wolfram Sang wrote:
+> On Wed, Apr 03, 2019 at 04:15:10PM +0300, Andy Shevchenko wrote:
+> > On Wed, Apr 03, 2019 at 02:40:07PM +0200, Wolfram Sang wrote:
+> > 
+> > FWIW,
+> > 
+> > Reviewed-by Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > for patches 1-5,12.
+> 
+> Thanks for the review, Andy! May I ask you once more to tag the patches
+> individually so patchwork can pick them up for me?
 
---bumn54iq4fpzj6q6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It seems I already cleaned up them from my mailbox. I can check if it's
+available in another one.
 
-On Wed, Mar 20, 2019 at 11:30:03AM +0100, Geert Uytterhoeven wrote:
->   - Replace explicit clock handling by Runtime PM calls,
->   - Streamline Runtime PM handling in error paths,
->   - Enable Runtime PM in .probe(),
->   - Disable Runtime PM in .remove(),
->   - Make sure the device is runtime-resumed when disabling interrupts in
->     .remove().
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> I don't think it's worth splitting off the last bug fix in a separate
-> (first) patch, using explicit clock handling, as that will be replaced
-> immediately by Runtime PM calls.
-
-Chris, what do you think about this patch?
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---bumn54iq4fpzj6q6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAly0dk4ACgkQFA3kzBSg
-KbaDVhAAo1TJqLJn+8CyI2ZkDxqVp+Tvyq7aIK93qvk5L+TFmH3xlVxrkydP+0E+
-cvDpG1ogX8qO6aaZ1/sgJud7HfV+Ivd+AYZksJPSeQlDGuilORv+diYq30MptCF1
-ix+vGCDjuiLPpq4EB6q6GeoI0NyqZyvgP8TceUr5QXecmAS3Lbvp9Vi9XvxDkIN2
-pvmXdi19ohPOBj8PX6+Fv+sQXraK7N32f1iaZcgfxENpupfeKolcydagIyS2xclD
-pgOzfzkLLlEeVP0c4aUGKfXhhZJvsNHyjDoa7npmsrxz+WzGnwgdJmJ2dfRZiOCk
-frjCZWAP/f98N7SuktPPcfJNRi3idzZq7W3LFotaLURjZ9R+1c5p3VIwgj15LY8L
-6Aq17BrtmVj9gfCpsXvvXp0fgA1QUK2l0ykyYOdTYHF1SYvgERbWk7W0juiDg2Iu
-Mk4AYOYvah3fpKSaJNKv/o1h25R7iW4PLZUbqtV5EJb6CvPWOTKAnMYx3tELN+0E
-HeLw1GwPjs+dDbHjoau9kG7X1cQ11jT+9hIe+XgT7XvAmRpNbt48CiuKx4UN0sde
-O0v5tbF9UssUZbylMEyHjHug2cBIHdk2zrhiBqa+MlYrSzcWSBH1rkzJfdKAvsUC
-3TouH/zV5bjTRRWUbY/H4MtfcTocSMsGEMaHaGRyk++ISyUM/GU=
-=4RXI
------END PGP SIGNATURE-----
-
---bumn54iq4fpzj6q6--
