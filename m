@@ -2,127 +2,98 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79DBC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C378C282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77FD9206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0FE920874
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:21:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=dialogsemiconductor.onmicrosoft.com header.i=@dialogsemiconductor.onmicrosoft.com header.b="Bb9nFYOY"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="QrFlyw70"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbfDOILZ (ORCPT
+        id S1725779AbfDOIVT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 04:11:25 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.132]:61491 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725794AbfDOILY (ORCPT
+        Mon, 15 Apr 2019 04:21:19 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44534 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfDOIVT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 04:11:24 -0400
-Received: from [46.226.53.50] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-c.eu-west-1.aws.symcld.net id C9/09-09106-9AC34BC5; Mon, 15 Apr 2019 08:11:21 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDJsWRWlGSWpSXmKPExsWSoc9morvCZku
-  MwdzbhhaXd81hs9j68h2TRd85dwdmj2cL17N4fN4kF8AUxZqZl5RfkcCa0bZjNXPBFJaKX9/u
-  szYwrmPuYuTkYBFYzyzxt9G8i5GLQ0ign0nizqy7LBDOfUaJGc39TCBVbAKGEvPevGcEsUUEj
-  CXWNM9mByliFpjKKHHsylF2kISwgJ/E2ufHoIoCJHrv7wdawQFkG0mcXZ0EsU1V4vSrtWDlvA
-  KxEhdutYJdISTgKrGlaytYnFPATeJP20mwOKOArMSXxtVgNrOAuMStJ/PB7pEQEJBYsuc8M4Q
-  tKvHy8T9WiPp4ifb9b9kh4joSZ68/YYSwlSSW3ZjFCmHLSlya3w0V95VYO+8LVP1FRokrzXYQ
-  tpbEvH+XoebnSBza3AFly0h0HPvLCPK7hMBlVomHjyezQTyQLPFh7lmoQXISq3ofskAUXWCW6
-  Nm5kg3iAx2JBbs/QdnaEssWvmaewKgxC8lzs5CUzUJSNgscYIISJ2c+YVnAyLKK0SypKDM9oy
-  Q3MTNH19DAQNfQ0EjXyMBQ11gvsUo3WS+1VLc8tbhE11AvsbxYr7gyNzknRS8vtWQTIzDlpBS
-  cZN7B+GxF+iFGSQ4mJVFeb5YtMUJ8SfkplRmJxRnxRaU5qcWHGGU4OJQkeK9YAeUEi1LTUyvS
-  MnOAyQ8mLcHBoyTCexQkzVtckJhbnJkOkTrFqMtxYNHDucxCLHn5ealS4rz81kBFAiBFGaV5c
-  CNgifgSo6yUMC8jAwODEE9BalFuZgmq/CtGcQ5GJWFeLpApPJl5JXCbXgEdwQR0xBSd1SBHlC
-  QipKQaGA/HtD6wvmaQ8E8qQkNT65bYwu6MEJ4uH7sdnK6zu448FrDfuOcj/9V5/9+wBa3+J/r
-  S0EB169XulkUFTMkRCR0fX73dUfdUeobsKd67kyvybulIp3GwyXLumr+Eo0T5/qE/t0uydtYG
-  NVQ+rPG8F+nIUy86wUxQ7XbbDMUrOqKWe6+9Wao4T4mlOCPRUIu5qDgRAJ1sjEC/AwAA
-X-Env-Sender: stwiss.opensource@diasemi.com
-X-Msg-Ref: server-20.tower-302.messagelabs.com!1555315880!6339237!1
-X-Originating-IP: [104.47.6.52]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 18570 invoked from network); 15 Apr 2019 08:11:20 -0000
-Received: from mail-ve1eur02lp2052.outbound.protection.outlook.com (HELO EUR02-VE1-obe.outbound.protection.outlook.com) (104.47.6.52)
-  by server-20.tower-302.messagelabs.com with AES256-SHA256 encrypted SMTP; 15 Apr 2019 08:11:20 -0000
+        Mon, 15 Apr 2019 04:21:19 -0400
+Received: by mail-lf1-f67.google.com with SMTP id h18so12328448lfj.11
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Apr 2019 01:21:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com; s=selector1-diasemi-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PBj7kK95aM/L/kXsfWLuPJ6e/bw3kx7UJX6/yEjvXEM=;
- b=Bb9nFYOYWIPtcL5qbv4smVjBt1fxPJeVDOrXEPnZ7aWSfJ3RPjsBEnTD7Z7a648DSqpSLvomy5rCxOMjl2Xld8IqGjuV9zZ05bbTL9ehgvkWh6Mh0O7ZrEiILxmJ7FFO137ebm+erFd/Hi+fXTQhikVCaKRWmG+LGFa/yla4Ez0=
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM (20.177.62.92) by
- VI1PR10MB2397.EURPRD10.PROD.OUTLOOK.COM (20.177.62.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1792.19; Mon, 15 Apr 2019 08:11:17 +0000
-Received: from VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::acc9:6d8f:da36:9f25]) by VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::acc9:6d8f:da36:9f25%2]) with mapi id 15.20.1792.018; Mon, 15 Apr 2019
- 08:11:17 +0000
-From:   Steve Twiss <stwiss.opensource@diasemi.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC:     LINUX RENESAS SOC <linux-renesas-soc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>
-Subject: RE: [PATCH RFT] watchdog: da9063_wdt: parse DT for timeout value, too
-Thread-Topic: [PATCH RFT] watchdog: da9063_wdt: parse DT for timeout value,
- too
-Thread-Index: AQHU8rKQiJBjLGoJgEygrdEbYLd/faY82vLA
-Date:   Mon, 15 Apr 2019 08:11:16 +0000
-Message-ID: <VI1PR10MB23525523F623FFAC4126EBC9FE2B0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
-References: <20190414110933.30529-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190414110933.30529-1-wsa+renesas@sang-engineering.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.240.73.196]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3766fb73-80e0-4b35-cdcc-08d6c179ef6c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600140)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR10MB2397;
-x-ms-traffictypediagnostic: VI1PR10MB2397:
-x-microsoft-antispam-prvs: <VI1PR10MB2397D44EB96EDDEC05881148F52B0@VI1PR10MB2397.EURPRD10.PROD.OUTLOOK.COM>
-x-forefront-prvs: 000800954F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(396003)(39850400004)(366004)(346002)(189003)(199004)(305945005)(7736002)(74316002)(14454004)(68736007)(66066001)(256004)(8676002)(9686003)(3846002)(55016002)(2906002)(105586002)(106356001)(97736004)(6116002)(8936002)(81156014)(81166006)(478600001)(5660300002)(99286004)(486006)(476003)(71200400001)(52536014)(86362001)(53546011)(76176011)(102836004)(6246003)(7696005)(26005)(4326008)(4744005)(107886003)(6506007)(316002)(6436002)(54906003)(446003)(25786009)(11346002)(186003)(71190400001)(229853002)(33656002)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR10MB2397;H:VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: S+KwyPoh4x742jHWLBJ7asxK5/q8y0C6KWoqODuqgBf6DsNie/FVyF6YOg3pTJx3bs5CJpMv0Lh0LNedB+6N4c0PHpkDA+sW+mlkqf5SAmjSlIK1MsDLSovC7WGo0f0kyC7hb3PnblSs9kiaxFUAMMav/6Sq+Ityse9int8ZLPA+azADYGbkEr1BKjrUsyqbwry6gZv+PPCZ2LRhkJfFr5u3QS49LWDz9+8sSx6BbsoQyeVXG4PPdgOpmsB9TuVYk3o1rDvgunReLbPxrhec6oObxH2hF1tFefnJTZVFTH4I1pCmOlZdKTo5DzkV8KsMQkcMiv4Q6OPWRKWguMVNhbk3GXg8QCtpcFprsx48WALqQ5u0FOZzlD9KxODc57nLlXok5BOr9SWaSJvtXX0QI1iWxBJE3eVf1B9a9+l0O08=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AjL0XQZG+HyQuEEfM7wCFA0sYmyyrpsrVEapUZBj0IA=;
+        b=QrFlyw70ZCUAQO+P1V035NcAlJ4UqdoVCU5BeRXuOcBdo37kXFVeX0I2QXKCgIX5KH
+         Z9P+IMGrgbIynDcP/KZ069NcIfunox/HeL+156iKvXhI7aaoZUpuQzvjEjLGxmZaZxKG
+         N1YNbqOobTmEuObyP5pgrqIImcrxc2zuHJhxwPYmOc7t7z2sA/Y41b2RgMH97NGRhEnW
+         BzGOaEmAoICrui4Nrqb1SEsIN1LiQmtvQioCnyfhO5ydjtlp6jfa0PoUb0aWsg/UoQuv
+         vXEm5C92KMvjNKZTtH9qSWvvvAXVZqQMR3OtqXQ/xVslgNkfPslfEdPSHeGG/yWf0566
+         YqpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AjL0XQZG+HyQuEEfM7wCFA0sYmyyrpsrVEapUZBj0IA=;
+        b=Hh1UvfucZU2LACHvPms+Lf+RUqL+A9Eh9BJfYIj44fmlYcOisw8NQk9KYPkH2TOTJD
+         26XxxBoCpr8MIYvQRQQtdwIwKP9msapGIQb+5UmX/aWKfO4LwgViB2vMHbtTEcXx/Ng0
+         iRKhi1dytTJuNikFyC3RVeFTtfwrhRFaQyvoux2RGmRmPl5B1qFBC1RUmG020fO1O78s
+         5/GPQXKzvklyt8rCWgEOeJ4FAC5ZwAAQD5r/MkoEuDBrKnyrubNUXSguwL1JupKwMa9Z
+         l/s2LcP/Ejm82QlQ6bsCHU2rJhDrrXbl4+mGe24kN8dvCLRo5W0tyPUmfM3HkYIDtl5L
+         ZfLA==
+X-Gm-Message-State: APjAAAVD9P+L4YJD3c7dMijAMV5/SD+FMPQsndnr53KvOR+2Th5vd2Ng
+        2+m9OpKd8BfTmwtnUWYnCWhgcKrHVG8=
+X-Google-Smtp-Source: APXvYqxNK7vvrZC5xsx390Bmid1rvxsEWxUvKTTDlbBjI1TCsDhQkUnqt1xqZa46bE1RP8nfZqQIcA==
+X-Received: by 2002:a19:f801:: with SMTP id a1mr18651473lff.150.1555316476990;
+        Mon, 15 Apr 2019 01:21:16 -0700 (PDT)
+Received: from [192.168.0.199] ([31.173.85.43])
+        by smtp.gmail.com with ESMTPSA id r2sm9852302ljd.16.2019.04.15.01.21.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Apr 2019 01:21:16 -0700 (PDT)
+Subject: Re: [PATCH 01/16] watchdog: refactor watchdog_init_timeout
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+References: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
+ <20190414102627.5564-2-wsa+renesas@sang-engineering.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <35407697-cbbb-e72b-7aed-ed84a3beb669@cogentembedded.com>
+Date:   Mon, 15 Apr 2019 11:21:13 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3766fb73-80e0-4b35-cdcc-08d6c179ef6c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2019 08:11:17.0271
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB2397
+In-Reply-To: <20190414102627.5564-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Hello!
 
-On 14 April 2019 12:10, Wolfram Sang wrote:
+On 14.04.2019 13:26, Wolfram Sang wrote:
 
-> Tested with a Renesas Lager board (R-Car H2, DA9063AD), checking the init=
-ial
-> timeout value via sysfs. I didn't test handover from bootloader because m=
-y
-> bootloader neither supports WDT or I2C out of the box.
+> The function is not easy to read and has two problems: a) -EINVAL is
+> returned when the module parameter is invalid but the DT parameter is
+> OK, and b) for the module parameter, zero is a valid value but for DT it
+> is invalid.
+> 
+> Refactor the code to have a the same pattern of checks for the module
+                             ^^^^^
+    One article would be enough. :-)
 
-Can I please check there is no mistake in your description. I have been rep=
-eatedly
-told by the hardware engineers here, (for the past 6 years) it is not possi=
-ble.
-But, you seem to have an R-Car H2 with the AD silicon version of DA9063?
+> parameter and DT. Further ones can be easily added in the future if the
+> need arises. The above mentioned problems are fixed, too.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[...]
 
-Regards,
-Steve
+MBR, Sergei
