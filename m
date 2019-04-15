@@ -2,136 +2,101 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE08C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3872AC10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71AB1206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:02:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="SZyjXEad"
+	by mail.kernel.org (Postfix) with ESMTP id 0D80F206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726042AbfDOMCT (ORCPT
+        id S1727118AbfDOMEo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 08:02:19 -0400
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:31588 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfDOMCT (ORCPT
+        Mon, 15 Apr 2019 08:04:44 -0400
+Received: from sauhun.de ([88.99.104.3]:41120 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725994AbfDOMEo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 08:02:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1555329736;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Dp739+M3g7T8x/A9MRsCUZ5CgeVOXaZDZnxNH6QnkW0=;
-        b=SZyjXEadlE4Uy1hO7dppukAHpXsOd3J2nEPGiyf7SRnWfwEwjPWfQUoOh4+ubS6x/N
-        VJQ1KBfbUtDaatkDtDZ7SY7DuY27gX0VX3uIZBDu7sCBOe7xkypq2UhcjKoflbcGt8JB
-        ZHP7ytOmLbiNvhd81buKk0n/BygrNWheAtOlYhDObfw0c/gmqfByDLKU4kCiEyumywwT
-        iuleyIO2y9zGJje2ms7g3Ovr6iEuKipc606kaYq+JTUXc4ozoC4WZWI3PiDXzIMjB99a
-        JtgAXJhKgxjWsNC3RdOfGGi4L+BIwP515FQWhQRFvM52kkhjZ8Mlr/k7CKlqz1sunnqR
-        E+aA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp05-03.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.18 AUTH)
-        with ESMTPSA id y08c83v3FC2GKm8
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Mon, 15 Apr 2019 14:02:16 +0200 (CEST)
-Date:   Mon, 15 Apr 2019 14:02:16 +0200 (CEST)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-Message-ID: <13733651.468607.1555329736729@webmail.strato.com>
-In-Reply-To: <20190412234359.5079-8-niklas.soderlund+renesas@ragnatech.se>
-References: <20190412234359.5079-1-niklas.soderlund+renesas@ragnatech.se>
- <20190412234359.5079-8-niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 7/8] rcar-vin: Fold rvin_initialize_device() into
- rvin_open()
+        Mon, 15 Apr 2019 08:04:44 -0400
+Received: from localhost (p54B331F8.dip0.t-ipconnect.de [84.179.49.248])
+        by pokefinder.org (Postfix) with ESMTPSA id 9A7942C0114;
+        Mon, 15 Apr 2019 14:04:41 +0200 (CEST)
+Date:   Mon, 15 Apr 2019 14:04:41 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 04/12] i2c: mux: populate the new *_atomic callbacks
+Message-ID: <20190415120441.ka65mytvxsuzul4v@ninjato>
+References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+ <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
+ <59d32414-3859-d614-dc41-cc0a1bc63301@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev55
-X-Originating-IP: 85.212.102.112
-X-Originating-Client: open-xchange-appsuite
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lhxkp6eumrz5hzmr"
+Content-Disposition: inline
+In-Reply-To: <59d32414-3859-d614-dc41-cc0a1bc63301@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
-> On April 13, 2019 at 1:43 AM Niklas S=C3=B6derlund <niklas.soderlund+rene=
-sas@ragnatech.se> wrote:
->=20
->=20
-> The function no longer serve a purpose as most tasks it performed have
-> been refactored, fold what remains it into the only caller.
->=20
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 21 ++++-----------------
->  1 file changed, 4 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/=
-platform/rcar-vin/rcar-v4l2.c
-> index 3b4624c117aaba18..58d0b59ee1247c8f 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -762,20 +762,6 @@ static int rvin_power_parallel(struct rvin_dev *vin,=
- int on)
->  =09return 0;
->  }
-> =20
-> -static int rvin_initialize_device(struct file *file)
-> -{
-> -=09struct rvin_dev *vin =3D video_drvdata(file);
-> -=09int ret;
-> -
-> -=09ret =3D rvin_power_parallel(vin, 1);
-> -=09if (ret < 0)
-> -=09=09return ret;
-> -
-> -=09v4l2_ctrl_handler_setup(&vin->ctrl_handler);
-> -
-> -=09return 0;
-> -}
-> -
->  static int rvin_open(struct file *file)
->  {
->  =09struct rvin_dev *vin =3D video_drvdata(file);
-> @@ -796,10 +782,11 @@ static int rvin_open(struct file *file)
->  =09=09goto err_pm;
-> =20
->  =09if (v4l2_fh_is_singular_file(file)) {
-> -=09=09if (rvin_initialize_device(file)) {
-> -=09=09=09ret =3D -ENODEV;
-> +=09=09ret =3D rvin_power_parallel(vin, 1);
+--lhxkp6eumrz5hzmr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-"1" -> "true". (See patch 6/8.)
 
-> +=09=09if (ret < 0)
->  =09=09=09goto err_open;
-> -=09=09}
-> +
-> +=09=09v4l2_ctrl_handler_setup(&vin->ctrl_handler);
->  =09}
-> =20
->  =09mutex_unlock(&vin->lock);
-> --=20
-> 2.21.0
->
+> I guess the question is if it is allowed to have .master_xfer_atomic
+> but not .master_xfer (and similarly for .smbus_xfer{,_atomic})? Maybe
+> that decision should be made explicit? And perhaps enforced?
 
-With the above fixed,
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+xfer_atomic callbacks are optional. One xfer callback is mandatory. I
+did a check for falling back to master_xfer_atomic if there is no
+suitable smbus_xfer_atomic. I will think about the vice-versa case you
+mentioned. Yet, this is indeed a super corner case, so I prefer to fix
+this incrementally.
 
-CU
-Uli
+> I don't care deeply about the above though, so feel free to do
+> something about it, or
+>=20
+> Reviewed-by: Peter Rosin <peda@axentia.se>
+
+Thanks for the review!
+
+
+--lhxkp6eumrz5hzmr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAly0c1kACgkQFA3kzBSg
+KbY5og//XeihKLEc7DDv97Bd8+50Rbfgz2b1tUDb5iCLL0Ttpw1Kx/NFjesHZN2I
+saEndxnDFct6Pb9ygV/yYRkKckqIUXzG5DMp/bDhUw+aFeSwSn6nPhSSSU1hsXG3
+yHhSJhKPb3oFr+hQhdZ8dz9skH6NhdZggxQ1pFcCeTOvZ9DcJllm3dxLqZWnGNxk
++F1lyDyJBHyUWa2OzuMi908/nTR5DWPIy3rTUKYAq2teWyHMok3KR8v8FW8EsqTa
+AffUcR1KV9JgVVAm79S1J1H+3IOLtt6Arh9GXvwkgiiJqvXtiygTQbA6rgTPYi9K
+ZHKh3fv+T6wtOfSAPXSWacGz8k8NJoTsT64ge+IDNIV769/H7W6GgVGa8ScjEWYh
+zPjEV/P8lkfI8HQ1mbcFZebFLIhdg6ki1z4TVq4HADwbgoT3uZdYwzhgnlAO7uGm
+iWe9+rLUm1YXl9k5pOLpZYHkhvy2d/Rsm0WOMuQLXTDXP8yjMD+tWJcHKPy0rqDG
+LV1Eqo18K+FXwBYu4hFKhblVMOtkFeDI7rk90e+BDOiN6FMOqGNoo8PslcT1T9Qe
+Lv+ZJo3bjhHgJiZJsCtzZJD/JsopOptF7zEK7zh4j8TSgyWD1BPBgg80IRdwVKnF
+QKUYvkby2DOPx8dFWrfLxzC5EHsWtPaHq2NibN5HlMcBRB4WYlk=
+=lPUY
+-----END PGP SIGNATURE-----
+
+--lhxkp6eumrz5hzmr--
