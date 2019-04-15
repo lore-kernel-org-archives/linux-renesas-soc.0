@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF2AC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 21:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B82C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 22:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D66BC206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 21:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72D3020880
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 22:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfDOV5y (ORCPT
+        id S1726968AbfDOWFx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 17:57:54 -0400
-Received: from stcim.de ([78.46.90.227]:43660 "EHLO stcim.de"
+        Mon, 15 Apr 2019 18:05:53 -0400
+Received: from stcim.de ([78.46.90.227]:43676 "EHLO stcim.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725804AbfDOV5y (ORCPT
+        id S1725804AbfDOWFx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 17:57:54 -0400
+        Mon, 15 Apr 2019 18:05:53 -0400
 Received: from xdsl-89-0-59-235.nc.de ([89.0.59.235] helo=porty)
         by stcim with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <contact@stefanchrist.eu>)
-        id 1hG9bo-00010H-Rg; Mon, 15 Apr 2019 23:57:49 +0200
-Date:   Mon, 15 Apr 2019 23:57:48 +0200
+        id 1hG9jX-00010l-Eu; Tue, 16 Apr 2019 00:05:47 +0200
+Date:   Tue, 16 Apr 2019 00:05:46 +0200
 From:   Stefan Lengfeld <contact@stefanchrist.eu>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
@@ -33,15 +33,17 @@ Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Peter Rosin <peda@axentia.se>, linux-omap@vger.kernel.org,
         linux-tegra@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 03/12] i2c: core: introduce callbacks for atomic transfers
-Message-ID: <20190415215748.e6jrii25nqliy7me@porty>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tero Kristo <t-kristo@ti.com>, Keerthy <j-keerthy@ti.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [PATCH 06/12] i2c: omap: Add the master_xfer_irqless hook
+Message-ID: <20190415220546.bvrp7jodgdq7phwg@porty>
 References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
- <20190403124019.8947-4-wsa+renesas@sang-engineering.com>
+ <20190403124019.8947-7-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190403124019.8947-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190403124019.8947-7-wsa+renesas@sang-engineering.com>
 X-PGP-Key: https://stefanchrist.eu/personal/Stefan_Lengfeld_0xE44A23B289092311.asc
 User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -51,18 +53,105 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Wolfram,
 
-On Wed, Apr 03, 2019 at 02:40:10PM +0200, Wolfram Sang wrote:
-> We had the request to access devices very late when interrupts are not
-> available anymore multiple times now. Mostly to prepare shutdown or
-> reboot. Allow adapters to specify a specific callback for this case.
-> Note that we fall back to the generic {master|smbus}_xfer callback if
-> this new atomic one is not present. This is intentional to preserve the
-> previous behaviour and avoid regressions. Because there are drivers not
-> using interrupts or because it might have worked "accidently" before.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+the subject line of this patch
 
-Tested-by: Stefan Lengfeld <contact@stefanchrist.eu>
+    i2c: omap: Add the master_xfer_irqless hook
+
+still contains the old name of the callback '_irqless'. It should be
+'_atomic' instead.
+
+
+On Wed, Apr 03, 2019 at 02:40:13PM +0200, Wolfram Sang wrote:
+> Add the master_xfer_irqless hook to enable i2c transactions
+
+Here again. It should be 'master_xfer_atomic'.
+
+
+> in irq disabled contexts like the poweroff case.
+> 
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Keerthy <j-keerthy@ti.com>
+> [wsa: simplified code a little: 'timeout = !ret']
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/busses/i2c-omap.c | 76 +++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 63 insertions(+), 13 deletions(-)
+> 
+
+snipped 
+
+> @@ -648,15 +650,28 @@ static void omap_i2c_resize_fifo(struct omap_i2c_dev *omap, u8 size, bool is_rx)
+>  			(1000 * omap->speed / 8);
+>  }
+>  
+> +static void omap_i2c_wait(struct omap_i2c_dev *omap)
+> +{
+> +	u16 stat;
+> +	u16 mask = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG);
+> +	int count = 0;
+> +
+> +	do {
+> +		stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
+> +		count++;
+> +	} while (!(stat & mask) && count < 5);
+> +}
+> +
+>  /*
+>   * Low level master read/write transaction.
+>   */
+>  static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
+> -			     struct i2c_msg *msg, int stop)
+> +			     struct i2c_msg *msg, int stop, bool polling)
+
+Nitpick. In the patches for the other drivers the boolean flag is called
+'atomic' and not 'polling'.
+
+>  {
+>  	struct omap_i2c_dev *omap = i2c_get_adapdata(adap);
+>  	unsigned long timeout;
+>  	u16 w;
+> +	int ret;
+>  
+>  	dev_dbg(omap->dev, "addr: 0x%04x, len: %d, flags: 0x%x, stop: %d\n",
+>  		msg->addr, msg->len, msg->flags, stop);
+
+sniped
+
+> @@ -1165,14 +1204,25 @@ omap_i2c_isr_thread(int this_irq, void *dev_id)
+>  		}
+>  	} while (stat);
+>  
+> -	omap_i2c_complete_cmd(omap, err);
+> +	return err;
+> +}
+> +
+> +static irqreturn_t
+> +omap_i2c_isr_thread(int this_irq, void *dev_id)
+> +{
+> +	int ret;
+> +	struct omap_i2c_dev *omap = dev_id;
+> +
+> +	ret = omap_i2c_xfer_data(omap);
+> +	if (ret != -EAGAIN)
+> +		omap_i2c_complete_cmd(omap, ret);
+>  
+> -out:
+>  	return IRQ_HANDLED;
+>  }
+>  
+>  static const struct i2c_algorithm omap_i2c_algo = {
+> -	.master_xfer	= omap_i2c_xfer,
+> +	.master_xfer	= omap_i2c_xfer_irq,
+> +	.master_xfer_atomic	= omap_i2c_xfer_polling,
+
+When consistency with other drivers is a goal, the functions should be
+named like:
+
+    .master_xfe = omap_i2c_xfer,
+    .master_xfer_atomic = omap_i2c_xfer_atomic,
+
+The first without a suffix and the second with the '_atomic' suffix.
 
 Kind regards,
 Stefan
