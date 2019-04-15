@@ -2,94 +2,120 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B197BC282DA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 16:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F79C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 16:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F7A2087C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 16:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F8782087C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 16:49:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="v5y97EyS"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="riq4R8w2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfDOQth (ORCPT
+        id S1727670AbfDOQta (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 12:49:37 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:33726 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725972AbfDOQtg (ORCPT
+        Mon, 15 Apr 2019 12:49:30 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42301 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727568AbfDOQt3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 12:49:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=9GUyQmKWFdaLFqgchYx1hFPPe82EEbXXLqZUWtu3SI4=; b=v5y97EySfHSEsZpribhAP/LaAA
-        HnAdUrG8wqpOFXlOgevo4zPk+I/V3Lx9EKrf+fh9CVwmSfZs6cO9+VbCzJg7kLhF3WHnhHtjj7pLh
-        yAX463IUjpfEFBGiSvaDWMllWcNumwsy8cuR9ujLPzK/jCikuwOmrNjq76bg1GfeTYDA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hG4nJ-0005hj-1E; Mon, 15 Apr 2019 18:49:21 +0200
-Date:   Mon, 15 Apr 2019 18:49:21 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        David Miller <davem@davemloft.net>,
-        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        Mon, 15 Apr 2019 12:49:29 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v22so16310624lje.9
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Apr 2019 09:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1TyrP6q3aXD4CjZb2Vj20teJ+w6WQrUSbi9Y4/iuPQE=;
+        b=riq4R8w2+WqNBT7GaMC/ZRUtNF4103rmB0c/KSuPzwEvcW9McOwcDyGNKJSlyp7742
+         D2N8DXH2tPZ63MStpe4k/peCQ0erR2Ss7TWlpcGtIYOJN2XThpAtWYCqEcVSElwMP16j
+         MUa97KR4fNKcjyGRNXDiQay1DLyvnEU5GR/FRhVivn9pjBzlCb/KcAHH5Fs0qByCxb1X
+         k2pJZ86tG/6j5ef/kaoad7NXISCdsC0h7t2gQ9AOEM8+2vLnh53AAmOEdddbltysfds4
+         ceKQ9uzFtspWBbMsfCLoddmGH2a+l5X5S8NdlxMwSxvACZkDtj52N7EKvcRPMPAT8ztA
+         PzrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=1TyrP6q3aXD4CjZb2Vj20teJ+w6WQrUSbi9Y4/iuPQE=;
+        b=CjKS8NyP3MF3VbefD5Xp5Ogdr5xCxmZtYeFlgm3hsl4WCv57l85L+pZTGybG11vOTQ
+         gobRyjEXyv4Pf5Xn0z5WL/VrHnrrO+wc8ca6uwqEY4yR7j36iIPDj+s1EpeMNB40tK6+
+         yQZyR+ySpgJ7y/2oJIdag2rp+geAbCy98PPpERPdtwNfmuWQ/Nyml9MVb6sd3eraePWk
+         NPqZa9kAPyv2RjM5hxQkV3xK4qDm4ZEzIUVStXF82J6TeNnVYB1BLGhIdJGTNXSxTKyV
+         h0qfyFjuHAw8mI16A7/BIrRn90hByGe2Gkpr0ToBBpLYs75i+nOeMhaDsimsqlXWc5fA
+         iKOA==
+X-Gm-Message-State: APjAAAWWraNDHxff5ioTZ8CgAH2YzlNUBxCM6bYvdIHVGUGNnuYmkXQv
+        lMcBkmzLEDuUoHvklQIZKWYQhw==
+X-Google-Smtp-Source: APXvYqzITwpyZL1+ApheZfkjLF2tNjpJuRVyXuAeJyay/XiydND59++gCfP2BV0DzLv7WaxNRcl+Ow==
+X-Received: by 2002:a2e:8906:: with SMTP id d6mr40711878lji.152.1555346966824;
+        Mon, 15 Apr 2019 09:49:26 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.85.61])
+        by smtp.gmail.com with ESMTPSA id u11sm10164212lfb.17.2019.04.15.09.49.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Apr 2019 09:49:25 -0700 (PDT)
+Subject: Re: [PATCH v10 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3
+ RPC-IF controller bindings
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, bbrezillon@kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2 net-next] ravb: Avoid unsupported internal delay mode
- for R-Car E3/D3
-Message-ID: <20190415164921.GB9343@lunn.ch>
-References: <20190410114502.30362-1-horms+renesas@verge.net.au>
- <20190410161906.GD8916@lunn.ch>
- <fa67b9d8-8b7c-3929-415f-e37f880de874@cogentembedded.com>
- <20190411084026.5crg7yiphm6zsk5s@verge.net.au>
- <20190411092056.jmnsx6mnfylfrsh4@verge.net.au>
- <20190411133357.GE8916@lunn.ch>
- <a6bd1a3a-0c6f-6d2a-9270-f5819c34d4e7@cogentembedded.com>
- <20190415114548.4k3n7qvs4jd2vkce@verge.net.au>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>
+References: <1555313834-15107-1-git-send-email-masonccyang@mxic.com.tw>
+ <1555313834-15107-4-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <907f2e87-1cb4-fa37-5406-82bf2bf71188@cogentembedded.com>
+Date:   Mon, 15 Apr 2019 19:49:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190415114548.4k3n7qvs4jd2vkce@verge.net.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1555313834-15107-4-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 4f648394e645..9618c4881c83 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -1980,8 +1987,12 @@ static void ravb_set_delay_mode(struct net_device *ndev)
->  		set |= APSR_DM_RDM;
->  
->  	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
-> -	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
-> -		set |= APSR_DM_TDM;
-> +	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
-> +		if (!WARN(soc_device_match(ravb_delay_mode_quirk_match),
-> +			  "phy-mode %s requires TX clock internal delay mode which is not supported by this hardware revision. Please update device tree",
-> +			  phy_modes(priv->phy_interface)))
-> +			set |= APSR_DM_TDM;
-> +	}
->  
->  	ravb_modify(ndev, APSR, APSR_DM, set);
->  }
+On 04/15/2019 10:37 AM, Mason Yang wrote:
 
-Hi Simon
+> Document the bindings used by the Renesas R-Car Gen3 RPC-IF MFD controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  .../devicetree/bindings/mfd/mfd-renesas-rpc.txt    | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/mfd-renesas-rpc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/mfd-renesas-rpc.txt b/Documentation/devicetree/bindings/mfd/mfd-renesas-rpc.txt
+> new file mode 100644
+> index 0000000..bfb3d29
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/mfd-renesas-rpc.txt
+> @@ -0,0 +1,37 @@
+> +Renesas R-Car Gen3 RPC-IF MFD controller Device Tree Bindings
+> +-------------------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be an SoC-specific compatible value, followed by
+> +		"renesas,rcar-gen3-rpc" as a fallback.
+> +		supported SoC-specific values are:
+> +		"renesas,r8a77995-rpc"	(R-Car D3)
+> +- reg: should contain 2 entries, one for the base address of rpc-if registers,
+> +	and one for the direct mapping area
+> +- reg-names: should contain "regs", and "dirmap"
 
-This looks good. Please add my:
+   The device tree describes the hardware, not the driver. Why did you remove
+the "wbuf" area?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+[...]
 
-To the real patch.
-
-    Andrew
+MBR, Sergei
