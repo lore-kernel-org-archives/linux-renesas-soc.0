@@ -2,103 +2,124 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC5DC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 21:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D43EC10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 21:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942FC2087C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 21:21:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1528A20880
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 21:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfDOVVb (ORCPT
+        id S1727552AbfDOVzz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 17:21:31 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:49076 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbfDOVVb (ORCPT
+        Mon, 15 Apr 2019 17:55:55 -0400
+Received: from stcim.de ([78.46.90.227]:43648 "EHLO stcim.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726609AbfDOVzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 17:21:31 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 070CC3C00C1;
-        Mon, 15 Apr 2019 23:21:28 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id RAzAevxOK1bX; Mon, 15 Apr 2019 23:21:20 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 0D6B13C00C0;
-        Mon, 15 Apr 2019 23:21:20 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 15 Apr
- 2019 23:21:19 +0200
-Date:   Mon, 15 Apr 2019 23:21:16 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Christian Gromm <christian.gromm@microchip.com>,
-        Andrey Shvetsov <andrey.shvetsov@k2l.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <driverdev-devel@linuxdriverproject.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        Vladimir Barinov <vladimir.barinov@cogentembedded.com>,
-        <external.sudipi@jp.adit-jv.com>, <tfranzen@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [PATCH v4 12/12] staging: most: Documentation: update driver
- documentation
-Message-ID: <20190415212116.GA3568@vmlxhi-102.adit-jv.com>
+        Mon, 15 Apr 2019 17:55:55 -0400
+Received: from xdsl-89-0-59-235.nc.de ([89.0.59.235] helo=porty)
+        by stcim with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <contact@stefanchrist.eu>)
+        id 1hG9Zq-0000zf-IS; Mon, 15 Apr 2019 23:55:46 +0200
+Date:   Mon, 15 Apr 2019 23:55:46 +0200
+From:   Stefan Lengfeld <contact@stefanchrist.eu>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Rosin <peda@axentia.se>, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 01/12] i2c: remove use of in_atomic()
+Message-ID: <20190415215546.xr7aftkahcu4ygak@porty>
+References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+ <20190403124019.8947-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1554297595-31767-13-git-send-email-christian.gromm@microchip.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+In-Reply-To: <20190403124019.8947-2-wsa+renesas@sang-engineering.com>
+X-PGP-Key: https://stefanchrist.eu/personal/Stefan_Lengfeld_0xE44A23B289092311.asc
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Christian, hello Andrey,
-cc: Vladimir Barinov
-cc: linux-renesas-soc
+Hi Wolfram,
 
-Our team currently has the requirement of adding MOST support to
-the v4.14-based R-Car3 kernel [1], matching the level of features
-and interfaces of mld-1.8.0 [2] release.
+On Wed, Apr 03, 2019 at 02:40:08PM +0200, Wolfram Sang wrote:
+> Commit cea443a81c9c ("i2c: Support i2c_transfer in atomic contexts")
+> added in_atomic() to the I2C core. However, the use of in_atomic()
+> outside of core kernel code is discouraged and was already[1] when this
+> code was added in early 2008. The above commit was a preparation for
+> commit b7a3670131c7 ("i2c-pxa: Add polling transfer"). Its commit
+> message says explicitly it was added "for cases where I2C transactions
+> have to occur at times interrup[t]s are disabled". So, the intention was
+> 'disabled interrupts'. This matches the use cases for atomic I2C
+> transfers I have seen so far: very late communication (mostly to a PMIC)
+> to powerdown or reboot the system. For those cases, interrupts are
+> disabled then. It doesn't seem that in_atomic() adds value.
+> 
+> After a discussion with Peter Zijlstra[2], we came up with a better set
+> of conditionals to match the use case.
+> 
+> The I2C core will soon gain an extra callback into bus drivers
+> especially for atomic transfers to make them more generic. The code
+> deciding which transfer to use (atomic/non-atomic) should mimic the
+> behaviour which locking to use (trylock/lock). This is why we add a
+> helper for it.
+> 
+> [1] https://lwn.net/Articles/274695/
+> [2] http://patchwork.ozlabs.org/patch/1067437/
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Based on a quick check [3], the mld-1.8.0 release contains 221 non-merge
-non-mainline commits. It seems like at least some (most?) of them have
-been reworked during upstreaming and are now part of vanilla, thanks to
-your efforts.
+Tested-by: Stefan Lengfeld <contact@stefanchrist.eu>
 
-Since you've actively participated in pushing the out-of-tree drivers
-to mainline, could you please share your gut feeling whether the
-current mainline state of the MOST subsystem matches the mld-1.8.0
-release in terms of features and interfaces?
+snipped
 
-At first glance, such mld-1.8.0 functionalities like "flexible PCM
-rate support" [4], as well as a number of dim2 sysfs entries [5-8]
-appear to be missing in v5.1-rc5. Could you please feedback if these
-have been deliberately dropped or didn't make their way for another
-reason? What would be your recommendation between going the mld-1.8.0
-and going the v5.1-rc5 way for MOST?
+> diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
+> index 37576f50fe20..9d8526415b26 100644
+> --- a/drivers/i2c/i2c-core.h
+> +++ b/drivers/i2c/i2c-core.h
+> @@ -29,6 +29,16 @@ extern int		__i2c_first_dynamic_bus_num;
+>  
+>  int i2c_check_7bit_addr_validity_strict(unsigned short addr);
+>  
+> +/*
+> + * We only allow atomic transfers for very late communication, e.g. to send
+> + * the powerdown command to a PMIC. Atomic transfers are a corner case and not
+> + * for generic use!
+> + */
+> +static inline bool i2c_in_atomic_xfer_mode(void)
+> +{
+> +	return system_state > SYSTEM_RUNNING && irqs_disabled();
+> +}
 
-Best regards,
-Eugeniu.
+I agree that this code is a lot better than the previous
+'irqs_disabled() || in_atomic()'. It also makes clear that the atomic
+I2C transfers is only meant for late shutdown I2C communcation.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas-bsp.git/
-[2] https://github.com/microchip-ais/linux/releases/tag/mld-1.8.0
-[3] git rev-list --no-merges --count  \
-    $(git merge-base linux/master mld-1.8.0)..mld-1.8.0
-    221
-[4] https://github.com/microchip-ais/linux/commit/8821bad23ff2
-    ("staging: most: aim-sound: add flexible PCM rate support")
-[5] https://github.com/microchip-ais/linux/commit/5030f77717a1d7
-    ("staging: most: dim2: add sysfs property dci/node_position")
-[6] https://github.com/microchip-ais/linux/commit/3a840d7b504552
-    ("staging: most: dim2: add sysfs property dci/node_address")
-[7] https://github.com/microchip-ais/linux/commit/0494ccb4bc5f39
-    ("staging: most: dim2: add sysfs property dci/ni_state")
-[8] https://github.com/microchip-ais/linux/commit/3198a5c5f0663
-    ("staging: most: dim2: add sysfs property dci/mep_eui48")
+
+After I read the article https://lwn.net/Articles/274695/ again I
+nevertheless cannot really say whether the usage of 'irqs_disabled()' is
+the theoretical correct approach. The article states explicitly that
+only the caller can really decided whether the operation should be
+atomic or not.
+
+Recap from previous discussions:
+
+But then you have to patch every call site to use either a new function
+like 'i2c_transfer_atomic()' or the extend I2C message flags. And mostly
+also supported this trough regmap and maybe other translation layers,
+which seems unpractical, may breaking existing usages and maybe not
+worth the hassle.
+
+For me this patch seems good and I don't know better.
+
+Kind regards,
+Stefan
