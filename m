@@ -2,164 +2,127 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 885D2C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 11:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FC7C282DA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 11:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3DA20818
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 11:32:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="krskU5bX"
+	by mail.kernel.org (Postfix) with ESMTP id 7FDAC2073F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 11:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfDOLcC (ORCPT
+        id S1726785AbfDOLp5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 07:32:02 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:24209 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbfDOLcC (ORCPT
+        Mon, 15 Apr 2019 07:45:57 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:50962 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfDOLp5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 07:32:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1555327919;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Tv+0wQw/B/P4QZNtwN/FLumaQSuEHmxrjBHZmTES62w=;
-        b=krskU5bXYEtDLTO5YopN7vfbYO4/atBenGDVMjHWv+P+ubnzQD0doJ4fc32gct2lCT
-        9jti0wTfn5Wkpd/kk8G3D9kDjK5kMwde0F0Q4DZEOd+ue0b0QaBWM+A5ZoAytj0NKd2c
-        u91Lyx1BBL3+RDdtYihvRoHZL9ao2KyGoY+9vOVkfF8Ado106h4c3Yq6wUJfJDw17prT
-        BzQC2QGXDfJFm0EoRV5vpcYW0SuGT9GC6HAfsKsz3Yyog263ldI2RRGh3TRPLtWybPnC
-        pfX0HG8PDhJzXT7t3E2YOH/kLW5GZp0OtqcovUlaBLY22bJb8nUAVZU2bS8gs29VEJHW
-        Iiww==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp05-03.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.18 AUTH)
-        with ESMTPSA id y08c83v3FBVxKMq
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Mon, 15 Apr 2019 13:31:59 +0200 (CEST)
-Date:   Mon, 15 Apr 2019 13:31:59 +0200 (CEST)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-Message-ID: <1836210583.466069.1555327919451@webmail.strato.com>
-In-Reply-To: <20190412234359.5079-6-niklas.soderlund+renesas@ragnatech.se>
-References: <20190412234359.5079-1-niklas.soderlund+renesas@ragnatech.se>
- <20190412234359.5079-6-niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH 5/8] rcar-vin: Move pm_runtime_{get,put} out of helpers
+        Mon, 15 Apr 2019 07:45:57 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id C6DAF25AD78;
+        Mon, 15 Apr 2019 21:45:54 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id C67589403F0; Mon, 15 Apr 2019 13:45:52 +0200 (CEST)
+Date:   Mon, 15 Apr 2019 13:45:52 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, David Miller <davem@davemloft.net>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 net-next] ravb: Avoid unsupported internal delay mode
+ for R-Car E3/D3
+Message-ID: <20190415114548.4k3n7qvs4jd2vkce@verge.net.au>
+References: <20190410114502.30362-1-horms+renesas@verge.net.au>
+ <20190410161906.GD8916@lunn.ch>
+ <fa67b9d8-8b7c-3929-415f-e37f880de874@cogentembedded.com>
+ <20190411084026.5crg7yiphm6zsk5s@verge.net.au>
+ <20190411092056.jmnsx6mnfylfrsh4@verge.net.au>
+ <20190411133357.GE8916@lunn.ch>
+ <a6bd1a3a-0c6f-6d2a-9270-f5819c34d4e7@cogentembedded.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev55
-X-Originating-IP: 85.212.102.112
-X-Originating-Client: open-xchange-appsuite
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6bd1a3a-0c6f-6d2a-9270-f5819c34d4e7@cogentembedded.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Thu, Apr 11, 2019 at 07:36:35PM +0300, Sergei Shtylyov wrote:
+> On 04/11/2019 04:33 PM, Andrew Lunn wrote:
+> 
+> >>>>>> According to the R-Car Gen3 Hardware Manual Rev 1.50 of Nov 30, 2018, the
+> >>>>>> TX clock internal delay mode isn't supported on R-Car E3 (r8a77990) or D3
+> >>>>>> (r8a77995). And by extension it is also not supported by RZ/G2E (r9a774c0).
+> >>>>>>
+> >>>>>> This matches all ES versions of the affected SoCs as it is
+> >>>>>> not clear if this problem will be resolved in newer chips.
+> >>>>>> This can be revisited, as necessary.
+> >>>>>>
+> >>>>>> This patch does not error-out if PHY_INTERFACE_MODE_RGMII_ID or
+> >>>>>> PHY_INTERFACE_MODE_RGMII_TXID are used on SoCs where TX clock delay
+> >>>>>> mode is not supported as there is a risk of introducing a regression
+> >>>>>> when used in conjunction with older DT blobs present in the field.
+> >>>>>
+> >>>>> Hi Simon
+> >>>>>
+> >>>>> I think it should at least WARN_ON(). Such blobs are broken, even if
+> >>>>> they do kind of work.
+> >>>>
+> >>>>    Good idea! Simon, third time's a charm? :-)
+> >>>
+> >>> Sure, can do.
+> >>
+> >> How about something like this?
+> >>
+> >> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> >> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> >> @@ -1980,8 +1987,14 @@ static void ravb_set_delay_mode(struct net_device *ndev)
+> >>  		set |= APSR_DM_RDM;
+> >>  
+> >>  	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
+> >> -	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
+> >> -		set |= APSR_DM_TDM;
+> >> +	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
+> >> +		if (soc_device_match(ravb_delay_mode_quirk_match))
+> >> +			dev_warn(ndev->dev.parent,
+> >> +				 "phy-mode %s requires TX clock internal delay mode which is not supported by this hardwre revision",
+> >> +				 phy_modes(priv->phy_interface));
+> > 
+> > Hi Simon
+> > 
+> > The point of the warning is to tell users they should upgrade their DT
+> > blob to one that is not broken. So i think the message should say
+> > this. Also, we want users to notice this, which is why i said
+> > WARN_ON(). Something big so it gets noticed.
+> 
+>    I agree in general but I guess you meant WARN() -- WARN_ON() doesn't take
+> a string arg...
 
-> On April 13, 2019 at 1:43 AM Niklas S=C3=B6derlund <niklas.soderlund+rene=
-sas@ragnatech.se> wrote:
->=20
->=20
-> The helpers rvin_power_{on,off} deals with both VIN and the parallel
-> subdevice power. This makes it hard to merge the Gen2 and Gen3
-> open/release functions. Move the VIN power handling directly to the
-> open/release functions to prepare for the merge.
->=20
-> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
-se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 34 +++++++++++++--------
->  1 file changed, 21 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/=
-platform/rcar-vin/rcar-v4l2.c
-> index 71651c5a69483367..5a9658b7d848fc86 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -754,8 +754,6 @@ static int rvin_power_on(struct rvin_dev *vin)
->  =09int ret;
->  =09struct v4l2_subdev *sd =3D vin_to_source(vin);
-> =20
-> -=09pm_runtime_get_sync(vin->v4l2_dev.dev);
-> -
->  =09ret =3D v4l2_subdev_call(sd, core, s_power, 1);
->  =09if (ret < 0 && ret !=3D -ENOIOCTLCMD && ret !=3D -ENODEV)
->  =09=09return ret;
-> @@ -768,9 +766,6 @@ static int rvin_power_off(struct rvin_dev *vin)
->  =09struct v4l2_subdev *sd =3D vin_to_source(vin);
-> =20
->  =09ret =3D v4l2_subdev_call(sd, core, s_power, 0);
-> -
-> -=09pm_runtime_put(vin->v4l2_dev.dev);
-> -
->  =09if (ret < 0 && ret !=3D -ENOIOCTLCMD && ret !=3D -ENODEV)
->  =09=09return ret;
-> =20
-> @@ -802,20 +797,31 @@ static int rvin_open(struct file *file)
-> =20
->  =09file->private_data =3D vin;
-> =20
-> +=09ret =3D pm_runtime_get_sync(vin->dev);
-> +=09if (ret < 0)
-> +=09=09goto err_unlock;
-> +
->  =09ret =3D v4l2_fh_open(file);
->  =09if (ret)
-> -=09=09goto unlock;
-> +=09=09goto err_pm;
-> =20
-> -=09if (!v4l2_fh_is_singular_file(file))
-> -=09=09goto unlock;
-> -
-> -=09if (rvin_initialize_device(file)) {
-> -=09=09v4l2_fh_release(file);
-> -=09=09ret =3D -ENODEV;
-> +=09if (v4l2_fh_is_singular_file(file)) {
-> +=09=09if (rvin_initialize_device(file)) {
-> +=09=09=09ret =3D -ENODEV;
-> +=09=09=09goto err_open;
-> +=09=09}
->  =09}
-> =20
-> -unlock:
->  =09mutex_unlock(&vin->lock);
-> +
-> +=09return 0;
-> +err_open:
-> +=09v4l2_fh_release(file);
-> +err_pm:
-> +=09pm_runtime_put(vin->dev);
-> +err_unlock:
-> +=09mutex_unlock(&vin->lock);
-> +
->  =09return ret;
->  }
-> =20
-> @@ -840,6 +846,8 @@ static int rvin_release(struct file *file)
->  =09if (fh_singular)
->  =09=09rvin_power_off(vin);
-> =20
-> +=09pm_runtime_put(vin->dev);
-> +
->  =09mutex_unlock(&vin->lock);
-> =20
->  =09return ret;
-> --=20
-> 2.21.0
->
+Thanks, how about this?
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-
-CU
-Uli
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 4f648394e645..9618c4881c83 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1980,8 +1987,12 @@ static void ravb_set_delay_mode(struct net_device *ndev)
+ 		set |= APSR_DM_RDM;
+ 
+ 	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
+-	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
+-		set |= APSR_DM_TDM;
++	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
++		if (!WARN(soc_device_match(ravb_delay_mode_quirk_match),
++			  "phy-mode %s requires TX clock internal delay mode which is not supported by this hardware revision. Please update device tree",
++			  phy_modes(priv->phy_interface)))
++			set |= APSR_DM_TDM;
++	}
+ 
+ 	ravb_modify(ndev, APSR, APSR_DM, set);
+ }
