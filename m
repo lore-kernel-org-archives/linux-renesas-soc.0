@@ -2,121 +2,124 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3AFC10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE785C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BE7206B6
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:43:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 835982077C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:45:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="fz+juSlV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fc6Erbs9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbfDOMn0 (ORCPT
+        id S1727386AbfDOMpC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 08:43:26 -0400
-Received: from mail-eopbgr1400138.outbound.protection.outlook.com ([40.107.140.138]:27232
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727214AbfDOMn0 (ORCPT
+        Mon, 15 Apr 2019 08:45:02 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37500 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbfDOMpC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 08:43:26 -0400
+        Mon, 15 Apr 2019 08:45:02 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e6so8536099pgc.4;
+        Mon, 15 Apr 2019 05:45:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yToQbf0zOHFmjO//tNHQnfCS2sRg6eBYgR+UASV+7os=;
- b=fz+juSlVDAsnqlQoB2NK22Gz9DSypJrtaLJOmneRoukdA7K4hSRMEno/sx4T0Mcrvffm1qvlv3iWCD1qtNfShnjWJkjMJHLWgiPQl2G5kd21ae+ex/UUhAxJwPDVRdCKGD8HDqVluYYSqGfX5kZGd2iRSJiqqiJKakO62NR2NPY=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1PR01MB1868.jpnprd01.prod.outlook.com (52.133.164.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1792.17; Mon, 15 Apr 2019 12:43:22 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::9cf9:e85b:37c7:a1d0]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::9cf9:e85b:37c7:a1d0%4]) with mapi id 15.20.1792.018; Mon, 15 Apr 2019
- 12:43:22 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] i2c: riic: Add Runtime PM support
-Thread-Topic: [PATCH] i2c: riic: Add Runtime PM support
-Thread-Index: AQHU3wfmPrqJaCLqskmvDOfIk8liNaY9TEYAgAADhOA=
-Date:   Mon, 15 Apr 2019 12:43:21 +0000
-Message-ID: <TY1PR01MB1562BF027EB966ACFE8BB1C48A2B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20190320103003.20107-1-geert+renesas@glider.be>
- <20190415121718.gdowmtgwqi2aa4zp@ninjato>
-In-Reply-To: <20190415121718.gdowmtgwqi2aa4zp@ninjato>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9fbdc302-7017-4352-0779-08d6c19ff1d3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600140)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:TY1PR01MB1868;
-x-ms-traffictypediagnostic: TY1PR01MB1868:
-x-microsoft-antispam-prvs: <TY1PR01MB18689D247023564886029D908A2B0@TY1PR01MB1868.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 000800954F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(366004)(376002)(39860400002)(396003)(189003)(199004)(13464003)(53546011)(6506007)(8676002)(76176011)(81156014)(229853002)(4326008)(5660300002)(186003)(102836004)(53936002)(6246003)(8936002)(26005)(52536014)(55016002)(81166006)(6436002)(25786009)(99286004)(68736007)(106356001)(478600001)(105586002)(256004)(9686003)(72206003)(33656002)(316002)(110136005)(14454004)(97736004)(446003)(7696005)(486006)(71200400001)(476003)(305945005)(71190400001)(86362001)(66066001)(7736002)(6116002)(74316002)(3846002)(2906002)(54906003)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1868;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: npnbd1/IGFZQ7zWm9HyOQn6j85EUmuaIDQn8WZ9SGeWD0jaahq3B2/uEU4BjrgDfWs0yQKdF2fAjjaRJiFkkHR8AJ5sbuEz9FVPUcSsStXvZV9O6dpB+Ba+9YbfC7AIlj+d6MgujZSvupDIQas4MLHC2Qm2QTxa6lqPBOSI/kh4P3hFsSH7Kay3GKOxBKU5V6Kcud4h9xo3cBZsXR5rBfX46BTO5XtWacOf5dnBvnPqxQlFrgOzdpAXSoTZV07h/Bc9bXisRjlEfB54VYnfIUTo/D+gWtadpI/exhiWHUBKSkg6p6QgszjJld6WzXCJ4I75NTENuepw6rnkGj/HagafSB9VUxW+DnHkwSRJIYEMnB2tFeG0zuii55+fikCVo1y8OcPhlAbSD/+lp8svZ1XoY4CN9KK86s34kBXKvjYo=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j2Jbk+XA0OWjgXCKKQtMT9pUcI5jesaoAegi8Sx+lEQ=;
+        b=fc6Erbs9Y5DyxddYgwY58UwwzLc5ZzUNN8Sr8k7iCEiFzjmFS2GSX4KJPAbKBEQM/J
+         sAcbusbZEKPj+1/6BaFJICColzz9Jw7HQcqHkxM/lFnAEeO8CBMfBN3QX1h6gYAqO/sI
+         RSVorg+ud1lylvgFYOl1LtU1BQsuvMWzxzNF5lXA5UlpX4eftrEhhUBdUdH61LTlh2oz
+         QnMsIyj9LDsjtjimJRN5fiJ47vaqtqCBIxa+kpyaDRG8BMaOK0uK3b9eaLB+pnc+7+nw
+         E1CEvDYyL5A2iKPXcx2FVLlyct7dDR6+GLoU4N0vL1MBeEyXxxMgdU05RKpON25ml5Ye
+         YZnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j2Jbk+XA0OWjgXCKKQtMT9pUcI5jesaoAegi8Sx+lEQ=;
+        b=EjpDb1CO1e+HFd/3IbiZIRNM3NyodkuGxWvuubp7Dlodo6XlTZ77nLArCbC2xauzUd
+         vkyMUct3/s6kOXiGTVciIqfDnYneKDVuz73odT7/a9iwaJ55DgC2dbzLfiCuC/gIVHNG
+         /7MYBBeSwCNrDLxlVVfJ/pblBWfIdy/xnneuchXKGb4gVFP1JYUh4hk6BjDD6L2kz0KT
+         5gPSYVxY8Zu2f/KqHP9hp31uRhjvfe7GAEtqaAUKdHTBW5YhsBALAmQdor1a4HAQiMaE
+         +0ibFkPmKKtc61FtMU2ttuWniYW2D/lIBtqCNXfHBs8lDPmGWuXAFv1sg3f7t6mW33dX
+         2w2g==
+X-Gm-Message-State: APjAAAVQ1SNVhMfdJtFS08CdFowEqta0n8j2Z5iV5gQ6Pyo9wZ/1rGek
+        QgieZ9vZ+FI1ZwSGSucTKn7A6YaPKnKgOplrXYQ=
+X-Google-Smtp-Source: APXvYqzKWmdgMxkzRSfGD+9ho2+CpaMZP3G+svhEOce4rzr315M0JBKyY0wKP8Wqwf1/MAiAEultZoehgVlG81SX8qU=
+X-Received: by 2002:a62:448d:: with SMTP id m13mr75740560pfi.182.1555332301258;
+ Mon, 15 Apr 2019 05:45:01 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fbdc302-7017-4352-0779-08d6c19ff1d3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2019 12:43:21.8942
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1868
+References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com> <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 15 Apr 2019 15:44:50 +0300
+Message-ID: <CAHp75Vfp_1g-DuTx1mR3bF21qxj47d-+N-JhQyBaXD9cumPB6Q@mail.gmail.com>
+Subject: Re: [PATCH 04/12] i2c: mux: populate the new *_atomic callbacks
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Peter Rosin <peda@axentia.se>,
+        Stefan Lengfeld <contact@stefanchrist.eu>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From a functional standpoint, it is simply doing the same operation that it=
- does today, just with different APIs, so that's fine.
+On Wed, Apr 3, 2019 at 3:42 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> If the parent adapter has atomic_xfer callbacks, populate them for the
+> mux adapter as well. We can use the same translation function as for the
+> non-atomic xfer callback.
+>
 
-I will go and test it to make sure it works on RZ/A1 and RZ/A2 and didn't b=
-reak anything, and then reply.
+Reviewed-by Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 
-Chris
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/i2c-mux.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
+> index f330690b4125..603252fa1284 100644
+> --- a/drivers/i2c/i2c-mux.c
+> +++ b/drivers/i2c/i2c-mux.c
+> @@ -310,12 +310,18 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
+>                 else
+>                         priv->algo.master_xfer = __i2c_mux_master_xfer;
+>         }
+> +       if (parent->algo->master_xfer_atomic)
+> +               priv->algo.master_xfer_atomic = priv->algo.master_xfer;
+> +
+>         if (parent->algo->smbus_xfer) {
+>                 if (muxc->mux_locked)
+>                         priv->algo.smbus_xfer = i2c_mux_smbus_xfer;
+>                 else
+>                         priv->algo.smbus_xfer = __i2c_mux_smbus_xfer;
+>         }
+> +       if (parent->algo->smbus_xfer_atomic)
+> +               priv->algo.smbus_xfer_atomic = priv->algo.smbus_xfer;
+> +
+>         priv->algo.functionality = i2c_mux_functionality;
+>
+>         /* Now fill out new adapter structure */
+> --
+> 2.11.0
+>
 
 
-> -----Original Message-----
-> From: Wolfram Sang <wsa@the-dreams.de>
-> Sent: Monday, April 15, 2019 8:17 AM
-> To: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Chris Brandt <Chris.Brandt@renesas.com>; linux-i2c@vger.kernel.org;
-> linux-renesas-soc@vger.kernel.org
-> Subject: Re: [PATCH] i2c: riic: Add Runtime PM support
->=20
-> On Wed, Mar 20, 2019 at 11:30:03AM +0100, Geert Uytterhoeven wrote:
-> >   - Replace explicit clock handling by Runtime PM calls,
-> >   - Streamline Runtime PM handling in error paths,
-> >   - Enable Runtime PM in .probe(),
-> >   - Disable Runtime PM in .remove(),
-> >   - Make sure the device is runtime-resumed when disabling interrupts i=
-n
-> >     .remove().
-> >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
-> > I don't think it's worth splitting off the last bug fix in a separate
-> > (first) patch, using explicit clock handling, as that will be replaced
-> > immediately by Runtime PM calls.
->=20
-> Chris, what do you think about this patch?
-
+-- 
+With Best Regards,
+Andy Shevchenko
