@@ -2,97 +2,88 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2917C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 10:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 958B4C10F12
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 11:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5AA206B6
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 10:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ECF720848
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 11:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfDOKwK (ORCPT
+        id S1727330AbfDOLEM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 06:52:10 -0400
-Received: from sauhun.de ([88.99.104.3]:40532 "EHLO pokefinder.org"
+        Mon, 15 Apr 2019 07:04:12 -0400
+Received: from sauhun.de ([88.99.104.3]:40684 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbfDOKwK (ORCPT
+        id S1727289AbfDOLEM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 06:52:10 -0400
+        Mon, 15 Apr 2019 07:04:12 -0400
 Received: from localhost (p54B331F8.dip0.t-ipconnect.de [84.179.49.248])
-        by pokefinder.org (Postfix) with ESMTPSA id B5E4D2C0114;
-        Mon, 15 Apr 2019 12:52:06 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-watchdog@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH] watchdog: renesas_wdt: support handover from bootloader
-Date:   Mon, 15 Apr 2019 12:52:01 +0200
-Message-Id: <20190415105201.2078-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
+        by pokefinder.org (Postfix) with ESMTPSA id EDC9C2C0114;
+        Mon, 15 Apr 2019 13:04:09 +0200 (CEST)
+Date:   Mon, 15 Apr 2019 13:04:09 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Steve Twiss <stwiss.opensource@diasemi.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        LINUX RENESAS SOC <linux-renesas-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Support Opensource <Support.Opensource@diasemi.com>
+Subject: Re: [PATCH RFT] watchdog: da9063_wdt: parse DT for timeout value, too
+Message-ID: <20190415110409.5q6la4wz5bjiesrc@ninjato>
+References: <20190414110933.30529-1-wsa+renesas@sang-engineering.com>
+ <VI1PR10MB23525523F623FFAC4126EBC9FE2B0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+ <20190415092853.GA1861@kunai>
+ <VI1PR10MB23520D64B2120138FF64D0BBFE2B0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lqmkg5kji7elbzig"
+Content-Disposition: inline
+In-Reply-To: <VI1PR10MB23520D64B2120138FF64D0BBFE2B0@VI1PR10MB2352.EURPRD10.PROD.OUTLOOK.COM>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Support an already running watchdog by checking its enable bit and set
-up the status accordingly before registering the device.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--lqmkg5kji7elbzig
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch was tested using a Renesas Salvator XS board (R-Car M3N). It works.
-However, there is a small window where the watchdog clock is disabled, namely
-after the MSSR clock driver initializes it until RuntimePM of the watchdog
-driver takes over. If the system hangs in this window, bad luck. So, I'd think
-it makes sense to have this clock either always-on or to keep the state which
-came from the firmware. Geert, what do you think?
 
- drivers/watchdog/renesas_wdt.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+> > I am confused, what is not possible? That I have an AD version? Yes, we
+> > found that out when we worked on the RTC recently.=20
+>=20
+> Sure, I know, people have been requesting continued support for DA9063 AD=
+ silicon
+> for years. The original DA9063 Linux driver was sent to LKML with AD supp=
+ort.
 
-diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-index 565dbc1ec638..37d757288b22 100644
---- a/drivers/watchdog/renesas_wdt.c
-+++ b/drivers/watchdog/renesas_wdt.c
-@@ -179,6 +179,7 @@ static int rwdt_probe(struct platform_device *pdev)
- 	struct clk *clk;
- 	unsigned long clks_per_sec;
- 	int ret, i;
-+	u8 csra;
- 
- 	if (rwdt_blacklisted(&pdev->dev))
- 		return -ENODEV;
-@@ -198,8 +199,8 @@ static int rwdt_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
- 	priv->clk_rate = clk_get_rate(clk);
--	priv->wdev.bootstatus = (readb_relaxed(priv->base + RWTCSRA) &
--				RWTCSRA_WOVF) ? WDIOF_CARDRESET : 0;
-+	csra = readb_relaxed(priv->base + RWTCSRA);
-+	priv->wdev.bootstatus = csra & RWTCSRA_WOVF ? WDIOF_CARDRESET : 0;
- 	pm_runtime_put(&pdev->dev);
- 
- 	if (!priv->clk_rate) {
-@@ -237,6 +238,16 @@ static int rwdt_probe(struct platform_device *pdev)
- 	/* This overrides the default timeout only if DT configuration was found */
- 	watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
- 
-+	if (csra & RWTCSRA_TME) {
-+		/* Ensure properly initialized dividers */
-+		rwdt_start(&priv->wdev);
-+		set_bit(WDOG_HW_RUNNING, &priv->wdev.status);
-+		//FIXME: We are missing pm_runtime_put in some code paths to
-+		// to balance PM calls. We first need to decide if we maybe
-+		// should have the RWDT clock always-on or if using RPM for
-+		// clock management is OK.
-+	}
-+
- 	ret = watchdog_register_device(&priv->wdev);
- 	if (ret < 0)
- 		goto out_pm_disable;
--- 
-2.11.0
+I see. Well, unlike the RTC patches recently, this watchdog patch is
+independent of the variant AFAICS, or?
 
+
+--lqmkg5kji7elbzig
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAly0ZSkACgkQFA3kzBSg
+KbYm2g/+MtI543GeMiwqgNwVhWzUd3MzVQYrgjPF8x/E0UmUTLSFn6TkFLlQrcGu
+e00szB+GXFJ3d+CRtxVNo0gbjmMNcegeLNUYu+7GSAbNQl1v8uwY9GVoKatoSzS/
+Ns3CoeZuVEqhLq85IaDxiVXRLeHJDyzAlZnYPm+pInAUvR/IantsvuUyB1wSTUt6
+KSJkQFLI8CT1dF6AO+uVfYMl7kMvZO44oaezUBg1RQYMD6RUeoWgfhRZ/v46hIBP
+z5pEsS56Hh6HJjjFzoUltb5AueTurbO97KGcLR5RMLr5gAZtpdGBdgwk6ZpUTqnu
+CLs/YTm5G1ftcIBpraTr+NwFJzVSa8WFswnIdPJPRpYCoOqNighXjCjkADa7FAZX
+or4d0M5xnOLKmNyQT/8m27XAGXPV03kO+DAtlr9RA73Uq8RXNtmXl74j18AUq9FD
+tq04kff1k0mY/iuHA5OEescGLJk7lNZqPXPvpHmLzNRIpg+4LS5m8HmlpVNUK01a
+coATYT7byYTof1MfOwWZkeDZ2HXw+pN+3V2TH5B3GVUAYCFcWbTKr2A8x3HjE2Qc
+zJF239K5l4IRgWZLWUt7yZbvIvS9I5J2oZ2dwxCJ4AZaCnQf4rEtGNTvxaB4G3Vh
+ihxxYdIEGG/w11WwnfHzMw0g+a80m5S87EAs1LeYtOhbwPNWP9U=
+=/Lia
+-----END PGP SIGNATURE-----
+
+--lqmkg5kji7elbzig--
