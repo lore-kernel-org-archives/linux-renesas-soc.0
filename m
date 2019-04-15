@@ -2,124 +2,80 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE785C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524C3C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835982077C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:45:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fc6Erbs9"
+	by mail.kernel.org (Postfix) with ESMTP id 296352077C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 12:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfDOMpC (ORCPT
+        id S1727389AbfDOMqu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 08:45:02 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37500 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727340AbfDOMpC (ORCPT
+        Mon, 15 Apr 2019 08:46:50 -0400
+Received: from sauhun.de ([88.99.104.3]:41536 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726042AbfDOMqu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 08:45:02 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e6so8536099pgc.4;
-        Mon, 15 Apr 2019 05:45:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j2Jbk+XA0OWjgXCKKQtMT9pUcI5jesaoAegi8Sx+lEQ=;
-        b=fc6Erbs9Y5DyxddYgwY58UwwzLc5ZzUNN8Sr8k7iCEiFzjmFS2GSX4KJPAbKBEQM/J
-         sAcbusbZEKPj+1/6BaFJICColzz9Jw7HQcqHkxM/lFnAEeO8CBMfBN3QX1h6gYAqO/sI
-         RSVorg+ud1lylvgFYOl1LtU1BQsuvMWzxzNF5lXA5UlpX4eftrEhhUBdUdH61LTlh2oz
-         QnMsIyj9LDsjtjimJRN5fiJ47vaqtqCBIxa+kpyaDRG8BMaOK0uK3b9eaLB+pnc+7+nw
-         E1CEvDYyL5A2iKPXcx2FVLlyct7dDR6+GLoU4N0vL1MBeEyXxxMgdU05RKpON25ml5Ye
-         YZnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j2Jbk+XA0OWjgXCKKQtMT9pUcI5jesaoAegi8Sx+lEQ=;
-        b=EjpDb1CO1e+HFd/3IbiZIRNM3NyodkuGxWvuubp7Dlodo6XlTZ77nLArCbC2xauzUd
-         vkyMUct3/s6kOXiGTVciIqfDnYneKDVuz73odT7/a9iwaJ55DgC2dbzLfiCuC/gIVHNG
-         /7MYBBeSwCNrDLxlVVfJ/pblBWfIdy/xnneuchXKGb4gVFP1JYUh4hk6BjDD6L2kz0KT
-         5gPSYVxY8Zu2f/KqHP9hp31uRhjvfe7GAEtqaAUKdHTBW5YhsBALAmQdor1a4HAQiMaE
-         +0ibFkPmKKtc61FtMU2ttuWniYW2D/lIBtqCNXfHBs8lDPmGWuXAFv1sg3f7t6mW33dX
-         2w2g==
-X-Gm-Message-State: APjAAAVQ1SNVhMfdJtFS08CdFowEqta0n8j2Z5iV5gQ6Pyo9wZ/1rGek
-        QgieZ9vZ+FI1ZwSGSucTKn7A6YaPKnKgOplrXYQ=
-X-Google-Smtp-Source: APXvYqzKWmdgMxkzRSfGD+9ho2+CpaMZP3G+svhEOce4rzr315M0JBKyY0wKP8Wqwf1/MAiAEultZoehgVlG81SX8qU=
-X-Received: by 2002:a62:448d:: with SMTP id m13mr75740560pfi.182.1555332301258;
- Mon, 15 Apr 2019 05:45:01 -0700 (PDT)
+        Mon, 15 Apr 2019 08:46:50 -0400
+Received: from localhost (p54B331F8.dip0.t-ipconnect.de [84.179.49.248])
+        by pokefinder.org (Postfix) with ESMTPSA id EE7162C0114;
+        Mon, 15 Apr 2019 14:46:48 +0200 (CEST)
+Date:   Mon, 15 Apr 2019 14:46:48 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Chris Brandt <Chris.Brandt@renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] i2c: riic: Add Runtime PM support
+Message-ID: <20190415124648.GA11768@kunai>
+References: <20190320103003.20107-1-geert+renesas@glider.be>
+ <20190415121718.gdowmtgwqi2aa4zp@ninjato>
+ <TY1PR01MB1562BF027EB966ACFE8BB1C48A2B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com> <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190403124019.8947-5-wsa+renesas@sang-engineering.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 15 Apr 2019 15:44:50 +0300
-Message-ID: <CAHp75Vfp_1g-DuTx1mR3bF21qxj47d-+N-JhQyBaXD9cumPB6Q@mail.gmail.com>
-Subject: Re: [PATCH 04/12] i2c: mux: populate the new *_atomic callbacks
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Peter Rosin <peda@axentia.se>,
-        Stefan Lengfeld <contact@stefanchrist.eu>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1562BF027EB966ACFE8BB1C48A2B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 3, 2019 at 3:42 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> If the parent adapter has atomic_xfer callbacks, populate them for the
-> mux adapter as well. We can use the same translation function as for the
-> non-atomic xfer callback.
->
 
-Reviewed-by Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/i2c/i2c-mux.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
-> index f330690b4125..603252fa1284 100644
-> --- a/drivers/i2c/i2c-mux.c
-> +++ b/drivers/i2c/i2c-mux.c
-> @@ -310,12 +310,18 @@ int i2c_mux_add_adapter(struct i2c_mux_core *muxc,
->                 else
->                         priv->algo.master_xfer = __i2c_mux_master_xfer;
->         }
-> +       if (parent->algo->master_xfer_atomic)
-> +               priv->algo.master_xfer_atomic = priv->algo.master_xfer;
-> +
->         if (parent->algo->smbus_xfer) {
->                 if (muxc->mux_locked)
->                         priv->algo.smbus_xfer = i2c_mux_smbus_xfer;
->                 else
->                         priv->algo.smbus_xfer = __i2c_mux_smbus_xfer;
->         }
-> +       if (parent->algo->smbus_xfer_atomic)
-> +               priv->algo.smbus_xfer_atomic = priv->algo.smbus_xfer;
-> +
->         priv->algo.functionality = i2c_mux_functionality;
->
->         /* Now fill out new adapter structure */
-> --
-> 2.11.0
->
+> I will go and test it to make sure it works on RZ/A1 and RZ/A2 and
+> didn't break anything, and then reply.
+
+Cool, thanks!
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+--KsGdsel6WgEHnImy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAly0fTAACgkQFA3kzBSg
+KbZBUg//fVmECXJlQrc48dbdf2UXAk5GiHro6/9K0SlCtgOvnDb8IM5VDVYBrWL+
+z4gAiyUf0IAt4InDwdfkAnD9gafs+eI/Ab0fl2Yb5rY3FkxEMx550B4rRsIqXuJ/
+nzPC0mKOihhnl3WRfTK//LiCpKkd74o4bxywv3tSeyLwqcRy4PSKMZKqdnb7aC0M
+UU04vTXnTi71rmVvvrhsjgN7WQy/U8rzkxgIvxlCrfzjqJm80/MHzPPRS/vHW6MC
+gUqyeB2nTNTSh9nzBx2O3p7OcgnJbxIwAzJgcaW8AGVZVQRgY8TqAjHSsUduoWhe
+e+B7pK8MyWNfyIBmNbOQfRKxKo06E10+w1rI2FYSVjnWoau5GNQwEEQHp2o/hQGJ
+kZmgmQzzjNdhOnZG0yV7Vr01ABqF6wIzizcSzzpkEUXl1A87muo1KnDEynDdOdZS
+/v9JgeDq5uf4+lz2IwxqzY6kTR911Em5en3HuAfsShbSf8RY/WjcFBx9J8UnJIEx
+4bEZB2+IHBW+oYyp0MHmz2CIzuVW9tQbQSIuyY+5hlZqJIIBPNVSs2sP+IMc5nxg
+Nlk1hmhaAov+HN/SjCrU9LkPs9Ir4afW1F3cogtTPDQXA+e1oxmiHSQKq7q5O56v
+m476weOfUDfRrRJu7fq2Y16BcU7gI1LZQh4duWM4UrCEREcW7fo=
+=yPV2
+-----END PGP SIGNATURE-----
+
+--KsGdsel6WgEHnImy--
