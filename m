@@ -2,98 +2,64 @@ Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C378C282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A07C10F11
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0FE920874
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:21:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="QrFlyw70"
+	by mail.kernel.org (Postfix) with ESMTP id DF8B720656
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 08:41:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725779AbfDOIVT (ORCPT
+        id S1725972AbfDOIls (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 04:21:19 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44534 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfDOIVT (ORCPT
+        Mon, 15 Apr 2019 04:41:48 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:42466 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfDOIls (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 04:21:19 -0400
-Received: by mail-lf1-f67.google.com with SMTP id h18so12328448lfj.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Apr 2019 01:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AjL0XQZG+HyQuEEfM7wCFA0sYmyyrpsrVEapUZBj0IA=;
-        b=QrFlyw70ZCUAQO+P1V035NcAlJ4UqdoVCU5BeRXuOcBdo37kXFVeX0I2QXKCgIX5KH
-         Z9P+IMGrgbIynDcP/KZ069NcIfunox/HeL+156iKvXhI7aaoZUpuQzvjEjLGxmZaZxKG
-         N1YNbqOobTmEuObyP5pgrqIImcrxc2zuHJhxwPYmOc7t7z2sA/Y41b2RgMH97NGRhEnW
-         BzGOaEmAoICrui4Nrqb1SEsIN1LiQmtvQioCnyfhO5ydjtlp6jfa0PoUb0aWsg/UoQuv
-         vXEm5C92KMvjNKZTtH9qSWvvvAXVZqQMR3OtqXQ/xVslgNkfPslfEdPSHeGG/yWf0566
-         YqpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=AjL0XQZG+HyQuEEfM7wCFA0sYmyyrpsrVEapUZBj0IA=;
-        b=Hh1UvfucZU2LACHvPms+Lf+RUqL+A9Eh9BJfYIj44fmlYcOisw8NQk9KYPkH2TOTJD
-         26XxxBoCpr8MIYvQRQQtdwIwKP9msapGIQb+5UmX/aWKfO4LwgViB2vMHbtTEcXx/Ng0
-         iRKhi1dytTJuNikFyC3RVeFTtfwrhRFaQyvoux2RGmRmPl5B1qFBC1RUmG020fO1O78s
-         5/GPQXKzvklyt8rCWgEOeJ4FAC5ZwAAQD5r/MkoEuDBrKnyrubNUXSguwL1JupKwMa9Z
-         l/s2LcP/Ejm82QlQ6bsCHU2rJhDrrXbl4+mGe24kN8dvCLRo5W0tyPUmfM3HkYIDtl5L
-         ZfLA==
-X-Gm-Message-State: APjAAAVD9P+L4YJD3c7dMijAMV5/SD+FMPQsndnr53KvOR+2Th5vd2Ng
-        2+m9OpKd8BfTmwtnUWYnCWhgcKrHVG8=
-X-Google-Smtp-Source: APXvYqxNK7vvrZC5xsx390Bmid1rvxsEWxUvKTTDlbBjI1TCsDhQkUnqt1xqZa46bE1RP8nfZqQIcA==
-X-Received: by 2002:a19:f801:: with SMTP id a1mr18651473lff.150.1555316476990;
-        Mon, 15 Apr 2019 01:21:16 -0700 (PDT)
-Received: from [192.168.0.199] ([31.173.85.43])
-        by smtp.gmail.com with ESMTPSA id r2sm9852302ljd.16.2019.04.15.01.21.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Apr 2019 01:21:16 -0700 (PDT)
-Subject: Re: [PATCH 01/16] watchdog: refactor watchdog_init_timeout
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-watchdog@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-References: <20190414102627.5564-1-wsa+renesas@sang-engineering.com>
- <20190414102627.5564-2-wsa+renesas@sang-engineering.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <35407697-cbbb-e72b-7aed-ed84a3beb669@cogentembedded.com>
-Date:   Mon, 15 Apr 2019 11:21:13 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 15 Apr 2019 04:41:48 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 3399325AD6F;
+        Mon, 15 Apr 2019 18:41:45 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 2B8A99403F0; Mon, 15 Apr 2019 10:41:43 +0200 (CEST)
+Date:   Mon, 15 Apr 2019 10:41:43 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     geert+renesas@glider.be, magnus.damm@gmail.com,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: renesas: r8a77965: Remove reg-names of
+ display node
+Message-ID: <20190415084142.6pk5sd7dupua34gs@verge.net.au>
+References: <20190412120132.31119-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <20190414102627.5564-2-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190412120132.31119-1-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
-
-On 14.04.2019 13:26, Wolfram Sang wrote:
-
-> The function is not easy to read and has two problems: a) -EINVAL is
-> returned when the module parameter is invalid but the DT parameter is
-> OK, and b) for the module parameter, zero is a valid value but for DT it
-> is invalid.
+On Fri, Apr 12, 2019 at 02:01:32PM +0200, Jacopo Mondi wrote:
+> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > 
-> Refactor the code to have a the same pattern of checks for the module
-                             ^^^^^
-    One article would be enough. :-)
-
-> parameter and DT. Further ones can be easily added in the future if the
-> need arises. The above mentioned problems are fixed, too.
+> Remove the "reg-names" property from the display node of R-Car Gen3 R8A77965
+> device tree.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-[...]
+> No other mainline R-Car Gen3 SoC has that property specified.
+> 
+> Fixes: 2f2c71bfc8c5 ("arm64: dts: renesas: r8a77965: Populate the DU instance placeholder")
+> 
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> [reworded commit message, sent upstream]
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-MBR, Sergei
+Thanks Jacopo,
+
+applied for inclusion in v5.2.
