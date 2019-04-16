@@ -2,73 +2,93 @@ Return-Path: <SRS0=apzE=SS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F7DC282DC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 15:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFCAC10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 17:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003B120872
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 15:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 695C32075B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 17:44:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cDZVaeNx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729483AbfDPPi4 (ORCPT
+        id S1728468AbfDPRob (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Apr 2019 11:38:56 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:36788 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728149AbfDPPi4 (ORCPT
+        Tue, 16 Apr 2019 13:44:31 -0400
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:38759 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727180AbfDPRob (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Apr 2019 11:38:56 -0400
-X-IronPort-AV: E=Sophos;i="5.60,358,1549897200"; 
-   d="scan'208";a="13230300"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Apr 2019 00:38:55 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F3463401204B;
-        Wed, 17 Apr 2019 00:38:52 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Tue, 16 Apr 2019 13:44:31 -0400
+Received: by mail-pf1-f182.google.com with SMTP id 10so10765030pfo.5;
+        Tue, 16 Apr 2019 10:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kcerwDv9rfydLuyPfDFuOzevVHw43iM/CZvB7OrlnWg=;
+        b=cDZVaeNxL2lYGxLNLJRLXzaeJDDGUe0j5N7Rgk13qs8q61EoC3coJ02CBy18Gf4yMG
+         c9krFkPbVqGjJLpBQVliG/iSWtYvjSgjlKJmKaQz8hTNtZxrtvCrWy9IHTipTAQeZ5YO
+         XJ5W7aMxzJCCvp6kG/FogeuMzPROgP4JnLnE2zijiUDXswJbkEt1IrgCi5RCvust25+3
+         1PHxm6AGT1r1zsk2iy7YpsXjVCHZuGtKCTxD91TWgizA6XsoAarDmBW1MPLx67lwlqDY
+         jVKs1XYGmZMArzy291qC/AIU30eQPPrItc+ORXPSaNffuIaGRtdbzE/2ZisRutyzHDlG
+         CmSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kcerwDv9rfydLuyPfDFuOzevVHw43iM/CZvB7OrlnWg=;
+        b=fFg4ljH4wgk357XkEkJ2FdRgXcIgDqgDPfMcuW16Rsx411rGQdr+Hcp//svzY1n1gu
+         0S09KKG1I/yJAHYD23SvaGJBQqV0i+xDU31gFKaNDoAn9iHyfg97uiRRUVsBPVYbsQUA
+         jpOkYhxLQGiW7ZLPdULYpZ40EFld95DzFo0zunkDSJNqrSLXqUPF6TaoeqLvK7pDB7oC
+         gqDBEMX3DnKVaOKNmYfYTYnWXHU5jC5VjVX4HJrRmqOdPO+G3SXurSxWFQyO9Vo6Wb06
+         y4jQ1kvWRnfTWjLT5dV5Sh/cHWtc96/xO3jALbaZyFDE3q9T19DvLqkio5Mz3Nde2Pky
+         GsfQ==
+X-Gm-Message-State: APjAAAVnzxR7CfrI+7rgARw1vkl5yLf7hWcX4ZZDUlxLmSeTpy/EDKCh
+        Uk+Q6QNmc7bs5MPOnUZJoxg8ISiG
+X-Google-Smtp-Source: APXvYqw4YBmU3AXGgw91ygZBKywbojYBJ7Ac3b98j1lsYE5jHk6hmenK99uUu4Hq+Y4jcSSOxVIqXA==
+X-Received: by 2002:a62:14c3:: with SMTP id 186mr85205839pfu.21.1555436670691;
+        Tue, 16 Apr 2019 10:44:30 -0700 (PDT)
+Received: from localhost.localdomain (KD118155013174.ppp-bb.dion.ne.jp. [118.155.13.174])
+        by smtp.gmail.com with ESMTPSA id f20sm39763791pff.176.2019.04.16.10.44.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 16 Apr 2019 10:44:29 -0700 (PDT)
+From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 6/6] arm64: dts: renesas: r8a774a1: Connect Ethernet-AVB to IPMMU-DS0
-Date:   Tue, 16 Apr 2019 16:31:57 +0100
-Message-Id: <1555428717-18376-7-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1555428717-18376-1-git-send-email-biju.das@bp.renesas.com>
-References: <1555428717-18376-1-git-send-email-biju.das@bp.renesas.com>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH/RFT v2 0/3] thermal: rcar_gen3_thermal: Update calculation formula due to HW evaluation
+Date:   Wed, 17 Apr 2019 02:44:12 +0900
+Message-Id: <1555436655-5262-1-git-send-email-ykaneko0929@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add IPMMU-DS0 to the Ethernet-AVB device node.
+This series was inspired by a patch in the BSP by Dien Pham <dien.pham.ry@renesas.com>.
 
-Based on work by Magnus Damm for the r8a7795.
+This series is based on the master branch of Linus Torvalds's linux tree.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+v2 [Yoshihiro Kaneko]
+* As suggested by Simon Horman
+- split into three patches
+- avoid global variables
+- marked thcode const
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index 99a3a76..ff9bc16 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -893,6 +893,7 @@
- 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
+Yoshihiro Kaneko (3):
+  thermal: rcar_gen3_thermal: Update value of Tj_1
+  thermal: rcar_gen3_thermal: Update calculation formula of IRQTEMP
+  thermal: rcar_gen3_thermal: Update temperature conversion method
+
+ drivers/thermal/rcar_gen3_thermal.c | 93 ++++++++++++++++++++++++-------------
+ 1 file changed, 61 insertions(+), 32 deletions(-)
+
 -- 
-2.7.4
+1.9.1
 
