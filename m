@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAEEC10F12
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90963C282DF
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 01:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359302064B
+	by mail.kernel.org (Postfix) with ESMTP id 6175B20825
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 01:56:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfDPB42 (ORCPT
+        id S1728274AbfDPB43 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 21:56:28 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:13590 "EHLO
+        Mon, 15 Apr 2019 21:56:29 -0400
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:13587 "EHLO
         www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbfDPB42 (ORCPT
+        with ESMTP id S1727214AbfDPB42 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 15 Apr 2019 21:56:28 -0400
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3G1u8RO080519;
-        Tue, 16 Apr 2019 10:56:08 +0900 (JST)
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3G1u69F080500;
+        Tue, 16 Apr 2019 10:56:06 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
- Tue, 16 Apr 2019 10:56:08 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Tue, 16 Apr 2019 10:56:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
 Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
         (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3G1u64o080499
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3G1u3Yi080469
         (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 16 Apr 2019 10:56:08 +0900 (JST)
+        Tue, 16 Apr 2019 10:56:06 +0900 (JST)
         (envelope-from cv-dong@jinso.co.jp)
 From:   Cao Van Dong <cv-dong@jinso.co.jp>
 To:     linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
@@ -41,9 +41,9 @@ To:     linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
         daniel.lezcano@linaro.org, tglx@linutronix.de, robh@kernel.org
 Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
         h-inayoshi@jinso.co.jp, na-hoan@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: [PATCH 3/4] arm64: dts: renesas: r8a77965: Add TPU support
-Date:   Tue, 16 Apr 2019 10:55:51 +0900
-Message-Id: <1555379752-5980-4-git-send-email-cv-dong@jinso.co.jp>
+Subject: [PATCH 2/4] arm64: dts: renesas: r8a7796: Add TPU support
+Date:   Tue, 16 Apr 2019 10:55:50 +0900
+Message-Id: <1555379752-5980-3-git-send-email-cv-dong@jinso.co.jp>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1555379752-5980-1-git-send-email-cv-dong@jinso.co.jp>
 References: <1555379752-5980-1-git-send-email-cv-dong@jinso.co.jp>
@@ -52,48 +52,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add TPU support on r8a77965 SoC.
+Add TPU support on r8a7796 SoC.
 
 Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
 ---
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 11 +++++++++++
- drivers/clk/renesas/r8a77965-cpg-mssr.c   |  1 +
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 11 +++++++++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c   |  1 +
  2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index d8b8172..d83a2d1 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -1125,6 +1125,17 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index d5e2f4a..a5c6a99 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -1319,6 +1319,17 @@
  			status = "disabled";
  		};
  
 +		tpu: pwm@e6e80000 {
-+			compatible = "renesas,tpu-r8a77965", "renesas,tpu";
++			compatible = "renesas,tpu-r8a7796", "renesas,tpu";
 +			reg = <0 0xe6e80000 0 0x148>;
 +			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 304>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
++			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
 +			resets = <&cpg 304>;
 +			#pwm-cells = <3>;
 +			status = "disabled";
 +		};
 +
  		msiof0: spi@e6e90000 {
- 			compatible = "renesas,msiof-r8a77965",
+ 			compatible = "renesas,msiof-r8a7796",
  				     "renesas,rcar-gen3-msiof";
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index 8f87e31..46d5a50 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -132,6 +132,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
- 	DEF_MOD("cmt2",			301,	R8A77965_CLK_R),
- 	DEF_MOD("cmt1",			302,	R8A77965_CLK_R),
- 	DEF_MOD("cmt0",			303,	R8A77965_CLK_R),
-+	DEF_MOD("tpu0",			304,	R8A77965_CLK_S3D4),
- 	DEF_MOD("scif2",		310,	R8A77965_CLK_S3D4),
- 	DEF_MOD("sdif3",		311,	R8A77965_CLK_SD3),
- 	DEF_MOD("sdif2",		312,	R8A77965_CLK_SD2),
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index d8e9af5..e4f5db4 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -134,6 +134,7 @@ static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
+ 	DEF_MOD("cmt2",			 301,	R8A7796_CLK_R),
+ 	DEF_MOD("cmt1",			 302,	R8A7796_CLK_R),
+ 	DEF_MOD("cmt0",			 303,	R8A7796_CLK_R),
++	DEF_MOD("tpu0",			 304,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("scif2",		 310,	R8A7796_CLK_S3D4),
+ 	DEF_MOD("sdif3",		 311,	R8A7796_CLK_SD3),
+ 	DEF_MOD("sdif2",		 312,	R8A7796_CLK_SD2),
 -- 
 2.7.4
 
