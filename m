@@ -2,109 +2,137 @@ Return-Path: <SRS0=apzE=SS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D8EC10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31C1C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413E320693
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:27:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfjobO7B"
+	by mail.kernel.org (Postfix) with ESMTP id AEE692075B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbfDPK1q (ORCPT
+        id S1729017AbfDPKs1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Apr 2019 06:27:46 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33643 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbfDPK1q (ORCPT
+        Tue, 16 Apr 2019 06:48:27 -0400
+Received: from sauhun.de ([88.99.104.3]:48906 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727942AbfDPKs0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Apr 2019 06:27:46 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t16so10132521plo.0;
-        Tue, 16 Apr 2019 03:27:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=71Ay+/zwy6XGeLFqR6I9o/UAfQvlsfkRImmq55N6HYE=;
-        b=bfjobO7BODZtTTJtH8FQa62BBjBHo44LqIeIbe5f8evThlje9rN/z++qtiz6o9KIr7
-         Xs02giTpx7c2A/EWUDKTDwn3AabXjI/ewknVqNtPp74oseHuwYDAHT5seOwxpLuD0Lgj
-         vbhNPh+Ew0QQ4Tj+8rDdsxHSiUHgGcx9E7tZL8rviiYxOtyTKX/U0bpYJpTizLl4qx8T
-         M8AfU6cMKDD1GXLSsn+j2ksaow4BrTjw3bDtGqxwOIUqgjY4T1gvyILQf2RpiYyZE4iY
-         87JkSWInMHwYhm29X1sJR/iyeublZw9p+tAcsc1bfHxQGMgZowsSgKy0klbN/possTMz
-         ByIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=71Ay+/zwy6XGeLFqR6I9o/UAfQvlsfkRImmq55N6HYE=;
-        b=kPJChGOf9mKlfbbefoxjui9PkP+I0b7oVJ7E8jkGfjNTApg7RzyxjjCaFlX5jZys89
-         Dmnk3TWQcNkuEBVbCYTdxUmAdsqFD7vW8m+F5lcb7/Ofi3itMVI9gTXGnL6WDgGrGy8R
-         d9tC5w17D6KAmQp3qegu1s8M0yzpbB4ZQRYcX4YJFKsS3l3BMa+YSg8DTB4OHcgF57BO
-         iWkPu4nJorq4Kiy1XGgAce+quUiF13Ktp7FVSS/cV+HVBYhrE6IRyVbqzGQYp6mdgvTY
-         HoJYq8FwT4XUOMevUZX1GUTUaqKvb0uzuMHx0ek3mEs8aKuOLpSEkutHE+00koGLfVzx
-         f6ew==
-X-Gm-Message-State: APjAAAUczXMyujVNYX/0X+xNK4YeqOWqN3qJn0K0Pz1+hyQgwYwX7XOk
-        lVNl3Cok6itnPv1Nb1nlbsnPC9vY
-X-Google-Smtp-Source: APXvYqzJG64MRiqfSOWxuaFtDytFRUFz5WhqBXJiT1XKDNs0hlrdOs0NmZ2iiYro0oQNl4dZj58Mxw==
-X-Received: by 2002:a17:902:6b03:: with SMTP id o3mr81520527plk.226.1555410465610;
-        Tue, 16 Apr 2019 03:27:45 -0700 (PDT)
-Received: from icarus ([2001:268:c1c2:6e92:c70:4af9:86e2:2])
-        by smtp.gmail.com with ESMTPSA id q11sm69363540pgs.94.2019.04.16.03.27.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Apr 2019 03:27:45 -0700 (PDT)
-Date:   Tue, 16 Apr 2019 19:28:39 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/16] watchdog: ebc-c384_wdt: drop warning after
- calling watchdog_init_timeout
-Message-ID: <20190416102839.GA6046@icarus>
-References: <20190416102515.12269-1-wsa+renesas@sang-engineering.com>
- <20190416102515.12269-6-wsa+renesas@sang-engineering.com>
+        Tue, 16 Apr 2019 06:48:26 -0400
+Received: from localhost (p54B332D3.dip0.t-ipconnect.de [84.179.50.211])
+        by pokefinder.org (Postfix) with ESMTPSA id 888E52C3637;
+        Tue, 16 Apr 2019 12:48:23 +0200 (CEST)
+Date:   Tue, 16 Apr 2019 12:48:23 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Stefan Lengfeld <contact@stefanchrist.eu>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Rosin <peda@axentia.se>, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 01/12] i2c: remove use of in_atomic()
+Message-ID: <20190416104823.zabxzdxarzfhdw7m@ninjato>
+References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
+ <20190403124019.8947-2-wsa+renesas@sang-engineering.com>
+ <20190415215546.xr7aftkahcu4ygak@porty>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="va5zqs4dempdj6of"
 Content-Disposition: inline
-In-Reply-To: <20190416102515.12269-6-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190415215546.xr7aftkahcu4ygak@porty>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Apr 16, 2019 at 12:25:04PM +0200, Wolfram Sang wrote:
-> The core will print out details now.
-> 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/watchdog/ebc-c384_wdt.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/watchdog/ebc-c384_wdt.c b/drivers/watchdog/ebc-c384_wdt.c
-> index 4c4c8ce78021..c176f59fea28 100644
-> --- a/drivers/watchdog/ebc-c384_wdt.c
-> +++ b/drivers/watchdog/ebc-c384_wdt.c
-> @@ -117,10 +117,7 @@ static int ebc_c384_wdt_probe(struct device *dev, unsigned int id)
->  	wdd->max_timeout = WATCHDOG_MAX_TIMEOUT;
->  
->  	watchdog_set_nowayout(wdd, nowayout);
-> -
-> -	if (watchdog_init_timeout(wdd, timeout, dev))
-> -		dev_warn(dev, "Invalid timeout (%u seconds), using default (%u seconds)\n",
-> -			timeout, WATCHDOG_TIMEOUT);
-> +	watchdog_init_timeout(wdd, timeout, dev);
->  
->  	return devm_watchdog_register_device(dev, wdd);
->  }
-> -- 
-> 2.11.0
 
-Acked-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+--va5zqs4dempdj6of
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Stefan,
+
+> Tested-by: Stefan Lengfeld <contact@stefanchrist.eu>
+
+Thanks for your comments and testing! I will fix the issues you
+mentioned and add your tags.
+
+> > +/*
+> > + * We only allow atomic transfers for very late communication, e.g. to=
+ send
+> > + * the powerdown command to a PMIC. Atomic transfers are a corner case=
+ and not
+> > + * for generic use!
+> > + */
+> > +static inline bool i2c_in_atomic_xfer_mode(void)
+> > +{
+> > +	return system_state > SYSTEM_RUNNING && irqs_disabled();
+> > +}
+>=20
+> I agree that this code is a lot better than the previous
+> 'irqs_disabled() || in_atomic()'. It also makes clear that the atomic
+> I2C transfers is only meant for late shutdown I2C communcation.
+>=20
+>=20
+> After I read the article https://lwn.net/Articles/274695/ again I
+> nevertheless cannot really say whether the usage of 'irqs_disabled()' is
+> the theoretical correct approach. The article states explicitly that
+> only the caller can really decided whether the operation should be
+> atomic or not.
+
+During the discussion with Peter, he stated we need irqs_disabled()
+because 'system_state > SYSTEM_RUNNING' alone won't do.
+
+> Recap from previous discussions:
+>=20
+> But then you have to patch every call site to use either a new function
+> like 'i2c_transfer_atomic()' or the extend I2C message flags. And mostly
+> also supported this trough regmap and maybe other translation layers,
+> which seems unpractical, may breaking existing usages and maybe not
+> worth the hassle.
+
+Yes, I kinda gave up on white-listing late I2C transfers. My hope is
+that not too many drivers will have an atomic callback, so the WARN will
+trigger often enough to find late transfers which are inappropriate.
+
+Another idea just popping up: Maybe we can improve that even further by
+first globally disabling atomic transfers. Drivers knowing they need
+this can then call an I2C core helper to enable them (again globally).
+Still not perfect as some unwanted late I2C transfers from another
+driver could slip through, but this should be rare enough. The pro-side
+is we will detect more unwanted late transfers if support for them is
+default off. It should be noted that "disabling" means keeping the old
+behaviour which is: we try the regular transfer but complain about it.
+Only enabling atomic will make the core quiet.
+
+Regards,
+
+   Wolfram
+
+
+--va5zqs4dempdj6of
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAly1svMACgkQFA3kzBSg
+KbZxBRAApfDnYlIej1zlztDILL+sczBMwOC2hii04cYsWcmCh3D+0h6upc7U3ibE
+pVykQ6KN5qrvSyu07V1aw2Z/iM2T2rA/MSMKEOAKmnydQLzWGU/VpgKKXWdd6o7J
+aol3sP+ovgih1qolxcAFw9sW8EfrrkEp8AbcGcfTCALWHfEmcLWyvWcm3kedBZIX
+br6lJHvLUU4WrKZxhUsuz1VQ/wq9iIcZiG/pEbyBAD/4Yo2Ot2WyiYw4TjScxgvP
+aGWKC3+GX08/O1PMjnMVTrtGyW2LhrMcQx1w0s3We93KWsSnzRPRQjbNUa0e/uIZ
+Hes/jSfFV3a8paryTaipp2w2k4u11h3ZbLsRFrN2SXKTv3oJxrh6bcRd2j7dJB4q
+iwjOQnd5CWRjljZ1xhS2i+RY1TD2ZxspLIS4Z+PAqjE4qTGlioyqkZkH9/aC4Kb2
+kbzFu8oOzSVTptTZVslEgCZgjoNB77Z7unFDAiogat71VL1473XT7mdW4sGTT8iy
+aI60L8EXdYrsde0pcyH23v/iz9e9gV8wk4zo47v48osiPXLw59CmUqr9/8/6jnn/
+nAEKyMK5qyQkc3u792gAF9Ex7g1w3QRFBD+6ZIvY3gMeMSoHpUwoysxklQuXWE5e
+T3OfXcZ3hSYof1AUlO7BfEQ89r/Uil9mtZPrYJ0N6qDTX7eDfY8=
+=HlAN
+-----END PGP SIGNATURE-----
+
+--va5zqs4dempdj6of--
