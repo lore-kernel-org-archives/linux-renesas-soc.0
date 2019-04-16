@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6417C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92ADBC10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B61802073F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64F372073F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:26:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbfDPKZ1 (ORCPT
+        id S1728613AbfDPK0s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Apr 2019 06:25:27 -0400
-Received: from sauhun.de ([88.99.104.3]:48678 "EHLO pokefinder.org"
+        Tue, 16 Apr 2019 06:26:48 -0400
+Received: from sauhun.de ([88.99.104.3]:48636 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728625AbfDPKZ1 (ORCPT
+        id S1727037AbfDPKZ0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Apr 2019 06:25:27 -0400
+        Tue, 16 Apr 2019 06:25:26 -0400
 Received: from localhost (p54B332D3.dip0.t-ipconnect.de [84.179.50.211])
-        by pokefinder.org (Postfix) with ESMTPSA id 4E7532E3571;
-        Tue, 16 Apr 2019 12:25:25 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 2C90B2E354E;
+        Tue, 16 Apr 2019 12:25:24 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-watchdog@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/16] watchdog: cadence_wdt: still probe if user supplied timeout is invalid
-Date:   Tue, 16 Apr 2019 12:25:03 +0200
-Message-Id: <20190416102515.12269-5-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 02/16] watchdog: add error messages when initializing timeout fails
+Date:   Tue, 16 Apr 2019 12:25:01 +0200
+Message-Id: <20190416102515.12269-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190416102515.12269-1-wsa+renesas@sang-engineering.com>
 References: <20190416102515.12269-1-wsa+renesas@sang-engineering.com>
@@ -41,31 +41,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-We have a default timeout value in the driver which we will fall back to
-if the user supplied values are out of bounce.
+This not only removes boilerplate code from watchdog drivers, it can
+also be more specific which of the supplied value actually fails. Also,
+the loglevel becomes now consistent across drivers.
 
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/watchdog/cadence_wdt.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/watchdog/watchdog_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/watchdog/cadence_wdt.c b/drivers/watchdog/cadence_wdt.c
-index e6eaeaf3dfb1..a22f2d431a35 100644
---- a/drivers/watchdog/cadence_wdt.c
-+++ b/drivers/watchdog/cadence_wdt.c
-@@ -328,10 +328,7 @@ static int cdns_wdt_probe(struct platform_device *pdev)
- 	/* Initialize the members of cdns_wdt structure */
- 	cdns_wdt_device->parent = dev;
+diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
+index 21e53cc49977..cd3ca6b366ef 100644
+--- a/drivers/watchdog/watchdog_core.c
++++ b/drivers/watchdog/watchdog_core.c
+@@ -126,6 +126,8 @@ int watchdog_init_timeout(struct watchdog_device *wdd,
+ 			wdd->timeout = timeout_parm;
+ 			return 0;
+ 		}
++		dev_err(dev, "driver supplied timeout (%u) out of range\n",
++			timeout_parm);
+ 		ret = -EINVAL;
+ 	}
  
--	ret = watchdog_init_timeout(cdns_wdt_device, wdt_timeout, dev);
--	if (ret)
--		return ret;
--
-+	watchdog_init_timeout(cdns_wdt_device, wdt_timeout, dev);
- 	watchdog_set_nowayout(cdns_wdt_device, nowayout);
- 	watchdog_stop_on_reboot(cdns_wdt_device);
- 	watchdog_set_drvdata(cdns_wdt_device, wdt);
+@@ -136,9 +138,13 @@ int watchdog_init_timeout(struct watchdog_device *wdd,
+ 			wdd->timeout = t;
+ 			return 0;
+ 		}
++		dev_err(dev, "DT supplied timeout (%u) out of range\n", t);
+ 		ret = -EINVAL;
+ 	}
+ 
++	if (ret < 0 && wdd->timeout)
++		dev_warn(dev, "falling back to default timeout (%u)\n", wdd->timeout);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(watchdog_init_timeout);
 -- 
 2.11.0
 
