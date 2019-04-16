@@ -2,181 +2,105 @@ Return-Path: <SRS0=apzE=SS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD83C10F13
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 08:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B46C10F13
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 09:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09EF12073F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 08:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C238420684
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 09:44:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbfDPIjq (ORCPT
+        id S1728365AbfDPJow (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Apr 2019 04:39:46 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:7483 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726208AbfDPIjq (ORCPT
+        Tue, 16 Apr 2019 05:44:52 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:10628 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726895AbfDPJow (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Apr 2019 04:39:46 -0400
-X-IronPort-AV: E=Sophos;i="5.60,355,1549897200"; 
-   d="scan'208";a="13198206"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Apr 2019 17:39:44 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A72194210FC3;
-        Tue, 16 Apr 2019 17:39:41 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Simon Horman <horms@verge.net.au>,
+        Tue, 16 Apr 2019 05:44:52 -0400
+X-IronPort-AV: E=Sophos;i="5.60,357,1549897200"; 
+   d="scan'208";a="13414210"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 16 Apr 2019 18:44:49 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 38C534038498;
+        Tue, 16 Apr 2019 18:44:46 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, ebiharaml@si-linux.co.jp
-Subject: [PATCH] arm64: dts: renesas: r8a774c0-cat874: Add HDMI video suport
-Date:   Tue, 16 Apr 2019 09:39:37 +0100
-Message-Id: <1555403977-7188-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V4 0/7] Add USB3.0 and TI HD3SS3220 driver support
+Date:   Tue, 16 Apr 2019 10:38:00 +0100
+Message-Id: <1555407487-35394-1-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The CAT874 board comes with a HDMI connector, managed by
-a TDA19988BET chip, connected to the RZ/G2E SoC via DPAD.
-This patch adds the necessary support to the board DT.
+This series adds USB 3.0 support for the CAT874 platform, including a
+new driver for the TI HD3SS3220 USB Type-C DRP port controller.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 82 +++++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
+This patch series supports:
+1) Host hotplug operation
+2) Device hot plug operation
+3) USB type-C data_role switch
+   (Tested with 2 RZ/G2E boards connected with a Type-C cable)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index 013a48c..0623950 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -22,6 +22,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-out {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_out: endpoint {
-+				remote-endpoint = <&tda19988_out>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -74,6 +85,31 @@
- 		states = <3300000 1
- 			  1800000 0>;
- 	};
-+
-+	x13_clk: x13 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <74250000>;
-+	};
-+};
-+
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&x13_clk>;
-+	clock-names = "du.0", "du.1", "dclkin.0";
-+
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <&tda19988_in>;
-+			};
-+		};
-+	};
- };
- 
- &ehci0 {
-@@ -85,6 +121,39 @@
- 	clock-frequency = <48000000>;
- };
- 
-+&i2c0 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+
-+	tda19988: tda19988@70 {
-+		compatible = "nxp,tda998x";
-+		reg = <0x70>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
-+
-+		video-ports = <0x234501>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				tda19988_in: endpoint {
-+					remote-endpoint = <&du_out_rgb>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				tda19988_out: endpoint {
-+					remote-endpoint = <&hdmi_con_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-0 = <&i2c1_pins>;
- 	pinctrl-names = "default";
-@@ -98,6 +167,13 @@
- 	};
- };
- 
-+&lvds0 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>, <&x13_clk>, <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+};
-+
- &ohci0 {
- 	dr_mode = "host";
- 	status = "okay";
-@@ -113,6 +189,12 @@
- };
- 
- &pfc {
-+	du_pins: du {
-+		groups = "du_rgb888", "du_clk_out_0", "du_sync", "du_disp",
-+			 "du_clk_in_0";
-+		function = "du";
-+	};
-+
- 	i2c1_pins: i2c1 {
- 		groups = "i2c1_b";
- 		function = "i2c1";
+This patchset is based on linux_next next-20190411 branch.
+V3-->V4
+  * Incorporated Chunfeng Yun's review comment
+    (https://patchwork.kernel.org/project/linux-usb/list/?submitter=133171)
+  * Used fwnode API's to get roleswitch handle
+
+V2-->V3
+  * Used the new API to usb_role_switch by node to find the remote endpoint
+    (https://patchwork.kernel.org/patch/10882555/)
+  * Added renesas,usb-role-switch property
+  * Incorporated shimoda-san's review comment
+    (https://patchwork.kernel.org/patch/10852507/)
+
+V1-->V2
+  * Use USB role class instead of extcon to receive connect and disconnect
+    events and also for the dual role switch.
+  * Dropped patch 6
+  * Squashed patch 8 and patch 9
+  * https://patchwork.kernel.org/cover/10840641/
+
+
+Biju Das (7):
+  dt-bindings: usb: hd3ss3220 device tree binding document
+  dt-bindings: usb: renesas_usb3: Add renesas,usb-role-switch property
+  usb: typec: driver for TI HD3SS3220 USB Type-C DRP port controller
+  usb: gadget: udc: renesas_usb3: Use usb_role_switch framework
+  arm64: defconfig: enable TYPEC_HD3SS3220 config option
+  arm64: dts: renesas: r8a774c0-cat874: Enable USB3.0 host/peripheral
+    device node
+  arm64: dts: renesas: r8a774c0-cat874: Enable usb role switch support
+
+ .../devicetree/bindings/usb/renesas_usb3.txt       |  22 ++
+ .../devicetree/bindings/usb/ti,hd3ss3220.txt       |  37 +++
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts    |  56 +++++
+ arch/arm64/configs/defconfig                       |   2 +
+ drivers/usb/gadget/udc/renesas_usb3.c              | 126 ++++++++--
+ drivers/usb/typec/Kconfig                          |  10 +
+ drivers/usb/typec/Makefile                         |   1 +
+ drivers/usb/typec/hd3ss3220.c                      | 263 +++++++++++++++++++++
+ 8 files changed, 495 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+ create mode 100644 drivers/usb/typec/hd3ss3220.c
+
 -- 
 2.7.4
 
