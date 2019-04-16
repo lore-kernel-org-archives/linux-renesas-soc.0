@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2922CC10F13
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D0FC282DC
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39EF206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:26:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4437A2086A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 10:26:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbfDPKZa (ORCPT
+        id S1728556AbfDPK0M (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Apr 2019 06:25:30 -0400
-Received: from sauhun.de ([88.99.104.3]:48684 "EHLO pokefinder.org"
+        Tue, 16 Apr 2019 06:26:12 -0400
+Received: from sauhun.de ([88.99.104.3]:48692 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729010AbfDPKZa (ORCPT
+        id S1729021AbfDPKZa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 16 Apr 2019 06:25:30 -0400
 Received: from localhost (p54B332D3.dip0.t-ipconnect.de [84.179.50.211])
-        by pokefinder.org (Postfix) with ESMTPSA id 9F6AC2E35C0;
-        Tue, 16 Apr 2019 12:25:28 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id 322D82E35C2;
+        Tue, 16 Apr 2019 12:25:29 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-watchdog@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/16] watchdog: nic7018_wdt: drop warning after calling watchdog_init_timeout
-Date:   Tue, 16 Apr 2019 12:25:09 +0200
-Message-Id: <20190416102515.12269-11-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 11/16] watchdog: renesas_wdt: drop warning after calling watchdog_init_timeout
+Date:   Tue, 16 Apr 2019 12:25:10 +0200
+Message-Id: <20190416102515.12269-12-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190416102515.12269-1-wsa+renesas@sang-engineering.com>
 References: <20190416102515.12269-1-wsa+renesas@sang-engineering.com>
@@ -46,25 +46,24 @@ The core will print out details now.
 Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/watchdog/nic7018_wdt.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/watchdog/renesas_wdt.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/watchdog/nic7018_wdt.c b/drivers/watchdog/nic7018_wdt.c
-index dcd265685837..82843abe38f8 100644
---- a/drivers/watchdog/nic7018_wdt.c
-+++ b/drivers/watchdog/nic7018_wdt.c
-@@ -211,10 +211,7 @@ static int nic7018_probe(struct platform_device *pdev)
+diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+index 8d1086b45c94..37d757288b22 100644
+--- a/drivers/watchdog/renesas_wdt.c
++++ b/drivers/watchdog/renesas_wdt.c
+@@ -236,9 +236,7 @@ static int rwdt_probe(struct platform_device *pdev)
+ 	watchdog_stop_on_unregister(&priv->wdev);
  
- 	watchdog_set_drvdata(wdd, wdt);
- 	watchdog_set_nowayout(wdd, nowayout);
--
--	ret = watchdog_init_timeout(wdd, timeout, dev);
+ 	/* This overrides the default timeout only if DT configuration was found */
+-	ret = watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
 -	if (ret)
--		dev_warn(dev, "unable to set timeout value, using default\n");
-+	watchdog_init_timeout(wdd, timeout, dev);
+-		dev_warn(&pdev->dev, "Specified timeout value invalid, using default\n");
++	watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
  
- 	/* Unlock WDT register */
- 	outb(UNLOCK, wdt->io_base + WDT_REG_LOCK);
+ 	if (csra & RWTCSRA_TME) {
+ 		/* Ensure properly initialized dividers */
 -- 
 2.11.0
 
