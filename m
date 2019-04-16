@@ -1,157 +1,75 @@
-Return-Path: <SRS0=pBJi=SR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=apzE=SS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B82C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 22:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22547C10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 01:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72D3020880
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Apr 2019 22:05:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D16752064B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Apr 2019 01:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfDOWFx (ORCPT
+        id S1728304AbfDPB42 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Apr 2019 18:05:53 -0400
-Received: from stcim.de ([78.46.90.227]:43676 "EHLO stcim.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725804AbfDOWFx (ORCPT
+        Mon, 15 Apr 2019 21:56:28 -0400
+Received: from www3345.sakura.ne.jp ([49.212.235.55]:13589 "EHLO
+        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728208AbfDPB42 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Apr 2019 18:05:53 -0400
-Received: from xdsl-89-0-59-235.nc.de ([89.0.59.235] helo=porty)
-        by stcim with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <contact@stefanchrist.eu>)
-        id 1hG9jX-00010l-Eu; Tue, 16 Apr 2019 00:05:47 +0200
-Date:   Tue, 16 Apr 2019 00:05:46 +0200
-From:   Stefan Lengfeld <contact@stefanchrist.eu>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peter Rosin <peda@axentia.se>, linux-omap@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Tero Kristo <t-kristo@ti.com>, Keerthy <j-keerthy@ti.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: Re: [PATCH 06/12] i2c: omap: Add the master_xfer_irqless hook
-Message-ID: <20190415220546.bvrp7jodgdq7phwg@porty>
-References: <20190403124019.8947-1-wsa+renesas@sang-engineering.com>
- <20190403124019.8947-7-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190403124019.8947-7-wsa+renesas@sang-engineering.com>
-X-PGP-Key: https://stefanchrist.eu/personal/Stefan_Lengfeld_0xE44A23B289092311.asc
-User-Agent: NeoMutt/20180716
+        Mon, 15 Apr 2019 21:56:28 -0400
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3G1u1Fp080443;
+        Tue, 16 Apr 2019 10:56:01 +0900 (JST)
+        (envelope-from cv-dong@jinso.co.jp)
+Received: from www3345.sakura.ne.jp (49.212.235.55)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Tue, 16 Apr 2019 10:56:01 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
+        (authenticated bits=0)
+        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3G1trL1080400
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 16 Apr 2019 10:56:00 +0900 (JST)
+        (envelope-from cv-dong@jinso.co.jp)
+From:   Cao Van Dong <cv-dong@jinso.co.jp>
+To:     linux-renesas-soc@vger.kernel.org, horms+renesas@verge.net.au,
+        broonie@kernel.org, geert+renesas@glider.be,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        daniel.lezcano@linaro.org, tglx@linutronix.de, robh@kernel.org
+Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
+        h-inayoshi@jinso.co.jp, na-hoan@jinso.co.jp, cv-dong@jinso.co.jp
+Subject: [PATCH 0/4] Add TPU support for R-Car H3/M3-W/M3-N
+Date:   Tue, 16 Apr 2019 10:55:48 +0900
+Message-Id: <1555379752-5980-1-git-send-email-cv-dong@jinso.co.jp>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+This series adds tpu support for r8a7795/r8a7796/r8a77965 SoCs.
+Based on the renesas-drivers-2019-04-02-v5.1-rc3 tag of renesas-drivers tree.
 
-the subject line of this patch
+For test: After booting, I found the device was registered in the boot log.
 
-    i2c: omap: Add the master_xfer_irqless hook
+Cao Van Dong (4):
+  arm64: dts: renesas: r8a7795: Add TPU support
+  arm64: dts: renesas: r8a7796: Add TPU support
+  arm64: dts: renesas: r8a77965: Add TPU support
+  dt-bindings: pwm: renesas: tpu: Document R8A779{5|6|65} bindings
 
-still contains the old name of the callback '_irqless'. It should be
-'_atomic' instead.
+ Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt |  3 +++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi                  | 11 +++++++++++
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi                  | 11 +++++++++++
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi                 | 11 +++++++++++
+ drivers/clk/renesas/r8a7795-cpg-mssr.c                    |  1 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c                    |  1 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c                   |  1 +
+ 7 files changed, 39 insertions(+)
 
+-- 
+2.7.4
 
-On Wed, Apr 03, 2019 at 02:40:13PM +0200, Wolfram Sang wrote:
-> Add the master_xfer_irqless hook to enable i2c transactions
-
-Here again. It should be 'master_xfer_atomic'.
-
-
-> in irq disabled contexts like the poweroff case.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
-> [wsa: simplified code a little: 'timeout = !ret']
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->  drivers/i2c/busses/i2c-omap.c | 76 +++++++++++++++++++++++++++++++++++--------
->  1 file changed, 63 insertions(+), 13 deletions(-)
-> 
-
-snipped 
-
-> @@ -648,15 +650,28 @@ static void omap_i2c_resize_fifo(struct omap_i2c_dev *omap, u8 size, bool is_rx)
->  			(1000 * omap->speed / 8);
->  }
->  
-> +static void omap_i2c_wait(struct omap_i2c_dev *omap)
-> +{
-> +	u16 stat;
-> +	u16 mask = omap_i2c_read_reg(omap, OMAP_I2C_IE_REG);
-> +	int count = 0;
-> +
-> +	do {
-> +		stat = omap_i2c_read_reg(omap, OMAP_I2C_STAT_REG);
-> +		count++;
-> +	} while (!(stat & mask) && count < 5);
-> +}
-> +
->  /*
->   * Low level master read/write transaction.
->   */
->  static int omap_i2c_xfer_msg(struct i2c_adapter *adap,
-> -			     struct i2c_msg *msg, int stop)
-> +			     struct i2c_msg *msg, int stop, bool polling)
-
-Nitpick. In the patches for the other drivers the boolean flag is called
-'atomic' and not 'polling'.
-
->  {
->  	struct omap_i2c_dev *omap = i2c_get_adapdata(adap);
->  	unsigned long timeout;
->  	u16 w;
-> +	int ret;
->  
->  	dev_dbg(omap->dev, "addr: 0x%04x, len: %d, flags: 0x%x, stop: %d\n",
->  		msg->addr, msg->len, msg->flags, stop);
-
-sniped
-
-> @@ -1165,14 +1204,25 @@ omap_i2c_isr_thread(int this_irq, void *dev_id)
->  		}
->  	} while (stat);
->  
-> -	omap_i2c_complete_cmd(omap, err);
-> +	return err;
-> +}
-> +
-> +static irqreturn_t
-> +omap_i2c_isr_thread(int this_irq, void *dev_id)
-> +{
-> +	int ret;
-> +	struct omap_i2c_dev *omap = dev_id;
-> +
-> +	ret = omap_i2c_xfer_data(omap);
-> +	if (ret != -EAGAIN)
-> +		omap_i2c_complete_cmd(omap, ret);
->  
-> -out:
->  	return IRQ_HANDLED;
->  }
->  
->  static const struct i2c_algorithm omap_i2c_algo = {
-> -	.master_xfer	= omap_i2c_xfer,
-> +	.master_xfer	= omap_i2c_xfer_irq,
-> +	.master_xfer_atomic	= omap_i2c_xfer_polling,
-
-When consistency with other drivers is a goal, the functions should be
-named like:
-
-    .master_xfe = omap_i2c_xfer,
-    .master_xfer_atomic = omap_i2c_xfer_atomic,
-
-The first without a suffix and the second with the '_atomic' suffix.
-
-Kind regards,
-Stefan
