@@ -2,193 +2,415 @@ Return-Path: <SRS0=NjMp=ST=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B72C10F12
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 06:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4879FC282DA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 09:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEA4120835
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 06:37:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U5Gsup+4"
+	by mail.kernel.org (Postfix) with ESMTP id 0DFA121773
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 09:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725767AbfDQGhB (ORCPT
+        id S1730926AbfDQJ5k (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 17 Apr 2019 02:37:01 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:44708 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729782AbfDQGhB (ORCPT
+        Wed, 17 Apr 2019 05:57:40 -0400
+Received: from mga11.intel.com ([192.55.52.93]:15794 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728237AbfDQJ5j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Apr 2019 02:37:01 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x3H6akxd127992;
-        Wed, 17 Apr 2019 01:36:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1555483006;
-        bh=tjGnXmiTxnSDuV72STszyM7Q/5OCjyBXNNEyyAvcSf4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=U5Gsup+42TkdPq9nXWQ/ZNS9fkPk/M48Hux1a6MgtEsw4J69hL3GCI51aiASNd68r
-         w03AOc5c9idYU5h0HXkm35WEihtps5dgsxrvEDHdcRgyiVFmj14aY5C6kemHa5AGPP
-         6rjuRHXgTW5KqBXwYwQEpxfUJhYWE0inEPvfUJIQ=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x3H6akXr004613
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Apr 2019 01:36:46 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 17
- Apr 2019 01:36:45 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 17 Apr 2019 01:36:45 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x3H6aeHQ033904;
-        Wed, 17 Apr 2019 01:36:41 -0500
-Subject: Re: [PATCH 2/4] phy: renesas: rcar-gen3-usb2: No need to request IRQ
- for non-OTG
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
+        Wed, 17 Apr 2019 05:57:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Apr 2019 02:57:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,361,1549958400"; 
+   d="scan'208";a="165480326"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 17 Apr 2019 02:57:33 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 17 Apr 2019 12:57:32 +0300
+Date:   Wed, 17 Apr 2019 12:57:32 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <1551438348-22119-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1551438348-22119-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <54573748-18bd-1ece-f6e1-bd7801503715@ti.com>
- <TYAPR01MB4271A67EA5A43F11656DD34AD8560@TYAPR01MB4271.jpnprd01.prod.outlook.com>
- <TY1PR01MB17703687A7ECF803B338834EC0570@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <cae6c938-6949-2d4f-2dda-65de85d460e6@ti.com>
-Date:   Wed, 17 Apr 2019 12:05:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V4 3/7] usb: typec: driver for TI HD3SS3220 USB Type-C
+ DRP port controller
+Message-ID: <20190417095732.GP1747@kuha.fi.intel.com>
+References: <1555407487-35394-1-git-send-email-biju.das@bp.renesas.com>
+ <1555407487-35394-4-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB17703687A7ECF803B338834EC0570@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1555407487-35394-4-git-send-email-biju.das@bp.renesas.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+On Tue, Apr 16, 2019 at 10:38:03AM +0100, Biju Das wrote:
+> Driver for TI HD3SS3220 USB Type-C DRP port controller.
+> 
+> The driver currently registers the port and supports data role swapping.
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-On 03/04/19 3:54 PM, Fabrizio Castro wrote:
-> Hello Yoshihiro-san, Kishon
-> 
->> From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->> Sent: 02 April 2019 03:11
->> Subject: RE: [PATCH 2/4] phy: renesas: rcar-gen3-usb2: No need to request IRQ for non-OTG
->>
->> Hi Kishon, Fabrizio,
->>
->>> From: Kishon Vijay Abraham I, Sent: Monday, April 1, 2019 9:26 PM
->>>
->>> On 01/03/19 4:35 PM, Fabrizio Castro wrote:
->>>> As stated in the comment found on top of rcar_gen3_phy_usb2_work,
->>>> we should not be registering the IRQ if !otg_channel || !uses_otg_pins.
->>>> On top of that, we should also make sure that extcon has been
->>>> allocated before requesting the irq as rcar_gen3_phy_usb2_work
->>>> uses it, hence the patch.
->>>>
->>>> Fixes: 2b38543c8db1 ("phy: rcar-gen3-usb2: add extcon support")
->>>> Fixes: 73801b90a38f ("phy: renesas: rcar-gen3-usb2: change a condition "dr_mode"")
->>>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->>>
->>> merged, thanks.
->>
->> I'm very sorry, I didn't notice this patch...
->> I'd like to fix this patch because this patch breaks for R-Car D3.
->> In this case, should I submit an incremental patch?
-> 
-> Kishon, is it too late to drop the patch?
+It's too bad they call it "port controller" even though it's not Port
+Controller Interface compliant. I put a few minor nitpicks below.
+Otherwise this looks okay to me, so if there are no other comments:
 
-I have to send a new pul request. I'll drop this patch then. Thanks for letting
-me know.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
--Kishon
+> ---
+>  Note: This patch has compilation dependency on 
+>  https://patchwork.kernel.org/patch/10882555/
+>  
+>  V3-->V4
+>    * Incorporated Chunfeng Yun's review comment
+>    * Used fwnode API's to get usb role switch handle.
+>  
+>  V2-->V3
+>    * Used the new api "usb_role_switch by node" for getting
+>      remote endpoint associated with Type-C USB DRP port
+>      controller devices.
+>  V1-->V2
+>    * Driver uses usb role class instead of extcon for dual role switch
+>      and also handles connect/disconnect events.
+> ---
+>  drivers/usb/typec/Kconfig     |  10 ++
+>  drivers/usb/typec/Makefile    |   1 +
+>  drivers/usb/typec/hd3ss3220.c | 263 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 274 insertions(+)
+>  create mode 100644 drivers/usb/typec/hd3ss3220.c
+> 
+> diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+> index 89d9193..92a3717 100644
+> --- a/drivers/usb/typec/Kconfig
+> +++ b/drivers/usb/typec/Kconfig
+> @@ -50,6 +50,16 @@ source "drivers/usb/typec/tcpm/Kconfig"
+>  
+>  source "drivers/usb/typec/ucsi/Kconfig"
+>  
+> +config TYPEC_HD3SS3220
+> +	tristate "TI HD3SS3220 Type-C DRP Port controller driver"
+> +	depends on I2C
+> +	help
+> +	  Say Y or M here if your system has TI HD3SS3220 Type-C DRP Port
+> +	  controller driver.
+> +
+> +	  If you choose to build this driver as a dynamically linked module, the
+> +	  module will be called hd3ss3220.ko.
+> +
+>  config TYPEC_TPS6598X
+>  	tristate "TI TPS6598x USB Power Delivery controller driver"
+>  	depends on I2C
+> diff --git a/drivers/usb/typec/Makefile b/drivers/usb/typec/Makefile
+> index 6696b72..7753a5c3 100644
+> --- a/drivers/usb/typec/Makefile
+> +++ b/drivers/usb/typec/Makefile
+> @@ -4,5 +4,6 @@ typec-y				:= class.o mux.o bus.o
+>  obj-$(CONFIG_TYPEC)		+= altmodes/
+>  obj-$(CONFIG_TYPEC_TCPM)	+= tcpm/
+>  obj-$(CONFIG_TYPEC_UCSI)	+= ucsi/
+> +obj-$(CONFIG_TYPEC_HD3SS3220)	+= hd3ss3220.o
+>  obj-$(CONFIG_TYPEC_TPS6598X)	+= tps6598x.o
+>  obj-$(CONFIG_TYPEC)		+= mux/
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> new file mode 100644
+> index 0000000..e98a38f
+> --- /dev/null
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -0,0 +1,263 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * TI HD3SS3220 Type-C DRP Port Controller Driver
+> + *
+> + * Copyright (C) 2019 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/i2c.h>
+> +#include <linux/usb/role.h>
+> +#include <linux/irqreturn.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/usb/typec.h>
+> +#include <linux/delay.h>
+> +
+> +#define HD3SS3220_REG_CN_STAT_CTRL	0x09
+> +#define HD3SS3220_REG_GEN_CTRL		0x0A
+> +#define HD3SS3220_REG_DEV_REV		0xA0
+> +
+> +/* Register HD3SS3220_REG_CN_STAT_CTRL*/
+> +#define HD3SS3220_REG_CN_STAT_CTRL_ATTACHED_STATE_MASK	(BIT(7) | BIT(6))
+> +#define HD3SS3220_REG_CN_STAT_CTRL_AS_DFP		BIT(6)
+> +#define HD3SS3220_REG_CN_STAT_CTRL_AS_UFP		BIT(7)
+> +#define HD3SS3220_REG_CN_STAT_CTRL_TO_ACCESSORY		(BIT(7) | BIT(6))
+> +#define HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS		BIT(4)
+> +
+> +/* Register HD3SS3220_REG_GEN_CTRL*/
+> +#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_MASK		(BIT(2) | BIT(1))
+> +#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT	0x00
+> +#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SNK	BIT(1)
+> +#define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SRC	(BIT(2) | BIT(1))
+> +
+> +struct hd3ss3220 {
+> +	struct device *dev;
+> +	struct regmap *regmap;
+> +	struct usb_role_switch	*role_sw;
+> +	struct typec_port *port;
+> +	struct typec_capability typec_cap;
+> +};
+> +
+> +static int hd3ss3220_set_source_pref(struct hd3ss3220 *hd3ss3220, int src_pref)
+> +{
+> +	return regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+> +				  HD3SS3220_REG_GEN_CTRL_SRC_PREF_MASK,
+> +				  src_pref);
+> +}
+> +
+> +static enum usb_role hd3ss3220_get_attached_state(struct hd3ss3220 *hd3ss3220)
+> +{
+> +	unsigned int reg_val;
+> +	enum usb_role attached_state;
+> +	int ret;
+> +
+> +	ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL,
+> +			  &reg_val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	switch (reg_val & HD3SS3220_REG_CN_STAT_CTRL_ATTACHED_STATE_MASK) {
+> +	case HD3SS3220_REG_CN_STAT_CTRL_AS_DFP:
+> +		attached_state = USB_ROLE_HOST;
+> +	break;
+> +	case HD3SS3220_REG_CN_STAT_CTRL_AS_UFP:
+> +		attached_state = USB_ROLE_DEVICE;
+> +	break;
 
-> 
->>
->>> -Kishon
->>>> ---
->>>>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 26 +++++++++++++-------------
->>>>  1 file changed, 13 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->>>> index 0a34782..be1a392 100644
->>>> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->>>> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
->>>> @@ -447,20 +447,8 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
->>>>  	if (IS_ERR(channel->base))
->>>>  		return PTR_ERR(channel->base);
->>>>
->>>> -	/* call request_irq for OTG */
->>>> -	irq = platform_get_irq(pdev, 0);
->>>> -	if (irq >= 0) {
->>>> -		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
->>>> -		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
->>>> -				       IRQF_SHARED, dev_name(dev), channel);
->>>> -		if (irq < 0)
->>>> -			dev_err(dev, "No irq handler (%d)\n", irq);
->>>> -	}
->>>> -
->>>>  	channel->dr_mode = of_usb_get_dr_mode_by_phy(dev->of_node, 0);
->>>> -	if (channel->dr_mode != USB_DR_MODE_UNKNOWN) {
->>>> -		int ret;
->>>> -
->>>> +	if (channel->dr_mode == USB_DR_MODE_OTG) {
->>
->> R-Car D3 (r8a77995-draak.dts) has dr_mode with "host". So, the board can use host mode
->> as default and "role" mode to switch the role for peripheral later. However, after we
->> applied this patch, the R-Car D3 USB2.0 cannot switch to the peripheral mode.
-> 
-> I understand, I am sorry for breaking it.
-> The probing function still needs some fixing, devm_request_irq uses rcar_gen3_phy_usb2_irq,
-> rcar_gen3_phy_usb2_irq  calls rcar_gen3_device_recognition, rcar_gen3_device_recognition may
-> call either rcar_gen3_init_for_host or rcar_gen3_init_for_peri, both rcar_gen3_init_for_host and
-> rcar_gen3_init_for_peri schedule work for the work queue that calls into rcar_gen3_phy_usb2_work,
-> rcar_gen3_phy_usb2_work uses extcon, extcon gets initialized after devm_request_irq, which
-> means we should move devm_request_irq after extcon gets initialized,.
-> Also, we may register the irq, and never deal with extcon if dr_mode == USB_DR_MODE_UNKNOWN.
-> 
-> Would you like to come up with a patch to address those points?
-> 
-> Thanks,
-> Fab
-> 
->>
->> Best regards,
->> Yoshihiro Shimoda
->>
->>>>  		channel->is_otg_channel = true;
->>>>  		channel->uses_otg_pins = !of_property_read_bool(dev->of_node,
->>>>  							"renesas,no-otg-pins");
->>>> @@ -476,6 +464,18 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
->>>>  		}
->>>>  	}
->>>>
->>>> +	if (channel->is_otg_channel && channel->uses_otg_pins) {
->>>> +		/* call request_irq for OTG */
->>>> +		irq = platform_get_irq(pdev, 0);
->>>> +		if (irq >= 0) {
->>>> +			INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
->>>> +			irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
->>>> +					       IRQF_SHARED, dev_name(dev), channel);
->>>> +			if (irq < 0)
->>>> +				dev_err(dev, "No irq handler (%d)\n", irq);
->>>> +		}
->>>> +	}
->>>> +
->>>>  	/*
->>>>  	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
->>>>  	 * And then, phy-core will manage runtime pm for this device.
->>>>
+It looks like your line indentation has collapsed here. I pretty sure
+scripts/checkpatch.pl would have found these.
+
+> +	default:
+> +		attached_state = USB_ROLE_NONE;
+> +	}
+> +
+> +	return attached_state;
+> +}
+> +
+> +static int hd3ss3220_dr_set(const struct typec_capability *cap,
+> +			    enum typec_data_role role)
+> +{
+> +	struct hd3ss3220 *hd3ss3220 = container_of(cap, struct hd3ss3220,
+> +						   typec_cap);
+> +	enum usb_role role_val;
+> +	int pref, ret = 0;
+> +
+> +	if (role == TYPEC_HOST) {
+> +		role_val = USB_ROLE_HOST;
+> +		pref = HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SRC;
+> +	} else {
+> +		role_val = USB_ROLE_DEVICE;
+> +		pref = HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SNK;
+> +	}
+> +
+> +	ret = hd3ss3220_set_source_pref(hd3ss3220, pref);
+> +	usleep_range(10, 100);
+> +
+> +	usb_role_switch_set_role(hd3ss3220->role_sw, role_val);
+> +	typec_set_data_role(hd3ss3220->port, role);
+> +
+> +	return ret;
+> +}
+> +
+> +static void hd3ss3220_set_role(struct hd3ss3220 *hd3ss3220)
+> +{
+> +	enum usb_role role_state = hd3ss3220_get_attached_state(hd3ss3220);
+> +
+> +	usb_role_switch_set_role(hd3ss3220->role_sw, role_state);
+> +	if (role_state == USB_ROLE_NONE)
+> +		hd3ss3220_set_source_pref(hd3ss3220,
+> +				HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT);
+> +
+> +	switch (role_state) {
+> +	case USB_ROLE_HOST:
+> +		typec_set_data_role(hd3ss3220->port, TYPEC_HOST);
+> +		break;
+> +	case USB_ROLE_DEVICE:
+> +		typec_set_data_role(hd3ss3220->port, TYPEC_DEVICE);
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +}
+> +
+> +irqreturn_t hd3ss3220_irq(struct hd3ss3220 *hd3ss3220)
+> +{
+> +	int err;
+> +
+> +	hd3ss3220_set_role(hd3ss3220);
+> +	err = regmap_update_bits_base(hd3ss3220->regmap,
+> +				      HD3SS3220_REG_CN_STAT_CTRL,
+> +				      HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS,
+> +				      HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS,
+> +				      NULL, false, true);
+> +	if (err < 0)
+> +		return IRQ_NONE;
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static irqreturn_t hd3ss3220_irq_handler(int irq, void *data)
+> +{
+> +	struct i2c_client *client = to_i2c_client(data);
+> +	struct hd3ss3220 *hd3ss3220 = i2c_get_clientdata(client);
+> +
+> +	return hd3ss3220_irq(hd3ss3220);
+> +}
+> +
+> +static const struct regmap_config config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = 0x0A,
+> +};
+> +
+> +static int hd3ss3220_probe(struct i2c_client *client,
+> +		const struct i2c_device_id *id)
+> +{
+> +	struct hd3ss3220 *hd3ss3220;
+> +	struct fwnode_handle *parent, *child;
+> +	int ret;
+> +	unsigned int data;
+> +
+> +	hd3ss3220 = devm_kzalloc(&client->dev, sizeof(struct hd3ss3220),
+> +				 GFP_KERNEL);
+> +	if (!hd3ss3220)
+> +		return -ENOMEM;
+> +
+> +	i2c_set_clientdata(client, hd3ss3220);
+> +
+> +	hd3ss3220->dev = &client->dev;
+> +	hd3ss3220->regmap = devm_regmap_init_i2c(client, &config);
+> +	if (IS_ERR(hd3ss3220->regmap))
+> +		return PTR_ERR(hd3ss3220->regmap);
+> +
+> +	hd3ss3220_set_source_pref(hd3ss3220,
+> +				  HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT);
+> +	child = fwnode_graph_get_next_endpoint(dev_fwnode(hd3ss3220->dev),
+> +					       NULL);
+> +	parent = fwnode_graph_get_remote_port_parent(child);
+> +	hd3ss3220->role_sw = fwnode_usb_role_switch_get(parent);
+> +	if (IS_ERR_OR_NULL(hd3ss3220->role_sw)) {
+> +		fwnode_handle_put(child);
+> +		fwnode_handle_put(parent);
+> +		return PTR_ERR(hd3ss3220->role_sw);
+> +	}
+> +
+> +	fwnode_handle_put(child);
+> +	fwnode_handle_put(parent);
+> +
+> +	hd3ss3220->typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
+> +	hd3ss3220->typec_cap.dr_set = hd3ss3220_dr_set;
+> +	hd3ss3220->typec_cap.type = TYPEC_PORT_DRP;
+> +	hd3ss3220->typec_cap.data = TYPEC_PORT_DRD;
+> +
+> +	hd3ss3220->port = typec_register_port(&client->dev,
+> +					      &hd3ss3220->typec_cap);
+> +	if (IS_ERR(hd3ss3220->port))
+> +		return PTR_ERR(hd3ss3220->port);
+> +
+> +	hd3ss3220_set_role(hd3ss3220);
+> +	if (client->irq > 0) {
+> +		ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL,
+> +				  &data);
+> +		if (ret < 0)
+> +			goto error;
+> +
+> +		if (data & HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS) {
+> +			ret = regmap_write(hd3ss3220->regmap,
+> +				HD3SS3220_REG_CN_STAT_CTRL,
+> +				data | HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS);
+> +			if (ret < 0)
+> +				goto error;
+> +		}
+> +		if (data & HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS) {
+> +			ret = regmap_write(hd3ss3220->regmap,
+> +				HD3SS3220_REG_CN_STAT_CTRL,
+> +				data | HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS);
+> +			if (ret < 0)
+> +				goto error;
+> +		}
+> +
+> +		ret = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+> +					hd3ss3220_irq_handler,
+> +					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> +					"hd3ss3220", &client->dev);
+> +		if (ret)
+> +			goto error;
+> +	}
+
+I would move the above if (client->irq > 0) case to it's own function.
+
+> +	ret = i2c_smbus_read_byte_data(client, HD3SS3220_REG_DEV_REV);
+> +	if (ret < 0)
+> +		goto error;
+> +
+> +	dev_info(&client->dev, "probed revision=0x%x\n", ret);
+> +
+> +	return 0;
+> +error:
+> +	typec_unregister_port(hd3ss3220->port);
+> +	usb_role_switch_put(hd3ss3220->role_sw);
+> +
+> +	return ret;
+> +}
+> +
+> +static int hd3ss3220_remove(struct i2c_client *client)
+> +{
+> +	struct hd3ss3220 *hd3ss3220 = i2c_get_clientdata(client);
+> +
+> +	typec_unregister_port(hd3ss3220->port);
+> +	usb_role_switch_put(hd3ss3220->role_sw);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id dev_ids[] = {
+> +	{ .compatible = "ti,hd3ss3220"},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, dev_ids);
+> +
+> +static struct i2c_driver hd3ss3220_driver = {
+> +	.driver = {
+> +		.name = "hd3ss3220",
+> +		.of_match_table = of_match_ptr(dev_ids),
+> +	},
+> +	.probe = hd3ss3220_probe,
+> +	.remove =  hd3ss3220_remove,
+> +};
+> +
+> +module_i2c_driver(hd3ss3220_driver);
+> +
+> +MODULE_AUTHOR("Biju Das <biju.das@bp.renesas.com>");
+> +MODULE_DESCRIPTION("TI HD3SS3220 DRP Port Controller Driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.7.4
+
+thanks,
+
+-- 
+heikki
