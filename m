@@ -2,91 +2,61 @@ Return-Path: <SRS0=NjMp=ST=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69656C282DA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 15:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A48FC282DA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 15:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30975205F4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 15:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXSW+LlW"
+	by mail.kernel.org (Postfix) with ESMTP id 62E0D20656
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 15:48:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732366AbfDQPLY (ORCPT
+        id S1732105AbfDQPsO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 17 Apr 2019 11:11:24 -0400
-Received: from mail-pf1-f174.google.com ([209.85.210.174]:42339 "EHLO
-        mail-pf1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729395AbfDQPLX (ORCPT
+        Wed, 17 Apr 2019 11:48:14 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:34440 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729940AbfDQPsO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Apr 2019 11:11:23 -0400
-Received: by mail-pf1-f174.google.com with SMTP id w25so12233168pfi.9
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Apr 2019 08:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:date:message-id:in-reply-to:references:subject;
-        bh=rsJcyfHBBySe/bPwij2wqviiKUqoNif2ucPd6VAje3U=;
-        b=PXSW+LlWlQQQMWUZXS9QQFL8jmrLft1hmf+J2wczVnY0d8tna7ZBWowZaygFnzxFxP
-         AwplsJvcScAyEpmuwT7Ylz71heAxwadU5f+uT5tkug/d74JlnNqNJknFf6c8DWNcbpPV
-         oRgbSdTxWJOtv3dPfeK3nNt3vMOnIFZzbgKCCKDwRO5/C77Ez59T7dlPMUKCAHoyButX
-         yH9dWMnZqU0Un8w+ptMrDX+FMVQv86ltcwJuIyhDByTRbsSmQesNK2cFO+g6l9TcmmSq
-         s/wfXtL8S7zZQDwSXP4NyTj7PESDKhzYRmElGlCJhwHXRhSPH8hQi6w+WAR5CXQYeRQH
-         iq2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
-         :references:subject;
-        bh=rsJcyfHBBySe/bPwij2wqviiKUqoNif2ucPd6VAje3U=;
-        b=fogSs12UIbvsxxp9+wwsYfsXKeAQWGTP2J6E4+GnvdT9V2dI9rApMHoEQOKHoGS218
-         jaGJjIPW4yFzrUhLIoqZzr5hw/D6F2kF+G58YZHFsJHppzN2wL1JkWNyiUTw3C7wQtbb
-         Faqsq2Igm+qUS88eAUDE4+0sKmhKAX3o1zqtz75QMedLfi6z6FdBGbj7fiemATySW6c+
-         de9Nyy6Wp1hLyDe5JGIe5wdXN+gHwyf0xg/lmHDq71rScpB61NvBdq+KPI1kiFjjfwI3
-         2OwOwN57OLdb1ci+5ew9oGOhdALl5LtnhNjb382/vt9GhV7FWaNZVWRztEO0V6qcjh2Q
-         AvHg==
-X-Gm-Message-State: APjAAAWWGgRyid7c7j8qsmb6PsMdQ21QcUnadias2iubgJ+2Z/ZP7FnU
-        lQakPIYdQvOh9ELB5IquEJl6d/c4
-X-Google-Smtp-Source: APXvYqxRF+cz+9E9ZYt167RAlMTedRTt1EJaIf5QkuUeGTFHvQn2sWD1MNrFEcQ0pIs2z3INt5ZHwA==
-X-Received: by 2002:a65:6202:: with SMTP id d2mr4739997pgv.176.1555513882605;
-        Wed, 17 Apr 2019 08:11:22 -0700 (PDT)
-Received: from [127.0.0.1] (s214090.ppp.asahi-net.or.jp. [220.157.214.90])
-        by smtp.gmail.com with ESMTPSA id v9sm7988690pgf.73.2019.04.17.08.11.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Apr 2019 08:11:21 -0700 (PDT)
-From:   Magnus Damm <magnus.damm@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Magnus Damm <magnus.damm@gmail.com>
-Date:   Thu, 18 Apr 2019 00:12:32 +0900
-Message-Id: <155551395233.5261.8738960412146064284.sendpatchset@octo>
-In-Reply-To: <155551391518.5261.925425188248761120.sendpatchset@octo>
+        Wed, 17 Apr 2019 11:48:14 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 1894F25AEB0;
+        Thu, 18 Apr 2019 01:48:12 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id EABB0940B0E; Wed, 17 Apr 2019 17:48:09 +0200 (CEST)
+Date:   Wed, 17 Apr 2019 17:48:09 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 0/4] arm: dts: Bootargs update for older boards from
+ Renesas
+Message-ID: <20190417154809.7zz6qite2j45flry@verge.net.au>
 References: <155551391518.5261.925425188248761120.sendpatchset@octo>
-Subject: [PATCH 4/4] arm: dts: ape6evm: Reorder bootargs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155551391518.5261.925425188248761120.sendpatchset@octo>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Thu, Apr 18, 2019 at 12:11:55AM +0900, Magnus Damm wrote:
+> arm: dts: Bootargs update for older boards from Renesas
+> 
+> [PATCH 1/4] arm: dts: kzm9d: Add rw parameter to bootargs
+> [PATCH 2/4] arm: dts: bockw: Reorder bootargs
+> [PATCH 3/4] arm: dts: marzen: Add rw to bootargs and use ip=dhcp
+> [PATCH 4/4] arm: dts: ape6evm: Reorder bootargs
+> 
+> These patches try to make bootargs more consistent across older boards with
+> 32-bit ARM SoCs from Renesas. Simple reordering, adding rw parameter and in
+> case of Marzen we go from ip=on to ip=dhcp. I believe using the ip parameter
+> consistently across the boards is a good first step.
 
-Reorder bootargs parameters to make the APE6EVM board bootargs match other
-boards from Renesas. No need to be special.
+Thanks Magnus,
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- arch/arm/boot/dts/r8a73a4-ape6evm.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- 0001/arch/arm/boot/dts/r8a73a4-ape6evm.dts
-+++ work/arch/arm/boot/dts/r8a73a4-ape6evm.dts	2019-04-17 23:42:00.887226321 +0900
-@@ -19,7 +19,7 @@
- 	};
- 
- 	chosen {
--		bootargs = "ignore_loglevel root=/dev/nfs ip=dhcp rw";
-+		bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
- 		stdout-path = "serial0:115200n8";
- 	};
- 
+applied for v5.2.
