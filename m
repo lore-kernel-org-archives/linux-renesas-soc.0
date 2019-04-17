@@ -2,148 +2,173 @@ Return-Path: <SRS0=NjMp=ST=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575B4C282DC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 18:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A42C282DA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 18:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25D00206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 18:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6C7B2173C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Apr 2019 18:44:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SlBF+eN5"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="kkTQf8Jt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730374AbfDQSF6 (ORCPT
+        id S1729794AbfDQSoM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 17 Apr 2019 14:05:58 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33091 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbfDQSF6 (ORCPT
+        Wed, 17 Apr 2019 14:44:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44459 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728373AbfDQSoM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Apr 2019 14:05:58 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k19so12377717pgh.0;
-        Wed, 17 Apr 2019 11:05:58 -0700 (PDT)
+        Wed, 17 Apr 2019 14:44:12 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h16so23391761ljg.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Apr 2019 11:44:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TylyuSSJFZXFF5azrzu30Zk32Cd0PF6Dt+BQjglTV3g=;
-        b=SlBF+eN5VBpDaB2YZe16O7Agkywy8wvv0ZHZ9Wv1AFhS0Z8VymIsnxl4QjR318bHEl
-         btUmhnxUSJTRmK/BwxdqIfZTAshZyP25/oHYDSJhF9fCVuQxjKzUlzSsd3ssCebOnADj
-         wL0PBbs1reeftgQeb8SsGzLmkb+8+DnQ8BoRHocusXltg9Ulu6T0myQV1ZK6xu+ehqCH
-         L763954erPFoRZ2lc3+r2lby+tgFM+w02e3pha8W1hhQMnPx0MlEQzFUIizv4GG5fqPw
-         37dp/1QEDnJLIACRG8w/TVcCU3AYTAm232cM7xzGbEknFATbAHJeufLgGq69tfnpvXFK
-         nEbA==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UIpbSehmMz/KBZb19dBtzvSykR387AXU45bcF3kvkm4=;
+        b=kkTQf8JtZ71uXPtgkEd9gma7wpUmmx97NZ4TWJbrHb6Mvoz6PzbcY5tElGbAw2wEy7
+         nAGlO/uaLeiabYx1t2rzhxWXwq7HcBgQtFxq1659PIaOkTEC9xEfFmnYORvswqZjYlwd
+         8iuvFnUPE1UI97SYp/4ezmLr+NwANP7Lj0KvqP9VMWxjJnm3H4IUVniN3E8BiG5jqNJ+
+         lm6DngII0v1QzGgJPVNWYjl7H9SfYstTBsfJU9qoO1pyaueTUyxwUYVBA4aAYA2iRvKK
+         mO+HulbfJZ4S0gNbtTGxumtVn+ZSd4QyIBU5HNp5g9yuOtyZwC3HKCKJUgVCkaZ6vN9z
+         /xEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TylyuSSJFZXFF5azrzu30Zk32Cd0PF6Dt+BQjglTV3g=;
-        b=gWwiN7ahVtIMYP1BIxeJaim0OugKq4oXyps4zflXcBj6s22er/Zw2xj9xrRPcoyGBX
-         YdF4ukHndPMeskRU1EExa/d8rw2zvscFnNFOL0OmwmuAl4HyKTRhiuH1/G/veE1/LhVM
-         AJ/6EmMU80Lc22gZaWUxZqme0V4HvFpZ7PcjTAWjqn9ZhpY9/YnyNoBtdmYICjB0xnqA
-         hLpiZAOSBpwZVucnnBhx2yA5Gzg+koJUwyDFQ3jXzcrTE+Pv4skXifCKijQuFDjzgrv9
-         djdCOQXd3phUEhDi17kBJC9ZMP74BvImYdECqvHM8KNp/6AilDEr1H64BJB2axpAgekw
-         AVPw==
-X-Gm-Message-State: APjAAAUNaAegXYxpFnOJr2yYLt/fdL8VI6JR5cF2kB51XHpmkyOVhUpf
-        Hm8MEb/gbmC7pucLVxbPaKM9N2LD
-X-Google-Smtp-Source: APXvYqzvqbu+iIOZpGFwLMvyCmwisJYdK0nid6CMLRS0oGg2beuIRg8jtzjPWSQ8pK9BZFD9s0r/7Q==
-X-Received: by 2002:a63:6503:: with SMTP id z3mr77480785pgb.113.1555524357800;
-        Wed, 17 Apr 2019 11:05:57 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h65sm147298349pfd.108.2019.04.17.11.05.56
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=UIpbSehmMz/KBZb19dBtzvSykR387AXU45bcF3kvkm4=;
+        b=Z73yUQEGJCNVQ6ffxSBSZGKhOqZh7wOQyN5WeT6o4e3NjMMIhhZv32Z9MApNwwuKDD
+         OJwHahkQVkj6cyaJdOz7GEFNKfUZ7dl/k7WkoUNPcwl+8Zf3XpOJMZPnGOroRKjZ1jBx
+         +OKUW8HOUuiXR1LKPSp2eN8Vc9I4BfYGebDvwEOmWXtRkw+cvqStNlOsWLoHfCp3yhHb
+         /tRGNGL/ijNXnRcrJVTYGlS7YazpxcogC9hqDEgVv0fjUOnPNBoJIFYtb+Rjq1Yl15O+
+         B8/9+OuCkanUJCyt2mEwQPqqOr+mecXhoEUxjCBw4GjtFRCQWh0A8Bu6fVhjaiiNbnSv
+         Z1rg==
+X-Gm-Message-State: APjAAAU0dIJJuwZRRoYX1r2lCeDy5CZdeZswXW/lgNr5H0UUeJqH+1hY
+        aZsabArM8dLuUX2Owir2C7nZOw==
+X-Google-Smtp-Source: APXvYqxllGYHF/7d868/kgXmY+um13gPE6GMCnNJm0Fd/serotSJLU44EMco9Z4AIHSdG1aVu77gFg==
+X-Received: by 2002:a2e:3e18:: with SMTP id l24mr50998325lja.68.1555526649813;
+        Wed, 17 Apr 2019 11:44:09 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.81.147])
+        by smtp.gmail.com with ESMTPSA id w19sm10875592lfe.23.2019.04.17.11.44.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Apr 2019 11:05:57 -0700 (PDT)
-Date:   Wed, 17 Apr 2019 11:05:56 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC PATCH] watchdog: renesas_wdt: support handover from
- bootloader
-Message-ID: <20190417180556.GA18401@roeck-us.net>
-References: <20190415105201.2078-1-wsa+renesas@sang-engineering.com>
+        Wed, 17 Apr 2019 11:44:08 -0700 (PDT)
+Subject: Re: [PATCH v9 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
+ driver
+To:     masonccyang@mxic.com.tw
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        lee.jones@linaro.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+        marek.vasut@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        zhengxunli@mxic.com.tw
+References: <1553847606-18122-1-git-send-email-masonccyang@mxic.com.tw>
+ <1553847606-18122-3-git-send-email-masonccyang@mxic.com.tw>
+ <1e2bf23d-db39-0d1d-0bcc-6d9cd2935a82@cogentembedded.com>
+ <cdee3d53-6ee3-4435-117e-8ba4a58ca72b@cogentembedded.com>
+ <OF82CE76E9.E6395EF7-ON482583DD.000E37D7-482583DD.000E5077@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <3d334751-8fd4-7db1-9deb-e6c94936df13@cogentembedded.com>
+Date:   Wed, 17 Apr 2019 21:44:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190415105201.2078-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <OF82CE76E9.E6395EF7-ON482583DD.000E37D7-482583DD.000E5077@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 12:52:01PM +0200, Wolfram Sang wrote:
-> Support an already running watchdog by checking its enable bit and set
-> up the status accordingly before registering the device.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> This patch was tested using a Renesas Salvator XS board (R-Car M3N). It works.
-> However, there is a small window where the watchdog clock is disabled, namely
-> after the MSSR clock driver initializes it until RuntimePM of the watchdog
-> driver takes over. If the system hangs in this window, bad luck. So, I'd think
-> it makes sense to have this clock either always-on or to keep the state which
-> came from the firmware. Geert, what do you think?
-> 
->  drivers/watchdog/renesas_wdt.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 565dbc1ec638..37d757288b22 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -179,6 +179,7 @@ static int rwdt_probe(struct platform_device *pdev)
->  	struct clk *clk;
->  	unsigned long clks_per_sec;
->  	int ret, i;
-> +	u8 csra;
->  
->  	if (rwdt_blacklisted(&pdev->dev))
->  		return -ENODEV;
-> @@ -198,8 +199,8 @@ static int rwdt_probe(struct platform_device *pdev)
->  	pm_runtime_enable(&pdev->dev);
->  	pm_runtime_get_sync(&pdev->dev);
->  	priv->clk_rate = clk_get_rate(clk);
-> -	priv->wdev.bootstatus = (readb_relaxed(priv->base + RWTCSRA) &
-> -				RWTCSRA_WOVF) ? WDIOF_CARDRESET : 0;
-> +	csra = readb_relaxed(priv->base + RWTCSRA);
-> +	priv->wdev.bootstatus = csra & RWTCSRA_WOVF ? WDIOF_CARDRESET : 0;
->  	pm_runtime_put(&pdev->dev);
->  
->  	if (!priv->clk_rate) {
-> @@ -237,6 +238,16 @@ static int rwdt_probe(struct platform_device *pdev)
->  	/* This overrides the default timeout only if DT configuration was found */
->  	watchdog_init_timeout(&priv->wdev, 0, &pdev->dev);
->  
-> +	if (csra & RWTCSRA_TME) {
-> +		/* Ensure properly initialized dividers */
-> +		rwdt_start(&priv->wdev);
-> +		set_bit(WDOG_HW_RUNNING, &priv->wdev.status);
-> +		//FIXME: We are missing pm_runtime_put in some code paths to
-> +		// to balance PM calls. We first need to decide if we maybe
-> +		// should have the RWDT clock always-on or if using RPM for
-> +		// clock management is OK.
+On 04/15/2019 05:36 AM, masonccyang@mxic.com.tw wrote:
 
-Maybe I am missing something, but ..
+>> >> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+>> >>
+>> >> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+>> >> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>> > [...]
+>> >> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+>> >> new file mode 100644
+>> >> index 0000000..037f273
+>> >> --- /dev/null
+>> >> +++ b/drivers/spi/spi-renesas-rpc.c
+>> > [...]
+>> >> +static int rpc_spi_probe(struct platform_device *pdev)
+>> >> +{
+>> >> +   struct spi_controller *ctlr;
+>> >> +   struct rpc_mfd *rpc_mfd = dev_get_drvdata(pdev->dev.parent);
+>> >> +   struct rpc_spi *rpc;
+>> >> +   int ret;
+>> >> +
+>> >> +   ctlr = spi_alloc_master(&pdev->dev, sizeof(*rpc));
+>> >> +   if (!ctlr)
+>> >> +      return -ENOMEM;
+>> >> +
+>> >> +   platform_set_drvdata(pdev, ctlr);
+>> >> +
+>> >> +   rpc = spi_controller_get_devdata(ctlr);
+>> >> +
+>> >> +   ctlr->dev.of_node = pdev->dev.of_node;
+>> > [...]
+>> >> +
+>> >> +   pm_runtime_enable(&pdev->dev);
+>> >> +   ctlr->auto_runtime_pm = true;
+>> >
+>> >    I think this line no longer works as expected with the new
+>> probing scheme.
 
-Is handover even possible if the clock is controlled by clock management ?
-Seems to me the clock would then be turned off through pm, which effectively
-turns off the watchdog. So it will be off between clock/pm initialization
-and the above code, meaning wdt handover from the boot loader is for all
-practical purposes useless if the kernel gets stuck in between.
+   That's because we added another (SPI) device under our MFD.
 
-Thanks,
-Guenter
-
-> +	}
-> +
->  	ret = watchdog_register_device(&priv->wdev);
->  	if (ret < 0)
->  		goto out_pm_disable;
-> -- 
-> 2.11.0
+>> > Have you tested reading? v8 patch still works while v9 patches
+>> > hang on doing:
+>> >
+>> > $ cat /dev/mtd<n>...
+>>
+>>    Sorry, 'od -x', not 'cat'.
 > 
+> root@draak:/# cat /proc/mtd
+> dev:    size   erasesize  name
+> mtd0: 00040000 00001000 "Bank 1 - Boot parameter"
+> mtd1: 00140000 00001000 "Bank 1 - Loader-BL2"
+> mtd2: 00040000 00001000 "Bank 1 - Certification"
+> mtd3: 00080000 00001000 "Bank 1 - ARM Trusted FW"
+> mtd4: 00400000 00001000 "Bank 1 - Reserved-1"
+> mtd5: 00300000 00001000 "Bank 1 - U-Boot"
+> mtd6: 00200000 00001000 "Bank 1 - Reserved-2"
+> mtd7: 00480000 00001000 "Bank 1 - Splash"
+> mtd8: 00040000 00001000 "Bank 1 - Device Tree"
+> root@draak:/# od -x /dev/mtd1
+> 0000000 0000 d280 0001 d280 0002 d280 0003 d280
+> 0000020 0004 d280 0005 d280 0006 d280 0007 d280
+> 0000040 0008 d280 0009 d280 000a d280 000b d280
+> 0000060 000c d280 000d d280 000e d280 000f d280
+> 0000100 0010 d280 0011 d280 0012 d280 0013 d280
+> 0000120 0014 d280 0015 d280 0016 d280 0017 d280
+> 0000140 0018 d280 0019 d280 001a d280 001b d280
+> 0000160 001c d280 001d d280 001e d280 1000 d53e
+> 0000200 f800 9266 1000 d51e 3fdf d503 3ba0 1005
+
+   Still hangs for me. After I patches spi-mem.c and the driver to
+call RPM for the MFD, it started working again. Perhaps, that clock
+is still enabled on your target. What does the following print (for
+the RPC clocks)?
+
+$ mount none -t debugfs /sys/kernel/debug/
+$ cat /sys/kernel/debug/clk/clk_summary
+
+> fyi~
+> 
+> best regards,
+> Mason
+
+MBR, Sergei
