@@ -2,199 +2,127 @@ Return-Path: <SRS0=TeIC=SU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA99C10F0E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Apr 2019 08:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9730CC10F0E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Apr 2019 09:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E41B2083D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Apr 2019 08:53:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="UVpcmRab"
+	by mail.kernel.org (Postfix) with ESMTP id 7032F214DA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Apr 2019 09:32:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388197AbfDRIxu (ORCPT
+        id S2387971AbfDRJcH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 18 Apr 2019 04:53:50 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44256 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729497AbfDRIxu (ORCPT
+        Thu, 18 Apr 2019 05:32:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58340 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728074AbfDRJcH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Apr 2019 04:53:50 -0400
-Received: by mail-lf1-f66.google.com with SMTP id h18so1002148lfj.11
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 18 Apr 2019 01:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=uynYQrHQ9VKE+Hszzp/XNIE6bwIb6ne5eqCgUQiYX7c=;
-        b=UVpcmRabaEbAOO3CLDUCJFjAKex9CZboPx7botwHTRx3P+WbAZ5PaQmM1JxyolLIP3
-         p9cY4zzbX3cSeY3UNV0Oq54VW6TMxTXrg3BjPZv3XwLHI8APYhX4urJctu4ROLKd2SpX
-         8T9zD0IAZt7M6CobE8PPpNHMrpMN3ZpaCR7BvodwG83tscCPSb2cpQP+SyaKPQUomvqJ
-         BM2XrwkCWfnvC1w1ZwlJvZaM3HaKsst4B6AFBUxsAiBpnDgluR6mXMGxz0H98Yeah8pZ
-         G1ctS8T4ZUlBvmHZn5T06Ukq4FXzF99OCnvrHH0lr5cgg1eRLdZh2RVKVUOUtISLyfr8
-         Nksw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=uynYQrHQ9VKE+Hszzp/XNIE6bwIb6ne5eqCgUQiYX7c=;
-        b=CLXVrJCICO5m0jr3NME4WyeD9jhw0BLKY4C7cNtclU1iiA2T/5ABTrQloLHjEkjgde
-         pv1IG4hJY5GAjLsFvSHY6iMvz3gjOHPDLhCZpLM9lwqPxfGUHOx0XEMjGZXnz2NoHs8s
-         tM+uK/c657wLKgnWWayc5clBpJzOsvyToNwGBHEdWikrM1YRsvCyiJ8UQzHS0294H4Pf
-         3tTwSt28HOj69yu/HB28Zk5vvxQ9BAlneLYH4U4HzXW927HiU+NtZfP/VQGzdFndzy1Z
-         CHKt931U09gdtgYo48xrp2PISIz8h65UoSgH0vc0qvfa4fDMZjQ8DucyZ/cmK1TKMGzz
-         Z8Yw==
-X-Gm-Message-State: APjAAAUFZm+lfQV6XP2HBhHI9xC0zwvLz5Q5wLAPF8TDfxJAxmxMR0y0
-        1cKgzwqY5WGILHAhrNQ3e4XM5w==
-X-Google-Smtp-Source: APXvYqz1El7LPujk7cUx3dXvzNVGnVsz5Us5CEferqfhNP5At7Vr6dxO/3/aSswRZFScXUlzS4726w==
-X-Received: by 2002:ac2:44b2:: with SMTP id c18mr7843961lfm.86.1555577627214;
-        Thu, 18 Apr 2019 01:53:47 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id d1sm311909lfa.49.2019.04.18.01.53.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 18 Apr 2019 01:53:46 -0700 (PDT)
-Date:   Thu, 18 Apr 2019 10:53:46 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc:     linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH/RFT v2 2/3] thermal: rcar_gen3_thermal: Update
- calculation formula of IRQTEMP
-Message-ID: <20190418085346.GX28515@bigcity.dyn.berto.se>
-References: <1555436655-5262-1-git-send-email-ykaneko0929@gmail.com>
- <1555436655-5262-3-git-send-email-ykaneko0929@gmail.com>
+        Thu, 18 Apr 2019 05:32:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC66015AB;
+        Thu, 18 Apr 2019 02:32:06 -0700 (PDT)
+Received: from [10.37.12.217] (unknown [10.37.12.217])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 003AB3F68F;
+        Thu, 18 Apr 2019 02:32:04 -0700 (PDT)
+Subject: Re: [PATCH] ARM: mach-shmobile: Don't configure ARCH timer if PSCI is
+ enabled
+To:     Oleksandr Tyshchenko <olekstysh@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     horms@verge.net.au, magnus.damm@gmail.com, linux@armlinux.org.uk,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+References: <1555521040-16706-1-git-send-email-olekstysh@gmail.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <1b33dca4-e3ae-4588-05f2-37b23ac8df78@arm.com>
+Date:   Thu, 18 Apr 2019 10:32:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1555436655-5262-3-git-send-email-ykaneko0929@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <1555521040-16706-1-git-send-email-olekstysh@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kaneko-san,
+Hi,
 
-Thanks for your work.
-
-On 2019-04-17 02:44:14 +0900, Yoshihiro Kaneko wrote:
-> Update the formula to calculate CTEMP:
-> Currently, the CTEMP is average of val1 (is calculated by
-> formula 1) and val2 (is calculated by formula 2). But,
-> as description in HWM (chapter 10A.3.1.1 Setting of Normal Mode)
+On 4/17/19 6:10 PM, Oleksandr Tyshchenko wrote:
+> From: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
 > 
-> If (STEMP < Tj_T) CTEMP value should be val1.
-> If (STEMP > Tj_T) CTEMP value should be val2.
+> If CONFIG_PSCI is enabled then most likely we are running on
+> PSCI-enabled U-Boot which, we assume, has already taken care of
+> configuring ARCH timer stuff before switching to non-secure mode.
 > 
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> Signed-off-by: Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+> 
 > ---
->  drivers/thermal/rcar_gen3_thermal.c | 34 ++++++++++++++++++----------------
->  1 file changed, 18 insertions(+), 16 deletions(-)
+> A bit of context here...
 > 
-> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-> index a2fd0fd..97cf3cd 100644
-> --- a/drivers/thermal/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/rcar_gen3_thermal.c
-> @@ -77,6 +77,7 @@ struct rcar_gen3_thermal_tsc {
->  	struct equation_coefs coef;
->  	int low;
->  	int high;
-> +	int tj_2;
->  };
->  
->  struct rcar_gen3_thermal_priv {
-> @@ -126,28 +127,27 @@ static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
->  /* no idea where these constants come from */
->  #define TJ_3 -41
->  
-> -static void rcar_gen3_thermal_calc_coefs(struct equation_coefs *coef,
-> +
-> +static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
->  					 int *ptat, int *thcode,
->  					 unsigned int ths_tj_1)
->  {
-> -	int tj_2;
-> -
->  	/* TODO: Find documentation and document constant calculation formula */
-
-Maybe you cold also fix this todo now that the datasheet have been 
-updated with 10A.3.1.1 ? This might also impact the equation_coefs 
-structure.
-
->  
->  	/*
->  	 * Division is not scaled in BSP and if scaled it might overflow
->  	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it unscaled
->  	 */
-> -	tj_2 = (FIXPT_INT((ptat[1] - ptat[2]) * 157)
-> -		/ (ptat[0] - ptat[2])) + FIXPT_INT(TJ_3);
-> +	tsc->tj_2 = (FIXPT_INT((ptat[1] - ptat[2]) * 157)
-> +		     / (ptat[0] - ptat[2])) + FIXPT_INT(TJ_3);
-
-I think tj_2 should be renamed to match the names in the datasheet, it's 
-Tj_T from 10A.3.1.1 right?
-
->  
-> -	coef->a1 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[2]),
-> -			     tj_2 - FIXPT_INT(TJ_3));
-> -	coef->b1 = FIXPT_INT(thcode[2]) - coef->a1 * TJ_3;
-> +	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[2]),
-> +				 tsc->tj_2 - FIXPT_INT(TJ_3));
-> +	tsc->coef.b1 = FIXPT_INT(thcode[2]) - tsc->coef.a1 * TJ_3;
->  
-> -	coef->a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
-> -			     tj_2 - FIXPT_INT(ths_tj_1));
-> -	coef->b2 = FIXPT_INT(thcode[0]) - coef->a2 * ths_tj_1;
-> +	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
-> +				 tsc->tj_2 - FIXPT_INT(ths_tj_1));
-> +	tsc->coef.b2 = FIXPT_INT(thcode[0]) - tsc->coef.a2 * ths_tj_1;
->  }
->  
->  static int rcar_gen3_thermal_round(int temp)
-> @@ -186,13 +186,15 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
->  static int rcar_gen3_thermal_mcelsius_to_temp(struct rcar_gen3_thermal_tsc *tsc,
->  					      int mcelsius)
->  {
-> -	int celsius, val1, val2;
-> +	int celsius, val;
->  
->  	celsius = DIV_ROUND_CLOSEST(mcelsius, 1000);
-> -	val1 = celsius * tsc->coef.a1 + tsc->coef.b1;
-> -	val2 = celsius * tsc->coef.a2 + tsc->coef.b2;
-> +	if (celsius <= INT_FIXPT(tsc->tj_2))
-> +		val = celsius * tsc->coef.a1 + tsc->coef.b1;
-> +	else
-> +		val = celsius * tsc->coef.a2 + tsc->coef.b2;
->  
-> -	return INT_FIXPT((val1 + val2) / 2);
-> +	return INT_FIXPT(val);
->  }
->  
->  static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
-> @@ -440,7 +442,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
->  		priv->tscs[i] = tsc;
->  
->  		priv->thermal_init(tsc);
-> -		rcar_gen3_thermal_calc_coefs(&tsc->coef, ptat, thcode[i],
-> +		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcode[i],
->  					     *rcar_gen3_ths_tj_1);
->  
->  		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
-> -- 
-> 1.9.1
+> We are highly interested in Renesas "Stout" board support (r8a7790)
+> in Xen hypervisor. The reason is to have fully supported HW for
+> performing "OSSTEST" (Xen automatic test system) on ARM32.
 > 
+> To reach that target we need a "generic way" for the secondary CPU cores
+> bring up and switching them to non-secure hyp mode.
+> So, the PSCI as a generic well-known way to bring up CPUs, was chosen
+> for that purpose.
+> 
+> You can find corresponding patches for U-Boot here:
+> http://u-boot.10912.n7.nabble.com/PATCH-0-3-PSCI-support-for-r8a7790-SoC-Lager-Stout-boards-td357352.html
+> 
+> You can find corresponding patches for Xen hypervisor here:
+> https://www.mail-archive.com/xen-devel@lists.xenproject.org/msg43332.html
+> 
+> To sumarize:
+> Together with enabling CONFIG_PSCI in shmobile_defconfig, current patch
+> is a minimal required change needed to run mainline Linux on top of
+> PSCI-enabled U-Boot.
+> There is no need to modify device tree. U-Boot will take care of inserting
+> proper "enable-method" strings in CPU nodes.
+> 
+> ---
+>   arch/arm/mach-shmobile/setup-rcar-gen2.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> index eea60b2..bac4490 100644
+> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+> @@ -32,7 +32,7 @@ static const struct of_device_id cpg_matches[] __initconst = {
+>   	{ /* sentinel */ }
+>   };
+>   
+> -static unsigned int __init get_extal_freq(void)
+> +static unsigned int __init __maybe_unused get_extal_freq(void)
+>   {
+>   	const struct of_device_id *match;
+>   	struct device_node *cpg, *extal;
+> @@ -60,6 +60,12 @@ static unsigned int __init get_extal_freq(void)
+>   
+>   void __init rcar_gen2_timer_init(void)
+>   {
+> +/*
+> + * If CONFIG_PSCI is enabled then most likely we are running on PSCI-enabled
+> + * U-Boot which, we assume, has already taken care of configuring ARCH timer
+> + * stuff before switching to non-secure mode.
+> + */
+
+I disagree with that statement. CONFIG_ARM_PSCI may be selected in your 
+.config for multiple reasons:
+      - CONFIG_XEN will selected it
+      - you build a .config targeting multiple platforms
+
+Yet you may still want to boot the kernel on older U-boot. Such change 
+would make it impossible.
+
+If there are code that should not be called when PSCI is used, then you 
+need to make sure the function is not called at runtime.
+
+Cheers,
 
 -- 
-Regards,
-Niklas Söderlund
+Julien Grall
