@@ -2,116 +2,105 @@ Return-Path: <SRS0=xIzj=SV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0924AC282E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2984C282DF
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB078222AF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8692A222AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbfDSSW1 (ORCPT
+        id S1727555AbfDSSW2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 19 Apr 2019 14:22:27 -0400
+        Fri, 19 Apr 2019 14:22:28 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:58840 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbfDSSW1 (ORCPT
+        with ESMTP id S1726834AbfDSSW2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Apr 2019 14:22:27 -0400
+        Fri, 19 Apr 2019 14:22:28 -0400
 Received: from penelope.horms.nl (unknown [62.153.215.140])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 77C7E25BECF;
-        Sat, 20 Apr 2019 00:34:54 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 7547F25B7C3;
+        Sat, 20 Apr 2019 00:34:00 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id DE4C0E21BF9; Fri, 19 Apr 2019 16:34:49 +0200 (CEST)
+        id 644FFE21AF6; Fri, 19 Apr 2019 16:33:58 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
+To:     arm@kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Cao Van Dong <cv-dong@jinso.co.jp>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 09/21] ARM: dts: r8a77470: Add HSCIF support
-Date:   Fri, 19 Apr 2019 16:34:36 +0200
-Message-Id: <f408170d1829779188aa774ec711bf267349b13b.1555655522.git.horms+renesas@verge.net.au>
+Subject: [GIT PULL] Second Round of Renesas ARM64 Based SoC DT Updates for v5.2
+Date:   Fri, 19 Apr 2019 16:33:55 +0200
+Message-Id: <cover.1555683861.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1555655522.git.horms+renesas@verge.net.au>
-References: <cover.1555655522.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Cao Van Dong <cv-dong@jinso.co.jp>
+Hi Olof, Hi Kevin, Hi Arnd,
 
-Add hscif{0|1|2} nodes to dtsi for HSCIF support on the
-RZ/G1C (r8a77470) SoC.
+Please consider these second round of Renesas ARM64 based SoC DT updates
+for v5.2.
 
-Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a77470.dtsi | 48 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+This pull request is based on the previous round of
+such requests, tagged as renesas-arm64-dt-for-v5.2,
+which I have already sent a pull-request for.
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 493cf2b3f795..60bd79fc35f7 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -588,6 +588,54 @@
- 			status = "disabled";
- 		};
- 
-+		hscif0: serial@e62c0000 {
-+			compatible = "renesas,hscif-r8a77470",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62c0000 0 0x60>;
-+			interrupts = <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 717>,
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x39>, <&dmac0 0x3a>,
-+			       <&dmac1 0x39>, <&dmac1 0x3a>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 717>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e62c8000 {
-+			compatible = "renesas,hscif-r8a77470",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62c8000 0 0x60>;
-+			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 716>,
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x4d>, <&dmac0 0x4e>,
-+			       <&dmac1 0x4d>, <&dmac1 0x4e>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 716>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial@e62d0000 {
-+			compatible = "renesas,hscif-r8a77470",
-+				     "renesas,rcar-gen2-hscif", "renesas,hscif";
-+			reg = <0 0xe62d0000 0 0x60>;
-+			interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 713>,
-+				 <&cpg CPG_CORE R8A77470_CLK_ZS>, <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac0 0x3b>, <&dmac0 0x3c>,
-+			       <&dmac1 0x3b>, <&dmac1 0x3c>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
-+			resets = <&cpg 713>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@ee100000 {
- 			compatible = "renesas,sdhi-r8a77470",
- 				     "renesas,rcar-gen2-sdhi";
--- 
-2.11.0
 
+The following changes since commit e3414b8c45afa5cdfb1ffd10f5334da3458c4aa5:
+
+  arm64: dts: renesas: salvator-common: Add GPIO keys support (2019-03-27 13:02:12 +0100)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-arm64-dt2-for-v5.2
+
+for you to fetch changes up to b7f5a8e435ecc7198407f44a2a5a6cdae1056b0d:
+
+  arm64: dts: renesas: r8a77980: Add "renesas,id" to VIN (2019-04-15 10:43:26 +0200)
+
+----------------------------------------------------------------
+Second Round of Renesas ARM64 Based SoC DT Updates for v5.2
+
+* R-Car H3 (r8a7795), M3-N (r8a77965) and E3 (r8a77990) SoCs
+  - Describe CMT devices in DT
+
+* R-Car M3-N (r8a77965) SoC
+  - Remove unecessary reg-names of display node
+
+* R-Car V3H (r8a77980) SoC
+  - Add missing "renesas,id" property to VIN of device tree
+
+* RZ/G2E (r8a774c0) based CAT874 board
+  - Add USB-HOST support
+
+----------------------------------------------------------------
+Cao Van Dong (3):
+      arm64: dts: renesas: r8a7795: Add CMT device nodes
+      arm64: dts: renesas: r8a77965: Add CMT device nodes
+      arm64: dts: renesas: r8a77990: Add CMT device nodes
+
+Fabrizio Castro (1):
+      arm64: dts: renesas: cat874: Add USB-HOST support
+
+Jacopo Mondi (1):
+      arm64: dts: renesas: r8a77980: Add "renesas,id" to VIN
+
+Takeshi Kihara (1):
+      arm64: dts: renesas: r8a77965: Remove reg-names of display node
+
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 15 ++++++
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi        | 70 ++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi       | 71 ++++++++++++++++++++++++-
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi       | 16 ++++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi       | 70 ++++++++++++++++++++++++
+ 5 files changed, 241 insertions(+), 1 deletion(-)
