@@ -6,113 +6,66 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA187C282DA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B4CC282DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86286222AF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84340222AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfDSSXU (ORCPT
+        id S1726762AbfDSSXZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 19 Apr 2019 14:23:20 -0400
+        Fri, 19 Apr 2019 14:23:25 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:58840 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbfDSSXU (ORCPT
+        with ESMTP id S1726793AbfDSSXX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Apr 2019 14:23:20 -0400
+        Fri, 19 Apr 2019 14:23:23 -0400
 Received: from penelope.horms.nl (unknown [62.153.215.140])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 10B8F25BE99;
-        Sat, 20 Apr 2019 00:34:53 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 4DF0B25B7B3;
+        Sat, 20 Apr 2019 00:33:25 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id CFFCBE21BF3; Fri, 19 Apr 2019 16:34:49 +0200 (CEST)
+        id 48525E21AF8; Fri, 19 Apr 2019 16:33:23 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 06/21] ARM: dts: rskrza1: Add I2C support
-Date:   Fri, 19 Apr 2019 16:34:33 +0200
-Message-Id: <129ca9e185ab34e939eab91ef8f10c115fc43ba5.1555655522.git.horms+renesas@verge.net.au>
+Subject: [PATCH 1/1] arm64: defconfig: enable RX-8581 config option
+Date:   Fri, 19 Apr 2019 16:33:21 +0200
+Message-Id: <940d1a288a598ee18afa25ee74f4ca124bddd364.1555683540.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1555655522.git.horms+renesas@verge.net.au>
-References: <cover.1555655522.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1555683540.git.horms+renesas@verge.net.au>
+References: <cover.1555683540.git.horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Biju Das <biju.das@bp.renesas.com>
 
-Enable the I2C bus, and add the following devices:
-  - Two CAT9554 port expanders (8 GPIOs, interrupt not wired by
-    default),
-  - R1EX24016ASAS0A EEPROM.
+Enable support for RX-8571/RX-8581 RTC by turning on
+CONFIG_RTC_DRV_RX8581 as module.
 
-The bus also contains a MAX9856 Audio Codec, which is not yet supported.
-
-All devices (incl. the audio codec) are documented to support an I2C bus
-running at 400 kHz.
-
-Pinctrl is based on the RZ/A BSP.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s72100-rskrza1.dts | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-index 8ee44a100e9a..60e80ecbbf68 100644
---- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
-+++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
-@@ -47,6 +47,34 @@
- 	clock-frequency = <13330000>;
- };
- 
-+&i2c3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c3_pins>;
-+	status = "okay";
-+
-+	clock-frequency = <400000>;
-+
-+	io_expander1: gpio@20 {
-+		compatible = "onnn,cat9554";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	io_expander2: gpio@21 {
-+		compatible = "onnn,cat9554";
-+		reg = <0x21>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	eeprom@50 {
-+		compatible = "renesas,r1ex24016", "atmel,24c16";
-+		reg = <0x50>;
-+		pagesize = <16>;
-+	};
-+};
-+
- &usb_x1_clk {
- 	clock-frequency = <48000000>;
- };
-@@ -56,6 +84,11 @@
- };
- 
- &pinctrl {
-+	/* RIIC ch3 (Port Expander, EEPROM (MAC Addr), Audio Codec) */
-+	i2c3_pins: i2c3 {
-+		pinmux = <RZA1_PINMUX(1, 6, 1)>,	/* RIIC3SCL */
-+			 <RZA1_PINMUX(1, 7, 1)>;	/* RIIC3SDA */
-+	};
- 
- 	/* Serial Console */
- 	scif2_pins: serial2 {
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 2d9c39033c1a..c5ec86c44656 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -605,6 +605,7 @@ CONFIG_EDAC_GHES=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_MAX77686=y
+ CONFIG_RTC_DRV_RK808=m
++CONFIG_RTC_DRV_RX8581=m
+ CONFIG_RTC_DRV_S5M=y
+ CONFIG_RTC_DRV_DS3232=y
+ CONFIG_RTC_DRV_EFI=y
 -- 
 2.11.0
 
