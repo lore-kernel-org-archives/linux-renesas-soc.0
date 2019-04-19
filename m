@@ -3,68 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05634C282DA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6F8C282DA
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4DED222D9
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3BB8222AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfDSSWm (ORCPT
+        id S1726852AbfDSSWw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 19 Apr 2019 14:22:42 -0400
+        Fri, 19 Apr 2019 14:22:52 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:58840 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbfDSSWl (ORCPT
+        with ESMTP id S1727349AbfDSSWt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Apr 2019 14:22:41 -0400
+        Fri, 19 Apr 2019 14:22:49 -0400
 Received: from penelope.horms.nl (unknown [62.153.215.140])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id EA81C25BDF3;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D14AF25BDAE;
         Sat, 20 Apr 2019 00:34:22 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id D75B6E21AFC; Fri, 19 Apr 2019 16:34:20 +0200 (CEST)
+        id CD60DE21AFA; Fri, 19 Apr 2019 16:34:20 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 4/5] ARM: shmobile: Enable PHY_RCAR_GEN3_USB2 in shmobile_defconfig
-Date:   Fri, 19 Apr 2019 16:34:19 +0200
-Message-Id: <0cd4f4f10245d1d9616e00245093f46acd198141.1555654474.git.horms+renesas@verge.net.au>
+Subject: [PATCH 2/5] ARM: shmobile: defconfig: Enable support for CFI NOR FLASH
+Date:   Fri, 19 Apr 2019 16:34:17 +0200
+Message-Id: <c8bb03f65cc04612c6684829cf1bad39e35973b1.1555654474.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1555654474.git.horms+renesas@verge.net.au>
 References: <cover.1555654474.git.horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Enable PHY_RCAR_GEN3_USB2 in shmobile_defconfig so that boards
-based on RZ/G1C SoC design can use the corresponding driver.
+Enable the config options needed to access the CFI NOR FLASH on the
+APE6EVM board.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/configs/shmobile_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 291abdd650ed..30abd8176010 100644
+index 41e773619c51..291abdd650ed 100644
 --- a/arch/arm/configs/shmobile_defconfig
 +++ b/arch/arm/configs/shmobile_defconfig
-@@ -197,6 +197,7 @@ CONFIG_PWM_RENESAS_TPU=y
- CONFIG_RESET_CONTROLLER=y
- CONFIG_GENERIC_PHY=y
- CONFIG_PHY_RCAR_GEN2=y
-+CONFIG_PHY_RCAR_GEN3_USB2=y
- # CONFIG_DNOTIFY is not set
- CONFIG_MSDOS_FS=y
- CONFIG_VFAT_FS=y
+@@ -46,6 +46,10 @@ CONFIG_DEVTMPFS_MOUNT=y
+ CONFIG_SIMPLE_PM_BUS=y
+ CONFIG_MTD=y
+ CONFIG_MTD_BLOCK=y
++CONFIG_MTD_CFI=y
++CONFIG_MTD_CFI_INTELEXT=y
++CONFIG_MTD_PHYSMAP=y
++CONFIG_MTD_PHYSMAP_OF=y
+ CONFIG_MTD_M25P80=y
+ CONFIG_MTD_SPI_NOR=y
+ CONFIG_EEPROM_AT24=y
 -- 
 2.11.0
 
