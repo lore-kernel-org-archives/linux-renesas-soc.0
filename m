@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70D2C282E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE83C282DF
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9482A222AF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB39E222AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfDSSWo (ORCPT
+        id S1727729AbfDSSWs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 19 Apr 2019 14:22:44 -0400
+        Fri, 19 Apr 2019 14:22:48 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:58840 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbfDSSWn (ORCPT
+        with ESMTP id S1727810AbfDSSWo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Apr 2019 14:22:43 -0400
+        Fri, 19 Apr 2019 14:22:44 -0400
 Received: from penelope.horms.nl (unknown [62.153.215.140])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id DBB4525BE67;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D032925BE45;
         Sat, 20 Apr 2019 00:34:51 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id C712EE21AFC; Fri, 19 Apr 2019 16:34:49 +0200 (CEST)
+        id BE543E21AFA; Fri, 19 Apr 2019 16:34:49 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 04/21] ARM: dts: r8a77470: Add DU support
-Date:   Fri, 19 Apr 2019 16:34:31 +0200
-Message-Id: <4ec778fb0f26692419609d2f39b6f8c829ed1fb5.1555655522.git.horms+renesas@verge.net.au>
+Subject: [PATCH 02/21] ARM: dts: alt: Add DA9063 PMIC node
+Date:   Fri, 19 Apr 2019 16:34:29 +0200
+Message-Id: <a8d5fc0be537d49562f3d4b63390584e304ec8dc.1555655522.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1555655522.git.horms+renesas@verge.net.au>
 References: <cover.1555655522.git.horms+renesas@verge.net.au>
@@ -42,60 +42,49 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-This commit adds DU support to the RZ/G1C (a.k.a. r8a77470)
-specific device tree.
+Add DA9063 PMIC node to the I2C bus.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a77470.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm/boot/dts/r8a7794-alt.dts | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index f4e232bf9d03..493cf2b3f795 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -643,6 +643,38 @@
- 			resets = <&cpg 408>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
+index ef7e2a837df6..e0500ec81569 100644
+--- a/arch/arm/boot/dts/r8a7794-alt.dts
++++ b/arch/arm/boot/dts/r8a7794-alt.dts
+@@ -377,6 +377,27 @@
+ 	pinctrl-names = "i2c-exio4";
+ };
  
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a77470";
-+			reg = <0 0xfeb00000 0 0x40000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>;
-+			clock-names = "du.0", "du.1";
-+			status = "disabled";
++&i2c7 {
++	status = "okay";
++	clock-frequency = <100000>;
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
++	pmic@58 {
++		compatible = "dlg,da9063";
++		reg = <0x58>;
++		interrupt-parent = <&gpio3>;
++		interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
 +
-+				port@0 {
-+					reg = <0>;
-+					du_out_rgb0: endpoint {
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					du_out_rgb1: endpoint {
-+					};
-+				};
-+				port@2 {
-+					reg = <2>;
-+					du_out_lvds0: endpoint {
-+					};
-+				};
-+			};
++		rtc {
++			compatible = "dlg,da9063-rtc";
 +		};
 +
- 		prr: chipid@ff000044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xff000044 0 4>;
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
++};
++
+ &vin0 {
+ 	status = "okay";
+ 	pinctrl-0 = <&vin0_pins>;
 -- 
 2.11.0
 
