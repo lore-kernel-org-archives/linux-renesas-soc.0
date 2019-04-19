@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14859C282DA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90318C282DF
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D955C222AF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 615AD222AF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Apr 2019 18:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfDSSXC (ORCPT
+        id S1727494AbfDSSXC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 19 Apr 2019 14:23:02 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:58840 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727494AbfDSSXB (ORCPT
+        with ESMTP id S1727832AbfDSSWu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Apr 2019 14:23:01 -0400
+        Fri, 19 Apr 2019 14:22:50 -0400
 Received: from penelope.horms.nl (unknown [62.153.215.140])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 3BEC525BEB8;
-        Sat, 20 Apr 2019 00:34:54 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id D277C25BE4C;
+        Sat, 20 Apr 2019 00:34:51 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id D9530E21BF8; Fri, 19 Apr 2019 16:34:49 +0200 (CEST)
+        id B6186E21AF8; Fri, 19 Apr 2019 16:34:49 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 08/21] ARM: dts: alt: Enable USB support
-Date:   Fri, 19 Apr 2019 16:34:35 +0200
-Message-Id: <a7586ad99e4727bcd92df374b88930400635c420.1555655522.git.horms+renesas@verge.net.au>
+Subject: [PATCH 01/21] ARM: dts: r8a7792: blanche: Add IIC3 and DA9063 PMIC node
+Date:   Fri, 19 Apr 2019 16:34:28 +0200
+Message-Id: <72cd625c85e2681bad718b5218bf672d7fa5af80.1555655522.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1555655522.git.horms+renesas@verge.net.au>
 References: <cover.1555655522.git.horms+renesas@verge.net.au>
@@ -44,59 +44,84 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-Add nodes enabling internal PCI controllers to which the internal USB
-controllers are connected, add USB PHY node and pinmux nodes.
+Add IIC3 node to R8A7792 SoC device tree and a DA9063 PMIC node
+to V2H Blanche board device tree.
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7794-alt.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm/boot/dts/r8a7792-blanche.dts | 20 ++++++++++++++++++++
+ arch/arm/boot/dts/r8a7792.dtsi        | 18 ++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index e0500ec81569..0ab3d8d57f6d 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -199,6 +199,22 @@
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index f92301290b02..b6fa80c3b07e 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -308,6 +308,26 @@
  	};
  };
  
-+&pci0 {
++&iic3 {
 +	status = "okay";
-+	pinctrl-0 = <&usb0_pins>;
-+	pinctrl-names = "default";
-+};
 +
-+&pci1 {
-+	status = "okay";
-+	pinctrl-0 = <&usb1_pins>;
-+	pinctrl-names = "default";
-+};
++	pmic@58 {
++		compatible = "dlg,da9063";
++		reg = <0x58>;
++		interrupt-parent = <&irqc>;
++		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-controller;
 +
-+&usbphy {
-+	status = "okay";
++		rtc {
++			compatible = "dlg,da9063-rtc";
++		};
++
++		wdt {
++			compatible = "dlg,da9063-watchdog";
++		};
++	};
 +};
 +
  &du {
- 	pinctrl-0 = <&du_pins>;
+ 	pinctrl-0 = <&du0_pins &du1_pins>;
  	pinctrl-names = "default";
-@@ -293,6 +309,16 @@
- 		function = "sdhi1";
- 		power-source = <1800>;
- 	};
-+
-+	usb0_pins: usb0 {
-+		groups = "usb0";
-+		function = "usb0";
-+	};
-+
-+	usb1_pins: usb1 {
-+		groups = "usb1";
-+		function = "usb1";
-+	};
- };
+diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
+index 8e9eb4b704d3..38fb43d11b27 100644
+--- a/arch/arm/boot/dts/r8a7792.dtsi
++++ b/arch/arm/boot/dts/r8a7792.dtsi
+@@ -22,6 +22,7 @@
+ 		i2c3 = &i2c3;
+ 		i2c4 = &i2c4;
+ 		i2c5 = &i2c5;
++		i2c6 = &iic3;
+ 		spi0 = &qspi;
+ 		spi1 = &msiof0;
+ 		spi2 = &msiof1;
+@@ -444,6 +445,23 @@
+ 			status = "disabled";
+ 		};
  
- &cmt0 {
++		iic3: i2c@e60b0000 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			compatible = "renesas,iic-r8a7792",
++				     "renesas,rcar-gen2-iic",
++				     "renesas,rmobile-iic";
++			reg = <0 0xe60b0000 0 0x425>;
++			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 926>;
++			dmas = <&dmac0 0x77>, <&dmac0 0x78>,
++			       <&dmac1 0x77>, <&dmac1 0x78>;
++			dma-names = "tx", "rx", "tx", "rx";
++			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
++			resets = <&cpg 926>;
++			status = "disabled";
++		};
++
+ 		dmac0: dma-controller@e6700000 {
+ 			compatible = "renesas,dmac-r8a7792",
+ 				     "renesas,rcar-dmac";
 -- 
 2.11.0
 
