@@ -1,99 +1,129 @@
-Return-Path: <SRS0=sogr=SW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=1BOO=SY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B182C282DD
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 20 Apr 2019 13:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC79C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Apr 2019 03:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E87B82087F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 20 Apr 2019 13:09:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BRQtkPTf"
+	by mail.kernel.org (Postfix) with ESMTP id 105E420833
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Apr 2019 03:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbfDTNJS (ORCPT
+        id S1726195AbfDVDKi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 20 Apr 2019 09:09:18 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51206 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbfDTNJS (ORCPT
+        Sun, 21 Apr 2019 23:10:38 -0400
+Received: from twhmllg4.macronix.com ([211.75.127.132]:53988 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfDVDKi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 20 Apr 2019 09:09:18 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 975805F;
-        Sat, 20 Apr 2019 15:09:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1555765755;
-        bh=oXAgjgghA3CzA87INJL4FtpGi1uQs/Ua+dmWjdZP0a0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BRQtkPTfAHOzxwpZWCAtuHRom5e7xvie4vN40RgSBT0/OzyeGuwxs2I3M33qkSTKn
-         FCm/UfE/VNGmZxkwWiiXbb3WT499iHgXl67Zm960/NxijJg6M5KQpCblrD7DUjrVJd
-         OkcwIv81cn3RW7BBH2bRBKSEBqYXxzCuFXcHAwys=
-Date:   Sat, 20 Apr 2019 16:09:06 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 0/9] R-Car DU: Add missing RGB pixel formats
-Message-ID: <20190420130906.GA4964@pendragon.ideasonboard.com>
-References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 21 Apr 2019 23:10:38 -0400
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG4.macronix.com with ESMTP id x3M3AUoO032883;
+        Mon, 22 Apr 2019 11:10:30 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        Mason Yang <masonccyang@mxic.com.tw>, zhengxunli@mxic.com.tw
+Subject: [PATCH v11 0/3] mfd: Add Renesas R-Car Gen3 RPC-IF MFD & SPI driver
+Date:   Mon, 22 Apr 2019 11:32:02 +0800
+Message-Id: <1555903925-15292-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG4.macronix.com x3M3AUoO032883
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Dave,
+Hi,
 
-On Thu, Mar 28, 2019 at 09:07:14AM +0200, Laurent Pinchart wrote:
-> Hello,
-> 
-> This patch series adds support for 16 missing RGB formats to the DU
-> driver. To do is, the formats are first added to the VSP1 driver.
-> Patches 1/9 to 3/9 define those formats in the V4L2 API, patches 4/9 to
-> 6/9 add them to the VSP driver, and patches 7/9 to 9/9 finally add them
-> to the DU driver.
+v11 patch including:
+1) Patch mfd include header file.
+2) mfd coding style.
+3) add back wbuf description in dts.
 
-This series touches both V4L2 and DRM drivers. I think it would be
-easier to merge it through the V4L2 tree, as the changes on the DRM side
-as minimal (see patches 7/9 to 9/9). Would that be OK with you ? I will
-of course make sure to avoid conflict with the R-Car DU patches already
-merged in your tree.
+v10 patch including:
+1) Address range for > 64M byte flash.
+2) Removed dirmap_write due to WBUF 256 bytes transfer issue.
+3) Dummy bytes setting according to spi-nor.c layer.
 
-> There's nothing very special here, but those patches are likely very
-> error-prone due to the many instances of very similar constructs. I
-> would thus appreciate careful review.
-> 
-> The new V4L2 4CCs match (or at least should match if I haven't made any
-> mistake) the DRM 4CCs, but the names of the format macros differ in
-> order to stick to the V4L2 naming scheme.
-> 
-> Laurent Pinchart (9):
->   v4l: Add definitions for missing 32-bit RGB formats
->   v4l: Add definitions for missing 16-bit RGB4444 formats
->   v4l: Add definitions for missing 16-bit RGB555 formats
->   media: vsp1: Add support for missing 32-bit RGB formats
->   media: vsp1: Add support for missing 16-bit RGB444 formats
->   media: vsp1: Add support for missing 16-bit RGB555 formats
->   drm: rcar-du: Add support for missing 32-bit RGB formats
->   drm: rcar-du: Add support for missing 16-bit RGB4444 formats
->   drm: rcar-du: Add support for missing 16-bit RGB1555 formats
-> 
->  .../media/uapi/v4l/pixfmt-packed-rgb.rst      | 436 ++++++++++++++++++
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c         |  80 ++++
->  drivers/media/platform/vsp1/vsp1_pipe.c       |  70 +++
->  include/uapi/linux/videodev2.h                |  16 +
->  4 files changed, 602 insertions(+)
+v9 patch is for RPC MFD driver and RPC SPI driver.
+
+v8 patch including:
+1) Supported SoC-specific values in DTS.
+2) Rename device node name as flash.
+
+v7 patch is according to Geert and Sergei's comments:
+1) Add all R-Car Gen3 model in dts.
+2) patch rpc-if child node search.
+3) minror coding style.
+
+v6 patch is accroding to Geert, Marek and Sergei's comments:
+1) spi_controller for new code.
+2) "renesas,rcar-gen3-rpc" instead of "renesas,r8a77995-rpc."
+3) patch external address read mode w/o u64 readq().
+4) patch dts for write buffer & drop "renesas,rpc-mode".
+5) coding style and so on.
+
+v5 patch is accroding to Sergei's comments:
+1) Read 6 bytes ID from Sergei's patch.
+2) regmap_update_bits().
+3) C++ style comment.
+
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match().
+2) Drop unused RPC registers.
+3) Use ilog2() instead of fls().
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
+
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned().
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
+
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM.
+3) add RPC module software reset,
+4) add regmap.
+5) other coding style and so on.
+
+thanks for your review.
+
+best regards,
+Mason
+
+
+Mason Yang (3):
+  mfd: Add Renesas R-Car Gen3 RPC-IF MFD driver
+  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+  dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF MFD bindings
+
+ .../devicetree/bindings/mfd/mfd-renesas-rpc.txt    |  39 ++
+ drivers/mfd/Kconfig                                |   9 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/renesas-rpc.c                          | 125 +++++
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 571 +++++++++++++++++++++
+ include/linux/mfd/renesas-rpc.h                    | 141 +++++
+ 8 files changed, 893 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/mfd-renesas-rpc.txt
+ create mode 100644 drivers/mfd/renesas-rpc.c
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+ create mode 100644 include/linux/mfd/renesas-rpc.h
 
 -- 
-Regards,
+1.9.1
 
-Laurent Pinchart
