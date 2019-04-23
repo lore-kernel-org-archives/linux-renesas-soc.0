@@ -2,145 +2,246 @@ Return-Path: <SRS0=hHdZ=SZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DDEC10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 15:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E10E2C10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 15:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F5E21773
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 15:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEBA921852
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 15:06:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="sn87QXSN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728183AbfDWPB4 (ORCPT
+        id S1727762AbfDWPG4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Apr 2019 11:01:56 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:46026 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727761AbfDWPB4 (ORCPT
+        Tue, 23 Apr 2019 11:06:56 -0400
+Received: from mail-eopbgr1410114.outbound.protection.outlook.com ([40.107.141.114]:30296
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727673AbfDWPG4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Apr 2019 11:01:56 -0400
-Received: by mail-ua1-f68.google.com with SMTP id o11so757912uad.12;
-        Tue, 23 Apr 2019 08:01:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UjKcQDchuiRrcdQ7wcg9oiUE5P+pgqbYSsnauAwr8CU=;
-        b=W0xZMQM1meloMyH9ruUynHtXgKLk3pGjW0f8RgmUPMlTFpCtvpRtD2FfrsxHNIl49n
-         cj53F5FfSVsLZfql+LJ3i9riteRtgGIUC2HW4l6Rust2J7ldpzuoWJnx6sBNh/s9twZ3
-         yAKD6DBhO/yoPPz2AYk93wGkO1UkYxBVpjg62OlB7NB4IQZC5hQUBQ6/6mOqXkRzqgNh
-         ZAHaftJXhWy8nOn6yMAtGFEcV9RFLvTdOv++AxbRosq2GHDIJL9obntrH71isP+oiK+g
-         cW/z9FhHhK/yY67aUfVsCiVuoqxrxGnBCYGN0CUU586Y8tqgDgPgIa1AupJ/pTsEl/50
-         DscQ==
-X-Gm-Message-State: APjAAAXbyYxEiakxWjI+mdjlbiCwdBiAhVWw25Yf3YYO+H6L0vOgo8qM
-        1PGhtGawBJ/bksI70Q5/4veo+M2NYFN9MxNudHaWLg==
-X-Google-Smtp-Source: APXvYqyK6XZDn6WHU0lafDyk+j0Bwmz5Fd1MzX0SG1EaZoHTo12JiitjmIbrukG4caSY8uDaMZKGV0J40RchVZfCyMQ=
-X-Received: by 2002:ab0:6419:: with SMTP id x25mr13100402uao.86.1556031714469;
- Tue, 23 Apr 2019 08:01:54 -0700 (PDT)
+        Tue, 23 Apr 2019 11:06:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5oJH+4oyiZbDY9z20wBzKFb35/kFSzoWBhw3QfS3jsI=;
+ b=sn87QXSNihYuVuiaa62ETqHew7JRF1ycGQ8GQ4UVsWCMWD9fLJkp64EU1xdx0VlQkrPbaP5FoIem1FEt52g44HkE9cKBFvMgJMr5V9PDKCdKhq3Ev/XeI5a50tUVxUQTAqY9E+/vJIExKpgLSgC8pjMlzFkxndtv/4Lk0I+ETo8=
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.242.17) by
+ OSBPR01MB4661.jpnprd01.prod.outlook.com (20.179.181.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1813.14; Tue, 23 Apr 2019 15:06:49 +0000
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::6d2c:bd11:88b0:c53a]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::6d2c:bd11:88b0:c53a%3]) with mapi id 15.20.1813.017; Tue, 23 Apr 2019
+ 15:06:49 +0000
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: RE: [PATCH V4 4/7] usb: gadget: udc: renesas_usb3: Use
+ usb_role_switch framework
+Thread-Topic: [PATCH V4 4/7] usb: gadget: udc: renesas_usb3: Use
+ usb_role_switch framework
+Thread-Index: AQHU9DkRMINJdSoeck6dgd5isJEyu6ZJD9eAgABlx+CAAClUgIAAQ/sg
+Date:   Tue, 23 Apr 2019 15:06:49 +0000
+Message-ID: <OSBPR01MB21035E6C1BCB59C8CE49B3B5B8230@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1555407487-35394-1-git-send-email-biju.das@bp.renesas.com>
+ <1555407487-35394-5-git-send-email-biju.das@bp.renesas.com>
+ <OSBPR01MB17335B483D7585AB1F27B61DD8230@OSBPR01MB1733.jpnprd01.prod.outlook.com>
+ <OSBPR01MB21037040E074CBC79E3E780EB8230@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <OSBPR01MB1733A56D1362592022C8EFFAD8230@OSBPR01MB1733.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB1733A56D1362592022C8EFFAD8230@OSBPR01MB1733.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biju.das@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2d9f016f-dc37-4ecd-7574-08d6c7fd4fd1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600141)(711020)(4605104)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:OSBPR01MB4661;
+x-ms-traffictypediagnostic: OSBPR01MB4661:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <OSBPR01MB4661F956EAB52EDBD13539F7B8230@OSBPR01MB4661.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 0016DEFF96
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(136003)(39860400002)(376002)(366004)(189003)(199004)(51914003)(446003)(11346002)(54906003)(476003)(14444005)(33656002)(256004)(99286004)(316002)(486006)(9686003)(44832011)(3846002)(6862004)(93886005)(86362001)(6246003)(2906002)(52536014)(6116002)(5660300002)(6506007)(53936002)(102836004)(55016002)(6306002)(76176011)(186003)(26005)(8676002)(8936002)(7696005)(25786009)(71190400001)(81166006)(71200400001)(81156014)(66066001)(74316002)(14454004)(64756008)(66946007)(7736002)(73956011)(66446008)(66476007)(229853002)(76116006)(66556008)(68736007)(97736004)(478600001)(6436002)(305945005)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB4661;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: kS0ygpLhBy8GUm2tlYaJtuUPgWeZNCLh2hWHOc/erhpkCXbwqaevE3MtQ2VDglKl6/eAJHWxNSxX1FKytp+RdVAOAsfCHtgwk0gRf+GN/Iqcc4XNwBMP5lWNoitZWFpqMRt2j2nU75gJE+kTof6KcKyDwt4tkP40ScrKOmFF9lBjkQ6Gj8Rc2CtlA1mpF2CtVr9XlXxs2rqOJHOXuTuWjSfE2glzWzMza4AfRDkSctaPiAtQ/3vyPYiQFMuMRo+r05/TCct8T59leZBZCjKGAhq2w4jLb4GLUJjprOeC5DyiQx9WvAqw4krR22bAux2/OkJTnB/pB8fZdd2jShH3eMzEhrEJ77FOSc/y9isrftspAr5jcr2S5EAiXeu/ektTzlN/QxyYZgvqH2pSijW0VeKWH7251IW96D+BEfS75VA=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190403182148.18058-1-geert+renesas@glider.be>
- <20190403182148.18058-2-geert+renesas@glider.be> <20190411081028.b2wf3nnzx4tw7xdr@verge.net.au>
- <20190411081214.pgdztqdlud5ta466@verge.net.au>
-In-Reply-To: <20190411081214.pgdztqdlud5ta466@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 23 Apr 2019 17:01:42 +0200
-Message-ID: <CAMuHMdUXK_TKJuWwuJ0XCPNK-gQo1bY4OPGB674hH3nTc2hTxg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] iommu/ipmmu-vmsa: Link IOMMUs and devices in sysfs
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d9f016f-dc37-4ecd-7574-08d6c7fd4fd1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2019 15:06:49.8473
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB4661
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+Hi Shimoda-San,
 
-On Thu, Apr 11, 2019 at 10:12 AM Simon Horman <horms@verge.net.au> wrote:
-> On Thu, Apr 11, 2019 at 10:10:28AM +0200, Simon Horman wrote:
-> > On Wed, Apr 03, 2019 at 08:21:43PM +0200, Geert Uytterhoeven wrote:
-> > > As of commit 7af9a5fdb9e0ca33 ("iommu/ipmmu-vmsa: Use
-> > > iommu_device_sysfs_add()/remove()"), IOMMU devices show up under
-> > > /sys/class/iommus/, but their "devices" subdirectories are empty.
+Thanks for the feedback.
+
+> Subject: RE: [PATCH V4 4/7] usb: gadget: udc: renesas_usb3: Use
+> usb_role_switch framework
+>=20
+> Hi Biju-san,
+>=20
+> > From: Biju Das, Sent: Tuesday, April 23, 2019 6:08 PM
 > >
-> > Should the path be /sys/class/iommu/ (no trailing 's') ?
+> > Hi Shimoda-San,
+> >
+> > Thanks for the feedback.
+> >
+> > > Subject: RE: [PATCH V4 4/7] usb: gadget: udc: renesas_usb3: Use
+> > > usb_role_switch framework
+> > >
+> > > Hi Biju-san,
+> > >
+> > > Thank you for the patch!
+> > >
+> > > > From: Biju Das, Sent: Tuesday, April 16, 2019 6:38 PM
+> > > >
+> > > > RZ/G2E cat874 board is capable of detecting cable connect and
+> > > > disconnect events. Add support for renesas_usb3 to receive connect
+> > > > and disconnect events and support dual-role switch using
+> > > > usb-role-switch
+> > > framework.
+> > > >
+> > > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > > > ---
+> > > >  V3-->V4
+> > > >    * No Change
+> > > >  V2-->V3
+> > > >    * Incorporated Shimoda-san's review comment
+> > > >      (https://patchwork.kernel.org/patch/10852507/)
+> > > >    * Used renesas,usb-role-switch property for differentiating USB
+> > > >      role switch associated with Type-C port controller driver.
+> > > >  V1-->V2
+> > > >    * Driver uses usb role clas for handling dual role switch and ha=
+ndling
+> > > >      connect/disconnect events instead of extcon.
+> > > <snip>
+> > >
+> > > > +static void usb3_check_vbus(struct renesas_usb3 *usb3) {
+> > > > +	if (usb3->workaround_for_vbus) {
+> > > > +		if (usb3->usb_role_switch_property) {
+> > > > +			if (usb3->connection_state =3D=3D USB_ROLE_DEVICE) {
+> > > > +				usb3_mode_config(usb3, false, false);
+> > >
+> > > I should have pointed it out the previous version though, why does
+> > > this
+> > > usb3_mode_config() calling need?
+> > > My guess is:
+> > >  - renesas_usb3_start() calls renesas_usb3_init_controller().
+> > >  -- renesas_usb3_init_controller() calls usb3_check_id() and then
+> > > usb_check_vbus().
+> > >  --- usb_check_id() calls usb3_mode_config(usb3, true, true) and
+> > > then the HW acts as host mode.
+> > >  ----> So, you'd like the HW to acts as peripheral mode when the
+> > > connection_state is USB_ROLE_DEVICE,
+> > >        you added that the usb3_check_vbus() calls
+> > > usb3_mode_config(usb3, false, false).
+> > >
+> > > Is my guess correct? If so, I'd like to add such code into
+> > > usb3_check_id() like
+> > > below:
+> >
+> > Yes, it is almost correct. The scenario I am trying is
+> >
+> > [1] USB type C  cable connected to a Host Machine(TI chip identifies
+> > as Device connection. But we haven't installed Gadget module for
+> > Device operation)
+> >
+> > [2] After that trying to install gadget module. In this case,  it
+> > calls usb_check_id() as mentioned above and configure it as Host mode.
+>=20
+> Thank you for the explanation.
+>=20
+> > > 	if ((usb3->extcon_host && !usb3->forced_b_device) ||
+> > > 	    (usb3->usb_role_switch_property &&
+> > > 	     usb3->connection_state =3D=3D USB_ROLE_HOST))
+> > > 		usb3_mode_config(usb3, true, true);
+> > > 	else
+> > > 		usb3_mode_config(usb3, false, false);
+> > >
+> > > What do you think?
+> >
+> > Since as per [1], usb3->extcon_host=3D1 and !usb3->forced_b_device =3D=
+=3D1
+> > ,  The above code always enter into Host Mode configuration.
+>=20
+> Oops. Thank you for the pointed it out.
+>=20
+> > To make it work,  I need to update  " usb3->forced_b_device" based on
+> > connection_state from TI chip. So the new code look like
+>=20
+> Since the forced_b_device is related to debug purpose (controlled by
+> debugfs), I don't want to use the value for type-c.
+>=20
+> > 1) There is no change in usb_check_id() call.
+> >
+> > if (usb3->extcon_host && !usb3->forced_b_device)
+> >     usb3_mode_config(usb3, true, true);
+> >    else
+> >     usb3_mode_config(usb3, false, false);
+> >
+> > 2) Update "usb3->forced_b_device" variable  based on connection_state.
+> >
+> > @@ -2370,6 +2376,7 @@ static void handle_ext_role_switch_states(struct
+> device *dev,
+> >                 usb3_vbus_out(usb3, false);
+> >                 break;
+> >         case USB_ROLE_DEVICE:
+> > +               usb3->forced_b_device =3D true;
+> >                 if (usb3->connection_state =3D=3D USB_ROLE_NONE) {
+> >                         usb3->connection_state =3D USB_ROLE_DEVICE;
+> >                         usb3_set_mode(usb3, false); @@ -2384,6 +2391,7
+> > @@ static void handle_ext_role_switch_states(struct device *dev,
+> >                 usb3_vbus_out(usb3, false);
+> >                 break;
+> >         case USB_ROLE_HOST:
+> > +               usb3->forced_b_device =3D false;
+> >
+> > Can you please confirm are you ok with this changes? Or do you prefer t=
+he
+> previous one?
+>=20
+> I'd like to change usb3_check_id() somehow.
+> How about the following conditions? In type-c environment, since usb3-
+> >usb_role_switch_property is true, it should be OK for it.
+>=20
+> 	if ((!usb3->usb_role_switch_property &&
+> 	     usb3->extcon_host && !usb3->forced_b_device) ||
+> 	    (usb3->usb_role_switch_property &&
+> 	     usb3->connection_state =3D=3D USB_ROLE_HOST))
+> 		usb3_mode_config(usb3, true, true);
+> 	else
+> 		usb3_mode_config(usb3, false, false);
+>=20
 
-Yes it does, thanks. Will fix.
+OK. I will send V5 with this changes.
 
-> > > Likewise, devices tied to an IOMMU do not have an "iommu" backlink.
-> > >
-> > > Make sure all links are created, on both arm32 and arm64.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > ---
-> > > v2:
-> > >   - Add Reviewed-by.
-> > > ---
-> > >  drivers/iommu/ipmmu-vmsa.c | 24 +++++++++++++++++-------
-> > >  1 file changed, 17 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> > > index 9a380c10655e182d..9f2b781e20a0eba6 100644
-> > > --- a/drivers/iommu/ipmmu-vmsa.c
-> > > +++ b/drivers/iommu/ipmmu-vmsa.c
-> > > @@ -885,27 +885,37 @@ static int ipmmu_init_arm_mapping(struct device *dev)
-> > >
-> > >  static int ipmmu_add_device(struct device *dev)
-> > >  {
-> > > +   struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
-> > >     struct iommu_group *group;
-> > > +   int ret;
-> > >
-> > >     /*
-> > >      * Only let through devices that have been verified in xlate()
-> > >      */
-> > > -   if (!to_ipmmu(dev))
-> > > +   if (!mmu)
-> > >             return -ENODEV;
-> > >
-> > > -   if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA))
-> > > -           return ipmmu_init_arm_mapping(dev);
-> > > +   if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA)) {
-> > > +           ret = ipmmu_init_arm_mapping(dev);
-> > > +           if (ret)
-> > > +                   return ret;
-> > > +   } else {
-> > > +           group = iommu_group_get_for_dev(dev);
-> > > +           if (IS_ERR(group))
-> > > +                   return PTR_ERR(group);
-> > >
-> > > -   group = iommu_group_get_for_dev(dev);
-> > > -   if (IS_ERR(group))
-> > > -           return PTR_ERR(group);
-> > > +           iommu_group_put(group);
-> > > +   }
-> > >
-> > > -   iommu_group_put(group);
-> > > +   iommu_device_link(&mmu->iommu, dev);
->
-> Also, is there any value in propagating the return value
-> of iommu_device_link() ?
-
-I don't think so.  Sysfs information is not super-critical, and most
-drivers just
-ignore such return values.  Also, the sysfs cleanup code handles cleanup
-after failed setup fine.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Biju
