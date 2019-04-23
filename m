@@ -2,119 +2,110 @@ Return-Path: <SRS0=hHdZ=SZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DA8C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 12:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C70C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 13:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023822054F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 12:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FCBA206A3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 13:03:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfDWMCE (ORCPT
+        id S1726655AbfDWNDi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Apr 2019 08:02:04 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:36770 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfDWMCE (ORCPT
+        Tue, 23 Apr 2019 09:03:38 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:50726 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfDWNDh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Apr 2019 08:02:04 -0400
-Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 3o212000X3XaVaC01o21pa; Tue, 23 Apr 2019 14:02:01 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hIu7d-000813-6a
-        for linux-renesas-soc@vger.kernel.org; Tue, 23 Apr 2019 14:02:01 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hIu7d-00058w-4c
-        for linux-renesas-soc@vger.kernel.org; Tue, 23 Apr 2019 14:02:01 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2019-04-23-v5.1-rc6
-Date:   Tue, 23 Apr 2019 14:02:01 +0200
-Message-Id: <20190423120201.19728-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Tue, 23 Apr 2019 09:03:37 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0715425AEC8;
+        Tue, 23 Apr 2019 23:03:36 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 0769A9403E4; Tue, 23 Apr 2019 15:03:33 +0200 (CEST)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [PATCH net-next v3] ravb: Avoid unsupported internal delay mode for R-Car E3/D3
+Date:   Tue, 23 Apr 2019 15:01:53 +0200
+Message-Id: <20190423130153.17295-1-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I have pushed renesas-drivers-2019-04-23-v5.1-rc6 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+According to the R-Car Gen3 Hardware Manual Rev 1.50 of Nov 30, 2018, the
+TX clock internal delay mode isn't supported on R-Car E3 (r8a77990) or D3
+(r8a77995). And by extension it is also not supported by RZ/G2E (r9a774c0).
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the development branch of
-Simon Horman's renesas.git tree.
+This matches all ES versions of the affected SoCs as it is
+not clear if this problem will be resolved in newer chips.
+This can be revisited, as necessary.
 
-Today's version is based on renesas-devel-20190417-v5.1-rc5.
+This patch does not error-out if PHY_INTERFACE_MODE_RGMII_ID or
+PHY_INTERFACE_MODE_RGMII_TXID are used on SoCs where TX clock delay
+mode is not supported as there is a risk of introducing a regression
+when used in conjunction with older DT blobs present in the field.
+Rather, a warning is logged in such cases.
 
-Included branches with driver code:
-  - clk-renesas
-  - sh-pfc
-  - git://linuxtv.org/pinchartl/media.git#drm/du/next
-  - git://linuxtv.org/pinchartl/media.git#drm/du/lvds/dual-link~2
-  - git://git.ragnatech.se/linux#for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#gmsl/for-renesas-drivers
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git#du/for-renesas-drivers
+Based on work by Kazuya Mizuguchi.
 
-Included fixes:
-  - Fix "clk: fixed-factor: Let clk framework find parent"
-  - ARM: shmobile: defconfig: Update shmobile_defconfig
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+v3
+* Log warning if unsupported phy-mode is used
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.infradead.org/users/vkoul/slave-dma.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+v2
+* Dropped RFC designation
+* Also correct RZ/G2E (r8a774c0)
+* Remove revision (ES version) portion of soc match
+  as it is not clear this problem will be resolved in newer chips.
+* Refer to user manual v1.50 rather than errata for v1.00 in changelog
+* Note absence of error handling in Changelog
+---
+ drivers/net/ethernet/renesas/ravb_main.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index 4f648394e645..9618c4881c83 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1969,6 +1969,13 @@ static void ravb_set_config_mode(struct net_device *ndev)
+ 	}
+ }
+ 
++static const struct soc_device_attribute ravb_delay_mode_quirk_match[] = {
++	{ .soc_id = "r8a774c0" },
++	{ .soc_id = "r8a77990" },
++	{ .soc_id = "r8a77995" },
++	{ /* sentinel */ }
++};
++
+ /* Set tx and rx clock internal delay modes */
+ static void ravb_set_delay_mode(struct net_device *ndev)
+ {
+@@ -1980,8 +1987,12 @@ static void ravb_set_delay_mode(struct net_device *ndev)
+ 		set |= APSR_DM_RDM;
+ 
+ 	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
+-	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID)
+-		set |= APSR_DM_TDM;
++	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
++		if (!WARN(soc_device_match(ravb_delay_mode_quirk_match),
++			  "phy-mode %s requires TX clock internal delay mode which is not supported by this hardware revision. Please update device tree",
++			  phy_modes(priv->phy_interface)))
++			set |= APSR_DM_TDM;
++	}
+ 
+ 	ravb_modify(ndev, APSR, APSR_DM, set);
+ }
+-- 
+2.11.0
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
