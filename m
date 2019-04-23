@@ -2,134 +2,218 @@ Return-Path: <SRS0=hHdZ=SZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44747C10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 16:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 462A5C10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 16:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15F8D20651
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 16:09:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="mvLY+Ww0"
+	by mail.kernel.org (Postfix) with ESMTP id 1466E21738
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 16:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfDWQJ0 (ORCPT
+        id S1729161AbfDWQzI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Apr 2019 12:09:26 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43796 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727703AbfDWQJ0 (ORCPT
+        Tue, 23 Apr 2019 12:55:08 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:51819 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728705AbfDWQzI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Apr 2019 12:09:26 -0400
-Received: by mail-lj1-f193.google.com with SMTP id f18so14020839lja.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Apr 2019 09:09:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=B987w6H/8sLrkjb92qYyMAxvrC7y1yIfwD5xAOGqELY=;
-        b=mvLY+Ww0TF2UkCnhyiF3YEOBg2yn3r0wRvDrJ/gS91LsuCviMTm9pFFwGJdG2Tt6So
-         Eq7cwxuAhkYjBev0KDzoT0H7w0T+LXcxtJpmhtAKUYblhQ3QxyS5viTPL42IhJOyiIx4
-         AJctrPEGV8JmtmoPb4DC0LvOXbkhR0A7WIn9VhhY61hFhrUHZqO6MTdbzAMpELm3B/CW
-         d8qgw19+oOmEZyIGa6/W36Tvd6GMuevH0Qryuf/c+t+EGtuDJ0hpVlKKf+8G8NkH7s5p
-         /Rp6rGxFlEiDjhL0BI/3A9sttoGT28HVHiWGTRiUneKQ1Ar86g/cWUW9OzAIc0ugFIwl
-         Rjrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=B987w6H/8sLrkjb92qYyMAxvrC7y1yIfwD5xAOGqELY=;
-        b=BfIgcKibBA3jMVKp3qTjK1wzJpZrU9TSPy7zfhVafpC+lM9ebT1dwWVkguYFb2j3kc
-         Q05uNebVlp6VjngygjyzgDO8s+PKNayNIc2fsCoU5TDRSnxz3bFSGyNtz9awx1yeuWu6
-         +PwaGyEe7bjaFbipnLmVVj0ZW+cJCJSm+rz8Ub28MtTVrDXr2L3GqTiDNvWQo0qF1hYk
-         LMC7LG8S/nBrGKlMDdcx8V1DZKxsLLYjrA+Iyj4iPf/Z1VBNz3pVzgPiR/zyVlsTFENr
-         0R7JQr0M7HNdNHhbD55S/OyK4weG4ymO+bO6lQlobPgKTHN1yh4bFcPGfNL5voGBoetL
-         p6lQ==
-X-Gm-Message-State: APjAAAXqhgv9NlzTeNqqNsdK4eRPCkOra9W1DUZpBOoZys7WxXcDv9mX
-        IXyO2iL08Y7wRc/kSet3Fee9RQ==
-X-Google-Smtp-Source: APXvYqx+P/bxote7QB0GizHRyFZECju3SA5IlB9D4y57NhwLsHlujQh9IG37ByidE/DTvMqe79C7ew==
-X-Received: by 2002:a2e:9597:: with SMTP id w23mr14252872ljh.111.1556035764793;
-        Tue, 23 Apr 2019 09:09:24 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.82.73])
-        by smtp.gmail.com with ESMTPSA id c5sm4538958ljd.18.2019.04.23.09.09.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Apr 2019 09:09:23 -0700 (PDT)
-Subject: Re: [PATCH v11 2/3] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        lee.jones@linaro.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-        marek.vasut@gmail.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        zhengxunli@mxic.com.tw
-References: <1555903925-15292-1-git-send-email-masonccyang@mxic.com.tw>
- <1555903925-15292-3-git-send-email-masonccyang@mxic.com.tw>
- <d2a7a471-2847-b774-42b1-9feb8f4c69f3@cogentembedded.com>
- <OFF96C004A.0EFDDD69-ON482583E5.0032EE18-482583E5.00337F42@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <060316c8-7675-cfaf-bfef-c3e6458bfa82@cogentembedded.com>
-Date:   Tue, 23 Apr 2019 19:09:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 23 Apr 2019 12:55:08 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 1BB15240003;
+        Tue, 23 Apr 2019 16:55:04 +0000 (UTC)
+Date:   Tue, 23 Apr 2019 18:56:00 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [PATCH 6/9] media: vsp1: Add support for missing 16-bit RGB555
+ formats
+Message-ID: <20190423165600.vavevn5iemzkzu5t@uno.localdomain>
+References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20190328070723.26553-7-laurent.pinchart+renesas@ideasonboard.com>
+ <20190423135508.ppdphyqy2z55ewhm@uno.localdomain>
+ <20190423144651.GA16111@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <OFF96C004A.0EFDDD69-ON482583E5.0032EE18-482583E5.00337F42@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="har4go3hnnokobjr"
+Content-Disposition: inline
+In-Reply-To: <20190423144651.GA16111@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 04/23/2019 12:22 PM, masonccyang@mxic.com.tw wrote:
 
->> > Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
->> >
->> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->> [...]
->>
->>   Do dote that I'm opposed to the driver separation as it's presented in
->> this patches, and I have a large patch reworking both MFD and SPI drivers
->> in the works.
->>
-> 
-> Do you mean add your name in both MFD & dt-binding ?
+--har4go3hnnokobjr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-   Of course not!
+Hi Laurent,
 
-> i.e.,
-> [PATCH v12 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF MFD bindings
-> 
-> Document the bindings used by the Renesas R-Car Gen3 RPC-IF MFD.
-> 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> 
-> 
-> [PATCH v12 1/3] mfd: Add Renesas R-Car Gen3 RPC-IF MFD driver
-> 
-> Add a driver for Renesas R-Car Gen3 RPC-IF MFD.
-> 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> 
-> 
-> Is it ok ?
+On Tue, Apr 23, 2019 at 05:46:51PM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> On Tue, Apr 23, 2019 at 03:55:08PM +0200, Jacopo Mondi wrote:
+> > On Thu, Mar 28, 2019 at 09:07:20AM +0200, Laurent Pinchart wrote:
+> > > Add support for the V4L2_PIX_FMT_RGBA555, V4L2_PIX_FMT_RGBX555,
+> > > V4L2_PIX_FMT_ABGR555, V4L2_PIX_FMT_XBGR555, V4L2_PIX_FMT_BGRA555 and
+> > > V4L2_PIX_FMT_BGRX555 formats to the VSP driver.
+> > >
+> > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > > ---
+> > >  drivers/media/platform/vsp1/vsp1_pipe.c | 32 +++++++++++++++++++++++++
+> > >  1 file changed, 32 insertions(+)
+> > >
+> > > diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+> > > index f6665871aa11..92f71dec99c5 100644
+> > > --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> > > +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> > > @@ -66,14 +66,46 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
+> > >  	  VI6_FMT_BGRA_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > >  	  VI6_RPF_DSWAP_P_WDS,
+> > >  	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > +#define V4L2_PIX_FMT_ARGB555 v4l2_fourcc('A', 'R', '1', '5') /* 16  ARGB-1-5-5-5  */
+> >
+> > Why is this here? I see the exact same line in videodev2.h.
+> > Is this a leftover?
+>
+> Oops. It is. I'm sorry, I'll remove that.
+>
+> > >  	{ V4L2_PIX_FMT_ARGB555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > >  	  VI6_FMT_ARGB_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > >  	  VI6_RPF_DSWAP_P_WDS,
+> > >  	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> > > +#define V4L2_PIX_FMT_XRGB555 v4l2_fourcc('X', 'R', '1', '5') /* 16  XRGB-1-5-5-5  */
+> >
+> > same here and below
+> >
+> > >  	{ V4L2_PIX_FMT_XRGB555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > >  	  VI6_FMT_XRGB_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > >  	  VI6_RPF_DSWAP_P_WDS,
+> > >  	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > +#define V4L2_PIX_FMT_RGBA555 v4l2_fourcc('R', 'A', '1', '5') /* 16  RGBA-5-5-5-1  */
+> > > +	{ V4L2_PIX_FMT_RGBA555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	  VI6_FMT_RGBA_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> > > +#define V4L2_PIX_FMT_RGBX555 v4l2_fourcc('R', 'X', '1', '5') /* 16  RGBX-5-5-5-1  */
+> > > +	{ V4L2_PIX_FMT_RGBX555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	  VI6_FMT_RGBX_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > > +#define V4L2_PIX_FMT_ABGR555 v4l2_fourcc('A', 'B', '1', '5') /* 16  ABGR-1-5-5-5  */
+> > > +	{ V4L2_PIX_FMT_ABGR555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	  VI6_FMT_ABGR_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> > > +#define V4L2_PIX_FMT_XBGR555 v4l2_fourcc('X', 'B', '1', '5') /* 16  XBGR-1-5-5-5  */
+> > > +	{ V4L2_PIX_FMT_XBGR555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	  VI6_FMT_ABGR_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> >
+> > Looks good, additional defines apart
+> >
+> > > +#define V4L2_PIX_FMT_BGRA555 v4l2_fourcc('B', 'A', '1', '5') /* 16  BGRA-5-5-5-1  */
+> > > +	{ V4L2_PIX_FMT_BGRA555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	  VI6_FMT_BGRA_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> >
+> >
+> > As I read this:
+> > V4L2_PIX_FMT_BGRA555            VI6_FMT_BGRA_5551        LLS|LWS|WDS
+> > gggrrrrr abbbbbgg               bbbbbggg ggrrrrra       ggrrrrra bbbbbggg
+>
+> Isn't V4L2_PIX_FMT_BGRA555 is defined as
+>
+> g1 g0 r4 r3 r2 r1 r0 a | b4 b3 b2 b1 b0 g4 g3 g2
+>
+Ah yes, I got fooled by how it is described in the documentation
 
-   I'm not OK with the most of the driver code ending up in the SPI driver,
-I think most of the code should be kept in the MFD driver and just be called
-by SPI/HF drivers.
+    * .. _V4L2-PIX-FMT-BGRA555:
 
-> best regards,
-> Mason
+      - ``V4L2_PIX_FMT_BGRA555``
+      - 'BA15'
 
-MBR, Sergei
+      - g\ :sub:`2`
+      - g\ :sub:`1`
+      - g\ :sub:`0`
+      - r\ :sub:`4`
+      - r\ :sub:`3`
+      - r\ :sub:`2`
+      - r\ :sub:`1`
+      - r\ :sub:`0`
+      - a
+
+      - b\ :sub:`4`
+      - b\ :sub:`3`
+      - b\ :sub:`2`
+      - b\ :sub:`1`
+      - b\ :sub:`0`
+      - g\ :sub:`4`
+      - g\ :sub:`3`
+      -
+
+The empty line between 'a' and b4 made me think those were 2 bytes,
+but apparently, they're not.
+
+So, it's fine! Thanks for checking!
+
+> ?
+>
+> > They seems different to me:
+> >         gggrrrrr abbbbbgg
+> >         ggrrrrra bbbbbggg
+> >
+> > But I have not find any better combination from table 23.10 that would
+> > result in the desired 'gggrrrrr abbbbbgg' ordering.
+> >
+> > > +#define V4L2_PIX_FMT_BGRX555 v4l2_fourcc('B', 'X', '1', '5') /* 16  BGRX-5-5-5-1  */
+> > > +	{ V4L2_PIX_FMT_BGRX555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > > +	  VI6_FMT_BGRA_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > > +	  VI6_RPF_DSWAP_P_WDS,
+> > > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> >
+> > Same as above.
+> >
+> > The last two entries apart:
+> > Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+> >
+> > >  	{ V4L2_PIX_FMT_RGB565, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > >  	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > >  	  VI6_RPF_DSWAP_P_WDS,
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+--har4go3hnnokobjr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAly/Q6AACgkQcjQGjxah
+VjwWxQ/+MG/hVRrXltTZ6KDFfvVbD811vLBM7jxF9KvoYyVbpTpBOBvPo8a2IsXn
+GY2IOWGWeABzMYWbjZMpvLY40ysq2nGZ+xc+8em6I5IRJ5thGmksYLwA1zeuKEgC
+d+OkxUXa0zB6PrzQtcqmQuQd3xKzpTuCTeP8guK/C7nwS5B2RhnChWuH2UKCqZZL
+d7oGMb/YVOXftxEEC4t+NM8Mp3Sb0ZSZTy8yD6Rti6LLRC179ixm/XlNTvIYh7B4
+5JvcQKKpKhhTkF0uhcnKEPlbXJsevtcWLaq6H8Ava0MzPAObYMJ7mKWKUz37qZTL
+EGtHp5/BgBXgHqdYDtton1FEiws5qXDN7PQrdefqTOloDBu4p9ZE/DZe/1R9arh6
+Dhbz0AyPTXYQVbsfMi5kyjb4Qq9J6QS4d6j1lJKR/B6kfYirLmkPjusw0CNhJyet
+uKuI4QFjt/npSsDYJw9vDJM6C6BRT7kiC9ii79e603FWQl+fGw8nXRxT86dK3cpe
+AOxEboriVaY287XDJvr+1/E0nyNiQEX7TkQII4TI/jFwsbpR7yhCUFWGG8QI2zBK
+UznjBe5ok2qi5nRjZCegsibB0+21J9cOJZAsZmxKj2huktXuu2kP2Z6LOen6jftm
+iepF8CrCbXQr9cG2JkpcptBvNr3r9qaP0gaeHY22kcXPwz5C1dE=
+=Byj4
+-----END PGP SIGNATURE-----
+
+--har4go3hnnokobjr--
