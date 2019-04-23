@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6E83C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC18C10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE67720645
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DB1321738
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:47:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vfffPQMY"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MfAPbsbU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbfDWOKZ (ORCPT
+        id S1726659AbfDWOrD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Apr 2019 10:10:25 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56112 "EHLO
+        Tue, 23 Apr 2019 10:47:03 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:56342 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727740AbfDWOKZ (ORCPT
+        with ESMTP id S1726421AbfDWOrD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Apr 2019 10:10:25 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3E73D5F;
-        Tue, 23 Apr 2019 16:10:23 +0200 (CEST)
+        Tue, 23 Apr 2019 10:47:03 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 676685F;
+        Tue, 23 Apr 2019 16:47:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1556028623;
-        bh=RsDr0+I9oWWQLTfb2BKk/ZrvWy0V0RJbZSdY9HReNus=;
+        s=mail; t=1556030821;
+        bh=O+iTyzd681wgXCSbOQYF2psWxVGQDUZ8OO3uja5+Z1Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vfffPQMYwSf+AoI4pDlSbx47Z1cNobERjaY0/J2aSQ+cYSZBnJrAAwaFRBPpT0A5L
-         giHyJT8UTV+7A6CkVoa7ar1g4hfZ1ic2QJSe7iARE4NPzJT6ig+u6bPq+CTz4pL0/h
-         3Qjdf9FPnRG6kfjPb5c5Wa8+Srv2+YBU9KoRvHJA=
-Date:   Tue, 23 Apr 2019 17:10:13 +0300
+        b=MfAPbsbUmrRFY8TV+bWxQYsb5rBgRcSIGU5iLK0qAX2RMN8TJDlFae0RVzE/GVFzA
+         eNxIpwQnsSoKNSqhzmvSJDdKxdG8zAoOF6QUX9ETwj7I6CHatb7DIw50h5xtfE2aUT
+         dTJPJxWthjA93BhmmRWL2Mffh+LelK4gj+qWNFdE=
+Date:   Tue, 23 Apr 2019 17:46:51 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Jacopo Mondi <jacopo@jmondi.org>
 Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 4/9] media: vsp1: Add support for missing 32-bit RGB
+Subject: Re: [PATCH 6/9] media: vsp1: Add support for missing 16-bit RGB555
  formats
-Message-ID: <20190423141013.GC4816@pendragon.ideasonboard.com>
+Message-ID: <20190423144651.GA16111@pendragon.ideasonboard.com>
 References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190328070723.26553-5-laurent.pinchart+renesas@ideasonboard.com>
- <20190404173905.n6mupqzvcr5vwhwu@uno.localdomain>
- <20190418060645.GC4806@pendragon.ideasonboard.com>
- <20190423132153.xfvy4dn3cflzotuf@uno.localdomain>
+ <20190328070723.26553-7-laurent.pinchart+renesas@ideasonboard.com>
+ <20190423135508.ppdphyqy2z55ewhm@uno.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190423132153.xfvy4dn3cflzotuf@uno.localdomain>
+In-Reply-To: <20190423135508.ppdphyqy2z55ewhm@uno.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -60,97 +58,105 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Jacopo,
 
-On Tue, Apr 23, 2019 at 03:21:53PM +0200, Jacopo Mondi wrote:
-> On Thu, Apr 18, 2019 at 09:06:45AM +0300, Laurent Pinchart wrote:
-> > On Thu, Apr 04, 2019 at 07:39:05PM +0200, Jacopo Mondi wrote:
-> >> HI Laurent,
-> >>   if you help me out understanding the bit swapping procedure in VSP
-> >> I would be more confident in saying I actually reviewed the series.
+On Tue, Apr 23, 2019 at 03:55:08PM +0200, Jacopo Mondi wrote:
+> On Thu, Mar 28, 2019 at 09:07:20AM +0200, Laurent Pinchart wrote:
+> > Add support for the V4L2_PIX_FMT_RGBA555, V4L2_PIX_FMT_RGBX555,
+> > V4L2_PIX_FMT_ABGR555, V4L2_PIX_FMT_XBGR555, V4L2_PIX_FMT_BGRA555 and
+> > V4L2_PIX_FMT_BGRX555 formats to the VSP driver.
 > >
-> > I'll try my best :-)
-> 
-> Thanks!
-> 
-> >> On Thu, Mar 28, 2019 at 09:07:18AM +0200, Laurent Pinchart wrote:
-> >>> Add support for the V4L2_PIX_FMT_BGRA32, V4L2_PIX_FMT_BGRX32,
-> >>> V4L2_PIX_FMT_RGBA32 and V4L2_PIX_FMT_RGBX32 formats to the VSP driver.
-> >>>
-> >>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >>> ---
-> >>>  drivers/media/platform/vsp1/vsp1_pipe.c | 14 ++++++++++++++
-> >>>  1 file changed, 14 insertions(+)
-> >>>
-> >>> diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
-> >>> index 54ff539ffea0..9f08d85e89d7 100644
-> >>> --- a/drivers/media/platform/vsp1/vsp1_pipe.c
-> >>> +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
-> >>> @@ -68,6 +68,20 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
-> >>>  	{ V4L2_PIX_FMT_XBGR32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> >>>  	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
-> >>>  	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-> >>> +	{ V4L2_PIX_FMT_BGRA32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> >>> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
-> >>> +	  1, { 32, 0, 0 }, false, false, 1, 1, true },
-> >>> +	{ V4L2_PIX_FMT_BGRX32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> >>> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS,
-> >>> +	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-> >>> +	{ V4L2_PIX_FMT_RGBA32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> >>> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> >>> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> >>> +	  1, { 32, 0, 0 }, false, false, 1, 1, true },
-> >>> +	{ V4L2_PIX_FMT_RGBX32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> >>> +	  VI6_FMT_RGBA_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> >>> +	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
-> >>> +	  1, { 32, 0, 0 }, false, false, 1, 1, false },
-> >>
-> >>
-> >> So, this is how I interpret the above lines for format BGRA32 (the
-> >> same applies to RGBA32 fwiw)
-> >>
-> >>         Bytes:          B3      B2      B1      B0
-> >> Input: ARGB8888_1X32:   A       R       G       B
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  drivers/media/platform/vsp1/vsp1_pipe.c | 32 +++++++++++++++++++++++++
+> >  1 file changed, 32 insertions(+)
 > >
-> > Note that, at the bus level, there's no byte ordering. Data is
-> > transmitted in parallel on a 32-bit bus (at least as far as I know). But
-> > this doesn't matter much anyway.
+> > diff --git a/drivers/media/platform/vsp1/vsp1_pipe.c b/drivers/media/platform/vsp1/vsp1_pipe.c
+> > index f6665871aa11..92f71dec99c5 100644
+> > --- a/drivers/media/platform/vsp1/vsp1_pipe.c
+> > +++ b/drivers/media/platform/vsp1/vsp1_pipe.c
+> > @@ -66,14 +66,46 @@ static const struct vsp1_format_info vsp1_video_formats[] = {
+> >  	  VI6_FMT_BGRA_4444, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> >  	  VI6_RPF_DSWAP_P_WDS,
+> >  	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > +#define V4L2_PIX_FMT_ARGB555 v4l2_fourcc('A', 'R', '1', '5') /* 16  ARGB-1-5-5-5  */
 > 
-> Indeed, but I should not use this as the description of the input
-> format but VI6_FMT_RGBA_8888, as you pointed out, which reads indeed
-> as RGBA (out of curiosity, what is the mbus code used for then?)
+> Why is this here? I see the exact same line in videodev2.h.
+> Is this a leftover?
 
-In the VSP case the media bus format is used to differenciate between
-YUV and RGB. Internally after the RPF and before the WPF everything is
-transmitted with 32 bits per pixel.
+Oops. It is. I'm sorry, I'll remove that.
 
-> >> Out:   BGRA32           R       G       B       A
-> >>
-> >> If I apply LLS and LWS on the "Input Row", according to the table I get
-> >>
-> >>  Position in Table 32.10:    0  1  2  3
-> >>  IN Components ordering:     A  R  G  B  (ARGB8888_1X32
-> >>  Position in Table 32.10:    3  2  1  0  (with LLS and LWS applied)
-> >>  OUT Components ordering:    B  G  R  A
-> >>
-> >> Which to me is the ordering of components of the format named
-> >> V4L2_PIX_FMT_ARGB32 and not BGRA32 which is instead, as reported RGBA
-> >> (GREAT naming here!)
-> >>
-> >> What am I doing wrong?
-> >
-> > You need to take entry VI6_FMT_RGBA_8888 (0x14) in table 32.10, which
-> > reads R G B A. Applying LLS and LWS but not WDS and BTS swaps the bytes
-> > to A B G R (see table 32.13), so the pixel is written to memory in the A
-> > B G R order, corresponding to V4L2_PIX_FMT_BGRA32 (I agree with you
-> > about the insane naming for the 4CC, but that's not my fault :-().
+> >  	{ V4L2_PIX_FMT_ARGB555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> >  	  VI6_FMT_ARGB_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> >  	  VI6_RPF_DSWAP_P_WDS,
+> >  	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> > +#define V4L2_PIX_FMT_XRGB555 v4l2_fourcc('X', 'R', '1', '5') /* 16  XRGB-1-5-5-5  */
 > 
-> Thanks, now that I applied flags to the correct input format, the
-> patch seems correct to me.
+> same here and below
 > 
+> >  	{ V4L2_PIX_FMT_XRGB555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> >  	  VI6_FMT_XRGB_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> >  	  VI6_RPF_DSWAP_P_WDS,
+> >  	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > +#define V4L2_PIX_FMT_RGBA555 v4l2_fourcc('R', 'A', '1', '5') /* 16  RGBA-5-5-5-1  */
+> > +	{ V4L2_PIX_FMT_RGBA555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > +	  VI6_FMT_RGBA_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > +	  VI6_RPF_DSWAP_P_WDS,
+> > +	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> > +#define V4L2_PIX_FMT_RGBX555 v4l2_fourcc('R', 'X', '1', '5') /* 16  RGBX-5-5-5-1  */
+> > +	{ V4L2_PIX_FMT_RGBX555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > +	  VI6_FMT_RGBX_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > +	  VI6_RPF_DSWAP_P_WDS,
+> > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> > +#define V4L2_PIX_FMT_ABGR555 v4l2_fourcc('A', 'B', '1', '5') /* 16  ABGR-1-5-5-5  */
+> > +	{ V4L2_PIX_FMT_ABGR555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > +	  VI6_FMT_ABGR_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > +	  VI6_RPF_DSWAP_P_WDS,
+> > +	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> > +#define V4L2_PIX_FMT_XBGR555 v4l2_fourcc('X', 'B', '1', '5') /* 16  XBGR-1-5-5-5  */
+> > +	{ V4L2_PIX_FMT_XBGR555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > +	  VI6_FMT_ABGR_1555, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > +	  VI6_RPF_DSWAP_P_WDS,
+> > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> 
+> Looks good, additional defines apart
+> 
+> > +#define V4L2_PIX_FMT_BGRA555 v4l2_fourcc('B', 'A', '1', '5') /* 16  BGRA-5-5-5-1  */
+> > +	{ V4L2_PIX_FMT_BGRA555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > +	  VI6_FMT_BGRA_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > +	  VI6_RPF_DSWAP_P_WDS,
+> > +	  1, { 16, 0, 0 }, false, false, 1, 1, true },
+> 
+> 
+> As I read this:
+> V4L2_PIX_FMT_BGRA555            VI6_FMT_BGRA_5551        LLS|LWS|WDS
+> gggrrrrr abbbbbgg               bbbbbggg ggrrrrra       ggrrrrra bbbbbggg
+
+Isn't V4L2_PIX_FMT_BGRA555 is defined as
+
+g1 g0 r4 r3 r2 r1 r0 a | b4 b3 b2 b1 b0 g4 g3 g2
+
+?
+
+> They seems different to me:
+>         gggrrrrr abbbbbgg
+>         ggrrrrra bbbbbggg
+> 
+> But I have not find any better combination from table 23.10 that would
+> result in the desired 'gggrrrrr abbbbbgg' ordering.
+> 
+> > +#define V4L2_PIX_FMT_BGRX555 v4l2_fourcc('B', 'X', '1', '5') /* 16  BGRX-5-5-5-1  */
+> > +	{ V4L2_PIX_FMT_BGRX555, MEDIA_BUS_FMT_ARGB8888_1X32,
+> > +	  VI6_FMT_BGRA_5551, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> > +	  VI6_RPF_DSWAP_P_WDS,
+> > +	  1, { 16, 0, 0 }, false, false, 1, 1, false },
+> 
+> Same as above.
+> 
+> The last two entries apart:
 > Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
 > 
-> >>>  	{ V4L2_PIX_FMT_ARGB32, MEDIA_BUS_FMT_ARGB8888_1X32,
-> >>>  	  VI6_FMT_ARGB_8888, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
-> >>>  	  VI6_RPF_DSWAP_P_WDS | VI6_RPF_DSWAP_P_BTS,
+> >  	{ V4L2_PIX_FMT_RGB565, MEDIA_BUS_FMT_ARGB8888_1X32,
+> >  	  VI6_FMT_RGB_565, VI6_RPF_DSWAP_P_LLS | VI6_RPF_DSWAP_P_LWS |
+> >  	  VI6_RPF_DSWAP_P_WDS,
 
 -- 
 Regards,
