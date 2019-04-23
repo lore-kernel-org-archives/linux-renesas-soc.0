@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAA4C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD89C282DD
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9FA820645
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:05:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37E5F20645
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Apr 2019 14:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbfDWOF6 (ORCPT
+        id S1727225AbfDWOIq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Apr 2019 10:05:58 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60963 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbfDWOF6 (ORCPT
+        Tue, 23 Apr 2019 10:08:46 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35449 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbfDWOIq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Apr 2019 10:05:58 -0400
+        Tue, 23 Apr 2019 10:08:46 -0400
 X-Originating-IP: 2.224.242.101
 Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 05EB7C001B;
-        Tue, 23 Apr 2019 14:05:53 +0000 (UTC)
-Date:   Tue, 23 Apr 2019 16:06:49 +0200
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id BE2091C001B;
+        Tue, 23 Apr 2019 14:08:43 +0000 (UTC)
+Date:   Tue, 23 Apr 2019 16:09:39 +0200
 From:   Jacopo Mondi <jacopo@jmondi.org>
 To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 8/9] drm: rcar-du: Add support for missing 16-bit RGB4444
+Subject: Re: [PATCH 9/9] drm: rcar-du: Add support for missing 16-bit RGB1555
  formats
-Message-ID: <20190423140649.mv4twq5kayuigzd6@uno.localdomain>
+Message-ID: <20190423140939.gp2rtnbyspzcbzpd@uno.localdomain>
 References: <20190328070723.26553-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190328070723.26553-9-laurent.pinchart+renesas@ideasonboard.com>
+ <20190328070723.26553-10-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4onpjwnw7z3tcjql"
+        protocol="application/pgp-signature"; boundary="xsot2cdl72g2muyj"
 Content-Disposition: inline
-In-Reply-To: <20190328070723.26553-9-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20190328070723.26553-10-laurent.pinchart+renesas@ideasonboard.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -48,16 +48,16 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---4onpjwnw7z3tcjql
+--xsot2cdl72g2muyj
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 
 Hi Laurent,
 
-On Thu, Mar 28, 2019 at 09:07:22AM +0200, Laurent Pinchart wrote:
-> Add support for the DRM_FORMAT_RGBA4444, DRM_FORMAT_RGBX4444,
-> DRM_FORMAT_ABGR4444, DRM_FORMAT_XBGR4444, DRM_FORMAT_BGRA4444 and
-> DRM_FORMAT_BGRX4444 formats to the DU driver. Those formats are only
+On Thu, Mar 28, 2019 at 09:07:23AM +0200, Laurent Pinchart wrote:
+> Add support for the DRM_FORMAT_RGBA5551, DRM_FORMAT_RGBX5551,
+> DRM_FORMAT_ABGR1555, DRM_FORMAT_XBGR1555, DRM_FORMAT_BGRA5551 and
+> DRM_FORMAT_BGRX5551 formats to the DU driver. Those formats are only
 > available on Gen3.
 >
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
@@ -66,50 +66,51 @@ On Thu, Mar 28, 2019 at 09:07:22AM +0200, Laurent Pinchart wrote:
 >  1 file changed, 30 insertions(+)
 >
 > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> index 4084136af845..4aaf623cbcd1 100644
+> index 4aaf623cbcd1..adbc4f5d8fc5 100644
 > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
 > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> @@ -123,6 +123,36 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
->  		.v4l2 = V4L2_PIX_FMT_XRGB444,
+> @@ -153,6 +153,36 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+>  		.v4l2 = V4L2_PIX_FMT_BGRX444,
 >  		.bpp = 16,
 >  		.planes = 1,
 > +	}, {
-> +		.fourcc = DRM_FORMAT_RGBA4444,
-> +		.v4l2 = V4L2_PIX_FMT_RGBA444,
+> +		.fourcc = DRM_FORMAT_RGBA5551,
+> +		.v4l2 = V4L2_PIX_FMT_RGBA555,
 > +		.bpp = 16,
 > +		.planes = 1,
 > +	}, {
-> +		.fourcc = DRM_FORMAT_RGBX4444,
-> +		.v4l2 = V4L2_PIX_FMT_RGBX444,
+> +		.fourcc = DRM_FORMAT_RGBX5551,
+> +		.v4l2 = V4L2_PIX_FMT_RGBX555,
 > +		.bpp = 16,
 > +		.planes = 1,
 > +	}, {
-> +		.fourcc = DRM_FORMAT_ABGR4444,
-> +		.v4l2 = V4L2_PIX_FMT_ABGR444,
+> +		.fourcc = DRM_FORMAT_ABGR1555,
+> +		.v4l2 = V4L2_PIX_FMT_ABGR555,
 > +		.bpp = 16,
 > +		.planes = 1,
 > +	}, {
-> +		.fourcc = DRM_FORMAT_XBGR4444,
-> +		.v4l2 = V4L2_PIX_FMT_XBGR444,
+> +		.fourcc = DRM_FORMAT_XBGR1555,
+> +		.v4l2 = V4L2_PIX_FMT_XBGR555,
 > +		.bpp = 16,
 > +		.planes = 1,
 > +	}, {
-> +		.fourcc = DRM_FORMAT_BGRA4444,
-> +		.v4l2 = V4L2_PIX_FMT_BGRA444,
+> +		.fourcc = DRM_FORMAT_BGRA5551,
+> +		.v4l2 = V4L2_PIX_FMT_BGRA555,
 > +		.bpp = 16,
 > +		.planes = 1,
 > +	}, {
-> +		.fourcc = DRM_FORMAT_BGRX4444,
-> +		.v4l2 = V4L2_PIX_FMT_BGRX444,
+> +		.fourcc = DRM_FORMAT_BGRX5551,
+> +		.v4l2 = V4L2_PIX_FMT_BGRX555,
 > +		.bpp = 16,
 > +		.planes = 1,
 
-Compared the DRM and V4L2 format definitions, they look sane to me!
+I have compared the format definitions and they seems fine to me!
 
 Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
 
 Thanks
-   j
+  j
+
 >  	}, {
 >  		.fourcc = DRM_FORMAT_BGR888,
 >  		.v4l2 = V4L2_PIX_FMT_RGB24,
@@ -119,24 +120,24 @@ Thanks
 > Laurent Pinchart
 >
 
---4onpjwnw7z3tcjql
+--xsot2cdl72g2muyj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAly/G/kACgkQcjQGjxah
-Vjwc/g/+Id9tYTMmMTNwLkxbhbkgdaBqp4RuUPnvjoi8yeO2UNIKg6y5J/tjTlS4
-bUlT2eun1IWRk78U0CUSK19bZiclCpB3SHJOX89M8ESyWeG+P9zqr3qhnNYvd4ld
-dnaPZ14BVa8e+ejQ5PKvSDMIxndDEFD4kKCV2rbIpiWoBltqqUDTF0kCkJ6f94r9
-y3Asvv72BIgmK5mwg3L+vJFbZHn6gsDHo8MQWS9XAfrcpyEKinSt7o4S/9G/5Oa/
-dPDt63+PZbauu161iGpz8feBeqg6eXc5080/C2yywaRdvgXEcM9kwBXJDwbYPxi1
-GEazlWe04O1u9yC3MZthCq4a0Z5RND75KzMbFUiC+8B5FZvIwIRAALLLRUkL2AHD
-iYunW/VlJzDPedsxwMbce4FE80od4AEDaYHUNiokmgvWqQwGsxCjQb47m2RsAPyN
-+nvOpB6yLP1UUFJTROn8cf86UdncUo4UklXHGaBMgHdE0PWmf7OQwrIdwUAM+sHW
-pnCE2c87lGf0ouxylaXwXchUyWW5Y6Ns06YRz593XoK9pGLrhQ4ReT17tYEEPE8b
-V8iJ1V28xmH32H8i3qjfcNbVv85ArT1WTQ0OlnP3wkxTw6Ra8YQctKqXwpzg94tl
-eIBetLbnjbKwGZsQQezQIDi0lx6ObASVhC7bUhUwFatIeulMWPw=
-=gvvN
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAly/HKMACgkQcjQGjxah
+VjwsIxAAsi2REZPG6BVz2/e7PFy7rZrsKMr3EI/26WmbmT1SfR3LVkRYq2D+FjnM
+0q9F+TT8sEbjQWjwkt0JvFxllvVER/azcBQpw0S22gAKATBkrOJgrnBYn2skXAVG
+s3lqeGsCDUfCM88kD0evcDz/4QaAgp1O+8Wa/9oA02ngcrG/jTjgl/dLZdalPi+t
+bQp4E4Aenx6JTujYUgnOlrFgBWwep7AvdIRCpo8POFmNDs9pbaalMeWNprTs+12O
+z0tm4thYEPpdA84gWa5eYu4HN7d+6OSJmsOMq01gPNw04m8CFl9or29wKkbWSD1a
+tpfbs4+VMUsoVK0SdYMc8RfO2ocJ1WcFsoIR6D7i4HMwD2osSAyD/7j02iJpDf58
+ja6u9z81gertSn99vz1XQCQx1SWYIKgO+l1p2YuUlBhr24pxhdLZ7x4k5V7dh5TA
+GiUqUvujJrj18efeDRBog3PJ8R9k1QJIEHF6WrIBxyLyBpEvmLcoO2cjZmDEX4lw
+Tlw+/zd3m5ZmUbDIbk7sDTtdbItf0EU6j6ueb2xPZaecp0n1RZu4R0uduMuKKbI5
+uHoBDeKgvRjcq6I0eOwr6q/J1Db70ekNzQ1iopnzwlqaxnwzuyJZMwci7NTo4J+Z
+s1EH6eEdOCK4QtK7hCFT5xt1J2My6iJMW/zYa6bS34C1R0GAg5U=
+=FeWy
 -----END PGP SIGNATURE-----
 
---4onpjwnw7z3tcjql--
+--xsot2cdl72g2muyj--
