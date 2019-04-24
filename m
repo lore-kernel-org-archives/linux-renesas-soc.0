@@ -2,103 +2,104 @@ Return-Path: <SRS0=xaBA=S2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62992C10F11
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B16C282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4C2208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12BF8218FC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730146AbfDXIWp (ORCPT
+        id S1727373AbfDXIiU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Apr 2019 04:22:45 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:28558 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726733AbfDXIWp (ORCPT
+        Wed, 24 Apr 2019 04:38:20 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:45176 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfDXIiU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Apr 2019 04:22:45 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3O8MCw5013196;
-        Wed, 24 Apr 2019 17:22:12 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Wed, 24 Apr 2019 17:22:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.225] (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3O8MBn0013182
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 24 Apr 2019 17:22:12 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-Subject: Re: [PATCH 0/4] Add TPU support for R-Car H3/M3-W/M3-N
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        =?UTF-8?B?56iy5ZCJ?= <h-inayoshi@jinso.co.jp>,
-        Hoan Nguyen An <na-hoan@jinso.co.jp>
-References: <1555379752-5980-1-git-send-email-cv-dong@jinso.co.jp>
- <CAMuHMdV42AY-ihUpfoOYraTWn6Pf=b6W15pq5sp97OdeZSGebw@mail.gmail.com>
-From:   Cao Van Dong <cv-dong@jinso.co.jp>
-Message-ID: <6f5f130c-9599-fec9-daf9-c047368f4b9c@jinso.co.jp>
-Date:   Wed, 24 Apr 2019 17:22:11 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 24 Apr 2019 04:38:20 -0400
+Received: by mail-ua1-f68.google.com with SMTP id o33so541450uae.12;
+        Wed, 24 Apr 2019 01:38:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eti/tTB27Ml+YHh2VBfgUmyRk/nhT5Vw5BKmsSU8uxE=;
+        b=W0jmzlD/NTfwVcuThjURHIcb3U1aBM6b/29ixS+GjCgSFNM4Q91Rt2BNqL7P+pchlg
+         5uq9a9kc8XxZ/wFo+bH6q4dqzmhhuEdo4lFcnv6T90HyRHDVnwRrPgAc+zSYyj6xHiQd
+         zxGyrMkP4P3n8vWpDtg+lPxE9RBBFGZ9GJg31XZHk06p4WKGjmlE4Jfmiwj9mfKPtRka
+         j5aIzeWKcABCubxEjk4HANSo21ah7tWObFjuOH4BJcg3BpdvmEquklMt6cnr8W4N5ygR
+         bt6mtO4wBBoZBNRUgtZ1/20ZvHPAYZcTqaHMhiumOnDu17IckomrXal/pbkgPBTTH8/T
+         E2SA==
+X-Gm-Message-State: APjAAAVlYH23dFfQ2cJhYwS3WfQ7LO0w300m4TTjE2vCCak0U3/J0M1F
+        OhT3T20TmblyXy1hZ4s9y78tkwms/JptvwW99DY=
+X-Google-Smtp-Source: APXvYqwyn3fomGe6IEvIz9EH52DaziJReAbKpW7CjoihP4HDHMjgS7Xm12qusaci4tELxB6oFz9iLg6MY+nhkzVNofM=
+X-Received: by 2002:ab0:6419:: with SMTP id x25mr15670661uao.86.1556095099247;
+ Wed, 24 Apr 2019 01:38:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV42AY-ihUpfoOYraTWn6Pf=b6W15pq5sp97OdeZSGebw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190416102515.12269-1-wsa+renesas@sang-engineering.com>
+ <20190416102515.12269-7-wsa+renesas@sang-engineering.com> <20190416203431.GA20072@anatevka>
+ <20190416204814.GA26442@roeck-us.net> <20190416205533.GB8268@kunai>
+ <20190416212046.GC26442@roeck-us.net> <20190416221702.GC8268@kunai>
+ <20190416223813.GA744@roeck-us.net> <20190417194528.xwivkyubhxyfrx4m@ninjato>
+In-Reply-To: <20190417194528.xwivkyubhxyfrx4m@ninjato>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 24 Apr 2019 10:38:07 +0200
+Message-ID: <CAMuHMdVuZH86bOBsymuPj+68o+exAtao9509XUjoXkozyi1Hvg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/16] watchdog: hpwdt: drop warning after calling watchdog_init_timeout
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear Geert-san,
+Hi Wolfram,
 
-On 2019/04/24 16:49, Geert Uytterhoeven wrote:
-> Hi Cao,
+On Wed, Apr 17, 2019 at 9:46 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > Yes, that works as well. Note that it will actually print something like
+> > "watchdog: <device>: ..." due to the pr_fmt() at the top of watchdog_core.c.
+> > I guess that should be ok.
 >
-> On Tue, Apr 16, 2019 at 3:56 AM Cao Van Dong <cv-dong@jinso.co.jp> wrote:
->> This series adds tpu support for r8a7795/r8a7796/r8a77965 SoCs.
->> Based on the renesas-drivers-2019-04-02-v5.1-rc3 tag of renesas-drivers tree.
->>
->> For test: After booting, I found the device was registered in the boot log.
-> Thanks for your series!
+> I have the following diff applied on top of patch 2. Works with and
+> without a parent device. I am not super happy casting 'identity' but
+> since its u8-type is exported to userspace, I think we can't avoid it.
+> Guenter, is this cast safe? Here is the diff:
 >
->> Cao Van Dong (4):
->>    arm64: dts: renesas: r8a7795: Add TPU support
->>    arm64: dts: renesas: r8a7796: Add TPU support
->>    arm64: dts: renesas: r8a77965: Add TPU support
->>    dt-bindings: pwm: renesas: tpu: Document R8A779{5|6|65} bindings
->>
->>   Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.txt |  3 +++
->>   arch/arm64/boot/dts/renesas/r8a7795.dtsi                  | 11 +++++++++++
->>   arch/arm64/boot/dts/renesas/r8a7796.dtsi                  | 11 +++++++++++
->>   arch/arm64/boot/dts/renesas/r8a77965.dtsi                 | 11 +++++++++++
->>   drivers/clk/renesas/r8a7795-cpg-mssr.c                    |  1 +
->>   drivers/clk/renesas/r8a7796-cpg-mssr.c                    |  1 +
->>   drivers/clk/renesas/r8a77965-cpg-mssr.c                   |  1 +
->>   7 files changed, 39 insertions(+)
-> Please split off the clock driver changes into separate patches, as DTS and
-> clock driver changes go in through different subsystem/maintainer paths.
-Thanks for your feedback!
-I will separate them and re-submit it with the v2 mask.
+> diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
+> index cd3ca6b366ef..62be9e52a4de 100644
+> --- a/drivers/watchdog/watchdog_core.c
+> +++ b/drivers/watchdog/watchdog_core.c
+> @@ -115,6 +115,8 @@ static void watchdog_check_min_max_timeout(struct watchdog_device *wdd)
+>  int watchdog_init_timeout(struct watchdog_device *wdd,
+>                                 unsigned int timeout_parm, struct device *dev)
+>  {
+> +       const char *dev_str = wdd->parent ? dev_name(wdd->parent) :
+> +                             (const char *)wdd->info->identity;
 
-Thank you,
-Dong
-> Gr{oetje,eeting}s,
->
->                          Geert
->
+    struct watchdog_info {
+            ...
+            __u8  identity[32];     /* Identity of the board */
+    };
+
+Is identity[] guaranteed to be NUL-terminated?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
