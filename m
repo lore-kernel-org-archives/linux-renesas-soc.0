@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10766C282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AA2C10F11
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE37206A3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:12:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F222E208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 08:14:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hJwKqmrn"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UnSzf0sQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729927AbfDXIM6 (ORCPT
+        id S1726232AbfDXIOC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Apr 2019 04:12:58 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:40782 "EHLO
+        Wed, 24 Apr 2019 04:14:02 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40802 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727350AbfDXIM4 (ORCPT
+        with ESMTP id S1727248AbfDXIOC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Apr 2019 04:12:56 -0400
+        Wed, 24 Apr 2019 04:14:02 -0400
 Received: from [192.168.43.26] (unknown [149.254.234.198])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 99DA05F;
-        Wed, 24 Apr 2019 10:12:53 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8FD685F;
+        Wed, 24 Apr 2019 10:13:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1556093574;
-        bh=mHa2ySZ+zqHLhPzrBj29n2+BpahK6uOlpWwF7M3jSJU=;
+        s=mail; t=1556093640;
+        bh=LrKPUzqF6J1W7s0xUQqJnMDvhOf4twDomqfLQQb7V7M=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hJwKqmrnEqujMno/V5mKzI2B0F7I2SMbsAa/bHuPGfF8Br/IORqifZYNMhQjYb73E
-         iybIw4FxjWRe4MEB7pt4JdM7Fg1IDjRq7aF/j/QNdrkwrAUPqqu7qrLbngQyd84MlQ
-         EnZY7l4Vy+2wkRBW7gMewbjLDvI/wRUl5drF5AnU=
+        b=UnSzf0sQNMwIjt1Hs4Fs8y8LYOgkMJot4mdVf3Mv2INyoewPguFqE5aGpQJ0l7UKu
+         3LmIQNcrcH+h2F8JCBhD7GEbC6uvwRPAOJBVlUeA1mEEq6S+TSoSSaioQfAgJs0b0g
+         AhNyMB2Ba7wwqlAu2aP1l9qasrQkO4nneP7+AV/c=
 Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH/RFC 04/15] drm: bridge: Add dual_link field to the
- drm_bridge_timings structure
+Subject: Re: [PATCH/RFC 03/15] drm/bridge: use bus flags in bridge timings
 To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Andrzej Hajda <a.hajda@samsung.com>
+Cc:     linux-renesas-soc@vger.kernel.org
 References: <20190306232345.23052-1-laurent.pinchart+renesas@ideasonboard.com>
- <20190306232345.23052-5-laurent.pinchart+renesas@ideasonboard.com>
+ <20190306232345.23052-4-laurent.pinchart+renesas@ideasonboard.com>
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
@@ -87,12 +85,12 @@ Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
  JxB1gWThL4kOTbsqqXj9GLcyOImkW0lJGGR3o/fV91Zh63S5TKnf2YGGGzxki+ADdxVQAm+Q
  sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
 Organization: Ideas on Board
-Message-ID: <eed9204e-a54e-98d8-99f0-cdc8675704e1@ideasonboard.com>
-Date:   Wed, 24 Apr 2019 09:12:48 +0100
+Message-ID: <6598594c-053b-34ab-2e8a-7f8044b3f29a@ideasonboard.com>
+Date:   Wed, 24 Apr 2019 09:13:54 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190306232345.23052-5-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20190306232345.23052-4-laurent.pinchart+renesas@ideasonboard.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
@@ -104,45 +102,86 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 Hi Laurent,
 
 On 06/03/2019 23:23, Laurent Pinchart wrote:
-> Extend the drm_bridge_timings structure with a new dual_link field to
-> indicate that the bridge's input bus carries data on two separate
-> physical links. The first use case is LVDS dual-link mode where even-
-> and odd-numbered pixels are transferred on separate LVDS links.
+> From: Stefan Agner <stefan@agner.ch>
+> 
+> The DRM bus flags convey additional information on pixel data on
+> the bus. All current available bus flags might be of interest for
+> a bridge. Remove the sampling_edge field and use bus_flags.
+> 
+> In the case at hand a dumb VGA bridge needs a specific data enable
+> polarity (DRM_BUS_FLAG_DE_LOW).
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Do you foresee this becoming a bitfield in the future if there are more
-options?
+Trivial but, should you have a +renesas            ^ there?
 
-I don't think that affects this right now though, and it's fine as a bool.
-
-
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 
 > ---
->  include/drm/drm_bridge.h | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  drivers/gpu/drm/bridge/dumb-vga-dac.c |  6 +++---
+>  include/drm/drm_bridge.h              | 12 +++++-------
+>  2 files changed, 8 insertions(+), 10 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+> index 94ed450e308d..e64736c39a9f 100644
+> --- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
+> +++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
+> @@ -234,7 +234,7 @@ static int dumb_vga_remove(struct platform_device *pdev)
+>   */
+>  static const struct drm_bridge_timings default_dac_timings = {
+>  	/* Timing specifications, datasheet page 7 */
+> -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
+> +	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
+>  	.setup_time_ps = 500,
+>  	.hold_time_ps = 1500,
+>  };
+> @@ -245,7 +245,7 @@ static const struct drm_bridge_timings default_dac_timings = {
+>   */
+>  static const struct drm_bridge_timings ti_ths8134_dac_timings = {
+>  	/* From timing diagram, datasheet page 9 */
+> -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
+> +	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
+>  	/* From datasheet, page 12 */
+>  	.setup_time_ps = 3000,
+>  	/* I guess this means latched input */
+> @@ -258,7 +258,7 @@ static const struct drm_bridge_timings ti_ths8134_dac_timings = {
+>   */
+>  static const struct drm_bridge_timings ti_ths8135_dac_timings = {
+>  	/* From timing diagram, datasheet page 14 */
+> -	.sampling_edge = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
+> +	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
+>  	/* From datasheet, page 16 */
+>  	.setup_time_ps = 2000,
+>  	.hold_time_ps = 500,
 > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index d4428913a4e1..aea1fcfd92a7 100644
+> index 5e5129206f40..d4428913a4e1 100644
 > --- a/include/drm/drm_bridge.h
 > +++ b/include/drm/drm_bridge.h
-> @@ -265,6 +265,14 @@ struct drm_bridge_timings {
->  	 * input signal after the clock edge.
+> @@ -244,15 +244,13 @@ struct drm_bridge_funcs {
+>   */
+>  struct drm_bridge_timings {
+>  	/**
+> -	 * @sampling_edge:
+> +	 * @input_bus_flags:
+>  	 *
+> -	 * Tells whether the bridge samples the digital input signals from the
+> -	 * display engine on the positive or negative edge of the clock. This
+> -	 * should use the DRM_BUS_FLAG_PIXDATA_SAMPLE_[POS|NEG]EDGE and
+> -	 * DRM_BUS_FLAG_SYNC_SAMPLE_[POS|NEG]EDGE bitwise flags from the DRM
+> -	 * connector (bit 2, 3, 6 and 7 valid).
+> +	 * Tells what additional settings for the pixel data on the bus
+> +	 * this bridge requires (like pixel signal polarity). See also
+> +	 * &drm_display_info->bus_flags.
 >  	 */
->  	u32 hold_time_ps;
-> +	/**
-> +	 * @dual_link:
-> +	 *
-> +	 * True if the bus operates in dual-link mode. The exact meaning is
-> +	 * dependent on the bus type. For LVDS buses, this indicates that even-
-> +	 * and odd-numbered pixels are received on separate links.
-> +	 */
-> +	bool dual_link;
->  };
->  
->  /**
+> -	u32 sampling_edge;
+> +	u32 input_bus_flags;
+>  	/**
+>  	 * @setup_time_ps:
+>  	 *
 > 
 
 -- 
