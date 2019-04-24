@@ -2,129 +2,104 @@ Return-Path: <SRS0=xaBA=S2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD47C282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 12:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061E2C10F11
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 13:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E737218D3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 12:57:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmeGTZKC"
+	by mail.kernel.org (Postfix) with ESMTP id CAC7F218FD
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 13:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfDXM5m (ORCPT
+        id S1730818AbfDXNzW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Apr 2019 08:57:42 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39909 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfDXM5m (ORCPT
+        Wed, 24 Apr 2019 09:55:22 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:50544 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727921AbfDXNzW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Apr 2019 08:57:42 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e92so7479085plb.6;
-        Wed, 24 Apr 2019 05:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SLjRph+8jU4ZtxyMRBhIIBKEMjfFncgRikIohBy/zGs=;
-        b=JmeGTZKCDidV/196lNg88lKAV3t3Tj7bxyw7LCqH9GKovPsLdUKfzrWQTC11szv0zf
-         GkcGnaLhuZxdWVBj+CiWnjlEDo/98/RQnMoqaq2Fy1IPoaC4iEZXlaBWEvKbweiZjpCu
-         kC2NTB/fC7athht9rl4l1ALjnOv20SQUBAaOhcBMdkrOsANcLa6PoBAruUJTspzZoP/W
-         Wea6KT7OH6xlU98C8eZk+dFxvi8cOUfr/WtkrhW6Rq7IdcyReZwrlREq/UceiX4k2NZN
-         3hxIHfVmqZDi2X5ASMfl8BFIwQZQAyc+gGbBocJZztJQdARBBGK/sIzpddpHZTZ2uyRx
-         cx+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SLjRph+8jU4ZtxyMRBhIIBKEMjfFncgRikIohBy/zGs=;
-        b=RKpdoe4L/DeC3sRzFrzVkbrN/hnD6hEg960E3YiNWM0XHmFn727RfPJGkO5+yLJGiE
-         16/N1N5BubxpKoAabVfmDScIEC7RS5iKSAfGxvAGgsNfYQnAUzzXcqxMNANCFo+Yy/sG
-         QVhN7esJx6Zq3+RhUnPOeH2z3lgikEZTtMqVuEul746FEc8m9q8YhSuPY0IJoi9w4XBY
-         hn11NFgSBnv1RNtHdHO/bOkQN2EXVpDrE8dHinRcrG2U17/EyBu7dOHpSQNnjkjJ62XN
-         oHVfoOg6ShfiGXgEE21JlfmssjRoP5FPzDAyjc/XU+IyN69ydhEWmgW4Ei6N4egGIMxG
-         sREg==
-X-Gm-Message-State: APjAAAVtQgkoR0rHqs0b+vukXjcu300QTd5b8TySUzrwqxDmDWeBIYev
-        RWs3FSISbKL32jRRhtn3BTmpH4ao
-X-Google-Smtp-Source: APXvYqxWSio2BfHWAkUa3fFMjK02KxL7lsTKChypOqrdK5FAP5wxh+UroIbrkERmrzOzrT5CWDIqiw==
-X-Received: by 2002:a17:902:201:: with SMTP id 1mr32635430plc.89.1556110661368;
-        Wed, 24 Apr 2019 05:57:41 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 6sm31057788pft.64.2019.04.24.05.57.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Apr 2019 05:57:40 -0700 (PDT)
-Subject: Re: [PATCH v2 06/16] watchdog: hpwdt: drop warning after calling
- watchdog_init_timeout
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190416102515.12269-1-wsa+renesas@sang-engineering.com>
- <20190416102515.12269-7-wsa+renesas@sang-engineering.com>
- <20190416203431.GA20072@anatevka> <20190416204814.GA26442@roeck-us.net>
- <20190416205533.GB8268@kunai> <20190416212046.GC26442@roeck-us.net>
- <20190416221702.GC8268@kunai> <20190416223813.GA744@roeck-us.net>
- <20190417194528.xwivkyubhxyfrx4m@ninjato>
- <CAMuHMdVuZH86bOBsymuPj+68o+exAtao9509XUjoXkozyi1Hvg@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <54286f3b-98f7-1b7c-8768-2c88ef73e9af@roeck-us.net>
-Date:   Wed, 24 Apr 2019 05:57:38 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 24 Apr 2019 09:55:22 -0400
+Received: from ramsan ([84.194.111.163])
+        by laurent.telenet-ops.be with bizsmtp
+        id 4DvL200093XaVaC01DvL9w; Wed, 24 Apr 2019 15:55:20 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hJIMq-00087x-39; Wed, 24 Apr 2019 15:55:20 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hJIMq-0006YT-18; Wed, 24 Apr 2019 15:55:20 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 0/6] iommu/ipmmu-vmsa: Suspend/resume support and assorted cleanups
+Date:   Wed, 24 Apr 2019 15:55:12 +0200
+Message-Id: <20190424135518.25150-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVuZH86bOBsymuPj+68o+exAtao9509XUjoXkozyi1Hvg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 4/24/19 1:38 AM, Geert Uytterhoeven wrote:
-> Hi Wolfram,
-> 
-> On Wed, Apr 17, 2019 at 9:46 PM Wolfram Sang <wsa@the-dreams.de> wrote:
->>> Yes, that works as well. Note that it will actually print something like
->>> "watchdog: <device>: ..." due to the pr_fmt() at the top of watchdog_core.c.
->>> I guess that should be ok.
->>
->> I have the following diff applied on top of patch 2. Works with and
->> without a parent device. I am not super happy casting 'identity' but
->> since its u8-type is exported to userspace, I think we can't avoid it.
->> Guenter, is this cast safe? Here is the diff:
->>
->> diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
->> index cd3ca6b366ef..62be9e52a4de 100644
->> --- a/drivers/watchdog/watchdog_core.c
->> +++ b/drivers/watchdog/watchdog_core.c
->> @@ -115,6 +115,8 @@ static void watchdog_check_min_max_timeout(struct watchdog_device *wdd)
->>   int watchdog_init_timeout(struct watchdog_device *wdd,
->>                                  unsigned int timeout_parm, struct device *dev)
->>   {
->> +       const char *dev_str = wdd->parent ? dev_name(wdd->parent) :
->> +                             (const char *)wdd->info->identity;
-> 
->      struct watchdog_info {
->              ...
->              __u8  identity[32];     /* Identity of the board */
->      };
-> 
-> Is identity[] guaranteed to be NUL-terminated?
-> 
+	Hi Jörg, Magnus,
 
-I would hope so, because we export its contents via sysfs to userspace
-with
-	return sprintf(buf, "%s\n", wdd->info->identity);
+On R-Car Gen3 systems with PSCI, PSCI may power down the SoC during
+system suspend, thus losing all IOMMU state.  Hence after s2ram, devices
+behind an IPMMU (e.g. SATA), and configured to use it, will fail to
+complete their I/O operations.
 
-Also, there are already several pr_err() assuming that it is
-a string,
+This patch series adds suspend/resume support to the Renesas IPMMU-VMSA
+IOMMU driver, and performs some smaller cleanups and fixes during the
+process.  Most patches are fairly independent, except for patch 6/6,
+which depends on patches 4/6 and 5/6.
 
-Guenter
+Changes compared to v2:
+  - Fix sysfs path typo in patch description,
+  - Add Reviewed-by.
+
+Changes compared to v1:
+  - Dropped "iommu/ipmmu-vmsa: Call ipmmu_ctx_write_root() instead of
+    open coding",
+  - Add Reviewed-by,
+  - Merge IMEAR/IMELAR,
+  - s/ipmmu_context_init/ipmmu_domain_setup_context/,
+  - Drop PSCI checks.
+
+This has been tested on Salvator-XS with R-Car H3 ES2.0, with IPMMU
+suport for SATA enabled.  To play safe, the resume operation has also
+been tested on R-Car M2-W.
+
+Thanks!
+
+Geert Uytterhoeven (6):
+  iommu/ipmmu-vmsa: Link IOMMUs and devices in sysfs
+  iommu/ipmmu-vmsa: Prepare to handle 40-bit error addresses
+  iommu/ipmmu-vmsa: Make IPMMU_CTX_MAX unsigned
+  iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific features
+  iommu/ipmmu-vmsa: Extract hardware context initialization
+  iommu/ipmmu-vmsa: Add suspend/resume support
+
+ drivers/iommu/ipmmu-vmsa.c | 185 +++++++++++++++++++++++++------------
+ 1 file changed, 124 insertions(+), 61 deletions(-)
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
