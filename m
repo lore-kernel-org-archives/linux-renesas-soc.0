@@ -2,95 +2,118 @@ Return-Path: <SRS0=xaBA=S2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB30AC10F11
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 12:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704B7C10F11
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 12:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB8821773
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 12:22:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AB0320811
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 12:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbfDXMWU convert rfc822-to-8bit (ORCPT
+        id S1729396AbfDXMb6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Apr 2019 08:22:20 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42441 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729396AbfDXMWU (ORCPT
+        Wed, 24 Apr 2019 08:31:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:42816 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726167AbfDXMb5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Apr 2019 08:22:20 -0400
-Received: by mail-vs1-f67.google.com with SMTP id f15so10234877vsk.9;
-        Wed, 24 Apr 2019 05:22:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2+gyHyjOSfX4EDiY7exTorEvXpPqFPghhbTRaLfpWlM=;
-        b=ceuvQkcGt7B5W8Gk/AoM+nZ0XxBxed4s+paATFE3CE3QN8ssjVLrjU4jl+DRF5XoPi
-         LAnUS2/jJW+GlBNjpkJUtuYwNWTnKqCzyHbLFsZ3YtrXpXBUeZxrtN+tiS0ImB0OlwYD
-         5E3HV8YskKO0OuJMMYTRdOIYDmkvnHCaGFld3Wceaqvc7cyL+hYgEIRVO5SKXA41M70y
-         A3+Ih8PREXMtknEU11xKsiHlB8t71y609FcSsoUqEJKB7xNlQmkwlbQxTZxiAGhTXniW
-         8wI6N4+edCNJhiSyNL0mb5539HkJqRcU4ov1iTFlMjMAmqWWBguJNxaThoJaVJukw0eS
-         ds5Q==
-X-Gm-Message-State: APjAAAUJ0xHNcc1Ao3kV2JaiRuiBsPVIx9/AWQ4wXP/C7/8dV/RHMFB/
-        i9SgwBa24tOvI16zDH2KRXPWwGHhrX7gZnPt99Y=
-X-Google-Smtp-Source: APXvYqxMS+D620DJ7TPM39p4hDoPhPRDnewp45WELr1tq/x1uzopZXTMdhoYdD1nvFF0JaYq+u5Li1jFcdaBFXdRq+g=
-X-Received: by 2002:a67:8e03:: with SMTP id q3mr6228666vsd.152.1556108538862;
- Wed, 24 Apr 2019 05:22:18 -0700 (PDT)
+        Wed, 24 Apr 2019 08:31:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FFE9A78;
+        Wed, 24 Apr 2019 05:31:57 -0700 (PDT)
+Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E23AF3F238;
+        Wed, 24 Apr 2019 05:31:55 -0700 (PDT)
+Subject: Re: [PATCH] ARM: mach-shmobile: Don't configure ARCH timer if PSCI is
+ enabled
+To:     Oleksandr <olekstysh@gmail.com>, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     horms@verge.net.au, magnus.damm@gmail.com, linux@armlinux.org.uk,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+References: <1555521040-16706-1-git-send-email-olekstysh@gmail.com>
+ <1b33dca4-e3ae-4588-05f2-37b23ac8df78@arm.com>
+ <8c9a1480-7956-9265-14c8-3fbb472e097d@gmail.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <c08c0d02-37f9-9f53-62b9-e5012097d94a@arm.com>
+Date:   Wed, 24 Apr 2019 13:31:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190410182657.23034-1-niklas.soderlund+renesas@ragnatech.se>
- <20190411084937.y5m6vzcwtkqqun7s@verge.net.au> <20190411151756.GC30887@bigcity.dyn.berto.se>
-In-Reply-To: <20190411151756.GC30887@bigcity.dyn.berto.se>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 24 Apr 2019 14:22:06 +0200
-Message-ID: <CAMuHMdXLM0hkUva4AukBpYy+=mRQ_tWT4XCGb=ZGbuT5nYMzjA@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: rcar-dmac: Update copyright information
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Simon Horman <horms@verge.net.au>, dmaengine@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <8c9a1480-7956-9265-14c8-3fbb472e097d@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas, Shimoda-san,
+Hi,
 
-On Thu, Apr 11, 2019 at 5:18 PM Niklas Söderlund
-<niklas.soderlund@ragnatech.se> wrote:
-> On 2019-04-11 10:49:37 +0200, Simon Horman wrote:
-> > On Wed, Apr 10, 2019 at 08:26:57PM +0200, Niklas Söderlund wrote:
-> > Not strictly related, but is it appropriate to:
-> >
-> > 1. Move this driver and drivers/dma/sh/usb-dmac.c to drivers/dma/renesas/
+On 18/04/2019 12:15, Oleksandr wrote:
+> 
+> On 18.04.19 12:32, Julien Grall wrote:
+>>> diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c 
+>>> b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+>>> index eea60b2..bac4490 100644
+>>> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
+>>> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
+>>> @@ -32,7 +32,7 @@ static const struct of_device_id cpg_matches[] __initconst = {
+>>>       { /* sentinel */ }
+>>>   };
+>>>   -static unsigned int __init get_extal_freq(void)
+>>> +static unsigned int __init __maybe_unused get_extal_freq(void)
+>>>   {
+>>>       const struct of_device_id *match;
+>>>       struct device_node *cpg, *extal;
+>>> @@ -60,6 +60,12 @@ static unsigned int __init get_extal_freq(void)
+>>>     void __init rcar_gen2_timer_init(void)
+>>>   {
+>>> +/*
+>>> + * If CONFIG_PSCI is enabled then most likely we are running on PSCI-enabled
+>>> + * U-Boot which, we assume, has already taken care of configuring ARCH timer
+>>> + * stuff before switching to non-secure mode.
+>>> + */
+>>
+>> I disagree with that statement. CONFIG_ARM_PSCI may be selected in your 
+>> .config for multiple reasons:
+>>      - CONFIG_XEN will selected it
+>>      - you build a .config targeting multiple platforms
+>>
+>> Yet you may still want to boot the kernel on older U-boot. Such change would 
+>> make it impossible.
+>>
+>> If there are code that should not be called when PSCI is used, then you need 
+>> to make sure the function is not called at runtime.
+> 
+> I got your point.
+> 
+> 
+> As I answered in a previous email:
+> 
+>  > But "#if !defined(CONFIG_ARM_PSCI)" wraps secure_cntvoff_init() call as
+>  > well, which resets CNTVOFF,
+> 
+>  > and this is something I tried to avoid the first from being executed on
+>  > a CPU, which is in SVC mode (when running on top of Xen).
+> 
+> What would be a proper way to avoid calling secure_cntvoff_init() at runtime?
+> 
+> Check that we are already in non-secure mode and/or cntvoff is already 0?
 
-That may make sense...
+CNTVOFF is controlled by the hypervisor, so you cannot access it from Dom0.
 
-> > 2. Remove drivers/dma/sh/sudmac.c which appears unused
->
-> I let someone with a better grasp of history answer this one. From my
-> side removing drivers which are unused seems like a good idea :-)
+If none of this code should be necessary when PSCI is enabled, then you can 
+check the presence of PSCI (see psci_smp_available()).
 
-There seem to be some (half-baked?) interaction between sudmac.c and
-drivers/usb/gadget/udc/r8a66597-udc.c and drivers/usb/renesas_usbhs/fifo.c.
-These don't seem to be used at all on Renesas ARM platforms, but
-CONFIG_USB_R8A66597_HCD is enabled in shmobile_defconfig and
-multi_v7_defconfig?
+Another solution is to check whether we are running on xen (see xen_domain()).
 
-Shimoda-san: can you please enlighten us?
-Thanks!
+In any case, I would still surround the two checks because the "armgcnt" should 
+really not be touched by Dom0.
 
-Gr{oetje,eeting}s,
-
-                        Geert
+Cheers,
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Julien Grall
