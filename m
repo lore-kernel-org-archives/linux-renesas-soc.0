@@ -6,46 +6,43 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7EBC282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 09:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59843C282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 09:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7345820878
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 09:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2837320878
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Apr 2019 09:29:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfDXJ31 (ORCPT
+        id S1727887AbfDXJ3a (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Apr 2019 05:29:27 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:42799 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726176AbfDXJ31 (ORCPT
+        Wed, 24 Apr 2019 05:29:30 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:35911 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726176AbfDXJ33 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Apr 2019 05:29:27 -0400
+        Wed, 24 Apr 2019 05:29:29 -0400
 X-IronPort-AV: E=Sophos;i="5.60,389,1549897200"; 
-   d="scan'208";a="13992920"
+   d="scan'208";a="14200197"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 24 Apr 2019 18:29:23 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 24 Apr 2019 18:29:27 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4050242A01A9;
-        Wed, 24 Apr 2019 18:29:20 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 427D042A0824;
+        Wed, 24 Apr 2019 18:29:24 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jun Li <jun.li@nxp.com>, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V5 2/9] usb: roles: add API to get usb_role_switch by node
-Date:   Wed, 24 Apr 2019 10:22:16 +0100
-Message-Id: <1556097743-12717-3-git-send-email-biju.das@bp.renesas.com>
+Subject: [PATCH V5 3/9] dt-bindings: usb: hd3ss3220 device tree binding document
+Date:   Wed, 24 Apr 2019 10:22:17 +0100
+Message-Id: <1556097743-12717-4-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1556097743-12717-1-git-send-email-biju.das@bp.renesas.com>
 References: <1556097743-12717-1-git-send-email-biju.das@bp.renesas.com>
@@ -54,88 +51,69 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Add device tree binding document for TI HD3SS3220 Type-C DRP port
+controller driver.
 
-Add fwnode_usb_role_switch_get() to make easier to get
-usb_role_switch by fwnode which register it.
-It's useful when there is not device_connection registered
-between two drivers and only knows the fwnode which register
-usb_role_switch.
-
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- * Rebased on top of patch1 in this series. Incorporated Heikki's review comments
-   (https://patchwork.kernel.org/patch/10882555/)
-
- Note:- This patch is added to this series to avoid compilation issues.
+V4-->V5
+  * No Change.
+V3-->V4
+  * No Change.
+V2-->V3
+  * Added Rob's Reviewed by tag.
+V1-->V2
+  * Added connector node.
+  * updated the example with connector node.
 ---
- drivers/usb/roles/class.c | 25 +++++++++++++++++++++++++
- include/linux/usb/role.h  |  8 ++++++++
- 2 files changed, 33 insertions(+)
+ .../devicetree/bindings/usb/ti,hd3ss3220.txt       | 37 ++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
 
-diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-index f45d8df..a0847a8 100644
---- a/drivers/usb/roles/class.c
-+++ b/drivers/usb/roles/class.c
-@@ -136,6 +136,31 @@ struct usb_role_switch *usb_role_switch_get(struct device *dev)
- EXPORT_SYMBOL_GPL(usb_role_switch_get);
- 
- /**
-+ * fwnode_usb_role_switch_get - Find USB role switch by it's parent fwnode
-+ * @fwnode: The fwnode that register USB role switch
-+ *
-+ * Finds and returns role switch registered by @fwnode. The reference count
-+ * for the found switch is incremented.
-+ */
-+struct usb_role_switch *
-+fwnode_usb_role_switch_get(struct fwnode_handle *fwnode)
-+{
-+	struct usb_role_switch *sw;
-+	struct device *dev;
+diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+new file mode 100644
+index 0000000..7f41400
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+@@ -0,0 +1,37 @@
++TI HD3SS3220 TypeC DRP Port Controller.
 +
-+	dev = class_find_device(role_class, NULL, fwnode,
-+				switch_fwnode_match);
-+	if (!dev)
-+		return ERR_PTR(-EPROBE_DEFER);
++Required properties:
++ - compatible: Must be "ti,hd3ss3220".
++ - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
++ - interrupts: <a b> where a is the interrupt number and b represents an
++   encoding of the sense and level information for the interrupt.
 +
-+	sw = to_role_switch(dev);
-+	WARN_ON(!try_module_get(sw->dev.parent->driver->owner));
++Required sub-node:
++ - connector : The "usb-c-connector" attached to the hd3ss3220 chip. The
++   bindings of the connector node are specified in:
 +
-+	return sw;
-+}
-+EXPORT_SYMBOL_GPL(fwnode_usb_role_switch_get);
++	Documentation/devicetree/bindings/connector/usb-connector.txt
 +
-+/**
-  * usb_role_switch_put - Release handle to a switch
-  * @sw: USB Role Switch
-  *
-diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
-index da2b964..0f6e2829 100644
---- a/include/linux/usb/role.h
-+++ b/include/linux/usb/role.h
-@@ -47,6 +47,8 @@ struct usb_role_switch_desc {
- int usb_role_switch_set_role(struct usb_role_switch *sw, enum usb_role role);
- enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw);
- struct usb_role_switch *usb_role_switch_get(struct device *dev);
-+struct usb_role_switch *
-+fwnode_usb_role_switch_get(struct fwnode_handle *fwnode);
- void usb_role_switch_put(struct usb_role_switch *sw);
- 
- struct usb_role_switch *
-@@ -70,6 +72,12 @@ static inline struct usb_role_switch *usb_role_switch_get(struct device *dev)
- 	return ERR_PTR(-ENODEV);
- }
- 
-+struct usb_role_switch *
-+fwnode_usb_role_switch_get(struct fwnode_handle *fwnode)
-+{
-+	return ERR_PTR(-ENODEV);
-+}
++Example:
++hd3ss3220@47 {
++	compatible = "ti,hd3ss3220";
++	reg = <0x47>;
++	interrupt-parent = <&gpio6>;
++	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 +
- static inline void usb_role_switch_put(struct usb_role_switch *sw) { }
- 
- static inline struct usb_role_switch *
++	usb_con: connector {
++		compatible = "usb-c-connector";
++		label = "USB-C";
++		data-role = "dual";
++	};
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		hd3ss3220_ep: endpoint@0 {
++			reg = <0>;
++			remote-endpoint = <&usb3peri_role_switch>;
++		};
++	};
++};
 -- 
 2.7.4
 
