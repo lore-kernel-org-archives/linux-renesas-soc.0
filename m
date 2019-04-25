@@ -2,218 +2,227 @@ Return-Path: <SRS0=Fsko=S3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB24C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D18C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 223FD20652
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:22:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBKQ07lN"
+	by mail.kernel.org (Postfix) with ESMTP id 3EDFE20717
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556220315;
+	bh=4GzDdv93DR0dvxuclbWUeFdx8hQo59ljV5CGKeXhVLA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=Z6Dx0n+vtTgUiWCktUYvw6EgoulOENSeI4epCrxjQkNFF6IAMIXdJgGjp3pi17MlV
+	 4b/32Eohy+zwg/7HHv3AHah/5+KOa3qJQL4C9y56f3AUE5xCfxZw6pYBdJJte1AuZZ
+	 fco/sRI0yUqxPddtcFWgUXys/kcmKVBj49UmHVT4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726125AbfDYTWq (ORCPT
+        id S1730004AbfDYTZO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Apr 2019 15:22:46 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41054 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbfDYTWq (ORCPT
+        Thu, 25 Apr 2019 15:25:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49610 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728999AbfDYTY6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Apr 2019 15:22:46 -0400
-Received: by mail-lj1-f193.google.com with SMTP id k8so660748lja.8;
-        Thu, 25 Apr 2019 12:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WPTWDWKCBkGfPSgSPT2bIo/0XXGhysj0HVhqcTTdXSE=;
-        b=mBKQ07lNPaiwvWymLp2woapWenob7ZDcCCcSPZWVmfUkGBPsDm5Sce2+hIDC6Pud92
-         viHklGZDuNyxZ5vTqiRZJf7k5E5crHwtVQJG2QSzAwiuBTNv5xAKQZ7DzZ3/dMYP3iyq
-         N38PILlreDn8GTS0fUCURrLylRG4T/TTzbp2ZYRtSW1fiA0xcnV1P0bMdvlppClrW77Y
-         BtDgiGMIS16DNP7zJOrV+zdFcO8wysKvWVPXth45JyF4h8gdC7LO2FmOxEqMkCk7GynU
-         7iqmiP9kLRKz+wmgv6R73XTqg/i7gnfEN7Jnra+/EBiBSmGoEqWA/ly9yW7Z1IN+NDI4
-         XgSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WPTWDWKCBkGfPSgSPT2bIo/0XXGhysj0HVhqcTTdXSE=;
-        b=e2gfefQxaPX7Vdg9CS/JT+EVr3IWobbLVdWF2U74c1uf2dpJBxGK4twcpYAndzdZl7
-         BhEkDy1Bcl/widHnOEU+MsH3pl+t/PU2Zxk06jdOYc+JN8YtakX6DCp7zjZXW2/jTsFj
-         H22n869HBvIfRV2IGcsLx9QTQcTdVfByo/pYwzVLntHP5FnGu2XiRfslUPcH/wpL7T0M
-         iwHkiNXzlS0fzGRo1hK7zRMnOROXAiR3LcZMifs+hWEtJ27JySUuN8snQef1gPdq3PvB
-         jMSfwhw6zl2TqvjYo2X6NRH8+0Fq8KtilkKpGgbbd7xTNxFmQZZ5PIPsH9hGXbjYmMtW
-         4I3w==
-X-Gm-Message-State: APjAAAU6Ukss2ZmonjGNw0J+j2eNeUtjHzENGsmmfZTDfd+/55lwY9b2
-        m654rxRIvh2gutQzzocH6KABpZtwtYU=
-X-Google-Smtp-Source: APXvYqzgUUr5dy9YGr8I65YQ7mSA9ladKPzlI9wj+1UbVd7FWJjv+4YAZ/HSCcTpsO6Il8Grn6ZqTQ==
-X-Received: by 2002:a2e:3207:: with SMTP id y7mr1459092ljy.117.1556220162548;
-        Thu, 25 Apr 2019 12:22:42 -0700 (PDT)
-Received: from [192.168.88.248] ([77.222.156.95])
-        by smtp.gmail.com with ESMTPSA id h123sm4909091lfe.96.2019.04.25.12.22.41
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Apr 2019 12:22:41 -0700 (PDT)
-Subject: Re: [PATCH RFT] i2c: designware: ratelimit 'transfer when suspended'
- errors
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20190424161632.4994-1-wsa+renesas@sang-engineering.com>
-From:   skidnik <skidnik@gmail.com>
-Message-ID: <1a8172c8-3d2e-1897-88dd-d86aa0130ed8@gmail.com>
-Date:   Thu, 25 Apr 2019 22:21:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190424161632.4994-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 25 Apr 2019 15:24:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=j2+3CwD3bY0kduLo8mFdXI4emoBewOG2I/Ww0ZqoiG0=; b=h1j+Uc8Ve9y9
+        h8A4wYspB/IxUIvKnpRWEn9oZtyBIRnKWAwEpW7HP0t178EA+VnCesEq1Xp5FaMGhm4c96KxcmTlz
+        Ra+XOBT68/WZndDKHm2eW94fu4TsQ5aR4DoDgoMpn3T+K87SyW2jpgx3YJnecX8X2AqXoS0A5sK6w
+        LXbRo=;
+Received: from 188.29.164.24.threembb.co.uk ([188.29.164.24] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hJjzD-0004aH-Nj; Thu, 25 Apr 2019 19:24:47 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 0C6BD441D3F; Thu, 25 Apr 2019 20:24:44 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Hoan Nguyen An <na-hoan@jinso.co.jp>
+Cc:     broonie@kernel.org, cv-dong@jinso.co.jp, geert+renesas@glider.be,
+        h-inayoshi@jinso.co.jp, kuninori.morimoto.gx@renesas.com,
+        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
+        magnus.damm@gmail.com, Mark Brown <broonie@kernel.org>,
+        na-hoan@jinso.co.jp, yoshihiro.shimoda.uh@renesas.com
+Subject: Applied "spi: rspi: Fix handling of QSPI code when transmit and receive" to the spi tree
+In-Reply-To: <1556011161-10847-1-git-send-email-na-hoan@jinso.co.jp>
+X-Patchwork-Hint: ignore
+Message-Id: <20190425192444.0C6BD441D3F@finisterre.ee.mobilebroadband>
+Date:   Thu, 25 Apr 2019 20:24:44 +0100 (BST)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 4/24/19 7:16 PM, Wolfram Sang wrote:
-> There are two problems with dev_err() here. One: It is not ratelimited.
-> Two: We don't see which driver tried to transfer something with a
-> suspended adapter. Switch to dev_WARN_ONCE to fix both issues. Drawback
-> is that we don't see if multiple drivers are trying to transfer while
-> suspended. They need to be discovered one after the other now. This is
-> better than a high CPU load because a really broken driver might try to
-> resend endlessly.
-> 
-> Link: https://bugs.archlinux.org/task/62391
-> Fixes: 275154155538 ("i2c: designware: Do not allow i2c_dw_xfer() calls while suspended")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> skdnik: Would you be so kind and test this patch? I can only build-test here.
-> 
-> I have a prototype to fix the similar issue in the core, but this needs more
-> testing first, so I am sending this one out already.
-> 
->   drivers/i2c/busses/i2c-designware-master.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-> index bb8e3f149979..d464799e40a3 100644
-> --- a/drivers/i2c/busses/i2c-designware-master.c
-> +++ b/drivers/i2c/busses/i2c-designware-master.c
-> @@ -426,8 +426,7 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
->   
->   	pm_runtime_get_sync(dev->dev);
->   
-> -	if (dev->suspended) {
-> -		dev_err(dev->dev, "Error %s call while suspended\n", __func__);
-> +	if (dev_WARN_ONCE(dev->dev, dev->suspended, "Transfer while suspended\n")) {
->   		ret = -ESHUTDOWN;
->   		goto done_nolock;
->   	}
-> 
-Patched, biult and tested. This is the new output:
+The patch
+
+   spi: rspi: Fix handling of QSPI code when transmit and receive
+
+has been applied to the spi tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 77d8063fe0a01effe93d95f2438668133c079c7d Mon Sep 17 00:00:00 2001
+From: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Date: Tue, 23 Apr 2019 18:19:21 +0900
+Subject: [PATCH] spi: rspi: Fix handling of QSPI code when transmit and
+ receive
+
+Process handling QSPI when transmit/receive at qspi_trigger_transfer_out_in() as follows:
+Setting the trigger, is the number of bytes in the FIFO buffer to determine
+when there is an interrupt. Then check if the value of triggering number is
+32-bytes or 1-byte, there will be corresponding processing
+Handling (if (n == QSPI_BUFFER_SIZE) esle) this is unnecessary, leads to the
+same processing of data transmission or reception, The difference here are with
+ret = rspi_wait_for_tx_empty(rspi);
+ret = rspi_wait_for_rx_full(rspi);
+
+When the nummber trigger is 32 bytes, we only write into FIFO when the FIFO is completely empty
+(interrupt transmission), and only receive if FIFO is full of 32 bytes of data.
+
+In the case of a nummber trigger that is 1 byte, in principle we still need to process
+rspi_wait_for_tx_empty/full so that FIFO is empty only with the amount of data we need to write to
+or equal to the number of bytes we need to receive, There is currently no processing of this.
+And in the current case with this patch, at this time it only needs at least 1 byte received in
+FIFO that has interrupt received, or FIFO at least 1bytes free can be written into FIFO,
+This patch therefore does not affect this processing.
+So we need to eliminate unnecessary waste processing (if (n == QSPI_BUFFER_SIZE) esle),
+more precisely in waiting for FIFO status.
+The same with handling in qspi_transfer_out()/qspi_transfer_in().
+
+Signed-off-by: Hoan Nguyen An <na-hoan@jinso.co.jp>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-[  285.441552] i2c_designware 808622C1:00: Transfer while suspended
-[  285.441595] WARNING: CPU: 2 PID: 1966 at 
-drivers/i2c/busses/i2c-designware-master.c:429 i2c_dw_xfer+0x23b/0x290
-[  285.441597] Modules linked in: 8021q garp mrp stp llc ccm 
-snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic 
-hid_sensor_gyro_3d hid_sensor_incl_3d hid_sens
-or_magn_3d hid_sensor_accel_3d hid_sensor_rotation hid_sensor_trigger 
-industrialio_triggered_buffer kfifo_buf hid_sensor_iio_common 
-industrialio btusb btrtl btbcm btintel
-  bluetooth uvcvideo ecdh_generic joydev mousedev intel_rapl 
-intel_powerclamp kvm_intel hid_rmi rmi_core kvm videobuf2_vmalloc 
-videobuf2_memops videobuf2_v4l2 arc4 videobu
-f2_common ofpart cmdlinepart videodev intel_spi_platform iwlmvm 
-intel_spi mac80211 spi_nor media irqbypass iTCO_wdt iTCO_vendor_support 
-i915 mtd nls_iso8859_1 crct10dif_p
-clmul nls_cp437 iwlwifi crc32_pclmul vfat fat ghash_clmulni_intel 
-wmi_bmof dell_wmi i2c_algo_bit snd_hda_intel drm_kms_helper dell_laptop 
-ledtrig_audio snd_hda_codec dell
-_smbios cfg80211 snd_hda_core aesni_intel dell_wmi_descriptor dcdbas 
-snd_hwdep dell_smm_hwmon aes_x86_64 snd_pcm crypto_simd drm cryptd 
-snd_timer glue_helper
-[  285.441696]  intel_cstate psmouse pcspkr input_leds snd mei_txe 
-tpm_crb soundcore intel_gtt mei agpgart lpc_ich i2c_i801 tpm_tis 
-tpm_tis_core syscopyarea sysfillrect s
-ysimgblt fb_sys_fops processor_thermal_device intel_xhci_usb_role_switch 
-roles intel_soc_dts_iosf tpm wmi battery rng_core i2c_hid dell_rbtn 
-evdev rfkill mac_hid pcc_cpuf
-req ac soc_button_array intel_vbtn int3403_thermal int3400_thermal 
-acpi_thermal_rel int340x_thermal_zone sparse_keymap coretemp msr 
-crypto_user ip_tables x_tables ext4 cr
-c32c_generic crc16 mbcache jbd2 sd_mod hid_sensor_hub hid_multitouch 
-hid_generic usbhid hid serio_raw atkbd libps2 ahci libahci xhci_pci 
-libata sdhci_pci crc32c_intel xhc
-i_hcd cqhci scsi_mod sdhci mmc_core i8042 serio
-[  285.441784] CPU: 2 PID: 1966 Comm: kworker/u8:56 Not tainted 
-5.1.0-rc6-mainline-master-00064-gcd8dead0c394 #1
-[  285.441788] Hardware name: Dell Inc. Inspiron 11-3168/0G70RP, BIOS 
-2.3.0 01/31/2018
-[  285.441796] Workqueue: events_unbound async_run_entry_fn
-[  285.441804] RIP: 0010:i2c_dw_xfer+0x23b/0x290
-[  285.441810] Code: 05 be 32 ca 00 01 48 85 ed 75 05 49 8b 6c 24 10 4c 
-89 e7 e8 f7 b5 f4 ff 48 89 ea 48 c7 c7 90 a7 b1 86 48 89 c6 e8 3f 6a a1 
-ff <0f> 0b bd 94 ff ff ff
-4c 8b 23 e9 49 fe ff ff 83 f8 01 74 14 8b 83
-[  285.441814] RSP: 0000:ffffb40a44d9fc70 EFLAGS: 00010282
-[  285.441819] RAX: 0000000000000000 RBX: ffff9e313a4d8818 RCX: 
-0000000000000000
-[  285.441822] RDX: 0000000000000000 RSI: 0000000000000096 RDI: 
-00000000ffffffff
-[  285.441824] RBP: ffff9e313a4bc640 R08: 0000000000000000 R09: 
-0000000000021500
-[  285.441828] R10: 000000097a05f1bc R11: 0000000000010148 R12: 
-ffff9e313a4ea810
-[  285.441831] R13: ffff9e313a4d88c8 R14: 00000000ffffee52 R15: 
-ffff9e313a4fb000
-[  285.441835] FS:  0000000000000000(0000) GS:ffff9e313bb00000(0000) 
-knlGS:0000000000000000
-[  285.441838] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  285.441840] CR2: 0000000000000000 CR3: 000000002b60e000 CR4: 
-00000000001006e0
-[  285.441844] Call Trace:
-[  285.441860]  __i2c_transfer+0x153/0x4a0
-[  285.441868]  i2c_transfer+0x51/0xc0
-[  285.441881]  __i2c_hid_command+0x1ed/0x2c0 [i2c_hid]
-[  285.441889]  ? finish_wait+0x2f/0x60
-[  285.441897]  ? _raw_spin_unlock_irqrestore+0x20/0x40
-[  285.441902]  ? async_synchronize_cookie_domain+0xdf/0x150
-[  285.441907]  ? wait_woken+0x80/0x80
-[  285.441915]  ? chv_gpio_irq_mask_unmask+0x2b/0xb0
-[  285.441923]  i2c_hid_set_power+0x6c/0x100 [i2c_hid]
-[  285.441931]  i2c_hid_resume+0x85/0x100 [i2c_hid]
-[  285.441939]  ? i2c_hid_runtime_resume+0x30/0x30 [i2c_hid]
-[  285.441945]  dpm_run_callback+0x4f/0x180
-[  285.441953]  device_resume+0xac/0x1f0
-[  285.441959]  async_resume+0x19/0x30
-[  285.441964]  async_run_entry_fn+0x37/0x140
-[  285.441972]  process_one_work+0x1eb/0x410
-[  285.441980]  worker_thread+0x2d/0x3d0
-[  285.441986]  ? process_one_work+0x410/0x410
-[  285.441991]  kthread+0x112/0x130
-[  285.441997]  ? kthread_park+0x80/0x80
-[  285.442003]  ret_from_fork+0x35/0x40
-[  285.442013] ---[ end trace c98b327600d4a21b ]---
-[  285.442042] i2c_hid i2c-DELL074D:00: failed to change power setting.
-[  285.442051] PM: dpm_run_callback(): i2c_hid_resume+0x0/0x100 
-[i2c_hid] returns -108
-[  285.442063] PM: Device i2c-DELL074D:00 failed to restore async: error 
--108
----
-outputs this once.
-Full dmesg from boot to resume from hibernation: 
-https://pastebin.com/raw/9akVTHL4
-sorry for the weird kernel naming.
-This solves system journal flooding, but I still have one core under 
-full load after resume from hibernation. The touchpad attached to that 
-bus works perfectly fine after resume.
+ drivers/spi/spi-rspi.c | 71 +++++++++++++++++-------------------------
+ 1 file changed, 28 insertions(+), 43 deletions(-)
+
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 3be8fbe80b08..15f5723d9f95 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -739,27 +739,22 @@ static int qspi_trigger_transfer_out_in(struct rspi_data *rspi, const u8 *tx,
+ 	while (len > 0) {
+ 		n = qspi_set_send_trigger(rspi, len);
+ 		qspi_set_receive_trigger(rspi, len);
+-		if (n == QSPI_BUFFER_SIZE) {
+-			ret = rspi_wait_for_tx_empty(rspi);
+-			if (ret < 0) {
+-				dev_err(&rspi->ctlr->dev, "transmit timeout\n");
+-				return ret;
+-			}
+-			for (i = 0; i < n; i++)
+-				rspi_write_data(rspi, *tx++);
++		ret = rspi_wait_for_tx_empty(rspi);
++		if (ret < 0) {
++			dev_err(&rspi->ctlr->dev, "transmit timeout\n");
++			return ret;
++		}
++		for (i = 0; i < n; i++)
++			rspi_write_data(rspi, *tx++);
+ 
+-			ret = rspi_wait_for_rx_full(rspi);
+-			if (ret < 0) {
+-				dev_err(&rspi->ctlr->dev, "receive timeout\n");
+-				return ret;
+-			}
+-			for (i = 0; i < n; i++)
+-				*rx++ = rspi_read_data(rspi);
+-		} else {
+-			ret = rspi_pio_transfer(rspi, tx, rx, n);
+-			if (ret < 0)
+-				return ret;
++		ret = rspi_wait_for_rx_full(rspi);
++		if (ret < 0) {
++			dev_err(&rspi->ctlr->dev, "receive timeout\n");
++			return ret;
+ 		}
++		for (i = 0; i < n; i++)
++			*rx++ = rspi_read_data(rspi);
++
+ 		len -= n;
+ 	}
+ 
+@@ -796,19 +791,14 @@ static int qspi_transfer_out(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 
+ 	while (n > 0) {
+ 		len = qspi_set_send_trigger(rspi, n);
+-		if (len == QSPI_BUFFER_SIZE) {
+-			ret = rspi_wait_for_tx_empty(rspi);
+-			if (ret < 0) {
+-				dev_err(&rspi->ctlr->dev, "transmit timeout\n");
+-				return ret;
+-			}
+-			for (i = 0; i < len; i++)
+-				rspi_write_data(rspi, *tx++);
+-		} else {
+-			ret = rspi_pio_transfer(rspi, tx, NULL, len);
+-			if (ret < 0)
+-				return ret;
++		ret = rspi_wait_for_tx_empty(rspi);
++		if (ret < 0) {
++			dev_err(&rspi->ctlr->dev, "transmit timeout\n");
++			return ret;
+ 		}
++		for (i = 0; i < len; i++)
++			rspi_write_data(rspi, *tx++);
++
+ 		n -= len;
+ 	}
+ 
+@@ -833,19 +823,14 @@ static int qspi_transfer_in(struct rspi_data *rspi, struct spi_transfer *xfer)
+ 
+ 	while (n > 0) {
+ 		len = qspi_set_receive_trigger(rspi, n);
+-		if (len == QSPI_BUFFER_SIZE) {
+-			ret = rspi_wait_for_rx_full(rspi);
+-			if (ret < 0) {
+-				dev_err(&rspi->ctlr->dev, "receive timeout\n");
+-				return ret;
+-			}
+-			for (i = 0; i < len; i++)
+-				*rx++ = rspi_read_data(rspi);
+-		} else {
+-			ret = rspi_pio_transfer(rspi, NULL, rx, len);
+-			if (ret < 0)
+-				return ret;
++		ret = rspi_wait_for_rx_full(rspi);
++		if (ret < 0) {
++			dev_err(&rspi->ctlr->dev, "receive timeout\n");
++			return ret;
+ 		}
++		for (i = 0; i < len; i++)
++			*rx++ = rspi_read_data(rspi);
++
+ 		n -= len;
+ 	}
+ 
+-- 
+2.20.1
+
