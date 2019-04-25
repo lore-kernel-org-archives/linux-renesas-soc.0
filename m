@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D18C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BB4C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EDFE20717
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D1820717
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 19:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1556220315;
+	s=default; t=1556220436;
 	bh=4GzDdv93DR0dvxuclbWUeFdx8hQo59ljV5CGKeXhVLA=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Z6Dx0n+vtTgUiWCktUYvw6EgoulOENSeI4epCrxjQkNFF6IAMIXdJgGjp3pi17MlV
-	 4b/32Eohy+zwg/7HHv3AHah/5+KOa3qJQL4C9y56f3AUE5xCfxZw6pYBdJJte1AuZZ
-	 fco/sRI0yUqxPddtcFWgUXys/kcmKVBj49UmHVT4=
+	b=2HK2vSt+A5LZmUwcqC5kbj6ZJVDpiH3Flr4u+URUAxwMOG1OCtma0W0hxhhJQw+AC
+	 n0sIFs5Pjq1VZ6ibJXWJyspHv3Tf1ZQ9zVMKzh8+8jWIPZW0iB8fA2hMuzNB5ZC0km
+	 g+EAEIucuzRavMwMG+ODp17Spwz/nkofI9+woYtI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbfDYTZO (ORCPT
+        id S1728062AbfDYT1P (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Apr 2019 15:25:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49610 "EHLO
+        Thu, 25 Apr 2019 15:27:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52838 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728999AbfDYTY6 (ORCPT
+        with ESMTP id S1730498AbfDYT0q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Apr 2019 15:24:58 -0400
+        Thu, 25 Apr 2019 15:26:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=j2+3CwD3bY0kduLo8mFdXI4emoBewOG2I/Ww0ZqoiG0=; b=h1j+Uc8Ve9y9
-        h8A4wYspB/IxUIvKnpRWEn9oZtyBIRnKWAwEpW7HP0t178EA+VnCesEq1Xp5FaMGhm4c96KxcmTlz
-        Ra+XOBT68/WZndDKHm2eW94fu4TsQ5aR4DoDgoMpn3T+K87SyW2jpgx3YJnecX8X2AqXoS0A5sK6w
-        LXbRo=;
+        List-Archive; bh=j2+3CwD3bY0kduLo8mFdXI4emoBewOG2I/Ww0ZqoiG0=; b=qdayETkbA1Ee
+        3MioKy+hT/TOh/2rLGgM/2tCVxpPsUfY73y+2m+YjyFzkcm7Y5SBVrCVRzzpDYvcCBPAzp97vYtYM
+        zCXQT1CTxlffqynPYj4dfZotjh/gUNXer+byxOOYVgTD+kqAEERaHW6upVY+JsQjk+FwCOFYTECQh
+        m+uIA=;
 Received: from 188.29.164.24.threembb.co.uk ([188.29.164.24] helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hJjzD-0004aH-Nj; Thu, 25 Apr 2019 19:24:47 +0000
+        id 1hJk12-0004f5-3r; Thu, 25 Apr 2019 19:26:40 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 0C6BD441D3F; Thu, 25 Apr 2019 20:24:44 +0100 (BST)
+        id 30A7C441D3E; Thu, 25 Apr 2019 20:26:39 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Hoan Nguyen An <na-hoan@jinso.co.jp>
 Cc:     broonie@kernel.org, cv-dong@jinso.co.jp, geert+renesas@glider.be,
@@ -55,8 +55,8 @@ Cc:     broonie@kernel.org, cv-dong@jinso.co.jp, geert+renesas@glider.be,
 Subject: Applied "spi: rspi: Fix handling of QSPI code when transmit and receive" to the spi tree
 In-Reply-To: <1556011161-10847-1-git-send-email-na-hoan@jinso.co.jp>
 X-Patchwork-Hint: ignore
-Message-Id: <20190425192444.0C6BD441D3F@finisterre.ee.mobilebroadband>
-Date:   Thu, 25 Apr 2019 20:24:44 +0100 (BST)
+Message-Id: <20190425192639.30A7C441D3E@finisterre.ee.mobilebroadband>
+Date:   Thu, 25 Apr 2019 20:26:39 +0100 (BST)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
