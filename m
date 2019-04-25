@@ -2,163 +2,82 @@ Return-Path: <SRS0=Fsko=S3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E2BC10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 11:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95622C43218
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 13:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B0862084B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 11:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70400206C1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 13:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfDYLM7 (ORCPT
+        id S1727588AbfDYNuJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Apr 2019 07:12:59 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:40959 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbfDYLM6 (ORCPT
+        Thu, 25 Apr 2019 09:50:09 -0400
+Received: from sauhun.de ([88.99.104.3]:45408 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726863AbfDYNuJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Apr 2019 07:12:58 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id B365E3C00D1;
-        Thu, 25 Apr 2019 13:12:54 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id FuD-uAvYsWA8; Thu, 25 Apr 2019 13:12:48 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 161BC3C0034;
-        Thu, 25 Apr 2019 13:12:48 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 25 Apr
- 2019 13:12:47 +0200
-Date:   Thu, 25 Apr 2019 13:12:45 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Simon Horman <horms+renesas@verge.net.au>,
-        Simon Horman <horms@verge.net.au>,
-        Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
-CC:     <magnus.damm@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-renesas-soc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tfranzen@de.adit-jv.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH] arm64: dts: ulcb-kf: Add support for TI WL1837
-Message-ID: <20190425111245.GA7258@vmlxhi-102.adit-jv.com>
-References: <20190411124102.22442-1-spapageorgiou@de.adit-jv.com>
+        Thu, 25 Apr 2019 09:50:09 -0400
+Received: from localhost (p5486CE26.dip0.t-ipconnect.de [84.134.206.38])
+        by pokefinder.org (Postfix) with ESMTPSA id E446F2CF687;
+        Thu, 25 Apr 2019 15:50:06 +0200 (CEST)
+Date:   Thu, 25 Apr 2019 15:50:06 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] i2c: core: ratelimit 'transfer when suspended' errors
+Message-ID: <20190425135006.3f6upe5tribls7wq@ninjato>
+References: <20190425082310.17109-1-wsa+renesas@sang-engineering.com>
+ <52b22d2a-d6b5-8443-a4d9-08c8c5381deb@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="e4ec264s4v4snwwx"
 Content-Disposition: inline
-In-Reply-To: <20190411124102.22442-1-spapageorgiou@de.adit-jv.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+In-Reply-To: <52b22d2a-d6b5-8443-a4d9-08c8c5381deb@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
 
-Do we have any chance getting this upstream? If so, would you kindly
-list the acceptance criteria we have to conform to?
+--e4ec264s4v4snwwx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Many thanks.
 
-On Thu, Apr 11, 2019 at 02:41:03PM +0200, Spyridon Papageorgiou wrote:
-> This patch adds description of TI WL1837 and links interfaces
-> to communicate with the IC, namely the SDIO interface to WLAN.
-> 
-> Signed-off-by: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
-> ---
->  arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 49 ++++++++++++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> index 7a09576..27851a7 100644
-> --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> @@ -38,6 +38,18 @@
->  		regulator-min-microvolt = <5000000>;
->  		regulator-max-microvolt = <5000000>;
->  	};
-> +
-> +	wlan_en: regulator-wlan_en {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "wlan-en-regulator";
-> +
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&gpio_exp_74 4 GPIO_ACTIVE_HIGH>;
-> +		startup-delay-us = <70000>;
-> +		enable-active-high;
-> +	};
->  };
->  
->  &can0 {
-> @@ -88,6 +100,13 @@
->  			line-name = "Audio_Out_OFF";
->  		};
->  
-> +		sd-wifi-mux {
-> +			gpio-hog;
-> +			gpios = <5 GPIO_ACTIVE_HIGH>;
-> +			output-low;	/* Connect WL1837 */
-> +			line-name = "SD WiFi mux";
-> +		};
-> +
->  		hub_pwen {
->  			gpio-hog;
->  			gpios = <6 GPIO_ACTIVE_HIGH>;
-> @@ -254,6 +273,12 @@
->  		function = "scif1";
->  	};
->  
-> +	sdhi3_pins: sdhi3 {
-> +		groups = "sdhi3_data4", "sdhi3_ctrl";
-> +		function = "sdhi3";
-> +		power-source = <3300>;
-> +	};
-> +
->  	usb0_pins: usb0 {
->  		groups = "usb0";
->  		function = "usb0";
-> @@ -273,6 +298,30 @@
->  	status = "okay";
->  };
->  
-> +&sdhi3 {
-> +	pinctrl-0 = <&sdhi3_pins>;
-> +	pinctrl-names = "default";
-> +
-> +	vmmc-supply = <&wlan_en>;
-> +	vqmmc-supply = <&wlan_en>;
-> +	bus-width = <4>;
-> +	no-1-8-v;
-> +	non-removable;
-> +	cap-power-off-card;
-> +	keep-power-in-suspend;
-> +	max-frequency = <26000000>;
-> +	status = "okay";
-> +
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	wlcore: wlcore@2 {
-> +		compatible = "ti,wl1837";
-> +		reg = <2>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-> +	};
-> +};
-> +
->  &usb2_phy0 {
->  	pinctrl-0 = <&usb0_pins>;
->  	pinctrl-names = "default";
-> -- 
-> 2.7.4
-> 
+> Am I missing something, or do we need to add an -ESHUTDOWN test
+> to i2c-core-smbus.c:__i2c_smbus_xfer()?
 
--- 
-Best regards,
-Eugeniu.
+I think you are right, SMBus was simply missed. I will refactor the
+check to an inline function and apply it to I2C and SMBus. Thanks for
+the heads up!
+
+
+--e4ec264s4v4snwwx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzBuwoACgkQFA3kzBSg
+KbY++hAAsh4NfBATRt06UlQy3fAPb02P2s/kUDGMBJPLt8mYT6/wMFx2hhyxDXJZ
+kyYvPWruuoaKNbI3rB6BvIw27FdZ/sEO+jvwwhE13ctSjxpo1qJKY+IiHc7l3N+A
+7WdKbaCwE1vqbodcgCA98EltxCxbsQNbqgYSe80/dS3X8LzQ5gFy+zvfQ8dwOXRn
+2N0tLZi+XrmCAaqwnmMT+hEvwzeiSTCcqsd+e0YXBPC4bj2i3F1ySp/2rcQbgPMc
+Zg9PIOOt1LKQkHWq/stjgU63aX7urkTn5OVjRw6w91DX/BhtFNTFHHVGO1HLPIvD
+qGTLkjsT2mev+ON+S7ugXO8TShMyXMSYJNCLk07J3TdMDjUBMdB3pzDHLwm+/tAJ
+c+K0+Qc2lyxQgdFOXyc94n4GlYwORNRw+htU1DsAgG3rG3v6EKnkIBgpDCgJoUzI
+qUmclpOKsUlAbnpPieYDtcD3jQxEaXtKd1MkZ/R3yn/ZmA8vsjcuRzAPOAMHxXK3
+JZao28h7aIiz4KExLOIneS1nU5iw5N7V51QP/l/Q18gmFULqeuap1w6EFSUBv87m
+7W1Kh3f+xDGsElHOnrL20YPTQRT699KspjgNRw/lrjEIUtyEzAtVT1ueXFFZWExm
+ZPBaV22DuFg3eC2bBdPhn7O0ygakMh2+odNmd80k9n+PQ78ZYlA=
+=Ouuw
+-----END PGP SIGNATURE-----
+
+--e4ec264s4v4snwwx--
