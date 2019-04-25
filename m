@@ -6,89 +6,95 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5055EC10F03
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 08:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF556C10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 09:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 280DD217FA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 08:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96626217D7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 09:55:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbfDYIXT (ORCPT
+        id S1728924AbfDYJzr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Apr 2019 04:23:19 -0400
-Received: from sauhun.de ([88.99.104.3]:43880 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727055AbfDYIXT (ORCPT
+        Thu, 25 Apr 2019 05:55:47 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45884 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728775AbfDYJzq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Apr 2019 04:23:19 -0400
-Received: from localhost (p5486CE26.dip0.t-ipconnect.de [84.134.206.38])
-        by pokefinder.org (Postfix) with ESMTPSA id 6C22A2CF687;
-        Thu, 25 Apr 2019 10:23:17 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: core: ratelimit 'transfer when suspended' errors
-Date:   Thu, 25 Apr 2019 10:23:10 +0200
-Message-Id: <20190425082310.17109-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 25 Apr 2019 05:55:46 -0400
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id 4Zvk200023XaVaC01ZvkWR; Thu, 25 Apr 2019 11:55:44 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hJb6V-0003Wv-VV; Thu, 25 Apr 2019 11:55:43 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hJb6V-0000Ch-US; Thu, 25 Apr 2019 11:55:43 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/4] pinctrl: sh-pfc: Validate pin tables at runtime
+Date:   Thu, 25 Apr 2019 11:55:42 +0200
+Message-Id: <20190425095542.726-5-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190425095542.726-1-geert+renesas@glider.be>
+References: <20190425095542.726-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There are two problems with WARN_ON() here. One: It is not ratelimited.
-Two: We don't see which adapter was used when trying to transfer
-something when already suspended. Implement a custom ratelimit once per
-adapter and use dev_WARN there. This fixes both issues. Drawback is that
-we don't see if multiple drivers are trying to transfer with the same
-adapter while suspended. They need to be discovered one after the other
-now. This is better than a high CPU load because a really broken driver
-might try to resend endlessly.
+Extend the run-time debug code with checks to ensure there are no
+conflicting pin names, numbers, or enumeration values.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This helps catching bugs early.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+ drivers/pinctrl/sh-pfc/core.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-So, Simon had a point with his review comment back then, and I think we now
-found a properly balanced way. Tested with a Renesas Lager board (R-Car H2). I
-decided against dev_WARN_ONCE because that seems too coarse grained for my
-taste (once per system) and the custom implementation is small.
-
- drivers/i2c/i2c-core-base.c | 5 ++++-
- include/linux/i2c.h         | 3 ++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 4e6300dc2c4e..f8e85983cb04 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1867,8 +1867,11 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index 889e5af281022e1d..3009508f466cf766 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -773,6 +773,35 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
  
- 	if (WARN_ON(!msgs || num < 1))
- 		return -EINVAL;
--	if (WARN_ON(test_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags)))
-+	if (test_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags)) {
-+		if (!test_and_set_bit(I2C_ALF_SUSPEND_REPORTED, &adap->locked_flags))
-+			dev_WARN(&adap->dev, "Transfer while suspended\n");
- 		return -ESHUTDOWN;
+ 	pr_info("Checking %s\n", drvname);
+ 
++	/* Check pins */
++	for (i = 0; i < info->nr_pins; i++) {
++		for (j = 0; j < i; j++) {
++			if (!strcmp(info->pins[i].name, info->pins[j].name)) {
++				pr_err("%s: pin %s/%s: name conflict\n",
++				       drvname, info->pins[i].name,
++				       info->pins[j].name);
++				sh_pfc_errors++;
++			}
++
++			if (info->pins[i].pin != (u16)-1 &&
++			    info->pins[i].pin == info->pins[j].pin) {
++				pr_err("%s: pin %s/%s: pin %u conflict\n",
++				       drvname, info->pins[i].name,
++				       info->pins[j].name, info->pins[i].pin);
++				sh_pfc_errors++;
++			}
++
++			if (info->pins[i].enum_id &&
++			    info->pins[i].enum_id == info->pins[j].enum_id) {
++				pr_err("%s: pin %s/%s: enum_id %u conflict\n",
++				       drvname, info->pins[i].name,
++				       info->pins[j].name,
++				       info->pins[i].enum_id);
++				sh_pfc_errors++;
++			}
++		}
 +	}
- 
- 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
- 		return -EOPNOTSUPP;
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 03755d4c9229..be27062f8ed1 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -694,7 +694,8 @@ struct i2c_adapter {
- 	int retries;
- 	struct device dev;		/* the adapter device */
- 	unsigned long locked_flags;	/* owned by the I2C core */
--#define I2C_ALF_IS_SUSPENDED	0
-+#define I2C_ALF_IS_SUSPENDED		0
-+#define I2C_ALF_SUSPEND_REPORTED	1
- 
- 	int nr;
- 	char name[48];
++
+ 	/* Check groups and functions */
+ 	refcnts = kcalloc(info->nr_groups, sizeof(*refcnts), GFP_KERNEL);
+ 	if (!refcnts)
 -- 
-2.11.0
+2.17.1
 
