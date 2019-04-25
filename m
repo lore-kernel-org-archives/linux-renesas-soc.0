@@ -2,77 +2,93 @@ Return-Path: <SRS0=Fsko=S3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCD3C282E1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 08:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5055EC10F03
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 08:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD7A214AE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 08:19:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 280DD217FA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Apr 2019 08:23:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfDYITm (ORCPT
+        id S1727268AbfDYIXT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Apr 2019 04:19:42 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58056 "EHLO mga04.intel.com"
+        Thu, 25 Apr 2019 04:23:19 -0400
+Received: from sauhun.de ([88.99.104.3]:43880 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfDYITl (ORCPT
+        id S1727055AbfDYIXT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Apr 2019 04:19:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Apr 2019 01:19:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,393,1549958400"; 
-   d="scan'208";a="226530485"
-Received: from mylly.fi.intel.com (HELO [10.237.72.79]) ([10.237.72.79])
-  by orsmga001.jf.intel.com with ESMTP; 25 Apr 2019 01:19:39 -0700
-Subject: Re: [PATCH RFT] i2c: designware: ratelimit 'transfer when suspended'
- errors
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org
-Cc:     skidnik <skidnik@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20190424161632.4994-1-wsa+renesas@sang-engineering.com>
-From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <440c64b6-0e77-4534-4ad7-2ab6b4a64edc@linux.intel.com>
-Date:   Thu, 25 Apr 2019 11:18:18 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190424161632.4994-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 25 Apr 2019 04:23:19 -0400
+Received: from localhost (p5486CE26.dip0.t-ipconnect.de [84.134.206.38])
+        by pokefinder.org (Postfix) with ESMTPSA id 6C22A2CF687;
+        Thu, 25 Apr 2019 10:23:17 +0200 (CEST)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] i2c: core: ratelimit 'transfer when suspended' errors
+Date:   Thu, 25 Apr 2019 10:23:10 +0200
+Message-Id: <20190425082310.17109-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 4/24/19 7:16 PM, Wolfram Sang wrote:
-> There are two problems with dev_err() here. One: It is not ratelimited.
-> Two: We don't see which driver tried to transfer something with a
-> suspended adapter. Switch to dev_WARN_ONCE to fix both issues. Drawback
-> is that we don't see if multiple drivers are trying to transfer while
-> suspended. They need to be discovered one after the other now. This is
-> better than a high CPU load because a really broken driver might try to
-> resend endlessly.
-> 
-> Link: https://bugs.archlinux.org/task/62391
-> Fixes: 275154155538 ("i2c: designware: Do not allow i2c_dw_xfer() calls while suspended")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> skdnik: Would you be so kind and test this patch? I can only build-test here.
-> 
-> I have a prototype to fix the similar issue in the core, but this needs more
-> testing first, so I am sending this one out already.
-> 
->   drivers/i2c/busses/i2c-designware-master.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+There are two problems with WARN_ON() here. One: It is not ratelimited.
+Two: We don't see which adapter was used when trying to transfer
+something when already suspended. Implement a custom ratelimit once per
+adapter and use dev_WARN there. This fixes both issues. Drawback is that
+we don't see if multiple drivers are trying to transfer with the same
+adapter while suspended. They need to be discovered one after the other
+now. This is better than a high CPU load because a really broken driver
+might try to resend endlessly.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+
+So, Simon had a point with his review comment back then, and I think we now
+found a properly balanced way. Tested with a Renesas Lager board (R-Car H2). I
+decided against dev_WARN_ONCE because that seems too coarse grained for my
+taste (once per system) and the custom implementation is small.
+
+ drivers/i2c/i2c-core-base.c | 5 ++++-
+ include/linux/i2c.h         | 3 ++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 4e6300dc2c4e..f8e85983cb04 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -1867,8 +1867,11 @@ int __i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
+ 
+ 	if (WARN_ON(!msgs || num < 1))
+ 		return -EINVAL;
+-	if (WARN_ON(test_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags)))
++	if (test_bit(I2C_ALF_IS_SUSPENDED, &adap->locked_flags)) {
++		if (!test_and_set_bit(I2C_ALF_SUSPEND_REPORTED, &adap->locked_flags))
++			dev_WARN(&adap->dev, "Transfer while suspended\n");
+ 		return -ESHUTDOWN;
++	}
+ 
+ 	if (adap->quirks && i2c_check_for_quirks(adap, msgs, num))
+ 		return -EOPNOTSUPP;
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 03755d4c9229..be27062f8ed1 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -694,7 +694,8 @@ struct i2c_adapter {
+ 	int retries;
+ 	struct device dev;		/* the adapter device */
+ 	unsigned long locked_flags;	/* owned by the I2C core */
+-#define I2C_ALF_IS_SUSPENDED	0
++#define I2C_ALF_IS_SUSPENDED		0
++#define I2C_ALF_SUSPEND_REPORTED	1
+ 
+ 	int nr;
+ 	char name[48];
+-- 
+2.11.0
+
