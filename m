@@ -2,47 +2,50 @@ Return-Path: <SRS0=L5iE=S4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D08C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DAFC43218
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC0120679
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 336A520679
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbfDZJxQ (ORCPT
+        id S1726068AbfDZJzR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Apr 2019 05:53:16 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45822 "EHLO
+        Fri, 26 Apr 2019 05:55:17 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:45932 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfDZJxP (ORCPT
+        with ESMTP id S1725901AbfDZJzQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Apr 2019 05:53:15 -0400
+        Fri, 26 Apr 2019 05:55:16 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id B6CE725AD60;
-        Fri, 26 Apr 2019 19:53:13 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6F9F925AD60;
+        Fri, 26 Apr 2019 19:55:13 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id CAAB99403ED; Fri, 26 Apr 2019 11:53:11 +0200 (CEST)
-Date:   Fri, 26 Apr 2019 11:53:11 +0200
+        id 710219403ED; Fri, 26 Apr 2019 11:55:11 +0200 (CEST)
+Date:   Fri, 26 Apr 2019 11:55:11 +0200
 From:   Simon Horman <horms@verge.net.au>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: Add check for empty pinmux
- groups/functions
-Message-ID: <20190426095311.xu7yo7cksqiwznek@verge.net.au>
-References: <20190425095542.726-1-geert+renesas@glider.be>
- <20190425095542.726-4-geert+renesas@glider.be>
- <20190426093454.pvmc426w5wca2jj3@verge.net.au>
- <CAMuHMdW1T-LCRN0R=3bh1gq1Ai3g1jgy8jcxQP6Xd0uVDeHHwA@mail.gmail.com>
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: Re: [PATCH repost] thermal: rcar_thermal: update calculation formula
+ for E3
+Message-ID: <20190426095511.tkgbxkf43psesgkv@verge.net.au>
+References: <20190418071514.13027-1-horms+renesas@verge.net.au>
+ <20190418081209.GT28515@bigcity.dyn.berto.se>
+ <CAMuHMdVX5t-Q5tM5bj95muAZ+8+phohtQSsAO-rCeCofiqVMKQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdW1T-LCRN0R=3bh1gq1Ai3g1jgy8jcxQP6Xd0uVDeHHwA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdVX5t-Q5tM5bj95muAZ+8+phohtQSsAO-rCeCofiqVMKQ@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -50,49 +53,87 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 11:42:11AM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
+On Wed, Apr 24, 2019 at 09:10:56AM +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
 > 
-> On Fri, Apr 26, 2019 at 11:35 AM Simon Horman <horms@verge.net.au> wrote:
-> > On Thu, Apr 25, 2019 at 11:55:41AM +0200, Geert Uytterhoeven wrote:
-> > > The pinmux groups and functions arrays may contain two parts, to ease
-> > > supporting SoCs that expose pin subsets of other related SoCs.  Both
-> > > parts need to be declared with explicit sizes, which thus need to be
-> > > updated when adding support for more groups and functions.
+> On Thu, Apr 18, 2019 at 10:12 AM Niklas Söderlund
+> <niklas.soderlund@ragnatech.se> wrote:
+> > On 2019-04-18 09:15:14 +0200, Simon Horman wrote:
+> > > From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 > > >
-> > > If a size is too small, the compiler will detect this at build time
-> > > ("excess elements in array initializer").
-> > > If a size is too large, this may go undetected (for pin groups), lead to
-> > > pin controller registration failures (for pin functions: "pinmux ops has
-> > > no name for functionN"), or crash the optional run-time debug code (for
-> > > pin groups).
-> > >
-> > > Extend the run-time debug code with checks to detect this, to help
-> > > catching bugs early.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > HW manual changes temperature calculation formula for E3:
 > >
-> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> 
-> Thank you!
-> 
-> > > --- a/drivers/pinctrl/sh-pfc/core.c
-> > > +++ b/drivers/pinctrl/sh-pfc/core.c
-> > > @@ -780,9 +780,15 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
-> > >
-> > >       for (i = 0; i < info->nr_functions; i++) {
-> > >               func = &info->functions[i];
-> > > +             if (!func->name) {
-> > > +                     pr_err("%s: empty function %u\n", drvname, i);
-> > > +                     sh_pfc_errors++;
+> > Is this not also true for V3M and D3?
 > >
-> > Not strictly related to this patch but did
-> > you consider not having sh_pfc_errors global to this file?
+> > > - When CTEMP is less than 24
+> > >    T = CTEMP[5:0] * 5.5 - 72
+> > > - When CTEMP is equal to/greater than 24
+> > >    T = CTEMP[5:0] * 5 - 60
+> > >
+> > > This was inspired by a patch in the BSP by Van Do <van.do.xw@renesas.com>
+> > >
+> > > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+> > > Tested-by: Simon Horman <horms+renesas@verge.net.au>
+> > > Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> > > ---
+> > >  drivers/thermal/rcar_thermal.c | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+> > > index 97462e9b40d8..11df0cc63bed 100644
+> > > --- a/drivers/thermal/rcar_thermal.c
+> > > +++ b/drivers/thermal/rcar_thermal.c
+> > > @@ -52,6 +52,7 @@ struct rcar_thermal_chip {
+> > >       unsigned int irq_per_ch : 1;
+> > >       unsigned int needs_suspend_resume : 1;
+> > >       unsigned int nirqs;
+> > > +     unsigned int ctemp_bands;
+> >
+> > Would it be possible to rename this to something indicating that this is
+> > a gen3 thing? Maybe move it to the bit fields above and name it gen3 ?
 > 
-> Do you have an alternative?
-> I could hide it, and combine it with the pr_err() in a sh_pfc_report_error()
-> function, but it would still be global.
+> Is that really a good thing to do? This structure describes features of
+> the thermal module, and we're already beyond the point where a simple
+> check  for gen2 or gen3 was sufficient.
+> Here the feature is having multiple temperature bands.
+> What if some other Gen3 SoC starts having 3 temperature bands?
+> 
+> > > @@ -263,7 +267,12 @@ static int rcar_thermal_get_current_temp(struct rcar_thermal_priv *priv,
+> > >               return ret;
+> > >
+> > >       mutex_lock(&priv->lock);
+> > > -     tmp =  MCELSIUS((priv->ctemp * 5) - 65);
+> > > +     if (priv->chip->ctemp_bands == 1)
+> > > +             tmp =  MCELSIUS((priv->ctemp * 5) - 65);
+> > > +     else if (priv->ctemp < 24)
+> > > +             tmp = MCELSIUS(((priv->ctemp * 55) - 720) / 10);
+> > > +     else
+> > > +             tmp = MCELSIUS((priv->ctemp * 5) - 60);
+> >
+> > I confirm that the calculations here are correct, but hard to read ;-)
+> > With the rename about how about.
+> >
+> >     if (priv->chip->gen3) {
+> >         if (priv->ctemp < 24)
+> >                 tmp = MCELSIUS(((priv->ctemp * 55) - 720) / 10);
+> >         else
+> >                 tmp = MCELSIUS((priv->ctemp * 5) - 60);
+> >     } else {
+> >             tmp =  MCELSIUS((priv->ctemp * 5) - 65);
+> >     }
+> 
+> _Iff_ we decide on going for the rename, I'd still write it as:
+> 
+>     if (!priv->chip->gen3)
+>             tmp =  MCELSIUS((priv->ctemp * 5) - 65);
+>     else if (priv->ctemp < 24)
+>             tmp = MCELSIUS(((priv->ctemp * 55) - 720) / 10);
+>     else
+>             tmp = MCELSIUS((priv->ctemp * 5) - 60);
+> 
+> Always fold your if/else if/else constructs to minimize the need for indentation
+> and braces ;-)
 
-I didn't look carefully for an alternative.
-If its not practical to pass around a local variable then
-I'm happy with the current setup.
+From my PoV I think the patch is fine in its current form.
+Niklas do you feel particularly strongly about changing it?
