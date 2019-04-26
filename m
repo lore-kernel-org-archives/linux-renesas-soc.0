@@ -2,138 +2,88 @@ Return-Path: <SRS0=L5iE=S4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DAFC43218
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A48EC43218
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:56:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 336A520679
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C6020679
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726068AbfDZJzR (ORCPT
+        id S1726155AbfDZJ4D (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Apr 2019 05:55:17 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45932 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfDZJzQ (ORCPT
+        Fri, 26 Apr 2019 05:56:03 -0400
+Received: from sauhun.de ([88.99.104.3]:51316 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbfDZJ4D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Apr 2019 05:55:16 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 6F9F925AD60;
-        Fri, 26 Apr 2019 19:55:13 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 710219403ED; Fri, 26 Apr 2019 11:55:11 +0200 (CEST)
-Date:   Fri, 26 Apr 2019 11:55:11 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Subject: Re: [PATCH repost] thermal: rcar_thermal: update calculation formula
- for E3
-Message-ID: <20190426095511.tkgbxkf43psesgkv@verge.net.au>
-References: <20190418071514.13027-1-horms+renesas@verge.net.au>
- <20190418081209.GT28515@bigcity.dyn.berto.se>
- <CAMuHMdVX5t-Q5tM5bj95muAZ+8+phohtQSsAO-rCeCofiqVMKQ@mail.gmail.com>
+        Fri, 26 Apr 2019 05:56:03 -0400
+Received: from localhost (p5486CFAE.dip0.t-ipconnect.de [84.134.207.174])
+        by pokefinder.org (Postfix) with ESMTPSA id 2066D2C0114;
+        Fri, 26 Apr 2019 11:56:01 +0200 (CEST)
+Date:   Fri, 26 Apr 2019 11:56:00 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/3] mmc: tmio: add init_card ops
+Message-ID: <20190426095600.GE1031@kunai>
+References: <1556255930-18188-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1556255930-18188-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <20190426094500.66fg3treuml6v47u@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kA1LkgxZ0NN7Mz3A"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVX5t-Q5tM5bj95muAZ+8+phohtQSsAO-rCeCofiqVMKQ@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190426094500.66fg3treuml6v47u@verge.net.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 24, 2019 at 09:10:56AM +0200, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Thu, Apr 18, 2019 at 10:12 AM Niklas Söderlund
-> <niklas.soderlund@ragnatech.se> wrote:
-> > On 2019-04-18 09:15:14 +0200, Simon Horman wrote:
-> > > From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> > >
-> > > HW manual changes temperature calculation formula for E3:
-> >
-> > Is this not also true for V3M and D3?
-> >
-> > > - When CTEMP is less than 24
-> > >    T = CTEMP[5:0] * 5.5 - 72
-> > > - When CTEMP is equal to/greater than 24
-> > >    T = CTEMP[5:0] * 5 - 60
-> > >
-> > > This was inspired by a patch in the BSP by Van Do <van.do.xw@renesas.com>
-> > >
-> > > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> > > Tested-by: Simon Horman <horms+renesas@verge.net.au>
-> > > Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > > ---
-> > >  drivers/thermal/rcar_thermal.c | 11 ++++++++++-
-> > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
-> > > index 97462e9b40d8..11df0cc63bed 100644
-> > > --- a/drivers/thermal/rcar_thermal.c
-> > > +++ b/drivers/thermal/rcar_thermal.c
-> > > @@ -52,6 +52,7 @@ struct rcar_thermal_chip {
-> > >       unsigned int irq_per_ch : 1;
-> > >       unsigned int needs_suspend_resume : 1;
-> > >       unsigned int nirqs;
-> > > +     unsigned int ctemp_bands;
-> >
-> > Would it be possible to rename this to something indicating that this is
-> > a gen3 thing? Maybe move it to the bit fields above and name it gen3 ?
-> 
-> Is that really a good thing to do? This structure describes features of
-> the thermal module, and we're already beyond the point where a simple
-> check  for gen2 or gen3 was sufficient.
-> Here the feature is having multiple temperature bands.
-> What if some other Gen3 SoC starts having 3 temperature bands?
-> 
-> > > @@ -263,7 +267,12 @@ static int rcar_thermal_get_current_temp(struct rcar_thermal_priv *priv,
-> > >               return ret;
-> > >
-> > >       mutex_lock(&priv->lock);
-> > > -     tmp =  MCELSIUS((priv->ctemp * 5) - 65);
-> > > +     if (priv->chip->ctemp_bands == 1)
-> > > +             tmp =  MCELSIUS((priv->ctemp * 5) - 65);
-> > > +     else if (priv->ctemp < 24)
-> > > +             tmp = MCELSIUS(((priv->ctemp * 55) - 720) / 10);
-> > > +     else
-> > > +             tmp = MCELSIUS((priv->ctemp * 5) - 60);
-> >
-> > I confirm that the calculations here are correct, but hard to read ;-)
-> > With the rename about how about.
-> >
-> >     if (priv->chip->gen3) {
-> >         if (priv->ctemp < 24)
-> >                 tmp = MCELSIUS(((priv->ctemp * 55) - 720) / 10);
-> >         else
-> >                 tmp = MCELSIUS((priv->ctemp * 5) - 60);
-> >     } else {
-> >             tmp =  MCELSIUS((priv->ctemp * 5) - 65);
-> >     }
-> 
-> _Iff_ we decide on going for the rename, I'd still write it as:
-> 
->     if (!priv->chip->gen3)
->             tmp =  MCELSIUS((priv->ctemp * 5) - 65);
->     else if (priv->ctemp < 24)
->             tmp = MCELSIUS(((priv->ctemp * 55) - 720) / 10);
->     else
->             tmp = MCELSIUS((priv->ctemp * 5) - 60);
-> 
-> Always fold your if/else if/else constructs to minimize the need for indentation
-> and braces ;-)
 
-From my PoV I think the patch is fine in its current form.
-Niklas do you feel particularly strongly about changing it?
+--kA1LkgxZ0NN7Mz3A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Apr 26, 2019 at 11:45:01AM +0200, Simon Horman wrote:
+> On Fri, Apr 26, 2019 at 02:18:48PM +0900, Yoshihiro Shimoda wrote:
+> > Since renesas_sdhi_internal_dmac driver would like to use
+> > the init_card() ops in the future, this patch adds init_card ops
+> > into the struct tmio_mmc_host and struct tmio_mmc_dma_ops.
+> >=20
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+>=20
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+Don't you think this not needed anymore in context with all the
+refactoring around 2aaa3c5193db ("mmc: tmio, renesas_sdhi: set
+mmc_host_ops hooks directly")?
+
+
+--kA1LkgxZ0NN7Mz3A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzC1bAACgkQFA3kzBSg
+KbbeuQ/9H69WmEWVTWygSKkVmI/ij/EAIFXid3ccbNSWj7Z2U66xgx5yDTQSr9Fl
+NwL43RYXyQydGuq9UUGXmuqGt+LAivVifpZYMHla9xFpW86pHBBVtPK2jWy00YJ9
+NTfr1y9JCxC5CWKDLZP6wrzTlHK4e2AEix4g7tVoeBJWGy3ZuxUSoUEl7Nqc7giT
+TVaR36Q78b7h0BaALxcrc+spNA9A0xQysN3mALMKWdhh18Zw+xRG9sgpKa7G3BWm
+niA31nSI1ErnITAa0s8QHPLSgIfG5yhBJP4INWebPpl71Er1Rzz/hMqm8Wh7SiqR
+FEG/CHJrY1EvihTjNMoNrhr7a40BpAWLGRb3u2bbIj0xI5yujz+fVTJiqZiT6cBq
+LEDPQbZVqe+2pRRUiicbHKMYcC++fqRghz3jJhEW9uCDilzgoouZ8x6cvNn9a+G+
+9mjqcGrTmNV9/GALzJHU1m7uxiRbE4ro6NwRUaJ/NHSw+f4WhjPO/Sigz85YwSPc
+CpfheRICdo/0WbsX/dWKbsMWbqbxygW+jlzvOkaoPzDsufv0UTlZuv62NQlFb9D6
+O/+6c4WYa+7dQPbfE3phWHgGZO9hxWn6E1Oolj0G51MxYPTbiefCvwzIhY22xJLm
+CazLmU+mOAXp+e502RoTeQkxgtFQHVa6c1APM9uI70J4Qis6O48=
+=tkBx
+-----END PGP SIGNATURE-----
+
+--kA1LkgxZ0NN7Mz3A--
