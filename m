@@ -2,44 +2,45 @@ Return-Path: <SRS0=L5iE=S4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3D1C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C82C43218
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54FF02089E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7AF206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfDZJoc (ORCPT
+        id S1726167AbfDZJuS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Apr 2019 05:44:32 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45024 "EHLO
+        Fri, 26 Apr 2019 05:50:18 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:45652 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727225AbfDZJob (ORCPT
+        with ESMTP id S1726048AbfDZJuS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Apr 2019 05:44:31 -0400
+        Fri, 26 Apr 2019 05:50:18 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5409F25AEA8;
-        Fri, 26 Apr 2019 19:44:29 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0012425AEA8;
+        Fri, 26 Apr 2019 19:50:14 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 224D69403ED; Fri, 26 Apr 2019 11:44:27 +0200 (CEST)
-Date:   Fri, 26 Apr 2019 11:44:27 +0200
+        id 57ED29403ED; Fri, 26 Apr 2019 11:50:12 +0200 (CEST)
+Date:   Fri, 26 Apr 2019 11:50:12 +0200
 From:   Simon Horman <horms@verge.net.au>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Peter Rosin <peda@axentia.se>,
-        linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v2 1/2] i2c: core: ratelimit 'transfer when suspended'
- errors
-Message-ID: <20190426094426.uvjkaelbl7fvvxqf@verge.net.au>
-References: <20190425141948.29255-1-wsa+renesas@sang-engineering.com>
- <20190425141948.29255-2-wsa+renesas@sang-engineering.com>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>,
+        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tfranzen@de.adit-jv.com,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH] arm64: dts: ulcb-kf: Add support for TI WL1837
+Message-ID: <20190426095012.xzyzevvmom4fzdcd@verge.net.au>
+References: <20190411124102.22442-1-spapageorgiou@de.adit-jv.com>
+ <20190425111245.GA7258@vmlxhi-102.adit-jv.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190425141948.29255-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190425111245.GA7258@vmlxhi-102.adit-jv.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -47,17 +48,115 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 04:19:47PM +0200, Wolfram Sang wrote:
-> There are two problems with WARN_ON() here. One: It is not ratelimited.
-> Two: We don't see which adapter was used when trying to transfer
-> something when already suspended. Implement a custom ratelimit once per
-> adapter and use dev_WARN there. This fixes both issues. Drawback is that
-> we don't see if multiple drivers are trying to transfer with the same
-> adapter while suspended. They need to be discovered one after the other
-> now. This is better than a high CPU load because a really broken driver
-> might try to resend endlessly.
-> 
-> Fixes: 9ac6cb5fbb17 ("i2c: add suspended flag and accessors for i2c adapters")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi,
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+from my point of view what is required is a review.
+I will try to find someone to do so.
+I apologise for not doing so earlier.
+
+On Thu, Apr 25, 2019 at 01:12:45PM +0200, Eugeniu Rosca wrote:
+> Hi Simon,
+> 
+> Do we have any chance getting this upstream? If so, would you kindly
+> list the acceptance criteria we have to conform to?
+> 
+> Many thanks.
+> 
+> On Thu, Apr 11, 2019 at 02:41:03PM +0200, Spyridon Papageorgiou wrote:
+> > This patch adds description of TI WL1837 and links interfaces
+> > to communicate with the IC, namely the SDIO interface to WLAN.
+> > 
+> > Signed-off-by: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
+> > ---
+> >  arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 49 ++++++++++++++++++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> > index 7a09576..27851a7 100644
+> > --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+> > @@ -38,6 +38,18 @@
+> >  		regulator-min-microvolt = <5000000>;
+> >  		regulator-max-microvolt = <5000000>;
+> >  	};
+> > +
+> > +	wlan_en: regulator-wlan_en {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-name = "wlan-en-regulator";
+> > +
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +
+> > +		gpio = <&gpio_exp_74 4 GPIO_ACTIVE_HIGH>;
+> > +		startup-delay-us = <70000>;
+> > +		enable-active-high;
+> > +	};
+> >  };
+> >  
+> >  &can0 {
+> > @@ -88,6 +100,13 @@
+> >  			line-name = "Audio_Out_OFF";
+> >  		};
+> >  
+> > +		sd-wifi-mux {
+> > +			gpio-hog;
+> > +			gpios = <5 GPIO_ACTIVE_HIGH>;
+> > +			output-low;	/* Connect WL1837 */
+> > +			line-name = "SD WiFi mux";
+> > +		};
+> > +
+> >  		hub_pwen {
+> >  			gpio-hog;
+> >  			gpios = <6 GPIO_ACTIVE_HIGH>;
+> > @@ -254,6 +273,12 @@
+> >  		function = "scif1";
+> >  	};
+> >  
+> > +	sdhi3_pins: sdhi3 {
+> > +		groups = "sdhi3_data4", "sdhi3_ctrl";
+> > +		function = "sdhi3";
+> > +		power-source = <3300>;
+> > +	};
+> > +
+> >  	usb0_pins: usb0 {
+> >  		groups = "usb0";
+> >  		function = "usb0";
+> > @@ -273,6 +298,30 @@
+> >  	status = "okay";
+> >  };
+> >  
+> > +&sdhi3 {
+> > +	pinctrl-0 = <&sdhi3_pins>;
+> > +	pinctrl-names = "default";
+> > +
+> > +	vmmc-supply = <&wlan_en>;
+> > +	vqmmc-supply = <&wlan_en>;
+> > +	bus-width = <4>;
+> > +	no-1-8-v;
+> > +	non-removable;
+> > +	cap-power-off-card;
+> > +	keep-power-in-suspend;
+> > +	max-frequency = <26000000>;
+> > +	status = "okay";
+> > +
+> > +	#address-cells = <1>;
+> > +	#size-cells = <0>;
+> > +	wlcore: wlcore@2 {
+> > +		compatible = "ti,wl1837";
+> > +		reg = <2>;
+> > +		interrupt-parent = <&gpio1>;
+> > +		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
+> > +	};
+> > +};
+> > +
+> >  &usb2_phy0 {
+> >  	pinctrl-0 = <&usb0_pins>;
+> >  	pinctrl-names = "default";
+> > -- 
+> > 2.7.4
+> > 
+> 
+> -- 
+> Best regards,
+> Eugeniu.
+> 
