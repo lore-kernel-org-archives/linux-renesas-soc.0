@@ -2,88 +2,93 @@ Return-Path: <SRS0=L5iE=S4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A48EC43218
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D736AC43218
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 10:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C6020679
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABF622077B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 10:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbfDZJ4D (ORCPT
+        id S1725942AbfDZKMn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Apr 2019 05:56:03 -0400
-Received: from sauhun.de ([88.99.104.3]:51316 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725901AbfDZJ4D (ORCPT
+        Fri, 26 Apr 2019 06:12:43 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:46864 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfDZKMn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Apr 2019 05:56:03 -0400
-Received: from localhost (p5486CFAE.dip0.t-ipconnect.de [84.134.207.174])
-        by pokefinder.org (Postfix) with ESMTPSA id 2066D2C0114;
-        Fri, 26 Apr 2019 11:56:01 +0200 (CEST)
-Date:   Fri, 26 Apr 2019 11:56:00 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
-        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/3] mmc: tmio: add init_card ops
-Message-ID: <20190426095600.GE1031@kunai>
-References: <1556255930-18188-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1556255930-18188-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20190426094500.66fg3treuml6v47u@verge.net.au>
+        Fri, 26 Apr 2019 06:12:43 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 5AE6A25AEEE;
+        Fri, 26 Apr 2019 20:12:41 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 5DFA09403ED; Fri, 26 Apr 2019 12:12:39 +0200 (CEST)
+Date:   Fri, 26 Apr 2019 12:12:39 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH] ARM: shmobile: Remove GENERIC_PHY from shmobile_defconfig
+Message-ID: <20190426101239.syq534l5awlinzb2@verge.net.au>
+References: <1556025203-59961-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdVzMt0Bq6Nyky2sSRKn8pB7srG1BTeweERFNJtrTUj+ow@mail.gmail.com>
+ <20190424093315.6jg7muf56d2toxl5@verge.net.au>
+ <OSBPR01MB210316C686F7DFABE8013357B83C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20190424110700.4q7ymsj6y62pvbji@verge.net.au>
+ <OSBPR01MB2103E36FDF7A5A38F93D37B9B83C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kA1LkgxZ0NN7Mz3A"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190426094500.66fg3treuml6v47u@verge.net.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <OSBPR01MB2103E36FDF7A5A38F93D37B9B83C0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Wed, Apr 24, 2019 at 11:11:43AM +0000, Biju Das wrote:
+> Hi Simon,
+> 
+> Thanks for the feedback.
+> 
+> > Subject: Re: [PATCH] ARM: shmobile: Remove GENERIC_PHY from
+> > shmobile_defconfig
+> > 
+> > On Wed, Apr 24, 2019 at 09:44:11AM +0000, Biju Das wrote:
+> > > Hi Simon,
+> > >
+> > > Thanks for the feedback.
+> > >
+> > > I missed to add the dependency for this patch.
+> > >
+> > > This patch has dependency on
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/co
+> > > mmit/?h=next-20190424&id=5d8042e95fd471d0e342cf14f127194f1a867a01
+> > 
+> > Thanks, but I see the same result with this patch applied on top of
+> > 
+> > 5d8042e95fd4 phy: rcar-gen3-usb2: Add support for r8a77470
+> 
+> That is strange.  Have you ran make shmobile_defconfig after applying the patch?
+> 
+> I get the following result with renesas- devel-20190423-v5.1-rc5.
 
---kA1LkgxZ0NN7Mz3A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, I also see things working fine with both
+* [PATCH] ARM: shmobile: Remove GENERIC_PHY from shmobile_defconfig
+* 5d8042e95fd4 phy: rcar-gen3-usb2: Add support for r8a77470
+applied on top of renesas-devel-20190423-v5.1-rc5
 
-On Fri, Apr 26, 2019 at 11:45:01AM +0200, Simon Horman wrote:
-> On Fri, Apr 26, 2019 at 02:18:48PM +0900, Yoshihiro Shimoda wrote:
-> > Since renesas_sdhi_internal_dmac driver would like to use
-> > the init_card() ops in the future, this patch adds init_card ops
-> > into the struct tmio_mmc_host and struct tmio_mmc_dma_ops.
-> >=20
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
->=20
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-Don't you think this not needed anymore in context with all the
-refactoring around 2aaa3c5193db ("mmc: tmio, renesas_sdhi: set
-mmc_host_ops hooks directly")?
-
-
---kA1LkgxZ0NN7Mz3A
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzC1bAACgkQFA3kzBSg
-KbbeuQ/9H69WmEWVTWygSKkVmI/ij/EAIFXid3ccbNSWj7Z2U66xgx5yDTQSr9Fl
-NwL43RYXyQydGuq9UUGXmuqGt+LAivVifpZYMHla9xFpW86pHBBVtPK2jWy00YJ9
-NTfr1y9JCxC5CWKDLZP6wrzTlHK4e2AEix4g7tVoeBJWGy3ZuxUSoUEl7Nqc7giT
-TVaR36Q78b7h0BaALxcrc+spNA9A0xQysN3mALMKWdhh18Zw+xRG9sgpKa7G3BWm
-niA31nSI1ErnITAa0s8QHPLSgIfG5yhBJP4INWebPpl71Er1Rzz/hMqm8Wh7SiqR
-FEG/CHJrY1EvihTjNMoNrhr7a40BpAWLGRb3u2bbIj0xI5yujz+fVTJiqZiT6cBq
-LEDPQbZVqe+2pRRUiicbHKMYcC++fqRghz3jJhEW9uCDilzgoouZ8x6cvNn9a+G+
-9mjqcGrTmNV9/GALzJHU1m7uxiRbE4ro6NwRUaJ/NHSw+f4WhjPO/Sigz85YwSPc
-CpfheRICdo/0WbsX/dWKbsMWbqbxygW+jlzvOkaoPzDsufv0UTlZuv62NQlFb9D6
-O/+6c4WYa+7dQPbfE3phWHgGZO9hxWn6E1Oolj0G51MxYPTbiefCvwzIhY22xJLm
-CazLmU+mOAXp+e502RoTeQkxgtFQHVa6c1APM9uI70J4Qis6O48=
-=tkBx
------END PGP SIGNATURE-----
-
---kA1LkgxZ0NN7Mz3A--
+I think I can go ahead and apply
+[PATCH] ARM: shmobile: Remove GENERIC_PHY from shmobile_defconfig
+once I rebase my branches on v5.2-rc1, agter it has been release and
+assuming it includes
+5d8042e95fd4 phy: rcar-gen3-usb2: Add support for r8a77470
