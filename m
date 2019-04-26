@@ -2,45 +2,47 @@ Return-Path: <SRS0=L5iE=S4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C82C43218
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D08C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B7AF206BA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DC0120679
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 09:53:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfDZJuS (ORCPT
+        id S1726199AbfDZJxQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Apr 2019 05:50:18 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45652 "EHLO
+        Fri, 26 Apr 2019 05:53:16 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:45822 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbfDZJuS (ORCPT
+        with ESMTP id S1725944AbfDZJxP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Apr 2019 05:50:18 -0400
+        Fri, 26 Apr 2019 05:53:15 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 0012425AEA8;
-        Fri, 26 Apr 2019 19:50:14 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id B6CE725AD60;
+        Fri, 26 Apr 2019 19:53:13 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 57ED29403ED; Fri, 26 Apr 2019 11:50:12 +0200 (CEST)
-Date:   Fri, 26 Apr 2019 11:50:12 +0200
+        id CAAB99403ED; Fri, 26 Apr 2019 11:53:11 +0200 (CEST)
+Date:   Fri, 26 Apr 2019 11:53:11 +0200
 From:   Simon Horman <horms@verge.net.au>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>,
-        magnus.damm@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tfranzen@de.adit-jv.com,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH] arm64: dts: ulcb-kf: Add support for TI WL1837
-Message-ID: <20190426095012.xzyzevvmom4fzdcd@verge.net.au>
-References: <20190411124102.22442-1-spapageorgiou@de.adit-jv.com>
- <20190425111245.GA7258@vmlxhi-102.adit-jv.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH 3/4] pinctrl: sh-pfc: Add check for empty pinmux
+ groups/functions
+Message-ID: <20190426095311.xu7yo7cksqiwznek@verge.net.au>
+References: <20190425095542.726-1-geert+renesas@glider.be>
+ <20190425095542.726-4-geert+renesas@glider.be>
+ <20190426093454.pvmc426w5wca2jj3@verge.net.au>
+ <CAMuHMdW1T-LCRN0R=3bh1gq1Ai3g1jgy8jcxQP6Xd0uVDeHHwA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190425111245.GA7258@vmlxhi-102.adit-jv.com>
+In-Reply-To: <CAMuHMdW1T-LCRN0R=3bh1gq1Ai3g1jgy8jcxQP6Xd0uVDeHHwA@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -48,115 +50,49 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
-
-from my point of view what is required is a review.
-I will try to find someone to do so.
-I apologise for not doing so earlier.
-
-On Thu, Apr 25, 2019 at 01:12:45PM +0200, Eugeniu Rosca wrote:
+On Fri, Apr 26, 2019 at 11:42:11AM +0200, Geert Uytterhoeven wrote:
 > Hi Simon,
 > 
-> Do we have any chance getting this upstream? If so, would you kindly
-> list the acceptance criteria we have to conform to?
+> On Fri, Apr 26, 2019 at 11:35 AM Simon Horman <horms@verge.net.au> wrote:
+> > On Thu, Apr 25, 2019 at 11:55:41AM +0200, Geert Uytterhoeven wrote:
+> > > The pinmux groups and functions arrays may contain two parts, to ease
+> > > supporting SoCs that expose pin subsets of other related SoCs.  Both
+> > > parts need to be declared with explicit sizes, which thus need to be
+> > > updated when adding support for more groups and functions.
+> > >
+> > > If a size is too small, the compiler will detect this at build time
+> > > ("excess elements in array initializer").
+> > > If a size is too large, this may go undetected (for pin groups), lead to
+> > > pin controller registration failures (for pin functions: "pinmux ops has
+> > > no name for functionN"), or crash the optional run-time debug code (for
+> > > pin groups).
+> > >
+> > > Extend the run-time debug code with checks to detect this, to help
+> > > catching bugs early.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 > 
-> Many thanks.
+> Thank you!
 > 
-> On Thu, Apr 11, 2019 at 02:41:03PM +0200, Spyridon Papageorgiou wrote:
-> > This patch adds description of TI WL1837 and links interfaces
-> > to communicate with the IC, namely the SDIO interface to WLAN.
-> > 
-> > Signed-off-by: Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>
-> > ---
-> >  arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 49 ++++++++++++++++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> > index 7a09576..27851a7 100644
-> > --- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-> > @@ -38,6 +38,18 @@
-> >  		regulator-min-microvolt = <5000000>;
-> >  		regulator-max-microvolt = <5000000>;
-> >  	};
-> > +
-> > +	wlan_en: regulator-wlan_en {
-> > +		compatible = "regulator-fixed";
-> > +		regulator-name = "wlan-en-regulator";
-> > +
-> > +		regulator-min-microvolt = <3300000>;
-> > +		regulator-max-microvolt = <3300000>;
-> > +
-> > +		gpio = <&gpio_exp_74 4 GPIO_ACTIVE_HIGH>;
-> > +		startup-delay-us = <70000>;
-> > +		enable-active-high;
-> > +	};
-> >  };
-> >  
-> >  &can0 {
-> > @@ -88,6 +100,13 @@
-> >  			line-name = "Audio_Out_OFF";
-> >  		};
-> >  
-> > +		sd-wifi-mux {
-> > +			gpio-hog;
-> > +			gpios = <5 GPIO_ACTIVE_HIGH>;
-> > +			output-low;	/* Connect WL1837 */
-> > +			line-name = "SD WiFi mux";
-> > +		};
-> > +
-> >  		hub_pwen {
-> >  			gpio-hog;
-> >  			gpios = <6 GPIO_ACTIVE_HIGH>;
-> > @@ -254,6 +273,12 @@
-> >  		function = "scif1";
-> >  	};
-> >  
-> > +	sdhi3_pins: sdhi3 {
-> > +		groups = "sdhi3_data4", "sdhi3_ctrl";
-> > +		function = "sdhi3";
-> > +		power-source = <3300>;
-> > +	};
-> > +
-> >  	usb0_pins: usb0 {
-> >  		groups = "usb0";
-> >  		function = "usb0";
-> > @@ -273,6 +298,30 @@
-> >  	status = "okay";
-> >  };
-> >  
-> > +&sdhi3 {
-> > +	pinctrl-0 = <&sdhi3_pins>;
-> > +	pinctrl-names = "default";
-> > +
-> > +	vmmc-supply = <&wlan_en>;
-> > +	vqmmc-supply = <&wlan_en>;
-> > +	bus-width = <4>;
-> > +	no-1-8-v;
-> > +	non-removable;
-> > +	cap-power-off-card;
-> > +	keep-power-in-suspend;
-> > +	max-frequency = <26000000>;
-> > +	status = "okay";
-> > +
-> > +	#address-cells = <1>;
-> > +	#size-cells = <0>;
-> > +	wlcore: wlcore@2 {
-> > +		compatible = "ti,wl1837";
-> > +		reg = <2>;
-> > +		interrupt-parent = <&gpio1>;
-> > +		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-> > +	};
-> > +};
-> > +
-> >  &usb2_phy0 {
-> >  	pinctrl-0 = <&usb0_pins>;
-> >  	pinctrl-names = "default";
-> > -- 
-> > 2.7.4
-> > 
+> > > --- a/drivers/pinctrl/sh-pfc/core.c
+> > > +++ b/drivers/pinctrl/sh-pfc/core.c
+> > > @@ -780,9 +780,15 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+> > >
+> > >       for (i = 0; i < info->nr_functions; i++) {
+> > >               func = &info->functions[i];
+> > > +             if (!func->name) {
+> > > +                     pr_err("%s: empty function %u\n", drvname, i);
+> > > +                     sh_pfc_errors++;
+> >
+> > Not strictly related to this patch but did
+> > you consider not having sh_pfc_errors global to this file?
 > 
-> -- 
-> Best regards,
-> Eugeniu.
-> 
+> Do you have an alternative?
+> I could hide it, and combine it with the pr_err() in a sh_pfc_report_error()
+> function, but it would still be global.
+
+I didn't look carefully for an alternative.
+If its not practical to pass around a local variable then
+I'm happy with the current setup.
