@@ -1,166 +1,89 @@
-Return-Path: <SRS0=L5iE=S4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=oNwv=S5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D50D0C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 19:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9965EC43218
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Apr 2019 12:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6CA62077B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Apr 2019 19:51:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdlKa/z+"
+	by mail.kernel.org (Postfix) with ESMTP id 5FB942087C
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Apr 2019 12:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556369787;
+	bh=VTEMkRxAEwAAhO8YkZ35ckyyOspKUqhkHhSKIJZnN28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xFHRkD4ey9PbDj7Q20xCuMKy4ghSQn+YQFSJkES0ef63+rrUWjPS135ATEF86Vjkq
+	 jIxA/ZXHTDlYnYrYY/gGmUQJJQu6q+yaTsA9y3s+j11JQDIbmL+nJS6QEzDxOdF6si
+	 NzToFQcjPj73ERmgsVGC5YWRy4jQpoMiKyj6gdwc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbfDZTvL (ORCPT
+        id S1727229AbfD0M4K (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Apr 2019 15:51:11 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:47047 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbfDZTvL (ORCPT
+        Sat, 27 Apr 2019 08:56:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727659AbfD0M4J (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Apr 2019 15:51:11 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h21so3930823ljk.13;
-        Fri, 26 Apr 2019 12:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=W7Eko1srITLoagm5AOEYzT49Ks2nbUdIhy1p1jQ52ic=;
-        b=KdlKa/z+qr0ywDldwyabD179jRnY/DhCxQlMSWzD0j0qnJ0gKlXeoIY99pvX+0dCx+
-         m63GP0TvzcV6+WPzseQgUNXLm+TNc4V850EO4TQFqZd+7w77ySCRc0Jh/QVGk1q170En
-         dnSzmJxJgI6l+Aqd5pDz2ODhdjvmQEGZfL6PO3RAwEvCxzfC3xmJ9L1a8+P1+j9xDpuC
-         z+swjRWG9ObvgWKx3E5DxKNNjn3jiid/oCaIVNkGPItvI5PwhvQqMcQuVDltVGWIkcda
-         pmWoZkG6lGcfi5iaGbAjRNgSaXRonSkK2p8H5QaigcSMmcrBEUMVbIaQMMzr8XIMmsI6
-         RJpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=W7Eko1srITLoagm5AOEYzT49Ks2nbUdIhy1p1jQ52ic=;
-        b=FJ8WnBa3f25Hjn6/8YCkTKSlBchxlFOgpy35ZZ1WhTDVm3FOuaV36/718rh9gxbcSJ
-         hWqnTziNXX+Qn9bzrdNbcaPSDiQOIwqSEGW4RITwRSqBGZ1l/Kafm+WD57VLF1P+B0HS
-         eLZscfPO/c9iXGmCW9sD5Kuwe8/YiW1VYPhUeNyeJof5itwQyAQVpoKoIfpaxdQr3dTP
-         grWYGGKY9nRLGvh8eXLEyC+/fXpfkuNvBBqk7QNHVMG4UAfg5SuRI9Rj4+D4wzsDxIYs
-         BYy+a5yxskpKiIiIfTmlYf0btUy+mWfx1mVMbupBMwT8L5nhhfve3/HqcQcUbO1y6mFf
-         wyag==
-X-Gm-Message-State: APjAAAV4iBwSIkvQ0oaxze4Vw3IEcz4C79f01tXnE/RHQxwnrfeLwe40
-        8cLw8jzqz+6uNq4pC5HNnP8=
-X-Google-Smtp-Source: APXvYqx+JnTd5FBVHykchXZ23cx3l66iZ4Zjw27evxYPNBrLhUQk9xEDLSs+jgD3B2zifS+EwwkNzw==
-X-Received: by 2002:a2e:9c51:: with SMTP id t17mr25714319ljj.104.1556308268785;
-        Fri, 26 Apr 2019 12:51:08 -0700 (PDT)
-Received: from [10.17.182.120] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id 63sm5765438lfz.2.2019.04.26.12.51.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 12:51:08 -0700 (PDT)
-Subject: Re: [PATCH] ARM: mach-shmobile: Don't configure ARCH timer if PSCI is
- enabled
-To:     Julien Grall <julien.grall@arm.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     horms@verge.net.au, magnus.damm@gmail.com, linux@armlinux.org.uk,
-        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
-References: <1555521040-16706-1-git-send-email-olekstysh@gmail.com>
- <1b33dca4-e3ae-4588-05f2-37b23ac8df78@arm.com>
- <8c9a1480-7956-9265-14c8-3fbb472e097d@gmail.com>
- <c08c0d02-37f9-9f53-62b9-e5012097d94a@arm.com>
-From:   Oleksandr <olekstysh@gmail.com>
-Message-ID: <e8798fa4-a0dc-7c85-e294-bdf6dad6ec74@gmail.com>
-Date:   Fri, 26 Apr 2019 22:51:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sat, 27 Apr 2019 08:56:09 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EEA22087C;
+        Sat, 27 Apr 2019 12:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556369768;
+        bh=VTEMkRxAEwAAhO8YkZ35ckyyOspKUqhkHhSKIJZnN28=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZFP7c9CJLoHipg0tqL/Y/MGUW3F5gGPjJVmDFER45me8zC4U8kDUnPput1M8W/wmX
+         j+uhlrb93vHMCPj4HrQfXusvDtrOiujFcDAR2Roz97eOHIqpdV2vTTHdU5zsM7SIsn
+         rGugvWpi1aSYPkoG+Gi8pLYLz8o9aTABwQu2xtwo=
+Date:   Sat, 27 Apr 2019 14:56:06 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Simon Horman <horms@verge.net.au>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>
+Subject: Re: [PATCH] dt-bindings: usb-xhci: Add r8a774c0 support
+Message-ID: <20190427125606.GA25493@kroah.com>
+References: <1544732471-6730-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TYXPR01MB1775A4A3AF86097F284C4A08C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+ <20190301161624.GA19937@kroah.com>
+ <TYXPR01MB17756DBAF2FD7A1F2A9B82B0C0760@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+ <TY1PR01MB1770DB45DCD263C6933B9210C0230@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <c08c0d02-37f9-9f53-62b9-e5012097d94a@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1770DB45DCD263C6933B9210C0230@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Tue, Apr 23, 2019 at 03:32:59PM +0000, Fabrizio Castro wrote:
+> Hello Simon,
+> 
+> I know you don't normally take this type of patches, but this one has
+> been around for more than 4 months now, and I am losing hope here...
+> 
+> Do you think you can this patch?
 
-On 24.04.19 15:31, Julien Grall wrote:
-> Hi,
+I think this got dropped somehow, sorry about that.
 
-Hi Julien
+Can you resend it, with the acks that have been given to it, and I will
+be glad to queue it up.
 
+thanks,
 
->
->>
->> As I answered in a previous email:
->>
->>  > But "#if !defined(CONFIG_ARM_PSCI)" wraps secure_cntvoff_init() 
->> call as
->>  > well, which resets CNTVOFF,
->>
->>  > and this is something I tried to avoid the first from being 
->> executed on
->>  > a CPU, which is in SVC mode (when running on top of Xen).
->>
->> What would be a proper way to avoid calling secure_cntvoff_init() at 
->> runtime?
->>
->> Check that we are already in non-secure mode and/or cntvoff is 
->> already 0?
->
-> CNTVOFF is controlled by the hypervisor, so you cannot access it from 
-> Dom0.
->
-> If none of this code should be necessary when PSCI is enabled, then 
-> you can check the presence of PSCI (see psci_smp_available()).
-
-
-If I am not mistaken, U-Boot resets CNTVOFF before leaving monitor mode 
-(switching to non-secure state). This happens if "support for booting in 
-non-secure mode" is enabled.
-
-This is a mandatory option for PSCI support as well as for support for 
-hardware virtualization.
-
-So the presence of PSCI would be an indicator, if CNTVOFF was configured 
-in U-Boot and we don't need to.
-
- From other hand, Gen2 Linux may be booted in non-secure mode, without 
-PSCI support...
-
-
-I was thinking about checking the presence of "enable-method = psci" in 
-CPU node, but probably psci_smp_available() is better option.
-
-Also, there is a specific device-tree property 
-"arm,cpu-registers-not-fw-configured" [1], but I am not sure whether it 
-is appropriate to use here.
-
-
->
-> Another solution is to check whether we are running on xen (see 
-> xen_domain()).
->
-> In any case, I would still surround the two checks because the 
-> "armgcnt" should really not be touched by Dom0.
-
-Agree.
-
-I will add two checks in V2.
-
-
-Thank you!
-
-
-[1]
-
-https://elixir.bootlin.com/linux/v5.1-rc6/source/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml#L68
-
-
->
-> Cheers,
->
--- 
-Regards,
-
-Oleksandr Tyshchenko
-
+greg k-h
