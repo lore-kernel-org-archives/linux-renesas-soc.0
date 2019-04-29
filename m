@@ -2,34 +2,34 @@ Return-Path: <SRS0=y581=S7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B38EC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B790EC04A6B
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Apr 2019 09:36:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60B6C206BF
+	by mail.kernel.org (Postfix) with ESMTP id 86C042075E
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Apr 2019 09:36:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfD2Jgm (ORCPT
+        id S1727228AbfD2Jgm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 29 Apr 2019 05:36:42 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36632 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbfD2Jgl (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:38572 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727635AbfD2Jgl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 29 Apr 2019 05:36:41 -0400
 Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id 69cd200053XaVaC019cdzb; Mon, 29 Apr 2019 11:36:40 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id 69cc2000R3XaVaC069ccRa; Mon, 29 Apr 2019 11:36:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hL2iD-0000we-3P; Mon, 29 Apr 2019 11:36:37 +0200
+        id 1hL2iD-0000ws-83; Mon, 29 Apr 2019 11:36:37 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hL2iD-0002p0-13; Mon, 29 Apr 2019 11:36:37 +0200
+        id 1hL2iD-0002pE-5P; Mon, 29 Apr 2019 11:36:37 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -42,79 +42,94 @@ To:     Thomas Gleixner <tglx@linutronix.de>,
 Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] ARM: rskrza1: Add RZ/A1 IRQC and input switches
-Date:   Mon, 29 Apr 2019 11:36:26 +0200
-Message-Id: <20190429093631.10799-1-geert+renesas@glider.be>
+Subject: [PATCH 5/5] ARM: dts: rskrza1: Add input switches
+Date:   Mon, 29 Apr 2019 11:36:31 +0200
+Message-Id: <20190429093631.10799-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190429093631.10799-1-geert+renesas@glider.be>
+References: <20190429093631.10799-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
-
-Unlike on most other Renesas SoCs, the GPIO controller block on RZ/A1
-SoCs lack interrupt functionality.  While the GPIOs can be routed to the
-GIC as pin interrupts, this is of limited use, as the PL390 GIC supports
-rising edge and high-level interrupts only.
-
-Fortunately RZ/A1 SoCs contain a small front-end for the GIC, allowing
-to use up to 8 external interrupts, with configurable sense select.
-
-Hence this patch series adds DT bindings and a driver for this
-front-end, adds a device node for it in the RZ/A1H DTS, and uses it to
-enable support for the 3 input switches on the Renesas RSK+RZA1
+Add support for input switches SW1-3 on the Renesas RZ/A1 RSK+RZA1
 development board.
 
-I expect this driver to be reusable for RZ/A2, after adding a match
-entry with .gic_spi_base = 4.
-  - Should this information come from DT instead?
-  - Originally I had interrupts properties in DT to define the mapping
-    from external interrupts to GIC interrupts (cfr. "renesas,irqc",
-    which also calls request_irq()), but other similar drivers seem to
-    hardcode this information in the driver, so I went that route.
+Note that this uses the IRQ interrupts, as the RZ/A1 GPIO controller
+does not include interrupt support.
 
-Dependencies:
-  - Patch 3 depends on patch 2,
-  - Patch 4 can be applied as soon as the DT bindings in patch 1 have
-    been accepted,
-  - Patch 5 depends on patch 4.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Use rza1-irqc instead of gic.
+---
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 38 ++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-This has been tested on RSK+RZA1 with evtest and s2ram wake-up.
-I have verified proper operation of low-level and rising/falling sense
-select, too.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (5):
-  dt-bindings: interrupt-controller: Add Renesas RZ/A1 Interrupt
-    Controller
-  irqchip: Add Renesas RZ/A1 Interrupt Controller driver
-  soc: renesas: Enable RZ/A1 IRQC on RZ/A1H
-  ARM: dts: r7s72100: Add IRQC device node
-  ARM: dts: rskrza1: Add input switches
-
- .../renesas,rza1-irqc.txt                     |  27 ++
- arch/arm/boot/dts/r7s72100-rskrza1.dts        |  38 +++
- arch/arm/boot/dts/r7s72100.dtsi               |   8 +
- drivers/irqchip/Kconfig                       |   4 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-renesas-rza1.c            | 238 ++++++++++++++++++
- drivers/soc/renesas/Kconfig                   |   1 +
- 7 files changed, 317 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
- create mode 100644 drivers/irqchip/irq-renesas-rza1.c
-
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index ff24301dc1be54de..99acfe4fe11aaed9 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -8,6 +8,7 @@
+ /dts-v1/;
+ #include "r7s72100.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+@@ -28,6 +29,37 @@
+ 		reg = <0x08000000 0x02000000>;
+ 	};
+ 
++	keyboard {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&keyboard_pins>;
++
++		key-1 {
++			interrupt-parent = <&irqc>;
++			interrupts = <3 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_1>;
++			label = "SW1";
++			wakeup-source;
++		};
++
++		key-2 {
++			interrupt-parent = <&irqc>;
++			interrupts = <2 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_2>;
++			label = "SW2";
++			wakeup-source;
++		};
++
++		key-3 {
++			interrupt-parent = <&irqc>;
++			interrupts = <5 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_3>;
++			label = "SW3";
++			wakeup-source;
++		};
++	};
++
+ 	lbsc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -101,6 +133,12 @@
+ 			 <RZA1_PINMUX(1, 7, 1)>;	/* RIIC3SDA */
+ 	};
+ 
++	keyboard_pins: keyboard {
++		pinmux = <RZA1_PINMUX(1, 9, 3)>,	/* IRQ3 */
++			 <RZA1_PINMUX(1, 8, 3)>,	/* IRQ2 */
++			 <RZA1_PINMUX(1, 11, 3)>;	/* IRQ5 */
++	};
++
+ 	/* Serial Console */
+ 	scif2_pins: serial2 {
+ 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
