@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 651FDC43219
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 13:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E85C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 13:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFC120644
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 13:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EB6A20644
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 13:35:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfD3Ndm (ORCPT
+        id S1726309AbfD3Nfk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 30 Apr 2019 09:33:42 -0400
-Received: from pbmsgap02.intersil.com ([192.157.179.202]:40608 "EHLO
+        Tue, 30 Apr 2019 09:35:40 -0400
+Received: from pbmsgap02.intersil.com ([192.157.179.202]:40786 "EHLO
         pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfD3Ndm (ORCPT
+        with ESMTP id S1725938AbfD3Nfj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Apr 2019 09:33:42 -0400
+        Tue, 30 Apr 2019 09:35:39 -0400
 Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
-        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x3UDNK9B032150;
-        Tue, 30 Apr 2019 09:23:20 -0400
-Received: from pbmxdp03.intersil.corp (pbmxdp03.pb.intersil.com [132.158.200.224])
-        by pbmsgap02.intersil.com with ESMTP id 2s4h8d2csa-1
+        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x3UDNK9D032150;
+        Tue, 30 Apr 2019 09:23:22 -0400
+Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
+        by pbmsgap02.intersil.com with ESMTP id 2s4h8d2csg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 30 Apr 2019 09:23:19 -0400
+        Tue, 30 Apr 2019 09:23:22 -0400
 Received: from pbmxdp03.intersil.corp (132.158.200.224) by
- pbmxdp03.intersil.corp (132.158.200.224) with Microsoft SMTP Server
+ pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Tue, 30 Apr 2019 09:23:18 -0400
+ 15.1.1531.3; Tue, 30 Apr 2019 09:23:21 -0400
 Received: from localhost.localdomain (132.158.202.108) by
  pbmxdp03.intersil.corp (132.158.200.224) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Tue, 30 Apr 2019 09:23:17 -0400
+ 15.1.1531.3 via Frontend Transport; Tue, 30 Apr 2019 09:23:20 -0400
 From:   Chris Brandt <chris.brandt@renesas.com>
 To:     Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
@@ -41,9 +41,9 @@ To:     Simon Horman <horms@verge.net.au>,
 CC:     <devicetree@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/7] ARM: dts: r7s9210: Add RSPI
-Date:   Tue, 30 Apr 2019 08:23:03 -0500
-Message-ID: <20190430132309.12473-2-chris.brandt@renesas.com>
+Subject: [PATCH 3/7] dt-bindings: i2c: riic: document r7s9210 support
+Date:   Tue, 30 Apr 2019 08:23:05 -0500
+Message-ID: <20190430132309.12473-4-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20190430132309.12473-1-chris.brandt@renesas.com>
 References: <20190430132309.12473-1-chris.brandt@renesas.com>
@@ -52,7 +52,7 @@ Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-30_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=721
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1904300086
 X-Proofpoint-Spam-Reason: mlx
@@ -61,69 +61,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add RSPI support for RZ/A2 SoC.
+Document support for the R7S9210 (RZ/A2) SoC. Also explicitly document
+bindings for the R7S72100 (RZ/A1) SoC.
 
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- arch/arm/boot/dts/r7s9210.dtsi | 45 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ Documentation/devicetree/bindings/i2c/i2c-riic.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r7s9210.dtsi b/arch/arm/boot/dts/r7s9210.dtsi
-index 22baa96f5974..8423004bb4b7 100644
---- a/arch/arm/boot/dts/r7s9210.dtsi
-+++ b/arch/arm/boot/dts/r7s9210.dtsi
-@@ -146,6 +146,51 @@
- 			status = "disabled";
- 		};
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-riic.txt b/Documentation/devicetree/bindings/i2c/i2c-riic.txt
+index 0bcc4716c319..e26fe3ad86a9 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-riic.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-riic.txt
+@@ -1,7 +1,10 @@
+ Device tree configuration for Renesas RIIC driver
  
-+		spi0: spi@e800c800 {
-+			compatible = "renesas,rspi-r7s9210", "renesas,rspi-rz";
-+			reg = <0xe800c800 0x24>;
-+			interrupts = <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&cpg CPG_MOD 97>;
-+			power-domains = <&cpg>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		spi1: spi@e800d000 {
-+			compatible = "renesas,rspi-r7s9210", "renesas,rspi-rz";
-+			reg = <0xe800d000 0x24>;
-+			interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&cpg CPG_MOD 96>;
-+			power-domains = <&cpg>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		spi2: spi@e800d800 {
-+			compatible = "renesas,rspi-r7s9210", "renesas,rspi-rz";
-+			reg = <0xe800d800 0x24>;
-+			interrupts = <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error", "rx", "tx";
-+			clocks = <&cpg CPG_MOD 95>;
-+			power-domains = <&cpg>;
-+			num-cs = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		ostm0: timer@e803b000 {
- 			compatible = "renesas,r7s9210-ostm", "renesas,ostm";
- 			reg = <0xe803b000 0x30>;
+ Required properties:
+-- compatible      : "renesas,riic-<soctype>". "renesas,riic-rz" as fallback
++- compatible      :
++	"renesas,riic-r7s72100" if the device is a part of a R7S72100 SoC.
++	"renesas,riic-r7s9210" if the device is a part of a R7S9210 SoC.
++	"renesas,riic-rz" for a generic RZ/A compatible device.
+ - reg             : address start and address range size of device
+ - interrupts      : 8 interrupts (TEI, RI, TI, SPI, STI, NAKI, ALI, TMOI)
+ - clock-frequency : frequency of bus clock in Hz
 -- 
 2.16.1
 
