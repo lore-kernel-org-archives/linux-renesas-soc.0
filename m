@@ -2,97 +2,105 @@ Return-Path: <SRS0=CTUA=TA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE7DC46470
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 11:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E71EC43219
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 12:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5FC2173E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 11:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46E03205ED
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 12:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfD3L7w (ORCPT
+        id S1727594AbfD3MNF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 30 Apr 2019 07:59:52 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:40068 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbfD3L7v (ORCPT
+        Tue, 30 Apr 2019 08:13:05 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:35100 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfD3MNF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Apr 2019 07:59:51 -0400
-Received: by mail-vk1-f196.google.com with SMTP id l17so3026917vke.7;
-        Tue, 30 Apr 2019 04:59:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=68G41fzqy/t8KAzyAUuR7DOWW+Zvyi6v+m6lvfvvc+0=;
-        b=Avz5LXAVgTu/W4Tll+6H17nun9by9PM3UnmeIs9qcFKhS4s2ENyc25V1ItsYeOOrJf
-         M2bwTH3BV766g+AjXsWbhx/rskvnirHtZoE+dFF6dXKSDWIcMW3OXLqjZ/XBhSFcjAX6
-         biiuuo++/4LMeJy4/WylFfkULHklOhGNEvMXdWtdU0eh10euO41V55fMAViI0RFnshqT
-         tZ7P3+8BwRW/hWDnkXWep3fjFuAnudlqBR81h0verHToztgS4AizEQg/kt5OPU7as8Tp
-         NGtSrVcfBEMIuHzNuZrTOBSYjKdCsgC8EvXLuHfskI2RaDXfv7DQx741XVhglNidi7ll
-         CdwA==
-X-Gm-Message-State: APjAAAXV/iJX+OyPjEgOf5JhVgofaDq6lvaliXtkSmj1JfcN6cp8vnL9
-        Qn0UC2f06acLpBhJu4QtQD2CsvdUHnpsXXyQ/z0=
-X-Google-Smtp-Source: APXvYqygIlklTnbIk6rM0U9zkVtPflbEuf3kSFG/GNNQnmU5aiEFoRpZdVM+Sii2SE3lHQP9DwnZPtD6ccV2tu1UN/s=
-X-Received: by 2002:a1f:17cd:: with SMTP id 196mr660349vkx.83.1556625590532;
- Tue, 30 Apr 2019 04:59:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190429152006.22593-1-geert+renesas@glider.be>
- <20190429152006.22593-3-geert+renesas@glider.be> <3ecf87e2-4e70-9159-a364-d41f1b744f7b@cogentembedded.com>
-In-Reply-To: <3ecf87e2-4e70-9159-a364-d41f1b744f7b@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 30 Apr 2019 13:59:39 +0200
-Message-ID: <CAMuHMdV3DNqDmTVHzmenS_jecnijx8bAjTV_7RRtTPEzg+uJ+Q@mail.gmail.com>
-Subject: Re: [PATCH 2/5] irqchip/renesas-irqc: Remove devm_kzalloc()/ioremap_nocache()
- error printing
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Tue, 30 Apr 2019 08:13:05 -0400
+Received: from ramsan ([84.194.111.163])
+        by xavier.telenet-ops.be with bizsmtp
+        id 6cCz2000k3XaVaC01cCzoq; Tue, 30 Apr 2019 14:13:03 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hLRd5-00086V-N4; Tue, 30 Apr 2019 14:12:59 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hLRd5-0000zB-KS; Tue, 30 Apr 2019 14:12:59 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/5] dt-bindings: interrupt-controller: Add Renesas RZ/A1 Interrupt Controller
+Date:   Tue, 30 Apr 2019 14:12:50 +0200
+Message-Id: <20190430121254.3737-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190430121254.3737-1-geert+renesas@glider.be>
+References: <20190430121254.3737-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+Add DT bindings for the Renesas RZ/A1 Interrupt Controller.
 
-On Tue, Apr 30, 2019 at 10:12 AM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 29.04.2019 18:20, Geert Uytterhoeven wrote:
-> > There is no need to print a message if devm_kzalloc() or
->
->     Just kzalloc() in this case.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Add "renesas,gic-spi-base",
+  - Document RZ/A2M.
+---
+ .../renesas,rza1-irqc.txt                     | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
 
-Thanks, silly copy-and-paste error.
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+new file mode 100644
+index 0000000000000000..ea8ddb6955338ccd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+@@ -0,0 +1,30 @@
++DT bindings for the Renesas RZ/A1 Interrupt Controller
++
++The RZ/A1 Interrupt Controller is a front-end for the GIC found on Renesas
++RZ/A1 and RZ/A2 SoCs:
++  - IRQ sense select for 8 external interrupts, 1:1-mapped to 8 GIC SPI
++    interrupts,
++  - NMI edge select.
++
++Required properties:
++  - compatible: Must be "renesas,<soctype>-irqc", and "renesas,rza1-irqc" as
++		fallback.
++		Examples with soctypes are:
++		  - "renesas,r7s72100-irqc" (RZ/A1H)
++		  - "renesas,r7s9210-irqc" (RZ/A2M)
++  - #interrupt-cells: Must be 2 (an interrupt index and flags, as defined
++				 in interrupts.txt in this directory)
++  - interrupt-controller: Marks the device as an interrupt controller
++  - reg: Base address and length of the memory resource used by the interrupt
++         controller
++  - renesas,gic-spi-base: Lowest GIC SPI interrupt number this block maps to.
++
++Example:
++
++	irqc: interrupt-controller@fcfef800 {
++		compatible = "renesas,r7s72100-irqc", "renesas,rza1-irqc";
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		reg = <0xfcfef800 0x6>;
++		renesas,gic-spi-base = <0>;
++	};
+-- 
+2.17.1
 
-> > --- a/drivers/irqchip/irq-renesas-irqc.c
-> > +++ b/drivers/irqchip/irq-renesas-irqc.c
-> > @@ -173,7 +172,6 @@ static int irqc_probe(struct platform_device *pdev)
-> >       /* ioremap IOMEM and setup read/write callbacks */
-> >       p->iomem = ioremap_nocache(io->start, resource_size(io));
-> >       if (!p->iomem) {
-> > -             dev_err(&pdev->dev, "failed to remap IOMEM\n");
-> >               ret = -ENXIO;
->
->     -ENOMEM?
-
-I'd say yes, except that this error code is removed in patch [5/5], so I don't
-think it's worth changing it in this patch.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
