@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6994AC43219
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 12:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50198C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 13:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4654821670
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 12:59:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2936C21670
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Apr 2019 13:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbfD3M7M (ORCPT
+        id S1727383AbfD3NAS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 30 Apr 2019 08:59:12 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37926 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbfD3M7L (ORCPT
+        Tue, 30 Apr 2019 09:00:18 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44196 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbfD3NAS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Apr 2019 08:59:11 -0400
-Received: by mail-vs1-f68.google.com with SMTP id v141so1114965vsc.5;
-        Tue, 30 Apr 2019 05:59:11 -0700 (PDT)
+        Tue, 30 Apr 2019 09:00:18 -0400
+Received: by mail-vs1-f65.google.com with SMTP id j184so7876666vsd.11;
+        Tue, 30 Apr 2019 06:00:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KKdm93VPJXF5O5j7UpkQ2YT6Jqh9Gtcke5UGF/ei2yA=;
-        b=Jj62xx4+w7S0Pp3wzQpACkCAd3xSpatLthOIDCqzoasbbfuGEVKZ3/4EFPU4z1gHLd
-         jgMQNxBcKmacz0WX90BTmEWyevcY8nC3EmN7DcCCNVeasOl+fAXZsqVtS7bJ+8MH+dMO
-         rLWnSBzzlpUuEuRWknRxyPtkZLg2cgA0nXXzUc0nhtnbXZAiGKYc+MovLR15c5Vnsc4u
-         yoBqW1cRxTodxHQqM8E9x2F4No+HmP72ictarmWSTsQVwjS3F4r0vGNg2U7UazeAvMcK
-         Q9elNLX4WdTwipWV151pZfm9jB/Ujj7Odjq7sweqPyBXfAq2M8qdCY9Oa9wMp9LGBfPa
-         yGqw==
-X-Gm-Message-State: APjAAAWMt8SI5jdAxFrikDYMb5uSGX6SmAo/jZVIbCK/pMcfSa6KCYmK
-        3NnonFVr4+bPVm4/kcwDNrFHWH+6bUXqE69kAKw=
-X-Google-Smtp-Source: APXvYqynR/fkbar2duH23XOmQIDC7a0Td41tF2nqLIgwhoqq+1OTqM8g1UtP+1bte30RGXuXT+Mc9i4oiDLvxyUFPUo=
-X-Received: by 2002:a67:83cf:: with SMTP id f198mr6727361vsd.63.1556629150322;
- Tue, 30 Apr 2019 05:59:10 -0700 (PDT)
+        bh=T8U8S6W9pYgH58gcHzi6vucbqWLIJbM/uYt3aM3LSaY=;
+        b=JoAXtxBiVcfeVKlcf4olgIzDBaVKLom18pdilHXIDCTa/MuSk3KZjluP79Q6gJgmxr
+         6UJ00u+DhRyqFl/1ItVmlmOi6i+/wZMjd1krXkQN0HWT+9mBiYx9lLypqXMV1HcU0ovh
+         sGgOZbiqku7otbiHgIwvFO+Z7CRK1pmQw7EpskGSTkLzxbBdOOPPmhrb2YkpUH0Ve74Z
+         69+hoPq7LDAtVnRrQHjL2MBbtYYZTmmNtv1CXJqW8hel4yXX642PMSiV8pyiXi9G6DcQ
+         Kv0F1k1kvOVTgUcecCgHEs8wuVdvqjM1KGaOllFQsaI9adJZG+pcq4P/SlY85hnOKWOy
+         1ScQ==
+X-Gm-Message-State: APjAAAXyKDSNrzx4XgqNCeAuT4Emi4AgvykZ+eLtuAmELS9oE7leSR6Z
+        8fUkw3D3cIBLEJ2V3WmwNyAJ1/62A9l9h59+Z9A=
+X-Google-Smtp-Source: APXvYqxMufOtbvKV13FvNPmryG+/XOOEmR3DR0kIntYTY4NMfjYK6cwvN4yqoVDuf2crTsnMF/95wh85ZkvkNR8zGc0=
+X-Received: by 2002:a67:7d58:: with SMTP id y85mr5496780vsc.96.1556629217351;
+ Tue, 30 Apr 2019 06:00:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <1554907730-14792-1-git-send-email-biju.das@bp.renesas.com> <1554907730-14792-13-git-send-email-biju.das@bp.renesas.com>
-In-Reply-To: <1554907730-14792-13-git-send-email-biju.das@bp.renesas.com>
+References: <1554907730-14792-1-git-send-email-biju.das@bp.renesas.com> <1554907730-14792-9-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1554907730-14792-9-git-send-email-biju.das@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 30 Apr 2019 14:58:59 +0200
-Message-ID: <CAMuHMdU9URhBDbM7dP+Mq6f3kiUTdcD8+ipDvipFBciq=iUDMw@mail.gmail.com>
-Subject: Re: [PATCH V5 12/13] ARM: dts: r8a77470: Add HSUSB device nodes
+Date:   Tue, 30 Apr 2019 15:00:05 +0200
+Message-ID: <CAMuHMdXi=cQpifJxG5vzhVJJ4L8msDYrfVoo0bEGXkfAbigsUg@mail.gmail.com>
+Subject: Re: [PATCH V5 08/13] ARM: dts: r8a77470: Add USB PHY DT support
 To:     Biju Das <biju.das@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -63,18 +63,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 10, 2019 at 4:56 PM Biju Das <biju.das@bp.renesas.com> wrote:
-> Define the r8a77470 generic part of the HSUSB0/1 device nodes.
->
-> Currently the renesas_usbhs driver doesn't handle multiple phys and we
-> don't have a proper hardware to validate such driver changes.
->
-> So for hsusb1 it is assumed that usbphy0 will be enabled by either
-> channel0 host or device.
->
-> In future, if any boards support hsusb1, we will need to add multiple phy
-> support in the renesas_usbhs driver and override the board dts to enable
-> the same.
+On Wed, Apr 10, 2019 at 4:55 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> Define the r8a77470 generic part of the USB PHY device node.
 >
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
