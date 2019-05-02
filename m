@@ -2,34 +2,34 @@ Return-Path: <SRS0=P7rp=TC=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E32C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 May 2019 12:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E0BC04AAA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 May 2019 12:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98793205C9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 May 2019 12:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49CD8214DA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 May 2019 12:32:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbfEBMct (ORCPT
+        id S1726571AbfEBMcx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 2 May 2019 08:32:49 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:37676 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfEBMc1 (ORCPT
+        Thu, 2 May 2019 08:32:53 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:60516 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbfEBMc1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 2 May 2019 08:32:27 -0400
 Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id 7QYN2000i3XaVaC01QYPMG; Thu, 02 May 2019 14:32:26 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id 7QYN2000F3XaVaC01QYNGw; Thu, 02 May 2019 14:32:25 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hMAsw-0007dz-TP; Thu, 02 May 2019 14:32:22 +0200
+        id 1hMAsw-0007dt-QJ; Thu, 02 May 2019 14:32:22 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hMAsw-0000nd-Rg; Thu, 02 May 2019 14:32:22 +0200
+        id 1hMAsw-0000nU-Np; Thu, 02 May 2019 14:32:22 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -42,60 +42,91 @@ To:     Thomas Gleixner <tglx@linutronix.de>,
 Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 3/5] soc: renesas: Enable RZ/A1 IRQC on RZ/A1H and RZ/A2M
-Date:   Thu,  2 May 2019 14:32:18 +0200
-Message-Id: <20190502123220.3016-4-geert+renesas@glider.be>
+Subject: [PATCH v3 0/5] ARM: rskrza1: Add RZ/A1 IRQC and input switches
+Date:   Thu,  2 May 2019 14:32:15 +0200
+Message-Id: <20190502123220.3016-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190502123220.3016-1-geert+renesas@glider.be>
-References: <20190502123220.3016-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Auto-enable support for the RZ/A1 Interrupt Controller when configuring
-a kernel which supports RZ/A1H or RZ/A2M SoCs.
-Keep selects sorted while at it.
+	Hi all,
 
-This is similar to how interrupt controllers for other Renesas SoCs are
-enabled.
+Unlike on most other Renesas SoCs, the GPIO controller block on RZ/A1
+and RZ/A2 SoCs lack interrupt functionality.  While the GPIOs can be
+routed to the GIC as pin interrupts, this is of limited use, as the
+PL390 or GIC-400 supports rising edge and high-level interrupts only.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
----
-v3:
-  - No changes,
+Fortunately RZ/A1 and RZ/A2 SoCs contain a small front-end for the GIC,
+allowing to use up to 8 external interrupts, with configurable sense
+select.
 
-v2:
+Hence this patch series adds DT bindings and a driver for this
+front-end, adds a device node for it in the RZ/A1H DTS, and uses it to
+enable support for the 3 input switches on the Renesas RSK+RZA1
+development board.
+
+Changes compared to v2:
+  - Add Tested-by,
+  - Use standard interrupt-map instead of custom renesas,gic-spi-base.
+    I'm still a bit puzzled by the confusing semantics (double meaning)
+    of child and parent unit addresses in interrupt-map.
+
+Changes compared to v1:
   - Add Reviewed-by,
-  - Add RZ/A2M,
-  - Sort RZ/A1H selects.
----
- drivers/soc/renesas/Kconfig | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+  - Replace gic_spi_base in OF match data by renesas,gic-spi-base in DT,
+  - Document RZ/A2M,
+  - Use u16 for register values,
+  - Use relaxed I/O accessors,
+  - Use "rza1-irqc" as irq_chip class name,
+  - Enable driver on RZ/A2M.
 
-diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-index 68bfca6f20ddf8a7..2bbf49e5d441808b 100644
---- a/drivers/soc/renesas/Kconfig
-+++ b/drivers/soc/renesas/Kconfig
-@@ -57,14 +57,16 @@ config ARCH_R7S72100
- 	bool "RZ/A1H (R7S72100)"
- 	select PM
- 	select PM_GENERIC_DOMAINS
--	select SYS_SUPPORTS_SH_MTU2
- 	select RENESAS_OSTM
-+	select RENESAS_RZA1_IRQC
-+	select SYS_SUPPORTS_SH_MTU2
- 
- config ARCH_R7S9210
- 	bool "RZ/A2 (R7S9210)"
- 	select PM
- 	select PM_GENERIC_DOMAINS
- 	select RENESAS_OSTM
-+	select RENESAS_RZA1_IRQC
- 
- config ARCH_R8A73A4
- 	bool "R-Mobile APE6 (R8A73A40)"
+Dependencies:
+  - Patch 3 depends on patch 2,
+  - Patch 4 can be applied as soon as the DT bindings in patch 1 have
+    been accepted,
+  - Patch 5 depends on patch 4.
+
+Upstream strategy:
+  - Patches 1-2 are intended to be applied to the irqchip tree,
+  - Patches 3-5 are meant for the Renesas tree.
+
+This has been tested on RSK+RZA1 with evtest and s2ram wake-up.
+I have verified proper operation of low-level and rising/falling sense
+select, too.
+
+Thanks!
+
+Geert Uytterhoeven (5):
+  dt-bindings: interrupt-controller: Add Renesas RZ/A1 Interrupt
+    Controller
+  irqchip: Add Renesas RZ/A1 Interrupt Controller driver
+  soc: renesas: Enable RZ/A1 IRQC on RZ/A1H and RZ/A2M
+  ARM: dts: r7s72100: Add IRQC device node
+  ARM: dts: rskrza1: Add input switches
+
+ .../renesas,rza1-irqc.txt                     |  43 +++
+ arch/arm/boot/dts/r7s72100-rskrza1.dts        |  38 +++
+ arch/arm/boot/dts/r7s72100.dtsi               |  19 ++
+ drivers/irqchip/Kconfig                       |   4 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-renesas-rza1.c            | 283 ++++++++++++++++++
+ drivers/soc/renesas/Kconfig                   |   4 +-
+ 7 files changed, 391 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rza1-irqc.txt
+ create mode 100644 drivers/irqchip/irq-renesas-rza1.c
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
