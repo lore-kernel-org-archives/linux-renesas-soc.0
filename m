@@ -2,132 +2,119 @@ Return-Path: <SRS0=rpyL=TD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1758DC46460
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42128C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E64C42075C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CB3320675
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfECJta (ORCPT
+        id S1727005AbfECJtb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 May 2019 05:49:30 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:46268 "EHLO
+        Fri, 3 May 2019 05:49:31 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:46280 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbfECJta (ORCPT
+        with ESMTP id S1726495AbfECJtb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 May 2019 05:49:30 -0400
+        Fri, 3 May 2019 05:49:31 -0400
 Received: from ramsan ([84.194.111.163])
         by baptiste.telenet-ops.be with bizsmtp
-        id 7lpT200033XaVaC01lpTVP; Fri, 03 May 2019 11:49:28 +0200
+        id 7lpT200043XaVaC01lpTVQ; Fri, 03 May 2019 11:49:28 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hMUop-0003sg-7m; Fri, 03 May 2019 11:49:27 +0200
+        id 1hMUop-0003se-7P; Fri, 03 May 2019 11:49:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hMUop-0003Bl-6q; Fri, 03 May 2019 11:49:27 +0200
+        id 1hMUop-0003Bh-4u; Fri, 03 May 2019 11:49:27 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Cao Van Dong <cv-dong@jinso.co.jp>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/4] pinctrl: sh-pfc: r8a7795: Add TPU pins, groups and functions
-Date:   Fri,  3 May 2019 11:49:24 +0200
-Message-Id: <20190503094926.12208-3-geert+renesas@glider.be>
+Subject: [PATCH 0/4] pinctrl: sh-pfc: r8a7795/6/65: Add TPU pins, groups and functions
+Date:   Fri,  3 May 2019 11:49:22 +0200
+Message-Id: <20190503094926.12208-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190503094926.12208-1-geert+renesas@glider.be>
-References: <20190503094926.12208-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add pins, groups and functions for the 16-Bit Timer Pulse Unit outputs
-on revisions ES2.x and later of the R-Car H3 SoC.
+	Hi Linus,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7795.c | 42 ++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+This patch series adds pins, groups and functions for the 16-Bit Timer
+Pulse Unit (TPU) outputs on the R-Car H3/M3-W/M3-N and RZ/G2M SoCs.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-index 79073b2f1ae2c335..bfa19309d14c91c5 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795.c
-@@ -3898,6 +3898,36 @@ static const unsigned int tmu_tclk2_b_mux[] = {
- 	TCLK2_B_MARK,
- };
- 
-+/* - TPU ------------------------------------------------------------------- */
-+static const unsigned int tpu_to0_pins[] = {
-+	/* TPU0TO0 */
-+	RCAR_GP_PIN(6, 28),
-+};
-+static const unsigned int tpu_to0_mux[] = {
-+	TPU0TO0_MARK,
-+};
-+static const unsigned int tpu_to1_pins[] = {
-+	/* TPU0TO1 */
-+	RCAR_GP_PIN(6, 29),
-+};
-+static const unsigned int tpu_to1_mux[] = {
-+	TPU0TO1_MARK,
-+};
-+static const unsigned int tpu_to2_pins[] = {
-+	/* TPU0TO2 */
-+	RCAR_GP_PIN(6, 30),
-+};
-+static const unsigned int tpu_to2_mux[] = {
-+	TPU0TO2_MARK,
-+};
-+static const unsigned int tpu_to3_pins[] = {
-+	/* TPU0TO3 */
-+	RCAR_GP_PIN(6, 31),
-+};
-+static const unsigned int tpu_to3_mux[] = {
-+	TPU0TO3_MARK,
-+};
-+
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
- 	/* PWEN, OVC */
-@@ -4448,6 +4478,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(tmu_tclk1_b),
- 	SH_PFC_PIN_GROUP(tmu_tclk2_a),
- 	SH_PFC_PIN_GROUP(tmu_tclk2_b),
-+	SH_PFC_PIN_GROUP(tpu_to0),
-+	SH_PFC_PIN_GROUP(tpu_to1),
-+	SH_PFC_PIN_GROUP(tpu_to2),
-+	SH_PFC_PIN_GROUP(tpu_to3),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-@@ -4943,6 +4977,13 @@ static const char * const tmu_groups[] = {
- 	"tmu_tclk2_b",
- };
- 
-+static const char * const tpu_groups[] = {
-+	"tpu_to0",
-+	"tpu_to1",
-+	"tpu_to2",
-+	"tpu_to3",
-+};
-+
- static const char * const usb0_groups[] = {
- 	"usb0",
- };
-@@ -5045,6 +5086,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(tmu),
-+	SH_PFC_FUNCTION(tpu),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
+This has been tested on the Salvator-XS development board with R-Car
+M3-N.  As the TPU parts of the R-Car H3/M3-W and RZ/G2M SoCs are very
+similar, I expect this to work on those SoCs, too.
+
+I intend to queue this up in sh-pfc-for-v5.3.
+
+Test procedure:
+  - Apply Cao Van Dong's series "[PATCH v2 0/5] Add TPU support for R-Car
+    H3/M3-W/M3-N"
+    (https://lore.kernel.org/linux-renesas-soc/1556155517-5054-1-git-send-email-cv-dong@jinso.co.jp/),
+  - Make sure switches SW31-[1-4] are switched off,
+  - Enable TPU and pin control in DTS:
+
+	--- a/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
+	+++ b/arch/arm64/boot/dts/renesas/salvator-xs.dtsi
+	@@ -27,3 +27,18 @@
+			clock-names = "xin";
+		};
+	 };
+	+
+	+&tpu {
+	+       // SW31-[1-4] OFF
+	+       pinctrl-0 = <&tpu_pins>;
+	+       pinctrl-names = "default";
+	+
+	+       status = "okay";
+	+};
+	+
+	+&pfc {
+	+       tpu_pins: tpu {
+	+               groups = "tpu_to2", "tpu_to3";
+	+               function = "tpu";
+	+       };
+	+};
+
+  - Exercise userspace PWM control for pwm[23] of
+    /sys/class/pwm/pwmchip1/,
+  - Inspect PWM signals on the input side of SW31-[12] using an
+    oscilloscope,
+  - Disable TPU and pin control in DTS, and restore SW31 switch
+    settings.
+
+Thanks!
+
+Geert Uytterhoeven (4):
+  pinctrl: sh-pfc: r8a7795-es1: Add TPU pins, groups and functions
+  pinctrl: sh-pfc: r8a7795: Add TPU pins, groups and functions
+  pinctrl: sh-pfc: r8a7796: Add TPU pins, groups and functions
+  pinctrl: sh-pfc: r8a77965: Add TPU pins, groups and functions
+
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 42 ++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 42 ++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 42 ++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 42 ++++++++++++++++++++++++
+ 4 files changed, 168 insertions(+)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
