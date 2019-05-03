@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D46C04AAA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CC6C004C9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBA6A20675
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 150C820675
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 May 2019 09:49:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbfECJta (ORCPT
+        id S1725777AbfECJta (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 3 May 2019 05:49:30 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:49830 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfECJta (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:46272 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbfECJta (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 3 May 2019 05:49:30 -0400
 Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id 7lpT2000G3XaVaC01lpTLb; Fri, 03 May 2019 11:49:28 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id 7lpT200053XaVaC01lpTVR; Fri, 03 May 2019 11:49:28 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hMUop-0003sf-7Q; Fri, 03 May 2019 11:49:27 +0200
+        id 1hMUop-0003sh-8M; Fri, 03 May 2019 11:49:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hMUop-0003Bj-6C; Fri, 03 May 2019 11:49:27 +0200
+        id 1hMUop-0003Bp-7S; Fri, 03 May 2019 11:49:27 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Cao Van Dong <cv-dong@jinso.co.jp>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] pinctrl: sh-pfc: r8a7795-es1: Add TPU pins, groups and functions
-Date:   Fri,  3 May 2019 11:49:23 +0200
-Message-Id: <20190503094926.12208-2-geert+renesas@glider.be>
+Subject: [PATCH 3/4] pinctrl: sh-pfc: r8a7796: Add TPU pins, groups and functions
+Date:   Fri,  3 May 2019 11:49:25 +0200
+Message-Id: <20190503094926.12208-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190503094926.12208-1-geert+renesas@glider.be>
 References: <20190503094926.12208-1-geert+renesas@glider.be>
@@ -47,18 +47,18 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Add pins, groups and functions for the 16-Bit Timer Pulse Unit outputs
-on revision ES1.x of the R-Car H3 SoC.
+on the R-Car M3-W and RZ/G2M SoCs.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 42 ++++++++++++++++++++++++
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c | 42 ++++++++++++++++++++++++++++
  1 file changed, 42 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-index 3f7d021367e90604..0d7b0dd21e15c05f 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c
-@@ -3809,6 +3809,36 @@ static const unsigned int tmu_tclk2_b_mux[] = {
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+index 33108f8886901a19..ae5fed14eb471776 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7796.c
+@@ -3888,6 +3888,36 @@ static const unsigned int tmu_tclk2_b_mux[] = {
  	TCLK2_B_MARK,
  };
  
@@ -95,18 +95,18 @@ index 3f7d021367e90604..0d7b0dd21e15c05f 100644
  /* - USB0 ------------------------------------------------------------------- */
  static const unsigned int usb0_pins[] = {
  	/* PWEN, OVC */
-@@ -4162,6 +4192,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(tmu_tclk1_b),
- 	SH_PFC_PIN_GROUP(tmu_tclk2_a),
- 	SH_PFC_PIN_GROUP(tmu_tclk2_b),
-+	SH_PFC_PIN_GROUP(tpu_to0),
-+	SH_PFC_PIN_GROUP(tpu_to1),
-+	SH_PFC_PIN_GROUP(tpu_to2),
-+	SH_PFC_PIN_GROUP(tpu_to3),
- 	SH_PFC_PIN_GROUP(usb0),
- 	SH_PFC_PIN_GROUP(usb1),
- 	SH_PFC_PIN_GROUP(usb2),
-@@ -4632,6 +4666,13 @@ static const char * const tmu_groups[] = {
+@@ -4394,6 +4424,10 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(tmu_tclk1_b),
+ 		SH_PFC_PIN_GROUP(tmu_tclk2_a),
+ 		SH_PFC_PIN_GROUP(tmu_tclk2_b),
++		SH_PFC_PIN_GROUP(tpu_to0),
++		SH_PFC_PIN_GROUP(tpu_to1),
++		SH_PFC_PIN_GROUP(tpu_to2),
++		SH_PFC_PIN_GROUP(tpu_to3),
+ 		SH_PFC_PIN_GROUP(usb0),
+ 		SH_PFC_PIN_GROUP(usb1),
+ 		SH_PFC_PIN_GROUP(usb30),
+@@ -4915,6 +4949,13 @@ static const char * const tmu_groups[] = {
  	"tmu_tclk2_b",
  };
  
@@ -120,14 +120,14 @@ index 3f7d021367e90604..0d7b0dd21e15c05f 100644
  static const char * const usb0_groups[] = {
  	"usb0",
  };
-@@ -4704,6 +4745,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(sdhi3),
- 	SH_PFC_FUNCTION(ssi),
- 	SH_PFC_FUNCTION(tmu),
-+	SH_PFC_FUNCTION(tpu),
- 	SH_PFC_FUNCTION(usb0),
- 	SH_PFC_FUNCTION(usb1),
- 	SH_PFC_FUNCTION(usb2),
+@@ -5008,6 +5049,7 @@ static const struct {
+ 		SH_PFC_FUNCTION(sdhi3),
+ 		SH_PFC_FUNCTION(ssi),
+ 		SH_PFC_FUNCTION(tmu),
++		SH_PFC_FUNCTION(tpu),
+ 		SH_PFC_FUNCTION(usb0),
+ 		SH_PFC_FUNCTION(usb1),
+ 		SH_PFC_FUNCTION(usb30),
 -- 
 2.17.1
 
