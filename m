@@ -2,111 +2,106 @@ Return-Path: <SRS0=UVfb=TH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE86AC004C9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 May 2019 14:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79582C004C9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 May 2019 14:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71802087F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 May 2019 14:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C43420825
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 May 2019 14:43:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="BvCwVyEV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbfEGOdp (ORCPT
+        id S1726572AbfEGOns (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 May 2019 10:33:45 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:38352 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfEGOdp (ORCPT
+        Tue, 7 May 2019 10:43:48 -0400
+Received: from mail-eopbgr1400139.outbound.protection.outlook.com ([40.107.140.139]:57754
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725859AbfEGOns (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 May 2019 10:33:45 -0400
-Received: by mail-ua1-f68.google.com with SMTP id t15so6098911uao.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 May 2019 07:33:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2+nW9Fa/RTU+kRi8Kjd9YcSYvGzElthXAVs65d+tibQ=;
-        b=Nw3tAP3H2UxaGn9a0XQ9jx2bSTobTYc6fxjt74yCHQgO2TsnqK7WH6oOF0PVmGoVhn
-         ngAAAs+7fjsr4bSdCM3J+JVmhsJ7tRq91iS/bZrTcK3TIOc2DIz28do92r6fnT9gasgD
-         +MDTMp3ZwGmbAbe2sdH9yb2ARyuWR5DehCccSOY0ciY/mGpBpt1ANOev7T1NG76lxY8B
-         4FhtXa6lKfOKAmW3Z22iQkfQdIlPMqUY8rm0xV/pCRidW/VtoF/54MjvwXQD3PMvRp/T
-         4EgCiXsAWrtf41Jkx10ysITCj1bBFwhda1X8ius2qVx6Z6qtLdr2JL7/3wKTtJY5wjiv
-         AFTw==
-X-Gm-Message-State: APjAAAVUoSO6UCe9rT88l2Sa0tRf5nEPqB2vbLxYIVPxuNk929VWMvDT
-        zD3H1Nbxf99tcvSIdEDUP8VyFqc0e5Gn3QwBs3o=
-X-Google-Smtp-Source: APXvYqyRJBFuMI4/6SrePGR2PEWd4v4APR9kNxFQAR6mYPQ+bUkCVpjNeBgKi6yNF0zZO11+y9M34blQ2ACJ2/i1JBE=
-X-Received: by 2002:ab0:6419:: with SMTP id x25mr16594003uao.86.1557239623947;
- Tue, 07 May 2019 07:33:43 -0700 (PDT)
+        Tue, 7 May 2019 10:43:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aM0Nd0hS5cwxiqbVjrIhyckr+/lsIhaa8E7lQbaaI9M=;
+ b=BvCwVyEV+OLyE03Fd0hbJF1HR8X55VAiTq+UN24vqef5iq5Nm1zyCNdQGh8z/ZunEp09l/gpXrC0c0LVp7cNzGoyBCeT2fREK9jvtctaDJddwsRvkuXqjXtwMhVXAprDVzblAjM/h0sShKEWQ4/4GMN4O0SW03RTZVV3xtBABIM=
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
+ TY1PR01MB1835.jpnprd01.prod.outlook.com (52.133.163.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1856.10; Tue, 7 May 2019 14:43:41 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::99cf:c94c:d11f:c2f0]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::99cf:c94c:d11f:c2f0%5]) with mapi id 15.20.1856.012; Tue, 7 May 2019
+ 14:43:41 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 03/10] phy: renesas: rcar-gen3-usb2: Check dr_mode when
+ not using OTG
+Thread-Topic: [PATCH 03/10] phy: renesas: rcar-gen3-usb2: Check dr_mode when
+ not using OTG
+Thread-Index: AQHVBGYbvpIQ5ioroEGpDalH9Ovnd6ZfhsEAgAAEBrCAAC6vgIAAAodw
+Date:   Tue, 7 May 2019 14:43:41 +0000
+Message-ID: <TY1PR01MB1562C153ABE676047F568BBD8A310@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20190506234631.113226-1-chris.brandt@renesas.com>
+ <20190506234631.113226-4-chris.brandt@renesas.com>
+ <17bcc673-5fed-ce4f-3d61-af34bfa5d769@cogentembedded.com>
+ <TY1PR01MB1562550164C7977D28C90F128A310@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <34544f59-76aa-710a-a6ec-7d7d7f31a023@cogentembedded.com>
+In-Reply-To: <34544f59-76aa-710a-a6ec-7d7d7f31a023@cogentembedded.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [24.206.39.126]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 50f26ac9-4f6b-4522-a6ff-08d6d2fa6605
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:TY1PR01MB1835;
+x-ms-traffictypediagnostic: TY1PR01MB1835:
+x-microsoft-antispam-prvs: <TY1PR01MB183521668A620E1A497A06488A310@TY1PR01MB1835.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0030839EEE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(39860400002)(136003)(366004)(199004)(189003)(102836004)(25786009)(4744005)(186003)(9686003)(6506007)(53936002)(26005)(55016002)(66066001)(52536014)(66946007)(73956011)(99286004)(76116006)(76176011)(5660300002)(64756008)(66446008)(4326008)(6246003)(71200400001)(68736007)(256004)(7696005)(66556008)(71190400001)(66476007)(6116002)(72206003)(74316002)(316002)(3846002)(6636002)(54906003)(86362001)(2906002)(110136005)(229853002)(11346002)(81156014)(446003)(486006)(476003)(33656002)(81166006)(8676002)(478600001)(7736002)(305945005)(14454004)(6436002)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1835;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: uPZDp5PeF7+tmUu0T2UI8Phz9EfG3VsbTRbk5xqa3+OFSnGO4FwGKskR81QELEXiLtOAPb/eE7gwxEnV+qgi+dxxvM1yqMFNm/0tz00VKebQZ2YpAPgfg50Ki3yqZAOMpOQrbeO4UrDi64pSP/VegEkmGPtGyMgV+A/mL2kfOuu7KjlnjC9bXADHoAwxK3Yki+gEoqbv9c+JlpPILgYvCDE21FJPf9Kelv483UKlSWV+BGU1iI3AdJNvOxUZa3eOYZBF6bPdHdmXgs0mlgUUq/5oHlToC5pZ6WVuTKUqGFmvMBhP/MkFD/yy30xtct81+B8h4rbsK0qLMwx5xw3bN0DNBl3VKM5RhbuRgNeOFac45N2eorEXBVzpmp23OjZBtnjF/VN1hSpNjo0BSsymQ30MjtJ0XKEH8Mzirs5bsPw=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190320071605.4289-1-jonas@norrbonn.se> <20190320071605.4289-3-jonas@norrbonn.se>
- <CAMuHMdVH85iFJngkU6W61ybwR2j3YQ7=cugPxgC57hUgBOc5KA@mail.gmail.com>
- <1f33e1e5-d7bf-76a0-c4d3-ecbc35fbfd4f@microchip.com> <CAMuHMdU83vLeVSqMZuJwR4yd382mau-OE1saMAOC2+6HodsHvg@mail.gmail.com>
- <fac5fa6d-95e9-cfb0-4d5a-6b16d4470190@norrbonn.se> <CAMuHMdUEdNr5rgCdaGAFJ-WK4oL2DC419smk+QYOJ7qJvkWA8A@mail.gmail.com>
- <a9ad3641-1eb8-782c-9dfd-0db41256d3f1@microchip.com> <ad49240c-2073-4045-c11c-fb6bad231321@microchip.com>
-In-Reply-To: <ad49240c-2073-4045-c11c-fb6bad231321@microchip.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 7 May 2019 16:33:31 +0200
-Message-ID: <CAMuHMdVcp--qRo3m8kSQ=++Vx33kvxBWEHFVHfh-j=pq1x-GPQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] spi-nor: s25fl512s supports region locking
-To:     Tudor Ambarus <Tudor.Ambarus@microchip.com>
-Cc:     Jonas Bonn <jonas@norrbonn.se>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50f26ac9-4f6b-4522-a6ff-08d6d2fa6605
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2019 14:43:41.2545
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1835
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Tudor,
-
-On Tue, May 7, 2019 at 3:25 PM <Tudor.Ambarus@microchip.com> wrote:
-> On 05/07/2019 04:15 PM, Tudor Ambarus wrote:
-> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> > index 73172d7f512b..b94a6eaaaca5 100644
-> > --- a/drivers/mtd/spi-nor/spi-nor.c
-> > +++ b/drivers/mtd/spi-nor/spi-nor.c
-> > @@ -1551,6 +1551,7 @@ static int spansion_read_cr_quad_enable(struct spi_nor *nor)
-> >         u8 sr_cr[2];
-> >         int ret;
-> >
-> > +       dev_err(dev, "%s\n", __FUNCTION__);
-
-This one isn't triggered.
-
-> >         /* Check current Quad Enable bit value. */
-> >         ret = read_cr(nor);
-> >         if (ret < 0) {
-> > @@ -3911,6 +3912,12 @@ static int spi_nor_setup(struct spi_nor *nor,
-> >  static int spi_nor_init(struct spi_nor *nor)
-> >  {
-> >         int err;
-> > +       u8 val;
-> > +       u8 mask = SR_BP2 | SR_BP1 | SR_BP0;
-> > +
-> > +       /* Check current Quad Enable bit value. */
-> > +       val = read_cr(nor);
-> this should have been:
->         val = read_sr(nor);
-> sorry.
->
-> > +       dev_err(nor->dev, "%s val = %02x\n", val);
-> and here
->         dev_err(nor->dev, "%s val = %02x\n", __FUNCTION__, val);
-
-m25p80 spi0.0: spi_nor_init val = 00
-
-so the masking trick doesn't help :-(
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gVHVlLCBNYXkgMDcsIDIwMTkgMSwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiAgICBEb24n
+dCB5b3UgcmVtZW1iZXIgYW5vdGhlciBydWxlOiB1c2Uge30gaW4gYWxsIGJyYW5jaGVzIGlmIGF0
+IGxlYXN0DQo+IG9uZSBicmFuY2ggdXNlcyB7fT8NCg0KQWgsIEkgc2VlIGl0IG5vdy4NCg0KRG9j
+dW1lbnRhdGlvbi9wcm9jZXNzL2NvZGluZy1zdHlsZS5yc3Q6DQoNClRoaXMgZG9lcyBub3QgYXBw
+bHkgaWYgb25seSBvbmUgYnJhbmNoIG9mIGEgY29uZGl0aW9uYWwgc3RhdGVtZW50IGlzIGEgc2lu
+Z2xlDQpzdGF0ZW1lbnQ7IGluIHRoZSBsYXR0ZXIgY2FzZSB1c2UgYnJhY2VzIGluIGJvdGggYnJh
+bmNoZXM6DQoNCi4uIGNvZGUtYmxvY2s6OiBjDQoNCglpZiAoY29uZGl0aW9uKSB7DQoJCWRvX3Ro
+aXMoKTsNCgkJZG9fdGhhdCgpOw0KCX0gZWxzZSB7DQoJCW90aGVyd2lzZSgpOw0KCX0NCg0KDQpJ
+IHdpbGwgY2hhbmdlIGl0Lg0KVGhhbmtzIQ0KDQpDaHJpcw0K
