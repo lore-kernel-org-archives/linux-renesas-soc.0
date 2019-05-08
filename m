@@ -2,151 +2,135 @@ Return-Path: <SRS0=E//N=TI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D597EC04A6B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 May 2019 13:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7025AC04A6B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 May 2019 13:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE6E20850
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 May 2019 13:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C3C1214AF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 May 2019 13:40:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbfEHNUQ (ORCPT
+        id S1727618AbfEHNkR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 May 2019 09:20:16 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:43362 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727453AbfEHNUQ (ORCPT
+        Wed, 8 May 2019 09:40:17 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33890 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727598AbfEHNkR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 May 2019 09:20:16 -0400
-Received: by mail-ua1-f65.google.com with SMTP id 94so5088056uaf.10
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 08 May 2019 06:20:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vxge8c0Vxi1T7nYlAa9OeuDqJOUYQ8h5Blla0Ehqg7E=;
-        b=Iq7fXlnSwrq4/Fm0nyx6mRFJ0advACBnk0slGtI2vYkX2GUhSIP5HWnwGzSO4iE0vG
-         YqH9C6g4FSBfNA7zN7YKrz5dYX8Bbirb5PxJHfe4sxUtv3bSjA3cb5PObEIARJUOEcNj
-         /O95jq+meUacKMYEOXCVJQSaYqSQcJbx8kIGyeyILTpiIrTm4bv7je4+fmXkqhu40Cb/
-         c5tWl4D08elI07NgB0534wWPoEpQrhhR5OWryEtGlabRl0cnuUDd9ecRcjh6TqD0yP7l
-         zWiPJ9ovct9fgLhfSTlvtHv/L6d5miCX6ROABsLiLwql/mB93gdC1qjd87orqfvRm2Rd
-         Bkig==
-X-Gm-Message-State: APjAAAX8KQHyPXdQmX33c7E2vbGwEsqOGkgZmJejipZ1E55HuOQs9uLi
-        GdOhhJrB0HADUQlyl77IEjBLdu3ZDom90a6VZB6nC81d
-X-Google-Smtp-Source: APXvYqy+09oDA6eSEwjGV6Rz9PrI3l7+/XyTg9qu8kZL5oMBtXA2c1sxJqcGdTAXRBoweyGt8q0Y42wLZllZYVVloJY=
-X-Received: by 2002:ab0:d89:: with SMTP id i9mr19771477uak.96.1557321615237;
- Wed, 08 May 2019 06:20:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190508115605.13726-1-horms+renesas@verge.net.au>
-In-Reply-To: <20190508115605.13726-1-horms+renesas@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 8 May 2019 15:20:03 +0200
-Message-ID: <CAMuHMdX3YW0NaDXvN1WjWeNrCH366LALa3UT41REqAHNJk-9JA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: r8a7795: Create thermal zone to
- support IPA
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 8 May 2019 09:40:17 -0400
+Received: from ramsan ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 9pgE2000Y3XaVaC01pgEFx; Wed, 08 May 2019 15:40:15 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hOMnu-0005Vp-IJ; Wed, 08 May 2019 15:40:14 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hOMnu-0004BD-Gq; Wed, 08 May 2019 15:40:14 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Cao Van Dong <cv-dong@jinso.co.jp>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 4/4] pinctrl: sh-pfc: r8a77965: Add TPU pins, groups and functions
+Date:   Wed,  8 May 2019 15:40:12 +0200
+Message-Id: <20190508134012.16002-5-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190508134012.16002-1-geert+renesas@glider.be>
+References: <20190508134012.16002-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
+Add pins, groups and functions for the 16-Bit Timer Pulse Unit outputs
+on the R-Car M3-N SoC.
 
-Thanks for your patch!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
+---
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c | 42 +++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-On Wed, May 8, 2019 at 1:56 PM Simon Horman <horms+renesas@verge.net.au> wrote:
-> From: Dien Pham <dien.pham.ry@renesas.com>
->
-> Setup a thermal zone driven by SoC temperature sensor.
-> Create passive trip points and bind them to CPUFreq cooling
-> device that supports power extension.
->
-> In R-Car Gen3, IPA is supported for only one channel
->  (on H3/M3/M3N board, it is channel THS3). Reason:
->   Currently, IPA controls base on only CPU temperature.
->   And only one thermal channel is assembled closest
->   CPU cores is selected as target of IPA.
->   If other channels are used, IPA controlling is not properly.
->
-> The device supports 5 cooling states which can be categorised as follows:
->
-> 0 & 1) boost (clocking up)
-> 2)     default
-> 3 & 4) cooling (clocking down)
->
-> Currently the thermal framework assumes that the default is the minimum,
-> or in other words there is no provision for handling boost states.
-> So this patch only describes the upper 3 states, default and cooling.
->
-> A single cooling device is described for all A57 CPUs as this
-> reflects that physically there is only one cooling device present.
->
-> This patch improves on an earlier version by:
->
-> * Omitting cooling-max-level and cooling-min-level properties which
->   are no longer present in mainline as of v4.17
-> * Removing an unused trip-point0 node sub-property from the trips
->   property.
-> * Using cooling-device indexes such that maximum refers to maximum cooling
->   rather than the inverse.
->
-> The long signed-off by chain below reflects many revisions, mainly
-> internal, that this patch has been through.
->
-> Signed-off-by: Keita Kobayashi <keita.kobayashi.ym@renesas.com>
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Hien Dang <hien.dang.eb@rvc.renesas.com>
-> Signed-off-by: An Huynh <an.huynh.uj@rvc.renesas.com>
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-> Signed-off-by: Simon Horman <simon.horman@netronome.com>
-
-Did you intend to use this SoB value?
-
-> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-> @@ -155,6 +155,7 @@
->                         power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       dynamic-power-coefficient = <854>;
-
-The dynamic-power-coefficient property is a property of the CPU,
-documented in Documentation/devicetree/bindings/arm/cpus.yaml,
-and not directly related to thermal zones.
-
-Hence I think its addition should be done in a separate patch.
-
->                         clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
->                         operating-points-v2 = <&cluster0_opp>;
->                         capacity-dmips-mhz = <1024>;
-> @@ -207,6 +208,8 @@
->                         power-domains = <&sysc R8A7795_PD_CA53_CPU0>;
->                         next-level-cache = <&L2_CA53>;
->                         enable-method = "psci";
-> +                       #cooling-cells = <2>;
-> +                       dynamic-power-coefficient = <277>;
-
-Likewise.
-
->                         clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
->                         operating-points-v2 = <&cluster1_opp>;
->                         capacity-dmips-mhz = <535>;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+index bddc6c038d8f233d..2c0c3480e45a8ab1 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a77965.c
+@@ -4113,6 +4113,36 @@ static const unsigned int tmu_tclk2_b_mux[] = {
+ 	TCLK2_B_MARK,
+ };
+ 
++/* - TPU ------------------------------------------------------------------- */
++static const unsigned int tpu_to0_pins[] = {
++	/* TPU0TO0 */
++	RCAR_GP_PIN(6, 28),
++};
++static const unsigned int tpu_to0_mux[] = {
++	TPU0TO0_MARK,
++};
++static const unsigned int tpu_to1_pins[] = {
++	/* TPU0TO1 */
++	RCAR_GP_PIN(6, 29),
++};
++static const unsigned int tpu_to1_mux[] = {
++	TPU0TO1_MARK,
++};
++static const unsigned int tpu_to2_pins[] = {
++	/* TPU0TO2 */
++	RCAR_GP_PIN(6, 30),
++};
++static const unsigned int tpu_to2_mux[] = {
++	TPU0TO2_MARK,
++};
++static const unsigned int tpu_to3_pins[] = {
++	/* TPU0TO3 */
++	RCAR_GP_PIN(6, 31),
++};
++static const unsigned int tpu_to3_mux[] = {
++	TPU0TO3_MARK,
++};
++
+ /* - USB0 ------------------------------------------------------------------- */
+ static const unsigned int usb0_pins[] = {
+ 	/* PWEN, OVC */
+@@ -4669,6 +4699,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(tmu_tclk1_b),
+ 	SH_PFC_PIN_GROUP(tmu_tclk2_a),
+ 	SH_PFC_PIN_GROUP(tmu_tclk2_b),
++	SH_PFC_PIN_GROUP(tpu_to0),
++	SH_PFC_PIN_GROUP(tpu_to1),
++	SH_PFC_PIN_GROUP(tpu_to2),
++	SH_PFC_PIN_GROUP(tpu_to3),
+ 	SH_PFC_PIN_GROUP(usb0),
+ 	SH_PFC_PIN_GROUP(usb1),
+ 	SH_PFC_PIN_GROUP(usb30),
+@@ -5161,6 +5195,13 @@ static const char * const tmu_groups[] = {
+ 	"tmu_tclk2_b",
+ };
+ 
++static const char * const tpu_groups[] = {
++	"tpu_to0",
++	"tpu_to1",
++	"tpu_to2",
++	"tpu_to3",
++};
++
+ static const char * const usb0_groups[] = {
+ 	"usb0",
+ };
+@@ -5255,6 +5296,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(sdhi3),
+ 	SH_PFC_FUNCTION(ssi),
+ 	SH_PFC_FUNCTION(tmu),
++	SH_PFC_FUNCTION(tpu),
+ 	SH_PFC_FUNCTION(usb0),
+ 	SH_PFC_FUNCTION(usb1),
+ 	SH_PFC_FUNCTION(usb30),
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
