@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16BDEC04AB2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF027C46470
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 May 2019 20:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76A321744
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 May 2019 20:36:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAA6721744
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 May 2019 20:36:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbfEIUgn (ORCPT
+        id S1727075AbfEIUgp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 May 2019 16:36:43 -0400
+        Thu, 9 May 2019 16:36:45 -0400
 Received: from pbmsgap01.intersil.com ([192.157.179.201]:34936 "EHLO
         pbmsgap01.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbfEIUgl (ORCPT
+        with ESMTP id S1726959AbfEIUgk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 May 2019 16:36:41 -0400
+        Thu, 9 May 2019 16:36:40 -0400
 Received: from pps.filterd (pbmsgap01.intersil.com [127.0.0.1])
-        by pbmsgap01.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x49KD5RM018305;
-        Thu, 9 May 2019 16:14:29 -0400
+        by pbmsgap01.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x49KCa5n018263;
+        Thu, 9 May 2019 16:13:52 -0400
 Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
-        by pbmsgap01.intersil.com with ESMTP id 2scabqgu2b-1
+        by pbmsgap01.intersil.com with ESMTP id 2scabqgu1j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 09 May 2019 16:14:29 -0400
+        Thu, 09 May 2019 16:13:51 -0400
 Received: from pbmxdp03.intersil.corp (132.158.200.224) by
  pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Thu, 9 May 2019 16:14:28 -0400
+ 15.1.1531.3; Thu, 9 May 2019 16:13:50 -0400
 Received: from localhost.localdomain (132.158.202.108) by
  pbmxdp03.intersil.corp (132.158.200.224) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Thu, 9 May 2019 16:14:27 -0400
+ 15.1.1531.3 via Frontend Transport; Thu, 9 May 2019 16:13:49 -0400
 From:   Chris Brandt <chris.brandt@renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -45,9 +45,9 @@ CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
         <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>,
         "Chris Brandt" <chris.brandt@renesas.com>
-Subject: [PATCH v2 14/15] ARM: dts: r7s9210: Add USB Device support
-Date:   Thu, 9 May 2019 15:11:41 -0500
-Message-ID: <20190509201142.10543-15-chris.brandt@renesas.com>
+Subject: [PATCH v2 10/15] usb: renesas_usbhs: support byte addressable CFIFO
+Date:   Thu, 9 May 2019 15:11:37 -0500
+Message-ID: <20190509201142.10543-11-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20190509201142.10543-1-chris.brandt@renesas.com>
 References: <20190509201142.10543-1-chris.brandt@renesas.com>
@@ -56,7 +56,7 @@ Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=940
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1905090115
 X-Proofpoint-Spam-Reason: mlx
@@ -65,59 +65,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add USB Device support for RZ/A2.
+Some SoC have a CFIFO register that is byte addressable. This means
+when the CFIFO access is set to 32-bit, you can write 8-bit values to
+addresses CFIFO+0, CFIFO+1, CFIFO+2, CFIFO+3.
 
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
-v2:
- * changed to generic name usb@xxx
- * Add space between compatible strings
----
- arch/arm/boot/dts/r7s9210.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/usb/renesas_usbhs/common.h | 1 +
+ drivers/usb/renesas_usbhs/fifo.c   | 9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r7s9210.dtsi b/arch/arm/boot/dts/r7s9210.dtsi
-index 1877871af3fc..5ebef1583f56 100644
---- a/arch/arm/boot/dts/r7s9210.dtsi
-+++ b/arch/arm/boot/dts/r7s9210.dtsi
-@@ -361,6 +361,18 @@
- 			status = "disabled";
- 		};
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index 211ab8e741be..af4aec703ab1 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -345,6 +345,7 @@ struct usbhs_priv *usbhs_pdev_to_priv(struct platform_device *pdev);
+  */
+ #define USBHSF_RUNTIME_PWCTRL	(1 << 0)
+ #define USBHSF_HAS_CNEN		(1 << 1) /* Single-ended receiver */
++#define USBHSF_CFIFO_BYTE_ADDR	(1 << 2) /* Byte addressable */
  
-+		usbhs0: usb@e8219000 {
-+			compatible = "renesas,usbhs-r7s9210", "renesas,rza2-usbhs";
-+			reg = <0xe8219000 0x724>;
-+			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 61>;
-+			renesas,buswait = <7>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
- 		ohci1: usb@e821a000 {
- 			compatible = "generic-ohci";
- 			reg = <0xe821a000 0x100>;
-@@ -393,6 +405,18 @@
- 			status = "disabled";
- 		};
+ #define usbhsc_flags_init(p)   ((p)->flags = 0)
+ #define usbhsc_flags_set(p, b) ((p)->flags |=  (b))
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index 39fa2fc1b8b7..b313ee637e53 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -543,8 +543,13 @@ static int usbhsf_pio_try_push(struct usbhs_pkt *pkt, int *is_done)
+ 	}
  
-+		usbhs1: usb@e821b000 {
-+			compatible = "renesas,usbhs-r7s9210", "renesas,rza2-usbhs";
-+			reg = <0xe821b000 0x724>;
-+			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 60>;
-+			renesas,buswait = <7>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@e8228000 {
- 			compatible = "renesas,sdhi-r7s9210";
- 			reg = <0xe8228000 0x8c0>;
+ 	/* the rest operation */
+-	for (i = 0; i < len; i++)
+-		iowrite8(buf[i], addr + (0x03 - (i & 0x03)));
++	if (usbhsc_flags_has(priv, USBHSF_CFIFO_BYTE_ADDR)) {
++		for (i = 0; i < len; i++)
++			iowrite8(buf[i], addr + (i & 0x03));
++	} else {
++		for (i = 0; i < len; i++)
++			iowrite8(buf[i], addr + (0x03 - (i & 0x03)));
++	}
+ 
+ 	/*
+ 	 * variable update
 -- 
 2.16.1
 
