@@ -1,131 +1,241 @@
-Return-Path: <SRS0=hqPp=TJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=0F6b=TK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F60C04AB1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 May 2019 20:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FED0C04AB1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 May 2019 01:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 620D4217D6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 May 2019 20:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A71C217F4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 May 2019 01:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfEIUnA (ORCPT
+        id S1726802AbfEJBxb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 May 2019 16:43:00 -0400
-Received: from pbmsgap01.intersil.com ([192.157.179.201]:35388 "EHLO
-        pbmsgap01.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbfEIUnA (ORCPT
+        Thu, 9 May 2019 21:53:31 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:8184 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726765AbfEJBxb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 May 2019 16:43:00 -0400
-Received: from pps.filterd (pbmsgap01.intersil.com [127.0.0.1])
-        by pbmsgap01.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x49K2vvK012618;
-        Thu, 9 May 2019 16:12:11 -0400
-Received: from pbmxdp03.intersil.corp (pbmxdp03.pb.intersil.com [132.158.200.224])
-        by pbmsgap01.intersil.com with ESMTP id 2scabqgtyy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 09 May 2019 16:12:11 -0400
-Received: from pbmxdp03.intersil.corp (132.158.200.224) by
- pbmxdp03.intersil.corp (132.158.200.224) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Thu, 9 May 2019 16:12:09 -0400
-Received: from localhost.localdomain (132.158.202.108) by
- pbmxdp03.intersil.corp (132.158.200.224) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Thu, 9 May 2019 16:12:08 -0400
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        Thu, 9 May 2019 21:53:31 -0400
+X-UUID: 271e0b596785462282f7b79aa87b7095-20190510
+X-UUID: 271e0b596785462282f7b79aa87b7095-20190510
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1268623971; Fri, 10 May 2019 09:53:26 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 10 May
+ 2019 09:53:24 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 10 May 2019 09:53:24 +0800
+Message-ID: <1557453204.10179.275.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 11/15] usb: renesas_usbhs: Add support for RZ/A2
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Chris Brandt <chris.brandt@renesas.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        "Chris Brandt" <chris.brandt@renesas.com>
-Subject: [PATCH v2 00/15] usb: Add host and device support for RZ/A2
-Date:   Thu, 9 May 2019 15:11:27 -0500
-Message-ID: <20190509201142.10543-1-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.16.1
+        <linux-renesas-soc@vger.kernel.org>
+Date:   Fri, 10 May 2019 09:53:24 +0800
+In-Reply-To: <20190509201142.10543-12-chris.brandt@renesas.com>
+References: <20190509201142.10543-1-chris.brandt@renesas.com>
+         <20190509201142.10543-12-chris.brandt@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905090114
-X-Proofpoint-Spam-Reason: mlx
+X-MTK:  N
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-For the most part, the RZ/A2 has the same USB 2.0 host and device
-HW as the R-Car Gen3, so we can reuse a lot of the code.
+On Thu, 2019-05-09 at 15:11 -0500, Chris Brandt wrote:
+> The RZ/A2 is similar to the R-Car Gen3 with some small differences.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+>  * combined RZA1 and RZA2 for fifo setting
+>  * added braces to make code easier to read
+>  * fixed and clean up usbhs_rza2_power_ctrl()
+> ---
+>  drivers/usb/renesas_usbhs/Makefile |  2 +-
+>  drivers/usb/renesas_usbhs/common.c | 12 +++++-
+>  drivers/usb/renesas_usbhs/rza.h    |  1 +
+>  drivers/usb/renesas_usbhs/rza2.c   | 79 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/usb/renesas_usbhs.h  |  1 +
+>  5 files changed, 93 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/usb/renesas_usbhs/rza2.c
+> 
+> diff --git a/drivers/usb/renesas_usbhs/Makefile b/drivers/usb/renesas_usbhs/Makefile
+> index 5c5b51bb48ef..a1fed56b0957 100644
+> --- a/drivers/usb/renesas_usbhs/Makefile
+> +++ b/drivers/usb/renesas_usbhs/Makefile
+> @@ -5,7 +5,7 @@
+>  
+>  obj-$(CONFIG_USB_RENESAS_USBHS)	+= renesas_usbhs.o
+>  
+> -renesas_usbhs-y			:= common.o mod.o pipe.o fifo.o rcar2.o rcar3.o rza.o
+> +renesas_usbhs-y			:= common.o mod.o pipe.o fifo.o rcar2.o rcar3.o rza.o rza2.o
+>  
+>  ifneq ($(CONFIG_USB_RENESAS_USBHS_HCD),)
+>  	renesas_usbhs-y		+= mod_host.o
+> diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+> index 820636fc4dc9..35d2298c03a0 100644
+> --- a/drivers/usb/renesas_usbhs/common.c
+> +++ b/drivers/usb/renesas_usbhs/common.c
+> @@ -582,6 +582,10 @@ static const struct of_device_id usbhs_of_match[] = {
+>  		.compatible = "renesas,rza1-usbhs",
+>  		.data = (void *)USBHS_TYPE_RZA1,
+>  	},
+> +	{
+> +		.compatible = "renesas,rza2-usbhs",
+> +		.data = (void *)USBHS_TYPE_RZA2,
+> +	},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, usbhs_of_match);
+> @@ -614,7 +618,8 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
+>  		dparam->pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
+>  	}
+>  
+> -	if (dparam->type == USBHS_TYPE_RZA1) {
+> +	if (dparam->type == USBHS_TYPE_RZA1 ||
+> +	    dparam->type == USBHS_TYPE_RZA2) {
+>  		dparam->pipe_configs = usbhsc_new_pipe;
+>  		dparam->pipe_size = ARRAY_SIZE(usbhsc_new_pipe);
+>  	}
+> @@ -688,6 +693,11 @@ static int usbhs_probe(struct platform_device *pdev)
+>  	case USBHS_TYPE_RZA1:
+>  		priv->pfunc = usbhs_rza1_ops;
+>  		break;
+> +	case USBHS_TYPE_RZA2:
+> +		priv->pfunc = usbhs_rza2_ops;
+> +		usbhsc_flags_set(priv, USBHSF_HAS_CNEN);
+> +		usbhsc_flags_set(priv, USBHSF_CFIFO_BYTE_ADDR);
+> +		break;
+>  	default:
+>  		if (!info->platform_callback.get_id) {
+>  			dev_err(&pdev->dev, "no platform callbacks");
+> diff --git a/drivers/usb/renesas_usbhs/rza.h b/drivers/usb/renesas_usbhs/rza.h
+> index ca917ca54f6d..073a53d1d442 100644
+> --- a/drivers/usb/renesas_usbhs/rza.h
+> +++ b/drivers/usb/renesas_usbhs/rza.h
+> @@ -2,3 +2,4 @@
+>  #include "common.h"
+>  
+>  extern const struct renesas_usbhs_platform_callback usbhs_rza1_ops;
+> +extern const struct renesas_usbhs_platform_callback usbhs_rza2_ops;
+> diff --git a/drivers/usb/renesas_usbhs/rza2.c b/drivers/usb/renesas_usbhs/rza2.c
+> new file mode 100644
+> index 000000000000..a1d9eb2d40cf
+> --- /dev/null
+> +++ b/drivers/usb/renesas_usbhs/rza2.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Renesas USB driver RZ/A2 initialization and power control
+> + *
+> + * Copyright (C) 2019 Chris Brandt
+> + * Copyright (C) 2019 Renesas Electronics Corporation
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/of_device.h>
+> +#include <linux/phy/phy.h>
+> +#include "common.h"
+> +#include "rza.h"
+> +
+> +
+> +static int usbhs_rza2_hardware_init(struct platform_device *pdev)
+> +{
+> +	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
+> +
+> +	if (IS_ENABLED(CONFIG_GENERIC_PHY)) {
+no need check it, if it's not enabled, phy_get() will return an error
+number.
 
-However, there are a couple extra register bits, and the CFIFO
-register 8-bit access works a little different..
+> +		struct phy *phy = phy_get(&pdev->dev, "usb");
+use devm_phy_get??
+> +
+> +		if (IS_ERR(phy))
+> +			return PTR_ERR(phy);
+> +
+> +		priv->phy = phy;
+> +		return 0;
+> +	}
+> +	return -ENXIO;
+> +}
+> +
+> +static int usbhs_rza2_hardware_exit(struct platform_device *pdev)
+> +{
+> +	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
+> +
+> +	if (priv->phy) {
+> +		phy_put(priv->phy);
+> +		priv->phy = NULL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int usbhs_rza2_power_ctrl(struct platform_device *pdev,
+> +				void __iomem *base, int enable)
+> +{
+> +	struct usbhs_priv *priv = usbhs_pdev_to_priv(pdev);
+> +	int retval = 0;
+> +
+> +	if (!priv->phy)
+> +		return -ENODEV;
+> +
+> +	if (enable) {
+> +		retval = phy_init(priv->phy);
+> +		usbhs_bset(priv, SUSPMODE, SUSPM, SUSPM);
+> +		udelay(100);	/* Wait for PLL to become stable */
+> +		if (!retval)
+> +			retval = phy_power_on(priv->phy);
+> +	} else {
+> +		usbhs_bset(priv, SUSPMODE, SUSPM, 0);
+> +		phy_power_off(priv->phy);
+> +		phy_exit(priv->phy);
+> +	}
+> +
+> +	return retval;
+> +}
+> +
+> +static int usbhs_rza2_get_id(struct platform_device *pdev)
+> +{
+> +	return USBHS_GADGET;
+> +}
+> +
+> +const struct renesas_usbhs_platform_callback usbhs_rza2_ops = {
+> +	.hardware_init = usbhs_rza2_hardware_init,
+> +	.hardware_exit = usbhs_rza2_hardware_exit,
+> +	.power_ctrl = usbhs_rza2_power_ctrl,
+> +	.get_id = usbhs_rza2_get_id,
+> +};
+> diff --git a/include/linux/usb/renesas_usbhs.h b/include/linux/usb/renesas_usbhs.h
+> index 53924f8e840c..39604c8b1eed 100644
+> --- a/include/linux/usb/renesas_usbhs.h
+> +++ b/include/linux/usb/renesas_usbhs.h
+> @@ -196,6 +196,7 @@ struct renesas_usbhs_driver_param {
+>  #define USBHS_TYPE_RCAR_GEN3		2
+>  #define USBHS_TYPE_RCAR_GEN3_WITH_PLL	3
+>  #define USBHS_TYPE_RZA1			4
+> +#define USBHS_TYPE_RZA2			5
+>  
+>  /*
+>   * option:
 
-There is a dedicated DMAC for the RZ/A2 USB Device HW, but we
-have not been able to reliably get that working yet, so device
-operation is pio only at the moment.
-
-On the RZ/A2M eval board, both USB channels can be used as either
-host or device. But, it's not set up for otg (ie, there are jumpers
-and separate connectors). Therefore, below is an example of what it
-would look like to enable USB channel 0 as a device instead of a host.
-
-&usb2_phy0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&usb0_pins>;
-	dr_mode = "peripheral";
-	status = "okay";
-};
-
-&usbhs0 {
-	status = "okay";
-};
-
-
-
-
-
-
-Chris Brandt (15):
-  ARM: dts: r7s9210: Add USB clock
-  ARM: dts: rza2mevb: Add 48MHz USB clock
-  phy: renesas: rcar-gen3-usb2: detect usb_x1 clock
-  dt-bindings: rcar-gen3-phy-usb2: Document use of usb_x1
-  phy: renesas: rcar-gen3-usb2: Check dr_mode when not using OTG
-  dt-bindings: rcar-gen3-phy-usb2: Document dr_mode
-  dt-bindings: rcar-gen3-phy-usb2: Add r7s9210 support
-  usb: renesas_usbhs: move flags macros
-  usb: renesas_usbhs: add support for CNEN bit
-  usb: renesas_usbhs: support byte addressable CFIFO
-  usb: renesas_usbhs: Add support for RZ/A2
-  dt-bindings: usb: renesas_usbhs: Add support for r7s9210
-  ARM: dts: r7s9210: Add USB Host support
-  ARM: dts: r7s9210: Add USB Device support
-  ARM: dts: rza2mevb: Add USB host support
-
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 17 ++--
- .../devicetree/bindings/usb/renesas_usbhs.txt      |  2 +
- arch/arm/boot/dts/r7s9210-rza2mevb.dts             | 42 ++++++++++
- arch/arm/boot/dts/r7s9210.dtsi                     | 95 ++++++++++++++++++++++
- drivers/phy/renesas/phy-rcar-gen3-usb2.c           | 22 +++++
- drivers/usb/renesas_usbhs/Makefile                 |  2 +-
- drivers/usb/renesas_usbhs/common.c                 | 25 ++++--
- drivers/usb/renesas_usbhs/common.h                 | 13 +++
- drivers/usb/renesas_usbhs/fifo.c                   |  9 +-
- drivers/usb/renesas_usbhs/rza.h                    |  1 +
- drivers/usb/renesas_usbhs/rza2.c                   | 79 ++++++++++++++++++
- include/linux/usb/renesas_usbhs.h                  |  1 +
- 12 files changed, 292 insertions(+), 16 deletions(-)
- create mode 100644 drivers/usb/renesas_usbhs/rza2.c
-
--- 
-2.16.1
 
