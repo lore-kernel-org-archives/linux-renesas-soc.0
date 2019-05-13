@@ -2,34 +2,34 @@ Return-Path: <SRS0=KVUT=TN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5993AC46470
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FDAC46460
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4F021473
+	by mail.kernel.org (Postfix) with ESMTP id E1EC321473
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731334AbfEMP3H (ORCPT
+        id S1731346AbfEMP3I (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 May 2019 11:29:07 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51268 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731335AbfEMP3G (ORCPT
+        Mon, 13 May 2019 11:29:08 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:55924 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731341AbfEMP3I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 May 2019 11:29:06 -0400
+        Mon, 13 May 2019 11:29:08 -0400
 Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id BrV32000C3XaVaC01rV3Qg; Mon, 13 May 2019 17:29:03 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id BrV32000E3XaVaC01rV3xx; Mon, 13 May 2019 17:29:03 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hQCsx-0001dI-7i; Mon, 13 May 2019 17:29:03 +0200
+        id 1hQCsx-0001d9-4N; Mon, 13 May 2019 17:29:03 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hQCsx-0003Qk-64; Mon, 13 May 2019 17:29:03 +0200
+        id 1hQCsx-0003Qc-1O; Mon, 13 May 2019 17:29:03 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -38,109 +38,115 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Chris Paterson <chris.paterson2@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/11] pinctrl: sh-pfc: r8a7778: Use new macros for non-GPIO pins
-Date:   Mon, 13 May 2019 17:28:49 +0200
-Message-Id: <20190513152857.13122-4-geert+renesas@glider.be>
+Subject: [PATCH 00/11] pinctrl: sh-pfc: Convert to new non-GPIO helper macros
+Date:   Mon, 13 May 2019 17:28:46 +0200
+Message-Id: <20190513152857.13122-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190513152857.13122-1-geert+renesas@glider.be>
-References: <20190513152857.13122-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Update the R-Car M1A pin control driver to use the new macros for
-describing pins without GPIO functionality.  This replaces the use of
-physical pin numbers on the R-Car M1A SoC (in 25x25 FCBGA package) by
-symbolic enum values, referring to signal names.
+	Hi all,
 
-Note that the user-visible names of these pins are still based on pin
-numbers instead of signal names, to preserve DT backwards compatibility.
+On many Renesas ARM SoCs, there exist pins that are not associated with
+a GPIO port, but still need configuration (e.g. drive strength or
+pull-up).  While pins with GPIO functionality are indexed by their
+GPIO number, no such number exists for non-GPIO pins.  Hence for the
+latter, the pin control driver uses numbers outside the GPIO number
+space, derived from the row and column numbers of the physical pins.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 29 +++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
+For R-Car H3 (and later M3-W and M3-N), the choice was made to use the
+SiP (System-in-Package, i.e. SoC + RAM + HyperFlash in a BGA package)
+physical pin numbers, as the SiP was what was mounted on the
+Salvator-X(S) and ULCB development boards available at that time.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-index 564b219942aac34c..24866a5958aee512 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -29,6 +29,11 @@
- 	PORT_GP_CFG_32(3, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
- 	PORT_GP_CFG_27(4, fn, sfx, SH_PFC_PIN_CFG_PULL_UP)
- 
-+#define CPU_ALL_NOGP(fn)		\
-+	PIN_NOGP(CLKOUT, "B25", fn),	\
-+	PIN_NOGP(CS0, "A20", fn),	\
-+	PIN_NOGP(CS1_A26, "C20", fn)
-+
- enum {
- 	PINMUX_RESERVED = 0,
- 
-@@ -1237,19 +1242,17 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP10_24_22,	CAN_CLK_C,	SEL_CANCLK_C),
- };
- 
--/* Pin numbers for pins without a corresponding GPIO port number are computed
-- * from the row and column numbers with a 1000 offset to avoid collisions with
-- * GPIO port numbers.
-+/*
-+ * Pins not associated with a GPIO port.
-  */
--#define PIN_NUMBER(row, col)		(1000+((row)-1)*25+(col)-1)
-+enum {
-+	GP_ASSIGN_LAST(),
-+	NOGP_ALL(),
-+};
- 
- static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
--
--	/* Pins not associated with a GPIO port */
--	SH_PFC_PIN_NAMED(3, 20, C20),
--	SH_PFC_PIN_NAMED(1, 20, A20),
--	SH_PFC_PIN_NAMED(2, 25, B25),
-+	PINMUX_NOGP_ALL(),
- };
- 
- /* - macro */
-@@ -1384,7 +1387,7 @@ HSPI_PFC_DAT(hspi1_a,	HSPI_CLK1_A,		HSPI_CS1_A,
- 			HSPI_RX1_A,		HSPI_TX1_A);
- 
- HSPI_PFC_PIN(hspi1_b,	RCAR_GP_PIN(0, 27),	RCAR_GP_PIN(0, 26),
--			PIN_NUMBER(1, 20),	PIN_NUMBER(2, 25));
-+			PIN_CS0,		PIN_CLKOUT);
- HSPI_PFC_DAT(hspi1_b,	HSPI_CLK1_B,		HSPI_CS1_B,
- 			HSPI_RX1_B,		HSPI_TX1_B);
- 
-@@ -1410,7 +1413,7 @@ I2C_PFC_PIN(i2c1_b,	RCAR_GP_PIN(4, 17),	RCAR_GP_PIN(4, 18));
- I2C_PFC_MUX(i2c1_b,	SDA1_B,			SCL1_B);
- 
- /* - I2C2 ------------------------------------------------------------------ */
--I2C_PFC_PIN(i2c2_a,	PIN_NUMBER(3, 20),	RCAR_GP_PIN(1, 3));
-+I2C_PFC_PIN(i2c2_a,	PIN_CS1_A26,		RCAR_GP_PIN(1, 3));
- I2C_PFC_MUX(i2c2_a,	SDA2_A,			SCL2_A);
- I2C_PFC_PIN(i2c2_b,	RCAR_GP_PIN(0, 3),	RCAR_GP_PIN(0, 4));
- I2C_PFC_MUX(i2c2_b,	SDA2_B,			SCL2_B);
-@@ -1500,7 +1503,7 @@ SCIF_PFC_PIN(scif2_data_e,	RCAR_GP_PIN(0, 3),	RCAR_GP_PIN(0, 4));
- SCIF_PFC_DAT(scif2_data_e,	TX2_E,			RX2_E);
- SCIF_PFC_PIN(scif2_clk_a,	RCAR_GP_PIN(3, 9));
- SCIF_PFC_CLK(scif2_clk_a,	SCK2_A);
--SCIF_PFC_PIN(scif2_clk_b,	PIN_NUMBER(3, 20));
-+SCIF_PFC_PIN(scif2_clk_b,	PIN_CS1_A26);
- SCIF_PFC_CLK(scif2_clk_b,	SCK2_B);
- SCIF_PFC_PIN(scif2_clk_c,	RCAR_GP_PIN(4, 12));
- SCIF_PFC_CLK(scif2_clk_c,	SCK2_C);
-@@ -1615,7 +1618,7 @@ SSI_PFC_PINS(ssi0_data,		RCAR_GP_PIN(3, 10));
- SSI_PFC_DATA(ssi0_data,		SSI_SDATA0);
- SSI_PFC_PINS(ssi1_a_ctrl,	RCAR_GP_PIN(2, 20),	RCAR_GP_PIN(2, 21));
- SSI_PFC_CTRL(ssi1_a_ctrl,	SSI_SCK1_A,		SSI_WS1_A);
--SSI_PFC_PINS(ssi1_b_ctrl,	PIN_NUMBER(3, 20),	RCAR_GP_PIN(1, 3));
-+SSI_PFC_PINS(ssi1_b_ctrl,	PIN_CS1_A26,		RCAR_GP_PIN(1, 3));
- SSI_PFC_CTRL(ssi1_b_ctrl,	SSI_SCK1_B,		SSI_WS1_B);
- SSI_PFC_PINS(ssi1_data,		RCAR_GP_PIN(3, 9));
- SSI_PFC_DATA(ssi1_data,		SSI_SDATA1);
+In hindsight, it would have been better to settle on the SoC physical
+pin numbers, though: the pin control driver for R-Car M3-W was reused
+for the RZ/G2M SoC, which is only available as an SoC, not SiP, thus
+making it hard to match the driver with the documentation.
+
+But even for SoCs there can be confusion: several SoCs are available in
+multiple packages, with the same or different number of pins, leading to
+different pin numberings.
+
+As this numbering is used only internal to the driver, and pin control
+configuration from DT refers to these pins by signal name, not pin
+number (usually, see exceptions below[*]), I started wondering if we
+could get rid of the SoC/SiP pin numbers instead.  As the actual numbers
+don't matter, all that is needed for the driver is a unique number for
+each pin.
+
+Hence this patch series converts the affected drivers to use new macros
+that allow to describe pins without GPIO functionality, and refer to
+them by auto-generated symbolic enum values, similar in spirit to the
+existing scheme for handling pins with GPIO functionality.
+
+This series consists of three parts:
+  - Patch 1 introduces new macros to describe and handle pins without
+    GPIO functionality,
+  - Patches 2-10 convert the pin control drivers for the individual SoCs
+    to use the new macros,
+  - Patch 11 removes the now unused old macros.
+
+There should be no functional changes induced by this patch series,
+which has been tested on Salvator-X(S) (with R-Car H3 ES1.0 and ES2.0,
+M3-W, and M3-N), Ebisu (R-Car E3), and KZM-A9-GT (SH-Mobile AG5).
+
+[*] The user-visible names of pins without GPIO functionality are based
+    on pin numbers (e.g. "B25") instead of signal names ("CLKOUT") on
+    EMMA Mobile EV2, R-Car M1A, R-Car H2, and SH-Mobile AG5.
+    I didn't change these to preserve DT backwards compatibility.
+
+The "name" parameters of the PIN_NOGP_CFG() and PIN_NOGP() macros could
+be removed, if these macros would generate the names from the "pin"
+parameters.  However, that would:
+  1. Require replacing the "#" suffices in pin names for active-low
+     signals by "_N",
+     R-Car H3/M3-W/M3-N use a "#" suffix, R-Car E3 use a "_N" suffix.
+  2. Replace the names based on pin numbers on older SoCs by signal
+     names.
+Both changes could affect DT backwards compatibility.  None of these are
+currently used in (upstream) DTS files, though.
+Do you think it would be worthwhile to make this consistent?
+
+Thanks for your comments!
+
+Geert Uytterhoeven (11):
+  pinctrl: sh-pfc: Add new non-GPIO helper macros
+  pinctrl: sh-pfc: emev2: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: r8a7778: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: r8a7790: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: r8a7795-es1: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: r8a7795: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: r8a7796: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: r8a77965: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: r8a77990: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: sh73a0: Use new macros for non-GPIO pins
+  pinctrl: sh-pfc: Remove obsolete SH_PFC_PIN_NAMED*() macros
+
+ drivers/pinctrl/sh-pfc/pfc-emev2.c       |  70 +++--
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c     |  29 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c     |  34 ++-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c | 333 +++++++++++------------
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c     | 313 +++++++++++----------
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c     | 307 ++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c    | 307 ++++++++++-----------
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c    |  87 +++---
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c      |  19 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h          |  72 +++--
+ 10 files changed, 797 insertions(+), 774 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
