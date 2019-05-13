@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253B3C04AAA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5993AC46470
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F4021473
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C4F021473
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731295AbfEMP3H (ORCPT
+        id S1731334AbfEMP3H (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 13 May 2019 11:29:07 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:55978 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731344AbfEMP3H (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:51268 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731335AbfEMP3G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 May 2019 11:29:07 -0400
+        Mon, 13 May 2019 11:29:06 -0400
 Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id BrV32000F3XaVaC01rV3xy; Mon, 13 May 2019 17:29:04 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id BrV32000C3XaVaC01rV3Qg; Mon, 13 May 2019 17:29:03 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hQCsx-0001dB-50; Mon, 13 May 2019 17:29:03 +0200
+        id 1hQCsx-0001dI-7i; Mon, 13 May 2019 17:29:03 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hQCsx-0003Qe-3N; Mon, 13 May 2019 17:29:03 +0200
+        id 1hQCsx-0003Qk-64; Mon, 13 May 2019 17:29:03 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Chris Paterson <chris.paterson2@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/11] pinctrl: sh-pfc: Add new non-GPIO helper macros
-Date:   Mon, 13 May 2019 17:28:47 +0200
-Message-Id: <20190513152857.13122-2-geert+renesas@glider.be>
+Subject: [PATCH 03/11] pinctrl: sh-pfc: r8a7778: Use new macros for non-GPIO pins
+Date:   Mon, 13 May 2019 17:28:49 +0200
+Message-Id: <20190513152857.13122-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190513152857.13122-1-geert+renesas@glider.be>
 References: <20190513152857.13122-1-geert+renesas@glider.be>
@@ -49,122 +49,98 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add new macros for describing pins without GPIO functionality:
-  - NOGP_ALL() expands to a list of PIN_id values, to be used for
-    generating symbolic enum values,
-  - PINMUX_NOGP_ALL() expands to a list of sh_pfc_pin entries, to
-    list all pins and their capabilities.
-Both macros depend on an SoC-specific CPU_ALL_NOGP() macro, to be
-provided by each individual SoC pin control driver.
+Update the R-Car M1A pin control driver to use the new macros for
+describing pins without GPIO functionality.  This replaces the use of
+physical pin numbers on the R-Car M1A SoC (in 25x25 FCBGA package) by
+symbolic enum values, referring to signal names.
 
-The new macros offer two advantages over the existing SH_PFC_PIN_NAMED()
-and SH_PFC_PIN_NAMED_CFG() macros:
-  1. They do not rely on PIN_NUMBER() macros and physical pin numbering,
-     hence do not suffer from pin numbering confusion among different
-     SoC/SiP packages.
-  2. They are similar in spirit to the existing scheme for handling pins
-     with GPIO functionality.
-
-Note that internal to the driver, non-GPIO pins use a sequential
-numbering scheme which starts after the highest GPIO pin number in use.
-This value is calculated automatically, using two new helper macros, for
-systems with either 32-port bank (GP port style) or linear (PORT style)
-pin space.  Sample expansion:
-
-    GP_LAST = sizeof(union {
-	char dummy[0] __attribute__((deprecated, deprecated));
-	char GP_0_0[(0 * 32) + 0] __attribute__((deprecated, deprecated));
-	char GP_0_1[(0 * 32) + 1] __attribute__((deprecated, deprecated));
-	...
-	char GP_7_3[(7 * 32) + 3] __attribute__((deprecated, deprecated));
-    })
+Note that the user-visible names of these pins are still based on pin
+numbers instead of signal names, to preserve DT backwards compatibility.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/sh_pfc.h | 56 +++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 29 +++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index 305a8db70ca86334..a379698c97410202 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -608,6 +608,24 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- #define _GP_DATA(bank, pin, name, sfx, cfg)	PINMUX_DATA(name##_DATA, name##_FN)
- #define PINMUX_DATA_GP_ALL()		CPU_ALL_GP(_GP_DATA, unused)
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+index 564b219942aac34c..24866a5958aee512 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+@@ -29,6 +29,11 @@
+ 	PORT_GP_CFG_32(3, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
+ 	PORT_GP_CFG_27(4, fn, sfx, SH_PFC_PIN_CFG_PULL_UP)
  
-+/*
-+ * GP_ASSIGN_LAST() - Expand to an enum definition for the last GP pin
-+ *
-+ * The largest GP pin index is obtained by taking the size of a union,
-+ * containing one array per GP pin, sized by the corresponding pin index.
-+ * As the fields in the CPU_ALL_GP() macro definition are separated by commas,
-+ * while the members of a union must be terminated by semicolons, the commas
-+ * are absorbed by wrapping them inside dummy attributes.
-+ */
-+#define _GP_ENTRY(bank, pin, name, sfx, cfg)				\
-+	deprecated)); char name[(bank * 32) + pin] __attribute__((deprecated
-+#define GP_ASSIGN_LAST()						\
-+	GP_LAST = sizeof(union {					\
-+		char dummy[0] __attribute__((deprecated,		\
-+		CPU_ALL_GP(_GP_ENTRY, unused),				\
-+		deprecated));						\
-+	})
++#define CPU_ALL_NOGP(fn)		\
++	PIN_NOGP(CLKOUT, "B25", fn),	\
++	PIN_NOGP(CS0, "A20", fn),	\
++	PIN_NOGP(CS1_A26, "C20", fn)
 +
- /*
-  * PORT style (linear pin space)
+ enum {
+ 	PINMUX_RESERVED = 0,
+ 
+@@ -1237,19 +1242,17 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_IPSR_MSEL(IP10_24_22,	CAN_CLK_C,	SEL_CANCLK_C),
+ };
+ 
+-/* Pin numbers for pins without a corresponding GPIO port number are computed
+- * from the row and column numbers with a 1000 offset to avoid collisions with
+- * GPIO port numbers.
++/*
++ * Pins not associated with a GPIO port.
   */
-@@ -673,6 +691,24 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- 		    PORT##pfx##_OUT, PORT##pfx##_IN)
- #define PINMUX_DATA_ALL()		CPU_ALL_PORT(_PORT_DATA, , unused)
+-#define PIN_NUMBER(row, col)		(1000+((row)-1)*25+(col)-1)
++enum {
++	GP_ASSIGN_LAST(),
++	NOGP_ALL(),
++};
  
-+/*
-+ * PORT_ASSIGN_LAST() - Expand to an enum definition for the last PORT pin
-+ *
-+ * The largest PORT pin index is obtained by taking the size of a union,
-+ * containing one array per PORT pin, sized by the corresponding pin index.
-+ * As the fields in the CPU_ALL_PORT() macro definition are separated by
-+ * commas, while the members of a union must be terminated by semicolons, the
-+ * commas are absorbed by wrapping them inside dummy attributes.
-+ */
-+#define _PORT_ENTRY(pn, pfx, sfx)					\
-+	deprecated)); char pfx[pn] __attribute__((deprecated
-+#define PORT_ASSIGN_LAST()						\
-+	PORT_LAST = sizeof(union {					\
-+		char dummy[0] __attribute__((deprecated,		\
-+		CPU_ALL_PORT(_PORT_ENTRY, PORT, unused),		\
-+		deprecated));						\
-+	})
-+
- /* GPIO_FN(name) - Expand to a sh_pfc_pin entry for a function GPIO */
- #define PINMUX_GPIO_FN(gpio, base, data_or_mark)			\
- 	[gpio - (base)] = {						\
-@@ -682,6 +718,26 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
- #define GPIO_FN(str)							\
- 	PINMUX_GPIO_FN(GPIO_FN_##str, PINMUX_FN_BASE, str##_MARK)
+ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
+-
+-	/* Pins not associated with a GPIO port */
+-	SH_PFC_PIN_NAMED(3, 20, C20),
+-	SH_PFC_PIN_NAMED(1, 20, A20),
+-	SH_PFC_PIN_NAMED(2, 25, B25),
++	PINMUX_NOGP_ALL(),
+ };
  
-+/*
-+ * Pins not associated with a GPIO port
-+ */
-+
-+#define PIN_NOGP_CFG(pin, name, fn, cfg)	fn(pin, name, cfg)
-+#define PIN_NOGP(pin, name, fn)			fn(pin, name, 0)
-+
-+/* NOGP_ALL - Expand to a list of PIN_id */
-+#define _NOGP_ALL(pin, name, cfg)		PIN_##pin
-+#define NOGP_ALL()				CPU_ALL_NOGP(_NOGP_ALL)
-+
-+/* PINMUX_NOGP_ALL - Expand to a list of sh_pfc_pin entries */
-+#define _NOGP_PINMUX(_pin, _name, cfg)					\
-+	{								\
-+		.pin = PIN_##_pin,					\
-+		.name = "PIN_" _name,					\
-+		.configs = SH_PFC_PIN_CFG_NO_GPIO | cfg,		\
-+	}
-+#define PINMUX_NOGP_ALL()		CPU_ALL_NOGP(_NOGP_PINMUX)
-+
- /*
-  * PORTnCR helper macro for SH-Mobile/R-Mobile
-  */
+ /* - macro */
+@@ -1384,7 +1387,7 @@ HSPI_PFC_DAT(hspi1_a,	HSPI_CLK1_A,		HSPI_CS1_A,
+ 			HSPI_RX1_A,		HSPI_TX1_A);
+ 
+ HSPI_PFC_PIN(hspi1_b,	RCAR_GP_PIN(0, 27),	RCAR_GP_PIN(0, 26),
+-			PIN_NUMBER(1, 20),	PIN_NUMBER(2, 25));
++			PIN_CS0,		PIN_CLKOUT);
+ HSPI_PFC_DAT(hspi1_b,	HSPI_CLK1_B,		HSPI_CS1_B,
+ 			HSPI_RX1_B,		HSPI_TX1_B);
+ 
+@@ -1410,7 +1413,7 @@ I2C_PFC_PIN(i2c1_b,	RCAR_GP_PIN(4, 17),	RCAR_GP_PIN(4, 18));
+ I2C_PFC_MUX(i2c1_b,	SDA1_B,			SCL1_B);
+ 
+ /* - I2C2 ------------------------------------------------------------------ */
+-I2C_PFC_PIN(i2c2_a,	PIN_NUMBER(3, 20),	RCAR_GP_PIN(1, 3));
++I2C_PFC_PIN(i2c2_a,	PIN_CS1_A26,		RCAR_GP_PIN(1, 3));
+ I2C_PFC_MUX(i2c2_a,	SDA2_A,			SCL2_A);
+ I2C_PFC_PIN(i2c2_b,	RCAR_GP_PIN(0, 3),	RCAR_GP_PIN(0, 4));
+ I2C_PFC_MUX(i2c2_b,	SDA2_B,			SCL2_B);
+@@ -1500,7 +1503,7 @@ SCIF_PFC_PIN(scif2_data_e,	RCAR_GP_PIN(0, 3),	RCAR_GP_PIN(0, 4));
+ SCIF_PFC_DAT(scif2_data_e,	TX2_E,			RX2_E);
+ SCIF_PFC_PIN(scif2_clk_a,	RCAR_GP_PIN(3, 9));
+ SCIF_PFC_CLK(scif2_clk_a,	SCK2_A);
+-SCIF_PFC_PIN(scif2_clk_b,	PIN_NUMBER(3, 20));
++SCIF_PFC_PIN(scif2_clk_b,	PIN_CS1_A26);
+ SCIF_PFC_CLK(scif2_clk_b,	SCK2_B);
+ SCIF_PFC_PIN(scif2_clk_c,	RCAR_GP_PIN(4, 12));
+ SCIF_PFC_CLK(scif2_clk_c,	SCK2_C);
+@@ -1615,7 +1618,7 @@ SSI_PFC_PINS(ssi0_data,		RCAR_GP_PIN(3, 10));
+ SSI_PFC_DATA(ssi0_data,		SSI_SDATA0);
+ SSI_PFC_PINS(ssi1_a_ctrl,	RCAR_GP_PIN(2, 20),	RCAR_GP_PIN(2, 21));
+ SSI_PFC_CTRL(ssi1_a_ctrl,	SSI_SCK1_A,		SSI_WS1_A);
+-SSI_PFC_PINS(ssi1_b_ctrl,	PIN_NUMBER(3, 20),	RCAR_GP_PIN(1, 3));
++SSI_PFC_PINS(ssi1_b_ctrl,	PIN_CS1_A26,		RCAR_GP_PIN(1, 3));
+ SSI_PFC_CTRL(ssi1_b_ctrl,	SSI_SCK1_B,		SSI_WS1_B);
+ SSI_PFC_PINS(ssi1_data,		RCAR_GP_PIN(3, 9));
+ SSI_PFC_DATA(ssi1_data,		SSI_SDATA1);
 -- 
 2.17.1
 
