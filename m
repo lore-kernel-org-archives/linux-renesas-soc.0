@@ -2,34 +2,34 @@ Return-Path: <SRS0=KVUT=TN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70057C04AA7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F24FEC04AAA
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4296F2084A
+	by mail.kernel.org (Postfix) with ESMTP id D02FD2084A
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 May 2019 15:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbfEMP3I (ORCPT
+        id S1731345AbfEMP3J (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 May 2019 11:29:08 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:51262 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731339AbfEMP3I (ORCPT
+        Mon, 13 May 2019 11:29:09 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:33944 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731353AbfEMP3G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 May 2019 11:29:08 -0400
+        Mon, 13 May 2019 11:29:06 -0400
 Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id BrV32000S3XaVaC01rV3Ql; Mon, 13 May 2019 17:29:03 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id BrV22000J3XaVaC01rV2Da; Mon, 13 May 2019 17:29:03 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hQCsx-0001eI-ER; Mon, 13 May 2019 17:29:03 +0200
+        id 1hQCsx-0001dN-8u; Mon, 13 May 2019 17:29:03 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hQCsx-0003R2-DC; Mon, 13 May 2019 17:29:03 +0200
+        id 1hQCsx-0003Qn-7P; Mon, 13 May 2019 17:29:03 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
@@ -38,9 +38,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Chris Paterson <chris.paterson2@renesas.com>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/11] pinctrl: sh-pfc: r8a77990: Use new macros for non-GPIO pins
-Date:   Mon, 13 May 2019 17:28:55 +0200
-Message-Id: <20190513152857.13122-10-geert+renesas@glider.be>
+Subject: [PATCH 04/11] pinctrl: sh-pfc: r8a7790: Use new macros for non-GPIO pins
+Date:   Mon, 13 May 2019 17:28:50 +0200
+Message-Id: <20190513152857.13122-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190513152857.13122-1-geert+renesas@glider.be>
 References: <20190513152857.13122-1-geert+renesas@glider.be>
@@ -49,57 +49,47 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Update the R-Car E3 pin control driver to use the new macros for
+Update the R-Car H2 pin control driver to use the new macros for
 describing pins without GPIO functionality.  This replaces the use of
-physical pin numbers on the R-Car E3 SoC (in 25x25 FCBGA package) by
+physical pin numbers on the R-Car H2 SoC (in 31x31 FCBGA package) by
 symbolic enum values, referring to signal names.
+
+Note that the user-visible names of these pins are still based on pin
+numbers instead of signal names, to preserve DT backwards compatibility.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 87 +++++++++++++--------------
- 1 file changed, 41 insertions(+), 46 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 34 ++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 1055ab94accf5780..2dfb8d9cfda126e4 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -40,6 +40,25 @@
- 	PORT_GP_CFG_1(6, 15, fn, sfx, CFG_FLAGS), \
- 	PORT_GP_CFG_1(6, 16, fn, sfx, CFG_FLAGS), \
- 	PORT_GP_CFG_1(6, 17, fn, sfx, CFG_FLAGS)
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index 80d33c7398df4388..3366ed561cceefdb 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -28,6 +28,12 @@
+ 	PORT_GP_32(4, fn, sfx),						\
+ 	PORT_GP_32(5, fn, sfx)
+ 
++#define CPU_ALL_NOGP(fn)		\
++	PIN_NOGP(IIC0_SDA, "AF15", fn),	\
++	PIN_NOGP(IIC0_SCL, "AG15", fn),	\
++	PIN_NOGP(IIC3_SDA, "AH15", fn),	\
++	PIN_NOGP(IIC3_SCL, "AJ15", fn)
 +
-+#define CPU_ALL_NOGP(fn)						\
-+	PIN_NOGP_CFG(ASEBRK, "ASEBRK", fn, CFG_FLAGS),			\
-+	PIN_NOGP_CFG(AVB_MDC, "AVB_MDC", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_MDIO, "AVB_MDIO", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD0, "AVB_TD0", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD1, "AVB_TD1", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD2, "AVB_TD2", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TD3, "AVB_TD3", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TXC, "AVB_TXC", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(AVB_TX_CTL, "AVB_TX_CTL", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(FSCLKST_N, "FSCLKST_N", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(MLB_REF, "MLB_REF", fn, CFG_FLAGS),		\
-+	PIN_NOGP_CFG(PRESETOUT_N, "PRESETOUT_N", fn, CFG_FLAGS),	\
-+	PIN_NOGP_CFG(TCK, "TCK", fn, CFG_FLAGS),			\
-+	PIN_NOGP_CFG(TDI, "TDI", fn, CFG_FLAGS),			\
-+	PIN_NOGP_CFG(TMS, "TMS", fn, CFG_FLAGS),			\
-+	PIN_NOGP_CFG(TRST_N, "TRST_N", fn, CFG_FLAGS)
-+
- /*
-  * F_() : just information
-  * FM() : macro for FN_xxx / xxx_MARK
-@@ -1276,40 +1295,16 @@ static const u16 pinmux_data[] = {
+ enum {
+ 	PINMUX_RESERVED = 0,
+ 
+@@ -1727,19 +1733,17 @@ static const u16 pinmux_data[] = {
+ 	PINMUX_DATA(I2C3_SDA_MARK, FN_SEL_IICDVFS_1),
  };
  
- /*
-- * R8A77990 has 7 banks with 32 GPIOs in each => 224 GPIOs.
-- * Physical layout rows: A - AE, cols: 1 - 25.
-+ * Pins not associated with a GPIO port.
-  */
+-/* R8A7790 has 6 banks with 32 GPIOs in each = 192 GPIOs */
 -#define ROW_GROUP_A(r) ('Z' - 'A' + 1 + (r))
--#define PIN_NUMBER(r, c) (((r) - 'A') * 25 + (c) + 300)
+-#define PIN_NUMBER(r, c) (((r) - 'A') * 31 + (c) + 200)
 -#define PIN_A_NUMBER(r, c) PIN_NUMBER(ROW_GROUP_A(r), c)
++/*
++ * Pins not associated with a GPIO port.
++ */
 +enum {
 +	GP_ASSIGN_LAST(),
 +	NOGP_ALL(),
@@ -108,100 +98,53 @@ index 1055ab94accf5780..2dfb8d9cfda126e4 100644
  static const struct sh_pfc_pin pinmux_pins[] = {
  	PINMUX_GPIO_GP_ALL(),
 -
--	/*
--	 * Pins not associated with a GPIO port.
--	 *
--	 * The pin positions are different between different R8A77990
--	 * packages, all that is needed for the pfc driver is a unique
--	 * number for each pin. To this end use the pin layout from
--	 * R8A77990 to calculate a unique number for each pin.
--	 */
--	SH_PFC_PIN_NAMED_CFG('F',  1, TRST_N,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('F',  3, TMS,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('F',  4, TCK,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('G',  2, TDI,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('G',  3, FSCLKST_N,	CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('H',  1, ASEBRK,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('N',  1, AVB_TXC,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('N',  2, AVB_TD0,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('N',  3, AVB_TD1,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('N',  5, AVB_TD2,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('N',  6, AVB_TD3,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('P',  3, AVB_TX_CTL,	CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('P',  4, AVB_MDIO,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('P',  5, AVB_MDC,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG('T', 21, MLB_REF,		CFG_FLAGS),
--	SH_PFC_PIN_NAMED_CFG(ROW_GROUP_A('D'), 3, PRESETOUT_N, CFG_FLAGS),
+-	/* Pins not associated with a GPIO port */
+-	SH_PFC_PIN_NAMED(ROW_GROUP_A('F'), 15, AF15),
+-	SH_PFC_PIN_NAMED(ROW_GROUP_A('G'), 15, AG15),
+-	SH_PFC_PIN_NAMED(ROW_GROUP_A('H'), 15, AH15),
+-	SH_PFC_PIN_NAMED(ROW_GROUP_A('J'), 15, AJ15),
 +	PINMUX_NOGP_ALL(),
  };
  
  /* - AUDIO CLOCK ------------------------------------------------------------ */
-@@ -5024,15 +5019,15 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		 [0] = RCAR_GP_PIN(2, 23),	/* RD# */
- 		 [1] = RCAR_GP_PIN(2, 22),	/* BS# */
- 		 [2] = RCAR_GP_PIN(2, 21),	/* AVB_PHY_INT */
--		 [3] = PIN_NUMBER('P', 5),	/* AVB_MDC */
--		 [4] = PIN_NUMBER('P', 4),	/* AVB_MDIO */
-+		 [3] = PIN_AVB_MDC,		/* AVB_MDC */
-+		 [4] = PIN_AVB_MDIO,		/* AVB_MDIO */
- 		 [5] = RCAR_GP_PIN(2, 20),	/* AVB_TXCREFCLK */
--		 [6] = PIN_NUMBER('N', 6),	/* AVB_TD3 */
--		 [7] = PIN_NUMBER('N', 5),	/* AVB_TD2 */
--		 [8] = PIN_NUMBER('N', 3),	/* AVB_TD1 */
--		 [9] = PIN_NUMBER('N', 2),	/* AVB_TD0 */
--		[10] = PIN_NUMBER('N', 1),	/* AVB_TXC */
--		[11] = PIN_NUMBER('P', 3),	/* AVB_TX_CTL */
-+		 [6] = PIN_AVB_TD3,		/* AVB_TD3 */
-+		 [7] = PIN_AVB_TD2,		/* AVB_TD2 */
-+		 [8] = PIN_AVB_TD1,		/* AVB_TD1 */
-+		 [9] = PIN_AVB_TD0,		/* AVB_TD0 */
-+		[10] = PIN_AVB_TXC,		/* AVB_TXC */
-+		[11] = PIN_AVB_TX_CTL,		/* AVB_TX_CTL */
- 		[12] = RCAR_GP_PIN(2, 19),	/* AVB_RD3 */
- 		[13] = RCAR_GP_PIN(2, 18),	/* AVB_RD2 */
- 		[14] = RCAR_GP_PIN(2, 17),	/* AVB_RD1 */
-@@ -5091,12 +5086,12 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 	{ PINMUX_BIAS_REG("PUEN2", 0xe6060408, "PUD2", 0xe6060448) {
- 		 [0] = RCAR_GP_PIN(3,  1),	/* SD0_CMD */
- 		 [1] = RCAR_GP_PIN(3,  0),	/* SD0_CLK */
--		 [2] = PIN_NUMBER('H', 1),	/* ASEBRK */
-+		 [2] = PIN_ASEBRK,		/* ASEBRK */
- 		 [3] = SH_PFC_PIN_NONE,
--		 [4] = PIN_NUMBER('G', 2),	/* TDI */
--		 [5] = PIN_NUMBER('F', 3),	/* TMS */
--		 [6] = PIN_NUMBER('F', 4),	/* TCK */
--		 [7] = PIN_NUMBER('F', 1),	/* TRST# */
-+		 [4] = PIN_TDI,			/* TDI */
-+		 [5] = PIN_TMS,			/* TMS */
-+		 [6] = PIN_TCK,			/* TCK */
-+		 [7] = PIN_TRST_N,		/* TRST# */
- 		 [8] = SH_PFC_PIN_NONE,
- 		 [9] = SH_PFC_PIN_NONE,
- 		[10] = SH_PFC_PIN_NONE,
-@@ -5104,12 +5099,12 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[12] = SH_PFC_PIN_NONE,
- 		[13] = SH_PFC_PIN_NONE,
- 		[14] = SH_PFC_PIN_NONE,
--		[15] = PIN_NUMBER('G', 3),	/* FSCLKST# */
-+		[15] = PIN_FSCLKST_N,		/* FSCLKST# */
- 		[16] = RCAR_GP_PIN(0, 17),	/* SDA4 */
- 		[17] = RCAR_GP_PIN(0, 16),	/* SCL4 */
- 		[18] = SH_PFC_PIN_NONE,
- 		[19] = SH_PFC_PIN_NONE,
--		[20] = PIN_A_NUMBER('D', 3),	/* PRESETOUT# */
-+		[20] = PIN_PRESETOUT_N,		/* PRESETOUT# */
- 		[21] = RCAR_GP_PIN(0, 15),	/* D15 */
- 		[22] = RCAR_GP_PIN(0, 14),	/* D14 */
- 		[23] = RCAR_GP_PIN(0, 13),	/* D13 */
-@@ -5173,7 +5168,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[13] = RCAR_GP_PIN(6,  2),	/* SSI_SDATA0 */
- 		[14] = RCAR_GP_PIN(6,  1),	/* SSI_WS01239 */
- 		[15] = RCAR_GP_PIN(6,  0),	/* SSI_SCK01239 */
--		[16] = PIN_NUMBER('T', 21),	/* MLB_REF */
-+		[16] = PIN_MLB_REF,		/* MLB_REF */
- 		[17] = RCAR_GP_PIN(5, 19),	/* MLB_DAT */
- 		[18] = RCAR_GP_PIN(5, 18),	/* MLB_SIG */
- 		[19] = RCAR_GP_PIN(5, 17),	/* MLB_CLK */
+@@ -2135,7 +2139,7 @@ static const unsigned int hscif1_ctrl_b_mux[] = {
+ /* - I2C0 ------------------------------------------------------------------- */
+ static const unsigned int i2c0_pins[] = {
+ 	/* SCL, SDA */
+-	PIN_A_NUMBER('G', 15), PIN_A_NUMBER('F', 15),
++	PIN_IIC0_SCL, PIN_IIC0_SDA,
+ };
+ static const unsigned int i2c0_mux[] = {
+ 	I2C0_SCL_MARK, I2C0_SDA_MARK,
+@@ -2201,7 +2205,7 @@ static const unsigned int i2c2_e_mux[] = {
+ /* - I2C3 ------------------------------------------------------------------- */
+ static const unsigned int i2c3_pins[] = {
+ 	/* SCL, SDA */
+-	PIN_A_NUMBER('J', 15), PIN_A_NUMBER('H', 15),
++	PIN_IIC3_SCL, PIN_IIC3_SDA,
+ };
+ static const unsigned int i2c3_mux[] = {
+ 	I2C3_SCL_MARK, I2C3_SDA_MARK,
+@@ -2209,7 +2213,7 @@ static const unsigned int i2c3_mux[] = {
+ /* - IIC0 (I2C4) ------------------------------------------------------------ */
+ static const unsigned int iic0_pins[] = {
+ 	/* SCL, SDA */
+-	PIN_A_NUMBER('G', 15), PIN_A_NUMBER('F', 15),
++	PIN_IIC0_SCL, PIN_IIC0_SDA,
+ };
+ static const unsigned int iic0_mux[] = {
+ 	IIC0_SCL_MARK, IIC0_SDA_MARK,
+@@ -2274,8 +2278,8 @@ static const unsigned int iic2_e_mux[] = {
+ };
+ /* - IIC3 (I2C7) ------------------------------------------------------------ */
+ static const unsigned int iic3_pins[] = {
+-/* SCL, SDA */
+-	PIN_A_NUMBER('J', 15), PIN_A_NUMBER('H', 15),
++	/* SCL, SDA */
++	PIN_IIC3_SCL, PIN_IIC3_SDA,
+ };
+ static const unsigned int iic3_mux[] = {
+ 	IIC3_SCL_MARK, IIC3_SDA_MARK,
 -- 
 2.17.1
 
