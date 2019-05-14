@@ -2,152 +2,125 @@ Return-Path: <SRS0=J82U=TO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B3CC04AB4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B30C04AB4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F4BE2085A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A38F720879
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbfENPP4 (ORCPT
+        id S1726025AbfENPab (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 May 2019 11:15:56 -0400
-Received: from pbmsgap01.intersil.com ([192.157.179.201]:51954 "EHLO
-        pbmsgap01.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfENPPz (ORCPT
+        Tue, 14 May 2019 11:30:31 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:42752 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfENPab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 May 2019 11:15:55 -0400
-Received: from pps.filterd (pbmsgap01.intersil.com [127.0.0.1])
-        by pbmsgap01.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x4EEqbkf026036;
-        Tue, 14 May 2019 10:57:03 -0400
-Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
-        by pbmsgap01.intersil.com with ESMTP id 2sdswyjjqg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 14 May 2019 10:57:03 -0400
-Received: from pbmxdp02.intersil.corp (132.158.200.223) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Tue, 14 May 2019 10:57:01 -0400
-Received: from localhost.localdomain (132.158.202.108) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Tue, 14 May 2019 10:57:01 -0400
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Tue, 14 May 2019 11:30:31 -0400
+Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1hQZNp-0002lK-D1 from George_Davis@mentor.com ; Tue, 14 May 2019 08:30:25 -0700
+Received: from localhost (147.34.91.1) by svr-orw-mbx-01.mgc.mentorg.com
+ (147.34.90.201) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 14 May
+ 2019 08:30:23 -0700
+Date:   Tue, 14 May 2019 11:30:22 -0400
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        "Chris Brandt" <chris.brandt@renesas.com>
-Subject: [PATCH v3 03/15] phy: renesas: rcar-gen3-usb2: detect usb_x1 clock
-Date:   Tue, 14 May 2019 09:55:53 -0500
-Message-ID: <20190514145605.19112-4-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20190514145605.19112-1-chris.brandt@renesas.com>
-References: <20190514145605.19112-1-chris.brandt@renesas.com>
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] serial: sh-sci: disable DMA for uart_console
+Message-ID: <20190514153021.GC18528@mam-gdavis-lt>
+References: <1557762446-23811-1-git-send-email-george_davis@mentor.com>
+ <CAMuHMdVaNWa=Q-7K-+_rM-8yYWB0-+4_o4hgACK6o-4BOrY07A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=925
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905140106
-X-Proofpoint-Spam-Reason: mlx
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVaNWa=Q-7K-+_rM-8yYWB0-+4_o4hgACK6o-4BOrY07A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/A2 has an optional dedicated 48MHz clock input for the PLL.
-If a clock node named 'usb_x1' exists and set to non-zero, then we can
-assume we want it use it.
+Hello Geert,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v3:
- * avoid magic number
- * use devm_clk_get and clk_get_rate
-v2:
- * use 'usb_x1' clock node instead of 'renesas,uses_usb_x1' property
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On Tue, May 14, 2019 at 10:28:34AM +0200, Geert Uytterhoeven wrote:
+> Hi George,
+> 
+> On Mon, May 13, 2019 at 5:48 PM George G. Davis <george_davis@mentor.com> wrote:
+> > As noted in commit 84b40e3b57ee ("serial: 8250: omap: Disable DMA for
+> > console UART"), UART console lines use low-level PIO only access functions
+> > which will conflict with use of the line when DMA is enabled, e.g. when
+> > the console line is also used for systemd messages. So disable DMA
+> > support for UART console lines.
+> >
+> > Fixes: https://patchwork.kernel.org/patch/10929511/
+> 
+> I don't think this is an appropriate reference, as it points to a patch that
+> was never applied.
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 1322185a00a2..06e0fc804226 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -12,6 +12,7 @@
- #include <linux/extcon-provider.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/clk.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-@@ -34,6 +35,7 @@
- #define USB2_VBCTRL		0x60c
- #define USB2_LINECTRL1		0x610
- #define USB2_ADPCTRL		0x630
-+#define USB2_PHYCLK_CTRL	0x644
- 
- /* INT_ENABLE */
- #define USB2_INT_ENABLE_UCOM_INTEN	BIT(3)
-@@ -75,6 +77,9 @@
- #define USB2_ADPCTRL_IDPULLUP		BIT(5)	/* 1 = ID sampling is enabled */
- #define USB2_ADPCTRL_DRVVBUS		BIT(4)
- 
-+/* PHYCLK_CTRL */
-+#define PHYCLK_CTRL_UCLKSEL		BIT(0)
-+
- #define NUM_OF_PHYS			4
- enum rcar_gen3_phy_index {
- 	PHY_INDEX_BOTH_HC,
-@@ -110,6 +115,7 @@ struct rcar_gen3_chan {
- 	bool extcon_host;
- 	bool is_otg_channel;
- 	bool uses_otg_pins;
-+	bool uses_usb_x1;
- };
- 
- /*
-@@ -391,6 +397,9 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 	void __iomem *usb2_base = channel->base;
- 	u32 val;
- 
-+	if (channel->uses_usb_x1)
-+		writel(PHYCLK_CTRL_UCLKSEL, usb2_base + USB2_PHYCLK_CTRL);
-+
- 	/* Initialize USB2 part */
- 	val = readl(usb2_base + USB2_INT_ENABLE);
- 	val |= USB2_INT_ENABLE_UCOM_INTEN | rphy->int_enable_bits;
-@@ -583,6 +592,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct rcar_gen3_chan *channel;
- 	struct phy_provider *provider;
-+	struct clk *usb_x1_clk;
- 	struct resource *res;
- 	const struct phy_ops *phy_usb2_ops;
- 	int irq, ret = 0, i;
-@@ -630,6 +640,10 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	usb_x1_clk = devm_clk_get(dev, "usb_x1");
-+	if (!IS_ERR(usb_x1_clk) && clk_get_rate(usb_x1_clk))
-+		channel->uses_usb_x1 = true;
-+
- 	/*
- 	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
- 	 * And then, phy-core will manage runtime pm for this device.
+I included it as a link to an upstream problem report similar to other commits
+that I previewed. The link provides the extra context that I was perhaps to
+lazy to note in the commit header.
+
+> As the problem has basically existed forever,
+
+Agreed
+
+> IMHO no Fixes tag
+> is needed.
+
+I've dropped the Fixes line.
+
+> > Reported-by: Michael Rodin <mrodin@de.adit-jv.com>
+> > Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: George G. Davis <george_davis@mentor.com>
+> > ---
+> > v2: Clarify comment regarding DMA support on kernel console,
+> >     add {Tested,Reviewed}-by:, and Cc: linux-stable lines.
+> 
+> Thanks for the update!
+
+Thanks!
+
+
+I'll submit v3 later today.
+
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
 -- 
-2.16.1
-
+Regards,
+George
