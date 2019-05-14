@@ -6,82 +6,119 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBE4C46470
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89DEC04AB7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F21320879
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92BD120862
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726098AbfENPeB (ORCPT
+        id S1726179AbfENPfm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 May 2019 11:34:01 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:38775 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725901AbfENPeA (ORCPT
+        Tue, 14 May 2019 11:35:42 -0400
+Received: from pbmsgap01.intersil.com ([192.157.179.201]:53244 "EHLO
+        pbmsgap01.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfENPfm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 May 2019 11:34:00 -0400
-X-IronPort-AV: E=Sophos;i="5.60,469,1549897200"; 
-   d="scan'208";a="15714500"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 15 May 2019 00:33:58 +0900
-Received: from renesas-ubuntu18.ree.adwin.renesas.com (unknown [10.226.36.106])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E356940123F7;
-        Wed, 15 May 2019 00:33:56 +0900 (JST)
-From:   Chris Paterson <chris.paterson2@renesas.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Biju Das <biju.das@bp.renesas.com>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Paterson <chris.paterson2@renesas.com>
-Subject: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
-Date:   Tue, 14 May 2019 16:33:41 +0100
-Message-Id: <20190514153341.22540-1-chris.paterson2@renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 14 May 2019 11:35:42 -0400
+Received: from pps.filterd (pbmsgap01.intersil.com [127.0.0.1])
+        by pbmsgap01.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x4EEqfmd026046;
+        Tue, 14 May 2019 10:57:49 -0400
+Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
+        by pbmsgap01.intersil.com with ESMTP id 2sdswyjjr5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 14 May 2019 10:57:49 -0400
+Received: from pbmxdp02.intersil.corp (132.158.200.223) by
+ pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.1531.3; Tue, 14 May 2019 10:57:47 -0400
+Received: from localhost.localdomain (132.158.202.108) by
+ pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
+ 15.1.1531.3 via Frontend Transport; Tue, 14 May 2019 10:57:47 -0400
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        "Chris Brandt" <chris.brandt@renesas.com>
+Subject: [PATCH v3 09/15] usb: renesas_usbhs: add support for CNEN bit
+Date:   Tue, 14 May 2019 09:55:59 -0500
+Message-ID: <20190514145605.19112-10-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20190514145605.19112-1-chris.brandt@renesas.com>
+References: <20190514145605.19112-1-chris.brandt@renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=930
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905140106
+X-Proofpoint-Spam-Reason: mlx
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Misspelling 'prohibited' is quite common in the real world, although
-surprisingly not so much in the Linux Kernel. In addition to fixing the
-typo we may as well add it to the spelling checker.
+For some SoC, CNEN must be set for USB Device mode operation.
 
-Also adding the present participle (prohibiting).
-
-Fixes: 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
-
-Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/clk/renesas/r8a77470-cpg-mssr.c | 2 +-
- scripts/spelling.txt                    | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+v2:
+ * options are now held in param
+---
+ drivers/usb/renesas_usbhs/common.c | 6 ++++++
+ drivers/usb/renesas_usbhs/common.h | 1 +
+ include/linux/usb/renesas_usbhs.h  | 1 +
+ 3 files changed, 8 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a77470-cpg-mssr.c b/drivers/clk/renesas/r8a77470-cpg-mssr.c
-index ab0fb10b6bf0..d81ae65f0d18 100644
---- a/drivers/clk/renesas/r8a77470-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77470-cpg-mssr.c
-@@ -175,7 +175,7 @@ static const unsigned int r8a77470_crit_mod_clks[] __initconst = {
-  *---------------------------------------------------
-  * 0  0		20		x80	x78	x50
-  * 0  1		26		x60	x60	x56
-- * 1  0		Prohibitted setting
-+ * 1  0		Prohibited setting
-  * 1  1		30		x52	x52	x50
-  *
-  * *1 :	Table 7.4 indicates VCO output (PLL0 = VCO)
-diff --git a/scripts/spelling.txt b/scripts/spelling.txt
-index dcd25a31f9f5..135459f59db6 100644
---- a/scripts/spelling.txt
-+++ b/scripts/spelling.txt
-@@ -1310,6 +1310,8 @@ programmble||programmable
- programm||program
- programms||programs
- progresss||progress
-+prohibitted||prohibited
-+prohibitting||prohibiting
- promiscouos||promiscuous
- promiscous||promiscuous
- promixity||proximity
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 1de7a44f3415..734fb4e542c5 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -114,6 +114,12 @@ void usbhs_sys_function_ctrl(struct usbhs_priv *priv, int enable)
+ 	u16 mask = DCFM | DRPD | DPRPU | HSE | USBE;
+ 	u16 val  = HSE | USBE;
+ 
++	/* CNEN bit is required for function operation */
++	if (usbhs_get_dparam(priv, has_cnen)) {
++		mask |= CNEN;
++		val  |= CNEN;
++	}
++
+ 	/*
+ 	 * if enable
+ 	 *
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index 1fbffb7bbc8f..de74ebd1a347 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -104,6 +104,7 @@ struct usbhs_priv;
+ 
+ /* SYSCFG */
+ #define SCKE	(1 << 10)	/* USB Module Clock Enable */
++#define CNEN	(1 << 8)	/* Single-ended receiver operation Enable */
+ #define HSE	(1 << 7)	/* High-Speed Operation Enable */
+ #define DCFM	(1 << 6)	/* Controller Function Select */
+ #define DRPD	(1 << 5)	/* D+ Line/D- Line Resistance Control */
+diff --git a/include/linux/usb/renesas_usbhs.h b/include/linux/usb/renesas_usbhs.h
+index 17fae6e504cc..9097a38fcda8 100644
+--- a/include/linux/usb/renesas_usbhs.h
++++ b/include/linux/usb/renesas_usbhs.h
+@@ -190,6 +190,7 @@ struct renesas_usbhs_driver_param {
+ 	u32 has_sudmac:1; /* for SUDMAC */
+ 	u32 has_usb_dmac:1; /* for USB-DMAC */
+ 	u32 runtime_pwctrl:1;
++	u32 has_cnen:1;
+ #define USBHS_USB_DMAC_XFER_SIZE	32	/* hardcode the xfer size */
+ };
+ 
 -- 
-2.17.1
+2.16.1
 
