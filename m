@@ -2,109 +2,105 @@ Return-Path: <SRS0=J82U=TO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25554C04AB7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31BBC04AB4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C1220862
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:35:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7645E2085A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 May 2019 15:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726084AbfENPfn (ORCPT
+        id S1726036AbfENPyy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 May 2019 11:35:43 -0400
-Received: from pbmsgap01.intersil.com ([192.157.179.201]:53244 "EHLO
-        pbmsgap01.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfENPfn (ORCPT
+        Tue, 14 May 2019 11:54:54 -0400
+Received: from sauhun.de ([88.99.104.3]:48886 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725901AbfENPyy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 May 2019 11:35:43 -0400
-Received: from pps.filterd (pbmsgap01.intersil.com [127.0.0.1])
-        by pbmsgap01.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x4EEqfma026046;
-        Tue, 14 May 2019 10:57:17 -0400
-Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
-        by pbmsgap01.intersil.com with ESMTP id 2sdswyjjqq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 14 May 2019 10:57:17 -0400
-Received: from pbmxdp02.intersil.corp (132.158.200.223) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Tue, 14 May 2019 10:57:16 -0400
-Received: from localhost.localdomain (132.158.202.108) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Tue, 14 May 2019 10:57:15 -0400
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Tue, 14 May 2019 11:54:54 -0400
+Received: from localhost (p54B3310E.dip0.t-ipconnect.de [84.179.49.14])
+        by pokefinder.org (Postfix) with ESMTPSA id 580052C2868;
+        Tue, 14 May 2019 17:54:51 +0200 (CEST)
+Date:   Tue, 14 May 2019 17:54:51 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     "George G. Davis" <george_davis@mentor.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        "Chris Brandt" <chris.brandt@renesas.com>
-Subject: [PATCH v3 05/15] phy: renesas: rcar-gen3-usb2: Check dr_mode when not using OTG
-Date:   Tue, 14 May 2019 09:55:55 -0500
-Message-ID: <20190514145605.19112-6-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20190514145605.19112-1-chris.brandt@renesas.com>
-References: <20190514145605.19112-1-chris.brandt@renesas.com>
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Andy Lowe <andy_lowe@mentor.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
+        <devicetree@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] serial: sh-sci: disable DMA for uart_console
+Message-ID: <20190514155450.GB6508@kunai>
+References: <1557762446-23811-1-git-send-email-george_davis@mentor.com>
+ <CAMuHMdVaNWa=Q-7K-+_rM-8yYWB0-+4_o4hgACK6o-4BOrY07A@mail.gmail.com>
+ <20190514153021.GC18528@mam-gdavis-lt>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-14_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=987
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905140106
-X-Proofpoint-Spam-Reason: mlx
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kXdP64Ggrk/fb43R"
+Content-Disposition: inline
+In-Reply-To: <20190514153021.GC18528@mam-gdavis-lt>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When not using OTG, the PHY will need to know if it should function as
-host or peripheral by checking dr_mode in the PHY node (not the parent
-controller node).
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v3:
- * changed 'if' to 'switch'
- * use rcar_gen3_set_host_mode() instead of writel()
-v2:
- * added braces to else statement
- * check if dr_mode is "host"
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+--kXdP64Ggrk/fb43R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 06e0fc804226..29da9c46ad9b 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -412,6 +412,18 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 		if (rcar_gen3_needs_init_otg(channel))
- 			rcar_gen3_init_otg(channel);
- 		rphy->otg_initialized = true;
-+	} else {
-+		/* Not OTG, so dr_mode should be set in PHY node */
-+		switch (usb_get_dr_mode(channel->dev)) {
-+		case USB_DR_MODE_HOST:
-+			rcar_gen3_set_host_mode(channel, 1);
-+			break;
-+		case USB_DR_MODE_PERIPHERAL:
-+			rcar_gen3_set_host_mode(channel, 0);
-+			break;
-+		default:
-+			break;
-+		}
- 	}
- 
- 	rphy->initialized = true;
--- 
-2.16.1
 
+> > > Fixes: https://patchwork.kernel.org/patch/10929511/
+> >=20
+> > I don't think this is an appropriate reference, as it points to a patch=
+ that
+> > was never applied.
+>=20
+> I included it as a link to an upstream problem report similar to other co=
+mmits
+> that I previewed. The link provides the extra context that I was perhaps =
+to
+> lazy to note in the commit header.
+
+We have a "Link:" tag for things like this, e.g.:
+
+Link: https://patchwork.kernel.org/patch/10929511/
+
+
+--kXdP64Ggrk/fb43R
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlza5MYACgkQFA3kzBSg
+KbbkfQ/+PL1lLGOvBp4WLSQof0j9gnQWmDJDxCG61/wtuAsqm6CkBe4BlgZIhoDq
+ZgOk6lcFvge3gPJPP+DOiPVa9Uebjx84+gJV8t/hJx5EkZ5d/VBzxLS9C74ae9KQ
+yC1BN8slbFbu4aS4bzbOoYCOGjRq2Wh7Se6MtdV5pCHZA6DxV60KvbrwvgVD8DrT
+2YgoyE5pVyou/2gn4FxoUVzKDPTxvFr7rTTcJLHdEBXiXxy5x+5gBIGsl0521+qy
+XIsJdaQXkI1wyssp/gRrUhZiAf/Du8W9MW0g4vXTC0a7nX8O5ENKW23FyV6FrzoX
+BpPl7ICCxAarMabDkaNvhlO+TCC8f88yhYaiZ8UZ2ZyzIg8MPGJBQ0jdOTOeWjkU
+DoLS5eVr8C2N9jT6iFY/f2UI/RfJlCx2gjdpgX23dUtn2uAkGjeFke4hXN0hmNnF
+HYHyfTDOODnfnM3QzowRGaMOHE9nVcUcTcR5VKK8M0GtnzKHr8yBzfFJJkfKeiHi
+CLjR9N37CcCUCKe5qDhIxwnmkXjJoUp6rgZxAS2hewGiv/CKi0WtfCvk6BzEkUV9
+Eg3rZ1Ipeqt0fSHK4EK4ltIrs+iSZp+nhx7W61UE2teWQ6IG+weOdVvBCHpe9FUN
+6RMlFFMcVzfvFKw2z+Q8uua9EPlKFFnUe7SAbydWO7d81KNyUGI=
+=BcaQ
+-----END PGP SIGNATURE-----
+
+--kXdP64Ggrk/fb43R--
