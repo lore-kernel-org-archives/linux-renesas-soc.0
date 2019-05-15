@@ -2,31 +2,31 @@ Return-Path: <SRS0=94f6=TP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B5EC04E53
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 11:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD03C04E53
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 11:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DBD2206BF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 11:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981792053B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 11:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732265AbfEOLpW (ORCPT
+        id S1730068AbfEOLpa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 May 2019 07:45:22 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:15010 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730132AbfEOLpR (ORCPT
+        Wed, 15 May 2019 07:45:30 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:2983 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732296AbfEOLp0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 07:45:17 -0400
+        Wed, 15 May 2019 07:45:26 -0400
 X-IronPort-AV: E=Sophos;i="5.60,472,1549897200"; 
-   d="scan'208";a="15811460"
+   d="scan'208";a="16013224"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 15 May 2019 20:45:15 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 15 May 2019 20:45:24 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 791B3424CA3C;
-        Wed, 15 May 2019 20:45:11 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B688E424CA39;
+        Wed, 15 May 2019 20:45:20 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -45,31 +45,57 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>, xu_shunji@hoperun.com
-Subject: [PATCH 0/2] Document HopeRun RZ/G2M boards
-Date:   Wed, 15 May 2019 12:44:55 +0100
-Message-Id: <1557920697-18057-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 2/2] dt-bindings: arm: renesas: Add HopeRun RZ/G2[M] boards
+Date:   Wed, 15 May 2019 12:44:57 +0100
+Message-Id: <1557920697-18057-3-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1557920697-18057-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1557920697-18057-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear All,
+This patch adds board HiHope RZ/G2M (the main board, powered by
+the R8A774A1) and board HiHope RZ/G2 EX (the expansion board
+that sits on top of the HiHope RZ/G2M). Both boards are made
+by Jiangsu HopeRun Software Co., Ltd. (a.k.a. HopeRun).
 
-this series aims at documenting the HiHope RZ/G2M platform from
-HopeRun, and its corresponding expansion board.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-Thanks,
-Fab
+---
+Useful links:
+http://hihope.org/product/detail/rzg2
+https://item.taobao.com/item.htm?spm=a2oq0.12575281.0.0.6bcf1debQpzkRS&ft=t&id=592177498472
+http://www.hoperun.com/Cn/news/id/379
 
-Fabrizio Castro (2):
-  dt-bindings: Add vendor prefix for HopeRun
-  dt-bindings: arm: renesas: Add HopeRun RZ/G2[M] boards
+We already know that the HiHope RZ/G2 EX will also sit on the
+HiHope RZ/G2N, even though the HiHope RZ/G2N doesn't exist just
+yet.
+---
+ Documentation/devicetree/bindings/arm/renesas.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- Documentation/devicetree/bindings/arm/renesas.yaml    | 8 ++++++++
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 2 files changed, 9 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
+index 19f3798..95302b9 100644
+--- a/Documentation/devicetree/bindings/arm/renesas.yaml
++++ b/Documentation/devicetree/bindings/arm/renesas.yaml
+@@ -106,6 +106,14 @@ properties:
+ 
+       - description: RZ/G2M (R8A774A1)
+         items:
++          - enum:
++              - hoperun,hihope-rzg2m # HopeRun HiHope RZ/G2M platform
++          - const: renesas,r8a774a1
++
++        items:
++          - enum:
++              - hoperun,hihope-rzg2-ex # HopeRun expansion board for HiHope RZ/G2 platforms
++          - const: hoperun,hihope-rzg2m
+           - const: renesas,r8a774a1
+ 
+       - description: RZ/G2E (R8A774C0)
 -- 
 2.7.4
 
