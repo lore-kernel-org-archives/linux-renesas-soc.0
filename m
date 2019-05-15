@@ -2,127 +2,167 @@ Return-Path: <SRS0=94f6=TP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2599CC04E53
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E32C04E53
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD55120818
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:41:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="sf1BtMnk"
+	by mail.kernel.org (Postfix) with ESMTP id 5379520818
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:46:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfEOPl0 (ORCPT
+        id S1728484AbfEOPqF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 May 2019 11:41:26 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40235 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfEOPl0 (ORCPT
+        Wed, 15 May 2019 11:46:05 -0400
+Received: from pbmsgap02.intersil.com ([192.157.179.202]:51974 "EHLO
+        pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbfEOPqF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 11:41:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id h13so178007lfc.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 May 2019 08:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EqNptRPpkh+Mz1esaoA+w01X4hsIZLe8ln4Yj4kpUHM=;
-        b=sf1BtMnk3C+GP71t3AAc1BHbg1OXwa/mNo0fP4jqkhzg2Lvv+YTriVRFdHob4roTnZ
-         MWyE4aTdddpi9xbD1/Euk1FBAyJg3fZBn0J4uE7SS3N44mnGbF04vXPKzKZty6FLPt09
-         aoizOYEGaqIMRyiDGDoUW5jGfyTB2KKeQOfz4aYSulmjk5PN8g7RbU1sa8K3OWYy3Vqu
-         FqW4OR5r7e/IIY5gXslSbHbhih4B7wzKGmvcY2Zki/kXNbFSL+g5X3T8i4qALhbcLJxk
-         b2Yx+OhUgqZm5gYyhhrfKQaAFG6oamjCrWkOrrPwjCVuovQ04s5VhnU9aVFHCxhPi0Jv
-         a8Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=EqNptRPpkh+Mz1esaoA+w01X4hsIZLe8ln4Yj4kpUHM=;
-        b=VFVFZCEhDkOwR6Ukccbk4aK2z9WeaONrwUqeveKktXj/8kanjp3R4h12niuo/i8g6I
-         UQN1JuU6goUyVY0DZbLpvWaGqLNFxwqf6cHsfOVPWggbjKdhOfiSj8y4zfqBRyf2wmzM
-         1hfkDyH76b9FT0RAWSxAiOa5ham1MIHru5Cv0reOfEzIGoW63zbm0WOELOOMidPJ+iqV
-         q7iW8Fq2NNe9FJ/VWxHXC97094NmmKZShegIDd9N1DyILfhCQIvO3LOFRKkc66e4Ypsl
-         sxwfImjqZZDdq2MMoP4+OwtJpKXAq6F82NDVVE0rnPkbdVV5+BDex/BRp/DpYo/H1UcW
-         nqCA==
-X-Gm-Message-State: APjAAAWYEiW0L/X6/jwWJ2aK6PRahfpeIXjCIAOdrgMuNQBbmcAUIB6R
-        lyKwVUgkvewan80gSBhrvYuSYO7PP5Q=
-X-Google-Smtp-Source: APXvYqxqsNHp3sR7YOUmeZzRszRgbklTV7wxcdZyV8FYCJVw3e3YwggdECvmL0axydK64oAAkc13eg==
-X-Received: by 2002:a19:6a06:: with SMTP id u6mr21845212lfu.26.1557934883814;
-        Wed, 15 May 2019 08:41:23 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.86.124])
-        by smtp.gmail.com with ESMTPSA id u8sm437053lfi.83.2019.05.15.08.41.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 15 May 2019 08:41:23 -0700 (PDT)
-Subject: Re: [PATCH] net: sh_eth: fix mdio access in sh_eth_close() for some
- SoCs
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <1557898601-26231-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <0ab08e61-833d-1d9e-ef71-311964854d46@cogentembedded.com>
-Date:   Wed, 15 May 2019 18:41:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 15 May 2019 11:46:05 -0400
+Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
+        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x4FFCHJt019290;
+        Wed, 15 May 2019 11:22:28 -0400
+Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
+        by pbmsgap02.intersil.com with ESMTP id 2sdrjcb6hk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 15 May 2019 11:22:28 -0400
+Received: from pbmxdp01.intersil.corp (132.158.200.222) by
+ pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.1531.3; Wed, 15 May 2019 11:22:27 -0400
+Received: from localhost.localdomain (132.158.202.108) by
+ pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server id
+ 15.1.1531.3 via Frontend Transport; Wed, 15 May 2019 11:22:26 -0400
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        "Chris Brandt" <chris.brandt@renesas.com>
+Subject: [PATCH v4 11/13] ARM: dts: r7s9210: Add USB Host support
+Date:   Wed, 15 May 2019 10:20:46 -0500
+Message-ID: <20190515152048.42363-12-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20190515152048.42363-1-chris.brandt@renesas.com>
+References: <20190515152048.42363-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <1557898601-26231-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-15_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905150094
+X-Proofpoint-Spam-Reason: mlx
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+Add EHCI and OHCI host support for RZ/A2.
 
-   It's not "some SoCs", it's only R-Car gen2 and RZ/G1 SoCs.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+ * "fclk" to "fck"
+ * changed phy reg size 0x10 -> 0x700
+ * added reviewed-by
+v3:
+ * add usb_x1 as a clock source
+ * add clock-names
+v2:
+  * changed to generic name usb@xxx
+  * Add space between compatible strings
+---
+ arch/arm/boot/dts/r7s9210.dtsi | 66 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-On 05/15/2019 08:36 AM, Yoshihiro Shimoda wrote:
+diff --git a/arch/arm/boot/dts/r7s9210.dtsi b/arch/arm/boot/dts/r7s9210.dtsi
+index 73041f04fef5..066e6fed11aa 100644
+--- a/arch/arm/boot/dts/r7s9210.dtsi
++++ b/arch/arm/boot/dts/r7s9210.dtsi
+@@ -329,6 +329,72 @@
+ 			status = "disabled";
+ 		};
+ 
++		ohci0: usb@e8218000 {
++			compatible = "generic-ohci";
++			reg = <0xe8218000 0x100>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 61>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		ehci0: usb@e8218100 {
++			compatible = "generic-ehci";
++			reg = <0xe8218100 0x100>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 61>;
++			phys = <&usb2_phy0>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		usb2_phy0: usb-phy@e8218200 {
++			compatible = "renesas,usb2-phy-r7s9210", "renesas,rcar-gen3-usb2-phy";
++			reg = <0xe8218200 0x700>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 61>, <&usb_x1_clk>;
++			clock-names = "fck", "usb_x1";
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
++		ohci1: usb@e821a000 {
++			compatible = "generic-ohci";
++			reg = <0xe821a000 0x100>;
++			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 60>;
++			phys = <&usb2_phy1>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		ehci1: usb@e821a100 {
++			compatible = "generic-ehci";
++			reg = <0xe821a100 0x100>;
++			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 60>;
++			phys = <&usb2_phy1>;
++			phy-names = "usb";
++			power-domains = <&cpg>;
++			status = "disabled";
++		};
++
++		usb2_phy1: usb-phy@e821a200 {
++			compatible = "renesas,usb2-phy-r7s9210", "renesas,rcar-gen3-usb2-phy";
++			reg = <0xe821a200 0x700>;
++			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 60>, <&usb_x1_clk>;
++			clock-names = "fck", "usb_x1";
++			power-domains = <&cpg>;
++			#phy-cells = <0>;
++			status = "disabled";
++		};
++
+ 		sdhi0: sd@e8228000 {
+ 			compatible = "renesas,sdhi-r7s9210";
+ 			reg = <0xe8228000 0x8c0>;
+-- 
+2.16.1
 
-> The sh_eth_close() resets the MAC and then calls phy_stop()
-> so that mdio read access result is incorrect without any error
-> according to kernel trace like below:
-> 
-> ifconfig-216   [003] .n..   109.133124: mdio_access: ee700000.ethernet-ffffffff read  phy:0x01 reg:0x00 val:0xffff
-
-   Not sure how RMII mode affects the MDIO transfers...
-
-> To fix the issue, this patch adds a condition and set the RMII mode
-> regiseter in sh_eth_dev_exit() for some SoCs.
-> 
-> Note that when I have tried to move the sh_eth_dev_exit() calling
-> after phy_stop() on sh_eth_close(), but it gets worse.
-
-   Ah, I was going to suggest changing the call order... what happens then?
-
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  drivers/net/ethernet/renesas/sh_eth.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-> index e33af37..106ae90 100644
-> --- a/drivers/net/ethernet/renesas/sh_eth.c
-> +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> @@ -1596,6 +1596,10 @@ static void sh_eth_dev_exit(struct net_device *ndev)
->  
->  	/* Set MAC address again */
->  	update_mac_address(ndev);
-> +
-> +	/* Set the mode again if required */
-
-   Should be "RMII mode", n ot just "Mode". We prolly need more detailed explanation...
-
-> +	if (mdp->cd->rmiimode)
-> +		sh_eth_write(ndev, 0x1, RMIIMODE);
->  }
->  
->  static void sh_eth_rx_csum(struct sk_buff *skb)
-
-MBR, Sergei
