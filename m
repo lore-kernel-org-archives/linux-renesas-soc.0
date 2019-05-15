@@ -3,46 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8510DC04E53
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8570EC46460
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5398C20675
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63139206BF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:17:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbfEOMQu (ORCPT
+        id S1728219AbfEOMRC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 May 2019 08:16:50 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:22171 "EHLO
+        Wed, 15 May 2019 08:17:02 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:51323 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728561AbfEOMQt (ORCPT
+        by vger.kernel.org with ESMTP id S1728217AbfEOMRB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 08:16:49 -0400
+        Wed, 15 May 2019 08:17:01 -0400
 X-IronPort-AV: E=Sophos;i="5.60,472,1549897200"; 
-   d="scan'208";a="15816038"
+   d="scan'208";a="15816073"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 15 May 2019 21:16:47 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 15 May 2019 21:16:59 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9537A4003864;
-        Wed, 15 May 2019 21:16:44 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 605D04003864;
+        Wed, 15 May 2019 21:16:56 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
 Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
+        Felipe Balbi <balbi@kernel.org>,
         Simon Horman <horms@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 4/7] usb: gadget: udc: renesas_usb3: Add dual role switch support
-Date:   Wed, 15 May 2019 13:09:09 +0100
-Message-Id: <1557922152-16449-5-git-send-email-biju.das@bp.renesas.com>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v6 7/7] arm64: dts: renesas: r8a774c0-cat874: Enable usb role switch support
+Date:   Wed, 15 May 2019 13:09:12 +0100
+Message-Id: <1557922152-16449-8-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1557922152-16449-1-git-send-email-biju.das@bp.renesas.com>
 References: <1557922152-16449-1-git-send-email-biju.das@bp.renesas.com>
@@ -51,229 +52,83 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/G2E cat874 board has a type-c connector connected to hd3ss3220 usb
-type-c drp port controller. This patch adds dual role switch support for
-the type-c connector using the usb role switch class framework.
+This patch enables TI HD3SS3220 device and support usb role switch
+for the CAT 874 platform.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- V5-->V6
-   * Added graph api's to find the role supported by the connector.
- V4-->V5
-   * Incorporated Shimoda-san's review comment
-    (https://patchwork.kernel.org/patch/10902537/)
- V3-->V4
-   * No Change
- V2-->V3
-   * Incorporated Shimoda-san's review comment
-     (https://patchwork.kernel.org/patch/10852507/)
-   * Used renesas,usb-role-switch property for differentiating USB
-     role switch associated with Type-C port controller driver.
- V1-->V2
-   * Driver uses usb role clas for handling dual role switch and handling
-     connect/disconnect events instead of extcon.
+V5-->V6
+  * No change
+V4-->V5
+  * No change
+V3-->V4
+  * No change
+V2-->V3
+  * Used "renesas,usb-role-switch" instead of generic "usb-role-switch"
+    property
+V1-->V2
+  * New patch
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 121 ++++++++++++++++++++++++++++++++--
- 1 file changed, 114 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 39 +++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 7dc2485..1d41998 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -24,6 +24,7 @@
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
- #include <linux/usb/of.h>
-+#include <linux/of_graph.h>
- #include <linux/usb/role.h>
- 
- /* register definitions */
-@@ -351,6 +352,8 @@ struct renesas_usb3 {
- 	int disabled_count;
- 
- 	struct usb_request *ep0_req;
-+
-+	enum usb_role connection_state;
- 	u16 test_mode;
- 	u8 ep0_buf[USB3_EP0_BUF_SIZE];
- 	bool softconnect;
-@@ -359,6 +362,7 @@ struct renesas_usb3 {
- 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
- 	bool forced_b_device;
- 	bool start_to_connect;
-+	bool dual_role_sw;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index b9ae7db..124ed58 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -85,6 +85,34 @@
+ 	clock-frequency = <48000000>;
  };
  
- #define gadget_to_renesas_usb3(_gadget)	\
-@@ -699,8 +703,10 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&usb3->lock, flags);
--	usb3_set_mode_by_role_sw(usb3, host);
--	usb3_vbus_out(usb3, a_dev);
-+	if (!usb3->dual_role_sw || usb3->connection_state != USB_ROLE_NONE) {
-+		usb3_set_mode_by_role_sw(usb3, host);
-+		usb3_vbus_out(usb3, a_dev);
-+	}
- 	/* for A-Peripheral or forced B-device mode */
- 	if ((!host && a_dev) || usb3->start_to_connect)
- 		usb3_connect(usb3);
-@@ -716,7 +722,8 @@ static void usb3_check_id(struct renesas_usb3 *usb3)
- {
- 	usb3->extcon_host = usb3_is_a_device(usb3);
- 
--	if (usb3->extcon_host && !usb3->forced_b_device)
-+	if ((!usb3->dual_role_sw && usb3->extcon_host && !usb3->forced_b_device)
-+	    || usb3->connection_state == USB_ROLE_HOST)
- 		usb3_mode_config(usb3, true, true);
- 	else
- 		usb3_mode_config(usb3, false, false);
-@@ -2343,14 +2350,65 @@ static enum usb_role renesas_usb3_role_switch_get(struct device *dev)
- 	return cur_role;
- }
- 
--static int renesas_usb3_role_switch_set(struct device *dev,
--					enum usb_role role)
-+static void handle_ext_role_switch_states(struct device *dev,
-+					    enum usb_role role)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
-+	struct device *host = usb3->host_dev;
-+	enum usb_role cur_role = renesas_usb3_role_switch_get(dev);
++&i2c0 {
++	status = "okay";
++	clock-frequency = <100000>;
 +
-+	switch (role) {
-+	case USB_ROLE_NONE:
-+		usb3->connection_state = USB_ROLE_NONE;
-+		if (usb3->driver)
-+			usb3_disconnect(usb3);
-+		usb3_vbus_out(usb3, false);
-+		break;
-+	case USB_ROLE_DEVICE:
-+		if (usb3->connection_state == USB_ROLE_NONE) {
-+			usb3->connection_state = USB_ROLE_DEVICE;
-+			usb3_set_mode(usb3, false);
-+			if (usb3->driver)
-+				usb3_connect(usb3);
-+		} else if (cur_role == USB_ROLE_HOST)  {
-+			device_release_driver(host);
-+			usb3_set_mode(usb3, false);
-+			if (usb3->driver)
-+				usb3_connect(usb3);
-+		}
-+		usb3_vbus_out(usb3, false);
-+		break;
-+	case USB_ROLE_HOST:
-+		if (usb3->connection_state == USB_ROLE_NONE) {
-+			if (usb3->driver)
-+				usb3_disconnect(usb3);
++	hd3ss3220@47 {
++		compatible = "ti,hd3ss3220";
++		reg = <0x47>;
++		interrupt-parent = <&gpio6>;
++		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 +
-+			usb3->connection_state = USB_ROLE_HOST;
-+			usb3_set_mode(usb3, true);
-+			usb3_vbus_out(usb3, true);
-+			if (device_attach(host) < 0)
-+				dev_err(dev, "device_attach(host) failed\n");
-+		} else if (cur_role == USB_ROLE_DEVICE) {
-+			usb3_disconnect(usb3);
-+			/* Must set the mode before device_attach of the host */
-+			usb3_set_mode(usb3, true);
-+			/* This device_attach() might sleep */
-+			if (device_attach(host) < 0)
-+				dev_err(dev, "device_attach(host) failed\n");
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+}
++		usb_con: connector {
++			compatible = "usb-c-connector";
++			label = "USB-C";
++			data-role = "dual";
++		};
 +
-+static void handle_role_switch_states(struct device *dev,
-+					    enum usb_role role)
- {
- 	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
- 	struct device *host = usb3->host_dev;
- 	enum usb_role cur_role = renesas_usb3_role_switch_get(dev);
- 
--	pm_runtime_get_sync(dev);
- 	if (cur_role == USB_ROLE_HOST && role == USB_ROLE_DEVICE) {
- 		device_release_driver(host);
- 		usb3_set_mode(usb3, false);
-@@ -2361,6 +2419,20 @@ static int renesas_usb3_role_switch_set(struct device *dev,
- 		if (device_attach(host) < 0)
- 			dev_err(dev, "device_attach(host) failed\n");
- 	}
-+}
++		port {
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+static int renesas_usb3_role_switch_set(struct device *dev,
-+					enum usb_role role)
-+{
-+	struct renesas_usb3 *usb3 = dev_get_drvdata(dev);
++			hd3ss3220_ep: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&usb3peri_role_switch>;
++			};
++		};
++	};
++};
 +
-+	pm_runtime_get_sync(dev);
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+ 	pinctrl-names = "default";
+@@ -175,6 +203,17 @@
+ &usb3_peri0 {
+ 	companion = <&xhci0>;
+ 	status = "okay";
++	usb-role-switch;
 +
-+	if (usb3->dual_role_sw)
-+		handle_ext_role_switch_states(dev, role);
-+	else
-+		handle_role_switch_states(dev, role);
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
- 	pm_runtime_put(dev);
- 
- 	return 0;
-@@ -2650,12 +2722,41 @@ static const unsigned int renesas_usb3_cable[] = {
- 	EXTCON_NONE,
++		usb3peri_role_switch: endpoint@0 {
++			reg = <0>;
++			remote-endpoint = <&hd3ss3220_ep>;
++		};
++	};
  };
  
--static const struct usb_role_switch_desc renesas_usb3_role_switch_desc = {
-+static struct usb_role_switch_desc renesas_usb3_role_switch_desc = {
- 	.set = renesas_usb3_role_switch_set,
- 	.get = renesas_usb3_role_switch_get,
- 	.allow_userspace_control = true,
- };
- 
-+static bool is_usb_dual_role_switch(struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct device_node *parent;
-+	struct device_node *child;
-+	bool ret = false;
-+	const char *role_type = NULL;
-+
-+	child = of_graph_get_endpoint_by_regs(np, -1, -1);
-+	if (!child)
-+		return ret;
-+
-+	parent = of_graph_get_remote_port_parent(child);
-+	of_node_put(child);
-+	child = of_get_child_by_name(parent, "connector");
-+	of_node_put(parent);
-+	if (!child)
-+		return ret;
-+
-+	if (of_device_is_compatible(child, "usb-c-connector")) {
-+		of_property_read_string(child, "data-role", &role_type);
-+		if (role_type && (!strncmp(role_type, "dual", strlen("dual"))))
-+			ret = true;
-+	}
-+
-+	of_node_put(child);
-+	return ret;
-+}
-+
- static int renesas_usb3_probe(struct platform_device *pdev)
- {
- 	struct renesas_usb3 *usb3;
-@@ -2741,6 +2842,12 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_dev_create;
- 
-+	if (device_property_read_bool(&pdev->dev, "usb-role-switch") &&
-+	    is_usb_dual_role_switch(&pdev->dev)) {
-+		usb3->dual_role_sw = true;
-+		renesas_usb3_role_switch_desc.fwnode = dev_fwnode(&pdev->dev);
-+	}
-+
- 	INIT_WORK(&usb3->role_work, renesas_usb3_role_work);
- 	usb3->role_sw = usb_role_switch_register(&pdev->dev,
- 					&renesas_usb3_role_switch_desc);
+ &xhci0 {
 -- 
 2.7.4
 
