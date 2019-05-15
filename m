@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4D9C04E53
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD18EC04E84
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2627120818
+	by mail.kernel.org (Postfix) with ESMTP id 8AF9020818
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:41:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfEOPlN (ORCPT
+        id S1728407AbfEOPlQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 May 2019 11:41:13 -0400
-Received: from pbmsgap02.intersil.com ([192.157.179.202]:51706 "EHLO
+        Wed, 15 May 2019 11:41:16 -0400
+Received: from pbmsgap02.intersil.com ([192.157.179.202]:51712 "EHLO
         pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfEOPlN (ORCPT
+        with ESMTP id S1727454AbfEOPlQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 11:41:13 -0400
+        Wed, 15 May 2019 11:41:16 -0400
 Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
-        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x4FFCHu0019293;
-        Wed, 15 May 2019 11:21:58 -0400
+        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x4FFCHtx019293;
+        Wed, 15 May 2019 11:21:45 -0400
 Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
-        by pbmsgap02.intersil.com with ESMTP id 2sdrjcb6h7-1
+        by pbmsgap02.intersil.com with ESMTP id 2sdrjcb6h2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 15 May 2019 11:21:58 -0400
+        Wed, 15 May 2019 11:21:44 -0400
 Received: from pbmxdp01.intersil.corp (132.158.200.222) by
  pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Wed, 15 May 2019 11:21:56 -0400
+ 15.1.1531.3; Wed, 15 May 2019 11:21:43 -0400
 Received: from localhost.localdomain (132.158.202.108) by
  pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Wed, 15 May 2019 11:21:56 -0400
+ 15.1.1531.3 via Frontend Transport; Wed, 15 May 2019 11:21:43 -0400
 From:   Chris Brandt <chris.brandt@renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -47,9 +47,9 @@ CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
         <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>,
         "Chris Brandt" <chris.brandt@renesas.com>
-Subject: [PATCH v4 07/13] usb: renesas_usbhs: add support for CNEN bit
-Date:   Wed, 15 May 2019 10:20:42 -0500
-Message-ID: <20190515152048.42363-8-chris.brandt@renesas.com>
+Subject: [PATCH v4 05/13] dt-bindings: rcar-gen3-phy-usb2: Add r7s9210 support
+Date:   Wed, 15 May 2019 10:20:40 -0500
+Message-ID: <20190515152048.42363-6-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20190515152048.42363-1-chris.brandt@renesas.com>
 References: <20190515152048.42363-1-chris.brandt@renesas.com>
@@ -58,7 +58,7 @@ Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-15_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=997
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1905150094
 X-Proofpoint-Spam-Reason: mlx
@@ -67,63 +67,49 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-For some SoC, CNEN must be set for USB Device mode operation.
+Document RZ/A2 (R7S9210) SoC bindings.
 
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
-v3:
- * added reviewed-by
 v2:
- * options are now held in param
+ * added reviewed-by
 ---
- drivers/usb/renesas_usbhs/common.c | 6 ++++++
- drivers/usb/renesas_usbhs/common.h | 1 +
- include/linux/usb/renesas_usbhs.h  | 1 +
- 3 files changed, 8 insertions(+)
+ Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index 1de7a44f3415..734fb4e542c5 100644
---- a/drivers/usb/renesas_usbhs/common.c
-+++ b/drivers/usb/renesas_usbhs/common.c
-@@ -114,6 +114,12 @@ void usbhs_sys_function_ctrl(struct usbhs_priv *priv, int enable)
- 	u16 mask = DCFM | DRPD | DPRPU | HSE | USBE;
- 	u16 val  = HSE | USBE;
+diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+index fa58663b7641..7f7a2ed2c9b1 100644
+--- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
+@@ -1,10 +1,12 @@
+ * Renesas R-Car generation 3 USB 2.0 PHY
  
-+	/* CNEN bit is required for function operation */
-+	if (usbhs_get_dparam(priv, has_cnen)) {
-+		mask |= CNEN;
-+		val  |= CNEN;
-+	}
-+
- 	/*
- 	 * if enable
- 	 *
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index 1fbffb7bbc8f..de74ebd1a347 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -104,6 +104,7 @@ struct usbhs_priv;
+ This file provides information on what the device node for the R-Car generation
+-3, RZ/G1C and RZ/G2 USB 2.0 PHY contain.
++3, RZ/G1C, RZ/G2 and RZ/A2 USB 2.0 PHY contain.
  
- /* SYSCFG */
- #define SCKE	(1 << 10)	/* USB Module Clock Enable */
-+#define CNEN	(1 << 8)	/* Single-ended receiver operation Enable */
- #define HSE	(1 << 7)	/* High-Speed Operation Enable */
- #define DCFM	(1 << 6)	/* Controller Function Select */
- #define DRPD	(1 << 5)	/* D+ Line/D- Line Resistance Control */
-diff --git a/include/linux/usb/renesas_usbhs.h b/include/linux/usb/renesas_usbhs.h
-index 17fae6e504cc..9097a38fcda8 100644
---- a/include/linux/usb/renesas_usbhs.h
-+++ b/include/linux/usb/renesas_usbhs.h
-@@ -190,6 +190,7 @@ struct renesas_usbhs_driver_param {
- 	u32 has_sudmac:1; /* for SUDMAC */
- 	u32 has_usb_dmac:1; /* for USB-DMAC */
- 	u32 runtime_pwctrl:1;
-+	u32 has_cnen:1;
- #define USBHS_USB_DMAC_XFER_SIZE	32	/* hardcode the xfer size */
- };
+ Required properties:
+-- compatible: "renesas,usb2-phy-r8a77470" if the device is a part of an R8A77470
++- compatible: "renesas,usb2-phy-r7s9210" if the device is a part of an R7S9210
++	      SoC.
++	      "renesas,usb2-phy-r8a77470" if the device is a part of an R8A77470
+ 	      SoC.
+ 	      "renesas,usb2-phy-r8a774a1" if the device is a part of an R8A774A1
+ 	      SoC.
+@@ -20,8 +22,8 @@ Required properties:
+ 	      R8A77990 SoC.
+ 	      "renesas,usb2-phy-r8a77995" if the device is a part of an
+ 	      R8A77995 SoC.
+-	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3 or RZ/G2
+-	      compatible device.
++	      "renesas,rcar-gen3-usb2-phy" for a generic R-Car Gen3, RZ/G2 or
++	      RZ/A2 compatible device.
  
+ 	      When compatible with the generic version, nodes must list the
+ 	      SoC-specific version corresponding to the platform first
 -- 
 2.16.1
 
