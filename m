@@ -2,117 +2,121 @@ Return-Path: <SRS0=94f6=TP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5126EC04E53
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 14:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3580AC04E53
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 117C621473
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 14:54:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="E5juylMq"
+	by mail.kernel.org (Postfix) with ESMTP id 0CDA720818
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 15:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfEOOyR (ORCPT
+        id S1727989AbfEOPiH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 May 2019 10:54:17 -0400
-Received: from mail-eopbgr1410118.outbound.protection.outlook.com ([40.107.141.118]:9440
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726392AbfEOOyQ (ORCPT
+        Wed, 15 May 2019 11:38:07 -0400
+Received: from pbmsgap02.intersil.com ([192.157.179.202]:51406 "EHLO
+        pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbfEOPiH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 10:54:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8BFrdef01VgfyTVRQ/GchLoLBjcJ14VYKb4K+NzL1wQ=;
- b=E5juylMqUPNBNRyWfCZTmrJMiKv+XQW+KQGEO2Nle4vLzAI508AisZmn+kced1afrFqFrVc7jxIWWFtER04/8YRjgdErxIZGchEjM6G54XqjzHVNd4UIHqoBHnPuq8lRmB+ki4qDd2e4bvnqy/VnHRviZZ5KCkAJaxJpxdDSwF4=
-Received: from TYXPR01MB1568.jpnprd01.prod.outlook.com (52.133.166.145) by
- TYXPR01MB1677.jpnprd01.prod.outlook.com (52.133.167.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1878.22; Wed, 15 May 2019 14:54:12 +0000
-Received: from TYXPR01MB1568.jpnprd01.prod.outlook.com
- ([fe80::c989:cb4d:b41e:2045]) by TYXPR01MB1568.jpnprd01.prod.outlook.com
- ([fe80::c989:cb4d:b41e:2045%7]) with mapi id 15.20.1900.010; Wed, 15 May 2019
- 14:54:12 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
+        Wed, 15 May 2019 11:38:07 -0400
+X-Greylist: delayed 1000 seconds by postgrey-1.27 at vger.kernel.org; Wed, 15 May 2019 11:38:06 EDT
+Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
+        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x4FFCHu1019293;
+        Wed, 15 May 2019 11:22:06 -0400
+Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
+        by pbmsgap02.intersil.com with ESMTP id 2sdrjcb6hc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 15 May 2019 11:22:05 -0400
+Received: from pbmxdp01.intersil.corp (132.158.200.222) by
+ pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.1531.3; Wed, 15 May 2019 11:22:04 -0400
+Received: from localhost.localdomain (132.158.202.108) by
+ pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server id
+ 15.1.1531.3 via Frontend Transport; Wed, 15 May 2019 11:22:03 -0400
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Simon Horman <horms@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        USB list <linux-usb@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v3 15/15] ARM: dts: rza2mevb: Add USB host support
-Thread-Topic: [PATCH v3 15/15] ARM: dts: rza2mevb: Add USB host support
-Thread-Index: AQHVCmWCnsI2dzmQpU69erLMQyE+h6Zr2ZoAgABbaPCAAAxngIAAAQwA
-Date:   Wed, 15 May 2019 14:54:11 +0000
-Message-ID: <TYXPR01MB15684FF367D694BD5C203BB68A090@TYXPR01MB1568.jpnprd01.prod.outlook.com>
-References: <20190514145605.19112-1-chris.brandt@renesas.com>
- <20190514145605.19112-16-chris.brandt@renesas.com>
- <CAMuHMdXx=7v5v3tHwS-01eNnzz6NSfs=M02jU1tNJMdcRbGScg@mail.gmail.com>
- <TYXPR01MB15689E3664801057DFCA09EA8A090@TYXPR01MB1568.jpnprd01.prod.outlook.com>
- <CAMuHMdWLB-JE=2f=Mq9np_b5Wuj6=nB2ywWquBFheoBVxPaAfQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWLB-JE=2f=Mq9np_b5Wuj6=nB2ywWquBFheoBVxPaAfQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d47543ef-b632-4291-b6d9-08d6d9453133
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:TYXPR01MB1677;
-x-ms-traffictypediagnostic: TYXPR01MB1677:
-x-microsoft-antispam-prvs: <TYXPR01MB1677529A852BAF100E4F97008A090@TYXPR01MB1677.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0038DE95A2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(366004)(39860400002)(136003)(199004)(189003)(85664002)(66446008)(64756008)(66476007)(66556008)(6116002)(316002)(55016002)(7736002)(305945005)(4326008)(74316002)(3846002)(8936002)(81166006)(7416002)(8676002)(81156014)(14454004)(68736007)(478600001)(2906002)(86362001)(72206003)(66066001)(9686003)(53936002)(6436002)(6246003)(5024004)(14444005)(256004)(7696005)(476003)(446003)(11346002)(52536014)(229853002)(54906003)(6916009)(186003)(102836004)(6506007)(26005)(33656002)(73956011)(66946007)(76116006)(25786009)(71190400001)(71200400001)(5660300002)(76176011)(486006)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:TYXPR01MB1677;H:TYXPR01MB1568.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 2vNMjUDVzvhqX9gm1CW428vBodV/SmSDczE9dSDZdW2Y6kRn0cfHyJQ1mz9oqQPrTocljX+fKtk33nJzA6ephnS3bghsn1P2QNJx2FXhzXY63CNQruLVtyylrRdgfTK38j5660No/NfLQPTHPwh8ZrEhhVOmEF9q/Yo/tBMhxyoiyMyvLYI5OPxLL47C7FkW+pdb66L5r+wWRXeEm5urkK/BvrlHJzkaj5ropiaqXMQdX/0O1j0Gkwdf0dLTHMEuU9M0wkpjav5qrL7pqGNrP8Au+opQFssVU51crO7zRKuNBY6lLhvAQtQoJ42vGrzmk6mi1WFR2Q4/v5z3QmUFcyVOzChBlqM9V8QzUqrvjMK7ezv94ubU3dyWekAhlTiHOqMNuTSaQDiy9Swg9C2dyZolU3jYdg3ZS6vnQEMo2h8=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        "Chris Brandt" <chris.brandt@renesas.com>
+Subject: [PATCH v4 08/13] usb: renesas_usbhs: support byte addressable CFIFO
+Date:   Wed, 15 May 2019 10:20:43 -0500
+Message-ID: <20190515152048.42363-9-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20190515152048.42363-1-chris.brandt@renesas.com>
+References: <20190515152048.42363-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d47543ef-b632-4291-b6d9-08d6d9453133
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2019 14:54:11.9038
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB1677
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-15_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=965
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905150094
+X-Proofpoint-Spam-Reason: mlx
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIFdlZCwgTWF5IDE1LCAyMDE5IDEsIEdlZXJ0IFV5dHRlcmhvZXZlbiB3
-cm90ZToNCj4gPiA+IERvZXMgcmVzaXN0b3IgUjc4IG5lZWQgdG8gYmUgbW91bnRlZCwgdG9vPw0K
-PiA+DQo+ID4gQnkgZGVmYXVsdCwgUjc4IGFuZCBSNzkgYXJlIG5vdCBwb3B1bGF0ZWQgb24gdGhl
-c2UgYm9hcmRzLCBhbmQgYm90aCBIb3N0DQo+ID4gYW5kIEZ1bmN0aW9uIHdvcmsgZmluZSB3aXRo
-b3V0IGJvYXJkIG1vZGlmaWNhdGlvbiwgc28gSSB3b3VsZCBzYXkNCj4gPiBwb3B1bGF0aW5nIFI3
-OCBpcyBub3QgYSByZXF1aXJlbWVudCBhcyBmYXIgYXMgSSBjYW4gdGVsbC4NCj4gDQo+IEkgYXNr
-ZWQgYmVjYXVzZSBhZnRlciByZWFkaW5nIFNlY3Rpb24gMi40IFVTQiBJbnRlcmZhY2UgaW4gdGhl
-IFJaL0EyTSBDUFUNCj4gQm9hcmQgIFVzZXIncyBNYW51YWwsIGl0J3Mgbm90IGNsZWFyIHRvIG1l
-IHdoZW4gb25lIG5lZWRzIHRvDQo+IHBvcHVsYXRlIG9uZSBvZiB0aGVzZSByZXNpc3RvcnMuIEVz
-cGVjaWFsbHkgaW4gcmVsYXRpb24gdG8gSlAzLCB3aGljaA0KPiB0YWxrcyBhYm91dCAyIHBvc3Np
-YmxlIG1vZGVzIChob3N0IHZzLiBmdW5jdGlvbiksIHdoaWxlIHRoZSByZXNpc3Rvcg0KPiBwYXJh
-Z3JhcGggdGFsa3MgYWJvdXQgMyBwb3NzaWJsZSBtb2RlcyAoZHVhbC1yb2xlIHZzLiBob3N0IHZz
-Lg0KPiBmdW5jdGlvbikuDQoNCkhvbmVzdGx5LCBJJ20gbm90IHN1cmUgd2hhdCB0aGV5IHdlcmUg
-dGhpbmtpbmcuDQpUaGV5IHB1dCBvbiBhIFVTQi1DIGNvbm5lY3RvciwgYW5kIHB1dCBvbiBjaXJj
-dWl0cnkgdG8gZGV0ZWN0IGlmIGEgSG9zdCANCm9yIGRldmljZSB3YXMgYXR0YWNoZWQuLi4uYnV0
-IHRoZW4gcHV0IGEgcGh5c2ljYWwganVtcGVyIG9uIHRoZSBib2FyZCB0bw0KY29ubmVjdC9kaXNj
-b25uZWN0IFZCVVMgcG93ZXIuDQoNCg0KPiBQZXJoYXBzIEkganVzdCBuZWVkIHRvIGRyaW5rIG1v
-cmUgVVNCIEtvb2wtQWlkPw0KPiAobm8gS29vbC1BaWQgc29sZCBpbiBsb2NhbCBzaG9wcywgdGhv
-dWdoOyB3ZSBsaXZlIG9uIENva2UgOy0pDQoNCk1heWJlIG5vdCBLb29sLUFpZCBhcyBpdCBzZWVt
-IHRoZXkgd2VyZSAnc21va2luZyBzb21ldGhpbmcnIGluc3RlYWQuIDpvDQoNCg0KQ2hyaXMNCg==
+Some SoC have a CFIFO register that is byte addressable. This means
+when the CFIFO access is set to 32-bit, you can write 8-bit values to
+addresses CFIFO+0, CFIFO+1, CFIFO+2, CFIFO+3.
+
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v3:
+ * added reviewed-by
+v2:
+ * options ahve moved from flags to param
+---
+ drivers/usb/renesas_usbhs/fifo.c  | 9 +++++++--
+ include/linux/usb/renesas_usbhs.h | 1 +
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index 39fa2fc1b8b7..452b456ac24e 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -543,8 +543,13 @@ static int usbhsf_pio_try_push(struct usbhs_pkt *pkt, int *is_done)
+ 	}
+ 
+ 	/* the rest operation */
+-	for (i = 0; i < len; i++)
+-		iowrite8(buf[i], addr + (0x03 - (i & 0x03)));
++	if (usbhs_get_dparam(priv, cfifo_byte_addr)) {
++		for (i = 0; i < len; i++)
++			iowrite8(buf[i], addr + (i & 0x03));
++	} else {
++		for (i = 0; i < len; i++)
++			iowrite8(buf[i], addr + (0x03 - (i & 0x03)));
++	}
+ 
+ 	/*
+ 	 * variable update
+diff --git a/include/linux/usb/renesas_usbhs.h b/include/linux/usb/renesas_usbhs.h
+index 9097a38fcda8..87043fd21d54 100644
+--- a/include/linux/usb/renesas_usbhs.h
++++ b/include/linux/usb/renesas_usbhs.h
+@@ -191,6 +191,7 @@ struct renesas_usbhs_driver_param {
+ 	u32 has_usb_dmac:1; /* for USB-DMAC */
+ 	u32 runtime_pwctrl:1;
+ 	u32 has_cnen:1;
++	u32 cfifo_byte_addr:1; /* CFIFO is byte addressable */
+ #define USBHS_USB_DMAC_XFER_SIZE	32	/* hardcode the xfer size */
+ };
+ 
+-- 
+2.16.1
+
