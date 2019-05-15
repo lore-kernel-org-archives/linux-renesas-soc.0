@@ -2,96 +2,116 @@ Return-Path: <SRS0=94f6=TP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66A2C04E87
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31981C04E87
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7FA320675
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:17:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D36320881
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 12:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfEOMRJ (ORCPT
+        id S1726771AbfEOMfi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 May 2019 08:17:09 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:24163 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726757AbfEOMQx (ORCPT
+        Wed, 15 May 2019 08:35:38 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:45843 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbfEOMfi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 08:16:53 -0400
-X-IronPort-AV: E=Sophos;i="5.60,472,1549897200"; 
-   d="scan'208";a="16017651"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 15 May 2019 21:16:52 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E128A400F797;
-        Wed, 15 May 2019 21:16:47 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Andy Gross <agross@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        linux-arm-kernel@lists.infradead.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 5/7] arm64: defconfig: enable TYPEC_HD3SS3220 config option
-Date:   Wed, 15 May 2019 13:09:10 +0100
-Message-Id: <1557922152-16449-6-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1557922152-16449-1-git-send-email-biju.das@bp.renesas.com>
-References: <1557922152-16449-1-git-send-email-biju.das@bp.renesas.com>
+        Wed, 15 May 2019 08:35:38 -0400
+Received: by mail-ua1-f65.google.com with SMTP id n7so940327uap.12;
+        Wed, 15 May 2019 05:35:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9o/mkjgpJyJBqQ6fjK8kXNYBqmzbn4iRPPC3NTr2Azw=;
+        b=kRMGIozTQ7P8X6tgaWcO+4EfLDhFA6u22xzplRfxClzXoL/FfIXbqKrCgKaW2szIdf
+         Qs5ttT8PDmGMEgKtDZYFNAfSWvSJCwcARKDfEy3akLGspZdVwajkOYf9WyiS7ERX3kKI
+         Y3Wv+e0+nCy97OMal1yU9VPSHnMlijp7YaD+SyoJw6UOaKL01zYDpRYFQd+M8iUkO3v3
+         mUi0/+XHoN6hk/gF4hThtq+/b4S2LIdFWwrA5XxABAJtlDB52Mp/FhSh21nEBZQzAwHd
+         dIG4uTq2jNGNIcsYh2PAywKmPJvX29qGzs4gbRAitXc8VdqstKF6DTcQQZpGIPKEEUQC
+         gmJQ==
+X-Gm-Message-State: APjAAAUI6dWmYV8JsVF5AOHeBgL/nOEdMrUNR6IIxmQvPcnqubJr9EKF
+        pAd1ORvkWfpen0X9bZdT4vkGtHgCU4LreCfuDleHih78
+X-Google-Smtp-Source: APXvYqx/xNXPI3O0J1KWOes/ITJhx1jTJcVpltBi4rT0EG9QNdiAAdMYSN/IA5rS6OiLGAGjy1LhQtcoEklOi/zbZJs=
+X-Received: by 2002:ab0:45e9:: with SMTP id u96mr1824377uau.75.1557923736935;
+ Wed, 15 May 2019 05:35:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190513152857.13122-1-geert+renesas@glider.be>
+In-Reply-To: <20190513152857.13122-1-geert+renesas@glider.be>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 15 May 2019 14:35:24 +0200
+Message-ID: <CAMuHMdW4spsWmcJCpjBHWbKgds-XVo==KWSPvLmrS83-S2aR3Q@mail.gmail.com>
+Subject: Re: [PATCH 00/11] pinctrl: sh-pfc: Convert to new non-GPIO helper macros
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Chris Paterson <chris.paterson2@renesas.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable support for the TI HD3SS320 USB Type-C DRP Port controller driver
-by turning on CONFIG_TYPEC and CONFIG_TYPEC_HD3SS3220 as modules.
+On Mon, May 13, 2019 at 5:29 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> On many Renesas ARM SoCs, there exist pins that are not associated with
+> a GPIO port, but still need configuration (e.g. drive strength or
+> pull-up).  While pins with GPIO functionality are indexed by their
+> GPIO number, no such number exists for non-GPIO pins.  Hence for the
+> latter, the pin control driver uses numbers outside the GPIO number
+> space, derived from the row and column numbers of the physical pins.
+>
+> For R-Car H3 (and later M3-W and M3-N), the choice was made to use the
+> SiP (System-in-Package, i.e. SoC + RAM + HyperFlash in a BGA package)
+> physical pin numbers, as the SiP was what was mounted on the
+> Salvator-X(S) and ULCB development boards available at that time.
+>
+> In hindsight, it would have been better to settle on the SoC physical
+> pin numbers, though: the pin control driver for R-Car M3-W was reused
+> for the RZ/G2M SoC, which is only available as an SoC, not SiP, thus
+> making it hard to match the driver with the documentation.
+>
+> But even for SoCs there can be confusion: several SoCs are available in
+> multiple packages, with the same or different number of pins, leading to
+> different pin numberings.
+>
+> As this numbering is used only internal to the driver, and pin control
+> configuration from DT refers to these pins by signal name, not pin
+> number (usually, see exceptions below[*]), I started wondering if we
+> could get rid of the SoC/SiP pin numbers instead.  As the actual numbers
+> don't matter, all that is needed for the driver is a unique number for
+> each pin.
+>
+> Hence this patch series converts the affected drivers to use new macros
+> that allow to describe pins without GPIO functionality, and refer to
+> them by auto-generated symbolic enum values, similar in spirit to the
+> existing scheme for handling pins with GPIO functionality.
+>
+> This series consists of three parts:
+>   - Patch 1 introduces new macros to describe and handle pins without
+>     GPIO functionality,
+>   - Patches 2-10 convert the pin control drivers for the individual SoCs
+>     to use the new macros,
+>   - Patch 11 removes the now unused old macros.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-V5-->V6
-  * No change
-V4-->V5
-  * No change
-V3-->V4
-  * No change
-V2-->V3
-  * No change
-V1-->V2
-  * No change
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Due to popular demand, I've pushed this (and its dependencies) to
+branch topic/sh-pfc-nogp-v1 of
+git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 8871cf7..9dc71a7 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -576,6 +576,8 @@ CONFIG_USB_ULPI=y
- CONFIG_USB_GADGET=y
- CONFIG_USB_RENESAS_USBHS_UDC=m
- CONFIG_USB_RENESAS_USB3=m
-+CONFIG_TYPEC=m
-+CONFIG_TYPEC_HD3SS3220=m
- CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=32
- CONFIG_MMC_ARMMMCI=y
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
