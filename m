@@ -2,151 +2,87 @@ Return-Path: <SRS0=PbOa=TQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68831C04AB4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 21:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3A8C04AAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 21:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4446220848
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 21:13:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBBD920848
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 21:54:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558043647;
+	bh=7/VPrBeDCtUB7U1B72xCKN6fY5VM8msYqQe9cjnuI/4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=F+ktQGOkTWW7K3elUcD94CDxCfKzw7/ZnacDFzNVJn4Mg+5WUssWliGY7vtu+J6ia
+	 4JlP5O4KMcv8+DURYpmVzJsrSULG4hFuEp8tMgiXnvxZN0vHWB5heJmxM4kOuqe8cq
+	 o+Nd7hquAu6m9dwq8iqcKJY7zVpQNIkHLYnPSGwg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbfEPVNX (ORCPT
+        id S1727903AbfEPVyH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 May 2019 17:13:23 -0400
-Received: from sauhun.de ([88.99.104.3]:45614 "EHLO pokefinder.org"
+        Thu, 16 May 2019 17:54:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728256AbfEPVNW (ORCPT
+        id S1726523AbfEPVyH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 May 2019 17:13:22 -0400
-Received: from localhost (p54B334EA.dip0.t-ipconnect.de [84.179.52.234])
-        by pokefinder.org (Postfix) with ESMTPSA id B37552C04ED;
-        Thu, 16 May 2019 23:13:19 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Peter Rosin <peda@axentia.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v8 2/3] i2c: core: add device-managed version of i2c_new_dummy
-Date:   Thu, 16 May 2019 23:13:09 +0200
-Message-Id: <20190516211310.22277-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190516211310.22277-1-wsa+renesas@sang-engineering.com>
-References: <20190516211310.22277-1-wsa+renesas@sang-engineering.com>
+        Thu, 16 May 2019 17:54:07 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75E5D2082E;
+        Thu, 16 May 2019 21:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558043646;
+        bh=7/VPrBeDCtUB7U1B72xCKN6fY5VM8msYqQe9cjnuI/4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ea7cvSFtUlBdy3juIFqqgBLtktCBOpnDrfQYYMnl7yji+Qq3nRa5PGMi88NO5NpBj
+         S0Zdd+p13+BoTJfuB7yWTvvrxIqjoxLe1xQsTnaVcL+OZ3TNLxxckOyEcASIXUJhdo
+         +MgNwoycoijodr3LLVBTOyHPcmlqf5uushk3bmSU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com>
+References: <20190514153341.22540-1-chris.paterson2@renesas.com> <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com> <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com>
+Subject: Re: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 16 May 2019 14:54:05 -0700
+Message-Id: <20190516215406.75E5D2082E@mail.kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+Quoting Geert Uytterhoeven (2019-05-15 00:32:46)
+> On Tue, May 14, 2019 at 11:19 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Chris Paterson (2019-05-14 08:33:41)
+> > > Misspelling 'prohibited' is quite common in the real world, although
+> > > surprisingly not so much in the Linux Kernel. In addition to fixing t=
+he
+> > > typo we may as well add it to the spelling checker.
+> > >
+> > > Also adding the present participle (prohibiting).
+> > >
+> > > Fixes: 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
+> > >
+> > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+>=20
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+>=20
+> Thanks!
+>=20
+> So I guess I'll queue this in clk-renesas-for-v5.3?
+>=20
 
-i2c_new_dummy is typically called from the probe function of the
-driver for the primary i2c client. It requires calls to
-i2c_unregister_device in the error path of the probe function and
-in the remove function.
-This can be simplified by introducing a device-managed version.
-
-Note the changed error case return value type: i2c_new_dummy returns
-NULL whilst devm_i2c_new_dummy_device returns an ERR_PTR.
-
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-[wsa: rename new functions and fix minor kdoc issues]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- Documentation/driver-model/devres.txt |  3 ++
- drivers/i2c/i2c-core-base.c           | 44 +++++++++++++++++++++++++++
- include/linux/i2c.h                   |  3 ++
- 3 files changed, 50 insertions(+)
-
-diff --git a/Documentation/driver-model/devres.txt b/Documentation/driver-model/devres.txt
-index 99994a461359..69c7fa7f616c 100644
---- a/Documentation/driver-model/devres.txt
-+++ b/Documentation/driver-model/devres.txt
-@@ -271,6 +271,9 @@ GPIO
-   devm_gpio_request_one()
-   devm_gpio_free()
- 
-+I2C
-+  devm_i2c_new_dummy_device()
-+
- IIO
-   devm_iio_device_alloc()
-   devm_iio_device_free()
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 9c38dde73366..d389d4fb0623 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -929,6 +929,50 @@ struct i2c_client *i2c_new_dummy(struct i2c_adapter *adapter, u16 address)
- }
- EXPORT_SYMBOL_GPL(i2c_new_dummy);
- 
-+struct i2c_dummy_devres {
-+	struct i2c_client *client;
-+};
-+
-+static void devm_i2c_release_dummy(struct device *dev, void *res)
-+{
-+	struct i2c_dummy_devres *this = res;
-+
-+	i2c_unregister_device(this->client);
-+}
-+
-+/**
-+ * devm_i2c_new_dummy_device - return a new i2c device bound to a dummy driver
-+ * @dev: device the managed resource is bound to
-+ * @adapter: the adapter managing the device
-+ * @address: seven bit address to be used
-+ * Context: can sleep
-+ *
-+ * This is the device-managed version of @i2c_new_dummy_device. It returns the
-+ * new i2c client or an ERR_PTR in case of an error.
-+ */
-+struct i2c_client *devm_i2c_new_dummy_device(struct device *dev,
-+					     struct i2c_adapter *adapter,
-+					     u16 address)
-+{
-+	struct i2c_dummy_devres *dr;
-+	struct i2c_client *client;
-+
-+	dr = devres_alloc(devm_i2c_release_dummy, sizeof(*dr), GFP_KERNEL);
-+	if (!dr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	client = i2c_new_dummy_device(adapter, address);
-+	if (IS_ERR(client)) {
-+		devres_free(dr);
-+	} else {
-+		dr->client = client;
-+		devres_add(dev, dr);
-+	}
-+
-+	return client;
-+}
-+EXPORT_SYMBOL_GPL(devm_i2c_new_dummy_device);
-+
- /**
-  * i2c_new_secondary_device - Helper to get the instantiated secondary address
-  * and create the associated device
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index be27062f8ed1..6c4db54714f6 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -469,6 +469,9 @@ extern int i2c_probe_func_quick_read(struct i2c_adapter *, unsigned short addr);
- extern struct i2c_client *
- i2c_new_dummy(struct i2c_adapter *adap, u16 address);
- 
-+extern struct i2c_client *
-+devm_i2c_new_dummy_device(struct device *dev, struct i2c_adapter *adap, u16 address);
-+
- extern struct i2c_client *
- i2c_new_secondary_device(struct i2c_client *client,
- 				const char *name,
--- 
-2.19.1
-
+Guess so! Or Andrew does it.
