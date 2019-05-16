@@ -1,88 +1,74 @@
-Return-Path: <SRS0=94f6=TP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=PbOa=TQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D544C04E53
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 18:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333FFC072AD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 01:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413C62084F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 May 2019 18:24:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F21B2087E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 01:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfEOSYA (ORCPT
+        id S1726772AbfEPBqf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 May 2019 14:24:00 -0400
-Received: from sauhun.de ([88.99.104.3]:57916 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbfEOSYA (ORCPT
+        Wed, 15 May 2019 21:46:35 -0400
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:46872 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfEPAs1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 14:24:00 -0400
-Received: from localhost (p54B332CD.dip0.t-ipconnect.de [84.179.50.205])
-        by pokefinder.org (Postfix) with ESMTPSA id E7D862C009E;
-        Wed, 15 May 2019 20:23:57 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
+        Wed, 15 May 2019 20:48:27 -0400
+X-Halon-ID: 4ae1d50c-7774-11e9-8ab4-005056917a89
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (unknown [89.233.230.99])
+        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
+        id 4ae1d50c-7774-11e9-8ab4-005056917a89;
+        Thu, 16 May 2019 02:48:24 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] mmc: tmio: fix SCC error handling to avoid false positive CRC error
-Date:   Wed, 15 May 2019 20:23:46 +0200
-Message-Id: <20190515182346.5292-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.11.0
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/3] rcar-vin: Add support for RGB formats with alpha component
+Date:   Thu, 16 May 2019 02:47:43 +0200
+Message-Id: <20190516004746.3794-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+Hi,
 
-If an SCC error occurs during a read/write command execution, a false
-positive CRC error message is output.
+This small series adds support for two new pixel formats for the 
+rcar-vin driver; V4L2_PIX_FMT_ARGB555 and V4L2_PIX_FMT_ABGR32. Both 
+formats have an alpha component so a new standard control is also added
+to control its value, V4L2_CID_ALPHA_COMPONENT.
 
-mmcblk0: response CRC error sending r/w cmd command, card status 0x900
+The series is based on the latest media-tree and is tested on both 
+Renesas Gen2 and Gen3 hardware without any regressions found.
 
-check_scc_error() checks SCC_RVSREQ.RVSERR bit. RVSERR detects a
-correction error in the next (up or down) delay tap position. However,
-since the command is successful, only retuning needs to be executed.
-This has been confirmed by HW engineers.
+Patch 1/3 fixes a badly named register name, 2/3 adds the new control 
+and finally 3/3 adds the two new pixel formats.
 
-Thus, on SCC error, set retuning flag instead of setting an error code.
+Niklas Söderlund (3):
+  rcar-vin: Rename VNDMR_DTMD_ARGB1555 to VNDMR_DTMD_ARGB
+  rcar-vin: Add control for alpha component
+  rcar-vin: Add support for RGB formats with alpha component
 
-Fixes: b85fb0a1c8ae ("mmc: tmio: Fix SCC error detection")
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-[wsa: updated comment and commit message, removed some braces]
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+ drivers/media/platform/rcar-vin/rcar-core.c | 53 ++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 39 ++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  8 ++++
+ drivers/media/platform/rcar-vin/rcar-vin.h  |  5 ++
+ 4 files changed, 101 insertions(+), 4 deletions(-)
 
-This patch was suggested by the BSP team because they were seeing CRC errors
-with a hardware I don't have access to. I tested this with my R-Car H3-ES2.0
-and M3-N (both Salvator-XS), and things were still running fine. But I suggest
-to wait for a final ack from Shimoda-san or someone from the BSP team.
-
-
- drivers/mmc/host/tmio_mmc_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 595949f1f001..78cc2a928efe 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -842,8 +842,9 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
- 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
- 		tmio_mmc_abort_dma(host);
- 
-+	/* SCC error means retune, but executed command was still successful */
- 	if (host->check_scc_error && host->check_scc_error(host))
--		mrq->cmd->error = -EILSEQ;
-+		mmc_retune_needed(host->mmc);
- 
- 	/* If SET_BLOCK_COUNT, continue with main command */
- 	if (host->mrq && !mrq->cmd->error) {
 -- 
-2.11.0
+2.21.0
 
