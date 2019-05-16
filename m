@@ -2,34 +2,31 @@ Return-Path: <SRS0=PbOa=TQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9C8C04AAF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 13:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE02EC04AAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 13:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6E620815
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 13:29:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A076020833
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 13:51:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfEPN32 (ORCPT
+        id S1726911AbfEPNvF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 May 2019 09:29:28 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:18539 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726528AbfEPN31 (ORCPT
+        Thu, 16 May 2019 09:51:05 -0400
+Received: from sauhun.de ([88.99.104.3]:42158 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726692AbfEPNvF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 May 2019 09:29:27 -0400
-X-IronPort-AV: E=Sophos;i="5.60,476,1549897200"; 
-   d="scan'208";a="16141177"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 16 May 2019 22:29:25 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E1C6B4014F48;
-        Thu, 16 May 2019 22:29:22 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Thu, 16 May 2019 09:51:05 -0400
+Received: from localhost (p54B334EA.dip0.t-ipconnect.de [84.179.52.234])
+        by pokefinder.org (Postfix) with ESMTPSA id 1B3142C04C2;
+        Thu, 16 May 2019 15:51:03 +0200 (CEST)
+Date:   Thu, 16 May 2019 15:51:02 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -38,65 +35,57 @@ Cc:     Biju Das <biju.das@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] phy: renesas: phy-rcar-gen2: Fix the array off by one warning
-Date:   Thu, 16 May 2019 14:22:03 +0100
-Message-Id: <1558012923-29081-1-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+Subject: Re: [PATCH v2] phy: renesas: phy-rcar-gen2: Fix the array off by one
+ warning
+Message-ID: <20190516135102.GA4901@kunai>
+References: <1558012923-29081-1-git-send-email-biju.das@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+Content-Disposition: inline
+In-Reply-To: <1558012923-29081-1-git-send-email-biju.das@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix the below smatch warning by adding variable check rather than the
-hardcoded value.
-warn: array off by one? 'data->select_value[channel_num]'
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-V1-->V2 
-  * Incorporated Geert's review comments.
-    (https://patchwork.kernel.org/patch/10944837/)
----
- drivers/phy/renesas/phy-rcar-gen2.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
-index 8dc5710..8dbdc5b 100644
---- a/drivers/phy/renesas/phy-rcar-gen2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen2.c
-@@ -71,6 +71,7 @@ struct rcar_gen2_phy_driver {
- struct rcar_gen2_phy_data {
- 	const struct phy_ops *gen2_phy_ops;
- 	const u32 (*select_value)[PHYS_PER_CHANNEL];
-+	const u32 num_channels;
- };
- 
- static int rcar_gen2_phy_init(struct phy *p)
-@@ -271,11 +272,13 @@ static const u32 usb20_select_value[][PHYS_PER_CHANNEL] = {
- static const struct rcar_gen2_phy_data rcar_gen2_usb_phy_data = {
- 	.gen2_phy_ops = &rcar_gen2_phy_ops,
- 	.select_value = pci_select_value,
-+	.num_channels = ARRAY_SIZE(pci_select_value),
- };
- 
- static const struct rcar_gen2_phy_data rz_g1c_usb_phy_data = {
- 	.gen2_phy_ops = &rz_g1c_phy_ops,
- 	.select_value = usb20_select_value,
-+	.num_channels = ARRAY_SIZE(usb20_select_value),
- };
- 
- static const struct of_device_id rcar_gen2_phy_match_table[] = {
-@@ -389,7 +392,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 		channel->selected_phy = -1;
- 
- 		error = of_property_read_u32(np, "reg", &channel_num);
--		if (error || channel_num > 2) {
-+		if (error || channel_num >= data->num_channels) {
- 			dev_err(dev, "Invalid \"reg\" property\n");
- 			return error;
- 		}
--- 
-2.7.4
+On Thu, May 16, 2019 at 02:22:03PM +0100, Biju Das wrote:
+> Fix the below smatch warning by adding variable check rather than the
+> hardcoded value.
+> warn: array off by one? 'data->select_value[channel_num]'
+>=20
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzdasYACgkQFA3kzBSg
+KbZLGw//RP01Uy7QPH+eQ3XfDcZ2Xw/QatqItFdCIW/MyQ1AAZQ7zXFo4qAsBTaL
+SHBrQ/VqG0j7oRAJNFNQh7d76OTqTD/Va9xh0RMO8dzzyesuKUIhzhI+b7CC6sFO
+9FfEDASAAv7MT3/Dia4xcrZqOKzJ+fND1X7b4sVhYRxuX4B7djJ+ahPkyenhRPvN
+nj1T9OtYsP0swd6k00GuRNcYoGqo2hMpuI8MmbPub3xXVqGO6bHmOYHTBtBlZKjf
+D5LyczXcYEvb/6fYm+bBPiXkaV5TEqnuhPvnxXvzdu89Xy8qjurfmrC9kVqg0knO
+nWGtAK9Cb5/DtSpZQsD8ZnVGU2Jr0v2nNaQ/KzlHGheI/cZ1IKwIpSDGOBKXC4na
+oCOkIHVc9sEynqWCF/qRBZp8OgT8kkyG3ytOg0GXY+Ajw2qFTBKRsdZlKrFfSfY1
+DmTWC+2HxI6gwxM7/Mz9xXUk2MIc/VuryJIv2rgREwuPXVrJZr0BcSernLeFHOj6
+950zdHfFHReYjUcCOjN9KzHFWUUKzXjBcOs5K4HPaSfOX53LR4xbuK07Xd8DvYTo
+vQRXbuEWcFs1ttGkymp+U6pVqW95Ux2weWCvFRuMfAoEmFuA+O89wliy7by7aAUL
+eXlwcuB+sNdCkt2eWDjcSxuYg3vLcJrA6+Le/uHREK/ttqK2Lco=
+=rKGa
+-----END PGP SIGNATURE-----
+
+--Dxnq1zWXvFF0Q93v--
