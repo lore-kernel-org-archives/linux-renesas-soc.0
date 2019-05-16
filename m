@@ -2,43 +2,42 @@ Return-Path: <SRS0=PbOa=TQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3F7C072AD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 01:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2119C04E87
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 01:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B48720873
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 01:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB2A20873
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 May 2019 01:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfEPBqf (ORCPT
+        id S1726733AbfEPBqf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 15 May 2019 21:46:35 -0400
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:44050 "EHLO
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:60791 "EHLO
         bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726807AbfEPAs2 (ORCPT
+        by vger.kernel.org with ESMTP id S1726813AbfEPAiK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 May 2019 20:48:28 -0400
-X-Halon-ID: 500952a2-7774-11e9-8ab4-005056917a89
+        Wed, 15 May 2019 20:38:10 -0400
+X-Halon-ID: dc7a3216-7772-11e9-8601-0050569116f7
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (unknown [89.233.230.99])
-        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 500952a2-7774-11e9-8ab4-005056917a89;
-        Thu, 16 May 2019 02:48:25 +0200 (CEST)
+        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
+        id dc7a3216-7772-11e9-8601-0050569116f7;
+        Thu, 16 May 2019 02:38:05 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/3] rcar-vin: Add control for alpha component
-Date:   Thu, 16 May 2019 02:47:45 +0200
-Message-Id: <20190516004746.3794-3-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH] dt-bindings: rcar-{csi2,vin}: Rename bindings documentation files
+Date:   Thu, 16 May 2019 02:38:03 +0200
+Message-Id: <20190516003803.808-1-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190516004746.3794-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20190516004746.3794-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,160 +46,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In preparation to adding support for RGB pixel formats with an alpha
-component add a control to allow the user to control which alpha value
-should be used.
+Renesas media binding documentation files uses a naming schema of
+'renesas,<module>.txt'. Rename VIN and CSI-2 files to match this
+pattern.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 53 ++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-dma.c  |  5 ++
- drivers/media/platform/rcar-vin/rcar-vin.h  |  5 ++
- 3 files changed, 61 insertions(+), 2 deletions(-)
+ .../media/{renesas,rcar-csi2.txt => renesas,csi2.txt}         | 0
+ .../bindings/media/{rcar_vin.txt => renesas,vin.txt}          | 0
+ MAINTAINERS                                                   | 4 ++--
+ 3 files changed, 2 insertions(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/media/{renesas,rcar-csi2.txt => renesas,csi2.txt} (100%)
+ rename Documentation/devicetree/bindings/media/{rcar_vin.txt => renesas,vin.txt} (100%)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 64f9cf790445d14e..ee6e6cb39c749675 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -389,6 +389,28 @@ static void rvin_group_put(struct rvin_dev *vin)
- 	kref_put(&group->refcount, rvin_group_release);
- }
+diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt b/Documentation/devicetree/bindings/media/renesas,csi2.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+rename to Documentation/devicetree/bindings/media/renesas,csi2.txt
+diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/renesas,vin.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/media/rcar_vin.txt
+rename to Documentation/devicetree/bindings/media/renesas,vin.txt
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 878588cfb453d83c..c3a23726472d7d4d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9629,8 +9629,8 @@ L:	linux-media@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+ T:	git git://linuxtv.org/media_tree.git
+ S:	Supported
+-F:	Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+-F:	Documentation/devicetree/bindings/media/rcar_vin.txt
++F:	Documentation/devicetree/bindings/media/renesas,csi2.txt
++F:	Documentation/devicetree/bindings/media/renesas,vin.txt
+ F:	drivers/media/platform/rcar-vin/
  
-+/* -----------------------------------------------------------------------------
-+ * Controls
-+ */
-+
-+static int rvin_s_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct rvin_dev *vin =
-+		container_of(ctrl->handler, struct rvin_dev, ctrl_handler);
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_ALPHA_COMPONENT:
-+		rvin_set_alpha(vin, ctrl->val);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ctrl_ops rvin_ctrl_ops = {
-+	.s_ctrl = rvin_s_ctrl,
-+};
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier
-  */
-@@ -478,6 +500,15 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
- 	if (ret < 0)
- 		return ret;
- 
-+	v4l2_ctrl_new_std(&vin->ctrl_handler, &rvin_ctrl_ops,
-+			  V4L2_CID_ALPHA_COMPONENT, 0, 255, 1, 255);
-+
-+	if (vin->ctrl_handler.error) {
-+		ret = vin->ctrl_handler.error;
-+		v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+		return ret;
-+	}
-+
- 	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, subdev->ctrl_handler,
- 				    NULL, true);
- 	if (ret < 0) {
-@@ -870,6 +901,21 @@ static int rvin_mc_init(struct rvin_dev *vin)
- 	if (ret)
- 		rvin_group_put(vin);
- 
-+	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 1);
-+	if (ret < 0)
-+		return ret;
-+
-+	v4l2_ctrl_new_std(&vin->ctrl_handler, &rvin_ctrl_ops,
-+			  V4L2_CID_ALPHA_COMPONENT, 0, 255, 1, 255);
-+
-+	if (vin->ctrl_handler.error) {
-+		ret = vin->ctrl_handler.error;
-+		v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+		return ret;
-+	}
-+
-+	vin->vdev.ctrl_handler = &vin->ctrl_handler;
-+
- 	return ret;
- }
- 
-@@ -1245,6 +1291,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 
- 	vin->dev = &pdev->dev;
- 	vin->info = of_device_get_match_data(&pdev->dev);
-+	vin->alpha = 0xff;
- 
- 	/*
- 	 * Special care is needed on r8a7795 ES1.x since it
-@@ -1288,6 +1335,8 @@ static int rcar_vin_probe(struct platform_device *pdev)
- 	return 0;
- 
- error_group_unregister:
-+	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+
- 	if (vin->info->use_mc) {
- 		mutex_lock(&vin->group->lock);
- 		if (&vin->v4l2_dev == vin->group->notifier.v4l2_dev) {
-@@ -1323,10 +1372,10 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 		}
- 		mutex_unlock(&vin->group->lock);
- 		rvin_group_put(vin);
--	} else {
--		v4l2_ctrl_handler_free(&vin->ctrl_handler);
- 	}
- 
-+	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+
- 	rvin_dma_unregister(vin);
- 
- 	return 0;
-diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
-index 2d146ecf93d66ad5..4e991cce5fb56a90 100644
---- a/drivers/media/platform/rcar-vin/rcar-dma.c
-+++ b/drivers/media/platform/rcar-vin/rcar-dma.c
-@@ -1343,3 +1343,8 @@ int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
- 
- 	return 0;
- }
-+
-+void rvin_set_alpha(struct rvin_dev *vin, unsigned int alpha)
-+{
-+	vin->alpha = alpha;
-+}
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 0b13b34d03e3dce4..365dfde06ec25add 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -178,6 +178,8 @@ struct rvin_info {
-  * @compose:		active composing
-  * @source:		active size of the video source
-  * @std:		active video standard of the video source
-+ *
-+ * @alpha:		Alpha component to fill in for supported pixel formats
-  */
- struct rvin_dev {
- 	struct device *dev;
-@@ -215,6 +217,8 @@ struct rvin_dev {
- 	struct v4l2_rect compose;
- 	struct v4l2_rect source;
- 	v4l2_std_id std;
-+
-+	unsigned int alpha;
- };
- 
- #define vin_to_source(vin)		((vin)->parallel->subdev)
-@@ -266,5 +270,6 @@ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat);
- void rvin_crop_scale_comp(struct rvin_dev *vin);
- 
- int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
-+void rvin_set_alpha(struct rvin_dev *vin, unsigned int alpha);
- 
- #endif
+ MEDIA DRIVERS FOR RENESAS - VSP1
 -- 
 2.21.0
 
