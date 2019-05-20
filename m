@@ -4,24 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07687C04AAF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 09:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FADC04AAF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 09:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC41D20675
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 09:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39C65206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 09:35:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725601AbfETJfI (ORCPT
+        id S1731888AbfETJfM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 May 2019 05:35:08 -0400
-Received: from sauhun.de ([88.99.104.3]:49556 "EHLO pokefinder.org"
+        Mon, 20 May 2019 05:35:12 -0400
+Received: from sauhun.de ([88.99.104.3]:49576 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbfETJfH (ORCPT
+        id S1727720AbfETJfI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 May 2019 05:35:07 -0400
+        Mon, 20 May 2019 05:35:08 -0400
 Received: from localhost (p54B333DA.dip0.t-ipconnect.de [84.179.51.218])
-        by pokefinder.org (Postfix) with ESMTPSA id 27A5E2C5DC5;
+        by pokefinder.org (Postfix) with ESMTPSA id DE2372C6EF1;
         Mon, 20 May 2019 11:35:06 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
@@ -29,9 +30,9 @@ Cc:     Mark Brown <broonie@kernel.org>, linux-renesas-soc@vger.kernel.org,
         Steve Twiss <stwiss.opensource@diasemi.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH RESEND 1/3] regulator: da9063: remove platform_data support
-Date:   Mon, 20 May 2019 11:34:44 +0200
-Message-Id: <20190520093446.30895-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH RESEND 3/3] regulator: da9063: platform_data is gone, depend on OF
+Date:   Mon, 20 May 2019 11:34:46 +0200
+Message-Id: <20190520093446.30895-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190520093446.30895-1-wsa+renesas@sang-engineering.com>
 References: <20190520093446.30895-1-wsa+renesas@sang-engineering.com>
@@ -42,41 +43,59 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There are no in-kernel users anymore, so remove this outdated interface.
+With OF being the only configuration possibility left, depend on it to
+simplify some code.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
 Tested-by: Steve Twiss <stwiss.opensource@diasemi.com>
 ---
- drivers/regulator/da9063-regulator.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ drivers/regulator/Kconfig            |  2 +-
+ drivers/regulator/da9063-regulator.c | 10 ----------
+ 2 files changed, 1 insertion(+), 11 deletions(-)
 
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 6c37f0df9323..d63d8cbbee1d 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -257,7 +257,7 @@ config REGULATOR_DA9062
+ 
+ config REGULATOR_DA9063
+ 	tristate "Dialog Semiconductor DA9063 regulators"
+-	depends on MFD_DA9063
++	depends on MFD_DA9063 && OF
+ 	help
+ 	  Say y here to support the BUCKs and LDOs regulators found on
+ 	  DA9063 PMICs.
 diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 6f9ce1a6e44d..43aa0df30346 100644
+index da95197fdb4f..02f816318fba 100644
 --- a/drivers/regulator/da9063-regulator.c
 +++ b/drivers/regulator/da9063-regulator.c
-@@ -683,7 +683,6 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+@@ -634,7 +634,6 @@ static const struct regulator_init_data *da9063_get_regulator_initdata(
+ 	return NULL;
+ }
+ 
+-#ifdef CONFIG_OF
+ static struct of_regulator_match da9063_matches[] = {
+ 	[DA9063_ID_BCORE1]           = { .name = "bcore1"           },
+ 	[DA9063_ID_BCORE2]           = { .name = "bcore2"           },
+@@ -712,15 +711,6 @@ static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+ 	*da9063_reg_matches = da9063_matches;
+ 	return pdata;
+ }
+-#else
+-static struct da9063_regulators_pdata *da9063_parse_regulators_dt(
+-		struct platform_device *pdev,
+-		struct of_regulator_match **da9063_reg_matches)
+-{
+-	*da9063_reg_matches = NULL;
+-	return ERR_PTR(-ENODEV);
+-}
+-#endif
+ 
  static int da9063_regulator_probe(struct platform_device *pdev)
  {
- 	struct da9063 *da9063 = dev_get_drvdata(pdev->dev.parent);
--	struct da9063_pdata *da9063_pdata = dev_get_platdata(da9063->dev);
- 	struct of_regulator_match *da9063_reg_matches = NULL;
- 	struct da9063_regulators_pdata *regl_pdata;
- 	const struct da9063_dev_model *model;
-@@ -693,11 +692,7 @@ static int da9063_regulator_probe(struct platform_device *pdev)
- 	bool bcores_merged, bmem_bio_merged;
- 	int id, irq, n, n_regulators, ret, val;
- 
--	regl_pdata = da9063_pdata ? da9063_pdata->regulators_pdata : NULL;
--
--	if (!regl_pdata)
--		regl_pdata = da9063_parse_regulators_dt(pdev,
--							&da9063_reg_matches);
-+	regl_pdata = da9063_parse_regulators_dt(pdev, &da9063_reg_matches);
- 
- 	if (IS_ERR(regl_pdata) || regl_pdata->n_regulators == 0) {
- 		dev_err(&pdev->dev,
 -- 
 2.19.1
 
