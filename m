@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161B7C04AAC
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 11:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB76CC04AAC
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 11:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C0D20644
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 11:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B2E220656
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 11:34:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730351AbfETLbv (ORCPT
+        id S1730159AbfETLe2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 May 2019 07:31:51 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:34579 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730302AbfETLbv (ORCPT
+        Mon, 20 May 2019 07:34:28 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41166 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbfETLe2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 May 2019 07:31:51 -0400
-Received: by mail-vk1-f193.google.com with SMTP id d7so3768859vkf.1;
-        Mon, 20 May 2019 04:31:50 -0700 (PDT)
+        Mon, 20 May 2019 07:34:28 -0400
+Received: by mail-vs1-f66.google.com with SMTP id g187so8661419vsc.8;
+        Mon, 20 May 2019 04:34:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lABXrm/svo69ZtFS6Y2mnzVSLQSMWNtyd1WWYIE0BkA=;
-        b=AvzOmSlA1JvYO1RLYA4GCwDTccV6nc0dnu7gHrrgBN5J49kOn0soPtYVXO8naK6uwi
-         QzfKvDxUV/kF5JpCWGffAjmFTUDKXK4+Vf0raEGGpxS9fma/Ywq2vFrd+G31CcmSLGYW
-         DH+OFm2+R3S1SzhKp1CxsxTDjtHGMVRSs96HONENe/ZF0d/1p9zVtqcDaKfjYf2sYLFT
-         OQeFO+BIcD1NIJETiowAuqkI6bpqDMUCRXqRfiJQ3qY0t3m3IBkuax2gGJAOnwNIpCCZ
-         U2LsWXYYjbUZr+loadwvAcUTCa7uHtzo5mA4LnfOcl0olrJybCwCSkfsQ9nFXqTFIJg2
-         o/Sg==
-X-Gm-Message-State: APjAAAUkwdUy6T2DTq36KlULCaibrp+oW/v7ZxcyKx4i5nSuxKs5Ia4o
-        gA9G50sQtarK9IsODXvAmS0SyMF3eFJvzHyX6KE=
-X-Google-Smtp-Source: APXvYqwsNHtkxGyBmPVDINeMxQ1OYovTV/YHuXmqDktOe6kWI14vRPeIuwNupkAD7TNMWyJyyWT4H5UQAaGfE2EqfR4=
-X-Received: by 2002:a1f:2fd2:: with SMTP id v201mr6282374vkv.83.1558351910292;
- Mon, 20 May 2019 04:31:50 -0700 (PDT)
+        bh=UH9/sjkGYt1CAC9BwyrRGZX8SnvoZEXpFocwJkf4y3o=;
+        b=CQRAciDj6OhZ1qUjPhQHhhkjx56LDjgdpmiP679SGfztnM+yxje5NO92xvRaEzaJg1
+         qMaIkEe6MO+SZCwVChf3wSw1/qYrPxx6CWz+mAws7VSnTbis+O2TwG1sBwbSEALncjOZ
+         9ReCHEAY7mkvtr0/YMUt0wreNoc7oyuc+K4ybuh/lKUyaTUN+n35qPOzc/5M5aBkKhCS
+         z9T6xk8bihaC+46zcfZTg+DVLP5Ta3VXZkRsPFS1P9NEarP9eDKZzAsKy6nCnEmf5RqO
+         irla7YsuWphsvfVU+4U6YnUAFbX+H0XcoDylL87A774PIyS2a+lyBDbT6wE/ORfpJqVG
+         CeUg==
+X-Gm-Message-State: APjAAAVfTMmG/gt/jq8sbUF+szQefzSSCDr5sIDquazO0uvVhDfyPHhX
+        2e7XdOiMw7mxs+h+rZJqvW6UYdFPw1WvvjNcgJw=
+X-Google-Smtp-Source: APXvYqyc41w0n4cC6rucCM5nf/3OFkR/HW/qIjxhDxrg/CU/4dtojTyg+SiGmK4Y5TBLGWzAQyPBgCihEslvgsK0O/4=
+X-Received: by 2002:a67:7c93:: with SMTP id x141mr25866170vsc.96.1558352066991;
+ Mon, 20 May 2019 04:34:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190520093446.30895-1-wsa+renesas@sang-engineering.com> <20190520093446.30895-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190520093446.30895-4-wsa+renesas@sang-engineering.com>
+References: <20190520093446.30895-1-wsa+renesas@sang-engineering.com> <20190520093446.30895-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20190520093446.30895-3-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 20 May 2019 13:31:38 +0200
-Message-ID: <CAMuHMdXJmYUq37fyPQscrYpnZcxEncCm0soi8qdGEqa+NYmHng@mail.gmail.com>
-Subject: Re: [PATCH RESEND 3/3] regulator: da9063: platform_data is gone,
- depend on OF
+Date:   Mon, 20 May 2019 13:34:15 +0200
+Message-ID: <CAMuHMdXio8Ve3GGfAr+gHqN9_kP2Y3jUv0Wd-dhoaw1qQK5kDA@mail.gmail.com>
+Subject: Re: [PATCH RESEND 2/3] regulator: da9063: move definitions out of a
+ header into the driver
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Mark Brown <broonie@kernel.org>,
@@ -60,8 +60,8 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Mon, May 20, 2019 at 12:46 PM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> With OF being the only configuration possibility left, depend on it to
-> simplify some code.
+> Those definitions are only used within the driver meanwhile, so put them
+> there.
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
@@ -74,7 +74,8 @@ Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
