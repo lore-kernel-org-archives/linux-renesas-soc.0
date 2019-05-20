@@ -1,108 +1,51 @@
 Return-Path: <SRS0=yiz9=TV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.8 required=3.0 tests=DATE_IN_PAST_12_24,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PRICE_CATALOG,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4144C04AAF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 08:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D4FC04E87
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 09:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F9121019
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 08:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0CA221743
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 09:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfEUI5e (ORCPT
+        id S1726744AbfEUJVp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 21 May 2019 04:57:34 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:39016 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfEUI5e (ORCPT
+        Tue, 21 May 2019 05:21:45 -0400
+Received: from [159.89.172.223] ([159.89.172.223]:36548 "EHLO
+        mail.boombf2am.ga" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfEUJVp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 May 2019 04:57:34 -0400
-Received: by mail-vs1-f65.google.com with SMTP id m1so10657421vsr.6;
-        Tue, 21 May 2019 01:57:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MWFrnsjcMZzOTmITsHfZDdO5f966+UMJICUhzqvq5h0=;
-        b=EHJYHbmfJ/Ce9Bofif58B++QmpKjWb1asJFeRpictQME4umq1MXbqwyOrPN2A8O0WU
-         dS1Q5yXnVeEpd17XFKVHJTVKtd7zFjqjxGVqHrfSS5vOjY29R3pe7bydOmCw9vuzp+ld
-         uTa/mrdHUcJJifa1DqLQVpoItWiy8Fac8ULwZ14XMgEKMs0rrXbD2I0lcSHB9ruM4BnE
-         ycTFdcRIZBj2pSO9I1RQl0fWUM6dXFfSbspL7bok0hvr/rjBLp7BVuXF49GsF/Y+rA9x
-         eCpu8u8YIGkq0iTLyfxD/roA80N1tK724nbuF8fqMX1SRkZn6ZY7VaZH07cKTFymN6XD
-         dtNQ==
-X-Gm-Message-State: APjAAAWJfjfkAZ+S4N0RSHizqUNWjah5QCJeuSTiGiK7bbYTaOzkVDdQ
-        /AQEZJS03x2aE80bONm1rY8EfteEk/kuLfZIQGg=
-X-Google-Smtp-Source: APXvYqyKZ9voK/cBbfTTXNvd4b2tLuD8JGb4aR0X6oA2nKaW2C6ZwK0EDtOV6rN+FFV/9oMnPctGM0nmJDs2gCaq+BU=
-X-Received: by 2002:a67:770f:: with SMTP id s15mr30405388vsc.11.1558429053082;
- Tue, 21 May 2019 01:57:33 -0700 (PDT)
+        Tue, 21 May 2019 05:21:45 -0400
+Received: by mail.boombf2am.ga (Postfix, from userid 48)
+        id 7919F56D902; Mon, 20 May 2019 13:32:13 +0000 (UTC)
+To:     linux-renesas-soc@vger.kernel.org
+Subject: Inquiry 20/May/2019
+X-PHP-Originating-Script: 0:nfhdgeds.php
+From:   Daniel Murray <sinara-group@bk.ru>
+Reply-To: sinara-group@list.ru
 MIME-Version: 1.0
-References: <20190514153341.22540-1-chris.paterson2@renesas.com>
- <155786877257.14659.6751252865489860937@swboyd.mtv.corp.google.com>
- <CAMuHMdWPSyrhYx5Z5mgmKrR68cHL6owcRT=B3+DD3GhhxuG4zw@mail.gmail.com> <20190516215406.75E5D2082E@mail.kernel.org>
-In-Reply-To: <20190516215406.75E5D2082E@mail.kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 21 May 2019 10:57:20 +0200
-Message-ID: <CAMuHMdVOKDRYjzmyRq-KXW8d+dYmAxnM+=y2yOh85YDcCEDMuw@mail.gmail.com>
-Subject: Re: [PATCH] scripts/spelling.txt: Add spelling fix for prohibited
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Message-Id: <20190520143724.7919F56D902@mail.boombf2am.ga>
+Date:   Mon, 20 May 2019 13:32:13 +0000 (UTC)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Stephen, Andrew,
+Hi,friend,
 
-On Thu, May 16, 2019 at 11:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2019-05-15 00:32:46)
-> > On Tue, May 14, 2019 at 11:19 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > Quoting Chris Paterson (2019-05-14 08:33:41)
-> > > > Misspelling 'prohibited' is quite common in the real world, although
-> > > > surprisingly not so much in the Linux Kernel. In addition to fixing the
-> > > > typo we may as well add it to the spelling checker.
-> > > >
-> > > > Also adding the present participle (prohibiting).
-> > > >
-> > > > Fixes: 5bf2fbbef50c ("clk: renesas: cpg-mssr: Add r8a77470 support")
-> > > >
-> > > > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> >
-> > Thanks!
-> >
-> > So I guess I'll queue this in clk-renesas-for-v5.3?
-> >
->
-> Guess so! Or Andrew does it.
+This is Daniel Murray and i am from Sinara Group Co.Ltd in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
 
-Given the change to scripts/spelling.txt conflicts with b937856a5db2cb7a
-("scripts/spelling.txt: add more typos to spelling.txt and sort") in
-linux-next, and the risk of conflict with future changes to
-drivers/clk/renesas/r8a77470-cpg-mssr.c is slim, I'd like to defer this
-to Andrew.
+Best Regards,
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Daniel Murray
+Purchasing Manager
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
