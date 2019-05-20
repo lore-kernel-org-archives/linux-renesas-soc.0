@@ -2,87 +2,106 @@ Return-Path: <SRS0=uQ1k=TU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B227AC04AAC
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 11:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114D6C04AAC
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 12:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3F220815
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 11:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E56F920815
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 May 2019 12:09:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731282AbfETLzb (ORCPT
+        id S1731083AbfETMJ5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 May 2019 07:55:31 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:36588 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730773AbfETLza (ORCPT
+        Mon, 20 May 2019 08:09:57 -0400
+Received: from sauhun.de ([88.99.104.3]:50406 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730921AbfETMJ5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 May 2019 07:55:30 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id BB41725AEBF;
-        Mon, 20 May 2019 21:55:28 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id B6D159404D4; Mon, 20 May 2019 13:55:26 +0200 (CEST)
-Date:   Mon, 20 May 2019 13:55:26 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, xu_shunji@hoperun.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: Add vendor prefix for HopeRun
-Message-ID: <20190520115526.zhhinfb52szptrtl@verge.net.au>
-References: <1558085189-22061-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1558085189-22061-2-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAL_JsqJCJyRBX+08UriNeYZ01ow0yLv=VjK3sNbjVi1GB5=MQA@mail.gmail.com>
+        Mon, 20 May 2019 08:09:57 -0400
+Received: from localhost (p54B333DA.dip0.t-ipconnect.de [84.179.51.218])
+        by pokefinder.org (Postfix) with ESMTPSA id 4F4432C2761;
+        Mon, 20 May 2019 14:09:55 +0200 (CEST)
+Date:   Mon, 20 May 2019 14:09:54 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Ulrich Hecht <uli@fpond.eu>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+        davem@davemloft.net, magnus.damm@gmail.com
+Subject: Re: [PATCH] ravb: implement MTU change while device is up
+Message-ID: <20190520120954.ffz2ius5nvojkxlh@katana>
+References: <1557328882-24307-1-git-send-email-uli+renesas@fpond.eu>
+ <1f7be29e-c85a-d63d-c83f-357a76e8ca45@cogentembedded.com>
+ <20190508165219.GA26309@bigcity.dyn.berto.se>
+ <434070244.1141414.1557385064484@webmail.strato.com>
+ <20190509101020.4ozvazptoy53gh55@verge.net.au>
+ <344020243.1186987.1557415941124@webmail.strato.com>
+ <20190513121807.cutayiact3qdbxt4@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4onpowlsgc4ggi7t"
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqJCJyRBX+08UriNeYZ01ow0yLv=VjK3sNbjVi1GB5=MQA@mail.gmail.com>
-Organisation: Horms Solutions BV
+In-Reply-To: <20190513121807.cutayiact3qdbxt4@verge.net.au>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, May 17, 2019 at 08:38:14AM -0500, Rob Herring wrote:
-> On Fri, May 17, 2019 at 4:27 AM Fabrizio Castro
-> <fabrizio.castro@bp.renesas.com> wrote:
-> >
-> > Add "Jiangsu HopeRun Software Co., Ltd." to the list of devicetree
-> > vendor prefixes as "hoperun".
-> >
-> > Website: http://www.hoperun.com/en
-> >
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> >
-> > ---
-> > v2->v3:
-> > * Moved to vendor-prefixes.yaml
-> > * Dropped Reviewed-by Simon as this is a completely new patch and as
-> >   such it needs a brand new review
-> > v1->v2:
-> > * No change
-> > ---
-> >  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Thanks, applied for inclusion in v5.3 via the renesas tree.
+--4onpowlsgc4ggi7t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > > > > >    How about the code below instead?
+> > > > > >=20
+> > > > > > 	if (netif_running(ndev))
+> > > > > > 		ravb_close(ndev);
+> > > > > >=20
+> > > > > >  	ndev->mtu =3D new_mtu;
+> > > > > > 	netdev_update_features(ndev);
+> > > > >=20
+> > > > > Is there a need to call netdev_update_features() even if the if i=
+s not=20
+> > > > > running?
+> > > >=20
+> > > > In my testing, it didn't seem so.
+> > >=20
+> > > That may be because your testing doesn't cover cases where it would m=
+ake
+> > > any difference.
+> >=20
+> > Cases other than changing the MTU while the device is up?
+>=20
+> I was thinking of cases where listeners are registered for the
+> notifier that netdev_update_features() triggers.
+
+Where are we here? Is this a blocker?
+
+
+--4onpowlsgc4ggi7t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzimRIACgkQFA3kzBSg
+KbY2ig/+OwxRKe5IvhMytGuTfw9DwJ67C/b6eNAe3iSX2v/VZTIBkYZvIkiP+O1z
++T6LxyQSiB2ceJvEfQXInI8gBydL6ZPmo0qzWUTUmJXVr3L3DaBwCaKA0PsGqP23
+C5XV4FtwDGo2SYunFCqSYsA6u5+TWKdagtdv2br2CSF5f1k+9PSzuRcrwFy9mA8Q
+xaLiiOYTaKgYvZE5geV7dQdngpNzRoiZw+YKIzSyNFkLB1WVTl4IJgvE9rAzJ6yb
+gUpkRfuvoBmUSKbUHX1iJzboYeoTMrf4m2si/nQeotgZUtgejBecUVWCmBC+BvSX
+c/o/U1uBMUBO0n9/AnHu0gqJ+h3lBDx0u5qpeo6eKd6pu8u2SKO1SWD6lP0/wil8
+qKcmDdghqMbrbq5pZgAA7JvGjsHR+U+VxmgPKvGEcPlSB1aOE+AIIVQbI80xVNWi
+75g1Ar9EveaGF2A3vd6rgeMlSRhEFXb0ByrDPd++iuIFcuUtrDjNUdjwgcJbShET
+ZJwK6+XSMl5HsKiRuQR69znCEFL6KpmTkgJZzzOXVBGHctOb3/Ut7s7PjK1tErEn
+cPmXKDCXJR37zMx2TQPFnIUjMNGDVhdjCdBId5sNXWL15EEicS4pWSA1XMFqA8pd
+EM36Tt6gpFvWXuPzk6rqYSAnj+eurhDRxlRqsevoAQkcnkbNaI0=
+=EEaJ
+-----END PGP SIGNATURE-----
+
+--4onpowlsgc4ggi7t--
