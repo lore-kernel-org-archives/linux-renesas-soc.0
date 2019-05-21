@@ -2,129 +2,113 @@ Return-Path: <SRS0=yiz9=TV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CFBC04E87
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 06:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 367A4C04AAF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 07:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5135F20863
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 06:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1C5521019
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 May 2019 07:03:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="lFBsbIPj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfEUG6Q (ORCPT
+        id S1726011AbfEUHDd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 21 May 2019 02:58:16 -0400
-Received: from twhmllg4.macronix.com ([122.147.135.202]:45296 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbfEUG6Q (ORCPT
+        Tue, 21 May 2019 03:03:33 -0400
+Received: from mail-eopbgr1400127.outbound.protection.outlook.com ([40.107.140.127]:6429
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725809AbfEUHDd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 May 2019 02:58:16 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x4L6vvQf093632;
-        Tue, 21 May 2019 14:57:59 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Tue, 21 May 2019 03:03:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lbEQUDK0onKg6sOJe7LLnTqMXdoa4OosAJLWVbSfmgQ=;
+ b=lFBsbIPjeU5yNBevlymzWqlbA3we4IRYVppsaTM1bG9DDP0MO3mXrBtIQTrohlHfhQoYoBaUMaHWbQo1fz/tF2JjGcBQcnQ4+whFv6acubGI03PEfb5rRZ9RCel5H8zkJlLDE0FsZgyTip5FZkL8RPTbJIGWciKtSDLp6E6zpPE=
+Received: from OSAPR01MB3089.jpnprd01.prod.outlook.com (52.134.247.150) by
+ OSAPR01MB1618.jpnprd01.prod.outlook.com (52.134.233.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.17; Tue, 21 May 2019 07:03:28 +0000
+Received: from OSAPR01MB3089.jpnprd01.prod.outlook.com
+ ([fe80::4597:5353:28fb:cfd8]) by OSAPR01MB3089.jpnprd01.prod.outlook.com
+ ([fe80::4597:5353:28fb:cfd8%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 07:03:28 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Biju Das <biju.das@bp.renesas.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+CC:     Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        Mason Yang <masonccyang@mxic.com.tw>, miquel.raynal@bootlin.com
-Subject: [PATCH v13 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF controller bindings
-Date:   Tue, 21 May 2019 15:19:34 +0800
-Message-Id: <1558423174-10748-4-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1558423174-10748-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1558423174-10748-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com x4L6vvQf093632
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] phy: renesas: phy-rcar-gen2: Fix the array off by one
+ warning
+Thread-Topic: [PATCH v2] phy: renesas: phy-rcar-gen2: Fix the array off by one
+ warning
+Thread-Index: AQHVC+ti8opjecbDNkeVOzFODhM55aZ1LoNA
+Date:   Tue, 21 May 2019 07:03:28 +0000
+Message-ID: <OSAPR01MB30894A7D5FE7983ED0D6E5B5D8070@OSAPR01MB3089.jpnprd01.prod.outlook.com>
+References: <1558012923-29081-1-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1558012923-29081-1-git-send-email-biju.das@bp.renesas.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [124.210.22.195]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c4ddba73-f49c-4856-1f7a-08d6ddba6d06
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:OSAPR01MB1618;
+x-ms-traffictypediagnostic: OSAPR01MB1618:
+x-microsoft-antispam-prvs: <OSAPR01MB1618F877596450436524BD88D8070@OSAPR01MB1618.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(39860400002)(396003)(366004)(346002)(199004)(189003)(33656002)(6506007)(446003)(476003)(81156014)(11346002)(8676002)(25786009)(4744005)(6246003)(486006)(81166006)(102836004)(66066001)(55236004)(4326008)(71190400001)(7736002)(14454004)(71200400001)(110136005)(6116002)(3846002)(52536014)(478600001)(68736007)(186003)(54906003)(26005)(74316002)(316002)(14444005)(2906002)(73956011)(55016002)(5660300002)(76116006)(9686003)(66556008)(64756008)(99286004)(53936002)(66446008)(7696005)(305945005)(66946007)(229853002)(6436002)(86362001)(66476007)(256004)(76176011)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB1618;H:OSAPR01MB3089.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: mCeIV5/NnlrIrYiqgUnBXdOwpEtZcSR2HYu3lFz9UTh7WMql9eti2uo1rho9VdFvMBgs9CKbyzDTwOlCGtRQ5O7koBJDy91fJTVZf6/JjCdrRG5a2HfdkZbidzOunHCcLc8amRkq0GCeIOBeEQojWx7DVliGifM+p3y6Eh1IDqb2l0BSfoWUn2KFPsGzuVKctHBNgUpkjsFUutKuqFzyT6xyRR62tT65XVzbkJ97GubfpHT7PvwnB3NOss+ltNSSB+6e0qRuS0FAcGNHlfLr9uMRlpj0M+w9rEn4aN/KW5tSgBYTbXvmT+g3LJ8/xsTL1mMiW8Onzdvwo2HcXc/63oqrCcFaFmt8LHR5521dI8IQ0OGD2oXbclBszBm/MEOWXyLruVIFwcmjw1SX0C/SX3rUlZkvMhaewSU9iMePN2o=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4ddba73-f49c-4856-1f7a-08d6ddba6d06
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 07:03:28.1074
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1618
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+Hi Biju-san,
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- .../devicetree/bindings/mfd/renesas-rpc-if.txt     | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt
+> From: Biju Das, Sent: Thursday, May 16, 2019 10:22 PM
+>=20
+> Fix the below smatch warning by adding variable check rather than the
+> hardcoded value.
+> warn: array off by one? 'data->select_value[channel_num]'
+>=20
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt b/Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt
-new file mode 100644
-index 0000000..20ec85b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt
-@@ -0,0 +1,65 @@
-+Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-+---------------------------------------------------------
-+
-+RPC-IF supports both SPI NOR and HyperFlash (CFI-compliant flash)
-+
-+Required properties:
-+- compatible: should be an SoC-specific compatible value, followed by
-+		"renesas,rcar-gen3-rpc" as a fallback.
-+		supported SoC-specific values are:
-+		"renesas,r8a77995-rpc"	(R-Car D3)
-+- reg: should contain three register areas:
-+	first for RPC-IF registers,
-+	second for the direct mapping read mode and
-+	third for the write buffer area.
-+- reg-names: should contain "regs", "dirmap" and "wbuf"
-+- clocks: should contain 1 entries for the module's clock
-+- clock-names: should contain "rpc"
-+- power-domains: should contain system-controller(sysc) for power-domain-cell
-+- resets: should contain clock pulse generator(cpg) for reset-cell,
-+	  power-domain-cell and clock-cell
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+
-+Example:
-+- SPI mode:
-+
-+	rpc: spi@ee200000 {
-+		compatible = "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc";
-+		reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
-+		      <0 0xee208000 0 0x100>;
-+		reg-names = "regs", "dirmap", "wbuf";
-+		clocks = <&cpg CPG_MOD 917>;
-+		clock-names = "rpc";
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <40000000>;
-+			spi-tx-bus-width = <1>;
-+			spi-rx-bus-width = <1>;
-+		};
-+	};
-+
-+- HF mode:
-+	rpc: spi@ee200000 {
-+		compatible = "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc";
-+		reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
-+		      <0 0xee208000 0 0x100>;
-+		reg-names = "regs", "dirmap", "wbuf";
-+		clocks = <&cpg CPG_MOD 917>;
-+		clock-names = "rpc";
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "cypress,hyperflash", "cfi-flash";
-+			reg = <0>;
-+		};
-+	};
--- 
-1.9.1
+Thank you for the patch!
+
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+
+Best regards,
+Yoshihiro Shimoda
 
