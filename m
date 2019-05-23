@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361F4C282DD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729FCC282DD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D23E204FD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48EB820851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558639943;
+	s=default; t=1558640594;
 	bh=+t0u5GOucS63bRMTYhnfoDgwbCZ7hpJlC0pSSCGnqdA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jW++NbJXUm3PwRd4uuWAGqvn6bLEi2DaHB0AtmodDW+2B2vCswyetVUKphv1JdXwJ
-	 nRxV8yHR/Rdwq2b3SbLXf8ciHfLJv2F7Cg1qIOSI39z2Y0ZjeRfuWkM7rPWcc/3zYm
-	 uyYoL2NrLfYph5V9mZVYGyb2VtGk1gDpOpFnSwEo=
+	b=Ehc9pVdyGiBCiS+XtXsYZos68qkgLznOj7TpiC9BKrUWVymyGnxuwuFgtLV7uMmyM
+	 ImXABbN9tqwm+VkPblzrlV4s+mDKDG8CUumZpT1zenXiL/y7KC9doSRYGVsbnE8s2W
+	 7PIJ+/Zd9f/tWZRMvHIlCXfNuJ++UKeIdrwCvHIA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392198AbfEWTay (ORCPT
+        id S2389554AbfEWTSP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 May 2019 15:30:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44450 "EHLO mail.kernel.org"
+        Thu, 23 May 2019 15:18:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392192AbfEWTav (ORCPT
+        id S2389124AbfEWTSM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 May 2019 15:30:51 -0400
+        Thu, 23 May 2019 15:18:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A808020879;
-        Thu, 23 May 2019 19:30:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05928217D7;
+        Thu, 23 May 2019 19:18:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639850;
+        s=default; t=1558639091;
         bh=+t0u5GOucS63bRMTYhnfoDgwbCZ7hpJlC0pSSCGnqdA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dZGsfRO2rRI0hBylfHkvqO43wy2ApuhZlRAajdyMR67ZpTbeuCPEGL3qZS5QK8yyM
-         eOTOFxMKEHcHT9NkqsCOsJdmx+S3S9Rh5F6y9++uBMW5GubfVEMFwD9/RjaxsSN+gE
-         RAyUjOPbDyoPd6lBDB5R7qrdpFyBoA73OS77TAUY=
+        b=HTVMFP7sc+56JRgcNRLMLzJVrka+nyVwDIiZ1Xbq6Na3JK1CpprEd9+W/ERRolTa0
+         OoKtKiXva8oKSAOiKGQLt/AEHsGzVG7NEKXhzxYQv4mj9Bw8UsX3ZtcMk9mBJ4qOiL
+         K7qSnNqktT48gVRWa6iVYIyMBqBG/VIZ278ruagM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,12 +53,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5.1 099/122] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
-Date:   Thu, 23 May 2019 21:07:01 +0200
-Message-Id: <20190523181718.354018681@linuxfoundation.org>
+Subject: [PATCH 4.19 074/114] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
+Date:   Thu, 23 May 2019 21:06:13 +0200
+Message-Id: <20190523181738.447719138@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
