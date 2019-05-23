@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A494C282DD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 361F4C282DD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D52A12133D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D23E204FD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 May 2019 19:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558639475;
+	s=default; t=1558639943;
 	bh=+t0u5GOucS63bRMTYhnfoDgwbCZ7hpJlC0pSSCGnqdA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rw5NREkx432hTqAEVkBpzCEu1WXkUhLxSC/vjBrF2J1dMUOhVUXSBhCGsTUN1H9q7
-	 OsUnQrTd49rZHodFKYNmIo3x9ea6I8ajfDgJB2TX1tRzkQh+QW9yx+oSC1tLkBH/s3
-	 cIWy48J1o6e7no+5LGmg6oCzX4Ah9MFptsS67G98=
+	b=jW++NbJXUm3PwRd4uuWAGqvn6bLEi2DaHB0AtmodDW+2B2vCswyetVUKphv1JdXwJ
+	 nRxV8yHR/Rdwq2b3SbLXf8ciHfLJv2F7Cg1qIOSI39z2Y0ZjeRfuWkM7rPWcc/3zYm
+	 uyYoL2NrLfYph5V9mZVYGyb2VtGk1gDpOpFnSwEo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390536AbfEWTYf (ORCPT
+        id S2392198AbfEWTay (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 May 2019 15:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
+        Thu, 23 May 2019 15:30:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390917AbfEWTYb (ORCPT
+        id S2392192AbfEWTav (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 May 2019 15:24:31 -0400
+        Thu, 23 May 2019 15:30:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36BA32133D;
-        Thu, 23 May 2019 19:24:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A808020879;
+        Thu, 23 May 2019 19:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639470;
+        s=default; t=1558639850;
         bh=+t0u5GOucS63bRMTYhnfoDgwbCZ7hpJlC0pSSCGnqdA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iM/kQ491E0MIxQlxfwyS/9cVxz5SvE1om43J7iGsWW4Pnu2ccRpOMjfX5cpscY+/E
-         RVv05L+uHNbLonqYmL3Upd/W4uXwqc2ZyE/ySzmMFnYdNlyiNz+dpHQXfe7fytlvh1
-         UC4/K9whUEJNWdq8biJUHxA+kMIKfl7WUsWVrG0s=
+        b=dZGsfRO2rRI0hBylfHkvqO43wy2ApuhZlRAajdyMR67ZpTbeuCPEGL3qZS5QK8yyM
+         eOTOFxMKEHcHT9NkqsCOsJdmx+S3S9Rh5F6y9++uBMW5GubfVEMFwD9/RjaxsSN+gE
+         RAyUjOPbDyoPd6lBDB5R7qrdpFyBoA73OS77TAUY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -53,12 +53,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5.0 090/139] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
-Date:   Thu, 23 May 2019 21:06:18 +0200
-Message-Id: <20190523181732.338258401@linuxfoundation.org>
+Subject: [PATCH 5.1 099/122] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
+Date:   Thu, 23 May 2019 21:07:01 +0200
+Message-Id: <20190523181718.354018681@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
