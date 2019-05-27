@@ -4,141 +4,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F79C282E3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 02:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D196C04AB3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 11:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D089B2075C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 02:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36EF620883
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 11:53:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbfE0CXM (ORCPT
+        id S1726793AbfE0LxB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 26 May 2019 22:23:12 -0400
-Received: from www3345.sakura.ne.jp ([49.212.235.55]:47039 "EHLO
-        www3345.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfE0CXM (ORCPT
+        Mon, 27 May 2019 07:53:01 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:41734 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbfE0LxA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 26 May 2019 22:23:12 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4R2N05I022033;
-        Mon, 27 May 2019 11:23:00 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-Received: from www3345.sakura.ne.jp (49.212.235.55)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Mon, 27 May 2019 11:23:00 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from localhost (p14010-ipadfx41marunouchi.tokyo.ocn.ne.jp [61.118.107.10])
-        (authenticated bits=0)
-        by www3345.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4R2Mbfh021811
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 27 May 2019 11:23:00 +0900 (JST)
-        (envelope-from cv-dong@jinso.co.jp)
-From:   Cao Van Dong <cv-dong@jinso.co.jp>
-To:     linux-renesas-soc@vger.kernel.org, thierry.reding@gmail.com,
-        horms+renesas@verge.net.au, geert+renesas@glider.be,
-        broonie@kernel.org, linux-pwm@vger.kernel.org
-Cc:     yoshihiro.shimoda.uh@renesas.com, kuninori.morimoto.gx@renesas.com,
-        h-inayoshi@jinso.co.jp, na-hoan@jinso.co.jp, cv-dong@jinso.co.jp
-Subject: [PATCH v5] pwm: renesas-tpu: Add suspend/resume function
-Date:   Mon, 27 May 2019 11:22:37 +0900
-Message-Id: <1558923757-9843-1-git-send-email-cv-dong@jinso.co.jp>
-X-Mailer: git-send-email 2.7.4
+        Mon, 27 May 2019 07:53:00 -0400
+Received: from ramsan ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id HPsy2000G3XaVaC06PsyAT; Mon, 27 May 2019 13:52:59 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hVEBW-0001O2-DG; Mon, 27 May 2019 13:52:58 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hVEBW-0000ao-BN; Mon, 27 May 2019 13:52:58 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Magnus Damm <damm+renesas@opensource.se>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 1/6] iommu/ipmmu-vmsa: Link IOMMUs and devices in sysfs
+Date:   Mon, 27 May 2019 13:52:48 +0200
+Message-Id: <20190527115253.2114-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190527115253.2114-1-geert+renesas@glider.be>
+References: <20190527115253.2114-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds suspend/resume function support for Renesas the 16-Bit Timer
-Pulse Unit (TPU) driver. This has been tested on the Salvator-XS board 
-with R-Car M3-N and H3 at renesas-drivers-2019-05-21-v5.2-rc1 tag.
-I expect this to work on other SoCs.
+As of commit 7af9a5fdb9e0ca33 ("iommu/ipmmu-vmsa: Use
+iommu_device_sysfs_add()/remove()"), IOMMU devices show up under
+/sys/class/iommu/, but their "devices" subdirectories are empty.
+Likewise, devices tied to an IOMMU do not have an "iommu" backlink.
 
-Test procedure:
-  - Enable TPU and pin control in DTS.
-  - Make sure switches { SW29-[1-2] are switched off or 
-    SW31-[1-4] are switched off(only for Salvator-xs) }.
-  - Exercise userspace PWM control for pwm[2,3] 
-    of /sys/class/pwm/pwmchip1/ .
-  - Inspect PWM signals on the input side of { CN29-[58,60] 
-    or SW31-[1,2] (only for Salvator-xs) }
-    before and after suspend/resume using an oscilloscope. 
+Make sure all links are created, on both arm32 and arm64.
 
-Signed-off-by: Cao Van Dong <cv-dong@jinso.co.jp>
-Tested-by: Cao Van Dong <cv-dong@jinso.co.jp>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-Changes v4 -> v5:
-  - Remove test_bit(PWMF_REQUESTED, &pwm->flags) check.
----
-Changes v3 -> v4:
-  - Use pwm_is_enabled(pwm) to check channel instead of pwm_get_chip_data(&chip->pwms[i]).
-  - Move tpu_pwm_disable() to tpu_pwm_suspend(), tpu_pwm_enable() to tpu_pwm_resume().
-  - Remove tpu_pwm_restart_timer() function and remove pm_runtime_get_sync() in tpu_pwm_resume().
----
-Changes v2 -> v3:
-  - Changes '3' -> TPU_CHANNEL_MAX in loop.
-  - Remove pm_runtime_put() function in tpu_pwm_suspend() function.
----
-Changes v1 -> v2:
-  - Repair the handling code to cover case of using multiple timers.
----
- drivers/pwm/pwm-renesas-tpu.c | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+v4:
+  - Add Reviewed-by, Tested-by,
 
-diff --git a/drivers/pwm/pwm-renesas-tpu.c b/drivers/pwm/pwm-renesas-tpu.c
-index 4a855a2..86b7da4 100644
---- a/drivers/pwm/pwm-renesas-tpu.c
-+++ b/drivers/pwm/pwm-renesas-tpu.c
-@@ -366,6 +366,41 @@ static void tpu_pwm_disable(struct pwm_chip *chip, struct pwm_device *_pwm)
- 	tpu_pwm_timer_stop(pwm);
+v3:
+  - Fix sysfs path typo in patch description,
+
+v2:
+  - Add Reviewed-by.
+---
+ drivers/iommu/ipmmu-vmsa.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 9a380c10655e182d..9f2b781e20a0eba6 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -885,27 +885,37 @@ static int ipmmu_init_arm_mapping(struct device *dev)
+ 
+ static int ipmmu_add_device(struct device *dev)
+ {
++	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
+ 	struct iommu_group *group;
++	int ret;
+ 
+ 	/*
+ 	 * Only let through devices that have been verified in xlate()
+ 	 */
+-	if (!to_ipmmu(dev))
++	if (!mmu)
+ 		return -ENODEV;
+ 
+-	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA))
+-		return ipmmu_init_arm_mapping(dev);
++	if (IS_ENABLED(CONFIG_ARM) && !IS_ENABLED(CONFIG_IOMMU_DMA)) {
++		ret = ipmmu_init_arm_mapping(dev);
++		if (ret)
++			return ret;
++	} else {
++		group = iommu_group_get_for_dev(dev);
++		if (IS_ERR(group))
++			return PTR_ERR(group);
+ 
+-	group = iommu_group_get_for_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
++		iommu_group_put(group);
++	}
+ 
+-	iommu_group_put(group);
++	iommu_device_link(&mmu->iommu, dev);
+ 	return 0;
  }
  
-+#ifdef CONFIG_PM_SLEEP
-+static int tpu_pwm_suspend(struct device *dev)
-+{
-+	struct tpu_device *tpu = dev_get_drvdata(dev);
-+	struct pwm_chip *chip = &tpu->chip;
-+	struct pwm_device *pwm;
-+	int i;
+ static void ipmmu_remove_device(struct device *dev)
+ {
++	struct ipmmu_vmsa_device *mmu = to_ipmmu(dev);
 +
-+	for (i = 0; i < TPU_CHANNEL_MAX; i++) {
-+		pwm = &chip->pwms[i];
-+		if (pwm_is_enabled(pwm))
-+			tpu_pwm_disable(pwm->chip, pwm);
-+	}
-+
-+	return 0;
-+}
-+
-+static int tpu_pwm_resume(struct device *dev)
-+{
-+	struct tpu_device *tpu = dev_get_drvdata(dev);
-+	struct pwm_chip *chip = &tpu->chip;
-+	struct pwm_device *pwm;
-+	int i;
-+
-+	for (i = 0; i < TPU_CHANNEL_MAX; i++) {
-+		pwm = &chip->pwms[i];
-+		if (pwm_is_enabled(pwm))
-+			tpu_pwm_enable(pwm->chip, pwm);
-+	}
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_SLEEP */
-+static SIMPLE_DEV_PM_OPS(tpu_pwm_pm_ops, tpu_pwm_suspend, tpu_pwm_resume);
-+
- static const struct pwm_ops tpu_pwm_ops = {
- 	.request = tpu_pwm_request,
- 	.free = tpu_pwm_free,
-@@ -459,6 +494,7 @@ static struct platform_driver tpu_driver = {
- 	.remove		= tpu_remove,
- 	.driver		= {
- 		.name	= "renesas-tpu-pwm",
-+		.pm	= &tpu_pwm_pm_ops,
- 		.of_match_table = of_match_ptr(tpu_of_table),
- 	}
- };
++	iommu_device_unlink(&mmu->iommu, dev);
+ 	arm_iommu_detach_device(dev);
+ 	iommu_group_remove_device(dev);
+ }
 -- 
-2.7.4
+2.17.1
 
