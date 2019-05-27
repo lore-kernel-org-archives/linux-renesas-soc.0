@@ -2,34 +2,35 @@ Return-Path: <SRS0=rwvk=T3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF20AC04AB3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 11:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BAAC072B1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 11:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889A120883
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 11:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E5220883
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 May 2019 11:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfE0LxC (ORCPT
+        id S1726841AbfE0LxB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 May 2019 07:53:02 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:41730 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbfE0LxB (ORCPT
+        Mon, 27 May 2019 07:53:01 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:44890 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfE0LxB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 27 May 2019 07:53:01 -0400
 Received: from ramsan ([84.194.111.163])
-        by albert.telenet-ops.be with bizsmtp
-        id HPsy2000F3XaVaC06PsyAS; Mon, 27 May 2019 13:52:59 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id HPsy2000N3XaVaC06Psypf; Mon, 27 May 2019 13:52:59 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hVEBW-0001O0-Ca; Mon, 27 May 2019 13:52:58 +0200
+        id 1hVEBW-0001OB-GO; Mon, 27 May 2019 13:52:58 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hVEBW-0000aj-AI; Mon, 27 May 2019 13:52:58 +0200
+        id 1hVEBW-0000ax-ES; Mon, 27 May 2019 13:52:58 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Joerg Roedel <joro@8bytes.org>,
         Magnus Damm <damm+renesas@opensource.se>
@@ -37,75 +38,86 @@ Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/6] iommu/ipmmu-vmsa: Suspend/resume support and assorted cleanups
-Date:   Mon, 27 May 2019 13:52:47 +0200
-Message-Id: <20190527115253.2114-1-geert+renesas@glider.be>
+Subject: [PATCH v4 4/6] iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific features
+Date:   Mon, 27 May 2019 13:52:51 +0200
+Message-Id: <20190527115253.2114-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190527115253.2114-1-geert+renesas@glider.be>
+References: <20190527115253.2114-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Jörg, Magnus,
+The maximum number of micro-TLBs per IPMMU instance is not fixed, but
+depends on the SoC type.  Hence move it from struct ipmmu_vmsa_device to
+struct ipmmu_features, and set up the correct value for both R-Car Gen2
+and Gen3 SoCs.
 
-On R-Car Gen3 systems with PSCI, PSCI may power down the SoC during
-system suspend, thus losing all IOMMU state.  Hence after s2ram, devices
-behind an IPMMU (e.g. SATA), and configured to use it, will fail to
-complete their I/O operations.
+Note that currently no code uses this value.
 
-This patch series adds suspend/resume support to the Renesas IPMMU-VMSA
-IOMMU driver, and performs some smaller cleanups and fixes during the
-process.  Most patches are fairly independent, except for patch 6/6,
-which depends on patches 4/6 and 5/6.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+v4:
+  - Add Reviewed-by, Tested-by,
 
-Changes compared to v3:
-  - Add Reviewed-by, Tested-by.
-
-Changes compared to v2:
-  - Fix sysfs path typo in patch description,
-  - Add Reviewed-by.
-
-Changes compared to v1:
-  - Dropped "iommu/ipmmu-vmsa: Call ipmmu_ctx_write_root() instead of
-    open coding",
+v3:
   - Add Reviewed-by,
-  - Merge IMEAR/IMELAR,
-  - s/ipmmu_context_init/ipmmu_domain_setup_context/,
-  - Drop PSCI checks.
 
-This has been tested on Salvator-XS with R-Car H3 ES2.0, with IPMMU
-suport for SATA enabled.  To play safe, the resume operation has also
-been tested on R-Car M2-W.
+v2:
+  - Add Reviewed-by.
+---
+ drivers/iommu/ipmmu-vmsa.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Is there anything still blocking the integration of this patch series?
-If not, please apply.
-
-Thanks!
-
-Geert Uytterhoeven (6):
-  iommu/ipmmu-vmsa: Link IOMMUs and devices in sysfs
-  iommu/ipmmu-vmsa: Prepare to handle 40-bit error addresses
-  iommu/ipmmu-vmsa: Make IPMMU_CTX_MAX unsigned
-  iommu/ipmmu-vmsa: Move num_utlbs to SoC-specific features
-  iommu/ipmmu-vmsa: Extract hardware context initialization
-  iommu/ipmmu-vmsa: Add suspend/resume support
-
- drivers/iommu/ipmmu-vmsa.c | 185 +++++++++++++++++++++++++------------
- 1 file changed, 124 insertions(+), 61 deletions(-)
-
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index 87acf86f295fac0d..3fa57627b1e35562 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -42,6 +42,7 @@ struct ipmmu_features {
+ 	bool use_ns_alias_offset;
+ 	bool has_cache_leaf_nodes;
+ 	unsigned int number_of_contexts;
++	unsigned int num_utlbs;
+ 	bool setup_imbuscr;
+ 	bool twobit_imttbcr_sl0;
+ 	bool reserved_context;
+@@ -53,7 +54,6 @@ struct ipmmu_vmsa_device {
+ 	struct iommu_device iommu;
+ 	struct ipmmu_vmsa_device *root;
+ 	const struct ipmmu_features *features;
+-	unsigned int num_utlbs;
+ 	unsigned int num_ctx;
+ 	spinlock_t lock;			/* Protects ctx and domains[] */
+ 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
+@@ -972,6 +972,7 @@ static const struct ipmmu_features ipmmu_features_default = {
+ 	.use_ns_alias_offset = true,
+ 	.has_cache_leaf_nodes = false,
+ 	.number_of_contexts = 1, /* software only tested with one context */
++	.num_utlbs = 32,
+ 	.setup_imbuscr = true,
+ 	.twobit_imttbcr_sl0 = false,
+ 	.reserved_context = false,
+@@ -981,6 +982,7 @@ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
+ 	.use_ns_alias_offset = false,
+ 	.has_cache_leaf_nodes = true,
+ 	.number_of_contexts = 8,
++	.num_utlbs = 48,
+ 	.setup_imbuscr = false,
+ 	.twobit_imttbcr_sl0 = true,
+ 	.reserved_context = true,
+@@ -1033,7 +1035,6 @@ static int ipmmu_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mmu->dev = &pdev->dev;
+-	mmu->num_utlbs = 48;
+ 	spin_lock_init(&mmu->lock);
+ 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
+ 	mmu->features = of_device_get_match_data(&pdev->dev);
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
