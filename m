@@ -2,130 +2,213 @@ Return-Path: <SRS0=f7QG=T4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DE4C04AB6
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 May 2019 08:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F98C072B1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 May 2019 09:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B0402075C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 May 2019 08:53:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n/v/lcWR"
+	by mail.kernel.org (Postfix) with ESMTP id 2496C2075C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 May 2019 09:04:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfE1Ixg (ORCPT
+        id S1726734AbfE1JEs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 May 2019 04:53:36 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:43327 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfE1Ixf (ORCPT
+        Tue, 28 May 2019 05:04:48 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:33289 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727457AbfE1JEr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 May 2019 04:53:35 -0400
-Received: by mail-vs1-f65.google.com with SMTP id d128so12271006vsc.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 May 2019 01:53:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w46wmn45pRWKdWx2S/E0/q503Ba5x6+lr995sSFplTc=;
-        b=n/v/lcWRjTbYolV2E7WI0eI+lHIWgRlJgCeQGZnvC/4D7KfrkEWRUAOqrFEtv9ajfp
-         CjXeruOMk9hnA5hQ+yKzCZWeooDWgKCf1VQNgax20zCHtvPJ1fcCDINKbIIabnNgl8P4
-         2PHsrvm1eci92Adh6MrmCmbjz/2eh534mmqmqpobSD6w/49LJZ4CCY5yjcI1Fk4wHvmg
-         zu5QR9656jfm00avoNT6Si4pn8UivZhESMyh5EwnwojKma4v4hXCsCZ4zuK5yvtz7CVa
-         tPUpaKb0Mv/U+r1M7hKyu5ehHaSZItzlmj6QoPLe35u7m9UAln9FrOPaGDXJx8uFKVZd
-         05/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w46wmn45pRWKdWx2S/E0/q503Ba5x6+lr995sSFplTc=;
-        b=aGChDMEd48p/vm+M+v504EnoUD3uN5Y3gOCyiFhV6S0YjCNMSVbYkRWSi84D3/Geym
-         cQ2LqBrzMoXKVzRyXaQYV4sMIdWlXuONwymHnAt/mjPSZK6CBMr/j33srIXqTjwba5yd
-         D14znDEzYpV/7WhZQZYWG/UiNWkmWxevBhZFLPe+eUntuaaIO5HvdyW+sDXJWB5ghkiF
-         ldCifplkuwlFgqlt8yjROcCQw4G6ZtetBve/TV5H5jYz8KQIEVVgKyFpDDyMQejfwcZl
-         a7oW/36aHOshyv/Ugc3v9hy+MyHg12DQ6bkqBniq5vIoTleMURwBM5jcemp1c28Kkai3
-         tfvg==
-X-Gm-Message-State: APjAAAUjYoQWAsTtHA8XsQismyo7svUB/J+c3wTRkFIn9i6sbECEw/Sp
-        8LH/l3pQzje+NOwBi7JoFG8ZxqiS+zHb7nk9aA40SGKn
-X-Google-Smtp-Source: APXvYqxYJVYarsSusvqhMycm49apuqHN0JcEAC+UGXcuEP316L7ch39AwNmnVwmDukrEsEJFhW0F27NkX0LDwxIS/vo=
-X-Received: by 2002:a67:f99a:: with SMTP id b26mr29207404vsq.200.1559033614951;
- Tue, 28 May 2019 01:53:34 -0700 (PDT)
+        Tue, 28 May 2019 05:04:47 -0400
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 6C0F9100008;
+        Tue, 28 May 2019 09:04:42 +0000 (UTC)
+Date:   Tue, 28 May 2019 11:05:51 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v2 03/10] drm: bridge: thc63: Report input bus mode
+ through bridge timings
+Message-ID: <20190528090551.swt6ovalcadateht@uno.localdomain>
+References: <20190511210702.18394-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20190511210702.18394-4-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-References: <20190515182346.5292-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20190515182346.5292-1-wsa+renesas@sang-engineering.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 28 May 2019 10:52:59 +0200
-Message-ID: <CAPDyKFrhXLMFwvxqvEAFOtaK4YSz08QQnm_fUo1h2jf+38s9rQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tmio: fix SCC error handling to avoid false positive
- CRC error
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hpp6knvdq33m7ccs"
+Content-Disposition: inline
+In-Reply-To: <20190511210702.18394-4-laurent.pinchart+renesas@ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 15 May 2019 at 20:24, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> From: Takeshi Saito <takeshi.saito.xv@renesas.com>
->
-> If an SCC error occurs during a read/write command execution, a false
-> positive CRC error message is output.
->
-> mmcblk0: response CRC error sending r/w cmd command, card status 0x900
->
-> check_scc_error() checks SCC_RVSREQ.RVSERR bit. RVSERR detects a
-> correction error in the next (up or down) delay tap position. However,
-> since the command is successful, only retuning needs to be executed.
-> This has been confirmed by HW engineers.
->
-> Thus, on SCC error, set retuning flag instead of setting an error code.
->
-> Fixes: b85fb0a1c8ae ("mmc: tmio: Fix SCC error detection")
-> Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-> [wsa: updated comment and commit message, removed some braces]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Applied for fixes and by adding a stable tag, thanks!
+--hpp6knvdq33m7ccs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Kind regards
-Uffe
+Hi Laurent,
 
-
+On Sun, May 12, 2019 at 12:06:55AM +0300, Laurent Pinchart wrote:
+> Set a drm_bridge_timings in the drm_bridge, and use it to report the
+> input bus mode (single-link or dual-link). The other fields of the
+> timings structure are kept to 0 as they do not apply to LVDS buses.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > ---
+> Changes since v1:
 >
-> This patch was suggested by the BSP team because they were seeing CRC errors
-> with a hardware I don't have access to. I tested this with my R-Car H3-ES2.0
-> and M3-N (both Salvator-XS), and things were still running fine. But I suggest
-> to wait for a final ack from Shimoda-san or someone from the BSP team.
+> - Ignore disabled remote device
+> ---
+>  drivers/gpu/drm/bridge/thc63lvd1024.c | 54 +++++++++++++++++++++------
+>  1 file changed, 43 insertions(+), 11 deletions(-)
 >
+> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> index b083a740565c..709dd28b43d6 100644
+> --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
+> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
+> @@ -31,6 +31,8 @@ struct thc63_dev {
 >
->  drivers/mmc/host/tmio_mmc_core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  	struct drm_bridge bridge;
+>  	struct drm_bridge *next;
+> +
+> +	struct drm_bridge_timings timings;
+>  };
 >
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-> index 595949f1f001..78cc2a928efe 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -842,8 +842,9 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
->         if (mrq->cmd->error || (mrq->data && mrq->data->error))
->                 tmio_mmc_abort_dma(host);
+>  static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
+> @@ -48,15 +50,28 @@ static int thc63_attach(struct drm_bridge *bridge)
+>  static enum drm_mode_status thc63_mode_valid(struct drm_bridge *bridge,
+>  					const struct drm_display_mode *mode)
+>  {
+> +	struct thc63_dev *thc63 = to_thc63(bridge);
+> +	unsigned int min_freq;
+> +	unsigned int max_freq;
+> +
+>  	/*
+> -	 * The THC63LVD1024 clock frequency range is 8 to 135 MHz in single-in
+> -	 * mode. Note that the limits are different in dual-in, single-out mode,
+> -	 * and will need to be adjusted accordingly.
+> +	 * The THC63LVD1024 pixel rate range is 8 to 135 MHz in all modes but
+> +	 * dual-in, single-out where it is 40 to 150 MHz. As dual-in, dual-out
+> +	 * isn't supported by the driver yet, simply derive the limits from the
+> +	 * input mode.
+>  	 */
+> -	if (mode->clock < 8000)
+> +	if (thc63->timings.dual_link) {
+> +		min_freq = 40000;
+> +		max_freq = 150000;
+> +	} else {
+> +		min_freq = 8000;
+> +		max_freq = 135000;
+> +	}
+> +
+> +	if (mode->clock < min_freq)
+>  		return MODE_CLOCK_LOW;
 >
-> +       /* SCC error means retune, but executed command was still successful */
->         if (host->check_scc_error && host->check_scc_error(host))
-> -               mrq->cmd->error = -EILSEQ;
-> +               mmc_retune_needed(host->mmc);
+> -	if (mode->clock > 135000)
+> +	if (mode->clock > max_freq)
+>  		return MODE_CLOCK_HIGH;
+
+I would have made a separate patch for this bit, anyway, verified
+against the THC631024 manual, and this matches my understanding.
+
 >
->         /* If SET_BLOCK_COUNT, continue with main command */
->         if (host->mrq && !mrq->cmd->error) {
+>  	return MODE_OK;
+> @@ -101,19 +116,19 @@ static const struct drm_bridge_funcs thc63_bridge_func = {
+>
+>  static int thc63_parse_dt(struct thc63_dev *thc63)
+>  {
+> -	struct device_node *thc63_out;
+> +	struct device_node *endpoint;
+>  	struct device_node *remote;
+>
+> -	thc63_out = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
+> -						  THC63_RGB_OUT0, -1);
+> -	if (!thc63_out) {
+> +	endpoint = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
+> +						 THC63_RGB_OUT0, -1);
+> +	if (!endpoint) {
+>  		dev_err(thc63->dev, "Missing endpoint in port@%u\n",
+>  			THC63_RGB_OUT0);
+>  		return -ENODEV;
+>  	}
+>
+> -	remote = of_graph_get_remote_port_parent(thc63_out);
+> -	of_node_put(thc63_out);
+> +	remote = of_graph_get_remote_port_parent(endpoint);
+> +	of_node_put(endpoint);
+>  	if (!remote) {
+>  		dev_err(thc63->dev, "Endpoint in port@%u unconnected\n",
+>  			THC63_RGB_OUT0);
+> @@ -132,6 +147,22 @@ static int thc63_parse_dt(struct thc63_dev *thc63)
+>  	if (!thc63->next)
+>  		return -EPROBE_DEFER;
+>
+> +	endpoint = of_graph_get_endpoint_by_regs(thc63->dev->of_node,
+> +						 THC63_LVDS_IN1, -1);
+> +	if (endpoint) {
+> +		remote = of_graph_get_remote_port_parent(endpoint);
+> +		of_node_put(endpoint);
+> +
+> +		if (remote) {
+> +			if (of_device_is_available(remote))
+> +				thc63->timings.dual_link = true;
+> +			of_node_put(remote);
+> +		}
+> +	}
+> +
+> +	dev_dbg(thc63->dev, "operating in %s-link mode\n",
+> +		thc63->timings.dual_link ? "dual" : "single");
+> +
+
+Fine, thanks for having addressed comments on the RFC.
+
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Thanks
+   j
+
+>  	return 0;
+>  }
+>
+> @@ -188,6 +219,7 @@ static int thc63_probe(struct platform_device *pdev)
+>  	thc63->bridge.driver_private = thc63;
+>  	thc63->bridge.of_node = pdev->dev.of_node;
+>  	thc63->bridge.funcs = &thc63_bridge_func;
+> +	thc63->bridge.timings = &thc63->timings;
+>
+>  	drm_bridge_add(&thc63->bridge);
+>
 > --
-> 2.11.0
+> Regards,
 >
+> Laurent Pinchart
+>
+
+--hpp6knvdq33m7ccs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlzs+e8ACgkQcjQGjxah
+VjxGBQ//QaejbAKf4w1iPov+CyMt01/OwqyLdI2pfSvTF6118ZDWONgYY62kqpMb
+BFrDILszA2My2FPdBMxD777GWpaDGCGCUxES4aB3+qFGL6EsOvRurxk1ERiZ1r6F
+hbbINoOpit4BG0Qy3Ac3Yi1XwNRRmhaN6Ne5IMyYKil6zDy8kEA7Pl658cgc+kaR
+VxZfma9bsCe6lHZ/Tq2BcDhHFiI46FyHiuZ0enaJrPxbUxkxRv7eYJQemhzFXvG0
+iOYFUC+1CXh0XqiQYDaNifWIb4fryMt1NwVs0UF9WJJYUKqcIMIDP69v8fLhRcPc
+Xrs9zZYKgHH9a3w68Q97F8sKBHmhIPoAtTjwpg+LL52htKZEIWbAfyLZmL3zikQH
+YiTZX7grMD1caSfXNEoRRYsezQ4MW0ph+oVgp3+xnCVmt11BU5N9wnZVj3mE4/L3
+7CTUcWUbwHYOg/8h3kH2ubstMGKfrwYcRSubJGjbgjI1YBLXleWoRwfEIe/X26K5
+XXOC8Dfhz9MpUCtfLEk/juTEYSUniIJRUtKTSaE0JTy+Cy3L7datbETgSR/c+eQg
+V8t3YefLGljB/oeY+3dj+Evy9OgvmDbGjatCfhlTVsCNaf5M2M1jotMz82v76TVj
+zIXLw8d2QuggC45YG7HaFH05zp8zvfy2RwQ4/z80y7NRmywDfjc=
+=k+Tn
+-----END PGP SIGNATURE-----
+
+--hpp6knvdq33m7ccs--
