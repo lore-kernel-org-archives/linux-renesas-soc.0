@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E10C28CC2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55600C28CC3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F54025715
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C2DC25715
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfE3KVD (ORCPT
+        id S1727978AbfE3KVD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 30 May 2019 06:21:03 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:6884 "EHLO
+Received: from relmlor2.renesas.com ([210.160.252.172]:59324 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727917AbfE3KVC (ORCPT
+        by vger.kernel.org with ESMTP id S1726738AbfE3KVD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 May 2019 06:21:02 -0400
+        Thu, 30 May 2019 06:21:03 -0400
 X-IronPort-AV: E=Sophos;i="5.60,530,1549897200"; 
-   d="scan'208";a="17175268"
+   d="scan'208";a="17175271"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
   by relmlie6.idc.renesas.com with ESMTP; 30 May 2019 19:20:59 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 781A44235028;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A8636423597A;
         Thu, 30 May 2019 19:20:59 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     thierry.reding@gmail.com
 Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/4] pwm: sysfs: Switch to SPDX identifier
-Date:   Thu, 30 May 2019 19:16:05 +0900
-Message-Id: <1559211367-25106-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 4/4] pwm: rcar: Remove suspend/resume support
+Date:   Thu, 30 May 2019 19:16:07 +0900
+Message-Id: <1559211367-25106-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559211367-25106-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1559211367-25106-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -42,39 +42,70 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Adopt the SPDX license identifier headers to ease license compliance
-management.
+According to the Documentation/pwm.txt, all PWM consumers should
+implement power management instead of the PWM driver. So, this
+patch removes suspend/resume support.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/pwm/sysfs.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/pwm/pwm-rcar.c | 39 ---------------------------------------
+ 1 file changed, 39 deletions(-)
 
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index 719f8fa..7eb4a13 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -1,19 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * A simple sysfs interface for the generic PWM framework
-  *
-  * Copyright (C) 2013 H Hartley Sweeten <hsweeten@visionengravers.com>
-  *
-  * Based on previous work by Lars Poeschel <poeschel@lemonage.de>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2, or (at your option)
-- * any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index cfe7dd1..5b2b8ec 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -254,50 +254,11 @@ static const struct of_device_id rcar_pwm_of_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, rcar_pwm_of_table);
  
- #include <linux/device.h>
+-#ifdef CONFIG_PM_SLEEP
+-static struct pwm_device *rcar_pwm_dev_to_pwm_dev(struct device *dev)
+-{
+-	struct rcar_pwm_chip *rcar_pwm = dev_get_drvdata(dev);
+-	struct pwm_chip *chip = &rcar_pwm->chip;
+-
+-	return &chip->pwms[0];
+-}
+-
+-static int rcar_pwm_suspend(struct device *dev)
+-{
+-	struct pwm_device *pwm = rcar_pwm_dev_to_pwm_dev(dev);
+-
+-	if (!test_bit(PWMF_REQUESTED, &pwm->flags))
+-		return 0;
+-
+-	pm_runtime_put(dev);
+-
+-	return 0;
+-}
+-
+-static int rcar_pwm_resume(struct device *dev)
+-{
+-	struct pwm_device *pwm = rcar_pwm_dev_to_pwm_dev(dev);
+-	struct pwm_state state;
+-
+-	if (!test_bit(PWMF_REQUESTED, &pwm->flags))
+-		return 0;
+-
+-	pm_runtime_get_sync(dev);
+-
+-	pwm_get_state(pwm, &state);
+-
+-	return rcar_pwm_apply(pwm->chip, pwm, &state);
+-}
+-#endif /* CONFIG_PM_SLEEP */
+-static SIMPLE_DEV_PM_OPS(rcar_pwm_pm_ops, rcar_pwm_suspend, rcar_pwm_resume);
+-
+ static struct platform_driver rcar_pwm_driver = {
+ 	.probe = rcar_pwm_probe,
+ 	.remove = rcar_pwm_remove,
+ 	.driver = {
+ 		.name = "pwm-rcar",
+-		.pm	= &rcar_pwm_pm_ops,
+ 		.of_match_table = of_match_ptr(rcar_pwm_of_table),
+ 	}
+ };
 -- 
 2.7.4
 
