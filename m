@@ -2,252 +2,79 @@ Return-Path: <SRS0=7QLY=T6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1B8C28CC0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B953C28CC0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7876A256E9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:13:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Ayzxh7Y4"
+	by mail.kernel.org (Postfix) with ESMTP id E2FAE25715
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 May 2019 10:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbfE3KNX (ORCPT
+        id S1727794AbfE3KVB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 30 May 2019 06:13:23 -0400
-Received: from mail-eopbgr1410124.outbound.protection.outlook.com ([40.107.141.124]:46911
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726540AbfE3KNX (ORCPT
+        Thu, 30 May 2019 06:21:01 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:16431 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727761AbfE3KVB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 30 May 2019 06:13:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OdAMWJOQJv2wMQ08r2+yvmc1bQfc7QvLgewa/Fw8K8s=;
- b=Ayzxh7Y4syAuwRLUbtOfjyXIoS1PVCHooMHdveuzhJujSneV4RhK8IrwWhnvcYVlr38IYJWkN9oOhX5G19q2Pm6xImGVUH7RswSnT/rTAZ1Yhb+/uK4+bG5fs1vsm4nXjFFYYQe9LYEyNbpoXsl8dRrvPJ7ki2Yvj1hEJ1LajA0=
-Received: from OSAPR01MB3089.jpnprd01.prod.outlook.com (52.134.247.150) by
- OSAPR01MB3777.jpnprd01.prod.outlook.com (20.178.102.214) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.18; Thu, 30 May 2019 10:12:39 +0000
-Received: from OSAPR01MB3089.jpnprd01.prod.outlook.com
- ([fe80::4597:5353:28fb:cfd8]) by OSAPR01MB3089.jpnprd01.prod.outlook.com
- ([fe80::4597:5353:28fb:cfd8%7]) with mapi id 15.20.1922.017; Thu, 30 May 2019
- 10:12:39 +0000
+        Thu, 30 May 2019 06:21:01 -0400
+X-IronPort-AV: E=Sophos;i="5.60,530,1549897200"; 
+   d="scan'208";a="17378680"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 30 May 2019 19:20:59 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 53E5A4235028;
+        Thu, 30 May 2019 19:20:59 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH 3/4] pwm: sysfs: Add suspend/resume support
-Thread-Topic: [PATCH 3/4] pwm: sysfs: Add suspend/resume support
-Thread-Index: AQHVFfOGU15czZP0GUGB5Ku4l2S3bKaCG6OAgAFWYEA=
-Date:   Thu, 30 May 2019 10:12:39 +0000
-Message-ID: <OSAPR01MB308953DA7219D38BDD25A712D8180@OSAPR01MB3089.jpnprd01.prod.outlook.com>
-References: <1559116082-9851-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1559116082-9851-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20190529133817.GB17223@ulmo>
-In-Reply-To: <20190529133817.GB17223@ulmo>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [118.238.235.108]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9febb645-8b42-4f49-afaa-08d6e4e758ac
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:OSAPR01MB3777;
-x-ms-traffictypediagnostic: OSAPR01MB3777:
-x-microsoft-antispam-prvs: <OSAPR01MB3777B245F1B3DCABE70F964BD8180@OSAPR01MB3777.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 00531FAC2C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(376002)(396003)(136003)(366004)(189003)(199004)(305945005)(81156014)(7736002)(81166006)(8676002)(6506007)(71190400001)(14444005)(73956011)(71200400001)(6246003)(8936002)(74316002)(2906002)(68736007)(7696005)(66446008)(66946007)(76116006)(256004)(186003)(4326008)(64756008)(66556008)(66476007)(5660300002)(229853002)(86362001)(15650500001)(52536014)(6916009)(486006)(11346002)(66066001)(99286004)(55016002)(316002)(33656002)(26005)(476003)(446003)(9686003)(6436002)(6116002)(102836004)(25786009)(14454004)(53936002)(478600001)(3846002)(54906003)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB3777;H:OSAPR01MB3089.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: a32/gffclRGrV4oOiI9SXAvNwybeHtDVdq51ezgN9gzV7UIxMeAGSj3DcfDSMSdmGrDtQKikwh1P2gzdPB+G5wthEQNjuf6nB6tZlSKhQVtKdlAxmklyIYWHJVIUDXk/CTlPhLsdoyVkpK/qZk3f9u1H8QvZS8WaLG6FWJOPNtlGYOG2cXOVM/hRQrIYrNBidMPTwakkKIGu5Kr6Im/VdR15lJiY/S7IwlxAZR1rcVv1uzR5anRnewGx9hjnrynCgNoAVY1+wcZ+yPVi63h9gn+evfhW99aUn8AH8Thg9IUuWoeIfdgz729JkIddNaTUCKbsDCCVCFqsGM9EI2U+Pu/Bf8/RVAltbHxMrzHvOqdIcRPDShJIQgdUF7wK0dLpw8rHtX9nTKESLfx65Bzu9Do6X3V8QXyfYTAHRoy39Ic=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9febb645-8b42-4f49-afaa-08d6e4e758ac
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2019 10:12:39.4015
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: yoshihiro.shimoda.uh@renesas.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3777
+To:     thierry.reding@gmail.com
+Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/4] pwm: Add power management descriptions
+Date:   Thu, 30 May 2019 19:16:04 +0900
+Message-Id: <1559211367-25106-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1559211367-25106-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1559211367-25106-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Thierry,
+This patch adds power management descriptions that consumers should
+implement it.
 
-> From: Thierry Reding, Sent: Wednesday, May 29, 2019 10:38 PM
->=20
-> On Wed, May 29, 2019 at 04:48:01PM +0900, Yoshihiro Shimoda wrote:
-> > According to the Documentation/pwm.txt, all PWM consumers should have
-> > power management. Since this sysfs interface is one of consumers so tha=
-t
-> > this patch adds suspend/resume support.
-> >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > ---
-> >  drivers/pwm/sysfs.c | 64 +++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  1 file changed, 64 insertions(+)
-> >
-> > diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-> > index 7eb4a13..72dafdd 100644
-> > --- a/drivers/pwm/sysfs.c
-> > +++ b/drivers/pwm/sysfs.c
-> > @@ -18,6 +18,7 @@ struct pwm_export {
-> >  	struct device child;
-> >  	struct pwm_device *pwm;
-> >  	struct mutex lock;
-> > +	bool enabled_in_suspend;
->=20
-> How about if we save the complete state here? Something like:
->=20
-> 	struct pwm_state suspend;
->=20
-> Or similar? Then we can just pwm_get_state() into that and then disable
-> the PWM like you do.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ Documentation/pwm.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I got it. I'll fix it on v2.
+diff --git a/Documentation/pwm.txt b/Documentation/pwm.txt
+index 8fbf0aa..996e5ea 100644
+--- a/Documentation/pwm.txt
++++ b/Documentation/pwm.txt
+@@ -65,6 +65,10 @@ period). struct pwm_args contains 2 fields (period and polarity) and should
+ be used to set the initial PWM config (usually done in the probe function
+ of the PWM user). PWM arguments are retrieved with pwm_get_args().
+ 
++All consumers should really be reconfiguring the PWM upon resume as
++appropriate. This is the only way to ensure that everything is resumed in
++the proper order.
++
+ Using PWMs with the sysfs interface
+ -----------------------------------
+ 
+@@ -141,6 +145,9 @@ The implementation of ->get_state() (a method used to retrieve initial PWM
+ state) is also encouraged for the same reason: letting the PWM user know
+ about the current PWM state would allow him to avoid glitches.
+ 
++Drivers should not implement any power management. In other words,
++consumers should implement it as described as the "Using PWMs" section.
++
+ Locking
+ -------
+ 
+-- 
+2.7.4
 
-> >  };
-> >
-> >  static struct pwm_export *child_to_pwm_export(struct device *child)
-> > @@ -372,10 +373,73 @@ static struct attribute *pwm_chip_attrs[] =3D {
-> >  };
-> >  ATTRIBUTE_GROUPS(pwm_chip);
-> >
-> > +static int pwm_class_suspend_resume(struct device *parent, bool suspen=
-d)
->=20
-> I would prefer if these were separate functions. I think the kind of
-> conditionals that you have below isn't worth the few lines that you may
-> save by fusing suspend/resume into one function.
->=20
-> Also, if you store struct pwm_state suspend during suspend, then both
-> implementations will end up being fairly different, so reusing the code
-> isn't going to be much of an advantage.
-
-I got it. As you said, separate functions are better for the code readabili=
-ty.
-
-> > +{
-> > +	struct pwm_chip *chip =3D dev_get_drvdata(parent);
-> > +	unsigned int i;
-> > +	int ret =3D 0;
-> > +
-> > +	for (i =3D 0; i < chip->npwm; i++) {
-> > +		struct pwm_device *pwm =3D &chip->pwms[i];
-> > +		struct device *child;
-> > +		struct pwm_export *export;
-> > +		struct pwm_state state;
-> > +
-> > +		if (!test_bit(PWMF_EXPORTED, &pwm->flags))
-> > +			continue;
-> > +
-> > +		child =3D device_find_child(parent, pwm, pwm_unexport_match);
-> > +		if (!child)
-> > +			goto rollback;
-> > +
-> > +		export =3D child_to_pwm_export(child);
-> > +		put_device(child);	/* for device_find_child() */
-> > +		if (!export)
-> > +			goto rollback;
->=20
-> Con this even happen? I have a hard time seeing how.
-
-Oops! This condition is unnecessary. I'll remove it.
-
-> > +
-> > +		mutex_lock(&export->lock);
-> > +		pwm_get_state(pwm, &state);
->=20
-> All of the above is shared code, so perhaps it'd be worth putting that
-> into a separate helper function to achieve the code reuse that you
-> otherwise get from sharing the function.
-
-I got it. I'll make such a helper function on v2.
-
-> > +		if (suspend) {
-> > +			if (state.enabled)
-> > +				export->enabled_in_suspend =3D true;
-> > +			state.enabled =3D false;
-> > +		} else if (export->enabled_in_suspend) {
-> > +			state.enabled =3D true;
-> > +			export->enabled_in_suspend =3D false;
-> > +		}
->=20
-> This in particular is what I mean. I think the two levels of
-> conditionals here make this more complicated to understand than
-> necessary.
-
-I think so.
-
-> > +		ret =3D pwm_apply_state(pwm, &state);
-> > +		mutex_unlock(&export->lock);
-> > +		if (ret < 0)
-> > +			goto rollback;
-> > +	}
-> > +
-> > +	return ret;
-> > +
-> > +rollback:
-> > +	/* roll back only when suspend */
-> > +	if (suspend)
-> > +		pwm_class_suspend_resume(parent, false);
->=20
-> And then there's stuff like this where you need to explain what's going
-> on just to save a couple of lines of code.
-
-I'll add a comment on v2.
-
-> Other than that, looks really nice.
-
-Thank you for your review!
-
-Best regards,
-Yoshihiro Shimoda
-
-> Thierry
->=20
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int pwm_class_suspend(struct device *parent)
-> > +{
-> > +	return pwm_class_suspend_resume(parent, true);
-> > +}
-> > +
-> > +static int pwm_class_resume(struct device *parent)
-> > +{
-> > +	return pwm_class_suspend_resume(parent, false);
-> > +}
-> > +
-> > +static SIMPLE_DEV_PM_OPS(pwm_class_pm_ops, pwm_class_suspend, pwm_clas=
-s_resume);
-> > +
-> >  static struct class pwm_class =3D {
-> >  	.name =3D "pwm",
-> >  	.owner =3D THIS_MODULE,
-> >  	.dev_groups =3D pwm_chip_groups,
-> > +	.pm =3D &pwm_class_pm_ops,
-> >  };
-> >
-> >  static int pwmchip_sysfs_match(struct device *parent, const void *data=
-)
-> > --
-> > 2.7.4
-> >
