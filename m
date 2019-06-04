@@ -2,39 +2,38 @@ Return-Path: <SRS0=606l=UD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5753DC282CE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Jun 2019 20:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C0AC282CE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Jun 2019 20:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3244420874
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Jun 2019 20:32:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 457272070B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Jun 2019 20:34:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfFDUcW (ORCPT
+        id S1726343AbfFDUeB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 Jun 2019 16:32:22 -0400
-Received: from pbmsgap02.intersil.com ([192.157.179.202]:60108 "EHLO
+        Tue, 4 Jun 2019 16:34:01 -0400
+Received: from pbmsgap02.intersil.com ([192.157.179.202]:60246 "EHLO
         pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbfFDUcV (ORCPT
+        with ESMTP id S1726301AbfFDUeA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Jun 2019 16:32:21 -0400
-X-Greylist: delayed 1357 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Jun 2019 16:32:21 EDT
+        Tue, 4 Jun 2019 16:34:00 -0400
 Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
-        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x54K3N4t016841;
-        Tue, 4 Jun 2019 16:09:27 -0400
-Received: from pbmxdp02.intersil.corp (pbmxdp02.pb.intersil.com [132.158.200.223])
-        by pbmsgap02.intersil.com with ESMTP id 2sukhdjn39-1
+        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id x54K3xZq017262;
+        Tue, 4 Jun 2019 16:09:44 -0400
+Received: from pbmxdp01.intersil.corp (pbmxdp01.pb.intersil.com [132.158.200.222])
+        by pbmsgap02.intersil.com with ESMTP id 2sukhdjn3m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 04 Jun 2019 16:09:26 -0400
+        Tue, 04 Jun 2019 16:09:44 -0400
 Received: from pbmxdp02.intersil.corp (132.158.200.223) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server
+ pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Tue, 4 Jun 2019 16:09:25 -0400
+ 15.1.1531.3; Tue, 4 Jun 2019 16:09:43 -0400
 Received: from localhost.localdomain (132.158.202.108) by
  pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Tue, 4 Jun 2019 16:09:24 -0400
+ 15.1.1531.3 via Frontend Transport; Tue, 4 Jun 2019 16:09:42 -0400
 From:   Chris Brandt <chris.brandt@renesas.com>
 To:     Simon Horman <horms@verge.net.au>,
         Rob Herring <robh+dt@kernel.org>,
@@ -42,16 +41,18 @@ To:     Simon Horman <horms@verge.net.au>,
 CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
         <devicetree@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 0/2] dts: rza2mevb: Add IRQ pin controller for RZ/A2
-Date:   Tue, 4 Jun 2019 15:09:12 -0500
-Message-ID: <20190604200914.64896-1-chris.brandt@renesas.com>
+Subject: [PATCH 2/2] ARM: dts: rza2mevb: Add input switch
+Date:   Tue, 4 Jun 2019 15:09:14 -0500
+Message-ID: <20190604200914.64896-3-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20190604200914.64896-1-chris.brandt@renesas.com>
+References: <20190604200914.64896-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-04_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=800
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=785
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1906040127
 X-Proofpoint-Spam-Reason: mlx
@@ -60,22 +61,62 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The IRQ pin controller that was added for RZ/A1 is the exact same
-one that is in RZ/A2. So we only need to add it to the device
-tree.
+Add support for input switch SW3 on the Renesas RZ/A2M EVB
+development board.
 
-Tested on the RZ/A2M EVB board (after gathering all the appropirate
-patches from different maintainer trees)
+Note that this uses the IRQ interrupt, as the RZ/A2 GPIO controller
+does not include interrupt support
 
-
-Chris Brandt (2):
-  ARM: dts: r7s9210: Add IRQC device node
-  ARM: dts: rza2mevb: Add input switch
-
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
  arch/arm/boot/dts/r7s9210-rza2mevb.dts | 20 ++++++++++++++++++++
- arch/arm/boot/dts/r7s9210.dtsi         | 19 +++++++++++++++++++
- 2 files changed, 39 insertions(+)
+ 1 file changed, 20 insertions(+)
 
+diff --git a/arch/arm/boot/dts/r7s9210-rza2mevb.dts b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
+index 4baf4a965090..6049145c120c 100644
+--- a/arch/arm/boot/dts/r7s9210-rza2mevb.dts
++++ b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
+@@ -9,6 +9,7 @@
+ /dts-v1/;
+ #include "r7s9210.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/pinctrl/r7s9210-pinctrl.h>
+ 
+ / {
+@@ -26,6 +27,21 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	keyboard {
++		compatible = "gpio-keys";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&keyboard_pins>;
++
++		key-3 {
++			interrupt-parent = <&irqc>;
++			interrupts = <0 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_3>;
++			label = "SW3";
++			wakeup-source;
++		};
++	};
++
+ 	lbsc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -121,6 +137,10 @@
+ 			 <RZA2_PINMUX(PORTL, 1, 5)>; /* IRQ5 */
+ 	};
+ 
++	keyboard_pins: keyboard {
++		pinmux = <RZA2_PINMUX(PORTJ, 1, 6)>;	/* IRQ0 */
++	};
++
+ 	/* Serial Console */
+ 	scif4_pins: serial4 {
+ 		pinmux = <RZA2_PINMUX(PORT9, 0, 4)>,	/* TxD4 */
 -- 
 2.16.1
 
