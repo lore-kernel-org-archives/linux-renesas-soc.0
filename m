@@ -2,84 +2,110 @@ Return-Path: <SRS0=QxYK=UE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71913C28D1A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 11:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C5CC28CC5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 12:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B82E2075B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 11:16:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BA7C2067C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 12:09:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="E3Ss5OAs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfFELQ5 (ORCPT
+        id S1727420AbfFEMJO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Jun 2019 07:16:57 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:52261 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727315AbfFELQ4 (ORCPT
+        Wed, 5 Jun 2019 08:09:14 -0400
+Received: from mail-eopbgr1410127.outbound.protection.outlook.com ([40.107.141.127]:27472
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726305AbfFEMJO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Jun 2019 07:16:56 -0400
-X-IronPort-AV: E=Sophos;i="5.60,550,1549897200"; 
-   d="scan'208";a="17680359"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Jun 2019 20:16:53 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5CC4541BD76A;
-        Wed,  5 Jun 2019 20:16:53 +0900 (JST)
+        Wed, 5 Jun 2019 08:09:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z04kfF10zxZdWzkt2V/e/SFELaUpasJPu/wRWdJJIpg=;
+ b=E3Ss5OAs9rT4c4bYVlkvTATj53uE8Hsh+DTmmAE9G3kmAb0k6YN60hmScyEJ2A+uHnAH3IiOzh9gTIVqzVRIv8NxrcDjmYPO8Fug1sstQMcs8i1MIVyRrysh41PEQvCounhEDTdomULAxh8QAFQ4LFX3jVSkjlhztxzH7UBDMrk=
+Received: from OSAPR01MB3089.jpnprd01.prod.outlook.com (52.134.247.150) by
+ OSAPR01MB1683.jpnprd01.prod.outlook.com (52.134.232.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1965.12; Wed, 5 Jun 2019 12:09:10 +0000
+Received: from OSAPR01MB3089.jpnprd01.prod.outlook.com
+ ([fe80::19ad:b6ce:a287:dc85]) by OSAPR01MB3089.jpnprd01.prod.outlook.com
+ ([fe80::19ad:b6ce:a287:dc85%7]) with mapi id 15.20.1943.018; Wed, 5 Jun 2019
+ 12:09:10 +0000
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
-        hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com,
-        joro@8bytes.org
-Cc:     linux-mmc@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [RFC PATCH v5 6/8] mmc: tmio: Add a definition for default max_segs
-Date:   Wed,  5 Jun 2019 20:11:52 +0900
-Message-Id: <1559733114-4221-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559733114-4221-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1559733114-4221-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: rcar_gen3_phy_usb2: unbalanced disables for USB20_VBUS0
+Thread-Topic: rcar_gen3_phy_usb2: unbalanced disables for USB20_VBUS0
+Thread-Index: AQHVGwA/6yZMGZVP4EW1AZzw0OBf96aMbWQggAA2D4CAAFUo0A==
+Date:   Wed, 5 Jun 2019 12:09:10 +0000
+Message-ID: <OSAPR01MB30895B18E4874231396BFEBED8160@OSAPR01MB3089.jpnprd01.prod.outlook.com>
+References: <CAMuHMdUObtKUVDohLT501TarPRC6eDnxBqqB5Tj_Tb+-4fwbkw@mail.gmail.com>
+ <OSAPR01MB30890E4B76F9605F3726C676D8160@OSAPR01MB3089.jpnprd01.prod.outlook.com>
+ <CAMuHMdXWsNfj1UYXDyh4ZJ0E2Z0jobug4jJ4uTpUa1X4d+Hocw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXWsNfj1UYXDyh4ZJ0E2Z0jobug4jJ4uTpUa1X4d+Hocw@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [118.238.235.108]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0404256c-d93a-4aaf-c1e7-08d6e9ae9e21
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:OSAPR01MB1683;
+x-ms-traffictypediagnostic: OSAPR01MB1683:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <OSAPR01MB16831065A7320FFA716DBA71D8160@OSAPR01MB1683.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 00594E8DBA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(396003)(39860400002)(136003)(189003)(199004)(102836004)(86362001)(53936002)(26005)(74316002)(53546011)(5660300002)(6506007)(66946007)(71200400001)(71190400001)(6916009)(9686003)(52536014)(476003)(66556008)(73956011)(66476007)(64756008)(66446008)(6436002)(305945005)(7736002)(99286004)(486006)(478600001)(76116006)(7696005)(446003)(256004)(14444005)(6306002)(76176011)(966005)(11346002)(55016002)(186003)(68736007)(14454004)(4326008)(3846002)(54906003)(66066001)(6116002)(6246003)(81166006)(81156014)(8676002)(8936002)(229853002)(25786009)(33656002)(2906002)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB1683;H:OSAPR01MB3089.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7dOCbNDgYqLQacF9KeqSQuLqcFAioDrMplazg9qo0RfFOD4ocHlgyGIkJb6lMC3h2ohcdX1aXiE43jxGLE+w99TZKlxF7JTHIDd97totQvYjJ449+5xl9kTpZL0DxHT2Ttp9UTfpawq5cHZxmAVb3vENZeMKI+/iaDG1MZC57UupkjbA/VxviiY5kQzJWX4LwUQRSjU8JniBRqJF7p0REhzZXrAl8i4GA4oEhN+3ubxBDPsD4xK4/xZ9N3YXjXboTG1a6/Z6vxe9P1+TW3qRbJicVX9Z5HHF710innOQl3ceh0Y2lMVG4j45jVy6UdkE1UmTnVP3//p2CG5kMOuep+WTgpQ+TcWBgBhkoDqvvgRUj5fRbzQYWWNPGvjfyDZ9SYbpEbfNKB/jeQR2sVcZP4ljvEGZ0SQVS/iOL0WDEUI=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0404256c-d93a-4aaf-c1e7-08d6e9ae9e21
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jun 2019 12:09:10.4768
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yoshihiro.shimoda.uh@renesas.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1683
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds a definition for default max_segs to be used by other
-driver (renesas_sdhi) in the future.
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/tmio_mmc.h      | 1 +
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index c5ba13f..9e387be 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -106,6 +106,7 @@
- #define TMIO_MASK_IRQ     (TMIO_MASK_READOP | TMIO_MASK_WRITEOP | TMIO_MASK_CMD)
- 
- #define TMIO_MAX_BLK_SIZE 512
-+#define TMIO_DEFAULT_MAX_SEGS 32
- 
- struct tmio_mmc_data;
- struct tmio_mmc_host;
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index c9f6a59..af1343e 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1185,7 +1185,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 
- 	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
--	mmc->max_segs = pdata->max_segs ? : 32;
-+	mmc->max_segs = pdata->max_segs ? : TMIO_DEFAULT_MAX_SEGS;
- 	mmc->max_blk_size = TMIO_MAX_BLK_SIZE;
- 	mmc->max_blk_count = pdata->max_blk_count ? :
- 		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
--- 
-2.7.4
-
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVz
+ZGF5LCBKdW5lIDUsIDIwMTkgNDowMyBQTQ0KPiANCj4gSGkgU2hpbW9kYS1zYW4sDQo+IA0KPiBP
+biBXZWQsIEp1biA1LCAyMDE5IGF0IDY6MDYgQU0gWW9zaGloaXJvIFNoaW1vZGENCj4gPHlvc2hp
+aGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IEdlZXJ0IFV5
+dHRlcmhvZXZlbiwgU2VudDogV2VkbmVzZGF5LCBKdW5lIDUsIDIwMTkgMzowNiBBTQ0KPiA+ID4g
+VXNpbmcgYSB0cmVlIGJhc2VkIG9uIHJlbmVzYXMtZHJpdmVycy0yMDE5LTA2LTA0LXY1LjItcmMz
+LCBJIHN0YXJ0ZWQgc2VlaW5nDQo+ID4gPiB0aGUgZm9sbG93aW5nIHdhcm5pbmcgZHVyaW5nIGEg
+c2Vjb25kIHN5c3RlbSBzdXNwZW5kIChzMmlkbGUpOg0KPiA+IDxzbmlwPg0KPiA+ID4gU28gZmFy
+IEkndmUgc2VlbiB0aGlzIG9uIFNhbHZhdG9yLVggd2l0aCBSLUNhciBIMyBFUzEuMCBvciBNMy1X
+LCBhbmQNCj4gPiA+IG9uIFNhbHZhdG9yLVhTIHdpdGggUi1DYXIgTTMtTiwgYnV0IG5vdCAoeWV0
+Pykgb24gSDMgRVMyLjAuDQo+ID4NCj4gPiBJIGNvdWxkIHJlcHJvZHVjZSB0aGlzIGlzc3VlIG9u
+IFItQ2FyIEgzIEVTMy4wIHdpdGggU3VzcGVuZC10by1SQU0uDQo+ID4gIyBJJ20gc2lsbHkgYnV0
+IEkgY291bGQgbm90IHVzZSBzMmlkbGUgdGhhdCBkaWRuJ3Qgd2FrZSB1cCBieSByYXZiLg0KPiA+
+ICMgaHR0cHM6Ly9lbGludXgub3JnL1ItQ2FyL0JvYXJkcy9TYWx2YXRvci1YI1N1c3BlbmQtdG8t
+SWRsZQ0KPiANCj4gV2l0aCBDT05GSUdfUE1fREVCVUc9eSBhbmQgQ09ORklHX1BNX1RFU1RfU1VT
+UEVORD15LCB5b3UgY2FuIHVzZQ0KPiANCj4gICAgICBlY2hvIHBsYXRmb3JtID4gL3N5cy9wb3dl
+ci9wbV90ZXN0DQo+IA0KPiB0byBjb25maWd1cmUgdGhlIHN5c3RlbSB0byB3YWtlIHVwIGZyb20g
+czJpZGxlIGFmdGVyIDUgc2Vjb25kcy4NCj4gVGhpcyBhbGxvd3MgdG8gbG9vcCBzMmlkbGUgd2l0
+aG91dCB1c2VyIGludGVydmVudGlvbi4NCg0KVGhhbmsgeW91IGZvciBleHBsYW5hdGlvbiEgSSBj
+b3VsZCB1c2UgaXQgb24gbXkgZW52aXJvbm1lbnQuDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGly
+byBTaGltb2RhDQoNCg==
