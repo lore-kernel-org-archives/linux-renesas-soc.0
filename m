@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA808C28D19
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8890DC28CC5
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 11:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA752075B
+	by mail.kernel.org (Postfix) with ESMTP id 6D92C2075B
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 11:16:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfFELQ5 (ORCPT
+        id S1727444AbfFELQ5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 5 Jun 2019 07:16:57 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:37256 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727198AbfFELQ4 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:62646 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727434AbfFELQ4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 5 Jun 2019 07:16:56 -0400
 X-IronPort-AV: E=Sophos;i="5.60,550,1549897200"; 
-   d="scan'208";a="17883871"
+   d="scan'208";a="17680362"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Jun 2019 20:16:52 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 05 Jun 2019 20:16:53 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E305441BD761;
-        Wed,  5 Jun 2019 20:16:52 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B64F141BD76A;
+        Wed,  5 Jun 2019 20:16:53 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
         hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com,
@@ -34,9 +34,9 @@ To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
 Cc:     linux-mmc@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [RFC PATCH v5 3/8] iommu: add a new capable IOMMU_CAP_MERGING
-Date:   Wed,  5 Jun 2019 20:11:49 +0900
-Message-Id: <1559733114-4221-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [RFC PATCH v5 8/8] mmc: renesas_sdhi: use multiple segments if possible
+Date:   Wed,  5 Jun 2019 20:11:54 +0900
+Message-Id: <1559733114-4221-9-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559733114-4221-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1559733114-4221-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -45,84 +45,105 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds a new capable IOMMU_CAP_MERGING to check whether
-the IOVA would be contiguous strictly if a device requires and
-the IOMMU driver has the capable.
+If the IOMMU driver has a capable for merging segments to
+a segment strictly, this can expose the host->mmc->max_segs with
+multiple segments to a block layer by using blk_queue_max_segments()
+that mmc_setup_queue() calls. Notes that an sdio card may be
+possible to use multiple segments with non page aligned size, so
+that this will not expose multiple segments to avoid failing
+dma_map_sg() every time.
+
+Notes that on renesas_sdhi_sys_dmac, the max_segs value will change
+from 32 to 512, but the sys_dmac can handle 512 segments, so that
+this init_card ops is added on "TMIO_MMC_MIN_RCAR2" environment.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/iommu/dma-iommu.c | 26 ++++++++++++++++++++++++--
- include/linux/iommu.h     |  1 +
- 2 files changed, 25 insertions(+), 2 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c          | 27 +++++++++++++++++++++++++++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  4 ++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 034caae..ecf1a04 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -847,11 +847,16 @@ static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 	dma_addr_t iova;
- 	size_t iova_len = 0;
- 	unsigned long mask = dma_get_seg_boundary(dev);
--	int i;
-+	int i, ret;
-+	bool iova_contiguous = false;
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index c5ee4a6..379cefa 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -20,6 +20,7 @@
  
- 	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
- 		iommu_dma_sync_sg_for_device(dev, sg, nents, dir);
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/iommu.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/tmio.h>
+ #include <linux/mmc/host.h>
+@@ -46,6 +47,8 @@
+ #define SDHI_VER_GEN3_SD	0xcc10
+ #define SDHI_VER_GEN3_SDMMC	0xcd10
  
-+	if (dma_get_iova_contiguous(dev) &&
-+	    iommu_capable(dev->bus, IOMMU_CAP_MERGING))
-+		iova_contiguous = true;
++#define SDHI_MAX_SEGS_IN_IOMMU	512
 +
- 	/*
- 	 * Work out how much IOVA space we need, and align the segments to
- 	 * IOVA granules for the IOMMU driver to handle. With some clever
-@@ -867,6 +872,13 @@ static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 		sg_dma_len(s) = s_length;
- 		s->offset -= s_iova_off;
- 		s_length = iova_align(iovad, s_length + s_iova_off);
-+		/*
-+		 * Check whether the IOVA would be contiguous strictly if
-+		 * a device requires and the IOMMU driver has the capable.
-+		 */
-+		if (iova_contiguous && i > 0 &&
-+		    (s_iova_off || s->length != s_length))
-+			return 0;
- 		s->length = s_length;
+ struct renesas_sdhi_quirks {
+ 	bool hs400_disabled;
+ 	bool hs400_4taps;
+@@ -203,6 +206,28 @@ static void renesas_sdhi_clk_disable(struct tmio_mmc_host *host)
+ 	clk_disable_unprepare(priv->clk_cd);
+ }
  
- 		/*
-@@ -902,8 +914,18 @@ static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 	if (iommu_map_sg(domain, iova, sg, nents, prot) < iova_len)
- 		goto out_free_iova;
- 
--	return __finalise_sg(dev, sg, nents, iova);
-+	ret = __finalise_sg(dev, sg, nents, iova);
++static void renesas_sdhi_init_card(struct mmc_host *mmc, struct mmc_card *card)
++{
++	struct tmio_mmc_host *host = mmc_priv(mmc);
++
 +	/*
-+	 * Check whether the sg entry is single if a device requires and
-+	 * the IOMMU driver has the capable.
++	 * If the IOMMU driver has a capable for merging segments to
++	 * a segment strictly, this can expose the host->mmc->max_segs with
++	 * multiple segments to a block layer by using blk_queue_max_segments()
++	 * that mmc_setup_queue() calls. Notes that an sdio card may be
++	 * possible to use multiple segments with non page aligned size, so
++	 * that this will not expose multiple segments to avoid failing
++	 * dma_map_sg() every time.
 +	 */
-+	if (iova_contiguous && ret != 1)
-+		goto out_unmap_sg;
++	if (host->pdata->max_segs < SDHI_MAX_SEGS_IN_IOMMU &&
++	    iommu_capable(host->pdev->dev.bus, IOMMU_CAP_MERGING) &&
++	    (mmc_card_mmc(card) || mmc_card_sd(card)))
++		host->mmc->max_segs = SDHI_MAX_SEGS_IN_IOMMU;
++	else
++		host->mmc->max_segs = host->pdata->max_segs ? :
++				      TMIO_DEFAULT_MAX_SEGS;
++}
 +
-+	return ret;
+ static int renesas_sdhi_card_busy(struct mmc_host *mmc)
+ {
+ 	struct tmio_mmc_host *host = mmc_priv(mmc);
+@@ -726,6 +751,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
  
-+out_unmap_sg:
-+	iommu_dma_unmap_sg(dev, sg, nents, dir, attrs);
- out_free_iova:
- 	iommu_dma_free_iova(cookie, iova, iova_len);
- out_restore_sg:
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 91af22a..f971dd3 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -104,6 +104,7 @@ enum iommu_cap {
- 					   transactions */
- 	IOMMU_CAP_INTR_REMAP,		/* IOMMU supports interrupt isolation */
- 	IOMMU_CAP_NOEXEC,		/* IOMMU_NOEXEC flag */
-+	IOMMU_CAP_MERGING,		/* IOMMU supports segments merging */
- };
+ 	/* SDR speeds are only available on Gen2+ */
+ 	if (mmc_data->flags & TMIO_MMC_MIN_RCAR2) {
++		host->ops.init_card = renesas_sdhi_init_card;
++
+ 		/* card_busy caused issues on r8a73a4 (pre-Gen2) CD-less SDHI */
+ 		host->ops.card_busy = renesas_sdhi_card_busy;
+ 		host->ops.start_signal_voltage_switch =
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 751fe91..a442f86 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -11,6 +11,7 @@
+ #include <linux/device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/io-64-nonatomic-hi-lo.h>
++#include <linux/iommu.h>
+ #include <linux/mfd/tmio.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mod_devicetable.h>
+@@ -337,6 +338,9 @@ static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
+ 	/* value is max of SD_SECCNT. Confirmed by HW engineers */
+ 	dma_set_max_seg_size(dev, 0xffffffff);
  
- /*
++	if (iommu_capable(dev->bus, IOMMU_CAP_MERGING))
++		dma_set_iova_contiguous(dev, true);
++
+ 	return renesas_sdhi_probe(pdev, &renesas_sdhi_internal_dmac_dma_ops);
+ }
+ 
 -- 
 2.7.4
 
