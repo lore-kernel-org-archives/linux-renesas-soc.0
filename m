@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44ADBC28D18
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9910AC28CC5
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 11:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299952075B
+	by mail.kernel.org (Postfix) with ESMTP id 744782075B
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Jun 2019 11:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfFELQz (ORCPT
+        id S1727366AbfFELQ4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Jun 2019 07:16:55 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:62646 "EHLO
+        Wed, 5 Jun 2019 07:16:56 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:16217 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727366AbfFELQz (ORCPT
+        by vger.kernel.org with ESMTP id S1727406AbfFELQz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 5 Jun 2019 07:16:55 -0400
 X-IronPort-AV: E=Sophos;i="5.60,550,1549897200"; 
-   d="scan'208";a="17680350"
+   d="scan'208";a="17680356"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Jun 2019 20:16:52 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 05 Jun 2019 20:16:53 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CEC6541BD771;
-        Wed,  5 Jun 2019 20:16:52 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 301CE41BD761;
+        Wed,  5 Jun 2019 20:16:53 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
         hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com,
@@ -34,9 +34,9 @@ To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com,
 Cc:     linux-mmc@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [RFC PATCH v5 2/8] iommu/dma: move iommu_dma_unmap_sg() place
-Date:   Wed,  5 Jun 2019 20:11:48 +0900
-Message-Id: <1559733114-4221-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [RFC PATCH v5 5/8] mmc: tmio: No memory size limitation if runs on IOMMU
+Date:   Wed,  5 Jun 2019 20:11:51 +0900
+Message-Id: <1559733114-4221-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559733114-4221-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1559733114-4221-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -45,80 +45,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-iommu_dma_map_sg() will use the unmap function in the future. To
-avoid a forward declaration, this patch move the function place.
+This patch adds a condition to avoid a memory size limitation of
+swiotlb if the driver runs on IOMMU.
 
+Tested-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/iommu/dma-iommu.c | 48 +++++++++++++++++++++++------------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 0dee374..034caae 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -730,6 +730,30 @@ static void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
- 	__iommu_dma_unmap(dev, dma_handle, size);
- }
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 130b91c..c9f6a59 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1194,9 +1194,10 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	 * Since swiotlb has memory size limitation, this will calculate
+ 	 * the maximum size locally (because we don't have any APIs for it now)
+ 	 * and check the current max_req_size. And then, this will update
+-	 * the max_req_size if needed as a workaround.
++	 * the max_req_size if needed as a workaround. However, if the driver
++	 * runs on IOMMU, this workaround isn't needed.
+ 	 */
+-	if (swiotlb_max_segment()) {
++	if (swiotlb_max_segment() && !device_iommu_mapped(&pdev->dev)) {
+ 		unsigned int max_size = (1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
  
-+static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
-+		int nents, enum dma_data_direction dir, unsigned long attrs)
-+{
-+	dma_addr_t start, end;
-+	struct scatterlist *tmp;
-+	int i;
-+
-+	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-+		iommu_dma_sync_sg_for_cpu(dev, sg, nents, dir);
-+
-+	/*
-+	 * The scatterlist segments are mapped into a single
-+	 * contiguous IOVA allocation, so this is incredibly easy.
-+	 */
-+	start = sg_dma_address(sg);
-+	for_each_sg(sg_next(sg), tmp, nents - 1, i) {
-+		if (sg_dma_len(tmp) == 0)
-+			break;
-+		sg = tmp;
-+	}
-+	end = sg_dma_address(sg) + sg_dma_len(sg);
-+	__iommu_dma_unmap(dev, start, end - start);
-+}
-+
- /*
-  * Prepare a successfully-mapped scatterlist to give back to the caller.
-  *
-@@ -887,30 +911,6 @@ static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
- 	return 0;
- }
- 
--static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
--		int nents, enum dma_data_direction dir, unsigned long attrs)
--{
--	dma_addr_t start, end;
--	struct scatterlist *tmp;
--	int i;
--
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		iommu_dma_sync_sg_for_cpu(dev, sg, nents, dir);
--
--	/*
--	 * The scatterlist segments are mapped into a single
--	 * contiguous IOVA allocation, so this is incredibly easy.
--	 */
--	start = sg_dma_address(sg);
--	for_each_sg(sg_next(sg), tmp, nents - 1, i) {
--		if (sg_dma_len(tmp) == 0)
--			break;
--		sg = tmp;
--	}
--	end = sg_dma_address(sg) + sg_dma_len(sg);
--	__iommu_dma_unmap(dev, start, end - start);
--}
--
- static dma_addr_t iommu_dma_map_resource(struct device *dev, phys_addr_t phys,
- 		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
+ 		if (mmc->max_req_size > max_size)
 -- 
 2.7.4
 
