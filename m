@@ -2,68 +2,95 @@ Return-Path: <SRS0=EBUn=UF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D6BC04AB5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Jun 2019 13:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F9CC04AB5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Jun 2019 14:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7F120645
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Jun 2019 13:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABE6A20665
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Jun 2019 14:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbfFFNmi (ORCPT
+        id S1728249AbfFFOVk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 6 Jun 2019 09:42:38 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:42286 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbfFFNmi (ORCPT
+        Thu, 6 Jun 2019 10:21:40 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:35247 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbfFFOVk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Jun 2019 09:42:38 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 082A525B746;
-        Thu,  6 Jun 2019 23:42:36 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 02D7D940356; Thu,  6 Jun 2019 15:42:33 +0200 (CEST)
-Date:   Thu, 6 Jun 2019 15:42:33 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Chris Brandt <chris.brandt@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: rza2mevb: Add input switch
-Message-ID: <20190606134232.ahetmpqlrvrmxsi5@verge.net.au>
-References: <20190604200914.64896-1-chris.brandt@renesas.com>
- <20190604200914.64896-3-chris.brandt@renesas.com>
- <20190606084827.2cg6eab3gvjvtfmd@verge.net.au>
+        Thu, 6 Jun 2019 10:21:40 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B7C682000E;
+        Thu,  6 Jun 2019 14:21:34 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     laurent.pinchart@ideasonboard.com,
+        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 01/20] dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
+Date:   Thu,  6 Jun 2019 16:22:01 +0200
+Message-Id: <20190606142220.1392-2-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190606142220.1392-1-jacopo+renesas@jmondi.org>
+References: <20190606142220.1392-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190606084827.2cg6eab3gvjvtfmd@verge.net.au>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 10:48:28AM +0200, Simon Horman wrote:
-> On Tue, Jun 04, 2019 at 03:09:14PM -0500, Chris Brandt wrote:
-> > Add support for input switch SW3 on the Renesas RZ/A2M EVB
-> > development board.
-> > 
-> > Note that this uses the IRQ interrupt, as the RZ/A2 GPIO controller
-> > does not include interrupt support
-> > 
-> > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> 
-> Thanks Chris,
-> 
-> I have applied this for inclusion in v5.3.
-> 
-> There was a minor conflict when applying the pinctl portion
-> of the patch which I have resolved. The result is as follows.
+Add device tree bindings documentation for the Renesas R-Car Display
+Unit Color Management Module.
 
-Scratch that, I was working in the wrong branch.
-I now have your patch cleanly applied for inclusion in v5.3.
+CMM is the image enhancement module available on each R-Car DU video
+channel on Gen2 and Gen3 SoCs (V3H and V3M excluded).
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ .../bindings/display/renesas,cmm.txt          | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.txt
+
+diff --git a/Documentation/devicetree/bindings/display/renesas,cmm.txt b/Documentation/devicetree/bindings/display/renesas,cmm.txt
+new file mode 100644
+index 000000000000..d8d3cf9ce2ce
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/renesas,cmm.txt
+@@ -0,0 +1,25 @@
++* Renesas R-Car Color Management Module (CMM)
++
++Renesas R-Car image enhancement module connected to R-Car DU video channels.
++
++Required properties:
++ - compatible: shall be one of:
++   - "renesas,cmm-gen3"
++   - "renesas,cmm-gen2"
++
++ - reg: the address base and length of the memory area where CMM control
++   registers are mapped to.
++
++ - clocks: phandle and clock-specifier pair to the CMM functional clock
++   supplier.
++
++Example:
++--------
++
++	cmm0: cmm@fea40000 {
++		compatible = "renesas,cmm";
++		reg = <0 0xfea40000 0 0x1000>;
++		power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
++		clocks = <&cpg CPG_MOD 711>;
++		resets = <&cpg 711>;
++	};
+-- 
+2.21.0
+
