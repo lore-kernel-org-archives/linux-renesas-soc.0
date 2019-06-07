@@ -2,77 +2,137 @@ Return-Path: <SRS0=GULD=UG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF740C28CC3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 09:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA98C28CC3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 10:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C843120B7C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 09:59:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FFE20B7C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 10:02:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="LOtqTM/l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbfFGJ7Y (ORCPT
+        id S1727134AbfFGKCV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 7 Jun 2019 05:59:24 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33802 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727895AbfFGJ7C (ORCPT
+        Fri, 7 Jun 2019 06:02:21 -0400
+Received: from mail-eopbgr1410122.outbound.protection.outlook.com ([40.107.141.122]:36128
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726584AbfFGKCU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Jun 2019 05:59:02 -0400
-Received: from ramsan ([84.194.111.163])
-        by baptiste.telenet-ops.be with bizsmtp
-        id Mlz02000b3XaVaC01lz0mh; Fri, 07 Jun 2019 11:59:00 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hZBeG-00040x-GT; Fri, 07 Jun 2019 11:59:00 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hZBeG-0002cZ-Fa; Fri, 07 Jun 2019 11:59:00 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/4] irqchip/renesas-intc-irqpin: Use proper irq_chip name and parent
-Date:   Fri,  7 Jun 2019 11:58:55 +0200
-Message-Id: <20190607095858.10028-2-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190607095858.10028-1-geert+renesas@glider.be>
-References: <20190607095858.10028-1-geert+renesas@glider.be>
+        Fri, 7 Jun 2019 06:02:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Z6z4LvArFmwjk5Kxar9ciw2QDAt5r84X13H7hbm+KM=;
+ b=LOtqTM/lmjtjcbRSBlWhcYZum6zC8oxPYfPz/bJM2F+7bD4HIbxPrsSKKa3/RqSKrK9xH3PdN/NgNouvJ7HLMHJweMrzxV67Cle60t/cwBQHwWMmlaAlECZRdLhsvzfdmFe5B/UuVI82eZDbmBkOPgNvBjiXzpwywTjlIc42+hg=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.13) by
+ TY1PR01MB1882.jpnprd01.prod.outlook.com (52.133.162.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.22; Fri, 7 Jun 2019 10:02:14 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::8a0:4174:3c3f:f05b]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::8a0:4174:3c3f:f05b%7]) with mapi id 15.20.1965.011; Fri, 7 Jun 2019
+ 10:02:13 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH repost 0/5] Repost CAN and CANFD dt-bindings
+Thread-Topic: [PATCH repost 0/5] Repost CAN and CANFD dt-bindings
+Thread-Index: AQHVBpxEfaP7dJG4WES76lrhZ+ehP6aQILng
+Date:   Fri, 7 Jun 2019 10:02:13 +0000
+Message-ID: <TY1PR01MB1770D2AAF2ED748575CA4CBFC0100@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1557429622-31676-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1557429622-31676-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3bb7a36a-2c04-4062-be2b-08d6eb2f3712
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TY1PR01MB1882;
+x-ms-traffictypediagnostic: TY1PR01MB1882:
+x-microsoft-antispam-prvs: <TY1PR01MB188207A4899633CE8973AC4EC0100@TY1PR01MB1882.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 0061C35778
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(376002)(136003)(396003)(39860400002)(199004)(189003)(66946007)(64756008)(66446008)(54906003)(66476007)(66556008)(102836004)(486006)(8676002)(81166006)(25786009)(74316002)(446003)(3846002)(6116002)(2906002)(68736007)(53936002)(7736002)(76176011)(4744005)(305945005)(7696005)(8936002)(99286004)(9686003)(110136005)(6246003)(186003)(6506007)(53546011)(71200400001)(71190400001)(5660300002)(66066001)(316002)(478600001)(52536014)(76116006)(73956011)(81156014)(14454004)(229853002)(476003)(86362001)(11346002)(413944005)(44832011)(55016002)(256004)(4326008)(33656002)(6436002)(26005)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1882;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: dlDf+dk+pWb+C5qOZMtBKmrGye4JRFEkzhh21Tjj25vParGo5Dymx38yuu2up+iwgEGfhEPE2GGF2CgTpaslhJdwkcZJLwBH7TKeH6Qk/ddPm4KNlRLsON3+BZqCUXaw4g7N/pqPts/wVMrnSNmNlb0BkXMKnpH/OIOyb/PQbf0JVAXULGytIvvfzeq98Pr7Tos5Drs1BE8U2/FzIb1L/t3xgm7TThS1jNG6kNawsf+Iq4M1/2T7R6ku3VkdmqU9fdE+ZhtzRW4g0jltxKkAbYfvLIHctq8ygQ92Fv669md4w5/CuY5rjPSnTKQMB1x4Rm3n2VVgnKMdV/Qt+g6QGSzw0ZTQN7PurozkM2DIGh7dSqu03sRJoX6DGT/Wlr2yw6GqBbf1hT9ALhFmS8tfrCIgaqDDU14lyQBbFR5MT9k=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bb7a36a-2c04-4062-be2b-08d6eb2f3712
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jun 2019 10:02:13.7320
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fabrizio.castro@bp.renesas.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1882
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The irq_chip .name field should contain the device's class (not
-instance) name, while .parent_device should point to the device itself.
+Dear All,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+These patches have been around for a very long time now, is anybody willing=
+ to take them?
+
+Cheers,
+Fab
+
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Sent: 09 May 2019 20:20
+> Subject: [PATCH repost 0/5] Repost CAN and CANFD dt-bindings
+>=20
+> Dear All,
+>=20
+> I am reposting some CAN and CANFD related dt-bindings changes for
+> Renesas' R-Car and RZ/G devices that have been originally sent
+> end of last year and beginning of this year.
+>=20
+> Thanks,
+> Fab
+>=20
+> Fabrizio Castro (3):
+>   dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
+>   dt-bindings: can: rcar_can: Add r8a774c0 support
+>   dt-bindings: can: rcar_canfd: document r8a774c0 support
+>=20
+> Marek Vasut (2):
+>   dt-bindings: can: rcar_canfd: document r8a77965 support
+>   dt-bindings: can: rcar_canfd: document r8a77990 support
+>=20
+>  Documentation/devicetree/bindings/net/can/rcar_can.txt   | 13 ++++------=
 ---
- drivers/irqchip/irq-renesas-intc-irqpin.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 04c05a18600cf71f..f82bc60a67931cd7 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -508,7 +508,8 @@ static int intc_irqpin_probe(struct platform_device *pdev)
- 	}
- 
- 	irq_chip = &p->irq_chip;
--	irq_chip->name = name;
-+	irq_chip->name = "intc-irqpin";
-+	irq_chip->parent_device = dev;
- 	irq_chip->irq_mask = disable_fn;
- 	irq_chip->irq_unmask = enable_fn;
- 	irq_chip->irq_set_type = intc_irqpin_irq_set_type;
--- 
-2.17.1
+>  Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 16 ++++++++++=
+------
+>  2 files changed, 14 insertions(+), 15 deletions(-)
+>=20
+> --
+> 2.7.4
 
