@@ -4,107 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F290C2BCA1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 09:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7843C28CC3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 09:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 327B3208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 09:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D0220B7C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Jun 2019 09:59:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfFGJun (ORCPT
+        id S1728008AbfFGJ7C (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 7 Jun 2019 05:50:43 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:50478 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727246AbfFGJun (ORCPT
+        Fri, 7 Jun 2019 05:59:02 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:51474 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727767AbfFGJ7C (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Jun 2019 05:50:43 -0400
+        Fri, 7 Jun 2019 05:59:02 -0400
 Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id Mlqg200053XaVaC01lqgyh; Fri, 07 Jun 2019 11:50:40 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id Mlz02000n3XaVaC01lz0si; Fri, 07 Jun 2019 11:59:00 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hZBWB-00040D-W7; Fri, 07 Jun 2019 11:50:40 +0200
+        id 1hZBeG-00040z-HB; Fri, 07 Jun 2019 11:59:00 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hZBWB-0002TP-Tp; Fri, 07 Jun 2019 11:50:39 +0200
+        id 1hZBeG-0002cb-GD; Fri, 07 Jun 2019 11:59:00 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-renesas-soc@vger.kernel.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] irqchip: Enable compile-testing for Renesas drivers
-Date:   Fri,  7 Jun 2019 11:50:36 +0200
-Message-Id: <20190607095036.9466-1-geert+renesas@glider.be>
+Subject: [PATCH 2/4] irqchip/renesas-irqc: Use proper irq_chip name and parent
+Date:   Fri,  7 Jun 2019 11:58:56 +0200
+Message-Id: <20190607095858.10028-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190607095858.10028-1-geert+renesas@glider.be>
+References: <20190607095858.10028-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable compile-testing for all Renesas interrupt controller drivers,
-except for RENESAS_H8300H_INTC.  The latter relies on a function
-(ctrl_bclr()) that is not available on other architectures.
+The irq_chip .name field should contain the device's class (not
+instance) name, while .parent_device should point to the device itself.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/irqchip/Kconfig | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ drivers/irqchip/irq-renesas-irqc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 2d3b5a27cc988ab6..fe509b88f99a8f10 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -217,17 +217,26 @@ config RDA_INTC
- 	select IRQ_DOMAIN
+diff --git a/drivers/irqchip/irq-renesas-irqc.c b/drivers/irqchip/irq-renesas-irqc.c
+index cde9f9c0687e94a4..11abc09ef76c62b5 100644
+--- a/drivers/irqchip/irq-renesas-irqc.c
++++ b/drivers/irqchip/irq-renesas-irqc.c
+@@ -176,7 +176,7 @@ static int irqc_probe(struct platform_device *pdev)
+ 	}
  
- config RENESAS_INTC_IRQPIN
--	bool
-+	bool "Renesas INTC External IRQ Pin Support" if COMPILE_TEST
- 	select IRQ_DOMAIN
-+	help
-+	  Enable support for the Renesas Interrupt Controller for external
-+	  interrupt pins, as found on SH/R-Mobile and R-Car Gen1 SoCs.
- 
- config RENESAS_IRQC
--	bool
-+	bool "Renesas R-Mobile APE6 and R-Car IRQC support" if COMPILE_TEST
- 	select GENERIC_IRQ_CHIP
- 	select IRQ_DOMAIN
-+	help
-+	  Enable support for the Renesas Interrupt Controller for external
-+	  devices, as found on R-Mobile APE6, R-Car Gen2, and R-Car Gen3 SoCs.
- 
- config RENESAS_RZA1_IRQC
--	bool
-+	bool "Renesas RZ/A1 IRQC support" if COMPILE_TEST
- 	select IRQ_DOMAIN_HIERARCHY
-+	help
-+	  Enable support for the Renesas RZ/A1 Interrupt Controller, to use up
-+	  to 8 external interrupts with configurable sense select.
- 
- config ST_IRQCHIP
- 	bool
-@@ -303,8 +312,11 @@ config RENESAS_H8300H_INTC
- 	select IRQ_DOMAIN
- 
- config RENESAS_H8S_INTC
--        bool
-+	bool "Renesas H8S Interrupt Controller Support" if COMPILE_TEST
- 	select IRQ_DOMAIN
-+	help
-+	  Enable support for the Renesas H8/300 Interrupt Controller, as found
-+	  on Renesas H8S SoCs.
- 
- config IMX_GPCV2
- 	bool
+ 	ret = irq_alloc_domain_generic_chips(p->irq_domain, p->number_of_irqs,
+-					     1, name, handle_level_irq,
++					     1, "irqc", handle_level_irq,
+ 					     0, 0, IRQ_GC_INIT_NESTED_LOCK);
+ 	if (ret) {
+ 		dev_err(dev, "cannot allocate generic chip\n");
+@@ -187,6 +187,7 @@ static int irqc_probe(struct platform_device *pdev)
+ 	p->gc->reg_base = p->cpu_int_base;
+ 	p->gc->chip_types[0].regs.enable = IRQC_EN_SET;
+ 	p->gc->chip_types[0].regs.disable = IRQC_EN_STS;
++	p->gc->chip_types[0].chip.parent_device = dev;
+ 	p->gc->chip_types[0].chip.irq_mask = irq_gc_mask_disable_reg;
+ 	p->gc->chip_types[0].chip.irq_unmask = irq_gc_unmask_enable_reg;
+ 	p->gc->chip_types[0].chip.irq_set_type	= irqc_irq_set_type;
 -- 
 2.17.1
 
