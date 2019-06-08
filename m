@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609CAC28CC5
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 11:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24087C28CC5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 11:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E9C2168B
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 11:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7E6621537
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 11:51:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559994570;
-	bh=AD4GRc4EAoNu9rDsMfCIUcUdXChBE37MLd0TH5O79V4=;
+	s=default; t=1559994684;
+	bh=qUjR+fTn3xqbmcW2hzTBwnmO3DzMgvhkS4MOSzcNSVs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iXMXvAXKYTzkh+8xCZOVd9IQqVz9UHdDxynhPlL136BUdD4vRdsgRAPqqFwUWxQJw
-	 R1YkO/JHpzbik1cBF8Er+t/SUG/shO4tJsTe91+hODvNjK1yUsg0IWZkjMEEQzW/xi
-	 e+lM00IFXJjQruRm+HpIYmO0e6s0a3J85lvjOOf4=
+	b=RwgzJ8anReUJU3v7mt9PjpPlUWiRkDromG12kzZHXuXdyXfQlRlnMYHxvGU7AmgFS
+	 7ygZ38xbWbCEAw+CJ+zU3zZ8dRJw5p3E8aJHJwo95NxYKYi21nYjttrpCd3iOkp70D
+	 xYPhlcnVJlg5H5RpTSKlOHLj/I4IIQMBOLY89jcI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbfFHLtI (ORCPT
+        id S1729369AbfFHLrp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 8 Jun 2019 07:49:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37946 "EHLO mail.kernel.org"
+        Sat, 8 Jun 2019 07:47:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730030AbfFHLtH (ORCPT
+        id S1729362AbfFHLro (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Jun 2019 07:49:07 -0400
+        Sat, 8 Jun 2019 07:47:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B22A21726;
-        Sat,  8 Jun 2019 11:49:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41F342168B;
+        Sat,  8 Jun 2019 11:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559994547;
-        bh=AD4GRc4EAoNu9rDsMfCIUcUdXChBE37MLd0TH5O79V4=;
+        s=default; t=1559994464;
+        bh=qUjR+fTn3xqbmcW2hzTBwnmO3DzMgvhkS4MOSzcNSVs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PQ+FofXCyX2mb3/iZcCySRKzmqP+qYoes9yz8tuZhqwzk4ajobG8k4b1em9RjN1qh
-         KjXdHoV7O3XhObYhsOxZaTY8OH2jUrRKcJKh/L9Nnq3e5Gh9ALaXGI2XvBlKxYvXvV
-         Dj6PlWblATcBhMtZmh79XvdfvYDRr2OVXf4pr7Vk=
+        b=UmcWOKMswqkC8Qj4zSAOzcfYqUUgHzvQ6KfW4ggc/b3US+Um4FOgS2uUGqM1qGabo
+         r7OrT1ilEl0yu9Jbe0TCNacufGhfTSk3lu8bWUqfzlA878qmON8jO5QstxyKCysle1
+         9Bf2gTPeOKvcmdDNOOZtKzyiJS5tS9t2N4c3Q2sY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 11/13] net: sh_eth: fix mdio access in sh_eth_close() for R-Car Gen2 and RZ/A1 SoCs
-Date:   Sat,  8 Jun 2019 07:48:43 -0400
-Message-Id: <20190608114847.9973-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 25/31] net: sh_eth: fix mdio access in sh_eth_close() for R-Car Gen2 and RZ/A1 SoCs
+Date:   Sat,  8 Jun 2019 07:46:36 -0400
+Message-Id: <20190608114646.9415-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190608114847.9973-1-sashal@kernel.org>
-References: <20190608114847.9973-1-sashal@kernel.org>
+In-Reply-To: <20190608114646.9415-1-sashal@kernel.org>
+References: <20190608114646.9415-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -91,10 +91,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index afaf79b8761f..2d9f4ed9a65e 100644
+index abfb9faadbc4..9b1906a65e11 100644
 --- a/drivers/net/ethernet/renesas/sh_eth.c
 +++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1408,6 +1408,10 @@ static void sh_eth_dev_exit(struct net_device *ndev)
+@@ -1458,6 +1458,10 @@ static void sh_eth_dev_exit(struct net_device *ndev)
  	sh_eth_get_stats(ndev);
  	sh_eth_reset(ndev);
  
