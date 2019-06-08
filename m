@@ -3,108 +3,140 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE900C468BD
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 11:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDBB3C28CC5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 12:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFA921537
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 11:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559994765;
-	bh=lGQ6TM8Ks9aZEQTjN/7Q4LvqRoYdOdivuhha7Z3PTjQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iKenL4nMuoebLL0IBIiTmxE9XrPWwB8LzkjcP8QvDF9nj9vxTCY28DJkX0Lc5oOhM
-	 I965UVCDPE7t3OYEgKTBWO5YAMiqGRbBbnzS0fm2Jf4TLILq+fFFWjEi+yZ5C/Au32
-	 TqSkod4GjSkFpO/8P5pKwj7zbmbesyH50jYc6ZYE=
+	by mail.kernel.org (Postfix) with ESMTP id 9D7AC20693
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Jun 2019 12:53:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="deoBcyw6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbfFHLmK (ORCPT
+        id S1726984AbfFHMxv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 8 Jun 2019 07:42:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbfFHLmJ (ORCPT
+        Sat, 8 Jun 2019 08:53:51 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39206 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbfFHMxu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Jun 2019 07:42:09 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1245214D8;
-        Sat,  8 Jun 2019 11:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559994128;
-        bh=lGQ6TM8Ks9aZEQTjN/7Q4LvqRoYdOdivuhha7Z3PTjQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tDW16SmpStS3+72FUpt5t4LmSKdVAwwzY1pmMWG7eRtQ+hYq6RqAgUgzQm9/wwtEj
-         tkFFrWIJwIxGEWr/BqRko2yV1aCT4BsqzbY5FZpwlUxaR7wORylhlx1wswTUqqh4yx
-         eVTv/u7ZQXYhMFknNJA3/xXAzMyy7Jy2AYlBlF7A=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 59/70] net: sh_eth: fix mdio access in sh_eth_close() for R-Car Gen2 and RZ/A1 SoCs
-Date:   Sat,  8 Jun 2019 07:39:38 -0400
-Message-Id: <20190608113950.8033-59-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190608113950.8033-1-sashal@kernel.org>
-References: <20190608113950.8033-1-sashal@kernel.org>
+        Sat, 8 Jun 2019 08:53:50 -0400
+Received: from localhost.localdomain (unknown [IPv6:2a02:a03f:44f0:8500:ca05:8177:199c:fed4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 002C05D;
+        Sat,  8 Jun 2019 14:53:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1559998429;
+        bh=2tin5FNugJ1JEB3AB00VDlZs3fRZ9cSDSC8RDq1ctg8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=deoBcyw6KZOAVvLza80cXC2th0OKMz86rA1ifXr7yaQl2HDKWeBukF/SFXKq0LCV0
+         cBK6rPcVZA0tZfosJipfkndKnw3kEAaxqA/QKCyplr3myOyPhSn+fWY3nbiD/4xZPa
+         +mYG9vBckPtawFo29gNfLNb8zCYZddlqrUAVj/jE=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] v4l: rcar-fcp: Read IP version register at probe time
+Date:   Sat,  8 Jun 2019 15:53:31 +0300
+Message-Id: <20190608125331.29146-1-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+This helps identifying the IP core version, for debugging purpose only
+for now.
 
-[ Upstream commit 315ca92dd863fecbffc0bb52ae0ac11e0398726a ]
-
-The sh_eth_close() resets the MAC and then calls phy_stop()
-so that mdio read access result is incorrect without any error
-according to kernel trace like below:
-
-ifconfig-216   [003] .n..   109.133124: mdio_access: ee700000.ethernet-ffffffff read  phy:0x01 reg:0x00 val:0xffff
-
-According to the hardware manual, the RMII mode should be set to 1
-before operation the Ethernet MAC. However, the previous code was not
-set to 1 after the driver issued the soft_reset in sh_eth_dev_exit()
-so that the mdio read access result seemed incorrect. To fix the issue,
-this patch adds a condition and set the RMII mode register in
-sh_eth_dev_exit() for R-Car Gen2 and RZ/A1 SoCs.
-
-Note that when I have tried to move the sh_eth_dev_exit() calling
-after phy_stop() on sh_eth_close(), but it gets worse (kernel panic
-happened and it seems that a register is accessed while the clock is
-off).
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/media/platform/rcar-fcp.c | 43 +++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index e33af371b169..48967dd27bbf 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -1594,6 +1594,10 @@ static void sh_eth_dev_exit(struct net_device *ndev)
- 	sh_eth_get_stats(ndev);
- 	mdp->cd->soft_reset(ndev);
+diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
+index 43c78620c9d8..e9b01965052d 100644
+--- a/drivers/media/platform/rcar-fcp.c
++++ b/drivers/media/platform/rcar-fcp.c
+@@ -8,6 +8,7 @@
+  */
  
-+	/* Set the RMII mode again if required */
-+	if (mdp->cd->rmiimode)
-+		sh_eth_write(ndev, 0x1, RMIIMODE);
+ #include <linux/device.h>
++#include <linux/io.h>
+ #include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/mod_devicetable.h>
+@@ -21,11 +22,38 @@
+ struct rcar_fcp_device {
+ 	struct list_head list;
+ 	struct device *dev;
++	void __iomem *iomem;
+ };
+ 
+ static LIST_HEAD(fcp_devices);
+ static DEFINE_MUTEX(fcp_lock);
+ 
++#define FCP_VCR			0x0000
++#define FCP_VCR_CATEGORY_MASK	(0xff << 8)
++#define FCP_VCR_CATEGORY_SHIFT	8
++#define FCP_VCR_REVISION_MASK	(0xff << 0)
++#define FCP_VCR_REVISION_SHIFT	0
 +
- 	/* Set MAC address again */
- 	update_mac_address(ndev);
- }
++#define FCP_CFG0		0x0004
++#define FCP_RST			0x0010
++#define FCP_STA			0x0018
++#define FCP_TL_CTRL		0x0070
++#define FCP_PICINFO1		0x00c4
++#define FCP_BA_ANC_Y0		0x0100
++#define FCP_BA_ANC_Y1		0x0104
++#define FCP_BA_ANC_Y2		0x0108
++#define FCP_BA_ANC_C		0x010c
++#define FCP_BA_REF_Y0		0x0110
++#define FCP_BA_REF_Y1		0x0114
++#define FCP_BA_REF_Y2		0x0118
++#define FCP_BA_REF_C		0x011c
++
++
++static inline u32 rcar_fcp_read(struct rcar_fcp_device *fcp, u32 reg)
++{
++	return ioread32(fcp->iomem + reg);
++}
++
+ /* -----------------------------------------------------------------------------
+  * Public API
+  */
+@@ -129,6 +157,8 @@ EXPORT_SYMBOL_GPL(rcar_fcp_disable);
+ static int rcar_fcp_probe(struct platform_device *pdev)
+ {
+ 	struct rcar_fcp_device *fcp;
++	struct resource *mem;
++	u32 version;
+ 
+ 	fcp = devm_kzalloc(&pdev->dev, sizeof(*fcp), GFP_KERNEL);
+ 	if (fcp == NULL)
+@@ -138,6 +168,19 @@ static int rcar_fcp_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	fcp->iomem = devm_ioremap_resource(&pdev->dev, mem);
++	if (IS_ERR(fcp->iomem))
++		return PTR_ERR(fcp->iomem);
++
++	pm_runtime_get_sync(&pdev->dev);
++	version = rcar_fcp_read(fcp, FCP_VCR);
++	pm_runtime_put(&pdev->dev);
++
++	dev_dbg(&pdev->dev, "FCP category %u revision %u\n",
++		(version & FCP_VCR_CATEGORY_MASK) >> FCP_VCR_CATEGORY_SHIFT,
++		(version & FCP_VCR_REVISION_MASK) >> FCP_VCR_REVISION_SHIFT);
++
+ 	mutex_lock(&fcp_lock);
+ 	list_add_tail(&fcp->list, &fcp_devices);
+ 	mutex_unlock(&fcp_lock);
 -- 
-2.20.1
+Regards,
+
+Laurent Pinchart
 
