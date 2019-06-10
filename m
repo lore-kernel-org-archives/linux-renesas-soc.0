@@ -2,209 +2,130 @@ Return-Path: <SRS0=spe5=UJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4E3C468C1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jun 2019 06:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C94C468C1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jun 2019 07:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0B9A20833
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jun 2019 06:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64B0520859
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jun 2019 07:01:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kKhPtWRj";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oYlI9Fp/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387650AbfFJG3B (ORCPT
+        id S2387721AbfFJHBM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Jun 2019 02:29:01 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:55515 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387464AbfFJG3B (ORCPT
+        Mon, 10 Jun 2019 03:01:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59962 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387582AbfFJHBM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jun 2019 02:29:01 -0400
-X-IronPort-AV: E=Sophos;i="5.60,573,1549897200"; 
-   d="scan'208";a="18044931"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Jun 2019 15:28:58 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6942D4001DC4;
-        Mon, 10 Jun 2019 15:28:58 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     kishon@ti.com
-Cc:     geert+renesas@glider.be, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3] phy: renesas: rcar-gen3-usb2: fix imbalance powered flag
-Date:   Mon, 10 Jun 2019 15:23:55 +0900
-Message-Id: <1560147835-7629-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 10 Jun 2019 03:01:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 06F6360867; Mon, 10 Jun 2019 07:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560150071;
+        bh=a6pX4FZYFU7XLFLEDRMvNOAtnygOukRcVj56PNv7Q+Q=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=kKhPtWRjkWGG0Ywp9i0Fs5eczlJ2bFdCLcuIpHABPfyUToOCDm1kYoJPBABqXpA3c
+         LVodgomkO6z7gfRQv1NR+mIFHeNg+CQmeQH8XN9F500eHPeZTlyQLKIrw2anOWPqOc
+         xVNJeJsj0R3oXDH7MhQg1X19ziWiwFqqY32Y8gsw=
+Received: from x230.qca.qualcomm.com (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7B3C760261;
+        Mon, 10 Jun 2019 07:01:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1560150069;
+        bh=a6pX4FZYFU7XLFLEDRMvNOAtnygOukRcVj56PNv7Q+Q=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=oYlI9Fp/f805fO/brFLieU4EaN76YQ++wFVSyJoK4LZqYfrNcmANENdeUYiPKuAJu
+         cWU9SxSZVLSd2Q8NKeB+S2pSef4qNaRSwIq8CuwYHfcshwGQ4WrcxLBN7jSat+zN2h
+         rqIoaU+f7PL6+ZFuwCGZzug4wTVHUoAFUNTNPd2w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B3C760261
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Spyridon Papageorgiou <spapageorgiou@de.adit-jv.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        "George G . Davis" <george_davis@mentor.com>,
+        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>, eyalr@ti.com
+Subject: Re: [PATCH] wlcore/wl18xx: Add invert-irq OF property for physically inverted IRQ
+References: <20190607172958.20745-1-erosca@de.adit-jv.com>
+Date:   Mon, 10 Jun 2019 10:01:01 +0300
+In-Reply-To: <20190607172958.20745-1-erosca@de.adit-jv.com> (Eugeniu Rosca's
+        message of "Fri, 7 Jun 2019 19:29:58 +0200")
+Message-ID: <87tvcxncuq.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The powered flag should be set for any other phys anyway. Also
-the flag should be locked by the channel. Otherwise, after we have
-revised the device tree for the usb phy, the following warning
-happened during a second system suspend. And if the driver doesn't
-lock the flag, an imbalance is possible when enabling the regulator
-during system resume. So, this patch fixes the issues.
+Eugeniu Rosca <erosca@de.adit-jv.com> writes:
 
-< The warning >
-[   56.026531] unbalanced disables for USB20_VBUS0
-[   56.031108] WARNING: CPU: 3 PID: 513 at drivers/regulator/core.c:2593 _regula
-tor_disable+0xe0/0x1c0
-[   56.040146] Modules linked in: rcar_du_drm rcar_lvds drm_kms_helper drm drm_p
-anel_orientation_quirks vsp1 videobuf2_vmalloc videobuf2_dma_contig videobuf2_me
-mops videobuf2_v4l2 videobuf2_common videodev snd_soc_rcar renesas_usbhs snd_soc
-_audio_graph_card media snd_soc_simple_card_utils crct10dif_ce renesas_usb3 snd_
-soc_ak4613 rcar_fcp pwm_rcar usb_dmac phy_rcar_gen3_usb3 pwm_bl ipv6
-[   56.074047] CPU: 3 PID: 513 Comm: kworker/u16:19 Not tainted 5.2.0-rc3-00001-
-g5f20a19 #6
-[   56.082129] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (
-DT)
-[   56.089524] Workqueue: events_unbound async_run_entry_fn
-[   56.094832] pstate: 40000005 (nZcv daif -PAN -UAO)
-[   56.099617] pc : _regulator_disable+0xe0/0x1c0
-[   56.104054] lr : _regulator_disable+0xe0/0x1c0
-[   56.108489] sp : ffff0000121c3ae0
-[   56.111796] x29: ffff0000121c3ae0 x28: 0000000000000000
-[   56.117102] x27: 0000000000000000 x26: ffff000010fe0e60
-[   56.122407] x25: 0000000000000002 x24: 0000000000000001
-[   56.127712] x23: 0000000000000002 x22: ffff8006f99d4000
-[   56.133017] x21: ffff8006f99cc000 x20: ffff8006f9846800
-[   56.138322] x19: ffff8006f9846800 x18: ffffffffffffffff
-[   56.143626] x17: 0000000000000000 x16: 0000000000000000
-[   56.148931] x15: ffff0000112f96c8 x14: ffff0000921c37f7
-[   56.154235] x13: ffff0000121c3805 x12: ffff000011312000
-[   56.159540] x11: 0000000005f5e0ff x10: ffff0000112f9f20
-[   56.164844] x9 : ffff0000112d3018 x8 : 00000000000001ad
-[   56.170149] x7 : 00000000ffffffcc x6 : ffff8006ff768180
-[   56.175453] x5 : ffff8006ff768180 x4 : 0000000000000000
-[   56.180758] x3 : ffff8006ff76ef10 x2 : ffff8006ff768180
-[   56.186062] x1 : 3d2eccbaead8fb00 x0 : 0000000000000000
-[   56.191367] Call trace:
-[   56.193808]  _regulator_disable+0xe0/0x1c0
-[   56.197899]  regulator_disable+0x40/0x78
-[   56.201820]  rcar_gen3_phy_usb2_power_off+0x3c/0x50
-[   56.206692]  phy_power_off+0x48/0xd8
-[   56.210263]  usb_phy_roothub_power_off+0x30/0x50
-[   56.214873]  usb_phy_roothub_suspend+0x1c/0x50
-[   56.219311]  hcd_bus_suspend+0x13c/0x168
-[   56.223226]  generic_suspend+0x4c/0x58
-[   56.226969]  usb_suspend_both+0x1ac/0x238
-[   56.230972]  usb_suspend+0xcc/0x170
-[   56.234455]  usb_dev_suspend+0x10/0x18
-[   56.238199]  dpm_run_callback.isra.6+0x20/0x68
-[   56.242635]  __device_suspend+0x110/0x308
-[   56.246637]  async_suspend+0x24/0xa8
-[   56.250205]  async_run_entry_fn+0x40/0xf8
-[   56.254210]  process_one_work+0x1e0/0x320
-[   56.258211]  worker_thread+0x40/0x450
-[   56.261867]  kthread+0x124/0x128
-[   56.265094]  ret_from_fork+0x10/0x18
-[   56.268661] ---[ end trace 86d7ec5de5c517af ]---
-[   56.273290] phy phy-ee080200.usb-phy.10: phy poweroff failed --> -5
+> The wl1837mod datasheet [1] says about the WL_IRQ pin:
+>
+>  ---8<---
+> SDIO available, interrupt out. Active high. [..]
+> Set to rising edge (active high) on powerup.
+>  ---8<---
+>
+> That's the reason of seeing the interrupt configured as:
+>  - IRQ_TYPE_EDGE_RISING on HiKey 960/970
+>  - IRQ_TYPE_LEVEL_HIGH on a number of i.MX6 platforms
+>
+> We assert that all those platforms have the WL_IRQ pin connected
+> to the SoC _directly_ (confirmed on HiKey 970 [2]).
+>
+> That's not the case for R-Car Kingfisher extension target, which carries
+> a WL1837MODGIMOCT IC. There is an SN74LV1T04DBVR inverter present
+> between the WLAN_IRQ pin of the WL18* chip and the SoC, effectively
+> reversing the requirement quoted from [1]. IOW, in Kingfisher DTS
+> configuration we would need to use IRQ_TYPE_EDGE_FALLING or
+> IRQ_TYPE_LEVEL_LOW.
+>
+> Unfortunately, v4.2-rc1 commit bd763482c82ea2 ("wl18xx: wlan_irq:
+> support platform dependent interrupt types") made a special case out
+> of these interrupt types. After this commit, it is impossible to provide
+> an IRQ configuration via DTS which would describe an inverter present
+> between the WL18* chip and the SoC, generating the need for workarounds
+> like [3].
+>
+> Create a boolean OF property, called "invert-irq" to specify that
+> the WLAN_IRQ pin of WL18* is connected to the SoC via an inverter.
+>
+> This solution has been successfully tested on R-Car H3ULCB-KF-M06 using
+> the DTS configuration [4] combined with the "invert-irq" property.
+>
+> [1] http://www.ti.com/lit/ds/symlink/wl1837mod.pdf
+> [2] https://www.96boards.org/documentation/consumer/hikey/hikey970/hardware-docs/
+> [3] https://github.com/CogentEmbedded/meta-rcar/blob/289fbd4f8354/meta-rcar-gen3-adas/recipes-kernel/linux/linux-renesas/0024-wl18xx-do-not-invert-IRQ-on-WLxxxx-side.patch
+> [4] https://patchwork.kernel.org/patch/10895879/
+>     ("arm64: dts: ulcb-kf: Add support for TI WL1837")
+>
+> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
 
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Fixes: 549b6b55b005 ("phy: renesas: rcar-gen3-usb2: enable/disable independent irqs")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+Tony&Eyal, do you agree with this?
 
-Changes from v2:
- - Revise the commit log.
- - Add a comment on the mutex definition.
- - Add Geert-san's Reviewed-by and Tested-by.
- https://patchwork.kernel.org/patch/10981299/
-
-Changes from v1:
- - Add mutex lock to avoid enabling the regulator imbalance during resume.
- - I got Geert-san's Tested-by, but I didn't add the tag because
-   v1 still has the imbalance issue above.
- https://patchwork.kernel.org/patch/10976299/
-
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 1322185..8ffba67 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -13,6 +13,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_device.h>
-@@ -106,6 +107,7 @@ struct rcar_gen3_chan {
- 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
- 	struct regulator *vbus;
- 	struct work_struct work;
-+	struct mutex lock;	/* protects rphys[...].powered */
- 	enum usb_dr_mode dr_mode;
- 	bool extcon_host;
- 	bool is_otg_channel;
-@@ -437,15 +439,16 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	void __iomem *usb2_base = channel->base;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 
-+	mutex_lock(&channel->lock);
- 	if (!rcar_gen3_are_all_rphys_power_off(channel))
--		return 0;
-+		goto out;
- 
- 	if (channel->vbus) {
- 		ret = regulator_enable(channel->vbus);
- 		if (ret)
--			return ret;
-+			goto out;
- 	}
- 
- 	val = readl(usb2_base + USB2_USBCTR);
-@@ -454,7 +457,10 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
- 	val &= ~USB2_USBCTR_PLL_RST;
- 	writel(val, usb2_base + USB2_USBCTR);
- 
-+out:
-+	/* The powered flag should be set for any other phys anyway */
- 	rphy->powered = true;
-+	mutex_unlock(&channel->lock);
- 
- 	return 0;
- }
-@@ -465,14 +471,18 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *p)
- 	struct rcar_gen3_chan *channel = rphy->ch;
- 	int ret = 0;
- 
-+	mutex_lock(&channel->lock);
- 	rphy->powered = false;
- 
- 	if (!rcar_gen3_are_all_rphys_power_off(channel))
--		return 0;
-+		goto out;
- 
- 	if (channel->vbus)
- 		ret = regulator_disable(channel->vbus);
- 
-+out:
-+	mutex_unlock(&channel->lock);
-+
- 	return ret;
- }
- 
-@@ -639,6 +649,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
- 	if (!phy_usb2_ops)
- 		return -EINVAL;
- 
-+	mutex_init(&channel->lock);
- 	for (i = 0; i < NUM_OF_PHYS; i++) {
- 		channel->rphys[i].phy = devm_phy_create(dev, NULL,
- 							phy_usb2_ops);
 -- 
-2.7.4
-
+Kalle Valo
