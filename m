@@ -4,95 +4,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0FFC43218
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jun 2019 12:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAE6C43218
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jun 2019 13:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB8520673
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jun 2019 12:30:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF47E20673
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jun 2019 13:07:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbfFKMab (ORCPT
+        id S2389772AbfFKNHH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Jun 2019 08:30:31 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:43206 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfFKMab (ORCPT
+        Tue, 11 Jun 2019 09:07:07 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:25340 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387657AbfFKNHG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jun 2019 08:30:31 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 318E625B81D;
-        Tue, 11 Jun 2019 22:30:29 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 33C0B9403F0; Tue, 11 Jun 2019 14:30:27 +0200 (CEST)
-Date:   Tue, 11 Jun 2019 14:30:27 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Tue, 11 Jun 2019 09:07:06 -0400
+X-IronPort-AV: E=Sophos;i="5.60,579,1549897200"; 
+   d="scan'208";a="18183671"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 11 Jun 2019 22:07:04 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E33D74004BD9;
+        Tue, 11 Jun 2019 22:07:01 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH/RFT] arm64: dts: renesas: r8a77990: Fix register range of
- display node
-Message-ID: <20190611123022.oo4arh76w72vlkg5@verge.net.au>
-References: <1560084198-2930-1-git-send-email-ykaneko0929@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1560084198-2930-1-git-send-email-ykaneko0929@gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 1/6] arm64: dts: renesas: r8a774a1: Fix USB 2.0 clocks
+Date:   Tue, 11 Jun 2019 14:06:36 +0100
+Message-Id: <1560258401-9517-2-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1560258401-9517-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1560258401-9517-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-+ Laurent
+Similarly to what done for the r8a7796 with commit 737e05bf034e
+("arm64: dts: renesas: revise properties for R-Car Gen3 SoCs'
+usb 2.0"), this patch lists the clock for the USB High-Speed Module
+(HS-USB) with the USB2.0 Host (EHCI/OHCI) IP DT node, and it lists
+the clock for the USB2.0 Host IP with the HS-USB module DT node.
 
-On Sun, Jun 09, 2019 at 09:43:18PM +0900, Yoshihiro Kaneko wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> 
-> Since the R8A77990 SoC uses DU{0,1}, the range from the base address to
-> the 0x4000 address is used.
-> This patch fixed it.
-> 
-> Fixes: 13ee2bfc5444 ("arm64: dts: renesas: r8a77990: Add display output support")
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Fixes: 4c2c2fb99876 ("arm64: dts: renesas: r8a774a1: Add USB2.0 phy and host(EHCI/OHCI) device nodes")
+Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and HSUSB device nodes")
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Thanks,
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index eb9f299..4a12a42 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -649,7 +649,7 @@
+ 				     "renesas,rcar-gen3-usbhs";
+ 			reg = <0 0xe6590000 0 0x200>;
+ 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 704>;
++			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
+ 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
+ 			       <&usb_dmac1 0>, <&usb_dmac1 1>;
+ 			dma-names = "ch0", "ch1", "ch2", "ch3";
+@@ -657,7 +657,7 @@
+ 			phys = <&usb2_phy0 3>;
+ 			phy-names = "usb";
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 704>;
++			resets = <&cpg 704>, <&cpg 703>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1780,11 +1780,11 @@
+ 			compatible = "generic-ohci";
+ 			reg = <0 0xee080000 0 0x100>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			phys = <&usb2_phy0 1>;
+ 			phy-names = "usb";
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1804,12 +1804,12 @@
+ 			compatible = "generic-ehci";
+ 			reg = <0 0xee080100 0 0x100>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			phys = <&usb2_phy0 2>;
+ 			phy-names = "usb";
+ 			companion = <&ohci0>;
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1831,9 +1831,9 @@
+ 				     "renesas,rcar-gen3-usb2-phy";
+ 			reg = <0 0xee080200 0 0x700>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			#phy-cells = <1>;
+ 			status = "disabled";
+ 		};
+-- 
+2.7.4
 
-This looks fine to me but I will wait to see if there are other reviews
-before applying.
-
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-Is a similar fix also appropriate for D3 (r8a77995)
-
-And a variant that reduces the register size to 0x5000
-for M3-W (r8a77965).
-
-> ---
-> 
-> This patch is based on the devel branch of Simon Horman's renesas tree.
-> 
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> index 547e970..9b15da1 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> @@ -1760,7 +1760,7 @@
->  
->  		du: display@feb00000 {
->  			compatible = "renesas,du-r8a77990";
-> -			reg = <0 0xfeb00000 0 0x80000>;
-> +			reg = <0 0xfeb00000 0 0x40000>;
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cpg CPG_MOD 724>,
-> -- 
-> 1.9.1
-> 
