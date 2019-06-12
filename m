@@ -2,88 +2,63 @@ Return-Path: <SRS0=TiSs=UL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B40C31E46
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4674BC31E46
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66D82082C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F86320665
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbfFLLqr (ORCPT
+        id S1729565AbfFLLsw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Jun 2019 07:46:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40730 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726167AbfFLLqr (ORCPT
+        Wed, 12 Jun 2019 07:48:52 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:38252 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfFLLsw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:46:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 15D42AE5A;
-        Wed, 12 Jun 2019 11:46:46 +0000 (UTC)
-Message-ID: <1560339966.9728.18.camel@suse.com>
-Subject: Re: How to resolve an issue in swiotlb environment?
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Wed, 12 Jun 2019 07:48:52 -0400
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 03A1725AD60;
+        Wed, 12 Jun 2019 21:48:50 +1000 (AEST)
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id EE8DBE21FE5; Wed, 12 Jun 2019 13:48:47 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 13:48:47 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Date:   Wed, 12 Jun 2019 13:46:06 +0200
-In-Reply-To: <20190612073059.GA20086@lst.de>
-References: <20190611064158.GA20601@lst.de>
-         <Pine.LNX.4.44L0.1906110956510.1535-100000@iolanthe.rowland.org>
-         <20190612073059.GA20086@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a774a1: Add PCIe device nodes
+Message-ID: <20190612114847.5owtl7hfqearwrkd@verge.net.au>
+References: <1559891639-62529-1-git-send-email-biju.das@bp.renesas.com>
+ <1559891639-62529-2-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdUReQtusF5tJCYn4QMn+kOonT6i_FRzSx4Xf32uBsFiWw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUReQtusF5tJCYn4QMn+kOonT6i_FRzSx4Xf32uBsFiWw@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Am Mittwoch, den 12.06.2019, 09:30 +0200 schrieb Christoph Hellwig:
+On Wed, Jun 12, 2019 at 09:56:00AM +0200, Geert Uytterhoeven wrote:
+> On Fri, Jun 7, 2019 at 9:18 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> > This patch adds PCIe{0,1} device nodes for R8A774A1 SoC.
+> >
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > 
-> So based on the above I'm a little confused about the actual requirement
-> again.  Can you still split the SCSI command into multiple URBs?  And
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yes. The device sees only a number of packets over the wire. They can
-come from an arbitrary number of URBs with the two restrictions that
-- we cannot split a packet among URBs
-- every packet but the last must be a multiple of maxpacket
-
-> is the boundary for that split still the scatterlist entry as in the
-> description above?  If so I don't really see how the virt_boundary
-> helps you at all. as it only guarnatees that in a bio, each subsequent
-> segment start as the advertised virt_boundary.  It says nothing about
-> the size of each segment.
-
-That is problematic.
-
-> Thay is someething the virt_boundary prevents.  But could still give
-> you something like:
-> 
-> 	1536 4096 4096 1024
-> 
-> or
-> 	1536 16384 8192 4096 16384 512
-
-That would kill the driver, if maxpacket were 1024.
-
-USB has really two kinds of requirements
-
-1. What comes from the protocol
-2. What comes from the HCD
-
-The protocol wants just multiples of maxpacket. XHCI can satisfy
-that in arbitrary scatter/gather. Other HCs cannot.
-
-	Regards
-		Oliver
-
+Thanks, applied for inclusion in v5.3.
