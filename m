@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48602C31E49
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A912C31E45
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26A6820665
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FBD720665
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbfFMRBO (ORCPT
+        id S2389621AbfFMRBP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 13:01:14 -0400
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32342 "EHLO
+        Thu, 13 Jun 2019 13:01:15 -0400
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32334 "EHLO
         bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729740AbfFLXqX (ORCPT
+        by vger.kernel.org with ESMTP id S1729737AbfFLXqW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jun 2019 19:46:23 -0400
-X-Halon-ID: 424e0b75-8d6c-11e9-8ab4-005056917a89
+        Wed, 12 Jun 2019 19:46:22 -0400
+X-Halon-ID: 41eb57f1-8d6c-11e9-8ab4-005056917a89
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (unknown [89.233.230.99])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 424e0b75-8d6c-11e9-8ab4-005056917a89;
-        Thu, 13 Jun 2019 01:46:12 +0200 (CEST)
+        id 41eb57f1-8d6c-11e9-8ab4-005056917a89;
+        Thu, 13 Jun 2019 01:46:11 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -34,9 +34,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>,
         Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v3 8/8] rcar-vin: Merge Gen2 and Gen3 file operations
-Date:   Thu, 13 Jun 2019 01:45:47 +0200
-Message-Id: <20190612234547.14486-9-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 7/8] rcar-vin: Fold rvin_initialize_device() into rvin_open()
+Date:   Thu, 13 Jun 2019 01:45:46 +0200
+Message-Id: <20190612234547.14486-8-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190612234547.14486-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20190612234547.14486-1-niklas.soderlund+renesas@ragnatech.se>
@@ -48,160 +48,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-After the rework of the Gen2 file operations it's now trivial to merge
-the Gen2 and Gen3 versions.
+The function no longer serve a purpose as most tasks it performed have
+been refactored, fold what remains of it into the only caller. While at
+it add error checking for v4l2_ctrl_handler_setup().
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 100 ++++----------------
- 1 file changed, 18 insertions(+), 82 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 24 +++++++--------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index a84a07f1588cc818..0936bcd98df1f75d 100644
+index 5a01b617c87dccf1..a84a07f1588cc818 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -781,16 +781,21 @@ static int rvin_open(struct file *file)
- 	if (ret)
+@@ -762,20 +762,6 @@ static int rvin_power_parallel(struct rvin_dev *vin, bool on)
+ 	return 0;
+ }
+ 
+-static int rvin_initialize_device(struct file *file)
+-{
+-	struct rvin_dev *vin = video_drvdata(file);
+-	int ret;
+-
+-	ret = rvin_power_parallel(vin, true);
+-	if (ret < 0)
+-		return ret;
+-
+-	v4l2_ctrl_handler_setup(&vin->ctrl_handler);
+-
+-	return 0;
+-}
+-
+ static int rvin_open(struct file *file)
+ {
+ 	struct rvin_dev *vin = video_drvdata(file);
+@@ -796,14 +782,20 @@ static int rvin_open(struct file *file)
  		goto err_unlock;
  
--	if (v4l2_fh_is_singular_file(file)) {
--		ret = rvin_power_parallel(vin, true);
-+	if (vin->info->use_mc) {
-+		ret = v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
- 		if (ret < 0)
- 			goto err_open;
-+	} else {
-+		if (v4l2_fh_is_singular_file(file)) {
-+			ret = rvin_power_parallel(vin, true);
-+			if (ret < 0)
-+				goto err_open;
- 
--		ret = v4l2_ctrl_handler_setup(&vin->ctrl_handler);
+ 	if (v4l2_fh_is_singular_file(file)) {
+-		ret = rvin_initialize_device(file);
 -		if (ret)
--			goto err_parallel;
-+			ret = v4l2_ctrl_handler_setup(&vin->ctrl_handler);
-+			if (ret)
-+				goto err_parallel;
-+		}
++		ret = rvin_power_parallel(vin, true);
++		if (ret < 0)
+ 			goto err_open;
++
++		ret = v4l2_ctrl_handler_setup(&vin->ctrl_handler);
++		if (ret)
++			goto err_parallel;
  	}
--
+ 
  	mutex_unlock(&vin->lock);
  
  	return 0;
-@@ -820,12 +825,12 @@ static int rvin_release(struct file *file)
- 	/* the release helper will cleanup any on-going streaming */
- 	ret = _vb2_fop_release(file, NULL);
- 
--	/*
--	 * If this was the last open file.
--	 * Then de-initialize hw module.
--	 */
--	if (fh_singular)
--		rvin_power_parallel(vin, false);
-+	if (vin->info->use_mc) {
-+		v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
-+	} else {
-+		if (fh_singular)
-+			rvin_power_parallel(vin, false);
-+	}
- 
- 	mutex_unlock(&vin->lock);
- 
-@@ -844,74 +849,6 @@ static const struct v4l2_file_operations rvin_fops = {
- 	.read		= vb2_fop_read,
- };
- 
--/* -----------------------------------------------------------------------------
-- * Media controller file operations
-- */
--
--static int rvin_mc_open(struct file *file)
--{
--	struct rvin_dev *vin = video_drvdata(file);
--	int ret;
--
--	ret = mutex_lock_interruptible(&vin->lock);
--	if (ret)
--		return ret;
--
--	ret = pm_runtime_get_sync(vin->dev);
--	if (ret < 0)
--		goto err_unlock;
--
--	ret = v4l2_pipeline_pm_use(&vin->vdev.entity, 1);
--	if (ret < 0)
--		goto err_pm;
--
--	file->private_data = vin;
--
--	ret = v4l2_fh_open(file);
--	if (ret)
--		goto err_v4l2pm;
--
--	mutex_unlock(&vin->lock);
--
--	return 0;
--err_v4l2pm:
--	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
--err_pm:
--	pm_runtime_put(vin->dev);
--err_unlock:
--	mutex_unlock(&vin->lock);
--
--	return ret;
--}
--
--static int rvin_mc_release(struct file *file)
--{
--	struct rvin_dev *vin = video_drvdata(file);
--	int ret;
--
--	mutex_lock(&vin->lock);
--
--	/* the release helper will cleanup any on-going streaming. */
--	ret = _vb2_fop_release(file, NULL);
--
--	v4l2_pipeline_pm_use(&vin->vdev.entity, 0);
--	pm_runtime_put(vin->dev);
--
--	mutex_unlock(&vin->lock);
--
--	return ret;
--}
--
--static const struct v4l2_file_operations rvin_mc_fops = {
--	.owner		= THIS_MODULE,
--	.unlocked_ioctl	= video_ioctl2,
--	.open		= rvin_mc_open,
--	.release	= rvin_mc_release,
--	.poll		= vb2_fop_poll,
--	.mmap		= vb2_fop_mmap,
--	.read		= vb2_fop_read,
--};
--
- void rvin_v4l2_unregister(struct rvin_dev *vin)
- {
- 	if (!video_is_registered(&vin->vdev))
-@@ -952,6 +889,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	snprintf(vdev->name, sizeof(vdev->name), "VIN%u output", vin->id);
- 	vdev->release = video_device_release_empty;
- 	vdev->lock = &vin->lock;
-+	vdev->fops = &rvin_fops;
- 	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING |
- 		V4L2_CAP_READWRITE;
- 
-@@ -963,10 +901,8 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
- 
- 	if (vin->info->use_mc) {
--		vdev->fops = &rvin_mc_fops;
- 		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
- 	} else {
--		vdev->fops = &rvin_fops;
- 		vdev->ioctl_ops = &rvin_ioctl_ops;
- 		rvin_reset_format(vin);
- 	}
++err_parallel:
++	rvin_power_parallel(vin, false);
+ err_open:
+ 	v4l2_fh_release(file);
+ err_unlock:
 -- 
 2.21.0
 
