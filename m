@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A912C31E45
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8ADC31E49
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FBD720665
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7572B20665
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389621AbfFMRBP (ORCPT
+        id S1727832AbfFMRBR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 13:01:15 -0400
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:32334 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729737AbfFLXqW (ORCPT
+        Thu, 13 Jun 2019 13:01:17 -0400
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:52141 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729735AbfFLXqV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jun 2019 19:46:22 -0400
-X-Halon-ID: 41eb57f1-8d6c-11e9-8ab4-005056917a89
+        Wed, 12 Jun 2019 19:46:21 -0400
+X-Halon-ID: 41a26adf-8d6c-11e9-8ab4-005056917a89
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (unknown [89.233.230.99])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 41eb57f1-8d6c-11e9-8ab4-005056917a89;
+        id 41a26adf-8d6c-11e9-8ab4-005056917a89;
         Thu, 13 Jun 2019 01:46:11 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
@@ -34,9 +34,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>,
         Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v3 7/8] rcar-vin: Fold rvin_initialize_device() into rvin_open()
-Date:   Thu, 13 Jun 2019 01:45:46 +0200
-Message-Id: <20190612234547.14486-8-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 6/8] rcar-vin: Merge helpers dealing with powering the parallel subdevice
+Date:   Thu, 13 Jun 2019 01:45:45 +0200
+Message-Id: <20190612234547.14486-7-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190612234547.14486-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20190612234547.14486-1-niklas.soderlund+renesas@ragnatech.se>
@@ -48,64 +48,66 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The function no longer serve a purpose as most tasks it performed have
-been refactored, fold what remains of it into the only caller. While at
-it add error checking for v4l2_ctrl_handler_setup().
+The two power helpers are now only dealing with the parallel subdevice,
+merge them into a single rvin_power_parallel() helper to reduce code
+duplication.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 24 +++++++--------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 5a01b617c87dccf1..a84a07f1588cc818 100644
+index c84962073cf6027f..5a01b617c87dccf1 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -762,20 +762,6 @@ static int rvin_power_parallel(struct rvin_dev *vin, bool on)
- 	return 0;
- }
+@@ -749,23 +749,13 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
+  * File Operations
+  */
  
--static int rvin_initialize_device(struct file *file)
--{
--	struct rvin_dev *vin = video_drvdata(file);
+-static int rvin_power_on(struct rvin_dev *vin)
++static int rvin_power_parallel(struct rvin_dev *vin, bool on)
+ {
 -	int ret;
+ 	struct v4l2_subdev *sd = vin_to_source(vin);
 -
--	ret = rvin_power_parallel(vin, true);
--	if (ret < 0)
+-	ret = v4l2_subdev_call(sd, core, s_power, 1);
+-	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
 -		return ret;
--
--	v4l2_ctrl_handler_setup(&vin->ctrl_handler);
--
 -	return 0;
 -}
 -
- static int rvin_open(struct file *file)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
-@@ -796,14 +782,20 @@ static int rvin_open(struct file *file)
- 		goto err_unlock;
+-static int rvin_power_off(struct rvin_dev *vin)
+-{
++	int power = on ? 1 : 0;
+ 	int ret;
+-	struct v4l2_subdev *sd = vin_to_source(vin);
  
- 	if (v4l2_fh_is_singular_file(file)) {
--		ret = rvin_initialize_device(file);
--		if (ret)
-+		ret = rvin_power_parallel(vin, true);
-+		if (ret < 0)
- 			goto err_open;
-+
-+		ret = v4l2_ctrl_handler_setup(&vin->ctrl_handler);
-+		if (ret)
-+			goto err_parallel;
- 	}
+-	ret = v4l2_subdev_call(sd, core, s_power, 0);
++	ret = v4l2_subdev_call(sd, core, s_power, power);
+ 	if (ret < 0 && ret != -ENOIOCTLCMD && ret != -ENODEV)
+ 		return ret;
+ 
+@@ -777,7 +767,7 @@ static int rvin_initialize_device(struct file *file)
+ 	struct rvin_dev *vin = video_drvdata(file);
+ 	int ret;
+ 
+-	ret = rvin_power_on(vin);
++	ret = rvin_power_parallel(vin, true);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -843,7 +833,7 @@ static int rvin_release(struct file *file)
+ 	 * Then de-initialize hw module.
+ 	 */
+ 	if (fh_singular)
+-		rvin_power_off(vin);
++		rvin_power_parallel(vin, false);
  
  	mutex_unlock(&vin->lock);
  
- 	return 0;
-+err_parallel:
-+	rvin_power_parallel(vin, false);
- err_open:
- 	v4l2_fh_release(file);
- err_unlock:
 -- 
 2.21.0
 
