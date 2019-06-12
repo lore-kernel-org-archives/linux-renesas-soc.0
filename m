@@ -2,50 +2,48 @@ Return-Path: <SRS0=TiSs=UL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4674BC31E46
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13679C31E46
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F86320665
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDF4820665
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 11:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbfFLLsw (ORCPT
+        id S1729607AbfFLLuG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Jun 2019 07:48:52 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:38252 "EHLO
+        Wed, 12 Jun 2019 07:50:06 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:38364 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726004AbfFLLsw (ORCPT
+        with ESMTP id S1726004AbfFLLuG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jun 2019 07:48:52 -0400
+        Wed, 12 Jun 2019 07:50:06 -0400
 Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 03A1725AD60;
-        Wed, 12 Jun 2019 21:48:50 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2B26325AD60;
+        Wed, 12 Jun 2019 21:50:04 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id EE8DBE21FE5; Wed, 12 Jun 2019 13:48:47 +0200 (CEST)
-Date:   Wed, 12 Jun 2019 13:48:47 +0200
+        id 1FDE0E21FE5; Wed, 12 Jun 2019 13:50:02 +0200 (CEST)
+Date:   Wed, 12 Jun 2019 13:50:02 +0200
 From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: Re: [PATCH 1/3] arm64: dts: renesas: r8a774a1: Add PCIe device nodes
-Message-ID: <20190612114847.5owtl7hfqearwrkd@verge.net.au>
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: hihope-common: Declare pcie bus
+ clock
+Message-ID: <20190612115001.xmalqxe7m2lasqzs@verge.net.au>
 References: <1559891639-62529-1-git-send-email-biju.das@bp.renesas.com>
- <1559891639-62529-2-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdUReQtusF5tJCYn4QMn+kOonT6i_FRzSx4Xf32uBsFiWw@mail.gmail.com>
+ <1559891639-62529-3-git-send-email-biju.das@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdUReQtusF5tJCYn4QMn+kOonT6i_FRzSx4Xf32uBsFiWw@mail.gmail.com>
+In-Reply-To: <1559891639-62529-3-git-send-email-biju.das@bp.renesas.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -53,12 +51,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 09:56:00AM +0200, Geert Uytterhoeven wrote:
-> On Fri, Jun 7, 2019 at 9:18 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> > This patch adds PCIe{0,1} device nodes for R8A774A1 SoC.
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+On Fri, Jun 07, 2019 at 08:13:58AM +0100, Biju Das wrote:
+> Declare pcie bus clock, since it is generated on the HiHope RZ/G2M main
+> board.
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
 Thanks, applied for inclusion in v5.3.
+
+> ---
+>  arch/arm64/boot/dts/renesas/hihope-common.dtsi | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> index 4cc924d..95ac6fa 100644
+> --- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+> @@ -26,6 +26,10 @@
+>  	clock-frequency = <32768>;
+>  };
+>  
+> +&pcie_bus_clk {
+> +	clock-frequency = <100000000>;
+> +};
+> +
+>  &pfc {
+>  	pinctrl-0 = <&scif_clk_pins>;
+>  	pinctrl-names = "default";
+> -- 
+> 2.7.4
+> 
