@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF1BC31E49
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831F3C31E4C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9229720851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59E3F20851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730563AbfFMPyj (ORCPT
+        id S2388259AbfFMPyj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 13 Jun 2019 11:54:39 -0400
-Received: from sauhun.de ([88.99.104.3]:41940 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:41930 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731773AbfFMPy1 (ORCPT
+        id S2390084AbfFMPy0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:54:27 -0400
+        Thu, 13 Jun 2019 11:54:26 -0400
 Received: from localhost (p5486CF99.dip0.t-ipconnect.de [84.134.207.153])
-        by pokefinder.org (Postfix) with ESMTPSA id 6F2F24A12AA;
-        Thu, 13 Jun 2019 17:54:25 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id DDE0F4A129C;
+        Thu, 13 Jun 2019 17:54:24 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Antti Palosaari <crope@iki.fi>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] media: mn88473: don't check retval after our own assignemt
-Date:   Thu, 13 Jun 2019 17:54:19 +0200
-Message-Id: <20190613155421.16408-4-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/4] media: mn88472: don't check retval after our own assignemt
+Date:   Thu, 13 Jun 2019 17:54:18 +0200
+Message-Id: <20190613155421.16408-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
 References: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
@@ -47,15 +47,15 @@ No need to check a retval after we assigned a constant to it.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/media/dvb-frontends/mn88473.c | 6 ++----
+ drivers/media/dvb-frontends/mn88472.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/mn88473.c b/drivers/media/dvb-frontends/mn88473.c
-index 08118b38533b..d1b11909825c 100644
---- a/drivers/media/dvb-frontends/mn88473.c
-+++ b/drivers/media/dvb-frontends/mn88473.c
-@@ -661,8 +661,7 @@ static int mn88473_probe(struct i2c_client *client,
- 	if (dev->client[1] == NULL) {
+diff --git a/drivers/media/dvb-frontends/mn88472.c b/drivers/media/dvb-frontends/mn88472.c
+index 731b44b9b74c..0a4d0d5fb4b6 100644
+--- a/drivers/media/dvb-frontends/mn88472.c
++++ b/drivers/media/dvb-frontends/mn88472.c
+@@ -616,8 +616,7 @@ static int mn88472_probe(struct i2c_client *client,
+ 	if (!dev->client[1]) {
  		ret = -ENODEV;
  		dev_err(&client->dev, "I2C registration failed\n");
 -		if (ret)
@@ -64,8 +64,8 @@ index 08118b38533b..d1b11909825c 100644
  	}
  	dev->regmap[1] = regmap_init_i2c(dev->client[1], &regmap_config);
  	if (IS_ERR(dev->regmap[1])) {
-@@ -675,8 +674,7 @@ static int mn88473_probe(struct i2c_client *client,
- 	if (dev->client[2] == NULL) {
+@@ -630,8 +629,7 @@ static int mn88472_probe(struct i2c_client *client,
+ 	if (!dev->client[2]) {
  		ret = -ENODEV;
  		dev_err(&client->dev, "2nd I2C registration failed\n");
 -		if (ret)
