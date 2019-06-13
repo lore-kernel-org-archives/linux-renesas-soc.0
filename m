@@ -2,69 +2,64 @@ Return-Path: <SRS0=IHaP=UM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5430EC31E45
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CA8C46477
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371BA208CA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744B220851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbfFMPyv (ORCPT
+        id S1731543AbfFMPzb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:54:51 -0400
-Received: from sauhun.de ([88.99.104.3]:41922 "EHLO pokefinder.org"
+        Thu, 13 Jun 2019 11:55:31 -0400
+Received: from verein.lst.de ([213.95.11.211]:36706 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390076AbfFMPy0 (ORCPT
+        id S1731539AbfFMIvu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jun 2019 11:54:26 -0400
-Received: from localhost (p5486CF99.dip0.t-ipconnect.de [84.134.207.153])
-        by pokefinder.org (Postfix) with ESMTPSA id 4BA5D4A1290;
-        Thu, 13 Jun 2019 17:54:24 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] media: cxd2820r: don't check retval after our own assignemt
-Date:   Thu, 13 Jun 2019 17:54:17 +0200
-Message-Id: <20190613155421.16408-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
-References: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
+        Thu, 13 Jun 2019 04:51:50 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id AC80D68B02; Thu, 13 Jun 2019 10:51:21 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 10:51:21 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "usb-storage@lists.one-eyed-alien.net" 
+        <usb-storage@lists.one-eyed-alien.net>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] usb-storage: Add a limitation for
+ blk_queue_max_hw_sectors()
+Message-ID: <20190613085121.GA13442@lst.de>
+References: <1560400504-26884-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <20190613073346.GB12093@lst.de> <OSAPR01MB30899FBDA010F0465599437AD8EF0@OSAPR01MB3089.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSAPR01MB30899FBDA010F0465599437AD8EF0@OSAPR01MB3089.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-No need to check a retval after we assigned a constant to it.
+On Thu, Jun 13, 2019 at 08:46:00AM +0000, Yoshihiro Shimoda wrote:
+> I believe this patch I sent has already covered it. What do you think?
+> 
+> For examples (all value units are "sectors"):
+> 	default	mapping size	max_sectors
+> case 1	240	MAX		2048		--> we use 2048
+> case 2	240	512		2048		--> we use 512
+> case 3	240	128		2048		--> we use 128
+> case 4	240	128		64		--> we use 64
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/media/dvb-frontends/cxd2820r_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Yes, I guess your version is fine after all:
 
-diff --git a/drivers/media/dvb-frontends/cxd2820r_core.c b/drivers/media/dvb-frontends/cxd2820r_core.c
-index 1f006f8e8cc2..99a186ddddb2 100644
---- a/drivers/media/dvb-frontends/cxd2820r_core.c
-+++ b/drivers/media/dvb-frontends/cxd2820r_core.c
-@@ -636,8 +636,7 @@ static int cxd2820r_probe(struct i2c_client *client,
- 	if (!priv->client[1]) {
- 		ret = -ENODEV;
- 		dev_err(&client->dev, "I2C registration failed\n");
--		if (ret)
--			goto err_regmap_0_regmap_exit;
-+		goto err_regmap_0_regmap_exit;
- 	}
- 
- 	priv->regmap[1] = regmap_init_i2c(priv->client[1], &regmap_config1);
--- 
-2.20.1
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
+although I think it might be simpler to just read the value back
+from the queue in the end.
