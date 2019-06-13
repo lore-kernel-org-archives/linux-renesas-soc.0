@@ -1,91 +1,94 @@
-Return-Path: <SRS0=TiSs=UL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=IHaP=UM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=AC_FROM_MANY_DOTS,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105B6C31E48
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 21:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14322C31E49
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA6AF21743
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Jun 2019 21:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1EC32082C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:29:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfFLVMv (ORCPT
+        id S1727535AbfFMP3w (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Jun 2019 17:12:51 -0400
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:58481 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727233AbfFLVMv (ORCPT
+        Thu, 13 Jun 2019 11:29:52 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:22282 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728643AbfFMLTM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Jun 2019 17:12:51 -0400
-X-Halon-ID: d2605675-8d56-11e9-8d05-005056917f90
-Authorized-sender: niklas@soderlund.pp.se
-Received: from bismarck.berto.se (unknown [89.233.230.99])
-        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id d2605675-8d56-11e9-8d05-005056917f90;
-        Wed, 12 Jun 2019 23:12:47 +0200 (CEST)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v2] dt-bindings: rcar-{csi2,vin}: Rename bindings documentation files
-Date:   Wed, 12 Jun 2019 23:12:41 +0200
-Message-Id: <20190612211241.1455-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 13 Jun 2019 07:19:12 -0400
+X-IronPort-AV: E=Sophos;i="5.62,369,1554735600"; 
+   d="scan'208";a="18384428"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 13 Jun 2019 20:19:10 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 86BC2427E065;
+        Thu, 13 Jun 2019 20:19:10 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: Use struct assignment instead of memcpy()
+Date:   Thu, 13 Jun 2019 20:18:48 +0900
+Message-Id: <1560424728-13929-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Renesas media binding documentation files uses a naming schema of
-'renesas,<module>.txt'. Rename VIN and CSI-2 files to match this
-pattern.
+To avoid the error-proneness of calls to sizeof() in the memcpy,
+this patch uses struct assignment instead of memcpy.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- .../media/{renesas,rcar-csi2.txt => renesas,csi2.txt}         | 0
- .../bindings/media/{rcar_vin.txt => renesas,vin.txt}          | 0
- MAINTAINERS                                                   | 4 ++--
- 3 files changed, 2 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/media/{renesas,rcar-csi2.txt => renesas,csi2.txt} (100%)
- rename Documentation/devicetree/bindings/media/{rcar_vin.txt => renesas,vin.txt} (100%)
+ This patch is based on Greg's linux-usb.git / usb-next branch.
+ Note that mod_host.c also has memcpy but we cannot use struct assignment
+ for it because the type of urb->setup_patcket is just "unsigned char *".
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt b/Documentation/devicetree/bindings/media/renesas,csi2.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
-rename to Documentation/devicetree/bindings/media/renesas,csi2.txt
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/renesas,vin.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/media/rcar_vin.txt
-rename to Documentation/devicetree/bindings/media/renesas,vin.txt
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6a3bac28ebb47830..a0d21ff13c8e8989 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9807,8 +9807,8 @@ L:	linux-media@vger.kernel.org
- L:	linux-renesas-soc@vger.kernel.org
- T:	git git://linuxtv.org/media_tree.git
- S:	Supported
--F:	Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
--F:	Documentation/devicetree/bindings/media/rcar_vin.txt
-+F:	Documentation/devicetree/bindings/media/renesas,csi2.txt
-+F:	Documentation/devicetree/bindings/media/renesas,vin.txt
- F:	drivers/media/platform/rcar-vin/
+ drivers/usb/renesas_usbhs/common.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index a501ea6..ebbe322 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -651,9 +651,8 @@ static struct renesas_usbhs_platform_info *usbhs_parse_dt(struct device *dev)
+ 		return NULL;
  
- MEDIA DRIVERS FOR RENESAS - VSP1
+ 	dparam = &info->driver_param;
+-	memcpy(dparam, &data->param, sizeof(data->param));
+-	memcpy(&info->platform_callback, data->platform_callback,
+-	       sizeof(*data->platform_callback));
++	*dparam = data->param;
++	info->platform_callback = *data->platform_callback;
+ 
+ 	if (!of_property_read_u32(dev->of_node, "renesas,buswait", &tmp))
+ 		dparam->buswait_bwait = tmp;
+@@ -714,17 +713,13 @@ static int usbhs_probe(struct platform_device *pdev)
+ 	 * care platform info
+ 	 */
+ 
+-	memcpy(&priv->dparam,
+-	       &info->driver_param,
+-	       sizeof(struct renesas_usbhs_driver_param));
++	priv->dparam = info->driver_param;
+ 
+ 	if (!info->platform_callback.get_id) {
+ 		dev_err(&pdev->dev, "no platform callbacks");
+ 		return -EINVAL;
+ 	}
+-	memcpy(&priv->pfunc,
+-	       &info->platform_callback,
+-	       sizeof(struct renesas_usbhs_platform_callback));
++	priv->pfunc = info->platform_callback;
+ 
+ 	/* set driver callback functions for platform */
+ 	dfunc			= &info->driver_callback;
 -- 
-2.21.0
+2.7.4
 
