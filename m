@@ -2,79 +2,62 @@ Return-Path: <SRS0=IHaP=UM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C70C31E49
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 16:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA535C31E45
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 16:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9408920449
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 16:36:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KyS1UsvA"
+	by mail.kernel.org (Postfix) with ESMTP id 9C92D20644
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 16:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392541AbfFMQgF (ORCPT
+        id S1728541AbfFMQg1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:36:05 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:48700 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbfFMQfx (ORCPT
+        Thu, 13 Jun 2019 12:36:27 -0400
+Received: from verein.lst.de ([213.95.11.211]:36365 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730689AbfFMHeR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:35:53 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F0CFE52B;
-        Thu, 13 Jun 2019 18:35:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1560443751;
-        bh=xYJTnR0BQQsX9pSkqK7GIQ6uoOB+X60qJ0Nav0xrwYE=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=KyS1UsvAm48Ahvvu+6wlakTthmDnIYVISXTkkNlPky7ERMbQ1PMQXh6v0ldpM28nm
-         aIDWrWBjv/Pd6LtreDBJoFGhYFGnCv4BG852XXxKhNq8AXCGb4X4LpaxjbB8IYr2MB
-         NGeOj4EUmKkSGfBqRLqdpqUCITWZ2pZe2FM1qqug=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 1/4] media: cxd2820r: don't check retval after our own
- assignemt
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
- <20190613155421.16408-2-wsa+renesas@sang-engineering.com>
- <550e0dbf-1776-000b-27ca-40e40e317da2@ideasonboard.com>
- <20190613161922.GA5015@kunai>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <cbf928b6-33d6-d412-87dd-05f1fb5f1b6c@ideasonboard.com>
-Date:   Thu, 13 Jun 2019 17:35:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 13 Jun 2019 03:34:17 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 21C4E68B02; Thu, 13 Jun 2019 09:33:47 +0200 (CEST)
+Date:   Thu, 13 Jun 2019 09:33:46 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     stern@rowland.harvard.edu, gregkh@linuxfoundation.org, hch@lst.de,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] usb-storage: Add a limitation for
+ blk_queue_max_hw_sectors()
+Message-ID: <20190613073346.GB12093@lst.de>
+References: <1560400504-26884-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20190613161922.GA5015@kunai>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560400504-26884-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+> +	if (max_sectors > 0) {
+> +		struct device *dev = us->pusb_dev->bus->sysdev;
+> +		size_t max_dma_sectors = dma_max_mapping_size(dev) >>
+> +					 SECTOR_SHIFT;
+> +
+> +		max_sectors = min_t(size_t, max_sectors, max_dma_sectors);
+> +		blk_queue_max_hw_sectors(sdev->request_queue, max_sectors);
 
-On 13/06/2019 17:19, Wolfram Sang wrote:
-> 
->> In the title/subject:
->>
->> media: cxd2820r: don't check retval after our own assignemt
->>
->> s/assignemt/assignment/
-> 
-> Eeeks, in deed :( Shall I resend? Sorry for the noise.
-> 
+I think we need to do this unconditionally for the rare (or maybe even
+theoretical case) of a dma max mapping size smaller than the default
+max_sectos.
 
-Not necessary for me, so I guess that's up to Mauro/Hans.
-Not sure who will pick these up and apply them.
---
-Kieran
+So something like this:
+
+	blk_queue_max_hw_sectors(sdev->request_queue,
+		min_t(unsigned long,
+			queue_max_hw_sectors(sdev->request_queue),
+			dma_max_mapping_size(dev) >> SECTOR_SHIFT));
+
