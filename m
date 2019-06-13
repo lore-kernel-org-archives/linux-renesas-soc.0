@@ -2,64 +2,140 @@ Return-Path: <SRS0=IHaP=UM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CA8C46477
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388E9C31E4A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 744B220851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:55:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 122AE20851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560441408;
+	bh=lrKXsr2OjonUOOQWsPIwOl6T08bXjYyq3cI+FJ7ZUYI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=pp1tnLjoUDiJHGb5sTPu+k/YvPmL/8yh1ml5vOOWr8MA3vKJRVgzJBoNlozyaLoyA
+	 HhuiENkSA3j1qyY+9JgUwxNUM0Q63+mH5CNaG/wHLu1TBZ5A1goifwedyEbOt+mwCp
+	 Z34uBthjVhcyXUglMGUMfBNNcuWg0a6SNIgtOLxI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731543AbfFMPzb (ORCPT
+        id S1731921AbfFMP4h (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:55:31 -0400
-Received: from verein.lst.de ([213.95.11.211]:36706 "EHLO newverein.lst.de"
+        Thu, 13 Jun 2019 11:56:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731539AbfFMIvu (ORCPT
+        id S1731522AbfFMIvK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jun 2019 04:51:50 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id AC80D68B02; Thu, 13 Jun 2019 10:51:21 +0200 (CEST)
-Date:   Thu, 13 Jun 2019 10:51:21 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "usb-storage@lists.one-eyed-alien.net" 
-        <usb-storage@lists.one-eyed-alien.net>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] usb-storage: Add a limitation for
- blk_queue_max_hw_sectors()
-Message-ID: <20190613085121.GA13442@lst.de>
-References: <1560400504-26884-1-git-send-email-yoshihiro.shimoda.uh@renesas.com> <20190613073346.GB12093@lst.de> <OSAPR01MB30899FBDA010F0465599437AD8EF0@OSAPR01MB3089.jpnprd01.prod.outlook.com>
+        Thu, 13 Jun 2019 04:51:10 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BB6E20851;
+        Thu, 13 Jun 2019 08:51:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560415868;
+        bh=lrKXsr2OjonUOOQWsPIwOl6T08bXjYyq3cI+FJ7ZUYI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dC+r3q5Flj0LVRcLtPR5MNKWaAHscUmnbX2VODdz2xEQ9SgGnEuv8AE+GdW9lHbOY
+         NN8V27Ksg0vf8BoQh1KuBfAh0E7u9eOYkaPSuQ3wbLSvSBxP2aS9b1fn/phhmf5Ckk
+         NKMIcmYBzVPv9z+d0CRcL+sh9xmZZKphNaGpbBAQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 126/155] PCI: rcar: Fix 64bit MSI message address handling
+Date:   Thu, 13 Jun 2019 10:33:58 +0200
+Message-Id: <20190613075659.876498184@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190613075652.691765927@linuxfoundation.org>
+References: <20190613075652.691765927@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OSAPR01MB30899FBDA010F0465599437AD8EF0@OSAPR01MB3089.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jun 13, 2019 at 08:46:00AM +0000, Yoshihiro Shimoda wrote:
-> I believe this patch I sent has already covered it. What do you think?
-> 
-> For examples (all value units are "sectors"):
-> 	default	mapping size	max_sectors
-> case 1	240	MAX		2048		--> we use 2048
-> case 2	240	512		2048		--> we use 512
-> case 3	240	128		2048		--> we use 128
-> case 4	240	128		64		--> we use 64
+[ Upstream commit 954b4b752a4c4e963b017ed8cef4c453c5ed308d ]
 
-Yes, I guess your version is fine after all:
+The MSI message address in the RC address space can be 64 bit. The
+R-Car PCIe RC supports such a 64bit MSI message address as well.
+The code currently uses virt_to_phys(__get_free_pages()) to obtain
+a reserved page for the MSI message address, and the return value
+of which can be a 64 bit physical address on 64 bit system.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+However, the driver only programs PCIEMSIALR register with the bottom
+32 bits of the virt_to_phys(__get_free_pages()) return value and does
+not program the top 32 bits into PCIEMSIAUR, but rather programs the
+PCIEMSIAUR register with 0x0. This worked fine on older 32 bit R-Car
+SoCs, however may fail on new 64 bit R-Car SoCs.
 
-although I think it might be simpler to just read the value back
-from the queue in the end.
+Since from a PCIe controller perspective, an inbound MSI is a memory
+write to a special address (in case of this controller, defined by
+the value in PCIEMSIAUR:PCIEMSIALR), which triggers an interrupt, but
+never hits the DRAM _and_ because allocation of an MSI by a PCIe card
+driver obtains the MSI message address by reading PCIEMSIAUR:PCIEMSIALR
+in rcar_msi_setup_irqs(), incorrectly programmed PCIEMSIAUR cannot
+cause memory corruption or other issues.
+
+There is however the possibility that if virt_to_phys(__get_free_pages())
+returned address above the 32bit boundary _and_ PCIEMSIAUR was programmed
+to 0x0 _and_ if the system had physical RAM at the address matching the
+value of PCIEMSIALR, a PCIe card driver could allocate a buffer with a
+physical address matching the value of PCIEMSIALR and a remote write to
+such a buffer by a PCIe card would trigger a spurious MSI.
+
+Fixes: e015f88c368d ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pci/controller/pcie-rcar.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+index 765c39911c0c..9b9c677ad3a0 100644
+--- a/drivers/pci/controller/pcie-rcar.c
++++ b/drivers/pci/controller/pcie-rcar.c
+@@ -892,7 +892,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
+ 	struct rcar_msi *msi = &pcie->msi;
+-	unsigned long base;
++	phys_addr_t base;
+ 	int err, i;
+ 
+ 	mutex_init(&msi->lock);
+@@ -937,8 +937,8 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ 	}
+ 	base = virt_to_phys((void *)msi->pages);
+ 
+-	rcar_pci_write_reg(pcie, base | MSIFE, PCIEMSIALR);
+-	rcar_pci_write_reg(pcie, 0, PCIEMSIAUR);
++	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
++	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
+ 
+ 	/* enable all MSI interrupts */
+ 	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
+-- 
+2.20.1
+
+
+
