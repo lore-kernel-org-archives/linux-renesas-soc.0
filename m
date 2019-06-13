@@ -2,103 +2,137 @@ Return-Path: <SRS0=IHaP=UM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B5DC31E4A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EE7C31E4B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E08120665
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 16:59:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JM/zm087"
+	by mail.kernel.org (Postfix) with ESMTP id 98EF9206BB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 17:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729959AbfFMQ7k (ORCPT
+        id S1729926AbfFMRAH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:59:40 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:41150 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729820AbfFMQ7k (ORCPT
+        Thu, 13 Jun 2019 13:00:07 -0400
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:36891 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729797AbfFMAEz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:59:40 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5DGrg6a146672;
-        Thu, 13 Jun 2019 16:59:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=VB7BbCcx5CDFsG6/AylvYiYZjuNghhK4GPV3gIX6IgY=;
- b=JM/zm087RQdix9tjZYqwsKtsL1r4oeg4m549rL34vFP7V7snV+V6jkMW32K6cszyFqwA
- 4LAwbnYI7oNx6Cder0IYcyRig+6l/D5XoXA1WNj3W3i4BZ6SS9JNcU2+U4sz9Ilx21RF
- m9yWqSzUQgzoMdBE7yH3XIoto5guc4o8ijARvGbDVEAkV33NZnSKZyPhcunGnyQZOg6D
- gntIMHlm0W9RMbH9YcXv5nmx02cXJu4f8UcMUE/CPLCoFNupiHRYByCja362NG3+UA64
- L3pcrl3it7g9J2N2cGoPCK+Lkrsj/lr1/Q03zQibiuskhzmeOuF3NAuinosmwPYef5Ov hA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2t05nr2uea-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 16:59:26 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x5DGuroV168293;
-        Thu, 13 Jun 2019 16:57:26 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2t1jpjnsf2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Jun 2019 16:57:26 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x5DGvOZm008225;
-        Thu, 13 Jun 2019 16:57:24 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 13 Jun 2019 09:57:23 -0700
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        "iommu\@lists.linux-foundation.org" 
-        <iommu@lists.linux-foundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        "linux-block\@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: Re: How to resolve an issue in swiotlb environment?
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190612120653.GA25285@lst.de>
-        <Pine.LNX.4.44L0.1906121038210.1557-100000@iolanthe.rowland.org>
-        <20190613073900.GC12093@lst.de>
-Date:   Thu, 13 Jun 2019 12:57:21 -0400
-In-Reply-To: <20190613073900.GC12093@lst.de> (Christoph Hellwig's message of
-        "Thu, 13 Jun 2019 09:39:00 +0200")
-Message-ID: <yq14l4ttocu.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Wed, 12 Jun 2019 20:04:55 -0400
+X-Halon-ID: c705cece-8d6e-11e9-8601-0050569116f7
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (unknown [89.233.230.99])
+        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
+        id c705cece-8d6e-11e9-8601-0050569116f7;
+        Thu, 13 Jun 2019 02:04:13 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 3/3] rcar-vin: Add support for RGB formats with alpha component
+Date:   Thu, 13 Jun 2019 02:04:39 +0200
+Message-Id: <20190613000439.28746-4-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190613000439.28746-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20190613000439.28746-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9287 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=655
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1906130122
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9287 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=707 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1906130123
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The R-Car VIN module supports V4L2_PIX_FMT_ARGB555 and
+V4L2_PIX_FMT_ABGR32 pixel formats. Add the hardware register setup and
+allow the alpha component to be changed while streaming using the
+V4L2_CID_ALPHA_COMPONENT control.
 
-Christoph,
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 30 +++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  8 ++++++
+ 2 files changed, 38 insertions(+)
 
-> sd.c only supports a few specific sector size, and none of them is
-> < 512 bytes:
-
-Yep, while sd.c in theory supported 256-byte logical blocks a while
-back, that code was removed since the block layer always operates on
-units of 512 bytes.
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 4e991cce5fb56a90..5c0ed27c5d05dd45 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -111,8 +111,11 @@
+ #define VNIE_EFE		(1 << 1)
+ 
+ /* Video n Data Mode Register bits */
++#define VNDMR_A8BIT(n)		((n & 0xff) << 24)
++#define VNDMR_A8BIT_MASK	(0xff << 24)
+ #define VNDMR_EXRGB		(1 << 8)
+ #define VNDMR_BPSM		(1 << 4)
++#define VNDMR_ABIT		(1 << 2)
+ #define VNDMR_DTMD_YCSEP	(1 << 1)
+ #define VNDMR_DTMD_ARGB		(1 << 0)
+ 
+@@ -730,6 +733,12 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		/* Note: not supported on M1 */
+ 		dmr = VNDMR_EXRGB;
+ 		break;
++	case V4L2_PIX_FMT_ARGB555:
++		dmr = (vin->alpha ? VNDMR_ABIT : 0) | VNDMR_DTMD_ARGB;
++		break;
++	case V4L2_PIX_FMT_ABGR32:
++		dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB | VNDMR_DTMD_ARGB;
++		break;
+ 	default:
+ 		vin_err(vin, "Invalid pixelformat (0x%x)\n",
+ 			vin->format.pixelformat);
+@@ -1346,5 +1355,26 @@ int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
+ 
+ void rvin_set_alpha(struct rvin_dev *vin, unsigned int alpha)
+ {
++	u32 dmr;
++
+ 	vin->alpha = alpha;
++
++	if (vin->state == STOPPED)
++		return;
++
++	switch (vin->format.pixelformat) {
++	case V4L2_PIX_FMT_ARGB555:
++		dmr = rvin_read(vin, VNDMR_REG) & ~VNDMR_ABIT;
++		if (vin->alpha)
++			dmr |= VNDMR_ABIT;
++		break;
++	case V4L2_PIX_FMT_ABGR32:
++		dmr = rvin_read(vin, VNDMR_REG) & ~VNDMR_A8BIT_MASK;
++		dmr |= VNDMR_A8BIT(vin->alpha);
++		break;
++	default:
++		return;
++	}
++
++	rvin_write(vin, dmr,  VNDMR_REG);
+ }
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 7cbdcbf9b090c638..bb2900f5d000f9a6 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -54,6 +54,14 @@ static const struct rvin_video_format rvin_formats[] = {
+ 		.fourcc			= V4L2_PIX_FMT_XBGR32,
+ 		.bpp			= 4,
+ 	},
++	{
++		.fourcc			= V4L2_PIX_FMT_ARGB555,
++		.bpp			= 2,
++	},
++	{
++		.fourcc			= V4L2_PIX_FMT_ABGR32,
++		.bpp			= 4,
++	},
+ };
+ 
+ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat)
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.21.0
+
