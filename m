@@ -2,31 +2,30 @@ Return-Path: <SRS0=IHaP=UM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A4EFC31E4D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3C5C31E45
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63EF2082C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:36:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F0782082C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:36:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbfFMPgN (ORCPT
+        id S1731968AbfFMPgQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:36:13 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:43359 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727487AbfFMKUm (ORCPT
+        Thu, 13 Jun 2019 11:36:16 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:38042 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727380AbfFMKUk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:20:42 -0400
+        Thu, 13 Jun 2019 06:20:40 -0400
 X-IronPort-AV: E=Sophos;i="5.62,369,1554735600"; 
-   d="scan'208";a="18589673"
+   d="scan'208";a="18380805"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Jun 2019 19:20:37 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 13 Jun 2019 19:20:37 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E2A694274BC4;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8D6284274BC4;
         Thu, 13 Jun 2019 19:20:37 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     joro@8bytes.org, axboe@kernel.dk, ulf.hansson@linaro.org,
@@ -35,9 +34,9 @@ Cc:     hch@lst.de, iommu@lists.linux-foundation.org,
         linux-block@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [RFC PATCH v6 4/5] mmc: tmio: Use dma_max_mapping_size() instead of a workaround
-Date:   Thu, 13 Jun 2019 19:20:14 +0900
-Message-Id: <1560421215-10750-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [RFC PATCH v6 1/5] iommu: add an exported function to get minimum page size for a domain
+Date:   Thu, 13 Jun 2019 19:20:11 +0900
+Message-Id: <1560421215-10750-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560421215-10750-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1560421215-10750-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -46,50 +45,77 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since the commit 133d624b1cee ("dma: Introduce dma_max_mapping_size()")
-provides a helper function to get the max mapping size, we can use
-the function instead of the workaround code for swiotlb.
+This patch adds an exported function to get minimum page size for
+a domain. This patch also modifies similar codes on the iommu.c.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ drivers/iommu/iommu.c | 18 +++++++++++++++---
+ include/linux/iommu.h |  1 +
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 130b91c..85bd6aa6 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -26,6 +26,7 @@
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 2a90638..7ed16af 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -280,6 +280,18 @@ iommu_insert_device_resv_regions(struct list_head *dev_resv_regions,
+ 	return ret;
+ }
  
- #include <linux/delay.h>
- #include <linux/device.h>
-+#include <linux/dma-mapping.h>
- #include <linux/highmem.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -1189,19 +1190,9 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 	mmc->max_blk_size = TMIO_MAX_BLK_SIZE;
- 	mmc->max_blk_count = pdata->max_blk_count ? :
- 		(PAGE_SIZE / mmc->max_blk_size) * mmc->max_segs;
--	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
--	/*
--	 * Since swiotlb has memory size limitation, this will calculate
--	 * the maximum size locally (because we don't have any APIs for it now)
--	 * and check the current max_req_size. And then, this will update
--	 * the max_req_size if needed as a workaround.
--	 */
--	if (swiotlb_max_segment()) {
--		unsigned int max_size = (1 << IO_TLB_SHIFT) * IO_TLB_SEGSIZE;
--
--		if (mmc->max_req_size > max_size)
--			mmc->max_req_size = max_size;
--	}
-+	mmc->max_req_size = min_t(unsigned int,
-+				  mmc->max_blk_size * mmc->max_blk_count,
-+				  dma_max_mapping_size(&pdev->dev));
- 	mmc->max_seg_size = mmc->max_req_size;
++/**
++ * iommu_get_minimum_page_size - get minimum page size for a domain
++ * @domain: the domain
++ *
++ * Allow iommu driver to get a minimum page size for a domain.
++ */
++unsigned long iommu_get_minimum_page_size(struct iommu_domain *domain)
++{
++	return 1UL << __ffs(domain->pgsize_bitmap);
++}
++EXPORT_SYMBOL_GPL(iommu_get_minimum_page_size);
++
+ int iommu_get_group_resv_regions(struct iommu_group *group,
+ 				 struct list_head *head)
+ {
+@@ -558,7 +570,7 @@ static int iommu_group_create_direct_mappings(struct iommu_group *group,
  
- 	if (mmc_can_gpio_ro(mmc))
+ 	BUG_ON(!domain->pgsize_bitmap);
+ 
+-	pg_size = 1UL << __ffs(domain->pgsize_bitmap);
++	pg_size = iommu_get_minimum_page_size(domain);
+ 	INIT_LIST_HEAD(&mappings);
+ 
+ 	iommu_get_resv_regions(dev, &mappings);
+@@ -1595,7 +1607,7 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		return -EINVAL;
+ 
+ 	/* find out the minimum page size supported */
+-	min_pagesz = 1 << __ffs(domain->pgsize_bitmap);
++	min_pagesz = iommu_get_minimum_page_size(domain);
+ 
+ 	/*
+ 	 * both the virtual address and the physical one, as well as
+@@ -1655,7 +1667,7 @@ static size_t __iommu_unmap(struct iommu_domain *domain,
+ 		return 0;
+ 
+ 	/* find out the minimum page size supported */
+-	min_pagesz = 1 << __ffs(domain->pgsize_bitmap);
++	min_pagesz = iommu_get_minimum_page_size(domain);
+ 
+ 	/*
+ 	 * The virtual address, as well as the size of the mapping, must be
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 91af22a..7e53b43 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -366,6 +366,7 @@ extern int iommu_request_dma_domain_for_dev(struct device *dev);
+ extern struct iommu_resv_region *
+ iommu_alloc_resv_region(phys_addr_t start, size_t length, int prot,
+ 			enum iommu_resv_type type);
++extern unsigned long iommu_get_minimum_page_size(struct iommu_domain *domain);
+ extern int iommu_get_group_resv_regions(struct iommu_group *group,
+ 					struct list_head *head);
+ 
 -- 
 2.7.4
 
