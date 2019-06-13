@@ -2,40 +2,36 @@ Return-Path: <SRS0=IHaP=UM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831F3C31E4C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4821C31E45
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59E3F20851
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C202420851
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 13 Jun 2019 15:54:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388259AbfFMPyj (ORCPT
+        id S2390094AbfFMPy0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:54:39 -0400
-Received: from sauhun.de ([88.99.104.3]:41930 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390084AbfFMPy0 (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 13 Jun 2019 11:54:26 -0400
+Received: from sauhun.de ([88.99.104.3]:41910 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389856AbfFMPyZ (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:54:25 -0400
 Received: from localhost (p5486CF99.dip0.t-ipconnect.de [84.134.207.153])
-        by pokefinder.org (Postfix) with ESMTPSA id DDE0F4A129C;
-        Thu, 13 Jun 2019 17:54:24 +0200 (CEST)
+        by pokefinder.org (Postfix) with ESMTPSA id B38484A127B;
+        Thu, 13 Jun 2019 17:54:23 +0200 (CEST)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] media: mn88472: don't check retval after our own assignemt
-Date:   Thu, 13 Jun 2019 17:54:18 +0200
-Message-Id: <20190613155421.16408-3-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/4] media: don't check retval after our own assignment
+Date:   Thu, 13 Jun 2019 17:54:16 +0200
+Message-Id: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
-References: <20190613155421.16408-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -43,37 +39,24 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-No need to check a retval after we assigned a constant to it.
+Interesting how many cleanups I find until I can start the
+refactorization I really want :) This series fixes a set of unneeded if
+checks following the assignment of an errno constant.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/media/dvb-frontends/mn88472.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Only build tested due to no HW.
 
-diff --git a/drivers/media/dvb-frontends/mn88472.c b/drivers/media/dvb-frontends/mn88472.c
-index 731b44b9b74c..0a4d0d5fb4b6 100644
---- a/drivers/media/dvb-frontends/mn88472.c
-+++ b/drivers/media/dvb-frontends/mn88472.c
-@@ -616,8 +616,7 @@ static int mn88472_probe(struct i2c_client *client,
- 	if (!dev->client[1]) {
- 		ret = -ENODEV;
- 		dev_err(&client->dev, "I2C registration failed\n");
--		if (ret)
--			goto err_regmap_0_regmap_exit;
-+		goto err_regmap_0_regmap_exit;
- 	}
- 	dev->regmap[1] = regmap_init_i2c(dev->client[1], &regmap_config);
- 	if (IS_ERR(dev->regmap[1])) {
-@@ -630,8 +629,7 @@ static int mn88472_probe(struct i2c_client *client,
- 	if (!dev->client[2]) {
- 		ret = -ENODEV;
- 		dev_err(&client->dev, "2nd I2C registration failed\n");
--		if (ret)
--			goto err_regmap_1_regmap_exit;
-+		goto err_regmap_1_regmap_exit;
- 	}
- 	dev->regmap[2] = regmap_init_i2c(dev->client[2], &regmap_config);
- 	if (IS_ERR(dev->regmap[2])) {
+Wolfram Sang (4):
+  media: cxd2820r_core: don't check retval after our own assignemt
+  media: mn88472: don't check retval after our own assignemt
+  media: mn88473: don't check retval after our own assignemt
+  media: zd1301_demod: don't check retval after our own assignemt
+
+ drivers/media/dvb-frontends/cxd2820r_core.c | 3 +--
+ drivers/media/dvb-frontends/mn88472.c       | 6 ++----
+ drivers/media/dvb-frontends/mn88473.c       | 6 ++----
+ drivers/media/dvb-frontends/zd1301_demod.c  | 3 +--
+ 4 files changed, 6 insertions(+), 12 deletions(-)
+
 -- 
 2.20.1
 
