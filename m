@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADC4C31E58
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 12:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE79C31E59
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 12:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544052089E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 12:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7657B2089E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 12:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfFQMxA (ORCPT
+        id S1727763AbfFQMxE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jun 2019 08:53:00 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:40270 "EHLO
+        Mon, 17 Jun 2019 08:53:04 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:40260 "EHLO
         michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbfFQMw7 (ORCPT
+        with ESMTP id S1727957AbfFQMw7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 17 Jun 2019 08:52:59 -0400
 Received: from ramsan ([84.194.111.163])
         by michel.telenet-ops.be with bizsmtp
-        id Rosg2000a3XaVaC06osgLH; Mon, 17 Jun 2019 14:52:46 +0200
+        id Rosg2000c3XaVaC06osgLL; Mon, 17 Jun 2019 14:52:46 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hcr7n-0001rv-Ho; Mon, 17 Jun 2019 14:52:39 +0200
+        id 1hcr7n-0001rw-IA; Mon, 17 Jun 2019 14:52:39 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hcr7n-0003an-Gk; Mon, 17 Jun 2019 14:52:39 +0200
+        id 1hcr7n-0003ap-HN; Mon, 17 Jun 2019 14:52:39 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] clk: renesas: rcar-gen2-legacy: Switch Z clock to .determine_rate()
-Date:   Mon, 17 Jun 2019 14:52:34 +0200
-Message-Id: <20190617125238.13761-2-geert+renesas@glider.be>
+Subject: [PATCH 2/5] clk: renesas: rcar-gen2: Switch Z clock to .determine_rate()
+Date:   Mon, 17 Jun 2019 14:52:35 +0200
+Message-Id: <20190617125238.13761-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190617125238.13761-1-geert+renesas@glider.be>
 References: <20190617125238.13761-1-geert+renesas@glider.be>
@@ -56,14 +56,14 @@ This includes implementing range checking.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/clk-rcar-gen2.c | 23 +++++++++++++----------
+ drivers/clk/renesas/rcar-gen2-cpg.c | 23 +++++++++++++----------
  1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/renesas/clk-rcar-gen2.c b/drivers/clk/renesas/clk-rcar-gen2.c
-index da9fe3f032eb2a0d..f85837716d2840cf 100644
---- a/drivers/clk/renesas/clk-rcar-gen2.c
-+++ b/drivers/clk/renesas/clk-rcar-gen2.c
-@@ -66,19 +66,22 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
+index f596a2dafcf4d8d1..282266b32c51a36b 100644
+--- a/drivers/clk/renesas/rcar-gen2-cpg.c
++++ b/drivers/clk/renesas/rcar-gen2-cpg.c
+@@ -63,19 +63,22 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
  	return div_u64((u64)parent_rate * mult, 32);
  }
  
@@ -95,7 +95,7 @@ index da9fe3f032eb2a0d..f85837716d2840cf 100644
  }
  
  static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -129,7 +132,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -126,7 +129,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
  
  static const struct clk_ops cpg_z_clk_ops = {
  	.recalc_rate = cpg_z_clk_recalc_rate,
