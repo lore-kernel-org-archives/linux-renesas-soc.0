@@ -2,57 +2,56 @@ Return-Path: <SRS0=vAcw=UQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159FDC31E44
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 08:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9B6C31E44
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 08:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B552080A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 08:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A85312080A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 08:43:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfFQInY (ORCPT
+        id S1727190AbfFQIn6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jun 2019 04:43:24 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33740 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfFQInY (ORCPT
+        Mon, 17 Jun 2019 04:43:58 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32847 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfFQIn6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jun 2019 04:43:24 -0400
-Received: by mail-lf1-f67.google.com with SMTP id y17so5902485lfe.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2019 01:43:22 -0700 (PDT)
+        Mon, 17 Jun 2019 04:43:58 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h10so8471103ljg.0
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2019 01:43:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=p4VKAprg7mXUJd6G8Qf2jpLDJEVAi1L24CO1vzj3CGU=;
-        b=JetUfSQRpg5yQOEHQ1APh3iRuQhd/suHBZ6ZnMtvnIpQKVlDKDvvWiuwlmcyNCW5Xd
-         A6V4LpWcy8+LujYTz5FA9HwQf813z0MyyAayEuC6jX69kgkn5nU+dMyLMSGKm0h0BOgp
-         +sGLlCVd/X8nTMHtw7Glt9K0mQoLyW87zLq6gRxwRbtYMEq/2jkOckMiedl6TKWDaooc
-         4/YCzIaP2i01MSwHNCHcJ6LT6mcv8JtKazMWujNd1pFbd4JWRot+3+fdllaXkypKqPQN
-         KZUwiI5NuTS8tsrc2uS8LxIZpsrT546aIr1Xz7+kh5+sMQ9lwQUk8zxniaF42/W0kfQf
-         rh4w==
-X-Gm-Message-State: APjAAAXD0z2UFsb/CJ6hauYzguVJRBoyZQa8Zr51ZM6YnVFQl0ysObg9
-        ubA0H+dcW0gDBfyvmKrQNnLW4wBfQMzWoxpKyEZxPQ==
-X-Google-Smtp-Source: APXvYqyzlinULIwCTQjvK3dU45P5C1mboR5bQEvnqFKJJDzMHrNXC72e93q8r138d5PLeAGt7y20WxK5UyK4E8ydR1k=
-X-Received: by 2002:ac2:597c:: with SMTP id h28mr15739604lfp.90.1560761002181;
- Mon, 17 Jun 2019 01:43:22 -0700 (PDT)
+        bh=ZR1yDHqUmbFJgvygvorNZChQNS+ZH5Vm3CebMOqstI8=;
+        b=FRrnljFwQuW3YIoqS6Jgq7CGoOU2lT7EPT32JfgJeXHjTsNlBpx8o0jvW4FsLh69mu
+         n1GvS3NMYKyzukSz4anwyYSMRulWcqHU3YXBnIRyEXrXyiF8Cd8bFlcNNeiNslQkcY/O
+         KBJPW0Y5ENwIM1n6lMKnkzAEYS8pWj+H5VxC//7YlFEeqT2jDRRqecyNF7uZptyqVQsX
+         HDhANVd4aiyLopsKytfolseJHEsanGQGXR6g0Zh4CUGjapjmONUakYlSEVDQ1uQeABYG
+         NTeDL3hwzQZo6fYdQ8xpfo+jBB608oxN8U+FMY4LAjKd0FNBhWTeV1VJEsnXZ2TuFY4n
+         IANQ==
+X-Gm-Message-State: APjAAAXs+IW9Ofo82UIb8lpsgGC30W8d19P/m0ZtuWcnvN0x4gUAieYZ
+        iUQFX+KafFfsyWaD8OS2eqwhsW0aOTrB6p6K9No=
+X-Google-Smtp-Source: APXvYqzyRsaX9lggOJEIeLixo7B3/WaZ1Swx1xmE7jR3IuhkQ2+ocPE8yYoi6Hw36yqAKgFSNvObaopuU6KByVgUzdk=
+X-Received: by 2002:a2e:2b57:: with SMTP id q84mr11708556lje.105.1560761036254;
+ Mon, 17 Jun 2019 01:43:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190617083704.3941-1-horms+renesas@verge.net.au> <20190617083704.3941-2-horms+renesas@verge.net.au>
-In-Reply-To: <20190617083704.3941-2-horms+renesas@verge.net.au>
+References: <20190617083704.3941-1-horms+renesas@verge.net.au> <20190617083704.3941-3-horms+renesas@verge.net.au>
+In-Reply-To: <20190617083704.3941-3-horms+renesas@verge.net.au>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 17 Jun 2019 10:43:09 +0200
-Message-ID: <CAMuHMdUu2T2+Ri_xEq+Nr1qD_Dm067TDkfxTDpduX4xia2FGDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: r8a77990: Add cpg reset for
+Date:   Mon, 17 Jun 2019 10:43:41 +0200
+Message-ID: <CAMuHMdXVrGDM+zQggk=Enyu_w=waZWkYx9iQDJEuTUz6kOQE0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: renesas: r8a77995: Add cpg reset for
  LVDS Interface
 To:     Simon Horman <horms+renesas@verge.net.au>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -63,7 +62,7 @@ Hi Simon,
 
 On Mon, Jun 17, 2019 at 10:37 AM Simon Horman
 <horms+renesas@verge.net.au> wrote:
-> From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 >
 > It is necessary to reset the LVDS Interface according to display on/off.
 
@@ -71,14 +70,16 @@ This is not the LVDS interface.
 The LVDS interface has its own device node.
 
 > Therefore, this patch adds CPG reset properties in DU device node
-> for the R8A77990 SoC.
+> for the R8A77995 SoC.
+>
+> This patch was inspired by a patch in the BSP by Takeshi Kihara
+> <takeshi.kihara.df@renesas.com>.
 >
 > According to Laurent Pinchart, R-Car Gen3 reset is handled at the group
-> level so specifying one reset entry per group is sufficient. For this
-> reason <&cpg 724> is not listed as a reset for "du.1" as was the case in an
-> earlier revision of this patch.
+> level so specifying one reset entry per group is sufficient. For
+> this reason <&cpg 724> is not listed as a reset for "du.1" as
+> was the case in an earlier revision of this patch.
 >
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 > Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 > ---
@@ -86,17 +87,10 @@ The LVDS interface has its own device node.
 > - only add one reset entry per group
 >
 > v1 [Yoshihiro Kaneko]
->
-> v0 [Takeshi Kihara]
-> ---
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> index b4318661f35e..84d1f58e73e7 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> @@ -1766,6 +1766,8 @@
+
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -1001,6 +1001,8 @@
 >                         clocks = <&cpg CPG_MOD 724>,
 >                                  <&cpg CPG_MOD 723>;
 >                         clock-names = "du.0", "du.1";
