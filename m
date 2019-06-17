@@ -2,108 +2,161 @@ Return-Path: <SRS0=vAcw=UQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE79C31E59
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 12:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A877EC31E5B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 14:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7657B2089E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 12:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B6732084D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 14:34:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TvpsDewF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfFQMxE (ORCPT
+        id S1726961AbfFQOeA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jun 2019 08:53:04 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:40260 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727957AbfFQMw7 (ORCPT
+        Mon, 17 Jun 2019 10:34:00 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34924 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfFQOeA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jun 2019 08:52:59 -0400
-Received: from ramsan ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id Rosg2000c3XaVaC06osgLL; Mon, 17 Jun 2019 14:52:46 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hcr7n-0001rw-IA; Mon, 17 Jun 2019 14:52:39 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hcr7n-0003ap-HN; Mon, 17 Jun 2019 14:52:39 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] clk: renesas: rcar-gen2: Switch Z clock to .determine_rate()
-Date:   Mon, 17 Jun 2019 14:52:35 +0200
-Message-Id: <20190617125238.13761-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190617125238.13761-1-geert+renesas@glider.be>
-References: <20190617125238.13761-1-geert+renesas@glider.be>
+        Mon, 17 Jun 2019 10:34:00 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 77D362AF;
+        Mon, 17 Jun 2019 16:33:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1560782038;
+        bh=nFb4UIdKnuWq3S4dj9spMe1F4yQqcBgMrLJlkNt4UD8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TvpsDewF6TnWT3xfexgL0FVz6Ti4FuCtbjc1ogaZgGNtviyI8nlC7qVY5SvpeVX2N
+         YO856pCMss8TO6563uBxSKLKyN2UOHwbUCQ+vL2+mDW2ps/H2jqnfOVH4lggb7AETw
+         d93ca77qqsWXZCIyBRzW3KFZmGtoQf1Oshay4qes=
+Date:   Mon, 17 Jun 2019 17:33:41 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] rcar-vin: Add support for RGB formats with alpha
+ component
+Message-ID: <20190617143341.GC4777@pendragon.ideasonboard.com>
+References: <20190613000439.28746-1-niklas.soderlund+renesas@ragnatech.se>
+ <20190613000439.28746-4-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190613000439.28746-4-niklas.soderlund+renesas@ragnatech.se>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As the .round_rate() callback returns a long clock rate, it cannot
-return clock rates that do not fit in signed long, but do fit in
-unsigned long.  Hence switch the Z clock on R-Car Gen2 from the old
-.round_rate() callback to the newer .determine_rate() callback, which
-does not suffer from this limitation.
+Hi Niklas,
 
-This includes implementing range checking.
+Thank you for the patch.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rcar-gen2-cpg.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+On Thu, Jun 13, 2019 at 02:04:39AM +0200, Niklas Söderlund wrote:
+> The R-Car VIN module supports V4L2_PIX_FMT_ARGB555 and
+> V4L2_PIX_FMT_ABGR32 pixel formats. Add the hardware register setup and
+> allow the alpha component to be changed while streaming using the
+> V4L2_CID_ALPHA_COMPONENT control.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-dma.c  | 30 +++++++++++++++++++++
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c |  8 ++++++
+>  2 files changed, 38 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+> index 4e991cce5fb56a90..5c0ed27c5d05dd45 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> @@ -111,8 +111,11 @@
+>  #define VNIE_EFE		(1 << 1)
+>  
+>  /* Video n Data Mode Register bits */
+> +#define VNDMR_A8BIT(n)		((n & 0xff) << 24)
+> +#define VNDMR_A8BIT_MASK	(0xff << 24)
+>  #define VNDMR_EXRGB		(1 << 8)
+>  #define VNDMR_BPSM		(1 << 4)
+> +#define VNDMR_ABIT		(1 << 2)
+>  #define VNDMR_DTMD_YCSEP	(1 << 1)
+>  #define VNDMR_DTMD_ARGB		(1 << 0)
+>  
+> @@ -730,6 +733,12 @@ static int rvin_setup(struct rvin_dev *vin)
+>  		/* Note: not supported on M1 */
+>  		dmr = VNDMR_EXRGB;
+>  		break;
+> +	case V4L2_PIX_FMT_ARGB555:
+> +		dmr = (vin->alpha ? VNDMR_ABIT : 0) | VNDMR_DTMD_ARGB;
+> +		break;
+> +	case V4L2_PIX_FMT_ABGR32:
+> +		dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB | VNDMR_DTMD_ARGB;
+> +		break;
+>  	default:
+>  		vin_err(vin, "Invalid pixelformat (0x%x)\n",
+>  			vin->format.pixelformat);
+> @@ -1346,5 +1355,26 @@ int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
+>  
+>  void rvin_set_alpha(struct rvin_dev *vin, unsigned int alpha)
+>  {
+> +	u32 dmr;
+> +
+>  	vin->alpha = alpha;
+> +
+> +	if (vin->state == STOPPED)
 
-diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
-index f596a2dafcf4d8d1..282266b32c51a36b 100644
---- a/drivers/clk/renesas/rcar-gen2-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen2-cpg.c
-@@ -63,19 +63,22 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
- 	return div_u64((u64)parent_rate * mult, 32);
- }
- 
--static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *parent_rate)
-+static int cpg_z_clk_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
- {
--	unsigned long prate  = *parent_rate;
--	unsigned int mult;
-+	unsigned long prate = req->best_parent_rate;
-+	unsigned int min_mult, max_mult, mult;
- 
--	if (!prate)
--		prate = 1;
-+	min_mult = max(div_u64(req->min_rate * 32ULL, prate), 1ULL);
-+	max_mult = min(div_u64(req->max_rate * 32ULL, prate), 32ULL);
-+	if (max_mult < min_mult)
-+		return -EINVAL;
- 
--	mult = div_u64((u64)rate * 32, prate);
--	mult = clamp(mult, 1U, 32U);
-+	mult = div_u64(req->rate * 32ULL, prate);
-+	mult = clamp(mult, min_mult, max_mult);
- 
--	return *parent_rate / 32 * mult;
-+	req->rate = prate / 32 * mult;
-+	return 0;
- }
- 
- static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -126,7 +129,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- static const struct clk_ops cpg_z_clk_ops = {
- 	.recalc_rate = cpg_z_clk_recalc_rate,
--	.round_rate = cpg_z_clk_round_rate,
-+	.determine_rate = cpg_z_clk_determine_rate,
- 	.set_rate = cpg_z_clk_set_rate,
- };
- 
+The state is protected by the vin->qlock spinlock. Is it safe to check
+it here without holding the spinlock ? The answer may be yes if you can
+guarantee that no code patch will race except for the IRQ handler, and
+guarantee that the race with the IRQ handler isn't an issue.
+
+Additionally, what happens if the control is set and streaming is then
+started ? I don't see in call to v4l2_ctrl_handler_setup() in 2/3 or
+3/3.
+
+> +		return;
+> +
+> +	switch (vin->format.pixelformat) {
+> +	case V4L2_PIX_FMT_ARGB555:
+> +		dmr = rvin_read(vin, VNDMR_REG) & ~VNDMR_ABIT;
+> +		if (vin->alpha)
+> +			dmr |= VNDMR_ABIT;
+> +		break;
+> +	case V4L2_PIX_FMT_ABGR32:
+> +		dmr = rvin_read(vin, VNDMR_REG) & ~VNDMR_A8BIT_MASK;
+> +		dmr |= VNDMR_A8BIT(vin->alpha);
+> +		break;
+> +	default:
+> +		return;
+> +	}
+> +
+> +	rvin_write(vin, dmr,  VNDMR_REG);
+>  }
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 7cbdcbf9b090c638..bb2900f5d000f9a6 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -54,6 +54,14 @@ static const struct rvin_video_format rvin_formats[] = {
+>  		.fourcc			= V4L2_PIX_FMT_XBGR32,
+>  		.bpp			= 4,
+>  	},
+> +	{
+> +		.fourcc			= V4L2_PIX_FMT_ARGB555,
+> +		.bpp			= 2,
+> +	},
+> +	{
+> +		.fourcc			= V4L2_PIX_FMT_ABGR32,
+> +		.bpp			= 4,
+> +	},
+>  };
+>  
+>  const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat)
+
 -- 
-2.17.1
+Regards,
 
+Laurent Pinchart
