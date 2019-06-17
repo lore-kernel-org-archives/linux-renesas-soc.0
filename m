@@ -7,79 +7,100 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AA2C31E57
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 09:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD79C31E57
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 09:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E33820848
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 09:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 204AE20848
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Jun 2019 09:58:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZ7vp27r"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qHWW3XMq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfFQJ6l (ORCPT
+        id S1727774AbfFQJ6u (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jun 2019 05:58:41 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42758 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbfFQJ6l (ORCPT
+        Mon, 17 Jun 2019 05:58:50 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38938 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbfFQJ6t (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jun 2019 05:58:41 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l19so5513961pgh.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2019 02:58:40 -0700 (PDT)
+        Mon, 17 Jun 2019 05:58:49 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j2so5404361pfe.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 17 Jun 2019 02:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:date:message-id:subject;
-        bh=f14t+iNNSc4JtArihmkhPbQk5+ihAbR3yUSivmL55Qw=;
-        b=NZ7vp27rwNdn0iaJGI+7YYbqc3fOPjlOTV0JGwElFjhUaKf6ptrhtwnfZgoRuCSPe8
-         Fl6/gb/aO8SJ5LG5RdvVCuT7536Aje/2XoEXZObxtZcjNhmoPqBk8jK4YJzh1hnieuxx
-         tXeqXVOVxWQaP6ebhIXFuM3hwekEFA3/VP2pDspAR9umM3bNxwD+xOSh+VN94OMrUWhK
-         a6uUegke8CwcdaOpjHHaQ+OKwDc3DLUdSWRTEeEdSBJCEWFGQh+oiUjnUTYN/VX9gdLH
-         VPL1EYdj+meaaEaS7p2JaMsfb3zOrB4eQcBn5sgbiM7o421MKXdyrxAnSS3BVdjtKVk+
-         CpSg==
+        h=from:to:cc:date:message-id:in-reply-to:references:subject;
+        bh=rBkEnkJ6ImtWF0KwahOamX5gecdJRBV0BRkWSWBrLjo=;
+        b=qHWW3XMqfoFXN1Pr2VhWbLMofONQ0h89fUKtnAsJYz7t5PdCtfHNGwSL2qxC2ZrYXb
+         BpymVhVyXlutRSwz7DwKUE8t2cfpkwqZrIpnL2U4oDPX43uHGe+sb3GvrWOyEgBnfxfz
+         7DROA/dMDGmihJWd0dBeX7rcAQwJLBCfW+MGwM8Lt86xTg762SgOxoI7XrsxeMOmV7lz
+         4SaCvfpnL+1hf8hHEvi/AJCXFIYE7jI3aRuue0lMgblhSvs28aVP7i8KhdIr7kOZ86mL
+         kBNtrvHBNDHgNTwVtvidD8EBWmUEgECnbwROJXIplXCCMCcLuzbfpjR8I4NrxXiT8Jb0
+         F29A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:date:message-id:subject;
-        bh=f14t+iNNSc4JtArihmkhPbQk5+ihAbR3yUSivmL55Qw=;
-        b=Wo34w6RH0i5knqAUEiqwGL33KTi1+uFyArpKEYGWiaZRsQUhkpGMuBzhRc0YVhVsUN
-         oea2wnoct4wIiyt1R8yOwMa6NUkUf6Kt1LXuqTTIAuT8lG+rBnYYzDdPDghrJI7lMZqg
-         YLZiwbr764f7Sgb//RLkipsTOCPoqxl5KlgNUpgwZMoB155viPSs4xFg9fH645D72ZVF
-         OAaXjY9sLkUn8S81KA38et0nuCyFgebITGcAMta/Q89ytV6GRZIjJqcSb620kW4FLMlD
-         Rxd2qj5RM2EHlLZ2cge7Btom5eNO0XOVTjzlRBxW9KOxeWxWscDRvpajUL36C9glZmg6
-         w0Dg==
-X-Gm-Message-State: APjAAAVHFWuPtbg9jBn0NZHg6XWfKFb9CftPXFkmRQVi+2rmEtizg/FB
-        UlFDY0WQEtxsrUmuquh8zyd5SVoS
-X-Google-Smtp-Source: APXvYqxHA+rDAiSmQhVsF6KW87EepfXCW/10Rb8BZJITyPlXfOz8KzSZUY1RL2gV9gdkoQpqnVwYMw==
-X-Received: by 2002:aa7:8007:: with SMTP id j7mr48653391pfi.154.1560765520302;
-        Mon, 17 Jun 2019 02:58:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
+         :references:subject;
+        bh=rBkEnkJ6ImtWF0KwahOamX5gecdJRBV0BRkWSWBrLjo=;
+        b=Ox4TmiZb3JPKabgdH/sl9Q3NppO+4qSvGkzxiHNZMyTfOZGRZzUHPBJI5Q5y77fwH1
+         dSyi9vEnMQPPJL6n/j4ccD0AobGk4KOeHly+RGd9eFr1CBP/fzlbkJwc9t+pgJdwFO4x
+         4bGlMLX6hfgmMcWB0apCWEe4rawGfKxEz4TJYVGJfdPfR7Oz7lLI+xDs5lCUVlPY65Oj
+         idmS22WpehX/3Hmlhv094tJ4fMsxF9EC4DsB/Fvx1oc9HxPY0ClGBYmIfCiM2D364sDg
+         SxuU7V093mQWFGzGEUbwIfakGg9+BCML1dhC8m8vKS8duOz9ikuJAhXD+4ilgFPklATy
+         7/Zg==
+X-Gm-Message-State: APjAAAUqK9qiRtJ6XrApZJ7UgK05vcESlNwq/03EHRI2G3xDuGjFJNJI
+        F9a/Nt+BpkEuAso0f94pBimZjL5b
+X-Google-Smtp-Source: APXvYqyhoPG82P8cQ78d9Z606NKQYJETTZ/SEbm6uSezOwvZhuRNbIYTKikYkLrFgluH+adYf8xxdg==
+X-Received: by 2002:a17:90a:9289:: with SMTP id n9mr25578755pjo.35.1560765528869;
+        Mon, 17 Jun 2019 02:58:48 -0700 (PDT)
 Received: from [127.0.0.1] (l193216.ppp.asahi-net.or.jp. [218.219.193.216])
-        by smtp.gmail.com with ESMTPSA id p6sm18908282pgs.77.2019.06.17.02.58.38
+        by smtp.gmail.com with ESMTPSA id 188sm15206040pfe.30.2019.06.17.02.58.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 02:58:39 -0700 (PDT)
+        Mon, 17 Jun 2019 02:58:47 -0700 (PDT)
 From:   Magnus Damm <magnus.damm@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Magnus Damm <magnus.damm@gmail.com>
-Date:   Mon, 17 Jun 2019 19:00:06 +0900
-Message-Id: <156076560641.6960.5508309411424406087.sendpatchset@octo>
-Subject: [PATCH 0/3] clocksource/drivers/sh_cmt: Minor DT compat string update
+Date:   Mon, 17 Jun 2019 19:00:15 +0900
+Message-Id: <156076561505.6960.6769412761253363711.sendpatchset@octo>
+In-Reply-To: <156076560641.6960.5508309411424406087.sendpatchset@octo>
+References: <156076560641.6960.5508309411424406087.sendpatchset@octo>
+Subject: [PATCH 1/3] clocksource/drivers/sh_cmt: SoC-specific match for CMT1 on r8a7740 and sh73a0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-clocksource/drivers/sh_cmt: Minor DT compat string update
+From: Magnus Damm <damm+renesas@opensource.se>
 
-[PATCH 1/3] clocksource/drivers/sh_cmt: SoC-specific match for CMT1 on r8a7740 and sh73a0
-[PATCH 2/3] clocksource/drivers/sh_cmt: Remove "cmt-48-gen2" support
-[PATCH 3/3] clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated
+Add SoC-specific matching for CMT1 on r8a7740 and sh73a0.
 
-Move over to new CMT1 bindings on r8a7740 and sh73a0 and get rid of old
-stale stuff such as "cmt-48-gen2" while keeping "cmt-48" around but document
-it as deprecated.
+This allows us to move away from the old DT bindings such as
+ - "renesas,cmt-48-sh73a0"
+ - "renesas,cmt-48-r8a7740"
+ - "renesas,cmt-48"
+in favour for the now commonly used format "renesas,<soc>-<device>"
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
 
-Patch 1 and patch 3 depend on updated SoC-specific DT bindings in:
+The updated SoC-specific DT bindings are documented in:
 [PATCH 2/8] dt-bindings: timer: renesas, cmt: Update CMT1 on sh73a0 and r8a7740
 
- drivers/clocksource/sh_cmt.c |   19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/clocksource/sh_cmt.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+--- 0001/drivers/clocksource/sh_cmt.c
++++ work/drivers/clocksource/sh_cmt.c	2019-06-17 14:42:26.019448534 +0900
+@@ -928,6 +928,14 @@ static const struct of_device_id sh_cmt_
+ 		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
+ 	},
+ 	{
++		.compatible = "renesas,r8a7740-cmt1",
++		.data = &sh_cmt_info[SH_CMT_48BIT]
++	},
++	{
++		.compatible = "renesas,sh73a0-cmt1",
++		.data = &sh_cmt_info[SH_CMT_48BIT]
++	},
++	{
+ 		.compatible = "renesas,rcar-gen2-cmt0",
+ 		.data = &sh_cmt_info[SH_CMT0_RCAR_GEN2]
+ 	},
