@@ -6,44 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60551C31E5B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jun 2019 15:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C49C31E5B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jun 2019 15:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DE6121479
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jun 2019 15:19:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61D72213F2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jun 2019 15:19:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbfFRPT1 (ORCPT
+        id S1729204AbfFRPTa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jun 2019 11:19:27 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:33462 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728572AbfFRPT1 (ORCPT
+        Tue, 18 Jun 2019 11:19:30 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:16165 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728572AbfFRPTa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jun 2019 11:19:27 -0400
+        Tue, 18 Jun 2019 11:19:30 -0400
 X-IronPort-AV: E=Sophos;i="5.62,389,1554735600"; 
-   d="scan'208";a="18772444"
+   d="scan'208";a="18981214"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Jun 2019 00:19:25 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 19 Jun 2019 00:19:28 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3AD974006A86;
-        Wed, 19 Jun 2019 00:19:22 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BBBB34006A86;
+        Wed, 19 Jun 2019 00:19:25 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH 1/3] dt-bindings: display: renesas: Add r8a774a1 support
-Date:   Tue, 18 Jun 2019 16:18:37 +0100
-Message-Id: <1560871119-16570-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add HDMI encoder instance
+Date:   Tue, 18 Jun 2019 16:18:38 +0100
+Message-Id: <1560871119-16570-3-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560871119-16570-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1560871119-16570-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -52,32 +48,67 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document RZ/G2M (R8A774A1) SoC bindings.
+Add the HDMI encoder to the R8A774A1 DT in disabled state.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
- Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This patch depends on:
+https://patchwork.kernel.org/patch/10995149/
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-index a41d280..db68041 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-@@ -12,10 +12,12 @@ following device-specific properties.
- Required properties:
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 32 +++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index d6dd4b6..a849ca7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -2397,6 +2397,37 @@
+ 			};
+ 		};
  
- - compatible : Shall contain one or more of
-+  - "renesas,r8a774a1-hdmi" for R8A774A1 (RZ/G2M) compatible HDMI TX
-   - "renesas,r8a7795-hdmi" for R8A7795 (R-Car H3) compatible HDMI TX
-   - "renesas,r8a7796-hdmi" for R8A7796 (R-Car M3-W) compatible HDMI TX
-   - "renesas,r8a77965-hdmi" for R8A77965 (R-Car M3-N) compatible HDMI TX
--  - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 compatible HDMI TX
-+  - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 and RZ/G2 compatible
-+			     HDMI TX
- 
-     When compatible with generic versions, nodes must list the SoC-specific
-     version corresponding to the platform first, followed by the
++		hdmi0: hdmi@fead0000 {
++			compatible = "renesas,r8a774a1-hdmi",
++				     "renesas,rcar-gen3-hdmi";
++			reg = <0 0xfead0000 0 0x10000>;
++			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 729>,
++				 <&cpg CPG_CORE R8A774A1_CLK_HDMI>;
++			clock-names = "iahb", "isfr";
++			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
++			resets = <&cpg 729>;
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				port@0 {
++					reg = <0>;
++					dw_hdmi0_in: endpoint {
++						remote-endpoint = <&du_out_hdmi0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++				};
++				port@2 {
++					/* HDMI sound */
++					reg = <2>;
++				};
++			};
++		};
++
+ 		du: display@feb00000 {
+ 			compatible = "renesas,du-r8a774a1";
+ 			reg = <0 0xfeb00000 0 0x70000>;
+@@ -2423,6 +2454,7 @@
+ 				port@1 {
+ 					reg = <1>;
+ 					du_out_hdmi0: endpoint {
++						remote-endpoint = <&dw_hdmi0_in>;
+ 					};
+ 				};
+ 				port@2 {
 -- 
 2.7.4
 
