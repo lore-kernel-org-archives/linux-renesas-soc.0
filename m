@@ -2,85 +2,58 @@ Return-Path: <SRS0=kRYB=US=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADF9C31E49
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jun 2019 12:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF147C31E49
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jun 2019 12:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70905206B7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jun 2019 12:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC51D2084A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jun 2019 12:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731653AbfFSMCu (ORCPT
+        id S1726999AbfFSMKZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Jun 2019 08:02:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40880 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbfFSMCu (ORCPT
+        Wed, 19 Jun 2019 08:10:25 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:58272 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfFSMKZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Jun 2019 08:02:50 -0400
-Received: by mail-lj1-f193.google.com with SMTP id a21so2977623ljh.7
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jun 2019 05:02:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sI3F9RN+utydt3P1LSuFV0W1bFTbyujq74r8k0N53Bo=;
-        b=E5GiVCj00wocsLQiTaQwVF8rk//ZFUv9EP6molAHiTgP3rv7GfJoukt3KDpI3r+eTM
-         6WrnyDSw/435ofGZHbVBybGJr1xfOaTNGBnn9InSJmMvbDtPWEoVfgLxuVWOcoSWmMOG
-         0Zr1AM+tRQpektoSQnzGnksxAKGC/PWyX7PuNKKK/9AA0+opqHaEWT5NP6ZSPIeTikIP
-         Yk4zQ/yC57obaUnInQdOth5FpjU0jpQivpuZw7ISwzwsH2Jrurf28pgxhXoF7lAB0FLc
-         rF7bRRMye49gn2qjcW/61Iva+Uxm/Bsi1dem6qwz7nQNyp2Le4L6h7BaGXZy1akT7Vsb
-         OTIA==
-X-Gm-Message-State: APjAAAWV1VYjfbSrVHZxW6rZ2nzZXXu2iuI4H5c3+rgO/eEowahMYrt+
-        dxt/I3+QPQwEzvG8mbQI4DQb+2MBThDyPBL2ynw=
-X-Google-Smtp-Source: APXvYqy6u/HLvJliV4B/pGxFYiWCuIRt07JR3Iu4QdJytpDJtdf5/cp1fpwTMmkP8kIP0sh8+nsdN6o+2smqSTput+M=
-X-Received: by 2002:a2e:9c85:: with SMTP id x5mr28842793lji.139.1560945768007;
- Wed, 19 Jun 2019 05:02:48 -0700 (PDT)
+        Wed, 19 Jun 2019 08:10:25 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 5590B25AF1B;
+        Wed, 19 Jun 2019 22:10:23 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 552DA9409FF; Wed, 19 Jun 2019 14:10:21 +0200 (CEST)
+Date:   Wed, 19 Jun 2019 14:10:21 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Add CMT0 and CMT1 to r8a7792
+Message-ID: <20190619121020.asmuj2skaicuzorb@verge.net.au>
+References: <156076300266.5827.16345352064689583105.sendpatchset@octo>
+ <156076302818.5827.976723043537886578.sendpatchset@octo>
+ <CAMuHMdU_BfLBPvohz752j16FLoDb0X2tCR=UTFcuLo_Y45AKPw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190618124714.15120-1-geert+renesas@glider.be> <20190619115141.wwze45px5qinll2j@verge.net.au>
-In-Reply-To: <20190619115141.wwze45px5qinll2j@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 19 Jun 2019 14:02:35 +0200
-Message-ID: <CAMuHMdVbGKxfVgkQ=CwqcBWj5u3CSR3j1E0Eso1eZTrdJUfPSQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: shmobile: defconfig: Refresh for v5.2-rc1
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU_BfLBPvohz752j16FLoDb0X2tCR=UTFcuLo_Y45AKPw@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Simon,
-
-On Wed, Jun 19, 2019 at 1:51 PM Simon Horman <horms@verge.net.au> wrote:
-> On Tue, Jun 18, 2019 at 02:47:14PM +0200, Geert Uytterhoeven wrote:
-> > Update the defconfig for Renesas ARM boards:
-> >   - Drop CONFIG_GENERIC_PHY=y (selected by PHY_RCAR_GEN3_USB2).
+On Tue, Jun 18, 2019 at 03:54:29PM +0200, Geert Uytterhoeven wrote:
+> On Mon, Jun 17, 2019 at 11:17 AM Magnus Damm <magnus.damm@gmail.com> wrote:
+> > From: Magnus Damm <damm+renesas@opensource.se>
 > >
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> I believe this duplicates the following patch which is present
-> in renesas-next.
->
-> b995421faef5 ("ARM: shmobile: Remove GENERIC_PHY from shmobile_defconfig")
+> > Add CMT0 and CMT1 to the R-Car Gen2 V2H (r8a7792) SoC.
+> >
+> > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-That commit doesn't seem to be part of your public repo.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git/commit/?id=b995421faef5
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks, applied for inclusion in v5.3.
