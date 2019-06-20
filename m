@@ -2,107 +2,86 @@ Return-Path: <SRS0=UbMS=UT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E50C43613
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Jun 2019 09:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DE2C43613
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Jun 2019 09:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3DB2080C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Jun 2019 09:08:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC8620656
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Jun 2019 09:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbfFTJIW (ORCPT
+        id S1726082AbfFTJVT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Jun 2019 05:08:22 -0400
-Received: from twhmllg3.macronix.com ([211.75.127.131]:25049 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725875AbfFTJIV (ORCPT
+        Thu, 20 Jun 2019 05:21:19 -0400
+Received: from sauhun.de ([88.99.104.3]:39804 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfFTJVS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Jun 2019 05:08:21 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG3.macronix.com with ESMTP id x5K985xF044197;
-        Thu, 20 Jun 2019 17:08:07 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        Mason Yang <masonccyang@mxic.com.tw>, miquel.raynal@bootlin.com
-Subject: [PATCH v14 2/2] dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF controller bindings
-Date:   Thu, 20 Jun 2019 17:30:46 +0800
-Message-Id: <1561023046-20886-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1561023046-20886-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1561023046-20886-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG3.macronix.com x5K985xF044197
+        Thu, 20 Jun 2019 05:21:18 -0400
+Received: from localhost (p5486CFDE.dip0.t-ipconnect.de [84.134.207.222])
+        by pokefinder.org (Postfix) with ESMTPSA id 92CB92C376D;
+        Thu, 20 Jun 2019 11:21:16 +0200 (CEST)
+Date:   Thu, 20 Jun 2019 11:21:16 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Steve Twiss <stwiss.opensource@diasemi.com>
+Cc:     "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "kieran.bingham+renesas@ideasonboard.com" 
+        <kieran.bingham+renesas@ideasonboard.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "peda@axentia.se" <peda@axentia.se>,
+        Support Opensource <Support.Opensource@diasemi.com>
+Subject: Re: [PATCH] mfd: da9063: occupy second I2C address, too
+Message-ID: <20190620092116.y7aqun6jjjn4mgow@katana>
+References: <AM6PR10MB218184C8F2206024C6CB77EAFEE40@AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kqzhjyotn5nd6yyg"
+Content-Disposition: inline
+In-Reply-To: <AM6PR10MB218184C8F2206024C6CB77EAFEE40@AM6PR10MB2181.EURPRD10.PROD.OUTLOOK.COM>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dcument the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+--kqzhjyotn5nd6yyg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-new file mode 100644
-index 0000000..e8edf99
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-@@ -0,0 +1,43 @@
-+Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-+---------------------------------------------------------
-+
-+Required properties:
-+- compatible: should be an SoC-specific compatible value, followed by
-+		"renesas,rcar-gen3-rpc" as a fallback.
-+		supported SoC-specific values are:
-+		"renesas,r8a77980-rpc"	(R-Car V3H)
-+		"renesas,r8a77995-rpc"	(R-Car D3)
-+- reg: should contain three register areas:
-+       first for the base address of RPC-IF registers,
-+       second for the direct mapping read mode and
-+       third for the write buffer area.
-+- reg-names: should contain "regs", "dirmap" and "wbuf"
-+- clocks: should contain the clock phandle/specifier pair for the module clock.
-+- clock-names: should contain "rpc"
-+- power-domain: should contain the power domain phandle/secifier pair.
-+- resets: should contain the reset controller phandle/specifier pair.
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+
-+Example:
-+
-+	rpc: spi@ee200000 {
-+		compatible = "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc";
-+		reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
-+		      <0 0xee208000 0 0x100>;
-+		reg-names = "regs", "dirmap", "wbuf";
-+		clocks = <&cpg CPG_MOD 917>;
-+		clock-names = "rpc";
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <40000000>;
-+			spi-tx-bus-width = <1>;
-+			spi-rx-bus-width = <1>;
-+		};
-+	};
--- 
-1.9.1
 
+> Is this a safety clause? What I mean is, shouldn't the hardware design make
+> sure there are not two devices located on the same I2C bus with the same slave
+> address?
+
+It is more about preventing userspace to accidently access this address,
+and thus the registers behind it.
+
+
+--kqzhjyotn5nd6yyg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0LUAcACgkQFA3kzBSg
+KbaCzA//bSm54R7HOZhp0THghBZ7DsE1wkpsGGfyCaIROm2ZmqG1STPmpRhj9+cH
+gZyDJkOJKIE8LQvfsVWnAknbpE942cnbczOIzGFKRS0lQlP3uUe/maQez+PowuUM
+0GQoofwDyF24w+jQX2a0QB0SwPmU+Yr1IIJb7fMvisiKo0YQ774sYSD3b+WBH5Vm
++3bU+9a1i5onSsCqu5zZ8fzJRQYr1WUFkOxRf+uzeBrltDwWvfxUrVJ7u6GF2uHs
+1f/ilqDdw+ngQeGLV1kF9ppHwVIFxV8vMwoGR+B3vbufPXcQgfB4Cknshb1baU/K
+k/2zUP6Q2gnbrWCapEQrGvh4adtqP6JGoPHV9UAj9ZH72qePER/DOJsQW9ZjN3m7
+RRZb7gUoMZOhwr4CyBT4uZH4tf/CUvt08AIY9SjEX+SNRf742OZgUD1dJR5ajc29
+q+yqG+9yruLb1Xsahe+k5Zz/0D4UEWZJ1wmIQVK+7Knue2sr2HZ1XTDS8EQOAUPh
+rrIkkNXU+r23ZubT2FeSruG93BeN2MR+COQM0XanxemGiNmx2g1eQMa6wtnPbRXn
+7qg4Den2vMQOkxk6mC0YTg8kRu6AgW+Koie/F8/IZbfmgOpIBLuV8AJAPWnNHIAM
+RuAsOHKk8ip13B2p36wa8O2igBlTaK9d6lKwLl1AnF60y1IjOlM=
+=cDU8
+-----END PGP SIGNATURE-----
+
+--kqzhjyotn5nd6yyg--
