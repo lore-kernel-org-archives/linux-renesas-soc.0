@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D216CC48BE0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9348C43613
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CB8208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6EF5208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfFUJOL (ORCPT
+        id S1726551AbfFUJOM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:14:11 -0400
+        Fri, 21 Jun 2019 05:14:12 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:33940 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfFUJOL (ORCPT
+        with ESMTP id S1726550AbfFUJOM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:14:11 -0400
+        Fri, 21 Jun 2019 05:14:12 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id F11FD25BE54;
-        Fri, 21 Jun 2019 19:13:54 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0C6C225BE5B;
+        Fri, 21 Jun 2019 19:13:55 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 295DC940F24; Fri, 21 Jun 2019 11:13:51 +0200 (CEST)
+        id 4D6CB940FE7; Fri, 21 Jun 2019 11:13:51 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 10/22] ARM: dts: r8a779x: Configure PMIC IRQ pinmux
-Date:   Fri, 21 Jun 2019 11:13:37 +0200
-Message-Id: <185555ff994eaf0a992ec52221a9b05f645ecd22.1561104194.git.horms+renesas@verge.net.au>
+Subject: [PATCH 12/22] ARM: dts: rskrza1: Add input switches
+Date:   Fri, 21 Jun 2019 11:13:39 +0200
+Message-Id: <35b81a037b2ee78f05d17e0856f0005ad8fc67f1.1561104194.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561104194.git.horms+renesas@verge.net.au>
 References: <cover.1561104194.git.horms+renesas@verge.net.au>
@@ -42,174 +42,83 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The PMIC IRQ line pin multiplexing configuration is missing from the DTs.
-Since the line is configured correctly by default, the system works fine.
-However, add the IRQ line pin multiplexing configuration for completeness.
+Add support for input switches SW1-3 on the Renesas RZ/A1 RSK+RZA1
+development board.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Note that this uses the IRQ interrupts, as the RZ/A1 GPIO controller
+does not include interrupt support.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r8a7790-lager.dts   | 7 +++++++
- arch/arm/boot/dts/r8a7790-stout.dts   | 7 ++++++-
- arch/arm/boot/dts/r8a7791-koelsch.dts | 7 +++++++
- arch/arm/boot/dts/r8a7791-porter.dts  | 7 +++++++
- arch/arm/boot/dts/r8a7792-blanche.dts | 7 +++++++
- arch/arm/boot/dts/r8a7793-gose.dts    | 7 +++++++
- 6 files changed, 41 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/r7s72100-rskrza1.dts | 38 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 7b9508e83d46..d637b9727808 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -423,6 +423,8 @@
- 	 */
- 	i2cpwr: i2c-13 {
- 		compatible = "i2c-demux-pinctrl";
+diff --git a/arch/arm/boot/dts/r7s72100-rskrza1.dts b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+index ff24301dc1be..99acfe4fe11a 100644
+--- a/arch/arm/boot/dts/r7s72100-rskrza1.dts
++++ b/arch/arm/boot/dts/r7s72100-rskrza1.dts
+@@ -8,6 +8,7 @@
+ /dts-v1/;
+ #include "r7s72100.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
+ #include <dt-bindings/pinctrl/r7s72100-pinctrl.h>
+ 
+ / {
+@@ -28,6 +29,37 @@
+ 		reg = <0x08000000 0x02000000>;
+ 	};
+ 
++	keyboard {
++		compatible = "gpio-keys";
++
 +		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq_pins>;
- 		i2c-parent = <&iic3>, <&i2c3>;
- 		i2c-bus-name = "i2c-pwr";
++		pinctrl-0 = <&keyboard_pins>;
++
++		key-1 {
++			interrupt-parent = <&irqc>;
++			interrupts = <3 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_1>;
++			label = "SW1";
++			wakeup-source;
++		};
++
++		key-2 {
++			interrupt-parent = <&irqc>;
++			interrupts = <2 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_2>;
++			label = "SW2";
++			wakeup-source;
++		};
++
++		key-3 {
++			interrupt-parent = <&irqc>;
++			interrupts = <5 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_3>;
++			label = "SW3";
++			wakeup-source;
++		};
++	};
++
+ 	lbsc {
  		#address-cells = <1>;
-@@ -615,6 +617,11 @@
- 		function = "iic3";
+ 		#size-cells = <1>;
+@@ -101,6 +133,12 @@
+ 			 <RZA1_PINMUX(1, 7, 1)>;	/* RIIC3SDA */
  	};
  
-+	pmic_irq_pins: pmicirq {
-+		groups = "intc_irq2";
-+		function = "intc";
++	keyboard_pins: keyboard {
++		pinmux = <RZA1_PINMUX(1, 9, 3)>,	/* IRQ3 */
++			 <RZA1_PINMUX(1, 8, 3)>,	/* IRQ2 */
++			 <RZA1_PINMUX(1, 11, 3)>;	/* IRQ5 */
 +	};
 +
- 	hsusb_pins: hsusb {
- 		groups = "usb0_ovc_vbus";
- 		function = "usb0";
-diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
-index 7a7d3b84d1a6..ad68e6034b43 100644
---- a/arch/arm/boot/dts/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/r8a7790-stout.dts
-@@ -179,6 +179,11 @@
- 		function = "iic3";
- 	};
- 
-+	pmic_irq_pins: pmicirq {
-+		groups = "intc_irq2";
-+		function = "intc";
-+	};
-+
- 	usb0_pins: usb0 {
- 		groups = "usb0";
- 		function = "usb0";
-@@ -317,7 +322,7 @@
- 
- &iic3 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&iic3_pins>;
-+	pinctrl-0 = <&iic3_pins &pmic_irq_pins>;
- 	status = "okay";
- 
- 	pmic@58 {
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index e6580aa0cea3..a116bfc11f0b 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -540,6 +540,11 @@
- 		function = "intc";
- 	};
- 
-+	pmic_irq_pins: pmicirq {
-+		groups = "intc_irq2";
-+		function = "intc";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -776,6 +781,8 @@
- };
- 
- &i2c6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmic_irq_pins>;
- 	status = "okay";
- 	clock-frequency = <100000>;
- 
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index fefdf8238bbe..e08d257f5d0c 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -228,6 +228,11 @@
- 		function = "intc";
- 	};
- 
-+	pmic_irq_pins: pmicirq {
-+		groups = "intc_irq2";
-+		function = "intc";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -373,6 +378,8 @@
- };
- 
- &i2c6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmic_irq_pins>;
- 	status = "okay";
- 	clock-frequency = <100000>;
- 
-diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
-index b6fa80c3b07e..b7af14de7c8e 100644
---- a/arch/arm/boot/dts/r8a7792-blanche.dts
-+++ b/arch/arm/boot/dts/r8a7792-blanche.dts
-@@ -234,6 +234,11 @@
- 		groups = "du1_rgb666", "du1_sync", "du1_disp";
- 		function = "du1";
- 	};
-+
-+	pmic_irq_pins: pmicirq {
-+		groups = "intc_irq2";
-+		function = "intc";
-+	};
- };
- 
- &rwdt {
-@@ -314,6 +319,8 @@
- 	pmic@58 {
- 		compatible = "dlg,da9063";
- 		reg = <0x58>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq_pins>;
- 		interrupt-parent = <&irqc>;
- 		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index f51601af89a2..9984ebf06695 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -514,6 +514,11 @@
- 		function = "intc";
- 	};
- 
-+	pmic_irq_pins: pmicirq {
-+		groups = "intc_irq2";
-+		function = "intc";
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		groups = "sdhi0_data4", "sdhi0_ctrl";
- 		function = "sdhi0";
-@@ -711,6 +716,8 @@
- };
- 
- &i2c6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pmic_irq_pins>;
- 	status = "okay";
- 	clock-frequency = <100000>;
- 
+ 	/* Serial Console */
+ 	scif2_pins: serial2 {
+ 		pinmux = <RZA1_PINMUX(3, 0, 6)>,	/* TxD2 */
 -- 
 2.11.0
 
