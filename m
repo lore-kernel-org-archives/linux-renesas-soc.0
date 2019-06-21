@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE27BC43613
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E180BC43613
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E5CD20665
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D8520665
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfFUJRi (ORCPT
+        id S1726523AbfFUJRj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:17:38 -0400
+        Fri, 21 Jun 2019 05:17:39 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:34780 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJRi (ORCPT
+        with ESMTP id S1726210AbfFUJRj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:17:38 -0400
+        Fri, 21 Jun 2019 05:17:39 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 9501125BECC;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 9949D25BED0;
         Fri, 21 Jun 2019 19:16:43 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 99AC5943340; Fri, 21 Jun 2019 11:16:34 +0200 (CEST)
+        id 5310D9430D4; Fri, 21 Jun 2019 11:16:34 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 33/53] arm64: dts: renesas: hihope-common: Declare pcie bus clock
-Date:   Fri, 21 Jun 2019 11:16:11 +0200
-Message-Id: <61e0505b162a3974663cc6d1dbec30268a7a03ea.1561107232.git.horms+renesas@verge.net.au>
+Subject: [PATCH 29/53] arm64: dts: renesas: Add HiHope RZ/G2M main board support
+Date:   Fri, 21 Jun 2019 11:16:07 +0200
+Message-Id: <438419ebd3f86221390e481f84db61fd7c5aa2b9.1561107232.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561107232.git.horms+renesas@verge.net.au>
 References: <cover.1561107232.git.horms+renesas@verge.net.au>
@@ -44,31 +44,107 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Biju Das <biju.das@bp.renesas.com>
 
-Declare pcie bus clock, since it is generated on the HiHope RZ/G2M main
-board.
+Basic support for the HiHope RZ/G2M main board:
+  - Memory,
+  - Main crystal,
+  - Serial console
+
+This patch also includes a dtsi common to both HiHope RZ/G2M
+and RZ/G2N main boards.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/hihope-common.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi     | 33 ++++++++++++++++++++++
+ .../boot/dts/renesas/r8a774a1-hihope-rzg2m.dts     | 26 +++++++++++++++++
+ 3 files changed, 60 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/hihope-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dts
 
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 6cde526547e4..aa33074b7360 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m.dtb
+ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
 diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-index 4cc924d38cf6..95ac6fa0fb7f 100644
---- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+new file mode 100644
+index 000000000000..5baf5328124a
+--- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-@@ -26,6 +26,10 @@
- 	clock-frequency = <32768>;
- };
- 
-+&pcie_bus_clk {
-+	clock-frequency = <100000000>;
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the HiHope RZ/G2[MN] main board common parts
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
++
++/ {
++	aliases {
++		serial0 = &scif2;
++	};
++
++	chosen {
++		bootargs = "ignore_loglevel";
++		stdout-path = "serial0:115200n8";
++	};
 +};
 +
- &pfc {
- 	pinctrl-0 = <&scif_clk_pins>;
- 	pinctrl-names = "default";
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&scif2 {
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <14745600>;
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dts b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dts
+new file mode 100644
+index 000000000000..93ca973c856c
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dts
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the HiHope RZ/G2M main board
++ *
++ * Copyright (C) 2019 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a774a1.dtsi"
++#include "hihope-common.dtsi"
++
++/ {
++	model = "HopeRun HiHope RZ/G2M main board based on r8a774a1";
++	compatible = "hoperun,hihope-rzg2m", "renesas,r8a774a1";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x80000000>;
++	};
++};
 -- 
 2.11.0
 
