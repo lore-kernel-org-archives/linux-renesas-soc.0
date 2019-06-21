@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558BDC48BE0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1283C43613
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B02208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0F08208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfFUJRV (ORCPT
+        id S1726404AbfFUJRW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:17:21 -0400
+        Fri, 21 Jun 2019 05:17:22 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:34780 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJRU (ORCPT
+        with ESMTP id S1726210AbfFUJRW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:17:20 -0400
+        Fri, 21 Jun 2019 05:17:22 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1750D25BE97;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 5C7B825BEA9;
         Fri, 21 Jun 2019 19:16:39 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id DBFDD942F33; Fri, 21 Jun 2019 11:16:33 +0200 (CEST)
+        id A6A2694351D; Fri, 21 Jun 2019 11:16:35 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 23/53] arm64: dts: renesas: r8a7796: Add dynamic power coefficient
-Date:   Fri, 21 Jun 2019 11:16:01 +0200
-Message-Id: <9fed1b89c0cdc11645cdb102b9d58598829e319d.1561107232.git.horms+renesas@verge.net.au>
+Subject: [PATCH 46/53] arm64: dts: renesas: hihope-common: Add LEDs support
+Date:   Fri, 21 Jun 2019 11:16:24 +0200
+Message-Id: <1485b6353a9940c5ac5d3f90880207ac95b4e350.1561107232.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561107232.git.horms+renesas@verge.net.au>
 References: <cover.1561107232.git.horms+renesas@verge.net.au>
@@ -41,35 +42,53 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Describe the dynamic power coefficient of A57 and A53 CPUs.
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Based on work by Gaku Inami <gaku.inami.xw@bp.renesas.com> and others.
+This patch adds LEDs support to the HiHope RZ/G2[MN] Main Board
+common device tree.
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a7796.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index fdadb44847c6..26df5b88efd7 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -160,6 +160,7 @@
- 			power-domains = <&sysc R8A7796_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			dynamic-power-coefficient = <854>;
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
-@@ -187,6 +188,7 @@
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
- 			#cooling-cells = <2>;
-+			dynamic-power-coefficient = <277>;
- 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
+diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+index 6a45c49c24dc..625c3aaead14 100644
+--- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
+@@ -17,6 +17,30 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	leds {
++		compatible = "gpio-leds";
++
++		led0 {
++			gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
++			label = "LED0";
++		};
++
++		led1 {
++			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
++			label = "LED1";
++		};
++
++		led2 {
++			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
++			label = "LED2";
++		};
++
++		led3 {
++			gpios = <&gpio0  0 GPIO_ACTIVE_HIGH>;
++			label = "LED3";
++		};
++	};
++
+ 	reg_1p8v: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
 -- 
 2.11.0
 
