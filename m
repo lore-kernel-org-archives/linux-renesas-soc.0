@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E8FEC48BE3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2588DC43613
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4245F2083B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 051EC20665
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfFUJRc (ORCPT
+        id S1726476AbfFUJRd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:17:32 -0400
+        Fri, 21 Jun 2019 05:17:33 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:34780 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJRc (ORCPT
+        with ESMTP id S1726210AbfFUJRd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:17:32 -0400
+        Fri, 21 Jun 2019 05:17:33 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 8266325BEBB;
-        Fri, 21 Jun 2019 19:16:39 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 90E8D25AEEC;
+        Fri, 21 Jun 2019 19:16:41 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 1A54B94353B; Fri, 21 Jun 2019 11:16:36 +0200 (CEST)
+        id CF9F2942F39; Fri, 21 Jun 2019 11:16:33 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Dien Pham <dien.pham.ry@renesas.com>,
+        Hien Dang <hien.dang.eb@rvc.renesas.com>,
+        An Huynh <an.huynh.uj@rvc.renesas.com>,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 51/53] arm64: dts: renesas: r8a774a1: Add HDMI encoder instance
-Date:   Fri, 21 Jun 2019 11:16:29 +0200
-Message-Id: <8c965642354950cd17d1edff57fd5ca965040517.1561107232.git.horms+renesas@verge.net.au>
+Subject: [PATCH 22/53] arm64: dts: renesas: r8a7796: Create thermal zone to support IPA
+Date:   Fri, 21 Jun 2019 11:16:00 +0200
+Message-Id: <81022ecd2720a5bf2c7163e6cc3fcfe51bf23ce0.1561107232.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561107232.git.horms+renesas@verge.net.au>
 References: <cover.1561107232.git.horms+renesas@verge.net.au>
@@ -42,67 +46,161 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+From: Dien Pham <dien.pham.ry@renesas.com>
 
-Add the HDMI encoder to the R8A774A1 DT in disabled state.
+Setup a thermal zone driven by SoC temperature sensor.
+Create passive trip points and bind them to CPUFreq cooling
+device that supports power extension.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+In R-Car Gen3, IPA is supported for only one channel
+ (on H3/M3/M3N SoCs, it is channel THS3). Reason:
+  Currently, IPA controls base on only CPU temperature.
+  And only one thermal channel is assembled closest
+  CPU cores is selected as target of IPA.
+  If other channels are used, IPA controlling is not properly.
+
+The A57 cooling device supports 5 cooling states which can be categorised
+as follows:
+
+0 & 1) boost (clocking up)
+2)     default
+3 & 4) cooling (clocking down)
+
+Currently the thermal framework assumes that the default is the minimum,
+or in other words there is no provision for handling boost states.
+So this patch only describes the upper 3 states, default and cooling.
+
+A single cooling device is described for all A57 CPUs and a separate
+cooling device is described for all A53 CPUs. This reflects that physically
+there is only one cooling device present for each type of CPU.
+
+This patch improves on an earlier version by:
+
+* Omitting cooling-max-level and cooling-min-level properties which
+  are no longer present in mainline as of v4.17
+* Removing an unused trip-point0 node sub-property from the trips
+  property.
+* Using cooling-device indexes such that maximum refers to maximum cooling
+  rather than the inverse.
+* Defers adding dynamic-power-coefficient properties to a separate patch as
+  these are properties of the CPU.
+
+The long signed-off by chain below reflects many revisions, mainly
+internal, that this patch has been through.
+
+Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Hien Dang <hien.dang.eb@rvc.renesas.com>
+Signed-off-by: An Huynh <an.huynh.uj@rvc.renesas.com>
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 32 +++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi | 44 +++++++++++---------------------
+ 1 file changed, 15 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index b437edc04712..f209457c7807 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -2368,6 +2368,37 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 452532fbc443..fdadb44847c6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -186,6 +186,7 @@
+ 			power-domains = <&sysc R8A7796_PD_CA53_CPU0>;
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
++			#cooling-cells = <2>;
+ 			clocks = <&cpg CPG_CORE R8A7796_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			capacity-dmips-mhz = <535>;
+@@ -2825,76 +2826,61 @@
+ 			polling-delay-passive = <250>;
+ 			polling-delay = <1000>;
+ 			thermal-sensors = <&tsc 0>;
++			sustainable-power = <3874>;
+ 
+ 			trips {
+-				sensor1_passive: sensor1-passive {
+-					temperature = <95000>;
+-					hysteresis = <1000>;
+-					type = "passive";
+-				};
+ 				sensor1_crit: sensor1-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
  			};
+-
+-			cooling-maps {
+-				map0 {
+-					trip = <&sensor1_passive>;
+-					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
+-				};
+-			};
  		};
  
-+		hdmi0: hdmi@fead0000 {
-+			compatible = "renesas,r8a774a1-hdmi",
-+				     "renesas,rcar-gen3-hdmi";
-+			reg = <0 0xfead0000 0 0x10000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 729>,
-+				 <&cpg CPG_CORE R8A774A1_CLK_HDMI>;
-+			clock-names = "iahb", "isfr";
-+			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 729>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+					dw_hdmi0_in: endpoint {
-+						remote-endpoint = <&du_out_hdmi0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+				port@2 {
-+					/* HDMI sound */
-+					reg = <2>;
-+				};
-+			};
-+		};
-+
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a774a1";
- 			reg = <0 0xfeb00000 0 0x70000>;
-@@ -2394,6 +2425,7 @@
- 				port@1 {
- 					reg = <1>;
- 					du_out_hdmi0: endpoint {
-+						remote-endpoint = <&dw_hdmi0_in>;
- 					};
+ 		sensor_thermal2: sensor-thermal2 {
+ 			polling-delay-passive = <250>;
+ 			polling-delay = <1000>;
+ 			thermal-sensors = <&tsc 1>;
++			sustainable-power = <3874>;
+ 
+ 			trips {
+-				sensor2_passive: sensor2-passive {
+-					temperature = <95000>;
+-					hysteresis = <1000>;
+-					type = "passive";
+-				};
+ 				sensor2_crit: sensor2-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <1000>;
+ 					type = "critical";
  				};
- 				port@2 {
+ 			};
+-
+-			cooling-maps {
+-				map0 {
+-					trip = <&sensor2_passive>;
+-					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
+-				};
+-			};
+ 		};
+ 
+ 		sensor_thermal3: sensor-thermal3 {
+ 			polling-delay-passive = <250>;
+ 			polling-delay = <1000>;
+ 			thermal-sensors = <&tsc 2>;
++			sustainable-power = <3874>;
+ 
+ 			trips {
+-				sensor3_passive: sensor3-passive {
+-					temperature = <95000>;
++				target: trip-point1 {
++					temperature = <100000>;
+ 					hysteresis = <1000>;
+ 					type = "passive";
+ 				};
++
+ 				sensor3_crit: sensor3-crit {
+ 					temperature = <120000>;
+ 					hysteresis = <1000>;
+ 					type = "critical";
+ 				};
+ 			};
+-
+ 			cooling-maps {
+ 				map0 {
+-					trip = <&sensor3_passive>;
+-					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
++					trip = <&target>;
++					cooling-device = <&a57_0 2 4>;
++					contribution = <1024>;
++				};
++				map1 {
++					trip = <&target>;
++					cooling-device = <&a53_0 0 2>;
++					contribution = <1024>;
+ 				};
+ 			};
+ 		};
 -- 
 2.11.0
 
