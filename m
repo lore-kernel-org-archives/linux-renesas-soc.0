@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9691C48BE0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C05C43613
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE81208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C7B3208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfFUJON (ORCPT
+        id S1726553AbfFUJOO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:14:13 -0400
+        Fri, 21 Jun 2019 05:14:14 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:33940 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbfFUJON (ORCPT
+        with ESMTP id S1726550AbfFUJOO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:14:13 -0400
+        Fri, 21 Jun 2019 05:14:14 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1879B25BE5E;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 167CE25BE5D;
         Fri, 21 Jun 2019 19:13:55 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 66206941305; Fri, 21 Jun 2019 11:13:51 +0200 (CEST)
+        id 3F210940FD8; Fri, 21 Jun 2019 11:13:51 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 13/22] ARM: dts: r7s9210: Add USB Host support
-Date:   Fri, 21 Jun 2019 11:13:40 +0200
-Message-Id: <9d8c794e315028fc77350015eaf70fe1d3d0e0dc.1561104194.git.horms+renesas@verge.net.au>
+Subject: [PATCH 11/22] ARM: dts: r7s72100: Add IRQC device node
+Date:   Fri, 21 Jun 2019 11:13:38 +0200
+Message-Id: <bd6ed4674358e482f72abe853a42477a800cadbc.1561104194.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561104194.git.horms+renesas@verge.net.au>
 References: <cover.1561104194.git.horms+renesas@verge.net.au>
@@ -42,94 +42,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Add EHCI and OHCI host support for RZ/A2.
+Enable support for the IRQC on RZ/A1H, which is a small front-end to the
+GIC.  This allows to use up to 8 external interrupts with configurable
+sense select.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm/boot/dts/r7s9210.dtsi | 66 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ arch/arm/boot/dts/r7s72100.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s9210.dtsi b/arch/arm/boot/dts/r7s9210.dtsi
-index 73041f04fef5..066e6fed11aa 100644
---- a/arch/arm/boot/dts/r7s9210.dtsi
-+++ b/arch/arm/boot/dts/r7s9210.dtsi
-@@ -329,6 +329,72 @@
+diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
+index 2211f88ede2a..d03dcd919d6f 100644
+--- a/arch/arm/boot/dts/r7s72100.dtsi
++++ b/arch/arm/boot/dts/r7s72100.dtsi
+@@ -670,6 +670,25 @@
  			status = "disabled";
  		};
  
-+		ohci0: usb@e8218000 {
-+			compatible = "generic-ohci";
-+			reg = <0xe8218000 0x100>;
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 61>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
++		irqc: interrupt-controller@fcfef800 {
++			compatible = "renesas,r7s72100-irqc",
++				     "renesas,rza1-irqc";
++			#interrupt-cells = <2>;
++			#address-cells = <0>;
++			interrupt-controller;
++			reg = <0xfcfef800 0x6>;
++			interrupt-map =
++				<0 0 &gic GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
++				<1 0 &gic GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
++				<2 0 &gic GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
++				<3 0 &gic GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
++				<4 0 &gic GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
++				<5 0 &gic GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
++				<6 0 &gic GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++				<7 0 &gic GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-map-mask = <7 0>;
 +		};
 +
-+		ehci0: usb@e8218100 {
-+			compatible = "generic-ehci";
-+			reg = <0xe8218100 0x100>;
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 61>;
-+			phys = <&usb2_phy0>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		usb2_phy0: usb-phy@e8218200 {
-+			compatible = "renesas,usb2-phy-r7s9210", "renesas,rcar-gen3-usb2-phy";
-+			reg = <0xe8218200 0x700>;
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 61>, <&usb_x1_clk>;
-+			clock-names = "fck", "usb_x1";
-+			power-domains = <&cpg>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		ohci1: usb@e821a000 {
-+			compatible = "generic-ohci";
-+			reg = <0xe821a000 0x100>;
-+			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 60>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		ehci1: usb@e821a100 {
-+			compatible = "generic-ehci";
-+			reg = <0xe821a100 0x100>;
-+			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 60>;
-+			phys = <&usb2_phy1>;
-+			phy-names = "usb";
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+		};
-+
-+		usb2_phy1: usb-phy@e821a200 {
-+			compatible = "renesas,usb2-phy-r7s9210", "renesas,rcar-gen3-usb2-phy";
-+			reg = <0xe821a200 0x700>;
-+			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 60>, <&usb_x1_clk>;
-+			clock-names = "fck", "usb_x1";
-+			power-domains = <&cpg>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		sdhi0: sd@e8228000 {
- 			compatible = "renesas,sdhi-r7s9210";
- 			reg = <0xe8228000 0x8c0>;
+ 		mtu2: timer@fcff0000 {
+ 			compatible = "renesas,mtu2-r7s72100", "renesas,mtu2";
+ 			reg = <0xfcff0000 0x400>;
 -- 
 2.11.0
 
