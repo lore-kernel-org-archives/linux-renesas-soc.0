@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C712EC43613
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EA3C48BE0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA528208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3997208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbfFUJRM (ORCPT
+        id S1726476AbfFUJRN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:17:12 -0400
+        Fri, 21 Jun 2019 05:17:13 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:34780 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJRM (ORCPT
+        with ESMTP id S1726210AbfFUJRN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:17:12 -0400
+        Fri, 21 Jun 2019 05:17:13 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 9069325BE7A;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 987DD25BE87;
         Fri, 21 Jun 2019 19:16:38 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 27DE99434A0; Fri, 21 Jun 2019 11:16:35 +0200 (CEST)
+        id 6188C9434E6; Fri, 21 Jun 2019 11:16:35 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 40/53] arm64: dts: renesas: hihope-common: Add uSD and eMMC
-Date:   Fri, 21 Jun 2019 11:16:18 +0200
-Message-Id: <015a75077d7b9d95ff882d0a6bbf0913df36a593.1561107232.git.horms+renesas@verge.net.au>
+Subject: [PATCH 43/53] arm64: dts: renesas: r8a774a1: Fix USB 2.0 clocks
+Date:   Fri, 21 Jun 2019 11:16:21 +0200
+Message-Id: <a573cb676d54ce314f58e129f8d69ff09c9a92cf.1561107232.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561107232.git.horms+renesas@verge.net.au>
 References: <cover.1561107232.git.horms+renesas@verge.net.au>
@@ -44,115 +44,83 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-This patch adds uSD and eMMC support to the HiHope RZ/G2M
-board.
+Similarly to what done for the r8a7796 with commit 737e05bf034e
+("arm64: dts: renesas: revise properties for R-Car Gen3 SoCs'
+usb 2.0"), this patch lists the clock for the USB High-Speed Module
+(HS-USB) with the USB2.0 Host (EHCI/OHCI) IP DT node, and it lists
+the clock for the USB2.0 Host IP with the HS-USB module DT node.
 
+Fixes: 4c2c2fb99876 ("arm64: dts: renesas: r8a774a1: Add USB2.0 phy and host(EHCI/OHCI) device nodes")
+Fixes: ed898d4fc19d ("arm64: dts: renesas: r8a774a1: Add USB-DMAC and HSUSB device nodes")
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/hihope-common.dtsi | 77 ++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/hihope-common.dtsi b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-index 9817bb5b309a..12047ee65a97 100644
---- a/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/hihope-common.dtsi
-@@ -16,6 +16,37 @@
- 		bootargs = "ignore_loglevel";
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	reg_1p8v: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vccq_sdhi0: regulator-vccq-sdhi0 {
-+		compatible = "regulator-gpio";
-+
-+		regulator-name = "SDHI0 VccQ";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpios = <&gpio6 30 GPIO_ACTIVE_HIGH>;
-+		gpios-states = <1>;
-+		states = <3300000 1
-+			  1800000 0>;
-+	};
- };
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index c2f6d0a8444f..f4aeb9bdeeb0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -784,7 +784,7 @@
+ 				     "renesas,rcar-gen3-usbhs";
+ 			reg = <0 0xe6590000 0 0x200>;
+ 			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 704>;
++			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
+ 			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
+ 			       <&usb_dmac1 0>, <&usb_dmac1 1>;
+ 			dma-names = "ch0", "ch1", "ch2", "ch3";
+@@ -792,7 +792,7 @@
+ 			phys = <&usb2_phy0 3>;
+ 			phy-names = "usb";
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 704>;
++			resets = <&cpg 704>, <&cpg 703>;
+ 			status = "disabled";
+ 		};
  
- &extal_clk {
-@@ -43,6 +74,24 @@
- 		groups = "scif_clk_a";
- 		function = "scif_clk";
- 	};
-+
-+	sdhi0_pins: sd0 {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <3300>;
-+	};
-+
-+	sdhi0_pins_uhs: sd0_uhs {
-+		groups = "sdhi0_data4", "sdhi0_ctrl";
-+		function = "sdhi0";
-+		power-source = <1800>;
-+	};
-+
-+	sdhi3_pins: sd3 {
-+		groups = "sdhi3_data8", "sdhi3_ctrl", "sdhi3_ds";
-+		function = "sdhi3";
-+		power-source = <1800>;
-+	};
- };
+@@ -1915,11 +1915,11 @@
+ 			compatible = "generic-ohci";
+ 			reg = <0 0xee080000 0 0x100>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			phys = <&usb2_phy0 1>;
+ 			phy-names = "usb";
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			status = "disabled";
+ 		};
  
- &rwdt {
-@@ -60,3 +109,31 @@
- &scif_clk {
- 	clock-frequency = <14745600>;
- };
-+
-+&sdhi0 {
-+	pinctrl-0 = <&sdhi0_pins>;
-+	pinctrl-1 = <&sdhi0_pins_uhs>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vccq_sdhi0>;
-+	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&sdhi3 {
-+	pinctrl-0 = <&sdhi3_pins>;
-+	pinctrl-1 = <&sdhi3_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&reg_1p8v>;
-+	bus-width = <8>;
-+	mmc-hs200-1_8v;
-+	non-removable;
-+	fixed-emmc-driver-type = <1>;
-+	status = "okay";
-+};
+@@ -1939,12 +1939,12 @@
+ 			compatible = "generic-ehci";
+ 			reg = <0 0xee080100 0 0x100>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			phys = <&usb2_phy0 2>;
+ 			phy-names = "usb";
+ 			companion = <&ohci0>;
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -1966,9 +1966,9 @@
+ 				     "renesas,rcar-gen3-usb2-phy";
+ 			reg = <0 0xee080200 0 0x700>;
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&cpg CPG_MOD 703>;
++			clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+ 			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
+-			resets = <&cpg 703>;
++			resets = <&cpg 703>, <&cpg 704>;
+ 			#phy-cells = <1>;
+ 			status = "disabled";
+ 		};
 -- 
 2.11.0
 
