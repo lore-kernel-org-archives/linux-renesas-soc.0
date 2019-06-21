@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CBCC48BE0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDAFC43613
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9DC208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15821208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726431AbfFUJQz (ORCPT
+        id S1726350AbfFUJQ4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:16:55 -0400
+        Fri, 21 Jun 2019 05:16:56 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:34780 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJQz (ORCPT
+        with ESMTP id S1726210AbfFUJQ4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:16:55 -0400
+        Fri, 21 Jun 2019 05:16:56 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 8B3F825BE54;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 90F9525BE5B;
         Fri, 21 Jun 2019 19:16:37 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 73E479413DC; Fri, 21 Jun 2019 11:16:33 +0200 (CEST)
+        id B6A92942ED9; Fri, 21 Jun 2019 11:16:33 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 17/53] arm64: dts: renesas: r8a774c0: Clean up CPU compatibles
-Date:   Fri, 21 Jun 2019 11:15:55 +0200
-Message-Id: <11290c09e29600f45684113d78209d1df1c22aba.1561107232.git.horms+renesas@verge.net.au>
+Subject: [PATCH 21/53] arm64: dts: renesas: r8a7795: Add dynamic power coefficient
+Date:   Fri, 21 Jun 2019 11:15:59 +0200
+Message-Id: <47e1714ab93da6936bc662fe4a19a2c183d5b1a1.1561107232.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561107232.git.horms+renesas@verge.net.au>
 References: <cover.1561107232.git.horms+renesas@verge.net.au>
@@ -42,41 +41,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Robin Murphy <robin.murphy@arm.com>
+Describe the dynamic power coefficient of A57 and A53 CPUs.
 
-Apparently this DTS crossed over with commit 31af04cd60d3 ("arm64: dts:
-Remove inconsistent use of 'arm,armv8' compatible string") and missed
-out on the cleanup, so put it right.
+Based on work by Gaku Inami <gaku.inami.xw@bp.renesas.com> and others.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 3f86db199dbf..500b7bd58022 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -70,7 +70,7 @@
- 		#size-cells = <0>;
- 
- 		a53_0: cpu@0 {
--			compatible = "arm,cortex-a53", "arm,armv8";
-+			compatible = "arm,cortex-a53";
- 			reg = <0>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A774C0_PD_CA53_CPU0>;
-@@ -81,7 +81,7 @@
- 		};
- 
- 		a53_1: cpu@1 {
--			compatible = "arm,cortex-a53", "arm,armv8";
-+			compatible = "arm,cortex-a53";
- 			reg = <1>;
- 			device_type = "cpu";
- 			power-domains = <&sysc R8A774C0_PD_CA53_CPU1>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index f340b663cb80..1745ac4b307e 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -155,6 +155,7 @@
+ 			power-domains = <&sysc R8A7795_PD_CA57_CPU0>;
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
++			dynamic-power-coefficient = <854>;
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			capacity-dmips-mhz = <1024>;
+@@ -208,6 +209,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			#cooling-cells = <2>;
++			dynamic-power-coefficient = <277>;
+ 			clocks = <&cpg CPG_CORE R8A7795_CLK_Z2>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			capacity-dmips-mhz = <535>;
 -- 
 2.11.0
 
