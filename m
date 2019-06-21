@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A4FC43613
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AFBC43613
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3920E208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4F5F208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:17:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfFUJRB (ORCPT
+        id S1726297AbfFUJRC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:17:01 -0400
+        Fri, 21 Jun 2019 05:17:02 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:34780 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJRA (ORCPT
+        with ESMTP id S1726210AbfFUJRC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:17:00 -0400
+        Fri, 21 Jun 2019 05:17:02 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id AC03C25BE62;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id AFBF425BE64;
         Fri, 21 Jun 2019 19:16:37 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 1D754943084; Fri, 21 Jun 2019 11:16:34 +0200 (CEST)
+        id 46B889430DA; Fri, 21 Jun 2019 11:16:34 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Dien Pham <dien.pham.ry@renesas.com>,
-        Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 26/53] arm64: dts: renesas: r8a77990: Create thermal zone to support IPA
-Date:   Fri, 21 Jun 2019 11:16:04 +0200
-Message-Id: <8fa7d18f9ee2dc20b5ad430e9b0c5336619f05e4.1561107232.git.horms+renesas@verge.net.au>
+Subject: [PATCH 28/53] arm64: dts: renesas: r8a774a1: Add operating points
+Date:   Fri, 21 Jun 2019 11:16:06 +0200
+Message-Id: <800037e815b91d8c9ad67906d18129e79a2cfcba.1561107232.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561107232.git.horms+renesas@verge.net.au>
 References: <cover.1561107232.git.horms+renesas@verge.net.au>
@@ -44,88 +42,140 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Dien Pham <dien.pham.ry@renesas.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Setup a thermal zone driven by SoC temperature sensor.
-Create passive trip points and bind them to CPUFreq cooling
-device that supports power extension.
+The RZ/G2M (a.k.a. r8a774a1) comes with two clusters of
+processors, similarly to the r8a7796.
+The first cluster is made of A57s, the second cluster is
+made of A53s.
 
-In R-Car Gen3, IPA is supported for only one channel
-Reason:
-  Currently, IPA controls base on only CPU temperature.
-  And only one thermal channel is assembled closest
-  CPU cores is selected as target of IPA.
-  If other channels are used, IPA controlling is not properly.
+The operating points for the cluster with the A57s are:
 
-A single cooling device is described for all A53 CPUs as this
-reflects that physically there is only one cooling device present.
+ Frequency | Voltage
+-----------|---------
+ 500 MHz   | 0.82V
+ 1.0 GHz   | 0.82V
+ 1.5 GHz   | 0.82V
 
-This patch improves on an earlier version by:
+The operating points for the cluster with the A53s are:
 
-* Omitting cooling-max-level and cooling-min-level properties which
-  are no longer present in mainline as of v4.17
-* Removing an unused trip-point0 node sub-property from the trips
-  property.
-* Defers adding dynamic-power-coefficient properties to a separate patch as
-  these are properties of the CPU.
+ Frequency | Voltage
+-----------|---------
+ 800 MHz   | 0.82V
+ 1.0 GHz   | 0.82V
+ 1.2 GHz   | 0.82V
 
-The long signed-off by chain below reflects many revisions, mainly
-internal, that this patch has been through.
+This patch adds the definitions for the operating points
+to the SoC specific DT.
 
-Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 48 +++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 3864fdc7ea91..5403b9d8f1b1 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -84,6 +84,7 @@
- 			compatible = "arm,cortex-a53";
- 			reg = <0>;
- 			device_type = "cpu";
-+			#cooling-cells = <2>;
- 			power-domains = <&sysc R8A77990_PD_CA53_CPU0>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index c2d99f5aaf74..4b1332feaae5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -56,6 +56,48 @@
+ 		clock-frequency = <0>;
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2";
++		opp-shared;
++
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <820000>;
++			clock-latency-ns = <300000>;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -68,6 +110,7 @@
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		a57_1: cpu@1 {
+@@ -78,6 +121,7 @@
+ 			next-level-cache = <&L2_CA57>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z>;
++			operating-points-v2 = <&cluster0_opp>;
+ 		};
+ 
+ 		a53_0: cpu@100 {
+@@ -88,6 +132,7 @@
  			next-level-cache = <&L2_CA53>;
  			enable-method = "psci";
-@@ -1856,11 +1857,18 @@
- 	thermal-zones {
- 		cpu-thermal {
- 			polling-delay-passive = <250>;
--			polling-delay = <1000>;
--			thermal-sensors = <&thermal>;
-+			polling-delay = <0>;
-+			thermal-sensors = <&thermal 0>;
-+			sustainable-power = <717>;
- 
- 			trips {
--				cpu-crit {
-+				target: trip-point1 {
-+					temperature = <100000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+
-+				sensor1_crit: sensor1-crit {
- 					temperature = <120000>;
- 					hysteresis = <2000>;
- 					type = "critical";
-@@ -1868,6 +1876,11 @@
- 			};
- 
- 			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&a53_0 0 2>;
-+					contribution = <1024>;
-+				};
- 			};
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
  		};
- 	};
+ 
+ 		a53_1: cpu@101 {
+@@ -98,6 +143,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_2: cpu@102 {
+@@ -108,6 +154,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		a53_3: cpu@103 {
+@@ -118,6 +165,7 @@
+ 			next-level-cache = <&L2_CA53>;
+ 			enable-method = "psci";
+ 			clocks = <&cpg CPG_CORE R8A774A1_CLK_Z2>;
++			operating-points-v2 = <&cluster1_opp>;
+ 		};
+ 
+ 		L2_CA57: cache-controller-0 {
 -- 
 2.11.0
 
