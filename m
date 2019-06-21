@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC96CC43613
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62BDC48BE0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0766208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F783208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Jun 2019 09:11:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfFUJLb (ORCPT
+        id S1726218AbfFUJLc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Jun 2019 05:11:31 -0400
+        Fri, 21 Jun 2019 05:11:32 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:33354 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfFUJLb (ORCPT
+        with ESMTP id S1726210AbfFUJLc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Jun 2019 05:11:31 -0400
+        Fri, 21 Jun 2019 05:11:32 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 1D76C25BE36;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 25EBF25BE3A;
         Fri, 21 Jun 2019 19:11:23 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 2B0D4940C81; Fri, 21 Jun 2019 11:11:19 +0200 (CEST)
+        id 502A1940CB2; Fri, 21 Jun 2019 11:11:19 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -33,9 +33,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 7/9] dt-bindings: can: rcar_canfd: document r8a774c0 support
-Date:   Fri, 21 Jun 2019 11:11:14 +0200
-Message-Id: <c908fd08692b8b4d87524762218652df6922386d.1561107729.git.horms+renesas@verge.net.au>
+Subject: [PATCH 9/9] dt-bindings: display: renesas: Add r8a774a1 support
+Date:   Fri, 21 Jun 2019 11:11:16 +0200
+Message-Id: <74a22e8f4350a9e096c84fc9e88cf72abf71887c.1561107729.git.horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1561107729.git.horms+renesas@verge.net.au>
 References: <cover.1561107729.git.horms+renesas@verge.net.au>
@@ -46,51 +46,33 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Document the support for rcar_canfd on R8A774C0 SoC devices.
+Document RZ/G2M (R8A774A1) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: David S. Miller <davem@davemloft.net>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
- Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-index 41049fed5872..32f051f6d338 100644
---- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-+++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-@@ -3,7 +3,8 @@ Renesas R-Car CAN FD controller Device Tree Bindings
- 
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+index a41d280c3f9f..db680413e89c 100644
+--- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+@@ -12,10 +12,12 @@ following device-specific properties.
  Required properties:
- - compatible: Must contain one or more of the following:
--  - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
-+  - "renesas,rcar-gen3-canfd" for R-Car Gen3 and RZ/G2 compatible controllers.
-+  - "renesas,r8a774c0-canfd" for R8A774C0 (RZ/G2E) compatible controller.
-   - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
-   - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3-W) compatible controller.
-   - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
-@@ -28,12 +29,13 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
- child node supports the "status" property only, which is used to
- enable/disable the respective channel.
  
--Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd",
--"renesas,r8a77965-canfd" and "renesas,r8a77990-canfd" compatible:
--In R8A7795, R8A7796, R8A77965 and R8A77990 SoCs, canfd clock is a div6 clock
--and can be used by both CAN and CAN FD controller at the same time. It needs
--to be scaled to maximum frequency if any of these controllers use it. This is
--done using the below properties:
-+Required properties for "renesas,r8a774c0-canfd", "renesas,r8a7795-canfd",
-+"renesas,r8a7796-canfd", "renesas,r8a77965-canfd", and "renesas,r8a77990-canfd"
-+compatible:
-+In R8A774C0, R8A7795, R8A7796, R8A77965, and R8A77990 SoCs, canfd clock is a
-+div6 clock and can be used by both CAN and CAN FD controller at the same time.
-+It needs to be scaled to maximum frequency if any of these controllers use it.
-+This is done using the below properties:
+ - compatible : Shall contain one or more of
++  - "renesas,r8a774a1-hdmi" for R8A774A1 (RZ/G2M) compatible HDMI TX
+   - "renesas,r8a7795-hdmi" for R8A7795 (R-Car H3) compatible HDMI TX
+   - "renesas,r8a7796-hdmi" for R8A7796 (R-Car M3-W) compatible HDMI TX
+   - "renesas,r8a77965-hdmi" for R8A77965 (R-Car M3-N) compatible HDMI TX
+-  - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 compatible HDMI TX
++  - "renesas,rcar-gen3-hdmi" for the generic R-Car Gen3 and RZ/G2 compatible
++			     HDMI TX
  
- - assigned-clocks: phandle of canfd clock.
- - assigned-clock-rates: maximum frequency of this clock.
+     When compatible with generic versions, nodes must list the SoC-specific
+     version corresponding to the platform first, followed by the
 -- 
 2.11.0
 
