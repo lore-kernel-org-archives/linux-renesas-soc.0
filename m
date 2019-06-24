@@ -2,117 +2,61 @@ Return-Path: <SRS0=K2hx=UX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153F6C43613
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 07:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9473CC43613
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 09:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2012089F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 07:04:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YG5GjITf"
+	by mail.kernel.org (Postfix) with ESMTP id 6B4C72054F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 09:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfFXHEx (ORCPT
+        id S1725881AbfFXJlP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jun 2019 03:04:53 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:58407 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfFXHEx (ORCPT
+        Mon, 24 Jun 2019 05:41:15 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:55136 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbfFXJlP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jun 2019 03:04:53 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x5O73v9q030616;
-        Mon, 24 Jun 2019 16:03:57 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x5O73v9q030616
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1561359838;
-        bh=5OUaZkjNas9lHS+ZQnY9UtPOBcnTTcVLurctTO3m70A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YG5GjITfAvzH2ZVvZjUsSjp2gg9EqW6C69xZBgP9nFJBGAEaCLEu0mDuVCmoiPv95
-         XDP/XKSVXF1Y8haU2KSZBjRmZUdKzX+Xyd3k/jte2Di7Nz28I8v3UPGPg35Gb08mDU
-         cyBAgI0thchw/xzTkbFlG2m581OwB0a+4r4EXb8WuLBNPaVPavybPjahJ4QACOGyZu
-         BgxWXXEmw4ThKwFxH3piyBsyV7/9YF5bNv0fQmSIv4NIjty6iSr5PNKVVWVoYYvmk4
-         S1eo4x+tOhbY2KwKxVOYxVmqnUOVxof/zEka9MqdHj1YJiPzu3pLl3PCAE/PMaO3jG
-         yozMaTddvqpJA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Simon Horman <simon.horman@netronome.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2] dt-binding: mmc: rename tmio_mmc.txt to renesas,sdhi.txt
-Date:   Mon, 24 Jun 2019 16:03:45 +0900
-Message-Id: <20190624070345.20373-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 24 Jun 2019 05:41:15 -0400
+Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id E1B6525B7C5;
+        Mon, 24 Jun 2019 19:41:12 +1000 (AEST)
+Received: by penelope.horms.nl (Postfix, from userid 7100)
+        id C97DAE22C2E; Mon, 24 Jun 2019 11:41:10 +0200 (CEST)
+Date:   Mon, 24 Jun 2019 11:41:10 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Chris Paterson <chris.paterson2@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH LOCAL] arm64: dts: renesas: r8a774a1: Remove dummy board
+ DTS
+Message-ID: <20190624094110.rkpe3do3b7a5no4z@verge.net.au>
+References: <20190620142325.28806-1-chris.paterson2@renesas.com>
+ <CAMuHMdXUq=G0JEBvYk98RpzpHJHZqdbbVwAqTT5Ntr0kikOCNQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXUq=G0JEBvYk98RpzpHJHZqdbbVwAqTT5Ntr0kikOCNQ@mail.gmail.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As commit b6147490e6aa ("mmc: tmio: split core functionality, DMA and
-MFD glue") said, these MMC controllers use the IP from Panasonic.
+On Thu, Jun 20, 2019 at 04:32:38PM +0200, Geert Uytterhoeven wrote:
+> On Thu, Jun 20, 2019 at 4:23 PM Chris Paterson
+> <chris.paterson2@renesas.com> wrote:
+> > This dummy dts file is no longer required as we have a real board, the
+> > r8a774a1-hihope-rzg2m.
+> >
+> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-TMIO (Toshiba Mobile IO) MMC was the first upstreamed user of this IP.
-The common driver code was split and expanded as 'tmio-mmc-core', then
-it became historical misnomer since 'tmio' is not the name of this IP.
-
-In the discussion [1], we decide to keep this name as-is at least in
-Linux driver level because renaming everything is a big churn.
-
-However, DT should not be oriented to a particular project even though
-it is mainly developed in Linux communities.
-
-This is the misfortune only in Linux. Let's stop exporting it to other
-projects, where there is no good reason to call this hardware "TMIO".
-Rename the file to renesas,sdhi.txt. In fact, all the information in
-this file is specific to the Renesas platform.
-
-This commit also removes the first paragraph entirely. The DT-binding
-should describe the hardware. It is strange to talk about Linux driver
-internals such as how the drivers are probed, how platform data are
-handed off, etc.
-
-[1] https://www.spinics.net/lists/linux-mmc/msg46952.html
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2:
- - Rename to renesas,sdhi.txt instead of renesas_sdhi.txt
-
- .../bindings/mmc/{tmio_mmc.txt => renesas,sdhi.txt}   | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
- rename Documentation/devicetree/bindings/mmc/{tmio_mmc.txt => renesas,sdhi.txt} (87%)
-
-diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-similarity index 87%
-rename from Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-rename to Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-index 2b4f17ca9087..dd08d038a65c 100644
---- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
-@@ -1,13 +1,4 @@
--* Toshiba Mobile IO SD/MMC controller
--
--The tmio-mmc driver doesn't probe its devices actively, instead its binding to
--devices is managed by either MFD drivers or by the sh_mobile_sdhi platform
--driver. Those drivers supply the tmio-mmc driver with platform data, that either
--describe hardware capabilities, known to them, or are obtained by them from
--their own platform data or from their DT information. In the latter case all
--compulsory and any optional properties, common to all SD/MMC drivers, as
--described in mmc.txt, can be used. Additionally the following tmio_mmc-specific
--optional bindings can be used.
-+* Renesas SDHI SD/MMC controller
- 
- Required properties:
- - compatible: should contain one or more of the following:
--- 
-2.17.1
-
+Thanks, as there is now nothing left in the 'topic/arm64-dummy-boards'
+branch I will drop it from the devel branch.
