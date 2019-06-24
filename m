@@ -2,34 +2,35 @@ Return-Path: <SRS0=K2hx=UX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30975C48BE8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 12:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B664C48BEA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 12:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AAA72146E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 12:35:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0273F205F4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 12:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730286AbfFXMfr (ORCPT
+        id S1728174AbfFXMfs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jun 2019 08:35:47 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:51574 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbfFXMfr (ORCPT
+        Mon, 24 Jun 2019 08:35:48 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:38756 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730294AbfFXMfr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 24 Jun 2019 08:35:47 -0400
 Received: from ramsan ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id Ucbi2000A3XaVaC01cbi88; Mon, 24 Jun 2019 14:35:45 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id Ucbi2000P3XaVaC06cbiuc; Mon, 24 Jun 2019 14:35:45 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hfOCE-0003jv-FB; Mon, 24 Jun 2019 14:35:42 +0200
+        id 1hfOCE-0003jz-Fq; Mon, 24 Jun 2019 14:35:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hfOCE-0005NU-Ci; Mon, 24 Jun 2019 14:35:42 +0200
+        id 1hfOCE-0005NY-En; Mon, 24 Jun 2019 14:35:42 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>,
@@ -41,48 +42,55 @@ Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         dmaengine@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] serial: sh-sci: Fix .flush_buffer() issues
-Date:   Mon, 24 Jun 2019 14:35:38 +0200
-Message-Id: <20190624123540.20629-1-geert+renesas@glider.be>
+Subject: [PATCH 2/2] serial: sh-sci: Terminate TX DMA during buffer flushing
+Date:   Mon, 24 Jun 2019 14:35:40 +0200
+Message-Id: <20190624123540.20629-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190624123540.20629-1-geert+renesas@glider.be>
+References: <20190624123540.20629-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Greg, Jiri,
+While the .flush_buffer() callback clears sci_port.tx_dma_len since
+commit 1cf4a7efdc71cab8 ("serial: sh-sci: Fix race condition causing
+garbage during shutdown"), it does not terminate a transmit DMA
+operation that may be in progress.
 
-This patch series attempts to fix the issues Eugeniu Rosca reported
-seeing, where .flush_buffer() interfered with transmit DMA operation[*].
+Fix this by terminating any pending DMA operations, and resetting the
+corresponding cookie.
 
-There's a third patch "dmaengine: rcar-dmac: Reject zero-length slave
-DMA requests", which is related to the issue, but further independent,
-hence submitted separately.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/tty/serial/sh-sci.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-Eugeniu: does this fix the issues you were seeing?
-
-Thanks for your comments!
-
-[*] '[PATCH 2/6] Revert "arm64: dts: renesas: r8a7796: Enable DMA for SCIF2"'
-(https://lore.kernel.org/lkml/20190504004258.23574-3-erosca@de.adit-jv.com/).
-
-Geert Uytterhoeven (2):
-  serial: sh-sci: Fix TX DMA buffer flushing and workqueue races
-  serial: sh-sci: Terminate TX DMA during buffer flushing
-
- drivers/tty/serial/sh-sci.c | 33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index d4504daff99263f5..d18c680aa64b3427 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1656,11 +1656,18 @@ static void sci_free_dma(struct uart_port *port)
+ 
+ static void sci_flush_buffer(struct uart_port *port)
+ {
++	struct sci_port *s = to_sci_port(port);
++
+ 	/*
+ 	 * In uart_flush_buffer(), the xmit circular buffer has just been
+-	 * cleared, so we have to reset tx_dma_len accordingly.
++	 * cleared, so we have to reset tx_dma_len accordingly, and stop any
++	 * pending transfers
+ 	 */
+-	to_sci_port(port)->tx_dma_len = 0;
++	s->tx_dma_len = 0;
++	if (s->chan_tx) {
++		dmaengine_terminate_async(s->chan_tx);
++		s->cookie_tx = -EINVAL;
++	}
+ }
+ #else /* !CONFIG_SERIAL_SH_SCI_DMA */
+ static inline void sci_request_dma(struct uart_port *port)
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
