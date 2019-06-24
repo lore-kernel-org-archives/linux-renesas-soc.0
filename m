@@ -2,61 +2,83 @@ Return-Path: <SRS0=K2hx=UX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9473CC43613
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 09:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0991FC43613
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 10:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4C72054F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 09:41:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D838120820
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jun 2019 10:52:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbfFXJlP (ORCPT
+        id S1729338AbfFXKwo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jun 2019 05:41:15 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:55136 "EHLO
+        Mon, 24 Jun 2019 06:52:44 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:59970 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbfFXJlP (ORCPT
+        with ESMTP id S1728369AbfFXKwo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jun 2019 05:41:15 -0400
+        Mon, 24 Jun 2019 06:52:44 -0400
 Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id E1B6525B7C5;
-        Mon, 24 Jun 2019 19:41:12 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 36F4925AF0F;
+        Mon, 24 Jun 2019 20:52:42 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id C97DAE22C2E; Mon, 24 Jun 2019 11:41:10 +0200 (CEST)
-Date:   Mon, 24 Jun 2019 11:41:10 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Chris Paterson <chris.paterson2@renesas.com>,
+        id 0AD52E21A77; Mon, 24 Jun 2019 12:52:40 +0200 (CEST)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
         Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH LOCAL] arm64: dts: renesas: r8a774a1: Remove dummy board
- DTS
-Message-ID: <20190624094110.rkpe3do3b7a5no4z@verge.net.au>
-References: <20190620142325.28806-1-chris.paterson2@renesas.com>
- <CAMuHMdXUq=G0JEBvYk98RpzpHJHZqdbbVwAqTT5Ntr0kikOCNQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXUq=G0JEBvYk98RpzpHJHZqdbbVwAqTT5Ntr0kikOCNQ@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Subject: [PATCH v3 1/2] arm64: dts: renesas: r8a77990: Add cpg reset for DU
+Date:   Mon, 24 Jun 2019 12:52:23 +0200
+Message-Id: <20190624105224.23927-2-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190624105224.23927-1-horms+renesas@verge.net.au>
+References: <20190624105224.23927-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jun 20, 2019 at 04:32:38PM +0200, Geert Uytterhoeven wrote:
-> On Thu, Jun 20, 2019 at 4:23 PM Chris Paterson
-> <chris.paterson2@renesas.com> wrote:
-> > This dummy dts file is no longer required as we have a real board, the
-> > r8a774a1-hihope-rzg2m.
-> >
-> > Signed-off-by: Chris Paterson <chris.paterson2@renesas.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Takeshi Kihara <takeshi.kihara.df@renesas.com>
 
-Thanks, as there is now nothing left in the 'topic/arm64-dummy-boards'
-branch I will drop it from the devel branch.
+Add CPG reset properties to DU node of E3 (r8a77990) SoC.
+
+According to Laurent Pinchart, R-Car Gen3 reset is handled at the group
+level so specifying one reset entry per group is sufficient.
+
+Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v3 [Simon Horman]
+- rewrote changelog
+
+v2 [Simon Horman]
+- only add one reset entry per group
+
+v1 [Yoshihiro Kaneko]
+
+v0 [Takeshi Kihara]
+---
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index b4318661f35e..84d1f58e73e7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -1766,6 +1766,8 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>;
+ 			clock-names = "du.0", "du.1";
++			resets = <&cpg 724>;
++			reset-names = "du.0";
+ 			vsps = <&vspd0 0 &vspd1 0>;
+ 			status = "disabled";
+ 
+-- 
+2.11.0
+
