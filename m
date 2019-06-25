@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59725C48BD4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jun 2019 05:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F7EC48BD5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jun 2019 05:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E12D20659
+	by mail.kernel.org (Postfix) with ESMTP id E914220659
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jun 2019 05:39:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbfFYFjj (ORCPT
+        id S1728400AbfFYFjl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Jun 2019 01:39:39 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:48886 "EHLO
+        Tue, 25 Jun 2019 01:39:41 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:53837 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728372AbfFYFji (ORCPT
+        by vger.kernel.org with ESMTP id S1728377AbfFYFjj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Jun 2019 01:39:38 -0400
+        Tue, 25 Jun 2019 01:39:39 -0400
 X-IronPort-AV: E=Sophos;i="5.62,413,1554735600"; 
-   d="scan'208";a="19607562"
+   d="scan'208";a="19607565"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie5.idc.renesas.com with ESMTP; 25 Jun 2019 14:39:32 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C8424400856C;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E12434007F41;
         Tue, 25 Jun 2019 14:39:32 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 09/13] usb: renesas_usbhs: Add struct device * declaration in usbhs_probe()
-Date:   Tue, 25 Jun 2019 14:38:53 +0900
-Message-Id: <1561441137-3090-10-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 11/13] usb: renesas_usbhs: Add a common function for the .get_id
+Date:   Tue, 25 Jun 2019 14:38:55 +0900
+Message-Id: <1561441137-3090-12-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1561441137-3090-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1561441137-3090-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -42,132 +42,157 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since this can remove over 80 charactors in a line, this patch adds
-struct device * declaration in usbhs_probe().
+All platform related codes (rcar[23].c and rza{2}.c) has its own
+.get_id function as "USBHS_GADGET". So, we can use a common
+function for it.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/usb/renesas_usbhs/common.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/usb/renesas_usbhs/common.c |  5 +++++
+ drivers/usb/renesas_usbhs/common.h |  2 ++
+ drivers/usb/renesas_usbhs/rcar2.c  |  8 ++------
+ drivers/usb/renesas_usbhs/rcar3.c  | 11 +++--------
+ drivers/usb/renesas_usbhs/rza.c    |  9 ++-------
+ drivers/usb/renesas_usbhs/rza2.c   |  7 +------
+ 6 files changed, 15 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
-index f9476a07..379b4a0e 100644
+index dc5e80d..656f976 100644
 --- a/drivers/usb/renesas_usbhs/common.c
 +++ b/drivers/usb/renesas_usbhs/common.c
-@@ -658,27 +658,28 @@ static int usbhs_probe(struct platform_device *pdev)
- 	struct renesas_usbhs_platform_info *info = renesas_usbhs_get_info(pdev);
- 	struct usbhs_priv *priv;
- 	struct resource *res, *irq_res;
-+	struct device *dev = &pdev->dev;
- 	int ret;
- 
- 	/* check device node */
--	if (dev_of_node(&pdev->dev))
-+	if (dev_of_node(dev))
- 		info = pdev->dev.platform_data = usbhs_parse_dt(&pdev->dev);
- 
- 	/* check platform information */
- 	if (!info) {
--		dev_err(&pdev->dev, "no platform information\n");
-+		dev_err(dev, "no platform information\n");
- 		return -EINVAL;
- 	}
- 
- 	/* platform data */
- 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!irq_res) {
--		dev_err(&pdev->dev, "Not enough Renesas USB platform resources.\n");
-+		dev_err(dev, "Not enough Renesas USB platform resources.\n");
- 		return -ENODEV;
- 	}
- 
- 	/* usb private data */
--	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-@@ -687,13 +688,13 @@ static int usbhs_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
--	if (of_property_read_bool(dev_of_node(&pdev->dev), "extcon")) {
--		priv->edev = extcon_get_edev_by_phandle(&pdev->dev, 0);
-+	if (of_property_read_bool(dev_of_node(dev), "extcon")) {
-+		priv->edev = extcon_get_edev_by_phandle(dev, 0);
- 		if (IS_ERR(priv->edev))
- 			return PTR_ERR(priv->edev);
- 	}
- 
--	priv->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
-+	priv->rsts = devm_reset_control_array_get_optional_shared(dev);
- 	if (IS_ERR(priv->rsts))
- 		return PTR_ERR(priv->rsts);
- 
-@@ -704,7 +705,7 @@ static int usbhs_probe(struct platform_device *pdev)
- 	priv->dparam = info->driver_param;
- 
- 	if (!info->platform_callback.get_id) {
--		dev_err(&pdev->dev, "no platform callbacks");
-+		dev_err(dev, "no platform callbacks\n");
- 		return -EINVAL;
- 	}
- 	priv->pfunc = info->platform_callback;
-@@ -755,7 +756,7 @@ static int usbhs_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto probe_fail_rst;
- 
--	ret = usbhsc_clk_get(&pdev->dev, priv);
-+	ret = usbhsc_clk_get(dev, priv);
- 	if (ret)
- 		goto probe_fail_clks;
- 
-@@ -771,8 +772,7 @@ static int usbhs_probe(struct platform_device *pdev)
- 		ret = !gpio_get_value(priv->dparam.enable_gpio);
- 		gpio_free(priv->dparam.enable_gpio);
- 		if (ret) {
--			dev_warn(&pdev->dev,
--				 "USB function not selected (GPIO %d)\n",
-+			dev_warn(dev, "USB function not selected (GPIO %d)\n",
- 				 priv->dparam.enable_gpio);
- 			ret = -ENOTSUPP;
- 			goto probe_end_mod_exit;
-@@ -788,7 +788,7 @@ static int usbhs_probe(struct platform_device *pdev)
- 	 */
- 	ret = usbhs_platform_call(priv, hardware_init, pdev);
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "platform init failed.\n");
-+		dev_err(dev, "platform init failed.\n");
- 		goto probe_end_mod_exit;
- 	}
- 
-@@ -796,7 +796,7 @@ static int usbhs_probe(struct platform_device *pdev)
- 	usbhs_platform_call(priv, phy_reset, pdev);
- 
- 	/* power control */
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_enable(dev);
- 	if (!usbhs_get_dparam(priv, runtime_pwctrl)) {
- 		usbhsc_power_ctrl(priv, 1);
- 		usbhs_mod_autonomy_mode(priv);
-@@ -809,7 +809,7 @@ static int usbhs_probe(struct platform_device *pdev)
- 	 */
- 	usbhsc_schedule_notify_hotplug(pdev);
- 
--	dev_info(&pdev->dev, "probed\n");
-+	dev_info(dev, "probed\n");
- 
- 	return ret;
- 
-@@ -824,7 +824,7 @@ static int usbhs_probe(struct platform_device *pdev)
- probe_end_pipe_exit:
- 	usbhs_pipe_remove(priv);
- 
--	dev_info(&pdev->dev, "probe failed (%d)\n", ret);
-+	dev_info(dev, "probe failed (%d)\n", ret);
- 
- 	return ret;
+@@ -84,6 +84,11 @@ struct usbhs_priv *usbhs_pdev_to_priv(struct platform_device *pdev)
+ 	return dev_get_drvdata(&pdev->dev);
  }
+ 
++int usbhs_get_id_as_gadget(struct platform_device *pdev)
++{
++	return USBHS_GADGET;
++}
++
+ /*
+  *		syscfg functions
+  */
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index b2b21fb..65e9abc 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -297,6 +297,8 @@ void usbhs_bset(struct usbhs_priv *priv, u32 reg, u16 mask, u16 data);
+ #define usbhs_lock(p, f) spin_lock_irqsave(usbhs_priv_to_lock(p), f)
+ #define usbhs_unlock(p, f) spin_unlock_irqrestore(usbhs_priv_to_lock(p), f)
+ 
++int usbhs_get_id_as_gadget(struct platform_device *pdev);
++
+ /*
+  * sysconfig
+  */
+diff --git a/drivers/usb/renesas_usbhs/rcar2.c b/drivers/usb/renesas_usbhs/rcar2.c
+index 0027092..741bd81 100644
+--- a/drivers/usb/renesas_usbhs/rcar2.c
++++ b/drivers/usb/renesas_usbhs/rcar2.c
+@@ -3,6 +3,7 @@
+  * Renesas USB driver R-Car Gen. 2 initialization and power control
+  *
+  * Copyright (C) 2014 Ulrich Hecht
++ * Copyright (C) 2019 Renesas Electronics Corporation
+  */
+ 
+ #include <linux/gpio.h>
+@@ -62,14 +63,9 @@ static int usbhs_rcar2_power_ctrl(struct platform_device *pdev,
+ 	return retval;
+ }
+ 
+-static int usbhs_rcar2_get_id(struct platform_device *pdev)
+-{
+-	return USBHS_GADGET;
+-}
+-
+ const struct renesas_usbhs_platform_callback usbhs_rcar2_ops = {
+ 	.hardware_init = usbhs_rcar2_hardware_init,
+ 	.hardware_exit = usbhs_rcar2_hardware_exit,
+ 	.power_ctrl = usbhs_rcar2_power_ctrl,
+-	.get_id = usbhs_rcar2_get_id,
++	.get_id = usbhs_get_id_as_gadget,
+ };
+diff --git a/drivers/usb/renesas_usbhs/rcar3.c b/drivers/usb/renesas_usbhs/rcar3.c
+index 5e730e9..8dbbd14 100644
+--- a/drivers/usb/renesas_usbhs/rcar3.c
++++ b/drivers/usb/renesas_usbhs/rcar3.c
+@@ -2,7 +2,7 @@
+ /*
+  * Renesas USB driver R-Car Gen. 3 initialization and power control
+  *
+- * Copyright (C) 2016 Renesas Electronics Corporation
++ * Copyright (C) 2016-2019 Renesas Electronics Corporation
+  */
+ 
+ #include <linux/delay.h>
+@@ -95,17 +95,12 @@ static int usbhs_rcar3_power_and_pll_ctrl(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
+-static int usbhs_rcar3_get_id(struct platform_device *pdev)
+-{
+-	return USBHS_GADGET;
+-}
+-
+ const struct renesas_usbhs_platform_callback usbhs_rcar3_ops = {
+ 	.power_ctrl = usbhs_rcar3_power_ctrl,
+-	.get_id = usbhs_rcar3_get_id,
++	.get_id = usbhs_get_id_as_gadget,
+ };
+ 
+ const struct renesas_usbhs_platform_callback usbhs_rcar3_with_pll_ops = {
+ 	.power_ctrl = usbhs_rcar3_power_and_pll_ctrl,
+-	.get_id = usbhs_rcar3_get_id,
++	.get_id = usbhs_get_id_as_gadget,
+ };
+diff --git a/drivers/usb/renesas_usbhs/rza.c b/drivers/usb/renesas_usbhs/rza.c
+index 8c739bd..64ce584 100644
+--- a/drivers/usb/renesas_usbhs/rza.c
++++ b/drivers/usb/renesas_usbhs/rza.c
+@@ -3,7 +3,7 @@
+  * Renesas USB driver RZ/A initialization and power control
+  *
+  * Copyright (C) 2018 Chris Brandt
+- * Copyright (C) 2018 Renesas Electronics Corporation
++ * Copyright (C) 2018-2019 Renesas Electronics Corporation
+  */
+ 
+ #include <linux/delay.h>
+@@ -41,12 +41,7 @@ static int usbhs_rza1_hardware_init(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int usbhs_rza_get_id(struct platform_device *pdev)
+-{
+-	return USBHS_GADGET;
+-}
+-
+ const struct renesas_usbhs_platform_callback usbhs_rza1_ops = {
+ 	.hardware_init = usbhs_rza1_hardware_init,
+-	.get_id = usbhs_rza_get_id,
++	.get_id = usbhs_get_id_as_gadget,
+ };
+diff --git a/drivers/usb/renesas_usbhs/rza2.c b/drivers/usb/renesas_usbhs/rza2.c
+index 9d8551f..6e32768 100644
+--- a/drivers/usb/renesas_usbhs/rza2.c
++++ b/drivers/usb/renesas_usbhs/rza2.c
+@@ -59,14 +59,9 @@ static int usbhs_rza2_power_ctrl(struct platform_device *pdev,
+ 	return retval;
+ }
+ 
+-static int usbhs_rza2_get_id(struct platform_device *pdev)
+-{
+-	return USBHS_GADGET;
+-}
+-
+ const struct renesas_usbhs_platform_callback usbhs_rza2_ops = {
+ 	.hardware_init = usbhs_rza2_hardware_init,
+ 	.hardware_exit = usbhs_rza2_hardware_exit,
+ 	.power_ctrl = usbhs_rza2_power_ctrl,
+-	.get_id = usbhs_rza2_get_id,
++	.get_id = usbhs_get_id_as_gadget,
+ };
 -- 
 2.7.4
 
