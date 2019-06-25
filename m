@@ -2,84 +2,84 @@ Return-Path: <SRS0=MX1t=UY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDA5C48BD5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jun 2019 04:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EB2C48BD4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jun 2019 05:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4882085A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jun 2019 04:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561437805;
-	bh=+svs1xm0F2/CdYWQbH30vJyA8MQxdVc1RKbfdXbmfn4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=M6XhPMruXuhkplLQdz57d7u3/121Uc7VscZo7KjeuaBQMgsp5HZB0zIQSr4tnIzhR
-	 9zwvaYbrgO9robZbnax1Vvv2sKcCRAn6xl5ewbTJI1lfG9VH9SEOSFQL1eqp0h6g68
-	 GMIBUHV8kDqT/yiCJSRSzm2yzHRFBb/msHcs1tnQ=
+	by mail.kernel.org (Postfix) with ESMTP id C5B1020659
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jun 2019 05:39:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfFYEnZ (ORCPT
+        id S1728351AbfFYFje (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Jun 2019 00:43:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfFYEnY (ORCPT
+        Tue, 25 Jun 2019 01:39:34 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:12131 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727064AbfFYFje (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Jun 2019 00:43:24 -0400
-Received: from localhost (unknown [106.201.40.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB6F320665;
-        Tue, 25 Jun 2019 04:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561437803;
-        bh=+svs1xm0F2/CdYWQbH30vJyA8MQxdVc1RKbfdXbmfn4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=02tb7MAIsylFHaBkdmn1s9wKrHFWBomvZc0RQKO3xWkT1lvq0XxxYTDUGatspxZ+K
-         r8H2n4NOLYN0339SPYo7VgJ8m7s/QKU2x5lKHQjsdh/n+ZbGKgLvBd4jYqxk9nG84V
-         61udSRhPhjErNptANGH+WsdajYE0mTfMMRqpMy8w=
-Date:   Tue, 25 Jun 2019 10:10:13 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        dmaengine@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: rcar-dmac: Reject zero-length slave DMA
- requests
-Message-ID: <20190625044013.GL2962@vkoul-mobl>
-References: <20190624123818.20919-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190624123818.20919-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Tue, 25 Jun 2019 01:39:34 -0400
+X-IronPort-AV: E=Sophos;i="5.62,413,1554735600"; 
+   d="scan'208";a="19393823"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 25 Jun 2019 14:39:32 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6710C400856C;
+        Tue, 25 Jun 2019 14:39:32 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 01/13] usb: renesas_usbhs: revise the irq_vbus comments
+Date:   Tue, 25 Jun 2019 14:38:45 +0900
+Message-Id: <1561441137-3090-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1561441137-3090-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1561441137-3090-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 24-06-19, 14:38, Geert Uytterhoeven wrote:
-> While the .device_prep_slave_sg() callback rejects empty scatterlists,
-> it still accepts single-entry scatterlists with a zero-length segment.
-> These may happen if a driver calls dmaengine_prep_slave_single() with a
-> zero len parameter.  The corresponding DMA request will never complete,
-> leading to messages like:
-> 
->     rcar-dmac e7300000.dma-controller: Channel Address Error happen
-> 
-> and DMA timeouts.
-> 
-> Although requesting a zero-length DMA request is a driver bug, rejecting
-> it early eases debugging.  Note that the .device_prep_dma_memcpy()
-> callback already rejects requests to copy zero bytes.
+Since the irq_vbus comments doesn't match with the current
+implementation, this patch revises it. This patch also changes
+new lines to reduce the source code lines.
 
-Applied, thanks
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/usb/renesas_usbhs/mod.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/usb/renesas_usbhs/mod.h b/drivers/usb/renesas_usbhs/mod.h
+index a4a61d6..7117729 100644
+--- a/drivers/usb/renesas_usbhs/mod.h
++++ b/drivers/usb/renesas_usbhs/mod.h
+@@ -3,6 +3,7 @@
+  * Renesas USB driver
+  *
+  * Copyright (C) 2011 Renesas Solutions Corp.
++ * Copyright (C) 2019 Renesas Electronics Corporation
+  * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+  */
+ #ifndef RENESAS_USB_MOD_H
+@@ -84,12 +85,11 @@ struct usbhs_mod_info {
+ 	/*
+ 	 * INTSTS0 :: VBINT
+ 	 *
+-	 * This function will be used as autonomy mode
+-	 * when platform cannot call notify_hotplug.
++	 * This function will be used as autonomy mode (runtime_pwctrl == 0)
++	 * when the platform doesn't have own get_vbus function.
+ 	 *
+-	 * This callback cannot be member of "struct usbhs_mod"
+-	 * because it will be used even though
+-	 * host/gadget has not been selected.
++	 * This callback cannot be member of "struct usbhs_mod" because it
++	 * will be used even though host/gadget has not been selected.
+ 	 */
+ 	int (*irq_vbus)(struct usbhs_priv *priv,
+ 			struct usbhs_irq_state *irq_state);
 -- 
-~Vinod
+2.7.4
+
