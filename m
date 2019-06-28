@@ -2,203 +2,179 @@ Return-Path: <SRS0=9pYP=U3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E92C4646D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 15:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE286C4321A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 16:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABCD2064A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 15:34:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43482083B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 16:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfF1Pez (ORCPT
+        id S1726605AbfF1Q3x (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Jun 2019 11:34:55 -0400
-Received: from sauhun.de ([88.99.104.3]:51882 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726793AbfF1Pez (ORCPT
+        Fri, 28 Jun 2019 12:29:53 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:35405 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfF1Q3x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jun 2019 11:34:55 -0400
-Received: from localhost (p54B332FA.dip0.t-ipconnect.de [84.179.50.250])
-        by pokefinder.org (Postfix) with ESMTPSA id 6EF952C35BF;
-        Fri, 28 Jun 2019 17:34:52 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
+        Fri, 28 Jun 2019 12:29:53 -0400
+Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1hgtkH-0001pV-KB from George_Davis@mentor.com ; Fri, 28 Jun 2019 09:29:05 -0700
+Received: from localhost (147.34.91.1) by svr-orw-mbx-01.mgc.mentorg.com
+ (147.34.90.201) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 28 Jun
+ 2019 09:29:03 -0700
+Date:   Fri, 28 Jun 2019 12:29:02 -0400
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT 0/4] mmc: renesas_sdhi: support manual calibration
-Date:   Fri, 28 Jun 2019 17:34:44 +0200
-Message-Id: <20190628153448.4167-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: Re: [PATCH 0/2] serial: sh-sci: Fix .flush_buffer() issues
+Message-ID: <20190628162902.GA1343@mam-gdavis-lt>
+References: <20190624123540.20629-1-geert+renesas@glider.be>
+ <20190626173434.GA24702@x230>
+ <CAMuHMdWuk7CkfcUSX=706f8b6YMFio7iwZg32+uXsyOKL68fuQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWuk7CkfcUSX=706f8b6YMFio7iwZg32+uXsyOKL68fuQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-ClientProxiedBy: SVR-ORW-MBX-09.mgc.mentorg.com (147.34.90.209) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Some R-Car Gen3 SoCs need corrections after they tuned to HS400. This
-series implements that. Please have a look at the patch descriptions for
-details.
+Hello All,
 
-The origins were patches in the BSP from Takeshi Saito. However, this
-series is heavily refactored:
+On Fri, Jun 28, 2019 at 01:51:25PM +0200, Geert Uytterhoeven wrote:
+> Hi Eugeniu,
+> 
+> On Wed, Jun 26, 2019 at 7:34 PM Eugeniu Rosca <roscaeugeniu@gmail.com> wrote:
+> > On Mon, Jun 24, 2019 at 02:35:38PM +0200, Geert Uytterhoeven wrote:
+> > > This patch series attempts to fix the issues Eugeniu Rosca reported
+> > > seeing, where .flush_buffer() interfered with transmit DMA operation[*].
+> > >
+> > > There's a third patch "dmaengine: rcar-dmac: Reject zero-length slave
+> > > DMA requests", which is related to the issue, but further independent,
+> > > hence submitted separately.
+> > >
+> > > Eugeniu: does this fix the issues you were seeing?
+> >
+> > Many thanks for both sh-sci and the rcar-dmac patches.
+> > The fixes are very much appreciated.
+> >
+> > > Geert Uytterhoeven (2):
+> > >   serial: sh-sci: Fix TX DMA buffer flushing and workqueue races
+> > >   serial: sh-sci: Terminate TX DMA during buffer flushing
+> > >
+> > >  drivers/tty/serial/sh-sci.c | 33 ++++++++++++++++++++++++---------
+> > >  1 file changed, 24 insertions(+), 9 deletions(-)
+> >
+> > I reserved some time to get a feeling about how the patches behave on
+> > a real system (H3-ES2.0-ULCB-KF-M06), so here come my observations.
+> 
+> Thanks for your extensive testing!
+> 
+> > First of all, the issue I have originally reported in [0] is only
+> > reproducible in absence of [4]. So, one of my questions would be how
+> > do you yourself see the relationship between [1-3] and [4]?
+> 
+> I consider them independent.
+> Just applying [4] would fix the issue for the console only, while the
+> race condition can still be triggered on other serial ports.
+> 
+> > That said, all my testing assumes:
+> >  - Vanilla tip v5.2-rc6-15-g249155c20f9b with [4] reverted.
+> >  - DEBUG is undefined in {sh-sci.c,rcar-dmac.c}, since I've noticed
+> >    new issues arising in the debug build, which are unrelated to [0].
+> >
+> > Below is the summary of my findings:
+> >
+> >  Version         IS [0]       Is console       Error message when
+> > (vanilla+X)    reproduced?  usable after [0]   [0] is reproduced
+> >                              is reproduced?
+> >  ------------------------------------------------------------
+> >  -[4]             Yes           No                [5]
+> >  -[4]+[1]         Yes           No                -
+> >  -[4]+[2]         Yes           Yes               [5]
+> >  -[4]+[3]         Yes           Yes               [6]
+> >  -[4]+[1]+[2]     No            -                 -
+> >  -[4]+[1]+[2]+[3] No            -                 -
+> >  pure vanilla     No            -                 -
+> >
+> > This looks a little too verbose, but I thought it might be interesting.
+> 
+> Thanks, it's very helpful to provide these results.
+> 
+> > The story which I see is that [1] does not fix [0] alone, but it seems
+> > to depend on [2]. Furthermore, if cherry picked alone, [1] makes the
+> > matters somewhat worse in the sense that it hides the error [5].
+> 
+> OK.
+> 
+> > My only question is whether [1-3] are supposed to replace [4] or they
+> > are supposed to happily coexist. Since I don't see [0] being reproduced
+> 
+> They are meant to coexist.
+> 
+> > with [1-3], I personally prefer to re-enable DMA on SCIF (when the
+> > latter is used as console) so that more features and code paths are
+> > exercised to increase test coverage.
+> 
+> If a serial port is used as a console, the port is used for both DMA
+> (normal use) and PIO (serial console output).  The latter can have a
+> negative impact on the former, aggravating existing bugs, or triggering
+> more races, even in the hardware.  So I think it's better to be more
+> cautious and keep DMA disabled for the console.
 
-* DT configuration was dropped, there is no user for it
-* the fixup offset is currently hardcoded because all affected SoCs use
-  the same offset. We can add it later to the struct quirks if needed
-* disabling HS400 for some SoCs was already upstreamed
-* the callback in the TMIO was made more generic to allow other use
-  cases in the future
-* less impact on the TMIO driver by stricter seperation of the SDHI parts
-* clearing the runtime flag in the error case was moved from
-  select_tuning to hw_reset to catch all error cases
-* cosmetic fixups
+Agreed.
 
-There is a branch for testing here:
+Just a note for the record that [4] was the easiest way to resolve the
+reported problem [0] but an alternative solution would be to implement DMA
+support for ttySC console ports which will be non-trivial to implement and test
+due to the potential for deadlocks in console write critical paths where
+various locks are held with interrupts disabled. I see only one tty serial
+driver which implements console DMA support, drivers/tty/serial/mpsc.c,
+and perhaps there is a good reason why there are no other examples?
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/topic/sdhi-manual-calib
-
-The patches were developed against mmc/next. However, the above branch
-is based on v5.2-rc6 with some cherry-picked patches from mmc/next, so
-Geert can consume it easier for his renesas-drivers branch. There are
-two more patches in that branch worth mentioning. A clk driver WIP patch
-which I needed to get HS400 on my M3-N working at all. We are discussing
-this patch internally right now and its upstreaming is a seperate issue.
-
-Also, there is a debug patch on top. I can't test that the manual fixup
-values improve HS400 because the actual issue only shows with
-temperatures I can't (and don't want to) provide here in my office.
-So, the debug patches add some trace_printk to demonstrate the functions
-are called and the outputs match the intended state machine.
-
-Here are examples (with comments) from my M3-N. If you review this,
-please don't trust anything I write here.
-
-An unaffected SDHI instance (no eMMC):
-
-Adjustment and runtime flag get disabled during the reset in the
-beginning of the initialization. The same reset routine will be called
-when tuning fails.
-
-kworker/0:2-965   [000] ....     1.413767: renesas_sdhi_reset_hs400_mode: ee100000.sd: adjustment disabled
-kworker/0:2-965   [000] ....     1.413768: renesas_sdhi_hw_reset: ee100000.sd: reset! flag disabled
-
-
-An SDHI instance with a HS400 capable eMMC connected:
-
-When preparing HS400 tuning, (potential) old HS400 tuning gets reset and
-the manual adjustment gets disabled, the runtime flag (signalling new
-manual adjustment will be needed) is set:
-
-kworker/0:1H-1009  [000] ....     1.864628: renesas_sdhi_reset_hs400_mode: ee140000.sd: adjustment disabled
-kworker/0:1H-1009  [000] ....     1.864629: renesas_sdhi_prepare_hs400_tuning: ee140000.sd: flag enabled
-
-Lots of tuning CMDs:
-
-kworker/0:2-965   [000] ....     1.864673: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864706: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864735: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864765: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864797: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864825: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864855: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864882: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864909: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864935: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864966: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.864998: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.865025: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.865052: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.865079: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.865106: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.865130: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 1
-kworker/0:2-965   [000] ....     1.865603: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 1
-
-First CMD13 after tuning discovered, enable adjustment, clear runtime
-flag:
-
-kworker/0:2-965   [000] ....     1.865609: renesas_sdhi_fixup_request: ee140000.sd: adjustment enabled, flag disabled
-kworker/0:2-965   [000] ....     1.865635: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 0
-kworker/0:2-965   [000] ....     1.865654: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 0
-kworker/0:2-965   [000] ....     1.865676: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 0
-kworker/0:2-965   [000] ....     1.866143: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 0
-kworker/0:2-965   [000] ....     1.866601: renesas_sdhi_fixup_request: ee140000.sd: opcode 18, flag 0
-
-Reading multiple blocks (CMD18) above failed
-
-kworker/0:2-965   [000] ....     1.866867: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 0
-kworker/0:2-965   [000] ....     1.867113: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 0
-kworker/0:2-965   [000] ....     1.867137: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 0
-kworker/0:2-965   [000] ....     1.867384: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 0
-kworker/0:2-965   [000] ....     1.867409: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 0
-kworker/0:2-965   [000] ....     1.867651: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 0
-
-Seems like another retune is need, start cycle again:
-
-kworker/0:1H-1009  [000] ....     1.867880: renesas_sdhi_reset_hs400_mode: ee140000.sd: adjustment disabled
-kworker/0:1H-1009  [000] ....     1.867882: renesas_sdhi_prepare_hs400_tuning: ee140000.sd: flag enabled
-kworker/0:2-965   [000] ....     1.867926: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.867958: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.867986: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868019: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868048: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868076: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868103: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868129: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868156: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868181: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868208: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868237: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868267: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868294: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868321: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868347: renesas_sdhi_fixup_request: ee140000.sd: opcode 21, flag 1
-kworker/0:2-965   [000] ....     1.868370: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 1
-kworker/0:2-965   [000] ....     1.868837: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 1
-kworker/0:2-965   [000] ....     1.868842: renesas_sdhi_fixup_request: ee140000.sd: adjustment enabled, flag disabled
-kworker/0:2-965   [000] ....     1.868869: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 0
-kworker/0:2-965   [000] ....     1.868888: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 0
-kworker/0:2-965   [000] ....     1.868913: renesas_sdhi_fixup_request: ee140000.sd: opcode 6, flag 0
-kworker/0:2-965   [000] ....     1.869381: renesas_sdhi_fixup_request: ee140000.sd: opcode 13, flag 0
-
-Finally, we can read lots of blocks without problems. The manual
-adjustment is still enabled as desired:
-
-kworker/0:2-965   [000] ....     1.870027: renesas_sdhi_fixup_request: ee140000.sd: opcode 18, flag 0
-kworker/0:2-965   [000] ....     1.871300: renesas_sdhi_fixup_request: ee140000.sd: opcode 18, flag 0
-kworker/0:2-965   [000] ....     1.871454: renesas_sdhi_fixup_request: ee140000.sd: opcode 18, flag 0
-kworker/0:2-965   [000] ....     1.871579: renesas_sdhi_fixup_request: ee140000.sd: opcode 18, flag 0
-kworker/0:2-965   [000] ....     1.871712: renesas_sdhi_fixup_request: ee140000.sd: opcode 18, flag 0
-...
-
-
-Okay, I know this is a lot of text, but it is a subtle issue, so I
-wanted to provide the details which enable other people to actually
-review what I have done.
-
-Shimoda-san, if the BSP team could have a look and share their opinion
-or could test, I'd be most grateful.
-
-Thanks and happy hacking,
-
-   Wolfram
-
-
-Wolfram Sang (4):
-  mmc: renesas_sdhi: keep sorting
-  mmc: tmio: add generic hook to fixup after a completed request
-  mmc: renesas_sdhi: make quirks info accessible outside probe()
-  mmc: renesas_sdhi: support manual calibration
-
- drivers/mmc/host/renesas_sdhi.h      |   9 ++
- drivers/mmc/host/renesas_sdhi_core.c | 129 +++++++++++++++++++++++++--
- drivers/mmc/host/tmio_mmc.h          |   1 +
- drivers/mmc/host/tmio_mmc_core.c     |   3 +
- 4 files changed, 135 insertions(+), 7 deletions(-)
+> > [0] https://lore.kernel.org/lkml/20190504004258.23574-3-erosca@de.adit-jv.com/
+> > [1] https://patchwork.kernel.org/patch/11012983/
+> >     ("serial: sh-sci: Fix TX DMA buffer flushing and workqueue races")
+> > [2] https://patchwork.kernel.org/patch/11012987/
+> >     ("serial: sh-sci: Terminate TX DMA during buffer flushing")
+> > [3] https://patchwork.kernel.org/patch/11012991/
+> >     ("dmaengine: rcar-dmac: Reject zero-length slave DMA requests")
+> > [4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=099506cbbc79c0
+> >     ("serial: sh-sci: disable DMA for uart_console")
+> >
+> > [5] rcar-dmac e7300000.dma-controller: Channel Address Error
+> > [6] rcar-dmac e7300000.dma-controller: rcar_dmac_prep_slave_sg: bad parameter: len=1, id=19
+> >     sh-sci e6e88000.serial: Failed preparing Tx DMA descriptor
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
 -- 
-2.20.1
-
+Regards,
+George
