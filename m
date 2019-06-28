@@ -2,109 +2,101 @@ Return-Path: <SRS0=9pYP=U3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA47C4321A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 14:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE69C4321A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 15:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA08214AF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 14:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB99208E3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jun 2019 15:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfF1OEe (ORCPT
+        id S1726859AbfF1Pez (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Jun 2019 10:04:34 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:37201 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfF1OEd (ORCPT
+        Fri, 28 Jun 2019 11:34:55 -0400
+Received: from sauhun.de ([88.99.104.3]:51902 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726836AbfF1Pez (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jun 2019 10:04:33 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 623EA3C00C6;
-        Fri, 28 Jun 2019 16:04:31 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id v0SS_07b2FWL; Fri, 28 Jun 2019 16:04:25 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id D41973C00BB;
-        Fri, 28 Jun 2019 16:04:25 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 28 Jun
- 2019 16:04:25 +0200
-Date:   Fri, 28 Jun 2019 16:04:25 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
+        Fri, 28 Jun 2019 11:34:55 -0400
+Received: from localhost (p54B332FA.dip0.t-ipconnect.de [84.179.50.250])
+        by pokefinder.org (Postfix) with ESMTPSA id 997A93E43D1;
+        Fri, 28 Jun 2019 17:34:53 +0200 (CEST)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        <linux-serial@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH 2/2] serial: sh-sci: Terminate TX DMA during buffer
- flushing
-Message-ID: <20190628140425.GB11231@vmlxhi-102.adit-jv.com>
-References: <20190624123540.20629-1-geert+renesas@glider.be>
- <20190624123540.20629-3-geert+renesas@glider.be>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT 3/4] mmc: renesas_sdhi: make quirks info accessible outside probe()
+Date:   Fri, 28 Jun 2019 17:34:47 +0200
+Message-Id: <20190628153448.4167-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190628153448.4167-1-wsa+renesas@sang-engineering.com>
+References: <20190628153448.4167-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190624123540.20629-3-geert+renesas@glider.be>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 02:35:40PM +0200, Geert Uytterhoeven wrote:
-[..]
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index d4504daff99263f5..d18c680aa64b3427 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -1656,11 +1656,18 @@ static void sci_free_dma(struct uart_port *port)
->  
->  static void sci_flush_buffer(struct uart_port *port)
->  {
-> +	struct sci_port *s = to_sci_port(port);
-> +
->  	/*
->  	 * In uart_flush_buffer(), the xmit circular buffer has just been
-> -	 * cleared, so we have to reset tx_dma_len accordingly.
-> +	 * cleared, so we have to reset tx_dma_len accordingly, and stop any
-> +	 * pending transfers
->  	 */
-> -	to_sci_port(port)->tx_dma_len = 0;
-> +	s->tx_dma_len = 0;
-> +	if (s->chan_tx) {
-> +		dmaengine_terminate_async(s->chan_tx);
-> +		s->cookie_tx = -EINVAL;
-> +	}
+We will need that for a later patch.
 
-I am seeing a similar solution being employed by other tty/serial
-drivers [1]. One major difference is that those drivers make use of
-dmaengine_terminate_all(). Since the latter is deprecated starting
-with commit [2], the API choice looks reasonable to me.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi.h      | 6 ++++++
+ drivers/mmc/host/renesas_sdhi_core.c | 6 +-----
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-
-[1] git grep -W "static void.*flush_buffer" -- drivers/tty/serial/ | grep dmaengine_terminate
-drivers/tty/serial/fsl_lpuart.c-		dmaengine_terminate_all(sport->dma_tx_chan);
-drivers/tty/serial/imx.c-	dmaengine_terminate_all(sport->dma_chan_tx);
-drivers/tty/serial/serial-tegra.c-		dmaengine_terminate_all(tup->tx_dma_chan);
-
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b36f09c3c441a6
-    ("dmaengine: Add transfer termination synchronization support")
-
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index c0504aa90857..88d05a617d43 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -33,6 +33,11 @@ struct renesas_sdhi_of_data {
+ 	unsigned short max_segs;
+ };
+ 
++struct renesas_sdhi_quirks {
++	bool hs400_disabled;
++	bool hs400_4taps;
++};
++
+ struct tmio_mmc_dma {
+ 	enum dma_slave_buswidth dma_buswidth;
+ 	bool (*filter)(struct dma_chan *chan, void *arg);
+@@ -46,6 +51,7 @@ struct renesas_sdhi {
+ 	struct clk *clk_cd;
+ 	struct tmio_mmc_data mmc_data;
+ 	struct tmio_mmc_dma dma_priv;
++	const struct renesas_sdhi_quirks *quirks;
+ 	struct pinctrl *pinctrl;
+ 	struct pinctrl_state *pins_default, *pins_uhs;
+ 	void __iomem *scc_ctl;
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 7e07c34b9db1..bce1779229a8 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -46,11 +46,6 @@
+ #define SDHI_VER_GEN3_SD	0xcc10
+ #define SDHI_VER_GEN3_SDMMC	0xcd10
+ 
+-struct renesas_sdhi_quirks {
+-	bool hs400_disabled;
+-	bool hs400_4taps;
+-};
+-
+ static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
+ {
+ 	u32 val;
+@@ -662,6 +657,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	priv->quirks = quirks;
+ 	mmc_data = &priv->mmc_data;
+ 	dma_priv = &priv->dma_priv;
+ 
 -- 
-Best Regards,
-Eugeniu.
+2.20.1
+
