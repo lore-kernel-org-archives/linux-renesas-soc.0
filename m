@@ -5,75 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C13C06511
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Jul 2019 08:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F70C5B578
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Jul 2019 08:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0339218A5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Jul 2019 08:35:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6AED218A0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Jul 2019 08:41:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfGCIfa (ORCPT
+        id S1727159AbfGCIlk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Jul 2019 04:35:30 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:57666 "EHLO
+        Wed, 3 Jul 2019 04:41:40 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:57934 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbfGCIf3 (ORCPT
+        with ESMTP id S1727019AbfGCIlk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jul 2019 04:35:29 -0400
+        Wed, 3 Jul 2019 04:41:40 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2D0E625BDD7;
-        Wed,  3 Jul 2019 18:35:23 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 51E6125AEEC;
+        Wed,  3 Jul 2019 18:41:38 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 3120794131F; Wed,  3 Jul 2019 10:35:21 +0200 (CEST)
+        id 64EAA9403B8; Wed,  3 Jul 2019 10:41:36 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Magnus Damm <magnus.damm@gmail.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH v2 2/2] dt-bindings: usb: renesas_gen3: Rename bindings documentation file
-Date:   Wed,  3 Jul 2019 10:35:14 +0200
-Message-Id: <20190703083514.32385-3-horms+renesas@verge.net.au>
+Subject: [PATCH] dt-bindings: Rename file of DT bindings for Renesas memory controllers
+Date:   Wed,  3 Jul 2019 10:41:06 +0200
+Message-Id: <20190703084106.484-1-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190703083514.32385-1-horms+renesas@verge.net.au>
-References: <20190703083514.32385-1-horms+renesas@verge.net.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 For consistency with the naming of (most) other documentation files for DT
-bindings for Renesas IP blocks rename the Renesas USB3.0 peripheral
-documentation file from renesas-gen3.txt to renesas,usb3-peri.txt
+bindings for Renesas IP blocks rename the Renesas R-Mobile and SH-Mobile
+memory controllers documentation file from renesas-memory-controllers.txt
+to renesas,dbsc.txt.
 
 Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
 ---
-v2
-* Accumulate review tags
-* Use renesas,usb3-peri.txt as new filename as suggested by Shimoda-san
----
- .../devicetree/bindings/usb/{renesas_usb3.txt => renesas,usb3-peri.txt}   | 0
+ .../{renesas-memory-controllers.txt => renesas,dbsc.txt}                  | 0
  1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/usb/{renesas_usb3.txt => renesas,usb3-peri.txt} (100%)
+ rename Documentation/devicetree/bindings/memory-controllers/{renesas-memory-controllers.txt => renesas,dbsc.txt} (100%)
 
-diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas,usb3-peri.txt
+diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas-memory-controllers.txt b/Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.txt
 similarity index 100%
-rename from Documentation/devicetree/bindings/usb/renesas_usb3.txt
-rename to Documentation/devicetree/bindings/usb/renesas,usb3-peri.txt
+rename from Documentation/devicetree/bindings/memory-controllers/renesas-memory-controllers.txt
+rename to Documentation/devicetree/bindings/memory-controllers/renesas,dbsc.txt
 -- 
 2.11.0
 
