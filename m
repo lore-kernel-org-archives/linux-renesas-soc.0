@@ -2,30 +2,31 @@ Return-Path: <SRS0=ZWut=VB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4095C5B578
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Jul 2019 01:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B2DC4646D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Jul 2019 01:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C388A218A6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Jul 2019 01:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 676B721882
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Jul 2019 01:58:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbfGDB62 (ORCPT
+        id S1727231AbfGDB6a (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Jul 2019 21:58:28 -0400
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:43498 "EHLO
+        Wed, 3 Jul 2019 21:58:30 -0400
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:43514 "EHLO
         bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727004AbfGDB62 (ORCPT
+        by vger.kernel.org with ESMTP id S1726955AbfGDB63 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jul 2019 21:58:28 -0400
-X-Halon-ID: 3231f3b8-9dff-11e9-8ab4-005056917a89
+        Wed, 3 Jul 2019 21:58:29 -0400
+X-Halon-ID: 36f2cd30-9dff-11e9-8ab4-005056917a89
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (unknown [145.14.112.32])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 3231f3b8-9dff-11e9-8ab4-005056917a89;
-        Thu, 04 Jul 2019 03:58:25 +0200 (CEST)
+        id 36f2cd30-9dff-11e9-8ab4-005056917a89;
+        Thu, 04 Jul 2019 03:58:28 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -33,10 +34,12 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 0/4] rcar-vin: Add support for RGB formats with alpha 
-Date:   Thu,  4 Jul 2019 03:58:13 +0200
-Message-Id: <20190704015817.17083-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 3/4] rcar-vin: Add support for RGB formats with alpha component
+Date:   Thu,  4 Jul 2019 03:58:16 +0200
+Message-Id: <20190704015817.17083-4-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190704015817.17083-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20190704015817.17083-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,39 +48,97 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+The R-Car VIN module supports V4L2_PIX_FMT_ARGB555 and
+V4L2_PIX_FMT_ABGR32 pixel formats. Add the hardware register setup and
+allow the alpha component to be changed while streaming using the
+V4L2_CID_ALPHA_COMPONENT control.
 
-This small series adds support for two new pixel formats for the
-rcar-vin driver; V4L2_PIX_FMT_ARGB555 and V4L2_PIX_FMT_ABGR32. Both
-formats have an alpha component so a new standard control is also added
-to control its value, V4L2_CID_ALPHA_COMPONENT.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 35 +++++++++++++++++++++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c |  8 +++++
+ 2 files changed, 43 insertions(+)
 
-The series is based on the latest media-tree and is tested on both
-Renesas Gen2 and Gen3 hardware without any regressions found.
-
-Patch 1/4 fixes a badly named register name, 2/4 adds the new control
-while 3/4 adds the two new pixel formats. Patch 4/4 is a clean up now 
-that Gen2 and Gen3 always have controls and v4l2_ctrl_handler_setup() 
-should be called for both cases.
-
-* Changes since v2
-- Protect the writing of the alpha value when streaming with the spin 
-  lock to make sure the streaming state is stable.
-- Add patch 4/4 to call v4l2_ctrl_handler_setup() for the media 
-  controller centric Gen3 mode of the driver.
-
-Niklas Söderlund (4):
-  rcar-vin: Rename VNDMR_DTMD_ARGB1555 to VNDMR_DTMD_ARGB
-  rcar-vin: Add control for alpha component
-  rcar-vin: Add support for RGB formats with alpha component
-  rcar-vin: Always setup controls when opening video device
-
- drivers/media/platform/rcar-vin/rcar-core.c | 53 ++++++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-dma.c  | 44 ++++++++++++++++-
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 38 +++++++++------
- drivers/media/platform/rcar-vin/rcar-vin.h  |  5 ++
- 4 files changed, 121 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 4e991cce5fb56a90..620976d173585694 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -111,8 +111,11 @@
+ #define VNIE_EFE		(1 << 1)
+ 
+ /* Video n Data Mode Register bits */
++#define VNDMR_A8BIT(n)		((n & 0xff) << 24)
++#define VNDMR_A8BIT_MASK	(0xff << 24)
+ #define VNDMR_EXRGB		(1 << 8)
+ #define VNDMR_BPSM		(1 << 4)
++#define VNDMR_ABIT		(1 << 2)
+ #define VNDMR_DTMD_YCSEP	(1 << 1)
+ #define VNDMR_DTMD_ARGB		(1 << 0)
+ 
+@@ -730,6 +733,12 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		/* Note: not supported on M1 */
+ 		dmr = VNDMR_EXRGB;
+ 		break;
++	case V4L2_PIX_FMT_ARGB555:
++		dmr = (vin->alpha ? VNDMR_ABIT : 0) | VNDMR_DTMD_ARGB;
++		break;
++	case V4L2_PIX_FMT_ABGR32:
++		dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB | VNDMR_DTMD_ARGB;
++		break;
+ 	default:
+ 		vin_err(vin, "Invalid pixelformat (0x%x)\n",
+ 			vin->format.pixelformat);
+@@ -1346,5 +1355,31 @@ int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
+ 
+ void rvin_set_alpha(struct rvin_dev *vin, unsigned int alpha)
+ {
++	unsigned long flags;
++	u32 dmr;
++
++	spin_lock_irqsave(&vin->qlock, flags);
++
+ 	vin->alpha = alpha;
++
++	if (vin->state == STOPPED)
++		goto out;
++
++	switch (vin->format.pixelformat) {
++	case V4L2_PIX_FMT_ARGB555:
++		dmr = rvin_read(vin, VNDMR_REG) & ~VNDMR_ABIT;
++		if (vin->alpha)
++			dmr |= VNDMR_ABIT;
++		break;
++	case V4L2_PIX_FMT_ABGR32:
++		dmr = rvin_read(vin, VNDMR_REG) & ~VNDMR_A8BIT_MASK;
++		dmr |= VNDMR_A8BIT(vin->alpha);
++		break;
++	default:
++		goto out;
++	}
++
++	rvin_write(vin, dmr,  VNDMR_REG);
++out:
++	spin_unlock_irqrestore(&vin->qlock, flags);
+ }
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 0936bcd98df1f75d..f8b6ec4408b2f5fa 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -54,6 +54,14 @@ static const struct rvin_video_format rvin_formats[] = {
+ 		.fourcc			= V4L2_PIX_FMT_XBGR32,
+ 		.bpp			= 4,
+ 	},
++	{
++		.fourcc			= V4L2_PIX_FMT_ARGB555,
++		.bpp			= 2,
++	},
++	{
++		.fourcc			= V4L2_PIX_FMT_ABGR32,
++		.bpp			= 4,
++	},
+ };
+ 
+ const struct rvin_video_format *rvin_format_from_pixel(u32 pixelformat)
 -- 
 2.21.0
 
