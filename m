@@ -1,97 +1,87 @@
-Return-Path: <SRS0=icXz=VA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=ZWut=VB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB06BC5B578
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Jul 2019 21:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47219C5B578
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Jul 2019 01:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD23218A0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Jul 2019 21:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E6D621882
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Jul 2019 01:58:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfGCVJC (ORCPT
+        id S1727095AbfGDB62 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Jul 2019 17:09:02 -0400
-Received: from sauhun.de ([88.99.104.3]:55406 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726678AbfGCVJB (ORCPT
+        Wed, 3 Jul 2019 21:58:28 -0400
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:52306 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727063AbfGDB62 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Jul 2019 17:09:01 -0400
-Received: from localhost (p54B333B3.dip0.t-ipconnect.de [84.179.51.179])
-        by pokefinder.org (Postfix) with ESMTPSA id 46B452C2761;
-        Wed,  3 Jul 2019 23:08:59 +0200 (CEST)
-Date:   Wed, 3 Jul 2019 23:08:58 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jiri Slaby <jslaby@suse.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        dmaengine@vger.kernel.org,
-        "George G . Davis" <george_davis@mentor.com>
-Subject: Re: [PATCH 0/2] serial: sh-sci: Fix .flush_buffer() issues
-Message-ID: <20190703210858.GA5012@kunai>
-References: <20190624123540.20629-1-geert+renesas@glider.be>
- <20190626173434.GA24702@x230>
- <CAMuHMdWuk7CkfcUSX=706f8b6YMFio7iwZg32+uXsyOKL68fuQ@mail.gmail.com>
- <20190628123907.GA10962@vmlxhi-102.adit-jv.com>
- <20190628125534.GB1458@ninjato>
- <20190628130200.GA11231@vmlxhi-102.adit-jv.com>
- <20190703173050.GA11328@kroah.com>
- <20190703181519.ifrmycrsrohcc2gf@x230>
- <20190703184422.GA14207@kroah.com>
+        Wed, 3 Jul 2019 21:58:28 -0400
+X-Halon-ID: 36002bda-9dff-11e9-8ab4-005056917a89
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (unknown [145.14.112.32])
+        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
+        id 36002bda-9dff-11e9-8ab4-005056917a89;
+        Thu, 04 Jul 2019 03:58:26 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH v3 1/4] rcar-vin: Rename VNDMR_DTMD_ARGB1555 to VNDMR_DTMD_ARGB
+Date:   Thu,  4 Jul 2019 03:58:14 +0200
+Message-Id: <20190704015817.17083-2-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190704015817.17083-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20190704015817.17083-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Content-Disposition: inline
-In-Reply-To: <20190703184422.GA14207@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The value have nothing to do with ARGB1555, it controls if the alpha
+component should be filled in for ARGB1555 or ARGB888. Rename it to
+reflect this.
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 91ab064404a185af..2d146ecf93d66ad5 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -114,7 +114,7 @@
+ #define VNDMR_EXRGB		(1 << 8)
+ #define VNDMR_BPSM		(1 << 4)
+ #define VNDMR_DTMD_YCSEP	(1 << 1)
+-#define VNDMR_DTMD_ARGB1555	(1 << 0)
++#define VNDMR_DTMD_ARGB		(1 << 0)
+ 
+ /* Video n Data Mode Register 2 bits */
+ #define VNDMR2_VPS		(1 << 30)
+@@ -721,7 +721,7 @@ static int rvin_setup(struct rvin_dev *vin)
+ 		output_is_yuv = true;
+ 		break;
+ 	case V4L2_PIX_FMT_XRGB555:
+-		dmr = VNDMR_DTMD_ARGB1555;
++		dmr = VNDMR_DTMD_ARGB;
+ 		break;
+ 	case V4L2_PIX_FMT_RGB565:
+ 		dmr = 0;
+-- 
+2.21.0
 
-> I've been doing this for a very long time now, before patchwork was even
-> around.  It's pretty trivial to collect them on my own.
-
-It's a workflow thing. Mileages vary. I ask people to tag patches
-individually for reasonable small series.
-
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0dGWYACgkQFA3kzBSg
-KbZL4w/+MqHZmwiTEJqm8BZ2ZK8faQJvNomt3fXolYS8QXPu/O3Xx6cuAqGSBCH7
-t0+YtpEqfzxXaezbtsNX74gVA1LdDJMB907+D72NuepZamo/xa0RmHPbVH5R7Aiw
-iLPw38oHscptehopOa+sS6fIXyOusnAqq7ItgLlLg8b3tS1xxkzZsChtT9tS1IPt
-M0nsXR1q5Ag3z+mQkE3AM1U4TXbns8rou2FH6eBOCE97sp7eEuBeFX7Whe17bOzX
-ia95g3H4Rf4RJ/NwwRpoJSh8nOh/8Ey52idfWOVrvwRMGWOJN3cq+V4lCBs/hKLQ
-yNPp6EM4vGioTTYz6KiMHzPfjrxvGlHCFgVceYNA90PnXAhygutwG82Cpun7ob/J
-HcoNJLePIcg0/ziV9kOzReyc9hTGCo2wJHQaAlVR/Fo04p8Oxr5+rFveVWNyUtzt
-TntLF1sDdpqYfjLvEfft1ygmAvBw2CxLLyWmLQwKa+ucyF6dayGNbJN9kl++Anhf
-vr2P339IStBPk2U7CChrLO4NTBlvBuTS+SlH83D4Faay9ozjNcHLGi6ss53KLzo0
-EpLi0o8LDoNWU+uYKccENLlfRBQq5Xryt/TtGIHHxJI3rJWOnm/1gXCg39q/VHpy
-CQx9isnS61NUwrwu2DEb3SgBAv43+hoP5N08jSZqJKgCkzDxsd4=
-=pG6l
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
