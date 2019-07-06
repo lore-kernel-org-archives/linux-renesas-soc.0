@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-10.0 required=3.0
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F33ACC0650E
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DF7C0650E
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54072133D
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:08:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A732205F4
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfGFOH7 (ORCPT
+        id S1726908AbfGFOGu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 6 Jul 2019 10:07:59 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:48599 "EHLO
+        Sat, 6 Jul 2019 10:06:50 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:42149 "EHLO
         relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbfGFOG4 (ORCPT
+        with ESMTP id S1726607AbfGFOGs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 6 Jul 2019 10:06:56 -0400
+        Sat, 6 Jul 2019 10:06:48 -0400
 X-Originating-IP: 2.224.242.101
 Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 84F72C0004;
-        Sat,  6 Jul 2019 14:06:52 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 59FD1C000A;
+        Sat,  6 Jul 2019 14:06:45 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     laurent.pinchart@ideasonboard.com,
         kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
@@ -35,11 +35,10 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         VenkataRajesh.Kalakodima@in.bosch.com,
         Harsha.ManjulaMallikarjun@in.bosch.com,
         linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 05/19] clk: renesas: r8a7795: Add CMM clocks
-Date:   Sat,  6 Jul 2019 16:07:32 +0200
-Message-Id: <20190706140746.29132-6-jacopo+renesas@jmondi.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 02/19] dt-bindings: display, renesas,du: Document cmms property
+Date:   Sat,  6 Jul 2019 16:07:29 +0200
+Message-Id: <20190706140746.29132-3-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
 References: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
@@ -50,30 +49,39 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add clock definitions for CMM units on Renesas R-Car Gen3 H3.
+Document the newly added 'cmms' property which accepts a list of phandle
+and channel index pairs that point to the CMM units available for each
+Display Unit output video channel.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/display/renesas,du.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index 9e9a6f2c31e8..d55b1d9c8f72 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -201,6 +201,10 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
- 	DEF_MOD("ehci0",		 703,	R8A7795_CLK_S3D2),
- 	DEF_MOD("hsusb",		 704,	R8A7795_CLK_S3D2),
- 	DEF_MOD("hsusb3",		 705,	R8A7795_CLK_S3D2),
-+	DEF_MOD("cmm3",			 708,	R8A7795_CLK_S2D1),
-+	DEF_MOD("cmm2",			 709,	R8A7795_CLK_S2D1),
-+	DEF_MOD("cmm1",			 710,	R8A7795_CLK_S2D1),
-+	DEF_MOD("cmm0",			 711,	R8A7795_CLK_S2D1),
- 	DEF_MOD("csi21",		 713,	R8A7795_CLK_CSI0), /* ES1.x */
- 	DEF_MOD("csi20",		 714,	R8A7795_CLK_CSI0),
- 	DEF_MOD("csi41",		 715,	R8A7795_CLK_CSI0),
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index aedb22b4d161..0f42af5b91cf 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -44,6 +44,10 @@ Required Properties:
+     instance that serves the DU channel, and the channel index identifies the
+     LIF instance in that VSP.
+ 
++  - cmms: A list of phandles to the CMM instances present in the SoC, one
++    for each available DU channel. The property shall not be specified for
++    SoCs that do not provide any CMM (such as V3M and V3H).
++
+ Required nodes:
+ 
+ The connections to the DU output video ports are modeled using the OF graph
+@@ -89,6 +93,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 			 <&cpg CPG_MOD 721>;
+ 		clock-names = "du.0", "du.1", "du.2", "du.3";
+ 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
++		cmms = <&cmm0 &cmm1 &cmm2 &cmm3>;
+ 
+ 		ports {
+ 			#address-cells = <1>;
 -- 
 2.21.0
 
