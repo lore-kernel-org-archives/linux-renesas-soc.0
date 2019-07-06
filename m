@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-10.0 required=3.0
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF91C0650E
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 856E6C0650E
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5888220856
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64A9D20856
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:06:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfGFOGq (ORCPT
+        id S1726922AbfGFOGw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 6 Jul 2019 10:06:46 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:57125 "EHLO
+        Sat, 6 Jul 2019 10:06:52 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:41383 "EHLO
         relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbfGFOGq (ORCPT
+        with ESMTP id S1726446AbfGFOGv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 6 Jul 2019 10:06:46 -0400
+        Sat, 6 Jul 2019 10:06:51 -0400
 X-Originating-IP: 2.224.242.101
 Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 0FF48C0009;
-        Sat,  6 Jul 2019 14:06:42 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id A5F85C000C;
+        Sat,  6 Jul 2019 14:06:47 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     laurent.pinchart@ideasonboard.com,
         kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
@@ -36,9 +36,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Harsha.ManjulaMallikarjun@in.bosch.com,
         linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/19] dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
-Date:   Sat,  6 Jul 2019 16:07:28 +0200
-Message-Id: <20190706140746.29132-2-jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 03/19] arm64: renesas: Update 'vsps' property
+Date:   Sat,  6 Jul 2019 16:07:30 +0200
+Message-Id: <20190706140746.29132-4-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
 References: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
@@ -49,50 +49,83 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device tree bindings documentation for the Renesas R-Car Display
-Unit Color Management Module.
-
-CMM is the image enhancement module available on each R-Car DU video
-channel on R-Car Gen2 and Gen3 SoCs (V3H and V3M excluded).
+Update the 'vsps' property in the R-Car Gen3 SoC device tree files to
+match what's in in the documentation example.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- .../bindings/display/renesas,cmm.txt          | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.txt
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,cmm.txt b/Documentation/devicetree/bindings/display/renesas,cmm.txt
-new file mode 100644
-index 000000000000..083dc1357b2b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/renesas,cmm.txt
-@@ -0,0 +1,25 @@
-+* Renesas R-Car Color Management Module (CMM)
-+
-+Renesas R-Car image enhancement module connected to R-Car DU video channels.
-+
-+Required properties:
-+ - compatible: shall be one of:
-+   - "renesas,rcar-gen3-cmm"
-+   - "renesas,rcar-gen2-cmm"
-+
-+ - reg: the address base and length of the memory area where CMM control
-+   registers are mapped to.
-+
-+ - clocks: phandle and clock-specifier pair to the CMM functional clock
-+   supplier.
-+
-+Example:
-+--------
-+
-+	cmm0: cmm@fea40000 {
-+		compatible = "renesas,rcar-gen3-cmm";
-+		reg = <0 0xfea40000 0 0x1000>;
-+		power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+		clocks = <&cpg CPG_MOD 711>;
-+		resets = <&cpg 711>;
-+	};
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+index 3f86db199dbf..e643f9d3c102 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+@@ -1807,7 +1807,7 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>;
+ 			clock-names = "du.0", "du.1";
+-			vsps = <&vspd0 0 &vspd1 0>;
++			vsps = <&vspd0 0>, <&vspd1 0>;
+ 			status = "disabled";
+ 
+ 			ports {
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 097538cc4b1f..432f4036a8a8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -3098,7 +3098,7 @@
+ 				 <&cpg CPG_MOD 722>,
+ 				 <&cpg CPG_MOD 721>;
+ 			clock-names = "du.0", "du.1", "du.2", "du.3";
+-			vsps = <&vspd0 0 &vspd1 0 &vspd2 0 &vspd0 1>;
++			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 			status = "disabled";
+ 
+ 			ports {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index 2554b1742dbf..b701aeb4f438 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -2456,7 +2456,7 @@
+ 			clock-names = "du.0", "du.1", "du.3";
+ 			status = "disabled";
+ 
+-			vsps = <&vspd0 0 &vspd1 0 &vspd0 1>;
++			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
+ 
+ 			ports {
+ 				#address-cells = <1>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 56cb566ffa09..79db5441b7e7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -1764,7 +1764,7 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>;
+ 			clock-names = "du.0", "du.1";
+-			vsps = <&vspd0 0 &vspd1 0>;
++			vsps = <&vspd0 0>, <&vspd1 0>;
+ 			status = "disabled";
+ 
+ 			ports {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+index 5bf3af246e14..49a11b4f55bd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+@@ -1001,7 +1001,7 @@
+ 			clocks = <&cpg CPG_MOD 724>,
+ 				 <&cpg CPG_MOD 723>;
+ 			clock-names = "du.0", "du.1";
+-			vsps = <&vspd0 0 &vspd1 0>;
++			vsps = <&vspd0 0>, <&vspd1 0>;
+ 			status = "disabled";
+ 
+ 			ports {
 -- 
 2.21.0
 
