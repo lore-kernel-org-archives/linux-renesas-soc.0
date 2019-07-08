@@ -1,123 +1,148 @@
-Return-Path: <SRS0=xD3p=VD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=rKWl=VF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E09EC468AD
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4EB2C0650E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jul 2019 03:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2772063F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Jul 2019 14:08:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8875920673
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jul 2019 03:11:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HvKdj5RY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfGFOGs (ORCPT
+        id S1727745AbfGHDLy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 6 Jul 2019 10:06:48 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:46841 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbfGFOGr (ORCPT
+        Sun, 7 Jul 2019 23:11:54 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39618 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfGHDLx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 6 Jul 2019 10:06:47 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id B700AC0004;
-        Sat,  6 Jul 2019 14:06:35 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        Sun, 7 Jul 2019 23:11:53 -0400
+Received: from pendragon.ideasonboard.com (unknown [210.160.37.25])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3595DCC;
+        Mon,  8 Jul 2019 05:11:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1562555511;
+        bh=8gc1GRiNm08PRWGt9s/RcUqTuZs4EATDUk92EjTIlcw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HvKdj5RYahTvfPfFy2ezx/60bHwdmV+2ZVYzRWT/UererVRPzYXGK6SbVQdYqoFUG
+         R5AlWdE/XFociu1LDvfAbVoO435efmELaJ8MvCIg4hscFOduZLP4WXYzPn5g0OJdVt
+         vQECeAnBz5AH6LjXY50J4BSz7UtJLurU0KcwW7EE=
+Date:   Mon, 8 Jul 2019 06:11:21 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
         VenkataRajesh.Kalakodima@in.bosch.com,
         Harsha.ManjulaMallikarjun@in.bosch.com,
         linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/19] drm: rcar-du: Add Color Management Module (CMM)
-Date:   Sat,  6 Jul 2019 16:07:27 +0200
-Message-Id: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.21.0
+Subject: Re: [PATCH v2 03/19] arm64: renesas: Update 'vsps' property
+Message-ID: <20190708031121.GA5046@pendragon.ideasonboard.com>
+References: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
+ <20190706140746.29132-4-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190706140746.29132-4-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
-  second iteration of CMM support for Renesas R-Car devices, where I have
-fixed comments from Laurent, Geert and Daniel.
+Hi Jacopo,
 
-A reference to the v1 cover letter, with some background on the CMM is
-available here:
-https://lkml.org/lkml/2019/6/6/583
+Thank you for the patch.
 
-Notable changes:
-- Rebased on v5.2-rc7
-- clock patches rebased, but already collected by Geert for v5.3
-- Changed cmm compatible string as suggested by Geert in bindings and
-  DTS files
-- CMM driver updated to include comments from Laurent, thanks!
-- Integration in R-Car DU is very similar, I have squashed a few patches
-- Add legagy gamma interface support with .gamma_set callback as suggested
-  by Daniel.
+On Sat, Jul 06, 2019 at 04:07:30PM +0200, Jacopo Mondi wrote:
+> Update the 'vsps' property in the R-Car Gen3 SoC device tree files to
+> match what's in in the documentation example.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Thanks
-   j
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Jacopo Mondi (19):
-  dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
-  dt-bindings: display, renesas,du: Document cmms property
-  arm64: renesas: Update 'vsps' property
-  clk: renesas: r8a7796: Add CMM clocks
-  clk: renesas: r8a7795: Add CMM clocks
-  clk: renesas: r8a77965: Add CMM clocks
-  clk: renesas: r8a77990: Add CMM clocks
-  clk: renesas: r8a77995: Add CMM clocks
-  arm64: dts: renesas: r8a7796: Add CMM units
-  arm64: dts: renesas: r8a7795: Add CMM units
-  arm64: dts: renesas: r8a77965: Add CMM units
-  arm64: dts: renesas: r8a77990: Add CMM units
-  arm64: dts: renesas: r8a77995: Add CMM units
-  drm: rcar-du: Add support for CMM
-  drm: rcar-du: Claim CMM support for Gen3 SoCs
-  drm: rcar-du: kms: Collect CMM instances
-  drm: rcar-du: crtc: Enable and disable CMMs
-  drm: rcar-du: crtc: Register GAMMA_LUT properties
-  drm: rcar-du: kms: Update CMM in atomic commit tail
+> ---
+>  arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 2 +-
+>  arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 2 +-
+>  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
+>  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 +-
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> index 3f86db199dbf..e643f9d3c102 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+> @@ -1807,7 +1807,7 @@
+>  			clocks = <&cpg CPG_MOD 724>,
+>  				 <&cpg CPG_MOD 723>;
+>  			clock-names = "du.0", "du.1";
+> -			vsps = <&vspd0 0 &vspd1 0>;
+> +			vsps = <&vspd0 0>, <&vspd1 0>;
+>  			status = "disabled";
+>  
+>  			ports {
+> diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> index 097538cc4b1f..432f4036a8a8 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+> @@ -3098,7 +3098,7 @@
+>  				 <&cpg CPG_MOD 722>,
+>  				 <&cpg CPG_MOD 721>;
+>  			clock-names = "du.0", "du.1", "du.2", "du.3";
+> -			vsps = <&vspd0 0 &vspd1 0 &vspd2 0 &vspd0 1>;
+> +			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+>  			status = "disabled";
+>  
+>  			ports {
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> index 2554b1742dbf..b701aeb4f438 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+> @@ -2456,7 +2456,7 @@
+>  			clock-names = "du.0", "du.1", "du.3";
+>  			status = "disabled";
+>  
+> -			vsps = <&vspd0 0 &vspd1 0 &vspd0 1>;
+> +			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
+>  
+>  			ports {
+>  				#address-cells = <1>;
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> index 56cb566ffa09..79db5441b7e7 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+> @@ -1764,7 +1764,7 @@
+>  			clocks = <&cpg CPG_MOD 724>,
+>  				 <&cpg CPG_MOD 723>;
+>  			clock-names = "du.0", "du.1";
+> -			vsps = <&vspd0 0 &vspd1 0>;
+> +			vsps = <&vspd0 0>, <&vspd1 0>;
+>  			status = "disabled";
+>  
+>  			ports {
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> index 5bf3af246e14..49a11b4f55bd 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -1001,7 +1001,7 @@
+>  			clocks = <&cpg CPG_MOD 724>,
+>  				 <&cpg CPG_MOD 723>;
+>  			clock-names = "du.0", "du.1";
+> -			vsps = <&vspd0 0 &vspd1 0>;
+> +			vsps = <&vspd0 0>, <&vspd1 0>;
+>  			status = "disabled";
+>  
+>  			ports {
 
- .../bindings/display/renesas,cmm.txt          |  25 ++
- .../bindings/display/renesas,du.txt           |   5 +
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi     |   2 +-
- arch/arm64/boot/dts/renesas/r8a7795.dtsi      |  36 ++-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi      |  25 ++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi     |  27 +-
- arch/arm64/boot/dts/renesas/r8a77990.dtsi     |  20 +-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi     |  20 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c        |   4 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c        |   3 +
- drivers/clk/renesas/r8a77965-cpg-mssr.c       |   3 +
- drivers/clk/renesas/r8a77990-cpg-mssr.c       |   2 +
- drivers/clk/renesas/r8a77995-cpg-mssr.c       |   2 +
- drivers/gpu/drm/rcar-du/Kconfig               |   7 +
- drivers/gpu/drm/rcar-du/Makefile              |   1 +
- drivers/gpu/drm/rcar-du/rcar_cmm.c            | 291 ++++++++++++++++++
- drivers/gpu/drm/rcar-du/rcar_cmm.h            |  38 +++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c        |  17 +
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h        |   2 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.c         |  12 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h         |   4 +
- drivers/gpu/drm/rcar-du/rcar_du_group.c       |   8 +
- drivers/gpu/drm/rcar-du/rcar_du_group.h       |   2 +
- drivers/gpu/drm/rcar-du/rcar_du_kms.c         |  86 ++++++
- drivers/gpu/drm/rcar-du/rcar_du_regs.h        |   5 +
- 25 files changed, 638 insertions(+), 9 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.txt
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
- create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
+-- 
+Regards,
 
---
-2.21.0
-
+Laurent Pinchart
