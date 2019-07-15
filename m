@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30371C76195
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jul 2019 13:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5DBC76191
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jul 2019 14:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F160A212F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jul 2019 13:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B478820868
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jul 2019 14:21:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563198713;
-	bh=Ffp64TdZCsIwXhtYCKk22WhWHY0Yl/3XVhpzg9tgNA0=;
+	s=default; t=1563200474;
+	bh=/1uh42vnI1YjnifHgWyaH48iN4ldgu9hW2Ksx6MeZ4Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gLYbssvi912gwRy1dsVJvVuB4BCFnV/RX4kzPoo6nd9EkTUwc62SZO06YrAhD2YyC
-	 cb0vRWt3yU/ZR1Mx/FWIlqUjBqqrwxVu0x4IcEyUOF9IsBxEoQpa8wqbNZ59DmGQbt
-	 qutLQ1sFPry0m1FOJyl/INYPe4N4KgyKu3X+aegw=
+	b=vmgcjQP00hJF3bU+xHF0yVYD8KQTC8p9NZ9dNCDu7HUQDP5aOzjD2WMM2sEAyrBWJ
+	 OPMZk1FHJ+ZMsD2IcTq1XguyJ7RDZN4B5p1JEKfvVYgcfUv0dwN/tmNxUrDW7FU/Cb
+	 nidKxaQa+VfSL/kAEksWng01sabOuukI2Qmt1vps=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732142AbfGONvr (ORCPT
+        id S2390504AbfGOOVH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Jul 2019 09:51:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43872 "EHLO mail.kernel.org"
+        Mon, 15 Jul 2019 10:21:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731709AbfGONvq (ORCPT
+        id S2390498AbfGOOVG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jul 2019 09:51:46 -0400
+        Mon, 15 Jul 2019 10:21:06 -0400
 Received: from sasha-vm.mshome.net (unknown [73.61.17.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CD7020896;
-        Mon, 15 Jul 2019 13:51:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03CF420868;
+        Mon, 15 Jul 2019 14:21:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563198705;
-        bh=Ffp64TdZCsIwXhtYCKk22WhWHY0Yl/3XVhpzg9tgNA0=;
+        s=default; t=1563200465;
+        bh=/1uh42vnI1YjnifHgWyaH48iN4ldgu9hW2Ksx6MeZ4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xiRcM0fFBWSU0dpsFoJr/YiPPOCfy4AGDYn32e4HQ4ajFM+5MbX0kEjLGeS1secsp
-         z7hvbb19ySyzu8411ucabEfmYK7ySBHNgVYTMvLi9ZY1uc99xrxn9IADZWx5k87S/5
-         yxRuLGf+HW3r41pa28tnmhCtODSa0v0Uv4RAzHnY=
+        b=jp9r9pEkTaL0W8qysq6nj8qbtz/IBQSHEXoXdbnXHp97TbZoQ/8OL83xIZOwaizm0
+         2QsM0BnLMH7gVOafSokHw7cIV6vNOw1qxuajeLlFjALYzVTmdPrGq6Nt2OpjZ5vZRt
+         zTnrreOlQhnZqywvvaKPV7g1F07REV1ZwKhjkM00=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -47,12 +47,12 @@ Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 088/249] media: fdp1: Support M3N and E3 platforms
-Date:   Mon, 15 Jul 2019 09:44:13 -0400
-Message-Id: <20190715134655.4076-88-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 057/158] media: fdp1: Support M3N and E3 platforms
+Date:   Mon, 15 Jul 2019 10:16:28 -0400
+Message-Id: <20190715141809.8445-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190715134655.4076-1-sashal@kernel.org>
-References: <20190715134655.4076-1-sashal@kernel.org>
+In-Reply-To: <20190715141809.8445-1-sashal@kernel.org>
+References: <20190715141809.8445-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -82,7 +82,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 insertions(+)
 
 diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
-index 6a90bc4c476e..b8615a288e2b 100644
+index 2a15b7cca338..0d1467028811 100644
 --- a/drivers/media/platform/rcar_fdp1.c
 +++ b/drivers/media/platform/rcar_fdp1.c
 @@ -257,6 +257,8 @@ MODULE_PARM_DESC(debug, "activate debug info");
@@ -106,7 +106,7 @@ index 6a90bc4c476e..b8615a288e2b 100644
 +		break;
  	default:
  		dev_err(fdp1->dev, "FDP1 Unidentifiable (0x%08x)\n",
- 			hw_version);
+ 				hw_version);
 -- 
 2.20.1
 
