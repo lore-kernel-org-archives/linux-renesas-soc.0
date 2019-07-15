@@ -1,96 +1,239 @@
-Return-Path: <SRS0=DNgi=VL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=DL1k=VM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A204C73C66
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Jul 2019 15:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B3CC7618F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jul 2019 09:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238A120896
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 14 Jul 2019 15:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563116975;
-	bh=bm9pEoqApX+qfkcBW1EqbTeake3cpyojbVnypkCIZzs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=oV3oAd/XQCYR3hQdVqDUjTeGgbSiol7QVIxjYhkVLwQJMGYKPANsB9eBNsnt73PJc
-	 J1ZbYQ/hTW2swLguAFkIBMad/jvT8jyXstH9qx384/IFTqj4sZcWzZ4+Swz9scy08N
-	 HgSeYRZOc0KMAvObbWGCrrRzYHRfuCwWl/YSsmAo=
+	by mail.kernel.org (Postfix) with ESMTP id 0564420868
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jul 2019 09:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728477AbfGNPJe (ORCPT
+        id S1729441AbfGOJCd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 14 Jul 2019 11:09:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728380AbfGNPJe (ORCPT
+        Mon, 15 Jul 2019 05:02:33 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:56964 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729257AbfGOJCd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 14 Jul 2019 11:09:34 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        Mon, 15 Jul 2019 05:02:33 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F2B92063F;
-        Sun, 14 Jul 2019 15:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563116973;
-        bh=bm9pEoqApX+qfkcBW1EqbTeake3cpyojbVnypkCIZzs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=0eRUwZBYgVu2OLCbOTDh1MKwciFyHBtd8VCxW9LyL5hX9zdTvY4irReOkutgYDqGN
-         jx2VGZACcSHrdEXXR4stGZTF2JkMoo4ULRTqQa9nxifkdWViBF3u77WAFTD3AkW4vC
-         +94C+s3kNUg7ipIqG68DRzw76ooNnXv7Lv3nHex4=
-Date:   Sun, 14 Jul 2019 16:09:08 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>, stable <stable@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Rob Herring <robh@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        linux-iio@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: adc: gyroadc: fix uninitialized return code
-Message-ID: <20190714160908.7443eca6@archlinux>
-In-Reply-To: <20190704195557.GA1338@kunai>
-References: <20190704113800.3299636-1-arnd@arndb.de>
-        <20190704120756.GA1582@kunai>
-        <CAMuHMdXDN60WWFerok1h05COdNNPZTMDCgKXejmQZMj9B6y5Cw@mail.gmail.com>
-        <fc3b8b4e-fe0e-9573-124d-4b41efa409e4@gmail.com>
-        <20190704195557.GA1338@kunai>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 36E83803B1;
+        Mon, 15 Jul 2019 11:02:29 +0200 (CEST)
+Date:   Mon, 15 Jul 2019 11:02:27 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     David Airlie <airlied@linux.ie>, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v1] drm/shmobile: drop use of drmP.h
+Message-ID: <20190715090227.GA27652@ravnborg.org>
+References: <20190630052126.6050-1-sam@ravnborg.org>
+ <20190630112203.GA7043@pendragon.ideasonboard.com>
+ <20190630141225.GA5444@ravnborg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190630141225.GA5444@ravnborg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
+        a=P1BnusSwAAAA:8 a=VwQbUJbxAAAA:8 a=kMHMJxhSLpEp1KH-nXwA:9
+        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=D0XLA9XvdZm18NrgonBM:22
+        a=AjGcO6oz07-iQ99wixmX:22
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 4 Jul 2019 21:55:58 +0200
-Wolfram Sang <wsa@the-dreams.de> wrote:
-
-> > >> This is correct but missing that the above 'return ret' is broken, too.
-> > >> ret is initialized but 0 in that case.  
-> > > 
-> > > Nice catch! Oh well, given enough eyeballs, ...  
+Hi Laurent
 > > 
-> > I don't think ret is initialized, reg is, not ret .  
+> > The shmobile driver hasn't seen changes for a long time and I don't have
+> > patches queued in my tree for it. If you don't mind taking this patch
+> > through drm-misc with the rest of the drmP.h removal series it would be
+> > easier for me. Otherwise please let me know and I'll handle it.
+> No problem, I will add to drm-misc when ready.
+> The motivation was alone to avoid later merge conflicts - which in this
+> case is a non-issue.
 > 
-> It is initialized for the broken 'return ret' *above* the one which gets
-> rightfully fixed in this patch.
+> > > diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+> > > index 9ca6920641d8..bd35fe8f9028 100644
+> > > --- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+> > > +++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+> > > @@ -10,7 +10,6 @@
+> > >  #ifndef __SHMOB_DRM_CRTC_H__
+> > >  #define __SHMOB_DRM_CRTC_H__
+> > >  
+> > > -#include <drm/drmP.h>
+> > 
+> > I think you should include drm/drm_connector.h here. It gets pulled
+> > indirectly, but it's one of the top-level headers and I think it should
+> > be explicitly included to avoid future breakages.
+> > 
+> > While at it a forward declaration of struct drm_pending_vblank_event and
+> > struct shmob_drm_format_info could also be useful to make the header
+> > self-contained.
+> Good input.
+> I went through all shmobile header files - now gcc is happy with them all
+> when used individually (self-contained).
 > 
+> I will post a v2 a bit later today with the below fixup included.
 
-Agreed, 2 broken cases and this is only fixing the second one.
-I'm expecting a v2 of this patch which fixes them both, so 
-won't apply this v1.
+Here is the v2 that I have applied locally and will push out soonish.
 
-Thanks,
+	Sam
 
-Jonathan
+From 7a9ff461c095034f9339df1045a7e8a4177bfbfe Mon Sep 17 00:00:00 2001
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Sat, 29 Jun 2019 11:27:23 +0200
+Subject: [PATCH v2 1/1] drm/shmobile: drop use of drmP.h
+
+Drop use of the deprecated drmP.h header file.
+Fix fallout.
+
+v2:
+- Add additional include/forward to shmob_drm_crtc.h
+  to avoid relying on indirect includes (Laurent)
+- Add additional includes to shmob_drm_regs.h to make
+  it self-contained
+- Add additonal includes to shmob_drm_plane.h to make
+  it self-contained
+
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/gpu/drm/shmobile/shmob_drm_crtc.c  | 3 ++-
+ drivers/gpu/drm/shmobile/shmob_drm_crtc.h  | 4 +++-
+ drivers/gpu/drm/shmobile/shmob_drm_drv.c   | 4 +++-
+ drivers/gpu/drm/shmobile/shmob_drm_kms.c   | 1 -
+ drivers/gpu/drm/shmobile/shmob_drm_plane.c | 2 +-
+ drivers/gpu/drm/shmobile/shmob_drm_plane.h | 1 +
+ drivers/gpu/drm/shmobile/shmob_drm_regs.h  | 3 +++
+ 7 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
+index b6988a6d698e..75a752d59ef1 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.c
+@@ -10,13 +10,14 @@
+ #include <linux/backlight.h>
+ #include <linux/clk.h>
+ 
+-#include <drm/drmP.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_fourcc.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_probe_helper.h>
++#include <drm/drm_vblank.h>
+ 
+ #include "shmob_drm_backlight.h"
+ #include "shmob_drm_crtc.h"
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+index 9ca6920641d8..21718843f46d 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
++++ b/drivers/gpu/drm/shmobile/shmob_drm_crtc.h
+@@ -10,12 +10,14 @@
+ #ifndef __SHMOB_DRM_CRTC_H__
+ #define __SHMOB_DRM_CRTC_H__
+ 
+-#include <drm/drmP.h>
+ #include <drm/drm_crtc.h>
++#include <drm/drm_connector.h>
+ #include <drm/drm_encoder.h>
+ 
+ struct backlight_device;
++struct drm_pending_vblank_event;
+ struct shmob_drm_device;
++struct shmob_drm_format_info;
+ 
+ struct shmob_drm_crtc {
+ 	struct drm_crtc crtc;
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+index 6c106b7a3bfe..b8c0930959c7 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+@@ -15,10 +15,12 @@
+ #include <linux/pm.h>
+ #include <linux/slab.h>
+ 
+-#include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_drv.h>
+ #include <drm/drm_gem_cma_helper.h>
++#include <drm/drm_irq.h>
+ #include <drm/drm_probe_helper.h>
++#include <drm/drm_vblank.h>
+ 
+ #include "shmob_drm_drv.h"
+ #include "shmob_drm_kms.h"
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_kms.c b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
+index 2e08bc203bf9..c51197b6fd85 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_kms.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_kms.c
+@@ -7,7 +7,6 @@
+  * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+  */
+ 
+-#include <drm/drmP.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_cma_helper.h>
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.c b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
+index 1d1ee5e51351..cbc464f006b4 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_plane.c
++++ b/drivers/gpu/drm/shmobile/shmob_drm_plane.c
+@@ -7,10 +7,10 @@
+  * Laurent Pinchart (laurent.pinchart@ideasonboard.com)
+  */
+ 
+-#include <drm/drmP.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_fb_cma_helper.h>
++#include <drm/drm_fourcc.h>
+ #include <drm/drm_gem_cma_helper.h>
+ 
+ #include "shmob_drm_drv.h"
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_plane.h b/drivers/gpu/drm/shmobile/shmob_drm_plane.h
+index bae67cc8c628..e72b21a4288f 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_plane.h
++++ b/drivers/gpu/drm/shmobile/shmob_drm_plane.h
+@@ -10,6 +10,7 @@
+ #ifndef __SHMOB_DRM_PLANE_H__
+ #define __SHMOB_DRM_PLANE_H__
+ 
++struct drm_plane;
+ struct shmob_drm_device;
+ 
+ int shmob_drm_plane_create(struct shmob_drm_device *sdev, unsigned int index);
+diff --git a/drivers/gpu/drm/shmobile/shmob_drm_regs.h b/drivers/gpu/drm/shmobile/shmob_drm_regs.h
+index 9eb0b3d01df8..058533685c4c 100644
+--- a/drivers/gpu/drm/shmobile/shmob_drm_regs.h
++++ b/drivers/gpu/drm/shmobile/shmob_drm_regs.h
+@@ -11,6 +11,9 @@
+ #define __SHMOB_DRM_REGS_H__
+ 
+ #include <linux/io.h>
++#include <linux/jiffies.h>
++
++#include "shmob_drm_drv.h"
+ 
+ /* Register definitions */
+ #define LDDCKPAT1R		0x400
+-- 
+2.20.1
+
