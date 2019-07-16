@@ -2,84 +2,91 @@ Return-Path: <SRS0=699y=VN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37321C76196
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jul 2019 15:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E35C7618F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jul 2019 19:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D8862173C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jul 2019 15:01:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="QO3qeQWy"
+	by mail.kernel.org (Postfix) with ESMTP id 96E4B20665
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jul 2019 19:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387908AbfGPPBV (ORCPT
+        id S1728340AbfGPTF1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Jul 2019 11:01:21 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:31238 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728390AbfGPPBU (ORCPT
+        Tue, 16 Jul 2019 15:05:27 -0400
+Received: from sauhun.de ([88.99.104.3]:40512 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfGPTF1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jul 2019 11:01:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1563289278;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=9MyPAKL8aOMdkgUeGxkG2hiV9y7ijQeVQyamlGPGLLY=;
-        b=QO3qeQWyHJxVgBQZPDpp80BewuEM6TjAePXInpVW9mkt6awrrltsOJqPnHW2scc2os
-        eBZvhFbJbx0nhS+hF3vChH+sBXWex8+7RPQq+jJy1ELxW0dkGBiMGXeYM5JIOj1S0bm5
-        Msa2c25Tzcu6478Ko1vNygrerLd/wsdfFvCDgCiZXb42utGvwzepqErVPn+srxV965fu
-        o7jbhwJxQfbW2ZJDnrcvBHsQKfX3qkcOVDVC7vzxrLfcuwp1z0tZsydmWDmSOfJYaLkJ
-        SGJRP7ZrJPtEFf1j/+kX6xefhkQKmpE6tYzgCtrXPycwgPmU6iIjzZFNjwYPlBxVczzA
-        z1XA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82dYd7rJSdw="
-X-RZG-CLASS-ID: mo00
-Received: from groucho.site
-        by smtp.strato.de (RZmta 44.24 DYNA|AUTH)
-        with ESMTPSA id h0a328v6GF1Cd5G
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 16 Jul 2019 17:01:12 +0200 (CEST)
-From:   Ulrich Hecht <uli+renesas@fpond.eu>
-To:     linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc:     niklas.soderlund@ragnatech.se, wsa@the-dreams.de,
-        yamada.masahiro@socionext.com, geert@linux-m68k.org,
-        ulf.hansson@linaro.org, magnus.damm@gmail.com,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 0/2] mmc: tmio: remove Gen2+ workaround and fix up
-Date:   Tue, 16 Jul 2019 17:01:02 +0200
-Message-Id: <1563289264-26432-1-git-send-email-uli+renesas@fpond.eu>
-X-Mailer: git-send-email 2.7.4
+        Tue, 16 Jul 2019 15:05:27 -0400
+Received: from localhost (p54B330C4.dip0.t-ipconnect.de [84.179.48.196])
+        by pokefinder.org (Postfix) with ESMTPSA id 099D02C0398;
+        Tue, 16 Jul 2019 21:05:25 +0200 (CEST)
+Date:   Tue, 16 Jul 2019 21:05:24 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-mmc@vger.kernel.org,
+        niklas.soderlund@ragnatech.se, yamada.masahiro@socionext.com,
+        geert@linux-m68k.org, ulf.hansson@linaro.org, magnus.damm@gmail.com
+Subject: Re: [PATCH 1/2] mmc: tmio: leave clock handling to PM if enabled
+Message-ID: <20190716190524.no5d25iyllgjdluh@katana>
+References: <1563289264-26432-1-git-send-email-uli+renesas@fpond.eu>
+ <1563289264-26432-2-git-send-email-uli+renesas@fpond.eu>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yoyke3isdctbjz5m"
+Content-Disposition: inline
+In-Reply-To: <1563289264-26432-2-git-send-email-uli+renesas@fpond.eu>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi!
 
-The second patch in this series removes a workaround that forced eMMC devices
-always on and that is no longer required.
+--yoyke3isdctbjz5m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Removing it does expose a bug, however, that leads to a clock imbalance due
-to the clock being enabled by both PM and the hardware driver. (See
-https://www.spinics.net/lists/linux-mmc/msg54009.html for discussion.)
-This bug is taken care of by the first patch.
+On Tue, Jul 16, 2019 at 05:01:03PM +0200, Ulrich Hecht wrote:
+> This fixes a clock imbalance that occurs because the SD clock is handled
+> by both PM and the hardware driver.
+> See https://www.spinics.net/lists/linux-mmc/msg44431.html for details.
+>=20
+> This patch removes the clock handling from the driver's PM callbacks and
+> turns the clock off after probing.
+>=20
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-Tested on r8a7790 (Lager), r8a7795 and r8a7796 (Salvator-X) with SD and
-eMMC, before and after suspend.
+Thanks, Uli!
 
-CU
-Uli
+Niklas, I'd really like your feedback on this one because you did the PM
+refactorization lately.
+
+I will have a look later, too.
 
 
-Ulrich Hecht (2):
-  mmc: tmio: leave clock handling to PM if enabled
-  mmc: tmio: remove obsolete PM workaround
+--yoyke3isdctbjz5m
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/mmc/host/tmio_mmc_core.c | 33 ++++++---------------------------
- 1 file changed, 6 insertions(+), 27 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.7.4
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl0uH/QACgkQFA3kzBSg
+KbYF/A/8DGMPpcoaD9JN6I0wJrYUOGHaVX9/to3u1IkrxcH/zhvILNhPedJpbcwV
+ZpBSdVJHK2fMt9NK3Ubbl/qnT0BUh7sWBxAeSLVbB42yVwEDN4In7xFa15FQqyqm
+a/4Niirx7iOZHh9un50lhaYXQP4oQOaPiqNaHjBDxTAsthpLUcaKNYGpYqBbHsa1
+n5ekJImuq6s5MSBO6vFnuZOSluCa9FZVM8j9wmZLZS49gZk74a6MqIGd0RmPxYIl
+74lkSlCfco9KGRO0tmou/OEjZ0tPRrtF0RSCkwh73oPcn7dAsAoz2e8hwAcnGAoX
+PJOJh/Fq1WpwZb+8Y5Ago92q7Fn3WwelEdCc0jupGStqlUSciUdE6tyeMHwgKwvU
+EgOfCDz3EXqrFLDEYNisrTnswxetsNSJX5jaOuPyYlAPl7zSs8OcpvrkTBWD3R4C
+86Mk6bs3k48T5yE2QktIgkpnSDPQPxt2N41P6tEXjVe04i0d6xL01dtEdkFWScrL
+b0Th4x/plgFHrgiJ+0ezqQRbf/fC1yjnVCBw0+PpOEiD3mwCq/Ki2ODOZDfkz6nD
+L9BinJw8S6lwf6ECyR8+HNjdF4bIXA6rXA2QXdLJgqvA/5cU/ME5mHFZZblhJ6zu
+Ndp2RpaiakDb096OMwkdKTog2XVrWeUIGZLtMXAKCboJdpya1XE=
+=kftr
+-----END PGP SIGNATURE-----
 
+--yoyke3isdctbjz5m--
