@@ -2,29 +2,29 @@ Return-Path: <SRS0=IcTR=VV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC1CC7618B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 12:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C65C7618F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 12:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFDC21850
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 12:16:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DDC021850
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 12:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbfGXMQQ (ORCPT
+        id S1727745AbfGXMQS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Jul 2019 08:16:16 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:49232 "EHLO
+        Wed, 24 Jul 2019 08:16:18 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:49252 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727745AbfGXMQQ (ORCPT
+        with ESMTP id S1727786AbfGXMQS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jul 2019 08:16:16 -0400
+        Wed, 24 Jul 2019 08:16:18 -0400
 Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 07B6125BE09;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 0E1EF25BE43;
         Wed, 24 Jul 2019 22:16:14 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 07592E220BE; Wed, 24 Jul 2019 14:16:12 +0200 (CEST)
+        id 0325EE2209B; Wed, 24 Jul 2019 14:16:11 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Chris Brandt <chris.brandt@renesas.com>
@@ -33,48 +33,40 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>, linux-i2c@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH 1/4] dt-bindings: i2c: sh_mobile: Rename bindings documentation file
-Date:   Wed, 24 Jul 2019 14:15:56 +0200
-Message-Id: <20190724121559.19079-2-horms+renesas@verge.net.au>
+Subject: [PATCH 0/4] dt-bindings: i2c: renesas: Rename bindings documentation files
+Date:   Wed, 24 Jul 2019 14:15:55 +0200
+Message-Id: <20190724121559.19079-1-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190724121559.19079-1-horms+renesas@verge.net.au>
-References: <20190724121559.19079-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rename the bindings documentation file for sh_mobile I2C controller
-from i2c-sh_mobile.txt to renesas,iic.txt.
+Rename the bindings documentation file for Renesas I2C controllers.
 
 This is part of an ongoing effort to name bindings documentation files for
 Renesas IP blocks consistently, in line with the compat strings they
 document.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- .../devicetree/bindings/i2c/{i2c-sh_mobile.txt => renesas,iic.txt}      | 0
- MAINTAINERS                                                             | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename Documentation/devicetree/bindings/i2c/{i2c-sh_mobile.txt => renesas,iic.txt} (100%)
+Based on v5.3-rc1
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/renesas,iic.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-rename to Documentation/devicetree/bindings/i2c/renesas,iic.txt
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 783569e3c4b4..4c8262837da9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13651,7 +13651,7 @@ RENESAS R-CAR I2C DRIVERS
- M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
- S:	Supported
- F:	Documentation/devicetree/bindings/i2c/i2c-rcar.txt
--F:	Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-+F:	Documentation/devicetree/bindings/i2c/renesas,iic.txt
- F:	drivers/i2c/busses/i2c-rcar.c
- F:	drivers/i2c/busses/i2c-sh_mobile.c
- 
+Simon Horman (4):
+  dt-bindings: i2c: sh_mobile: Rename bindings documentation file
+  dt-bindings: i2c: rcar: Rename bindings documentation file
+  dt-bindings: i2c: riic: Rename bindings documentation file
+  dt-bindings: i2c: riic: Rename bindings documentation file
+
+ .../devicetree/bindings/i2c/{i2c-rcar.txt => renesas,i2c.txt}     | 0
+ .../bindings/i2c/{i2c-emev2.txt => renesas,iic-emev2.txt}         | 0
+ .../bindings/i2c/{i2c-sh_mobile.txt => renesas,iic.txt}           | 0
+ .../devicetree/bindings/i2c/{i2c-riic.txt => renesas,riic.txt}    | 0
+ MAINTAINERS                                                       | 8 ++++----
+ 5 files changed, 4 insertions(+), 4 deletions(-)
+ rename Documentation/devicetree/bindings/i2c/{i2c-rcar.txt => renesas,i2c.txt} (100%)
+ rename Documentation/devicetree/bindings/i2c/{i2c-emev2.txt => renesas,iic-emev2.txt} (100%)
+ rename Documentation/devicetree/bindings/i2c/{i2c-sh_mobile.txt => renesas,iic.txt} (100%)
+ rename Documentation/devicetree/bindings/i2c/{i2c-riic.txt => renesas,riic.txt} (100%)
+
 -- 
 2.11.0
 
