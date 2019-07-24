@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D32BEC7618B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 11:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AEBC7618B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 11:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1524229F4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 11:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 605992190F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jul 2019 11:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbfGXLNN (ORCPT
+        id S1726981AbfGXLNd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Jul 2019 07:13:13 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:45570 "EHLO
+        Wed, 24 Jul 2019 07:13:33 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:45686 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727513AbfGXLNN (ORCPT
+        with ESMTP id S1726960AbfGXLNc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:13:13 -0400
+        Wed, 24 Jul 2019 07:13:32 -0400
 Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id F3E8B25BE40;
-        Wed, 24 Jul 2019 21:13:10 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id ED88425B7BE;
+        Wed, 24 Jul 2019 21:13:29 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 040D9E22041; Wed, 24 Jul 2019 13:13:09 +0200 (CEST)
-Date:   Wed, 24 Jul 2019 13:13:08 +0200
+        id C18CFE22041; Wed, 24 Jul 2019 13:13:27 +0200 (CEST)
+Date:   Wed, 24 Jul 2019 13:13:27 +0200
 From:   Simon Horman <horms@verge.net.au>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, geert+renesas@glider.be,
         daniel.lezcano@linaro.org, linux-renesas-soc@vger.kernel.org,
         robh+dt@kernel.org, tglx@linutronix.de
-Subject: Re: [PATCH 4/7] dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1
- to r8a77995
-Message-ID: <20190724111308.433afmqlvep6qghv@verge.net.au>
+Subject: Re: [PATCH 7/7] clocksource/drivers/sh_cmt: Document "cmt-48" as
+ deprecated
+Message-ID: <20190724111327.gwurememjdhsbgtf@verge.net.au>
 References: <156345023791.5307.6113391102648394591.sendpatchset@octo>
- <156345029298.5307.13303613183227788698.sendpatchset@octo>
+ <156345033835.5307.9206628986166423962.sendpatchset@octo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <156345029298.5307.13303613183227788698.sendpatchset@octo>
+In-Reply-To: <156345033835.5307.9206628986166423962.sendpatchset@octo>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -48,15 +48,19 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 08:44:53PM +0900, Magnus Damm wrote:
+On Thu, Jul 18, 2019 at 08:45:38PM +0900, Magnus Damm wrote:
 > From: Magnus Damm <damm+renesas@opensource.se>
 > 
-> This patch adds DT binding documentation for the CMT devices on
-> the R-Car Gen3 D3 (r8a77995) SoC.
+> Update the CMT driver to mark "renesas,cmt-48" as deprecated.
+> 
+> Instead of documenting a theoretical hardware device based on current software
+> support level, define DT bindings top-down based on available data sheet
+> information and make use of part numbers in the DT compat string.
+> 
+> In case of the only in-tree users r8a7740 and sh73a0 the compat strings
+> "renesas,r8a7740-cmt1" and "renesas,sh73a0-cmt1" may be used instead.
 > 
 > Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
