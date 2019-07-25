@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2985DC7618B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jul 2019 06:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9AFC7618B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jul 2019 06:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0716B21850
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jul 2019 06:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 558AF21850
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jul 2019 06:15:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfGYGNl (ORCPT
+        id S1726109AbfGYGO7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Jul 2019 02:13:41 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:53930 "EHLO
+        Thu, 25 Jul 2019 02:14:59 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:53998 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727005AbfGYGNl (ORCPT
+        with ESMTP id S1726115AbfGYGO7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jul 2019 02:13:41 -0400
+        Thu, 25 Jul 2019 02:14:59 -0400
 Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 8B08E25AD7E;
-        Thu, 25 Jul 2019 16:13:39 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id AFC2125AD7E;
+        Thu, 25 Jul 2019 16:14:57 +1000 (AEST)
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 79019E2209B; Thu, 25 Jul 2019 08:13:37 +0200 (CEST)
-Date:   Thu, 25 Jul 2019 08:13:37 +0200
+        id A4B66E2209B; Thu, 25 Jul 2019 08:14:55 +0200 (CEST)
+Date:   Thu, 25 Jul 2019 08:14:55 +0200
 From:   Simon Horman <horms@verge.net.au>
 To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: renesas: r8a7796-salvator-xs: sort nodes
-Message-ID: <20190725061336.bzyupg6w5g4mav6k@verge.net.au>
-References: <1563904961-2835-1-git-send-email-ykaneko0929@gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: salvator-common: sort nodes
+Message-ID: <20190725061454.tyvuezuohga7bmkc@verge.net.au>
+References: <1563904990-2873-1-git-send-email-ykaneko0929@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1563904961-2835-1-git-send-email-ykaneko0929@gmail.com>
+In-Reply-To: <1563904990-2873-1-git-send-email-ykaneko0929@gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -46,7 +46,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 03:02:41AM +0900, Yoshihiro Kaneko wrote:
+On Wed, Jul 24, 2019 at 03:03:10AM +0900, Yoshihiro Kaneko wrote:
 > Sort nodes.
 > 
 > If node address is present
