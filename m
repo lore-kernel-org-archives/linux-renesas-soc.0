@@ -2,83 +2,69 @@ Return-Path: <SRS0=jr3J=V4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F6EC433FF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 08:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7060FC32753
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 09:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D29102067D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 08:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5112120693
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 09:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbfGaIdw (ORCPT
+        id S1726779AbfGaJCP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 31 Jul 2019 04:33:52 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45379 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfGaIdw (ORCPT
+        Wed, 31 Jul 2019 05:02:15 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:46956 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbfGaJCP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jul 2019 04:33:52 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f9so68644727wre.12
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 31 Jul 2019 01:33:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IGsLzBygQeN4U1HbS+siGyivzSnwWDQU6/cEgl1u7bA=;
-        b=MKgqCCq4FyStvoyqOMcJkYsiRoKYxK836et5Cy5YY4OJIrZakyhJKeJTusSsd4o2+s
-         M3iEcQpihvt97ILYonVipvtqGWVL8p+iD5JXCCo29KLSF+vK+ctUyySgPFQDHldFLV4i
-         je4pP0QakFuBFBqpF0VDzwEQuF7tw2mCc9oBTeCuzBgp/WJX8/EsZouuXnC4XANa6zt4
-         IsICs7MK908KXqKY9UhXy7PZXL+HG0c85v6FuhV6UEIYMJLZTx0EawD1RL3FEJjv/gxD
-         3HE2rUdWo5KKcri5npmV6k8/Esiq2ZEX4isZLW0w26+KxEZZtjlK7AlrAwRxBQp16GuN
-         ZyVA==
-X-Gm-Message-State: APjAAAW8J1uG/vltEF7ciDXYVNTo8JvnWU5WnF6r0A+rf51mnsOS1N7D
-        OIKxPnJxFSxg2iN0ffQae9lGsIcl4VXJMmnhwbey46Dl
-X-Google-Smtp-Source: APXvYqyHziTaChsaMWtanO1xCV68zcl6MTTzIToJk2Rucs4hRh1zedOwhC5f4r6CT7jA9LbHoCbi9u9lTdoflyuIYPs=
-X-Received: by 2002:adf:cd81:: with SMTP id q1mr131610751wrj.16.1564562030235;
- Wed, 31 Jul 2019 01:33:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <1563461033-19708-1-git-send-email-ykaneko0929@gmail.com>
-In-Reply-To: <1563461033-19708-1-git-send-email-ykaneko0929@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 31 Jul 2019 10:33:38 +0200
-Message-ID: <CAMuHMdV9Wwgc5Q_Nzk3qKUFduQ0WRTgpQM0Jqv-qmE0Va5oZog@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: r8a7795-es1: sort nodes node
-To:     Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 31 Jul 2019 05:02:15 -0400
+Received: from ramsan ([84.194.98.4])
+        by michel.telenet-ops.be with bizsmtp
+        id jM2C2000E05gfCL06M2Cqj; Wed, 31 Jul 2019 11:02:13 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hskUu-0007Jc-4G; Wed, 31 Jul 2019 11:02:12 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hskUu-00053m-1v; Wed, 31 Jul 2019 11:02:12 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-doc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] docs: arm: Remove orphan sh-mobile directory
+Date:   Wed, 31 Jul 2019 11:02:11 +0200
+Message-Id: <20190731090211.19408-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 4:44 PM Yoshihiro Kaneko <ykaneko0929@gmail.com> wrote:
-> Sort nodes.
->
-> If node address is present
->    * Sort by node address, grouping all nodes with the same compat string
->      and sorting the group alphabetically.
-> Else
->    * Sort alphabetically
->
-> This should not have any run-time effect.
->
-> Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+This directory is empty, except for a .gitignore file, listing an
+executable file that can no longer be built since commit
+c6535e1e0361157e ("Documentation: Remove ZBOOT MMC/SDHI utility and
+docs").
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.4.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/arm/sh-mobile/.gitignore | 1 -
+ 1 file changed, 1 deletion(-)
+ delete mode 100644 Documentation/arm/sh-mobile/.gitignore
 
-Gr{oetje,eeting}s,
+diff --git a/Documentation/arm/sh-mobile/.gitignore b/Documentation/arm/sh-mobile/.gitignore
+deleted file mode 100644
+index c928dbf3cc8806e2..0000000000000000
+--- a/Documentation/arm/sh-mobile/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-vrl4
+-- 
+2.17.1
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
