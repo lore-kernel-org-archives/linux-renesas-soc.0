@@ -4,42 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DADC32751
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 07:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BFDC32751
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 07:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4209220693
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 07:37:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C3A20693
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 07:48:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726009AbfGaHhw (ORCPT
+        id S1725942AbfGaHsM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 31 Jul 2019 03:37:52 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:57412 "EHLO
+        Wed, 31 Jul 2019 03:48:12 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:46134 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfGaHhv (ORCPT
+        with ESMTP id S1725866AbfGaHsL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jul 2019 03:37:51 -0400
+        Wed, 31 Jul 2019 03:48:11 -0400
 Received: from ramsan ([84.194.98.4])
         by xavier.telenet-ops.be with bizsmtp
-        id jKdl2000s05gfCL01Kdl8g; Wed, 31 Jul 2019 09:37:50 +0200
+        id jKo92000f05gfCL01Ko9gb; Wed, 31 Jul 2019 09:48:09 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hsjBB-0006tB-SD; Wed, 31 Jul 2019 09:37:45 +0200
+        id 1hsjLF-0006wj-Kh; Wed, 31 Jul 2019 09:48:09 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hsjBB-0003dy-Qu; Wed, 31 Jul 2019 09:37:45 +0200
+        id 1hsjLF-0001Un-JA; Wed, 31 Jul 2019 09:48:09 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: [PATCH] arm64: dts: renesas: r8a77995: draak: Fix backlight regulator name
-Date:   Wed, 31 Jul 2019 09:37:44 +0200
-Message-Id: <20190731073744.13963-1-geert+renesas@glider.be>
+Date:   Wed, 31 Jul 2019 09:48:01 +0200
+Message-Id: <20190731074801.5706-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190731073744.13963-1-geert+renesas@glider.be>
+References: <20190731073744.13963-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
