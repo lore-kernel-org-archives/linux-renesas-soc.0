@@ -2,93 +2,92 @@ Return-Path: <SRS0=jr3J=V4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB92C32751
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 09:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B948DC32751
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 09:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A91820693
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 09:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B42E20657
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 31 Jul 2019 09:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfGaJCp (ORCPT
+        id S1728868AbfGaJ1S (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 31 Jul 2019 05:02:45 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:38725 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726699AbfGaJCo (ORCPT
+        Wed, 31 Jul 2019 05:27:18 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44301 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727329AbfGaJ1Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 31 Jul 2019 05:02:44 -0400
-X-IronPort-AV: E=Sophos;i="5.64,329,1559487600"; 
-   d="scan'208";a="22937243"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 31 Jul 2019 18:02:42 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F4236421A7EC;
-        Wed, 31 Jul 2019 18:02:41 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     kishon@ti.com
-Cc:     pavel@denx.de, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] phy: renesas: rcar-gen3-usb2: Fix sysfs interface of "role"
-Date:   Wed, 31 Jul 2019 18:01:29 +0900
-Message-Id: <1564563689-25863-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 31 Jul 2019 05:27:16 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p17so68834040wrf.11;
+        Wed, 31 Jul 2019 02:27:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EGM5RKDve8/AJbKDylbWZIikdzuX+zEV16LFhW7u4Ok=;
+        b=JENqiz9OBD+afpN0kpc5rEgo8xfGE/dhb+/OW82KY3olCKzgzUWt1SyBXdTVqc+vtY
+         nA61KOD29bO52ZTQK0ZEI3EZvqdNcdwZWZb/b5nyLOIgJyAHpriptBPJWne79zqw6yCx
+         FSO8CjpLkja/nlgItQ0CjtfJX5QePx3GaUbTGUbwuDkWp/TCfOhNsEy1EMZEdKk6rPMu
+         pnC6SgdO7S+T7U1M2iROS0qAbNdvsN4bF4LaNA9HNt88p65qjLHCIHp/v6lRP1/xtQJN
+         Wn7Dq4V9kKxd7UZeAvaQvNiIllmjqKAaJJib266b5cqaBpNH1L52eNFs9TifbLeVIgVz
+         MWHA==
+X-Gm-Message-State: APjAAAW/WIcPPesnr1ArK7FBMbqd8ZcarpXBd7ib/cWoGYwxdOq0l0M3
+        NxMeZJWhwFH7FzYsDss1kqMfAvZElechUWSX8TpMoA==
+X-Google-Smtp-Source: APXvYqw9c9Q5GKDpsqV7MciNU/urisuCE7B3KXVQAFDBcKvBOEM0oVW1SwoqNTvYlQZ5w9O4vw30XmIutx+pqJr8X3M=
+X-Received: by 2002:a5d:630c:: with SMTP id i12mr45644695wru.312.1564565234591;
+ Wed, 31 Jul 2019 02:27:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <1564563689-25863-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1564563689-25863-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 31 Jul 2019 11:27:02 +0200
+Message-ID: <CAMuHMdWhA2xxKKEmmobZDDKGnWNfO4xDb6m6gM16CCFX-1UyTQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: Fix sysfs interface of "role"
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Pavel Machek <pavel@denx.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since the role_store() uses strncmp(), it's possible to refer
-out-of-memory if the sysfs data size is smaller than strlen("host").
-This patch fixes it by using sysfs_streq() instead of strncmp().
+Hi Shimoda-san,
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
-Cc: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Just a record. The role_store() doesn't need to check the count because
- the sysfs_streq() checks the first argument is NULL or not.
+On Wed, Jul 31, 2019 at 11:04 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Since the role_store() uses strncmp(), it's possible to refer
+> out-of-memory if the sysfs data size is smaller than strlen("host").
+> This patch fixes it by using sysfs_streq() instead of strncmp().
+>
+> Reported-by: Pavel Machek <pavel@denx.de>
+> Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
+> Cc: <stable@vger.kernel.org> # v4.10+
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
- On "if (sysfs_streq(buf, "host"))"
-  Example 1: echo ho > role
-  --> In this case, the count is 3 and the buf has "ho" + NULL.
-      So, the third character differs between NULL and 's'.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-  Example 2: echo host-is-not-used > role
-  --> In this case, the count is 17 and the buf has "host-is-not-used" + NULL.
-      So, the fifth character differs between '-' and NULL.
+> ---
+>  Just a record. The role_store() doesn't need to check the count because
+>  the sysfs_streq() checks the first argument is NULL or not.
 
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Is that wat you mean? sysfs_streq() doesn't seem to check for NULL pointers.
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 1322185..cc18970 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -20,6 +20,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/string.h>
- #include <linux/usb/of.h>
- #include <linux/workqueue.h>
- 
-@@ -317,9 +318,9 @@ static ssize_t role_store(struct device *dev, struct device_attribute *attr,
- 	if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
- 		return -EIO;
- 
--	if (!strncmp(buf, "host", strlen("host")))
-+	if (sysfs_streq(buf, "host"))
- 		new_mode = PHY_MODE_USB_HOST;
--	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+	else if (sysfs_streq(buf, "peripheral"))
- 		new_mode = PHY_MODE_USB_DEVICE;
- 	else
- 		return -EINVAL;
+Isn't the real reason that sysfs (kernfs) guarantees that the passed buffer
+is NUL-terminated?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
