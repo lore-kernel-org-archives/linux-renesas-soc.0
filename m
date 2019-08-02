@@ -2,85 +2,131 @@ Return-Path: <SRS0=0rNU=V6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3188DC433FF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 08:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B3BC433FF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 09:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAC1218BA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 08:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB0C22173E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 09:01:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbfHBIew (ORCPT
+        id S1729007AbfHBJBp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Aug 2019 04:34:52 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:48600 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729739AbfHBIew (ORCPT
+        Fri, 2 Aug 2019 05:01:45 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36621 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728559AbfHBJBp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:34:52 -0400
-X-IronPort-AV: E=Sophos;i="5.64,337,1559487600"; 
-   d="scan'208";a="23157724"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Aug 2019 17:34:50 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3462A41DCD1E;
-        Fri,  2 Aug 2019 17:34:50 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     gregkh@linuxfoundation.org, mathias.nyman@intel.com
-Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: host: xhci-rcar: Fix timeout in xhci_suspend()
-Date:   Fri,  2 Aug 2019 17:33:35 +0900
-Message-Id: <1564734815-17964-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 2 Aug 2019 05:01:45 -0400
+Received: by mail-wm1-f65.google.com with SMTP id g67so61488057wme.1;
+        Fri, 02 Aug 2019 02:01:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kvvlW+uIUrUdNjqlOT5P3qO2zeClOhr+R8v8gEKY+6Y=;
+        b=kkA0gcpG4rSlUkbE8JufAX7iiXuOmG6jE0U2BFuP4lAb34/eZ1cVaNNaLnNuXF0DsC
+         UVA1qqrpFrJquOGbiFfxL/Z9UKB6IwL/Iz1hFg9Nn5ygDKAGR6+LRlJyjJ3FVuAm3JwQ
+         VWh/ejODNC8Q94oNKmcbaaxW8bBKbJ7F/o1Vo4LedeQX+QUiES8VpxdCUKYrmGb8pdS+
+         cqiO1N8oyu/rbc+8AP3fC/E1sqmVMqtjfhJXRHP0N/vQs3h857cjBsGH0rAk2PKSBBmA
+         Ln3px4Rs8PHnLoAkzhhUBv9Far/eJLN5sAFqzr64E8khnECIKhAGcdbj8Hl20uF3qrhn
+         6/ig==
+X-Gm-Message-State: APjAAAUfocUqzyfjcmTPTUVuRgbjLktQqWwc4lZMjiRBfRoaz7x/nHVk
+        LHqDtn/cJHCd6LqfvnFryu2zLbOm36DMUbwuhVs=
+X-Google-Smtp-Source: APXvYqzlYNYU0pjvulT5Kn0ylbMvd7827Mu+1m9924pu/nWD4wXojl+caY4NoCY9bFexyT8l7fkwqjioGghgcgQKFeU=
+X-Received: by 2002:a1c:1f4e:: with SMTP id f75mr3363459wmf.137.1564736503038;
+ Fri, 02 Aug 2019 02:01:43 -0700 (PDT)
+MIME-Version: 1.0
+References: <1564731249-22671-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1564731249-22671-6-git-send-email-fabrizio.castro@bp.renesas.com> <20190802080613.GF5008@pendragon.ideasonboard.com>
+In-Reply-To: <20190802080613.GF5008@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 2 Aug 2019 11:01:30 +0200
+Message-ID: <CAMuHMdWw5SyP=jfwTpA=+qheTh1ckhiP_etn1J4PrRVdL4R1Pg@mail.gmail.com>
+Subject: Re: [PATCH/RFC 05/12] drm: rcar-du: lvds: Add data swap support
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When a USB device is connected to the host controller and
-the system enters suspend, the following error happens
-in xhci_suspend():
+Hi Laurent,
 
-	xhci-hcd ee000000.usb: WARN: xHC CMD_RUN timeout
+On Fri, Aug 2, 2019 at 10:06 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Fri, Aug 02, 2019 at 08:34:02AM +0100, Fabrizio Castro wrote:
+> > When in vertical stripe mode of operation, there is the option
+> > of swapping even data and odd data on the two LVDS interfaces
+> > used to drive the video output.
+> > Add data swap support by exposing a new DT property named
+> > "renesas,swap-data".
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Since the firmware/internal CPU control the USBSTS.STS_HALT
-and the process speed is down when the roothub port enters U3,
-long delay for the handshake of STS_HALT is neeed in xhci_suspend().
-So, this patch adds to set the XHCI_SLOW_SUSPEND.
+> > --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
 
-Fixes: 435cc1138ec9 ("usb: host: xhci-plat: set resume_quirk() for R-Car controllers")
-Cc: <stable@vger.kernel.org> # v4.12+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/host/xhci-rcar.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> > @@ -439,12 +440,16 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
+> >       rcar_lvds_write(lvds, LVDCHCR, lvdhcr);
+> >
+> >       if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK) {
+> > -             /*
+> > -              * Configure vertical stripe based on the mode of operation of
+> > -              * the connected device.
+> > -              */
+> > -             rcar_lvds_write(lvds, LVDSTRIPE,
+> > -                             lvds->dual_link ? LVDSTRIPE_ST_ON : 0);
+> > +             u32 lvdstripe = 0;
+> > +
+> > +             if (lvds->dual_link)
+> > +                     /*
+> > +                      * Configure vertical stripe based on the mode of
+> > +                      * operation of the connected device.
+> > +                      */
+> > +                     lvdstripe = LVDSTRIPE_ST_ON | (lvds->stripe_swap_data ?
+> > +                                                    LVDSTRIPE_ST_SWAP : 0);
+>
+> Would the following be simpler ?
+>
+>                 lvdstripe = (lvds->dual_link ? LVDSTRIPE_ST_ON : 0)
+>                           | (lvds->stripe_swap_data ? LVDSTRIPE_ST_SWAP : 0);
 
-diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
-index 671bce1..8616c52 100644
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -238,10 +238,15 @@ int xhci_rcar_init_quirk(struct usb_hcd *hcd)
- 	 * pointers. So, this driver clears the AC64 bit of xhci->hcc_params
- 	 * to call dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in
- 	 * xhci_gen_setup().
-+	 *
-+	 * And, since the firmware/internal CPU control the USBSTS.STS_HALT
-+	 * and the process speed is down when the roothub port enters U3,
-+	 * long delay for the handshake of STS_HALT is neeed in xhci_suspend().
- 	 */
- 	if (xhci_rcar_is_gen2(hcd->self.controller) ||
--			xhci_rcar_is_gen3(hcd->self.controller))
--		xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
-+			xhci_rcar_is_gen3(hcd->self.controller)) {
-+		xhci->quirks |= XHCI_NO_64BIT_SUPPORT | XHCI_SLOW_SUSPEND;
-+	}
- 
- 	if (!xhci_rcar_wait_for_pll_active(hcd))
- 		return -ETIMEDOUT;
+From the point of view of "wc -l": yes.
+From the point of view of readability, I'd go for:
+
+    if (lvds->dual_link)
+            lvdstripe |= LVDSTRIPE_ST_ON;
+    if (lvds->stripe_swap_data)
+            lvdstripe |= LVDSTRIPE_ST_SWAP;
+
+> > +             rcar_lvds_write(lvds, LVDSTRIPE, lvdstripe);
+> >       }
+> >
+> >       /*
+> > @@ -770,8 +775,12 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
