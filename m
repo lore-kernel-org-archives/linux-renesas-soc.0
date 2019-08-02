@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E25C433FF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 07:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D3EC32750
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 07:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E708A20665
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 07:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A36ED2086A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Aug 2019 07:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389908AbfHBHfJ (ORCPT
+        id S2389928AbfHBHfO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Aug 2019 03:35:09 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:51999 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389759AbfHBHfI (ORCPT
+        Fri, 2 Aug 2019 03:35:14 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:20347 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389759AbfHBHfN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Aug 2019 03:35:08 -0400
+        Fri, 2 Aug 2019 03:35:13 -0400
 X-IronPort-AV: E=Sophos;i="5.64,337,1559487600"; 
-   d="scan'208";a="23151184"
+   d="scan'208";a="22931998"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Aug 2019 16:35:07 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Aug 2019 16:35:12 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id F3F184007528;
-        Fri,  2 Aug 2019 16:35:04 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 58AB740078B4;
+        Fri,  2 Aug 2019 16:35:09 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -39,9 +39,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH/RFC 07/12] drm: rcar-du: lvds: Add support for dual link panels
-Date:   Fri,  2 Aug 2019 08:34:04 +0100
-Message-Id: <1564731249-22671-8-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH/RFC 08/12] drm: rcar-du: lvds: Fix bridge_to_rcar_lvds
+Date:   Fri,  2 Aug 2019 08:34:05 +0100
+Message-Id: <1564731249-22671-9-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1564731249-22671-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1564731249-22671-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -50,28 +50,32 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-If the display comes with two ports, assume it supports dual
-link.
+Using name "bridge" for macro bridge_to_rcar_lvds argument doesn't
+work when the pointer name used by the caller is not "bridge".
+Rename the argument to "bridge_ptr" to allow for any pointer
+name.
 
+Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index 2d54ae5..97c51c2 100644
+index 97c51c2..edd63f5 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -751,6 +751,9 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
- 			ret = -EPROBE_DEFER;
- 			goto done;
- 		}
-+		if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
-+			lvds->dual_link = of_graph_get_endpoint_count(remote)
-+					== 2;
- 	}
+@@ -72,8 +72,8 @@ struct rcar_lvds {
+ 	bool stripe_swap_data;
+ };
  
- 	if (lvds->dual_link) {
+-#define bridge_to_rcar_lvds(bridge) \
+-	container_of(bridge, struct rcar_lvds, bridge)
++#define bridge_to_rcar_lvds(bridge_ptr) \
++	container_of(bridge_ptr, struct rcar_lvds, bridge)
+ 
+ #define connector_to_rcar_lvds(connector) \
+ 	container_of(connector, struct rcar_lvds, connector)
 -- 
 2.7.4
 
