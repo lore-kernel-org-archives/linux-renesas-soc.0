@@ -2,34 +2,35 @@ Return-Path: <SRS0=Fj0y=WD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E582C433FF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  7 Aug 2019 08:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779E8C19759
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  7 Aug 2019 08:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D682F222FC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  7 Aug 2019 08:46:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A9E82231F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  7 Aug 2019 08:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728473AbfHGIqm (ORCPT
+        id S2387546AbfHGIqu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 7 Aug 2019 04:46:42 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:55920 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbfHGIqm (ORCPT
+        Wed, 7 Aug 2019 04:46:50 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:40788 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387718AbfHGIqq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 7 Aug 2019 04:46:42 -0400
+        Wed, 7 Aug 2019 04:46:46 -0400
 Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id m8md2000r05gfCL068meTU; Wed, 07 Aug 2019 10:46:40 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id m8mg2000205gfCL068mgMM; Wed, 07 Aug 2019 10:46:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hvHaf-0002dn-SU; Wed, 07 Aug 2019 10:46:37 +0200
+        id 1hvHai-0002dt-0E; Wed, 07 Aug 2019 10:46:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hvHaf-0006If-QX; Wed, 07 Aug 2019 10:46:37 +0200
+        id 1hvHah-0006Im-UU; Wed, 07 Aug 2019 10:46:39 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -37,45 +38,145 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Chris Brandt <Chris.Brandt@renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/3] clocksource/drivers/ostm: Miscellaneous improvements
-Date:   Wed,  7 Aug 2019 10:46:32 +0200
-Message-Id: <20190807084635.24173-1-geert+renesas@glider.be>
+Subject: [PATCH v3 2/3] clocksource/drivers/renesas-ostm: Fix probe error path
+Date:   Wed,  7 Aug 2019 10:46:34 +0200
+Message-Id: <20190807084635.24173-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190807084635.24173-1-geert+renesas@glider.be>
+References: <20190807084635.24173-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Fix various issues in the error path of ostm_init():
+  1. Drop error message printing on of_iomap() failure, as the memory
+     allocation core already takes of that,
+  2. Handle irq_of_parse_and_map() failures correctly: it returns
+     unsigned int, hence make irq unsigned int, and zero is an error,
+  3. Propagate/return appropriate error codes instead of -EFAULT.
+  4. Add a missing clk_put(),
+  5. Split the single cleanup block in separate phases, to avoid
+     clk_put() calling WARN() when passed an error pointer.
 
-This patch series contains various improvements for the Renesas OSTM
-timer driver, as used on the RZ/A1 and RZ/A2 SoCs.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v3:
+  - New.
+---
+ drivers/clocksource/renesas-ostm.c | 54 ++++++++++++++++--------------
+ 1 file changed, 29 insertions(+), 25 deletions(-)
 
-The last patch is v3 of a patch that was sent before to a limited
-audience:
-  - https://lore.kernel.org/linux-renesas-soc/1507727130-17641-1-git-send-email-jacopo+renesas@jmondi.org/
-  - https://lore.kernel.org/linux-renesas-soc/1507725113-18070-1-git-send-email-geert+renesas@glider.be/
-
-Thanks!
-
-Geert Uytterhoeven (3):
-  clocksource/drivers/renesas-ostm: Use DIV_ROUND_CLOSEST() helper
-  clocksource/drivers/renesas-ostm: Fix probe error path
-  clocksource/drivers/ostm: Use unique device name instead of ostm
-
- drivers/clocksource/renesas-ostm.c | 95 ++++++++++++++++++------------
- 1 file changed, 57 insertions(+), 38 deletions(-)
-
+diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
+index 37c39b901bb12b38..1e22e54d7b0df40d 100644
+--- a/drivers/clocksource/renesas-ostm.c
++++ b/drivers/clocksource/renesas-ostm.c
+@@ -155,7 +155,7 @@ static irqreturn_t ostm_timer_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int __init ostm_init_clkevt(struct ostm_device *ostm, int irq,
++static int __init ostm_init_clkevt(struct ostm_device *ostm, unsigned int irq,
+ 			unsigned long rate)
+ {
+ 	struct clock_event_device *ced = &ostm->ced;
+@@ -185,11 +185,11 @@ static int __init ostm_init_clkevt(struct ostm_device *ostm, int irq,
+ 
+ static int __init ostm_init(struct device_node *np)
+ {
+-	struct ostm_device *ostm;
+-	int ret = -EFAULT;
+ 	struct clk *ostm_clk = NULL;
+-	int irq;
++	struct ostm_device *ostm;
+ 	unsigned long rate;
++	unsigned int irq;
++	int ret;
+ 
+ 	ostm = kzalloc(sizeof(*ostm), GFP_KERNEL);
+ 	if (!ostm)
+@@ -197,27 +197,29 @@ static int __init ostm_init(struct device_node *np)
+ 
+ 	ostm->base = of_iomap(np, 0);
+ 	if (!ostm->base) {
+-		pr_err("ostm: failed to remap I/O memory\n");
+-		goto err;
++		ret = -ENOMEM;
++		goto err_free;
+ 	}
+ 
+ 	irq = irq_of_parse_and_map(np, 0);
+-	if (irq < 0) {
++	if (!irq) {
+ 		pr_err("ostm: Failed to get irq\n");
+-		goto err;
++		ret = -EINVAL;
++		goto err_unmap;
+ 	}
+ 
+ 	ostm_clk = of_clk_get(np, 0);
+ 	if (IS_ERR(ostm_clk)) {
+ 		pr_err("ostm: Failed to get clock\n");
+ 		ostm_clk = NULL;
+-		goto err;
++		ret = PTR_ERR(ostm_clk);
++		goto err_unmap;
+ 	}
+ 
+ 	ret = clk_prepare_enable(ostm_clk);
+ 	if (ret) {
+ 		pr_err("ostm: Failed to enable clock\n");
+-		goto err;
++		goto err_clk_put;
+ 	}
+ 
+ 	rate = clk_get_rate(ostm_clk);
+@@ -229,28 +231,30 @@ static int __init ostm_init(struct device_node *np)
+ 	 */
+ 	if (!system_clock) {
+ 		ret = ostm_init_clksrc(ostm, rate);
++		if (ret)
++			goto err_clk_disable;
+ 
+-		if (!ret) {
+-			ostm_init_sched_clock(ostm, rate);
+-			pr_info("ostm: used for clocksource\n");
+-		}
+-
++		ostm_init_sched_clock(ostm, rate);
++		pr_info("ostm: used for clocksource\n");
+ 	} else {
+ 		ret = ostm_init_clkevt(ostm, irq, rate);
++		if (ret)
++			goto err_clk_disable;
+ 
+-		if (!ret)
+-			pr_info("ostm: used for clock events\n");
+-	}
+-
+-err:
+-	if (ret) {
+-		clk_disable_unprepare(ostm_clk);
+-		iounmap(ostm->base);
+-		kfree(ostm);
+-		return ret;
++		pr_info("ostm: used for clock events\n");
+ 	}
+ 
+ 	return 0;
++
++err_clk_disable:
++	clk_disable_unprepare(ostm_clk);
++err_clk_put:
++	clk_put(ostm_clk);
++err_unmap:
++	iounmap(ostm->base);
++err_free:
++	kfree(ostm);
++	return ret;
+ }
+ 
+ TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
