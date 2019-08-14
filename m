@@ -4,138 +4,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAA1C32753
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A0EAC32753
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F4B204EC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC2E8204EC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfHNJWZ (ORCPT
+        id S1725954AbfHNJ2E (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Aug 2019 05:22:25 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:53074 "EHLO
+        Wed, 14 Aug 2019 05:28:04 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:34924 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbfHNJWZ (ORCPT
+        with ESMTP id S1725928AbfHNJ2E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:22:25 -0400
+        Wed, 14 Aug 2019 05:28:04 -0400
 Received: from ramsan ([84.194.98.4])
         by baptiste.telenet-ops.be with bizsmtp
-        id oxNP2000105gfCL01xNP7S; Wed, 14 Aug 2019 11:22:23 +0200
+        id oxTy2000Y05gfCL01xTy1o; Wed, 14 Aug 2019 11:28:03 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hxpU6-0003Su-Tb; Wed, 14 Aug 2019 11:22:22 +0200
+        id 1hxpZW-0003Us-RA; Wed, 14 Aug 2019 11:27:58 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hxpU6-0003Nl-S4; Wed, 14 Aug 2019 11:22:22 +0200
+        id 1hxpZW-0003aV-Pk; Wed, 14 Aug 2019 11:27:58 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        netdev@vger.kernel.org,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Richard Genoud <richard.genoud@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] can: rcar_can: Remove unused platform data support
-Date:   Wed, 14 Aug 2019 11:22:21 +0200
-Message-Id: <20190814092221.12959-1-geert+renesas@glider.be>
+Subject: [PATCH 3/3] serial: sh-sci: Don't check for mctrl_gpio_to_gpiod() returning error
+Date:   Wed, 14 Aug 2019 11:27:57 +0200
+Message-Id: <20190814092757.13726-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190814092757.13726-1-geert+renesas@glider.be>
+References: <20190814092757.13726-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-All R-Car platforms use DT for describing CAN controllers.
-R-Car CAN platform data support was never used in any upstream kernel.
+Since commit 1d267ea6539f2663 ("serial: mctrl-gpio: simplify init
+routine"), mctrl_gpio_init() returns failure if the assignment to any
+member of the gpio array results in an error pointer.
+Since commit c359522194593815 ("serial: mctrl_gpio: Avoid probe failures
+in case of missing gpiolib"), mctrl_gpio_to_gpiod() returns NULL in the
+!CONFIG_GPIOLIB case.
+Hence there is no longer a need to check for mctrl_gpio_to_gpiod()
+returning an error value.  A simple NULL check is sufficient.
 
-Move the Clock Select Register settings enum into the driver, and remove
-platform data support and the corresponding header file.
+This follows the spirit of commit 445df7ff3fd1a0a9 ("serial: mctrl-gpio:
+drop usages of IS_ERR_OR_NULL") in the mctrl-gpio core.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/net/can/rcar/rcar_can.c       | 22 +++++++++-------------
- include/linux/can/platform/rcar_can.h | 18 ------------------
- 2 files changed, 9 insertions(+), 31 deletions(-)
- delete mode 100644 include/linux/can/platform/rcar_can.h
+ drivers/tty/serial/sh-sci.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/can/rcar/rcar_can.c b/drivers/net/can/rcar/rcar_can.c
-index cf218949a8fb52d5..3c5e9c2c5342147f 100644
---- a/drivers/net/can/rcar/rcar_can.c
-+++ b/drivers/net/can/rcar/rcar_can.c
-@@ -15,11 +15,17 @@
- #include <linux/can/led.h>
- #include <linux/can/dev.h>
- #include <linux/clk.h>
--#include <linux/can/platform/rcar_can.h>
- #include <linux/of.h>
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 7f565fcbf1ca4c5e..4e754a4850e6db63 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2099,12 +2099,12 @@ static unsigned int sci_get_mctrl(struct uart_port *port)
+ 	if (s->autorts) {
+ 		if (sci_get_cts(port))
+ 			mctrl |= TIOCM_CTS;
+-	} else if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_CTS))) {
++	} else if (!mctrl_gpio_to_gpiod(gpios, UART_GPIO_CTS)) {
+ 		mctrl |= TIOCM_CTS;
+ 	}
+-	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_DSR)))
++	if (!mctrl_gpio_to_gpiod(gpios, UART_GPIO_DSR))
+ 		mctrl |= TIOCM_DSR;
+-	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(gpios, UART_GPIO_DCD)))
++	if (!mctrl_gpio_to_gpiod(gpios, UART_GPIO_DCD))
+ 		mctrl |= TIOCM_CAR;
  
- #define RCAR_CAN_DRV_NAME	"rcar_can"
+ 	return mctrl;
+@@ -3285,10 +3285,8 @@ static int sci_probe_single(struct platform_device *dev,
+ 		return PTR_ERR(sciport->gpios);
  
-+/* Clock Select Register settings */
-+enum CLKR {
-+	CLKR_CLKP1 = 0,	/* Peripheral clock (clkp1) */
-+	CLKR_CLKP2 = 1,	/* Peripheral clock (clkp2) */
-+	CLKR_CLKEXT = 3	/* Externally input clock */
-+};
-+
- #define RCAR_SUPPORTED_CLOCKS	(BIT(CLKR_CLKP1) | BIT(CLKR_CLKP2) | \
- 				 BIT(CLKR_CLKEXT))
- 
-@@ -736,7 +742,6 @@ static const char * const clock_names[] = {
- 
- static int rcar_can_probe(struct platform_device *pdev)
- {
--	struct rcar_can_platform_data *pdata;
- 	struct rcar_can_priv *priv;
- 	struct net_device *ndev;
- 	struct resource *mem;
-@@ -745,17 +750,8 @@ static int rcar_can_probe(struct platform_device *pdev)
- 	int err = -ENODEV;
- 	int irq;
- 
--	if (pdev->dev.of_node) {
--		of_property_read_u32(pdev->dev.of_node,
--				     "renesas,can-clock-select", &clock_select);
--	} else {
--		pdata = dev_get_platdata(&pdev->dev);
--		if (!pdata) {
--			dev_err(&pdev->dev, "No platform data provided!\n");
--			goto fail;
--		}
--		clock_select = pdata->clock_select;
--	}
-+	of_property_read_u32(pdev->dev.of_node, "renesas,can-clock-select",
-+			     &clock_select);
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
-diff --git a/include/linux/can/platform/rcar_can.h b/include/linux/can/platform/rcar_can.h
-deleted file mode 100644
-index a43dcd0cf79ee3ec..0000000000000000
---- a/include/linux/can/platform/rcar_can.h
-+++ /dev/null
-@@ -1,18 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _CAN_PLATFORM_RCAR_CAN_H_
--#define _CAN_PLATFORM_RCAR_CAN_H_
--
--#include <linux/types.h>
--
--/* Clock Select Register settings */
--enum CLKR {
--	CLKR_CLKP1 = 0,	/* Peripheral clock (clkp1) */
--	CLKR_CLKP2 = 1,	/* Peripheral clock (clkp2) */
--	CLKR_CLKEXT = 3	/* Externally input clock */
--};
--
--struct rcar_can_platform_data {
--	enum CLKR clock_select;	/* Clock source select */
--};
--
--#endif	/* !_CAN_PLATFORM_RCAR_CAN_H_ */
+ 	if (sciport->has_rtscts) {
+-		if (!IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
+-							UART_GPIO_CTS)) ||
+-		    !IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(sciport->gpios,
+-							UART_GPIO_RTS))) {
++		if (mctrl_gpio_to_gpiod(sciport->gpios, UART_GPIO_CTS) ||
++		    mctrl_gpio_to_gpiod(sciport->gpios, UART_GPIO_RTS)) {
+ 			dev_err(&dev->dev, "Conflicting RTS/CTS config\n");
+ 			return -EINVAL;
+ 		}
 -- 
 2.17.1
 
