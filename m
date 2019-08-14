@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5D5C32753
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D2AC433FF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C04D204EC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2494A204EC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 09:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbfHNJ2H (ORCPT
+        id S1725996AbfHNJ3c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Aug 2019 05:28:07 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:60222 "EHLO
+        Wed, 14 Aug 2019 05:29:32 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:34158 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfHNJ2H (ORCPT
+        with ESMTP id S1726126AbfHNJ3c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:28:07 -0400
+        Wed, 14 Aug 2019 05:29:32 -0400
 Received: from ramsan ([84.194.98.4])
         by xavier.telenet-ops.be with bizsmtp
-        id oxTy2000p05gfCL01xTyH5; Wed, 14 Aug 2019 11:28:06 +0200
+        id oxVS2000605gfCL01xVSWU; Wed, 14 Aug 2019 11:29:30 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hxpZW-0003Um-PV; Wed, 14 Aug 2019 11:27:58 +0200
+        id 1hxpaw-0003VM-3a; Wed, 14 Aug 2019 11:29:26 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hxpZW-0003aP-OG; Wed, 14 Aug 2019 11:27:58 +0200
+        id 1hxpaw-0003cJ-1U; Wed, 14 Aug 2019 11:29:26 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
-Cc:     Richard Genoud <richard.genoud@gmail.com>,
+Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Richard Genoud <richard.genoud@gmail.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: [PATCH 1/3] serial: atmel: Don't check for mctrl_gpio_to_gpiod() returning error
-Date:   Wed, 14 Aug 2019 11:27:55 +0200
-Message-Id: <20190814092757.13726-2-geert+renesas@glider.be>
+Date:   Wed, 14 Aug 2019 11:29:22 +0200
+Message-Id: <20190814092924.13857-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190814092757.13726-1-geert+renesas@glider.be>
+In-Reply-To: <20190814092924.13857-1-geert+renesas@glider.be>
 References: <20190814092757.13726-1-geert+renesas@glider.be>
+ <20190814092924.13857-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
